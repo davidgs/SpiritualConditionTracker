@@ -11,13 +11,8 @@ const PORT = process.env.PORT || 5000;
 const db = {
   users: [],
   activities: [],
-  spiritualFitness: []
-};
-
-// Cache for AA meetings data
-let meetingsCache = {
-  timestamp: 0,
-  data: null
+  spiritualFitness: [],
+  meetings: [] // Added user-managed meetings
 };
 
 // Calculate spiritual fitness score for a user
@@ -370,42 +365,157 @@ const server = http.createServer((req, res) => {
       return;
     }
     
-    // Get AA Meetings
+    // Get user meetings
     if (pathname === '/api/meetings' && req.method === 'GET') {
-      const { region, day, time, types, location } = reqUrl.query;
+      // We now use a user-managed meeting list instead of an external API
+      // Simple in-memory storage for meetings (in real app, this would be in the SQLite database)
+      if (!db.meetings) {
+        db.meetings = [];
+      }
       
-      if (!location) {
-        res.writeHead(400);
-        res.end(JSON.stringify({ error: 'Location parameter is required' }));
+      const { day, type } = reqUrl.query;
+      
+      // Filter meetings based on query parameters
+      let filteredMeetings = [...db.meetings];
+      
+      if (day) {
+        filteredMeetings = filteredMeetings.filter(m => 
+          m.day && m.day.toLowerCase() === day.toLowerCase()
+        );
+      }
+      
+      if (type) {
+        filteredMeetings = filteredMeetings.filter(m => 
+          m.type && m.type.toLowerCase().includes(type.toLowerCase())
+        );
+      }
+      
+      res.writeHead(200);
+      res.end(JSON.stringify(filteredMeetings));
+      return;
+    }
+    
+    // Create a new meeting
+    if (pathname === '/api/meetings' && req.method === 'POST') {
+      let body = '';
+      req.on('data', chunk => {
+        body += chunk.toString();
+      });
+      
+      req.on('end', () => {
+        try {
+          const meeting = JSON.parse(body);
+          
+          // Validate required fields
+          if (!meeting.name || !meeting.day || !meeting.time) {
+            res.writeHead(400);
+            res.end(JSON.stringify({ error: 'Name, day, and time are required' }));
+            return;
+          }
+          
+          // Initialize meetings array if it doesn't exist
+          if (!db.meetings) {
+            db.meetings = [];
+          }
+          
+          // Add ID and creation timestamp
+          meeting.id = `meeting_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+          meeting.createdAt = new Date().toISOString();
+          
+          // Add to database
+          db.meetings.push(meeting);
+          
+          res.writeHead(201);
+          res.end(JSON.stringify(meeting));
+        } catch (error) {
+          console.error('Error creating meeting:', error);
+          res.writeHead(400);
+          res.end(JSON.stringify({ error: 'Invalid meeting data' }));
+        }
+      });
+      return;
+    }
+    
+    // Update a meeting
+    if (pathname.startsWith('/api/meetings/') && req.method === 'PUT') {
+      const id = pathname.split('/').pop();
+      
+      let body = '';
+      req.on('data', chunk => {
+        body += chunk.toString();
+      });
+      
+      req.on('end', () => {
+        try {
+          // Initialize meetings array if it doesn't exist
+          if (!db.meetings) {
+            db.meetings = [];
+          }
+          
+          const meetingIndex = db.meetings.findIndex(m => m.id === id);
+          
+          if (meetingIndex === -1) {
+            res.writeHead(404);
+            res.end(JSON.stringify({ error: 'Meeting not found' }));
+            return;
+          }
+          
+          const updatedMeeting = JSON.parse(body);
+          
+          // Preserve ID and creation date
+          updatedMeeting.id = id;
+          updatedMeeting.createdAt = db.meetings[meetingIndex].createdAt;
+          
+          // Update the meeting
+          db.meetings[meetingIndex] = updatedMeeting;
+          
+          res.writeHead(200);
+          res.end(JSON.stringify(updatedMeeting));
+        } catch (error) {
+          console.error('Error updating meeting:', error);
+          res.writeHead(400);
+          res.end(JSON.stringify({ error: 'Invalid meeting data' }));
+        }
+      });
+      return;
+    }
+    
+    // Delete a meeting
+    if (pathname.startsWith('/api/meetings/') && req.method === 'DELETE') {
+      // Initialize meetings array if it doesn't exist
+      if (!db.meetings) {
+        db.meetings = [];
+      }
+      
+      const id = pathname.split('/').pop();
+      const meetingIndex = db.meetings.findIndex(m => m.id === id);
+      
+      if (meetingIndex === -1) {
+        res.writeHead(404);
+        res.end(JSON.stringify({ error: 'Meeting not found' }));
         return;
       }
       
-      // Execute Python script to get meetings
-      const command = `python3 aa_meetings_api.py "${region || ''}" "${day || ''}" "${time || ''}" "${types || ''}" "${location}"`;
+      // Remove the meeting
+      db.meetings.splice(meetingIndex, 1);
       
-      exec(`cd ${__dirname} && ${command}`, (error, stdout, stderr) => {
-        if (error) {
-          console.error(`Error fetching meetings: ${error.message}`);
-          res.writeHead(500);
-          res.end(JSON.stringify({ error: 'Error fetching meetings', details: error.message }));
-          return;
-        }
-        
-        if (stderr) {
-          console.error(`Error from Python script: ${stderr}`);
-        }
-        
-        try {
-          const meetings = JSON.parse(stdout);
-          res.writeHead(200);
-          res.end(JSON.stringify(meetings));
-        } catch (e) {
-          console.error('Error parsing meeting data:', e, stdout);
-          res.writeHead(500);
-          res.end(JSON.stringify({ error: 'Error parsing meeting data' }));
-        }
-      });
+      res.writeHead(200);
+      res.end(JSON.stringify({ message: 'Meeting deleted successfully' }));
+      return;
+    }
+    
+    // Get shared meetings
+    if (pathname === '/api/meetings/shared' && req.method === 'GET') {
+      // Initialize meetings array if it doesn't exist
+      if (!db.meetings) {
+        db.meetings = [];
+      }
       
+      // Filter for shared meetings only
+      const sharedMeetings = db.meetings.filter(m => m.isShared);
+      
+      res.writeHead(200);
+      res.end(JSON.stringify(sharedMeetings));
       return;
     }
     
@@ -558,6 +668,52 @@ db.activities.push({
   date: new Date().toISOString(),
   duration: 60,
   notes: 'Great meeting with strong sharing',
+  createdAt: new Date().toISOString()
+});
+
+// Add sample meetings
+db.meetings.push({
+  id: 'meeting_1',
+  name: 'Downtown Morning Serenity',
+  day: 'Monday',
+  time: '07:30',
+  location: 'Community Center',
+  address: '123 Main Street',
+  city: 'San Francisco',
+  state: 'CA',
+  type: 'Open',
+  notes: 'Beginner-friendly meeting with coffee and donuts',
+  isShared: true,
+  createdAt: new Date().toISOString()
+});
+
+db.meetings.push({
+  id: 'meeting_2',
+  name: 'Sunset Discussion Group',
+  day: 'Wednesday',
+  time: '19:00',
+  location: 'Sunset Church',
+  address: '456 Sunset Blvd',
+  city: 'San Francisco',
+  state: 'CA',
+  type: 'Closed',
+  notes: 'Discussion format, 1 hour',
+  isShared: true,
+  createdAt: new Date().toISOString()
+});
+
+db.meetings.push({
+  id: 'meeting_3',
+  name: 'Saturday Step Study',
+  day: 'Saturday',
+  time: '10:00',
+  location: 'Recovery Center',
+  address: '789 Recovery Road',
+  city: 'San Francisco',
+  state: 'CA',
+  type: 'Step Study',
+  notes: 'Focuses on one step per week with detailed discussion',
+  isShared: true,
   createdAt: new Date().toISOString()
 });
 
