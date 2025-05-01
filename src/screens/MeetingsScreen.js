@@ -428,6 +428,122 @@ const MeetingsScreen = ({ navigation }) => {
           </View>
         ) : null}
       </ScrollView>
+      
+      {/* Calendar Reminder Modal */}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={isReminderModalVisible}
+        onRequestClose={() => setIsReminderModalVisible(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>Add Calendar Reminder</Text>
+              <TouchableOpacity 
+                onPress={() => setIsReminderModalVisible(false)}
+                disabled={addingReminder}
+              >
+                <Ionicons name="close" size={24} color="#6b7280" />
+              </TouchableOpacity>
+            </View>
+            
+            <View style={styles.modalBody}>
+              {selectedMeeting && (
+                <>
+                  <Text style={styles.meetingInfoTitle}>{selectedMeeting.name || 'AA Meeting'}</Text>
+                  
+                  <View style={styles.meetingInfoRow}>
+                    <Ionicons name="calendar-outline" size={18} color="#4b5563" />
+                    <Text style={styles.meetingInfoText}>
+                      {selectedMeeting.day ? selectedMeeting.day.charAt(0).toUpperCase() + selectedMeeting.day.slice(1) : 'Day not specified'}
+                    </Text>
+                  </View>
+                  
+                  <View style={styles.meetingInfoRow}>
+                    <Ionicons name="time-outline" size={18} color="#4b5563" />
+                    <Text style={styles.meetingInfoText}>
+                      {selectedMeeting.time || 'Time not specified'}
+                    </Text>
+                  </View>
+                  
+                  {(selectedMeeting.location || selectedMeeting.address) && (
+                    <View style={styles.meetingInfoRow}>
+                      <Ionicons name="location-outline" size={18} color="#4b5563" />
+                      <Text style={styles.meetingInfoText}>
+                        {[selectedMeeting.location, selectedMeeting.address, selectedMeeting.city].filter(Boolean).join(', ')}
+                      </Text>
+                    </View>
+                  )}
+                  
+                  <View style={styles.divider} />
+                  
+                  <Text style={styles.sectionTitle}>Reminder Settings</Text>
+                  
+                  <Text style={styles.settingLabel}>Remind me before meeting</Text>
+                  <View style={styles.reminderTimeContainer}>
+                    {[15, 30, 60, 120].map(minutes => (
+                      <TouchableOpacity
+                        key={minutes}
+                        style={[
+                          styles.reminderTimeButton,
+                          reminderMinutes === minutes && styles.reminderTimeButtonActive
+                        ]}
+                        onPress={() => setReminderMinutes(minutes)}
+                      >
+                        <Text 
+                          style={[
+                            styles.reminderTimeText,
+                            reminderMinutes === minutes && styles.reminderTimeTextActive
+                          ]}
+                        >
+                          {minutes} min
+                        </Text>
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+                  
+                  <View style={styles.recurringContainer}>
+                    <View style={styles.recurringTextContainer}>
+                      <Text style={styles.settingLabel}>Repeat weekly</Text>
+                      <Text style={styles.settingDescription}>
+                        Add this meeting to your calendar every week
+                      </Text>
+                    </View>
+                    <Switch
+                      value={isRecurring}
+                      onValueChange={setIsRecurring}
+                      trackColor={{ false: '#d1d5db', true: '#93c5fd' }}
+                      thumbColor={isRecurring ? '#3b82f6' : '#f3f4f6'}
+                    />
+                  </View>
+                </>
+              )}
+            </View>
+            
+            <View style={styles.modalFooter}>
+              <TouchableOpacity 
+                style={styles.cancelButton}
+                onPress={() => setIsReminderModalVisible(false)}
+                disabled={addingReminder}
+              >
+                <Text style={styles.cancelButtonText}>Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity 
+                style={styles.addButton}
+                onPress={addMeetingReminder}
+                disabled={addingReminder}
+              >
+                {addingReminder ? (
+                  <ActivityIndicator size="small" color="#fff" />
+                ) : (
+                  <Text style={styles.addButtonText}>Add to Calendar</Text>
+                )}
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 };
@@ -614,6 +730,137 @@ const styles = StyleSheet.create({
     color: '#3b82f6',
     fontWeight: '500',
     marginLeft: 4,
+  },
+  
+  // Modal styles
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    backgroundColor: 'rgba(0,0,0,0.5)',
+  },
+  modalContent: {
+    backgroundColor: '#fff',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    maxHeight: '80%',
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#e5e7eb',
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#1f2937',
+  },
+  modalBody: {
+    padding: 16,
+    maxHeight: '60%',
+  },
+  meetingInfoTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#1f2937',
+    marginBottom: 16,
+  },
+  meetingInfoRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  meetingInfoText: {
+    fontSize: 16,
+    color: '#4b5563',
+    marginLeft: 8,
+    flex: 1,
+  },
+  divider: {
+    height: 1,
+    backgroundColor: '#e5e7eb',
+    marginVertical: 16,
+  },
+  sectionTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#1f2937',
+    marginBottom: 12,
+  },
+  settingLabel: {
+    fontSize: 16,
+    fontWeight: '500',
+    color: '#1f2937',
+    marginBottom: 8,
+  },
+  settingDescription: {
+    fontSize: 14,
+    color: '#6b7280',
+  },
+  reminderTimeContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginBottom: 16,
+  },
+  reminderTimeButton: {
+    backgroundColor: '#f3f4f6',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 8,
+    marginRight: 8,
+    marginBottom: 8,
+  },
+  reminderTimeButtonActive: {
+    backgroundColor: '#3b82f6',
+  },
+  reminderTimeText: {
+    color: '#4b5563',
+    fontWeight: '500',
+  },
+  reminderTimeTextActive: {
+    color: '#fff',
+  },
+  recurringContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: 8,
+  },
+  recurringTextContainer: {
+    flex: 1,
+  },
+  modalFooter: {
+    flexDirection: 'row',
+    padding: 16,
+    borderTopWidth: 1,
+    borderTopColor: '#e5e7eb',
+  },
+  cancelButton: {
+    flex: 1,
+    backgroundColor: '#f3f4f6',
+    paddingVertical: 12,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginRight: 8,
+  },
+  cancelButtonText: {
+    fontSize: 16,
+    fontWeight: '500',
+    color: '#6b7280',
+  },
+  addButton: {
+    flex: 2,
+    backgroundColor: '#3b82f6',
+    paddingVertical: 12,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  addButtonText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#fff',
   },
 });
 

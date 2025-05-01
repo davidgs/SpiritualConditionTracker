@@ -14,8 +14,9 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from 'react-native-vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useUser } from '../contexts/UserContext';
-import { settingsOperations } from '../utils/database';
+import { settingsOperations, calendarReminderOperations } from '../utils/database';
 import { calculateSobrietyDays, calculateSobrietyYears, formatNumberWithCommas } from '../utils/calculations';
+import { cancelNotification } from '../utils/calendarReminders';
 
 const SettingsScreen = () => {
   const { user, updateUser } = useUser();
@@ -31,6 +32,10 @@ const SettingsScreen = () => {
   // Settings state
   const [reminderTime, setReminderTime] = useState('08:00');
   const [darkMode, setDarkMode] = useState(false);
+  
+  // Calendar reminders state
+  const [calendarReminders, setCalendarReminders] = useState([]);
+  const [loadingReminders, setLoadingReminders] = useState(false);
   
   // Date picker state
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -66,7 +71,45 @@ const SettingsScreen = () => {
     };
     
     loadSettings();
+    loadCalendarReminders();
   }, [user]);
+  
+  // Load calendar reminders
+  const loadCalendarReminders = async () => {
+    try {
+      setLoadingReminders(true);
+      const reminders = await calendarReminderOperations.getAllCalendarReminders();
+      setCalendarReminders(reminders);
+    } catch (error) {
+      console.error('Error loading calendar reminders:', error);
+    } finally {
+      setLoadingReminders(false);
+    }
+  };
+  
+  // Delete calendar reminder
+  const deleteCalendarReminder = async (reminderId) => {
+    try {
+      const reminder = calendarReminders.find(r => r.id === reminderId);
+      if (!reminder) return;
+      
+      // Cancel notification if exists
+      if (reminder.notificationId) {
+        await cancelNotification(reminder.notificationId);
+      }
+      
+      // Delete from database
+      await calendarReminderOperations.deleteCalendarReminder(reminderId);
+      
+      // Update list
+      loadCalendarReminders();
+      
+      Alert.alert('Reminder Deleted', 'The meeting reminder has been deleted from your calendar.');
+    } catch (error) {
+      console.error('Error deleting calendar reminder:', error);
+      Alert.alert('Error', 'Failed to delete the reminder. Please try again.');
+    }
+  };
   
   // Handle sobriety date change
   const onDateChange = (event, selectedDate) => {
@@ -287,6 +330,94 @@ const SettingsScreen = () => {
         </View>
         
         <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Calendar Reminders</Text>
+          
+          {loadingReminders ? (
+            <View style={styles.loadingContainer}>
+              <ActivityIndicator size="small" color="#3b82f6" />
+              <Text style={styles.loadingText}>Loading reminders...</Text>
+            </View>
+          ) : calendarReminders.length === 0 ? (
+            <View style={styles.emptyRemindersContainer}>
+              <Ionicons name="calendar-outline" size={48} color="#d1d5db" />
+              <Text style={styles.emptyRemindersText}>
+                You don't have any meeting reminders set up.
+              </Text>
+              <Text style={styles.reminderHelpText}>
+                When browsing meetings, tap "Add to Calendar" to set reminders.
+              </Text>
+            </View>
+          ) : (
+            <>
+              <Text style={styles.reminderHelpText}>
+                Your scheduled meeting reminders. Tap the trash icon to remove a reminder.
+              </Text>
+              
+              {calendarReminders.map((reminder) => (
+                <View key={reminder.id} style={styles.reminderItem}>
+                  <View style={styles.reminderInfo}>
+                    <Text style={styles.reminderTitle}>{reminder.meetingName}</Text>
+                    <View style={styles.reminderDetails}>
+                      <View style={styles.reminderDetail}>
+                        <Ionicons name="calendar-outline" size={14} color="#6b7280" />
+                        <Text style={styles.reminderDetailText}>
+                          {reminder.meetingDay.charAt(0).toUpperCase() + reminder.meetingDay.slice(1)}
+                        </Text>
+                      </View>
+                      <View style={styles.reminderDetail}>
+                        <Ionicons name="time-outline" size={14} color="#6b7280" />
+                        <Text style={styles.reminderDetailText}>{reminder.meetingTime}</Text>
+                      </View>
+                      <View style={styles.reminderDetail}>
+                        <Ionicons name="notifications-outline" size={14} color="#6b7280" />
+                        <Text style={styles.reminderDetailText}>
+                          {reminder.reminderMinutes} min before
+                        </Text>
+                      </View>
+                    </View>
+                    {reminder.location ? (
+                      <Text style={styles.reminderLocation}>{reminder.location}</Text>
+                    ) : null}
+                    {reminder.isRecurring && (
+                      <View style={styles.recurringBadge}>
+                        <Text style={styles.recurringBadgeText}>Weekly</Text>
+                      </View>
+                    )}
+                  </View>
+                  <TouchableOpacity
+                    style={styles.deleteButton}
+                    onPress={() => {
+                      Alert.alert(
+                        'Delete Reminder',
+                        'Are you sure you want to delete this meeting reminder?',
+                        [
+                          { text: 'Cancel', style: 'cancel' },
+                          { 
+                            text: 'Delete', 
+                            style: 'destructive',
+                            onPress: () => deleteCalendarReminder(reminder.id)
+                          }
+                        ]
+                      );
+                    }}
+                  >
+                    <Ionicons name="trash-outline" size={24} color="#ef4444" />
+                  </TouchableOpacity>
+                </View>
+              ))}
+              
+              <TouchableOpacity
+                style={styles.refreshButton}
+                onPress={loadCalendarReminders}
+              >
+                <Ionicons name="refresh-outline" size={16} color="#3b82f6" />
+                <Text style={styles.refreshButtonText}>Refresh Reminders</Text>
+              </TouchableOpacity>
+            </>
+          )}
+        </View>
+        
+        <View style={styles.section}>
           <Text style={styles.sectionTitle}>Data Management</Text>
           
           <TouchableOpacity
@@ -495,6 +626,103 @@ const styles = StyleSheet.create({
   sobrietyStatsLabel: {
     fontSize: 14,
     color: '#6b7280',
+  },
+  
+  // Calendar reminders styles
+  loadingContainer: {
+    alignItems: 'center',
+    padding: 16,
+  },
+  loadingText: {
+    marginTop: 8,
+    fontSize: 14,
+    color: '#6b7280',
+  },
+  emptyRemindersContainer: {
+    alignItems: 'center',
+    padding: 20,
+  },
+  emptyRemindersText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#1f2937',
+    marginTop: 16,
+    marginBottom: 8,
+    textAlign: 'center',
+  },
+  reminderHelpText: {
+    fontSize: 14,
+    color: '#6b7280',
+    marginBottom: 16,
+    fontStyle: 'italic',
+    textAlign: 'center',
+  },
+  reminderItem: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    backgroundColor: '#f9fafb',
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 12,
+    borderLeftWidth: 4,
+    borderLeftColor: '#3b82f6',
+  },
+  reminderInfo: {
+    flex: 1,
+  },
+  reminderTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#1f2937',
+    marginBottom: 8,
+  },
+  reminderDetails: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginBottom: 8,
+  },
+  reminderDetail: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginRight: 12,
+    marginBottom: 4,
+  },
+  reminderDetailText: {
+    fontSize: 14,
+    color: '#6b7280',
+    marginLeft: 4,
+  },
+  reminderLocation: {
+    fontSize: 14,
+    color: '#4b5563',
+  },
+  recurringBadge: {
+    backgroundColor: '#ebf5ff',
+    borderRadius: 4,
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    alignSelf: 'flex-start',
+    marginTop: 8,
+  },
+  recurringBadgeText: {
+    fontSize: 12,
+    color: '#3b82f6',
+  },
+  deleteButton: {
+    padding: 8,
+    justifyContent: 'center',
+  },
+  refreshButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 8,
+    paddingVertical: 8,
+  },
+  refreshButtonText: {
+    marginLeft: 4,
+    fontSize: 14,
+    color: '#3b82f6',
   },
 });
 
