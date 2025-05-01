@@ -257,12 +257,14 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = org.name.AARecoveryTracker;
-				PRODUCT_NAME = AARecoveryTracker;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.example.aarecoverytracker";
+				PRODUCT_NAME = "AARecoveryTracker";
 				SWIFT_OBJC_BRIDGING_HEADER = "AARecoveryTracker/AARecoveryTracker-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				CODE_SIGN_ENTITLEMENTS = AARecoveryTracker/AARecoveryTracker.entitlements;
 			};
 			name = Debug;
 		};
@@ -284,11 +286,13 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = org.name.AARecoveryTracker;
-				PRODUCT_NAME = AARecoveryTracker;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.example.aarecoverytracker";
+				PRODUCT_NAME = "AARecoveryTracker";
 				SWIFT_OBJC_BRIDGING_HEADER = "AARecoveryTracker/AARecoveryTracker-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				CODE_SIGN_ENTITLEMENTS = AARecoveryTracker/AARecoveryTracker.entitlements;
 			};
 			name = Release;
 		};
