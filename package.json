@@ -15,6 +15,7 @@
     "@react-navigation/native": "^7.1.6",
     "chart.js": "^4.4.9",
     "cors": "^2.8.5",
+    "eas-cli": "^16.3.3",
     "expo": "^53.0.4",
     "expo-calendar": "^14.1.4",
     "expo-location": "^18.1.4",

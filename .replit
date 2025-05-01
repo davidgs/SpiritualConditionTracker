@@ -15,6 +15,10 @@ author = "agent"
 task = "workflow.run"
 args = "Server"
 
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "BuildIOS"
+
 [[workflows.workflow]]
 name = "Server"
 author = "agent"
@@ -23,6 +27,14 @@ author = "agent"
 task = "shell.exec"
 args = "cd simple-server && node server.js"
 waitForPort = 5000
+
+[[workflows.workflow]]
+name = "BuildIOS"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd . && npx eas build -p ios"
 
 [deployment]
 run = ["sh", "-c", "cd simple-server && node server.js"]
