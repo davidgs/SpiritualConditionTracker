@@ -132,8 +132,9 @@
               <h2 class="text-xl font-semibold text-blue-800 mb-4">Your Recovery Summary</h2>
               <div class="space-y-4">
                 <div id="sobriety-counter" class="text-center p-4 bg-blue-50 rounded-lg">
-                  <h3 class="font-medium text-gray-700">Days of Sobriety</h3>
-                  <p class="text-4xl font-bold text-blue-600" id="sobriety-days">0</p>
+                  <h3 class="font-medium text-gray-700">Your Sobriety</h3>
+                  <p class="text-4xl font-bold text-blue-600" id="sobriety-years">0.0 years</p>
+                  <p class="text-lg text-blue-500" id="sobriety-days">0 days</p>
                 </div>
                 <div class="bg-green-50 p-4 rounded-lg">
                   <h3 class="font-medium text-gray-700 mb-2">Spiritual Fitness</h3>
@@ -778,10 +779,11 @@
       updateRecentActivities();
     }
     
-    // Calculate and display sobriety days
+    // Calculate and display sobriety days and years
     function updateSobrietyDays() {
       const user = Storage.getUser();
       const sobrietyDaysElement = document.getElementById('sobriety-days');
+      const sobrietyYearsElement = document.getElementById('sobriety-years');
       
       if (user && user.sobrietyDate) {
         const sobrietyDate = new Date(user.sobrietyDate);
@@ -789,9 +791,19 @@
         const diffTime = Math.abs(today - sobrietyDate);
         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
         
-        sobrietyDaysElement.textContent = diffDays;
+        // Format days with thousands separators
+        sobrietyDaysElement.textContent = diffDays.toLocaleString() + ' days';
+        
+        // Calculate years with 1 decimal place
+        const years = diffDays / 365.25;
+        const yearsFormatted = years.toLocaleString(undefined, { 
+          minimumFractionDigits: 1, 
+          maximumFractionDigits: 1 
+        });
+        sobrietyYearsElement.textContent = yearsFormatted + ' years';
       } else {
-        sobrietyDaysElement.textContent = '0';
+        sobrietyDaysElement.textContent = '0 days';
+        sobrietyYearsElement.textContent = '0.0 years';
       }
     }
     

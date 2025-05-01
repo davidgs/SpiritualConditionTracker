@@ -3,6 +3,7 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const url = require('url');
+const { exec } = require('child_process');
 
 const PORT = process.env.PORT || 5000;
 
@@ -11,6 +12,12 @@ const db = {
   users: [],
   activities: [],
   spiritualFitness: []
+};
+
+// Cache for AA meetings data
+let meetingsCache = {
+  timestamp: 0,
+  data: null
 };
 
 // Calculate spiritual fitness score for a user
@@ -360,6 +367,45 @@ const server = http.createServer((req, res) => {
           res.end(JSON.stringify({ error: 'Invalid user data' }));
         }
       });
+      return;
+    }
+    
+    // Get AA Meetings
+    if (pathname === '/api/meetings' && req.method === 'GET') {
+      const { region, day, time, types, location } = reqUrl.query;
+      
+      if (!location) {
+        res.writeHead(400);
+        res.end(JSON.stringify({ error: 'Location parameter is required' }));
+        return;
+      }
+      
+      // Execute Python script to get meetings
+      const command = `python3 aa_meetings_api.py "${region || ''}" "${day || ''}" "${time || ''}" "${types || ''}" "${location}"`;
+      
+      exec(`cd ${__dirname} && ${command}`, (error, stdout, stderr) => {
+        if (error) {
+          console.error(`Error fetching meetings: ${error.message}`);
+          res.writeHead(500);
+          res.end(JSON.stringify({ error: 'Error fetching meetings', details: error.message }));
+          return;
+        }
+        
+        if (stderr) {
+          console.error(`Error from Python script: ${stderr}`);
+        }
+        
+        try {
+          const meetings = JSON.parse(stdout);
+          res.writeHead(200);
+          res.end(JSON.stringify(meetings));
+        } catch (e) {
+          console.error('Error parsing meeting data:', e, stdout);
+          res.writeHead(500);
+          res.end(JSON.stringify({ error: 'Error parsing meeting data' }));
+        }
+      });
+      
       return;
     }
     
