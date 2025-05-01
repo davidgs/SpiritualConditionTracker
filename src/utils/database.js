@@ -107,6 +107,33 @@ export const initDatabase = () => {
         }
       );
 
+      // Create user-defined meetings table
+      tx.executeSql(
+        `CREATE TABLE IF NOT EXISTS userMeetings (
+          id TEXT PRIMARY KEY,
+          name TEXT NOT NULL,
+          day TEXT NOT NULL,
+          time TEXT NOT NULL,
+          location TEXT,
+          address TEXT,
+          city TEXT,
+          state TEXT,
+          type TEXT,
+          notes TEXT,
+          isShared INTEGER DEFAULT 0,
+          createdAt TEXT
+        )`,
+        [],
+        () => {
+          console.log('User meetings table created successfully');
+        },
+        (_, error) => {
+          console.error('Error creating user meetings table:', error);
+          reject(error);
+          return false;
+        }
+      );
+      
       // Create settings table
       tx.executeSql(
         `CREATE TABLE IF NOT EXISTS settings (
@@ -624,6 +651,186 @@ export const calculateSobrietyYears = (sobrietyDate, decimalPlaces = 2) => {
 };
 
 // Calendar reminders operations
+// User-defined meetings operations
+export const userMeetingOperations = {
+  // Save a meeting
+  saveMeeting: (meeting) => {
+    return new Promise((resolve, reject) => {
+      const {
+        name,
+        day,
+        time,
+        location,
+        address,
+        city,
+        state,
+        type,
+        notes,
+        isShared
+      } = meeting;
+      
+      const id = meeting.id || `meeting_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+      const now = new Date().toISOString();
+      
+      db.transaction(tx => {
+        tx.executeSql(
+          `INSERT OR REPLACE INTO userMeetings (
+            id, name, day, time, location, address, city, state, type, notes, isShared, createdAt
+          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+          [
+            id,
+            name,
+            day,
+            time,
+            location || '',
+            address || '',
+            city || '',
+            state || '',
+            type || '',
+            notes || '',
+            isShared ? 1 : 0,
+            meeting.createdAt || now
+          ],
+          (_, result) => {
+            resolve({
+              id,
+              ...meeting,
+              isShared: !!isShared,
+              createdAt: meeting.createdAt || now
+            });
+          },
+          (_, error) => {
+            console.error('Error saving meeting:', error);
+            reject(error);
+            return false;
+          }
+        );
+      });
+    });
+  },
+  
+  // Get all user meetings
+  getAllMeetings: () => {
+    return new Promise((resolve, reject) => {
+      db.transaction(tx => {
+        tx.executeSql(
+          'SELECT * FROM userMeetings ORDER BY day, time',
+          [],
+          (_, { rows }) => {
+            const meetings = [];
+            for (let i = 0; i < rows.length; i++) {
+              const meeting = rows.item(i);
+              // Convert INTEGER to boolean
+              meeting.isShared = !!meeting.isShared;
+              meetings.push(meeting);
+            }
+            resolve(meetings);
+          },
+          (_, error) => {
+            console.error('Error fetching meetings:', error);
+            reject(error);
+            return false;
+          }
+        );
+      });
+    });
+  },
+  
+  // Get a meeting by ID
+  getMeetingById: (meetingId) => {
+    return new Promise((resolve, reject) => {
+      db.transaction(tx => {
+        tx.executeSql(
+          'SELECT * FROM userMeetings WHERE id = ?',
+          [meetingId],
+          (_, { rows }) => {
+            if (rows.length > 0) {
+              const meeting = rows.item(0);
+              // Convert INTEGER to boolean
+              meeting.isShared = !!meeting.isShared;
+              resolve(meeting);
+            } else {
+              resolve(null);
+            }
+          },
+          (_, error) => {
+            console.error('Error fetching meeting:', error);
+            reject(error);
+            return false;
+          }
+        );
+      });
+    });
+  },
+  
+  // Delete a meeting
+  deleteMeeting: (meetingId) => {
+    return new Promise((resolve, reject) => {
+      db.transaction(tx => {
+        tx.executeSql(
+          'DELETE FROM userMeetings WHERE id = ?',
+          [meetingId],
+          (_, result) => {
+            resolve(result.rowsAffected > 0);
+          },
+          (_, error) => {
+            console.error('Error deleting meeting:', error);
+            reject(error);
+            return false;
+          }
+        );
+      });
+    });
+  },
+  
+  // Update sharing status
+  updateSharingStatus: (meetingId, isShared) => {
+    return new Promise((resolve, reject) => {
+      db.transaction(tx => {
+        tx.executeSql(
+          'UPDATE userMeetings SET isShared = ? WHERE id = ?',
+          [isShared ? 1 : 0, meetingId],
+          (_, result) => {
+            resolve(result.rowsAffected > 0);
+          },
+          (_, error) => {
+            console.error('Error updating sharing status:', error);
+            reject(error);
+            return false;
+          }
+        );
+      });
+    });
+  },
+  
+  // Get shared meetings
+  getSharedMeetings: () => {
+    return new Promise((resolve, reject) => {
+      db.transaction(tx => {
+        tx.executeSql(
+          'SELECT * FROM userMeetings WHERE isShared = 1 ORDER BY day, time',
+          [],
+          (_, { rows }) => {
+            const meetings = [];
+            for (let i = 0; i < rows.length; i++) {
+              const meeting = rows.item(i);
+              // Convert INTEGER to boolean
+              meeting.isShared = true;
+              meetings.push(meeting);
+            }
+            resolve(meetings);
+          },
+          (_, error) => {
+            console.error('Error fetching shared meetings:', error);
+            reject(error);
+            return false;
+          }
+        );
+      });
+    });
+  }
+};
+
 export const calendarReminderOperations = {
   // Save a calendar reminder
   saveCalendarReminder: (reminder) => {
