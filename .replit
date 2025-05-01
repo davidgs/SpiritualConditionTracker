@@ -34,7 +34,7 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "cd . && npx eas build -p ios"
+args = "cd . && npx expo prebuild -p ios"
 
 [deployment]
 run = ["sh", "-c", "cd simple-server && node server.js"]
