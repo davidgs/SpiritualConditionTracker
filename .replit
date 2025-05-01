@@ -19,6 +19,10 @@ args = "Server"
 task = "workflow.run"
 args = "BuildIOS"
 
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "BuildAndroid"
+
 [[workflows.workflow]]
 name = "Server"
 author = "agent"
@@ -35,6 +39,14 @@ author = "agent"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "cd . && npx expo prebuild -p ios"
+
+[[workflows.workflow]]
+name = "BuildAndroid"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd . && npx expo prebuild -p android"
 
 [deployment]
 run = ["sh", "-c", "cd simple-server && node server.js"]
