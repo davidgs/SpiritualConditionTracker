@@ -24,9 +24,17 @@ A React Native mobile application for tracking AA (Alcoholics Anonymous) recover
 
 ### Prerequisites
 
-- Node.js (v12 or higher)
+- Node.js (v16 or higher)
 - npm or yarn
 - Expo CLI
+- For iOS development:
+  - macOS computer
+  - Xcode 14 or higher
+  - Apple Developer account (for testing on physical devices and distribution)
+- For Android development:
+  - Android Studio
+  - Android SDK
+  - Java Development Kit (JDK)
 
 ### Installation
 
@@ -48,6 +56,58 @@ A React Native mobile application for tracking AA (Alcoholics Anonymous) recover
 4. Run on device/emulator:
    - Use the Expo Go app on your physical device
    - Press 'a' for Android emulator or 'i' for iOS simulator
+
+### Building for iOS using Xcode
+
+1. Generate native iOS files (already completed in this repository):
+   ```
+   npx expo prebuild -p ios
+   ```
+
+2. Install CocoaPods dependencies:
+   ```
+   cd ios
+   pod install
+   cd ..
+   ```
+
+3. Open the Xcode project:
+   ```
+   open ios/AARecoveryTracker.xcworkspace
+   ```
+
+4. In Xcode:
+   - Select a development team in the "Signing & Capabilities" tab
+   - Update bundle identifier if needed (current: com.example.aarecoverytracker)
+   - Enable necessary capabilities (HealthKit, Push Notifications, etc.)
+   - Select a target device (simulator or connected device)
+   - Click the "Run" button to build and run the app
+
+### Building for Distribution
+
+#### Using EAS Build (Recommended)
+
+1. Login to your Expo account:
+   ```
+   eas login
+   ```
+
+2. Configure build:
+   ```
+   eas build:configure
+   ```
+
+3. Start the build process:
+   - For iOS: `eas build -p ios`
+   - For Android: `eas build -p android`
+
+4. Follow the on-screen instructions to complete the build process
+
+#### Manual Archive for App Store
+
+1. In Xcode, select "Any iOS Device" as the build target
+2. Select Product > Archive
+3. After archiving completes, use the Organizer window to validate and upload to App Store Connect
 
 ## Privacy
 
