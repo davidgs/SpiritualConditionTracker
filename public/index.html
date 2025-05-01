@@ -1369,7 +1369,7 @@
       });
     }
     
-    // Load the meetings tab using code4recovery API
+    // Load the meetings tab using real meeting data from our API
     function loadMeetingsTab() {
       const meetingForm = document.getElementById('meeting-search-form');
       const meetingResults = document.getElementById('meeting-results');
@@ -1400,53 +1400,82 @@
           </div>
         `;
         
-        // For this demo, we'll simulate the API response
-        // In a real app, you would fetch from the Meeting Guide API
-        setTimeout(() => {
-          // Simulate meetings based on search params
-          const meetings = generateSampleMeetings(location, day, time, type);
-          
-          if (meetings.length === 0) {
-            meetingResults.innerHTML = `
-              <div class="bg-blue-100 border border-blue-400 text-blue-700 px-4 py-2 rounded">
-                <p><i class="fa-solid fa-info-circle mr-1"></i> No meetings found matching your criteria.</p>
-                <p class="text-sm mt-1">Try broadening your search or changing location.</p>
-              </div>
-            `;
-          } else {
+        // Build the query string for our API
+        const queryParams = new URLSearchParams({
+          location: location
+        });
+        
+        if (day) queryParams.append('day', day);
+        if (time) queryParams.append('time', time);
+        if (type) queryParams.append('types', type);
+        
+        // Fetch real meeting data from our API endpoint
+        fetch(`/api/meetings?${queryParams.toString()}`)
+          .then(response => {
+            if (!response.ok) {
+              throw new Error(`Server returned ${response.status}: ${response.statusText}`);
+            }
+            return response.json();
+          })
+          .then(data => {
+            // Check if we got an error response
+            if (data.error) {
+              throw new Error(data.error);
+            }
+            
+            // Check if meetings were found
+            if (!Array.isArray(data) || data.length === 0) {
+              meetingResults.innerHTML = `
+                <div class="bg-blue-100 border border-blue-400 text-blue-700 px-4 py-2 rounded">
+                  <p><i class="fa-solid fa-info-circle mr-1"></i> No meetings found matching your criteria.</p>
+                  <p class="text-sm mt-1">Try broadening your search or changing location.</p>
+                </div>
+              `;
+              return;
+            }
+            
+            // Render the meetings
             let meetingsHtml = `
-              <p class="mb-4">Found ${meetings.length} meetings near ${location}</p>
+              <p class="mb-4">Found ${data.length} meetings near ${location}</p>
               <div class="space-y-6">
             `;
             
-            meetings.forEach(meeting => {
+            data.forEach(meeting => {
+              // Format meeting data for display - handle potential missing fields
+              const name = meeting.name || 'Unnamed Meeting';
+              const loc = meeting.location || meeting.city || 'Location not specified';
+              const day = meeting.day || 'Day not specified';
+              const time = meeting.time || 'Time not specified';
+              const types = meeting.types || ['AA Meeting'];
+              const address = meeting.address || (meeting.location ? `${meeting.location}, ${meeting.city || ''}` : 'Address not available');
+              
               meetingsHtml += `
                 <div class="border-b pb-4">
-                  <div class="font-semibold text-lg">${meeting.name}</div>
+                  <div class="font-semibold text-lg">${name}</div>
                   <div class="text-sm text-gray-600 mb-2">
                     <span class="mr-3">
                       <i class="fa-solid fa-location-dot mr-1"></i> 
-                      ${meeting.location}
+                      ${loc}
                     </span>
                     <span class="mr-3">
                       <i class="fa-solid fa-calendar-day mr-1"></i>
-                      ${meeting.day}
+                      ${day}
                     </span>
                     <span>
                       <i class="fa-solid fa-clock mr-1"></i>
-                      ${meeting.time}
+                      ${time}
                     </span>
                   </div>
                   <div class="flex flex-wrap gap-2 mb-2">
-                    ${meeting.types.map(type => 
+                    ${types.map(type => 
                       `<span class="text-xs bg-blue-100 text-blue-800 rounded-full px-2 py-1">${type}</span>`
                     ).join('')}
                   </div>
                   <div class="text-sm">
-                    ${meeting.address}
+                    ${address}
                   </div>
                   <div class="mt-2 flex space-x-2">
-                    <a href="https://maps.google.com/?q=${encodeURIComponent(meeting.address)}" target="_blank" class="text-blue-600 hover:underline text-sm">
+                    <a href="https://maps.google.com/?q=${encodeURIComponent(address)}" target="_blank" class="text-blue-600 hover:underline text-sm">
                       <i class="fa-solid fa-map-location-dot mr-1"></i> View on Google Maps
                     </a>
                     <button class="log-meeting text-green-600 hover:underline text-sm">
@@ -1463,7 +1492,7 @@
             // Add event listeners for log meeting buttons
             document.querySelectorAll('.log-meeting').forEach((btn, index) => {
               btn.addEventListener('click', () => {
-                const meeting = meetings[index];
+                const meeting = data[index];
                 
                 // Switch to activity tab
                 const activityTab = document.querySelector('.tab-btn[data-tab="activity"]');
@@ -1471,13 +1500,30 @@
                 
                 // Prefill activity form with meeting info
                 document.getElementById('activity-type').value = 'meeting';
-                document.getElementById('activity-name').value = meeting.name;
+                document.getElementById('activity-name').value = meeting.name || 'AA Meeting';
                 document.getElementById('activity-duration').value = 60;
-                document.getElementById('activity-notes').value = `${meeting.location}, ${meeting.address}`;
+                
+                // Create notes with available meeting info
+                const locationInfo = [
+                  meeting.location, 
+                  meeting.address, 
+                  meeting.city, 
+                  meeting.state
+                ].filter(Boolean).join(', ');
+                
+                document.getElementById('activity-notes').value = locationInfo;
               });
             });
-          }
-        }, 1500);
+          })
+          .catch(error => {
+            // Show error message
+            meetingResults.innerHTML = `
+              <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded">
+                <p><i class="fa-solid fa-circle-exclamation mr-1"></i> Error finding meetings</p>
+                <p class="text-sm mt-1">${error.message}</p>
+              </div>
+            `;
+          });
       });
     }
     
