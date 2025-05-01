@@ -9,151 +9,68 @@
  * @returns {Object} Spiritual fitness score and breakdown
  */
 export const calculateSpiritualFitness = (activities, options = {}) => {
-  if (!activities || activities.length === 0) {
-    return { score: 0, breakdown: {}, message: "No activities recorded" };
-  }
-  
   const {
-    timeframeInDays = 30,
-    meetingWeight = 3,
-    meditationWeight = 2,
-    readingWeight = 2,
-    sponsorWeight = 2.5,
-    serviceWeight = 2,
-    otherWeight = 1,
+    timeframe = 30, // Default to 30 days
+    weights = {
+      meeting: 5,      // Points per meeting
+      meditation: 3,   // Points per meditation
+      reading: 2,      // Points per reading
+      service: 4,      // Points per service
+      stepwork: 5,     // Points per stepwork
+      sponsorship: 4   // Points per sponsorship
+    },
+    maxScore = 100     // Maximum possible score
   } = options;
   
-  // Filter activities within the timeframe
+  // Get current date for comparison
   const now = new Date();
-  const timeframeCutoff = new Date(now.setDate(now.getDate() - timeframeInDays));
+  const timeframeCutoff = new Date(now);
+  timeframeCutoff.setDate(timeframeCutoff.getDate() - timeframe);
   
-  const relevantActivities = activities.filter(
+  // Filter activities within timeframe
+  const recentActivities = activities.filter(
     activity => new Date(activity.date) >= timeframeCutoff
   );
   
-  if (relevantActivities.length === 0) {
-    return { score: 0, breakdown: {}, message: `No activities in the last ${timeframeInDays} days` };
-  }
+  // Count activity types
+  const typeCounts = {};
+  recentActivities.forEach(activity => {
+    typeCounts[activity.type] = (typeCounts[activity.type] || 0) + 1;
+  });
   
-  // Group activities by type
-  const groupedActivities = relevantActivities.reduce((acc, activity) => {
-    if (!acc[activity.type]) {
-      acc[activity.type] = [];
-    }
-    acc[activity.type].push(activity);
-    return acc;
-  }, {});
+  // Calculate base score from activity counts
+  let score = 0;
+  const breakdown = {};
   
-  // Calculate metrics
-  const metrics = {
-    meetingCount: (groupedActivities.meeting || []).length,
-    totalMeetingMinutes: (groupedActivities.meeting || []).reduce((sum, a) => sum + (parseInt(a.duration, 10) || 0), 0),
+  Object.keys(typeCounts).forEach(type => {
+    const count = typeCounts[type];
+    const weight = weights[type] || 1;
+    const typeScore = count * weight;
     
-    meditationCount: (groupedActivities.meditation || []).length,
-    totalMeditationMinutes: (groupedActivities.meditation || []).reduce((sum, a) => sum + (parseInt(a.duration, 10) || 0), 0),
-    
-    readingCount: (groupedActivities.reading || []).length,
-    totalReadingMinutes: (groupedActivities.reading || []).reduce((sum, a) => sum + (parseInt(a.duration, 10) || 0), 0),
-    
-    sponsorCount: (groupedActivities.sponsor || []).length,
-    totalSponsorMinutes: (groupedActivities.sponsor || []).reduce((sum, a) => sum + (parseInt(a.duration, 10) || 0), 0),
-    
-    serviceCount: (groupedActivities.service || []).length,
-    totalServiceMinutes: (groupedActivities.service || []).reduce((sum, a) => sum + (parseInt(a.duration, 10) || 0), 0),
-    
-    otherCount: (groupedActivities.other || []).length,
-    totalOtherMinutes: (groupedActivities.other || []).reduce((sum, a) => sum + (parseInt(a.duration, 10) || 0), 0),
-  };
+    score += typeScore;
+    breakdown[type] = {
+      count,
+      weight,
+      score: typeScore
+    };
+  });
   
-  // Calculate average activities per week
-  const weeksInTimeframe = timeframeInDays / 7;
-  const meetingsPerWeek = metrics.meetingCount / weeksInTimeframe;
-  const meditationsPerWeek = metrics.meditationCount / weeksInTimeframe;
+  // Add bonus for variety (different types of activities)
+  const activityTypesCount = Object.keys(typeCounts).length;
+  const varietyBonus = Math.min(20, activityTypesCount * 5);
+  score += varietyBonus;
   
-  // Calculate meeting score (0-25)
-  // Optimal is 3+ meetings per week
-  const meetingScore = Math.min(25, (meetingsPerWeek / 3) * 25);
-  
-  // Calculate meditation score (0-20)
-  // Optimal is daily meditation (7+ per week) with at least 70 minutes per week
-  const meditationFrequencyScore = Math.min(10, (meditationsPerWeek / 7) * 10);
-  const meditationTimeScore = Math.min(10, (metrics.totalMeditationMinutes / (70 * weeksInTimeframe)) * 10);
-  const meditationScore = meditationFrequencyScore + meditationTimeScore;
-  
-  // Calculate reading score (0-15)
-  // Optimal is 30+ minutes of reading per day (210+ minutes per week)
-  const targetReadingMinutes = 210 * weeksInTimeframe;
-  const readingScore = Math.min(15, (metrics.totalReadingMinutes / targetReadingMinutes) * 15);
-  
-  // Calculate sponsor/sponsee score (0-15)
-  // Optimal is at least 60 minutes per week with sponsor/sponsee
-  const targetSponsorMinutes = 60 * weeksInTimeframe;
-  const sponsorScore = Math.min(15, (metrics.totalSponsorMinutes / targetSponsorMinutes) * 15);
-  
-  // Calculate service score (0-15)
-  // Optimal is at least 60 minutes per week in service
-  const targetServiceMinutes = 60 * weeksInTimeframe;
-  const serviceScore = Math.min(15, (metrics.totalServiceMinutes / targetServiceMinutes) * 15);
-  
-  // Calculate other activities score (0-10)
-  // Bonus points for additional recovery activities
-  const otherScore = Math.min(10, metrics.otherCount * 2);
-  
-  // Calculate total score (0-100)
-  const totalScore = Math.round(
-    meetingScore + 
-    meditationScore + 
-    readingScore + 
-    sponsorScore + 
-    serviceScore + 
-    otherScore
-  );
-  
-  // Create score breakdown
-  const breakdown = {
-    meetings: {
-      score: Math.round(meetingScore),
-      details: `${metrics.meetingCount} meetings (${Math.round(meetingsPerWeek * 10) / 10}/week)`
-    },
-    meditation: {
-      score: Math.round(meditationScore),
-      details: `${metrics.meditationCount} sessions, ${metrics.totalMeditationMinutes} minutes`
-    },
-    reading: {
-      score: Math.round(readingScore),
-      details: `${metrics.readingCount} sessions, ${metrics.totalReadingMinutes} minutes`
-    },
-    sponsor: {
-      score: Math.round(sponsorScore),
-      details: `${metrics.sponsorCount} sessions, ${metrics.totalSponsorMinutes} minutes`
-    },
-    service: {
-      score: Math.round(serviceScore),
-      details: `${metrics.serviceCount} sessions, ${metrics.totalServiceMinutes} minutes`
-    },
-    other: {
-      score: Math.round(otherScore),
-      details: `${metrics.otherCount} other recovery activities`
-    },
-  };
-  
-  // Determine fitness message
-  let message = "";
-  if (totalScore >= 80) {
-    message = "Excellent spiritual fitness. Keep up the great work!";
-  } else if (totalScore >= 60) {
-    message = "Good spiritual fitness. Maintain consistency in your activities.";
-  } else if (totalScore >= 40) {
-    message = "Fair spiritual fitness. Consider increasing meeting attendance and meditation.";
-  } else {
-    message = "Opportunity for growth. Focus on establishing a regular meeting schedule.";
-  }
+  // Cap score at maximum
+  score = Math.min(maxScore, score);
   
   return {
-    score: totalScore,
+    score,
     breakdown,
-    message,
-    metrics,
+    activityCount: recentActivities.length,
+    activityTypes: activityTypesCount,
+    varietyBonus,
+    timeframe,
+    lastCalculated: now.toISOString()
   };
 };
 
@@ -166,11 +83,37 @@ export const calculateSobrietyDays = (sobrietyDate) => {
   if (!sobrietyDate) return 0;
   
   const start = new Date(sobrietyDate);
-  const today = new Date();
-  const diffTime = Math.abs(today - start);
-  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  const now = new Date();
+  
+  // Calculate the difference in days
+  const diffTime = Math.abs(now - start);
+  const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
   
   return diffDays;
+};
+
+/**
+ * Calculate sobriety years with optional decimal places
+ * @param {string} sobrietyDate - Sobriety date in ISO format
+ * @param {number} decimalPlaces - Number of decimal places (default 2)
+ * @returns {number} Years of sobriety with decimal places
+ */
+export const calculateSobrietyYears = (sobrietyDate, decimalPlaces = 2) => {
+  if (!sobrietyDate) return 0;
+  
+  const days = calculateSobrietyDays(sobrietyDate);
+  const years = days / 365.25; // Account for leap years
+  
+  return Number(years.toFixed(decimalPlaces));
+};
+
+/**
+ * Format a number with thousands separators
+ * @param {number} number - The number to format
+ * @returns {string} Formatted number with commas as thousands separators
+ */
+export const formatNumberWithCommas = (number) => {
+  return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 };
 
 /**
@@ -179,102 +122,72 @@ export const calculateSobrietyDays = (sobrietyDate) => {
  * @returns {Object} Streak information for different activity types
  */
 export const calculateStreaks = (activities) => {
-  if (!activities || activities.length === 0) {
-    return {
-      meeting: 0,
-      meditation: 0,
-      reading: 0,
-      overall: 0,
-    };
-  }
-  
-  // Group activities by date and type
-  const activitiesByDate = {};
-  
+  // Group activities by type
+  const typeGroups = {};
   activities.forEach(activity => {
-    const dateStr = new Date(activity.date).toISOString().split('T')[0];
-    
-    if (!activitiesByDate[dateStr]) {
-      activitiesByDate[dateStr] = {};
+    if (!typeGroups[activity.type]) {
+      typeGroups[activity.type] = [];
     }
-    
-    if (!activitiesByDate[dateStr][activity.type]) {
-      activitiesByDate[dateStr][activity.type] = [];
-    }
-    
-    activitiesByDate[dateStr][activity.type].push(activity);
+    typeGroups[activity.type].push(activity);
   });
   
-  // Sort dates in reverse chronological order
-  const sortedDates = Object.keys(activitiesByDate).sort().reverse();
-  
-  if (sortedDates.length === 0) {
-    return {
-      meeting: 0,
-      meditation: 0,
-      reading: 0,
-      overall: 0,
-    };
-  }
-  
-  // Calculate streaks
-  const calculateTypeStreak = (activityType) => {
-    let streak = 0;
-    let currentDate = new Date();
-    let dateStr = currentDate.toISOString().split('T')[0];
+  // Calculate streak for each type
+  const streaks = {};
+  Object.keys(typeGroups).forEach(type => {
+    // Sort activities by date (newest first)
+    const typeActivities = typeGroups[type].sort(
+      (a, b) => new Date(b.date) - new Date(a.date)
+    );
     
-    // If there's an activity today, start counting from today
-    if (activitiesByDate[dateStr] && activitiesByDate[dateStr][activityType]) {
-      streak = 1;
-    } else {
-      // If no activity today, start from yesterday
-      currentDate.setDate(currentDate.getDate() - 1);
-      dateStr = currentDate.toISOString().split('T')[0];
+    if (typeActivities.length === 0) {
+      streaks[type] = { current: 0, longest: 0 };
+      return;
     }
     
-    // Count consecutive days with activities
-    while (
-      activitiesByDate[dateStr] && 
-      activitiesByDate[dateStr][activityType] &&
-      activitiesByDate[dateStr][activityType].length > 0
-    ) {
-      streak++;
-      currentDate.setDate(currentDate.getDate() - 1);
-      dateStr = currentDate.toISOString().split('T')[0];
+    // Check if most recent activity was today or yesterday
+    const now = new Date();
+    now.setHours(0, 0, 0, 0); // Set to start of day
+    
+    const yesterday = new Date(now);
+    yesterday.setDate(yesterday.getDate() - 1);
+    
+    const mostRecentDate = new Date(typeActivities[0].date);
+    mostRecentDate.setHours(0, 0, 0, 0); // Set to start of day
+    
+    // If most recent activity wasn't today or yesterday, streak is broken
+    if (mostRecentDate < yesterday) {
+      streaks[type] = { current: 0, longest: 0 };
+      return;
     }
     
-    return streak;
-  };
+    // Calculate current streak
+    let currentStreak = 1; // Count the most recent day
+    let longestStreak = 1;
+    let currentDate = mostRecentDate;
+    
+    for (let i = 1; i < typeActivities.length; i++) {
+      const activityDate = new Date(typeActivities[i].date);
+      activityDate.setHours(0, 0, 0, 0); // Set to start of day
+      
+      // Check if this activity was the day before the current date
+      const expectedDate = new Date(currentDate);
+      expectedDate.setDate(expectedDate.getDate() - 1);
+      
+      if (activityDate.getTime() === expectedDate.getTime()) {
+        // Activity was on the consecutive previous day, continue streak
+        currentStreak++;
+        currentDate = activityDate;
+      } else {
+        // Streak is broken
+        break;
+      }
+    }
+    
+    // Calculate longest streak (simplified: just using current for now)
+    longestStreak = Math.max(currentStreak, longestStreak);
+    
+    streaks[type] = { current: currentStreak, longest: longestStreak };
+  });
   
-  // Calculate overall streak (any recovery activity)
-  const calculateOverallStreak = () => {
-    let streak = 0;
-    let currentDate = new Date();
-    let dateStr = currentDate.toISOString().split('T')[0];
-    
-    // If there's any activity today, start counting from today
-    if (activitiesByDate[dateStr]) {
-      streak = 1;
-    } else {
-      // If no activity today, start from yesterday
-      currentDate.setDate(currentDate.getDate() - 1);
-      dateStr = currentDate.toISOString().split('T')[0];
-    }
-    
-    // Count consecutive days with any activities
-    while (activitiesByDate[dateStr]) {
-      streak++;
-      currentDate.setDate(currentDate.getDate() - 1);
-      dateStr = currentDate.toISOString().split('T')[0];
-    }
-    
-    return streak;
-  };
-  
-  return {
-    meeting: calculateTypeStreak('meeting'),
-    meditation: calculateTypeStreak('meditation'),
-    reading: calculateTypeStreak('reading'),
-    overall: calculateOverallStreak(),
-  };
+  return streaks;
 };
