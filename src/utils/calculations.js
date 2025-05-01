@@ -101,9 +101,16 @@ export const calculateSobrietyDays = (sobrietyDate) => {
 export const calculateSobrietyYears = (sobrietyDate, decimalPlaces = 2) => {
   if (!sobrietyDate) return 0;
   
-  const days = calculateSobrietyDays(sobrietyDate);
-  const years = days / 365.25; // Account for leap years
+  // Get sobriety date and current date
+  const start = new Date(sobrietyDate);
+  const now = new Date();
   
+  // Calculate exact years including fractional part
+  const diffTime = now - start;
+  const diffDays = diffTime / (1000 * 60 * 60 * 24);
+  const years = diffDays / 365.25; // Account for leap years
+  
+  // Format to specified decimal places
   return Number(years.toFixed(decimalPlaces));
 };
 

@@ -634,7 +634,7 @@ db.users.push({
   id: 'user_1',
   name: 'John Doe',
   email: 'john@example.com',
-  sobrietyDate: '2022-01-01',
+  sobrietyDate: '1985-01-01',
   phone: '555-123-4567',
   discoverable: true, // Available for nearby discovery
   location: {
