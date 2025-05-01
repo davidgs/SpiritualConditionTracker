@@ -9,12 +9,20 @@ import {
   ActivityIndicator,
   Alert,
   Linking,
-  Platform
+  Platform,
+  Modal
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from 'react-native-vector-icons';
 import { fetchMeetings } from '../utils/api';
 import { useActivities } from '../contexts/ActivitiesContext';
+import { 
+  requestCalendarPermissions, 
+  requestNotificationPermissions,
+  addMeetingToCalendar,
+  scheduleMeetingNotification
+} from '../utils/calendarReminders';
+import { calendarReminderOperations } from '../utils/database';
 
 const MeetingsScreen = ({ navigation }) => {
   const { addActivity } = useActivities();
@@ -25,6 +33,13 @@ const MeetingsScreen = ({ navigation }) => {
   const [meetings, setMeetings] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  
+  // Reminder modal state
+  const [isReminderModalVisible, setIsReminderModalVisible] = useState(false);
+  const [selectedMeeting, setSelectedMeeting] = useState(null);
+  const [reminderMinutes, setReminderMinutes] = useState(30);
+  const [isRecurring, setIsRecurring] = useState(true);
+  const [addingReminder, setAddingReminder] = useState(false);
   
   // Days of week options
   const dayOptions = [
@@ -140,6 +155,96 @@ const MeetingsScreen = ({ navigation }) => {
       });
   };
   
+  // Add meeting to calendar
+  const showReminderModal = (meeting) => {
+    setSelectedMeeting(meeting);
+    setIsReminderModalVisible(true);
+  };
+  
+  // Process adding meeting to calendar
+  const addMeetingReminder = async () => {
+    if (!selectedMeeting) return;
+    
+    setAddingReminder(true);
+    
+    try {
+      // Check if we have permissions
+      const calendarPermission = await requestCalendarPermissions();
+      const notificationPermission = await requestNotificationPermissions();
+      
+      if (!calendarPermission || !notificationPermission) {
+        Alert.alert(
+          'Permission Required',
+          'Calendar and notification permissions are required to add meeting reminders.',
+          [{ text: 'OK' }]
+        );
+        setAddingReminder(false);
+        return;
+      }
+      
+      // Format location
+      const location = [
+        selectedMeeting.location, 
+        selectedMeeting.address, 
+        selectedMeeting.city, 
+        selectedMeeting.state
+      ].filter(Boolean).join(', ');
+      
+      // Format meeting data
+      const meeting = {
+        ...selectedMeeting,
+        id: selectedMeeting.id || `meeting_${Date.now()}`, // Ensure we have an ID
+        name: selectedMeeting.name || 'AA Meeting',
+        day: selectedMeeting.day || 'sunday',  // Default to sunday if no day specified
+        time: selectedMeeting.time || '19:00', // Default to 7 PM if no time
+      };
+      
+      // Add to calendar
+      const calendarEventId = await addMeetingToCalendar(meeting, {
+        reminderMinutes,
+        recurrence: isRecurring ? 'weekly' : null
+      });
+      
+      // Schedule notification
+      const notificationId = await scheduleMeetingNotification(meeting, {
+        reminderMinutes
+      });
+      
+      // Save reminder info to database
+      await calendarReminderOperations.saveCalendarReminder({
+        meetingId: meeting.id,
+        meetingName: meeting.name,
+        meetingDay: meeting.day,
+        meetingTime: meeting.time,
+        location,
+        calendarEventId,
+        notificationId,
+        reminderMinutes,
+        isRecurring
+      });
+      
+      // Close modal
+      setIsReminderModalVisible(false);
+      setSelectedMeeting(null);
+      
+      // Show success message
+      Alert.alert(
+        'Reminder Set',
+        `A ${isRecurring ? 'weekly ' : ''}reminder has been added to your calendar for ${meeting.name}.`,
+        [{ text: 'OK' }]
+      );
+    } catch (error) {
+      console.error('Error adding meeting reminder:', error);
+      Alert.alert(
+        'Error',
+        'An error occurred while adding the meeting reminder. Please try again.',
+        [{ text: 'OK' }]
+      );
+    } finally {
+      setAddingReminder(false);
+    }
+  };
+  
   // Render a meeting item
   const renderMeetingItem = (meeting) => {
     // Format meeting data for display - handle potential missing fields
@@ -193,6 +298,14 @@ const MeetingsScreen = ({ navigation }) => {
               <Text style={styles.meetingActionText}>View on Map</Text>
             </TouchableOpacity>
           ) : null}
+          
+          <TouchableOpacity 
+            style={styles.meetingActionButton}
+            onPress={() => showReminderModal(meeting)}
+          >
+            <Ionicons name="calendar-outline" size={16} color="#3b82f6" />
+            <Text style={styles.meetingActionText}>Add to Calendar</Text>
+          </TouchableOpacity>
           
           <TouchableOpacity 
             style={styles.meetingActionButton}

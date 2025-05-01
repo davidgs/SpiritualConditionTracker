@@ -21,7 +21,10 @@
       "bundleIdentifier": "com.example.aarecoverytracker",
       "buildNumber": "1.0.0",
       "infoPlist": {
-        "NSLocationWhenInUseUsageDescription": "This app uses your location to find nearby AA members when you enable discoverability."
+        "NSLocationWhenInUseUsageDescription": "This app uses your location to find nearby AA members when you enable discoverability.",
+        "NSCalendarsUsageDescription": "This app needs access to your calendar to add AA meeting reminders.",
+        "NSRemindersUsageDescription": "This app needs access to your reminders to set meeting alerts.",
+        "NSUserActivityTypes": ["AddToCalendarIntent"]
       }
     },
     "android": {
@@ -33,7 +36,12 @@
       "versionCode": 1,
       "permissions": [
         "ACCESS_COARSE_LOCATION",
-        "ACCESS_FINE_LOCATION"
+        "ACCESS_FINE_LOCATION",
+        "READ_CALENDAR",
+        "WRITE_CALENDAR",
+        "RECEIVE_BOOT_COMPLETED",
+        "VIBRATE",
+        "SCHEDULE_EXACT_ALARM"
       ]
     },
     "web": {

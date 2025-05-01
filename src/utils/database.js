@@ -80,6 +80,32 @@ export const initDatabase = () => {
           return false;
         }
       );
+      
+      // Create calendar reminders table
+      tx.executeSql(
+        `CREATE TABLE IF NOT EXISTS calendarReminders (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          meetingId TEXT,
+          meetingName TEXT,
+          meetingDay TEXT,
+          meetingTime TEXT,
+          location TEXT,
+          calendarEventId TEXT,
+          notificationId TEXT,
+          reminderMinutes INTEGER DEFAULT 30,
+          isRecurring INTEGER DEFAULT 1,
+          createdAt TEXT
+        )`,
+        [],
+        () => {
+          console.log('Calendar reminders table created successfully');
+        },
+        (_, error) => {
+          console.error('Error creating calendar reminders table:', error);
+          reject(error);
+          return false;
+        }
+      );
 
       // Create settings table
       tx.executeSql(
@@ -595,4 +621,171 @@ export const calculateSobrietyYears = (sobrietyDate, decimalPlaces = 2) => {
   const years = days / 365.25; // Account for leap years
   
   return Number(years.toFixed(decimalPlaces));
+};
+
+// Calendar reminders operations
+export const calendarReminderOperations = {
+  // Save a calendar reminder
+  saveCalendarReminder: (reminder) => {
+    return new Promise((resolve, reject) => {
+      const {
+        meetingId,
+        meetingName,
+        meetingDay,
+        meetingTime,
+        location,
+        calendarEventId,
+        notificationId,
+        reminderMinutes = 30,
+        isRecurring = true
+      } = reminder;
+      
+      const now = new Date().toISOString();
+      
+      db.transaction(tx => {
+        tx.executeSql(
+          `INSERT INTO calendarReminders (
+            meetingId, meetingName, meetingDay, meetingTime, location,
+            calendarEventId, notificationId, reminderMinutes, isRecurring, createdAt
+          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+          [
+            meetingId,
+            meetingName,
+            meetingDay,
+            meetingTime,
+            location,
+            calendarEventId,
+            notificationId,
+            reminderMinutes,
+            isRecurring ? 1 : 0,
+            now
+          ],
+          (_, result) => {
+            resolve({
+              id: result.insertId,
+              ...reminder,
+              createdAt: now
+            });
+          },
+          (_, error) => {
+            console.error('Error saving calendar reminder:', error);
+            reject(error);
+            return false;
+          }
+        );
+      });
+    });
+  },
+  
+  // Get all calendar reminders
+  getAllCalendarReminders: () => {
+    return new Promise((resolve, reject) => {
+      db.transaction(tx => {
+        tx.executeSql(
+          'SELECT * FROM calendarReminders ORDER BY createdAt DESC',
+          [],
+          (_, { rows }) => {
+            const reminders = [];
+            for (let i = 0; i < rows.length; i++) {
+              const reminder = rows.item(i);
+              // Convert INTEGER to boolean
+              reminder.isRecurring = !!reminder.isRecurring;
+              reminders.push(reminder);
+            }
+            resolve(reminders);
+          },
+          (_, error) => {
+            console.error('Error fetching calendar reminders:', error);
+            reject(error);
+            return false;
+          }
+        );
+      });
+    });
+  },
+  
+  // Get calendar reminder by meeting ID
+  getCalendarReminderByMeetingId: (meetingId) => {
+    return new Promise((resolve, reject) => {
+      db.transaction(tx => {
+        tx.executeSql(
+          'SELECT * FROM calendarReminders WHERE meetingId = ?',
+          [meetingId],
+          (_, { rows }) => {
+            if (rows.length > 0) {
+              const reminder = rows.item(0);
+              // Convert INTEGER to boolean
+              reminder.isRecurring = !!reminder.isRecurring;
+              resolve(reminder);
+            } else {
+              resolve(null);
+            }
+          },
+          (_, error) => {
+            console.error('Error fetching calendar reminder:', error);
+            reject(error);
+            return false;
+          }
+        );
+      });
+    });
+  },
+  
+  // Update a calendar reminder
+  updateCalendarReminder: (id, updates) => {
+    return new Promise((resolve, reject) => {
+      const {
+        calendarEventId,
+        notificationId,
+        reminderMinutes,
+        isRecurring
+      } = updates;
+      
+      db.transaction(tx => {
+        tx.executeSql(
+          `UPDATE calendarReminders SET 
+            calendarEventId = COALESCE(?, calendarEventId),
+            notificationId = COALESCE(?, notificationId),
+            reminderMinutes = COALESCE(?, reminderMinutes),
+            isRecurring = COALESCE(?, isRecurring)
+           WHERE id = ?`,
+          [
+            calendarEventId !== undefined ? calendarEventId : null,
+            notificationId !== undefined ? notificationId : null,
+            reminderMinutes !== undefined ? reminderMinutes : null,
+            isRecurring !== undefined ? (isRecurring ? 1 : 0) : null,
+            id
+          ],
+          (_, result) => {
+            resolve(result.rowsAffected > 0);
+          },
+          (_, error) => {
+            console.error('Error updating calendar reminder:', error);
+            reject(error);
+            return false;
+          }
+        );
+      });
+    });
+  },
+  
+  // Delete a calendar reminder
+  deleteCalendarReminder: (id) => {
+    return new Promise((resolve, reject) => {
+      db.transaction(tx => {
+        tx.executeSql(
+          'DELETE FROM calendarReminders WHERE id = ?',
+          [id],
+          (_, result) => {
+            resolve(result.rowsAffected > 0);
+          },
+          (_, error) => {
+            console.error('Error deleting calendar reminder:', error);
+            reject(error);
+            return false;
+          }
+        );
+      });
+    });
+  }
 };
