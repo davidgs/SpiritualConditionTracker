@@ -24,7 +24,9 @@
         "NSLocationWhenInUseUsageDescription": "This app uses your location to find nearby AA members when you enable discoverability.",
         "NSCalendarsUsageDescription": "This app needs access to your calendar to add AA meeting reminders.",
         "NSRemindersUsageDescription": "This app needs access to your reminders to set meeting alerts.",
-        "NSUserActivityTypes": ["AddToCalendarIntent"]
+        "NSUserActivityTypes": [
+          "AddToCalendarIntent"
+        ]
       }
     },
     "android": {
@@ -46,6 +48,12 @@
     },
     "web": {
       "favicon": "./src/assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "a4fdb049-707c-4964-bb1f-20e9931596d2"
+      }
+    },
+    "owner": "davidgs"
   }
 }
