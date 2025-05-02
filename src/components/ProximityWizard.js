@@ -402,7 +402,12 @@ export default function ProximityWizard({ onClose, navigation }) {
                   Phone: {formatPhoneNumber(selectedUser.phone)}
                 </Text>
                 <Text style={styles.connectionDetail}>
-                  Distance: {selectedUser.distance.toFixed(1)} km away
+                  Distance: {typeof selectedUser.distance === 'number' 
+                    ? `${selectedUser.distance.toFixed(1)} km away` 
+                    : selectedUser.distance}
+                </Text>
+                <Text style={styles.connectionDetail}>
+                  Found via: {getConnectionTypeString(selectedUser.discoveryType || DISCOVERY_TYPES.GPS)}
                 </Text>
                 {selectedUser.phone && (
                   <TouchableOpacity

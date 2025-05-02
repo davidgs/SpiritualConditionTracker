@@ -16,6 +16,8 @@ import Slider from '@react-native-community/slider';
 import { Ionicons } from '@expo/vector-icons';
 import { useUser } from '../contexts/UserContext';
 import { userOperations, calculateDistance, calculateSobrietyYears } from '../utils/database';
+import proximityDiscovery, { DISCOVERY_TYPES, getConnectionTypeString } from '../utils/proximityDiscovery';
+import DiscoverySettings from './DiscoverySettings';
 import ProximityWizard from './ProximityWizard';
 
 function NearbyMembers({ navigation, onStartWizard }) {
@@ -47,7 +49,19 @@ function NearbyMembers({ navigation, onStartWizard }) {
     }
   };
 
-  // Fetch nearby users
+  // Discovery options state
+  const [discoveryOptions, setDiscoveryOptions] = useState({
+    useGps: true,
+    useBluetooth: false,
+    useWifi: false
+  });
+  
+  // Update discovery options
+  const handleUpdateDiscoveryOptions = (options) => {
+    setDiscoveryOptions(options);
+  };
+  
+  // Fetch nearby users using all available discovery methods
   const fetchNearbyUsers = async () => {
     setIsLoading(true);
     setError(null);
@@ -73,11 +87,47 @@ function NearbyMembers({ navigation, onStartWizard }) {
         await userOperations.updateUserLocation(user.id, latitude, longitude);
       }
       
-      // Get nearby users
-      const nearby = await userOperations.getNearbyUsers(latitude, longitude, searchRadius);
+      // Find nearby users with all enabled discovery methods
+      let nearbyUsersList = [];
+      
+      // Use the advanced discovery methods if enabled (Bluetooth/WiFi)
+      if (discoveryOptions.useBluetooth || discoveryOptions.useWifi) {
+        try {
+          const advancedUsers = await proximityDiscovery.discoverNearbyUsers(
+            user.id,
+            {
+              useGps: discoveryOptions.useGps,
+              useBluetooth: discoveryOptions.useBluetooth,
+              useWifi: discoveryOptions.useWifi,
+              latitude,
+              longitude,
+              radius: searchRadius,
+              timeoutMs: 10000 // 10-second timeout
+            }
+          );
+          
+          if (advancedUsers && advancedUsers.length > 0) {
+            nearbyUsersList = advancedUsers;
+          }
+        } catch (discoveryError) {
+          console.error('Advanced discovery error:', discoveryError);
+          // Fall back to GPS if advanced methods fail
+        }
+      }
+      
+      // If no users found with advanced methods or they're disabled, use GPS
+      if (nearbyUsersList.length === 0 && discoveryOptions.useGps) {
+        const gpsUsers = await userOperations.getNearbyUsers(latitude, longitude, searchRadius);
+        
+        // Add discovery type to GPS users
+        nearbyUsersList = gpsUsers.map(user => ({
+          ...user,
+          discoveryType: DISCOVERY_TYPES.GPS
+        }));
+      }
       
       // Filter out the current user
-      const filteredUsers = nearby.filter(u => u.id !== user?.id);
+      const filteredUsers = nearbyUsersList.filter(u => u.id !== user?.id);
       
       setNearbyUsers(filteredUsers);
     } catch (error) {
@@ -161,19 +211,44 @@ function NearbyMembers({ navigation, onStartWizard }) {
     return (
       <View style={styles.userCard}>
         <View style={styles.userInfo}>
-          <Text style={styles.userName}>{item.name}</Text>
+          <View style={styles.userHeader}>
+            <Text style={styles.userName}>{item.name}</Text>
+            <View style={styles.discoveryBadge}>
+              <Ionicons 
+                name={
+                  item.discoveryType === DISCOVERY_TYPES.BLUETOOTH 
+                    ? 'bluetooth' 
+                    : item.discoveryType === DISCOVERY_TYPES.WIFI 
+                      ? 'wifi'
+                      : 'location'
+                } 
+                size={10} 
+                color="#fff" 
+                style={styles.discoveryIcon} 
+              />
+              <Text style={styles.discoveryText}>
+                {item.discoveryType ? getConnectionTypeString(item.discoveryType) : 'GPS location'}
+              </Text>
+            </View>
+          </View>
+          
           {item.sobrietyDate && (
             <Text style={styles.userDetail}>
               {sobrietyYears} years sober
             </Text>
           )}
+          
           <Text style={styles.userLastSeen}>
             Last seen: {getTimeSince(item.lastSeen)}
           </Text>
+          
           <Text style={styles.userDistance}>
-            {item.distance.toFixed(1)} km away
+            {typeof item.distance === 'number' 
+              ? `${item.distance.toFixed(1)} km away` 
+              : item.distance || 'Nearby'}
           </Text>
         </View>
+        
         <TouchableOpacity
           style={styles.callButton}
           onPress={() => callUser(item.phone, item.name)}
@@ -230,14 +305,27 @@ function NearbyMembers({ navigation, onStartWizard }) {
           />
         </View>
         
+        {/* Advanced Discovery Settings */}
+        <DiscoverySettings 
+          onUpdateDiscoveryOptions={handleUpdateDiscoveryOptions} 
+        />
+        
         <TouchableOpacity
           style={styles.refreshButton}
           onPress={fetchNearbyUsers}
           disabled={isLoading}
         >
-          <Text style={styles.refreshButtonText}>
-            {isLoading ? 'Searching...' : 'Refresh Search'}
-          </Text>
+          <View style={styles.refreshButtonContent}>
+            <Ionicons 
+              name="refresh" 
+              size={16} 
+              color="white" 
+              style={styles.refreshIcon} 
+            />
+            <Text style={styles.refreshButtonText}>
+              {isLoading ? 'Searching...' : 'Refresh Search'}
+            </Text>
+          </View>
         </TouchableOpacity>
       </View>
       
@@ -358,6 +446,14 @@ const styles = StyleSheet.create({
     color: 'white',
     fontWeight: 'bold',
   },
+  refreshButtonContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  refreshIcon: {
+    marginRight: 6,
+  },
   errorContainer: {
     backgroundColor: '#ffcccc',
     padding: 12,
@@ -451,6 +547,28 @@ const styles = StyleSheet.create({
   },
   loader: {
     marginTop: 24,
+  },
+  userHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 6,
+  },
+  discoveryBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#3498db',
+    paddingVertical: 2,
+    paddingHorizontal: 6,
+    borderRadius: 10,
+  },
+  discoveryIcon: {
+    marginRight: 3,
+  },
+  discoveryText: {
+    color: '#fff',
+    fontSize: 8,
+    fontWeight: 'bold',
   },
 });
 

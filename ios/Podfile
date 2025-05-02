@@ -60,5 +60,17 @@ target 'AARecoveryTracker' do
         end
       end
     end
+    
+    # Add the following to allow bluetooth and other frameworks to work properly
+    installer.pods_project.targets.each do |target|
+      target.build_configurations.each do |config|
+        config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.1'
+      end
+    end
+    
+    # Fix for Xcode 15 build errors (TMP_DIR issue)
+    installer.pods_project.build_configurations.each do |config|
+      config.build_settings["EXCLUDED_ARCHS[sdk=iphonesimulator*]"] = "arm64"
+    end
   end
 end

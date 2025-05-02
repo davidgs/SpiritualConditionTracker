@@ -50,8 +50,19 @@
       <key>NSAllowsLocalNetworking</key>
       <true/>
     </dict>
+    <key>NSBluetoothAlwaysUsageDescription</key>
+    <string>This app uses Bluetooth to discover nearby AA members for connection.</string>
+    <key>NSBluetoothPeripheralUsageDescription</key>
+    <string>This app uses Bluetooth to discover nearby AA members for connection.</string>
+    <key>NSBonjourServices</key>
+    <array>
+      <string>_aarecovery._tcp</string>
+      <string>_aarecovery._udp</string>
+    </array>
     <key>NSCalendarsUsageDescription</key>
     <string>This app needs access to your calendar to add AA meeting reminders.</string>
+    <key>NSLocalNetworkUsageDescription</key>
+    <string>This app uses WiFi to discover nearby AA members for connection.</string>
     <key>NSLocationWhenInUseUsageDescription</key>
     <string>This app uses your location to find nearby AA members when you enable discoverability.</string>
     <key>NSRemindersUsageDescription</key>
@@ -59,6 +70,13 @@
     <key>NSUserActivityTypes</key>
     <array>
       <string>AddToCalendarIntent</string>
+    </array>
+    <key>UIBackgroundModes</key>
+    <array>
+      <string>bluetooth-central</string>
+      <string>bluetooth-peripheral</string>
+      <string>fetch</string>
+      <string>location</string>
     </array>
     <key>UILaunchStoryboardName</key>
     <string>SplashScreen</string>
