@@ -1,6 +1,7 @@
 {
   "cli": {
-    "version": ">= 0.60.0"
+    "version": ">= 0.60.0",
+    "appVersionSource": "remote"
   },
   "build": {
     "development": {
@@ -37,9 +38,9 @@
   "submit": {
     "production": {
       "ios": {
-        "appleId": "your-apple-id@example.com",
-        "ascAppId": "your-app-store-connect-app-id",
-        "appleTeamId": "your-apple-team-id"
+        "appleId": "APPLE_ID",
+        "ascAppId": "APP_STORE_CONNECT_APP_ID",
+        "appleTeamId": "APPLE_TEAM_ID"
       },
       "android": {
         "serviceAccountKeyPath": "path/to/service-account-key.json",
