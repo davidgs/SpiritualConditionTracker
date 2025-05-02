@@ -1,7 +1,21 @@
-import * as SQLite from 'expo-sqlite';
+import SQLite from 'react-native-sqlite-storage';
+
+// Configure SQLite
+SQLite.enablePromise(true);
 
 // Create a database instance
-const db = SQLite.openDatabase('aarecovery.db');
+let db = null;
+
+// Initialize database connection
+const getDBConnection = async () => {
+  if (db === null) {
+    db = await SQLite.openDatabase({
+      name: 'aarecovery.db',
+      location: 'default'
+    });
+  }
+  return db;
+};
 
 // Initialize database with necessary tables
 export const initDatabase = () => {
