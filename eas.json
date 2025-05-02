@@ -19,7 +19,8 @@
         "resourceClass": "m-medium"
       },
       "android": {
-        "buildType": "apk"
+        "buildType": "apk",
+        "credentialsSource": "local"
       }
     },
     "production": {
@@ -28,7 +29,8 @@
         "resourceClass": "m-medium"
       },
       "android": {
-        "buildType": "app-bundle"
+        "buildType": "app-bundle",
+        "credentialsSource": "local"
       }
     }
   },
