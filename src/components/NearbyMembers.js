@@ -18,7 +18,7 @@ import { useUser } from '../contexts/UserContext';
 import { userOperations, calculateDistance, calculateSobrietyYears } from '../utils/database';
 import ProximityWizard from './ProximityWizard';
 
-function NearbyMembers({ navigation }) {
+function NearbyMembers({ navigation, onStartWizard }) {
   const [nearbyUsers, setNearbyUsers] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -120,7 +120,16 @@ function NearbyMembers({ navigation }) {
 
   // Start the proximity wizard
   const startWizard = () => {
-    setShowWizard(true);
+    if (navigation && navigation.navigate) {
+      // Use stack navigation if available
+      navigation.navigate('ProximityWizard');
+    } else if (onStartWizard) {
+      // Use callback if provided
+      onStartWizard();
+    } else {
+      // Fallback to modal
+      setShowWizard(true);
+    }
   };
 
   // Call a user
