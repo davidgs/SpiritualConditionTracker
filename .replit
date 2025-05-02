@@ -28,6 +28,18 @@ args = "BuildAndroid"
 task = "workflow.run"
 args = "BuildAndroidAgain"
 
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "BuildIOSSimulator"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "DevBuildIOS"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "DevBuildAndroid"
+
 [[workflows.workflow]]
 name = "Server"
 author = "agent"
@@ -60,6 +72,30 @@ author = "agent"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "cd . && EXPO_TOKEN=rvxlBHyFU-XtCyZqkKCyCL8nluZmMBuaF8kT-8Bd npx eas build --platform android --profile preview"
+
+[[workflows.workflow]]
+name = "BuildIOSSimulator"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd . && EXPO_TOKEN=rvxlBHyFU-XtCyZqkKCyCL8nluZmMBuaF8kT-8Bd npx eas build --platform ios --profile preview --non-interactive"
+
+[[workflows.workflow]]
+name = "DevBuildIOS"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd . && EXPO_TOKEN=rvxlBHyFU-XtCyZqkKCyCL8nluZmMBuaF8kT-8Bd npx eas build --platform ios --profile development --non-interactive"
+
+[[workflows.workflow]]
+name = "DevBuildAndroid"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd . && EXPO_TOKEN=rvxlBHyFU-XtCyZqkKCyCL8nluZmMBuaF8kT-8Bd npx eas build --platform android --profile development --non-interactive"
 
 [deployment]
 run = ["sh", "-c", "cd simple-server && node server.js"]
