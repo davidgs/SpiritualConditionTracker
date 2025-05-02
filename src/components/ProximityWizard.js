@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Alert, Switch, Slider, ScrollView, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Alert, Switch, ScrollView, ActivityIndicator, Platform, Linking } from 'react-native';
+import Slider from '@react-native-community/slider';
 import * as Location from 'expo-location';
+import { Ionicons } from '@expo/vector-icons';
 import { useUser } from '../contexts/UserContext';
 import { userOperations, calculateDistance, calculateSobrietyYears } from '../utils/database';
+import proximityDiscovery, { DISCOVERY_TYPES, getConnectionTypeString } from '../utils/proximityDiscovery';
+import DiscoverySettings from './DiscoverySettings';
 
 const STEPS = {
   INTRO: 'intro',
@@ -14,7 +18,7 @@ const STEPS = {
   CONNECTION: 'connection'
 };
 
-export default function ProximityWizard({ onClose }) {
+export default function ProximityWizard({ onClose, navigation }) {
   const [currentStep, setCurrentStep] = useState(STEPS.INTRO);
   const [hasLocationPermission, setHasLocationPermission] = useState(false);
   const [isDiscoverable, setIsDiscoverable] = useState(false);
@@ -73,7 +77,19 @@ export default function ProximityWizard({ onClose }) {
     }
   };
 
-  // Find nearby users based on search radius
+  // Discovery options
+  const [discoveryOptions, setDiscoveryOptions] = useState({
+    useGps: true,
+    useBluetooth: false,
+    useWifi: false
+  });
+  
+  // Update discovery options from child component
+  const handleUpdateDiscoveryOptions = (options) => {
+    setDiscoveryOptions(options);
+  };
+  
+  // Find nearby users based on search radius and discovery options
   const findNearbyUsers = async () => {
     setIsLoading(true);
     setError(null);
@@ -91,11 +107,48 @@ export default function ProximityWizard({ onClose }) {
         await userOperations.updateUserLocation(user.id, latitude, longitude);
       }
       
-      // Find nearby users
-      const nearby = await userOperations.getNearbyUsers(latitude, longitude, searchRadius);
+      // Find nearby users with enhanced discovery options
+      let nearbyUsersList = [];
+      
+      // First try advanced discovery methods if enabled
+      if (discoveryOptions.useBluetooth || discoveryOptions.useWifi) {
+        try {
+          const discoveredUsers = await proximityDiscovery.discoverNearbyUsers(
+            user.id, 
+            {
+              useGps: discoveryOptions.useGps,
+              useBluetooth: discoveryOptions.useBluetooth,
+              useWifi: discoveryOptions.useWifi,
+              latitude,
+              longitude,
+              radius: searchRadius,
+              timeoutMs: 10000 // 10-second timeout for discovery
+            }
+          );
+          
+          if (discoveredUsers && discoveredUsers.length > 0) {
+            nearbyUsersList = discoveredUsers;
+          }
+        } catch (discoveryError) {
+          console.error('Advanced discovery error:', discoveryError);
+          // Continue with regular GPS discovery if advanced methods fail
+        }
+      }
+      
+      // If we haven't found any users with advanced methods or they're disabled,
+      // fall back to regular GPS discovery
+      if (nearbyUsersList.length === 0 && discoveryOptions.useGps) {
+        const gpsUsers = await userOperations.getNearbyUsers(latitude, longitude, searchRadius);
+        
+        // Add discovery type to GPS users
+        nearbyUsersList = gpsUsers.map(user => ({
+          ...user,
+          discoveryType: DISCOVERY_TYPES.GPS
+        }));
+      }
       
       // Filter out the current user
-      const filteredUsers = nearby.filter(u => u.id !== user.id);
+      const filteredUsers = nearbyUsersList.filter(u => u.id !== user.id);
       
       setNearbyUsers(filteredUsers);
       
@@ -225,15 +278,30 @@ export default function ProximityWizard({ onClose }) {
               minimumTrackTintColor="#007AFF"
               maximumTrackTintColor="#D3D3D3"
             />
+            
+            {/* Discovery settings component */}
+            <DiscoverySettings 
+              onUpdateDiscoveryOptions={handleUpdateDiscoveryOptions} 
+            />
+            
             <TouchableOpacity
               style={styles.button}
               onPress={findNearbyUsers}
               disabled={isLoading}
             >
-              <Text style={styles.buttonText}>
-                {isLoading ? 'Searching...' : 'Find Nearby Members'}
-              </Text>
+              <View style={styles.buttonContent}>
+                <Ionicons 
+                  name="search" 
+                  size={18} 
+                  color="#fff" 
+                  style={styles.buttonIcon} 
+                />
+                <Text style={styles.buttonText}>
+                  {isLoading ? 'Searching...' : 'Find Nearby Members'}
+                </Text>
+              </View>
             </TouchableOpacity>
+            
             {error && <Text style={styles.error}>{error}</Text>}
             {isLoading && <ActivityIndicator style={styles.loader} />}
           </View>
@@ -254,14 +322,35 @@ export default function ProximityWizard({ onClose }) {
                   style={styles.userCard}
                   onPress={() => selectUser(user)}
                 >
-                  <Text style={styles.userName}>{user.name}</Text>
+                  <View style={styles.userCardHeader}>
+                    <Text style={styles.userName}>{user.name}</Text>
+                    <View style={styles.discoveryTypeChip}>
+                      <Ionicons 
+                        name={
+                          user.discoveryType === DISCOVERY_TYPES.BLUETOOTH 
+                            ? 'bluetooth' 
+                            : user.discoveryType === DISCOVERY_TYPES.WIFI 
+                              ? 'wifi'
+                              : 'location'
+                        } 
+                        size={12} 
+                        color="#fff" 
+                        style={styles.discoveryTypeIcon} 
+                      />
+                      <Text style={styles.discoveryTypeText}>
+                        {getConnectionTypeString(user.discoveryType)}
+                      </Text>
+                    </View>
+                  </View>
                   <Text style={styles.userDetail}>
                     {user.sobrietyDate ? 
                       `${calculateSobrietyYears(user.sobrietyDate)} years sober` : 
                       'Sobriety date not shared'}
                   </Text>
                   <Text style={styles.userDistance}>
-                    {user.distance.toFixed(1)} km away
+                    {typeof user.distance === 'number' 
+                      ? `${user.distance.toFixed(1)} km away` 
+                      : user.distance}
                   </Text>
                 </TouchableOpacity>
               ))}
@@ -319,15 +408,32 @@ export default function ProximityWizard({ onClose }) {
                   <TouchableOpacity
                     style={styles.button}
                     onPress={() => {
-                      // Just simulate the phone call for now
                       Alert.alert(
                         'Call Member',
-                        `This would call ${selectedUser.name} at ${formatPhoneNumber(selectedUser.phone)}`,
-                        [{ text: 'OK' }]
+                        `Would you like to call ${selectedUser.name} at ${formatPhoneNumber(selectedUser.phone)}?`,
+                        [
+                          { text: 'Cancel', style: 'cancel' },
+                          { 
+                            text: 'Call', 
+                            onPress: () => {
+                              const phoneNumber = selectedUser.phone.replace(/\D/g, '');
+                              const phoneUrl = Platform.OS === 'ios' 
+                                ? `telprompt:${phoneNumber}` 
+                                : `tel:${phoneNumber}`;
+                              Linking.openURL(phoneUrl).catch(err => {
+                                Alert.alert('Error', 'Could not initiate phone call');
+                                console.error('Error making phone call:', err);
+                              });
+                            }
+                          }
+                        ]
                       );
                     }}
                   >
-                    <Text style={styles.buttonText}>Call Member</Text>
+                    <View style={styles.buttonContent}>
+                      <Ionicons name="call" size={20} color="white" style={styles.buttonIcon} />
+                      <Text style={styles.buttonText}>Call Member</Text>
+                    </View>
                   </TouchableOpacity>
                 )}
               </View>
@@ -498,5 +604,35 @@ const styles = StyleSheet.create({
   },
   loader: {
     marginTop: 20,
+  },
+  buttonContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  buttonIcon: {
+    marginRight: 8,
+  },
+  userCardHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  discoveryTypeChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#3498db',
+    paddingVertical: 3,
+    paddingHorizontal: 8,
+    borderRadius: 12,
+  },
+  discoveryTypeIcon: {
+    marginRight: 4,
+  },
+  discoveryTypeText: {
+    color: '#fff',
+    fontSize: 10,
+    fontWeight: 'bold',
   },
 });

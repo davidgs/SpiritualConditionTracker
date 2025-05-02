@@ -210,7 +210,6 @@ export const userOperations = {
       }
       
       // Calculate distance for each user and filter by radius
-      // This is a simplified version - in a real app, you'd use a more accurate distance calculation
       const nearbyUsers = users.filter(user => {
         if (!user.latitude || !user.longitude) return false;
         
@@ -228,6 +227,29 @@ export const userOperations = {
       return nearbyUsers;
     } catch (error) {
       console.error('Error fetching nearby users:', error);
+      throw error;
+    }
+  },
+  
+  // Get users by discoverability status
+  getUsersByDiscoverability: async (isDiscoverable) => {
+    try {
+      const db = await getDBConnection();
+      const [results] = await db.executeSql(
+        'SELECT * FROM users WHERE discoverable = ?',
+        [isDiscoverable ? 1 : 0]
+      );
+      
+      const users = [];
+      for (let i = 0; i < results.rows.length; i++) {
+        const user = results.rows.item(i);
+        user.discoverable = !!user.discoverable; // Convert to boolean
+        users.push(user);
+      }
+      
+      return users;
+    } catch (error) {
+      console.error('Error fetching users by discoverability:', error);
       throw error;
     }
   },
