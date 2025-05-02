@@ -18,7 +18,7 @@
       "distribution": "internal",
       "ios": {
         "resourceClass": "m-medium",
-        "credentialsSource": "local"
+        "simulator": true
       },
       "android": {
         "buildType": "apk",
