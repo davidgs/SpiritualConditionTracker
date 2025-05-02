@@ -28,6 +28,10 @@ args = "BuildAndroid"
 task = "workflow.run"
 args = "EASBuild"
 
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "BuildiOS"
+
 [[workflows.workflow]]
 name = "Server"
 author = "agent"
@@ -60,6 +64,14 @@ author = "agent"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "cd . && EXPO_TOKEN=rvxlBHyFU-XtCyZqkKCyCL8nluZmMBuaF8kT-8Bd npx eas build --platform android --profile preview"
+
+[[workflows.workflow]]
+name = "BuildiOS"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd . && EXPO_TOKEN=rvxlBHyFU-XtCyZqkKCyCL8nluZmMBuaF8kT-8Bd npx eas build --platform ios --profile preview --non-interactive --no-wait"
 
 [deployment]
 run = ["sh", "-c", "cd simple-server && node server.js"]
