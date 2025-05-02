@@ -18,371 +18,296 @@ const getDBConnection = async () => {
 };
 
 // Initialize database with necessary tables
-export const initDatabase = () => {
-  return new Promise((resolve, reject) => {
-    db.transaction(tx => {
-      // Create users table
-      tx.executeSql(
-        `CREATE TABLE IF NOT EXISTS users (
-          id TEXT PRIMARY KEY,
-          name TEXT,
-          email TEXT,
-          phone TEXT,
-          sobrietyDate TEXT,
-          homeGroup TEXT,
-          discoverable INTEGER DEFAULT 0,
-          latitude REAL,
-          longitude REAL,
-          lastSeen TEXT,
-          createdAt TEXT,
-          updatedAt TEXT
-        )`,
-        [],
-        () => {
-          console.log('Users table created successfully');
-        },
-        (_, error) => {
-          console.error('Error creating users table:', error);
-          reject(error);
-          return false;
-        }
-      );
-
-      // Create activities table
-      tx.executeSql(
-        `CREATE TABLE IF NOT EXISTS activities (
-          id TEXT PRIMARY KEY,
-          userId TEXT,
-          type TEXT,
-          name TEXT,
-          date TEXT,
-          duration INTEGER,
-          notes TEXT,
-          createdAt TEXT,
-          FOREIGN KEY (userId) REFERENCES users (id)
-        )`,
-        [],
-        () => {
-          console.log('Activities table created successfully');
-        },
-        (_, error) => {
-          console.error('Error creating activities table:', error);
-          reject(error);
-          return false;
-        }
-      );
-
-      // Create spiritual fitness table
-      tx.executeSql(
-        `CREATE TABLE IF NOT EXISTS spiritualFitness (
-          id INTEGER PRIMARY KEY AUTOINCREMENT,
-          userId TEXT,
-          score INTEGER,
-          timeframe INTEGER,
-          lastCalculated TEXT,
-          activityCount INTEGER,
-          activityTypes INTEGER,
-          FOREIGN KEY (userId) REFERENCES users (id)
-        )`,
-        [],
-        () => {
-          console.log('Spiritual fitness table created successfully');
-        },
-        (_, error) => {
-          console.error('Error creating spiritual fitness table:', error);
-          reject(error);
-          return false;
-        }
-      );
-      
-      // Create calendar reminders table
-      tx.executeSql(
-        `CREATE TABLE IF NOT EXISTS calendarReminders (
-          id INTEGER PRIMARY KEY AUTOINCREMENT,
-          meetingId TEXT,
-          meetingName TEXT,
-          meetingDay TEXT,
-          meetingTime TEXT,
-          location TEXT,
-          calendarEventId TEXT,
-          notificationId TEXT,
-          reminderMinutes INTEGER DEFAULT 30,
-          isRecurring INTEGER DEFAULT 1,
-          createdAt TEXT
-        )`,
-        [],
-        () => {
-          console.log('Calendar reminders table created successfully');
-        },
-        (_, error) => {
-          console.error('Error creating calendar reminders table:', error);
-          reject(error);
-          return false;
-        }
-      );
-
-      // Create user-defined meetings table
-      tx.executeSql(
-        `CREATE TABLE IF NOT EXISTS userMeetings (
-          id TEXT PRIMARY KEY,
-          name TEXT NOT NULL,
-          day TEXT NOT NULL,
-          time TEXT NOT NULL,
-          location TEXT,
-          address TEXT,
-          city TEXT,
-          state TEXT,
-          type TEXT,
-          notes TEXT,
-          isShared INTEGER DEFAULT 0,
-          createdAt TEXT
-        )`,
-        [],
-        () => {
-          console.log('User meetings table created successfully');
-        },
-        (_, error) => {
-          console.error('Error creating user meetings table:', error);
-          reject(error);
-          return false;
-        }
-      );
-      
-      // Create settings table
-      tx.executeSql(
-        `CREATE TABLE IF NOT EXISTS settings (
-          id INTEGER PRIMARY KEY AUTOINCREMENT,
-          key TEXT UNIQUE,
-          value TEXT
-        )`,
-        [],
-        () => {
-          console.log('Settings table created successfully');
-          resolve();
-        },
-        (_, error) => {
-          console.error('Error creating settings table:', error);
-          reject(error);
-          return false;
-        }
-      );
-    });
-  });
+export const initDatabase = async () => {
+  try {
+    const db = await getDBConnection();
+    
+    // Create users table
+    await db.executeSql(
+      `CREATE TABLE IF NOT EXISTS users (
+        id TEXT PRIMARY KEY,
+        name TEXT,
+        email TEXT,
+        phone TEXT,
+        sobrietyDate TEXT,
+        homeGroup TEXT,
+        discoverable INTEGER DEFAULT 0,
+        latitude REAL,
+        longitude REAL,
+        lastSeen TEXT,
+        createdAt TEXT,
+        updatedAt TEXT
+      )`
+    );
+    console.log('Users table created successfully');
+    
+    // Create activities table
+    await db.executeSql(
+      `CREATE TABLE IF NOT EXISTS activities (
+        id TEXT PRIMARY KEY,
+        userId TEXT,
+        type TEXT,
+        name TEXT,
+        date TEXT,
+        duration INTEGER,
+        notes TEXT,
+        createdAt TEXT,
+        FOREIGN KEY (userId) REFERENCES users (id)
+      )`
+    );
+    console.log('Activities table created successfully');
+    
+    // Create spiritual fitness table
+    await db.executeSql(
+      `CREATE TABLE IF NOT EXISTS spiritualFitness (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        userId TEXT,
+        score INTEGER,
+        timeframe INTEGER,
+        lastCalculated TEXT,
+        activityCount INTEGER,
+        activityTypes INTEGER,
+        FOREIGN KEY (userId) REFERENCES users (id)
+      )`
+    );
+    console.log('Spiritual fitness table created successfully');
+    
+    // Create calendar reminders table
+    await db.executeSql(
+      `CREATE TABLE IF NOT EXISTS calendarReminders (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        meetingId TEXT,
+        meetingName TEXT,
+        meetingDay TEXT,
+        meetingTime TEXT,
+        location TEXT,
+        calendarEventId TEXT,
+        notificationId TEXT,
+        reminderMinutes INTEGER DEFAULT 30,
+        isRecurring INTEGER DEFAULT 1,
+        createdAt TEXT
+      )`
+    );
+    console.log('Calendar reminders table created successfully');
+    
+    // Create user-defined meetings table
+    await db.executeSql(
+      `CREATE TABLE IF NOT EXISTS userMeetings (
+        id TEXT PRIMARY KEY,
+        name TEXT NOT NULL,
+        day TEXT NOT NULL,
+        time TEXT NOT NULL,
+        location TEXT,
+        address TEXT,
+        city TEXT,
+        state TEXT,
+        type TEXT,
+        notes TEXT,
+        isShared INTEGER DEFAULT 0,
+        createdAt TEXT
+      )`
+    );
+    console.log('User meetings table created successfully');
+    
+    // Create settings table
+    await db.executeSql(
+      `CREATE TABLE IF NOT EXISTS settings (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        key TEXT UNIQUE,
+        value TEXT
+      )`
+    );
+    console.log('Settings table created successfully');
+    
+    return true;
+  } catch (error) {
+    console.error('Database initialization error:', error);
+    throw error;
+  }
 };
 
 // User-related database operations
 export const userOperations = {
   // Create a new user or update existing one
-  saveUser: (user) => {
-    return new Promise((resolve, reject) => {
+  saveUser: async (user) => {
+    try {
+      const db = await getDBConnection();
       const { id, name, email, phone, sobrietyDate, homeGroup, discoverable, latitude, longitude } = user;
       const now = new Date().toISOString();
+      const userId = id || `user_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
       
-      db.transaction(tx => {
-        tx.executeSql(
-          `INSERT OR REPLACE INTO users (
-            id, name, email, phone, sobrietyDate, homeGroup, discoverable, 
-            latitude, longitude, lastSeen, createdAt, updatedAt
-          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-          [
-            id || `user_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
-            name || '',
-            email || '',
-            phone || '',
-            sobrietyDate || '',
-            homeGroup || '',
-            discoverable ? 1 : 0,
-            latitude || null,
-            longitude || null,
-            now,
-            user.createdAt || now,
-            now
-          ],
-          (_, result) => {
-            resolve(result.insertId);
-          },
-          (_, error) => {
-            console.error('Error saving user:', error);
-            reject(error);
-            return false;
-          }
-        );
-      });
-    });
+      const query = `INSERT OR REPLACE INTO users (
+        id, name, email, phone, sobrietyDate, homeGroup, discoverable, 
+        latitude, longitude, lastSeen, createdAt, updatedAt
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+      
+      const params = [
+        userId,
+        name || '',
+        email || '',
+        phone || '',
+        sobrietyDate || '',
+        homeGroup || '',
+        discoverable ? 1 : 0,
+        latitude || null,
+        longitude || null,
+        now,
+        user.createdAt || now,
+        now
+      ];
+      
+      const [result] = await db.executeSql(query, params);
+      return userId;
+    } catch (error) {
+      console.error('Error saving user:', error);
+      throw error;
+    }
   },
   
   // Get current user (the first one for now, can be enhanced later)
-  getUser: () => {
-    return new Promise((resolve, reject) => {
-      db.transaction(tx => {
-        tx.executeSql(
-          'SELECT * FROM users LIMIT 1',
-          [],
-          (_, { rows }) => {
-            if (rows.length > 0) {
-              const user = rows.item(0);
-              // Convert INTEGER to Boolean for discoverable
-              user.discoverable = !!user.discoverable;
-              resolve(user);
-            } else {
-              // Return empty user if none exists
-              resolve({
-                id: `user_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
-                name: '',
-                email: '',
-                phone: '',
-                sobrietyDate: '',
-                homeGroup: '',
-                discoverable: false,
-                createdAt: new Date().toISOString()
-              });
-            }
-          },
-          (_, error) => {
-            console.error('Error fetching user:', error);
-            reject(error);
-            return false;
-          }
-        );
-      });
-    });
+  getUser: async () => {
+    try {
+      const db = await getDBConnection();
+      const [results] = await db.executeSql('SELECT * FROM users LIMIT 1');
+      
+      if (results.rows.length > 0) {
+        const user = results.rows.item(0);
+        // Convert INTEGER to Boolean for discoverable
+        user.discoverable = !!user.discoverable;
+        return user;
+      } else {
+        // Return empty user if none exists
+        return {
+          id: `user_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
+          name: '',
+          email: '',
+          phone: '',
+          sobrietyDate: '',
+          homeGroup: '',
+          discoverable: false,
+          createdAt: new Date().toISOString()
+        };
+      }
+    } catch (error) {
+      console.error('Error fetching user:', error);
+      throw error;
+    }
   },
   
   // Get nearby users
-  getNearbyUsers: (latitude, longitude, radius) => {
-    return new Promise((resolve, reject) => {
-      db.transaction(tx => {
-        tx.executeSql(
-          `SELECT id, name, sobrietyDate, phone, latitude, longitude, lastSeen 
-           FROM users 
-           WHERE discoverable = 1`,
-          [],
-          (_, { rows }) => {
-            const users = [];
-            for (let i = 0; i < rows.length; i++) {
-              users.push(rows.item(i));
-            }
-            
-            // Calculate distance for each user and filter by radius
-            // This is a simplified version - in a real app, you'd use a more accurate distance calculation
-            const nearbyUsers = users.filter(user => {
-              if (!user.latitude || !user.longitude) return false;
-              
-              const distance = calculateDistance(
-                latitude,
-                longitude,
-                user.latitude,
-                user.longitude
-              );
-              
-              user.distance = distance;
-              return distance <= radius;
-            });
-            
-            resolve(nearbyUsers);
-          },
-          (_, error) => {
-            console.error('Error fetching nearby users:', error);
-            reject(error);
-            return false;
-          }
+  getNearbyUsers: async (latitude, longitude, radius) => {
+    try {
+      const db = await getDBConnection();
+      const [results] = await db.executeSql(
+        `SELECT id, name, sobrietyDate, phone, latitude, longitude, lastSeen 
+         FROM users 
+         WHERE discoverable = 1`
+      );
+      
+      const users = [];
+      for (let i = 0; i < results.rows.length; i++) {
+        users.push(results.rows.item(i));
+      }
+      
+      // Calculate distance for each user and filter by radius
+      // This is a simplified version - in a real app, you'd use a more accurate distance calculation
+      const nearbyUsers = users.filter(user => {
+        if (!user.latitude || !user.longitude) return false;
+        
+        const distance = calculateDistance(
+          latitude,
+          longitude,
+          user.latitude,
+          user.longitude
         );
+        
+        user.distance = distance;
+        return distance <= radius;
       });
-    });
+      
+      return nearbyUsers;
+    } catch (error) {
+      console.error('Error fetching nearby users:', error);
+      throw error;
+    }
   },
   
   // Update user location
-  updateUserLocation: (userId, latitude, longitude) => {
-    return new Promise((resolve, reject) => {
+  updateUserLocation: async (userId, latitude, longitude) => {
+    try {
+      const db = await getDBConnection();
       const now = new Date().toISOString();
       
-      db.transaction(tx => {
-        tx.executeSql(
-          'UPDATE users SET latitude = ?, longitude = ?, lastSeen = ?, updatedAt = ? WHERE id = ?',
-          [latitude, longitude, now, now, userId],
-          (_, result) => {
-            resolve(result.rowsAffected > 0);
-          },
-          (_, error) => {
-            console.error('Error updating user location:', error);
-            reject(error);
-            return false;
-          }
-        );
-      });
-    });
+      const [result] = await db.executeSql(
+        'UPDATE users SET latitude = ?, longitude = ?, lastSeen = ?, updatedAt = ? WHERE id = ?',
+        [latitude, longitude, now, now, userId]
+      );
+      
+      return result.rowsAffected > 0;
+    } catch (error) {
+      console.error('Error updating user location:', error);
+      throw error;
+    }
   },
   
   // Update user discoverability
-  updateDiscoverability: (userId, discoverable) => {
-    return new Promise((resolve, reject) => {
-      db.transaction(tx => {
-        tx.executeSql(
-          'UPDATE users SET discoverable = ?, updatedAt = ? WHERE id = ?',
-          [discoverable ? 1 : 0, new Date().toISOString(), userId],
-          (_, result) => {
-            resolve(result.rowsAffected > 0);
-          },
-          (_, error) => {
-            console.error('Error updating discoverability:', error);
-            reject(error);
-            return false;
-          }
-        );
-      });
-    });
+  updateDiscoverability: async (userId, discoverable) => {
+    try {
+      const db = await getDBConnection();
+      const now = new Date().toISOString();
+      
+      const [result] = await db.executeSql(
+        'UPDATE users SET discoverable = ?, updatedAt = ? WHERE id = ?',
+        [discoverable ? 1 : 0, now, userId]
+      );
+      
+      return result.rowsAffected > 0;
+    } catch (error) {
+      console.error('Error updating discoverability:', error);
+      throw error;
+    }
   }
 };
 
 // Activity-related database operations
 export const activityOperations = {
   // Save a new activity
-  saveActivity: (activity) => {
-    return new Promise((resolve, reject) => {
+  saveActivity: async (activity) => {
+    try {
+      const db = await getDBConnection();
       const { userId, type, name, date, duration, notes } = activity;
       const now = new Date().toISOString();
       const id = activity.id || `activity_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
       
-      db.transaction(tx => {
-        tx.executeSql(
-          `INSERT INTO activities (id, userId, type, name, date, duration, notes, createdAt)
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-          [id, userId, type, name, date, duration, notes, now],
-          (_, result) => {
-            resolve({ id, ...activity, createdAt: now });
-          },
-          (_, error) => {
-            console.error('Error saving activity:', error);
-            reject(error);
-            return false;
-          }
-        );
-      });
-    });
+      await db.executeSql(
+        `INSERT INTO activities (id, userId, type, name, date, duration, notes, createdAt)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+        [id, userId, type, name, date, duration, notes, now]
+      );
+      
+      return { id, ...activity, createdAt: now };
+    } catch (error) {
+      console.error('Error saving activity:', error);
+      throw error;
+    }
   },
   
   // Get all activities
-  getAllActivities: () => {
-    return new Promise((resolve, reject) => {
-      db.transaction(tx => {
-        tx.executeSql(
-          'SELECT * FROM activities ORDER BY date DESC',
-          [],
-          (_, { rows }) => {
-            const activities = [];
-            for (let i = 0; i < rows.length; i++) {
-              activities.push(rows.item(i));
-            }
-            resolve(activities);
-          },
-          (_, error) => {
-            console.error('Error fetching activities:', error);
-            reject(error);
-            return false;
-          }
-        );
-      });
-    });
+  getAllActivities: async () => {
+    try {
+      const db = await getDBConnection();
+      const [results] = await db.executeSql('SELECT * FROM activities ORDER BY date DESC');
+      
+      const activities = [];
+      for (let i = 0; i < results.rows.length; i++) {
+        activities.push(results.rows.item(i));
+      }
+      
+      return activities;
+    } catch (error) {
+      console.error('Error fetching activities:', error);
+      throw error;
+    }
   },
   
   // Get activities for a specific user
