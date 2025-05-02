@@ -1,88 +1,155 @@
 # iOS Xcode Build Checklist for AA Recovery Tracker
 
-This checklist will help you ensure that all required settings are properly configured for a native Xcode build of the AA Recovery Tracker app, particularly with the Bluetooth/WiFi proximity features.
+This checklist will help you ensure that all required settings are properly configured for a native Xcode build of the AA Recovery Tracker app, particularly with the Bluetooth/WiFi proximity features for nearby member discovery.
+
+## Prerequisites
+
+1. ✅ Make sure you have the latest version of Xcode installed (minimum 14.0+)
+2. ✅ Ensure you have a valid Apple Developer account
+3. ✅ Make sure you have CocoaPods installed (`sudo gem install cocoapods`)
 
 ## Before Opening Xcode
 
-1. ✅ Make sure all necessary permissions have been added to Info.plist
+1. ✅ Make sure all necessary permissions have been added to Info.plist:
    - NSBluetoothAlwaysUsageDescription
    - NSBluetoothPeripheralUsageDescription
    - NSLocalNetworkUsageDescription
    - NSBonjourServices
    - UIBackgroundModes
+   - NSCalendarsUsageDescription
+   - NSRemindersUsageDescription
+   - NSLocationWhenInUseUsageDescription
 
-2. ✅ Make sure all necessary entitlements have been added to AARecoveryTracker.entitlements
+2. ✅ Make sure all necessary entitlements have been added to AARecoveryTracker.entitlements:
    - com.apple.developer.networking.multicast
    - com.apple.developer.networking.wifi-info
-   - UIBackgroundModes
+   - UIBackgroundModes (with bluetooth-central, bluetooth-peripheral, fetch, location)
 
-3. ✅ Run `cd ios && pod install` to install all necessary pods and dependencies
-
-## Xcode Project Setup
-
-1. Open the project in Xcode by opening the `.xcworkspace` file (not the `.xcodeproj` file)
+3. ✅ Run the following commands to ensure all dependencies are properly installed:
+   ```bash
+   cd ios
+   pod deintegrate  # Optional: only if you're having pod-related issues
+   pod install --repo-update
    ```
+
+## Opening Xcode Project
+
+1. Open the project in Xcode by opening the `.xcworkspace` file (not the `.xcodeproj` file):
+   ```bash
    open ios/AARecoveryTracker.xcworkspace
    ```
 
-2. Configure Signing & Capabilities:
-   - Select the AARecoveryTracker target
-   - Go to the "Signing & Capabilities" tab
-   - Make sure "Automatically manage signing" is checked
-   - Select your development team
-   - If necessary, add the following capabilities:
-     - Background Modes (with Bluetooth Central/Peripheral, Location, and Background fetch enabled)
-     - Access WiFi Information
-     - Network Extensions (for multi-cast)
+## Xcode Project Configuration
 
-3. Check Build Settings:
-   - "iOS Deployment Target" should be set to iOS 15.1 or later
-   - Architecture settings should include "arm64" for devices
-   - In build settings, search for "valid architectures" and make sure it includes arm64
+### 1. Signing & Capabilities Setup
 
-4. Check Swift version compatibility:
-   - Ensure Swift language version is set to "Swift 5" in build settings
+1. Select the AARecoveryTracker target in the Project Navigator
+2. Go to the "Signing & Capabilities" tab
+3. Make sure "Automatically manage signing" is checked
+4. Select your Apple Developer Team from the dropdown
+5. The Bundle Identifier should be "com.example.aarecoverytracker" (or your custom identifier)
+6. Verify that all the following capabilities are present (add them if missing by clicking "+ Capability"):
+   - Background Modes
+     - ✓ Uses Bluetooth LE accessories
+     - ✓ Acts as a Bluetooth LE accessory
+     - ✓ Background fetch
+     - ✓ Location updates
+   - Access WiFi Information
+   - Network Extensions (for multicast)
+   - Push Notifications (if using)
+   - App Groups (if using)
 
-5. Check Framework Search Paths:
-   - Make sure the framework search paths include $(inherited) and the proper Pods paths
+### 2. Info Tab
 
-## Building the App
+1. Verify the deployment target is set to iOS 15.1 or higher
+2. Check that the version and build numbers match app.json (1.0.0)
+3. Make sure the device orientation settings match what's in app.json
 
-1. Before building, clean the build folder:
-   - Select "Product" > "Clean Build Folder" from the menu
+### 3. Build Settings
 
-2. Select your device from the device selector in the toolbar
+1. Search for "deployment target" and ensure it's set to 15.1
+2. Search for "valid architectures" and ensure "arm64" is included for devices
+3. Search for "bitcode" and ensure it's set to "No" (Bitcode is deprecated as of Xcode 14)
+4. Search for "swift version" and ensure it's set to Swift 5
+5. Search for "framework search paths" and verify it includes:
+   - $(inherited)
+   - ${PODS_ROOT}/hermes-engine/destroot/Library/Frameworks/universal
+   - ${PODS_XCFRAMEWORKS_BUILD_DIR}/hermes-engine/Pre-built
 
-3. Build and run the app
-   - If you encounter any errors, check the Issues navigator for details
+### 4. Build Phases
 
-## Common Issues & Solutions
+1. Check "Link Binary With Libraries" section to ensure all required frameworks are linked:
+   - CoreBluetooth.framework
+   - Network.framework
+   - CoreLocation.framework
+   - EventKit.framework (for calendar)
+   - UserNotifications.framework
+   - All required React Native and Expo frameworks should be added by CocoaPods
 
-1. If you get code signing errors:
-   - Check that your development team is selected
-   - Verify that your provisioning profile is valid
-   - Try "Product" > "Clean Build Folder" and build again
+## Final Preparation and Building
 
-2. If you get "framework not found" errors:
-   - Run `pod install` again
-   - Make sure all required frameworks are linked in the Build Phases
+1. Update the Team ID in project.pbxproj if needed:
+   - Open ios/AARecoveryTracker.xcodeproj/project.pbxproj in a text editor
+   - Find the "DEVELOPMENT_TEAM" entry and update with your Apple Team ID
 
-3. If you get Bluetooth-related errors:
-   - Confirm all the necessary permissions are in Info.plist
-   - Check that Bluetooth capabilities are enabled in Signing & Capabilities
-   - Ensure the device you're testing on has Bluetooth enabled
+2. Clean the build folder before building:
+   - In Xcode, select "Product" > "Clean Build Folder"
 
-4. If you get WiFi or network-related errors:
-   - Verify NSLocalNetworkUsageDescription is properly set
-   - Check that Bonjour services are listed in NSBonjourServices
-   - Confirm the networking entitlements are properly configured
+3. Select a physical device from the device selector in the toolbar
+   - Note: Some Bluetooth/WiFi features can only be fully tested on a physical device
 
-## Post-Build Testing
+4. Build and run the app:
+   - Click the "Run" button (▶️) or press Cmd+R
 
-After successfully building the app, test the proximity features:
+## Debugging Common iOS Build Issues
+
+### Code Signing Issues
+
+1. "No valid signing certificate found":
+   - Make sure your Apple Developer account is valid
+   - Check that you've selected the correct team
+   - Try creating a new certificate through Xcode by selecting "Fix Issue"
+
+2. "Failed to create provisioning profile":
+   - Go to the Apple Developer Portal and verify your App ID
+   - Check that your bundle identifier matches what's registered
+   - Try adding explicit provisioning profiles if automatic signing fails
+
+### Framework/Library Issues
+
+1. "Framework not found" errors:
+   - Run `pod install --repo-update` again
+   - Check that all frameworks are properly linked in Build Phases
+   - Delete the derived data folder: `rm -rf ~/Library/Developer/Xcode/DerivedData`
+
+2. Architecture issues:
+   - Make sure the target architecture matches your device
+   - For simulators, ensure x86_64 is supported
+   - For physical devices, ensure arm64 is supported
+
+### Permission Issues
+
+1. Bluetooth/WiFi permissions not working:
+   - Double-check Info.plist for all required permissions
+   - Verify that the entitlements file is correctly configured
+   - Check that capabilities are properly set in the Signing & Capabilities tab
+
+## Testing Proximity Features
+
+After building and installing the app:
+
 1. Enable Bluetooth and WiFi on the test device
-2. Navigate to the NearbyMembers screen
-3. Enable discovery
-4. Test with another device to confirm that proximity discovery works correctly
+2. Grant all permissions when prompted
+3. Navigate to the NearbyMembers screen
+4. Enable discoverability
+5. Use the DiscoverySettings component to enable Bluetooth/WiFi scanning
+6. Test with another device to confirm proximity discovery works
+7. Verify that different discovery methods (GPS, Bluetooth, WiFi) are correctly displayed in the user interface
 
-Good luck with your build! If you encounter any issues not covered in this checklist, consult the React Native and Expo documentation for additional guidance.
+## Additional Resources
+
+- React Native iOS Setup Guide: https://reactnative.dev/docs/environment-setup
+- Expo Development Builds: https://docs.expo.dev/development/build/
+- Apple Developer Documentation: https://developer.apple.com/documentation/
+
+Good luck with your Xcode build! If you encounter any specific issues not covered in this checklist, consult the React Native and Expo documentation or seek assistance from the developer community.
