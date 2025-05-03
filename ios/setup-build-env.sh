@@ -66,9 +66,13 @@ else
     fi
 fi
 
-# Fix any issues with the Expo configure scripts
-echo "Fixing Expo configure scripts..."
+# Run the fix-expo-configure script to handle the transition from Expo to native
+echo "Converting any remaining Expo scripts to pure native..."
 cd "$SCRIPT_DIR" && ./fix-expo-configure.sh
+
+# Ensure the right permissions on fix scripts
+chmod +x "$SCRIPT_DIR/fix-pods.sh"
+chmod +x "$SCRIPT_DIR/force-workspace-creation.sh"
 
 # Make a clean version of the project.pbxproj file
 echo "Backing up and cleaning project.pbxproj..."

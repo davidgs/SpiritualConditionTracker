@@ -1,17 +1,12 @@
 require_relative '../node_modules/react-native/scripts/react_native_pods'
 
 # Try to load the native_modules from cli-platform-ios
-# If it fails, define our own implementation
+# If it fails, use our custom implementation
 begin
   require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
 rescue LoadError => e
-  # Define fallback implementation for native_modules
-  def use_native_modules!(config = nil)
-    puts "Using fallback native_modules implementation"
-    config = {}
-    config[:reactNativePath] = '../node_modules/react-native'
-    return config
-  end
+  # Use custom implementation if library is not found
+  require_relative './native_modules'
 end
 
 # No Expo dependencies - fully native build
@@ -45,6 +40,9 @@ target 'AARecoveryTracker' do
     # An absolute path to your application root.
     :app_path => "#{Pod::Config.instance.installation_root}/..",
   )
+  
+  # Explicitly add SQLite
+  pod 'react-native-sqlite-storage', :path => '../node_modules/react-native-sqlite-storage'
 
   post_install do |installer|
     # Apple Silicon builds require a library path tweak for Swift library discovery or the simulator will fail to launch the app
