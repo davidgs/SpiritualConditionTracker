@@ -27,7 +27,9 @@ target 'AARecoveryTracker' do
   
   # Third-party deps
   pod 'glog', :podspec => '../node_modules/react-native/third-party-podspecs/glog.podspec'
-  pod 'RCT-Folly', :podspec => '../node_modules/react-native/third-party-podspecs/RCT-Folly.podspec'
+  
+  # Skip RCT-Folly podspec and use Folly directly
+  pod 'Folly', :podspec => '../node_modules/react-native/third-party-podspecs/folly.podspec'
   
   # SQLite pods
   pod 'react-native-sqlite-storage', :path => '../node_modules/react-native-sqlite-storage'
