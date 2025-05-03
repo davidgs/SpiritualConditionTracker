@@ -16,21 +16,52 @@ target 'AARecoveryTracker' do
   # Use direct references for reliability
   config = { :reactNativePath => "../node_modules/react-native" }
   
-  # React Native core - with simplified config
-  use_react_native!(
-    :path => config[:reactNativePath],
-    :hermes_enabled => true,
-    :app_path => "#{Pod::Config.instance.installation_root}/.."
-  )
+  # Add React Native core dependencies manually for better control
+  pod 'React', :path => '../node_modules/react-native/'
+  pod 'React-Core', :path => '../node_modules/react-native/'
+  pod 'React-CoreModules', :path => '../node_modules/react-native/React/CoreModules'
+  pod 'React-RCTActionSheet', :path => '../node_modules/react-native/Libraries/ActionSheetIOS'
+  pod 'React-RCTAnimation', :path => '../node_modules/react-native/Libraries/NativeAnimation'
+  pod 'React-RCTBlob', :path => '../node_modules/react-native/Libraries/Blob'
+  pod 'React-RCTImage', :path => '../node_modules/react-native/Libraries/Image'
+  pod 'React-RCTLinking', :path => '../node_modules/react-native/Libraries/LinkingIOS'
+  pod 'React-RCTNetwork', :path => '../node_modules/react-native/Libraries/Network'
+  pod 'React-RCTSettings', :path => '../node_modules/react-native/Libraries/Settings'
+  pod 'React-RCTText', :path => '../node_modules/react-native/Libraries/Text'
+  pod 'React-RCTVibration', :path => '../node_modules/react-native/Libraries/Vibration'
+  
+  # Add third-party dependencies explicitly
+  pod 'FBLazyVector', :path => "../node_modules/react-native/Libraries/FBLazyVector"
+  pod 'FBReactNativeSpec', :path => "../node_modules/react-native/React/FBReactNativeSpec"
+  pod 'RCTRequired', :path => "../node_modules/react-native/Libraries/RCTRequired"
+  pod 'RCTTypeSafety', :path => "../node_modules/react-native/Libraries/TypeSafety"
+  pod 'React-Core/DevSupport', :path => '../node_modules/react-native/'
+  pod 'React-jsi', :path => '../node_modules/react-native/ReactCommon/jsi'
+  pod 'React-jsiexecutor', :path => '../node_modules/react-native/ReactCommon/jsiexecutor'
+  pod 'React-jsinspector', :path => '../node_modules/react-native/ReactCommon/jsinspector'
+  pod 'React-callinvoker', :path => "../node_modules/react-native/ReactCommon/callinvoker"
+  pod 'React-perflogger', :path => "../node_modules/react-native/ReactCommon/reactperflogger"
+  pod 'React-runtimeexecutor', :path => "../node_modules/react-native/ReactCommon/runtimeexecutor"
+  pod 'ReactCommon/turbomodule/core', :path => "../node_modules/react-native/ReactCommon"
+  pod 'Yoga', :path => '../node_modules/react-native/ReactCommon/yoga'
+  
+  # Add third-party specs
+  pod 'DoubleConversion', :podspec => '../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec'
+  pod 'glog', :podspec => '../node_modules/react-native/third-party-podspecs/glog.podspec'
+  pod 'folly', :podspec => '../node_modules/react-native/third-party-podspecs/folly.podspec'
+  
+  # Hermes Engine if enabled
+  if defined?(enable_hermes_engine) && enable_hermes_engine == true
+    pod 'React-hermes', :path => '../node_modules/react-native/'
+    pod 'hermes-engine', :podspec => '../node_modules/react-native/sdks/hermes-engine/hermes-engine.podspec'
+    pod 'libevent', :podspec => '../node_modules/react-native/third-party-podspecs/libevent.podspec'
+  end
   
   # Add SQLite for local storage - use a version that properly configures headers
   pod 'react-native-sqlite-storage', :path => '../node_modules/react-native-sqlite-storage'
   
   # Explicitly link system SQLite
   pod 'sqlite3', '~> 3.39.2'
-  
-  # Add DoubleConversion dependency explicitly
-  pod 'DoubleConversion', :podspec => '../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec'
   
   # Add other required native modules
   pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
