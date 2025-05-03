@@ -1,6 +1,22 @@
-# Simple and reliable approach for React Native path
-require_relative '../node_modules/react-native/scripts/react_native_pods'
-require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
+# Detect the React Native path
+REACT_NATIVE_PATH = File.join(__dir__, '..', 'node_modules', 'react-native')
+
+# Verify React Native exists
+if File.exist?(File.join(REACT_NATIVE_PATH, 'package.json'))
+  require_relative '../node_modules/react-native/scripts/react_native_pods'
+else 
+  puts "Error: React Native not found at #{REACT_NATIVE_PATH}. Please verify your installation."
+  exit(1)
+end
+
+# Try to load the native_modules from cli-platform-ios
+# If it fails, use our custom implementation
+begin
+  require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
+rescue LoadError => e
+  puts "Failed to load @react-native-community/cli-platform-ios: #{e.message}. Using custom implementation."
+  require_relative './native_modules'
+end
 
 # No Expo dependencies - fully native build
 require 'json'
@@ -26,9 +42,9 @@ target 'AARecoveryTracker' do
   # Call use_native_modules! before use_react_native!
   config = use_native_modules!
 
-  # React Native
+  # React Native - Use the constant defined at the top
   use_react_native!(
-    :path => "../node_modules/react-native",
+    :path => REACT_NATIVE_PATH,
     :hermes_enabled => true,
     # An absolute path to your application root.
     :app_path => "#{Pod::Config.instance.installation_root}/..",
@@ -52,10 +68,10 @@ target 'AARecoveryTracker' do
       aggregate_target.user_project.save
     end
     
-    # React Native post-installation
+    # React Native post-installation - Use the constant defined at the top
     react_native_post_install(
       installer,
-      "../node_modules/react-native",
+      REACT_NATIVE_PATH,
       :mac_catalyst_enabled => false,
       :ccache_enabled => podfile_properties['apple.ccacheEnabled'] == 'true',
     )
