@@ -144,6 +144,31 @@ If you're using Firebase or specific Expo packages causing problems:
 1. Verify compatibility with your React Native and Expo versions
 2. Check that native configurations are properly set in Build Phases
 
+## Missing Workspace or Pod Install Errors
+
+If you're experiencing issues with the Xcode workspace file missing or Pod installation errors:
+
+1. Run the dedicated fix script:
+   ```bash
+   cd ios
+   chmod +x fix-pods.sh
+   ./fix-pods.sh --clean
+   ```
+
+2. This script will:
+   - Clean the Pods directory and Podfile.lock
+   - Try multiple pod installation methods
+   - Force workspace creation if all pod install attempts fail
+
+3. If pod install is failing with Expo-related errors:
+   - Check the Podfile for any Expo dependencies that may be causing issues
+   - Run `./fix-expo-configure.sh` to patch the Expo configuration scripts
+   - Consider removing or updating problematic Expo modules
+
+4. If the workspace file won't open or has reference issues:
+   - Run `./force-workspace-creation.sh` to create a minimal working workspace
+   - Open the workspace and manually add any missing references
+
 ## Still Having Issues?
 
 If you're still experiencing build issues:
@@ -154,4 +179,5 @@ If you're still experiencing build issues:
    ```bash
    xcodebuild -workspace ios/AARecoveryTracker.xcworkspace -scheme AARecoveryTracker -configuration Debug -destination 'platform=iOS Simulator,name=iPhone 14' | xcpretty
    ```
-4. Consult the React Native and Expo documentation for version-specific issues
+4. Consult the React Native documentation for version-specific issues
+5. Disable Expo modules one by one to identify which one is causing the issue

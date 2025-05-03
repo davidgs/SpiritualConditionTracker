@@ -79,6 +79,10 @@ cp "$PROJECT_FILE" "$PROJECT_FILE.backup"
 perl -i -pe 's/\\"/"/g' "$PROJECT_FILE"
 perl -i -pe 's/\\\\n/\\n/g' "$PROJECT_FILE"
 
+# Force creation of workspace file
+echo "Forcing creation of Xcode workspace..."
+cd "$SCRIPT_DIR" && ./force-workspace-creation.sh
+
 echo ""
 echo "Setup complete! You can now open the workspace in Xcode:"
 echo "open $SCRIPT_DIR/AARecoveryTracker.xcworkspace"

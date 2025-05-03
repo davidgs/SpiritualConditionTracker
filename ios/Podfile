@@ -1,74 +1,43 @@
 require File.join(File.dirname(`node --print "require.resolve('react-native/package.json')"`), "scripts/react_native_pods")
 
+# Don't actively require the expo autolinking script
+# but also don't crash if expo modules have been added
+begin
+  require File.join(File.dirname(`node --print "require.resolve('expo/package.json')"`), "scripts/autolinking")
+rescue LoadError
+  puts "Skipping Expo autolinking"
+end
+
 require 'json'
 podfile_properties = JSON.parse(File.read(File.join(__dir__, 'Podfile.properties.json'))) rescue {}
 
-# Native iOS build configuration - no Expo dependencies
+# Set environment variables
 ENV['RCT_NEW_ARCH_ENABLED'] = '0'
 ENV['USE_HERMES'] = '1'
 
-# Set iOS version
 platform :ios, '15.1'
 install! 'cocoapods',
   :deterministic_uuids => false
 
 prepare_react_native_project!
 
-# Define required pods
-def common_pods
-  # React Native
-  pod 'React-Core'
-  pod 'React-CoreModules'
-  pod 'React-RCTActionSheet'
-  pod 'React-RCTAnimation'
-  pod 'React-RCTBlob'
-  pod 'React-RCTImage'
-  pod 'React-RCTLinking'
-  pod 'React-RCTNetwork'
-  pod 'React-RCTSettings'
-  pod 'React-RCTText'
-  pod 'React-RCTVibration'
-  pod 'React-Core/DevSupport'
-  pod 'React-Core/RCTWebSocket'
-  pod 'React-cxxreact'
-  pod 'React-jsi'
-  pod 'React-jsiexecutor'
-  pod 'React-jsinspector'
-  pod 'React-logger'
-  pod 'React-perflogger'
-  pod 'ReactCommon/turbomodule/core'
-  pod 'Yoga', :path => '../node_modules/react-native/ReactCommon/yoga'
-  pod 'DoubleConversion'
-  pod 'glog'
-  pod 'RCT-Folly'
-  
-  # Hermes engine
-  pod 'React-hermes'
-  pod 'hermes-engine'
-
-  # Native features
-  pod 'RNCAsyncStorage'
-  pod 'RNGestureHandler'
-  pod 'RNReanimated'
-  pod 'RNScreens'
-  pod 'react-native-safe-area-context'
-  
-  # Bluetooth and WiFi
-  pod 'CoreBluetooth'
-end
-
 target 'AARecoveryTracker' do
-  # React Native dependencies
+  # Create workspace even if modules fail
+  workspace 'AARecoveryTracker'
+  
+  # This ensures the workspace file gets created even if pod install fails
+  generate_multiple_pod_projects = true
+
+  # Call use_native_modules! before use_react_native!
   config = use_native_modules!
 
+  # React Native
   use_react_native!(
     :path => config[:reactNativePath],
     :hermes_enabled => true,
+    # An absolute path to your application root.
     :app_path => "#{Pod::Config.instance.installation_root}/..",
   )
-
-  # Add common pods
-  common_pods()
 
   post_install do |installer|
     # Apple Silicon builds require a library path tweak for Swift library discovery or the simulator will fail to launch the app
