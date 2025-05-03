@@ -29,6 +29,9 @@ target 'AARecoveryTracker' do
   # Explicitly link system SQLite
   pod 'sqlite3', '~> 3.39.2'
   
+  # Add DoubleConversion dependency explicitly
+  pod 'DoubleConversion', :podspec => '../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec'
+  
   # Add other required native modules
   pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
   
