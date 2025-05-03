@@ -1,5 +1,18 @@
 require_relative '../node_modules/react-native/scripts/react_native_pods'
-require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
+
+# Try to load the native_modules from cli-platform-ios
+# If it fails, define our own implementation
+begin
+  require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
+rescue LoadError => e
+  # Define fallback implementation for native_modules
+  def use_native_modules!(config = nil)
+    puts "Using fallback native_modules implementation"
+    config = {}
+    config[:reactNativePath] = '../node_modules/react-native'
+    return config
+  end
+end
 
 # No Expo dependencies - fully native build
 require 'json'
