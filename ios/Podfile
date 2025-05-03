@@ -1,112 +1,67 @@
-# Only require the React Native pods script
 require_relative '../node_modules/react-native/scripts/react_native_pods'
 
-# Since cli-platform-ios is not available, define native_modules functionality here
-def use_native_modules!(config = nil)
-  puts "Using internal implementation for native_modules"
-  
-  # Return a simple config with the React Native path
-  return { :reactNativePath => "../node_modules/react-native" }
-end
-
-# No Expo dependencies - fully native build
-require 'json'
-podfile_properties = JSON.parse(File.read(File.join(__dir__, 'Podfile.properties.json'))) rescue {}
-
-# Set environment variables
-ENV['RCT_NEW_ARCH_ENABLED'] = '0'
-ENV['USE_HERMES'] = '1'
-
+# Define iOS platform version
 platform :ios, '15.1'
-install! 'cocoapods',
-  :deterministic_uuids => false
-
 prepare_react_native_project!
 
+# Install pods with deterministic UUIDs
+install! 'cocoapods', :deterministic_uuids => false
+
 target 'AARecoveryTracker' do
-  # Create workspace even if modules fail
-  workspace 'AARecoveryTracker'
+  # Use direct references for reliability
+  config = { :reactNativePath => "../node_modules/react-native" }
   
-  # This ensures the workspace file gets created even if pod install fails
-  generate_multiple_pod_projects = true
-
-  # Call use_native_modules! before use_react_native!
-  config = use_native_modules!
-
-  # React Native
+  # React Native core
   use_react_native!(
-    :path => "../node_modules/react-native",
+    :path => config[:reactNativePath],
     :hermes_enabled => true,
-    # An absolute path to your application root.
-    :app_path => "#{Pod::Config.instance.installation_root}/..",
+    :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
   
-  # Explicitly add SQLite with the correct podspec path
-  pod 'react-native-sqlite-storage', :podspec => '../node_modules/react-native-sqlite-storage/react-native-sqlite-storage.podspec'
-
+  # Add SQLite for local storage - use a version that properly configures headers
+  pod 'react-native-sqlite-storage', :path => '../node_modules/react-native-sqlite-storage'
+  
+  # Explicitly link system SQLite
+  pod 'sqlite3', '~> 3.39.2'
+  
+  # Add other required native modules
+  pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
+  
+  # Navigation dependencies
+  pod 'RNScreens', :path => '../node_modules/react-native-screens'
+  pod 'RNGestureHandler', :path => '../node_modules/react-native-gesture-handler'
+  pod 'RNReanimated', :path => '../node_modules/react-native-reanimated'
+  pod 'react-native-safe-area-context', :path => '../node_modules/react-native-safe-area-context'
+  
+  # Fix header search paths and compiler flags for SQLite
   post_install do |installer|
-    # Apple Silicon builds require a library path tweak for Swift library discovery or the simulator will fail to launch the app
-    installer.aggregate_targets.each do |aggregate_target|
-      aggregate_target.user_project.native_targets.each do |target|
-        target.build_configurations.each do |config|
-          # Make sure these are all set to the same value
-          config.build_settings['LIBRARY_SEARCH_PATHS'] = ['$(SDKROOT)/usr/lib/swift', '$(inherited)']
-          config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.1'
-        end
-      end
-      
-      # Fix Windows / Linux file paths for Mac
-      aggregate_target.user_project.save
-    end
-    
-    # React Native post-installation
-    react_native_post_install(
-      installer,
-      "../node_modules/react-native",
-      :mac_catalyst_enabled => false,
-      :ccache_enabled => podfile_properties['apple.ccacheEnabled'] == 'true',
-    )
-    
-    # This is necessary for Xcode 14+, because it signs resource bundles by default
-    # when building for devices
-    installer.target_installation_results.pod_target_installation_results
-      .each do |pod_name, target_installation_result|
-      target_installation_result.resource_bundle_targets.each do |resource_bundle_target|
-        resource_bundle_target.build_configurations.each do |config|
-          config.build_settings['CODE_SIGNING_ALLOWED'] = 'NO'
-        end
-      end
-    end
-    
-    # Configure all targets for Bluetooth and other frameworks 
     installer.pods_project.targets.each do |target|
       target.build_configurations.each do |config|
-        # Ensure consistent deployment target
         config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.1'
         
-        # Explicitly set Swift version if it's a target that uses Swift
+        # Add SQLite header search paths if needed
+        if target.name == 'react-native-sqlite-storage'
+          config.build_settings['HEADER_SEARCH_PATHS'] ||= '$(inherited) '
+          config.build_settings['HEADER_SEARCH_PATHS'] += '"${PODS_ROOT}/sqlite3/sqlite3-all"'
+          config.build_settings['SWIFT_INCLUDE_PATHS'] = '$(inherited) $(PODS_ROOT)/sqlite3'
+        end
+        
+        # Handle Swift version
         if config.build_settings['SWIFT_VERSION']
           config.build_settings['SWIFT_VERSION'] = '5.0'
         end
+        
+        # Support for M1 Macs
+        config.build_settings["EXCLUDED_ARCHS[sdk=iphonesimulator*]"] = "arm64"
       end
     end
     
-    # Fix for any TMP_DIR issues in Xcode 14/15
-    installer.pods_project.build_configurations.each do |config|
-      # Handle simulator architecture on Apple Silicon
-      config.build_settings["EXCLUDED_ARCHS[sdk=iphonesimulator*]"] = "arm64"
-      
-      # Add debug symbols for debugging
-      if config.name == 'Debug'
-        config.build_settings['DEBUG_INFORMATION_FORMAT'] = 'dwarf-with-dsym'
-        config.build_settings['ONLY_ACTIVE_ARCH'] = 'YES'
-      end
-    end
-    
-    # Fix for React Native Reanimated (if present)
-    if File.exist?(`node --print "require.resolve('react-native-reanimated/package.json')"`.strip) 
-      puts "Applying React Native Reanimated fix"
-      `node --no-warnings --eval "const cp = require('child_process'); cp.exec('npx react-native-reanimated-plugin')"`
-    end
+    # Additional fixes from React Native post install
+    react_native_post_install(
+      installer,
+      config[:reactNativePath],
+      :mac_catalyst_enabled => false
+    )
+    __apply_Xcode_12_5_M1_post_install_workaround(installer)
   end
 end
