@@ -1,729 +1,606 @@
-import React, { useState, useEffect } from 'react';
-import { 
-  View, 
-  Text, 
-  StyleSheet, 
-  ScrollView, 
-  TouchableOpacity, 
-  TextInput,
+import React, { useState } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
   Switch,
-  Alert,
+  ScrollView,
+  SafeAreaView,
+  Modal,
+  TextInput,
   Platform
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from 'react-native-vector-icons';
+import Icon from 'react-native-vector-icons/FontAwesome5';
 import DateTimePicker from '@react-native-community/datetimepicker';
+
 import { useUser } from '../contexts/UserContext';
-import { settingsOperations, calendarReminderOperations } from '../utils/database';
-import { calculateSobrietyDays, calculateSobrietyYears, formatNumberWithCommas } from '../utils/calculations';
-import { cancelNotification } from '../utils/calendarReminders';
+import { calculateSobrietyDays, calculateSobrietyYears } from '../utils/calculations';
 
 const SettingsScreen = () => {
-  const { user, updateUser } = useUser();
+  const { user, updateUserProfile } = useUser();
   
-  // Form state
-  const [name, setName] = useState('');
-  const [phone, setPhone] = useState('');
-  const [email, setEmail] = useState('');
-  const [sobrietyDate, setSobrietyDate] = useState(new Date());
-  const [homeGroup, setHomeGroup] = useState('');
-  const [hasSobrietyDate, setHasSobrietyDate] = useState(false);
+  // State for settings
+  const [notificationsEnabled, setNotificationsEnabled] = useState(
+    user?.profileSettings?.notificationsEnabled || false
+  );
+  const [privacyEnabled, setPrivacyEnabled] = useState(
+    user?.profileSettings?.privacyEnabled || true
+  );
+  const [reminderTime, setReminderTime] = useState(
+    user?.profileSettings?.reminderTime || 30
+  );
   
-  // Settings state
-  const [reminderTime, setReminderTime] = useState('08:00');
-  const [darkMode, setDarkMode] = useState(false);
+  // State for profile editing
+  const [showSobrietyDatePicker, setShowSobrietyDatePicker] = useState(false);
+  const [showProfileEditor, setShowProfileEditor] = useState(false);
+  const [sobrietyDate, setSobrietyDate] = useState(
+    user?.sobrietyDate ? new Date(user.sobrietyDate) : new Date()
+  );
   
-  // Calendar reminders state
-  const [calendarReminders, setCalendarReminders] = useState([]);
-  const [loadingReminders, setLoadingReminders] = useState(false);
+  // State for profile form
+  const [name, setName] = useState(user?.name || '');
+  const [email, setEmail] = useState(user?.email || '');
+  const [phone, setPhone] = useState(user?.phone || '');
+  const [homeGroup, setHomeGroup] = useState(user?.homeGroup || '');
   
-  // Date picker state
-  const [showDatePicker, setShowDatePicker] = useState(false);
+  // Format sobriety information
+  const sobrietyDays = user?.sobrietyDate 
+    ? calculateSobrietyDays(user.sobrietyDate) 
+    : 0;
   
-  // Initialize form
-  useEffect(() => {
-    if (user) {
-      setName(user.name || '');
-      setPhone(user.phone || '');
-      setEmail(user.email || '');
-      setHomeGroup(user.homeGroup || '');
-      
-      if (user.sobrietyDate) {
-        setSobrietyDate(new Date(user.sobrietyDate));
-        setHasSobrietyDate(true);
-      } else {
-        setSobrietyDate(new Date());
-        setHasSobrietyDate(false);
-      }
-    }
-    
-    // Load app settings
-    const loadSettings = async () => {
-      try {
-        const savedReminderTime = await settingsOperations.getSetting('reminderTime', '08:00');
-        const savedDarkMode = await settingsOperations.getSetting('darkMode', false);
-        
-        setReminderTime(savedReminderTime);
-        setDarkMode(savedDarkMode);
-      } catch (error) {
-        console.error('Error loading settings:', error);
-      }
-    };
-    
-    loadSettings();
-    loadCalendarReminders();
-  }, [user]);
+  const sobrietyYears = user?.sobrietyDate 
+    ? calculateSobrietyYears(user.sobrietyDate) 
+    : 0;
   
-  // Load calendar reminders
-  const loadCalendarReminders = async () => {
-    try {
-      setLoadingReminders(true);
-      const reminders = await calendarReminderOperations.getAllCalendarReminders();
-      setCalendarReminders(reminders);
-    } catch (error) {
-      console.error('Error loading calendar reminders:', error);
-    } finally {
-      setLoadingReminders(false);
-    }
+  // Handle switching settings
+  const handleToggleNotifications = () => {
+    const newValue = !notificationsEnabled;
+    setNotificationsEnabled(newValue);
+    saveSettings({ notificationsEnabled: newValue });
   };
   
-  // Delete calendar reminder
-  const deleteCalendarReminder = async (reminderId) => {
+  const handleTogglePrivacy = () => {
+    const newValue = !privacyEnabled;
+    setPrivacyEnabled(newValue);
+    saveSettings({ privacyEnabled: newValue });
+  };
+  
+  // Handle changing reminder time
+  const handleReminderTimeChange = (value) => {
+    setReminderTime(value);
+    saveSettings({ reminderTime: value });
+  };
+  
+  // Save settings to database
+  const saveSettings = async (settings) => {
     try {
-      const reminder = calendarReminders.find(r => r.id === reminderId);
-      if (!reminder) return;
+      const currentSettings = user?.profileSettings || {};
+      const updatedSettings = { ...currentSettings, ...settings };
       
-      // Cancel notification if exists
-      if (reminder.notificationId) {
-        await cancelNotification(reminder.notificationId);
-      }
-      
-      // Delete from database
-      await calendarReminderOperations.deleteCalendarReminder(reminderId);
-      
-      // Update list
-      loadCalendarReminders();
-      
-      Alert.alert('Reminder Deleted', 'The meeting reminder has been deleted from your calendar.');
+      await updateUserProfile({
+        profileSettings: updatedSettings
+      });
     } catch (error) {
-      console.error('Error deleting calendar reminder:', error);
-      Alert.alert('Error', 'Failed to delete the reminder. Please try again.');
+      console.error('Error saving settings:', error);
     }
   };
   
   // Handle sobriety date change
-  const onDateChange = (event, selectedDate) => {
-    const currentDate = selectedDate || sobrietyDate;
-    setShowDatePicker(Platform.OS === 'ios');
-    setSobrietyDate(currentDate);
-  };
-  
-  // Handle form submission
-  const handleSaveProfile = async () => {
-    try {
-      const updatedUser = {
-        ...user,
-        name,
-        phone,
-        email,
-        sobrietyDate: hasSobrietyDate ? sobrietyDate.toISOString() : null,
-        homeGroup,
-      };
-      
-      await updateUser(updatedUser);
-      
-      Alert.alert('Success', 'Your profile has been updated successfully.');
-    } catch (error) {
-      console.error('Error saving profile:', error);
-      Alert.alert('Error', 'Failed to update profile. Please try again.');
+  const handleSobrietyDateChange = (event, date) => {
+    setShowSobrietyDatePicker(Platform.OS === 'ios');
+    
+    if (date) {
+      setSobrietyDate(date);
+      updateUserProfile({
+        sobrietyDate: date.toISOString().split('T')[0]
+      });
     }
   };
   
-  // Handle dark mode toggle
-  const handleDarkModeToggle = async (value) => {
-    setDarkMode(value);
-    await settingsOperations.saveSetting('darkMode', value);
-  };
-  
-  // Handle reminder time change
-  const saveReminderTime = async (time) => {
-    setReminderTime(time);
-    await settingsOperations.saveSetting('reminderTime', time);
-  };
-  
-  // Handle data reset
-  const handleResetData = () => {
-    Alert.alert(
-      'Reset All Data',
-      'Are you sure you want to reset all data? This cannot be undone.',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        { 
-          text: 'Reset', 
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              // The database layer would handle clearing all tables
-              // This is a placeholder for actual implementation
-              Alert.alert('Data Reset', 'All data has been reset successfully.');
-            } catch (error) {
-              console.error('Error resetting data:', error);
-              Alert.alert('Error', 'Failed to reset data. Please try again.');
-            }
-          }
-        },
-      ]
-    );
-  };
-  
-  // Render sobriety info
-  const renderSobrietyInfo = () => {
-    if (!hasSobrietyDate || !user.sobrietyDate) return null;
-    
-    const days = calculateSobrietyDays(user.sobrietyDate);
-    const years = calculateSobrietyYears(user.sobrietyDate);
-    
-    return (
-      <View style={styles.sobrietyInfoContainer}>
-        <Text style={styles.sobrietyInfoTitle}>Your Sobriety</Text>
-        <View style={styles.sobrietyStatsContainer}>
-          <View style={styles.sobrietyStatBox}>
-            <Text style={styles.sobrietyStatsNumber}>{formatNumberWithCommas(days)}</Text>
-            <Text style={styles.sobrietyStatsLabel}>Days</Text>
-          </View>
-          <View style={styles.sobrietyStatBox}>
-            <Text style={styles.sobrietyStatsNumber}>{years.toFixed(2)}</Text>
-            <Text style={styles.sobrietyStatsLabel}>Years</Text>
-          </View>
-        </View>
-      </View>
-    );
+  // Handle profile update
+  const handleUpdateProfile = async () => {
+    try {
+      await updateUserProfile({
+        name,
+        email,
+        phone,
+        homeGroup
+      });
+      
+      setShowProfileEditor(false);
+    } catch (error) {
+      console.error('Error updating profile:', error);
+    }
   };
   
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.title}>Settings</Text>
-      </View>
-      
-      <ScrollView style={styles.scrollView}>
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Personal Information</Text>
-          
-          {renderSobrietyInfo()}
-          
-          <View style={styles.formGroup}>
-            <Text style={styles.inputLabel}>Name</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Your name"
-              value={name}
-              onChangeText={setName}
-            />
+    <SafeAreaView style={styles.safeArea}>
+      <ScrollView style={styles.container}>
+        <View style={styles.header}>
+          <Text style={styles.title}>Settings</Text>
+        </View>
+        
+        {/* Profile Section */}
+        <View style={styles.card}>
+          <View style={styles.cardHeader}>
+            <Icon name="user" size={18} color="#3498db" />
+            <Text style={styles.cardTitle}>Profile</Text>
           </View>
           
-          <View style={styles.formGroup}>
-            <Text style={styles.inputLabel}>Phone Number</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Your phone number"
-              value={phone}
-              onChangeText={setPhone}
-              keyboardType="phone-pad"
-            />
-          </View>
-          
-          <View style={styles.formGroup}>
-            <Text style={styles.inputLabel}>Email (Optional)</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Your email"
-              value={email}
-              onChangeText={setEmail}
-              keyboardType="email-address"
-              autoCapitalize="none"
-            />
-          </View>
-          
-          <View style={styles.formGroup}>
-            <Text style={styles.inputLabel}>Home Group (Optional)</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Your home group"
-              value={homeGroup}
-              onChangeText={setHomeGroup}
-            />
-          </View>
-          
-          <View style={styles.formGroup}>
-            <View style={styles.sobrietyDateHeader}>
-              <Text style={styles.inputLabel}>Sobriety Date</Text>
-              <Switch
-                value={hasSobrietyDate}
-                onValueChange={setHasSobrietyDate}
-                trackColor={{ false: '#d1d5db', true: '#93c5fd' }}
-                thumbColor={hasSobrietyDate ? '#3b82f6' : '#f3f4f6'}
-              />
-            </View>
-            
-            {hasSobrietyDate && (
-              <TouchableOpacity
-                style={styles.dateInput}
-                onPress={() => setShowDatePicker(true)}
-              >
-                <Text>{sobrietyDate.toLocaleDateString()}</Text>
-              </TouchableOpacity>
+          <View style={styles.profileInfo}>
+            <Text style={styles.profileName}>{user?.name || 'AA Member'}</Text>
+            {user?.email && (
+              <Text style={styles.profileDetail}>{user.email}</Text>
             )}
-            
-            {showDatePicker && (
-              <DateTimePicker
-                value={sobrietyDate}
-                mode="date"
-                display="default"
-                onChange={onDateChange}
-                maximumDate={new Date()} // Can't select future dates
-              />
+            {user?.phone && (
+              <Text style={styles.profileDetail}>{user.phone}</Text>
+            )}
+            {user?.homeGroup && (
+              <Text style={styles.profileDetail}>Home Group: {user.homeGroup}</Text>
             )}
           </View>
           
-          <TouchableOpacity
-            style={styles.saveButton}
-            onPress={handleSaveProfile}
+          <TouchableOpacity 
+            style={styles.button}
+            onPress={() => setShowProfileEditor(true)}
           >
-            <Text style={styles.saveButtonText}>Save Profile</Text>
+            <Text style={styles.buttonText}>Edit Profile</Text>
           </TouchableOpacity>
         </View>
         
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>App Settings</Text>
-          
-          <View style={styles.settingRow}>
-            <View style={styles.settingLabelContainer}>
-              <Text style={styles.settingLabel}>Daily Reminder Time</Text>
-              <Text style={styles.settingDescription}>Time to be reminded to log activities</Text>
-            </View>
-            <View style={styles.timePickerContainer}>
-              <TouchableOpacity onPress={() => {
-                // Simple time picker for demo purposes
-                const hours = ['06:00', '08:00', '12:00', '18:00', '20:00'];
-                const currentIndex = hours.indexOf(reminderTime);
-                const nextIndex = (currentIndex + 1) % hours.length;
-                saveReminderTime(hours[nextIndex]);
-              }}>
-                <Text style={styles.timePickerText}>{reminderTime}</Text>
-              </TouchableOpacity>
-            </View>
+        {/* Sobriety Date Section */}
+        <View style={styles.card}>
+          <View style={styles.cardHeader}>
+            <Icon name="calendar-check" size={18} color="#27ae60" />
+            <Text style={styles.cardTitle}>Sobriety Date</Text>
           </View>
           
-          <View style={styles.settingRow}>
-            <View style={styles.settingLabelContainer}>
-              <Text style={styles.settingLabel}>Dark Mode</Text>
-              <Text style={styles.settingDescription}>Use dark theme for the app</Text>
-            </View>
-            <Switch
-              value={darkMode}
-              onValueChange={handleDarkModeToggle}
-              trackColor={{ false: '#d1d5db', true: '#93c5fd' }}
-              thumbColor={darkMode ? '#3b82f6' : '#f3f4f6'}
+          <View style={styles.sobrietyInfo}>
+            <Text style={styles.sobrietyDate}>
+              {user?.sobrietyDate 
+                ? new Date(user.sobrietyDate).toLocaleDateString() 
+                : 'Not set'}
+            </Text>
+            
+            {user?.sobrietyDate && (
+              <View style={styles.sobrietyCounter}>
+                <Text style={styles.sobrietyDays}>{sobrietyDays} days</Text>
+                <Text style={styles.sobrietyYears}>({sobrietyYears} years)</Text>
+              </View>
+            )}
+          </View>
+          
+          <TouchableOpacity 
+            style={styles.button}
+            onPress={() => setShowSobrietyDatePicker(true)}
+          >
+            <Text style={styles.buttonText}>Change Sobriety Date</Text>
+          </TouchableOpacity>
+          
+          {showSobrietyDatePicker && (
+            <DateTimePicker
+              value={sobrietyDate}
+              mode="date"
+              display="default"
+              onChange={handleSobrietyDateChange}
+              maximumDate={new Date()}
             />
-          </View>
-        </View>
-        
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Calendar Reminders</Text>
-          
-          {loadingReminders ? (
-            <View style={styles.loadingContainer}>
-              <ActivityIndicator size="small" color="#3b82f6" />
-              <Text style={styles.loadingText}>Loading reminders...</Text>
-            </View>
-          ) : calendarReminders.length === 0 ? (
-            <View style={styles.emptyRemindersContainer}>
-              <Ionicons name="calendar-outline" size={48} color="#d1d5db" />
-              <Text style={styles.emptyRemindersText}>
-                You don't have any meeting reminders set up.
-              </Text>
-              <Text style={styles.reminderHelpText}>
-                When browsing meetings, tap "Add to Calendar" to set reminders.
-              </Text>
-            </View>
-          ) : (
-            <>
-              <Text style={styles.reminderHelpText}>
-                Your scheduled meeting reminders. Tap the trash icon to remove a reminder.
-              </Text>
-              
-              {calendarReminders.map((reminder) => (
-                <View key={reminder.id} style={styles.reminderItem}>
-                  <View style={styles.reminderInfo}>
-                    <Text style={styles.reminderTitle}>{reminder.meetingName}</Text>
-                    <View style={styles.reminderDetails}>
-                      <View style={styles.reminderDetail}>
-                        <Ionicons name="calendar-outline" size={14} color="#6b7280" />
-                        <Text style={styles.reminderDetailText}>
-                          {reminder.meetingDay.charAt(0).toUpperCase() + reminder.meetingDay.slice(1)}
-                        </Text>
-                      </View>
-                      <View style={styles.reminderDetail}>
-                        <Ionicons name="time-outline" size={14} color="#6b7280" />
-                        <Text style={styles.reminderDetailText}>{reminder.meetingTime}</Text>
-                      </View>
-                      <View style={styles.reminderDetail}>
-                        <Ionicons name="notifications-outline" size={14} color="#6b7280" />
-                        <Text style={styles.reminderDetailText}>
-                          {reminder.reminderMinutes} min before
-                        </Text>
-                      </View>
-                    </View>
-                    {reminder.location ? (
-                      <Text style={styles.reminderLocation}>{reminder.location}</Text>
-                    ) : null}
-                    {reminder.isRecurring && (
-                      <View style={styles.recurringBadge}>
-                        <Text style={styles.recurringBadgeText}>Weekly</Text>
-                      </View>
-                    )}
-                  </View>
-                  <TouchableOpacity
-                    style={styles.deleteButton}
-                    onPress={() => {
-                      Alert.alert(
-                        'Delete Reminder',
-                        'Are you sure you want to delete this meeting reminder?',
-                        [
-                          { text: 'Cancel', style: 'cancel' },
-                          { 
-                            text: 'Delete', 
-                            style: 'destructive',
-                            onPress: () => deleteCalendarReminder(reminder.id)
-                          }
-                        ]
-                      );
-                    }}
-                  >
-                    <Ionicons name="trash-outline" size={24} color="#ef4444" />
-                  </TouchableOpacity>
-                </View>
-              ))}
-              
-              <TouchableOpacity
-                style={styles.refreshButton}
-                onPress={loadCalendarReminders}
-              >
-                <Ionicons name="refresh-outline" size={16} color="#3b82f6" />
-                <Text style={styles.refreshButtonText}>Refresh Reminders</Text>
-              </TouchableOpacity>
-            </>
           )}
         </View>
         
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Data Management</Text>
+        {/* Notifications Section */}
+        <View style={styles.card}>
+          <View style={styles.cardHeader}>
+            <Icon name="bell" size={18} color="#f39c12" />
+            <Text style={styles.cardTitle}>Notifications</Text>
+          </View>
           
-          <TouchableOpacity
-            style={styles.dangerButton}
-            onPress={handleResetData}
-          >
-            <Text style={styles.dangerButtonText}>Reset All Data</Text>
-          </TouchableOpacity>
-          <Text style={styles.dangerHelpText}>
-            This will delete all your activities, preferences, and personal information.
-            This action cannot be undone.
+          <View style={styles.settingRow}>
+            <View style={styles.settingInfo}>
+              <Text style={styles.settingLabel}>Enable Notifications</Text>
+              <Text style={styles.settingDescription}>
+                Receive reminders for meetings and recovery activities
+              </Text>
+            </View>
+            <Switch
+              value={notificationsEnabled}
+              onValueChange={handleToggleNotifications}
+              trackColor={{ false: '#bdc3c7', true: '#3498db' }}
+              thumbColor={notificationsEnabled ? '#fff' : '#fff'}
+            />
+          </View>
+          
+          <View style={styles.reminderOptions}>
+            <Text style={styles.reminderTitle}>Meeting Reminder Time</Text>
+            
+            <View style={styles.reminderButtons}>
+              <TouchableOpacity 
+                style={[
+                  styles.reminderButton,
+                  reminderTime === 15 && styles.reminderButtonActive
+                ]}
+                onPress={() => handleReminderTimeChange(15)}
+              >
+                <Text 
+                  style={[
+                    styles.reminderButtonText,
+                    reminderTime === 15 && styles.reminderButtonTextActive
+                  ]}
+                >
+                  15 min
+                </Text>
+              </TouchableOpacity>
+              
+              <TouchableOpacity 
+                style={[
+                  styles.reminderButton,
+                  reminderTime === 30 && styles.reminderButtonActive
+                ]}
+                onPress={() => handleReminderTimeChange(30)}
+              >
+                <Text 
+                  style={[
+                    styles.reminderButtonText,
+                    reminderTime === 30 && styles.reminderButtonTextActive
+                  ]}
+                >
+                  30 min
+                </Text>
+              </TouchableOpacity>
+              
+              <TouchableOpacity 
+                style={[
+                  styles.reminderButton,
+                  reminderTime === 60 && styles.reminderButtonActive
+                ]}
+                onPress={() => handleReminderTimeChange(60)}
+              >
+                <Text 
+                  style={[
+                    styles.reminderButtonText,
+                    reminderTime === 60 && styles.reminderButtonTextActive
+                  ]}
+                >
+                  1 hour
+                </Text>
+              </TouchableOpacity>
+              
+              <TouchableOpacity 
+                style={[
+                  styles.reminderButton,
+                  reminderTime === 120 && styles.reminderButtonActive
+                ]}
+                onPress={() => handleReminderTimeChange(120)}
+              >
+                <Text 
+                  style={[
+                    styles.reminderButtonText,
+                    reminderTime === 120 && styles.reminderButtonTextActive
+                  ]}
+                >
+                  2 hours
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+        
+        {/* Privacy Section */}
+        <View style={styles.card}>
+          <View style={styles.cardHeader}>
+            <Icon name="user-shield" size={18} color="#9b59b6" />
+            <Text style={styles.cardTitle}>Privacy</Text>
+          </View>
+          
+          <View style={styles.settingRow}>
+            <View style={styles.settingInfo}>
+              <Text style={styles.settingLabel}>Enhanced Privacy Mode</Text>
+              <Text style={styles.settingDescription}>
+                Limit the information shared with nearby AA members
+              </Text>
+            </View>
+            <Switch
+              value={privacyEnabled}
+              onValueChange={handleTogglePrivacy}
+              trackColor={{ false: '#bdc3c7', true: '#3498db' }}
+              thumbColor={privacyEnabled ? '#fff' : '#fff'}
+            />
+          </View>
+        </View>
+        
+        {/* About Section */}
+        <View style={styles.card}>
+          <View style={styles.cardHeader}>
+            <Icon name="info-circle" size={18} color="#3498db" />
+            <Text style={styles.cardTitle}>About</Text>
+          </View>
+          
+          <Text style={styles.aboutText}>
+            AA Recovery Tracker is designed to help you track your recovery journey
+            and maintain your spiritual fitness. All of your data is stored locally
+            on your device to ensure your privacy.
+          </Text>
+          
+          <Text style={styles.versionText}>
+            Version 1.0.0
           </Text>
         </View>
         
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>About</Text>
-          
-          <View style={styles.aboutContainer}>
-            <Text style={styles.appName}>AA Recovery Tracker</Text>
-            <Text style={styles.appVersion}>Version 1.0.0</Text>
-            <Text style={styles.appDescription}>
-              This app helps you track your recovery activities and calculate your spiritual fitness.
-              All your data is stored locally on your device for privacy.
-            </Text>
+        {/* Profile Editor Modal */}
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={showProfileEditor}
+          onRequestClose={() => setShowProfileEditor(false)}
+        >
+          <View style={styles.modalOverlay}>
+            <View style={styles.modalContainer}>
+              <View style={styles.modalHeader}>
+                <Text style={styles.modalTitle}>Edit Profile</Text>
+                <TouchableOpacity 
+                  style={styles.closeButton}
+                  onPress={() => setShowProfileEditor(false)}
+                >
+                  <Icon name="times" size={20} color="#7f8c8d" />
+                </TouchableOpacity>
+              </View>
+              
+              <ScrollView style={styles.modalContent}>
+                <Text style={styles.inputLabel}>Name</Text>
+                <TextInput
+                  style={styles.input}
+                  value={name}
+                  onChangeText={setName}
+                  placeholder="Your name"
+                />
+                
+                <Text style={styles.inputLabel}>Email</Text>
+                <TextInput
+                  style={styles.input}
+                  value={email}
+                  onChangeText={setEmail}
+                  placeholder="Your email"
+                  keyboardType="email-address"
+                />
+                
+                <Text style={styles.inputLabel}>Phone</Text>
+                <TextInput
+                  style={styles.input}
+                  value={phone}
+                  onChangeText={setPhone}
+                  placeholder="Your phone number"
+                  keyboardType="phone-pad"
+                />
+                
+                <Text style={styles.inputLabel}>Home Group</Text>
+                <TextInput
+                  style={styles.input}
+                  value={homeGroup}
+                  onChangeText={setHomeGroup}
+                  placeholder="Your home group"
+                />
+                
+                <TouchableOpacity 
+                  style={styles.saveButton}
+                  onPress={handleUpdateProfile}
+                >
+                  <Text style={styles.saveButtonText}>Save Profile</Text>
+                </TouchableOpacity>
+              </ScrollView>
+            </View>
           </View>
-        </View>
+        </Modal>
       </ScrollView>
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#f8f9fa'
+  },
   container: {
     flex: 1,
-    backgroundColor: '#f3f4f6',
+    padding: 16
   },
   header: {
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    backgroundColor: '#fff',
-    borderBottomWidth: 1,
-    borderBottomColor: '#e5e7eb',
+    marginBottom: 20
   },
   title: {
-    fontSize: 18,
+    fontSize: 24,
     fontWeight: 'bold',
-    color: '#1f2937',
+    color: '#2c3e50'
   },
-  scrollView: {
-    flex: 1,
-  },
-  section: {
+  card: {
     backgroundColor: '#fff',
     borderRadius: 12,
-    padding: 16,
-    margin: 16,
-    marginBottom: 0,
+    padding: 20,
+    marginBottom: 16,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 2,
+    shadowRadius: 4,
+    elevation: 2
   },
-  sectionTitle: {
+  cardHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 12
+  },
+  cardTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#2c3e50',
+    marginLeft: 8
+  },
+  profileInfo: {
+    marginBottom: 16
+  },
+  profileName: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#1f2937',
-    marginBottom: 16,
+    color: '#2c3e50',
+    marginBottom: 4
   },
-  formGroup: {
-    marginBottom: 16,
+  profileDetail: {
+    fontSize: 14,
+    color: '#7f8c8d',
+    marginBottom: 2
   },
-  inputLabel: {
-    fontSize: 16,
-    fontWeight: '500',
-    color: '#1f2937',
-    marginBottom: 8,
-  },
-  input: {
-    backgroundColor: '#f9fafb',
-    borderWidth: 1,
-    borderColor: '#e5e7eb',
-    borderRadius: 8,
-    padding: 12,
-    fontSize: 16,
-  },
-  sobrietyDateHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+  sobrietyInfo: {
     alignItems: 'center',
-    marginBottom: 8,
+    marginBottom: 16
   },
-  dateInput: {
-    backgroundColor: '#f9fafb',
-    borderWidth: 1,
-    borderColor: '#e5e7eb',
-    borderRadius: 8,
-    padding: 12,
-    fontSize: 16,
-  },
-  saveButton: {
-    backgroundColor: '#3b82f6',
-    borderRadius: 8,
-    paddingVertical: 12,
-    alignItems: 'center',
-    marginTop: 8,
-  },
-  saveButtonText: {
-    fontSize: 16,
+  sobrietyDate: {
+    fontSize: 18,
     fontWeight: 'bold',
-    color: '#fff',
+    color: '#27ae60',
+    marginBottom: 8
+  },
+  sobrietyCounter: {
+    flexDirection: 'row',
+    alignItems: 'baseline'
+  },
+  sobrietyDays: {
+    fontSize: 16,
+    color: '#2c3e50',
+    fontWeight: '500'
+  },
+  sobrietyYears: {
+    fontSize: 14,
+    color: '#7f8c8d',
+    marginLeft: 6
+  },
+  button: {
+    backgroundColor: '#f8f9fa',
+    padding: 12,
+    borderRadius: 8,
+    alignItems: 'center'
+  },
+  buttonText: {
+    color: '#2c3e50',
+    fontWeight: '600'
   },
   settingRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#f3f4f6',
+    marginBottom: 16
   },
-  settingLabelContainer: {
+  settingInfo: {
     flex: 1,
+    paddingRight: 16
   },
   settingLabel: {
     fontSize: 16,
     fontWeight: '500',
-    color: '#1f2937',
+    color: '#2c3e50',
+    marginBottom: 2
   },
   settingDescription: {
     fontSize: 14,
-    color: '#6b7280',
+    color: '#7f8c8d'
   },
-  timePickerContainer: {
-    backgroundColor: '#f3f4f6',
-    borderRadius: 8,
-    padding: 8,
-  },
-  timePickerText: {
-    fontSize: 16,
-    color: '#1f2937',
-  },
-  dangerButton: {
-    backgroundColor: '#fee2e2',
-    borderWidth: 1,
-    borderColor: '#ef4444',
-    borderRadius: 8,
-    paddingVertical: 12,
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-  dangerButtonText: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#ef4444',
-  },
-  dangerHelpText: {
-    fontSize: 14,
-    color: '#6b7280',
-    fontStyle: 'italic',
-  },
-  aboutContainer: {
-    alignItems: 'center',
-    paddingVertical: 8,
-  },
-  appName: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#1f2937',
-    marginBottom: 4,
-  },
-  appVersion: {
-    fontSize: 14,
-    color: '#6b7280',
-    marginBottom: 12,
-  },
-  appDescription: {
-    fontSize: 14,
-    color: '#4b5563',
-    textAlign: 'center',
-  },
-  sobrietyInfoContainer: {
-    backgroundColor: '#ebf5ff',
-    borderRadius: 8,
-    padding: 16,
-    marginBottom: 16,
-  },
-  sobrietyInfoTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#1f2937',
-    marginBottom: 8,
-  },
-  sobrietyStatsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-  },
-  sobrietyStatBox: {
-    alignItems: 'center',
-    minWidth: 80,
-  },
-  sobrietyStatsNumber: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#3b82f6',
-  },
-  sobrietyStatsLabel: {
-    fontSize: 14,
-    color: '#6b7280',
-  },
-  
-  // Calendar reminders styles
-  loadingContainer: {
-    alignItems: 'center',
-    padding: 16,
-  },
-  loadingText: {
-    marginTop: 8,
-    fontSize: 14,
-    color: '#6b7280',
-  },
-  emptyRemindersContainer: {
-    alignItems: 'center',
-    padding: 20,
-  },
-  emptyRemindersText: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#1f2937',
-    marginTop: 16,
-    marginBottom: 8,
-    textAlign: 'center',
-  },
-  reminderHelpText: {
-    fontSize: 14,
-    color: '#6b7280',
-    marginBottom: 16,
-    fontStyle: 'italic',
-    textAlign: 'center',
-  },
-  reminderItem: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    backgroundColor: '#f9fafb',
-    borderRadius: 8,
-    padding: 12,
-    marginBottom: 12,
-    borderLeftWidth: 4,
-    borderLeftColor: '#3b82f6',
-  },
-  reminderInfo: {
-    flex: 1,
+  reminderOptions: {
+    marginTop: 8
   },
   reminderTitle: {
     fontSize: 16,
+    fontWeight: '500',
+    color: '#2c3e50',
+    marginBottom: 12
+  },
+  reminderButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between'
+  },
+  reminderButton: {
+    flex: 1,
+    backgroundColor: '#f8f9fa',
+    padding: 12,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginHorizontal: 4
+  },
+  reminderButtonActive: {
+    backgroundColor: '#3498db'
+  },
+  reminderButtonText: {
+    color: '#7f8c8d',
+    fontSize: 13
+  },
+  reminderButtonTextActive: {
+    color: '#fff',
+    fontWeight: '500'
+  },
+  aboutText: {
+    fontSize: 14,
+    color: '#2c3e50',
+    lineHeight: 20,
+    marginBottom: 16
+  },
+  versionText: {
+    fontSize: 14,
+    color: '#7f8c8d',
+    textAlign: 'center'
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'flex-end'
+  },
+  modalContainer: {
+    backgroundColor: '#fff',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    maxHeight: '90%'
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ecf0f1'
+  },
+  modalTitle: {
+    fontSize: 18,
     fontWeight: 'bold',
-    color: '#1f2937',
-    marginBottom: 8,
+    color: '#2c3e50'
   },
-  reminderDetails: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    marginBottom: 8,
+  closeButton: {
+    padding: 4
   },
-  reminderDetail: {
-    flexDirection: 'row',
+  modalContent: {
+    padding: 16
+  },
+  inputLabel: {
+    fontSize: 16,
+    fontWeight: '500',
+    color: '#2c3e50',
+    marginBottom: 8
+  },
+  input: {
+    backgroundColor: '#f8f9fa',
+    padding: 12,
+    borderRadius: 8,
+    marginBottom: 16
+  },
+  saveButton: {
+    backgroundColor: '#27ae60',
+    padding: 16,
+    borderRadius: 8,
     alignItems: 'center',
-    marginRight: 12,
-    marginBottom: 4,
+    marginTop: 16,
+    marginBottom: 32
   },
-  reminderDetailText: {
-    fontSize: 14,
-    color: '#6b7280',
-    marginLeft: 4,
-  },
-  reminderLocation: {
-    fontSize: 14,
-    color: '#4b5563',
-  },
-  recurringBadge: {
-    backgroundColor: '#ebf5ff',
-    borderRadius: 4,
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-    alignSelf: 'flex-start',
-    marginTop: 8,
-  },
-  recurringBadgeText: {
-    fontSize: 12,
-    color: '#3b82f6',
-  },
-  deleteButton: {
-    padding: 8,
-    justifyContent: 'center',
-  },
-  refreshButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 8,
-    paddingVertical: 8,
-  },
-  refreshButtonText: {
-    marginLeft: 4,
-    fontSize: 14,
-    color: '#3b82f6',
-  },
+  saveButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 16
+  }
 });
 
 export default SettingsScreen;

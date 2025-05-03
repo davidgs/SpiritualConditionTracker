@@ -1,394 +1,425 @@
-import React, { useState } from 'react';
-import { 
-  View, 
-  Text, 
-  StyleSheet, 
-  ScrollView, 
-  TouchableOpacity, 
-  TextInput,
+import React, { useState, useEffect } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  FlatList,
+  TouchableOpacity,
+  SafeAreaView,
   Modal,
-  Platform
+  TextInput,
+  ScrollView
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from 'react-native-vector-icons';
-import DateTimePicker from '@react-native-community/datetimepicker';
-import { useActivities } from '../contexts/ActivitiesContext';
+import Icon from 'react-native-vector-icons/FontAwesome5';
+
+// Contexts
+import { useActivities, ACTIVITY_TYPES } from '../contexts/ActivitiesContext';
+
+// Utils
+import { formatDate } from '../utils/calculations';
 
 const ActivityLogScreen = () => {
-  const { activities, loading, addActivity, deleteActivity } = useActivities();
-  const [isAddModalVisible, setIsAddModalVisible] = useState(false);
-  const [showDatePicker, setShowDatePicker] = useState(false);
+  const { 
+    activities, 
+    isLoading, 
+    addActivity, 
+    deleteActivity,
+    loadActivities
+  } = useActivities();
   
-  // New activity form state
-  const [activityType, setActivityType] = useState('meeting');
-  const [activityName, setActivityName] = useState('');
-  const [activityDate, setActivityDate] = useState(new Date());
-  const [activityDuration, setActivityDuration] = useState('60');
-  const [activityNotes, setActivityNotes] = useState('');
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedType, setSelectedType] = useState('meeting');
+  const [duration, setDuration] = useState('60');
+  const [notes, setNotes] = useState('');
+  const [filterType, setFilterType] = useState(null);
   
-  // List of activity types
-  const activityTypes = [
-    { id: 'meeting', label: 'Meeting', icon: 'people' },
-    { id: 'meditation', label: 'Meditation', icon: 'leaf' },
-    { id: 'reading', label: 'Reading', icon: 'book' },
-    { id: 'service', label: 'Service', icon: 'hand-left' },
-    { id: 'stepwork', label: 'Step Work', icon: 'list' },
-    { id: 'sponsorship', label: 'Sponsorship', icon: 'person' },
-  ];
+  // Load activities on mount
+  useEffect(() => {
+    loadActivities();
+  }, []);
   
-  // Handle form submission
-  const handleSubmit = async () => {
-    const newActivity = {
-      type: activityType,
-      name: activityName,
-      date: activityDate.toISOString(),
-      duration: parseInt(activityDuration, 10) || 0,
-      notes: activityNotes,
+  // Filter activities by selected type
+  const filteredActivities = filterType 
+    ? activities.filter(activity => activity.type === filterType)
+    : activities;
+  
+  // Format activity data for display
+  const renderActivity = ({ item }) => {
+    const activityType = ACTIVITY_TYPES[item.type] || {
+      label: 'Activity',
+      icon: 'check',
+      color: '#3498db'
     };
     
-    await addActivity(newActivity);
-    resetForm();
-    setIsAddModalVisible(false);
-  };
-  
-  // Reset form fields
-  const resetForm = () => {
-    setActivityType('meeting');
-    setActivityName('');
-    setActivityDate(new Date());
-    setActivityDuration('60');
-    setActivityNotes('');
-  };
-  
-  // Handle date change
-  const onDateChange = (event, selectedDate) => {
-    const currentDate = selectedDate || activityDate;
-    setShowDatePicker(Platform.OS === 'ios');
-    setActivityDate(currentDate);
-  };
-  
-  // Render activity item
-  const renderActivityItem = (activity) => {
     return (
-      <View key={activity.id} style={styles.activityItem}>
-        <View style={styles.activityIconContainer}>
-          <Ionicons 
-            name={getActivityIcon(activity.type)} 
-            size={24} 
-            color="#3b82f6" 
+      <View style={styles.activityItem}>
+        <View style={styles.activityIcon}>
+          <Icon 
+            name={activityType.icon} 
+            size={20} 
+            color="#fff" 
+            style={{ padding: 10 }}
           />
         </View>
-        <View style={styles.activityContent}>
-          <Text style={styles.activityName}>{activity.name}</Text>
-          <Text style={styles.activityMeta}>
-            {new Date(activity.date).toLocaleDateString()} • {activity.duration} min
-          </Text>
-          {activity.notes ? (
-            <Text style={styles.activityNotes} numberOfLines={2}>
-              {activity.notes}
+        <View style={styles.activityInfo}>
+          <View style={styles.activityHeader}>
+            <Text style={styles.activityType}>{activityType.label}</Text>
+            <Text style={styles.activityDate}>
+              {formatDate(item.date, { format: 'medium', includeTime: true })}
             </Text>
-          ) : null}
+          </View>
+          {item.duration > 0 && (
+            <Text style={styles.duration}>{item.duration} minutes</Text>
+          )}
+          {item.notes && (
+            <Text style={styles.notes}>{item.notes}</Text>
+          )}
         </View>
         <TouchableOpacity 
           style={styles.deleteButton}
-          onPress={() => deleteActivity(activity.id)}
+          onPress={() => deleteActivity(item.id)}
         >
-          <Ionicons name="trash-outline" size={20} color="#ef4444" />
+          <Icon name="trash" size={16} color="#e74c3c" />
         </TouchableOpacity>
       </View>
     );
   };
   
-  // Helper function to get icon for activity type
-  const getActivityIcon = (type) => {
-    const activityType = activityTypes.find(t => t.id === type);
-    return activityType ? activityType.icon : 'checkmark-circle';
-  };
-  
-  // Render add activity modal
-  const renderAddActivityModal = () => {
-    return (
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={isAddModalVisible}
-        onRequestClose={() => setIsAddModalVisible(false)}
+  // Type selection button for modal
+  const TypeButton = ({ type, label, icon }) => (
+    <TouchableOpacity
+      style={[
+        styles.typeButton,
+        selectedType === type && styles.typeButtonSelected
+      ]}
+      onPress={() => setSelectedType(type)}
+    >
+      <Icon 
+        name={icon} 
+        size={20} 
+        color={selectedType === type ? '#fff' : '#3498db'} 
+      />
+      <Text 
+        style={[
+          styles.typeButtonText,
+          selectedType === type && styles.typeButtonTextSelected
+        ]}
       >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>Add Activity</Text>
-              <TouchableOpacity onPress={() => setIsAddModalVisible(false)}>
-                <Ionicons name="close" size={24} color="#6b7280" />
-              </TouchableOpacity>
-            </View>
-            
-            <ScrollView style={styles.modalBody}>
-              <Text style={styles.inputLabel}>Activity Type</Text>
-              <View style={styles.typeButtonsContainer}>
-                {activityTypes.map((type) => (
-                  <TouchableOpacity
-                    key={type.id}
-                    style={[
-                      styles.typeButton,
-                      activityType === type.id && styles.typeButtonActive
-                    ]}
-                    onPress={() => setActivityType(type.id)}
-                  >
-                    <Ionicons 
-                      name={type.icon} 
-                      size={20} 
-                      color={activityType === type.id ? '#fff' : '#3b82f6'} 
-                    />
-                    <Text 
-                      style={[
-                        styles.typeButtonText,
-                        activityType === type.id && styles.typeButtonTextActive
-                      ]}
-                    >
-                      {type.label}
-                    </Text>
-                  </TouchableOpacity>
-                ))}
-              </View>
-              
-              <Text style={styles.inputLabel}>Activity Name</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Name your activity"
-                value={activityName}
-                onChangeText={setActivityName}
-              />
-              
-              <Text style={styles.inputLabel}>Date</Text>
-              <TouchableOpacity 
-                style={styles.dateInput}
-                onPress={() => setShowDatePicker(true)}
-              >
-                <Text>
-                  {activityDate.toLocaleDateString()}
-                </Text>
-              </TouchableOpacity>
-              
-              {showDatePicker && (
-                <DateTimePicker
-                  value={activityDate}
-                  mode="date"
-                  display="default"
-                  onChange={onDateChange}
-                />
-              )}
-              
-              <Text style={styles.inputLabel}>Duration (minutes)</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Duration in minutes"
-                keyboardType="numeric"
-                value={activityDuration}
-                onChangeText={setActivityDuration}
-              />
-              
-              <Text style={styles.inputLabel}>Notes (optional)</Text>
-              <TextInput
-                style={[styles.input, styles.textArea]}
-                placeholder="Add notes about your activity"
-                multiline
-                numberOfLines={4}
-                value={activityNotes}
-                onChangeText={setActivityNotes}
-              />
-            </ScrollView>
-            
-            <View style={styles.modalFooter}>
-              <TouchableOpacity 
-                style={styles.cancelButton}
-                onPress={() => setIsAddModalVisible(false)}
-              >
-                <Text style={styles.cancelButtonText}>Cancel</Text>
-              </TouchableOpacity>
-              <TouchableOpacity 
-                style={styles.saveButton}
-                onPress={handleSubmit}
-              >
-                <Text style={styles.saveButtonText}>Save Activity</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-      </Modal>
-    );
+        {label}
+      </Text>
+    </TouchableOpacity>
+  );
+  
+  // Type filter button for list
+  const FilterButton = ({ type, label, icon }) => (
+    <TouchableOpacity
+      style={[
+        styles.filterButton,
+        filterType === type && styles.filterButtonSelected
+      ]}
+      onPress={() => setFilterType(filterType === type ? null : type)}
+    >
+      <Icon 
+        name={icon} 
+        size={16} 
+        color={filterType === type ? '#fff' : '#7f8c8d'} 
+      />
+      <Text 
+        style={[
+          styles.filterButtonText,
+          filterType === type && styles.filterButtonTextSelected
+        ]}
+      >
+        {label}
+      </Text>
+    </TouchableOpacity>
+  );
+  
+  // Handle saving a new activity
+  const handleSaveActivity = () => {
+    const activityData = {
+      type: selectedType,
+      date: new Date().toISOString(),
+      duration: parseInt(duration) || 0,
+      notes: notes
+    };
+    
+    addActivity(activityData);
+    
+    // Reset form
+    setSelectedType('meeting');
+    setDuration('60');
+    setNotes('');
+    setModalVisible(false);
   };
   
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.title}>Activity Log</Text>
-        <TouchableOpacity
-          style={styles.addButton}
-          onPress={() => setIsAddModalVisible(true)}
+    <SafeAreaView style={styles.safeArea}>
+      <View style={styles.container}>
+        {/* Header */}
+        <View style={styles.header}>
+          <Text style={styles.title}>Recovery Activities</Text>
+          <TouchableOpacity 
+            style={styles.addButton}
+            onPress={() => setModalVisible(true)}
+          >
+            <Icon name="plus" size={16} color="#fff" />
+            <Text style={styles.addButtonText}>Add Activity</Text>
+          </TouchableOpacity>
+        </View>
+        
+        {/* Filters */}
+        <ScrollView 
+          horizontal 
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.filtersContainer}
         >
-          <Ionicons name="add" size={24} color="#fff" />
-        </TouchableOpacity>
-      </View>
-      
-      <ScrollView style={styles.scrollView}>
-        {loading ? (
-          <View style={styles.loadingContainer}>
-            <Text style={styles.loadingText}>Loading activities...</Text>
+          {Object.entries(ACTIVITY_TYPES).map(([type, details]) => (
+            <FilterButton 
+              key={type}
+              type={type}
+              label={details.label}
+              icon={details.icon}
+            />
+          ))}
+        </ScrollView>
+        
+        {/* Activities List */}
+        {isLoading ? (
+          <View style={styles.centered}>
+            <Text>Loading activities...</Text>
           </View>
-        ) : activities.length === 0 ? (
-          <View style={styles.emptyContainer}>
-            <Ionicons name="calendar-outline" size={64} color="#d1d5db" />
-            <Text style={styles.emptyTitle}>No Activities Yet</Text>
-            <Text style={styles.emptySubtitle}>
-              Log your recovery activities to build your spiritual fitness.
+        ) : filteredActivities.length === 0 ? (
+          <View style={styles.centered}>
+            <Icon name="list-alt" size={50} color="#bdc3c7" />
+            <Text style={styles.emptyText}>
+              {filterType 
+                ? `No ${ACTIVITY_TYPES[filterType]?.label || ''} activities found`
+                : 'No activities logged yet'}
             </Text>
-            <TouchableOpacity
+            <TouchableOpacity 
               style={styles.emptyButton}
-              onPress={() => setIsAddModalVisible(true)}
+              onPress={() => setModalVisible(true)}
             >
-              <Text style={styles.emptyButtonText}>Add Your First Activity</Text>
+              <Text style={styles.emptyButtonText}>Log Your First Activity</Text>
             </TouchableOpacity>
           </View>
         ) : (
-          <View style={styles.activitiesList}>
-            {activities.map(activity => renderActivityItem(activity))}
-          </View>
+          <FlatList
+            data={filteredActivities}
+            renderItem={renderActivity}
+            keyExtractor={item => item.id}
+            contentContainerStyle={styles.list}
+          />
         )}
-      </ScrollView>
-      
-      {renderAddActivityModal()}
+        
+        {/* Add Activity Modal */}
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={modalVisible}
+          onRequestClose={() => setModalVisible(false)}
+        >
+          <View style={styles.modalOverlay}>
+            <View style={styles.modalContainer}>
+              <View style={styles.modalHeader}>
+                <Text style={styles.modalTitle}>Log Recovery Activity</Text>
+                <TouchableOpacity 
+                  style={styles.closeButton}
+                  onPress={() => setModalVisible(false)}
+                >
+                  <Icon name="times" size={20} color="#7f8c8d" />
+                </TouchableOpacity>
+              </View>
+              
+              <ScrollView style={styles.modalContent}>
+                <Text style={styles.inputLabel}>Activity Type</Text>
+                <View style={styles.typeButtons}>
+                  {Object.entries(ACTIVITY_TYPES).map(([type, details]) => (
+                    <TypeButton 
+                      key={type}
+                      type={type}
+                      label={details.label}
+                      icon={details.icon}
+                    />
+                  ))}
+                </View>
+                
+                <Text style={styles.inputLabel}>Duration (minutes)</Text>
+                <TextInput
+                  style={styles.input}
+                  value={duration}
+                  onChangeText={setDuration}
+                  keyboardType="number-pad"
+                  placeholder="Enter duration in minutes"
+                />
+                
+                <Text style={styles.inputLabel}>Notes</Text>
+                <TextInput
+                  style={[styles.input, styles.notesInput]}
+                  value={notes}
+                  onChangeText={setNotes}
+                  placeholder="Add any notes about this activity"
+                  multiline
+                />
+                
+                <TouchableOpacity 
+                  style={styles.saveButton}
+                  onPress={handleSaveActivity}
+                >
+                  <Text style={styles.saveButtonText}>Save Activity</Text>
+                </TouchableOpacity>
+              </ScrollView>
+            </View>
+          </View>
+        </Modal>
+      </View>
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#f8f9fa'
+  },
   container: {
     flex: 1,
-    backgroundColor: '#f3f4f6',
+    padding: 16
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    backgroundColor: '#fff',
-    borderBottomWidth: 1,
-    borderBottomColor: '#e5e7eb',
+    marginBottom: 16
   },
   title: {
-    fontSize: 18,
+    fontSize: 24,
     fontWeight: 'bold',
-    color: '#1f2937',
+    color: '#2c3e50'
   },
   addButton: {
-    backgroundColor: '#3b82f6',
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    justifyContent: 'center',
+    flexDirection: 'row',
     alignItems: 'center',
+    backgroundColor: '#3498db',
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 8
   },
-  scrollView: {
-    flex: 1,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
-  },
-  loadingText: {
-    fontSize: 16,
-    color: '#6b7280',
-  },
-  emptyContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
-    marginTop: 60,
-  },
-  emptyTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#1f2937',
-    marginTop: 16,
-    marginBottom: 8,
-  },
-  emptySubtitle: {
-    fontSize: 16,
-    color: '#6b7280',
-    textAlign: 'center',
-    marginBottom: 24,
-  },
-  emptyButton: {
-    backgroundColor: '#3b82f6',
-    paddingHorizontal: 20,
-    paddingVertical: 12,
-    borderRadius: 8,
-  },
-  emptyButtonText: {
+  addButtonText: {
     color: '#fff',
-    fontWeight: 'bold',
-    fontSize: 16,
+    fontWeight: '500',
+    marginLeft: 6
   },
-  activitiesList: {
-    padding: 16,
+  filtersContainer: {
+    paddingBottom: 12
+  },
+  filterButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#ecf0f1',
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: 16,
+    marginRight: 8
+  },
+  filterButtonSelected: {
+    backgroundColor: '#3498db'
+  },
+  filterButtonText: {
+    color: '#7f8c8d',
+    fontSize: 12,
+    marginLeft: 4
+  },
+  filterButtonTextSelected: {
+    color: '#fff'
+  },
+  list: {
+    paddingBottom: 20
   },
   activityItem: {
     flexDirection: 'row',
     backgroundColor: '#fff',
     borderRadius: 12,
-    padding: 16,
     marginBottom: 12,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
+    shadowOpacity: 0.05,
     shadowRadius: 2,
-    elevation: 2,
+    elevation: 1
   },
-  activityIconContainer: {
+  activityIcon: {
     width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: '#ebf5ff',
-    justifyContent: 'center',
+    backgroundColor: '#3498db',
+    borderTopLeftRadius: 12,
+    borderBottomLeftRadius: 12,
     alignItems: 'center',
-    marginRight: 12,
+    justifyContent: 'center'
   },
-  activityContent: {
+  activityInfo: {
     flex: 1,
+    padding: 12
   },
-  activityName: {
+  activityHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 4
+  },
+  activityType: {
     fontSize: 16,
-    fontWeight: '500',
-    color: '#1f2937',
-    marginBottom: 4,
+    fontWeight: '600',
+    color: '#2c3e50'
   },
-  activityMeta: {
-    fontSize: 14,
-    color: '#6b7280',
-    marginBottom: 4,
+  activityDate: {
+    fontSize: 12,
+    color: '#7f8c8d'
   },
-  activityNotes: {
+  duration: {
     fontSize: 14,
-    color: '#4b5563',
+    color: '#3498db',
+    marginBottom: 4
+  },
+  notes: {
+    fontSize: 14,
+    color: '#7f8c8d',
+    fontStyle: 'italic'
   },
   deleteButton: {
-    padding: 8,
+    padding: 12,
+    justifyContent: 'center'
+  },
+  centered: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  emptyText: {
+    fontSize: 16,
+    color: '#7f8c8d',
+    marginTop: 16,
+    marginBottom: 20
+  },
+  emptyButton: {
+    backgroundColor: '#3498db',
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    borderRadius: 8
+  },
+  emptyButtonText: {
+    color: '#fff',
+    fontWeight: '500'
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'flex-end'
   },
   modalContainer: {
-    flex: 1,
-    justifyContent: 'flex-end',
-    backgroundColor: 'rgba(0,0,0,0.5)',
-  },
-  modalContent: {
     backgroundColor: '#fff',
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
-    maxHeight: '90%',
+    maxHeight: '90%'
   },
   modalHeader: {
     flexDirection: 'row',
@@ -396,102 +427,73 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#e5e7eb',
+    borderBottomColor: '#ecf0f1'
   },
   modalTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#1f2937',
+    color: '#2c3e50'
   },
-  modalBody: {
-    padding: 16,
-    maxHeight: '70%',
+  closeButton: {
+    padding: 4
+  },
+  modalContent: {
+    padding: 16
   },
   inputLabel: {
     fontSize: 16,
-    fontWeight: '500',
-    color: '#1f2937',
-    marginBottom: 8,
-    marginTop: 16,
+    fontWeight: '600',
+    color: '#2c3e50',
+    marginBottom: 8
   },
-  input: {
-    backgroundColor: '#f9fafb',
-    borderWidth: 1,
-    borderColor: '#e5e7eb',
-    borderRadius: 8,
-    padding: 12,
-    fontSize: 16,
-  },
-  textArea: {
-    minHeight: 100,
-    textAlignVertical: 'top',
-  },
-  dateInput: {
-    backgroundColor: '#f9fafb',
-    borderWidth: 1,
-    borderColor: '#e5e7eb',
-    borderRadius: 8,
-    padding: 12,
-    fontSize: 16,
-  },
-  typeButtonsContainer: {
+  typeButtons: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    marginHorizontal: -4,
+    marginBottom: 16
   },
   typeButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#ebf5ff',
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    margin: 4,
-  },
-  typeButtonActive: {
-    backgroundColor: '#3b82f6',
-  },
-  typeButtonText: {
-    color: '#3b82f6',
-    fontWeight: '500',
-    marginLeft: 4,
-  },
-  typeButtonTextActive: {
-    color: '#fff',
-  },
-  modalFooter: {
-    flexDirection: 'row',
-    padding: 16,
-    borderTopWidth: 1,
-    borderTopColor: '#e5e7eb',
-  },
-  cancelButton: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#f3f4f6',
-    paddingVertical: 12,
+    backgroundColor: '#ecf0f1',
+    padding: 10,
     borderRadius: 8,
     marginRight: 8,
+    marginBottom: 8,
+    width: '48%'
   },
-  cancelButtonText: {
-    color: '#6b7280',
-    fontWeight: '500',
-    fontSize: 16,
+  typeButtonSelected: {
+    backgroundColor: '#3498db'
+  },
+  typeButtonText: {
+    color: '#2c3e50',
+    marginLeft: 8
+  },
+  typeButtonTextSelected: {
+    color: '#fff'
+  },
+  input: {
+    backgroundColor: '#f8f9fa',
+    padding: 12,
+    borderRadius: 8,
+    marginBottom: 16
+  },
+  notesInput: {
+    minHeight: 80,
+    textAlignVertical: 'top'
   },
   saveButton: {
-    flex: 2,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#3b82f6',
-    paddingVertical: 12,
+    backgroundColor: '#27ae60',
+    padding: 16,
     borderRadius: 8,
+    alignItems: 'center',
+    marginTop: 16,
+    marginBottom: 32
   },
   saveButtonText: {
     color: '#fff',
     fontWeight: 'bold',
-    fontSize: 16,
-  },
+    fontSize: 16
+  }
 });
 
 export default ActivityLogScreen;

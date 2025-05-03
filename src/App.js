@@ -1,76 +1,133 @@
-import React, { useState, useEffect } from 'react';
-import NavBar from './components/NavBar';
-import Dashboard from './components/Dashboard';
-import ActivityLog from './components/ActivityLog';
-import SpiritualFitness from './components/SpiritualFitness';
-import History from './components/History';
-import Profile from './components/Profile';
-import NearbyMembers from './components/NearbyMembers';
+import React from 'react';
+import { SafeAreaView, StyleSheet, StatusBar, View, Text, ActivityIndicator } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import Icon from 'react-native-vector-icons/FontAwesome5';
 
-function App() {
-  const [currentView, setCurrentView] = useState('dashboard');
-  const [user, setUser] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
+// Contexts
+import { UserProvider, useUser } from './contexts/UserContext';
+import { ActivitiesProvider } from './contexts/ActivitiesContext';
+
+// Import screens
+import DashboardScreen from './screens/DashboardScreen';
+import ActivityLogScreen from './screens/ActivityLogScreen';
+import SpiritualFitnessScreen from './screens/SpiritualFitnessScreen';
+import MeetingsScreen from './screens/MeetingsScreen';
+import ProximityWizardScreen from './screens/ProximityWizardScreen';
+import NearbyMembersScreen from './screens/NearbyMembersScreen';
+import SettingsScreen from './screens/SettingsScreen';
+
+// Initialize navigation
+const Tab = createBottomTabNavigator();
+const Stack = createNativeStackNavigator();
+
+// Loading screen while database initializes
+const LoadingScreen = () => (
+  <View style={styles.loadingContainer}>
+    <ActivityIndicator size="large" color="#0000ff" />
+    <Text style={styles.loadingText}>Loading AA Recovery Tracker...</Text>
+  </View>
+);
+
+// Main tab navigation
+const MainTabNavigator = () => {
+  return (
+    <Tab.Navigator
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ focused, color, size }) => {
+          let iconName;
+          
+          if (route.name === 'Dashboard') {
+            iconName = 'home';
+          } else if (route.name === 'Activities') {
+            iconName = 'list-alt';
+          } else if (route.name === 'Spiritual') {
+            iconName = 'heart';
+          } else if (route.name === 'Meetings') {
+            iconName = 'users';
+          } else if (route.name === 'Nearby') {
+            iconName = 'map-marker-alt';
+          } else if (route.name === 'Settings') {
+            iconName = 'cog';
+          }
+          
+          return <Icon name={iconName} size={size} color={color} />;
+        },
+        tabBarActiveTintColor: '#3498db',
+        tabBarInactiveTintColor: 'gray',
+        headerShown: false
+      })}
+    >
+      <Tab.Screen name="Dashboard" component={DashboardScreen} />
+      <Tab.Screen name="Activities" component={ActivityLogScreen} />
+      <Tab.Screen name="Spiritual" component={SpiritualFitnessScreen} />
+      <Tab.Screen name="Meetings" component={MeetingsScreen} />
+      <Tab.Screen name="Nearby" component={NearbyStackNavigator} />
+      <Tab.Screen name="Settings" component={SettingsScreen} />
+    </Tab.Navigator>
+  );
+};
+
+// Nested stack navigator for nearby screens
+const NearbyStackNavigator = () => {
+  return (
+    <Stack.Navigator
+      screenOptions={{
+        headerShown: false
+      }}
+    >
+      <Stack.Screen name="NearbyMembers" component={NearbyMembersScreen} />
+      <Stack.Screen name="ProximityWizard" component={ProximityWizardScreen} />
+    </Stack.Navigator>
+  );
+};
+
+// App container with context providers
+const AppContainer = () => {
+  const { isLoading } = useUser();
   
-  // Check if user is logged in
-  useEffect(() => {
-    // In a real app, this would check session/token validity
-    const loggedInUser = localStorage.getItem('user');
-    
-    if (loggedInUser) {
-      setUser(JSON.parse(loggedInUser));
-    } else {
-      // For this MVP, we'll create a simple anonymous user
-      const newUser = {
-        id: 'user_' + Math.random().toString(36).substr(2, 9),
-        anonymous: true,
-        createdAt: new Date().toISOString()
-      };
-      
-      localStorage.setItem('user', JSON.stringify(newUser));
-      setUser(newUser);
-    }
-    
-    setIsLoading(false);
-  }, []);
-  
-  const renderCurrentView = () => {
-    if (isLoading) {
-      return (
-        <div className="flex justify-center items-center h-screen">
-          <div className="spinner-border text-primary" role="status">
-            <span className="sr-only">Loading...</span>
-          </div>
-        </div>
-      );
-    }
-    
-    switch (currentView) {
-      case 'dashboard':
-        return <Dashboard setCurrentView={setCurrentView} />;
-      case 'activity':
-        return <ActivityLog setCurrentView={setCurrentView} />;
-      case 'fitness':
-        return <SpiritualFitness setCurrentView={setCurrentView} />;
-      case 'history':
-        return <History setCurrentView={setCurrentView} />;
-      case 'profile':
-        return <Profile user={user} setUser={setUser} setCurrentView={setCurrentView} />;
-      case 'nearby':
-        return <NearbyMembers userId={user?.id} setCurrentView={setCurrentView} />;
-      default:
-        return <Dashboard setCurrentView={setCurrentView} />;
-    }
-  };
+  if (isLoading) {
+    return <LoadingScreen />;
+  }
   
   return (
-    <div className="min-h-screen bg-gray-50">
-      <NavBar currentView={currentView} setCurrentView={setCurrentView} />
-      <div className="container-custom pt-4 pb-16">
-        {renderCurrentView()}
-      </div>
-    </div>
+    <NavigationContainer>
+      <MainTabNavigator />
+    </NavigationContainer>
   );
-}
+};
+
+// Root component with providers
+const App = () => {
+  return (
+    <SafeAreaView style={styles.container}>
+      <StatusBar barStyle="dark-content" />
+      <UserProvider>
+        <ActivitiesProvider>
+          <AppContainer />
+        </ActivitiesProvider>
+      </UserProvider>
+    </SafeAreaView>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#fff'
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#f5f5f5'
+  },
+  loadingText: {
+    marginTop: 20,
+    fontSize: 18,
+    color: '#333'
+  }
+});
 
 export default App;

@@ -14,28 +14,16 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "ReactNativeStart"
-
-[[workflows.workflow.tasks]]
-task = "workflow.run"
-args = "AAMeetingServer"
+args = "ReactNativeServer"
 
 [[workflows.workflow]]
-name = "ReactNativeStart"
+name = "ReactNativeServer"
 author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "cd . && npx react-native start --port 5000 --host 0.0.0.0"
+args = "node node_modules/react-native/cli.js start --port 5000"
 waitForPort = 5000
-
-[[workflows.workflow]]
-name = "AAMeetingServer"
-author = "agent"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "cd simple-server && node server.js"
 
 [deployment]
 run = ["sh", "-c", "cd simple-server && node server.js"]
