@@ -1,38 +1,33 @@
-require_relative '../node_modules/react-native/scripts/react_native_pods'
-
-# Define iOS platform version
+# iOS platform version
 platform :ios, '15.1'
 
-# Disable Codegen discovery to prevent failures
-ENV['RCT_NEW_ARCH_ENABLED'] = '0'
-ENV['NO_FLIPPER'] = '1'
-
-prepare_react_native_project!
-
-# Install pods with deterministic UUIDs
+# No deterministic UUIDs
 install! 'cocoapods', :deterministic_uuids => false
 
 target 'AARecoveryTracker' do
-  # React Native path
-  react_native_path = '../node_modules/react-native'
+  # Basic pods
+  pod 'React', :path => '../node_modules/react-native/'
+  pod 'React-Core', :path => '../node_modules/react-native/'
   
-  # Use React Native with minimal config
-  use_react_native!(
-    :path => react_native_path,
-    :hermes_enabled => false
-  )
+  # Manually add DoubleConversion
+  pod 'DoubleConversion', :podspec => './DoubleConversion.podspec'
   
-  # SQLite for local storage
+  # FBReactNativeSpec depends on DoubleConversion
+  pod 'FBReactNativeSpec', :path => '../node_modules/react-native/React/FBReactNativeSpec'
+  
+  # RCTRequired is needed for FBReactNativeSpec
+  pod 'RCTRequired', :path => '../node_modules/react-native/Libraries/RCTRequired'
+  
+  # Add SQLite storage
   pod 'react-native-sqlite-storage', :path => '../node_modules/react-native-sqlite-storage'
   pod 'sqlite3', '~> 3.39.2'
   
   post_install do |installer|
-    # Configure build settings
     installer.pods_project.targets.each do |target|
       target.build_configurations.each do |config|
         config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.1'
         
-        # M1 Mac support
+        # For M1 Macs
         config.build_settings["EXCLUDED_ARCHS[sdk=iphonesimulator*]"] = "arm64"
       end
     end

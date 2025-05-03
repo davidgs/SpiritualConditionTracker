@@ -10,9 +10,15 @@ Pod::Spec.new do |spec|
   spec.module_name = 'DoubleConversion'
   spec.header_dir = 'double-conversion'
   
-  # Use a relative path that works with CocoaPods
+  # Use the local files we just copied
   spec.source_files = 'DoubleConversion/double-conversion/*.{h,cc}'
   
   spec.compiler_flags = '-Wno-unreachable-code'
-  spec.platforms = { :ios => "12.4" }
+  spec.platforms = { :ios => "15.1" }
+  
+  # Add these to avoid build errors
+  spec.pod_target_xcconfig = {
+    'CLANG_CXX_LANGUAGE_STANDARD' => 'c++14',
+    'HEADER_SEARCH_PATHS' => '$(PODS_TARGET_SRCROOT)'
+  }
 end

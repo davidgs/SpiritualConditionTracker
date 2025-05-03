@@ -14,11 +14,19 @@ mkdir -p DoubleConversion/double-conversion
 
 # Clone the DoubleConversion repository
 echo "Cloning DoubleConversion repository..."
-git clone --depth 1 --branch v1.1.6 https://github.com/google/double-conversion.git temp-doubleconversion
+git clone --depth 1 https://github.com/google/double-conversion.git temp-doubleconversion
 
-# Copy the required files
+# Find and list the contents to see the actual directory structure
+echo "Checking repository structure..."
+find temp-doubleconversion -type f -name "*.h" | head -n 5
+
+# Copy the required files based on actual structure
 echo "Copying DoubleConversion source files..."
-cp -r temp-doubleconversion/double-conversion/* DoubleConversion/double-conversion/
+mkdir -p DoubleConversion/double-conversion
+cp temp-doubleconversion/double-conversion/*.h DoubleConversion/double-conversion/ 2>/dev/null || echo "No .h files found in expected location"
+cp temp-doubleconversion/double-conversion/*.cc DoubleConversion/double-conversion/ 2>/dev/null || echo "No .cc files found in expected location"
+cp temp-doubleconversion/src/*.h DoubleConversion/double-conversion/ 2>/dev/null || echo "No .h files found in src"
+cp temp-doubleconversion/src/*.cc DoubleConversion/double-conversion/ 2>/dev/null || echo "No .cc files found in src"
 
 # Clean up
 echo "Cleaning up temporary files..."
