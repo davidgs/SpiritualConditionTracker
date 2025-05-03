@@ -7,6 +7,9 @@ platform :ios, '15.1'
 ENV['RCT_NEW_ARCH_ENABLED'] = '0'
 ENV['NO_FLIPPER'] = '1'
 
+# Complete path to React Native installation
+react_native_path = '../node_modules/react-native'
+
 prepare_react_native_project!
 
 # Install pods with deterministic UUIDs
@@ -14,48 +17,19 @@ install! 'cocoapods', :deterministic_uuids => false
 
 target 'AARecoveryTracker' do
   # Use direct references for reliability
-  config = { :reactNativePath => "../node_modules/react-native" }
+  config = { :reactNativePath => react_native_path }
   
-  # Add React Native core dependencies manually for better control
-  pod 'React', :path => '../node_modules/react-native/'
-  pod 'React-Core', :path => '../node_modules/react-native/'
-  pod 'React-CoreModules', :path => '../node_modules/react-native/React/CoreModules'
-  pod 'React-RCTActionSheet', :path => '../node_modules/react-native/Libraries/ActionSheetIOS'
-  pod 'React-RCTAnimation', :path => '../node_modules/react-native/Libraries/NativeAnimation'
-  pod 'React-RCTBlob', :path => '../node_modules/react-native/Libraries/Blob'
-  pod 'React-RCTImage', :path => '../node_modules/react-native/Libraries/Image'
-  pod 'React-RCTLinking', :path => '../node_modules/react-native/Libraries/LinkingIOS'
-  pod 'React-RCTNetwork', :path => '../node_modules/react-native/Libraries/Network'
-  pod 'React-RCTSettings', :path => '../node_modules/react-native/Libraries/Settings'
-  pod 'React-RCTText', :path => '../node_modules/react-native/Libraries/Text'
-  pod 'React-RCTVibration', :path => '../node_modules/react-native/Libraries/Vibration'
+  # Use simpler React Native integration
+  use_react_native!(
+    :path => config[:reactNativePath],
+    :hermes_enabled => true,
+    :app_path => "#{Pod::Config.instance.installation_root}/.."
+  )
   
-  # Add third-party dependencies explicitly
-  pod 'FBLazyVector', :path => "../node_modules/react-native/Libraries/FBLazyVector"
-  pod 'FBReactNativeSpec', :path => "../node_modules/react-native/React/FBReactNativeSpec"
-  pod 'RCTRequired', :path => "../node_modules/react-native/Libraries/RCTRequired"
-  pod 'RCTTypeSafety', :path => "../node_modules/react-native/Libraries/TypeSafety"
-  pod 'React-Core/DevSupport', :path => '../node_modules/react-native/'
-  pod 'React-jsi', :path => '../node_modules/react-native/ReactCommon/jsi'
-  pod 'React-jsiexecutor', :path => '../node_modules/react-native/ReactCommon/jsiexecutor'
-  pod 'React-jsinspector', :path => '../node_modules/react-native/ReactCommon/jsinspector'
-  pod 'React-callinvoker', :path => "../node_modules/react-native/ReactCommon/callinvoker"
-  pod 'React-perflogger', :path => "../node_modules/react-native/ReactCommon/reactperflogger"
-  pod 'React-runtimeexecutor', :path => "../node_modules/react-native/ReactCommon/runtimeexecutor"
-  pod 'ReactCommon/turbomodule/core', :path => "../node_modules/react-native/ReactCommon"
-  pod 'Yoga', :path => '../node_modules/react-native/ReactCommon/yoga'
-  
-  # Add third-party specs
-  pod 'DoubleConversion', :podspec => '../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec'
-  pod 'glog', :podspec => '../node_modules/react-native/third-party-podspecs/glog.podspec'
-  pod 'folly', :podspec => '../node_modules/react-native/third-party-podspecs/folly.podspec'
-  
-  # Hermes Engine if enabled
-  if defined?(enable_hermes_engine) && enable_hermes_engine == true
-    pod 'React-hermes', :path => '../node_modules/react-native/'
-    pod 'hermes-engine', :podspec => '../node_modules/react-native/sdks/hermes-engine/hermes-engine.podspec'
-    pod 'libevent', :podspec => '../node_modules/react-native/third-party-podspecs/libevent.podspec'
-  end
+  # Explicitly add third-party specs that might be missing
+  pod 'DoubleConversion', :podspec => "#{react_native_path}/third-party-podspecs/DoubleConversion.podspec"
+  pod 'glog', :podspec => "#{react_native_path}/third-party-podspecs/glog.podspec"
+  pod 'RCT-Folly', :podspec => "#{react_native_path}/third-party-podspecs/RCT-Folly.podspec"
   
   # Add SQLite for local storage - use a version that properly configures headers
   pod 'react-native-sqlite-storage', :path => '../node_modules/react-native-sqlite-storage'
