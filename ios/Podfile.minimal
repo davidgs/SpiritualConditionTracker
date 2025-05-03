@@ -1,29 +1,64 @@
-require_relative '../node_modules/react-native/scripts/react_native_pods'
-
+# Platform version
 platform :ios, '15.1'
+
+# Standard installation
 install! 'cocoapods', :deterministic_uuids => false
 
-# Create the workspace even if pods install fails
-workspace 'AARecoveryTracker'
-
 target 'AARecoveryTracker' do
-  # React Native
-  config = { :reactNativePath => "../node_modules/react-native" }
+  # React Native pods - minimal version that doesn't use any auto-linking
+  pod 'React', :path => '../node_modules/react-native/'
+  pod 'React-Core', :path => '../node_modules/react-native/'
+  pod 'React-CoreModules', :path => '../node_modules/react-native/React/CoreModules'
+  pod 'React-RCTImage', :path => '../node_modules/react-native/Libraries/Image'
+  pod 'React-RCTLinking', :path => '../node_modules/react-native/Libraries/LinkingIOS'
+  pod 'React-RCTNetwork', :path => '../node_modules/react-native/Libraries/Network'
+  pod 'React-RCTSettings', :path => '../node_modules/react-native/Libraries/Settings'
+  pod 'React-RCTText', :path => '../node_modules/react-native/Libraries/Text'
   
-  use_react_native!(
-    :path => config[:reactNativePath],
-    :hermes_enabled => true,
-    :app_path => "#{Pod::Config.instance.installation_root}/.."
-  )
+  # React dependencies
+  pod 'React-cxxreact', :path => '../node_modules/react-native/ReactCommon/cxxreact'
+  pod 'React-jsi', :path => '../node_modules/react-native/ReactCommon/jsi'
+  pod 'React-jsiexecutor', :path => '../node_modules/react-native/ReactCommon/jsiexecutor'
+  pod 'React-jsinspector', :path => '../node_modules/react-native/ReactCommon/jsinspector'
+  pod 'Yoga', :path => '../node_modules/react-native/ReactCommon/yoga'
   
-  # Explicitly add SQLite with the correct podspec
-  pod 'react-native-sqlite-storage', :podspec => '../node_modules/react-native-sqlite-storage/react-native-sqlite-storage.podspec'
+  # Our custom DoubleConversion - using vendored binary instead of source
+  pod 'DoubleConversion', :podspec => './DoubleConversion.podspec'
   
-  # Simple post-install fixes to avoid project syntax issues
+  # Third-party deps
+  pod 'glog', :podspec => '../node_modules/react-native/third-party-podspecs/glog.podspec'
+  pod 'RCT-Folly', :podspec => '../node_modules/react-native/third-party-podspecs/RCT-Folly.podspec'
+  
+  # SQLite pods
+  pod 'react-native-sqlite-storage', :path => '../node_modules/react-native-sqlite-storage'
+  pod 'sqlite3', '~> 3.39.2'
+  
+  # Navigation deps
+  pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
+  pod 'RNScreens', :path => '../node_modules/react-native-screens'
+  pod 'RNGestureHandler', :path => '../node_modules/react-native-gesture-handler'
+  pod 'react-native-safe-area-context', :path => '../node_modules/react-native-safe-area-context'
+  
   post_install do |installer|
+    # Configure build settings
     installer.pods_project.targets.each do |target|
       target.build_configurations.each do |config|
         config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.1'
+        
+        # Fix SQLite search paths
+        if target.name == 'react-native-sqlite-storage'
+          config.build_settings['HEADER_SEARCH_PATHS'] ||= '$(inherited) '
+          config.build_settings['HEADER_SEARCH_PATHS'] += '${PODS_ROOT}/sqlite3'
+        end
+        
+        # Fix DoubleConversion search paths for all React targets
+        if target.name.start_with?('React')
+          config.build_settings['HEADER_SEARCH_PATHS'] ||= '$(inherited) '
+          config.build_settings['HEADER_SEARCH_PATHS'] += '"$(PODS_ROOT)/DoubleConversion" '
+        end
+        
+        # Support for M1 Macs
+        config.build_settings["EXCLUDED_ARCHS[sdk=iphonesimulator*]"] = "arm64"
       end
     end
   end

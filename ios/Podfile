@@ -1,68 +1,42 @@
-# Set platform
+# Platform version
 platform :ios, '15.1'
 
 # Standard installation
 install! 'cocoapods', :deterministic_uuids => false
 
-# Detect if new architecture is enabled
-newArchEnabled = ENV['RCT_NEW_ARCH_ENABLED'] == '1'
-
-# No Flipper
-ENV['NO_FLIPPER'] = '1'
-
 target 'AARecoveryTracker' do
-  # React Native pods
+  # React Native pods - minimal version that doesn't use any auto-linking
   pod 'React', :path => '../node_modules/react-native/'
   pod 'React-Core', :path => '../node_modules/react-native/'
   pod 'React-CoreModules', :path => '../node_modules/react-native/React/CoreModules'
-  pod 'React-RCTActionSheet', :path => '../node_modules/react-native/Libraries/ActionSheetIOS'
-  pod 'React-RCTAnimation', :path => '../node_modules/react-native/Libraries/NativeAnimation'
-  pod 'React-RCTBlob', :path => '../node_modules/react-native/Libraries/Blob'
   pod 'React-RCTImage', :path => '../node_modules/react-native/Libraries/Image'
   pod 'React-RCTLinking', :path => '../node_modules/react-native/Libraries/LinkingIOS'
   pod 'React-RCTNetwork', :path => '../node_modules/react-native/Libraries/Network'
   pod 'React-RCTSettings', :path => '../node_modules/react-native/Libraries/Settings'
   pod 'React-RCTText', :path => '../node_modules/react-native/Libraries/Text'
-  pod 'React-RCTVibration', :path => '../node_modules/react-native/Libraries/Vibration'
   
-  # React Native dependencies
-  pod 'FBLazyVector', :path => "../node_modules/react-native/Libraries/FBLazyVector"
-  pod 'RCTRequired', :path => "../node_modules/react-native/Libraries/RCTRequired"
-  pod 'RCTTypeSafety', :path => "../node_modules/react-native/Libraries/TypeSafety"
-  pod 'React-Core/DevSupport', :path => '../node_modules/react-native/'
-  pod 'React-Core/RCTWebSocket', :path => '../node_modules/react-native/'
+  # React dependencies
   pod 'React-cxxreact', :path => '../node_modules/react-native/ReactCommon/cxxreact'
   pod 'React-jsi', :path => '../node_modules/react-native/ReactCommon/jsi'
   pod 'React-jsiexecutor', :path => '../node_modules/react-native/ReactCommon/jsiexecutor'
   pod 'React-jsinspector', :path => '../node_modules/react-native/ReactCommon/jsinspector'
-  pod 'React-callinvoker', :path => "../node_modules/react-native/ReactCommon/callinvoker"
-  pod 'React-runtimeexecutor', :path => "../node_modules/react-native/ReactCommon/runtimeexecutor"
-  pod 'React-perflogger', :path => "../node_modules/react-native/ReactCommon/reactperflogger"
-  pod 'React-logger', :path => "../node_modules/react-native/ReactCommon/logger"
-  pod 'ReactCommon/turbomodule/core', :path => "../node_modules/react-native/ReactCommon"
   pod 'Yoga', :path => '../node_modules/react-native/ReactCommon/yoga'
+  
+  # Our custom DoubleConversion - using vendored binary instead of source
+  pod 'DoubleConversion', :podspec => './DoubleConversion.podspec'
   
   # Third-party deps
   pod 'glog', :podspec => '../node_modules/react-native/third-party-podspecs/glog.podspec'
   pod 'RCT-Folly', :podspec => '../node_modules/react-native/third-party-podspecs/RCT-Folly.podspec'
   
-  # Our custom DoubleConversion
-  pod 'DoubleConversion', :podspec => './DoubleConversion.podspec'
-  
-  # Hermes
-  pod 'React-hermes', :path => '../node_modules/react-native/'
-  pod 'hermes-engine', :podspec => '../node_modules/react-native/sdks/hermes-engine/hermes-engine.podspec'
-  pod 'libevent', :podspec => '../node_modules/react-native/third-party-podspecs/libevent.podspec'
-  
   # SQLite pods
   pod 'react-native-sqlite-storage', :path => '../node_modules/react-native-sqlite-storage'
   pod 'sqlite3', '~> 3.39.2'
   
-  # Navigation and UI pods
+  # Navigation deps
   pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
   pod 'RNScreens', :path => '../node_modules/react-native-screens'
   pod 'RNGestureHandler', :path => '../node_modules/react-native-gesture-handler'
-  pod 'RNReanimated', :path => '../node_modules/react-native-reanimated'
   pod 'react-native-safe-area-context', :path => '../node_modules/react-native-safe-area-context'
   
   post_install do |installer|
@@ -71,25 +45,19 @@ target 'AARecoveryTracker' do
       target.build_configurations.each do |config|
         config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.1'
         
-        # Fix for SQLite
+        # Fix SQLite search paths
         if target.name == 'react-native-sqlite-storage'
           config.build_settings['HEADER_SEARCH_PATHS'] ||= '$(inherited) '
-          config.build_settings['HEADER_SEARCH_PATHS'] += '"${PODS_ROOT}/sqlite3/sqlite3-all"'
-          config.build_settings['SWIFT_INCLUDE_PATHS'] = '$(inherited) $(PODS_ROOT)/sqlite3'
+          config.build_settings['HEADER_SEARCH_PATHS'] += '${PODS_ROOT}/sqlite3'
         end
         
-        # React and DoubleConversion headers
-        if target.name.start_with?('React') 
+        # Fix DoubleConversion search paths for all React targets
+        if target.name.start_with?('React')
           config.build_settings['HEADER_SEARCH_PATHS'] ||= '$(inherited) '
-          config.build_settings['HEADER_SEARCH_PATHS'] += '"$(PODS_ROOT)/DoubleConversion" "$(PODS_ROOT)/boost" "$(PODS_ROOT)/boost-for-react-native" "$(PODS_ROOT)/RCT-Folly" "$(PODS_ROOT)/Headers/Public/React-hermes" "$(PODS_ROOT)/Headers/Public/hermes-engine"'
+          config.build_settings['HEADER_SEARCH_PATHS'] += '"$(PODS_ROOT)/DoubleConversion" '
         end
         
-        # Swift version
-        if config.build_settings['SWIFT_VERSION']
-          config.build_settings['SWIFT_VERSION'] = '5.0'
-        end
-        
-        # M1 Mac support
+        # Support for M1 Macs
         config.build_settings["EXCLUDED_ARCHS[sdk=iphonesimulator*]"] = "arm64"
       end
     end
