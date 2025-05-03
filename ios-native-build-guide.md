@@ -94,15 +94,30 @@ cd ios
 
 If you encounter errors about finding React Native or its package.json, our updated Podfile now includes better path resolution with explicit checks and fallbacks.
 
+### Xcode Project Syntax Errors
+
+If you encounter syntax errors in the Xcode project file (like "Nanaimo::Reader::ParseError" or "Dictionary missing ';' after key-value pair for shellScript"), use one of these approaches:
+
+```bash
+# Option 1: Fix shellScript syntax issues in project.pbxproj
+cd ios && ./fix-pbxproj.sh
+
+# Option 2: For severe corruption, recreate the project with a clean configuration
+cd ios && ./recreate-project.sh
+```
+
 ### Comprehensive Fix
 
 For a complete fix that addresses multiple issues at once:
 
 ```bash
-# Run the SQLite configuration fix
+# Step 1: Run the SQLite configuration fix
 node fix-sqlite-config.js
 
-# Run the comprehensive iOS setup script
+# Step 2: Fix Xcode project syntax issues 
+cd ios && ./fix-pbxproj.sh
+
+# Step 3: Run the comprehensive iOS setup script with clean pods
 cd ios && ./setup-build-env.sh --clean-pods
 ```
 

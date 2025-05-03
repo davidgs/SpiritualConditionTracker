@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# This script fixes common syntax issues in Xcode project.pbxproj files
-# Run this script when encountering errors like "Nanaimo::Reader::ParseError" or "Dictionary missing ';'"
+# This script specifically fixes shellScript syntax issues in Xcode project.pbxproj files
+# It addresses the "Nanaimo::Reader::ParseError - Dictionary missing ';' after key-value pair for shellScript" error
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 PROJECT_FILE="$SCRIPT_DIR/AARecoveryTracker.xcodeproj/project.pbxproj"
@@ -15,27 +15,34 @@ fi
 echo "Creating backup of project.pbxproj..."
 cp "$PROJECT_FILE" "$PROJECT_FILE.backup"
 
-echo "Fixing syntax issues in project.pbxproj..."
+echo "Fixing shellScript syntax issues in project.pbxproj..."
 
-# Fix 1: Ensure all dictionary entries end with semicolons
-# This addresses the "Dictionary missing ';' after key-value pair" error
-perl -i -pe 's/([^;\s])\s*\n\s*([a-zA-Z0-9_]+\s*=)/$1;\n\t$2/g' "$PROJECT_FILE"
+# Create a temporary file for processing
+TMP_FILE=$(mktemp)
 
-# Fix 2: Fix shellScript entries that have unescaped dollar signs
-# This addresses issues with shell script syntax in the project file
-perl -i -pe 's/(shellScript\s*=\s*)"(.*?)([^\\])\$(.*)/$1"$2$3\\\$$4/g' "$PROJECT_FILE"
+# Process line by line to handle shellScript entries specifically
+cat "$PROJECT_FILE" | while IFS= read -r line; do
+    # Check if line contains shellScript definition
+    if [[ $line == *"shellScript ="* ]]; then
+        # Check if line ends with a semicolon
+        if [[ $line != *";"* ]]; then
+            # Add semicolon at the end
+            line="${line};"
+        fi
+        
+        # Escape dollar signs in shellScript
+        line=$(echo "$line" | sed 's/\$/\\$/g')
+    fi
+    
+    # Write the processed line to temp file
+    echo "$line" >> "$TMP_FILE"
+done
 
-# Fix 3: Check for other common syntax errors
+# Move the temp file back to the original
+mv "$TMP_FILE" "$PROJECT_FILE"
+
+# Fix any closing brackets without semicolons
 perl -i -pe 's/([^;])\s*\}\s*;/$1;\n\t};/g' "$PROJECT_FILE"
-
-# Fix 4: Ensure all strings are properly terminated
-perl -i -pe 's/([^\\])"([^"]*)$/\1"\2"/g if /^\s*[A-Za-z0-9_]+\s*=\s*"/' "$PROJECT_FILE"
-
-# Fix 5: Clean up unnecessary escape characters
-perl -i -pe 's/\\"/"/g' "$PROJECT_FILE"
-
-# Fix 6: Re-add proper escaping for quotes in strings
-perl -i -pe 's/([^\\])(".*?[^\\])(".*?[^\\])"/${1}${2}\\"${3}/g' "$PROJECT_FILE"
 
 echo "Fixes applied to project.pbxproj"
 echo ""
