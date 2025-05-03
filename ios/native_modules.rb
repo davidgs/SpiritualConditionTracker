@@ -6,57 +6,26 @@ def use_native_modules!(config = nil)
   
   # Create a basic config if none is provided
   config = {}
-  config[:reactNativePath] = File.join(File.dirname(__FILE__), '../node_modules/react-native')
+  
+  # Use a relative path from the Podfile's location
+  config[:reactNativePath] = '../node_modules/react-native'
+  
+  # Verify the path exists (for debugging)
+  react_native_path = File.join(File.dirname(__FILE__), config[:reactNativePath])
+  package_json_path = File.join(react_native_path, 'package.json')
+  
+  if File.exist?(package_json_path)
+    puts "Found React Native package.json at: #{package_json_path}"
+  else
+    puts "WARNING: React Native package.json not found at: #{package_json_path}"
+    # Try alternate paths if needed
+    alternate_path = File.expand_path('../../node_modules/react-native/package.json', __FILE__)
+    if File.exist?(alternate_path)
+      puts "Found React Native at alternate path: #{alternate_path}"
+      config[:reactNativePath] = File.expand_path('../../node_modules/react-native', __FILE__)
+    end
+  end
 
-  # Define pod specs for each native module
-  pod_specs = []
-
-  # Core React Native libraries
-  pod_specs << {
-    'name' => 'React-RCTActionSheet',
-    'path' => "#{config[:reactNativePath]}/Libraries/ActionSheetIOS"
-  }
-  
-  pod_specs << {
-    'name' => 'React-RCTAnimation',
-    'path' => "#{config[:reactNativePath]}/Libraries/NativeAnimation"
-  }
-  
-  pod_specs << {
-    'name' => 'React-RCTBlob',
-    'path' => "#{config[:reactNativePath]}/Libraries/Blob"
-  }
-  
-  pod_specs << {
-    'name' => 'React-RCTImage',
-    'path' => "#{config[:reactNativePath]}/Libraries/Image"
-  }
-  
-  pod_specs << {
-    'name' => 'React-RCTLinking',
-    'path' => "#{config[:reactNativePath]}/Libraries/LinkingIOS"
-  }
-  
-  pod_specs << {
-    'name' => 'React-RCTNetwork',
-    'path' => "#{config[:reactNativePath]}/Libraries/Network"
-  }
-  
-  pod_specs << {
-    'name' => 'React-RCTSettings',
-    'path' => "#{config[:reactNativePath]}/Libraries/Settings"
-  }
-  
-  pod_specs << {
-    'name' => 'React-RCTText',
-    'path' => "#{config[:reactNativePath]}/Libraries/Text"
-  }
-  
-  pod_specs << {
-    'name' => 'React-RCTVibration',
-    'path' => "#{config[:reactNativePath]}/Libraries/Vibration"
-  }
-
-  # Return the configuration
+  # Return the configuration with the correct path
   return config
 end
