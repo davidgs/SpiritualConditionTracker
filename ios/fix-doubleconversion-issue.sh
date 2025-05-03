@@ -1,44 +1,39 @@
 #!/bin/bash
 
-# Create a directory for the custom build
-mkdir -p ios/Pods/DoubleConversion
+echo "Fixing DoubleConversion issue for iOS build..."
 
-# Download the DoubleConversion source code
-curl -L https://github.com/google/double-conversion/archive/refs/tags/v3.1.5.tar.gz | tar -xz -C ios/Pods/DoubleConversion --strip-components=1
+# Create a directories for the needed headers
+mkdir -p ios/DoubleConversion
+mkdir -p ios/DoubleConversion/double-conversion
 
-# Create a CMakeLists.txt for building DoubleConversion
-cat > ios/Pods/DoubleConversion/CMakeLists.txt << 'EOF'
-cmake_minimum_required(VERSION 3.0)
-project(double-conversion)
+# Download the DoubleConversion source directly from GitHub
+echo "Downloading DoubleConversion source..."
+curl -s -L https://github.com/google/double-conversion/archive/v3.1.5.tar.gz | tar -xz -C /tmp
+cp -r /tmp/double-conversion-3.1.5/double-conversion/* ios/DoubleConversion/double-conversion/
 
-set(headers
-    double-conversion/bignum.h
-    double-conversion/cached-powers.h
-    double-conversion/diy-fp.h
-    double-conversion/double-conversion.h
-    double-conversion/fast-dtoa.h
-    double-conversion/fixed-dtoa.h
-    double-conversion/ieee.h
-    double-conversion/strtod.h
-    double-conversion/utils.h
-)
-
-set(sources
-    double-conversion/bignum.cc
-    double-conversion/bignum-dtoa.cc
-    double-conversion/cached-powers.cc
-    double-conversion/diy-fp.cc
-    double-conversion/double-conversion.cc
-    double-conversion/fast-dtoa.cc
-    double-conversion/fixed-dtoa.cc
-    double-conversion/strtod.cc
-)
-
-add_library(double-conversion STATIC ${headers} ${sources})
-target_include_directories(double-conversion PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+# Create the podspec file locally
+echo "Creating local podspec file for DoubleConversion..."
+cat > ios/DoubleConversion.podspec << 'EOF'
+Pod::Spec.new do |spec|
+  spec.name = 'DoubleConversion'
+  spec.version = '1.1.6'
+  spec.license = { :type => 'MIT' }
+  spec.homepage = 'https://github.com/google/double-conversion'
+  spec.summary = 'Efficient binary-decimal and decimal-binary conversion routines for IEEE doubles'
+  spec.authors = 'Google'
+  spec.source = { :git => 'https://github.com/google/double-conversion.git',
+                  :tag => "v#{spec.version}" }
+  spec.module_name = 'DoubleConversion'
+  spec.header_dir = 'double-conversion'
+  spec.source_files = 'ios/DoubleConversion/double-conversion/*.{h,cc}'
+  spec.compiler_flags = '-Wno-unreachable-code'
+  # Pinning to the same version as React.podspec.
+  spec.platforms = { :ios => "12.4" }
+end
 EOF
 
-# Create a custom Podfile that doesn't use DoubleConversion podspec
+# Update the Podfile to use our local copy
+echo "Updating Podfile to use local DoubleConversion..."
 cat > ios/Podfile << 'EOF'
 require_relative '../node_modules/react-native/scripts/react_native_pods'
 
@@ -62,7 +57,10 @@ target 'AARecoveryTracker' do
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
   
-  # Manually include glog and Folly
+  # Use our local DoubleConversion podspec instead of the one from React Native
+  pod 'DoubleConversion', :podspec => './DoubleConversion.podspec'
+  
+  # Explicitly include other third-party specs
   pod 'glog', :podspec => '../node_modules/react-native/third-party-podspecs/glog.podspec'
   pod 'RCT-Folly', :podspec => '../node_modules/react-native/third-party-podspecs/RCT-Folly.podspec'
   
@@ -90,6 +88,12 @@ target 'AARecoveryTracker' do
           config.build_settings['HEADER_SEARCH_PATHS'] ||= '$(inherited) '
           config.build_settings['HEADER_SEARCH_PATHS'] += '"${PODS_ROOT}/sqlite3/sqlite3-all"'
           config.build_settings['SWIFT_INCLUDE_PATHS'] = '$(inherited) $(PODS_ROOT)/sqlite3'
+        end
+        
+        # Fix DoubleConversion header search paths specifically 
+        if target.name.start_with?('React')
+          config.build_settings['HEADER_SEARCH_PATHS'] ||= '$(inherited) '
+          config.build_settings['HEADER_SEARCH_PATHS'] += '"$(PODS_ROOT)/DoubleConversion" '
         end
         
         # Handle Swift version
@@ -121,16 +125,14 @@ target 'AARecoveryTracker' do
 end
 EOF
 
-# Clean the pods directory
-cd ios
-rm -rf Pods
-rm -rf Podfile.lock
-rm -rf build
-rm -rf DerivedData
-rm -rf *.xcworkspace
+echo "Cleaning previous build artifacts..."
+rm -rf ios/Pods
+rm -rf ios/Podfile.lock
+rm -rf ios/build
+rm -rf ios/*.xcworkspace
 
-# Run pod install
-pod install
-
-echo "Done! Please open the workspace in Xcode:"
+echo "Done! Now, on your local machine, run the following commands:"
+echo "cd ios"
+echo "pod install"
+echo "Then open the workspace in Xcode:"
 echo "open AARecoveryTracker.xcworkspace"
