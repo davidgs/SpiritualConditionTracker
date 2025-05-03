@@ -1,3 +1,10 @@
+#!/bin/bash
+
+# Clean everything
+rm -rf Pods Podfile.lock *.xcworkspace
+
+# Create clean Podfile that doesn't use troublesome dependencies
+cat > Podfile << 'EOL'
 # Platform
 platform :ios, '15.1'
 
@@ -41,3 +48,7 @@ target 'AARecoveryTracker' do
     end
   end
 end
+EOL
+
+echo "Created simplified Podfile that avoids problematic dependencies."
+echo "On your local machine, run: cd ios && pod install"
