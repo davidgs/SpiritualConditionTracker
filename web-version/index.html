@@ -308,6 +308,236 @@
     </div>
 
     <script>
+        // App state
+        let currentUser = null;
+        let activities = [];
+        let spiritualFitness = { score: 0, breakdown: {} };
+        let nearbyMembers = [];
+
+        // Fetch data from API
+        async function fetchData() {
+            try {
+                // Get current user
+                const userResponse = await fetch('/api/users/current');
+                currentUser = await userResponse.json();
+                
+                // Get activities
+                const activitiesResponse = await fetch('/api/activities');
+                activities = await activitiesResponse.json();
+                
+                // Get spiritual fitness
+                const fitnessResponse = await fetch('/api/spiritual-fitness');
+                spiritualFitness = await fitnessResponse.json();
+                
+                // Get nearby members
+                const membersResponse = await fetch('/api/nearby-members');
+                nearbyMembers = await membersResponse.json();
+                
+                // Update UI
+                updateDashboard();
+                updateSpiritualFitness();
+                updateNearbyMembers();
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        }
+
+        // Update dashboard
+        function updateDashboard() {
+            if (!currentUser || !activities.length) return;
+            
+            // Calculate days sober
+            const sobrietyDate = new Date(currentUser.sobrietyDate);
+            const today = new Date();
+            const daysSober = Math.floor((today - sobrietyDate) / (1000 * 60 * 60 * 24));
+            
+            // Count meetings this week
+            const weekStart = new Date();
+            weekStart.setDate(today.getDate() - today.getDay());
+            const meetingsThisWeek = activities.filter(a => 
+                a.type === 'meeting' && new Date(a.date) >= weekStart
+            ).length;
+            
+            // Update UI
+            document.querySelector('.fitness-score').textContent = spiritualFitness.score;
+            document.querySelector('.metric-row:nth-child(1) span:last-child').textContent = 
+                `${meetingsThisWeek} / 7`;
+            document.querySelector('.metric-row:nth-child(2) span:last-child').textContent = 
+                daysSober;
+            
+            // Update activity log
+            const activityLog = document.querySelector('.activity-log');
+            activityLog.innerHTML = '';
+            
+            activities.slice(0, 5).forEach(activity => {
+                const date = new Date(activity.date);
+                const dateString = date.toLocaleDateString();
+                const timeString = date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                
+                const activityItem = document.createElement('div');
+                activityItem.className = 'activity-item';
+                
+                const activityDate = document.createElement('div');
+                activityDate.className = 'activity-date';
+                activityDate.textContent = `${dateString}, ${timeString}`;
+                
+                const activityContent = document.createElement('div');
+                
+                switch(activity.type) {
+                    case 'meeting':
+                        activityContent.textContent = `Attended AA Meeting: ${activity.notes}`;
+                        break;
+                    case 'sponsor':
+                        activityContent.textContent = `Call with Sponsor: ${activity.duration} minutes`;
+                        break;
+                    case 'meditation':
+                        activityContent.textContent = `Meditation: ${activity.duration} minutes`;
+                        break;
+                    case 'reading':
+                        activityContent.textContent = `AA Literature Reading: ${activity.duration} minutes`;
+                        break;
+                    case 'service':
+                        activityContent.textContent = `Service Work: ${activity.notes}`;
+                        break;
+                    default:
+                        activityContent.textContent = `${activity.type}: ${activity.notes}`;
+                }
+                
+                activityItem.appendChild(activityDate);
+                activityItem.appendChild(activityContent);
+                activityLog.appendChild(activityItem);
+            });
+        }
+
+        // Update spiritual fitness page
+        function updateSpiritualFitness() {
+            if (!spiritualFitness) return;
+            
+            document.querySelector('#fitness .fitness-score').textContent = spiritualFitness.score;
+            
+            const breakdown = spiritualFitness.breakdown;
+            document.querySelector('#fitness .metric-row:nth-child(1) span:last-child').textContent = 
+                `${breakdown.meetingAttendance} / 5`;
+            document.querySelector('#fitness .metric-row:nth-child(2) span:last-child').textContent = 
+                `${breakdown.prayerMeditation} / 5`;
+            document.querySelector('#fitness .metric-row:nth-child(3) span:last-child').textContent = 
+                `${breakdown.literatureStudy} / 5`;
+            document.querySelector('#fitness .metric-row:nth-child(4) span:last-child').textContent = 
+                `${breakdown.sponsorship} / 5`;
+            document.querySelector('#fitness .metric-row:nth-child(5) span:last-child').textContent = 
+                `${breakdown.serviceWork} / 5`;
+        }
+
+        // Update nearby members page
+        function updateNearbyMembers() {
+            if (!nearbyMembers.length) return;
+            
+            const membersContainer = document.querySelector('#nearby .card');
+            // Clear existing members (but keep the title and intro paragraph)
+            const titleAndIntro = membersContainer.querySelectorAll(':nth-child(-n+2)');
+            membersContainer.innerHTML = '';
+            titleAndIntro.forEach(el => membersContainer.appendChild(el));
+            
+            // Add members
+            nearbyMembers.forEach(member => {
+                const memberElement = document.createElement('div');
+                memberElement.className = 'nearby-member';
+                
+                const avatar = document.createElement('div');
+                avatar.className = 'member-avatar';
+                const initials = member.name.split(' ').map(n => n[0]).join('');
+                avatar.textContent = initials;
+                
+                const info = document.createElement('div');
+                info.className = 'member-info';
+                
+                const nameDiv = document.createElement('div');
+                nameDiv.textContent = member.name;
+                
+                const sobrietyDiv = document.createElement('div');
+                sobrietyDiv.textContent = `Sobriety: ${member.sobrietyTime}`;
+                
+                info.appendChild(nameDiv);
+                info.appendChild(sobrietyDiv);
+                
+                const distance = document.createElement('div');
+                distance.className = 'member-distance';
+                distance.textContent = `${member.distance} mi`;
+                
+                memberElement.appendChild(avatar);
+                memberElement.appendChild(info);
+                memberElement.appendChild(distance);
+                
+                membersContainer.appendChild(memberElement);
+            });
+            
+            // Add the discovery button
+            const button = document.createElement('button');
+            button.textContent = 'Start Discovery Wizard';
+            button.onclick = startWizard;
+            membersContainer.appendChild(button);
+        }
+
+        // Log a new activity
+        async function logActivity() {
+            const type = document.getElementById('activity-type').value;
+            const date = document.getElementById('activity-date').value;
+            const duration = document.getElementById('activity-duration').value;
+            const notes = document.getElementById('activity-notes').value;
+            
+            const now = new Date();
+            const time = now.toTimeString().split(' ')[0].substring(0, 5);
+            const dateTime = `${date}T${time}`;
+            
+            try {
+                const response = await fetch('/api/activities', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        type,
+                        date: dateTime,
+                        duration: parseInt(duration),
+                        notes
+                    })
+                });
+                
+                if (response.ok) {
+                    alert('Activity logged successfully!');
+                    
+                    // Refresh data and go to dashboard
+                    await fetchData();
+                    showTab('dashboard');
+                } else {
+                    alert('Failed to log activity. Please try again.');
+                }
+            } catch (error) {
+                console.error('Error logging activity:', error);
+                alert('An error occurred. Please try again.');
+            }
+        }
+
+        // Start the discovery wizard
+        async function startWizard() {
+            try {
+                const response = await fetch('/api/discovery/start', {
+                    method: 'POST'
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    alert(`Discovery Wizard started (ID: ${data.wizardId}, Step: ${data.step}). This would connect you with nearby members securely.`);
+                } else {
+                    alert('Failed to start discovery wizard. Please try again.');
+                }
+            } catch (error) {
+                console.error('Error starting wizard:', error);
+                alert('An error occurred. Please try again.');
+            }
+        }
+
+        // Tab navigation
         function showTab(tabId) {
             // Hide all tab contents
             document.querySelectorAll('.tab-content').forEach(content => {
@@ -330,14 +560,18 @@
             });
         }
         
-        function logActivity() {
-            alert('Activity logged successfully!');
-            showTab('dashboard');
-        }
-        
-        function startWizard() {
-            alert('Discovery Wizard would start here, allowing you to connect with nearby members securely.');
-        }
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchData();
+            
+            // Set current date in the activity form
+            const today = new Date();
+            const dateString = today.toISOString().split('T')[0];
+            document.getElementById('activity-date').value = dateString;
+            
+            // Add event listener to the activity form button
+            document.querySelector('#activity-form button').addEventListener('click', logActivity);
+        });
     </script>
 </body>
 </html>
