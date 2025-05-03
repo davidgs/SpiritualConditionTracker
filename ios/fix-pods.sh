@@ -63,6 +63,19 @@ try_pod_install() {
     fi
 }
 
+# Fix SQLite configuration
+fix_sqlite_config() {
+    echo "Fixing react-native-sqlite-storage configuration..."
+    PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
+    
+    # Run the SQLite configuration fix script
+    if [ -f "$PROJECT_DIR/fix-sqlite-config.js" ]; then
+        node "$PROJECT_DIR/fix-sqlite-config.js"
+    else
+        echo "SQLite fix script not found. Skipping SQLite configuration fix."
+    fi
+}
+
 main() {
     check_pod_command
     
@@ -70,6 +83,9 @@ main() {
     if [ "$1" == "--clean" ]; then
         clean_pods
     fi
+    
+    # Fix SQLite configuration before pod install
+    fix_sqlite_config
     
     # Try pod install
     try_pod_install

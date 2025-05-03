@@ -50,8 +50,8 @@ target 'AARecoveryTracker' do
     :app_path => "#{Pod::Config.instance.installation_root}/..",
   )
   
-  # Explicitly add SQLite
-  pod 'react-native-sqlite-storage', :path => '../node_modules/react-native-sqlite-storage'
+  # Explicitly add SQLite with the correct podspec path
+  pod 'react-native-sqlite-storage', :podspec => '../node_modules/react-native-sqlite-storage/react-native-sqlite-storage.podspec'
 
   post_install do |installer|
     # Apple Silicon builds require a library path tweak for Swift library discovery or the simulator will fail to launch the app

@@ -54,16 +54,32 @@ npm install --save the-missing-module
 cd ios && pod install
 ```
 
-### Pod Installation Failures
+### React Native SQLite Storage Warnings
 
-If pod installation fails, try:
+If you see warnings about react-native-sqlite-storage configuration:
 
 ```bash
-cd ios
-./setup-build-env.sh --clean-pods
+node fix-sqlite-config.js
+cd ios && pod install
 ```
 
-This will completely clean the Pods directory and reinstall.
+Or use the updated fix-pods.sh script which now handles this automatically.
+
+### Pod Installation Failures
+
+If pod installation fails, try one of these approaches:
+
+```bash
+# Option 1: Use the comprehensive setup script
+cd ios
+./setup-build-env.sh --clean-pods
+
+# Option 2: Use the targeted pod fix script
+cd ios
+./fix-pods.sh --clean
+```
+
+These will clean the Pods directory, fix configuration issues, and reinstall.
 
 ### Workspace Issues
 
@@ -74,13 +90,20 @@ cd ios
 ./force-workspace-creation.sh
 ```
 
-### Strange Build Errors
+### React Native Path Resolution Issues
 
-If you encounter unexpected build errors related to Expo or configuration issues:
+If you encounter errors about finding React Native or its package.json, our updated Podfile now includes better path resolution with explicit checks and fallbacks.
+
+### Comprehensive Fix
+
+For a complete fix that addresses multiple issues at once:
 
 ```bash
-cd ios
-./fix-expo-configure.sh
+# Run the SQLite configuration fix
+node fix-sqlite-config.js
+
+# Run the comprehensive iOS setup script
+cd ios && ./setup-build-env.sh --clean-pods
 ```
 
 ## SQLite Database Integration
