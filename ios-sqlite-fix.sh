@@ -33,15 +33,11 @@ target 'AARecoveryTracker' do
   # Use direct references for reliability
   config = { :reactNativePath => "../node_modules/react-native" }
   
-  # React Native core - disable new architecture and codegen
+  # React Native core - with simplified config
   use_react_native!(
     :path => config[:reactNativePath],
     :hermes_enabled => true,
-    :fabric_enabled => false,
-    :app_path => "#{Pod::Config.instance.installation_root}/..",
-    # Disable codegen completely to prevent errors
-    :codegen_discovery_enabled => false,
-    :codegen_framework_enabled => false
+    :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
   
   # Add SQLite for local storage - use a version that properly configures headers
