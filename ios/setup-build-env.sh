@@ -54,6 +54,10 @@ else
     cd "$SCRIPT_DIR" && pod install
 fi
 
+# Fix any issues with the Expo configure scripts
+echo "Fixing Expo configure scripts..."
+cd "$SCRIPT_DIR" && ./fix-expo-configure.sh
+
 echo ""
 echo "Setup complete! You can now open the workspace in Xcode:"
 echo "open $SCRIPT_DIR/AARecoveryTracker.xcworkspace"

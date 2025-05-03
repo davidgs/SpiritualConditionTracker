@@ -1,5 +1,12 @@
-require File.join(File.dirname(`node --print "require.resolve('expo/package.json')"`), "scripts/autolinking")
 require File.join(File.dirname(`node --print "require.resolve('react-native/package.json')"`), "scripts/react_native_pods")
+
+begin
+  # Try to load expo autolinking script only if it exists
+  require File.join(File.dirname(`node --print "require.resolve('expo/package.json')"`), "scripts/autolinking") rescue nil
+rescue => e
+  # If expo autolinking fails, log the error but continue
+  puts "Warning: Expo autolinking script not found or failed to load: #{e.message}"
+end
 
 require 'json'
 podfile_properties = JSON.parse(File.read(File.join(__dir__, 'Podfile.properties.json'))) rescue {}

@@ -6,6 +6,22 @@ This guide addresses common iOS build issues for the AA Recovery Tracker app, sp
 
 This error typically occurs during the "Bundle React Native code and images" phase of the Xcode build process. Here's how to fix it:
 
+### Special Solution for Expo-Configure-Project.sh Issues
+
+If the error mentions "expo-configure-project.sh" specifically, this is likely an issue with the Expo configuration script's permissions or Node path:
+
+1. Run our specialized fix script:
+   ```bash
+   cd ios
+   ./fix-expo-configure.sh
+   ```
+
+2. This script will:
+   - Find all instances of expo-configure-project.sh
+   - Fix execution permissions
+   - Update the script to handle Node.js path issues
+   - Create backups of the original scripts
+
 ### Solution 1: Run the Setup Script
 
 We've created a setup script to help fix common build issues:
