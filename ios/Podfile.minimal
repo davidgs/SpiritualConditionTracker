@@ -1,35 +1,26 @@
 require_relative '../node_modules/react-native/scripts/react_native_pods'
-require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
 
 platform :ios, '15.1'
 install! 'cocoapods', :deterministic_uuids => false
 
+# Create the workspace even if pods install fails
+workspace 'AARecoveryTracker'
+
 target 'AARecoveryTracker' do
-  # Force workspace creation
-  workspace 'AARecoveryTracker'
+  # React Native
+  config = { :reactNativePath => "../node_modules/react-native" }
   
-  config = use_native_modules!
-
-  # Flags change depending on the env values.
-  flags = get_default_flags()
-
   use_react_native!(
     :path => config[:reactNativePath],
     :hermes_enabled => true,
-    :fabric_enabled => flags[:fabric_enabled],
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
-
+  
+  # Explicitly add SQLite with the correct podspec
+  pod 'react-native-sqlite-storage', :podspec => '../node_modules/react-native-sqlite-storage/react-native-sqlite-storage.podspec'
+  
+  # Simple post-install fixes to avoid project syntax issues
   post_install do |installer|
-    # Fix architecture issues
-    installer.pods_project.build_configurations.each do |config|
-      config.build_settings["EXCLUDED_ARCHS[sdk=iphonesimulator*]"] = "arm64"
-    end
-    
-    # React Native post-installation
-    react_native_post_install(installer)
-    
-    # Set deployment target for all pods
     installer.pods_project.targets.each do |target|
       target.build_configurations.each do |config|
         config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.1'

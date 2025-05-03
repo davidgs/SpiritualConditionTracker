@@ -74,14 +74,12 @@ cd "$SCRIPT_DIR" && ./fix-expo-configure.sh
 chmod +x "$SCRIPT_DIR/fix-pods.sh"
 chmod +x "$SCRIPT_DIR/force-workspace-creation.sh"
 
-# Make a clean version of the project.pbxproj file
-echo "Backing up and cleaning project.pbxproj..."
-PROJECT_FILE="$SCRIPT_DIR/AARecoveryTracker.xcodeproj/project.pbxproj"
-cp "$PROJECT_FILE" "$PROJECT_FILE.backup"
-
-# Clean up any extraneous quotes or escape characters in the project file
-perl -i -pe 's/\\"/"/g' "$PROJECT_FILE"
-perl -i -pe 's/\\\\n/\\n/g' "$PROJECT_FILE"
+# Fix the project.pbxproj file
+echo "Fixing project.pbxproj syntax..."
+# Make the fix-pbxproj script executable
+chmod +x "$SCRIPT_DIR/fix-pbxproj.sh"
+# Run the script
+"$SCRIPT_DIR/fix-pbxproj.sh"
 
 # Force creation of workspace file
 echo "Forcing creation of Xcode workspace..."
