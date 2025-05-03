@@ -7,47 +7,37 @@ platform :ios, '15.1'
 ENV['RCT_NEW_ARCH_ENABLED'] = '0'
 ENV['NO_FLIPPER'] = '1'
 
-# Complete path to React Native installation
-react_native_path = '../node_modules/react-native'
-
 prepare_react_native_project!
 
 # Install pods with deterministic UUIDs
 install! 'cocoapods', :deterministic_uuids => false
 
 target 'AARecoveryTracker' do
-  # Use direct references for reliability
-  config = { :reactNativePath => react_native_path }
+  # React Native core - minimal configuration
+  pod 'React', :path => '../node_modules/react-native/'
+  pod 'React-Core', :path => '../node_modules/react-native/'
+  pod 'React-RCTImage', :path => '../node_modules/react-native/Libraries/Image'
+  pod 'React-RCTLinking', :path => '../node_modules/react-native/Libraries/LinkingIOS'
+  pod 'React-RCTNetwork', :path => '../node_modules/react-native/Libraries/Network'
+  pod 'React-RCTSettings', :path => '../node_modules/react-native/Libraries/Settings'
+  pod 'React-RCTText', :path => '../node_modules/react-native/Libraries/Text'
+  pod 'React-Core/DevSupport', :path => '../node_modules/react-native/'
   
-  # Use simpler React Native integration
-  use_react_native!(
-    :path => config[:reactNativePath],
-    :hermes_enabled => true,
-    :app_path => "#{Pod::Config.instance.installation_root}/.."
-  )
+  # Avoid using DoubleConversion directly - it's part of React-Core
   
-  # Explicitly add third-party specs that might be missing
-  pod 'DoubleConversion', :podspec => "#{react_native_path}/third-party-podspecs/DoubleConversion.podspec"
-  pod 'glog', :podspec => "#{react_native_path}/third-party-podspecs/glog.podspec"
-  pod 'RCT-Folly', :podspec => "#{react_native_path}/third-party-podspecs/RCT-Folly.podspec"
-  
-  # Add SQLite for local storage - use a version that properly configures headers
+  # SQLite for local storage
   pod 'react-native-sqlite-storage', :path => '../node_modules/react-native-sqlite-storage'
-  
-  # Explicitly link system SQLite
-  pod 'sqlite3', '~> 3.39.2'
-  
-  # Add other required native modules
-  pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
+  pod 'sqlite3'
   
   # Navigation dependencies
+  pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
   pod 'RNScreens', :path => '../node_modules/react-native-screens'
   pod 'RNGestureHandler', :path => '../node_modules/react-native-gesture-handler'
   pod 'RNReanimated', :path => '../node_modules/react-native-reanimated'
   pod 'react-native-safe-area-context', :path => '../node_modules/react-native-safe-area-context'
   
-  # Fix header search paths and compiler flags for SQLite
   post_install do |installer|
+    # Configure project
     installer.pods_project.targets.each do |target|
       target.build_configurations.each do |config|
         config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.1'
@@ -55,7 +45,7 @@ target 'AARecoveryTracker' do
         # Add SQLite header search paths if needed
         if target.name == 'react-native-sqlite-storage'
           config.build_settings['HEADER_SEARCH_PATHS'] ||= '$(inherited) '
-          config.build_settings['HEADER_SEARCH_PATHS'] += '"${PODS_ROOT}/sqlite3/sqlite3-all"'
+          config.build_settings['HEADER_SEARCH_PATHS'] += '$(PODS_ROOT)/sqlite3'
           config.build_settings['SWIFT_INCLUDE_PATHS'] = '$(inherited) $(PODS_ROOT)/sqlite3'
         end
         
@@ -65,25 +55,6 @@ target 'AARecoveryTracker' do
         end
         
         # Support for M1 Macs
-        config.build_settings["EXCLUDED_ARCHS[sdk=iphonesimulator*]"] = "arm64"
-      end
-    end
-    
-    # Additional fixes from React Native post install
-    react_native_post_install(
-      installer,
-      config[:reactNativePath],
-      :mac_catalyst_enabled => false
-    )
-    
-    # Apply M1 workaround manually since the helper method doesn't exist
-    installer.pods_project.targets.each do |target|
-      target.build_configurations.each do |config|
-        if config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'].to_f < 12.0
-          config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '12.0'
-        end
-        
-        # Set build settings for M1 Macs
         config.build_settings["EXCLUDED_ARCHS[sdk=iphonesimulator*]"] = "arm64"
       end
     end
