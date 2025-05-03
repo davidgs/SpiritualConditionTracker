@@ -9,8 +9,10 @@ Pod::Spec.new do |spec|
                   :tag => "v#{spec.version}" }
   spec.module_name = 'DoubleConversion'
   spec.header_dir = 'double-conversion'
+  
+  # Use a relative path that works with CocoaPods
   spec.source_files = 'DoubleConversion/double-conversion/*.{h,cc}'
+  
   spec.compiler_flags = '-Wno-unreachable-code'
-  # Pinning to the same version as React.podspec.
   spec.platforms = { :ios => "12.4" }
 end
