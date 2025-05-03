@@ -19,6 +19,11 @@ require_relative '../node_modules/react-native/scripts/react_native_pods'
 
 # Define iOS platform version
 platform :ios, '15.1'
+
+# Disable Codegen discovery to prevent failures
+ENV['RCT_NEW_ARCH_ENABLED'] = '0'
+ENV['NO_FLIPPER'] = '1'
+
 prepare_react_native_project!
 
 # Install pods with deterministic UUIDs
@@ -28,11 +33,15 @@ target 'AARecoveryTracker' do
   # Use direct references for reliability
   config = { :reactNativePath => "../node_modules/react-native" }
   
-  # React Native core
+  # React Native core - disable new architecture and codegen
   use_react_native!(
     :path => config[:reactNativePath],
     :hermes_enabled => true,
-    :app_path => "#{Pod::Config.instance.installation_root}/.."
+    :fabric_enabled => false,
+    :app_path => "#{Pod::Config.instance.installation_root}/..",
+    # Disable codegen completely to prevent errors
+    :codegen_discovery_enabled => false,
+    :codegen_framework_enabled => false
   )
   
   # Add SQLite for local storage - use a version that properly configures headers

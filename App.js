@@ -1,119 +1,283 @@
-import React, { useState, useEffect } from 'react';
-import { StatusBar } from 'expo-status-bar';
-import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { NavigationContainer } from '@react-navigation/native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Ionicons } from 'react-native-vector-icons';
-
-// Import database initialization
-import { initDatabase } from './src/utils/database';
-
-// Import context providers
-import { UserProvider } from './src/contexts/UserContext';
-import { ActivitiesProvider } from './src/contexts/ActivitiesContext';
-
-// Import screens
-import DashboardScreen from './src/screens/DashboardScreen';
-import ActivityLogScreen from './src/screens/ActivityLogScreen';
-import MeetingsScreen from './src/screens/MeetingsScreen';
-import SpiritualFitnessScreen from './src/screens/SpiritualFitnessScreen';
-import NearbyMembersScreen from './src/screens/NearbyMembersScreen';
-import SettingsScreen from './src/screens/SettingsScreen';
-
-// Create bottom tab navigator
-const Tab = createBottomTabNavigator();
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, StatusBar, Button, SafeAreaView, ActivityIndicator } from 'react-native';
+import database from './src/utils/database';
 
 export default function App() {
-  const [dbInitialized, setDbInitialized] = useState(false);
+  const [dbStatus, setDbStatus] = useState('Not initialized');
+  const [testUserId, setTestUserId] = useState(null);
+  const [testResults, setTestResults] = useState([]);
   const [loading, setLoading] = useState(true);
-  
-  // Initialize database on app startup
+
   useEffect(() => {
-    const setupDb = async () => {
-      try {
-        await initDatabase();
-        setDbInitialized(true);
-      } catch (error) {
-        console.error('Error initializing database:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    
-    setupDb();
+    // Initialize database when component mounts
+    initDb();
   }, []);
-  
+
+  const initDb = async () => {
+    try {
+      await database.initDatabase();
+      setDbStatus('Initialized');
+      log('Database initialized successfully');
+      setLoading(false);
+    } catch (error) {
+      setDbStatus(`Error: ${error.message}`);
+      log(`Database init error: ${error.message}`);
+      setLoading(false);
+    }
+  };
+
+  const log = (message) => {
+    console.log(message);
+    setTestResults(prev => [...prev, message]);
+  };
+
+  const clearLogs = () => {
+    setTestResults([]);
+  };
+
+  const createTestUser = async () => {
+    try {
+      const userId = await database.userOperations.createUser({
+        name: 'Test User',
+        sobrietyDate: '2020-01-01',
+        homeGroup: 'Thursday Night Group',
+        phone: '555-123-4567',
+        email: 'test@example.com',
+        privacySettings: { 
+          shareLocation: false, 
+          shareActivities: true 
+        }
+      });
+      
+      setTestUserId(userId);
+      log(`Created test user with ID: ${userId}`);
+    } catch (error) {
+      log(`Error creating user: ${error.message}`);
+    }
+  };
+
+  const createTestActivity = async () => {
+    if (!testUserId) {
+      log('Create a test user first');
+      return;
+    }
+
+    try {
+      const activityId = await database.activityOperations.createActivity({
+        userId: testUserId,
+        type: 'prayer',
+        duration: 15,
+        notes: 'Morning prayer'
+      });
+      
+      log(`Created activity with ID: ${activityId}`);
+    } catch (error) {
+      log(`Error creating activity: ${error.message}`);
+    }
+  };
+
+  const calculateSpiritualFitness = async () => {
+    if (!testUserId) {
+      log('Create a test user first');
+      return;
+    }
+
+    try {
+      const fitness = await database.spiritualFitnessOperations.calculateSpiritualFitness(testUserId);
+      log(`Spiritual fitness: ${fitness.score.toFixed(2)}`);
+      log(`Details: ${JSON.stringify(fitness.details)}`);
+    } catch (error) {
+      log(`Error calculating spiritual fitness: ${error.message}`);
+    }
+  };
+
+  const getUserActivities = async () => {
+    if (!testUserId) {
+      log('Create a test user first');
+      return;
+    }
+
+    try {
+      const activities = await database.activityOperations.getUserActivities(testUserId);
+      log(`Found ${activities.length} activities`);
+      
+      activities.forEach(activity => {
+        log(`- ${activity.type}: ${activity.duration} minutes`);
+      });
+    } catch (error) {
+      log(`Error getting activities: ${error.message}`);
+    }
+  };
+
+  const createTestMeeting = async () => {
+    if (!testUserId) {
+      log('Create a test user first');
+      return;
+    }
+
+    try {
+      const meetingId = await database.meetingOperations.createMeeting({
+        name: 'Thursday Night Beginners',
+        day: 'thursday',
+        time: '19:00',
+        location: 'Community Center',
+        address: '123 Main St',
+        city: 'Anytown',
+        state: 'CA',
+        zip: '90210',
+        type: 'open',
+        notes: 'Beginner-friendly meeting',
+        shared: true,
+        createdBy: testUserId
+      });
+      
+      log(`Created meeting with ID: ${meetingId}`);
+    } catch (error) {
+      log(`Error creating meeting: ${error.message}`);
+    }
+  };
+
+  const getMeetings = async () => {
+    try {
+      const meetings = await database.meetingOperations.getSharedMeetings();
+      log(`Found ${meetings.length} shared meetings`);
+      
+      meetings.forEach(meeting => {
+        log(`- ${meeting.name} (${meeting.day}, ${meeting.time})`);
+      });
+    } catch (error) {
+      log(`Error getting meetings: ${error.message}`);
+    }
+  };
+
   // Loading screen while database is initializing
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color="#3b82f6" />
-        <Text style={styles.loadingText}>Initializing app...</Text>
+        <Text style={styles.loadingText}>Initializing database...</Text>
       </View>
     );
   }
-  
-  // Error screen if database failed to initialize
-  if (!dbInitialized) {
-    return (
-      <View style={styles.errorContainer}>
-        <Ionicons name="alert-circle" size={64} color="#ef4444" />
-        <Text style={styles.errorTitle}>Error Initializing App</Text>
-        <Text style={styles.errorText}>
-          Failed to initialize the database. Please restart the app.
+
+  return (
+    <SafeAreaView style={styles.container}>
+      <StatusBar barStyle="dark-content" />
+      <Text style={styles.title}>AA Recovery Tracker</Text>
+      <Text style={styles.subtitle}>SQLite Integration Test</Text>
+      
+      <View style={styles.statusContainer}>
+        <Text style={styles.statusLabel}>Database Status:</Text>
+        <Text style={[
+          styles.statusValue, 
+          dbStatus === 'Initialized' ? styles.statusGood : 
+          dbStatus.startsWith('Error') ? styles.statusBad : styles.statusPending
+        ]}>
+          {dbStatus}
         </Text>
       </View>
-    );
-  }
-  
-  return (
-    <SafeAreaProvider>
-      <UserProvider>
-        <ActivitiesProvider>
-          <NavigationContainer>
-            <Tab.Navigator
-              screenOptions={({ route }) => ({
-                tabBarIcon: ({ focused, color, size }) => {
-                  let iconName;
-                  
-                  if (route.name === 'Dashboard') {
-                    iconName = focused ? 'home' : 'home-outline';
-                  } else if (route.name === 'Activities') {
-                    iconName = focused ? 'list' : 'list-outline';
-                  } else if (route.name === 'Meetings') {
-                    iconName = focused ? 'people' : 'people-outline';
-                  } else if (route.name === 'Fitness') {
-                    iconName = focused ? 'fitness' : 'fitness-outline';
-                  } else if (route.name === 'Nearby') {
-                    iconName = focused ? 'location' : 'location-outline';
-                  } else if (route.name === 'Settings') {
-                    iconName = focused ? 'settings' : 'settings-outline';
-                  }
-                  
-                  return <Ionicons name={iconName} size={size} color={color} />;
-                },
-                tabBarActiveTintColor: '#3b82f6',
-                tabBarInactiveTintColor: 'gray',
-                headerShown: false,
-              })}
-            >
-              <Tab.Screen name="Dashboard" component={DashboardScreen} />
-              <Tab.Screen name="Activities" component={ActivityLogScreen} />
-              <Tab.Screen name="Meetings" component={MeetingsScreen} />
-              <Tab.Screen name="Fitness" component={SpiritualFitnessScreen} />
-              <Tab.Screen name="Nearby" component={NearbyMembersScreen} />
-              <Tab.Screen name="Settings" component={SettingsScreen} />
-            </Tab.Navigator>
-          </NavigationContainer>
-          <StatusBar style="auto" />
-        </ActivitiesProvider>
-      </UserProvider>
-    </SafeAreaProvider>
+
+      <View style={styles.buttonContainer}>
+        <Button title="Create Test User" onPress={createTestUser} />
+        <Button title="Create Activity" onPress={createTestActivity} />
+        <Button title="Create Meeting" onPress={createTestMeeting} />
+        <Button title="Calculate Spiritual Fitness" onPress={calculateSpiritualFitness} />
+        <Button title="Get Activities" onPress={getUserActivities} />
+        <Button title="Get Meetings" onPress={getMeetings} />
+        <Button title="Clear Logs" onPress={clearLogs} color="#999" />
+      </View>
+      
+      <Text style={styles.logsTitle}>Test Results:</Text>
+      <ScrollView style={styles.logs}>
+        {testResults.map((result, index) => (
+          <Text key={index} style={styles.logLine}>
+            {result}
+          </Text>
+        ))}
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#f5f5f5',
+    padding: 16,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginVertical: 10,
+    color: '#2c3e50',
+  },
+  subtitle: {
+    fontSize: 18,
+    textAlign: 'center',
+    color: '#7f8c8d',
+    marginBottom: 20,
+  },
+  statusContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: 10,
+    backgroundColor: 'white',
+    padding: 10,
+    borderRadius: 5,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.2,
+    shadowRadius: 1.5,
+  },
+  statusLabel: {
+    fontSize: 16,
+    fontWeight: '600',
+    marginRight: 10,
+  },
+  statusValue: {
+    fontSize: 16,
+    fontWeight: '500',
+  },
+  statusGood: {
+    color: 'green',
+  },
+  statusBad: {
+    color: 'red',
+  },
+  statusPending: {
+    color: 'orange',
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    marginVertical: 15,
+  },
+  logsTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    marginTop: 20,
+    marginBottom: 10,
+  },
+  logs: {
+    flex: 1,
+    backgroundColor: '#fff',
+    borderRadius: 5,
+    padding: 10,
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 2,
+  },
+  logLine: {
+    fontSize: 14,
+    marginBottom: 5,
+    color: '#34495e',
+    fontFamily: 'monospace',
+  },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
