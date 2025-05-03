@@ -49,14 +49,35 @@ if [ "$1" == "--clean-pods" ]; then
     
     echo "Running pod install with repo update..."
     cd "$SCRIPT_DIR" && pod install --repo-update
+    
+    # Check if pod install succeeded
+    if [ $? -ne 0 ]; then
+        echo "Standard pod install failed. Trying manual approach..."
+        cd "$SCRIPT_DIR" && pod install --no-integrate
+    fi
 else
     echo "Running pod install..."
     cd "$SCRIPT_DIR" && pod install
+    
+    # Check if pod install succeeded
+    if [ $? -ne 0 ]; then
+        echo "Standard pod install failed. Trying manual approach..."
+        cd "$SCRIPT_DIR" && pod install --no-integrate
+    fi
 fi
 
 # Fix any issues with the Expo configure scripts
 echo "Fixing Expo configure scripts..."
 cd "$SCRIPT_DIR" && ./fix-expo-configure.sh
+
+# Make a clean version of the project.pbxproj file
+echo "Backing up and cleaning project.pbxproj..."
+PROJECT_FILE="$SCRIPT_DIR/AARecoveryTracker.xcodeproj/project.pbxproj"
+cp "$PROJECT_FILE" "$PROJECT_FILE.backup"
+
+# Clean up any extraneous quotes or escape characters in the project file
+perl -i -pe 's/\\"/"/g' "$PROJECT_FILE"
+perl -i -pe 's/\\\\n/\\n/g' "$PROJECT_FILE"
 
 echo ""
 echo "Setup complete! You can now open the workspace in Xcode:"

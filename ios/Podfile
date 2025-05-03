@@ -1,53 +1,74 @@
 require File.join(File.dirname(`node --print "require.resolve('react-native/package.json')"`), "scripts/react_native_pods")
 
-begin
-  # Try to load expo autolinking script only if it exists
-  require File.join(File.dirname(`node --print "require.resolve('expo/package.json')"`), "scripts/autolinking") rescue nil
-rescue => e
-  # If expo autolinking fails, log the error but continue
-  puts "Warning: Expo autolinking script not found or failed to load: #{e.message}"
-end
-
 require 'json'
 podfile_properties = JSON.parse(File.read(File.join(__dir__, 'Podfile.properties.json'))) rescue {}
 
-ENV['RCT_NEW_ARCH_ENABLED'] = '0' if podfile_properties['newArchEnabled'] == 'false'
-ENV['EX_DEV_CLIENT_NETWORK_INSPECTOR'] = podfile_properties['EX_DEV_CLIENT_NETWORK_INSPECTOR']
+# Native iOS build configuration - no Expo dependencies
+ENV['RCT_NEW_ARCH_ENABLED'] = '0'
+ENV['USE_HERMES'] = '1'
 
-platform :ios, podfile_properties['ios.deploymentTarget'] || '15.1'
+# Set iOS version
+platform :ios, '15.1'
 install! 'cocoapods',
   :deterministic_uuids => false
 
 prepare_react_native_project!
 
+# Define required pods
+def common_pods
+  # React Native
+  pod 'React-Core'
+  pod 'React-CoreModules'
+  pod 'React-RCTActionSheet'
+  pod 'React-RCTAnimation'
+  pod 'React-RCTBlob'
+  pod 'React-RCTImage'
+  pod 'React-RCTLinking'
+  pod 'React-RCTNetwork'
+  pod 'React-RCTSettings'
+  pod 'React-RCTText'
+  pod 'React-RCTVibration'
+  pod 'React-Core/DevSupport'
+  pod 'React-Core/RCTWebSocket'
+  pod 'React-cxxreact'
+  pod 'React-jsi'
+  pod 'React-jsiexecutor'
+  pod 'React-jsinspector'
+  pod 'React-logger'
+  pod 'React-perflogger'
+  pod 'ReactCommon/turbomodule/core'
+  pod 'Yoga', :path => '../node_modules/react-native/ReactCommon/yoga'
+  pod 'DoubleConversion'
+  pod 'glog'
+  pod 'RCT-Folly'
+  
+  # Hermes engine
+  pod 'React-hermes'
+  pod 'hermes-engine'
+
+  # Native features
+  pod 'RNCAsyncStorage'
+  pod 'RNGestureHandler'
+  pod 'RNReanimated'
+  pod 'RNScreens'
+  pod 'react-native-safe-area-context'
+  
+  # Bluetooth and WiFi
+  pod 'CoreBluetooth'
+end
+
 target 'AARecoveryTracker' do
-  use_expo_modules!
-
-  if ENV['EXPO_USE_COMMUNITY_AUTOLINKING'] == '1'
-    config_command = ['node', '-e', "process.argv=['', '', 'config'];require('@react-native-community/cli').run()"];
-  else
-    config_command = [
-      'npx',
-      'expo-modules-autolinking',
-      'react-native-config',
-      '--json',
-      '--platform',
-      'ios'
-    ]
-  end
-
-  config = use_native_modules!(config_command)
-
-  use_frameworks! :linkage => podfile_properties['ios.useFrameworks'].to_sym if podfile_properties['ios.useFrameworks']
-  use_frameworks! :linkage => ENV['USE_FRAMEWORKS'].to_sym if ENV['USE_FRAMEWORKS']
+  # React Native dependencies
+  config = use_native_modules!
 
   use_react_native!(
     :path => config[:reactNativePath],
-    :hermes_enabled => podfile_properties['expo.jsEngine'] == nil || podfile_properties['expo.jsEngine'] == 'hermes',
-    # An absolute path to your application root.
+    :hermes_enabled => true,
     :app_path => "#{Pod::Config.instance.installation_root}/..",
-    :privacy_file_aggregation_enabled => podfile_properties['apple.privacyManifestAggregationEnabled'] != 'false',
   )
+
+  # Add common pods
+  common_pods()
 
   post_install do |installer|
     # Apple Silicon builds require a library path tweak for Swift library discovery or the simulator will fail to launch the app

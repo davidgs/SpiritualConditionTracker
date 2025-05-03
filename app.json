@@ -1,80 +1,42 @@
 {
-  "expo": {
-    "name": "AA Recovery Tracker",
-    "slug": "aa-recovery-tracker",
-    "version": "1.0.0",
-    "orientation": "portrait",
-    "icon": "./src/assets/icon.png",
-    "splash": {
-      "image": "./src/assets/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+  "name": "AA Recovery Tracker",
+  "displayName": "AARecoveryTracker",
+  "version": "1.0.0",
+  "orientation": "portrait",
+  "assets": [
+    "./src/assets/icon.png",
+    "./src/assets/splash.png",
+    "./src/assets/favicon.png",
+    "./src/assets/adaptive-icon.png"
+  ],
+  "ios": {
+    "supportsTablet": true,
+    "bundleIdentifier": "com.example.aarecoverytracker",
+    "buildNumber": "1.0.0"
+  },
+  "android": {
+    "package": "com.example.aarecoverytracker",
+    "versionCode": 1,
+    "adaptiveIcon": {
+      "foregroundImage": "./src/assets/adaptive-icon.png",
+      "backgroundColor": "#FFFFFF"
     },
-    "updates": {
-      "fallbackToCacheTimeout": 0
-    },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
-    "ios": {
-      "supportsTablet": true,
-      "bundleIdentifier": "com.example.aarecoverytracker",
-      "buildNumber": "1.0.0",
-      "infoPlist": {
-        "NSLocationWhenInUseUsageDescription": "This app uses your location to find nearby AA members when you enable discoverability.",
-        "NSCalendarsUsageDescription": "This app needs access to your calendar to add AA meeting reminders.",
-        "NSRemindersUsageDescription": "This app needs access to your reminders to set meeting alerts.",
-        "NSBluetoothAlwaysUsageDescription": "This app uses Bluetooth to discover nearby AA members for connection.",
-        "NSBluetoothPeripheralUsageDescription": "This app uses Bluetooth to discover nearby AA members for connection.",
-        "NSLocalNetworkUsageDescription": "This app uses WiFi to discover nearby AA members for connection.",
-        "NSBonjourServices": [
-          "_aarecovery._tcp",
-          "_aarecovery._udp"
-        ],
-        "UIBackgroundModes": [
-          "bluetooth-central",
-          "bluetooth-peripheral",
-          "fetch",
-          "location"
-        ],
-        "NSUserActivityTypes": [
-          "AddToCalendarIntent"
-        ]
-      }
-    },
-    "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./src/assets/adaptive-icon.png",
-        "backgroundColor": "#FFFFFF"
-      },
-      "package": "com.example.aarecoverytracker",
-      "versionCode": 1,
-      "permissions": [
-        "ACCESS_COARSE_LOCATION",
-        "ACCESS_FINE_LOCATION",
-        "BLUETOOTH",
-        "BLUETOOTH_ADMIN",
-        "BLUETOOTH_CONNECT",
-        "BLUETOOTH_SCAN",
-        "BLUETOOTH_ADVERTISE",
-        "ACCESS_WIFI_STATE",
-        "CHANGE_WIFI_STATE",
-        "NEARBY_WIFI_DEVICES",
-        "READ_CALENDAR",
-        "WRITE_CALENDAR",
-        "RECEIVE_BOOT_COMPLETED",
-        "VIBRATE",
-        "SCHEDULE_EXACT_ALARM"
-      ]
-    },
-    "web": {
-      "favicon": "./src/assets/favicon.png"
-    },
-    "extra": {
-      "eas": {
-        "projectId": "a4fdb049-707c-4964-bb1f-20e9931596d2"
-      }
-    },
-    "owner": "davidgs"
+    "permissions": [
+      "ACCESS_COARSE_LOCATION",
+      "ACCESS_FINE_LOCATION",
+      "BLUETOOTH",
+      "BLUETOOTH_ADMIN",
+      "BLUETOOTH_CONNECT",
+      "BLUETOOTH_SCAN",
+      "BLUETOOTH_ADVERTISE",
+      "ACCESS_WIFI_STATE",
+      "CHANGE_WIFI_STATE",
+      "NEARBY_WIFI_DEVICES",
+      "READ_CALENDAR",
+      "WRITE_CALENDAR",
+      "RECEIVE_BOOT_COMPLETED",
+      "VIBRATE",
+      "SCHEDULE_EXACT_ALARM"
+    ]
   }
 }
