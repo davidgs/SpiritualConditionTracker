@@ -36,8 +36,8 @@ try_pod_install() {
     fi
     
     if [ $? -ne 0 ]; then
-        echo "Pod install with repo update failed, trying with --no-integrate..."
-        pod install --no-integrate
+        echo "Pod install with repo update failed, trying alternative method..."
+        cd .. && cd ios && pod install # Sometimes changing directory helps
     fi
     
     if [ $? -ne 0 ]; then

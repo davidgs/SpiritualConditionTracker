@@ -14,52 +14,28 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "Server"
+args = "ReactNativeStart"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "BuildIOS"
-
-[[workflows.workflow.tasks]]
-task = "workflow.run"
-args = "BuildAndroid"
-
-[[workflows.workflow.tasks]]
-task = "workflow.run"
-args = "DevBuildAndroid"
+args = "AAMeetingServer"
 
 [[workflows.workflow]]
-name = "Server"
+name = "ReactNativeStart"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd . && npx react-native start --port 5000 --host 0.0.0.0"
+waitForPort = 5000
+
+[[workflows.workflow]]
+name = "AAMeetingServer"
 author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "cd simple-server && node server.js"
-waitForPort = 5000
-
-[[workflows.workflow]]
-name = "BuildIOS"
-author = "agent"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "cd . && npx expo prebuild -p ios"
-
-[[workflows.workflow]]
-name = "BuildAndroid"
-author = "agent"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "cd . && npx expo prebuild -p android"
-
-[[workflows.workflow]]
-name = "DevBuildAndroid"
-author = "agent"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "cd . && EXPO_TOKEN=rvxlBHyFU-XtCyZqkKCyCL8nluZmMBuaF8kT-8Bd npx eas build --platform android --profile development --non-interactive"
 
 [deployment]
 run = ["sh", "-c", "cd simple-server && node server.js"]
@@ -67,3 +43,7 @@ run = ["sh", "-c", "cd simple-server && node server.js"]
 [[ports]]
 localPort = 5000
 externalPort = 80
+
+[[ports]]
+localPort = 5001
+externalPort = 3000

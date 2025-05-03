@@ -5,7 +5,7 @@ const path = require('path');
 const url = require('url');
 const { exec } = require('child_process');
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5001;
 
 // In-memory database for the app
 const db = {
