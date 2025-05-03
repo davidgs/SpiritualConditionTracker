@@ -7,6 +7,9 @@ platform :ios, '15.1'
 ENV['RCT_NEW_ARCH_ENABLED'] = '0'
 ENV['NO_FLIPPER'] = '1'
 
+# Skip auto-linking DoubleConversion by React Native scripts
+$RN_THIRD_PARTY_PODSPECS_EXCLUDE = ['DoubleConversion']
+
 prepare_react_native_project!
 
 # Install pods with deterministic UUIDs
