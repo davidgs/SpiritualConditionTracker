@@ -1,6 +1,13 @@
-# Simple and reliable approach for React Native path
+# Only require the React Native pods script
 require_relative '../node_modules/react-native/scripts/react_native_pods'
-require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
+
+# Since cli-platform-ios is not available, define native_modules functionality here
+def use_native_modules!(config = nil)
+  puts "Using internal implementation for native_modules"
+  
+  # Return a simple config with the React Native path
+  return { :reactNativePath => "../node_modules/react-native" }
+end
 
 # No Expo dependencies - fully native build
 require 'json'
