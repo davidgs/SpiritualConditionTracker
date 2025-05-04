@@ -173,27 +173,27 @@ function DashboardScreen() {
               
               <View style={themedStyles.calculationItem}>
                 <Text style={themedStyles.calculationLabel}>• Prayer & Meditation:</Text>
-                <Text style={themedStyles.calculationValue}>Regular daily practice</Text>
+                <Text style={themedStyles.calculationValue}>2 pts per 15 min daily, max 4 pts/day</Text>
               </View>
               
               <View style={themedStyles.calculationItem}>
                 <Text style={themedStyles.calculationLabel}>• Meetings:</Text>
-                <Text style={themedStyles.calculationValue}>Frequency of attendance</Text>
+                <Text style={themedStyles.calculationValue}>3 pts each, max 6 pts/day</Text>
               </View>
               
               <View style={themedStyles.calculationItem}>
                 <Text style={themedStyles.calculationLabel}>• Literature:</Text>
-                <Text style={themedStyles.calculationValue}>Time spent reading AA texts</Text>
+                <Text style={themedStyles.calculationValue}>1 pt per 15 min, max 4 pts/day</Text>
               </View>
               
               <View style={themedStyles.calculationItem}>
                 <Text style={themedStyles.calculationLabel}>• Service:</Text>
-                <Text style={themedStyles.calculationValue}>Helping others in recovery</Text>
+                <Text style={themedStyles.calculationValue}>2 pts per activity, max 6 pts/day</Text>
               </View>
               
               <View style={themedStyles.calculationItem}>
                 <Text style={themedStyles.calculationLabel}>• Sponsorship:</Text>
-                <Text style={themedStyles.calculationValue}>Time with sponsor/sponsees</Text>
+                <Text style={themedStyles.calculationValue}>2 pts per interaction, max 4 pts/day</Text>
               </View>
             </View>
           </>
