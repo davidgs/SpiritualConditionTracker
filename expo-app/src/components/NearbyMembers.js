@@ -226,13 +226,19 @@ function NearbyMembers({ navigation, onStartWizard }) {
                   </View>
                 </View>
                 
-                <Text style={[styles.memberDistance, themedStyles.userInfo]}>
-                  <Icon name="map-marker" size={14} /> {member.distance} miles away
-                </Text>
+                <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                  <Icon name="map-marker" size={14} color={theme.textSecondary} />
+                  <Text style={[styles.memberDistance, themedStyles.userInfo]}>
+                    {' '}{member.distance} miles away
+                  </Text>
+                </View>
                 
-                <Text style={[styles.memberActive, themedStyles.userInfo]}>
-                  <Icon name="clock-o" size={14} /> Active {member.lastActive}
-                </Text>
+                <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                  <Icon name="clock-o" size={14} color={theme.textSecondary} />
+                  <Text style={[styles.memberActive, themedStyles.userInfo]}>
+                    {' '}Active {member.lastActive}
+                  </Text>
+                </View>
               </View>
               
               <TouchableOpacity
