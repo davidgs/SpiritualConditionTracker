@@ -1,18 +1,30 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, Dimensions } from 'react-native';
 import { useTheme } from '../contexts/ThemeContext';
+import Svg, { Circle, G } from 'react-native-svg';
 
-const SpiritualFitnessGauge = ({ value = 0, width = 300, height = 120, maxValue = 10 }) => {
+/**
+ * SpiritualFitnessGauge component displays the spiritual fitness score
+ * either as a circular gauge (doughnut) or as a horizontal bar gauge
+ */
+const SpiritualFitnessGauge = ({ 
+  value = 0, 
+  width = 300, 
+  height = 120, 
+  maxValue = 100,
+  style = 'horizontal', // 'horizontal' or 'doughnut'
+  size = 200 // Used for doughnut style
+}) => {
   const { theme } = useTheme();
   
-  // Convert to 0-100 scale
-  const scaledValue = Math.round((value / maxValue) * 100);
+  // Normalize value to 0-100 scale
+  const normalizedValue = Math.min(Math.max(Math.round((value / maxValue) * 100), 0), 100);
   
-  // Calculate colors based on the value (0-100 scale)
+  // Calculate colors based on the value
   const getColor = (value) => {
     if (value < 30) return '#f44336'; // Red for low values
     if (value < 60) return '#ff9800'; // Orange for medium values
-    if (value < 80) return '#2196F3'; // Blue for good values
+    if (value < 80) return '#4F86C6'; // Blue for good values
     return '#4CAF50'; // Green for excellent values
   };
   
@@ -23,18 +35,74 @@ const SpiritualFitnessGauge = ({ value = 0, width = 300, height = 120, maxValue 
     return 'Excellent';
   };
   
-  const barColor = getColor(scaledValue);
-  const gaugeLabel = getLabel(scaledValue);
+  const barColor = getColor(normalizedValue);
+  const gaugeLabel = getLabel(normalizedValue);
   
+  // Render doughnut-style gauge
+  if (style === 'doughnut') {
+    // Circle parameters
+    const strokeWidth = 18;
+    const radius = (size - strokeWidth) / 2;
+    const circumference = radius * 2 * Math.PI;
+    const fillPercent = normalizedValue / 100;
+    const fillOffset = circumference * (1 - fillPercent);
+    
+    return (
+      <View style={[styles.container, { width: size, height: size + 40 }]}>
+        <View style={styles.circleContainer}>
+          <Svg width={size} height={size}>
+            <G rotation="-90" origin={`${size/2}, ${size/2}`}>
+              {/* Background Circle */}
+              <Circle
+                cx={size/2}
+                cy={size/2}
+                r={radius}
+                stroke={theme.isDark ? '#333333' : '#E4E9F2'}
+                strokeWidth={strokeWidth}
+                fill="none"
+              />
+              
+              {/* Progress Circle */}
+              <Circle
+                cx={size/2}
+                cy={size/2}
+                r={radius}
+                stroke={barColor}
+                strokeWidth={strokeWidth}
+                fill="none"
+                strokeDasharray={circumference}
+                strokeDashoffset={fillOffset}
+                strokeLinecap="round"
+              />
+            </G>
+          </Svg>
+          
+          {/* Value in center */}
+          <View style={styles.valueContainer}>
+            <Text style={[styles.valueText, { color: barColor }]}>
+              {normalizedValue}
+            </Text>
+          </View>
+        </View>
+        
+        {/* Label */}
+        <Text style={[styles.statusLabel, { color: barColor }]}>
+          {gaugeLabel}
+        </Text>
+      </View>
+    );
+  }
+  
+  // Default: render horizontal-style gauge
   // Calculate the width of the progress bar
-  const progressWidth = Math.max((scaledValue / 100) * (width - 40), 10); // at least 10px wide
+  const progressWidth = Math.max((normalizedValue / 100) * (width - 40), 10); // at least 10px wide
   
   return (
     <View style={[styles.container, { width, height }]}>
       {/* Score display */}
       <View style={styles.scoreContainer}>
         <Text style={[styles.scoreValue, { color: barColor }]}>
-          {scaledValue}
+          {normalizedValue}
         </Text>
         <Text style={[styles.scoreLabel, { color: barColor }]}>
           {gaugeLabel}
@@ -81,6 +149,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingVertical: 15
   },
+  // Horizontal gauge styles
   scoreContainer: {
     alignItems: 'center',
     marginBottom: 15
@@ -121,6 +190,27 @@ const styles = StyleSheet.create({
   scaleLabel: {
     fontSize: 14,
     fontWeight: '500'
+  },
+  // Doughnut gauge styles
+  circleContainer: {
+    position: 'relative',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  valueContainer: {
+    position: 'absolute',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  valueText: {
+    fontSize: 48,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  statusLabel: {
+    fontSize: 18,
+    fontWeight: '500',
+    marginTop: 10,
   }
 });
 
