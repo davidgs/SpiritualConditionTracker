@@ -48,15 +48,15 @@
     },
     "extra": {
       "eas": {
-        "projectId": "a82e4d89-0b9f-45e8-a23d-c9b8e7662695"
+        "projectId": "fc5da254-b364-461a-b064-b16448479301"
       }
     },
-    "owner": "anonymous",
+    "owner": "davidgs",
     "runtimeVersion": {
       "policy": "sdkVersion"
     },
     "updates": {
-      "url": "https://u.expo.dev/a82e4d89-0b9f-45e8-a23d-c9b8e7662695"
+      "enabled": true
     }
   }
 }
