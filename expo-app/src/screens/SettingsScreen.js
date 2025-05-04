@@ -1,8 +1,13 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, Switch, TouchableOpacity, TextInput, Alert } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Switch, TouchableOpacity, TextInput, Alert, Platform } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import DateTimePicker from '@react-native-community/datetimepicker';
 import { useUser } from '../contexts/UserContext';
+
+// Only import DateTimePicker on native platforms
+let DateTimePicker;
+if (Platform.OS !== 'web') {
+  DateTimePicker = require('@react-native-community/datetimepicker').default;
+}
 
 function SettingsScreen() {
   const { user, updateUser } = useUser();
@@ -55,6 +60,17 @@ function SettingsScreen() {
       setProfile({...profile, sobrietyDate: selectedDate});
     }
   };
+  
+  const handleWebDateChange = (text) => {
+    try {
+      const newDate = new Date(text);
+      if (!isNaN(newDate.getTime())) {
+        setProfile({...profile, sobrietyDate: newDate});
+      }
+    } catch (e) {
+      console.log('Invalid date format');
+    }
+  };
 
   const reminderOptions = [
     { value: 15, label: '15 minutes' },
@@ -104,7 +120,14 @@ function SettingsScreen() {
               <MaterialCommunityIcons name="calendar" size={20} color="#4a86e8" />
             </TouchableOpacity>
             
-            {showDatePicker && (
+            {Platform.OS === 'web' ? (
+              <TextInput
+                style={styles.input}
+                value={profile.sobrietyDate ? profile.sobrietyDate.toISOString().split('T')[0] : ''}
+                onChangeText={handleWebDateChange}
+                placeholder="YYYY-MM-DD"
+              />
+            ) : showDatePicker && (
               <DateTimePicker
                 value={profile.sobrietyDate}
                 mode="date"
