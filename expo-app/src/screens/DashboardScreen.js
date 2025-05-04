@@ -107,8 +107,7 @@ function DashboardScreen() {
         <View style={styles.gaugeContainer}>
           <SpiritualFitnessGauge 
             value={spiritualFitness?.overall || 0} 
-            width={Math.min(350, screenWidth - 60)}
-            height={120}
+            size={Math.min(220, screenWidth - 120)}
             maxValue={10}
           />
         </View>
