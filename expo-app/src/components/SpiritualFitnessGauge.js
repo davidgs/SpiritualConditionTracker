@@ -2,11 +2,14 @@ import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { useTheme } from '../contexts/ThemeContext';
 
-const SpiritualFitnessGauge = ({ value = 0, width = 300, height = 140, maxValue = 10 }) => {
+const SpiritualFitnessGauge = ({ value = 0, width = 300, height = 120, maxValue = 10 }) => {
   const { theme } = useTheme();
   
-  // Normalize value between 0 and 1
-  const normalizedValue = Math.min(Math.max(value, 0), maxValue) / maxValue;
+  // Convert to 0-100 scale
+  const scaledValue = Math.round((value / maxValue) * 100);
+  
+  // Normalize value between 0 and 1 for calculations
+  const normalizedValue = Math.min(Math.max(scaledValue, 0), 100) / 100;
   
   // Calculate colors based on the value
   const getColor = (value) => {
@@ -26,101 +29,47 @@ const SpiritualFitnessGauge = ({ value = 0, width = 300, height = 140, maxValue 
   const barColor = getColor(normalizedValue);
   const gaugeLabel = getLabel(normalizedValue);
   
-  // Create major ticks for the gauge (only 0, 5, and 10)
-  const renderTicks = () => {
-    const ticks = [];
-    const majorTicks = [0, 5, 10]; // Only show 0, 5, and 10 marks
-    const barWidth = width - 40;
-    
-    majorTicks.forEach(tickValue => {
-      const tickPosition = 20 + (tickValue / maxValue) * barWidth;
-      
-      ticks.push(
-        <View
-          key={tickValue}
-          style={{
-            position: 'absolute',
-            left: tickPosition,
-            top: 80,
-            width: 2,
-            height: 10,
-            backgroundColor: theme.textSecondary,
-          }}
-        />
-      );
-      
-      ticks.push(
-        <Text
-          key={`label-${tickValue}`}
-          style={{
-            position: 'absolute',
-            left: tickPosition - 5,
-            top: 92,
-            fontSize: 16,
-            fontWeight: '500',
-            color: theme.textSecondary,
-          }}
-        >
-          {tickValue}
-        </Text>
-      );
-    });
-    
-    return ticks;
-  };
-  
   return (
     <View style={[styles.container, { width, height }]}>
       {/* Large Value Display */}
       <View style={styles.valueContainer}>
         <Text style={[styles.valueText, { color: barColor }]}>
-          {value.toFixed(2)}
+          {scaledValue}
         </Text>
         <Text style={[styles.statusLabel, { color: barColor }]}>
           {gaugeLabel}
         </Text>
       </View>
       
-      {/* Background Track */}
-      <View 
-        style={[
-          styles.track, 
-          { 
-            backgroundColor: theme.isDark ? '#333333' : '#f0f0f0',
-            width: width - 40,
-            marginLeft: 20,
-            marginRight: 20,
-          }
-        ]}
-      />
-      
-      {/* Colored Progress Bar */}
-      <View 
-        style={[
-          styles.progressBar, 
-          { 
-            backgroundColor: barColor,
-            width: Math.max(normalizedValue * (width - 40), 20), // Minimum visible bar size
-            marginLeft: 20,
-          }
-        ]}
-      />
-      
-      {/* Add Ticks */}
-      {renderTicks()}
-      
-      {/* Gradient Indicator Below Bar */}
-      <View style={[styles.gradientContainer, { width: width - 40, marginLeft: 20 }]}>
-        <View style={[styles.gradientSegment, { backgroundColor: '#f44336' }]} />
-        <View style={[styles.gradientSegment, { backgroundColor: '#ff9800' }]} />
-        <View style={[styles.gradientSegment, { backgroundColor: '#2196F3' }]} />
-        <View style={[styles.gradientSegment, { backgroundColor: '#4CAF50' }]} />
-      </View>
-      
-      {/* Labels */}
-      <View style={[styles.labelContainer, { width: width - 30 }]}>
-        <Text style={[styles.label, { color: theme.textSecondary }]}>Needs Work</Text>
-        <Text style={[styles.label, { color: theme.textSecondary }]}>Excellent</Text>
+      {/* Gauge Bar Container */}
+      <View style={styles.gaugeContainer}>
+        {/* Background Track */}
+        <View 
+          style={[
+            styles.track, 
+            { 
+              backgroundColor: theme.isDark ? '#333333' : '#f0f0f0',
+              width: width - 40,
+            }
+          ]}
+        />
+        
+        {/* Colored Fill Bar */}
+        <View 
+          style={[
+            styles.progressBar, 
+            { 
+              backgroundColor: barColor,
+              width: Math.max(normalizedValue * (width - 40), 10), // Minimum visible width
+            }
+          ]}
+        />
+        
+        {/* Tick marks at 0, 50, and 100 */}
+        <View style={[styles.tickContainer, { width: width - 40 }]}>
+          <Text style={[styles.tickLabel, { color: theme.textSecondary }]}>0</Text>
+          <Text style={[styles.tickLabel, { color: theme.textSecondary }]}>100</Text>
+        </View>
       </View>
     </View>
   );
@@ -128,17 +77,16 @@ const SpiritualFitnessGauge = ({ value = 0, width = 300, height = 140, maxValue 
 
 const styles = StyleSheet.create({
   container: {
-    position: 'relative',
     alignItems: 'center',
-    paddingTop: 5,
-    paddingBottom: 25,
+    justifyContent: 'center',
+    paddingVertical: 15,
   },
   valueContainer: {
     alignItems: 'center',
-    marginBottom: 15,
+    marginBottom: 20,
   },
   valueText: {
-    fontSize: 42,
+    fontSize: 48,
     fontWeight: 'bold',
     textAlign: 'center',
   },
@@ -147,38 +95,30 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     marginTop: 5,
   },
+  gaugeContainer: {
+    position: 'relative',
+    alignItems: 'center',
+    width: '100%',
+  },
   track: {
-    height: 16,
-    borderRadius: 8,
-    position: 'absolute',
-    top: 80,
+    height: 24,
+    borderRadius: 12,
+    marginHorizontal: 20,
   },
   progressBar: {
-    height: 16,
-    borderRadius: 8,
+    height: 24,
+    borderRadius: 12,
     position: 'absolute',
-    top: 80,
+    top: 0,
+    left: 20,
   },
-  gradientContainer: {
-    flexDirection: 'row',
-    height: 6,
-    borderRadius: 3,
-    position: 'absolute',
-    top: 105,
-    overflow: 'hidden',
-  },
-  gradientSegment: {
-    flex: 1,
-    height: 6,
-  },
-  labelContainer: {
+  tickContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    position: 'absolute',
-    bottom: 0,
-    paddingHorizontal: 20,
+    marginTop: 5,
+    marginHorizontal: 20,
   },
-  label: {
+  tickLabel: {
     fontSize: 14,
     fontWeight: '500',
   },
