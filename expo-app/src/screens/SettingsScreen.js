@@ -68,6 +68,25 @@ function SettingsScreen() {
     year: profile.sobrietyDate.getFullYear().toString()
   });
   
+  // Format phone number as (xxx) yyy-zzzz
+  const formatPhoneNumber = (phoneNumber) => {
+    if (!phoneNumber) return '';
+    
+    // Remove all non-numeric characters
+    const cleaned = phoneNumber.replace(/\D/g, '');
+    
+    // Format based on length
+    if (cleaned.length === 0) {
+      return '';
+    } else if (cleaned.length <= 3) {
+      return `(${cleaned}`;
+    } else if (cleaned.length <= 6) {
+      return `(${cleaned.slice(0, 3)}) ${cleaned.slice(3)}`;
+    } else {
+      return `(${cleaned.slice(0, 3)}) ${cleaned.slice(3, 6)}-${cleaned.slice(6, 10)}`;
+    }
+  };
+  
   // Update webDate when profile.sobrietyDate changes (initialization)
   useEffect(() => {
     if (profile.sobrietyDate) {
@@ -170,22 +189,6 @@ function SettingsScreen() {
             {Platform.OS === 'web' ? (
               <View>
                 <View style={styles.webDatePickerContainer}>
-                  {/* Day dropdown */}
-                  <View style={styles.webDatePickerItem}>
-                    <Text style={styles.webDatePickerLabel}>Day</Text>
-                    <View style={styles.webDatePickerSelect}>
-                      <select
-                        value={webDate.day}
-                        onChange={(e) => setWebDate({...webDate, day: e.target.value})}
-                        style={styles.webDateDropdown}
-                      >
-                        {days.map(day => (
-                          <option key={day} value={day}>{day}</option>
-                        ))}
-                      </select>
-                    </View>
-                  </View>
-                  
                   {/* Month dropdown */}
                   <View style={styles.webDatePickerItem}>
                     <Text style={styles.webDatePickerLabel}>Month</Text>
@@ -197,6 +200,22 @@ function SettingsScreen() {
                       >
                         {months.map(month => (
                           <option key={month.value} value={month.value}>{month.label}</option>
+                        ))}
+                      </select>
+                    </View>
+                  </View>
+                  
+                  {/* Day dropdown */}
+                  <View style={styles.webDatePickerItem}>
+                    <Text style={styles.webDatePickerLabel}>Day</Text>
+                    <View style={styles.webDatePickerSelect}>
+                      <select
+                        value={webDate.day}
+                        onChange={(e) => setWebDate({...webDate, day: e.target.value})}
+                        style={styles.webDateDropdown}
+                      >
+                        {days.map(day => (
+                          <option key={day} value={day}>{day}</option>
                         ))}
                       </select>
                     </View>
@@ -265,9 +284,9 @@ function SettingsScreen() {
             <Text style={styles.label}>Sponsor Phone</Text>
             <TextInput
               style={styles.input}
-              value={profile.sponsorPhone}
+              value={formatPhoneNumber(profile.sponsorPhone)}
               onChangeText={(text) => setProfile({...profile, sponsorPhone: text})}
-              placeholder="Enter your sponsor's phone number"
+              placeholder="(555) 555-5555"
               keyboardType="phone-pad"
             />
             
@@ -302,6 +321,11 @@ function SettingsScreen() {
             {profile.sponsorName && (
               <Text style={styles.profileDetail}>
                 Sponsor: {profile.sponsorName}
+              </Text>
+            )}
+            {profile.sponsorPhone && (
+              <Text style={styles.profileDetail}>
+                Sponsor Phone: {formatPhoneNumber(profile.sponsorPhone)}
               </Text>
             )}
           </View>

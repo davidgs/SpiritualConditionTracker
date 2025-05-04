@@ -1,17 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { useUser } from '../contexts/UserContext';
-import { formatNumberWithCommas, calculateSobrietyDays } from '../utils/calculations';
+import { formatNumberWithCommas, calculateSobrietyDays, calculateSobrietyYears } from '../utils/calculations';
 
 function DashboardScreen() {
   const { user, spiritualFitness, loadSpiritualFitness } = useUser();
   const [sobrietyDays, setSobrietyDays] = useState(0);
+  const [sobrietyYears, setSobrietyYears] = useState(0);
 
   useEffect(() => {
     loadSpiritualFitness();
     
     if (user && user.sobrietyDate) {
       setSobrietyDays(calculateSobrietyDays(user.sobrietyDate));
+      setSobrietyYears(calculateSobrietyYears(user.sobrietyDate, 2));
     }
   }, [user]);
 
@@ -19,11 +21,21 @@ function DashboardScreen() {
     <ScrollView style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.greeting}>Hello, {user?.firstName || 'Friend'}</Text>
-        <Text style={styles.sobrietyDays}>
-          {sobrietyDays > 0 
-            ? `${formatNumberWithCommas(sobrietyDays)} days of sobriety` 
-            : 'Set your sobriety date in Profile'}
-        </Text>
+        
+        {sobrietyDays > 0 ? (
+          <View style={styles.sobrietyContainer}>
+            <Text style={styles.sobrietyYears}>
+              {sobrietyYears.toFixed(2)} Years
+            </Text>
+            <Text style={styles.sobrietyDays}>
+              {formatNumberWithCommas(sobrietyDays)} Days
+            </Text>
+          </View>
+        ) : (
+          <Text style={styles.sobrietyDays}>
+            Set your sobriety date in Profile
+          </Text>
+        )}
       </View>
 
       <View style={styles.fitnessCard}>
@@ -89,6 +101,15 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     color: 'white',
+  },
+  sobrietyContainer: {
+    marginTop: 10,
+  },
+  sobrietyYears: {
+    fontSize: 32,
+    fontWeight: 'bold',
+    color: 'white',
+    marginTop: 5,
   },
   sobrietyDays: {
     fontSize: 16,
