@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Dimensions } from 'react-native';
 import { useUser } from '../contexts/UserContext';
 import { useTheme } from '../contexts/ThemeContext';
 import SpiritualFitnessGauge from '../components/SpiritualFitnessGauge';
@@ -106,8 +106,8 @@ function DashboardScreen() {
         <View style={styles.gaugeContainer}>
           <SpiritualFitnessGauge 
             value={spiritualFitness?.overall || 0} 
-            size={220}
-            thickness={15}
+            width={Math.min(350, screen.width - 60)}
+            height={100}
             maxValue={10}
           />
         </View>

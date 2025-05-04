@@ -2,17 +2,11 @@ import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { useTheme } from '../contexts/ThemeContext';
 
-const SpiritualFitnessGauge = ({ value = 0, size = 200, thickness = 20, maxValue = 10 }) => {
+const SpiritualFitnessGauge = ({ value = 0, width = 300, height = 80, maxValue = 10 }) => {
   const { theme } = useTheme();
   
   // Normalize value between 0 and 1
   const normalizedValue = Math.min(Math.max(value, 0), maxValue) / maxValue;
-  
-  // Calculate angles for the arc (in degrees)
-  const startAngle = -135;
-  const endAngle = 135;
-  const totalAngle = endAngle - startAngle;
-  const valueAngle = startAngle + (totalAngle * normalizedValue);
   
   // Calculate colors based on the value
   const getColor = (value) => {
@@ -22,89 +16,46 @@ const SpiritualFitnessGauge = ({ value = 0, size = 200, thickness = 20, maxValue
     return '#4CAF50'; // Green for excellent values
   };
   
-  const arcColor = getColor(normalizedValue);
+  const barColor = getColor(normalizedValue);
   
-  // Calculate coordinates for the arc
-  const radius = (size - thickness) / 2;
-  const center = size / 2;
-  
-  // Convert angle to radians and calculate position
-  const angleToRadians = (angle) => ((angle - 90) * Math.PI) / 180;
-  
-  const calculateArcPoint = (angle) => {
-    const rad = angleToRadians(angle);
-    return {
-      x: center + radius * Math.cos(rad),
-      y: center + radius * Math.sin(rad),
-    };
-  };
-  
-  const start = calculateArcPoint(startAngle);
-  const end = calculateArcPoint(valueAngle);
-  
-  // Create gauge ticks
+  // Create the ticks for the gauge
   const renderTicks = () => {
     const ticks = [];
-    const numTicks = 27; // Number of ticks (one per 10 degrees)
+    const numTicks = 10; // One tick per unit
+    const tickSpacing = (width - 40) / numTicks;
     
     for (let i = 0; i <= numTicks; i++) {
-      const tickAngle = startAngle + (totalAngle * (i / numTicks));
-      const isLongTick = i % 3 === 0;
-      const tickRadius = isLongTick ? radius - 5 : radius - 2;
-      const tickStart = calculateArcPoint(tickAngle);
-      const tickEnd = {
-        x: center + (tickRadius * Math.cos(angleToRadians(tickAngle))),
-        y: center + (tickRadius * Math.sin(angleToRadians(tickAngle))),
-      };
-      
-      // Determine if tick should be colored (within the current value range)
-      const isColored = tickAngle <= valueAngle;
+      const tickX = 20 + (i * tickSpacing);
+      const isMajorTick = i % 2 === 0;
       
       ticks.push(
         <View
           key={i}
           style={{
             position: 'absolute',
-            width: isLongTick ? 3 : 1.5,
-            height: isLongTick ? 10 : 5,
-            backgroundColor: isColored ? arcColor : theme.textSecondary,
-            borderRadius: 1,
-            left: tickEnd.x,
-            top: tickEnd.y,
-            transform: [
-              { translateX: -1 },
-              { translateY: -1 },
-              { rotate: `${tickAngle}deg` },
-            ],
+            left: tickX,
+            top: height * 0.45,
+            width: 1,
+            height: isMajorTick ? 10 : 6,
+            backgroundColor: theme.textSecondary,
+            opacity: 0.7,
           }}
         />
       );
       
-      // Add labels for major ticks
-      if (isLongTick && i % 6 === 0) {
-        const labelValue = (maxValue * (i / numTicks)).toFixed(1);
-        const labelRadius = radius - 25;
-        const labelPos = {
-          x: center + (labelRadius * Math.cos(angleToRadians(tickAngle))),
-          y: center + (labelRadius * Math.sin(angleToRadians(tickAngle))),
-        };
-        
+      if (isMajorTick) {
         ticks.push(
           <Text
             key={`label-${i}`}
             style={{
               position: 'absolute',
+              left: tickX - 8,
+              top: height * 0.45 + 12,
               fontSize: 10,
               color: theme.textSecondary,
-              left: labelPos.x,
-              top: labelPos.y,
-              transform: [
-                { translateX: -8 },
-                { translateY: -5 },
-              ],
             }}
           >
-            {labelValue}
+            {i}
           </Text>
         );
       }
@@ -113,97 +64,74 @@ const SpiritualFitnessGauge = ({ value = 0, size = 200, thickness = 20, maxValue
     return ticks;
   };
   
-  // Create the needle
-  const needleLength = radius - 10;
-  const needleWidth = 4;
-  
-  const needlePoint = {
-    x: center + (needleLength * Math.cos(angleToRadians(valueAngle))),
-    y: center + (needleLength * Math.sin(angleToRadians(valueAngle))),
-  };
+  // Calculate the position of the marker
+  const markerPosition = 20 + (normalizedValue * (width - 40));
   
   return (
-    <View style={[styles.container, { width: size, height: size }]}>
-      {/* Background arc */}
-      <View
+    <View style={[styles.container, { width, height }]}>
+      {/* Value Display */}
+      <View style={styles.valueContainer}>
+        <Text style={[styles.valueText, { color: theme.text }]}>
+          {value.toFixed(2)}
+        </Text>
+        <Text style={[styles.maxValueText, { color: theme.textSecondary }]}>
+          / {maxValue.toFixed(1)}
+        </Text>
+      </View>
+      
+      {/* Background Track */}
+      <View 
         style={[
-          styles.arc,
-          {
-            width: size,
-            height: size,
-            borderRadius: size / 2,
-            borderWidth: thickness,
-            borderColor: theme.isDark ? '#333333' : '#EEEEEE',
-          },
+          styles.track, 
+          { 
+            backgroundColor: theme.isDark ? '#333333' : '#f0f0f0',
+            width: width - 40,
+            marginLeft: 20,
+            marginRight: 20,
+          }
         ]}
       />
       
-      {/* Colored arc - we'll use a half circle and rotate/clip it */}
-      <View
+      {/* Colored Progress Bar */}
+      <View 
         style={[
-          styles.valueArc,
-          {
-            width: size,
-            height: size,
-            borderRadius: size / 2,
-            borderWidth: thickness,
-            borderLeftColor: 'transparent',
-            borderRightColor: 'transparent',
-            borderBottomColor: 'transparent',
-            borderTopColor: arcColor,
-            transform: [
-              { rotate: `${startAngle}deg` },
-              { scaleX: normalizedValue * (totalAngle / 180) },
-            ],
-          },
+          styles.progressBar, 
+          { 
+            backgroundColor: barColor,
+            width: normalizedValue * (width - 40),
+            marginLeft: 20,
+          }
         ]}
       />
       
-      {/* Ticks */}
+      {/* Add Ticks */}
       {renderTicks()}
       
-      {/* Needle */}
-      <View
+      {/* Marker */}
+      <View 
         style={[
-          styles.needle,
-          {
-            width: needleLength,
-            height: needleWidth,
-            left: center,
-            top: center,
-            transform: [
-              { translateY: -needleWidth / 2 },
-              { rotate: `${valueAngle}deg` },
-              { translateX: needleWidth / 2 },
-            ],
-            backgroundColor: theme.text,
-          },
+          styles.marker, 
+          { 
+            left: markerPosition - 8,
+            backgroundColor: theme.isDark ? '#ffffff' : '#333333',
+            borderColor: barColor,
+          }
         ]}
       />
       
-      {/* Needle center */}
-      <View
-        style={[
-          styles.needleCenter,
-          {
-            width: thickness,
-            height: thickness,
-            borderRadius: thickness / 2,
-            left: center - thickness / 2,
-            top: center - thickness / 2,
-            backgroundColor: arcColor,
-            borderColor: theme.text,
-          },
-        ]}
-      />
+      {/* Temperature-like Gradient Indicator */}
+      <View style={[styles.gradientContainer, { width: width - 40, marginLeft: 20 }]}>
+        <View style={[styles.gradientSegment, { backgroundColor: '#f44336' }]} />
+        <View style={[styles.gradientSegment, { backgroundColor: '#ff9800' }]} />
+        <View style={[styles.gradientSegment, { backgroundColor: '#2196F3' }]} />
+        <View style={[styles.gradientSegment, { backgroundColor: '#4CAF50' }]} />
+      </View>
       
-      {/* Value Text */}
-      <Text style={[styles.valueText, { color: theme.text }]}>
-        {value.toFixed(2)}
-      </Text>
-      <Text style={[styles.maxValueText, { color: theme.textSecondary }]}>
-        / {maxValue.toFixed(1)}
-      </Text>
+      {/* Labels */}
+      <View style={[styles.labelContainer, { width: width - 30 }]}>
+        <Text style={[styles.label, { color: theme.textSecondary }]}>Low</Text>
+        <Text style={[styles.label, { color: theme.textSecondary }]}>High</Text>
+      </View>
     </View>
   );
 };
@@ -212,39 +140,68 @@ const styles = StyleSheet.create({
   container: {
     position: 'relative',
     alignItems: 'center',
-    justifyContent: 'center',
+    paddingVertical: 15,
   },
-  arc: {
-    position: 'absolute',
-    borderRightColor: 'transparent',
-    borderBottomColor: 'transparent',
-    borderLeftColor: 'transparent',
-    transform: [{ rotate: '45deg' }],
-  },
-  valueArc: {
-    position: 'absolute',
-    transform: [{ rotate: '-135deg' }],
-  },
-  needle: {
-    position: 'absolute',
-    left: 0,
-    top: 0,
-    height: 4,
-    borderRadius: 4,
-    transformOrigin: 'left center',
-  },
-  needleCenter: {
-    position: 'absolute',
-    borderWidth: 2,
+  valueContainer: {
+    flexDirection: 'row',
+    alignItems: 'baseline',
+    marginBottom: 5,
   },
   valueText: {
-    fontSize: 28,
+    fontSize: 24,
     fontWeight: 'bold',
-    marginTop: 40,
   },
   maxValueText: {
-    fontSize: 16,
-    marginTop: 5,
+    fontSize: 14,
+    marginLeft: 2,
+  },
+  track: {
+    height: 8,
+    borderRadius: 4,
+    position: 'absolute',
+    top: 50,
+  },
+  progressBar: {
+    height: 8,
+    borderRadius: 4,
+    position: 'absolute',
+    top: 50,
+  },
+  marker: {
+    position: 'absolute',
+    top: 45,
+    width: 16,
+    height: 16,
+    borderRadius: 8,
+    borderWidth: 2,
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
+  },
+  gradientContainer: {
+    flexDirection: 'row',
+    height: 4,
+    borderRadius: 2,
+    position: 'absolute',
+    top: 65,
+    opacity: 0.7,
+    overflow: 'hidden',
+  },
+  gradientSegment: {
+    flex: 1,
+    height: 4,
+  },
+  labelContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    position: 'absolute',
+    bottom: 0,
+    paddingHorizontal: 20,
+  },
+  label: {
+    fontSize: 10,
   },
 });
 

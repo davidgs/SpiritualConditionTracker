@@ -438,8 +438,8 @@ function SettingsScreen() {
         )}
       </View>
       
-      <View style={styles.card}>
-        <Text style={styles.cardTitle}>Privacy Settings</Text>
+      <View style={themedStyles.card}>
+        <Text style={themedStyles.cardTitle}>Privacy Settings</Text>
         
         <View style={styles.settingRow}>
           <View style={styles.settingTextContainer}>
@@ -510,8 +510,8 @@ function SettingsScreen() {
         </View>
       </View>
       
-      <View style={styles.card}>
-        <Text style={styles.cardTitle}>Notification Settings</Text>
+      <View style={themedStyles.card}>
+        <Text style={themedStyles.cardTitle}>Notification Settings</Text>
         
         <View style={styles.settingRow}>
           <View style={styles.settingTextContainer}>
@@ -590,13 +590,13 @@ function SettingsScreen() {
         </View>
       </View>
       
-      <View style={styles.card}>
-        <Text style={styles.cardTitle}>Display Settings</Text>
+      <View style={themedStyles.card}>
+        <Text style={themedStyles.cardTitle}>Display Settings</Text>
         
-        <View style={styles.settingRow}>
+        <View style={themedStyles.settingRow}>
           <View style={styles.settingTextContainer}>
-            <Text style={styles.settingLabel}>Dark Mode</Text>
-            <Text style={styles.settingDescription}>
+            <Text style={themedStyles.settingLabel}>Dark Mode</Text>
+            <Text style={themedStyles.settingDescription}>
               Switch between light and dark theme
             </Text>
           </View>
@@ -609,16 +609,16 @@ function SettingsScreen() {
         </View>
       </View>
       
-      <View style={styles.card}>
-        <Text style={styles.cardTitle}>App Information</Text>
-        <Text style={styles.infoText}>Version: 1.0.0</Text>
-        <Text style={styles.infoText}>
+      <View style={themedStyles.card}>
+        <Text style={themedStyles.cardTitle}>App Information</Text>
+        <Text style={themedStyles.infoText}>Version: 1.0.0</Text>
+        <Text style={themedStyles.infoText}>
           AA Recovery Tracker is designed to help members of Alcoholics Anonymous 
           track their recovery journey while maintaining anonymity and privacy.
         </Text>
         
-        <TouchableOpacity style={styles.supportButton}>
-          <Text style={styles.supportButtonText}>Contact Support</Text>
+        <TouchableOpacity style={themedStyles.supportButton}>
+          <Text style={themedStyles.supportButtonText}>Contact Support</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>
