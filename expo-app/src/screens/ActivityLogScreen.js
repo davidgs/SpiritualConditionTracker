@@ -1,14 +1,195 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput, Switch } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput, Switch, Platform } from 'react-native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useUser } from '../contexts/UserContext';
+import { useTheme } from '../contexts/ThemeContext';
 import { ACTIVITY_TYPES } from '../contexts/ActivitiesContext';
+
+// Only import DateTimePicker on native platforms
+let DateTimePicker;
+if (Platform.OS !== 'web') {
+  DateTimePicker = require('@react-native-community/datetimepicker').default;
+}
 
 function ActivityLogScreen() {
   const { logActivity } = useUser();
+  const { theme } = useTheme();
   const [activityType, setActivityType] = useState('');
   const [duration, setDuration] = useState('');
   const [notes, setNotes] = useState('');
   const [showSuccess, setShowSuccess] = useState(false);
+  
+  // Add state for date selection
+  const [activityDate, setActivityDate] = useState(new Date());
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  
+  // For web date picker
+  const [webDate, setWebDate] = useState({
+    day: activityDate.getDate().toString(),
+    month: (activityDate.getMonth() + 1).toString(),
+    year: activityDate.getFullYear().toString()
+  });
+  
+  // Apply theme to styles
+  const themedStyles = {
+    container: {
+      ...styles.container,
+      backgroundColor: theme.background,
+    },
+    card: {
+      ...styles.card,
+      backgroundColor: theme.card,
+      ...theme.shadow,
+    },
+    title: {
+      ...styles.title,
+      color: theme.text,
+    },
+    label: {
+      ...styles.label,
+      color: theme.textSecondary,
+    },
+    input: {
+      ...styles.input,
+      backgroundColor: theme.card,
+      borderColor: theme.border,
+      color: theme.text,
+    },
+    activityTypeButton: {
+      ...styles.activityTypeButton,
+      borderColor: theme.primary,
+      backgroundColor: theme.card,
+    },
+    activityTypeSelected: {
+      ...styles.activityTypeSelected,
+      backgroundColor: theme.primary,
+    },
+    activityTypeText: {
+      ...styles.activityTypeText,
+      color: theme.primary,
+    },
+    submitButton: {
+      ...styles.submitButton,
+      backgroundColor: theme.primary,
+    },
+    infoLabel: {
+      ...styles.infoLabel,
+      color: theme.text,
+    },
+    infoDescription: {
+      ...styles.infoDescription,
+      color: theme.textSecondary,
+    },
+    dateButton: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      borderWidth: 1,
+      borderColor: theme.border,
+      borderRadius: 5,
+      padding: 10,
+      backgroundColor: theme.card,
+      marginBottom: 15,
+    },
+    dateButtonText: {
+      fontSize: 16,
+      color: theme.text,
+    },
+    webDatePickerContainer: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      marginBottom: 15,
+    },
+    webDatePickerItem: {
+      flex: 1,
+      marginHorizontal: 5,
+    },
+    webDatePickerLabel: {
+      fontSize: 12,
+      color: theme.textSecondary,
+      marginBottom: 5,
+    },
+    webDatePickerSelect: {
+      borderWidth: 1,
+      borderColor: theme.border,
+      borderRadius: 5,
+      backgroundColor: theme.card,
+      height: 40,
+      justifyContent: 'center',
+    },
+    webDateDropdown: {
+      width: '100%',
+      height: 36,
+      border: 'none',
+      backgroundColor: 'transparent',
+      paddingHorizontal: 10,
+      fontSize: 16,
+      color: theme.text,
+    },
+  };
+
+  const handleDateChange = (event, selectedDate) => {
+    setShowDatePicker(false);
+    if (selectedDate) {
+      setActivityDate(selectedDate);
+      
+      // Update web date picker values
+      setWebDate({
+        day: selectedDate.getDate().toString(),
+        month: (selectedDate.getMonth() + 1).toString(),
+        year: selectedDate.getFullYear().toString()
+      });
+    }
+  };
+  
+  // Generate arrays for days, months and years for the web dropdowns
+  const getDaysInMonth = (month, year) => {
+    return new Date(year, month, 0).getDate();
+  };
+  
+  const days = Array.from(
+    { length: getDaysInMonth(parseInt(webDate.month), parseInt(webDate.year)) }, 
+    (_, i) => (i + 1).toString()
+  );
+  
+  const months = [
+    { value: '1', label: 'January' },
+    { value: '2', label: 'February' },
+    { value: '3', label: 'March' },
+    { value: '4', label: 'April' },
+    { value: '5', label: 'May' },
+    { value: '6', label: 'June' },
+    { value: '7', label: 'July' },
+    { value: '8', label: 'August' },
+    { value: '9', label: 'September' },
+    { value: '10', label: 'October' },
+    { value: '11', label: 'November' },
+    { value: '12', label: 'December' }
+  ];
+  
+  const currentYear = new Date().getFullYear();
+  const years = Array.from(
+    { length: 10 }, 
+    (_, i) => (currentYear - i).toString()
+  );
+  
+  const updateActivityDateFromWeb = () => {
+    const day = parseInt(webDate.day, 10);
+    const month = parseInt(webDate.month, 10) - 1; // JS months are 0-indexed
+    const year = parseInt(webDate.year, 10);
+    
+    if (!isNaN(day) && !isNaN(month) && !isNaN(year)) {
+      const newDate = new Date(year, month, day);
+      if (!isNaN(newDate.getTime())) {
+        setActivityDate(newDate);
+      }
+    }
+  };
+  
+  // When any part of the web date changes, update the activity date
+  useEffect(() => {
+    updateActivityDateFromWeb();
+  }, [webDate]);
 
   const handleSubmit = () => {
     if (!activityType || !duration) {
@@ -18,7 +199,7 @@ function ActivityLogScreen() {
     const newActivity = {
       type: activityType,
       duration: parseInt(duration, 10),
-      date: new Date().toISOString(),
+      date: activityDate.toISOString(),
       notes: notes || '',
     };
 
