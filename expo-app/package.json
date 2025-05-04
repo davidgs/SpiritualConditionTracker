@@ -9,6 +9,7 @@
     "web": "expo start --offline --web --port 5000",
     "check-env": "./check-build-environment.sh",
     "eas-login": "./eas-login.sh",
+    "setup-token": "./setup-eas-token.sh",
     "build:android": "eas build --platform android --profile native --non-interactive",
     "build:ios": "eas build --platform ios --profile native --non-interactive",
     "build:preview": "eas build --profile preview --non-interactive",

@@ -6,6 +6,14 @@ This document provides an overview of the build process for the Spiritual Condit
 
 The Spiritual Condition Tracker app is built using Expo and React Native. The build process is handled by EAS (Expo Application Services), which provides cloud builds for both iOS and Android.
 
+### Authentication Setup
+
+Before building, you need to authenticate with EAS:
+
+1. **Generate an EAS token**: Follow the instructions in `generate-eas-token.md`
+2. **Set up the token**: Run `npm run setup-token` and follow the prompts
+3. **Store the token**: Add it to Replit Secrets as `EXPO_TOKEN`
+
 ## Build Tools
 
 The following build tools and scripts are included in this project:
@@ -13,6 +21,8 @@ The following build tools and scripts are included in this project:
 1. **build-ios.sh**: Interactive script for building the iOS app
 2. **build-android.sh**: Interactive script for building the Android app
 3. **eas-login.sh**: Helper script for logging into EAS
+4. **setup-eas-token.sh**: Helper script for setting up authentication tokens
+5. **check-build-environment.sh**: Tool to verify your build environment is properly configured
 
 ## Build Process Overview
 
