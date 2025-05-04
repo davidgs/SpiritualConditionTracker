@@ -1,216 +1,338 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, TextInput, Alert, Linking } from 'react-native';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator, ScrollView } from 'react-native';
+import { useTheme } from '../contexts/ThemeContext';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
-const WIZARD_STEPS = [
-  {
-    id: 'intro',
-    title: 'Connect with a Nearby Member',
-    content: 'This wizard will help you safely connect with another AA member nearby.',
-  },
-  {
-    id: 'method',
-    title: 'Choose Connection Method',
-    content: 'How would you like to connect with this member?',
-  },
-  {
-    id: 'message',
-    title: 'Add a Brief Message',
-    content: 'You can include a short message with your connection request.',
-  },
-  {
-    id: 'confirm',
-    title: 'Review and Confirm',
-    content: 'Review your connection request details before sending.',
-  }
-];
-
-export default function ProximityWizard({ onClose, navigation }) {
-  const [currentStep, setCurrentStep] = useState(0);
-  const [connectionMethod, setConnectionMethod] = useState(null);
-  const [message, setMessage] = useState('');
+/**
+ * ProximityWizard component guides users through the process of
+ * connecting with nearby AA members
+ */
+export default function ProximityWizard({ onClose, navigation, member }) {
+  const { theme } = useTheme();
+  const [step, setStep] = useState(1);
+  const [isSearching, setIsSearching] = useState(false);
+  const [isConnected, setIsConnected] = useState(false);
+  const [connectionError, setConnectionError] = useState(null);
+  const [selectedMember] = useState(member || {
+    id: 1,
+    username: 'John S.',
+    distance: 0.3,
+    sobrietyYears: 5.2
+  });
   
-  const step = WIZARD_STEPS[currentStep];
+  // Reset state when component mounts
+  useEffect(() => {
+    return () => {
+      // Clean up any connections when component unmounts
+    };
+  }, []);
   
-  const handleNext = () => {
-    if (currentStep === 1 && !connectionMethod) {
-      Alert.alert('Please Select', 'Please select a connection method to continue.');
-      return;
-    }
-    
-    if (currentStep < WIZARD_STEPS.length - 1) {
-      setCurrentStep(currentStep + 1);
-    } else {
-      handleSendRequest();
-    }
+  const startWizard = () => {
+    setStep(2);
+    simulateScanning();
   };
   
-  const handleBack = () => {
-    if (currentStep > 0) {
-      setCurrentStep(currentStep - 1);
-    } else {
+  const simulateScanning = () => {
+    setIsSearching(true);
+    // Simulate Bluetooth/WiFi scanning for 3 seconds
+    setTimeout(() => {
+      setIsSearching(false);
+      setIsConnected(true);
+      setStep(3);
+    }, 3000);
+  };
+  
+  const finishWizard = () => {
+    // In a real app, this would save the connection
+    if (onClose) {
       onClose();
+    } else {
+      navigation.goBack();
     }
   };
   
-  const handleSendRequest = () => {
-    // In a real app, this would actually send the connection request
-    Alert.alert(
-      'Connection Request Sent',
-      'Your connection request has been sent. You\'ll be notified when they respond.',
-      [{ text: 'OK', onPress: onClose }]
-    );
+  const cancelWizard = () => {
+    if (onClose) {
+      onClose();
+    } else {
+      navigation.goBack();
+    }
   };
   
-  const callMember = () => {
-    // Simulate calling the member
-    Linking.openURL('tel:5555555555');
+  const retryConnection = () => {
+    setConnectionError(null);
+    simulateScanning();
+  };
+  
+  const themedStyles = {
+    container: {
+      backgroundColor: theme.cardBackground,
+      borderColor: theme.border,
+    },
+    title: {
+      color: theme.text,
+    },
+    subtitle: {
+      color: theme.textSecondary,
+    },
+    memberName: {
+      color: theme.text,
+    },
+    memberDetail: {
+      color: theme.textSecondary,
+    },
+    progressBar: {
+      backgroundColor: theme.isDark ? '#333333' : '#e0e0e0',
+    },
+    progressFill: {
+      backgroundColor: theme.primary,
+    },
+    stepIndicator: {
+      backgroundColor: theme.isDark ? '#333333' : '#e0e0e0',
+    },
+    stepIndicatorActive: {
+      backgroundColor: theme.primary,
+    },
+    actionButton: {
+      backgroundColor: theme.primary,
+    },
+    cancelButton: {
+      backgroundColor: 'transparent',
+      borderColor: theme.border,
+    },
+    cancelButtonText: {
+      color: theme.textSecondary,
+    },
+    errorText: {
+      color: theme.error,
+    },
+    errorContainer: {
+      backgroundColor: theme.errorBackground,
+      borderColor: theme.error,
+    }
   };
   
   const renderStepContent = () => {
-    switch (step.id) {
-      case 'intro':
+    switch(step) {
+      case 1:
         return (
-          <View style={styles.stepContent}>
-            <MaterialCommunityIcons name="account-group" size={60} color="#4a86e8" />
-            <Text style={styles.stepDescription}>
-              Connecting with another member in-person can strengthen your recovery. 
-              This process maintains your privacy while helping you reach out.
+          <View>
+            <Text style={[styles.title, themedStyles.title]}>Connect with AA Member</Text>
+            <Text style={[styles.subtitle, themedStyles.subtitle]}>
+              You're about to connect with:
+            </Text>
+            
+            <View style={styles.memberCard}>
+              <View style={styles.memberInfo}>
+                <Text style={[styles.memberName, themedStyles.memberName]}>
+                  {selectedMember.username}
+                </Text>
+                <Text style={[styles.memberDetail, themedStyles.memberDetail]}>
+                  <Icon name="map-marker" size={14} /> {selectedMember.distance} miles away
+                </Text>
+                <Text style={[styles.memberDetail, themedStyles.memberDetail]}>
+                  <Icon name="calendar" size={14} /> {selectedMember.sobrietyYears.toFixed(1)} years sober
+                </Text>
+              </View>
+            </View>
+            
+            <Text style={[styles.instructionText, themedStyles.subtitle]}>
+              To connect, both of you need to:
+            </Text>
+            
+            <View style={styles.instructionList}>
+              <View style={styles.instructionItem}>
+                <View style={styles.instructionNumber}>
+                  <Text style={styles.instructionNumberText}>1</Text>
+                </View>
+                <Text style={[styles.instructionDetail, themedStyles.subtitle]}>
+                  Be within about 30 feet of each other
+                </Text>
+              </View>
+              
+              <View style={styles.instructionItem}>
+                <View style={styles.instructionNumber}>
+                  <Text style={styles.instructionNumberText}>2</Text>
+                </View>
+                <Text style={[styles.instructionDetail, themedStyles.subtitle]}>
+                  Have WiFi and Bluetooth turned on
+                </Text>
+              </View>
+              
+              <View style={styles.instructionItem}>
+                <View style={styles.instructionNumber}>
+                  <Text style={styles.instructionNumberText}>3</Text>
+                </View>
+                <Text style={[styles.instructionDetail, themedStyles.subtitle]}>
+                  Both start the connection wizard
+                </Text>
+              </View>
+            </View>
+            
+            <Text style={[styles.privacyText, themedStyles.subtitle]}>
+              Your contact information is only shared after both parties confirm the connection.
             </Text>
           </View>
         );
-        
-      case 'method':
+      
+      case 2:
         return (
-          <View style={styles.stepContent}>
-            <TouchableOpacity
-              style={[
-                styles.methodOption,
-                connectionMethod === 'phone' && styles.methodSelected
-              ]}
-              onPress={() => setConnectionMethod('phone')}
-            >
-              <MaterialCommunityIcons name="phone" size={30} color={connectionMethod === 'phone' ? 'white' : '#4a86e8'} />
-              <Text style={[styles.methodText, connectionMethod === 'phone' && styles.methodTextSelected]}>
-                Phone Call
+          <View>
+            <Text style={[styles.title, themedStyles.title]}>Searching for Member</Text>
+            <Text style={[styles.subtitle, themedStyles.subtitle]}>
+              Looking for {selectedMember.username} nearby...
+            </Text>
+            
+            {isSearching && (
+              <View style={styles.loadingContainer}>
+                <ActivityIndicator size="large" color={theme.primary} style={styles.loadingIndicator} />
+                <Text style={[styles.loadingText, themedStyles.subtitle]}>
+                  Scanning for nearby device...
+                </Text>
+                <Text style={[styles.tipText, themedStyles.subtitle]}>
+                  Make sure you're within 30 feet of each other
+                </Text>
+              </View>
+            )}
+            
+            {connectionError && (
+              <View style={[styles.errorContainer, themedStyles.errorContainer]}>
+                <Icon name="exclamation-triangle" size={20} color={theme.error} style={styles.errorIcon} />
+                <Text style={[styles.errorText, themedStyles.errorText]}>
+                  {connectionError}
+                </Text>
+              </View>
+            )}
+          </View>
+        );
+      
+      case 3:
+        return (
+          <View>
+            <Text style={[styles.title, themedStyles.title]}>Connection Successful!</Text>
+            <Text style={[styles.subtitle, themedStyles.subtitle]}>
+              You are now connected with {selectedMember.username}
+            </Text>
+            
+            <View style={styles.successIconContainer}>
+              <Icon name="check-circle" size={80} color={theme.success} style={styles.successIcon} />
+            </View>
+            
+            <View style={styles.connectionDetails}>
+              <Text style={[styles.detailLabel, themedStyles.subtitle]}>
+                Member:
               </Text>
-            </TouchableOpacity>
-            
-            <TouchableOpacity
-              style={[
-                styles.methodOption,
-                connectionMethod === 'message' && styles.methodSelected
-              ]}
-              onPress={() => setConnectionMethod('message')}
-            >
-              <MaterialCommunityIcons name="message-text" size={30} color={connectionMethod === 'message' ? 'white' : '#4a86e8'} />
-              <Text style={[styles.methodText, connectionMethod === 'message' && styles.methodTextSelected]}>
-                In-App Message
+              <Text style={[styles.detailValue, themedStyles.memberName]}>
+                {selectedMember.username}
               </Text>
-            </TouchableOpacity>
+            </View>
             
-            <TouchableOpacity
-              style={[
-                styles.methodOption,
-                connectionMethod === 'inperson' && styles.methodSelected
-              ]}
-              onPress={() => setConnectionMethod('inperson')}
-            >
-              <MaterialCommunityIcons name="handshake" size={30} color={connectionMethod === 'inperson' ? 'white' : '#4a86e8'} />
-              <Text style={[styles.methodText, connectionMethod === 'inperson' && styles.methodTextSelected]}>
-                In-Person Meeting
+            <View style={styles.connectionDetails}>
+              <Text style={[styles.detailLabel, themedStyles.subtitle]}>
+                Connected:
               </Text>
-            </TouchableOpacity>
-          </View>
-        );
-        
-      case 'message':
-        return (
-          <View style={styles.stepContent}>
-            <Text style={styles.stepDescription}>
-              Add a brief message to introduce yourself:
-            </Text>
-            <TextInput
-              style={styles.messageInput}
-              value={message}
-              onChangeText={setMessage}
-              placeholder="e.g., Hi, I'm new to the area and looking to connect with local members."
-              multiline
-              numberOfLines={4}
-            />
-            <Text style={styles.privacyNote}>
-              Note: For safety and anonymity, avoid sharing personal details like your full name, 
-              address, or other identifying information.
-            </Text>
-          </View>
-        );
-        
-      case 'confirm':
-        return (
-          <View style={styles.stepContent}>
-            <Text style={styles.confirmLabel}>Connection Method:</Text>
-            <Text style={styles.confirmValue}>
-              {connectionMethod === 'phone' ? 'Phone Call' : 
-               connectionMethod === 'message' ? 'In-App Message' : 'In-Person Meeting'}
-            </Text>
+              <Text style={[styles.detailValue, themedStyles.memberName]}>
+                {new Date().toLocaleTimeString()}
+              </Text>
+            </View>
             
-            <Text style={styles.confirmLabel}>Your Message:</Text>
-            <Text style={styles.confirmValue}>
-              {message || '(No message included)'}
-            </Text>
-            
-            <Text style={styles.privacyNote}>
-              By sending this request, you agree to share your first name and sobriety 
-              information with this member, according to your privacy settings.
+            <Text style={[styles.nextStepsText, themedStyles.subtitle]}>
+              You can now message each other, share meeting information, or arrange to meet up.
             </Text>
           </View>
         );
+      
+      default:
+        return null;
     }
   };
   
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.stepIndicator}>Step {currentStep + 1} of {WIZARD_STEPS.length}</Text>
-        <TouchableOpacity onPress={onClose} style={styles.closeButton}>
-          <MaterialCommunityIcons name="close" size={24} color="#666" />
-        </TouchableOpacity>
-      </View>
-      
-      <Text style={styles.title}>{step.title}</Text>
-      
-      {renderStepContent()}
-      
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity 
-          style={styles.backButton}
-          onPress={handleBack}
-        >
-          <Text style={styles.backButtonText}>
-            {currentStep === 0 ? 'Cancel' : 'Back'}
-          </Text>
-        </TouchableOpacity>
+    <View style={[styles.container, themedStyles.container]}>
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
+        {/* Progress indicator */}
+        <View style={styles.stepIndicatorContainer}>
+          <View style={[styles.stepIndicator, themedStyles.stepIndicator, step >= 1 && themedStyles.stepIndicatorActive]} />
+          <View style={[styles.stepConnector, themedStyles.progressBar]}>
+            <View 
+              style={[
+                themedStyles.progressFill, 
+                { 
+                  width: step === 1 ? '0%' : step === 2 ? '50%' : '100%'
+                }
+              ]} 
+            />
+          </View>
+          <View style={[styles.stepIndicator, themedStyles.stepIndicator, step >= 2 && themedStyles.stepIndicatorActive]} />
+          <View style={[styles.stepConnector, themedStyles.progressBar]}>
+            <View 
+              style={[
+                themedStyles.progressFill, 
+                { 
+                  width: step === 3 ? '100%' : '0%'
+                }
+              ]} 
+            />
+          </View>
+          <View style={[styles.stepIndicator, themedStyles.stepIndicator, step >= 3 && themedStyles.stepIndicatorActive]} />
+        </View>
         
-        <TouchableOpacity 
-          style={styles.nextButton}
-          onPress={handleNext}
-        >
-          <Text style={styles.nextButtonText}>
-            {currentStep === WIZARD_STEPS.length - 1 ? 'Send Request' : 'Next'}
-          </Text>
-        </TouchableOpacity>
-      </View>
-      
-      {/* Direct actions */}
-      {connectionMethod === 'phone' && currentStep === WIZARD_STEPS.length - 1 && (
-        <TouchableOpacity 
-          style={styles.directActionButton}
-          onPress={callMember}
-        >
-          <MaterialCommunityIcons name="phone" size={20} color="white" />
-          <Text style={styles.directActionText}>Call Now</Text>
-        </TouchableOpacity>
-      )}
+        {/* Current step content */}
+        <View style={styles.contentContainer}>
+          {renderStepContent()}
+        </View>
+        
+        {/* Action buttons */}
+        <View style={styles.buttonsContainer}>
+          {step === 1 && (
+            <>
+              <TouchableOpacity 
+                style={[styles.actionButton, themedStyles.actionButton]}
+                onPress={startWizard}
+              >
+                <Text style={styles.actionButtonText}>Start Connection</Text>
+              </TouchableOpacity>
+              
+              <TouchableOpacity 
+                style={[styles.cancelButton, themedStyles.cancelButton]}
+                onPress={cancelWizard}
+              >
+                <Text style={[styles.cancelButtonText, themedStyles.cancelButtonText]}>Cancel</Text>
+              </TouchableOpacity>
+            </>
+          )}
+          
+          {step === 2 && (
+            <TouchableOpacity 
+              style={[styles.cancelButton, themedStyles.cancelButton]}
+              onPress={cancelWizard}
+              disabled={isSearching && !connectionError}
+            >
+              <Text style={[styles.cancelButtonText, themedStyles.cancelButtonText]}>
+                {connectionError ? 'Go Back' : 'Cancel'}
+              </Text>
+            </TouchableOpacity>
+          )}
+          
+          {connectionError && (
+            <TouchableOpacity 
+              style={[styles.actionButton, themedStyles.actionButton]}
+              onPress={retryConnection}
+            >
+              <Text style={styles.actionButtonText}>Retry</Text>
+            </TouchableOpacity>
+          )}
+          
+          {step === 3 && (
+            <TouchableOpacity 
+              style={[styles.actionButton, themedStyles.actionButton]}
+              onPress={finishWizard}
+            >
+              <Text style={styles.actionButtonText}>Continue</Text>
+            </TouchableOpacity>
+          )}
+        </View>
+      </ScrollView>
     </View>
   );
 }
@@ -218,140 +340,178 @@ export default function ProximityWizard({ onClose, navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'white',
+    borderRadius: 12,
+    borderWidth: 1,
+    overflow: 'hidden',
+  },
+  scrollContainer: {
     padding: 20,
   },
-  header: {
+  stepIndicatorContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 20,
+    justifyContent: 'center',
+    marginBottom: 30,
   },
   stepIndicator: {
-    fontSize: 14,
-    color: '#666',
+    width: 12,
+    height: 12,
+    borderRadius: 6,
   },
-  closeButton: {
-    padding: 5,
+  stepConnector: {
+    height: 4,
+    flex: 1,
+    marginHorizontal: 5,
+    position: 'relative',
+  },
+  contentContainer: {
+    marginBottom: 30,
   },
   title: {
     fontSize: 22,
     fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 20,
-  },
-  stepContent: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 20,
-  },
-  stepDescription: {
-    fontSize: 16,
-    color: '#555',
+    marginBottom: 10,
     textAlign: 'center',
-    lineHeight: 24,
-    marginTop: 20,
   },
-  methodOption: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    width: '80%',
+  subtitle: {
+    fontSize: 16,
+    marginBottom: 20,
+    textAlign: 'center',
+  },
+  memberCard: {
+    marginTop: 10,
+    marginBottom: 20,
     padding: 15,
-    marginVertical: 10,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: '#4a86e8',
-    backgroundColor: 'white',
+    alignItems: 'center',
   },
-  methodSelected: {
-    backgroundColor: '#4a86e8',
+  memberInfo: {
+    alignItems: 'center',
   },
-  methodText: {
+  memberName: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 5,
+  },
+  memberDetail: {
+    fontSize: 14,
+    marginBottom: 3,
+  },
+  instructionText: {
     fontSize: 16,
     fontWeight: '500',
-    color: '#4a86e8',
-    marginLeft: 15,
+    marginBottom: 15,
   },
-  methodTextSelected: {
-    color: 'white',
+  instructionList: {
+    marginBottom: 20,
   },
-  messageInput: {
-    width: '100%',
-    height: 120,
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 8,
-    padding: 15,
-    marginVertical: 20,
-    textAlignVertical: 'top',
-    fontSize: 16,
+  instructionItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 12,
   },
-  privacyNote: {
-    fontSize: 12,
-    color: '#888',
+  instructionNumber: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: '#4F86C6',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 12,
+  },
+  instructionNumberText: {
+    color: '#FFFFFF',
+    fontWeight: 'bold',
+  },
+  instructionDetail: {
+    fontSize: 14,
+    flex: 1,
+  },
+  privacyText: {
+    fontSize: 14,
     fontStyle: 'italic',
     textAlign: 'center',
-    marginTop: 15,
-  },
-  confirmLabel: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#555',
-    marginBottom: 5,
-    width: '100%',
-    marginTop: 15,
-  },
-  confirmValue: {
-    fontSize: 16,
-    color: '#333',
-    marginBottom: 15,
-    width: '100%',
-  },
-  buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 20,
-  },
-  backButton: {
-    flex: 1,
-    padding: 15,
-    marginRight: 10,
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 8,
-  },
-  backButtonText: {
-    color: '#666',
-    fontWeight: 'bold',
-    fontSize: 16,
-  },
-  nextButton: {
-    flex: 2,
-    backgroundColor: '#4a86e8',
-    padding: 15,
-    borderRadius: 8,
-    alignItems: 'center',
-  },
-  nextButtonText: {
-    color: 'white',
-    fontWeight: 'bold',
-    fontSize: 16,
-  },
-  directActionButton: {
-    backgroundColor: '#4CAF50',
-    padding: 15,
-    borderRadius: 8,
-    alignItems: 'center',
     marginTop: 10,
-    flexDirection: 'row',
-    justifyContent: 'center',
   },
-  directActionText: {
-    color: 'white',
-    fontWeight: 'bold',
+  loadingContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 30,
+  },
+  loadingIndicator: {
+    marginBottom: 20,
+  },
+  loadingText: {
     fontSize: 16,
-    marginLeft: 10,
+    marginBottom: 10,
+  },
+  tipText: {
+    fontSize: 14,
+    textAlign: 'center',
+    maxWidth: '80%',
+  },
+  successIconContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginVertical: 30,
+  },
+  connectionDetails: {
+    flexDirection: 'row',
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(0,0,0,0.1)',
+  },
+  detailLabel: {
+    width: 100,
+    fontSize: 16,
+  },
+  detailValue: {
+    flex: 1,
+    fontSize: 16,
+  },
+  nextStepsText: {
+    fontSize: 14,
+    textAlign: 'center',
+    marginTop: 20,
+    lineHeight: 20,
+  },
+  buttonsContainer: {
+    marginTop: 10,
+  },
+  actionButton: {
+    paddingVertical: 14,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 10,
+  },
+  actionButtonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  cancelButton: {
+    paddingVertical: 14,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+  },
+  cancelButtonText: {
+    fontSize: 16,
+  },
+  errorContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 15,
+    borderRadius: 8,
+    borderWidth: 1,
+    marginVertical: 20,
+  },
+  errorIcon: {
+    marginRight: 10,
+  },
+  errorText: {
+    fontSize: 14,
+    flex: 1,
   },
 });
