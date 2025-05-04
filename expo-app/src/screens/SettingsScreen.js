@@ -441,10 +441,10 @@ function SettingsScreen() {
       <View style={themedStyles.card}>
         <Text style={themedStyles.cardTitle}>Privacy Settings</Text>
         
-        <View style={styles.settingRow}>
+        <View style={themedStyles.settingRow}>
           <View style={styles.settingTextContainer}>
-            <Text style={styles.settingLabel}>Share Location for Meetings</Text>
-            <Text style={styles.settingDescription}>
+            <Text style={themedStyles.settingLabel}>Share Location for Meetings</Text>
+            <Text style={themedStyles.settingDescription}>
               Allow the app to use your location to find nearby meetings
             </Text>
           </View>

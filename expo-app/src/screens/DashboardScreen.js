@@ -10,6 +10,7 @@ function DashboardScreen() {
   const { theme } = useTheme();
   const [sobrietyDays, setSobrietyDays] = useState(0);
   const [sobrietyYears, setSobrietyYears] = useState(0);
+  const { width: screenWidth } = Dimensions.get('window');
 
   useEffect(() => {
     loadSpiritualFitness();
@@ -106,7 +107,7 @@ function DashboardScreen() {
         <View style={styles.gaugeContainer}>
           <SpiritualFitnessGauge 
             value={spiritualFitness?.overall || 0} 
-            width={Math.min(350, screen.width - 60)}
+            width={Math.min(350, screenWidth - 60)}
             height={100}
             maxValue={10}
           />
