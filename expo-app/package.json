@@ -6,7 +6,9 @@
     "start": "expo start --offline",
     "android": "expo start --offline --android",
     "ios": "expo start --offline --ios",
-    "web": "expo start --offline --web --port 5000"
+    "web": "expo start --offline --web --port 5000",
+    "build:android": "eas build --platform android --profile native",
+    "build:ios": "eas build --platform ios --profile native"
   },
   "dependencies": {
     "expo": "~53.0.7",
