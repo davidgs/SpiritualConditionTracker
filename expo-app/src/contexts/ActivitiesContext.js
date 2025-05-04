@@ -1,4 +1,6 @@
 import React, { createContext, useState, useContext } from 'react';
+import { getUserActivities, addUserActivity, deleteUserActivity } from '../database/database';
+import { v4 as uuidv4 } from 'uuid';
 
 // Define activity types with descriptions
 export const ACTIVITY_TYPES = {
@@ -51,36 +53,48 @@ export const ActivitiesProvider = ({ children }) => {
       setLoading(true);
       setError(null);
       
-      // In a real app, this would fetch from a database
-      // For now, use sample data
-      const sampleActivities = [
-        {
-          id: '1',
-          userId: userId,
-          type: 'MEETING',
-          date: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
-          duration: 60,
-          notes: 'Serenity Group discussion meeting',
-        },
-        {
-          id: '2',
-          userId: userId,
-          type: 'PRAYER',
-          date: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
-          duration: 15,
-          notes: 'Morning meditation',
-        },
-        {
-          id: '3',
-          userId: userId,
-          type: 'LITERATURE',
-          date: new Date().toISOString(),
-          duration: 30,
-          notes: 'Big Book chapter 5',
-        },
-      ];
+      // Fetch activities from database
+      const userActivities = await getUserActivities(userId);
       
-      setActivities(sampleActivities);
+      // If no activities found and this is first run, let's add some default ones for demo purposes
+      if (userActivities.length === 0) {
+        const defaultActivities = [
+          {
+            id: uuidv4(),
+            userId: userId,
+            type: 'MEETING',
+            date: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+            duration: 60,
+            notes: 'Serenity Group discussion meeting',
+          },
+          {
+            id: uuidv4(),
+            userId: userId,
+            type: 'PRAYER',
+            date: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
+            duration: 15,
+            notes: 'Morning meditation',
+          },
+          {
+            id: uuidv4(),
+            userId: userId,
+            type: 'LITERATURE',
+            date: new Date().toISOString(),
+            duration: 30,
+            notes: 'Big Book chapter 5',
+          },
+        ];
+        
+        // Add default activities to database
+        for (const activity of defaultActivities) {
+          await addUserActivity(activity);
+        }
+        
+        setActivities(defaultActivities);
+      } else {
+        setActivities(userActivities);
+      }
+      
       setLoading(false);
     } catch (err) {
       setError('Failed to load activities');
@@ -94,12 +108,16 @@ export const ActivitiesProvider = ({ children }) => {
       setLoading(true);
       setError(null);
       
-      // In a real app, this would save to a database
+      // Prepare new activity with UUID
       const newActivity = {
-        id: Date.now().toString(),
+        id: uuidv4(),
         ...activity,
       };
       
+      // Save to database
+      await addUserActivity(newActivity);
+      
+      // Update state
       setActivities([...activities, newActivity]);
       setLoading(false);
       return newActivity;
@@ -137,12 +155,17 @@ export const ActivitiesProvider = ({ children }) => {
       setLoading(true);
       setError(null);
       
-      // In a real app, this would delete from a database
-      const updatedActivities = activities.filter(activity => activity.id !== activityId);
+      // Delete from database
+      const success = await deleteUserActivity(activityId);
       
-      setActivities(updatedActivities);
+      if (success) {
+        // Update local state
+        const updatedActivities = activities.filter(activity => activity.id !== activityId);
+        setActivities(updatedActivities);
+      }
+      
       setLoading(false);
-      return true;
+      return success;
     } catch (err) {
       setError('Failed to delete activity');
       setLoading(false);

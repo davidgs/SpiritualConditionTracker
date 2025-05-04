@@ -44,8 +44,8 @@ export default function App() {
 
   return (
     <SafeAreaProvider>
-      <UserProvider>
-        <ActivitiesProvider>
+      <ActivitiesProvider>
+        <UserProvider>
           <NavigationContainer>
             <Tab.Navigator
               screenOptions={({ route }) => ({
@@ -78,8 +78,8 @@ export default function App() {
             </Tab.Navigator>
             <StatusBar style="auto" />
           </NavigationContainer>
-        </ActivitiesProvider>
-      </UserProvider>
+        </UserProvider>
+      </ActivitiesProvider>
     </SafeAreaProvider>
   );
 }

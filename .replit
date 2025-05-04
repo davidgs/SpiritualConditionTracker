@@ -14,15 +14,15 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "ReactNativeServer"
+args = "ExpoApp"
 
 [[workflows.workflow]]
-name = "ReactNativeServer"
+name = "ExpoApp"
 author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "node node_modules/react-native/cli.js start --port 5000"
+args = "cd expo-app && npx expo start --web --port 5000"
 waitForPort = 5000
 
 [deployment]
