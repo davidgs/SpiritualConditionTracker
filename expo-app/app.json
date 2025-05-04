@@ -48,9 +48,15 @@
     },
     "extra": {
       "eas": {
-        "projectId": "aa-recovery-tracker"
+        "projectId": "spiritual-condition-tracker"
       }
     },
-    "owner": "anonymous"
+    "owner": "anonymous",
+    "runtimeVersion": {
+      "policy": "sdkVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/spiritual-condition-tracker"
+    }
   }
 }

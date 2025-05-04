@@ -16,10 +16,12 @@
     },
     "native": {
       "ios": {
-        "resourceClass": "default"
+        "resourceClass": "default",
+        "distribution": "internal"
       },
       "android": {
-        "buildType": "apk"
+        "buildType": "apk",
+        "distribution": "internal"
       }
     }
   },
