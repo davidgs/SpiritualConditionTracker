@@ -77,6 +77,34 @@ function DashboardScreen() {
       ...styles.emptyText,
       color: theme.textSecondary,
     },
+    sectionTitle: {
+      fontSize: 16,
+      fontWeight: 'bold',
+      marginBottom: 8,
+      color: theme.text,
+    },
+    helpText: {
+      fontSize: 14,
+      color: theme.textSecondary,
+      marginBottom: 10,
+      lineHeight: 20,
+    },
+    calculationItem: {
+      flexDirection: 'row',
+      marginBottom: 6,
+      paddingLeft: 5,
+    },
+    calculationLabel: {
+      fontSize: 14,
+      fontWeight: '500',
+      color: theme.text,
+      width: 160,
+    },
+    calculationValue: {
+      fontSize: 14,
+      color: theme.textSecondary,
+      flex: 1,
+    },
   };
 
   return (
@@ -113,28 +141,61 @@ function DashboardScreen() {
         </View>
         
         {spiritualFitness && (
-          <View style={styles.breakdownContainer}>
-            <View style={themedStyles.breakdownItem}>
-              <Text style={themedStyles.breakdownLabel}>Prayer & Meditation</Text>
-              <Text style={themedStyles.breakdownValue}>{spiritualFitness.prayer.toFixed(2)}</Text>
+          <>
+            <View style={styles.breakdownContainer}>
+              <Text style={themedStyles.sectionTitle}>Score Breakdown</Text>
+              <View style={themedStyles.breakdownItem}>
+                <Text style={themedStyles.breakdownLabel}>Prayer & Meditation</Text>
+                <Text style={themedStyles.breakdownValue}>{spiritualFitness.prayer.toFixed(2)}</Text>
+              </View>
+              <View style={themedStyles.breakdownItem}>
+                <Text style={themedStyles.breakdownLabel}>Meetings</Text>
+                <Text style={themedStyles.breakdownValue}>{spiritualFitness.meetings.toFixed(2)}</Text>
+              </View>
+              <View style={themedStyles.breakdownItem}>
+                <Text style={themedStyles.breakdownLabel}>Literature</Text>
+                <Text style={themedStyles.breakdownValue}>{spiritualFitness.literature.toFixed(2)}</Text>
+              </View>
+              <View style={themedStyles.breakdownItem}>
+                <Text style={themedStyles.breakdownLabel}>Service</Text>
+                <Text style={themedStyles.breakdownValue}>{spiritualFitness.service.toFixed(2)}</Text>
+              </View>
+              <View style={themedStyles.breakdownItem}>
+                <Text style={themedStyles.breakdownLabel}>Sponsorship</Text>
+                <Text style={themedStyles.breakdownValue}>{spiritualFitness.sponsorship.toFixed(2)}</Text>
+              </View>
             </View>
-            <View style={themedStyles.breakdownItem}>
-              <Text style={themedStyles.breakdownLabel}>Meetings</Text>
-              <Text style={themedStyles.breakdownValue}>{spiritualFitness.meetings.toFixed(2)}</Text>
+            
+            <View style={styles.helpContainer}>
+              <Text style={themedStyles.sectionTitle}>How Score Is Calculated</Text>
+              <Text style={themedStyles.helpText}>Your Spiritual Fitness score is calculated based on your recovery activities over the past 30 days:</Text>
+              
+              <View style={themedStyles.calculationItem}>
+                <Text style={themedStyles.calculationLabel}>• Prayer & Meditation:</Text>
+                <Text style={themedStyles.calculationValue}>Regular daily practice</Text>
+              </View>
+              
+              <View style={themedStyles.calculationItem}>
+                <Text style={themedStyles.calculationLabel}>• Meetings:</Text>
+                <Text style={themedStyles.calculationValue}>Frequency of attendance</Text>
+              </View>
+              
+              <View style={themedStyles.calculationItem}>
+                <Text style={themedStyles.calculationLabel}>• Literature:</Text>
+                <Text style={themedStyles.calculationValue}>Time spent reading AA texts</Text>
+              </View>
+              
+              <View style={themedStyles.calculationItem}>
+                <Text style={themedStyles.calculationLabel}>• Service:</Text>
+                <Text style={themedStyles.calculationValue}>Helping others in recovery</Text>
+              </View>
+              
+              <View style={themedStyles.calculationItem}>
+                <Text style={themedStyles.calculationLabel}>• Sponsorship:</Text>
+                <Text style={themedStyles.calculationValue}>Time with sponsor/sponsees</Text>
+              </View>
             </View>
-            <View style={themedStyles.breakdownItem}>
-              <Text style={themedStyles.breakdownLabel}>Literature</Text>
-              <Text style={themedStyles.breakdownValue}>{spiritualFitness.literature.toFixed(2)}</Text>
-            </View>
-            <View style={themedStyles.breakdownItem}>
-              <Text style={themedStyles.breakdownLabel}>Service</Text>
-              <Text style={themedStyles.breakdownValue}>{spiritualFitness.service.toFixed(2)}</Text>
-            </View>
-            <View style={themedStyles.breakdownItem}>
-              <Text style={themedStyles.breakdownLabel}>Sponsorship</Text>
-              <Text style={themedStyles.breakdownValue}>{spiritualFitness.sponsorship.toFixed(2)}</Text>
-            </View>
-          </View>
+          </>
         )}
       </View>
 
@@ -266,6 +327,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginVertical: 10,
+  },
+  helpContainer: {
+    marginTop: 15,
+    paddingTop: 15,
+    borderTopWidth: 1,
+    borderTopColor: '#f0f0f0',
   },
 });
 

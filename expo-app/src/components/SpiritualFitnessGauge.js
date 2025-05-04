@@ -25,7 +25,7 @@ const SpiritualFitnessGauge = ({ value = 0, size = 200, maxValue = 10 }) => {
   };
   
   // Circle parameters
-  const strokeWidth = 12;
+  const strokeWidth = 18; // Thicker line
   const radius = (size - strokeWidth) / 2;
   const circumference = radius * 2 * Math.PI;
   const fillPercent = scaledValue / 100;
