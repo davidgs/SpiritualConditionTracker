@@ -1,0 +1,44 @@
+{
+  "expo": {
+    "name": "AA Recovery Tracker",
+    "slug": "aa-recovery-tracker",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.aarecovery.tracker",
+      "infoPlist": {
+        "NSCalendarsUsageDescription": "This app needs access to your calendar to add meetings and set reminders.",
+        "NSLocationWhenInUseUsageDescription": "This app needs access to your location to find nearby meetings and members.",
+        "NSBluetoothAlwaysUsageDescription": "This app needs access to Bluetooth to discover nearby members."
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "package": "com.aarecovery.tracker",
+      "permissions": [
+        "ACCESS_FINE_LOCATION",
+        "BLUETOOTH",
+        "BLUETOOTH_ADMIN",
+        "READ_CALENDAR",
+        "WRITE_CALENDAR"
+      ]
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    }
+  }
+}

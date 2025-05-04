@@ -16,10 +16,6 @@ author = "agent"
 task = "workflow.run"
 args = "ReactNativeServer"
 
-[[workflows.workflow.tasks]]
-task = "workflow.run"
-args = "WebDemoServer"
-
 [[workflows.workflow]]
 name = "ReactNativeServer"
 author = "agent"
@@ -27,15 +23,6 @@ author = "agent"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "node node_modules/react-native/cli.js start --port 5000"
-waitForPort = 5000
-
-[[workflows.workflow]]
-name = "WebDemoServer"
-author = "agent"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "cd web-version && node server.js"
 waitForPort = 5000
 
 [deployment]
