@@ -134,10 +134,10 @@ function DashboardScreen() {
         {/* Replace the text score with our gauge component */}
         <View style={styles.gaugeContainer}>
           <SpiritualFitnessGauge 
-            value={spiritualFitness?.overall || 0} 
+            value={spiritualFitness?.score || 0} 
             width={Math.min(350, screenWidth - 60)}
             height={120}
-            maxValue={10}
+            maxValue={100}
           />
         </View>
         
@@ -145,31 +145,27 @@ function DashboardScreen() {
           <>
             <View style={styles.breakdownContainer}>
               <Text style={themedStyles.sectionTitle}>Score Breakdown</Text>
+              {spiritualFitness.breakdown && Object.keys(spiritualFitness.breakdown).map((type, index) => (
+                <View key={index} style={themedStyles.breakdownItem}>
+                  <Text style={themedStyles.breakdownLabel}>{type.charAt(0).toUpperCase() + type.slice(1)}</Text>
+                  <Text style={themedStyles.breakdownValue}>{spiritualFitness.breakdown[type].score} pts</Text>
+                </View>
+              ))}
+              {spiritualFitness.varietyBonus > 0 && (
+                <View style={themedStyles.breakdownItem}>
+                  <Text style={themedStyles.breakdownLabel}>Variety Bonus</Text>
+                  <Text style={themedStyles.breakdownValue}>{spiritualFitness.varietyBonus} pts</Text>
+                </View>
+              )}
               <View style={themedStyles.breakdownItem}>
-                <Text style={themedStyles.breakdownLabel}>Prayer & Meditation</Text>
-                <Text style={themedStyles.breakdownValue}>{spiritualFitness.prayer.toFixed(2)}</Text>
-              </View>
-              <View style={themedStyles.breakdownItem}>
-                <Text style={themedStyles.breakdownLabel}>Meetings</Text>
-                <Text style={themedStyles.breakdownValue}>{spiritualFitness.meetings.toFixed(2)}</Text>
-              </View>
-              <View style={themedStyles.breakdownItem}>
-                <Text style={themedStyles.breakdownLabel}>Literature</Text>
-                <Text style={themedStyles.breakdownValue}>{spiritualFitness.literature.toFixed(2)}</Text>
-              </View>
-              <View style={themedStyles.breakdownItem}>
-                <Text style={themedStyles.breakdownLabel}>Service</Text>
-                <Text style={themedStyles.breakdownValue}>{spiritualFitness.service.toFixed(2)}</Text>
-              </View>
-              <View style={themedStyles.breakdownItem}>
-                <Text style={themedStyles.breakdownLabel}>Sponsorship</Text>
-                <Text style={themedStyles.breakdownValue}>{spiritualFitness.sponsorship.toFixed(2)}</Text>
+                <Text style={[themedStyles.breakdownLabel, {fontWeight: 'bold'}]}>Total Score</Text>
+                <Text style={[themedStyles.breakdownValue, {fontWeight: 'bold'}]}>{spiritualFitness.score} pts</Text>
               </View>
             </View>
             
             <View style={styles.helpContainer}>
               <Text style={themedStyles.sectionTitle}>How Score Is Calculated</Text>
-              <Text style={themedStyles.helpText}>Your Spiritual Fitness score is calculated based on your recovery activities over the past 30 days, with a maximum score of 100:</Text>
+              <Text style={themedStyles.helpText}>Your Spiritual Fitness score is calculated based on your recovery activities over the past 30 days, with a maximum score of 100. You earn bonus points for variety (5 pts for each different type of activity, up to 20 pts):</Text>
               
               <View style={themedStyles.calculationItem}>
                 <Text style={themedStyles.calculationLabel}>• Meetings:</Text>

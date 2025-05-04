@@ -2,8 +2,6 @@
  * Utility functions for calculating spiritual fitness and other recovery metrics
  */
 
-import { ACTIVITY_TYPES } from '../contexts/ActivitiesContext';
-
 /**
  * Calculate spiritual fitness based on activities
  * @param {Array} activities - Array of activity objects
@@ -11,129 +9,70 @@ import { ACTIVITY_TYPES } from '../contexts/ActivitiesContext';
  * @returns {Object} Spiritual fitness score and breakdown
  */
 export const calculateSpiritualFitness = (activities, options = {}) => {
-  // Default options
-  const defaultOptions = {
-    timeframe: 30, // Days to look back
-    decayFactor: 0.9, // How much older activities are valued less
-    categoryWeights: {
-      MEETING: 1.0,
-      PRAYER: 1.0,
-      LITERATURE: 0.8,
-      SPONSOR: 0.9,
-      SPONSEE: 1.1,
-      SERVICE: 1.2,
-      STEP_WORK: 1.0,
+  const {
+    timeframe = 30, // Default to 30 days
+    weights = {
+      meeting: 5,      // Points per meeting
+      meditation: 3,   // Points per meditation
+      reading: 2,      // Points per reading
+      service: 4,      // Points per service
+      stepwork: 5,     // Points per stepwork
+      sponsorship: 4   // Points per sponsorship
     },
-  };
-
-  const config = { ...defaultOptions, ...options };
+    maxScore = 100     // Maximum possible score
+  } = options;
   
-  // Group activities by type
-  const byType = {};
-  
-  // Calculate cutoff date
+  // Get current date for comparison
   const now = new Date();
-  const cutoffDate = new Date(now);
-  cutoffDate.setDate(cutoffDate.getDate() - config.timeframe);
+  const timeframeCutoff = new Date(now);
+  timeframeCutoff.setDate(timeframeCutoff.getDate() - timeframe);
   
   // Filter activities within timeframe
-  const recentActivities = activities.filter(activity => {
-    const activityDate = new Date(activity.date);
-    return activityDate >= cutoffDate && activityDate <= now;
-  });
+  const recentActivities = activities.filter(
+    activity => new Date(activity.date) >= timeframeCutoff
+  );
   
-  // Initialize type groups
-  Object.keys(ACTIVITY_TYPES).forEach(type => {
-    byType[type] = [];
-  });
-  
-  // Group filtered activities by type
+  // Count activity types
+  const typeCounts = {};
   recentActivities.forEach(activity => {
-    const type = activity.type;
-    if (byType[type]) {
-      byType[type].push(activity);
-    }
+    typeCounts[activity.type] = (typeCounts[activity.type] || 0) + 1;
   });
   
-  // Calculate scores for each category
-  const scores = {
-    prayer: calculateCategoryScore(byType.PRAYER || [], config),
-    meetings: calculateCategoryScore(byType.MEETING || [], config),
-    literature: calculateCategoryScore(byType.LITERATURE || [], config),
-    service: calculateCategoryScore(byType.SERVICE || [], config),
-    sponsorship: (
-      calculateCategoryScore(byType.SPONSOR || [], config) * 0.5 +
-      calculateCategoryScore(byType.SPONSEE || [], config) * 0.5
-    ),
-    timestamp: new Date().toISOString(),
-  };
-  
-  // Calculate overall score with weighted average
-  const categories = Object.keys(scores).filter(k => k !== 'timestamp');
-  let overallScore = 0;
-  let weightSum = 0;
-  
-  categories.forEach(category => {
-    const weight = category === 'sponsorship' ? 1.0 : // sponsorship is already a combined score
-      config.categoryWeights[category.toUpperCase()] || 1.0;
-    overallScore += scores[category] * weight;
-    weightSum += weight;
-  });
-  
-  if (weightSum > 0) {
-    overallScore /= weightSum;
-  }
-  
-  // Ensure minimum score is 0 and maximum is 10
-  overallScore = Math.min(Math.max(overallScore, 0), 10);
-  
-  // Round to 2 decimal places
-  scores.overall = parseFloat(overallScore.toFixed(2));
-  
-  // Round category scores to 2 decimal places
-  categories.forEach(category => {
-    scores[category] = parseFloat(scores[category].toFixed(2));
-  });
-  
-  return scores;
-};
-
-/**
- * Calculate score for a single category
- * @param {Array} activities - Activities in the category
- * @param {Object} options - Calculation options
- * @returns {number} Category score
- */
-function calculateCategoryScore(activities, options) {
-  if (!activities.length) return 0;
-  
-  const now = new Date();
+  // Calculate base score from activity counts
   let score = 0;
+  const breakdown = {};
   
-  // Sort activities by date, newest first
-  activities.sort((a, b) => new Date(b.date) - new Date(a.date));
-  
-  // Calculate score with time decay
-  activities.forEach(activity => {
-    const activityDate = new Date(activity.date);
-    const daysDiff = Math.floor((now - activityDate) / (1000 * 60 * 60 * 24));
-    const decayFactor = Math.pow(options.decayFactor, daysDiff);
+  Object.keys(typeCounts).forEach(type => {
+    const count = typeCounts[type];
+    const weight = weights[type] || 1;
+    const typeScore = count * weight;
     
-    // Base value from duration (minutes)
-    let value = activity.duration / 60; // Convert minutes to hours
-    
-    // Apply decay factor - more recent activities count more
-    value *= decayFactor;
-    
-    score += value;
+    score += typeScore;
+    breakdown[type] = {
+      count,
+      weight,
+      score: typeScore
+    };
   });
   
-  // Normalize to 0-10 scale
-  // More than 10 hours of activity in the timeframe will give a perfect 10
-  const normalizedScore = Math.min(score, 10);
+  // Add bonus for variety (different types of activities)
+  const activityTypesCount = Object.keys(typeCounts).length;
+  const varietyBonus = Math.min(20, activityTypesCount * 5);
+  score += varietyBonus;
   
-  return normalizedScore;
-}
+  // Cap score at maximum
+  score = Math.min(maxScore, score);
+  
+  return {
+    score,
+    breakdown,
+    activityCount: recentActivities.length,
+    activityTypes: activityTypesCount,
+    varietyBonus,
+    timeframe,
+    lastCalculated: now.toISOString()
+  };
+};
 
 /**
  * Calculate sobriety days
@@ -146,10 +85,8 @@ export const calculateSobrietyDays = (sobrietyDate) => {
   const start = new Date(sobrietyDate);
   const now = new Date();
   
-  // Time difference in milliseconds
+  // Calculate the difference in days
   const diffTime = Math.abs(now - start);
-  
-  // Convert to days and round down
   const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
   
   return diffDays;
@@ -164,10 +101,17 @@ export const calculateSobrietyDays = (sobrietyDate) => {
 export const calculateSobrietyYears = (sobrietyDate, decimalPlaces = 2) => {
   if (!sobrietyDate) return 0;
   
-  const days = calculateSobrietyDays(sobrietyDate);
-  const years = days / 365.25; // Account for leap years
+  // Get sobriety date and current date
+  const start = new Date(sobrietyDate);
+  const now = new Date();
   
-  return parseFloat(years.toFixed(decimalPlaces));
+  // Calculate exact years including fractional part
+  const diffTime = now - start;
+  const diffDays = diffTime / (1000 * 60 * 60 * 24);
+  const years = diffDays / 365.25; // Account for leap years
+  
+  // Format to specified decimal places
+  return Number(years.toFixed(decimalPlaces));
 };
 
 /**
@@ -185,47 +129,69 @@ export const formatNumberWithCommas = (number) => {
  * @returns {Object} Streak information for different activity types
  */
 export const calculateStreaks = (activities) => {
-  const streaks = {};
-  const byType = {};
-  
   // Group activities by type
+  const typeGroups = {};
   activities.forEach(activity => {
-    const type = activity.type;
-    if (!byType[type]) byType[type] = [];
-    byType[type].push(activity);
+    if (!typeGroups[activity.type]) {
+      typeGroups[activity.type] = [];
+    }
+    typeGroups[activity.type].push(activity);
   });
   
-  // Calculate streaks for each type
-  Object.keys(byType).forEach(type => {
-    const sorted = byType[type].sort((a, b) => new Date(b.date) - new Date(a.date));
+  // Calculate streak for each type
+  const streaks = {};
+  Object.keys(typeGroups).forEach(type => {
+    // Sort activities by date (newest first)
+    const typeActivities = typeGroups[type].sort(
+      (a, b) => new Date(b.date) - new Date(a.date)
+    );
     
-    if (sorted.length === 0) {
+    if (typeActivities.length === 0) {
       streaks[type] = { current: 0, longest: 0 };
       return;
     }
     
-    // Initialize streak counting
-    let currentStreak = 1;
-    let longestStreak = 1;
-    let previousDate = new Date(sorted[0].date);
+    // Check if most recent activity was today or yesterday
+    const now = new Date();
+    now.setHours(0, 0, 0, 0); // Set to start of day
     
-    for (let i = 1; i < sorted.length; i++) {
-      const currentDate = new Date(sorted[i].date);
-      
-      // Check if dates are consecutive
-      const diffDays = Math.floor((previousDate - currentDate) / (1000 * 60 * 60 * 24));
-      
-      if (diffDays === 1) {
-        // Consecutive day, streak continues
-        currentStreak++;
-        longestStreak = Math.max(longestStreak, currentStreak);
-      } else if (diffDays > 1) {
-        // Streak broken
-        currentStreak = 1;
-      }
-      
-      previousDate = currentDate;
+    const yesterday = new Date(now);
+    yesterday.setDate(yesterday.getDate() - 1);
+    
+    const mostRecentDate = new Date(typeActivities[0].date);
+    mostRecentDate.setHours(0, 0, 0, 0); // Set to start of day
+    
+    // If most recent activity wasn't today or yesterday, streak is broken
+    if (mostRecentDate < yesterday) {
+      streaks[type] = { current: 0, longest: 0 };
+      return;
     }
+    
+    // Calculate current streak
+    let currentStreak = 1; // Count the most recent day
+    let longestStreak = 1;
+    let currentDate = mostRecentDate;
+    
+    for (let i = 1; i < typeActivities.length; i++) {
+      const activityDate = new Date(typeActivities[i].date);
+      activityDate.setHours(0, 0, 0, 0); // Set to start of day
+      
+      // Check if this activity was the day before the current date
+      const expectedDate = new Date(currentDate);
+      expectedDate.setDate(expectedDate.getDate() - 1);
+      
+      if (activityDate.getTime() === expectedDate.getTime()) {
+        // Activity was on the consecutive previous day, continue streak
+        currentStreak++;
+        currentDate = activityDate;
+      } else {
+        // Streak is broken
+        break;
+      }
+    }
+    
+    // Calculate longest streak (simplified: just using current for now)
+    longestStreak = Math.max(currentStreak, longestStreak);
     
     streaks[type] = { current: currentStreak, longest: longestStreak };
   });
