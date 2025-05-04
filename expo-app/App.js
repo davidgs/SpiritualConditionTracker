@@ -68,6 +68,16 @@ export default function App() {
                 },
                 tabBarActiveTintColor: '#4a86e8',
                 tabBarInactiveTintColor: 'gray',
+                headerShown: true,
+                tabBarStyle: { 
+                  height: 60,
+                  paddingTop: 5,
+                  paddingBottom: 10
+                },
+                tabBarLabelStyle: {
+                  fontSize: 12,
+                  fontWeight: '500'
+                }
               })}
             >
               <Tab.Screen name="Dashboard" component={DashboardScreen} />
