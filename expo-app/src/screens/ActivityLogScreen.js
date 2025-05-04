@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput, Switch, Platform } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useUser } from '../contexts/UserContext';
@@ -218,9 +218,9 @@ function ActivityLogScreen() {
   };
 
   return (
-    <ScrollView style={styles.container}>
-      <View style={styles.card}>
-        <Text style={styles.title}>Log Recovery Activity</Text>
+    <ScrollView style={themedStyles.container}>
+      <View style={themedStyles.card}>
+        <Text style={themedStyles.title}>Log Recovery Activity</Text>
         
         {showSuccess && (
           <View style={styles.successMessage}>
@@ -228,20 +228,96 @@ function ActivityLogScreen() {
           </View>
         )}
         
-        <Text style={styles.label}>Activity Type</Text>
+        <Text style={themedStyles.label}>Activity Date</Text>
+        
+        {Platform.OS === 'web' ? (
+          <View style={themedStyles.webDatePickerContainer}>
+            {/* Month dropdown */}
+            <View style={themedStyles.webDatePickerItem}>
+              <Text style={themedStyles.webDatePickerLabel}>Month</Text>
+              <View style={themedStyles.webDatePickerSelect}>
+                <select
+                  value={webDate.month}
+                  onChange={(e) => setWebDate({...webDate, month: e.target.value})}
+                  style={themedStyles.webDateDropdown}
+                >
+                  {months.map(month => (
+                    <option key={month.value} value={month.value}>{month.label}</option>
+                  ))}
+                </select>
+              </View>
+            </View>
+            
+            {/* Day dropdown */}
+            <View style={themedStyles.webDatePickerItem}>
+              <Text style={themedStyles.webDatePickerLabel}>Day</Text>
+              <View style={themedStyles.webDatePickerSelect}>
+                <select
+                  value={webDate.day}
+                  onChange={(e) => setWebDate({...webDate, day: e.target.value})}
+                  style={themedStyles.webDateDropdown}
+                >
+                  {days.map(day => (
+                    <option key={day} value={day}>{day}</option>
+                  ))}
+                </select>
+              </View>
+            </View>
+            
+            {/* Year dropdown */}
+            <View style={themedStyles.webDatePickerItem}>
+              <Text style={themedStyles.webDatePickerLabel}>Year</Text>
+              <View style={themedStyles.webDatePickerSelect}>
+                <select
+                  value={webDate.year}
+                  onChange={(e) => setWebDate({...webDate, year: e.target.value})}
+                  style={themedStyles.webDateDropdown}
+                >
+                  {years.map(year => (
+                    <option key={year} value={year}>{year}</option>
+                  ))}
+                </select>
+              </View>
+            </View>
+          </View>
+        ) : (
+          <>
+            <TouchableOpacity 
+              style={themedStyles.dateButton}
+              onPress={() => setShowDatePicker(true)}
+            >
+              <Text style={themedStyles.dateButtonText}>
+                {activityDate.toLocaleDateString()}
+              </Text>
+              <MaterialCommunityIcons name="calendar" size={20} color={theme.primary} />
+            </TouchableOpacity>
+            
+            {showDatePicker && (
+              <DateTimePicker
+                value={activityDate}
+                mode="date"
+                display="default"
+                onChange={handleDateChange}
+                maximumDate={new Date()}
+              />
+            )}
+          </>
+        )}
+        
+        <Text style={themedStyles.label}>Activity Type</Text>
         <View style={styles.activityTypeContainer}>
           {Object.keys(ACTIVITY_TYPES).map((type) => (
             <TouchableOpacity
               key={type}
               style={[
-                styles.activityTypeButton,
-                activityType === type && styles.activityTypeSelected
+                themedStyles.activityTypeButton,
+                activityType === type && themedStyles.activityTypeSelected
               ]}
               onPress={() => setActivityType(type)}
             >
               <Text 
                 style={[
-                  styles.activityTypeText,
+                  themedStyles.activityTypeText,
                   activityType === type && styles.activityTypeTextSelected
                 ]}
               >
@@ -251,28 +327,30 @@ function ActivityLogScreen() {
           ))}
         </View>
         
-        <Text style={styles.label}>Duration (minutes)</Text>
+        <Text style={themedStyles.label}>Duration (minutes)</Text>
         <TextInput
-          style={styles.input}
+          style={themedStyles.input}
           value={duration}
           onChangeText={setDuration}
           keyboardType="numeric"
           placeholder="Enter duration in minutes"
+          placeholderTextColor={theme.textSecondary}
         />
         
-        <Text style={styles.label}>Notes (optional)</Text>
+        <Text style={themedStyles.label}>Notes (optional)</Text>
         <TextInput
-          style={[styles.input, styles.textArea]}
+          style={[themedStyles.input, styles.textArea]}
           value={notes}
           onChangeText={setNotes}
           placeholder="Add any notes about this activity"
+          placeholderTextColor={theme.textSecondary}
           multiline
           numberOfLines={4}
         />
         
         <TouchableOpacity 
           style={[
-            styles.submitButton,
+            themedStyles.submitButton,
             (!activityType || !duration) && styles.submitButtonDisabled
           ]}
           onPress={handleSubmit}
@@ -282,12 +360,12 @@ function ActivityLogScreen() {
         </TouchableOpacity>
       </View>
       
-      <View style={styles.card}>
-        <Text style={styles.title}>Activity Types Info</Text>
+      <View style={themedStyles.card}>
+        <Text style={themedStyles.title}>Activity Types Info</Text>
         {Object.keys(ACTIVITY_TYPES).map((key) => (
           <View key={key} style={styles.infoItem}>
-            <Text style={styles.infoLabel}>{ACTIVITY_TYPES[key].label}:</Text>
-            <Text style={styles.infoDescription}>{ACTIVITY_TYPES[key].description}</Text>
+            <Text style={themedStyles.infoLabel}>{ACTIVITY_TYPES[key].label}:</Text>
+            <Text style={themedStyles.infoDescription}>{ACTIVITY_TYPES[key].description}</Text>
           </View>
         ))}
       </View>
