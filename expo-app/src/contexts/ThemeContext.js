@@ -6,8 +6,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 export const lightTheme = {
   background: '#f8f9fa',
   card: '#ffffff',
-  primary: '#4a86e8',
-  secondary: '#90caf9',
+  primary: '#01040c',
+  secondary: '#30bfde',
   text: '#333333',
   textSecondary: '#666666',
   border: '#dddddd',
@@ -30,8 +30,8 @@ export const lightTheme = {
 export const darkTheme = {
   background: '#121212',
   card: '#1e1e1e',
-  primary: '#4a86e8',
-  secondary: '#5794d3',
+  primary: '#01040c',
+  secondary: '#30bfde',
   text: '#ffffff',
   textSecondary: '#aaaaaa',
   border: '#333333',

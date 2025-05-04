@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "AA Recovery Tracker",
-    "slug": "aa-recovery-tracker",
+    "name": "Spiritual Condition Tracker",
+    "slug": "spiritual-condition-tracker",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -9,7 +9,7 @@
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#01040c"
     },
     "assetBundlePatterns": [
       "**/*"
@@ -31,7 +31,7 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#01040c"
       },
       "package": "com.aarecovery.tracker",
       "versionCode": 1,

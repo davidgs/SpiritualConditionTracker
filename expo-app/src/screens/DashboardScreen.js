@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Dimensions, Image } from 'react-native';
 import { useUser } from '../contexts/UserContext';
 import { useTheme } from '../contexts/ThemeContext';
 import SpiritualFitnessGauge from '../components/SpiritualFitnessGauge';
@@ -110,22 +110,32 @@ function DashboardScreen() {
   return (
     <ScrollView style={themedStyles.container}>
       <View style={themedStyles.header}>
-        <Text style={styles.greeting}>Hello, {user?.firstName || 'Friend'}</Text>
-        
-        {sobrietyDays > 0 ? (
-          <View style={styles.sobrietyContainer}>
-            <Text style={styles.sobrietyYears}>
-              {sobrietyYears.toFixed(2)} Years
-            </Text>
-            <Text style={styles.sobrietyDays}>
-              {formatNumberWithCommas(sobrietyDays)} Days
-            </Text>
+        <View style={styles.headerTop}>
+          <View style={styles.textContainer}>
+            <Text style={styles.greeting}>Hello, {user?.firstName || 'Friend'}</Text>
+            
+            {sobrietyDays > 0 ? (
+              <View style={styles.sobrietyContainer}>
+                <Text style={styles.sobrietyYears}>
+                  {sobrietyYears.toFixed(2)} Years
+                </Text>
+                <Text style={styles.sobrietyDays}>
+                  {formatNumberWithCommas(sobrietyDays)} Days
+                </Text>
+              </View>
+            ) : (
+              <Text style={styles.sobrietyDays}>
+                Set your sobriety date in Profile
+              </Text>
+            )}
           </View>
-        ) : (
-          <Text style={styles.sobrietyDays}>
-            Set your sobriety date in Profile
-          </Text>
-        )}
+          
+          <Image 
+            source={require('../../assets/icon.png')}
+            style={styles.headerLogo}
+            resizeMode="contain"
+          />
+        </View>
       </View>
 
       <View style={themedStyles.fitnessCard}>
@@ -226,7 +236,7 @@ const styles = StyleSheet.create({
   },
   header: {
     padding: 20,
-    backgroundColor: '#4a86e8',
+    backgroundColor: '#01040c',
   },
   greeting: {
     fontSize: 24,
@@ -335,6 +345,20 @@ const styles = StyleSheet.create({
     paddingTop: 15,
     borderTopWidth: 1,
     borderTopColor: '#f0f0f0',
+  },
+  headerTop: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  textContainer: {
+    flex: 1,
+  },
+  headerLogo: {
+    width: 80,
+    height: 80,
+    marginLeft: 10,
+    borderRadius: 40,
   },
 });
 
