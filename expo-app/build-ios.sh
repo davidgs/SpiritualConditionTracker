@@ -1,89 +1,98 @@
 #!/bin/bash
 
-# Build script for iOS using EAS Build
-# This script will handle the process of building the iOS app
+# Interactive build script for iOS
+# This script walks through the iOS build process step by step
 
 # Set error handling
 set -e
 
-echo "===== Spiritual Condition Tracker iOS Build ====="
-echo "Starting build process..."
+echo "===== iOS Build Script for Spiritual Condition Tracker ====="
+echo "This script will help you build the iOS app with EAS."
 
-# Check if eas-cli is installed
-if ! command -v npx eas &> /dev/null; then
-    echo "Error: EAS CLI is not installed. Installing..."
-    npm install -g eas-cli
-fi
-
-# Check login status
-echo "Checking EAS login status..."
+# Check if logged in
 if ! npx eas whoami &> /dev/null; then
-    echo "You need to log in to EAS first."
-    echo "Run 'npx eas login' and then try again."
-    exit 1
+    echo "Not logged in to EAS. Please log in first."
+    ./eas-login.sh
+    if ! npx eas whoami &> /dev/null; then
+        echo "Login failed. Please try again later."
+        exit 1
+    fi
 fi
 
-# Validate app.json and eas.json
-echo "Validating configuration files..."
-if [ ! -f "app.json" ]; then
-    echo "Error: app.json file not found!"
-    exit 1
+# Verify app.json
+if ! grep -q '"projectId": ".*-.*-.*-.*-.*"' app.json; then
+    echo "⚠️ Warning: The projectId in app.json doesn't appear to be a valid UUID."
+    echo "This might cause the 'Invalid UUID appId' error."
+    read -p "Do you want to continue anyway? (y/n): " continue_anyway
+    if [ "$continue_anyway" != "y" ] && [ "$continue_anyway" != "Y" ]; then
+        echo "Build cancelled. Please fix the projectId in app.json."
+        exit 1
+    fi
 fi
 
-if [ ! -f "eas.json" ]; then
-    echo "Error: eas.json file not found!"
+# Check bundle identifier
+if ! grep -q '"bundleIdentifier": ".*"' app.json; then
+    echo "⚠️ Error: No bundleIdentifier found in app.json!"
+    echo "Please add a bundleIdentifier like 'com.yourcompany.appname' to the ios section of app.json."
     exit 1
-fi
-
-# Check for iOS-specific configuration
-if ! grep -q "\"ios\":" app.json; then
-    echo "Error: iOS configuration not found in app.json!"
-    exit 1
-fi
-
-# Check for iOS bundle identifier
-if ! grep -q "\"bundleIdentifier\":" app.json; then
-    echo "Error: iOS bundle identifier not found in app.json!"
-    exit 1
-fi
-
-# Check for credentials
-if [ ! -f "../credentials.json" ]; then
-    echo "Warning: credentials.json file not found in the project root."
-    echo "EAS will prompt for credentials during the build process."
 fi
 
 # Choose build profile
-echo "Select a build profile:"
-echo "1) development - For development and testing"
-echo "2) native - Internal distribution with iOS-specific settings"
-echo "3) preview - Internal distribution"
-echo "4) production - For App Store submissions"
-read -p "Enter your choice (1-4): " choice
+echo "Available build profiles:"
+echo "1) development - Creates a development build for testing (requires Apple Developer account)"
+echo "2) preview - Creates an internal distribution build for testing"
+echo "3) native - Creates a native build optimized for testing (faster than simulator)"
+echo "4) production - Creates a production-ready build for App Store submission"
 
-case $choice in
-    1)
-        profile="development"
-        ;;
-    2)
-        profile="native" 
-        ;;
-    3)
-        profile="preview"
-        ;;
-    4)
-        profile="production"
-        ;;
-    *)
-        echo "Invalid choice. Using 'native' profile as default."
-        profile="native"
-        ;;
+read -p "Select a build profile (1-4): " profile_choice
+
+case $profile_choice in
+    1) profile="development" ;;
+    2) profile="preview" ;;
+    3) profile="native" ;;
+    4) profile="production" ;;
+    *) echo "Invalid choice. Using 'preview' as default."; profile="preview" ;;
 esac
 
-echo "Starting EAS build for iOS with profile: $profile"
+# Ask for distribution type
+if [ "$profile" = "development" ] || [ "$profile" = "preview" ] || [ "$profile" = "native" ]; then
+    echo "Distribution options:"
+    echo "1) simulator - Build for iOS simulator"
+    echo "2) internal - Build for internal distribution (Ad Hoc)"
+    
+    read -p "Select distribution type (1-2): " dist_choice
+    
+    case $dist_choice in
+        1) distribution="simulator" ;;
+        2) distribution="internal" ;;
+        *) echo "Invalid choice. Using 'internal' as default."; distribution="internal" ;;
+    esac
+else
+    distribution="store"
+fi
+
+# Final confirmation
+echo ""
+echo "=============== BUILD CONFIGURATION ==============="
+echo "Profile: $profile"
+echo "Distribution: $distribution"
+echo ""
+
+read -p "Start build with these settings? (y/n): " start_build
+
+if [ "$start_build" != "y" ] && [ "$start_build" != "Y" ]; then
+    echo "Build cancelled. No changes were made."
+    exit 0
+fi
 
 # Run the build
-npx eas build --platform ios --profile $profile --non-interactive
+echo "Starting iOS build with EAS..."
 
-echo "Build process initiated. You can monitor the build progress in the EAS dashboard."
-echo "===== Build script complete ====="
+if [ "$distribution" = "simulator" ]; then
+    npx eas build --platform ios --profile $profile --local
+else
+    npx eas build --platform ios --profile $profile --non-interactive
+fi
+
+echo "===== Build process initiated ====="
+echo "You can check the status of your build at https://expo.dev/builds"

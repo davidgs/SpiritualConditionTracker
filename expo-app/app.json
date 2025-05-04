@@ -48,7 +48,7 @@
     },
     "extra": {
       "eas": {
-        "projectId": "spiritual-condition-tracker"
+        "projectId": "a82e4d89-0b9f-45e8-a23d-c9b8e7662695"
       }
     },
     "owner": "anonymous",
@@ -56,7 +56,7 @@
       "policy": "sdkVersion"
     },
     "updates": {
-      "url": "https://u.expo.dev/spiritual-condition-tracker"
+      "url": "https://u.expo.dev/a82e4d89-0b9f-45e8-a23d-c9b8e7662695"
     }
   }
 }
