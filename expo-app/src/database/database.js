@@ -16,7 +16,10 @@ if (Platform.OS === 'web') {
       users: [],
       activities: [],
       meetings: [],
-      spiritual_fitness: []
+      spiritual_fitness: [],
+      messages: [],
+      conversations: [],
+      conversation_participants: []
     },
     
     transaction: function(callback) {
@@ -235,6 +238,9 @@ if (Platform.OS === 'web') {
         webDb.data.activities = JSON.parse(localStorage.getItem('aa_recovery_activities')) || [];
         webDb.data.meetings = JSON.parse(localStorage.getItem('aa_recovery_meetings')) || [];
         webDb.data.spiritual_fitness = JSON.parse(localStorage.getItem('aa_recovery_spiritual_fitness')) || [];
+        webDb.data.messages = JSON.parse(localStorage.getItem('aa_recovery_messages')) || [];
+        webDb.data.conversations = JSON.parse(localStorage.getItem('aa_recovery_conversations')) || [];
+        webDb.data.conversation_participants = JSON.parse(localStorage.getItem('aa_recovery_conversation_participants')) || [];
       } catch (e) {
         console.warn('Failed to load from localStorage:', e);
       }
@@ -252,6 +258,9 @@ if (Platform.OS === 'web') {
 /**
  * Initialize the database tables
  */
+// Import message tables schema
+import { createMessageTables } from './messageSchema';
+
 export const initDatabase = () => {
   return new Promise((resolve, reject) => {
     db.transaction(tx => {
@@ -267,7 +276,8 @@ export const initDatabase = () => {
           sponsorPhone TEXT,
           privacySettings TEXT,
           notificationSettings TEXT,
-          profileData TEXT
+          profileData TEXT,
+          deviceId TEXT
         )`,
         [],
         () => { console.log('Users table created or already exists'); },
@@ -326,9 +336,33 @@ export const initDatabase = () => {
         [],
         () => { 
           console.log('Spiritual fitness table created or already exists');
-          resolve();
+          
+          // Create message tables
+          createMessageTables(db)
+            .then(() => resolve())
+            .catch(error => {
+              console.error('Error creating message tables:', error);
+              reject(error);
+            });
         },
         (_, error) => { console.error('Error creating spiritual fitness table:', error); reject(error); }
+      );
+      
+      // Create connections table for storing user connections
+      tx.executeSql(
+        `CREATE TABLE IF NOT EXISTS connections (
+          id TEXT PRIMARY KEY,
+          userId TEXT NOT NULL,
+          connectedUserId TEXT NOT NULL,
+          status TEXT NOT NULL,
+          createdAt TEXT NOT NULL,
+          updatedAt TEXT NOT NULL,
+          FOREIGN KEY (userId) REFERENCES users (id),
+          FOREIGN KEY (connectedUserId) REFERENCES users (id)
+        )`,
+        [],
+        () => { console.log('Connections table created or already exists'); },
+        (_, error) => { console.error('Error creating connections table:', error); reject(error); }
       );
     });
   });
