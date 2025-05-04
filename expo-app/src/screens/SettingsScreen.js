@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, Switch, TouchableOpacity, TextInput, Alert, Platform } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useUser } from '../contexts/UserContext';
@@ -61,16 +61,72 @@ function SettingsScreen() {
     }
   };
   
-  const handleWebDateChange = (text) => {
-    try {
-      const newDate = new Date(text);
+  // For web date picker
+  const [webDate, setWebDate] = useState({
+    day: profile.sobrietyDate.getDate().toString(),
+    month: (profile.sobrietyDate.getMonth() + 1).toString(),
+    year: profile.sobrietyDate.getFullYear().toString()
+  });
+  
+  // Update webDate when profile.sobrietyDate changes (initialization)
+  useEffect(() => {
+    if (profile.sobrietyDate) {
+      setWebDate({
+        day: profile.sobrietyDate.getDate().toString(),
+        month: (profile.sobrietyDate.getMonth() + 1).toString(),
+        year: profile.sobrietyDate.getFullYear().toString()
+      });
+    }
+  }, []);
+  
+  const updateSobrietyDateFromWeb = () => {
+    const day = parseInt(webDate.day, 10);
+    const month = parseInt(webDate.month, 10) - 1; // JS months are 0-indexed
+    const year = parseInt(webDate.year, 10);
+    
+    if (!isNaN(day) && !isNaN(month) && !isNaN(year)) {
+      const newDate = new Date(year, month, day);
       if (!isNaN(newDate.getTime())) {
         setProfile({...profile, sobrietyDate: newDate});
       }
-    } catch (e) {
-      console.log('Invalid date format');
     }
   };
+  
+  // When any part of the web date changes, update the sobriety date
+  useEffect(() => {
+    updateSobrietyDateFromWeb();
+  }, [webDate]);
+  
+  // Generate arrays for days, months and years for the dropdowns
+  const getDaysInMonth = (month, year) => {
+    return new Date(year, month, 0).getDate();
+  };
+  
+  const days = Array.from(
+    { length: getDaysInMonth(parseInt(webDate.month), parseInt(webDate.year)) }, 
+    (_, i) => (i + 1).toString()
+  );
+  
+  const months = [
+    { value: '1', label: 'January' },
+    { value: '2', label: 'February' },
+    { value: '3', label: 'March' },
+    { value: '4', label: 'April' },
+    { value: '5', label: 'May' },
+    { value: '6', label: 'June' },
+    { value: '7', label: 'July' },
+    { value: '8', label: 'August' },
+    { value: '9', label: 'September' },
+    { value: '10', label: 'October' },
+    { value: '11', label: 'November' },
+    { value: '12', label: 'December' }
+  ];
+  
+  const currentYear = new Date().getFullYear();
+  const years = Array.from(
+    { length: 100 }, 
+    (_, i) => (currentYear - i).toString()
+  );
 
   const reminderOptions = [
     { value: 15, label: '15 minutes' },
@@ -109,18 +165,61 @@ function SettingsScreen() {
               placeholder="Enter your last name"
             />
             
-            <Text style={styles.label}>Sobriety Date (YYYY-MM-DD)</Text>
+            <Text style={styles.label}>Sobriety Date</Text>
             
             {Platform.OS === 'web' ? (
               <View>
-                <TextInput
-                  style={styles.input}
-                  value={profile.sobrietyDate ? profile.sobrietyDate.toISOString().split('T')[0] : ''}
-                  onChangeText={handleWebDateChange}
-                  placeholder="YYYY-MM-DD"
-                />
+                <View style={styles.webDatePickerContainer}>
+                  {/* Day dropdown */}
+                  <View style={styles.webDatePickerItem}>
+                    <Text style={styles.webDatePickerLabel}>Day</Text>
+                    <View style={styles.webDatePickerSelect}>
+                      <select
+                        value={webDate.day}
+                        onChange={(e) => setWebDate({...webDate, day: e.target.value})}
+                        style={styles.webDateDropdown}
+                      >
+                        {days.map(day => (
+                          <option key={day} value={day}>{day}</option>
+                        ))}
+                      </select>
+                    </View>
+                  </View>
+                  
+                  {/* Month dropdown */}
+                  <View style={styles.webDatePickerItem}>
+                    <Text style={styles.webDatePickerLabel}>Month</Text>
+                    <View style={styles.webDatePickerSelect}>
+                      <select
+                        value={webDate.month}
+                        onChange={(e) => setWebDate({...webDate, month: e.target.value})}
+                        style={styles.webDateDropdown}
+                      >
+                        {months.map(month => (
+                          <option key={month.value} value={month.value}>{month.label}</option>
+                        ))}
+                      </select>
+                    </View>
+                  </View>
+                  
+                  {/* Year dropdown */}
+                  <View style={styles.webDatePickerItem}>
+                    <Text style={styles.webDatePickerLabel}>Year</Text>
+                    <View style={styles.webDatePickerSelect}>
+                      <select
+                        value={webDate.year}
+                        onChange={(e) => setWebDate({...webDate, year: e.target.value})}
+                        style={styles.webDateDropdown}
+                      >
+                        {years.map(year => (
+                          <option key={year} value={year}>{year}</option>
+                        ))}
+                      </select>
+                    </View>
+                  </View>
+                </View>
                 <Text style={styles.dateHelpText}>
-                  Enter date in YYYY-MM-DD format (e.g., 2022-01-15)
+                  Your sobriety date: {profile.sobrietyDate.toLocaleDateString()}
                 </Text>
               </View>
             ) : (
@@ -443,6 +542,36 @@ const styles = StyleSheet.create({
     fontStyle: 'italic',
     marginTop: 5,
     marginBottom: 10,
+  },
+  webDatePickerContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginVertical: 10,
+  },
+  webDatePickerItem: {
+    flex: 1,
+    marginHorizontal: 5,
+  },
+  webDatePickerLabel: {
+    fontSize: 12,
+    color: '#555',
+    marginBottom: 5,
+  },
+  webDatePickerSelect: {
+    borderWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 5,
+    backgroundColor: '#fff',
+    height: 40,
+    justifyContent: 'center',
+  },
+  webDateDropdown: {
+    width: '100%',
+    height: 36,
+    border: 'none',
+    backgroundColor: 'transparent',
+    paddingHorizontal: 10,
+    fontSize: 16,
   },
   editButtons: {
     flexDirection: 'row',
