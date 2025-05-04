@@ -109,32 +109,42 @@ function SettingsScreen() {
               placeholder="Enter your last name"
             />
             
-            <Text style={styles.label}>Sobriety Date</Text>
-            <TouchableOpacity 
-              style={styles.dateButton}
-              onPress={() => setShowDatePicker(true)}
-            >
-              <Text style={styles.dateButtonText}>
-                {profile.sobrietyDate.toLocaleDateString()}
-              </Text>
-              <MaterialCommunityIcons name="calendar" size={20} color="#4a86e8" />
-            </TouchableOpacity>
+            <Text style={styles.label}>Sobriety Date (YYYY-MM-DD)</Text>
             
             {Platform.OS === 'web' ? (
-              <TextInput
-                style={styles.input}
-                value={profile.sobrietyDate ? profile.sobrietyDate.toISOString().split('T')[0] : ''}
-                onChangeText={handleWebDateChange}
-                placeholder="YYYY-MM-DD"
-              />
-            ) : showDatePicker && (
-              <DateTimePicker
-                value={profile.sobrietyDate}
-                mode="date"
-                display="default"
-                onChange={handleDateChange}
-                maximumDate={new Date()}
-              />
+              <View>
+                <TextInput
+                  style={styles.input}
+                  value={profile.sobrietyDate ? profile.sobrietyDate.toISOString().split('T')[0] : ''}
+                  onChangeText={handleWebDateChange}
+                  placeholder="YYYY-MM-DD"
+                />
+                <Text style={styles.dateHelpText}>
+                  Enter date in YYYY-MM-DD format (e.g., 2022-01-15)
+                </Text>
+              </View>
+            ) : (
+              <>
+                <TouchableOpacity 
+                  style={styles.dateButton}
+                  onPress={() => setShowDatePicker(true)}
+                >
+                  <Text style={styles.dateButtonText}>
+                    {profile.sobrietyDate.toLocaleDateString()}
+                  </Text>
+                  <MaterialCommunityIcons name="calendar" size={20} color="#4a86e8" />
+                </TouchableOpacity>
+                
+                {showDatePicker && (
+                  <DateTimePicker
+                    value={profile.sobrietyDate}
+                    mode="date"
+                    display="default"
+                    onChange={handleDateChange}
+                    maximumDate={new Date()}
+                  />
+                )}
+              </>
             )}
             
             <Text style={styles.label}>Home Group</Text>
@@ -426,6 +436,13 @@ const styles = StyleSheet.create({
   dateButtonText: {
     fontSize: 16,
     color: '#333',
+  },
+  dateHelpText: {
+    fontSize: 12,
+    color: '#666',
+    fontStyle: 'italic',
+    marginTop: 5,
+    marginBottom: 10,
   },
   editButtons: {
     flexDirection: 'row',
