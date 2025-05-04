@@ -1,0 +1,35 @@
+#!/bin/bash
+
+# Script to build Android app locally
+# This should be run on your local machine, not in Replit
+
+# Exit on error
+set -e
+
+# Check if EAS CLI is installed
+if ! command -v eas &> /dev/null; then
+    echo "EAS CLI is not installed. Installing now..."
+    npm install -g eas-cli
+fi
+
+# Check if logged in
+echo "Checking EAS authentication status..."
+if ! eas whoami &> /dev/null; then
+    echo "You are not logged in to EAS. Please log in:"
+    eas login
+fi
+
+# Show current user
+eas whoami
+
+# Start the build
+echo "Starting Android build process..."
+echo "This will build the app with the native profile and open the build status in your browser."
+echo "Press Enter to continue or Ctrl+C to cancel..."
+read
+
+# Run the build command
+eas build --platform android --profile native
+
+echo "Build process has been initiated!"
+echo "You can monitor the build at: https://expo.dev/accounts/davidgs/projects/spiritual-condition-tracker/builds"

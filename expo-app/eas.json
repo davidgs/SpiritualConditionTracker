@@ -17,11 +17,15 @@
     "native": {
       "ios": {
         "resourceClass": "default",
-        "distribution": "internal"
+        "distribution": "internal",
+        "credentialsSource": "remote",
+        "image": "latest"
       },
       "android": {
         "buildType": "apk",
-        "distribution": "internal"
+        "distribution": "internal",
+        "credentialsSource": "remote",
+        "image": "latest"
       }
     }
   },
