@@ -17,6 +17,7 @@ function SettingsScreen() {
     lastName: user?.lastName || '',
     sobrietyDate: user?.sobrietyDate ? new Date(user.sobrietyDate) : new Date(),
     homeGroup: user?.homeGroup || '',
+    phoneNumber: user?.phoneNumber || '',
     sponsorName: user?.sponsorName || '',
     sponsorPhone: user?.sponsorPhone || '',
   });
@@ -273,6 +274,15 @@ function SettingsScreen() {
               placeholder="Enter your home group"
             />
             
+            <Text style={styles.label}>Your Phone Number</Text>
+            <TextInput
+              style={styles.input}
+              value={formatPhoneNumber(profile.phoneNumber)}
+              onChangeText={(text) => setProfile({...profile, phoneNumber: text})}
+              placeholder="(555) 555-5555"
+              keyboardType="phone-pad"
+            />
+            
             <Text style={styles.label}>Sponsor Name</Text>
             <TextInput
               style={styles.input}
@@ -316,6 +326,11 @@ function SettingsScreen() {
             {profile.homeGroup && (
               <Text style={styles.profileDetail}>
                 Home Group: {profile.homeGroup}
+              </Text>
+            )}
+            {profile.phoneNumber && (
+              <Text style={styles.profileDetail}>
+                Phone: {formatPhoneNumber(profile.phoneNumber)}
               </Text>
             )}
             {profile.sponsorName && (
