@@ -240,6 +240,26 @@ function SettingsScreen() {
       ...styles.cancelButtonText,
       color: theme.textSecondary,
     },
+    reminderOptions: {
+      ...styles.reminderOptions,
+    },
+    reminderOption: {
+      ...styles.reminderOption,
+      backgroundColor: theme.card,
+      borderColor: theme.primary,
+    },
+    reminderOptionSelected: {
+      ...styles.reminderOptionSelected,
+      backgroundColor: theme.primary,
+    },
+    reminderOptionText: {
+      ...styles.reminderOptionText,
+      color: theme.primary,
+    },
+    reminderOptionTextSelected: {
+      ...styles.reminderOptionTextSelected,
+      color: theme.isDark ? 'white' : 'white',
+    },
     settingRow: {
       ...styles.settingRow,
       borderBottomColor: theme.divider,
@@ -458,10 +478,10 @@ function SettingsScreen() {
           />
         </View>
         
-        <View style={styles.settingRow}>
+        <View style={themedStyles.settingRow}>
           <View style={styles.settingTextContainer}>
-            <Text style={styles.settingLabel}>Share Full Name</Text>
-            <Text style={styles.settingDescription}>
+            <Text style={themedStyles.settingLabel}>Share Full Name</Text>
+            <Text style={themedStyles.settingDescription}>
               Show your last name to other AA members
             </Text>
           </View>
@@ -475,10 +495,10 @@ function SettingsScreen() {
           />
         </View>
         
-        <View style={styles.settingRow}>
+        <View style={themedStyles.settingRow}>
           <View style={styles.settingTextContainer}>
-            <Text style={styles.settingLabel}>Share Sobriety Date</Text>
-            <Text style={styles.settingDescription}>
+            <Text style={themedStyles.settingLabel}>Share Sobriety Date</Text>
+            <Text style={themedStyles.settingDescription}>
               Allow other members to see your sobriety date
             </Text>
           </View>
@@ -492,10 +512,10 @@ function SettingsScreen() {
           />
         </View>
         
-        <View style={styles.settingRow}>
+        <View style={themedStyles.settingRow}>
           <View style={styles.settingTextContainer}>
-            <Text style={styles.settingLabel}>Allow Bluetooth Discovery</Text>
-            <Text style={styles.settingDescription}>
+            <Text style={themedStyles.settingLabel}>Allow Bluetooth Discovery</Text>
+            <Text style={themedStyles.settingDescription}>
               Enable more precise discovery of nearby members
             </Text>
           </View>
@@ -513,10 +533,10 @@ function SettingsScreen() {
       <View style={themedStyles.card}>
         <Text style={themedStyles.cardTitle}>Notification Settings</Text>
         
-        <View style={styles.settingRow}>
+        <View style={themedStyles.settingRow}>
           <View style={styles.settingTextContainer}>
-            <Text style={styles.settingLabel}>Meeting Reminders</Text>
-            <Text style={styles.settingDescription}>
+            <Text style={themedStyles.settingLabel}>Meeting Reminders</Text>
+            <Text style={themedStyles.settingDescription}>
               Get notified before your scheduled meetings
             </Text>
           </View>
@@ -530,10 +550,10 @@ function SettingsScreen() {
           />
         </View>
         
-        <View style={styles.settingRow}>
+        <View style={themedStyles.settingRow}>
           <View style={styles.settingTextContainer}>
-            <Text style={styles.settingLabel}>Daily Reflection</Text>
-            <Text style={styles.settingDescription}>
+            <Text style={themedStyles.settingLabel}>Daily Reflection</Text>
+            <Text style={themedStyles.settingDescription}>
               Receive a daily recovery reflection
             </Text>
           </View>
@@ -547,10 +567,10 @@ function SettingsScreen() {
           />
         </View>
         
-        <View style={styles.settingRow}>
+        <View style={themedStyles.settingRow}>
           <View style={styles.settingTextContainer}>
-            <Text style={styles.settingLabel}>Sobriety Milestones</Text>
-            <Text style={styles.settingDescription}>
+            <Text style={themedStyles.settingLabel}>Sobriety Milestones</Text>
+            <Text style={themedStyles.settingDescription}>
               Get notified of sobriety milestones
             </Text>
           </View>
@@ -564,14 +584,14 @@ function SettingsScreen() {
           />
         </View>
         
-        <Text style={styles.label}>Reminder Time Before Meetings</Text>
-        <View style={styles.reminderOptions}>
+        <Text style={themedStyles.label}>Reminder Time Before Meetings</Text>
+        <View style={themedStyles.reminderOptions}>
           {reminderOptions.map((option) => (
             <TouchableOpacity
               key={option.value}
               style={[
-                styles.reminderOption,
-                notificationSettings.reminderTime === option.value && styles.reminderOptionSelected
+                themedStyles.reminderOption,
+                notificationSettings.reminderTime === option.value && themedStyles.reminderOptionSelected
               ]}
               onPress={() => 
                 setNotificationSettings({...notificationSettings, reminderTime: option.value})
@@ -579,8 +599,8 @@ function SettingsScreen() {
             >
               <Text 
                 style={[
-                  styles.reminderOptionText,
-                  notificationSettings.reminderTime === option.value && styles.reminderOptionTextSelected
+                  themedStyles.reminderOptionText,
+                  notificationSettings.reminderTime === option.value && themedStyles.reminderOptionTextSelected
                 ]}
               >
                 {option.label}
