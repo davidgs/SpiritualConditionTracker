@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, Switch, TouchableOpacity, TextInput, Alert, Platform } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useUser } from '../contexts/UserContext';
+import { useTheme } from '../contexts/ThemeContext';
 
 // Only import DateTimePicker on native platforms
 let DateTimePicker;
@@ -11,6 +12,7 @@ if (Platform.OS !== 'web') {
 
 function SettingsScreen() {
   const { user, updateUser } = useUser();
+  const { isDark, theme, toggleTheme } = useTheme();
   const [editing, setEditing] = useState(false);
   const [profile, setProfile] = useState({
     firstName: user?.firstName || '',
@@ -155,11 +157,100 @@ function SettingsScreen() {
     { value: 120, label: '2 hours' },
   ];
 
+  // Apply theme to styles
+  const themedStyles = {
+    container: {
+      ...styles.container,
+      backgroundColor: theme.background,
+    },
+    card: {
+      ...styles.card,
+      backgroundColor: theme.card,
+      ...theme.shadow,
+    },
+    cardTitle: {
+      ...styles.cardTitle,
+      color: theme.text,
+    },
+    profileName: {
+      ...styles.profileName,
+      color: theme.text,
+    },
+    profileDetail: {
+      ...styles.profileDetail,
+      color: theme.textSecondary,
+    },
+    label: {
+      ...styles.label,
+      color: theme.textSecondary,
+    },
+    input: {
+      ...styles.input,
+      backgroundColor: theme.card,
+      borderColor: theme.border,
+      color: theme.text,
+    },
+    settingLabel: {
+      ...styles.settingLabel,
+      color: theme.text,
+    },
+    settingDescription: {
+      ...styles.settingDescription,
+      color: theme.textSecondary,
+    },
+    infoText: {
+      ...styles.infoText,
+      color: theme.textSecondary,
+    },
+    webDatePickerLabel: {
+      ...styles.webDatePickerLabel,
+      color: theme.textSecondary,
+    },
+    supportButton: {
+      ...styles.supportButton,
+      backgroundColor: isDark ? '#333333' : '#f0f0f0',
+    },
+    supportButtonText: {
+      ...styles.supportButtonText,
+      color: theme.text,
+    },
+    dateButtonText: {
+      ...styles.dateButtonText,
+      color: theme.text,
+    },
+    dateButton: {
+      ...styles.dateButton,
+      backgroundColor: theme.card,
+      borderColor: theme.border,
+    },
+    dateHelpText: {
+      ...styles.dateHelpText,
+      color: theme.textSecondary,
+    },
+    webDatePickerSelect: {
+      ...styles.webDatePickerSelect,
+      backgroundColor: theme.card,
+      borderColor: theme.border,
+    },
+    cancelButton: {
+      ...styles.cancelButton,
+      borderColor: theme.border,
+    },
+    cancelButtonText: {
+      ...styles.cancelButtonText,
+      color: theme.textSecondary,
+    },
+    settingRow: {
+      ...styles.settingRow,
+      borderBottomColor: theme.divider,
+    },
+  };
+
   return (
-    <ScrollView style={styles.container}>
-      <View style={styles.card}>
+    <ScrollView style={themedStyles.container}>
+      <View style={themedStyles.card}>
         <View style={styles.cardHeader}>
-          <Text style={styles.cardTitle}>My Profile</Text>
+          <Text style={themedStyles.cardTitle}>My Profile</Text>
           {!editing && (
             <TouchableOpacity onPress={() => setEditing(true)}>
               <MaterialCommunityIcons name="pencil" size={22} color="#4a86e8" />
@@ -496,6 +587,25 @@ function SettingsScreen() {
               </Text>
             </TouchableOpacity>
           ))}
+        </View>
+      </View>
+      
+      <View style={styles.card}>
+        <Text style={styles.cardTitle}>Display Settings</Text>
+        
+        <View style={styles.settingRow}>
+          <View style={styles.settingTextContainer}>
+            <Text style={styles.settingLabel}>Dark Mode</Text>
+            <Text style={styles.settingDescription}>
+              Switch between light and dark theme
+            </Text>
+          </View>
+          <Switch
+            value={isDark}
+            onValueChange={toggleTheme}
+            trackColor={{ false: '#ccc', true: '#90caf9' }}
+            thumbColor={isDark ? '#4a86e8' : '#f4f3f4'}
+          />
         </View>
       </View>
       
