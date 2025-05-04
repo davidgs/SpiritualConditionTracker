@@ -169,31 +169,36 @@ function DashboardScreen() {
             
             <View style={styles.helpContainer}>
               <Text style={themedStyles.sectionTitle}>How Score Is Calculated</Text>
-              <Text style={themedStyles.helpText}>Your Spiritual Fitness score is calculated based on your recovery activities over the past 30 days:</Text>
-              
-              <View style={themedStyles.calculationItem}>
-                <Text style={themedStyles.calculationLabel}>• Prayer & Meditation:</Text>
-                <Text style={themedStyles.calculationValue}>2 pts per 15 min daily, max 4 pts/day</Text>
-              </View>
+              <Text style={themedStyles.helpText}>Your Spiritual Fitness score is calculated based on your recovery activities over the past 30 days, with a maximum score of 100:</Text>
               
               <View style={themedStyles.calculationItem}>
                 <Text style={themedStyles.calculationLabel}>• Meetings:</Text>
-                <Text style={themedStyles.calculationValue}>3 pts each, max 6 pts/day</Text>
+                <Text style={themedStyles.calculationValue}>5 points per meeting</Text>
               </View>
               
               <View style={themedStyles.calculationItem}>
-                <Text style={themedStyles.calculationLabel}>• Literature:</Text>
-                <Text style={themedStyles.calculationValue}>1 pt per 15 min, max 4 pts/day</Text>
+                <Text style={themedStyles.calculationLabel}>• Meditation:</Text>
+                <Text style={themedStyles.calculationValue}>3 points per session</Text>
+              </View>
+              
+              <View style={themedStyles.calculationItem}>
+                <Text style={themedStyles.calculationLabel}>• Reading:</Text>
+                <Text style={themedStyles.calculationValue}>2 points per reading</Text>
               </View>
               
               <View style={themedStyles.calculationItem}>
                 <Text style={themedStyles.calculationLabel}>• Service:</Text>
-                <Text style={themedStyles.calculationValue}>2 pts per activity, max 6 pts/day</Text>
+                <Text style={themedStyles.calculationValue}>4 points per service activity</Text>
+              </View>
+              
+              <View style={themedStyles.calculationItem}>
+                <Text style={themedStyles.calculationLabel}>• Stepwork:</Text>
+                <Text style={themedStyles.calculationValue}>5 points per activity</Text>
               </View>
               
               <View style={themedStyles.calculationItem}>
                 <Text style={themedStyles.calculationLabel}>• Sponsorship:</Text>
-                <Text style={themedStyles.calculationValue}>2 pts per interaction, max 4 pts/day</Text>
+                <Text style={themedStyles.calculationValue}>4 points per interaction</Text>
               </View>
             </View>
           </>
