@@ -16,7 +16,7 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.aarecovery.tracker",
+      "bundleIdentifier": "com.davidgs.spiritualconditiontracker",
       "buildNumber": "1",
       "infoPlist": {
         "NSCalendarsUsageDescription": "This app needs access to your calendar to add meetings and set reminders.",
@@ -33,7 +33,7 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#01040c"
       },
-      "package": "com.aarecovery.tracker",
+      "package": "com.davidgs.spiritualconditiontracker",
       "versionCode": 1,
       "permissions": [
         "ACCESS_FINE_LOCATION",
