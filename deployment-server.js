@@ -150,12 +150,13 @@ async function main() {
     // Set up the proxy
     const proxy = setupProxy();
     
-    // Serve static files from the root directory
+    // Serve static files from the root directory and set public to have priority
+    app.use(express.static(path.join(__dirname, 'public')));
     app.use(express.static(path.join(__dirname)));
     
     // Root route for landing page
     app.get('/', (req, res) => {
-      res.sendFile(path.join(__dirname, 'index.html'));
+      res.sendFile(path.join(__dirname, 'public', 'index.html'));
     });
     
     // Handle bundle requests directly - important for app loading
@@ -170,7 +171,8 @@ async function main() {
     app.use('/app', (req, res) => {
       console.log(`Proxying ${req.method} request for ${req.url}`);
       proxy.web(req, res, { 
-        target: `http://localhost:${EXPO_PORT}` 
+        target: `http://localhost:${EXPO_PORT}`,
+        changeOrigin: true
       });
     });
     

@@ -1,1851 +1,224 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AA Recovery Tracker</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css">
-  <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    }
-    
-    .card {
-      background-color: white;
-      border-radius: 0.5rem;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-      padding: 1.5rem;
-      margin-bottom: 1rem;
-    }
-    
-    .btn-primary {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: 0.5rem 1rem;
-      font-weight: 500;
-      color: white;
-      border-radius: 0.375rem;
-      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-      cursor: pointer;
-      transition: all 0.15s ease-in-out;
-    }
-    
-    .btn-primary:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-    
-    /* Tab styles */
-    .tab-btn {
-      transition: all 0.2s ease-in-out;
-    }
-    
-    .tab-btn.active {
-      background-color: #e0f2fe;
-      color: #1d4ed8;
-      font-weight: 500;
-    }
-    
-    .tab-btn:not(.active) {
-      color: #4b5563;
-    }
-    
-    .tab-btn:not(.active):hover {
-      background-color: #f3f4f6;
-    }
-    
-    /* Dark mode styles */
-    body.dark-mode {
-      background-color: #1a202c;
-      color: #e2e8f0;
-    }
-    
-    body.dark-mode .card {
-      background-color: #2d3748;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-    }
-    
-    body.dark-mode .bg-white {
-      background-color: #1a202c !important;
-    }
-    
-    body.dark-mode .text-gray-700,
-    body.dark-mode .text-gray-600 {
-      color: #cbd5e0 !important;
-    }
-    
-    body.dark-mode .border-gray-300 {
-      border-color: #4a5568 !important;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spiritual Condition Tracker</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+        
+        .dark-mode {
+            background-color: #1a1a1a;
+            color: #f0f0f0;
+        }
+        
+        header {
+            background-color: #007bff;
+            color: white;
+            padding: 1rem;
+            text-align: center;
+        }
+        
+        .dark-mode header {
+            background-color: #1e3a8a;
+        }
+        
+        main {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .hero {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            color: #6c757d;
+            margin-bottom: 2rem;
+        }
+        
+        .dark-mode .hero p {
+            color: #b0b0b0;
+        }
+        
+        .cta-button {
+            display: inline-block;
+            background-color: #007bff;
+            color: white;
+            padding: 0.8rem 1.5rem;
+            font-size: 1.2rem;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        
+        .dark-mode .cta-button {
+            background-color: #3b82f6;
+        }
+        
+        .cta-button:hover {
+            background-color: #0056b3;
+        }
+        
+        .dark-mode .cta-button:hover {
+            background-color: #1e40af;
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+        
+        .feature-card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .dark-mode .feature-card {
+            background-color: #2d2d2d;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+        
+        .feature-card h3 {
+            margin-top: 0;
+            color: #007bff;
+        }
+        
+        .dark-mode .feature-card h3 {
+            color: #60a5fa;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: #f1f1f1;
+            margin-top: 2rem;
+        }
+        
+        .dark-mode footer {
+            background-color: #2a2a2a;
+        }
+        
+        .theme-toggle {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 1.5rem;
+        }
+        
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .hero p {
+                font-size: 1rem;
+            }
+            
+            .features {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
-<body class="bg-gray-50">
-  <div id="root">
-    <div class="min-h-screen flex flex-col">
-      <header class="bg-white shadow-sm">
-        <div class="container mx-auto px-4 py-4">
-          <h1 class="text-3xl font-bold text-blue-600">AA Recovery Tracker</h1>
-          <p class="text-gray-600 mt-1">Track your recovery journey, one day at a time</p>
+<body>
+    <header>
+        <button class="theme-toggle" id="theme-toggle">🌓</button>
+        <div style="text-align: center; margin-bottom: 1rem;">
+            <img src="/public/logo.jpg" alt="Spiritual Condition Tracker Logo" style="width: 150px; height: 150px; border-radius: 50%; margin: 0 auto; display: block; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">
         </div>
-      </header>
-      
-      <!-- Tab Navigation -->
-      <div class="bg-white border-b">
-        <div class="container mx-auto px-4">
-          <div class="flex overflow-x-auto py-2 space-x-2" id="tab-navigation">
-            <button data-tab="dashboard" class="tab-btn active px-4 py-2 text-sm font-medium rounded-md whitespace-nowrap">
-              <i class="fa-solid fa-gauge-high mr-1"></i> Dashboard
-            </button>
-            <button data-tab="activity" class="tab-btn px-4 py-2 text-sm font-medium rounded-md whitespace-nowrap">
-              <i class="fa-solid fa-plus mr-1"></i> Log Activity
-            </button>
-            <button data-tab="fitness" class="tab-btn px-4 py-2 text-sm font-medium rounded-md whitespace-nowrap">
-              <i class="fa-solid fa-heart-pulse mr-1"></i> Spiritual Fitness
-            </button>
-            <button data-tab="nearby" class="tab-btn px-4 py-2 text-sm font-medium rounded-md whitespace-nowrap">
-              <i class="fa-solid fa-users mr-1"></i> Nearby Members
-            </button>
-            <button data-tab="sponsor" class="tab-btn px-4 py-2 text-sm font-medium rounded-md whitespace-nowrap">
-              <i class="fa-solid fa-user-group mr-1"></i> Sponsor
-            </button>
-            <button data-tab="sponsees" class="tab-btn px-4 py-2 text-sm font-medium rounded-md whitespace-nowrap">
-              <i class="fa-solid fa-people-group mr-1"></i> Sponsees
-            </button>
-            <button data-tab="meetings" class="tab-btn px-4 py-2 text-sm font-medium rounded-md whitespace-nowrap">
-              <i class="fa-solid fa-map-location-dot mr-1"></i> Find Meetings
-            </button>
-            <button data-tab="settings" class="tab-btn px-4 py-2 text-sm font-medium rounded-md whitespace-nowrap">
-              <i class="fa-solid fa-gear mr-1"></i> Settings
-            </button>
-          </div>
-        </div>
-      </div>
-      
-      <!-- Tab Content -->
-      <div class="container mx-auto px-4 py-6 flex-grow">
-        <!-- Dashboard Tab -->
-        <div id="dashboard-tab" class="tab-content active">
-          <div class="grid md:grid-cols-2 gap-6">
-            <div class="card">
-              <h2 class="text-xl font-semibold text-blue-800 mb-4">Your Recovery Summary</h2>
-              <div class="space-y-4">
-                <div id="sobriety-counter" class="text-center p-4 bg-blue-50 rounded-lg">
-                  <h3 class="font-medium text-gray-700">Your Sobriety</h3>
-                  <p class="text-4xl font-bold text-blue-600" id="sobriety-years">0.0 years</p>
-                  <p class="text-lg text-blue-500" id="sobriety-days">0 days</p>
-                </div>
-                <div class="bg-green-50 p-4 rounded-lg">
-                  <h3 class="font-medium text-gray-700 mb-2">Spiritual Fitness</h3>
-                  <div class="relative h-6 bg-gray-200 rounded-full overflow-hidden">
-                    <div id="fitness-score-bar" class="absolute top-0 left-0 h-full bg-green-500" style="width:0%"></div>
-                  </div>
-                  <div class="flex justify-between mt-1">
-                    <span class="text-xs text-gray-500">Needs Improvement</span>
-                    <span class="text-xs text-gray-500">Excellent</span>
-                  </div>
-                  <p class="text-center mt-3" id="fitness-score-text">calculating...</p>
-                </div>
-              </div>
-            </div>
-            
-            <div class="card">
-              <h2 class="text-xl font-semibold text-blue-800 mb-4">Recent Activities</h2>
-              <div id="recent-activities" class="text-left">
-                <p class="text-gray-500">Loading activities...</p>
-              </div>
-              <div class="mt-4 text-center">
-                <button id="log-activity-btn" class="btn-primary bg-blue-500 hover:bg-blue-600">
-                  <i class="fa-solid fa-plus mr-2"></i> Log New Activity
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-        
-        <!-- Activity Tab -->
-        <div id="activity-tab" class="tab-content hidden">
-          <h2 class="text-2xl font-semibold text-blue-800 mb-4">Log Recovery Activity</h2>
-          <div class="card max-w-2xl mx-auto">
-            <form id="activity-form" class="space-y-4">
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Activity Type</label>
-                <select id="activity-type" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
-                  <option value="meeting">AA Meeting</option>
-                  <option value="meditation">Meditation/Prayer</option>
-                  <option value="reading">Reading AA Literature</option>
-                  <option value="sponsor">Sponsor Interaction</option>
-                  <option value="sponsee">Sponsee Interaction</option>
-                  <option value="service">Service Work</option>
-                  <option value="step">Step Work</option>
-                </select>
-              </div>
-              
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Name/Description</label>
-                <input type="text" id="activity-name" placeholder="e.g., Morning Meditation" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
-              </div>
-              
-              <div class="grid grid-cols-2 gap-4">
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-1">Date</label>
-                  <input type="date" id="activity-date" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
-                </div>
-                
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-1">Duration (minutes)</label>
-                  <input type="number" id="activity-duration" min="1" value="60" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
-                </div>
-              </div>
-              
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Notes (optional)</label>
-                <textarea id="activity-notes" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"></textarea>
-              </div>
-              
-              <div class="text-center pt-2">
-                <button type="submit" class="btn-primary bg-green-500 hover:bg-green-600">
-                  <i class="fa-solid fa-plus mr-2"></i>
-                  Save Activity
-                </button>
-              </div>
-            </form>
-            <div id="activity-result" class="mt-3 hidden"></div>
-          </div>
-          
-          <div class="mt-8">
-            <h3 class="text-xl font-semibold text-blue-800 mb-4">Activity History</h3>
-            <div class="card">
-              <div id="activity-history" class="text-left">
-                <p class="text-gray-500">Loading activity history...</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      
-        <!-- Other Tab Content Placeholders - We'll fill these later -->
-        <div id="fitness-tab" class="tab-content hidden">
-          <h2 class="text-2xl font-semibold text-blue-800 mb-4">Spiritual Fitness</h2>
-          <div class="card">Loading spiritual fitness data...</div>
-        </div>
-        
-        <div id="nearby-tab" class="tab-content hidden">
-          <h2 class="text-2xl font-semibold text-blue-800 mb-4">Nearby AA Members</h2>
-          <div class="card">Loading nearby members...</div>
-        </div>
-        
-        <div id="sponsor-tab" class="tab-content hidden">
-          <h2 class="text-2xl font-semibold text-blue-800 mb-4">Sponsor Information</h2>
-          <div class="card">
-            <p class="text-gray-600 mb-4">Add your sponsor's information to keep in touch and track interactions.</p>
-            
-            <form id="sponsor-form" class="space-y-4">
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Sponsor's Name</label>
-                <input type="text" id="sponsor-name" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
-              </div>
-              
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
-                <input type="tel" id="sponsor-phone" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
-              </div>
-              
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Email (optional)</label>
-                <input type="email" id="sponsor-email" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
-              </div>
-              
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Sobriety Date (if known)</label>
-                <input type="date" id="sponsor-sobriety-date" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
-              </div>
-              
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Notes</label>
-                <textarea id="sponsor-notes" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"></textarea>
-              </div>
-              
-              <div class="flex justify-between pt-2">
-                <button type="button" id="call-sponsor-btn" class="btn-primary bg-green-500 hover:bg-green-600" disabled>
-                  <i class="fa-solid fa-phone mr-2"></i> Call Sponsor
-                </button>
-                <button type="submit" class="btn-primary bg-blue-500 hover:bg-blue-600">
-                  <i class="fa-solid fa-save mr-2"></i> Save
-                </button>
-              </div>
-            </form>
-            <div id="sponsor-result" class="mt-3 hidden"></div>
-          </div>
-          
-          <div class="mt-8">
-            <h3 class="text-xl font-semibold text-blue-800 mb-4">Recent Sponsor Interactions</h3>
-            <div id="sponsor-interactions" class="card">
-              <p class="text-gray-500">Loading interactions...</p>
-            </div>
-            <div class="mt-4 text-center">
-              <button id="log-sponsor-interaction-btn" class="btn-primary bg-blue-500 hover:bg-blue-600">
-                <i class="fa-solid fa-plus mr-2"></i> Log Sponsor Interaction
-              </button>
-            </div>
-          </div>
-        </div>
-        
-        <div id="sponsees-tab" class="tab-content hidden">
-          <h2 class="text-2xl font-semibold text-blue-800 mb-4">Your Sponsees</h2>
-          
-          <div class="card mb-6">
-            <h3 class="text-xl font-semibold text-blue-800 mb-4">Add New Sponsee</h3>
-            <form id="add-sponsee-form" class="space-y-4">
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Sponsee's Name</label>
-                <input type="text" id="sponsee-name" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
-              </div>
-              
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
-                <input type="tel" id="sponsee-phone" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
-              </div>
-              
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Email (optional)</label>
-                <input type="email" id="sponsee-email" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
-              </div>
-              
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Sobriety Date (if known)</label>
-                <input type="date" id="sponsee-sobriety-date" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
-              </div>
-              
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Notes</label>
-                <textarea id="sponsee-notes" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"></textarea>
-              </div>
-              
-              <div class="text-center pt-2">
-                <button type="submit" class="btn-primary bg-blue-500 hover:bg-blue-600">
-                  <i class="fa-solid fa-plus mr-2"></i> Add Sponsee
-                </button>
-              </div>
-            </form>
-            <div id="sponsee-result" class="mt-3 hidden"></div>
-          </div>
-          
-          <div class="card">
-            <h3 class="text-xl font-semibold text-blue-800 mb-4">Your Sponsees</h3>
-            <div id="sponsees-list" class="space-y-4">
-              <p class="text-gray-500">Loading sponsees...</p>
-            </div>
-          </div>
-        </div>
-        
-        <div id="meetings-tab" class="tab-content hidden">
-          <h2 class="text-2xl font-semibold text-blue-800 mb-4">Find AA Meetings</h2>
-          
-          <div class="card mb-6">
-            <div class="p-4 bg-blue-50 rounded mb-4">
-              <p class="text-sm text-gray-600">
-                This feature uses the <a href="https://github.com/code4recovery/spec" target="_blank" class="text-blue-600 hover:underline">Meeting Guide API</a> to find AA meetings in your area. Thousands of AA groups around the world have contributed their meeting information.
-              </p>
-            </div>
-            
-            <form id="meeting-search-form" class="space-y-4">
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Location</label>
-                <input type="text" id="meeting-location" placeholder="City, state, or zip code" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
-              </div>
-              
-              <div class="grid grid-cols-2 gap-4">
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-1">Day</label>
-                  <select id="meeting-day" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
-                    <option value="">Any day</option>
-                    <option value="sunday">Sunday</option>
-                    <option value="monday">Monday</option>
-                    <option value="tuesday">Tuesday</option>
-                    <option value="wednesday">Wednesday</option>
-                    <option value="thursday">Thursday</option>
-                    <option value="friday">Friday</option>
-                    <option value="saturday">Saturday</option>
-                  </select>
-                </div>
-                
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-1">Time</label>
-                  <select id="meeting-time" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
-                    <option value="">Any time</option>
-                    <option value="morning">Morning</option>
-                    <option value="noon">Noon</option>
-                    <option value="evening">Evening</option>
-                    <option value="night">Night</option>
-                  </select>
-                </div>
-              </div>
-              
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Meeting Type</label>
-                <select id="meeting-type" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
-                  <option value="">All types</option>
-                  <option value="open">Open meetings</option>
-                  <option value="closed">Closed meetings</option>
-                  <option value="men">Men's meetings</option>
-                  <option value="women">Women's meetings</option>
-                  <option value="speaker">Speaker meetings</option>
-                  <option value="discussion">Discussion meetings</option>
-                  <option value="beginner">Beginner meetings</option>
-                </select>
-              </div>
-              
-              <div class="text-center pt-2">
-                <button type="submit" class="btn-primary bg-blue-500 hover:bg-blue-600">
-                  <i class="fa-solid fa-search mr-2"></i> Find Meetings
-                </button>
-              </div>
-            </form>
-          </div>
-          
-          <div class="card">
-            <h3 class="text-xl font-semibold text-blue-800 mb-4">Meeting Results</h3>
-            <div id="meeting-results" class="space-y-4">
-              <p class="text-gray-500">Enter search criteria above to find meetings.</p>
-            </div>
-          </div>
-          
-          <div id="meeting-map" class="card mt-6 hidden">
-            <h3 class="text-xl font-semibold text-blue-800 mb-4">Meeting Map</h3>
-            <div id="map-container" class="h-80 bg-gray-100 rounded-lg flex items-center justify-center">
-              <p class="text-gray-500">Map will appear after search.</p>
-            </div>
-          </div>
-        </div>
-        
-        <!-- Settings Tab -->
-        <div id="settings-tab" class="tab-content hidden">
-          <h2 class="text-2xl font-semibold text-blue-800 mb-4">Personal Settings</h2>
-          
-          <div class="card mb-6">
-            <h3 class="text-xl font-semibold text-blue-800 mb-4">Your Information</h3>
-            <p class="text-gray-600 mb-4">
-              This information is stored only on your device and helps personalize your recovery experience.
-            </p>
-            
-            <form id="user-settings-form" class="space-y-4">
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Your Name</label>
-                <input type="text" id="user-name" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
-                <p class="text-xs text-gray-500 mt-1">This will be visible to others if you enable discoverability</p>
-              </div>
-              
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
-                <input type="tel" id="user-phone" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
-                <p class="text-xs text-gray-500 mt-1">May be shared with nearby members if you enable discoverability</p>
-              </div>
-              
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Email (optional)</label>
-                <input type="email" id="user-email" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
-                <p class="text-xs text-gray-500 mt-1">For your personal reference only, not shared with others</p>
-              </div>
-              
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Sobriety Date</label>
-                <input type="date" id="user-sobriety-date" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
-                <p class="text-xs text-gray-500 mt-1">Used to calculate your sobriety days</p>
-              </div>
-              
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Home Group (optional)</label>
-                <input type="text" id="user-home-group" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
-              </div>
-              
-              <div class="text-center pt-2">
-                <button type="submit" class="btn-primary bg-blue-500 hover:bg-blue-600">
-                  <i class="fa-solid fa-save mr-2"></i> Save Information
-                </button>
-              </div>
-            </form>
-            <div id="settings-result" class="mt-3 hidden"></div>
-          </div>
-          
-          <div class="card mb-6">
-            <h3 class="text-xl font-semibold text-blue-800 mb-4">App Settings</h3>
-            
-            <div class="space-y-4">
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">
-                  Daily Reminder Time (for meditation/prayer)
-                </label>
-                <input type="time" id="reminder-time" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
-                <p class="text-xs text-gray-500 mt-1">Optional reminder for daily spiritual practice</p>
-              </div>
-              
-              <div class="flex items-center justify-between">
-                <div>
-                  <h4 class="font-medium">Dark Mode</h4>
-                  <p class="text-sm text-gray-500">Use dark theme for the app</p>
-                </div>
-                <label class="relative inline-flex items-center cursor-pointer">
-                  <input type="checkbox" id="dark-mode-toggle" class="sr-only peer">
-                  <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-                </label>
-              </div>
-            </div>
-            
-            <div class="mt-4 text-center">
-              <button id="save-app-settings-btn" class="btn-primary bg-blue-500 hover:bg-blue-600">
-                <i class="fa-solid fa-save mr-2"></i> Save Settings
-              </button>
-            </div>
-          </div>
-          
-          <div class="card">
-            <h3 class="text-xl font-semibold text-blue-800 mb-4">Data Management</h3>
-            
-            <div class="space-y-4">
-              <div class="p-4 bg-blue-50 rounded">
-                <p class="text-sm text-gray-600">
-                  All your data is stored locally on your device for privacy. You can export your data for backup
-                  or clear all data if needed.
-                </p>
-              </div>
-              
-              <div class="flex flex-wrap gap-4 justify-center">
-                <button id="export-data-btn" class="btn-primary bg-blue-500 hover:bg-blue-600">
-                  <i class="fa-solid fa-download mr-2"></i> Export Data
-                </button>
-                
-                <button id="reset-data-btn" class="btn-primary bg-red-500 hover:bg-red-600">
-                  <i class="fa-solid fa-trash mr-2"></i> Reset All Data
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <script>
-    // Local Storage Data Model
-    const Storage = {
-      // User Profile
-      getUser: function() {
-        const user = localStorage.getItem('aa_user');
-        return user ? JSON.parse(user) : null;
-      },
-      
-      setUser: function(userData) {
-        localStorage.setItem('aa_user', JSON.stringify(userData));
-      },
-      
-      // Activities
-      getActivities: function() {
-        const activities = localStorage.getItem('aa_activities');
-        return activities ? JSON.parse(activities) : [];
-      },
-      
-      addActivity: function(activity) {
-        const activities = this.getActivities();
-        activity.id = `activity_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
-        activity.createdAt = new Date().toISOString();
-        activities.push(activity);
-        localStorage.setItem('aa_activities', JSON.stringify(activities));
-        return activity;
-      },
-      
-      // Sponsor
-      getSponsor: function() {
-        const sponsor = localStorage.getItem('aa_sponsor');
-        return sponsor ? JSON.parse(sponsor) : null;
-      },
-      
-      setSponsor: function(sponsorData) {
-        localStorage.setItem('aa_sponsor', JSON.stringify(sponsorData));
-      },
-      
-      // Sponsees
-      getSponsees: function() {
-        const sponsees = localStorage.getItem('aa_sponsees');
-        return sponsees ? JSON.parse(sponsees) : [];
-      },
-      
-      addSponsee: function(sponsee) {
-        const sponsees = this.getSponsees();
-        sponsee.id = `sponsee_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
-        sponsee.createdAt = new Date().toISOString();
-        sponsees.push(sponsee);
-        localStorage.setItem('aa_sponsees', JSON.stringify(sponsees));
-        return sponsee;
-      },
-      
-      // Settings
-      getSetting: function(key, defaultValue = null) {
-        const settings = localStorage.getItem('aa_settings');
-        const parsedSettings = settings ? JSON.parse(settings) : {};
-        return key in parsedSettings ? parsedSettings[key] : defaultValue;
-      },
-      
-      setSetting: function(key, value) {
-        const settings = localStorage.getItem('aa_settings');
-        const parsedSettings = settings ? JSON.parse(settings) : {};
-        parsedSettings[key] = value;
-        localStorage.setItem('aa_settings', JSON.stringify(parsedSettings));
-      }
-    };
+        <h1>Spiritual Condition Tracker</h1>
+        <p>Your personal companion for recovery and spiritual growth</p>
+    </header>
     
-    // Initialize user if not exists
-    function initializeUser() {
-      let user = Storage.getUser();
-      if (!user) {
-        // Create default user
-        user = {
-          id: 'user_' + Math.random().toString(36).substring(2, 9),
-          name: 'AA Member',
-          sobrietyDate: new Date().toISOString().split('T')[0], // Today
-          phone: '',
-          email: '',
-          discoverable: false,
-          location: {
-            lat: null,
-            lng: null
-          },
-          lastSeen: new Date().toISOString(),
-          createdAt: new Date().toISOString()
-        };
-        Storage.setUser(user);
-      }
-      return user;
-    }
+    <main>
+        <section class="hero">
+            <h1>Track Your Journey to Spiritual Wellness</h1>
+            <p>Monitor your daily activities, track your progress, and connect with others on the same path.</p>
+            <a href="/app/" class="cta-button">Launch App</a>
+        </section>
+        
+        <section class="features">
+            <div class="feature-card">
+                <h3>Daily Activity Tracking</h3>
+                <p>Log your meetings, meditation, readings, and service work to see your spiritual fitness score improve over time.</p>
+            </div>
+            
+            <div class="feature-card">
+                <h3>Connect with Others</h3>
+                <p>Find and connect with others in recovery nearby to build your support network.</p>
+            </div>
+            
+            <div class="feature-card">
+                <h3>Meeting Management</h3>
+                <p>Keep track of your meetings, get reminders, and share your schedule with sponsors and sponsees.</p>
+            </div>
+            
+            <div class="feature-card">
+                <h3>Private & Secure</h3>
+                <p>Your data stays on your device with end-to-end encryption for all communications.</p>
+            </div>
+            
+            <div class="feature-card">
+                <h3>Sobriety Tracking</h3>
+                <p>Monitor your sobriety time with precision and celebrate your milestones.</p>
+            </div>
+            
+            <div class="feature-card">
+                <h3>Personal Insights</h3>
+                <p>Gain valuable insights into your recovery patterns and spiritual growth.</p>
+            </div>
+        </section>
+    </main>
     
-    // Spiritual Fitness Calculation
-    function calculateSpiritualFitness() {
-      const activities = Storage.getActivities();
-      const user = Storage.getUser();
-      
-      if (!user || !activities.length) {
-        return {
-          score: 0,
-          breakdown: {
-            meetings: 0,
-            meditation: 0,
-            reading: 0,
-            service: 0,
-            sponsor: 0,
-            sponsee: 0
-          }
-        };
-      }
-      
-      // Get activities from the last 30 days
-      const now = new Date();
-      const cutoffDate = new Date(now.setDate(now.getDate() - 30));
-      const recentActivities = activities.filter(a => new Date(a.date) >= cutoffDate);
-      
-      // Calculate breakdown by type
-      const breakdown = {
-        meetings: 0,
-        meditation: 0,
-        reading: 0,
-        service: 0,
-        sponsor: 0,
-        sponsee: 0,
-        step: 0
-      };
-      
-      // Count activities by type
-      recentActivities.forEach(activity => {
-        if (activity.type in breakdown) {
-          breakdown[activity.type]++;
+    <footer>
+        <p>&copy; 2025 Spiritual Condition Tracker. All rights reserved.</p>
+    </footer>
+    
+    <script>
+        const themeToggle = document.getElementById('theme-toggle');
+        const body = document.body;
+        
+        // Check for saved theme preference or use preferred color scheme
+        const savedTheme = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        
+        if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+            body.classList.add('dark-mode');
         }
-      });
-      
-      // Weight factors for each activity type
-      const weights = {
-        meetings: 5,    // 5 points per meeting
-        meditation: 5,  // 5 points per meditation session
-        reading: 3,     // 3 points per reading session
-        service: 4,     // 4 points per service activity
-        sponsor: 4,     // 4 points per sponsor interaction
-        sponsee: 4,     // 4 points per sponsee interaction
-        step: 6         // 6 points per step work session
-      };
-      
-      // Calculate score
-      let weightedScore = 0;
-      let maxPossibleScore = 0;
-      
-      // Calculate weighted score
-      Object.keys(weights).forEach(type => {
-        weightedScore += breakdown[type] * weights[type];
-        // Max score is based on daily practice for meetings and meditation,
-        // and weekly for others
-        if (type === 'meetings' || type === 'meditation') {
-          maxPossibleScore += 30 * weights[type]; // Daily for 30 days
-        } else {
-          maxPossibleScore += 4 * weights[type];  // Weekly for 4 weeks
-        }
-      });
-      
-      // Calculate final score as percentage
-      const score = Math.min(100, Math.round((weightedScore / maxPossibleScore) * 100));
-      
-      return {
-        score,
-        breakdown
-      };
-    }
-    
-    // Tab Navigation
-    function initTabs() {
-      const tabButtons = document.querySelectorAll('.tab-btn');
-      const tabContents = document.querySelectorAll('.tab-content');
-      
-      // Set active tab from localStorage or use default
-      const activeTab = Storage.getSetting('activeTab', 'dashboard');
-      setActiveTab(activeTab);
-      
-      // Set up tab click handlers
-      tabButtons.forEach(button => {
-        button.addEventListener('click', () => {
-          const tab = button.getAttribute('data-tab');
-          setActiveTab(tab);
-          Storage.setSetting('activeTab', tab);
+        
+        // Toggle theme when button is clicked
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+            const theme = body.classList.contains('dark-mode') ? 'dark' : 'light';
+            localStorage.setItem('theme', theme);
         });
-      });
-      
-      // Function to set active tab
-      function setActiveTab(tabId) {
-        // Remove active class from all tabs and content
-        tabButtons.forEach(btn => {
-          if (btn.getAttribute('data-tab') === tabId) {
-            btn.classList.add('active', 'bg-blue-100', 'text-blue-700');
-            btn.classList.remove('text-gray-700', 'hover:bg-gray-100');
-          } else {
-            btn.classList.remove('active', 'bg-blue-100', 'text-blue-700');
-            btn.classList.add('text-gray-700', 'hover:bg-gray-100');
-          }
-        });
-        
-        tabContents.forEach(content => {
-          if (content.id === `${tabId}-tab`) {
-            content.classList.remove('hidden');
-            content.classList.add('active');
-          } else {
-            content.classList.add('hidden');
-            content.classList.remove('active');
-          }
-        });
-        
-        // Load tab-specific content if needed
-        loadTabContent(tabId);
-      }
-    }
-    
-    // Load content for specific tabs
-    function loadTabContent(tabId) {
-      switch(tabId) {
-        case 'dashboard':
-          updateDashboard();
-          break;
-        case 'activity':
-          loadActivityHistory();
-          break;
-        case 'fitness':
-          updateSpiritualFitnessTab();
-          break;
-        case 'nearby':
-          loadNearbyMembers();
-          break;
-        case 'sponsor':
-          loadSponsorInfo();
-          break;
-        case 'sponsees':
-          loadSponseesInfo();
-          break;
-        case 'meetings':
-          loadMeetingsTab();
-          break;
-        case 'settings':
-          loadSettingsTab();
-          break;
-      }
-    }
-    
-    // Update dashboard with latest data
-    function updateDashboard() {
-      updateSobrietyDays();
-      updateSpiritualFitnessWidget();
-      updateRecentActivities();
-    }
-    
-    // Calculate and display sobriety days and years
-    function updateSobrietyDays() {
-      const user = Storage.getUser();
-      const sobrietyDaysElement = document.getElementById('sobriety-days');
-      const sobrietyYearsElement = document.getElementById('sobriety-years');
-      
-      if (user && user.sobrietyDate) {
-        const sobrietyDate = new Date(user.sobrietyDate);
-        const today = new Date();
-        const diffTime = Math.abs(today - sobrietyDate);
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-        
-        // Format days with thousands separators
-        sobrietyDaysElement.textContent = diffDays.toLocaleString() + ' days';
-        
-        // Calculate years with 1 decimal place
-        const years = diffDays / 365.25;
-        const yearsFormatted = years.toLocaleString(undefined, { 
-          minimumFractionDigits: 1, 
-          maximumFractionDigits: 1 
-        });
-        sobrietyYearsElement.textContent = yearsFormatted + ' years';
-      } else {
-        sobrietyDaysElement.textContent = '0 days';
-        sobrietyYearsElement.textContent = '0.0 years';
-      }
-    }
-    
-    // Update spiritual fitness widget on dashboard
-    function updateSpiritualFitnessWidget() {
-      const fitness = calculateSpiritualFitness();
-      const scoreBar = document.getElementById('fitness-score-bar');
-      const scoreText = document.getElementById('fitness-score-text');
-      
-      scoreBar.style.width = `${fitness.score}%`;
-      
-      // Set color based on score
-      if (fitness.score < 30) {
-        scoreBar.classList.add('bg-red-500');
-        scoreBar.classList.remove('bg-yellow-500', 'bg-green-500');
-      } else if (fitness.score < 70) {
-        scoreBar.classList.add('bg-yellow-500');
-        scoreBar.classList.remove('bg-red-500', 'bg-green-500');
-      } else {
-        scoreBar.classList.add('bg-green-500');
-        scoreBar.classList.remove('bg-red-500', 'bg-yellow-500');
-      }
-      
-      scoreText.textContent = `Spiritual Fitness Score: ${fitness.score}%`;
-    }
-    
-    // Update spiritual fitness detailed tab
-    function updateSpiritualFitnessTab() {
-      const fitness = calculateSpiritualFitness();
-      const fitnessTab = document.getElementById('fitness-tab');
-      
-      let breakdownHtml = `
-        <div class="card mb-6">
-          <h3 class="text-xl font-semibold text-blue-800 mb-4">Your Spiritual Fitness</h3>
-          <div class="text-center mb-4">
-            <div class="inline-block p-4 rounded-full bg-blue-50 mb-2">
-              <span class="text-5xl font-bold ${
-                fitness.score < 30 ? 'text-red-500' : 
-                fitness.score < 70 ? 'text-yellow-500' : 'text-green-500'
-              }">${fitness.score}%</span>
-            </div>
-            <p class="text-gray-600">Based on your recovery activities in the last 30 days</p>
-          </div>
-          <div class="relative h-6 bg-gray-200 rounded-full overflow-hidden mb-6">
-            <div class="absolute top-0 left-0 h-full ${
-              fitness.score < 30 ? 'bg-red-500' : 
-              fitness.score < 70 ? 'bg-yellow-500' : 'bg-green-500'
-            }" style="width:${fitness.score}%"></div>
-          </div>
-          
-          <h4 class="font-medium text-gray-700 mb-3">Activity Breakdown (Last 30 Days)</h4>
-          <div class="space-y-3">
-            <div class="flex justify-between items-center">
-              <span>AA Meetings</span>
-              <span class="font-semibold">${fitness.breakdown.meetings} activities</span>
-            </div>
-            <div class="flex justify-between items-center">
-              <span>Meditation/Prayer</span>
-              <span class="font-semibold">${fitness.breakdown.meditation} activities</span>
-            </div>
-            <div class="flex justify-between items-center">
-              <span>Reading AA Literature</span>
-              <span class="font-semibold">${fitness.breakdown.reading} activities</span>
-            </div>
-            <div class="flex justify-between items-center">
-              <span>Service Work</span>
-              <span class="font-semibold">${fitness.breakdown.service} activities</span>
-            </div>
-            <div class="flex justify-between items-center">
-              <span>Sponsor Interactions</span>
-              <span class="font-semibold">${fitness.breakdown.sponsor} activities</span>
-            </div>
-            <div class="flex justify-between items-center">
-              <span>Sponsee Interactions</span>
-              <span class="font-semibold">${fitness.breakdown.sponsee} activities</span>
-            </div>
-            <div class="flex justify-between items-center">
-              <span>Step Work</span>
-              <span class="font-semibold">${fitness.breakdown.step} activities</span>
-            </div>
-          </div>
-        </div>
-        
-        <div class="card">
-          <h3 class="text-xl font-semibold text-blue-800 mb-4">How Spiritual Fitness is Calculated</h3>
-          <p class="mb-4">Your spiritual fitness score is based on your recovery activities in the last 30 days. Different activities contribute different weights to your overall score:</p>
-          
-          <ul class="list-disc pl-5 space-y-2 mb-4">
-            <li><strong>AA Meetings:</strong> 5 points each (daily attendance recommended)</li>
-            <li><strong>Meditation/Prayer:</strong> 5 points each (daily practice recommended)</li>
-            <li><strong>Reading AA Literature:</strong> 3 points each (regular reading recommended)</li>
-            <li><strong>Service Work:</strong> 4 points each (weekly service recommended)</li>
-            <li><strong>Sponsor/Sponsee Interactions:</strong> 4 points each (weekly contact recommended)</li>
-            <li><strong>Step Work:</strong> 6 points each (regular step work recommended)</li>
-          </ul>
-          
-          <p>The maximum score is calculated based on recommended frequency for each activity type.</p>
-        </div>
-      `;
-      
-      fitnessTab.innerHTML = `
-        <h2 class="text-2xl font-semibold text-blue-800 mb-4">Spiritual Fitness</h2>
-        ${breakdownHtml}
-      `;
-    }
-    
-    // Load recent activities from localStorage
-    function updateRecentActivities() {
-      const activitiesContainer = document.getElementById('recent-activities');
-      const activities = Storage.getActivities();
-      
-      if (!activities.length) {
-        activitiesContainer.innerHTML = `
-          <p class="text-gray-500">No activities logged yet.</p>
-        `;
-        return;
-      }
-      
-      // Sort by date (newest first) and take the most recent 5
-      const recentActivities = [...activities]
-        .sort((a, b) => new Date(b.date) - new Date(a.date))
-        .slice(0, 5);
-      
-      let activitiesHtml = `<div class="space-y-2">`;
-      
-      recentActivities.forEach(activity => {
-        const activityDate = new Date(activity.date).toLocaleDateString();
-        activitiesHtml += `
-          <div class="border-b pb-2">
-            <div class="font-semibold">
-              ${activity.type.charAt(0).toUpperCase() + activity.type.slice(1)}
-              ${activity.name ? `: ${activity.name}` : ''}
-            </div>
-            <div class="text-sm text-gray-600">
-              <span class="mr-3">
-                <i class="fa-solid fa-clock mr-1"></i> 
-                ${activity.duration} minutes
-              </span>
-              <span>
-                <i class="fa-solid fa-calendar mr-1"></i>
-                ${activityDate}
-              </span>
-            </div>
-            ${activity.notes ? `<div class="text-sm italic mt-1">"${activity.notes}"</div>` : ''}
-          </div>
-        `;
-      });
-      
-      activitiesHtml += `</div>`;
-      activitiesContainer.innerHTML = activitiesHtml;
-    }
-    
-    // Load all activities for the activity history tab
-    function loadActivityHistory() {
-      const historyContainer = document.getElementById('activity-history');
-      const activities = Storage.getActivities();
-      
-      if (!activities.length) {
-        historyContainer.innerHTML = `
-          <p class="text-gray-500">No activities logged yet.</p>
-        `;
-        return;
-      }
-      
-      // Sort by date (newest first)
-      const sortedActivities = [...activities].sort((a, b) => new Date(b.date) - new Date(a.date));
-      
-      let historyHtml = `<div class="space-y-4">`;
-      
-      sortedActivities.forEach(activity => {
-        const activityDate = new Date(activity.date).toLocaleDateString();
-        historyHtml += `
-          <div class="border-b pb-4">
-            <div class="flex justify-between items-start">
-              <div>
-                <div class="font-semibold text-lg">
-                  ${activity.type.charAt(0).toUpperCase() + activity.type.slice(1)}
-                  ${activity.name ? `: ${activity.name}` : ''}
-                </div>
-                <div class="text-sm text-gray-600">
-                  <span class="mr-3">
-                    <i class="fa-solid fa-clock mr-1"></i> 
-                    ${activity.duration} minutes
-                  </span>
-                  <span>
-                    <i class="fa-solid fa-calendar mr-1"></i>
-                    ${activityDate}
-                  </span>
-                </div>
-                ${activity.notes ? `<div class="text-sm italic mt-1">"${activity.notes}"</div>` : ''}
-              </div>
-              <button 
-                class="delete-activity text-red-500 hover:text-red-700" 
-                data-id="${activity.id}"
-              >
-                <i class="fa-solid fa-trash"></i>
-              </button>
-            </div>
-          </div>
-        `;
-      });
-      
-      historyHtml += `</div>`;
-      historyContainer.innerHTML = historyHtml;
-      
-      // Add delete handlers
-      document.querySelectorAll('.delete-activity').forEach(button => {
-        button.addEventListener('click', (e) => {
-          const activityId = e.currentTarget.getAttribute('data-id');
-          deleteActivity(activityId);
-        });
-      });
-    }
-    
-    // Delete an activity
-    function deleteActivity(activityId) {
-      if (!confirm('Are you sure you want to delete this activity?')) {
-        return;
-      }
-      
-      const activities = Storage.getActivities();
-      const updatedActivities = activities.filter(a => a.id !== activityId);
-      localStorage.setItem('aa_activities', JSON.stringify(updatedActivities));
-      
-      // Refresh displays
-      loadActivityHistory();
-      updateDashboard();
-      updateSpiritualFitnessTab();
-    }
-    
-    // Handle activity form submission
-    function setupActivityForm() {
-      // Set today's date as default
-      const today = new Date().toISOString().split('T')[0];
-      document.getElementById('activity-date').value = today;
-      
-      document.getElementById('activity-form').addEventListener('submit', (e) => {
-        e.preventDefault();
-        
-        const activityType = document.getElementById('activity-type').value;
-        const activityName = document.getElementById('activity-name').value;
-        const activityDate = document.getElementById('activity-date').value;
-        const activityDuration = document.getElementById('activity-duration').value;
-        const activityNotes = document.getElementById('activity-notes').value;
-        
-        const activityData = {
-          type: activityType,
-          name: activityName,
-          duration: parseInt(activityDuration, 10),
-          notes: activityNotes,
-          date: new Date(activityDate).toISOString(),
-          userId: Storage.getUser().id
-        };
-        
-        // Add activity to localStorage
-        Storage.addActivity(activityData);
-        
-        // Show success message
-        const resultElement = document.getElementById('activity-result');
-        resultElement.innerHTML = `
-          <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-2 rounded">
-            <p><i class="fa-solid fa-check mr-1"></i> Activity logged successfully!</p>
-          </div>
-        `;
-        resultElement.classList.remove('hidden');
-        
-        // Reset form fields
-        document.getElementById('activity-name').value = '';
-        document.getElementById('activity-notes').value = '';
-        document.getElementById('activity-date').value = today;
-        
-        // Refresh displays that depend on activities
-        updateDashboard();
-        loadActivityHistory();
-        
-        // Hide success message after 3 seconds
-        setTimeout(() => {
-          resultElement.classList.add('hidden');
-        }, 3000);
-      });
-    }
-    
-    // Add button to go from dashboard to activity logging
-    function setupDashboardButtons() {
-      document.getElementById('log-activity-btn').addEventListener('click', () => {
-        // Switch to activity tab
-        const activityTab = document.querySelector('.tab-btn[data-tab="activity"]');
-        activityTab.click();
-      });
-    }
-    
-    // Initial app setup
-    function initApp() {
-      // Initialize user data if not exists
-      initializeUser();
-      
-      // Setup tab navigation
-      initTabs();
-      
-      // Setup activity form
-      setupActivityForm();
-      
-      // Setup dashboard buttons
-      setupDashboardButtons();
-      
-      // Update dashboard with initial data
-      updateDashboard();
-    }
-    
-    // Load sponsor info and interactions
-    function loadSponsorInfo() {
-      const sponsor = Storage.getSponsor();
-      const sponsorForm = document.getElementById('sponsor-form');
-      const callSponsorBtn = document.getElementById('call-sponsor-btn');
-      
-      // Fill form with saved sponsor info if exists
-      if (sponsor) {
-        document.getElementById('sponsor-name').value = sponsor.name || '';
-        document.getElementById('sponsor-phone').value = sponsor.phone || '';
-        document.getElementById('sponsor-email').value = sponsor.email || '';
-        document.getElementById('sponsor-sobriety-date').value = sponsor.sobrietyDate || '';
-        document.getElementById('sponsor-notes').value = sponsor.notes || '';
-        
-        // Enable call button if phone exists
-        if (sponsor.phone) {
-          callSponsorBtn.disabled = false;
-          callSponsorBtn.onclick = () => {
-            window.location.href = `tel:${sponsor.phone}`;
-          };
-        }
-      }
-      
-      // Handle sponsor form submission
-      sponsorForm.addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        const sponsorData = {
-          name: document.getElementById('sponsor-name').value,
-          phone: document.getElementById('sponsor-phone').value,
-          email: document.getElementById('sponsor-email').value,
-          sobrietyDate: document.getElementById('sponsor-sobriety-date').value,
-          notes: document.getElementById('sponsor-notes').value,
-          updatedAt: new Date().toISOString()
-        };
-        
-        // Save to localStorage
-        Storage.setSponsor(sponsorData);
-        
-        // Show success message
-        const resultElement = document.getElementById('sponsor-result');
-        resultElement.innerHTML = `
-          <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-2 rounded">
-            <p><i class="fa-solid fa-check mr-1"></i> Sponsor information saved!</p>
-          </div>
-        `;
-        resultElement.classList.remove('hidden');
-        
-        // Enable call button
-        if (sponsorData.phone) {
-          callSponsorBtn.disabled = false;
-          callSponsorBtn.onclick = () => {
-            window.location.href = `tel:${sponsorData.phone}`;
-          };
-        }
-        
-        // Hide success message after 3 seconds
-        setTimeout(() => {
-          resultElement.classList.add('hidden');
-        }, 3000);
-      });
-      
-      // Load sponsor interactions
-      loadSponsorInteractions();
-      
-      // Set up log sponsor interaction button
-      document.getElementById('log-sponsor-interaction-btn').addEventListener('click', () => {
-        // Switch to activity tab with sponsor type selected
-        const activityTab = document.querySelector('.tab-btn[data-tab="activity"]');
-        activityTab.click();
-        
-        // Set activity type to sponsor
-        document.getElementById('activity-type').value = 'sponsor';
-        // Set focus to activity name
-        document.getElementById('activity-name').focus();
-      });
-    }
-    
-    // Load sponsor interactions from activities
-    function loadSponsorInteractions() {
-      const activities = Storage.getActivities();
-      const sponsorActivities = activities.filter(a => a.type === 'sponsor')
-        .sort((a, b) => new Date(b.date) - new Date(a.date));
-      
-      const interactionsContainer = document.getElementById('sponsor-interactions');
-      
-      if (sponsorActivities.length === 0) {
-        interactionsContainer.innerHTML = `
-          <p class="text-gray-500">No sponsor interactions logged yet.</p>
-        `;
-        return;
-      }
-      
-      let interactionsHtml = `<div class="space-y-4">`;
-      
-      sponsorActivities.forEach(activity => {
-        const activityDate = new Date(activity.date).toLocaleDateString();
-        interactionsHtml += `
-          <div class="border-b pb-4">
-            <div class="font-semibold">
-              ${activity.name || 'Sponsor Interaction'}
-            </div>
-            <div class="text-sm text-gray-600">
-              <span class="mr-3">
-                <i class="fa-solid fa-clock mr-1"></i> 
-                ${activity.duration} minutes
-              </span>
-              <span>
-                <i class="fa-solid fa-calendar mr-1"></i>
-                ${activityDate}
-              </span>
-            </div>
-            ${activity.notes ? `<div class="text-sm italic mt-1">"${activity.notes}"</div>` : ''}
-          </div>
-        `;
-      });
-      
-      interactionsHtml += `</div>`;
-      interactionsContainer.innerHTML = interactionsHtml;
-    }
-    
-    // Load sponsees list and form
-    function loadSponseesInfo() {
-      const sponsees = Storage.getSponsees();
-      const sponseesList = document.getElementById('sponsees-list');
-      const addSponseeForm = document.getElementById('add-sponsee-form');
-      
-      // Display sponsees
-      if (sponsees.length === 0) {
-        sponseesList.innerHTML = `
-          <p class="text-gray-500">You haven't added any sponsees yet.</p>
-        `;
-      } else {
-        let sponseesHtml = `<div class="space-y-6">`;
-        
-        sponsees.forEach(sponsee => {
-          const sobrietyDays = sponsee.sobrietyDate ? 
-            Math.ceil(Math.abs(new Date() - new Date(sponsee.sobrietyDate)) / (1000 * 60 * 60 * 24)) : 
-            '?';
-          
-          sponseesHtml += `
-            <div class="border-b pb-4" data-id="${sponsee.id}">
-              <div class="flex justify-between items-start">
-                <div>
-                  <div class="font-semibold text-lg">${sponsee.name}</div>
-                  <div class="text-sm text-gray-600">
-                    ${sponsee.sobrietyDate ? 
-                      `<span class="mr-3"><i class="fa-solid fa-calendar mr-1"></i> ${sobrietyDays} days sober</span>` : 
-                      ''}
-                    ${sponsee.phone ? 
-                      `<span class="mr-3"><i class="fa-solid fa-phone mr-1"></i> ${sponsee.phone}</span>` : 
-                      ''}
-                    ${sponsee.email ? 
-                      `<span><i class="fa-solid fa-envelope mr-1"></i> ${sponsee.email}</span>` : 
-                      ''}
-                  </div>
-                  ${sponsee.notes ? `<div class="text-sm mt-2">${sponsee.notes}</div>` : ''}
-                </div>
-                <div class="flex space-x-2">
-                  <button class="call-sponsee text-green-500 hover:text-green-700 p-1" ${!sponsee.phone ? 'disabled' : ''}>
-                    <i class="fa-solid fa-phone"></i>
-                  </button>
-                  <button class="log-sponsee-interaction text-blue-500 hover:text-blue-700 p-1">
-                    <i class="fa-solid fa-pen"></i>
-                  </button>
-                  <button class="delete-sponsee text-red-500 hover:text-red-700 p-1">
-                    <i class="fa-solid fa-trash"></i>
-                  </button>
-                </div>
-              </div>
-            </div>
-          `;
-        });
-        
-        sponseesHtml += `</div>`;
-        sponseesList.innerHTML = sponseesHtml;
-        
-        // Add event listeners for sponsee actions
-        document.querySelectorAll('.call-sponsee').forEach((btn, index) => {
-          if (sponsees[index].phone) {
-            btn.addEventListener('click', () => {
-              window.location.href = `tel:${sponsees[index].phone}`;
-            });
-          }
-        });
-        
-        document.querySelectorAll('.log-sponsee-interaction').forEach((btn, index) => {
-          btn.addEventListener('click', () => {
-            // Switch to activity tab with sponsee type selected
-            const activityTab = document.querySelector('.tab-btn[data-tab="activity"]');
-            activityTab.click();
-            
-            // Set activity type to sponsee
-            document.getElementById('activity-type').value = 'sponsee';
-            // Prefill activity name with sponsee name
-            document.getElementById('activity-name').value = `Call with ${sponsees[index].name}`;
-            // Set focus to activity duration
-            document.getElementById('activity-duration').focus();
-          });
-        });
-        
-        document.querySelectorAll('.delete-sponsee').forEach((btn, index) => {
-          btn.addEventListener('click', () => {
-            if (confirm(`Are you sure you want to remove ${sponsees[index].name} from your sponsees?`)) {
-              // Remove sponsee from storage
-              const updatedSponsees = sponsees.filter(s => s.id !== sponsees[index].id);
-              localStorage.setItem('aa_sponsees', JSON.stringify(updatedSponsees));
-              // Reload sponsees list
-              loadSponseesInfo();
-            }
-          });
-        });
-      }
-      
-      // Handle add sponsee form
-      addSponseeForm.addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        const sponseeData = {
-          name: document.getElementById('sponsee-name').value,
-          phone: document.getElementById('sponsee-phone').value,
-          email: document.getElementById('sponsee-email').value,
-          sobrietyDate: document.getElementById('sponsee-sobriety-date').value,
-          notes: document.getElementById('sponsee-notes').value,
-          createdAt: new Date().toISOString()
-        };
-        
-        // Add to storage
-        Storage.addSponsee(sponseeData);
-        
-        // Show success message
-        const resultElement = document.getElementById('sponsee-result');
-        resultElement.innerHTML = `
-          <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-2 rounded">
-            <p><i class="fa-solid fa-check mr-1"></i> Sponsee added successfully!</p>
-          </div>
-        `;
-        resultElement.classList.remove('hidden');
-        
-        // Clear form
-        document.getElementById('sponsee-name').value = '';
-        document.getElementById('sponsee-phone').value = '';
-        document.getElementById('sponsee-email').value = '';
-        document.getElementById('sponsee-sobriety-date').value = '';
-        document.getElementById('sponsee-notes').value = '';
-        
-        // Reload sponsees list
-        loadSponseesInfo();
-        
-        // Hide success message after 3 seconds
-        setTimeout(() => {
-          resultElement.classList.add('hidden');
-        }, 3000);
-      });
-    }
-    
-    // Load the meetings tab using real meeting data from our API
-    function loadMeetingsTab() {
-      const meetingForm = document.getElementById('meeting-search-form');
-      const meetingResults = document.getElementById('meeting-results');
-      
-      // Handle meeting search form submission
-      meetingForm.addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        const location = document.getElementById('meeting-location').value;
-        const day = document.getElementById('meeting-day').value;
-        const time = document.getElementById('meeting-time').value;
-        const type = document.getElementById('meeting-type').value;
-        
-        if (!location) {
-          meetingResults.innerHTML = `
-            <div class="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-2 rounded">
-              <p><i class="fa-solid fa-triangle-exclamation mr-1"></i> Please enter a location to search</p>
-            </div>
-          `;
-          return;
-        }
-        
-        // Show loading state
-        meetingResults.innerHTML = `
-          <div class="text-center p-4">
-            <i class="fa-solid fa-spinner fa-spin text-blue-500 text-3xl mb-2"></i>
-            <p>Searching for meetings...</p>
-          </div>
-        `;
-        
-        // Build the query string for our API
-        const queryParams = new URLSearchParams({
-          location: location
-        });
-        
-        if (day) queryParams.append('day', day);
-        if (time) queryParams.append('time', time);
-        if (type) queryParams.append('types', type);
-        
-        // Fetch real meeting data from our API endpoint
-        fetch(`/api/meetings?${queryParams.toString()}`)
-          .then(response => {
-            if (!response.ok) {
-              throw new Error(`Server returned ${response.status}: ${response.statusText}`);
-            }
-            return response.json();
-          })
-          .then(data => {
-            // Check if we got an error response
-            if (data.error) {
-              throw new Error(data.error);
-            }
-            
-            // Check if meetings were found
-            if (!Array.isArray(data) || data.length === 0) {
-              meetingResults.innerHTML = `
-                <div class="bg-blue-100 border border-blue-400 text-blue-700 px-4 py-2 rounded">
-                  <p><i class="fa-solid fa-info-circle mr-1"></i> No meetings found matching your criteria.</p>
-                  <p class="text-sm mt-1">Try broadening your search or changing location.</p>
-                </div>
-              `;
-              return;
-            }
-            
-            // Render the meetings
-            let meetingsHtml = `
-              <p class="mb-4">Found ${data.length} meetings near ${location}</p>
-              <div class="space-y-6">
-            `;
-            
-            data.forEach(meeting => {
-              // Format meeting data for display - handle potential missing fields
-              const name = meeting.name || 'Unnamed Meeting';
-              const loc = meeting.location || meeting.city || 'Location not specified';
-              const day = meeting.day || 'Day not specified';
-              const time = meeting.time || 'Time not specified';
-              const types = meeting.types || ['AA Meeting'];
-              const address = meeting.address || (meeting.location ? `${meeting.location}, ${meeting.city || ''}` : 'Address not available');
-              
-              meetingsHtml += `
-                <div class="border-b pb-4">
-                  <div class="font-semibold text-lg">${name}</div>
-                  <div class="text-sm text-gray-600 mb-2">
-                    <span class="mr-3">
-                      <i class="fa-solid fa-location-dot mr-1"></i> 
-                      ${loc}
-                    </span>
-                    <span class="mr-3">
-                      <i class="fa-solid fa-calendar-day mr-1"></i>
-                      ${day}
-                    </span>
-                    <span>
-                      <i class="fa-solid fa-clock mr-1"></i>
-                      ${time}
-                    </span>
-                  </div>
-                  <div class="flex flex-wrap gap-2 mb-2">
-                    ${types.map(type => 
-                      `<span class="text-xs bg-blue-100 text-blue-800 rounded-full px-2 py-1">${type}</span>`
-                    ).join('')}
-                  </div>
-                  <div class="text-sm">
-                    ${address}
-                  </div>
-                  <div class="mt-2 flex space-x-2">
-                    <a href="https://maps.google.com/?q=${encodeURIComponent(address)}" target="_blank" class="text-blue-600 hover:underline text-sm">
-                      <i class="fa-solid fa-map-location-dot mr-1"></i> View on Google Maps
-                    </a>
-                    <button class="log-meeting text-green-600 hover:underline text-sm">
-                      <i class="fa-solid fa-plus mr-1"></i> Log Meeting
-                    </button>
-                  </div>
-                </div>
-              `;
-            });
-            
-            meetingsHtml += `</div>`;
-            meetingResults.innerHTML = meetingsHtml;
-            
-            // Add event listeners for log meeting buttons
-            document.querySelectorAll('.log-meeting').forEach((btn, index) => {
-              btn.addEventListener('click', () => {
-                const meeting = data[index];
-                
-                // Switch to activity tab
-                const activityTab = document.querySelector('.tab-btn[data-tab="activity"]');
-                activityTab.click();
-                
-                // Prefill activity form with meeting info
-                document.getElementById('activity-type').value = 'meeting';
-                document.getElementById('activity-name').value = meeting.name || 'AA Meeting';
-                document.getElementById('activity-duration').value = 60;
-                
-                // Create notes with available meeting info
-                const locationInfo = [
-                  meeting.location, 
-                  meeting.address, 
-                  meeting.city, 
-                  meeting.state
-                ].filter(Boolean).join(', ');
-                
-                document.getElementById('activity-notes').value = locationInfo;
-              });
-            });
-          })
-          .catch(error => {
-            // Show error message
-            meetingResults.innerHTML = `
-              <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded">
-                <p><i class="fa-solid fa-circle-exclamation mr-1"></i> Error finding meetings</p>
-                <p class="text-sm mt-1">${error.message}</p>
-              </div>
-            `;
-          });
-      });
-    }
-    
-    // Generate sample meetings for demo purposes
-    // This would be replaced with actual API calls in a production app
-    function generateSampleMeetings(location, day, time, type) {
-      // For demo purposes, generate some meetings based on search params
-      const meetings = [];
-      const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-      const times = ['7:00 AM', '12:00 PM', '6:30 PM', '8:00 PM'];
-      const types = ['Open', 'Closed', 'Discussion', 'Speaker', 'Big Book', 'Step Study'];
-      
-      // Generate 0-10 meetings based on params
-      const numMeetings = Math.floor(Math.random() * 10) + 1;
-      
-      for (let i = 0; i < numMeetings; i++) {
-        // Filter by day if specified
-        let meetingDay = days[Math.floor(Math.random() * days.length)];
-        if (day && !meetingDay.toLowerCase().includes(day.toLowerCase())) {
-          meetingDay = day.charAt(0).toUpperCase() + day.slice(1);
-        }
-        
-        // Filter by time if specified
-        let meetingTime = times[Math.floor(Math.random() * times.length)];
-        if (time === 'morning' && !meetingTime.includes('AM')) {
-          meetingTime = '7:00 AM';
-        } else if (time === 'noon' && !meetingTime.includes('12:00')) {
-          meetingTime = '12:00 PM';
-        } else if (time === 'evening' && !meetingTime.includes('6:30')) {
-          meetingTime = '6:30 PM';
-        } else if (time === 'night' && !meetingTime.includes('8:00')) {
-          meetingTime = '8:00 PM';
-        }
-        
-        // Generate meeting types
-        const meetingTypes = [];
-        // Include specified type if any
-        if (type) {
-          meetingTypes.push(type.charAt(0).toUpperCase() + type.slice(1));
-        }
-        
-        // Add 1-3 random types
-        const numTypes = Math.floor(Math.random() * 3) + 1;
-        for (let j = 0; j < numTypes; j++) {
-          const randomType = types[Math.floor(Math.random() * types.length)];
-          if (!meetingTypes.includes(randomType)) {
-            meetingTypes.push(randomType);
-          }
-        }
-        
-        meetings.push({
-          name: `${location} ${meetingTypes[0]} Meeting`,
-          location: `${location} Fellowship Hall`,
-          address: `123 Main St, ${location}, AA 12345`,
-          day: meetingDay,
-          time: meetingTime,
-          types: meetingTypes
-        });
-      }
-      
-      return meetings;
-    }
-    
-    // Load nearby AA members tab
-    function loadNearbyMembers() {
-      const nearbyTab = document.getElementById('nearby-tab');
-      
-      // Create nearby tab content
-      nearbyTab.innerHTML = `
-        <h2 class="text-2xl font-semibold text-blue-800 mb-4">Nearby AA Members</h2>
-        
-        <div class="card mb-6">
-          <h3 class="text-xl font-semibold text-blue-800 mb-4">Your Discoverability</h3>
-          <p class="text-gray-600 mb-4">
-            When enabled, other AA members using this app can see your first name, sobriety date, 
-            and phone number if they are within your set radius.
-          </p>
-          
-          <div class="flex items-center justify-between mb-4">
-            <div>
-              <h4 class="font-medium">Make Me Discoverable</h4>
-              <p class="text-sm text-gray-500">Allow other members to find you</p>
-            </div>
-            <label class="relative inline-flex items-center cursor-pointer">
-              <input type="checkbox" id="discoverable-toggle" class="sr-only peer">
-              <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-            </label>
-          </div>
-          
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Discovery Radius (miles)</label>
-            <input type="range" id="discovery-radius" min="1" max="25" step="1" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
-            <div class="flex justify-between text-xs text-gray-500 mt-1">
-              <span>1</span>
-              <span>5</span>
-              <span>10</span>
-              <span>15</span>
-              <span>20</span>
-              <span>25</span>
-            </div>
-            <p class="text-center mt-2 text-sm" id="radius-display">5 miles</p>
-          </div>
-        </div>
-        
-        <div class="card">
-          <h3 class="text-xl font-semibold text-blue-800 mb-4">Nearby Members</h3>
-          <div id="nearby-members-list" class="space-y-4">
-            <p class="text-gray-500">Looking for nearby members...</p>
-          </div>
-        </div>
-      `;
-      
-      // Set up discoverability settings
-      const user = Storage.getUser();
-      const discoverableToggle = document.getElementById('discoverable-toggle');
-      const discoveryRadius = document.getElementById('discovery-radius');
-      const radiusDisplay = document.getElementById('radius-display');
-      
-      // Set initial values from storage
-      discoverableToggle.checked = user.discoverable || false;
-      const radius = Storage.getSetting('discoveryRadius', 5);
-      discoveryRadius.value = radius;
-      radiusDisplay.textContent = `${radius} miles`;
-      
-      // Handle toggle change
-      discoverableToggle.addEventListener('change', () => {
-        user.discoverable = discoverableToggle.checked;
-        Storage.setUser(user);
-      });
-      
-      // Handle radius change
-      discoveryRadius.addEventListener('input', () => {
-        const value = discoveryRadius.value;
-        radiusDisplay.textContent = `${value} miles`;
-        Storage.setSetting('discoveryRadius', parseInt(value));
-      });
-      
-      // Simulate nearby members
-      setTimeout(() => {
-        const nearbyMembersList = document.getElementById('nearby-members-list');
-        
-        if (!user.discoverable) {
-          nearbyMembersList.innerHTML = `
-            <div class="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded">
-              <p><i class="fa-solid fa-triangle-exclamation mr-1"></i> You need to enable discoverability to see nearby members.</p>
-            </div>
-          `;
-          return;
-        }
-        
-        // Simulate 0-5 nearby members
-        const numMembers = Math.floor(Math.random() * 6);
-        
-        if (numMembers === 0) {
-          nearbyMembersList.innerHTML = `
-            <p class="text-gray-500">No AA members found nearby at this time.</p>
-            <p class="text-sm text-gray-500 mt-2">This could be because other members have not enabled discoverability or are not currently in your area.</p>
-          `;
-          return;
-        }
-        
-        let membersHtml = `<div class="space-y-4">`;
-        
-        for (let i = 0; i < numMembers; i++) {
-          const randomSobrietyDays = Math.floor(Math.random() * 3650) + 1; // 1 day to 10 years
-          const memberDistance = (Math.random() * parseFloat(discoveryRadius.value)).toFixed(1);
-          
-          membersHtml += `
-            <div class="border-b pb-4">
-              <div class="flex justify-between items-start">
-                <div>
-                  <div class="font-semibold">Anonymous Member</div>
-                  <div class="text-sm text-gray-600">
-                    <span class="mr-3">
-                      <i class="fa-solid fa-calendar mr-1"></i> 
-                      ${randomSobrietyDays} days sober
-                    </span>
-                    <span>
-                      <i class="fa-solid fa-location-dot mr-1"></i>
-                      ${memberDistance} miles away
-                    </span>
-                  </div>
-                </div>
-                <button class="call-nearby-member text-green-500 hover:text-green-700">
-                  <i class="fa-solid fa-phone mr-1"></i> Call
-                </button>
-              </div>
-            </div>
-          `;
-        }
-        
-        membersHtml += `</div>`;
-        nearbyMembersList.innerHTML = membersHtml;
-        
-        // Add call handlers (in a real app this would use actual phone numbers)
-        document.querySelectorAll('.call-nearby-member').forEach(button => {
-          button.addEventListener('click', () => {
-            alert('This is a simulated feature. In a real app, this would connect you to the nearby member.');
-          });
-        });
-      }, 1500);
-    }
-    
-    // Load the settings tab
-    function loadSettingsTab() {
-      const user = Storage.getUser();
-      
-      // Fill user information form
-      document.getElementById('user-name').value = user.name || '';
-      document.getElementById('user-phone').value = user.phone || '';
-      document.getElementById('user-email').value = user.email || '';
-      document.getElementById('user-sobriety-date').value = user.sobrietyDate || '';
-      document.getElementById('user-home-group').value = user.homeGroup || '';
-      
-      // Set app settings
-      document.getElementById('reminder-time').value = Storage.getSetting('reminderTime', '08:00');
-      document.getElementById('dark-mode-toggle').checked = Storage.getSetting('darkMode', false);
-      
-      // Handle user settings form submission
-      document.getElementById('user-settings-form').addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        // Update user data
-        user.name = document.getElementById('user-name').value;
-        user.phone = document.getElementById('user-phone').value;
-        user.email = document.getElementById('user-email').value;
-        user.sobrietyDate = document.getElementById('user-sobriety-date').value;
-        user.homeGroup = document.getElementById('user-home-group').value;
-        user.updatedAt = new Date().toISOString();
-        
-        // Save to localStorage
-        Storage.setUser(user);
-        
-        // Show success message
-        const resultElement = document.getElementById('settings-result');
-        resultElement.innerHTML = `
-          <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-2 rounded">
-            <p><i class="fa-solid fa-check mr-1"></i> Your information has been saved!</p>
-          </div>
-        `;
-        resultElement.classList.remove('hidden');
-        
-        // Hide success message after 3 seconds
-        setTimeout(() => {
-          resultElement.classList.add('hidden');
-        }, 3000);
-        
-        // Update dashboard to reflect changes (especially sobriety days)
-        updateDashboard();
-      });
-      
-      // Handle app settings
-      document.getElementById('save-app-settings-btn').addEventListener('click', function() {
-        const reminderTime = document.getElementById('reminder-time').value;
-        const darkMode = document.getElementById('dark-mode-toggle').checked;
-        
-        // Save settings
-        Storage.setSetting('reminderTime', reminderTime);
-        Storage.setSetting('darkMode', darkMode);
-        
-        // Show success alert
-        alert('App settings saved successfully!');
-        
-        // Apply dark mode if enabled
-        applyDarkMode(darkMode);
-      });
-      
-      // Handle data export
-      document.getElementById('export-data-btn').addEventListener('click', function() {
-        const exportData = {
-          user: Storage.getUser(),
-          activities: Storage.getActivities(),
-          sponsor: Storage.getSponsor(),
-          sponsees: Storage.getSponsees(),
-          settings: JSON.parse(localStorage.getItem('aa_settings') || '{}'),
-          exportDate: new Date().toISOString()
-        };
-        
-        // Create download link
-        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportData, null, 2));
-        const downloadAnchorNode = document.createElement('a');
-        downloadAnchorNode.setAttribute("href", dataStr);
-        downloadAnchorNode.setAttribute("download", "aa_recovery_data.json");
-        document.body.appendChild(downloadAnchorNode);
-        downloadAnchorNode.click();
-        downloadAnchorNode.remove();
-      });
-      
-      // Handle data reset
-      document.getElementById('reset-data-btn').addEventListener('click', function() {
-        if (confirm("Are you sure you want to reset all data? This cannot be undone.")) {
-          if (confirm("This will delete all your activities, sponsor information, and settings. Are you REALLY sure?")) {
-            // Clear all localStorage items
-            localStorage.removeItem('aa_user');
-            localStorage.removeItem('aa_activities');
-            localStorage.removeItem('aa_sponsor');
-            localStorage.removeItem('aa_sponsees');
-            localStorage.removeItem('aa_settings');
-            
-            // Show confirmation
-            alert('All data has been reset. The app will now reload.');
-            
-            // Reload the page
-            window.location.reload();
-          }
-        }
-      });
-    }
-    
-    // Apply dark mode to the app
-    function applyDarkMode(enabled) {
-      if (enabled) {
-        document.body.classList.add('dark-mode');
-        // Apply dark mode styles
-        // This is a placeholder - in a real app, you'd add CSS classes
-      } else {
-        document.body.classList.remove('dark-mode');
-      }
-    }
-    
-    // Start the app when page is loaded
-    document.addEventListener('DOMContentLoaded', initApp);
-  </script>
+    </script>
 </body>
 </html>
