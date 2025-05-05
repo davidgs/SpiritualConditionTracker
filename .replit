@@ -35,12 +35,16 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "cd expo-app && npx expo start --offline --web --port 5001"
-waitForPort = 5001
+args = "node main.js"
+waitForPort = 3000
 
 [deployment]
 run = ["sh", "-c", "cd simple-server && node server.js"]
 deploymentTarget = "cloudrun"
+
+[[ports]]
+localPort = 3000
+externalPort = 3001
 
 [[ports]]
 localPort = 5000
