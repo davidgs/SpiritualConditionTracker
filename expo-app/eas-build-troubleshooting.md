@@ -2,6 +2,50 @@
 
 This guide addresses common issues encountered when building with EAS Build.
 
+## Dependency Conflicts
+
+### React Version Conflicts
+
+Error similar to:
+```
+npm error ERESOLVE unable to resolve dependency tree
+npm error Found: react@19.1.0
+npm error Could not resolve dependency:
+npm error peer react@"^18.0.0" from react-native-web@0.19.13
+```
+
+This error occurs when React 19 is installed but dependencies like react-native-web require React 18.
+
+**Solution:**
+
+1. Use `--legacy-peer-deps` flag when installing:
+
+```bash
+npm install --legacy-peer-deps
+```
+
+2. Update the fix-dependencies.sh script to include this flag:
+
+```bash
+./fix-dependencies.sh
+```
+
+3. If the above doesn't work, use the provided downgrade script:
+
+```bash
+# This will downgrade React to version 18.2.0 which is compatible with react-native-web
+chmod +x ./downgrade-react.sh
+./downgrade-react.sh
+```
+
+4. For manual resolution, downgrade React version to 18.2.0 in package.json:
+
+```json
+"dependencies": {
+  "react": "^18.2.0"
+}
+```
+
 ## Module Resolution Issues
 
 ### `Cannot find module 'minimatch/dist/commonjs/index.js'`

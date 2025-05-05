@@ -1,6 +1,8 @@
-# AA Recovery Tracker
+# Spiritual Condition Tracker
 
 A React Native application for tracking recovery in Alcoholics Anonymous.
+
+![Spiritual Condition Tracker Logo](expo-app/assets/logo.png)
 
 ## Features
 
@@ -55,22 +57,92 @@ npx react-native run-android
 
 ## Building for Production
 
-### iOS
+### Using EAS Build (Recommended)
+
+The project is configured to use EAS Build, which handles iOS and Android builds in the cloud.
+
+#### Prerequisites
+
+1. Install EAS CLI:
+
+```bash
+npm install -g eas-cli
+```
+
+2. Log in to your Expo account:
+
+```bash
+eas login
+```
+
+#### Building
+
+The project includes build scripts that handle dependency fixes and build configuration:
+
+1. For iOS:
+
+```bash
+# Make script executable
+chmod +x ./expo-app/local-ios-build.sh
+
+# Run the build script
+./expo-app/local-ios-build.sh
+```
+
+2. For Android:
+
+```bash
+# Make script executable
+chmod +x ./expo-app/local-android-build.sh
+
+# Run the build script
+./expo-app/local-android-build.sh
+```
+
+### Troubleshooting Build Issues
+
+If you encounter dependency conflicts or module resolution errors:
+
+1. Run the fix-dependencies script:
+
+```bash
+chmod +x ./expo-app/fix-dependencies.sh
+./expo-app/fix-dependencies.sh
+```
+
+2. For React version conflicts specifically:
+
+```bash
+chmod +x ./expo-app/downgrade-react.sh
+./expo-app/downgrade-react.sh
+```
+
+3. Check the troubleshooting guide for more information:
+
+```
+expo-app/eas-build-troubleshooting.md
+```
+
+### Manual Building (Alternative)
+
+#### iOS
 
 1. Open the project in Xcode:
 
 ```bash
-open ios/AARecoveryTracker.xcworkspace
+npx expo prebuild --platform ios
+open ios/SpiritualConditionTracker.xcworkspace
 ```
 
 2. Select the desired scheme and device
 3. Build and archive the application
 
-### Android
+#### Android
 
 1. Generate a signed APK:
 
 ```bash
+npx expo prebuild --platform android
 cd android
 ./gradlew assembleRelease
 ```

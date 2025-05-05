@@ -9,14 +9,30 @@ echo "⚙️ Fixing dependencies before build..."
 cd "$(dirname "$0")"
 PROJECT_DIR=$(pwd)
 
-# Install dependencies
+# Install dependencies with legacy peer deps to resolve conflicts
 echo "📦 Installing dependencies..."
-npm install
+npm install --legacy-peer-deps
 
 # Add explicit minimatch dependency if not already present
 if ! grep -q '"minimatch":' package.json; then
   echo "➕ Adding minimatch dependency..."
-  npm install minimatch@^9.0.3 --save
+  npm install minimatch@^9.0.3 --save --legacy-peer-deps
+fi
+
+# Check for React and react-native-web version conflict
+echo "🔍 Checking for React version conflicts..."
+# Extract React version from package.json
+react_version=$(node -e "try { console.log(require('./package.json').dependencies.react); } catch(e) { console.log(''); }")
+
+# If React version is 19.x.x, try to fix conflicts with react-native-web
+if [[ $react_version == *"19."* ]]; then
+  echo "⚠️ React 19 detected, but some packages require React 18"
+  echo "🔧 Using --legacy-peer-deps for compatibility"
+  
+  # Reinstall react-native-web with legacy peer deps for compatibility
+  if grep -q '"react-native-web":' package.json; then
+    npm install react-native-web --legacy-peer-deps
+  fi
 fi
 
 # Fix specific module resolution issues
@@ -36,7 +52,7 @@ if [ ! -f node_modules/minimatch/dist/commonjs/index.js ]; then
   else
     # Option 2: Reinstall minimatch specifically
     npm uninstall minimatch
-    npm install minimatch@^9.0.3 --save
+    npm install minimatch@^9.0.3 --save --legacy-peer-deps
     # Then create the structure if it still doesn't exist
     if [ ! -f node_modules/minimatch/dist/commonjs/index.js ]; then
       mkdir -p node_modules/minimatch/dist/commonjs
