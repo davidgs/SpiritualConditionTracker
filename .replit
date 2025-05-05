@@ -14,15 +14,28 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "BetterAppServer"
+args = "ProductionServer"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "TestServer"
 
 [[workflows.workflow]]
-name = "BetterAppServer"
+name = "ProductionServer"
 author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "node better-server.js"
+args = "node production-server.js"
+waitForPort = 5000
+
+[[workflows.workflow]]
+name = "TestServer"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "node test-server.js"
 waitForPort = 5000
 
 [deployment]
