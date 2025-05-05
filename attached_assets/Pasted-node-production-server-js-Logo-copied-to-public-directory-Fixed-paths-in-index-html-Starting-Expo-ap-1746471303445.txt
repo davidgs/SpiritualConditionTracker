@@ -1,0 +1,80 @@
+node production-server.js
+Logo copied to public directory
+Fixed paths in index.html
+Starting Expo app...
+Checking for minimatch module...
+Creating minimatch directory structure...
+Fixed minimatch module issue
+Cleaning up existing processes...
+Started Expo with PID 3890744
+Waiting for Expo to initialize...
+Expo: Networking has been disabled
+Expo error: /var/www/vhosts/spiritual-condition.com/httpdocs/SpiritualConditionTracker/node_modules/glob/dist/commonjs/index.js:9
+const minimatch_1 = require("minimatch");
+                    ^
+
+Error [ERR_REQUIRE_ESM]: require() of ES Module /var/www/vhosts/spiritual-condition.com/httpdocs/SpiritualConditionTracker/node_modules/minimatch/dist/commonjs/index.js from /var/www/vhosts/spiritual-condition.com/httpdocs/SpiritualConditionTracker/node_modules/glob/dist/commonjs/index.js not supported.
+/var/www/vhosts/spiritual-condition.com/httpdocs/SpiritualConditionTracker/node_modules/minimatch/dist/commonjs/index.js is treated as an ES module file as it is a .js file whose nearest parent package.json contains "type": "module" which declares all .js files in that package scope as ES modules.
+Instead either rename /var/www/vhosts/spiritual-condition.com/httpdocs/SpiritualConditionTracker/node_modules/minimatch/dist/commonjs/index.js to end in .cjs, change the requiring code to use dynamic import() which is available in all CommonJS modules, or change "type": "module" to "type": "commonjs" in /var/www/vhosts/spiritual-condition.com/httpdocs/SpiritualConditionTracker/node_modules/minimatch/package.json to treat all .js files as CommonJS (using .mjs for all ES modules instead).
+
+    at Object.<anonymous> (/var/www/vhosts/spiritual-condition.com/httpdocs/SpiritualConditionTracker/node_modules/glob/dist/commonjs/index.js:9:21) {
+  code: 'ERR_REQUIRE_ESM'
+}
+
+Node.js v21.5.0
+Expo process exited with code 7
+Attempting to restart Expo...
+Starting Expo app...
+Checking for minimatch module...
+Cleaning up existing processes...
+Started Expo with PID 3890802
+Waiting for Expo to initialize...
+Expo: Networking has been disabled
+Expo error: /var/www/vhosts/spiritual-condition.com/httpdocs/SpiritualConditionTracker/node_modules/glob/dist/commonjs/index.js:9
+const minimatch_1 = require("minimatch");
+                    ^
+
+Error [ERR_REQUIRE_ESM]: require() of ES Module /var/www/vhosts/spiritual-condition.com/httpdocs/SpiritualConditionTracker/node_modules/minimatch/dist/commonjs/index.js from /var/www/vhosts/spiritual-condition.com/httpdocs/SpiritualConditionTracker/node_modules/glob/dist/commonjs/index.js not supported.
+/var/www/vhosts/spiritual-condition.com/httpdocs/SpiritualConditionTracker/node_modules/minimatch/dist/commonjs/index.js is treated as an ES module file as it is a .js file whose nearest parent package.json contains "type": "module" which declares all .js files in that package scope as ES modules.
+Instead either rename /var/www/vhosts/spiritual-condition.com/httpdocs/SpiritualConditionTracker/node_modules/minimatch/dist/commonjs/index.js to end in .cjs, change the requiring code to use dynamic import() which is available in all CommonJS modules, or change "type": "module" to "type": "commonjs" in /var/www/vhosts/spiritual-condition.com/httpdocs/SpiritualConditionTracker/node_modules/minimatch/package.json to treat all .js files as CommonJS (using .mjs for all ES modules instead).
+
+    at Object.<anonymous> (/var/www/vhosts/spiritual-condition.com/httpdocs/SpiritualConditionTracker/node_modules/glob/dist/commonjs/index.js:9:21) {
+  code: 'ERR_REQUIRE_ESM'
+}
+
+Node.js v21.5.0
+Expo process exited with code 7
+Attempting to restart Expo...
+Starting Expo app...
+Checking for minimatch module...
+Cleaning up existing processes...
+Started Expo with PID 3890860
+Waiting for Expo to initialize...
+Expo: Networking has been disabled
+Expo error: /var/www/vhosts/spiritual-condition.com/httpdocs/SpiritualConditionTracker/node_modules/glob/dist/commonjs/index.js:9
+const minimatch_1 = require("minimatch");
+                    ^
+
+Error [ERR_REQUIRE_ESM]: require() of ES Module /var/www/vhosts/spiritual-condition.com/httpdocs/SpiritualConditionTracker/node_modules/minimatch/dist/commonjs/index.js from /var/www/vhosts/spiritual-condition.com/httpdocs/SpiritualConditionTracker/node_modules/glob/dist/commonjs/index.js not supported.
+/var/www/vhosts/spiritual-condition.com/httpdocs/SpiritualConditionTracker/node_modules/minimatch/dist/commonjs/index.js is treated as an ES module file as it is a .js file whose nearest parent package.json contains "type": "module" which declares all .js files in that package scope as ES modules.
+Instead either rename /var/www/vhosts/spiritual-condition.com/httpdocs/SpiritualConditionTracker/node_modules/minimatch/dist/commonjs/index.js to end in .cjs, change the requiring code to use dynamic import() which is available in all CommonJS modules, or change "type": "module" to "type": "commonjs" in /var/www/vhosts/spiritual-condition.com/httpdocs/SpiritualConditionTracker/node_modules/minimatch/package.json to treat all .js files as CommonJS (using .mjs for all ES modules instead).
+
+    at Object.<anonymous> (/var/www/vhosts/spiritual-condition.com/httpdocs/SpiritualConditionTracker/node_modules/glob/dist/commonjs/index.js:9:21) {
+  code: 'ERR_REQUIRE_ESM'
+}
+
+Node.js v21.5.0
+Expo process exited with code 7
+Attempting to restart Expo...
+Fatal server error: TypeError: Missing parameter name at 5: https://git.new/pathToRegexpError
+    at name (/var/www/vhosts/spiritual-condition.com/httpdocs/SpiritualConditionTracker/node_modules/path-to-regexp/dist/index.js:73:19)
+    at lexer (/var/www/vhosts/spiritual-condition.com/httpdocs/SpiritualConditionTracker/node_modules/path-to-regexp/dist/index.js:91:27)
+    at lexer.next (<anonymous>)
+    at Iter.peek (/var/www/vhosts/spiritual-condition.com/httpdocs/SpiritualConditionTracker/node_modules/path-to-regexp/dist/index.js:106:38)
+    at Iter.tryConsume (/var/www/vhosts/spiritual-condition.com/httpdocs/SpiritualConditionTracker/node_modules/path-to-regexp/dist/index.js:112:28)
+    at Iter.text (/var/www/vhosts/spiritual-condition.com/httpdocs/SpiritualConditionTracker/node_modules/path-to-regexp/dist/index.js:128:30)
+    at consume (/var/www/vhosts/spiritual-condition.com/httpdocs/SpiritualConditionTracker/node_modules/path-to-regexp/dist/index.js:152:29)
+    at parse (/var/www/vhosts/spiritual-condition.com/httpdocs/SpiritualConditionTracker/node_modules/path-to-regexp/dist/index.js:183:20)
+    at /var/www/vhosts/spiritual-condition.com/httpdocs/SpiritualConditionTracker/node_modules/path-to-regexp/dist/index.js:294:74
+    at Array.map (<anonymous>)
+root@davidgs /var/www/vhosts/spiritual-condition.com/httpdocs/SpiritualConditionTracker #

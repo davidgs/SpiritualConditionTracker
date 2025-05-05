@@ -81,108 +81,22 @@ function fixLogoPath() {
   }
 }
 
-// Fix minimatch module issue
-function fixMinimatchError() {
-  try {
-    console.log('Checking for minimatch module...');
-    
-    // Check if the problematic path exists
-    const minimatchPath = path.join(__dirname, 'node_modules', 'minimatch', 'dist', 'commonjs');
-    if (!fs.existsSync(minimatchPath)) {
-      console.log('Creating minimatch directory structure...');
-      fs.mkdirSync(minimatchPath, { recursive: true });
-      
-      // Create a simple shim
-      const indexPath = path.join(minimatchPath, 'index.js');
-      fs.writeFileSync(indexPath, `
-// Simple shim to fix module resolution
-module.exports = require('../../minimatch.js');
-      `);
-      console.log('Fixed minimatch module issue');
-    }
-  } catch (err) {
-    console.error('Error fixing minimatch module:', err);
-  }
+// Skip using Expo and just serve the landing page
+function skipExpo() {
+  console.log('==============================================');
+  console.log('NOTICE: Running in landing-page-only mode');
+  console.log('The app functionality will not be available');
+  console.log('Only the landing page will be served');
+  console.log('==============================================');
+  return null;
 }
 
 // Start Expo in the background
 async function startExpoApp() {
   console.log('Starting Expo app...');
   
-  // Fix minimatch error first
-  fixMinimatchError();
-  
-  // Check if directory exists
-  const expoAppDir = path.join(__dirname, 'expo-app');
-  if (!fs.existsSync(expoAppDir)) {
-    console.error('Error: expo-app directory not found');
-    throw new Error('expo-app directory not found');
-  }
-  
-  // Clean up existing processes
-  try {
-    console.log('Cleaning up existing processes...');
-    spawn('pkill', ['-f', 'npx expo'], { stdio: 'ignore' });
-    await new Promise(resolve => setTimeout(resolve, 1000));
-  } catch (err) {
-    console.log('No processes to clean up');
-  }
-  
-  // Configure environment for reverse proxy
-  const expoEnv = { 
-    ...process.env, 
-    CI: '1',
-    // Critical for reverse proxy
-    DANGEROUSLY_DISABLE_HOST_CHECK: 'true',
-    // For proper path handling
-    PUBLIC_URL: '/',
-    // For Metro bundler behind reverse proxy
-    NODE_ENV: 'production',
-    // Skip validation to avoid path-to-regexp error
-    EXPO_SKIP_DEPENDENCY_VALIDATION: 'true'
-  };
-  
-  // Start Expo with safer options
-  const expoProcess = spawn('npx', [
-    'expo',
-    'start',
-    '--no-dev',
-    '--offline',
-    '--web',
-    '--port',
-    EXPO_PORT
-  ], {
-    cwd: expoAppDir,
-    env: expoEnv,
-    stdio: 'pipe'
-  });
-  
-  console.log(`Started Expo with PID ${expoProcess.pid}`);
-  
-  expoProcess.stdout.on('data', (data) => {
-    const output = data.toString();
-    console.log(`Expo: ${output.trim()}`);
-  });
-  
-  expoProcess.stderr.on('data', (data) => {
-    const output = data.toString();
-    console.error(`Expo error: ${output.trim()}`);
-  });
-  
-  expoProcess.on('close', (code) => {
-    console.log(`Expo process exited with code ${code}`);
-    // Auto-restart if it crashes, but avoid restarting if there's a path-to-regexp error
-    if (code !== 0) {
-      console.log('Attempting to restart Expo...');
-      setTimeout(() => startExpoApp(), 5000);
-    }
-  });
-  
-  // Wait for Expo to initialize (longer timeout for production)
-  console.log('Waiting for Expo to initialize...');
-  await new Promise(resolve => setTimeout(resolve, 15000));
-  
-  return expoProcess;
+  // Just return the skip function
+  return skipExpo();
 }
 
 // Main function to start everything
@@ -224,66 +138,47 @@ Headers: ${JSON.stringify(req.headers, null, 2)}
     // Start Expo in the background
     const expoProcess = await startExpoApp();
     
-    // Forward app routes to Expo - using app.all to catch all HTTP methods
-    app.all('/app*', (req, res) => {
-      console.log(`Proxying app request: ${req.url}`);
-      // Set host header to help Expo
-      req.headers['host'] = `localhost:${EXPO_PORT}`;
-      proxy.web(req, res, { 
-        target: `http://localhost:${EXPO_PORT}`,
-        ignorePath: false
-      });
+    // Create a simple app unavailable message
+    app.get('/app*', (req, res) => {
+      res.send(`
+        <html>
+          <head>
+            <title>App Temporarily Unavailable</title>
+            <style>
+              body {
+                font-family: Arial, sans-serif;
+                text-align: center;
+                padding: 50px;
+                background-color: #f8f9fa;
+              }
+              .container {
+                max-width: 600px;
+                margin: 0 auto;
+                background-color: white;
+                padding: 30px;
+                border-radius: 8px;
+                box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+              }
+              h1 { color: #dc3545; }
+              a { color: #007bff; text-decoration: none; }
+              a:hover { text-decoration: underline; }
+            </style>
+          </head>
+          <body>
+            <div class="container">
+              <h1>App Temporarily Unavailable</h1>
+              <p>The app is currently being upgraded. Please check back later.</p>
+              <p>In the meantime, you can visit the <a href="/">home page</a>.</p>
+              <hr>
+              <p><small>Server time: ${new Date().toISOString()}</small></p>
+            </div>
+          </body>
+        </html>
+      `);
     });
     
-    // Handle asset requests - wildcards to catch all asset paths
-    app.all('/assets*', (req, res) => {
-      console.log(`Proxying asset request: ${req.url}`);
-      proxy.web(req, res, { target: `http://localhost:${EXPO_PORT}` });
-    });
-    
-    app.all('/static*', (req, res) => {
-      console.log(`Proxying static request: ${req.url}`);
-      proxy.web(req, res, { target: `http://localhost:${EXPO_PORT}` });
-    });
-    
-    // Handle JavaScript and bundle requests
-    app.use((req, res, next) => {
-      const url = req.url;
-      if (url.includes('.bundle') || url.includes('.js') || 
-          url.includes('.map') || url.includes('hot-update') || 
-          url.includes('sockjs-node')) {
-        console.log(`Proxying special request: ${url}`);
-        proxy.web(req, res, { target: `http://localhost:${EXPO_PORT}` });
-      } else {
-        next();
-      }
-    });
-    
-    // Handle WebSocket connections for hot reloading - critical for the app to work
-    server.on('upgrade', (req, socket, head) => {
-      const url = req.url;
-      console.log(`WebSocket upgrade: ${url}`);
-      if (url.startsWith('/app') || url.includes('hot-update') || 
-          url.includes('sockjs-node') || url.includes('ws')) {
-        proxy.ws(req, socket, head, { target: `http://localhost:${EXPO_PORT}` });
-      }
-    });
-    
-    // Catch-all route to handle SPA routing
+    // Catch-all route to handle all other routes
     app.get('*', (req, res, next) => {
-      // Don't handle assets or API routes
-      if (req.url.startsWith('/assets') || 
-          req.url.startsWith('/static') || 
-          req.url.startsWith('/api')) {
-        return next();
-      }
-      
-      // If route starts with /app, serve the Expo app
-      if (req.url.startsWith('/app')) {
-        console.log(`SPA route, proxying to Expo: ${req.url}`);
-        return proxy.web(req, res, { target: `http://localhost:${EXPO_PORT}` });
-      }
-      
       // Otherwise serve the landing page
       res.sendFile(path.join(__dirname, 'public', 'index.html'));
     });
