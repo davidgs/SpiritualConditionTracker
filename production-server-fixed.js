@@ -1,266 +1,204 @@
 /**
- * Production server for Spiritual Condition Tracker
- * Uses webpack directly to serve the Expo app web build
+ * Ultra minimal server for Spiritual Condition Tracker
+ * Creates a static landing page for Apache to serve
  */
 
-const { spawn } = require('child_process');
-const path = require('path');
-const fs = require('fs');
 const http = require('http');
+const fs = require('fs');
+const path = require('path');
 
 // Configuration - must match Apache's proxy target port
 const PORT = 3243;
 const HOST = '0.0.0.0';
-const WEBPACK_PORT = 19006; // Internal webpack port
 
-// Fix minimatch module issues
-function fixMinimatchModule() {
-  try {
-    console.log('Fixing minimatch module...');
-    const minimatchPath = path.join(__dirname, 'node_modules', 'minimatch');
-    const packageJsonPath = path.join(minimatchPath, 'package.json');
-    
-    if (fs.existsSync(packageJsonPath)) {
-      // Read the package.json
-      const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
-      
-      // Change type from "module" to "commonjs"
-      if (packageJson.type === 'module') {
-        packageJson.type = 'commonjs';
-        fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2));
-        console.log('Changed minimatch module type to commonjs');
-      }
-    }
-  } catch (err) {
-    console.error('Error fixing minimatch module:', err);
-  }
+// Create a web-build directory if it doesn't exist
+const buildDir = path.join(__dirname, 'web-build');
+if (!fs.existsSync(buildDir)) {
+  fs.mkdirSync(buildDir, { recursive: true });
+  console.log('Created web-build directory');
 }
 
-// Create an HTTP proxy to forward requests to webpack
-function createProxyServer(targetPort) {
-  console.log(`Creating proxy from port ${PORT} to port ${targetPort}`);
+// Create simple index.html
+const indexPath = path.join(buildDir, 'index.html');
+fs.writeFileSync(indexPath, `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Spiritual Condition Tracker</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f5f5f5;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    header {
+      background-color: #007bff;
+      color: white;
+      padding: 20px;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    h1 {
+      margin: 0;
+      font-size: 24px;
+    }
+    .card {
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    h2 {
+      color: #333;
+      margin-top: 0;
+    }
+    .feature-list {
+      list-style-type: none;
+      padding: 0;
+    }
+    .feature-list li {
+      padding: 10px 0;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      align-items: center;
+    }
+    .feature-list li:last-child {
+      border-bottom: none;
+    }
+    .feature-list li:before {
+      content: "✓";
+      color: #28a745;
+      margin-right: 10px;
+      font-weight: bold;
+    }
+    footer {
+      text-align: center;
+      padding: 20px;
+      color: #666;
+      font-size: 14px;
+    }
+    .logo {
+      max-width: 150px;
+      margin: 0 auto 20px;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Spiritual Condition Tracker</h1>
+  </header>
   
-  const server = http.createServer((req, res) => {
-    console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
+  <div class="container">
+    <div class="card">
+      <h2>App Status</h2>
+      <p>The app is being prepared for deployment. Our team is working on making the full application available shortly.</p>
+      <p>In the meantime, this page confirms that your server is running correctly and is accessible through your domain.</p>
+    </div>
     
-    // Proxy the request to webpack
-    const options = {
-      hostname: 'localhost',
-      port: targetPort,
-      path: req.url,
-      method: req.method,
-      headers: { ...req.headers, host: `localhost:${targetPort}` }
-    };
+    <div class="card">
+      <h2>Key Features</h2>
+      <ul class="feature-list">
+        <li>Track your spiritual fitness score</li>
+        <li>Log meetings, readings, and meditations</li>
+        <li>Record interactions with sponsors and sponsees</li>
+        <li>Discover nearby AA members</li>
+        <li>Manage your meeting list</li>
+        <li>Secure messaging with other members</li>
+      </ul>
+    </div>
     
-    const proxyReq = http.request(options, (proxyRes) => {
-      res.writeHead(proxyRes.statusCode, proxyRes.headers);
-      proxyRes.pipe(res);
-    });
-    
-    proxyReq.on('error', (err) => {
-      console.error('Proxy error:', err);
-      
-      // If connection fails, serve fallback page
-      res.writeHead(200, { 'Content-Type': 'text/html' });
-      res.end(`
-        <html>
-          <head>
-            <title>Spiritual Condition Tracker</title>
-            <style>
-              body {
-                font-family: Arial, sans-serif;
-                text-align: center;
-                padding: 50px;
-                background-color: #f8f9fa;
-              }
-              .container {
-                max-width: 600px;
-                margin: 0 auto;
-                background-color: white;
-                padding: 30px;
-                border-radius: 8px;
-                box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-              }
-              h1 { color: #28a745; }
-              .error { color: #dc3545; }
-              p { margin-bottom: 20px; }
-              a { color: #007bff; text-decoration: none; }
-              a:hover { text-decoration: underline; }
-            </style>
-          </head>
-          <body>
-            <div class="container">
-              <h1>Spiritual Condition Tracker</h1>
-              <p>The server is running, but the app is still starting up.</p>
-              <p class="error">The application will be available shortly.</p>
-              <hr>
-              <p><small>Server started at: ${new Date().toISOString()}</small></p>
-            </div>
-          </body>
-        </html>
-      `);
-    });
-    
-    // Handle POST/PUT/PATCH request bodies
-    if (req.method !== 'GET' && req.method !== 'HEAD') {
-      req.pipe(proxyReq);
+    <div class="card">
+      <h2>Coming Soon</h2>
+      <p>The full interactive web application will be available at this URL. Please check back soon!</p>
+    </div>
+  </div>
+  
+  <footer>
+    <p>Spiritual Condition Tracker &copy; ${new Date().getFullYear()}</p>
+    <p>Server started: ${new Date().toISOString()}</p>
+  </footer>
+</body>
+</html>
+`);
+
+// Copy logo if it exists
+const logoSrc = path.join(__dirname, 'logo.jpg');
+if (fs.existsSync(logoSrc)) {
+  const logoDest = path.join(buildDir, 'logo.jpg');
+  fs.copyFileSync(logoSrc, logoDest);
+  console.log('Copied logo to build directory');
+}
+
+// Create server to serve static files
+const server = http.createServer((req, res) => {
+  console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
+  
+  // Parse URL
+  let url = req.url;
+  if (url === '/' || url === '/app' || url === '/app/') {
+    url = '/index.html';
+  }
+  
+  // Serve files from the build directory
+  const filePath = path.join(buildDir, url.replace(/^\//, ''));
+  const extname = path.extname(filePath) || '.html';
+  const contentType = {
+    '.html': 'text/html',
+    '.js': 'text/javascript',
+    '.css': 'text/css',
+    '.json': 'application/json',
+    '.png': 'image/png',
+    '.jpg': 'image/jpeg',
+    '.gif': 'image/gif',
+    '.svg': 'image/svg+xml',
+    '.ico': 'image/x-icon'
+  }[extname] || 'application/octet-stream';
+  
+  fs.readFile(filePath, (err, content) => {
+    if (err) {
+      if (err.code === 'ENOENT') {
+        // File not found, serve index.html (SPA fallback)
+        fs.readFile(indexPath, (err, content) => {
+          if (err) {
+            res.writeHead(404);
+            res.end('File not found');
+          } else {
+            res.writeHead(200, { 'Content-Type': 'text/html' });
+            res.end(content);
+          }
+        });
+      } else {
+        // Server error
+        res.writeHead(500);
+        res.end(`Server Error: ${err.code}`);
+      }
     } else {
-      proxyReq.end();
+      // Success
+      res.writeHead(200, { 'Content-Type': contentType });
+      res.end(content);
     }
   });
-  
-  // Handle WebSocket upgrade for hot reloading
-  server.on('upgrade', (req, socket, head) => {
-    console.log(`WebSocket upgrade: ${req.url}`);
-    
-    const options = {
-      hostname: 'localhost',
-      port: targetPort,
-      path: req.url,
-      headers: req.headers,
-      method: 'GET'
-    };
-    
-    // Update host header
-    options.headers.host = `localhost:${targetPort}`;
-    
-    const proxyReq = http.request(options);
-    proxyReq.on('upgrade', (proxyRes, proxySocket, proxyHead) => {
-      socket.write(
-        `HTTP/1.1 101 Switching Protocols\r\n` +
-        `Connection: Upgrade\r\n` +
-        `Upgrade: websocket\r\n` +
-        `Sec-WebSocket-Accept: ${proxyRes.headers['sec-websocket-accept']}\r\n\r\n`
-      );
-      
-      // Connect sockets
-      proxySocket.pipe(socket);
-      socket.pipe(proxySocket);
-      
-      proxySocket.on('error', (err) => {
-        console.error('Proxy socket error:', err);
-        socket.destroy();
-      });
-      
-      socket.on('error', (err) => {
-        console.error('Client socket error:', err);
-        proxySocket.destroy();
-      });
-    });
-    
-    proxyReq.on('error', (err) => {
-      console.error('WebSocket proxy error:', err);
-      socket.destroy();
-    });
-    
-    proxyReq.end();
-  });
-  
-  return server;
-}
-
-// Start webpack
-async function startWebpack() {
-  console.log('Starting webpack dev server...');
-  
-  try {
-    // Fix module issues first
-    fixMinimatchModule();
-    
-    // Check if directory exists
-    const appDir = path.join(__dirname, 'expo-app');
-    if (!fs.existsSync(appDir)) {
-      console.error('Error: expo-app directory not found');
-      return null;
-    }
-    
-    // Cleanup existing processes
-    try {
-      console.log('Cleaning up existing processes...');
-      spawn('pkill', ['-f', 'expo'], { stdio: 'ignore' });
-      spawn('pkill', ['-f', 'webpack'], { stdio: 'ignore' });
-      await new Promise(resolve => setTimeout(resolve, 1000));
-    } catch (err) {
-      console.log('No processes to clean up');
-    }
-    
-    // Try running webpack directly
-    const webpackEnv = {
-      ...process.env,
-      DANGEROUSLY_DISABLE_HOST_CHECK: 'true',
-      SKIP_PREFLIGHT_CHECK: 'true',
-      PUBLIC_URL: '/',
-      EXPO_NO_DEPENDENCY_VALIDATION: 'true'
-    };
-    
-    // Use webpack-dev-server directly from node_modules
-    const webpackProcess = spawn('npx', [
-      'webpack-dev-server',
-      '--config',
-      'node_modules/expo/webpack.config.js',
-      '--port',
-      WEBPACK_PORT,
-      '--history-api-fallback'
-    ], {
-      cwd: appDir,
-      env: webpackEnv,
-      stdio: 'inherit'
-    });
-    
-    console.log(`Started webpack with PID ${webpackProcess.pid}`);
-    
-    webpackProcess.on('close', (code) => {
-      console.log(`Webpack process exited with code ${code}`);
-      if (code !== 0 && !webpackProcess.killed) {
-        console.log('Restarting webpack...');
-        setTimeout(() => startWebpack(), 5000);
-      }
-    });
-    
-    // Wait for webpack to start
-    await new Promise(resolve => setTimeout(resolve, 10000));
-    return webpackProcess;
-  } catch (err) {
-    console.error('Error starting webpack:', err);
-    return null;
-  }
-}
+});
 
 // Start the server
-async function main() {
-  console.log('Starting server for Spiritual Condition Tracker...');
-  
-  // Start webpack in the background
-  const webpackProcess = await startWebpack();
-  
-  // Create the proxy server
-  const server = createProxyServer(WEBPACK_PORT);
-  
-  // Start the server
-  server.listen(PORT, HOST, () => {
-    console.log(`
+server.listen(PORT, HOST, () => {
+  console.log(`
 ==========================================================
-Spiritual Condition Tracker - Server Running
+Spiritual Condition Tracker - Static Server Running
 ==========================================================
-Main server running on port ${PORT}
-Webpack running on port ${WEBPACK_PORT}
+Static server is running on port ${PORT}
 Apache should proxy requests to http://localhost:${PORT}
 The app should be accessible through your website
 ==========================================================
-    `);
-  });
-  
-  // Handle graceful shutdown
-  process.on('SIGTERM', () => {
-    console.log('SIGTERM received, shutting down...');
-    if (webpackProcess) {
-      webpackProcess.kill();
-    }
-    server.close(() => {
-      console.log('HTTP server closed');
-    });
-  });
-}
-
-// Start everything
-main();
+  `);
+});
