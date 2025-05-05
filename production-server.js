@@ -1,15 +1,31 @@
 /**
  * Direct Expo starter - Starts Expo directly on port 3243
  * Simple script that just starts Expo on the port that Apache proxies to
+ * First runs fix-module-error.sh to fix minimatch module issues
  */
 
-const { spawn } = require('child_process');
+const { spawn, execSync } = require('child_process');
 const path = require('path');
 const fs = require('fs');
 
 // Configuration
 const PORT = 3243;  // The port Apache is configured to proxy to
 const expoAppDir = path.join(__dirname, 'expo-app');
+
+// Run fix-module-error.sh first to fix the minimatch module issue
+console.log('Fixing module errors before starting Expo...');
+try {
+  const fixScriptPath = path.join(__dirname, 'fix-module-error.sh');
+  if (fs.existsSync(fixScriptPath)) {
+    console.log('Running fix-module-error.sh script...');
+    execSync(`bash ${fixScriptPath}`, { stdio: 'inherit' });
+    console.log('Fix script completed');
+  } else {
+    console.warn('Warning: fix-module-error.sh script not found');
+  }
+} catch (err) {
+  console.error('Error running fix script:', err.message);
+}
 
 // Ensure the Expo directory exists
 if (!fs.existsSync(expoAppDir)) {

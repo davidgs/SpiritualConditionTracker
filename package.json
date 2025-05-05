@@ -43,6 +43,7 @@
     "expo-status-bar": "^2.2.3",
     "express": "^5.1.0",
     "http-proxy": "^1.18.1",
+    "minimatch": "^5.1.6",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-native": "^0.79.2",

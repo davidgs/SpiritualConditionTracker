@@ -1,11 +1,30 @@
 // Simple script to start Expo directly on port 3243 with no HTTP server
+// This version first runs the fix-module-error.sh script to fix module issues
 
-const { spawn } = require('child_process');
+const { spawn, execSync } = require('child_process');
 const path = require('path');
+const fs = require('fs');
 
 // Configuration
 const PORT = 3243;
 const expoAppDir = path.join(__dirname, 'expo-app');
+
+console.log('Fixing minimatch module error first...');
+
+// Run the existing fix script first
+try {
+  // Check if the fix script exists
+  const fixScriptPath = path.join(__dirname, 'fix-module-error.sh');
+  if (fs.existsSync(fixScriptPath)) {
+    console.log('Running fix-module-error.sh script...');
+    execSync(`bash ${fixScriptPath}`, { stdio: 'inherit' });
+    console.log('Fix script completed');
+  } else {
+    console.warn('Warning: fix-module-error.sh script not found');
+  }
+} catch (err) {
+  console.error('Error running fix script:', err.message);
+}
 
 console.log(`Starting Expo directly on port ${PORT}...`);
 
