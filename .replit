@@ -16,6 +16,10 @@ author = "agent"
 task = "workflow.run"
 args = "ExpoApp"
 
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "ExpoDeployment"
+
 [[workflows.workflow]]
 name = "ExpoApp"
 author = "agent"
@@ -24,6 +28,15 @@ author = "agent"
 task = "shell.exec"
 args = "cd expo-app && npx expo start --offline --web --port 5000"
 waitForPort = 5000
+
+[[workflows.workflow]]
+name = "ExpoDeployment"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd expo-app && npx expo start --offline --web --port 5001"
+waitForPort = 5001
 
 [deployment]
 run = ["sh", "-c", "cd simple-server && node server.js"]
