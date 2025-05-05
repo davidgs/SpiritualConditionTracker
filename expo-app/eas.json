@@ -4,6 +4,13 @@
     "appVersionSource": "remote"
   },
   "build": {
+    "base": {
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://api.yourdomain.com",
+        "EXPO_IMAGE_UTILS_NO_SHARP": "1"
+      },
+      "node": "18.18.0"
+    },
     "development": {
       "developmentClient": true,
       "distribution": "internal"
@@ -19,13 +26,21 @@
         "resourceClass": "default",
         "distribution": "internal",
         "credentialsSource": "remote",
-        "image": "latest"
+        "image": "latest",
+        "env": {
+          "EXPO_IMAGE_UTILS_NO_SHARP": "1"
+        },
+        "buildConfiguration": "Release"
       },
       "android": {
         "buildType": "apk",
         "distribution": "internal",
         "credentialsSource": "remote",
-        "image": "latest"
+        "image": "latest",
+        "env": {
+          "EXPO_IMAGE_UTILS_NO_SHARP": "1"
+        },
+        "gradleCommand": ":app:assembleRelease"
       }
     }
   },

@@ -22,9 +22,12 @@
         "NSCalendarsUsageDescription": "This app needs access to your calendar to add meetings and set reminders.",
         "NSLocationWhenInUseUsageDescription": "This app needs access to your location to find nearby meetings and members.",
         "NSBluetoothAlwaysUsageDescription": "This app needs access to Bluetooth to discover nearby members.",
+        "NSBluetoothPeripheralUsageDescription": "This app uses Bluetooth to connect with nearby AA members.",
         "UIBackgroundModes": [
           "bluetooth-central",
-          "location"
+          "bluetooth-peripheral",
+          "location",
+          "fetch"
         ]
       }
     },
@@ -37,8 +40,12 @@
       "versionCode": 1,
       "permissions": [
         "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION",
         "BLUETOOTH",
         "BLUETOOTH_ADMIN",
+        "BLUETOOTH_SCAN",
+        "BLUETOOTH_CONNECT",
+        "BLUETOOTH_ADVERTISE",
         "READ_CALENDAR",
         "WRITE_CALENDAR"
       ]
