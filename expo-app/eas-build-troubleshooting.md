@@ -1,153 +1,134 @@
 # EAS Build Troubleshooting Guide
 
-This document provides solutions for common issues encountered when building the Spiritual Condition Tracker app with EAS.
+This guide addresses common issues encountered when building with EAS Build.
 
-## "Invalid UUID appId" Error
+## Module Resolution Issues
 
-### Problem
+### `Cannot find module 'minimatch/dist/commonjs/index.js'`
 
-When running an EAS build, you encounter this error:
+This error occurs when the minimatch module structure doesn't match what EAS Build expects.
 
+**Solution:**
+
+1. Make sure minimatch is explicitly added to your dependencies:
+
+```json
+"dependencies": {
+  "minimatch": "^9.0.3"
+}
 ```
-Invalid UUID appId
+
+2. Run the `fix-dependencies.sh` script before building:
+
+```bash
+chmod +x ./fix-dependencies.sh
+./fix-dependencies.sh
 ```
 
-### Cause
+3. Use the `--preserve-symlinks` Node option:
 
-This error occurs when:
+```bash
+export NODE_OPTIONS="--preserve-symlinks"
+eas build [options]
+```
 
-1. The `projectId` in the app.json file is not a valid UUID format.
-2. There's a mismatch between your Expo account and the project configuration.
-3. You've recently renamed or duplicated the project.
+## Yoga/React Native Component Errors
 
-### Solution
+### Errors like `'Edges' is a private member of 'facebook::yoga::Style'`
 
-1. **Check projectId Format**: Ensure the projectId is a valid UUID in the format `xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx`
+These errors indicate compatibility issues between React Native components.
 
-   ```json
-   "extra": {
-     "eas": {
-       "projectId": "a82e4d89-0b9f-45e8-a23d-c9b8e7662695"
-     }
-   }
-   ```
+**Solution:**
 
-2. **Generate a New Project ID**: You can generate a new valid UUID and update app.json:
+1. Make sure all React Native packages are on compatible versions
+2. Specifically for safe-area-context, use version 4.8.1:
 
-   ```bash
-   npx uuid
-   ```
+```json
+"react-native-safe-area-context": "4.8.1"
+```
 
-   Then, replace the projectId in app.json with the generated UUID.
+3. Use a specific build configuration in eas.json:
 
-3. **Update the Updates URL**: Make sure the updates URL in app.json matches the projectId:
+```json
+"ios": {
+  "buildConfiguration": "Release",
+  "env": {
+    "EXPO_IMAGE_UTILS_NO_SHARP": "1"
+  }
+}
+```
 
-   ```json
-   "updates": {
-     "url": "https://u.expo.dev/a82e4d89-0b9f-45e8-a23d-c9b8e7662695"
-   }
-   ```
+## Build Failures or Timeouts
 
-4. **Re-Login to EAS**: Sometimes logging out and back in can help:
+### Build fails with timeout or unexplained error
 
-   ```bash
-   npx eas logout
-   npx eas login
-   ```
+**Solution:**
 
-5. **Create a New EAS Project**: If all else fails, create a new EAS project:
+1. Use the `--no-wait` flag with EAS Build to initiate the build without waiting:
 
-   ```bash
-   npx eas project:init
-   ```
+```bash
+eas build --platform ios --profile native --no-wait
+```
 
-   This will create a new projectId and configure your app.json properly.
+2. Monitor build progress in the Expo website dashboard
+3. Consider using a local build if EAS Build continues to fail
 
-## Authentication Issues
+## iOS Specific Issues
 
-### Problem
+### CoreBluetooth Errors
 
-Unable to authenticate with EAS or seeing permission errors.
+If you encounter CoreBluetooth symbol errors:
 
-### Solution
+1. Ensure proper permissions are in app.json:
 
-1. Ensure you're logged in with the correct Expo account:
-   ```bash
-   npx eas whoami
-   ```
+```json
+"ios": {
+  "infoPlist": {
+    "NSBluetoothAlwaysUsageDescription": "This app uses Bluetooth to connect with nearby AA members.",
+    "NSBluetoothPeripheralUsageDescription": "This app uses Bluetooth to connect with nearby AA members.",
+    "UIBackgroundModes": ["bluetooth-central", "bluetooth-peripheral"]
+  }
+}
+```
 
-2. Check if your EXPO_TOKEN is set correctly in your environment variables.
+2. Include proper native module implementations:
 
-3. Re-login using:
-   ```bash
-   npx eas logout
-   npx eas login
-   ```
+```js
+// Use react-native-ble-plx instead of expo-bluetooth
+import { BleManager } from 'react-native-ble-plx';
+```
 
-## iOS Build Issues
+## Android Specific Issues
 
-### Problem
+### Android SDK or JDK Issues
 
-iOS build fails with certificate or provisioning profile errors.
+If you encounter Android SDK or JDK errors:
 
-### Solution
+1. Make sure your local environment has correct versions:
+   - JDK 11 or 17
+   - Android SDK 33+
 
-1. Let EAS manage your credentials automatically (easiest):
-   ```bash
-   npx eas build --platform ios --profile preview --non-interactive --auto-credentials
-   ```
+2. Use the 'latest' image in eas.json:
 
-2. Use a generic provisioning profile (only for testing):
-   ```bash
-   npx eas build --platform ios --profile preview --non-interactive --clear-provisions
-   ```
+```json
+"android": {
+  "image": "latest"
+}
+```
 
-3. Configure credentials manually:
-   ```bash
-   npx eas credentials
-   ```
+## Getting Help from EAS Support
 
-## Android Build Issues
+If issues persist:
 
-### Problem
+1. Run `eas diagnostics` to get system details
+2. Contact Expo support with your build ID
+3. Include detailed error messages and project configuration
 
-Android build fails with keystore or signing errors.
+## Recommended Build Process
 
-### Solution
+For the most reliable builds:
 
-1. Let EAS manage your keystore (recommended for first-time builds):
-   ```bash
-   npx eas build --platform android --profile preview --non-interactive
-   ```
-
-2. If you have your own keystore, configure it:
-   ```bash
-   npx eas credentials
-   ```
-
-## Other Common Issues
-
-1. **Out of date Expo SDK or Expo CLI**: Update your dependencies:
-   ```bash
-   npm install -g eas-cli
-   npm install expo@latest
-   ```
-
-2. **Incompatible dependencies**: Check for warnings in your package.json dependencies.
-
-3. **Missing runtime version**: Ensure your app.json has the runtimeVersion field:
-   ```json
-   "runtimeVersion": {
-     "policy": "sdkVersion"
-   }
-   ```
-
-4. **Invalid or missing app configuration**: Use the check-build-environment.sh script to verify your configuration.
-
-## Getting Further Help
-
-If you continue to face issues after trying these solutions:
-
-1. Visit the [Expo forums](https://forums.expo.dev/)
-2. Check the [EAS Build documentation](https://docs.expo.dev/build/introduction/)
-3. Look for similar issues on [GitHub](https://github.com/expo/expo/issues)
+1. Always run `fix-dependencies.sh` before building
+2. Use the `--no-wait` flag for EAS builds
+3. Monitor in the Expo developer dashboard
+4. Consider setting up CI/CD for automated builds once the configuration is stable

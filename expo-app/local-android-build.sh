@@ -22,14 +22,20 @@ fi
 # Show current user
 eas whoami
 
+# Apply dependency fixes
+echo "Applying dependency fixes before build..."
+chmod +x ./fix-dependencies.sh
+./fix-dependencies.sh
+
 # Start the build
 echo "Starting Android build process..."
 echo "This will build the app with the native profile and open the build status in your browser."
 echo "Press Enter to continue or Ctrl+C to cancel..."
 read
 
-# Run the build command
-eas build --platform android --profile native
+# Run the build command with minimatch workaround
+export NODE_OPTIONS="--preserve-symlinks"
+eas build --platform android --profile native --no-wait
 
 echo "Build process has been initiated!"
 echo "You can monitor the build at: https://expo.dev/accounts/davidgs/projects/spiritual-condition-tracker/builds"
