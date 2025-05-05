@@ -26,7 +26,7 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "node production-server.js"
+args = "node start-expo-server.js"
 waitForPort = 3243
 
 [[workflows.workflow]]
