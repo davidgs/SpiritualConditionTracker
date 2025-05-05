@@ -16,10 +16,6 @@ author = "agent"
 task = "workflow.run"
 args = "ProductionServer"
 
-[[workflows.workflow.tasks]]
-task = "workflow.run"
-args = "ReplicationServer"
-
 [[workflows.workflow]]
 name = "ProductionServer"
 author = "agent"
@@ -27,15 +23,6 @@ author = "agent"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "node production-server.js"
-waitForPort = 5000
-
-[[workflows.workflow]]
-name = "ReplicationServer"
-author = "agent"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "node deployment-server.js"
 waitForPort = 5000
 
 [deployment]
