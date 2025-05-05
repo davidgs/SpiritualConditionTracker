@@ -1,11 +1,23 @@
 #!/bin/bash
 
-# This script is used to deploy the Expo app
+# This script is executed when the application is deployed on Replit
+# It ensures the latest version of the app is served
 
-# Make sure the script is executable
-chmod +x deploy-expo.sh
+echo "Starting deployment process..."
 
-# Start the ExpoApp workflow
-echo "Starting ExpoApp workflow..."
-cd expo-app
-npx expo start --offline --web --port 5000
+# Stop any running processes
+pkill -f "node main.js" || true
+pkill -f "npx expo" || true
+
+# Change to the project directory
+cd "$(dirname "$0")"
+
+# Check if the expo-app directory exists
+if [ ! -d "expo-app" ]; then
+  echo "Error: expo-app directory not found!"
+  exit 1
+fi
+
+# Start the main deployment server
+echo "Starting main deployment server..."
+node main.js
