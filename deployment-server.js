@@ -174,11 +174,46 @@ async function main() {
       });
     });
     
+    // Forward specific known bundle patterns with fixed routing
+    app.use('/index.bundle', (req, res) => {
+      console.log(`Proxying main bundle request: ${req.url}`);
+      proxy.web(req, res, {
+        target: `http://localhost:${EXPO_PORT}`
+      });
+    });
+    
+    // Handle bundle requests with extensions
+    app.use(function(req, res, next) {
+      if (req.path.endsWith('.bundle')) {
+        console.log(`Proxying bundle request with extension handler: ${req.url}`);
+        proxy.web(req, res, {
+          target: `http://localhost:${EXPO_PORT}`
+        });
+      } else {
+        next();
+      }
+    });
+
+    // Handle asset requests individually to avoid array syntax issues
+    app.use('/assets', (req, res) => {
+      console.log(`Proxying assets request: ${req.url}`);
+      proxy.web(req, res, {
+        target: `http://localhost:${EXPO_PORT}`
+      });
+    });
+    
+    app.use('/static', (req, res) => {
+      console.log(`Proxying static request: ${req.url}`);
+      proxy.web(req, res, {
+        target: `http://localhost:${EXPO_PORT}`
+      });
+    });
+    
     // Check if the URL contains bundle-related requests and proxy them
     app.use((req, res, next) => {
       const url = req.url;
       if (url.includes('bundle') || url.includes('.js') || url.includes('assets') || 
-          url.includes('static') || url.includes('hot')) {
+          url.includes('static') || url.includes('hot') || url.includes('.map')) {
         console.log(`Proxying bundle-related request: ${url}`);
         return proxy.web(req, res, {
           target: `http://localhost:${EXPO_PORT}`
