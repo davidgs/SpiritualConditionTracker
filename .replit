@@ -26,7 +26,7 @@ args = "node deployment-server.js"
 waitForPort = 3000
 
 [deployment]
-run = ["sh", "-c", "cd simple-server && node server.js"]
+run = ["sh", "-c", "node deployment-server.js"]
 deploymentTarget = "cloudrun"
 
 [[ports]]

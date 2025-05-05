@@ -158,12 +158,33 @@ async function main() {
       res.sendFile(path.join(__dirname, 'index.html'));
     });
     
+    // Handle bundle requests directly - important for app loading
+    app.use('/index.bundle', (req, res) => {
+      console.log(`Proxying bundle request: ${req.url}`);
+      proxy.web(req, res, {
+        target: `http://localhost:${EXPO_PORT}`
+      });
+    });
+    
     // Forward all app related requests to the Expo app
     app.use('/app', (req, res) => {
       console.log(`Proxying ${req.method} request for ${req.url}`);
       proxy.web(req, res, { 
         target: `http://localhost:${EXPO_PORT}` 
       });
+    });
+    
+    // Check if the URL contains bundle-related requests and proxy them
+    app.use((req, res, next) => {
+      const url = req.url;
+      if (url.includes('bundle') || url.includes('.js') || url.includes('assets') || 
+          url.includes('static') || url.includes('hot')) {
+        console.log(`Proxying bundle-related request: ${url}`);
+        return proxy.web(req, res, {
+          target: `http://localhost:${EXPO_PORT}`
+        });
+      }
+      next();
     });
     
     // Catch-all route for any other requests
