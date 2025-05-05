@@ -167,15 +167,20 @@ async function main() {
       });
     });
     
+    // Redirect /app to /app/ to ensure proper path handling
+    app.get('/app', (req, res) => {
+      res.redirect('/app/');
+    });
+    
     // Forward all app related requests to the Expo app
-    app.use('/app', (req, res) => {
+    app.use('/app/', (req, res) => {
       console.log(`Proxying ${req.method} request for ${req.url}`);
-      // Change the target URL to explicitly point to the Expo app's web root
+      // Strip the /app/ prefix when forwarding to Expo
+      req.url = req.url.replace(/^\/app\//, '/');
+      
       proxy.web(req, res, { 
         target: `http://localhost:${EXPO_PORT}`,
-        changeOrigin: true,
-        ignorePath: true,
-        pathRewrite: { '^/app': '/' }
+        changeOrigin: true
       });
     });
     
@@ -239,10 +244,20 @@ async function main() {
     // Handle WebSocket connections
     server.on('upgrade', (req, socket, head) => {
       console.log(`WebSocket upgrade: ${req.url}`);
-      if (req.url.indexOf('/app') === 0) {
+      if (req.url.startsWith('/app/')) {
         // Modify the path for WebSocket connections too
-        const modifiedUrl = req.url.replace(/^\/app/, '');
-        req.url = modifiedUrl;
+        req.url = req.url.replace(/^\/app\//, '/');
+        proxy.ws(req, socket, head, { 
+          target: `http://localhost:${EXPO_PORT}`
+        });
+      } else if (req.url.startsWith('/app')) {
+        // Handle WebSocket for /app without trailing slash
+        req.url = req.url.replace(/^\/app/, '');
+        proxy.ws(req, socket, head, { 
+          target: `http://localhost:${EXPO_PORT}`
+        });
+      } else if (req.url.includes('hot') || req.url.includes('hmr')) {
+        // Handle WebSocket for HMR
         proxy.ws(req, socket, head, { 
           target: `http://localhost:${EXPO_PORT}`
         });
