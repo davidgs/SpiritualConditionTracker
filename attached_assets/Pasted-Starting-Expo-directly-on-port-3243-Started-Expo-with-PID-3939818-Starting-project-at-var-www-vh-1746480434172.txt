@@ -1,0 +1,37 @@
+Starting Expo directly on port 3243...
+Started Expo with PID 3939818
+Starting project at /var/www/vhosts/spiritual-condition.com/httpdocs/SpiritualConditionTracker/expo-app
+Error: Cannot find module './lib/stream'
+Require stack:
+- /var/www/vhosts/spiritual-condition.com/httpdocs/SpiritualConditionTracker/node_modules/ws/index.js
+- /var/www/vhosts/spiritual-condition.com/httpdocs/SpiritualConditionTracker/node_modules/@expo/cli/build/src/start/server/metro/dev-server/createMessageSocket.js
+- /var/www/vhosts/spiritual-condition.com/httpdocs/SpiritualConditionTracker/node_modules/@expo/cli/build/src/start/server/metro/dev-server/createMetroMiddleware.js
+- /var/www/vhosts/spiritual-condition.com/httpdocs/SpiritualConditionTracker/node_modules/@expo/cli/build/src/start/server/metro/instantiateMetro.js
+- /var/www/vhosts/spiritual-condition.com/httpdocs/SpiritualConditionTracker/node_modules/@expo/cli/build/src/start/server/metro/MetroBundlerDevServer.js
+- /var/www/vhosts/spiritual-condition.com/httpdocs/SpiritualConditionTracker/node_modules/@expo/cli/build/src/start/server/DevServerManager.js
+- /var/www/vhosts/spiritual-condition.com/httpdocs/SpiritualConditionTracker/node_modules/@expo/cli/build/src/start/startAsync.js
+- /var/www/vhosts/spiritual-condition.com/httpdocs/SpiritualConditionTracker/node_modules/@expo/cli/build/src/start/index.js
+- /var/www/vhosts/spiritual-condition.com/httpdocs/SpiritualConditionTracker/node_modules/@expo/cli/build/bin/cli
+- /var/www/vhosts/spiritual-condition.com/httpdocs/SpiritualConditionTracker/node_modules/expo/bin/cli
+Error: Cannot find module './lib/stream'
+Require stack:
+- /var/www/vhosts/spiritual-condition.com/httpdocs/SpiritualConditionTracker/node_modules/ws/index.js
+- /var/www/vhosts/spiritual-condition.com/httpdocs/SpiritualConditionTracker/node_modules/@expo/cli/build/src/start/server/metro/dev-server/createMessageSocket.js
+- /var/www/vhosts/spiritual-condition.com/httpdocs/SpiritualConditionTracker/node_modules/@expo/cli/build/src/start/server/metro/dev-server/createMetroMiddleware.js
+- /var/www/vhosts/spiritual-condition.com/httpdocs/SpiritualConditionTracker/node_modules/@expo/cli/build/src/start/server/metro/instantiateMetro.js
+- /var/www/vhosts/spiritual-condition.com/httpdocs/SpiritualConditionTracker/node_modules/@expo/cli/build/src/start/server/metro/MetroBundlerDevServer.js
+- /var/www/vhosts/spiritual-condition.com/httpdocs/SpiritualConditionTracker/node_modules/@expo/cli/build/src/start/server/DevServerManager.js
+- /var/www/vhosts/spiritual-condition.com/httpdocs/SpiritualConditionTracker/node_modules/@expo/cli/build/src/start/startAsync.js
+- /var/www/vhosts/spiritual-condition.com/httpdocs/SpiritualConditionTracker/node_modules/@expo/cli/build/src/start/index.js
+- /var/www/vhosts/spiritual-condition.com/httpdocs/SpiritualConditionTracker/node_modules/@expo/cli/build/bin/cli
+- /var/www/vhosts/spiritual-condition.com/httpdocs/SpiritualConditionTracker/node_modules/expo/bin/cli
+    at Function.Module._resolveFilename (node:internal/modules/cjs/loader:1143:15)
+    at Function.Module._load (node:internal/modules/cjs/loader:984:27)
+    at Module.require (node:internal/modules/cjs/loader:1234:19)
+    at require (node:internal/modules/helpers:176:18)
+    at Object.<anonymous> (/var/www/vhosts/spiritual-condition.com/httpdocs/SpiritualConditionTracker/node_modules/ws/index.js:5:35)
+    at Module._compile (node:internal/modules/cjs/loader:1375:14)
+    at Object.Module._extensions..js (node:internal/modules/cjs/loader:1434:10)
+    at Module.load (node:internal/modules/cjs/loader:1206:32)
+    at Function.Module._load (node:internal/modules/cjs/loader:1022:12)
+    at Module.require (node:internal/modules/cjs/loader:1234:19)

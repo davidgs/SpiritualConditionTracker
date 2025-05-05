@@ -36,8 +36,8 @@ module.exports = require('../src/index');
 EOF
 fi
 
-# Fix for ws module limiter issue
-echo "Fixing ws module limiter issue..."
+# Fix for ws module issues
+echo "Fixing ws module issues..."
 mkdir -p node_modules/ws/lib
 
 # Create limiter.js if needed
@@ -79,5 +79,55 @@ class Limiter {
 module.exports = Limiter;
 EOF
 fi
+
+# Create stream.js if needed
+if [ ! -f "node_modules/ws/lib/stream.js" ]; then
+  echo "Creating ws stream.js compatibility file..."
+  cat > node_modules/ws/lib/stream.js << 'EOF'
+'use strict';
+
+const { Duplex } = require('stream');
+
+/**
+ * Simple implementation for the missing stream.js module
+ */
+
+class WebSocketStream extends Duplex {
+  constructor(ws, options) {
+    super(options);
+    
+    this._ws = ws;
+    this._ws.on('message', (msg, isBinary) => {
+      const data = isBinary ? msg : msg.toString();
+      if (!this.push(data)) this._ws.pause();
+    });
+    
+    this._ws.on('close', () => {
+      this.push(null);
+    });
+    
+    this.on('end', () => {
+      this._ws.close();
+    });
+  }
+  
+  _read() {
+    this._ws.resume();
+  }
+  
+  _write(chunk, encoding, callback) {
+    this._ws.send(chunk, callback);
+  }
+}
+
+module.exports = WebSocketStream;
+EOF
+fi
+
+# Create all required subdirectories
+mkdir -p node_modules/ws/lib/stream
+
+# Create dummy empty files that might be required
+touch node_modules/ws/lib/stream/index.js
 
 echo "Done fixing module errors."
