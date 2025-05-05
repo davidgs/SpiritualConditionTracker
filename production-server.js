@@ -1,66 +1,53 @@
 /**
  * Production-ready server for Spiritual Condition Tracker
- * Designed to work reliably with Apache reverse proxy
+ * Pure Node.js - No dependencies on Express or other modules
  */
 
-const express = require('express');
-const { spawn } = require('child_process');
-const path = require('path');
 const http = require('http');
-const httpProxy = require('http-proxy');
 const fs = require('fs');
+const path = require('path');
 
 // Configuration
-const PORT = process.env.PORT || 3243; // Use 3243 for your server
-const EXPO_PORT = 5001;
-const HOST = process.env.HOST || '0.0.0.0';
+const PORT = process.env.PORT || 3243;
+const HOST = '0.0.0.0';
 
-// Create Express app
-const app = express();
+// MIME types for static files
+const MIME_TYPES = {
+  '.html': 'text/html',
+  '.js': 'text/javascript',
+  '.css': 'text/css',
+  '.json': 'application/json',
+  '.png': 'image/png',
+  '.jpg': 'image/jpeg',
+  '.jpeg': 'image/jpeg',
+  '.gif': 'image/gif',
+  '.svg': 'image/svg+xml',
+  '.ico': 'image/x-icon',
+  '.txt': 'text/plain',
+};
 
-// Create HTTP server
-const server = http.createServer(app);
-
-// Create a proxy server for Expo with settings for reverse proxy
-const proxy = httpProxy.createProxyServer({
-  ws: true,
-  changeOrigin: true,
-  xfwd: true,     // Forward the client IP
-  secure: false   // Don't verify SSL certs
-});
-
-// Handle proxy errors
-proxy.on('error', (err, req, res) => {
-  console.error('Proxy error:', err);
-  if (res && !res.headersSent && res.writeHead) {
-    res.writeHead(500);
-    res.end(`Proxy error: ${err.message}`);
-  }
-});
-
-// Configure Express middleware - serve static files
-app.use(express.static(path.join(__dirname)));
-app.use('/public', express.static(path.join(__dirname, 'public')));
-
-// Custom middleware to log all requests
-app.use((req, res, next) => {
-  console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
-  next();
-});
-
-// Fix for logo in HTML file and ensure it exists in both locations
-function fixLogoPath() {
+// Ensure logo is in place and fix HTML paths
+function prepareFiles() {
   try {
-    // Copy logo to ensure it's in both locations
-    if (fs.existsSync('logo.jpg')) {
-      if (!fs.existsSync('public')) {
-        fs.mkdirSync('public', { recursive: true });
-      }
-      fs.copyFileSync('logo.jpg', path.join('public', 'logo.jpg'));
+    console.log('Preparing files...');
+    
+    // Create public directory if needed
+    const publicDir = path.join(__dirname, 'public');
+    if (!fs.existsSync(publicDir)) {
+      fs.mkdirSync(publicDir, { recursive: true });
+      console.log('Created public directory');
+    }
+    
+    // Copy logo to public directory if it exists
+    const logoSrc = path.join(__dirname, 'logo.jpg');
+    const logoDest = path.join(publicDir, 'logo.jpg');
+    if (fs.existsSync(logoSrc) && !fs.existsSync(logoDest)) {
+      fs.copyFileSync(logoSrc, logoDest);
       console.log('Logo copied to public directory');
     }
     
-    const indexPath = path.join(__dirname, 'public', 'index.html');
+    // Fix paths in index.html if it exists
+    const indexPath = path.join(publicDir, 'index.html');
     if (fs.existsSync(indexPath)) {
       let content = fs.readFileSync(indexPath, 'utf8');
       
@@ -74,148 +61,274 @@ function fixLogoPath() {
       fs.writeFileSync(indexPath, content);
       console.log('Fixed paths in index.html');
     } else {
-      console.error('Could not find index.html to fix paths');
+      console.error('Warning: index.html not found in public directory');
     }
   } catch (err) {
-    console.error('Error fixing paths:', err);
+    console.error('Error preparing files:', err);
   }
 }
 
-// Skip using Expo and just serve the landing page
-function skipExpo() {
-  console.log('==============================================');
-  console.log('NOTICE: Running in landing-page-only mode');
-  console.log('The app functionality will not be available');
-  console.log('Only the landing page will be served');
-  console.log('==============================================');
-  return null;
+// Serve a static file
+function serveFile(res, filePath, contentType) {
+  fs.readFile(filePath, (err, content) => {
+    if (err) {
+      if (err.code === 'ENOENT') {
+        console.error(`File not found: ${filePath}`);
+        res.writeHead(404);
+        res.end('File not found');
+      } else {
+        console.error(`Error reading file: ${filePath}`, err);
+        res.writeHead(500);
+        res.end('Server error');
+      }
+    } else {
+      res.writeHead(200, { 'Content-Type': contentType });
+      res.end(content);
+    }
+  });
 }
 
-// Start Expo in the background
-async function startExpoApp() {
-  console.log('Starting Expo app...');
-  
-  // Just return the skip function
-  return skipExpo();
+// Serve the index.html file
+function serveIndex(res) {
+  const filePath = path.join(__dirname, 'public', 'index.html');
+  serveFile(res, filePath, 'text/html');
 }
 
-// Main function to start everything
-async function main() {
-  try {
-    // Fix logo path in HTML
-    fixLogoPath();
-    
-    // Serve the landing page at root
-    app.get('/', (req, res) => {
-      res.sendFile(path.join(__dirname, 'public', 'index.html'));
-    });
-    
-    // Add a simple test page to verify server is working
-    app.get('/server-test', (req, res) => {
-      res.send(`
-        <html><head><title>Server Test</title></head>
-        <body>
-          <h1>Server is running properly!</h1>
-          <p>This confirms that the Express server is working.</p>
-          <p><a href="/">Go to home page</a></p>
-          <p><a href="/app">Go to app</a></p>
-          <p>Server time: ${new Date().toISOString()}</p>
-        </body></html>
-      `);
-    });
-    
-    // Add debug route to show headers
-    app.get('/debug-headers', (req, res) => {
-      res.send(`
+// Create a professional-looking app status page
+function serveAppStatusPage(res) {
+  res.writeHead(200, { 'Content-Type': 'text/html' });
+  res.end(`
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <title>Spiritual Condition Tracker</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <style>
+          body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+          }
+          .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+          }
+          header {
+            background-color: #007bff;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 30px;
+          }
+          h1 {
+            margin: 0;
+            font-size: 24px;
+          }
+          .card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+          }
+          h2 {
+            color: #333;
+            margin-top: 0;
+          }
+          .feature-list {
+            list-style-type: none;
+            padding: 0;
+          }
+          .feature-list li {
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            align-items: center;
+          }
+          .feature-list li:last-child {
+            border-bottom: none;
+          }
+          .feature-list li:before {
+            content: "✓";
+            color: #28a745;
+            margin-right: 10px;
+            font-weight: bold;
+          }
+          footer {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            font-size: 14px;
+          }
+        </style>
+      </head>
+      <body>
+        <header>
+          <h1>Spiritual Condition Tracker</h1>
+        </header>
+        
+        <div class="container">
+          <div class="card">
+            <h2>App Status</h2>
+            <p>The app is being prepared for deployment. Our team is working on making the full application available shortly.</p>
+            <p>In the meantime, this page confirms that your server is running correctly and is accessible through your domain.</p>
+          </div>
+          
+          <div class="card">
+            <h2>Key Features</h2>
+            <ul class="feature-list">
+              <li>Track your spiritual fitness score</li>
+              <li>Log meetings, readings, and meditations</li>
+              <li>Record interactions with sponsors and sponsees</li>
+              <li>Discover nearby AA members</li>
+              <li>Manage your meeting list</li>
+              <li>Secure messaging with other members</li>
+            </ul>
+          </div>
+          
+          <div class="card">
+            <h2>Coming Soon</h2>
+            <p>The full interactive web application will be available at this URL. Please check back soon!</p>
+          </div>
+        </div>
+        
+        <footer>
+          <p>Spiritual Condition Tracker &copy; ${new Date().getFullYear()}</p>
+          <p>Server started: ${new Date().toISOString()}</p>
+        </footer>
+      </body>
+    </html>
+  `);
+}
+
+// Serve a server test page
+function serveTestPage(res) {
+  res.writeHead(200, { 'Content-Type': 'text/html' });
+  res.end(`
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <title>Server Test</title>
+        <meta charset="utf-8">
+      </head>
+      <body>
+        <h1>Server is running properly!</h1>
+        <p>This confirms that the server is working correctly.</p>
+        <p><a href="/">Go to home page</a></p>
+        <p><a href="/app">Go to app</a></p>
+        <p>Server time: ${new Date().toISOString()}</p>
+      </body>
+    </html>
+  `);
+}
+
+// Serve a debug headers page
+function serveDebugPage(req, res) {
+  res.writeHead(200, { 'Content-Type': 'text/html' });
+  res.end(`
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <title>Debug Headers</title>
+        <meta charset="utf-8">
+      </head>
+      <body>
+        <h1>Server Debug Info</h1>
         <pre>
 Server running on port: ${PORT}
-Environment: ${process.env.NODE_ENV}
+Environment: ${process.env.NODE_ENV || 'development'}
+Request URL: ${req.url}
+Request Method: ${req.method}
 Headers: ${JSON.stringify(req.headers, null, 2)}
         </pre>
-      `);
-    });
+      </body>
+    </html>
+  `);
+}
+
+// Start the HTTP server
+function startServer() {
+  // Prepare files first
+  prepareFiles();
+  
+  // Create the server
+  const server = http.createServer((req, res) => {
+    // Log the request
+    console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
     
-    // Start Expo in the background
-    const expoProcess = await startExpoApp();
+    // Parse the URL
+    const url = new URL(req.url, `http://${req.headers.host}`);
+    const pathname = url.pathname;
     
-    // Create a simple app unavailable message
-    app.get('/app*', (req, res) => {
-      res.send(`
-        <html>
-          <head>
-            <title>App Temporarily Unavailable</title>
-            <style>
-              body {
-                font-family: Arial, sans-serif;
-                text-align: center;
-                padding: 50px;
-                background-color: #f8f9fa;
-              }
-              .container {
-                max-width: 600px;
-                margin: 0 auto;
-                background-color: white;
-                padding: 30px;
-                border-radius: 8px;
-                box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-              }
-              h1 { color: #dc3545; }
-              a { color: #007bff; text-decoration: none; }
-              a:hover { text-decoration: underline; }
-            </style>
-          </head>
-          <body>
-            <div class="container">
-              <h1>App Temporarily Unavailable</h1>
-              <p>The app is currently being upgraded. Please check back later.</p>
-              <p>In the meantime, you can visit the <a href="/">home page</a>.</p>
-              <hr>
-              <p><small>Server time: ${new Date().toISOString()}</small></p>
-            </div>
-          </body>
-        </html>
-      `);
-    });
-    
-    // Catch-all route to handle all other routes
-    app.get('*', (req, res, next) => {
-      // Otherwise serve the landing page
-      res.sendFile(path.join(__dirname, 'public', 'index.html'));
-    });
-    
-    // Start the server
-    server.listen(PORT, HOST, () => {
-      console.log(`
+    // Route based on pathname
+    if (pathname === '/' || pathname === '/index.html') {
+      // Serve the landing page
+      serveIndex(res);
+    } 
+    else if (pathname === '/server-test') {
+      // Serve the test page
+      serveTestPage(res);
+    } 
+    else if (pathname === '/debug-headers') {
+      // Serve the debug page
+      serveDebugPage(req, res);
+    } 
+    else if (pathname.startsWith('/app')) {
+      // Serve the app status page for any app routes
+      serveAppStatusPage(res);
+    } 
+    else if (pathname === '/logo.jpg') {
+      // Serve the logo
+      const filePath = path.join(__dirname, 'public', 'logo.jpg');
+      serveFile(res, filePath, 'image/jpeg');
+    } 
+    else {
+      // Try to serve a static file
+      const filePath = path.join(__dirname, 'public', pathname.substring(1));
+      const extname = path.extname(filePath);
+      const contentType = MIME_TYPES[extname] || 'application/octet-stream';
+      
+      // Check if file exists
+      fs.access(filePath, fs.constants.F_OK, (err) => {
+        if (err) {
+          // File not found, serve landing page as fallback
+          serveIndex(res);
+        } else {
+          // File exists, serve it
+          serveFile(res, filePath, contentType);
+        }
+      });
+    }
+  });
+  
+  // Start listening for requests
+  server.listen(PORT, HOST, () => {
+    console.log(`
 ==========================================================
 Spiritual Condition Tracker Server Running
 ==========================================================
 Server port: ${PORT}
-Expo port: ${EXPO_PORT}
-Landing page: http://localhost:${PORT}/
-App: http://localhost:${PORT}/app
-Server test: http://localhost:${PORT}/server-test
-Debug headers: http://localhost:${PORT}/debug-headers
+Landing page: http://${HOST}:${PORT}/
+App: http://${HOST}:${PORT}/app (Status Page)
+Server test: http://${HOST}:${PORT}/server-test
+Debug headers: http://${HOST}:${PORT}/debug-headers
 ==========================================================
-      `);
+    `);
+  });
+  
+  // Handle graceful shutdown
+  process.on('SIGTERM', () => {
+    console.log('SIGTERM received, shutting down...');
+    server.close(() => {
+      console.log('HTTP server closed');
     });
-    
-    // Handle graceful shutdown
-    process.on('SIGTERM', () => {
-      console.log('SIGTERM received, shutting down...');
-      if (expoProcess) {
-        console.log('Terminating Expo process...');
-        expoProcess.kill();
-      }
-      server.close(() => {
-        console.log('HTTP server closed');
-      });
-    });
-    
-  } catch (err) {
-    console.error('Fatal server error:', err);
-    process.exit(1);
-  }
+  });
+  
+  return server;
 }
 
-// Start everything
-main();
+// Start the server
+startServer();
