@@ -22,7 +22,7 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "node start-expo-server.js"
+args = "node run-expo-only.js"
 waitForPort = 3243
 
 [deployment]

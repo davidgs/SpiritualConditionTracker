@@ -55,6 +55,8 @@ const env = {
 };
 
 // Start Expo with web mode on the specified port 
+// Using stdio: 'inherit' to see all output directly in the console
+console.log(`Running: npx expo start --web --port ${PORT} --host lan in ${expoAppDir}`);
 const expoProcess = spawn('npx', [
   'expo',
   'start',
@@ -66,19 +68,24 @@ const expoProcess = spawn('npx', [
 ], {
   cwd: expoAppDir,
   env: env,
-  stdio: 'pipe'  // Capture output
+  stdio: 'inherit'  // Direct output to terminal for better debugging
 });
 
 console.log(`Started Expo with PID ${expoProcess.pid}`);
 
-// Pipe Expo output to console
-expoProcess.stdout.on('data', (data) => {
-  console.log(`Expo: ${data.toString().trim()}`);
-});
+// When using stdio: 'inherit', we don't need to pipe output
+// These event listeners won't trigger with stdio: 'inherit'
+if (expoProcess.stdout) {
+  expoProcess.stdout.on('data', (data) => {
+    console.log(`Expo: ${data.toString().trim()}`);
+  });
+}
 
-expoProcess.stderr.on('data', (data) => {
-  console.error(`Expo error: ${data.toString().trim()}`);
-});
+if (expoProcess.stderr) {
+  expoProcess.stderr.on('data', (data) => {
+    console.error(`Expo error: ${data.toString().trim()}`);
+  });
+}
 
 // Handle process exit
 expoProcess.on('close', (code) => {

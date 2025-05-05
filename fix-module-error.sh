@@ -1,28 +1,39 @@
 #!/bin/bash
 
-# Script to fix the minimatch module error
+# Script to fix module errors for production deployment
+# This fixes both minimatch and agent-base modules
 
-echo "Fixing minimatch module error..."
+echo "Fixing module errors..."
 
-# Install minimatch directly
-npm install minimatch@^5.1.0
+# Install problematic packages
+echo "Installing required packages..."
+npm install minimatch@^5.1.0 agent-base@^6.0.2
 
-# Create the directory structure if it doesn't exist
+# Fix for minimatch module
+echo "Fixing minimatch module..."
 mkdir -p node_modules/minimatch/dist/commonjs
 
-# Check if the dist/commonjs directory exists in minimatch
-if [ ! -d "node_modules/minimatch/dist/commonjs" ]; then
-  echo "Creating the minimatch/dist/commonjs directory..."
-  mkdir -p node_modules/minimatch/dist/commonjs
-  
-  # Create a simple index.js file if none exists
-  if [ ! -f "node_modules/minimatch/dist/commonjs/index.js" ]; then
-    echo "Creating a simple index.js file..."
-    cat > node_modules/minimatch/dist/commonjs/index.js << 'EOF'
+# Create minimatch index.js if needed
+if [ ! -f "node_modules/minimatch/dist/commonjs/index.js" ]; then
+  echo "Creating minimatch compatibility file..."
+  cat > node_modules/minimatch/dist/commonjs/index.js << 'EOF'
 // Simple minimatch shim
 module.exports = require('../../minimatch.js');
 EOF
-  fi
 fi
 
-echo "Done fixing module error."
+# Fix for agent-base module
+echo "Fixing agent-base module..."
+mkdir -p node_modules/agent-base/dist
+
+# Create agent-base index.js if needed
+if [ ! -f "node_modules/agent-base/dist/index.js" ]; then
+  echo "Creating agent-base compatibility file..."
+  cat > node_modules/agent-base/dist/index.js << 'EOF'
+"use strict";
+// Simple agent-base shim
+module.exports = require('../src/index');
+EOF
+fi
+
+echo "Done fixing module errors."
