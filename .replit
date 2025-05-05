@@ -14,16 +14,16 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "UnifiedDeployment"
+args = "BasicAppServer"
 
 [[workflows.workflow]]
-name = "UnifiedDeployment"
+name = "BasicAppServer"
 author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "node deployment-server.js"
-waitForPort = 3000
+args = "node basic-server.js"
+waitForPort = 5000
 
 [deployment]
 run = ["sh", "-c", "node deployment-server.js"]
