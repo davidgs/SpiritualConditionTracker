@@ -1,6 +1,6 @@
 /**
  * Production-ready server for Spiritual Condition Tracker
- * Designed to work reliably on external hosting environments
+ * Designed to work reliably with Apache reverse proxy
  */
 
 const express = require('express');
@@ -11,7 +11,7 @@ const httpProxy = require('http-proxy');
 const fs = require('fs');
 
 // Configuration
-const PORT = process.env.PORT || 5000; // Use configurable port (use 3243 for your own server)
+const PORT = process.env.PORT || 3243; // Use 3243 for your server
 const EXPO_PORT = 5001;
 const HOST = process.env.HOST || '0.0.0.0';
 
@@ -21,24 +21,26 @@ const app = express();
 // Create HTTP server
 const server = http.createServer(app);
 
-// Create a proxy server for Expo
+// Create a proxy server for Expo with settings for reverse proxy
 const proxy = httpProxy.createProxyServer({
   ws: true,
-  changeOrigin: true
+  changeOrigin: true,
+  xfwd: true,     // Forward the client IP
+  secure: false   // Don't verify SSL certs
 });
 
 // Handle proxy errors
 proxy.on('error', (err, req, res) => {
   console.error('Proxy error:', err);
-  if (res && res.writeHead) {
+  if (res && !res.headersSent && res.writeHead) {
     res.writeHead(500);
     res.end(`Proxy error: ${err.message}`);
   }
 });
 
-// Configure Express middleware
-app.use('/public', express.static(path.join(__dirname, 'public')));
+// Configure Express middleware - serve static files
 app.use(express.static(path.join(__dirname)));
+app.use('/public', express.static(path.join(__dirname, 'public')));
 
 // Custom middleware to log all requests
 app.use((req, res, next) => {
@@ -46,28 +48,36 @@ app.use((req, res, next) => {
   next();
 });
 
-// Fix for logo in HTML file
+// Fix for logo in HTML file and ensure it exists in both locations
 function fixLogoPath() {
-  const indexPath = path.join(__dirname, 'public', 'index.html');
-  if (fs.existsSync(indexPath)) {
-    let content = fs.readFileSync(indexPath, 'utf8');
+  try {
+    // Copy logo to ensure it's in both locations
+    if (fs.existsSync('logo.jpg')) {
+      if (!fs.existsSync('public')) {
+        fs.mkdirSync('public', { recursive: true });
+      }
+      fs.copyFileSync('logo.jpg', path.join('public', 'logo.jpg'));
+      console.log('Logo copied to public directory');
+    }
     
-    // Fix the logo path to be absolute
-    content = content.replace(
-      'src="/public/logo.jpg"', 
-      'src="/logo.jpg"'
-    );
-    
-    // Fix the app link to include a trailing slash
-    content = content.replace(
-      'href="/app/"',
-      'href="/app"'
-    );
-    
-    fs.writeFileSync(indexPath, content);
-    console.log('Fixed paths in index.html');
-  } else {
-    console.error('Could not find index.html to fix paths');
+    const indexPath = path.join(__dirname, 'public', 'index.html');
+    if (fs.existsSync(indexPath)) {
+      let content = fs.readFileSync(indexPath, 'utf8');
+      
+      // Fix the logo path to be absolute
+      content = content.replace(/src="[^"]*logo\.jpg"/g, 'src="/logo.jpg"');
+      
+      // Make all resource paths absolute
+      content = content.replace(/src="(?!http|\/)/g, 'src="/');
+      content = content.replace(/href="(?!http|\/|#)/g, 'href="/');
+      
+      fs.writeFileSync(indexPath, content);
+      console.log('Fixed paths in index.html');
+    } else {
+      console.error('Could not find index.html to fix paths');
+    }
+  } catch (err) {
+    console.error('Error fixing paths:', err);
   }
 }
 
@@ -91,6 +101,18 @@ async function startExpoApp() {
     console.log('No processes to clean up');
   }
   
+  // Configure environment for reverse proxy
+  const expoEnv = { 
+    ...process.env, 
+    CI: '1',
+    // Critical for reverse proxy
+    DANGEROUSLY_DISABLE_HOST_CHECK: 'true',
+    // For proper path handling
+    PUBLIC_URL: '/',
+    // For Metro bundler behind reverse proxy
+    NODE_ENV: 'production'
+  };
+  
   // Start Expo
   const expoProcess = spawn('npx', [
     'expo',
@@ -102,27 +124,34 @@ async function startExpoApp() {
     '--non-interactive'
   ], {
     cwd: expoAppDir,
-    env: { ...process.env, CI: '1' },
+    env: expoEnv,
     stdio: 'pipe'
   });
   
   console.log(`Started Expo with PID ${expoProcess.pid}`);
   
   expoProcess.stdout.on('data', (data) => {
-    console.log(`Expo: ${data}`);
+    const output = data.toString();
+    console.log(`Expo: ${output.trim()}`);
   });
   
   expoProcess.stderr.on('data', (data) => {
-    console.error(`Expo error: ${data}`);
+    const output = data.toString();
+    console.error(`Expo error: ${output.trim()}`);
   });
   
   expoProcess.on('close', (code) => {
     console.log(`Expo process exited with code ${code}`);
+    // Auto-restart if it crashes
+    if (code !== 0) {
+      console.log('Attempting to restart Expo...');
+      setTimeout(() => startExpoApp(), 5000);
+    }
   });
   
   // Wait for Expo to initialize (longer timeout for production)
   console.log('Waiting for Expo to initialize...');
-  await new Promise(resolve => setTimeout(resolve, 10000));
+  await new Promise(resolve => setTimeout(resolve, 15000));
   
   return expoProcess;
 }
@@ -138,25 +167,52 @@ async function main() {
       res.sendFile(path.join(__dirname, 'public', 'index.html'));
     });
     
+    // Add a simple test page to verify server is working
+    app.get('/server-test', (req, res) => {
+      res.send(`
+        <html><head><title>Server Test</title></head>
+        <body>
+          <h1>Server is running properly!</h1>
+          <p>This confirms that the Express server is working.</p>
+          <p><a href="/">Go to home page</a></p>
+          <p><a href="/app">Go to app</a></p>
+          <p>Server time: ${new Date().toISOString()}</p>
+        </body></html>
+      `);
+    });
+    
+    // Add debug route to show headers
+    app.get('/debug-headers', (req, res) => {
+      res.send(`
+        <pre>
+Server running on port: ${PORT}
+Environment: ${process.env.NODE_ENV}
+Headers: ${JSON.stringify(req.headers, null, 2)}
+        </pre>
+      `);
+    });
+    
     // Start Expo in the background
     const expoProcess = await startExpoApp();
     
-    // Forward app routes to Expo
-    app.use('/app', (req, res) => {
+    // Forward app routes to Expo - using app.all to catch all HTTP methods
+    app.all('/app*', (req, res) => {
       console.log(`Proxying app request: ${req.url}`);
+      // Set host header to help Expo
+      req.headers['host'] = `localhost:${EXPO_PORT}`;
       proxy.web(req, res, { 
         target: `http://localhost:${EXPO_PORT}`,
         ignorePath: false
       });
     });
     
-    // Handle asset requests
-    app.use('/assets', (req, res) => {
+    // Handle asset requests - wildcards to catch all asset paths
+    app.all('/assets*', (req, res) => {
       console.log(`Proxying asset request: ${req.url}`);
       proxy.web(req, res, { target: `http://localhost:${EXPO_PORT}` });
     });
     
-    app.use('/static', (req, res) => {
+    app.all('/static*', (req, res) => {
       console.log(`Proxying static request: ${req.url}`);
       proxy.web(req, res, { target: `http://localhost:${EXPO_PORT}` });
     });
@@ -165,18 +221,23 @@ async function main() {
     app.use((req, res, next) => {
       const url = req.url;
       if (url.includes('.bundle') || url.includes('.js') || 
-          url.includes('.map') || url.includes('hot')) {
-        console.log(`Proxying bundle request: ${url}`);
+          url.includes('.map') || url.includes('hot-update') || 
+          url.includes('sockjs-node')) {
+        console.log(`Proxying special request: ${url}`);
         proxy.web(req, res, { target: `http://localhost:${EXPO_PORT}` });
       } else {
         next();
       }
     });
     
-    // Handle WebSocket connections for hot reloading
+    // Handle WebSocket connections for hot reloading - critical for the app to work
     server.on('upgrade', (req, socket, head) => {
-      console.log(`WebSocket upgrade: ${req.url}`);
-      proxy.ws(req, socket, head, { target: `http://localhost:${EXPO_PORT}` });
+      const url = req.url;
+      console.log(`WebSocket upgrade: ${url}`);
+      if (url.startsWith('/app') || url.includes('hot-update') || 
+          url.includes('sockjs-node') || url.includes('ws')) {
+        proxy.ws(req, socket, head, { target: `http://localhost:${EXPO_PORT}` });
+      }
     });
     
     // Catch-all route to handle SPA routing
@@ -200,9 +261,18 @@ async function main() {
     
     // Start the server
     server.listen(PORT, HOST, () => {
-      console.log(`Server running at http://${HOST}:${PORT}`);
-      console.log(`- Landing page: http://localhost:${PORT}/`);
-      console.log(`- Main app: http://localhost:${PORT}/app`);
+      console.log(`
+==========================================================
+Spiritual Condition Tracker Server Running
+==========================================================
+Server port: ${PORT}
+Expo port: ${EXPO_PORT}
+Landing page: http://localhost:${PORT}/
+App: http://localhost:${PORT}/app
+Server test: http://localhost:${PORT}/server-test
+Debug headers: http://localhost:${PORT}/debug-headers
+==========================================================
+      `);
     });
     
     // Handle graceful shutdown

@@ -10,43 +10,62 @@ const http = require('http');
 const httpProxy = require('http-proxy');
 const fs = require('fs');
 
-// Configuration - use your custom port on your own server
-const PORT = process.env.PORT || 3243;
+// Configuration
+const PORT = process.env.PORT || 5000; // Set to port 5000 for Replit testing
 const EXPO_PORT = 5001;
-const HOST = process.env.HOST || '0.0.0.0';
 
-// Create Express app and HTTP server
+// Create Express app and server
 const app = express();
 const server = http.createServer(app);
 
-// Create proxy for Expo app
-const proxy = httpProxy.createProxyServer({ 
-  ws: true, 
-  changeOrigin: true,
-  ignorePath: false
+// Create a simple proxy for Expo
+const proxy = httpProxy.createProxyServer({
+  ws: true,
+  changeOrigin: true
 });
 
-// Handle proxy errors
+// Fix common proxy errors
 proxy.on('error', (err, req, res) => {
-  console.error(`Proxy error: ${err.message}`);
-  if (res && res.writeHead) {
+  console.error(`Proxy error: ${err}`);
+  if (!res.headersSent && res.writeHead) {
     res.writeHead(500);
-    res.end(`Server error: ${err.message}`);
+    res.end(`Proxy error: ${err.message}`);
   }
 });
 
-// Serve static files from both public and root directories
-app.use('/public', express.static(path.join(__dirname, 'public')));
-app.use('/logo.jpg', express.static(path.join(__dirname, 'logo.jpg')));
-app.use(express.static(path.join(__dirname)));
+// Fix paths in HTML files to handle proxy issues
+function fixHtmlPaths() {
+  try {
+    const indexPath = path.join(__dirname, 'public', 'index.html');
+    if (fs.existsSync(indexPath)) {
+      let html = fs.readFileSync(indexPath, 'utf8');
+      
+      // Fix relative paths
+      html = html.replace(/src="(?!http|\/)/g, 'src="/');
+      html = html.replace(/href="(?!http|\/|#)/g, 'href="/');
+      
+      // Fix logo path specifically
+      html = html.replace(/src="[^"]*logo\.jpg"/g, 'src="/logo.jpg"');
+      
+      fs.writeFileSync(indexPath, html);
+      console.log('Fixed paths in index.html');
+    }
+  } catch (err) {
+    console.error('Error fixing HTML paths:', err);
+  }
+}
 
-// Request logging middleware
-app.use((req, res, next) => {
-  console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
-  next();
-});
+// Copy logo to both locations to ensure it's available
+try {
+  if (fs.existsSync('logo.jpg')) {
+    fs.copyFileSync('logo.jpg', path.join('public', 'logo.jpg'));
+    console.log('Copied logo to public directory');
+  }
+} catch (err) {
+  console.error('Error copying logo:', err);
+}
 
-// Start the Expo app in the background
+// Start Expo in the background
 async function startExpoApp() {
   console.log('Starting Expo app...');
   
@@ -56,7 +75,7 @@ async function startExpoApp() {
     throw new Error('expo-app directory not found');
   }
   
-  // Clean up any existing Expo processes
+  // Kill any existing processes
   try {
     console.log('Cleaning up existing processes...');
     spawn('pkill', ['-f', 'npx expo'], { stdio: 'ignore' });
@@ -65,19 +84,26 @@ async function startExpoApp() {
     console.log('No processes to clean up');
   }
   
-  // Start Expo with CI mode to avoid interactive prompts
+  // Prepare Expo environment
+  const expoEnv = { 
+    ...process.env, 
+    CI: '1',
+    DANGEROUSLY_DISABLE_HOST_CHECK: 'true',
+    PUBLIC_URL: '/'
+  };
+  
+  // Start Expo with troubleshooting flags
   const expoProcess = spawn('npx', [
     'expo',
     'start',
     '--offline',
     '--web',
     '--port',
-    EXPO_PORT,
-    '--non-interactive'
+    EXPO_PORT
   ], {
     cwd: expoAppDir,
-    env: { ...process.env, CI: '1' },
-    stdio: 'pipe'
+    env: expoEnv,
+    stdio: 'pipe'  // Capture output
   });
   
   console.log(`Started Expo with PID ${expoProcess.pid}`);
@@ -90,100 +116,72 @@ async function startExpoApp() {
     console.error(`Expo error: ${data}`);
   });
   
-  // Wait for Expo to initialize
-  console.log('Waiting for Expo to initialize...');
-  await new Promise(resolve => setTimeout(resolve, 10000));
+  expoProcess.on('close', (code) => {
+    console.log(`Expo process exited with code ${code}`);
+  });
+  
+  // Wait for Expo to start
+  console.log('Waiting for Expo to start...');
+  await new Promise(resolve => setTimeout(resolve, 15000));
   
   return expoProcess;
 }
 
-// Fix the logo path in the HTML
-function fixHtmlPaths() {
-  const indexPath = path.join(__dirname, 'public', 'index.html');
-  if (fs.existsSync(indexPath)) {
-    let content = fs.readFileSync(indexPath, 'utf8');
-    
-    // Fix logo path to be absolute (for any environment)
-    content = content.replace(
-      'src="/public/logo.jpg"',
-      'src="/logo.jpg"'
-    );
-    
-    // Ensure app link has proper format
-    content = content.replace(
-      'href="/app/"',
-      'href="/app"'
-    );
-    
-    fs.writeFileSync(indexPath, content);
-    console.log('Fixed paths in index.html');
-  }
-}
-
-// Set up the application routes and start the server
+// Main function
 async function main() {
   try {
     // Fix HTML paths
     fixHtmlPaths();
     
-    // Set up the landing page route
+    // Serve static files - this comes first
+    app.use(express.static(path.join(__dirname)));
+    app.use('/public', express.static(path.join(__dirname, 'public')));
+    
+    // Basic routes without complex patterns
+    
+    // Home page
     app.get('/', (req, res) => {
       res.sendFile(path.join(__dirname, 'public', 'index.html'));
     });
     
-    // Start Expo in the background
+    // Start Expo
     const expoProcess = await startExpoApp();
     
-    // Handle app route - main entry point to the Expo app
-    app.use('/app', (req, res) => {
-      const targetUrl = `http://localhost:${EXPO_PORT}`;
-      console.log(`Proxying to Expo app: ${req.url} -> ${targetUrl}`);
-      proxy.web(req, res, { target: targetUrl });
-    });
-    
-    // Handle known Expo asset routes
-    app.use('/assets', (req, res) => {
-      proxy.web(req, res, { target: `http://localhost:${EXPO_PORT}` });
-    });
-    
-    app.use('/static', (req, res) => {
-      proxy.web(req, res, { target: `http://localhost:${EXPO_PORT}` });
-    });
-    
-    // Handle bundle and JS files
-    app.use((req, res, next) => {
-      if (req.url.includes('.bundle') || 
-          req.url.includes('.js') || 
-          req.url.includes('.map') || 
-          req.url.includes('hot')) {
-        proxy.web(req, res, { target: `http://localhost:${EXPO_PORT}` });
-      } else {
-        next();
-      }
+    // Super simple proxy approach that avoids URL pattern complexities
+    app.all('/app*', (req, res) => {
+      console.log(`Proxying to Expo: ${req.url}`);
+      proxy.web(req, res, { 
+        target: `http://localhost:${EXPO_PORT}`,
+        ignorePath: false
+      });
     });
     
     // Handle WebSocket connections
     server.on('upgrade', (req, socket, head) => {
-      console.log(`WebSocket upgrade: ${req.url}`);
-      proxy.ws(req, socket, head, { target: `http://localhost:${EXPO_PORT}` });
+      if (req.url.startsWith('/app')) {
+        console.log('Proxying WebSocket connection to Expo');
+        proxy.ws(req, socket, head, { 
+          target: `http://localhost:${EXPO_PORT}`
+        });
+      }
     });
     
     // Start the server
-    server.listen(PORT, HOST, () => {
-      console.log(`Server running at http://${HOST}:${PORT}`);
-      console.log(`- Landing page: http://localhost:${PORT}/`);
-      console.log(`- Main app: http://localhost:${PORT}/app`);
+    server.listen(PORT, '0.0.0.0', () => {
+      console.log(`Server running on port ${PORT}`);
+      console.log(`- Home page: http://localhost:${PORT}/`);
+      console.log(`- App: http://localhost:${PORT}/app`);
     });
     
     // Handle graceful shutdown
     process.on('SIGTERM', () => {
-      console.log('SIGTERM received, shutting down...');
+      console.log('Shutting down...');
       if (expoProcess) expoProcess.kill();
-      server.close(() => console.log('HTTP server closed'));
+      server.close();
     });
     
   } catch (err) {
-    console.error('Fatal server error:', err);
+    console.error('Server error:', err);
     process.exit(1);
   }
 }

@@ -1,85 +1,102 @@
-# Spiritual Condition Tracker - Deployment Instructions
+# Deployment Instructions for Spiritual Condition Tracker
 
-These instructions will help you successfully deploy the Spiritual Condition Tracker application on your server.
+## Quick Start (3 Steps)
 
-## Server Deployment Steps
+1. Upload all project files to your server
+2. Start the server: `node production-server.js` (or use PM2, see below)
+3. Configure Apache (see below)
 
-### 1. Server Prerequisites
-- Node.js v16+ installed on your server
-- npm or yarn package manager
-- Port 3243 available (or another port of your choice)
+## Apache Reverse Proxy Configuration
 
-### 2. Project Setup
-1. Upload the entire project to your server
-2. Install dependencies:
-   ```
-   npm install
-   ```
+Add these lines to your Apache site configuration:
 
-### 3. Use the Fixed Production Server
-The `production-server-fixed.js` file has been specially created to address deployment issues:
-- Fixes the broken logo path
-- Resolves the DNS lookup failure for localhost:3243app
-- Improves proxy handling for external deployment environments
-
-To start the server:
+```apache
+<VirtualHost *:443>
+    ServerName spiritual-condition.com
+    ServerAlias www.spiritual-condition.com
+    
+    # SSL Configuration
+    SSLEngine on
+    SSLCertificateFile /path/to/your/certificate.crt
+    SSLCertificateKeyFile /path/to/your/private.key
+    SSLCertificateChainFile /path/to/your/chain.crt
+    
+    # Enable required modules (IMPORTANT)
+    # Run: a2enmod proxy proxy_http proxy_wstunnel rewrite headers
+    
+    # Basic proxy configuration
+    ProxyRequests Off
+    ProxyPreserveHost On
+    ProxyPass / http://localhost:3243/
+    ProxyPassReverse / http://localhost:3243/
+    
+    # WebSocket proxy (CRITICAL for app to work)
+    RewriteEngine On
+    RewriteCond %{HTTP:Upgrade} =websocket [NC]
+    RewriteRule /(.*) ws://localhost:3243/$1 [P,L]
+    
+    # Forward protocol information
+    RequestHeader set X-Forwarded-Proto https
+    RequestHeader set X-Forwarded-Port 443
+    
+    # Log settings
+    ErrorLog ${APACHE_LOG_DIR}/spiritual-condition-error.log
+    CustomLog ${APACHE_LOG_DIR}/spiritual-condition-access.log combined
+</VirtualHost>
 ```
-node production-server-fixed.js
+
+## Starting the Server with PM2 (Recommended)
+
+```bash
+# Install PM2 if needed
+npm install -g pm2
+
+# Start the server with PM2
+pm2 start production-server.js --name spiritual-condition
+
+# Auto-restart on server reboot
+pm2 startup
+pm2 save
+
+# View logs
+pm2 logs spiritual-condition
 ```
 
-For custom port configuration:
-```
-PORT=8080 node production-server-fixed.js
-```
+## Testing Your Deployment
 
-### 4. Using PM2 (Recommended)
-For better reliability in production, use PM2:
+Visit these URLs to test different parts of your setup:
 
-1. Install PM2 globally:
-   ```
-   npm install -g pm2
-   ```
+1. https://spiritual-condition.com/ - Should show landing page with logo
+2. https://spiritual-condition.com/server-test - Confirms Express is working
+3. https://spiritual-condition.com/debug-headers - Shows request headers 
+4. https://spiritual-condition.com/app - Main application
 
-2. Start the server with PM2:
-   ```
-   pm2 start production-server-fixed.js --name "spiritual-tracker"
-   ```
+## Troubleshooting
 
-3. Set up PM2 to restart on server boot:
-   ```
-   pm2 startup
-   pm2 save
-   ```
+If you encounter issues:
 
-## Troubleshooting Common Issues
+1. **Logo not showing:**
+   - Check that logo.jpg is in both root and public directories
+   - The server should copy it automatically, but you can do it manually:
+     ```bash
+     cp logo.jpg public/logo.jpg
+     ```
 
-### Logo Not Displaying
-If the logo still doesn't appear:
-- Make sure the logo.jpg file exists in your root directory
-- The fixed server specifically looks for logo.jpg in the root directory
-- Verify file permissions allow the web server to read the file
+2. **App not loading:**
+   - Check Apache error logs: `tail -f /var/log/apache2/error.log`
+   - Check Node.js logs: `pm2 logs spiritual-condition`
+   - Make sure WebSocket proxy is configured correctly
 
-### App Not Loading
-If the main app doesn't load:
-- Make sure port 5001 is available internally for Expo
-- Check the server logs for any detailed error messages
-- Verify your server allows localhost connections for proxying
+3. **WebSocket issues:**
+   - Ensure you have the required Apache modules enabled:
+     ```bash
+     a2enmod proxy proxy_http proxy_wstunnel rewrite headers
+     systemctl restart apache2
+     ```
 
-### Other Connection Issues
-- If behind a firewall, ensure port 3243 (or your chosen port) is open
-- For DNS errors, make sure your server can resolve local hostnames
-- The fixed server uses absolute URL paths to prevent malformed requests
-
-## Additional Security Measures
-
-For a more secure deployment:
-1. Run behind Nginx or Apache as a reverse proxy
-2. Set up SSL/TLS for HTTPS access
-3. Consider using environment variables for sensitive configuration
-
-## Getting Help
-If you continue to experience deployment issues, please refer to the logs in:
-- The server console output
-- Browser developer tools (network and console tabs)
-
-These logs will provide valuable information for diagnosing any remaining problems.
+4. **"Cannot GET /app" error:**
+   - Log in to your server and check that Expo started properly:
+     ```bash
+     pm2 logs spiritual-condition
+     ```
+   - Look for "Expo: Waiting on http://localhost:5001" message
