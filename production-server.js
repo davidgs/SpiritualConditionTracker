@@ -1,334 +1,169 @@
 /**
- * Production-ready server for Spiritual Condition Tracker
- * Pure Node.js - No dependencies on Express or other modules
+ * Simple HTTP proxy for Spiritual Condition Tracker
+ * Routes requests to the Expo app running on port 19006
  */
 
 const http = require('http');
-const fs = require('fs');
+const { spawn } = require('child_process');
 const path = require('path');
+const fs = require('fs');
 
 // Configuration
-const PORT = process.env.PORT || 3243;
-const HOST = '0.0.0.0';
+const PROXY_PORT = 3243;  // The port Apache is configured to proxy to
+const EXPO_PORT = 19006;  // Default Expo port for web
+const expoAppDir = path.join(__dirname, 'expo-app');
 
-// MIME types for static files
-const MIME_TYPES = {
-  '.html': 'text/html',
-  '.js': 'text/javascript',
-  '.css': 'text/css',
-  '.json': 'application/json',
-  '.png': 'image/png',
-  '.jpg': 'image/jpeg',
-  '.jpeg': 'image/jpeg',
-  '.gif': 'image/gif',
-  '.svg': 'image/svg+xml',
-  '.ico': 'image/x-icon',
-  '.txt': 'text/plain',
-};
-
-// Ensure logo is in place and fix HTML paths
-function prepareFiles() {
-  try {
-    console.log('Preparing files...');
-    
-    // Create public directory if needed
-    const publicDir = path.join(__dirname, 'public');
-    if (!fs.existsSync(publicDir)) {
-      fs.mkdirSync(publicDir, { recursive: true });
-      console.log('Created public directory');
-    }
-    
-    // Copy logo to public directory if it exists
-    const logoSrc = path.join(__dirname, 'logo.jpg');
-    const logoDest = path.join(publicDir, 'logo.jpg');
-    if (fs.existsSync(logoSrc) && !fs.existsSync(logoDest)) {
-      fs.copyFileSync(logoSrc, logoDest);
-      console.log('Logo copied to public directory');
-    }
-    
-    // Fix paths in index.html if it exists
-    const indexPath = path.join(publicDir, 'index.html');
-    if (fs.existsSync(indexPath)) {
-      let content = fs.readFileSync(indexPath, 'utf8');
-      
-      // Fix the logo path to be absolute
-      content = content.replace(/src="[^"]*logo\.jpg"/g, 'src="/logo.jpg"');
-      
-      // Make all resource paths absolute
-      content = content.replace(/src="(?!http|\/)/g, 'src="/');
-      content = content.replace(/href="(?!http|\/|#)/g, 'href="/');
-      
-      fs.writeFileSync(indexPath, content);
-      console.log('Fixed paths in index.html');
-    } else {
-      console.error('Warning: index.html not found in public directory');
-    }
-  } catch (err) {
-    console.error('Error preparing files:', err);
-  }
+// Ensure the Expo directory exists
+if (!fs.existsSync(expoAppDir)) {
+  console.error(`Error: Expo app directory not found at ${expoAppDir}`);
+  process.exit(1);
 }
 
-// Serve a static file
-function serveFile(res, filePath, contentType) {
-  fs.readFile(filePath, (err, content) => {
-    if (err) {
-      if (err.code === 'ENOENT') {
-        console.error(`File not found: ${filePath}`);
-        res.writeHead(404);
-        res.end('File not found');
-      } else {
-        console.error(`Error reading file: ${filePath}`, err);
-        res.writeHead(500);
-        res.end('Server error');
-      }
-    } else {
-      res.writeHead(200, { 'Content-Type': contentType });
-      res.end(content);
+// Start the Expo app
+function startExpo() {
+  console.log('Starting Expo app...');
+  
+  // Kill any existing Expo processes
+  try {
+    console.log('Cleaning up existing processes...');
+    spawn('pkill', ['-f', 'expo'], { stdio: 'ignore' });
+  } catch (err) {
+    // Ignore errors
+  }
+  
+  // Set up environment for Expo
+  const env = {
+    ...process.env,
+    CI: '1',  // Non-interactive mode
+    EXPO_WEB_PORT: EXPO_PORT.toString(),
+    DANGEROUSLY_DISABLE_HOST_CHECK: 'true'
+  };
+  
+  // Start Expo with web mode
+  const expoProcess = spawn('npx', [
+    'expo',
+    'start',
+    '--web',
+    '--port',
+    EXPO_PORT.toString(),
+    '--host',
+    'lan'
+  ], {
+    cwd: expoAppDir,
+    env: env,
+    stdio: 'pipe'
+  });
+  
+  console.log(`Started Expo with PID ${expoProcess.pid}`);
+  
+  // Handle Expo output
+  expoProcess.stdout.on('data', (data) => {
+    console.log(`Expo: ${data.toString().trim()}`);
+  });
+  
+  expoProcess.stderr.on('data', (data) => {
+    console.error(`Expo error: ${data.toString().trim()}`);
+  });
+  
+  expoProcess.on('close', (code) => {
+    console.log(`Expo process exited with code ${code}`);
+    if (code !== 0 && code !== null) {
+      console.log('Restarting Expo in 5 seconds...');
+      setTimeout(startExpo, 5000);
     }
   });
-}
-
-// Serve the index.html file
-function serveIndex(res) {
-  const filePath = path.join(__dirname, 'public', 'index.html');
-  serveFile(res, filePath, 'text/html');
-}
-
-// Create a professional-looking app status page
-function serveAppStatusPage(res) {
-  res.writeHead(200, { 'Content-Type': 'text/html' });
-  res.end(`
-    <!DOCTYPE html>
-    <html>
-      <head>
-        <title>Spiritual Condition Tracker</title>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <style>
-          body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f5f5f5;
-          }
-          .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-          }
-          header {
-            background-color: #007bff;
-            color: white;
-            padding: 20px;
-            text-align: center;
-            margin-bottom: 30px;
-          }
-          h1 {
-            margin: 0;
-            font-size: 24px;
-          }
-          .card {
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            padding: 20px;
-            margin-bottom: 20px;
-          }
-          h2 {
-            color: #333;
-            margin-top: 0;
-          }
-          .feature-list {
-            list-style-type: none;
-            padding: 0;
-          }
-          .feature-list li {
-            padding: 10px 0;
-            border-bottom: 1px solid #eee;
-            display: flex;
-            align-items: center;
-          }
-          .feature-list li:last-child {
-            border-bottom: none;
-          }
-          .feature-list li:before {
-            content: "✓";
-            color: #28a745;
-            margin-right: 10px;
-            font-weight: bold;
-          }
-          footer {
-            text-align: center;
-            padding: 20px;
-            color: #666;
-            font-size: 14px;
-          }
-        </style>
-      </head>
-      <body>
-        <header>
-          <h1>Spiritual Condition Tracker</h1>
-        </header>
-        
-        <div class="container">
-          <div class="card">
-            <h2>App Status</h2>
-            <p>The app is being prepared for deployment. Our team is working on making the full application available shortly.</p>
-            <p>In the meantime, this page confirms that your server is running correctly and is accessible through your domain.</p>
-          </div>
-          
-          <div class="card">
-            <h2>Key Features</h2>
-            <ul class="feature-list">
-              <li>Track your spiritual fitness score</li>
-              <li>Log meetings, readings, and meditations</li>
-              <li>Record interactions with sponsors and sponsees</li>
-              <li>Discover nearby AA members</li>
-              <li>Manage your meeting list</li>
-              <li>Secure messaging with other members</li>
-            </ul>
-          </div>
-          
-          <div class="card">
-            <h2>Coming Soon</h2>
-            <p>The full interactive web application will be available at this URL. Please check back soon!</p>
-          </div>
-        </div>
-        
-        <footer>
-          <p>Spiritual Condition Tracker &copy; ${new Date().getFullYear()}</p>
-          <p>Server started: ${new Date().toISOString()}</p>
-        </footer>
-      </body>
-    </html>
-  `);
-}
-
-// Serve a server test page
-function serveTestPage(res) {
-  res.writeHead(200, { 'Content-Type': 'text/html' });
-  res.end(`
-    <!DOCTYPE html>
-    <html>
-      <head>
-        <title>Server Test</title>
-        <meta charset="utf-8">
-      </head>
-      <body>
-        <h1>Server is running properly!</h1>
-        <p>This confirms that the server is working correctly.</p>
-        <p><a href="/">Go to home page</a></p>
-        <p><a href="/app">Go to app</a></p>
-        <p>Server time: ${new Date().toISOString()}</p>
-      </body>
-    </html>
-  `);
-}
-
-// Serve a debug headers page
-function serveDebugPage(req, res) {
-  res.writeHead(200, { 'Content-Type': 'text/html' });
-  res.end(`
-    <!DOCTYPE html>
-    <html>
-      <head>
-        <title>Debug Headers</title>
-        <meta charset="utf-8">
-      </head>
-      <body>
-        <h1>Server Debug Info</h1>
-        <pre>
-Server running on port: ${PORT}
-Environment: ${process.env.NODE_ENV || 'development'}
-Request URL: ${req.url}
-Request Method: ${req.method}
-Headers: ${JSON.stringify(req.headers, null, 2)}
-        </pre>
-      </body>
-    </html>
-  `);
-}
-
-// Start the HTTP server
-function startServer() {
-  // Prepare files first
-  prepareFiles();
   
-  // Create the server
+  return expoProcess;
+}
+
+// Create a proxy server
+function createProxyServer() {
+  console.log(`Creating proxy server on port ${PROXY_PORT} -> ${EXPO_PORT}`);
+  
   const server = http.createServer((req, res) => {
-    // Log the request
     console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
     
-    // Parse the URL
-    const url = new URL(req.url, `http://${req.headers.host}`);
-    const pathname = url.pathname;
+    // Options for the proxy request
+    const options = {
+      hostname: 'localhost',
+      port: EXPO_PORT,
+      path: req.url,
+      method: req.method,
+      headers: {
+        ...req.headers,
+        host: `localhost:${EXPO_PORT}`
+      }
+    };
     
-    // Route based on pathname
-    if (pathname === '/' || pathname === '/index.html') {
-      // Serve the landing page
-      serveIndex(res);
-    } 
-    else if (pathname === '/server-test') {
-      // Serve the test page
-      serveTestPage(res);
-    } 
-    else if (pathname === '/debug-headers') {
-      // Serve the debug page
-      serveDebugPage(req, res);
-    } 
-    else if (pathname.startsWith('/app')) {
-      // Serve the app status page for any app routes
-      serveAppStatusPage(res);
-    } 
-    else if (pathname === '/logo.jpg') {
-      // Serve the logo
-      const filePath = path.join(__dirname, 'public', 'logo.jpg');
-      serveFile(res, filePath, 'image/jpeg');
-    } 
-    else {
-      // Try to serve a static file
-      const filePath = path.join(__dirname, 'public', pathname.substring(1));
-      const extname = path.extname(filePath);
-      const contentType = MIME_TYPES[extname] || 'application/octet-stream';
+    // Create the proxied request
+    const proxyReq = http.request(options, (proxyRes) => {
+      res.writeHead(proxyRes.statusCode, proxyRes.headers);
+      proxyRes.pipe(res);
+    });
+    
+    // Handle errors
+    proxyReq.on('error', (e) => {
+      console.error(`Proxy error: ${e.message}`);
       
-      // Check if file exists
-      fs.access(filePath, fs.constants.F_OK, (err) => {
-        if (err) {
-          // File not found, serve landing page as fallback
-          serveIndex(res);
-        } else {
-          // File exists, serve it
-          serveFile(res, filePath, contentType);
-        }
-      });
+      // Send a user-friendly response if Expo is not available
+      res.writeHead(500, { 'Content-Type': 'text/html' });
+      res.end(`
+        <html>
+          <head><title>App Starting</title></head>
+          <body style="font-family: sans-serif; text-align: center; padding: 50px;">
+            <h1>App is starting up...</h1>
+            <p>The Spiritual Condition Tracker app is currently starting up.</p>
+            <p>Please try again in a few moments.</p>
+            <p><a href="/">Return to Home Page</a></p>
+          </body>
+        </html>
+      `);
+    });
+    
+    // Forward the request body if it exists
+    if (req.method !== 'GET' && req.method !== 'HEAD') {
+      req.pipe(proxyReq);
+    } else {
+      proxyReq.end();
     }
   });
   
-  // Start listening for requests
-  server.listen(PORT, HOST, () => {
+  // Start listening
+  server.listen(PROXY_PORT, '0.0.0.0', () => {
     console.log(`
 ==========================================================
-Spiritual Condition Tracker Server Running
-==========================================================
-Server port: ${PORT}
-Landing page: http://${HOST}:${PORT}/
-App: http://${HOST}:${PORT}/app (Status Page)
-Server test: http://${HOST}:${PORT}/server-test
-Debug headers: http://${HOST}:${PORT}/debug-headers
+Proxy server running on port ${PROXY_PORT}
+Forwarding requests to Expo on port ${EXPO_PORT}
 ==========================================================
     `);
-  });
-  
-  // Handle graceful shutdown
-  process.on('SIGTERM', () => {
-    console.log('SIGTERM received, shutting down...');
-    server.close(() => {
-      console.log('HTTP server closed');
-    });
   });
   
   return server;
 }
 
-// Start the server
-startServer();
+// Main function
+function main() {
+  // Start Expo first
+  const expoProcess = startExpo();
+  
+  // Then create the proxy
+  const server = createProxyServer();
+  
+  // Handle shutdown signals
+  process.on('SIGINT', () => {
+    console.log('Shutting down...');
+    expoProcess.kill();
+    server.close();
+    process.exit(0);
+  });
+  
+  process.on('SIGTERM', () => {
+    console.log('Shutting down...');
+    expoProcess.kill();
+    server.close();
+    process.exit(0);
+  });
+}
+
+// Start everything
+main();
