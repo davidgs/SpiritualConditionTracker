@@ -11,7 +11,7 @@ const http = require('http');
 const httpProxy = require('http-proxy');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 5000; // Use port 5000 to work with Replit
 const EXPO_PORT = 5001; // Use a different port to avoid conflicts
 
 // Function to check if Expo is running properly
