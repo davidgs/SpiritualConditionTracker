@@ -24,8 +24,20 @@ eas whoami
 
 # Apply dependency fixes
 echo "Applying dependency fixes before build..."
-chmod +x ./fix-dependencies.sh
-./fix-dependencies.sh
+
+# Make sure eas-hooks directory exists
+mkdir -p eas-hooks
+
+# Run pre-install hook
+chmod +x ./eas-hooks/eas-build-pre-install.sh
+./eas-hooks/eas-build-pre-install.sh
+
+# Install dependencies
+npm install --legacy-peer-deps
+
+# Run post-install hook
+chmod +x ./eas-hooks/eas-build-post-install.sh
+./eas-hooks/eas-build-post-install.sh
 
 # Start the build
 echo "Starting Android build process..."

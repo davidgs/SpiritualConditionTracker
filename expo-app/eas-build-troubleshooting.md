@@ -18,33 +18,39 @@ This error occurs when React 19 is installed but dependencies like react-native-
 
 **Solution:**
 
-1. Use `--legacy-peer-deps` flag when installing:
+1. **For local development:**
+   Use the provided EAS hooks:
 
-```bash
-npm install --legacy-peer-deps
-```
+   ```bash
+   # Run pre-install hook to fix package.json
+   chmod +x ./eas-hooks/eas-build-pre-install.sh
+   ./eas-hooks/eas-build-pre-install.sh
+   
+   # Install dependencies with legacy peer deps
+   npm install --legacy-peer-deps
+   
+   # Run post-install hook to fix module structure
+   chmod +x ./eas-hooks/eas-build-post-install.sh
+   ./eas-hooks/eas-build-post-install.sh
+   ```
 
-2. Update the fix-dependencies.sh script to include this flag:
+2. **For EAS builds:**
+   Use the pre-configured hooks in eas.json:
 
-```bash
-./fix-dependencies.sh
-```
+   ```json
+   "prebuildCommand": "chmod +x ./eas-hooks/eas-build-pre-install.sh && ./eas-hooks/eas-build-pre-install.sh",
+   "postInstallCommand": "chmod +x ./eas-hooks/eas-build-post-install.sh && ./eas-hooks/eas-build-post-install.sh"
+   ```
 
-3. If the above doesn't work, use the provided downgrade script:
+3. **Quick Fix:**
+   Manually modify package.json to use React 18:
 
-```bash
-# This will downgrade React to version 18.2.0 which is compatible with react-native-web
-chmod +x ./downgrade-react.sh
-./downgrade-react.sh
-```
-
-4. For manual resolution, downgrade React version to 18.2.0 in package.json:
-
-```json
-"dependencies": {
-  "react": "^18.2.0"
-}
-```
+   ```json
+   "dependencies": {
+     "react": "18.2.0",
+     "react-dom": "18.2.0"
+   }
+   ```
 
 ## Module Resolution Issues
 
@@ -54,27 +60,40 @@ This error occurs when the minimatch module structure doesn't match what EAS Bui
 
 **Solution:**
 
-1. Make sure minimatch is explicitly added to your dependencies:
+1. **Use the eas-hooks system (recommended):**
 
-```json
-"dependencies": {
-  "minimatch": "^9.0.3"
-}
-```
+   The project includes pre and post-install hooks that automatically fix this issue:
 
-2. Run the `fix-dependencies.sh` script before building:
+   ```bash
+   # Run post-install hook to fix minimatch structure
+   chmod +x ./eas-hooks/eas-build-post-install.sh
+   ./eas-hooks/eas-build-post-install.sh
+   ```
 
-```bash
-chmod +x ./fix-dependencies.sh
-./fix-dependencies.sh
-```
+2. **Manual fix:**
 
-3. Use the `--preserve-symlinks` Node option:
+   If the hook doesn't work, manually fix the module structure:
 
-```bash
-export NODE_OPTIONS="--preserve-symlinks"
-eas build [options]
-```
+   ```bash
+   # Create directory structure
+   mkdir -p node_modules/minimatch/dist/commonjs
+   
+   # Create re-export file if minimatch.js exists
+   if [ -f node_modules/minimatch/minimatch.js ]; then
+     cp node_modules/minimatch/minimatch.js node_modules/minimatch/dist/commonjs/index.js
+   else
+     echo "module.exports = require('../../minimatch.js');" > node_modules/minimatch/dist/commonjs/index.js
+   fi
+   ```
+
+3. **Use the `--preserve-symlinks` Node option:**
+
+   This is already configured in the eas.json file, but can be set manually:
+
+   ```bash
+   export NODE_OPTIONS="--preserve-symlinks"
+   eas build [options]
+   ```
 
 ## Yoga/React Native Component Errors
 
@@ -170,9 +189,55 @@ If issues persist:
 
 ## Recommended Build Process
 
-For the most reliable builds:
+For the most reliable builds, follow these steps:
 
-1. Always run `fix-dependencies.sh` before building
-2. Use the `--no-wait` flag for EAS builds
-3. Monitor in the Expo developer dashboard
-4. Consider setting up CI/CD for automated builds once the configuration is stable
+### Method 1: Using Local Build Scripts (Recommended)
+
+The project provides complete build scripts that handle all dependency fixes:
+
+1. For iOS:
+   ```bash
+   chmod +x ./local-ios-build.sh
+   ./local-ios-build.sh
+   ```
+
+2. For Android:
+   ```bash
+   chmod +x ./local-android-build.sh
+   ./local-android-build.sh
+   ```
+
+### Method 2: Manual EAS Build
+
+If you need to manually trigger builds:
+
+1. Run the dependency fix hooks first:
+   ```bash
+   chmod +x ./eas-hooks/eas-build-pre-install.sh
+   ./eas-hooks/eas-build-pre-install.sh
+   
+   npm install --legacy-peer-deps
+   
+   chmod +x ./eas-hooks/eas-build-post-install.sh
+   ./eas-hooks/eas-build-post-install.sh
+   ```
+
+2. Start the build with the `--no-wait` flag:
+   ```bash
+   export NODE_OPTIONS="--preserve-symlinks"
+   eas build --platform [ios|android] --profile native --no-wait
+   ```
+
+3. Monitor build progress in the Expo dashboard
+
+### Method 3: CI/CD Setup
+
+For continuous integration:
+
+1. Use GitHub Actions or similar CI/CD platform
+2. Include the hooks in your CI/CD workflow
+3. Trigger EAS builds with the proper environment variables set:
+   ```
+   NODE_OPTIONS="--preserve-symlinks" 
+   EXPO_IMAGE_UTILS_NO_SHARP="1"
+   ```
