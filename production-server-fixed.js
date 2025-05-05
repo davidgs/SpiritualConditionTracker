@@ -1,6 +1,6 @@
 /**
  * Ultra minimal Expo starter for Apache proxy setup
- * Just starts Expo on the correct port - Apache handles the rest
+ * Fixes module compatibility issues before starting
  */
 
 const { spawn } = require('child_process');
@@ -10,11 +10,37 @@ const fs = require('fs');
 // Configuration - this must match Apache's proxy target port
 const EXPO_PORT = 3243;
 
+// Fix minimatch module issues
+function fixMinimatchModule() {
+  try {
+    console.log('Fixing minimatch module...');
+    const minimatchPath = path.join(__dirname, 'node_modules', 'minimatch');
+    const packageJsonPath = path.join(minimatchPath, 'package.json');
+    
+    if (fs.existsSync(packageJsonPath)) {
+      // Read the package.json
+      const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
+      
+      // Change type from "module" to "commonjs"
+      if (packageJson.type === 'module') {
+        packageJson.type = 'commonjs';
+        fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2));
+        console.log('Changed minimatch module type to commonjs');
+      }
+    }
+  } catch (err) {
+    console.error('Error fixing minimatch module:', err);
+  }
+}
+
 // Start Expo
 async function startExpo() {
   console.log('Starting Expo on port ' + EXPO_PORT);
   
   try {
+    // Fix module issues first
+    fixMinimatchModule();
+    
     // Check if directory exists
     const expoAppDir = path.join(__dirname, 'expo-app');
     if (!fs.existsSync(expoAppDir)) {
@@ -36,17 +62,18 @@ async function startExpo() {
       ...process.env,
       DANGEROUSLY_DISABLE_HOST_CHECK: 'true',  // Allow external connections
       EXPO_NO_DEPENDENCY_VALIDATION: 'true',   // Skip validation
-      CI: 'true',                              // Reduce verbose output
       PUBLIC_URL: '/',                         // Root URL
-      NODE_ENV: 'production'                   // Production mode
+      NODE_ENV: 'production',                  // Production mode
+      SKIP_PREFLIGHT_CHECK: 'true'             // Skip React checks
     };
     
-    // Start Expo directly on the target port
-    console.log('Starting Expo process...');
+    // Try to use a compatible Expo web command that doesn't rely on problematic modules
+    console.log('Starting React Native web server directly...');
+    
+    // Use webpack serve directly instead of Expo CLI
     const expoProcess = spawn('npx', [
-      'expo', 'start', 
-      '--no-dev',
-      '--web',
+      'react-native', 
+      'start',
       '--port', 
       EXPO_PORT
     ], {
@@ -55,14 +82,16 @@ async function startExpo() {
       stdio: 'inherit'  // Direct output to console for easy debugging
     });
     
-    console.log(`Started Expo with PID ${expoProcess.pid}`);
+    console.log(`Started server with PID ${expoProcess.pid}`);
     
     // Handle process exit
     expoProcess.on('close', (code) => {
-      console.log(`Expo process exited with code ${code}`);
-      if (code !== 0) {
-        console.log('Restarting Expo...');
-        startExpo();
+      console.log(`Process exited with code ${code}`);
+      
+      // Only restart if not killed intentionally
+      if (code !== 0 && !expoProcess.killed) {
+        console.log('Restarting server...');
+        setTimeout(() => startExpo(), 5000); // Wait 5 seconds before restart
       }
     });
     
@@ -76,9 +105,9 @@ async function startExpo() {
     // Keep the process running
     console.log(`
 ==========================================================
-Spiritual Condition Tracker - Expo Running
+Spiritual Condition Tracker - Server Running
 ==========================================================
-Expo is now running directly on port ${EXPO_PORT}
+Server is now running directly on port ${EXPO_PORT}
 Apache should proxy requests to http://localhost:${EXPO_PORT}
 The app should be accessible through your website
 ==========================================================
