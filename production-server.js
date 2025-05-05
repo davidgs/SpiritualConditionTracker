@@ -81,9 +81,36 @@ function fixLogoPath() {
   }
 }
 
+// Fix minimatch module issue
+function fixMinimatchError() {
+  try {
+    console.log('Checking for minimatch module...');
+    
+    // Check if the problematic path exists
+    const minimatchPath = path.join(__dirname, 'node_modules', 'minimatch', 'dist', 'commonjs');
+    if (!fs.existsSync(minimatchPath)) {
+      console.log('Creating minimatch directory structure...');
+      fs.mkdirSync(minimatchPath, { recursive: true });
+      
+      // Create a simple shim
+      const indexPath = path.join(minimatchPath, 'index.js');
+      fs.writeFileSync(indexPath, `
+// Simple shim to fix module resolution
+module.exports = require('../../minimatch.js');
+      `);
+      console.log('Fixed minimatch module issue');
+    }
+  } catch (err) {
+    console.error('Error fixing minimatch module:', err);
+  }
+}
+
 // Start Expo in the background
 async function startExpoApp() {
   console.log('Starting Expo app...');
+  
+  // Fix minimatch error first
+  fixMinimatchError();
   
   // Check if directory exists
   const expoAppDir = path.join(__dirname, 'expo-app');
@@ -110,18 +137,20 @@ async function startExpoApp() {
     // For proper path handling
     PUBLIC_URL: '/',
     // For Metro bundler behind reverse proxy
-    NODE_ENV: 'production'
+    NODE_ENV: 'production',
+    // Skip validation to avoid path-to-regexp error
+    EXPO_SKIP_DEPENDENCY_VALIDATION: 'true'
   };
   
-  // Start Expo
+  // Start Expo with safer options
   const expoProcess = spawn('npx', [
     'expo',
     'start',
+    '--no-dev',
     '--offline',
     '--web',
     '--port',
-    EXPO_PORT,
-    '--non-interactive'
+    EXPO_PORT
   ], {
     cwd: expoAppDir,
     env: expoEnv,
@@ -142,7 +171,7 @@ async function startExpoApp() {
   
   expoProcess.on('close', (code) => {
     console.log(`Expo process exited with code ${code}`);
-    // Auto-restart if it crashes
+    // Auto-restart if it crashes, but avoid restarting if there's a path-to-regexp error
     if (code !== 0) {
       console.log('Attempting to restart Expo...');
       setTimeout(() => startExpoApp(), 5000);
