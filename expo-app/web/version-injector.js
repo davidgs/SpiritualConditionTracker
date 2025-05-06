@@ -1,5 +1,5 @@
 
-// Force version refresh - created at 2025-05-06T20:53:37.524Z
+// Force version refresh - created at 2025-05-06T20:57:37.764Z
 window.FORCE_APP_VERSION = "1.0.2 - May 6, 2025, 08:52 PM - BUILD-1746564757471";
 window.BUILD_ID = "build-1746564757471";
 console.log("[Version Injector] Running version: " + window.FORCE_APP_VERSION);
