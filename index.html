@@ -161,7 +161,7 @@
         <section class="hero">
             <h1>Track Your Journey to Spiritual Wellness</h1>
             <p>Monitor your daily activities, track your progress, and connect with others on the same path.</p>
-            <a href="/web-build/" class="cta-button">Launch App</a>
+            <a href="javascript:void(0)" onclick="loadApp()" class="cta-button">Launch App</a>
         </section>
         
         <section class="features">
@@ -219,6 +219,81 @@
             const theme = body.classList.contains('dark-mode') ? 'dark' : 'light';
             localStorage.setItem('theme', theme);
         });
+
+        // Function to load the app directly in the page
+        function loadApp() {
+            // Create a full-page app container
+            const appContainer = document.createElement('div');
+            appContainer.id = 'app-container';
+            appContainer.style.position = 'fixed';
+            appContainer.style.top = '0';
+            appContainer.style.left = '0';
+            appContainer.style.width = '100%';
+            appContainer.style.height = '100%';
+            appContainer.style.backgroundColor = body.classList.contains('dark-mode') ? '#1a1a1a' : '#f8f9fa';
+            appContainer.style.zIndex = '1000';
+            appContainer.style.display = 'flex';
+            appContainer.style.flexDirection = 'column';
+            appContainer.style.alignItems = 'center';
+            appContainer.style.justifyContent = 'center';
+            
+            // Add a loading indicator
+            const loader = document.createElement('div');
+            loader.innerHTML = 'Loading Spiritual Condition Tracker...';
+            loader.style.marginBottom = '20px';
+            loader.style.fontSize = '18px';
+            
+            // Add a back button
+            const backButton = document.createElement('button');
+            backButton.innerHTML = 'Return to Homepage';
+            backButton.style.padding = '10px 15px';
+            backButton.style.backgroundColor = '#007bff';
+            backButton.style.color = 'white';
+            backButton.style.border = 'none';
+            backButton.style.borderRadius = '5px';
+            backButton.style.cursor = 'pointer';
+            backButton.style.marginTop = '20px';
+            backButton.style.display = 'none'; // Hide initially
+            
+            // Back button click handler
+            backButton.addEventListener('click', () => {
+                document.body.removeChild(appContainer);
+            });
+            
+            // Add elements to the container
+            appContainer.appendChild(loader);
+            appContainer.appendChild(backButton);
+            
+            // Add the container to the page
+            document.body.appendChild(appContainer);
+            
+            // Create a root div for the React app
+            const rootDiv = document.createElement('div');
+            rootDiv.id = 'root';
+            rootDiv.style.width = '100%';
+            rootDiv.style.height = '100%';
+            rootDiv.style.display = 'none'; // Hide initially
+            appContainer.appendChild(rootDiv);
+            
+            // Attempt to load the bundle
+            const script = document.createElement('script');
+            script.src = '/index.bundle';
+            script.onerror = (error) => {
+                loader.innerHTML = 'Error loading the application. Please try again later.';
+                backButton.style.display = 'block';
+                console.error('Failed to load the app bundle:', error);
+            };
+            script.onload = () => {
+                // Show success and back button after a short delay
+                setTimeout(() => {
+                    loader.innerHTML = 'App loaded successfully!';
+                    backButton.style.display = 'block';
+                    rootDiv.style.display = 'block';
+                }, 1000);
+            };
+            
+            document.head.appendChild(script);
+        }
     </script>
 </body>
 </html>
