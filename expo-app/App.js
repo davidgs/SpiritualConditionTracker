@@ -230,7 +230,8 @@ const AppDrawerNavigator = () => {
 
 function Main() {
   const [dbInitialized, setDbInitialized] = useState(false);
-  const [isMobile, setIsMobile] = useState(isMobileDevice());
+  // Force mobile navigation for now
+  const [isMobile, setIsMobile] = useState(true);
   const { theme, isDark } = useTheme();
 
   // Create custom navigation theme
@@ -245,14 +246,17 @@ function Main() {
     },
   };
 
-  // Listen for dimension changes
+  // Toggle between mobile and desktop navigation
+  const toggleNavigationMode = () => {
+    setIsMobile(prev => !prev);
+  };
+  
+  // Add toggle function to window for easy access
   useEffect(() => {
-    const handleDimensionChange = () => {
-      setIsMobile(isMobileDevice());
-    };
-
-    const unsubscribe = addDimensionListener(handleDimensionChange);
-    return () => unsubscribe();
+    if (Platform.OS === 'web') {
+      window.toggleNav = toggleNavigationMode;
+      console.log('Navigation toggle available. Call window.toggleNav() to switch between mobile/desktop view');
+    }
   }, []);
 
   useEffect(() => {

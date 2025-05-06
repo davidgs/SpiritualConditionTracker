@@ -2,6 +2,7 @@ import React, { createContext, useState, useContext, useEffect } from 'react';
 import { calculateSpiritualFitness } from '../utils/calculations';
 import { useActivities } from './ActivitiesContext';
 import { getUserData, updateUserData, getUserSpiritualFitness, updateUserSpiritualFitness } from '../database/database';
+import { saveUserToLocalStorage, loadUserFromLocalStorage } from '../utils/webStorage';
 
 const UserContext = createContext();
 
@@ -74,10 +75,16 @@ export const UserProvider = ({ children }) => {
       setLoading(true);
       setError(null);
       
-      // In a real app, this would update the database
+      // Update the user object by merging with new data
       const updatedUser = { ...user, ...userData };
+      
+      // Update in database
       await updateUserData(updatedUser);
       
+      // Also save to localStorage for web persistence
+      saveUserToLocalStorage(updatedUser);
+      
+      // Update state
       setUser(updatedUser);
       setLoading(false);
       return updatedUser;

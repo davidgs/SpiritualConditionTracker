@@ -7,12 +7,23 @@ let isWebDb = false;
 
 // Platform-specific database handling
 if (Platform.OS === 'web') {
-  // Web-specific storage using IndexedDB
+  // Web-specific storage using localStorage for persistence
   isWebDb = true;
   
-  // Initialize IndexedDB for web platform
+  // Load data from localStorage if it exists
+  let savedData;
+  try {
+    const storedData = localStorage.getItem('spiritualConditionTrackerData');
+    savedData = storedData ? JSON.parse(storedData) : null;
+    console.log('Loaded saved data from localStorage');
+  } catch (e) {
+    console.error('Failed to load data from localStorage:', e);
+    savedData = null;
+  }
+  
+  // Initialize web database with saved data or defaults
   const webDb = {
-    data: {
+    data: savedData || {
       users: [],
       activities: [],
       meetings: [],
@@ -20,6 +31,16 @@ if (Platform.OS === 'web') {
       messages: [],
       conversations: [],
       conversation_participants: []
+    },
+    
+    // Save data to localStorage after each transaction
+    saveData: function() {
+      try {
+        localStorage.setItem('spiritualConditionTrackerData', JSON.stringify(this.data));
+        console.log('Data saved to localStorage');
+      } catch (e) {
+        console.error('Failed to save data to localStorage:', e);
+      }
     },
     
     transaction: function(callback) {
