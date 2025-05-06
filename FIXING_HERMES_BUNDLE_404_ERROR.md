@@ -8,9 +8,50 @@ GET https://spiritual-condition.com/index.bundle?platform=web&dev=true&hot=false
 
 ## The Problem
 
-The Expo application is trying to load the JavaScript bundle directly from the root path (`/index.bundle`) with complex query parameters including Hermes engine configuration. Apache is currently not properly handling this request pattern.
+The Expo application is trying to load the JavaScript bundle directly from the root path (`/index.bundle`) with complex query parameters including Hermes engine configuration. Your server stack (nginx in front of Apache) is currently not properly handling this request pattern.
 
-## Solution: Direct Proxy for Root Bundle Requests
+## Solution for Nginx (Primary Configuration)
+
+Since you have nginx running in front of Apache, you should configure nginx to handle these requests directly:
+
+```nginx
+# Handle direct bundle requests with complex parameters at root level
+location ~ ^/index\.bundle {
+    # Preserve the original query string
+    proxy_pass http://localhost:3243$request_uri;
+    
+    # Set proper headers
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    
+    # Force the correct MIME type for JavaScript bundles
+    add_header Content-Type application/javascript;
+    
+    # Increase timeouts for large bundles
+    proxy_read_timeout 300s;
+    proxy_connect_timeout 300s;
+}
+
+# Special handling for Hermes bundle requests
+location ~ ^/index\.bundle\?.*transform\.engine=hermes.* {
+    # This specific pattern needs special handling
+    proxy_pass http://localhost:3243$request_uri;
+    
+    # Force JavaScript MIME type
+    add_header Content-Type application/javascript;
+    
+    # Set headers
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+}
+```
+
+See the complete nginx configuration in the `nginx-expo-config.conf` file.
+
+## Alternative Solution: Direct Proxy for Root Bundle Requests (Apache Configuration)
 
 Instead of redirecting root bundle requests to `/app/index.bundle`, we need to directly proxy these requests to the Expo server to preserve all query parameters.
 
