@@ -198,6 +198,8 @@ const PORT = 3243;  // The port Apache is configured to proxy to
 const PUBLIC_PATH = 'app';  // Public path without leading slash to avoid URL validation errors
 const expoAppDir = path.join(__dirname, 'expo-app');
 
+// No longer needed - env is defined below
+
 log(`Configuration: PORT=${PORT}, PUBLIC_PATH=${PUBLIC_PATH}, expoAppDir=${expoAppDir}`, 'DEBUG');
 writeLog(`Configuration: PORT=${PORT}, PUBLIC_PATH=${PUBLIC_PATH}, expoAppDir=${expoAppDir}`);
 
@@ -395,7 +397,8 @@ const env = {
   NODE_ENV: 'development',
   DEBUG: '*',  // Enable all debug output
   EXPO_DEBUG: 'true',
-  CI: 'false',  // Must be 'false' string to be properly parsed as boolean
+  CI: '1',      // Use '1' to make Expo auto-accept alternate port
+  EXPO_NO_COLOR: '1', // Disable colors in output
   BROWSER: 'none',  // Prevent opening browser
   EXPO_WEB_PORT: PORT.toString(),  // Set explicit web port
   PORT: PORT.toString(),  // For Metro
@@ -755,20 +758,10 @@ let expoProcess = null;
 function startExpo() {
   log('Starting Expo server...', 'STARTUP');
   
-  // Start Expo with web mode on the specified port
-  // Use a simplified command line with only the essential parameters and add --non-interactive
-  // to automatically accept the alternate port suggestion
-  expoProcess = spawn('npx', [
-    'expo',
-    'start',
-    '--web',
-    '--port',
-    PORT.toString(),
-    '--host',
-    'lan',  // Use 'lan' to make it accessible on the network
-    '--non-interactive' // Auto-accept alternate port
+  // Start using our helper script that properly sets CI=1
+  expoProcess = spawn('bash', [
+    path.join(__dirname, 'auto-accept-alternate-port.sh')
   ], {
-    cwd: expoAppDir,
     env: env,
     stdio: 'inherit'  // Use inherit to directly show output for easier debugging
   });
