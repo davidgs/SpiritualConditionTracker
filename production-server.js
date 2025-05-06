@@ -131,11 +131,43 @@ const expoProcess = spawn('npx', [
 
 console.log(`Started Expo with PID ${expoProcess.pid}`);
 
-// Mark server as started after a delay
-setTimeout(() => {
-  serverStarted = true;
-  console.log('✅ Expo server has been running for 30 seconds, marking as successfully started');
-}, 30000);
+// We won't automatically mark as started - only check if it's running
+const http = require('http');
+
+// Check if server is actually running on the port
+function checkServerRunning() {
+  return new Promise((resolve) => {
+    const req = http.get(`http://localhost:${PORT}`, (res) => {
+      if (res.statusCode === 200) {
+        serverStarted = true;
+        console.log('✅ Expo server is running and responding on port ' + PORT);
+        resolve(true);
+      } else {
+        console.log(`Server responded with status code: ${res.statusCode}`);
+        resolve(false);
+      }
+    });
+    
+    req.on('error', (err) => {
+      console.log(`❌ Could not connect to server: ${err.message}`);
+      resolve(false);
+    });
+    
+    req.setTimeout(5000, () => {
+      req.abort();
+      console.log('❌ Server connection timeout');
+      resolve(false);
+    });
+  });
+}
+
+// Check server status periodically
+const checkInterval = setInterval(async () => {
+  const isRunning = await checkServerRunning();
+  if (!isRunning && !serverStarted) {
+    console.log('Expo server not responding yet, still waiting...');
+  }
+}, 10000); // Check every 10 seconds
 
 // Set a longer timeout for initial startup
 startupTimer = setTimeout(() => {
@@ -149,9 +181,13 @@ startupTimer = setTimeout(() => {
 expoProcess.on('close', (code) => {
   console.log(`Expo process exited with code ${code}`);
   
-  // Clear the startup timer if it's still running
+  // Clean up resources
   if (startupTimer) {
     clearTimeout(startupTimer);
+  }
+  
+  if (checkInterval) {
+    clearInterval(checkInterval);
   }
   
   if (serverStarted) {
@@ -164,18 +200,30 @@ expoProcess.on('close', (code) => {
   } else {
     // If server never started successfully, log but don't auto-restart
     console.log('Expo crashed during startup. Please check logs for errors.');
+    // Try one more time after a delay
+    console.log('Will attempt one more restart in 10 seconds...');
+    setTimeout(() => {
+      console.log('Final restart attempt...');
+      process.exit(1);  // Exit and let the system restart the process
+    }, 10000);
   }
 });
 
 // Handle process signals
 process.on('SIGINT', () => {
   console.log('SIGINT received, shutting down...');
+  // Clean up resources
+  if (startupTimer) clearTimeout(startupTimer);
+  if (checkInterval) clearInterval(checkInterval);
   expoProcess.kill();
   process.exit(0);
 });
 
 process.on('SIGTERM', () => {
   console.log('SIGTERM received, shutting down...');
+  // Clean up resources
+  if (startupTimer) clearTimeout(startupTimer);
+  if (checkInterval) clearInterval(checkInterval);
   expoProcess.kill();
   process.exit(0);
 });
