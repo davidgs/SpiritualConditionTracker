@@ -14,15 +14,28 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "ProductionServer"
+args = "MinimalServer"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "SimpleServer"
 
 [[workflows.workflow]]
-name = "ProductionServer"
+name = "MinimalServer"
 author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "node production-server.js"
+args = "node minimal-deployment-server.js"
+waitForPort = 3243
+
+[[workflows.workflow]]
+name = "SimpleServer"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "node super-minimal-server.js"
 waitForPort = 3243
 
 [deployment]
