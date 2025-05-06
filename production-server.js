@@ -456,27 +456,72 @@ if (!fs.existsSync(STATIC_DIR)) {
   log(`Created static directory at ${STATIC_DIR}`, 'SETUP');
 }
 
-// Create a minimal bundle file for direct serving
+// Create a better functional bundle file for direct serving
 function createMinimalBundle() {
-  log('Creating minimal static bundle file...', 'SETUP');
+  log('Creating functional static bundle file...', 'SETUP');
   const bundleContent = `
 // Static bundle for Spiritual Condition Tracker
-// This is a fallback bundle for nginx compatibility
-console.warn('Using static bundle - this is a compatibility file for nginx');
-
-// Initialize minimum required modules
-require('react');
-require('react-native');
-require('expo');
-
-// Let the user know what's happening
-console.log('Static bundle loaded successfully. The app is starting in compatibility mode.');
-console.log('This bundle is only served for nginx compatibility and should redirect to the main app.');
+// Enhanced compatibility bundle for Hermes engine & Nginx
+(function() {
+  console.log('[Bundle] Loading compatibility bundle...');
+  
+  // Provide minimal mocks for expected Hermes APIs
+  if (typeof global !== 'undefined' && !global.HermesInternal) {
+    global.HermesInternal = {
+      getRuntimeProperties: function() {
+        return { 
+          "OSS Release Version": "hermes-2023-08-07-RNv0.72.4-node-v18.17.1",
+          "Build Mode": "Release", 
+          "Bytecode Version": 99 
+        };
+      },
+      hasToStringBug: function() { return false; },
+      enablePromiseRejectionTracker: function() {},
+      enterCriticalSection: function() {},
+      exitCriticalSection: function() {},
+      handleMemoryPressure: function() {},
+      initializeHermesIfNeeded: function() {},
+      shouldEnableTurboModule: function() { return false; }
+    };
+  }
+  
+  // Setup minimal React environment
+  if (typeof window !== 'undefined') {
+    // Redirect to root after a short delay if this gets loaded directly
+    setTimeout(function() {
+      console.log('[Bundle] Redirecting to app root...');
+      if (window.location.pathname.includes('index.bundle')) {
+        try {
+          // Try to use the standard app URL
+          window.location.href = '/';
+        } catch (e) {
+          console.error('[Bundle] Redirect failed:', e);
+        }
+      }
+    }, 500);
+  }
+  
+  // Let the user know this is a compatibility bundle
+  console.warn('[Bundle] Running in compatibility mode - this is not the full app bundle');
+  console.log('[Bundle] If you see this message in the browser console, you should reload the page or navigate to the app root');
+  
+  // Export expected modules to prevent errors
+  return {
+    __esModule: true,
+    default: {
+      name: 'SpiritualConditionTracker',
+      displayName: 'Spiritual Condition Tracker',
+      expo: {
+        name: 'Spiritual Condition Tracker'
+      }
+    }
+  };
+})();
 `;
 
   const bundlePath = path.join(STATIC_DIR, 'index.bundle');
   fs.writeFileSync(bundlePath, bundleContent);
-  log(`Static bundle created at ${bundlePath}`, 'SETUP');
+  log(`Enhanced static bundle created at ${bundlePath}`, 'SETUP');
   return bundlePath;
 }
 
