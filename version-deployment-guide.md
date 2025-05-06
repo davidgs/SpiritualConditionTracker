@@ -1,76 +1,92 @@
 # Version Deployment Guide
 
-We've been making changes to the app in Replit, but those changes need to be deployed to your actual server to be visible in browsers and iOS simulators.
+This guide documents the minimal steps needed to update your app version and ensure it appears correctly on deployment.
 
-## Deployment Steps
+## Deployment Issues Summary
 
-1. **Commit Changes to GitHub**
-   - The changes we've made need to be committed to your GitHub repository
-   - This includes the updated App.js with the new version string "1.0.2"
-   - Also includes the improved run-expo-only.js script
+The main issue preventing version updates from appearing is the lru-cache module resolution error during the build process. This prevents proper rebuilding on the server.
 
-2. **Pull Changes on Your Server**
-   ```bash
-   cd /path/to/your/app
-   git pull
+## Minimal Fix Process
+
+1. Update version in `expo-app/App.js`:
+   ```javascript
+   const APP_VERSION = "1.0.2 - May 6, 2025"; // Update with each release
    ```
 
-3. **Restart the Expo Server**
+2. Skip problematic export step in `run-expo-only.js`:
+   ```javascript
+   // Skip the export step which causes lru-cache issues
+   console.log('Skipping export step to avoid lru-cache issues...');
+   console.log('Continuing with direct Expo start...');
+   ```
+
+3. On your server, run these commands after git pull:
    ```bash
-   # Kill any existing Expo processes
-   pkill -f "expo start" || true
-   pkill -f "node.*expo" || true
+   # Kill existing processes
+   pkill -f node
    
-   # Clear all caches
+   # Force clear all caches
+   rm -rf node_modules/.cache
    rm -rf expo-app/node_modules/.cache
+   rm -rf .expo
    rm -rf expo-app/.expo
-   rm -rf expo-app/web-build
+   rm -rf ~/Library/Developer/Xcode/DerivedData
    
-   # Start the server with our improved script
+   # Install critical dependencies
+   npm install --no-save lru-cache@6.0.0 semver@7.5.4 minimatch@5.1.6
+   
+   # Start with cache busting variables
+   EXPO_CACHE_BUSTER="$(date +%s)" \
+   METRO_CACHE_BUSTER="$(date +%s)" \
+   BUILD_ID="force-clean-$(date +%s)" \
    node run-expo-only.js
    ```
 
-## Verifying the Update
+## Nginx Configuration
 
-After restarting, you should be able to see:
-1. The updated version string "1.0.2" in the footer
-2. The hamburger menu for mobile navigation
+Add this to your Nginx site configuration:
 
-## Common Issues
+```nginx
+# Cache busting headers
+add_header Cache-Control "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0" always;
+add_header Pragma "no-cache" always;
+add_header Expires "0" always;
 
-If the update still doesn't appear:
-1. **Browser Cache**: Try clearing your browser cache completely or use incognito mode
-2. **Server Proxy Cache**: If you're using Nginx or Apache, they might be caching responses
-3. **iOS Simulator**: Try completely closing and restarting the simulator
-4. **Web Configuration**: Check if any content delivery networks (CDNs) are caching your app
+# Disable etag
+etag off;
 
-## Force Clear Browser Cache
+# Add random timestamp to force cache invalidation
+add_header X-Cache-Timestamp $msec always;
+```
 
-Add this script to your index.html to force browsers to clear their cache:
+## Client-Side Refresh
+
+Add this iframe to any HTML page to test if the version is updating properly:
 
 ```html
-<script>
-  // Force reload if version doesn't match
-  (function() {
-    const currentVersion = "1.0.2-May6";
-    const storedVersion = localStorage.getItem('app_version');
-    
-    if (storedVersion !== currentVersion) {
-      console.log('New version detected, clearing cache and reloading');
-      localStorage.setItem('app_version', currentVersion);
-      
-      // Clear all caches if browser supports it
-      if ('caches' in window) {
-        caches.keys().then(cacheNames => {
-          cacheNames.forEach(cacheName => {
-            caches.delete(cacheName);
-          });
-        });
-      }
-      
-      // Force reload without cache
-      window.location.reload(true);
-    }
-  })();
-</script>
+<iframe src="/app/?v=new-version-$(date +%s)" style="width:100%; height:600px; border:1px solid #ccc;"></iframe>
 ```
+
+## Future Updates
+
+For future version updates:
+
+1. Update the version string in `expo-app/App.js`
+2. Include the date in the version string for easy verification
+3. Commit and push to your repository
+4. On your server:
+   ```bash
+   git pull
+   pkill -f node
+   CACHE_BUSTER="$(date +%s)" node run-expo-only.js
+   ```
+
+## Browser Testing
+
+Test your app in incognito/private browsing mode, which starts with a fresh cache.
+
+If you still see an old version:
+1. Open browser developer tools (F12)
+2. Go to Application tab
+3. Select "Storage" and clear all site data
+4. Hard refresh (Ctrl+Shift+R or Cmd+Shift+R)

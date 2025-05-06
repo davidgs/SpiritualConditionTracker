@@ -157,20 +157,9 @@ if (fs.existsSync(appJsPath)) {
   }
 }
 
-// First try to clean up old files
-try {
-  // Run a complete clean build first
-  console.log('Doing a complete clean build first...');
-  execSync('npx expo export -p web --clear', {
-    cwd: expoAppDir,
-    env: { ...env, EXPO_WEB_BUILD_VERSION: BUILD_ID },
-    stdio: 'inherit'
-  });
-  console.log('Web export completed successfully');
-} catch (error) {
-  console.error('Error during web export:', error);
-  console.log('Continuing with regular start...');
-}
+// Skip the export step which causes lru-cache issues
+console.log('Skipping export step to avoid lru-cache issues...');
+console.log('Continuing with direct Expo start...');
 
 // Start Expo with maximum cache-clearing options
 const expo = spawn('npx', [
