@@ -194,14 +194,15 @@ function fixVectorIcons() {
 }
 
 // Configuration
-const PORT = 3243;  // The port Apache is configured to proxy to
+const BUNDLE_PORT = 3243;  // The port Apache is configured to proxy to
+const EXPO_PORT = 3244;    // The port Expo will run on
 const PUBLIC_PATH = 'app';  // Public path without leading slash to avoid URL validation errors
 const expoAppDir = path.join(__dirname, 'expo-app');
 
 // No longer needed - env is defined below
 
-log(`Configuration: PORT=${PORT}, PUBLIC_PATH=${PUBLIC_PATH}, expoAppDir=${expoAppDir}`, 'DEBUG');
-writeLog(`Configuration: PORT=${PORT}, PUBLIC_PATH=${PUBLIC_PATH}, expoAppDir=${expoAppDir}`);
+log(`Configuration: BUNDLE_PORT=${BUNDLE_PORT}, EXPO_PORT=${EXPO_PORT}, PUBLIC_PATH=${PUBLIC_PATH}, expoAppDir=${expoAppDir}`, 'DEBUG');
+writeLog(`Configuration: BUNDLE_PORT=${BUNDLE_PORT}, EXPO_PORT=${EXPO_PORT}, PUBLIC_PATH=${PUBLIC_PATH}, expoAppDir=${expoAppDir}`);
 
 // Startup tracking variables
 let serverStarted = false;
@@ -400,8 +401,8 @@ const env = {
   CI: '1',      // Use '1' to make Expo auto-accept alternate port
   EXPO_NO_COLOR: '1', // Disable colors in output
   BROWSER: 'none',  // Prevent opening browser
-  EXPO_WEB_PORT: PORT.toString(),  // Set explicit web port
-  PORT: PORT.toString(),  // For Metro
+  EXPO_WEB_PORT: EXPO_PORT.toString(),  // Set explicit web port
+  PORT: EXPO_PORT.toString(),  // For Metro
   
   // Critical path configuration
   EXPO_WEBPACK_PUBLIC_PATH: PUBLIC_PATH,  // Important: set correct public path for bundle assets
@@ -457,10 +458,10 @@ function checkServerRunning() {
     }
     
     // Full health check for initial startup
-    log(`Checking if server is running on port ${PORT}...`, 'DEBUG');
+    log(`Checking if server is running on port ${BUNDLE_PORT}...`, 'DEBUG');
     
     // Check our status endpoint first - this should work if our server is up
-    const statusReq = http.get(`http://localhost:${PORT}/server-status`, (statusRes) => {
+    const statusReq = http.get(`http://localhost:${BUNDLE_PORT}/server-status`, (statusRes) => {
       let data = '';
       statusRes.on('data', (chunk) => {
         data += chunk;
