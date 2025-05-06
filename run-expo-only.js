@@ -78,13 +78,25 @@ fixVectorIcons();
 
 console.log(`Starting Expo directly on port ${PORT}...`);
 
-// Start Expo with required options for nginx
+// Clear cache first to ensure a clean build
+console.log('Clearing Expo cache...');
+try {
+  execSync('rm -rf node_modules/.cache', { cwd: expoAppDir, stdio: 'inherit' });
+  console.log('Cache cleared successfully');
+} catch (error) {
+  console.error('Error clearing cache:', error);
+}
+
+// Start Expo with required options for nginx and force rebuild
 const expo = spawn('npx', [
   'expo', 
   'start', 
   '--web', 
   '--port', PORT.toString(),
-  '--host', 'lan'  // Important: use LAN host mode for external access
+  '--host', 'lan',   // Important: use LAN host mode for external access
+  '--clear',         // Clear the cache
+  '--no-dev',        // Disable development mode for better reliability
+  '--reset-cache',   // Reset the cache entirely
 ], {
   cwd: expoAppDir,
   env: env,

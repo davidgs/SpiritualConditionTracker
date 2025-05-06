@@ -13,15 +13,22 @@ const MOBILE_WIDTH_THRESHOLD = 768;
 export const isMobileDevice = () => {
   // For native platforms, use the platform type
   if (Platform.OS === 'ios' || Platform.OS === 'android') {
+    console.log('Device detection: Native mobile platform detected');
     return true;
   }
   
   // For web, check the viewport width
   if (Platform.OS === 'web' && typeof window !== 'undefined') {
-    return window.innerWidth < MOBILE_WIDTH_THRESHOLD;
+    const isMobile = window.innerWidth < MOBILE_WIDTH_THRESHOLD;
+    console.log(`Device detection: Web platform - width: ${window.innerWidth}px, detected as: ${isMobile ? 'MOBILE' : 'DESKTOP'}`);
+    
+    // Force mobile for testing
+    console.log('Device detection: Forcing MOBILE navigation for testing');
+    return true;
   }
   
   // Default to false if unable to determine
+  console.log('Device detection: Unable to determine device type, defaulting to desktop');
   return false;
 };
 
