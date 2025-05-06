@@ -9,6 +9,7 @@ To run the app on your production server:
 1. Copy these files to your server:
    - `fix-subprotocol.js`
    - `run-expo-with-fixes.js`
+   - `create-systemd-service.js` (optional, for automatic startup)
 
 2. Run the combined solution:
 
@@ -18,6 +19,9 @@ node run-expo-with-fixes.js
 
 This script:
 - Fixes the missing subprotocol.js module and other missing files
+- Creates/fixes static content in the public directory
+- Fixes paths in index.html for proper resource loading
+- Sets up symbolic links for bundle access
 - Starts Expo directly on port 3243 (the port your Apache proxy is configured for)
 
 ## Troubleshooting
