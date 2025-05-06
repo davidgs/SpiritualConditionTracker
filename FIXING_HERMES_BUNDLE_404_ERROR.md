@@ -30,11 +30,12 @@ Instead of redirecting root bundle requests to `/app/index.bundle`, we need to d
 
 # Specific handling for Hermes engine bundles
 <Location "/index.bundle">
-    <If "%{QUERY_STRING} =~ /transform\.engine=hermes/">
-        ProxyPass "http://localhost:3243/index.bundle?%{QUERY_STRING}"
-        ProxyPassReverse "http://localhost:3243/index.bundle"
-        ForceType application/javascript
-    </If>
+    RewriteEngine On
+    # Handle Hermes engine requests
+    RewriteCond %{QUERY_STRING} transform\.engine=hermes
+    RewriteRule ^/index\.bundle$ http://localhost:3243/index.bundle?%{QUERY_STRING} [P,L]
+    # Force JavaScript MIME type
+    ForceType application/javascript
 </Location>
 ```
 
