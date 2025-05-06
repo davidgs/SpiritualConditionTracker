@@ -8,6 +8,26 @@ const { spawn, execSync } = require('child_process');
 const path = require('path');
 const fs = require('fs');
 
+// Create missing vector icons directories to prevent crashes
+function fixVectorIcons() {
+  console.log('Creating missing vector icons directories...');
+  const iconFontPaths = [
+    path.join(__dirname, 'expo-app', 'node_modules', '@expo', 'vector-icons', 'build', 'vendor', 'react-native-vector-icons', 'Fonts'),
+    path.join(__dirname, 'node_modules', '@expo', 'vector-icons', 'build', 'vendor', 'react-native-vector-icons', 'Fonts')
+  ];
+  
+  iconFontPaths.forEach(dirPath => {
+    try {
+      if (!fs.existsSync(dirPath)) {
+        fs.mkdirSync(dirPath, { recursive: true });
+        console.log(`Created directory: ${dirPath}`);
+      }
+    } catch (err) {
+      console.warn(`Warning: Could not create ${dirPath}:`, err.message);
+    }
+  });
+}
+
 // Configuration
 const PORT = 3243;  // The port Apache is configured to proxy to
 const expoAppDir = path.join(__dirname, 'expo-app');
@@ -33,6 +53,34 @@ if (!fs.existsSync(expoAppDir)) {
   process.exit(1);
 }
 
+// Fix vector icons issue
+fixVectorIcons();
+
+// Create _node_modules directory for compatibility
+const nodeModulesDir = path.join(__dirname, 'expo-app', '_node_modules');
+if (!fs.existsSync(nodeModulesDir)) {
+  try {
+    fs.mkdirSync(nodeModulesDir, { recursive: true });
+    console.log(`Created _node_modules directory: ${nodeModulesDir}`);
+
+    // Create @expo directory
+    const expoDir = path.join(nodeModulesDir, '@expo');
+    fs.mkdirSync(expoDir, { recursive: true });
+    
+    // Create vector-icons/build/vendor/react-native-vector-icons/Fonts directory
+    const iconFontsDir = path.join(expoDir, 'vector-icons', 'build', 'vendor', 'react-native-vector-icons', 'Fonts');
+    fs.mkdirSync(iconFontsDir, { recursive: true });
+    console.log(`Created vector icons directory: ${iconFontsDir}`);
+    
+    // Create empty font file to prevent crashes
+    const missingFontFile = path.join(iconFontsDir, 'MaterialCommunityIcons.ttf');
+    fs.writeFileSync(missingFontFile, '');
+    console.log(`Created empty font file: ${missingFontFile}`);
+  } catch (err) {
+    console.warn(`Warning: Could not create required directories:`, err.message);
+  }
+}
+
 // Start Expo
 console.log(`Starting Expo app directly on port ${PORT}...`);
 
@@ -55,6 +103,8 @@ const env = {
   EXPO_WEB_PORT: PORT.toString(),  // Set explicit web port
   PORT: PORT.toString(),  // For Metro
   EXPO_WEBPACK_PUBLIC_PATH: '/',  // Important: set correct public path for bundle assets
+  EXPO_NO_FONTS: 'true',  // Skip font loading
+  EXPO_USE_VECTOR_ICONS: 'false',  // Skip vector icons
   DANGEROUSLY_DISABLE_HOST_CHECK: 'true'  // Allow external connections
 };
 
