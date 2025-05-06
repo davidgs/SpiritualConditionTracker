@@ -23,9 +23,15 @@ export const UserProvider = ({ children }) => {
       setLoading(true);
       setError(null);
       
-      // In a real app, this would fetch from a database
-      // For now, use sample data
-      const userData = await getUserData();
+      // First try to load from database
+      let userData = await getUserData();
+      
+      // For web platform, also check localStorage for more recent data
+      const webStorageUser = loadUserFromLocalStorage('1');
+      if (webStorageUser) {
+        console.log('Found user data in web storage, using that instead');
+        userData = webStorageUser;
+      }
       
       if (userData) {
         setUser(userData);
@@ -59,6 +65,7 @@ export const UserProvider = ({ children }) => {
         };
         
         await updateUserData(defaultUser);
+        saveUserToLocalStorage(defaultUser); // Also save to web storage
         setUser(defaultUser);
       }
       

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { View, Text, Image } from 'react-native';
+import { View, Text, Image, Platform } from 'react-native';
 import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -24,7 +24,7 @@ import { ThemeProvider, useTheme } from './src/contexts/ThemeContext';
 import { MessagingProvider } from './src/contexts/MessagingContext';
 
 // Import utilities
-import { isMobileDevice, addDimensionListener } from './src/utils/deviceUtils';
+import { getNavigationType, injectResponsiveCSS, responsiveClasses } from './src/utils/responsiveStyles';
 
 // Import database functions
 import { initDatabase } from './src/database/database';
@@ -230,8 +230,8 @@ const AppDrawerNavigator = () => {
 
 function Main() {
   const [dbInitialized, setDbInitialized] = useState(false);
-  // Force mobile navigation for now
-  const [isMobile, setIsMobile] = useState(true);
+  // For native platforms, default to the appropriate navigation
+  const [navType, setNavType] = useState(getNavigationType());
   const { theme, isDark } = useTheme();
 
   // Create custom navigation theme
@@ -246,16 +246,28 @@ function Main() {
     },
   };
 
-  // Toggle between mobile and desktop navigation
-  const toggleNavigationMode = () => {
-    setIsMobile(prev => !prev);
-  };
-  
-  // Add toggle function to window for easy access
+  // Inject CSS for responsive design on web
   useEffect(() => {
     if (Platform.OS === 'web') {
-      window.toggleNav = toggleNavigationMode;
-      console.log('Navigation toggle available. Call window.toggleNav() to switch between mobile/desktop view');
+      // Inject responsive CSS for media queries
+      injectResponsiveCSS();
+      
+      // Listen for window resize to update navigation type
+      const handleResize = () => {
+        setNavType(getNavigationType());
+      };
+      
+      window.addEventListener('resize', handleResize);
+      
+      // Keep manual toggle function for testing
+      window.toggleNav = () => {
+        setNavType(prev => prev === 'drawer' ? 'tabs' : 'drawer');
+        console.log('Toggled navigation mode to:', navType === 'drawer' ? 'tabs' : 'drawer');
+      };
+      
+      return () => {
+        window.removeEventListener('resize', handleResize);
+      };
     }
   }, []);
 
@@ -279,7 +291,15 @@ function Main() {
 
   return (
     <NavigationContainer theme={customNavigationTheme}>
-      {isMobile ? <AppDrawerNavigator /> : <AppTabNavigator />}
+      {navType === 'drawer' ? (
+        <View style={{ flex: 1 }} className={responsiveClasses.mobileNavigation}>
+          <AppDrawerNavigator />
+        </View>
+      ) : (
+        <View style={{ flex: 1 }} className={responsiveClasses.desktopNavigation}>
+          <AppTabNavigator />
+        </View>
+      )}
       <StatusBar style={theme.statusBar} />
     </NavigationContainer>
   );
