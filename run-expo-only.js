@@ -161,7 +161,60 @@ if (fs.existsSync(appJsPath)) {
 console.log('Skipping export step to avoid lru-cache issues...');
 console.log('Continuing with direct Expo start...');
 
-// Start Expo with maximum cache-clearing options
+// Create a log file for Metro bundling
+const logFilePath = path.join(__dirname, 'metro-bundling.log');
+fs.writeFileSync(logFilePath, `Metro bundling log started at ${new Date().toISOString()}\n`, 'utf8');
+
+function appendToLog(message) {
+  try {
+    fs.appendFileSync(logFilePath, `${new Date().toISOString()}: ${message}\n`, 'utf8');
+  } catch (err) {
+    console.error('Error writing to log file:', err);
+  }
+}
+
+console.log(`Metro bundling logs will be saved to: ${logFilePath}`);
+appendToLog('Starting Metro bundler with forced cache clearing');
+
+// Set a timeout to check if bundling completes
+const bundleTimeout = setTimeout(() => {
+  const message = 'WARNING: Metro bundling may be stalled - no completion message after 5 minutes';
+  console.log('\x1b[33m%s\x1b[0m', message);  // Yellow warning
+  appendToLog(message);
+  
+  // Check if the app is actually responding despite no bundle message
+  try {
+    // Try to query the app using the http module
+    const http = require('http');
+    const options = {
+      hostname: 'localhost',
+      port: PORT,
+      path: '/',
+      method: 'GET',
+      timeout: 5000
+    };
+    
+    const req = http.request(options, (res) => {
+      if (res.statusCode === 200) {
+        const successMsg = `App is responding on port ${PORT} despite no bundle completion message`;
+        console.log('\x1b[32m%s\x1b[0m', successMsg);  // Green success
+        appendToLog(successMsg);
+      }
+    });
+    
+    req.on('error', (e) => {
+      const errorMsg = `App is not responding: ${e.message}`;
+      console.log('\x1b[31m%s\x1b[0m', errorMsg);  // Red error
+      appendToLog(errorMsg);
+    });
+    
+    req.end();
+  } catch (err) {
+    appendToLog(`Error checking app status: ${err.message}`);
+  }
+}, 300000); // 5 minutes
+
+// Start Expo with output piping for better debugging
 const expo = spawn('npx', [
   'expo', 
   'start', 
@@ -170,11 +223,41 @@ const expo = spawn('npx', [
   '--host', 'lan',       // Important: use LAN host mode for external access
   '--clear',             // Clear the cache
   '--no-dev',            // Disable development mode for better reliability
-  '--reset-cache'        // Reset the cache entirely
+  '--reset-cache',       // Reset the cache entirely
+  '--max-workers', '2'   // Limit workers to avoid memory issues
 ], {
   cwd: expoAppDir,
   env: env,
-  stdio: 'inherit'  // Direct output to terminal
+  // Use pipe instead of inherit for better control
+  stdio: ['ignore', 'pipe', 'pipe']
+});
+
+// Handle output
+expo.stdout.on('data', (data) => {
+  const output = data.toString();
+  process.stdout.write(output);
+  
+  // Look for bundling completion
+  if (output.includes('Web Bundled')) {
+    appendToLog(`BUNDLE COMPLETE: ${output.trim()}`);
+    clearTimeout(bundleTimeout);
+  }
+  
+  // Log important Metro messages
+  if (output.includes('error') || 
+      output.includes('warning') || 
+      output.includes('Bundled') ||
+      output.includes('Starting') ||
+      output.includes('Waiting')) {
+    appendToLog(output.trim());
+  }
+});
+
+// Handle error output
+expo.stderr.on('data', (data) => {
+  const output = data.toString();
+  process.stderr.write(output);
+  appendToLog(`ERROR: ${output.trim()}`);
 });
 
 console.log(`Started Expo with PID ${expo.pid}`);
