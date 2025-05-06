@@ -317,7 +317,20 @@ const env = {
   BROWSER: 'none',  // Prevent opening browser
   EXPO_WEB_PORT: PORT.toString(),  // Set explicit web port
   PORT: PORT.toString(),  // For Metro
+  
+  // Critical path configuration
   EXPO_WEBPACK_PUBLIC_PATH: PUBLIC_PATH,  // Important: set correct public path for bundle assets
+  PUBLIC_URL: PUBLIC_PATH,  // React public URL setting
+  ASSET_PATH: PUBLIC_PATH,  // Webpack asset path
+  BASE_PATH: PUBLIC_PATH,  // Base path for routing
+  WEBPACK_PUBLIC_PATH: PUBLIC_PATH,  // Fallback for webpack
+  
+  // Additional env variables to help with path resolution
+  REACT_APP_PUBLIC_PATH: PUBLIC_PATH,
+  WEB_PUBLIC_PATH: PUBLIC_PATH,
+  PUBLIC_PATH: PUBLIC_PATH,
+  
+  // Debugging and feature flags
   EXPO_NO_FONTS: 'true',  // Skip font loading
   EXPO_USE_VECTOR_ICONS: 'false',  // Skip vector icons
   DANGEROUSLY_DISABLE_HOST_CHECK: 'true'  // Allow external connections
