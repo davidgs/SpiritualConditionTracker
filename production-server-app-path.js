@@ -1,13 +1,12 @@
 /**
- * Direct Expo starter - Starts Expo directly on port 3243
- * Simple script that just starts Expo on the port that Apache proxies to
- * First runs fix-module-error.sh to fix minimatch module issues
- * Enhanced with extensive logging for troubleshooting
+ * Production server that serves the Expo app at the /app path
+ * Configured to work with Apache proxy serving /app to port 3243
  */
 
 const { spawn, execSync } = require('child_process');
 const path = require('path');
 const fs = require('fs');
+const http = require('http');
 const os = require('os');
 
 // Create timestamp for logs
@@ -36,7 +35,7 @@ function writeLog(message) {
 }
 
 // Start with system info
-log('=== STARTING DEPLOYMENT SERVER WITH DEBUG LOGGING ===', 'DEBUG');
+log('=== STARTING DEPLOYMENT SERVER WITH APP PATH ===', 'DEBUG');
 log(`Node.js version: ${process.version}`, 'DEBUG');
 log(`Operating system: ${os.type()} ${os.release()}`, 'DEBUG');
 log(`CPU architecture: ${os.arch()}`, 'DEBUG');
@@ -118,6 +117,9 @@ writeLog(`Configuration: PORT=${PORT}, PUBLIC_PATH=${PUBLIC_PATH}, expoAppDir=${
 // Startup tracking variables
 let serverStarted = false;
 let startupTimer = null;
+let checkInterval = null;
+let restartAttempts = 0;
+const MAX_RESTART_ATTEMPTS = 3;
 
 // Run fix-module-error.sh first to fix the minimatch module issue
 log('Running fix-module-error.sh...', 'DEBUG');
@@ -137,66 +139,6 @@ try {
   } else {
     log(`Warning: fix-module-error.sh not found at ${fixScriptPath}`, 'WARN');
     writeLog(`Warning: fix-module-error.sh not found at ${fixScriptPath}`);
-    
-    // Try to manually create some critical files that might be missing
-    log('Manually creating critical missing files...', 'DEBUG');
-    
-    // Fix minimatch module
-    try {
-      const minimatchDir = path.join(expoAppDir, 'node_modules', 'minimatch');
-      if (!fs.existsSync(minimatchDir)) {
-        fs.mkdirSync(minimatchDir, { recursive: true });
-        log(`Created minimatch directory: ${minimatchDir}`, 'DEBUG');
-      }
-      
-      const minimatchJsPath = path.join(minimatchDir, 'minimatch.js');
-      if (!fs.existsSync(minimatchJsPath)) {
-        fs.writeFileSync(minimatchJsPath, 'module.exports = function minimatch() { return true; };');
-        log(`Created minimatch.js stub file`, 'DEBUG');
-      }
-    } catch (err) {
-      log(`Error fixing minimatch: ${err.message}`, 'ERROR');
-    }
-    
-    // Fix agent-base module
-    try {
-      const agentBaseDir = path.join(expoAppDir, 'node_modules', 'agent-base');
-      if (!fs.existsSync(agentBaseDir)) {
-        fs.mkdirSync(agentBaseDir, { recursive: true });
-        log(`Created agent-base directory: ${agentBaseDir}`, 'DEBUG');
-      }
-      
-      const agentBasePath = path.join(agentBaseDir, 'index.js');
-      if (!fs.existsSync(agentBasePath)) {
-        fs.writeFileSync(agentBasePath, 'module.exports = function createAgent() { return function agent() {}; };');
-        log(`Created agent-base/index.js stub file`, 'DEBUG');
-      }
-    } catch (err) {
-      log(`Error fixing agent-base: ${err.message}`, 'ERROR');
-    }
-    
-    // Fix ws module
-    try {
-      const wsDir = path.join(expoAppDir, 'node_modules', 'ws');
-      if (!fs.existsSync(wsDir)) {
-        fs.mkdirSync(wsDir, { recursive: true });
-        log(`Created ws directory: ${wsDir}`, 'DEBUG');
-      }
-      
-      const wsIndexPath = path.join(wsDir, 'index.js');
-      if (!fs.existsSync(wsIndexPath)) {
-        fs.writeFileSync(wsIndexPath, 'module.exports = class WebSocket { constructor() {}; };');
-        log(`Created ws/index.js stub file`, 'DEBUG');
-      }
-      
-      const subprotocolPath = path.join(wsDir, 'subprotocol.js');
-      if (!fs.existsSync(subprotocolPath)) {
-        fs.writeFileSync(subprotocolPath, 'module.exports = { format: (protocols) => protocols[0], parse: (header) => [header] };');
-        log(`Created subprotocol.js stub file`, 'DEBUG');
-      }
-    } catch (err) {
-      log(`Error fixing ws: ${err.message}`, 'ERROR');
-    }
   }
 } catch (err) {
   log(`Error running fix script: ${err.message}`, 'ERROR');
@@ -219,22 +161,6 @@ if (!fs.existsSync(expoAppDir)) {
     writeLog(`Expo app directory contents: ${expoAppContents.join(', ')}`);
   } catch (err) {
     log(`Error reading Expo app directory: ${err.message}`, 'ERROR');
-  }
-  
-  // Check if package.json exists
-  const packageJsonPath = path.join(expoAppDir, 'package.json');
-  if (fs.existsSync(packageJsonPath)) {
-    log('Found package.json in Expo app directory', 'DEBUG');
-    
-    try {
-      const packageJson = require(packageJsonPath);
-      log(`package.json name: ${packageJson.name}`, 'DEBUG');
-      log(`package.json dependencies: ${Object.keys(packageJson.dependencies).join(', ')}`, 'DEBUG');
-    } catch (err) {
-      log(`Error reading package.json: ${err.message}`, 'ERROR');
-    }
-  } else {
-    log('Warning: No package.json found in Expo app directory', 'WARN');
   }
 }
 
@@ -296,8 +222,8 @@ if (!fs.existsSync(nodeModulesDir)) {
 }
 
 // Start Expo
-log(`Starting Expo app directly on port ${PORT} with public path ${PUBLIC_PATH}...`, 'DEBUG');
-writeLog(`Starting Expo app directly on port ${PORT} with public path ${PUBLIC_PATH}`);
+log(`Starting Expo app directly on port ${PORT} with publicPath=${PUBLIC_PATH}...`, 'DEBUG');
+writeLog(`Starting Expo app directly on port ${PORT} with publicPath=${PUBLIC_PATH}`);
 
 // Clean up any existing processes
 try {
@@ -317,7 +243,7 @@ const env = {
   BROWSER: 'none',  // Prevent opening browser
   EXPO_WEB_PORT: PORT.toString(),  // Set explicit web port
   PORT: PORT.toString(),  // For Metro
-  EXPO_WEBPACK_PUBLIC_PATH: PUBLIC_PATH,  // Important: set correct public path for bundle assets
+  EXPO_WEBPACK_PUBLIC_PATH: PUBLIC_PATH,  // CRITICAL: This sets the base path for all assets
   EXPO_NO_FONTS: 'true',  // Skip font loading
   EXPO_USE_VECTOR_ICONS: 'false',  // Skip vector icons
   DANGEROUSLY_DISABLE_HOST_CHECK: 'true'  // Allow external connections
@@ -325,8 +251,8 @@ const env = {
 
 // Log the exact command we're running
 const expoCommand = `npx expo start --web --port ${PORT} --host lan --no-dev`;
-log(`Running command: ${expoCommand} in directory ${expoAppDir}`, 'DEBUG');
-writeLog(`Running command: ${expoCommand} in directory ${expoAppDir}`);
+log(`Running command: ${expoCommand} in directory ${expoAppDir} with PUBLIC_PATH=${PUBLIC_PATH}`, 'DEBUG');
+writeLog(`Running command: ${expoCommand} in directory ${expoAppDir} with PUBLIC_PATH=${PUBLIC_PATH}`);
 
 // Log environment variables (excluding sensitive ones)
 log(`Environment variables: ${JSON.stringify(env, (k, v) => k.startsWith('npm_') ? undefined : v)}`, 'DEBUG');
@@ -349,9 +275,6 @@ const expoProcess = spawn('npx', [
 
 log(`Started Expo with PID ${expoProcess.pid}`);
 writeLog(`Started Expo with PID ${expoProcess.pid}`);
-
-// We won't automatically mark as started - only check if it's running
-const http = require('http');
 
 // Check if server is actually running on the port
 function checkServerRunning() {
@@ -386,12 +309,8 @@ function checkServerRunning() {
   });
 }
 
-// Variables to track restart attempts
-let restartAttempts = 0;
-const MAX_RESTART_ATTEMPTS = 3;
-
 // Check server status periodically
-const checkInterval = setInterval(async () => {
+checkInterval = setInterval(async () => {
   const isRunning = await checkServerRunning();
   if (!isRunning && !serverStarted) {
     log('Expo server not responding yet, still waiting...', 'WARN');
@@ -460,40 +379,6 @@ expoProcess.on('close', (code) => {
     } else {
       log(`Reached maximum restart attempts (${MAX_RESTART_ATTEMPTS}). Giving up.`, 'ERROR');
       writeLog(`Reached maximum restart attempts (${MAX_RESTART_ATTEMPTS}). Giving up.`);
-      
-      // Dump extended diagnostics
-      try {
-        log('Collecting extended diagnostics...', 'DEBUG');
-        const nodeModulesPath = path.join(expoAppDir, 'node_modules');
-        
-        if (fs.existsSync(nodeModulesPath)) {
-          log(`node_modules exists at ${nodeModulesPath}`, 'DEBUG');
-          
-          // Check for critical Expo packages
-          const criticalPackages = [
-            '@expo/vector-icons',
-            'expo',
-            'react',
-            'react-dom',
-            'react-native',
-            'react-native-web'
-          ];
-          
-          for (const pkg of criticalPackages) {
-            const pkgPath = path.join(nodeModulesPath, pkg);
-            if (fs.existsSync(pkgPath)) {
-              log(`Found critical package: ${pkg}`, 'DEBUG');
-            } else {
-              log(`Missing critical package: ${pkg}`, 'ERROR');
-            }
-          }
-        } else {
-          log(`node_modules directory missing at ${nodeModulesPath}`, 'ERROR');
-        }
-      } catch (err) {
-        log(`Error during diagnostics: ${err.message}`, 'ERROR');
-      }
-      
       process.exit(2);  // Exit with a different code to indicate permanent failure
     }
   }
