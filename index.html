@@ -68,6 +68,7 @@
             text-decoration: none;
             border-radius: 5px;
             transition: background-color 0.3s;
+            cursor: pointer;
         }
         
         .dark-mode .cta-button {
@@ -132,6 +133,142 @@
             font-size: 1.5rem;
         }
         
+        /* App UI Styles */
+        #app-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #f8f9fa;
+            z-index: 1000;
+            display: none;
+        }
+        
+        .dark-mode #app-container {
+            background-color: #1a1a1a;
+            color: #f0f0f0;
+        }
+        
+        .app-header {
+            background-color: #007bff;
+            color: white;
+            padding: 1rem;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .dark-mode .app-header {
+            background-color: #1e3a8a;
+        }
+        
+        .app-tabs {
+            display: flex;
+            background-color: #f1f1f1;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .dark-mode .app-tabs {
+            background-color: #2a2a2a;
+            border-bottom: 1px solid #444;
+        }
+        
+        .tab-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            background: none;
+            cursor: pointer;
+        }
+        
+        .tab-btn.active {
+            font-weight: bold;
+            color: #007bff;
+            border-bottom: 2px solid #007bff;
+        }
+        
+        .dark-mode .tab-btn {
+            color: #f0f0f0;
+        }
+        
+        .dark-mode .tab-btn.active {
+            color: #60a5fa;
+            border-bottom: 2px solid #60a5fa;
+        }
+        
+        .tab-content {
+            padding: 1rem;
+            display: none;
+            overflow-y: auto;
+            flex: 1;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 1rem;
+        }
+        
+        .dark-mode .card {
+            background-color: #2d2d2d;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 24px;
+            background-color: #e9ecef;
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 1rem 0;
+        }
+        
+        .dark-mode .progress-bar {
+            background-color: #444;
+        }
+        
+        .progress-bar-fill {
+            height: 100%;
+            background-color: #28a745;
+            border-radius: 12px;
+        }
+        
+        .btn {
+            padding: 0.75rem 1rem;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+        }
+        
+        .dark-mode .btn {
+            background-color: #3b82f6;
+        }
+        
+        .app-back-btn {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            padding: 0.5rem 1rem;
+            background-color: rgba(0, 0, 0, 0.1);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .dark-mode .app-back-btn {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
         @media (max-width: 768px) {
             .hero h1 {
                 font-size: 2rem;
@@ -161,7 +298,7 @@
         <section class="hero">
             <h1>Track Your Journey to Spiritual Wellness</h1>
             <p>Monitor your daily activities, track your progress, and connect with others on the same path.</p>
-            <a href="javascript:void(0)" onclick="loadApp()" class="cta-button">Launch App</a>
+            <a href="javascript:void(0)" onclick="toggleApp(true)" class="cta-button">Launch App</a>
         </section>
         
         <section class="features">
@@ -201,7 +338,159 @@
         <p>&copy; 2025 Spiritual Condition Tracker. All rights reserved.</p>
     </footer>
     
+    <!-- App Interface -->
+    <div id="app-container">
+        <button class="app-back-btn" onclick="toggleApp(false)">← Back</button>
+        
+        <div class="app-header">
+            <h1 style="margin: 0; font-size: 1.5rem;">Spiritual Condition Tracker</h1>
+        </div>
+        
+        <div class="app-tabs">
+            <button class="tab-btn active" onclick="openTab('dashboard')">Dashboard</button>
+            <button class="tab-btn" onclick="openTab('activities')">Activities</button>
+            <button class="tab-btn" onclick="openTab('meetings')">Meetings</button>
+            <button class="tab-btn" onclick="openTab('nearby')">Nearby</button>
+            <button class="tab-btn" onclick="openTab('settings')">Settings</button>
+        </div>
+        
+        <div class="tab-content active" id="dashboard-tab">
+            <div class="card">
+                <h2 style="margin-top: 0; color: #333;">Sobriety</h2>
+                <div style="font-size: 2rem; font-weight: bold; color: #007bff;">2.58 Years</div>
+                <div style="color: #666; margin-top: 0.5rem;">943 days</div>
+            </div>
+            
+            <div class="card">
+                <h2 style="margin-top: 0; color: #333;">Spiritual Fitness</h2>
+                <div class="progress-bar">
+                    <div class="progress-bar-fill" style="width: 78%;"></div>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <span>Low</span>
+                    <span style="font-weight: bold;">78%</span>
+                    <span>High</span>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2 style="margin-top: 0; color: #333;">Recent Activities</h2>
+                <ul style="padding-left: 1rem;">
+                    <li style="margin-bottom: 0.5rem;">Meeting - Yesterday</li>
+                    <li style="margin-bottom: 0.5rem;">Meditation - 2 days ago</li>
+                    <li style="margin-bottom: 0.5rem;">Reading - 3 days ago</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="tab-content" id="activities-tab">
+            <h2>Activity Log</h2>
+            <p>Use this screen to log your daily recovery activities.</p>
+            
+            <div class="card">
+                <button class="btn">Log New Activity</button>
+            </div>
+            
+            <div class="card">
+                <h3 style="margin-top: 0;">Activity History</h3>
+                <div style="border-bottom: 1px solid #eee; padding: 0.75rem 0;">
+                    <div style="font-weight: bold;">Meeting</div>
+                    <div style="color: #666; font-size: 0.9rem;">Yesterday at 7:30 PM</div>
+                </div>
+                <div style="border-bottom: 1px solid #eee; padding: 0.75rem 0;">
+                    <div style="font-weight: bold;">Meditation</div>
+                    <div style="color: #666; font-size: 0.9rem;">2 days ago - 20 minutes</div>
+                </div>
+                <div style="padding: 0.75rem 0;">
+                    <div style="font-weight: bold;">Reading</div>
+                    <div style="color: #666; font-size: 0.9rem;">3 days ago - 30 minutes</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="tab-content" id="meetings-tab">
+            <h2>Meetings</h2>
+            <p>Manage your recovery meetings and get reminders.</p>
+            
+            <div class="card">
+                <button class="btn">Add New Meeting</button>
+            </div>
+            
+            <div class="card">
+                <h3 style="margin-top: 0;">Upcoming Meetings</h3>
+                <div style="border-bottom: 1px solid #eee; padding: 0.75rem 0;">
+                    <div style="font-weight: bold;">Daily Reflections</div>
+                    <div style="color: #666; font-size: 0.9rem;">Tomorrow at 7:00 PM - Community Center</div>
+                </div>
+                <div style="border-bottom: 1px solid #eee; padding: 0.75rem 0;">
+                    <div style="font-weight: bold;">Big Book Study</div>
+                    <div style="color: #666; font-size: 0.9rem;">Thursday at 6:30 PM - Online</div>
+                </div>
+                <div style="padding: 0.75rem 0;">
+                    <div style="font-weight: bold;">Speaker Meeting</div>
+                    <div style="color: #666; font-size: 0.9rem;">Saturday at 2:00 PM - Recovery Center</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="tab-content" id="nearby-tab">
+            <h2>Nearby Recovery Friends</h2>
+            <p>Connect with others in recovery who are nearby.</p>
+            
+            <div class="card" style="text-align: center;">
+                <p>This feature requires location permission.</p>
+                <button class="btn">Start Proximity Scan</button>
+            </div>
+            
+            <div class="card">
+                <h3 style="margin-top: 0;">Connected Friends</h3>
+                <p style="color: #666;">No connections yet. Use the proximity scan to find others nearby.</p>
+            </div>
+        </div>
+        
+        <div class="tab-content" id="settings-tab">
+            <h2>Settings</h2>
+            
+            <div class="card">
+                <h3 style="margin-top: 0;">Profile</h3>
+                <div style="padding: 0.75rem 0; border-bottom: 1px solid #eee;">
+                    <div style="font-weight: bold;">Sobriety Date</div>
+                    <div style="color: #666; margin-top: 0.25rem;">September 5, 2022</div>
+                </div>
+                <div style="padding: 0.75rem 0;">
+                    <div style="font-weight: bold;">Sponsor</div>
+                    <div style="color: #666; margin-top: 0.25rem;">John D. (555) 123-4567</div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3 style="margin-top: 0;">Appearance</h3>
+                <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 0;">
+                    <span>Dark Mode</span>
+                    <div class="switch" onclick="toggleDarkMode()">
+                        <div style="position: relative; display: inline-block; width: 50px; height: 24px; background-color: #ccc; border-radius: 24px; transition: 0.4s;">
+                            <div id="dark-mode-toggle-indicator" style="position: absolute; height: 20px; width: 20px; left: 2px; bottom: 2px; background-color: white; border-radius: 50%; transition: 0.4s;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3 style="margin-top: 0;">About</h3>
+                <div style="padding: 0.75rem 0; border-bottom: 1px solid #eee;">
+                    <div style="font-weight: bold;">Version</div>
+                    <div style="color: #666; margin-top: 0.25rem;">1.0.0</div>
+                </div>
+                <div style="padding: 0.75rem 0;">
+                    <div style="font-weight: bold;">Privacy Policy</div>
+                    <div style="color: #007bff; margin-top: 0.25rem; cursor: pointer;">View Policy</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
     <script>
+        // Theme toggle functions
         const themeToggle = document.getElementById('theme-toggle');
         const body = document.body;
         
@@ -211,88 +500,110 @@
         
         if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
             body.classList.add('dark-mode');
+            updateDarkModeIndicator(true);
         }
         
         // Toggle theme when button is clicked
         themeToggle.addEventListener('click', () => {
-            body.classList.toggle('dark-mode');
-            const theme = body.classList.contains('dark-mode') ? 'dark' : 'light';
-            localStorage.setItem('theme', theme);
+            toggleDarkMode();
         });
 
-        // Function to load the app directly in the page
-        function loadApp() {
-            // Create a full-page app container
-            const appContainer = document.createElement('div');
-            appContainer.id = 'app-container';
-            appContainer.style.position = 'fixed';
-            appContainer.style.top = '0';
-            appContainer.style.left = '0';
-            appContainer.style.width = '100%';
-            appContainer.style.height = '100%';
-            appContainer.style.backgroundColor = body.classList.contains('dark-mode') ? '#1a1a1a' : '#f8f9fa';
-            appContainer.style.zIndex = '1000';
-            appContainer.style.display = 'flex';
-            appContainer.style.flexDirection = 'column';
-            appContainer.style.alignItems = 'center';
-            appContainer.style.justifyContent = 'center';
+        function toggleDarkMode() {
+            body.classList.toggle('dark-mode');
+            const isDark = body.classList.contains('dark-mode');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            updateDarkModeIndicator(isDark);
+        }
+
+        function updateDarkModeIndicator(isDark) {
+            const indicator = document.getElementById('dark-mode-toggle-indicator');
+            if (indicator) {
+                if (isDark) {
+                    indicator.style.transform = 'translateX(26px)';
+                    indicator.style.backgroundColor = '#60a5fa';
+                } else {
+                    indicator.style.transform = 'translateX(0)';
+                    indicator.style.backgroundColor = 'white';
+                }
+            }
+        }
+
+        // App UI functions
+        function toggleApp(show) {
+            const appContainer = document.getElementById('app-container');
+            appContainer.style.display = show ? 'flex' : 'none';
             
-            // Add a loading indicator
-            const loader = document.createElement('div');
-            loader.innerHTML = 'Loading Spiritual Condition Tracker...';
-            loader.style.marginBottom = '20px';
-            loader.style.fontSize = '18px';
+            if (show) {
+                appContainer.style.flexDirection = 'column';
+                
+                // Update dark mode colors for the app
+                updateAppTheme();
+            }
+        }
+
+        function updateAppTheme() {
+            const isDark = body.classList.contains('dark-mode');
+            const cards = document.querySelectorAll('.card');
+            const borders = document.querySelectorAll('[style*="border-bottom: 1px solid #eee"]');
             
-            // Add a back button
-            const backButton = document.createElement('button');
-            backButton.innerHTML = 'Return to Homepage';
-            backButton.style.padding = '10px 15px';
-            backButton.style.backgroundColor = '#007bff';
-            backButton.style.color = 'white';
-            backButton.style.border = 'none';
-            backButton.style.borderRadius = '5px';
-            backButton.style.cursor = 'pointer';
-            backButton.style.marginTop = '20px';
-            backButton.style.display = 'none'; // Hide initially
-            
-            // Back button click handler
-            backButton.addEventListener('click', () => {
-                document.body.removeChild(appContainer);
+            if (isDark) {
+                cards.forEach(card => {
+                    card.style.backgroundColor = '#2d2d2d';
+                    card.style.color = '#f0f0f0';
+                    
+                    const titles = card.querySelectorAll('h2, h3');
+                    titles.forEach(title => {
+                        title.style.color = '#f0f0f0';
+                    });
+                    
+                    const textElements = card.querySelectorAll('[style*="color: #666"]');
+                    textElements.forEach(el => {
+                        el.style.color = '#b0b0b0';
+                    });
+                });
+                
+                borders.forEach(border => {
+                    border.style.borderBottom = '1px solid #444';
+                });
+            } else {
+                cards.forEach(card => {
+                    card.style.backgroundColor = 'white';
+                    
+                    const titles = card.querySelectorAll('h2, h3');
+                    titles.forEach(title => {
+                        title.style.color = '#333';
+                    });
+                    
+                    const textElements = card.querySelectorAll('[style*="color: #b0b0b0"]');
+                    textElements.forEach(el => {
+                        el.style.color = '#666';
+                    });
+                });
+                
+                borders.forEach(border => {
+                    border.style.borderBottom = '1px solid #eee';
+                });
+            }
+        }
+
+        function openTab(tabName) {
+            // Hide all tab contents
+            const tabContents = document.querySelectorAll('.tab-content');
+            tabContents.forEach(tab => {
+                tab.classList.remove('active');
             });
             
-            // Add elements to the container
-            appContainer.appendChild(loader);
-            appContainer.appendChild(backButton);
+            // Remove active class from all buttons
+            const tabButtons = document.querySelectorAll('.tab-btn');
+            tabButtons.forEach(button => {
+                button.classList.remove('active');
+            });
             
-            // Add the container to the page
-            document.body.appendChild(appContainer);
+            // Show the selected tab content
+            document.getElementById(tabName + '-tab').classList.add('active');
             
-            // Create a root div for the React app
-            const rootDiv = document.createElement('div');
-            rootDiv.id = 'root';
-            rootDiv.style.width = '100%';
-            rootDiv.style.height = '100%';
-            rootDiv.style.display = 'none'; // Hide initially
-            appContainer.appendChild(rootDiv);
-            
-            // Attempt to load the bundle
-            const script = document.createElement('script');
-            script.src = '/index.bundle';
-            script.onerror = (error) => {
-                loader.innerHTML = 'Error loading the application. Please try again later.';
-                backButton.style.display = 'block';
-                console.error('Failed to load the app bundle:', error);
-            };
-            script.onload = () => {
-                // Show success and back button after a short delay
-                setTimeout(() => {
-                    loader.innerHTML = 'App loaded successfully!';
-                    backButton.style.display = 'block';
-                    rootDiv.style.display = 'block';
-                }, 1000);
-            };
-            
-            document.head.appendChild(script);
+            // Add active class to the clicked button
+            event.currentTarget.classList.add('active');
         }
     </script>
 </body>
