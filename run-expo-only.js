@@ -78,25 +78,61 @@ fixVectorIcons();
 
 console.log(`Starting Expo directly on port ${PORT}...`);
 
-// Clear cache first to ensure a clean build
-console.log('Clearing Expo cache...');
+// Clear ALL caches to ensure a completely clean build
+console.log('Clearing ALL Expo caches...');
 try {
+  // Remove node_modules/.cache
   execSync('rm -rf node_modules/.cache', { cwd: expoAppDir, stdio: 'inherit' });
-  console.log('Cache cleared successfully');
+  
+  // Remove .expo directory
+  execSync('rm -rf .expo', { cwd: expoAppDir, stdio: 'inherit' });
+  
+  // Remove web-build directory
+  execSync('rm -rf web-build', { cwd: expoAppDir, stdio: 'inherit' });
+  
+  // Remove any Metro bundler caches
+  execSync('rm -rf ~/.expo', { stdio: 'inherit' });
+  
+  // Clean require cache at runtime
+  Object.keys(require.cache).forEach(function(key) {
+    if (key.includes('expo-app')) {
+      delete require.cache[key];
+    }
+  });
+  
+  console.log('All caches cleared successfully');
 } catch (error) {
   console.error('Error clearing cache:', error);
 }
 
-// Start Expo with required options for nginx and force rebuild
+// First kill any running Expo processes (safety check)
+try {
+  execSync('pkill -f "expo start" || true', { stdio: 'inherit' });
+  execSync('pkill -f "node.*expo" || true', { stdio: 'inherit' });
+  console.log('Killed any existing Expo processes');
+} catch (error) {
+  // Ignore errors here
+}
+
+// Force rebuild the project with extreme cache clearing
+console.log('Starting complete Expo rebuild...');
+
+// Create a timestamp to prevent caching
+const timestamp = new Date().getTime();
+env.EXPO_CACHE_BUSTER = timestamp.toString();
+env.METRO_CACHE_BUSTER = timestamp.toString();
+env.TIMESTAMP = timestamp.toString();
+
+// Start Expo with maximum cache-clearing options
 const expo = spawn('npx', [
   'expo', 
   'start', 
   '--web', 
   '--port', PORT.toString(),
-  '--host', 'lan',   // Important: use LAN host mode for external access
-  '--clear',         // Clear the cache
-  '--no-dev',        // Disable development mode for better reliability
-  '--reset-cache',   // Reset the cache entirely
+  '--host', 'lan',       // Important: use LAN host mode for external access
+  '--clear',             // Clear the cache
+  '--no-dev',            // Disable development mode for better reliability
+  '--reset-cache'        // Reset the cache entirely
 ], {
   cwd: expoAppDir,
   env: env,
