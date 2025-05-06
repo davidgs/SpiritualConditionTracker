@@ -347,33 +347,102 @@ const env = {
 function checkServerRunning() {
   return new Promise((resolve) => {
     log(`Checking if server is running on port ${PORT}...`, 'DEBUG');
-    const req = http.get(`http://localhost:${PORT}`, (res) => {
-      log(`Server responded with status code: ${res.statusCode}`, 'DEBUG');
-      if (res.statusCode === 200) {
+    
+    // Check our status endpoint first - this should work if our server is up
+    const statusReq = http.get(`http://localhost:${PORT}/server-status`, (statusRes) => {
+      log(`Status endpoint responded with status code: ${statusRes.statusCode}`, 'DEBUG');
+      if (statusRes.statusCode === 200) {
+        // Our server is definitely running
         serverStarted = true;
-        log('✅ Expo server is running and responding on port ' + PORT);
-        writeLog('Expo server is running and responding successfully');
+        log('✅ Server status endpoint is responding correctly on port ' + PORT);
+        writeLog('Server status endpoint is responding successfully');
+        resolve(true);
+        return;
+      }
+      
+      // If status check failed, try the bundle path
+      checkBundle(resolve);
+    });
+    
+    statusReq.on('error', (err) => {
+      log(`❌ Could not connect to status endpoint: ${err.message}`, 'ERROR');
+      writeLog(`Could not connect to status endpoint: ${err.message}`);
+      // Fall back to checking the bundle
+      checkBundle(resolve);
+    });
+    
+    statusReq.setTimeout(2000, () => {
+      statusReq.abort();
+      log('❌ Status endpoint connection timeout', 'ERROR');
+      writeLog('Status endpoint connection timeout after 2s');
+      // Fall back to checking the bundle
+      checkBundle(resolve);
+    });
+  });
+  
+  // Helper function to check the bundle endpoint
+  function checkBundle(resolve) {
+    const req = http.get(`http://localhost:${PORT}/index.bundle`, (res) => {
+      log(`Bundle endpoint responded with status code: ${res.statusCode}`, 'DEBUG');
+      if (res.statusCode === 200) {
+        // Bundle server is working correctly
+        serverStarted = true;
+        log('✅ Bundle server is responding correctly on port ' + PORT);
+        writeLog('Bundle server is responding successfully');
+        resolve(true);
+        return;
+      }
+      
+      // If bundle check failed, try the root path
+      checkRoot(resolve);
+    });
+    
+    req.on('error', (err) => {
+      log(`❌ Could not connect to bundle endpoint: ${err.message}`, 'ERROR');
+      writeLog(`Could not connect to bundle endpoint: ${err.message}`);
+      // Fall back to checking the root path
+      checkRoot(resolve);
+    });
+    
+    req.setTimeout(2000, () => {
+      req.abort();
+      log('❌ Bundle endpoint connection timeout', 'ERROR');
+      writeLog('Bundle endpoint connection timeout after 2s');
+      // Fall back to checking the root path
+      checkRoot(resolve);
+    });
+  }
+  
+  // Helper function to check the root path
+  function checkRoot(resolve) {
+    const rootReq = http.get(`http://localhost:${PORT}`, (rootRes) => {
+      log(`Root path responded with status code: ${rootRes.statusCode}`, 'DEBUG');
+      if (rootRes.statusCode === 200 || rootRes.statusCode === 302) {
+        // Root path works - even if it's a redirect, that's a good sign
+        serverStarted = true;
+        log('✅ Server root path is responding on port ' + PORT);
+        writeLog('Server root path is responding successfully');
         resolve(true);
       } else {
-        log(`Server responded with non-200 status code: ${res.statusCode}`, 'WARN');
-        writeLog(`Server responded with non-200 status code: ${res.statusCode}`);
+        log(`Server responded with unexpected status code: ${rootRes.statusCode}`, 'WARN');
+        writeLog(`Server responded with unexpected status code: ${rootRes.statusCode}`);
         resolve(false);
       }
     });
     
-    req.on('error', (err) => {
-      log(`❌ Could not connect to server: ${err.message}`, 'ERROR');
-      writeLog(`Could not connect to server: ${err.message}`);
+    rootReq.on('error', (err) => {
+      log(`❌ Could not connect to server root path: ${err.message}`, 'ERROR');
+      writeLog(`Could not connect to server root path: ${err.message}`);
       resolve(false);
     });
     
-    req.setTimeout(5000, () => {
-      req.abort();
-      log('❌ Server connection timeout', 'ERROR');
-      writeLog('Server connection timeout after 5s');
+    rootReq.setTimeout(2000, () => {
+      rootReq.abort();
+      log('❌ Server root path connection timeout', 'ERROR');
+      writeLog('Server root path connection timeout after 2s');
       resolve(false);
     });
-  });
+  }
 }
 
 // Variables to track restart attempts
@@ -422,6 +491,19 @@ const bundleServer = http.createServer((req, res) => {
   
   log(`[BUNDLE-SERVER] ${req.method} ${req.url}`, 'REQUEST');
   
+  // Special route for health check
+  if (urlPath === '/server-status') {
+    log('Health check request received', 'STATUS');
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({
+      status: 'ok',
+      serverStarted,
+      bundleServerRunning: true,
+      time: new Date().toISOString()
+    }));
+    return;
+  }
+  
   // Handle bundle requests directly
   if (urlPath === '/index.bundle' || urlPath === '/app/index.bundle') {
     log(`Serving static bundle for ${urlPath}`, 'BUNDLE');
@@ -430,9 +512,85 @@ const bundleServer = http.createServer((req, res) => {
     return;
   }
   
-  // For all other requests, respond with a redirect to let Expo handle it
-  res.writeHead(302, { 'Location': '/' });
-  res.end();
+  // Handle root path requests with a simple status page
+  if (urlPath === '/') {
+    const html = `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>Spiritual Condition Tracker - Server Status</title>
+          <style>
+            body { font-family: Arial, sans-serif; margin: 20px; }
+            h1 { color: #2c3e50; }
+            .status { padding: 10px; border-radius: 5px; margin: 10px 0; }
+            .ok { background-color: #dff0d8; color: #3c763d; }
+            .warn { background-color: #fcf8e3; color: #8a6d3b; }
+            .error { background-color: #f2dede; color: #a94442; }
+            .links { margin-top: 20px; }
+            a { color: #337ab7; text-decoration: none; }
+            a:hover { text-decoration: underline; }
+          </style>
+        </head>
+        <body>
+          <h1>Spiritual Condition Tracker</h1>
+          <div class="status ${serverStarted ? 'ok' : 'warn'}">
+            Server Status: ${serverStarted ? 'Running' : 'Starting up...'}
+          </div>
+          <div class="status ok">
+            Bundle Server: Running
+          </div>
+          <div class="links">
+            <p><a href="/app/">Access the App</a></p>
+            <p><a href="/index.bundle">Test Bundle</a></p>
+            <p><a href="/server-status">Server Status (JSON)</a></p>
+          </div>
+          <p>Server Time: ${new Date().toISOString()}</p>
+        </body>
+      </html>
+    `;
+    res.writeHead(200, { 'Content-Type': 'text/html' });
+    res.end(html);
+    return;
+  }
+  
+  // For all other requests, respond with the status page (same as root)
+  const html = `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <title>Spiritual Condition Tracker - Server Status</title>
+        <style>
+          body { font-family: Arial, sans-serif; margin: 20px; }
+          h1 { color: #2c3e50; }
+          .status { padding: 10px; border-radius: 5px; margin: 10px 0; }
+          .ok { background-color: #dff0d8; color: #3c763d; }
+          .warn { background-color: #fcf8e3; color: #8a6d3b; }
+          .error { background-color: #f2dede; color: #a94442; }
+          .links { margin-top: 20px; }
+          a { color: #337ab7; text-decoration: none; }
+          a:hover { text-decoration: underline; }
+        </style>
+      </head>
+      <body>
+        <h1>Spiritual Condition Tracker</h1>
+        <div class="status ${serverStarted ? 'ok' : 'warn'}">
+          Server Status: ${serverStarted ? 'Running' : 'Starting up...'}
+        </div>
+        <div class="status ok">
+          Bundle Server: Running
+        </div>
+        <div class="links">
+          <p><a href="/app/">Access the App</a></p>
+          <p><a href="/index.bundle">Test Bundle</a></p>
+          <p><a href="/server-status">Server Status (JSON)</a></p>
+        </div>
+        <p>Server Time: ${new Date().toISOString()}</p>
+        <p>Requested Path: ${urlPath}</p>
+      </body>
+    </html>
+  `;
+  res.writeHead(200, { 'Content-Type': 'text/html' });
+  res.end(html);
 });
 
 // Define a variable to hold the Expo process
@@ -465,6 +623,55 @@ function startExpo() {
   expoProcess.on('error', (err) => {
     log(`Expo process error: ${err.message}`, 'ERROR');
     writeLog(`Expo process error: ${err.message}`);
+  });
+  
+  // Set up close handler for the Expo process
+  expoProcess.on('close', (code) => {
+    log(`Expo process exited with code ${code}`, 'ERROR');
+    writeLog(`Expo process exited with code ${code}`);
+    
+    // Clean up resources
+    if (startupTimer) {
+      clearTimeout(startupTimer);
+    }
+    
+    if (checkInterval) {
+      clearInterval(checkInterval);
+    }
+    
+    if (serverStarted) {
+      // If server was previously running but crashed, restart it
+      log('Expo crashed after successful startup. Restarting in 5 seconds...', 'WARN');
+      writeLog('Expo crashed after successful startup. Attempting restart.');
+      
+      setTimeout(() => {
+        log('Restarting Expo...', 'DEBUG');
+        writeLog('Restarting Expo after crash');
+        startExpo(); // Restart Expo instead of exiting
+      }, 5000);
+    } else {
+      // If server never started successfully, attempt a restart with increasing delay
+      restartAttempts++;
+      
+      if (restartAttempts < MAX_RESTART_ATTEMPTS) {
+        const delay = 5000 * Math.pow(2, restartAttempts - 1);  // Exponential backoff
+        
+        log(`Expo crashed during startup (attempt ${restartAttempts}/${MAX_RESTART_ATTEMPTS}). Will restart in ${delay/1000} seconds...`, 'WARN');
+        writeLog(`Expo crashed during startup (attempt ${restartAttempts}/${MAX_RESTART_ATTEMPTS}). Will restart in ${delay/1000} seconds.`);
+        
+        // Collect system information before restart
+        log(`Free memory before restart: ${Math.round(os.freemem() / (1024 * 1024))} MB`, 'DEBUG');
+        
+        setTimeout(() => {
+          log(`Restarting Expo (attempt ${restartAttempts + 1})...`, 'DEBUG');
+          writeLog(`Restarting Expo (attempt ${restartAttempts + 1})`);
+          startExpo(); // Restart Expo instead of exiting
+        }, delay);
+      } else {
+        log(`Reached maximum restart attempts (${MAX_RESTART_ATTEMPTS}). Giving up.`, 'ERROR');
+        writeLog(`Reached maximum restart attempts (${MAX_RESTART_ATTEMPTS}). Giving up.`);
+      }
+    }
   });
 }
 
@@ -503,89 +710,7 @@ process.on('uncaughtException', (err) => {
   writeLog(`Uncaught exception: ${err.message}\n${err.stack}`);
 });
 
-// Handle process exit
-expoProcess.on('close', (code) => {
-  log(`Expo process exited with code ${code}`, 'ERROR');
-  writeLog(`Expo process exited with code ${code}`);
-  
-  // Clean up resources
-  if (startupTimer) {
-    clearTimeout(startupTimer);
-  }
-  
-  if (checkInterval) {
-    clearInterval(checkInterval);
-  }
-  
-  if (serverStarted) {
-    // If server was previously running but crashed, restart it
-    log('Expo crashed after successful startup. Restarting in 5 seconds...', 'WARN');
-    writeLog('Expo crashed after successful startup. Attempting restart.');
-    
-    setTimeout(() => {
-      log('Restarting Expo...', 'DEBUG');
-      writeLog('Restarting Expo after crash');
-      process.exit(1);  // Exit and let the system restart the process
-    }, 5000);
-  } else {
-    // If server never started successfully, attempt a restart with increasing delay
-    restartAttempts++;
-    
-    if (restartAttempts < MAX_RESTART_ATTEMPTS) {
-      const delay = 5000 * Math.pow(2, restartAttempts - 1);  // Exponential backoff
-      
-      log(`Expo crashed during startup (attempt ${restartAttempts}/${MAX_RESTART_ATTEMPTS}). Will restart in ${delay/1000} seconds...`, 'WARN');
-      writeLog(`Expo crashed during startup (attempt ${restartAttempts}/${MAX_RESTART_ATTEMPTS}). Will restart in ${delay/1000} seconds.`);
-      
-      // Collect system information before restart
-      log(`Free memory before restart: ${Math.round(os.freemem() / (1024 * 1024))} MB`, 'DEBUG');
-      
-      setTimeout(() => {
-        log(`Restarting Expo (attempt ${restartAttempts + 1})...`, 'DEBUG');
-        writeLog(`Restarting Expo (attempt ${restartAttempts + 1})`);
-        process.exit(1);  // Exit and let the system restart the process
-      }, delay);
-    } else {
-      log(`Reached maximum restart attempts (${MAX_RESTART_ATTEMPTS}). Giving up.`, 'ERROR');
-      writeLog(`Reached maximum restart attempts (${MAX_RESTART_ATTEMPTS}). Giving up.`);
-      
-      // Dump extended diagnostics
-      try {
-        log('Collecting extended diagnostics...', 'DEBUG');
-        const nodeModulesPath = path.join(expoAppDir, 'node_modules');
-        
-        if (fs.existsSync(nodeModulesPath)) {
-          log(`node_modules exists at ${nodeModulesPath}`, 'DEBUG');
-          
-          // Check for critical Expo packages
-          const criticalPackages = [
-            '@expo/vector-icons',
-            'expo',
-            'react',
-            'react-dom',
-            'react-native',
-            'react-native-web'
-          ];
-          
-          for (const pkg of criticalPackages) {
-            const pkgPath = path.join(nodeModulesPath, pkg);
-            if (fs.existsSync(pkgPath)) {
-              log(`Found critical package: ${pkg}`, 'DEBUG');
-            } else {
-              log(`Missing critical package: ${pkg}`, 'ERROR');
-            }
-          }
-        } else {
-          log(`node_modules directory missing at ${nodeModulesPath}`, 'ERROR');
-        }
-      } catch (err) {
-        log(`Error during diagnostics: ${err.message}`, 'ERROR');
-      }
-      
-      process.exit(2);  // Exit with a different code to indicate permanent failure
-    }
-  }
-});
+// Handle process exit handling in the startExpo function now
 
 // Handle process signals
 process.on('SIGINT', () => {
@@ -596,7 +721,15 @@ process.on('SIGINT', () => {
   if (startupTimer) clearTimeout(startupTimer);
   if (checkInterval) clearInterval(checkInterval);
   
-  expoProcess.kill();
+  // Only try to kill Expo if it's running
+  if (expoProcess) {
+    try {
+      expoProcess.kill();
+    } catch (err) {
+      log(`Error killing Expo process: ${err.message}`, 'ERROR');
+    }
+  }
+  
   process.exit(0);
 });
 
@@ -608,6 +741,14 @@ process.on('SIGTERM', () => {
   if (startupTimer) clearTimeout(startupTimer);
   if (checkInterval) clearInterval(checkInterval);
   
-  expoProcess.kill();
+  // Only try to kill Expo if it's running
+  if (expoProcess) {
+    try {
+      expoProcess.kill();
+    } catch (err) {
+      log(`Error killing Expo process: ${err.message}`, 'ERROR');
+    }
+  }
+  
   process.exit(0);
 });
