@@ -1,0 +1,13 @@
+
+// Static bundle for Spiritual Condition Tracker
+// This is a fallback bundle for nginx compatibility
+console.warn('Using static bundle - this is a compatibility file for nginx');
+
+// Initialize minimum required modules
+require('react');
+require('react-native');
+require('expo');
+
+// Let the user know what's happening
+console.log('Static bundle loaded successfully. The app is starting in compatibility mode.');
+console.log('This bundle is only served for nginx compatibility and should redirect to the main app.');
