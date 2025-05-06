@@ -24,7 +24,7 @@ import { ThemeProvider, useTheme } from './src/contexts/ThemeContext';
 import { MessagingProvider } from './src/contexts/MessagingContext';
 
 // Import utilities
-import { getNavigationType, injectResponsiveCSS, responsiveClasses } from './src/utils/responsiveStyles';
+import { isMobileDevice, addDimensionListener } from './src/utils/deviceUtils';
 
 // Import database functions
 import { initDatabase } from './src/database/database';
@@ -230,8 +230,8 @@ const AppDrawerNavigator = () => {
 
 function Main() {
   const [dbInitialized, setDbInitialized] = useState(false);
-  // For native platforms, default to the appropriate navigation
-  const [navType, setNavType] = useState(getNavigationType());
+  // Check if device is mobile-sized and set navigation type accordingly
+  const [isMobile, setIsMobile] = useState(isMobileDevice());
   const { theme, isDark } = useTheme();
 
   // Create custom navigation theme
@@ -246,31 +246,28 @@ function Main() {
     },
   };
 
-  // Inject CSS for responsive design on web
+  // Set up dimension change listener for responsive design
   useEffect(() => {
+    // Check device type on mount
+    setIsMobile(isMobileDevice());
+    
+    // Set up listener for dimension changes (like rotation or window resize)
+    const cleanupListener = addDimensionListener(() => {
+      setIsMobile(isMobileDevice());
+    });
+    
+    // Add toggle function to window for easy testing on web
     if (Platform.OS === 'web') {
-      // Inject responsive CSS for media queries
-      injectResponsiveCSS();
-      
-      // Listen for window resize to update navigation type
-      const handleResize = () => {
-        setNavType(getNavigationType());
-      };
-      
-      window.addEventListener('resize', handleResize);
-      
-      // Keep manual toggle function for testing
       window.toggleNav = () => {
-        setNavType(prev => prev === 'drawer' ? 'tabs' : 'drawer');
-        console.log('Toggled navigation mode to:', navType === 'drawer' ? 'tabs' : 'drawer');
-      };
-      
-      return () => {
-        window.removeEventListener('resize', handleResize);
+        setIsMobile(prev => !prev);
+        console.log('Navigation mode toggled to:', isMobile ? 'desktop' : 'mobile');
       };
     }
+    
+    return cleanupListener;
   }, []);
 
+  // Initialize database
   useEffect(() => {
     async function setupDatabase() {
       try {
@@ -291,12 +288,12 @@ function Main() {
 
   return (
     <NavigationContainer theme={customNavigationTheme}>
-      {navType === 'drawer' ? (
-        <View style={{ flex: 1 }} className={responsiveClasses.mobileNavigation}>
+      {isMobile ? (
+        <View style={{ flex: 1 }}>
           <AppDrawerNavigator />
         </View>
       ) : (
-        <View style={{ flex: 1 }} className={responsiveClasses.desktopNavigation}>
+        <View style={{ flex: 1 }}>
           <AppTabNavigator />
         </View>
       )}
