@@ -124,10 +124,63 @@ module.exports = WebSocketStream;
 EOF
 fi
 
+# Create subprotocol.js if needed
+if [ ! -f "node_modules/ws/lib/subprotocol.js" ]; then
+  echo "Creating ws subprotocol.js compatibility file..."
+  cat > node_modules/ws/lib/subprotocol.js << 'EOF'
+'use strict';
+
+/**
+ * Simple implementation for the missing subprotocol.js module
+ */
+
+/**
+ * Performs the WebSocket protocol subprotocol selection.
+ *
+ * @param {String} protocols The list of subprotocols requested by the client
+ * @param {Array} ServerOptions.subprotocols The list of supported subprotocols
+ * @return {String|Boolean} Returns the selected protocol or `false` if no
+ *                          protocol could be selected
+ * @public
+ */
+function subprotocol(protocols, serverProtocols) {
+  if (!Array.isArray(serverProtocols)) return false;
+  
+  if (!protocols) return serverProtocols[0];
+  
+  // Convert from string to array if needed
+  const requestedProtocols = typeof protocols === 'string' 
+    ? protocols.split(/, */) 
+    : protocols;
+  
+  // Check if any of the requested protocols is supported by the server
+  for (let i = 0; i < requestedProtocols.length; i++) {
+    const protocol = requestedProtocols[i].trim();
+    
+    if (serverProtocols.includes(protocol)) {
+      return protocol;
+    }
+  }
+  
+  return false;
+}
+
+module.exports = { subprotocol };
+EOF
+fi
+
 # Create all required subdirectories
 mkdir -p node_modules/ws/lib/stream
 
-# Create dummy empty files that might be required
+# Create any other required files that might be missing
+echo "Creating additional empty compatibility files for ws..."
 touch node_modules/ws/lib/stream/index.js
+touch node_modules/ws/lib/validation.js
+touch node_modules/ws/lib/receiver.js
+touch node_modules/ws/lib/sender.js
+touch node_modules/ws/lib/extension.js
+touch node_modules/ws/lib/constants.js
+touch node_modules/ws/lib/websocket.js
+touch node_modules/ws/lib/websocket-server.js
 
 echo "Done fixing module errors."
