@@ -109,7 +109,7 @@ function fixVectorIcons() {
 
 // Configuration
 const PORT = 3243;  // The port Apache is configured to proxy to
-const PUBLIC_PATH = '/app';  // Public path where the app will be served (matches Apache proxy)
+const PUBLIC_PATH = 'app';  // Public path without leading slash to avoid URL validation errors
 const expoAppDir = path.join(__dirname, 'expo-app');
 
 log(`Configuration: PORT=${PORT}, PUBLIC_PATH=${PUBLIC_PATH}, expoAppDir=${expoAppDir}`, 'DEBUG');

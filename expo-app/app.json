@@ -53,7 +53,7 @@
     "web": {
       "favicon": "./assets/favicon.png",
       "bundler": "metro",
-      "publicPath": "/app"
+      "publicPath": "app"
     },
     "extra": {
       "eas": {
