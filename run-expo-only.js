@@ -117,11 +117,60 @@ try {
 // Force rebuild the project with extreme cache clearing
 console.log('Starting complete Expo rebuild...');
 
-// Create a timestamp to prevent caching
+// Create a timestamp and build ID to prevent caching
 const timestamp = new Date().getTime();
+const BUILD_ID = `build-${timestamp}`;
 env.EXPO_CACHE_BUSTER = timestamp.toString();
 env.METRO_CACHE_BUSTER = timestamp.toString();
 env.TIMESTAMP = timestamp.toString();
+env.BUILD_ID = BUILD_ID;
+
+// Also set environment variables to force reload
+env.EXPO_PUBLIC_BUILD_ID = BUILD_ID;
+env.REACT_APP_BUILD_ID = BUILD_ID;
+
+// Ensure App.js has the version stamp and update it if needed
+const appJsPath = path.join(expoAppDir, 'App.js');
+if (fs.existsSync(appJsPath)) {
+  try {
+    let appJsContent = fs.readFileSync(appJsPath, 'utf8');
+    const currentDateString = new Date().toLocaleString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+    
+    // Check if it already has a version string
+    if (appJsContent.includes('APP_VERSION =')) {
+      // Update the existing version string
+      appJsContent = appJsContent.replace(
+        /APP_VERSION = "([^"]*)"/,
+        `APP_VERSION = "1.0.2 - ${currentDateString} - BUILD-${timestamp}"`
+      );
+      fs.writeFileSync(appJsPath, appJsContent);
+      console.log(`Updated App.js version to include build timestamp: ${timestamp}`);
+    }
+  } catch (error) {
+    console.error('Error updating App.js version:', error);
+  }
+}
+
+// First try to clean up old files
+try {
+  // Run a complete clean build first
+  console.log('Doing a complete clean build first...');
+  execSync('npx expo export -p web --clear', {
+    cwd: expoAppDir,
+    env: { ...env, EXPO_WEB_BUILD_VERSION: BUILD_ID },
+    stdio: 'inherit'
+  });
+  console.log('Web export completed successfully');
+} catch (error) {
+  console.error('Error during web export:', error);
+  console.log('Continuing with regular start...');
+}
 
 // Start Expo with maximum cache-clearing options
 const expo = spawn('npx', [
