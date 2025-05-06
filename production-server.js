@@ -55,7 +55,6 @@ const env = {
 };
 
 // Start Expo with web mode on the specified port 
-// Using stdio: 'inherit' to see all output directly in the console
 console.log(`Running: npx expo start --web --port ${PORT} --host lan in ${expoAppDir}`);
 const expoProcess = spawn('npx', [
   'expo',
@@ -68,22 +67,29 @@ const expoProcess = spawn('npx', [
 ], {
   cwd: expoAppDir,
   env: env,
-  stdio: 'inherit'  // Direct output to terminal for better debugging
+  stdio: 'pipe'  // Capture output to see error details
 });
 
 console.log(`Started Expo with PID ${expoProcess.pid}`);
 
-// When using stdio: 'inherit', we don't need to pipe output
-// These event listeners won't trigger with stdio: 'inherit'
+// Capture and log all output from Expo
 if (expoProcess.stdout) {
   expoProcess.stdout.on('data', (data) => {
-    console.log(`Expo: ${data.toString().trim()}`);
+    const output = data.toString().trim();
+    console.log(`Expo: ${output}`);
+    
+    // Log if we detect any known error patterns
+    if (output.includes('Error:') || output.includes('error:') || 
+        output.includes('Cannot find module') || output.includes('ENOENT')) {
+      console.error('Error detected in Expo output:', output);
+    }
   });
 }
 
 if (expoProcess.stderr) {
   expoProcess.stderr.on('data', (data) => {
-    console.error(`Expo error: ${data.toString().trim()}`);
+    const error = data.toString().trim();
+    console.error(`Expo error: ${error}`);
   });
 }
 
