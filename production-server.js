@@ -47,6 +47,9 @@ try {
 // Set up environment variables for Expo
 const env = {
   ...process.env,
+  NODE_ENV: 'development',
+  DEBUG: '*',  // Enable all debug output
+  EXPO_DEBUG: 'true',
   CI: 'false',  // Must be 'false' string to be properly parsed as boolean
   BROWSER: 'none',  // Prevent opening browser
   EXPO_WEB_PORT: PORT.toString(),  // Set explicit web port
@@ -56,7 +59,7 @@ const env = {
 };
 
 // Start Expo with web mode on the specified port 
-console.log(`Running: npx expo start --web --port ${PORT} --host lan in ${expoAppDir}`);
+console.log(`Running: npx expo start --web --port ${PORT} --host lan --no-dev in ${expoAppDir}`);
 const expoProcess = spawn('npx', [
   'expo',
   'start',
@@ -64,7 +67,8 @@ const expoProcess = spawn('npx', [
   '--port',
   PORT.toString(),
   '--host',
-  'lan'  // Use 'lan' to make it accessible on the network
+  'lan',  // Use 'lan' to make it accessible on the network
+  '--no-dev'  // Use production mode to reduce potential issues
 ], {
   cwd: expoAppDir,
   env: env,
