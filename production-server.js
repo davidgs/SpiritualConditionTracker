@@ -333,7 +333,12 @@ const env = {
   // Debugging and feature flags
   EXPO_NO_FONTS: 'true',  // Skip font loading
   EXPO_USE_VECTOR_ICONS: 'false',  // Skip vector icons
-  DANGEROUSLY_DISABLE_HOST_CHECK: 'true'  // Allow external connections
+  DANGEROUSLY_DISABLE_HOST_CHECK: 'true',  // Allow external connections
+  
+  // Disable features that require authentication
+  EXPO_NO_SIGNIN: 'true',  // Skip authentication prompt
+  EXPO_NO_CODE_SIGNING: 'true',  // Disable code signing
+  EAS_NO_VCS: 'true'  // Disable version control integration
 };
 
 // Log the exact command we're running
@@ -345,6 +350,7 @@ writeLog(`Running command: ${expoCommand} in directory ${expoAppDir}`);
 log(`Environment variables: ${JSON.stringify(env, (k, v) => k.startsWith('npm_') ? undefined : v)}`, 'DEBUG');
 
 // Start Expo with web mode on the specified port 
+// Use a simplified command line with only the essential parameters
 const expoProcess = spawn('npx', [
   'expo',
   'start',
@@ -352,8 +358,7 @@ const expoProcess = spawn('npx', [
   '--port',
   PORT.toString(),
   '--host',
-  'lan',  // Use 'lan' to make it accessible on the network
-  '--no-dev'  // Use production mode to reduce potential issues
+  'lan'  // Use 'lan' to make it accessible on the network
 ], {
   cwd: expoAppDir,
   env: env,
