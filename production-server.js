@@ -32,6 +32,10 @@ function fixVectorIcons() {
 const PORT = 3243;  // The port Apache is configured to proxy to
 const expoAppDir = path.join(__dirname, 'expo-app');
 
+// Startup tracking variables
+let serverStarted = false;
+let startupTimer = null;
+
 // Run fix-module-error.sh first to fix the minimatch module issue
 console.log('Fixing module errors before starting Expo...');
 try {
@@ -133,6 +137,12 @@ if (expoProcess.stdout) {
     const output = data.toString().trim();
     console.log(`Expo: ${output}`);
     
+    // Mark server as started when we see this line
+    if (output.includes('Logs for your project will appear below')) {
+      serverStarted = true;
+      console.log('✅ Expo server has started successfully');
+    }
+    
     // Log if we detect any known error patterns
     if (output.includes('Error:') || output.includes('error:') || 
         output.includes('Cannot find module') || output.includes('ENOENT')) {
@@ -148,16 +158,33 @@ if (expoProcess.stderr) {
   });
 }
 
+// Set a longer timeout for initial startup
+startupTimer = setTimeout(() => {
+  if (!serverStarted) {
+    console.log('Expo startup timeout after 60 seconds. Not restarting automatically.');
+    // Keep the process running, just log the issue
+  }
+}, 60000);
+
 // Handle process exit
 expoProcess.on('close', (code) => {
   console.log(`Expo process exited with code ${code}`);
   
-  if (code !== 0) {
-    console.log('Expo crashed. Restarting in 5 seconds...');
+  // Clear the startup timer if it's still running
+  if (startupTimer) {
+    clearTimeout(startupTimer);
+  }
+  
+  if (serverStarted) {
+    // If server was previously running but crashed, restart it
+    console.log('Expo crashed after successful startup. Restarting in 5 seconds...');
     setTimeout(() => {
       console.log('Restarting Expo...');
       process.exit(1);  // Exit and let the system restart the process
     }, 5000);
+  } else {
+    // If server never started successfully, log but don't auto-restart
+    console.log('Expo crashed during startup. Please check logs for errors.');
   }
 });
 
