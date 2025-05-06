@@ -7,7 +7,7 @@ echo "Fixing module errors..."
 
 # Install problematic packages
 echo "Installing required packages..."
-npm install minimatch@^5.1.0 agent-base@^6.0.2 ws@^8.0.0
+npm install minimatch@^5.1.0 agent-base@^6.0.2 ws@^8.0.0 semver@^7.0.0
 
 # Fix for minimatch module
 echo "Fixing minimatch module..."
@@ -182,5 +182,39 @@ touch node_modules/ws/lib/extension.js
 touch node_modules/ws/lib/constants.js
 touch node_modules/ws/lib/websocket.js
 touch node_modules/ws/lib/websocket-server.js
+
+# Fix for semver module
+echo "Fixing semver module..."
+mkdir -p node_modules/semver
+
+# Create semver.js if needed
+if [ ! -f "node_modules/semver/semver.js" ]; then
+  echo "Creating semver.js file..."
+  cat > node_modules/semver/semver.js << 'EOF'
+// Simple semver compatibility shim
+module.exports = require('./');
+EOF
+fi
+
+# Create semver package.json if not present or invalid
+echo "Creating/fixing semver package.json..."
+cat > node_modules/semver/package.json << 'EOF'
+{
+  "name": "semver",
+  "version": "7.5.4",
+  "description": "The semantic version parser used by npm.",
+  "main": "index.js",
+  "files": [
+    "bin",
+    "classes",
+    "functions",
+    "internal",
+    "ranges",
+    "index.js",
+    "preload.js",
+    "semver.js"
+  ]
+}
+EOF
 
 echo "Done fixing module errors."
