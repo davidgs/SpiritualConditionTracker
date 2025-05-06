@@ -1,7 +1,7 @@
 
-// Force version refresh - created at 2025-05-06T21:09:54.825Z
-window.FORCE_APP_VERSION = "1.0.2 - May 6, 2025, 09:00 PM - BUILD-1746565254334";
-window.BUILD_ID = "build-1746565254334";
+// Force version refresh - created at 2025-05-06T21:23:11.118Z
+window.FORCE_APP_VERSION = "1.0.2 - May 6, 2025, 09:23 PM - BUILD-1746566591091";
+window.BUILD_ID = "build-1746566591091";
 console.log("[Version Injector] Running version: " + window.FORCE_APP_VERSION);
 
 // Enforce version checking
