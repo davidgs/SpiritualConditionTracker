@@ -51,6 +51,7 @@ const env = {
   BROWSER: 'none',  // Prevent opening browser
   EXPO_WEB_PORT: PORT.toString(),  // Set explicit web port
   PORT: PORT.toString(),  // For Metro
+  EXPO_WEBPACK_PUBLIC_PATH: '/',  // Important: set correct public path for bundle assets
   DANGEROUSLY_DISABLE_HOST_CHECK: 'true'  // Allow external connections
 };
 
