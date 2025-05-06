@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { View, Text, Platform, Dimensions } from 'react-native';
+import { View, Text, Image, Platform } from 'react-native';
 import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -23,6 +23,9 @@ import { ActivitiesProvider } from './src/contexts/ActivitiesContext';
 import { ThemeProvider, useTheme } from './src/contexts/ThemeContext';
 import { MessagingProvider } from './src/contexts/MessagingContext';
 
+// Import utilities
+import { isMobileDevice, addDimensionListener } from './src/utils/deviceUtils';
+
 // Import database functions
 import { initDatabase } from './src/database/database';
 
@@ -30,62 +33,107 @@ const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
 
-// Simple device detection
-const isMobile = () => {
-  // Always treat native apps as mobile
-  if (Platform.OS === 'ios' || Platform.OS === 'android') {
-    return true;
+// Icon mapping for both tab and drawer navigation
+const getIconName = (routeName, focused) => {
+  switch (routeName) {
+    case 'Dashboard':
+      return focused ? 'view-dashboard' : 'view-dashboard-outline';
+    case 'Activities':
+      return focused ? 'notebook' : 'notebook-outline';
+    case 'Nearby':
+      return focused ? 'account-group' : 'account-group-outline';
+    case 'Meetings':
+      return focused ? 'calendar-check' : 'calendar-check-outline';
+    case 'Messages':
+      return focused ? 'message-text' : 'message-text-outline';
+    case 'Settings':
+      return focused ? 'cog' : 'cog-outline';
+    default:
+      return 'help-circle-outline';
   }
-  
-  // For web, check screen size
-  if (Platform.OS === 'web' && typeof window !== 'undefined') {
-    return window.innerWidth < 768;
-  }
-  
-  // Default to true if we can't detect
-  return true;
 };
 
-// Navigation for the Messages stack
+// Navigation for the Messages
 const MessagesStack = () => (
-  <Stack.Navigator screenOptions={{ headerShown: false }}>
+  <Stack.Navigator
+    screenOptions={{
+      headerShown: false,
+    }}
+  >
     <Stack.Screen name="MessagesList" component={MessagingScreen} />
     <Stack.Screen name="Conversation" component={ConversationScreen} />
   </Stack.Navigator>
 );
 
-// Tab Navigator (for desktop)
-const TabNavigator = () => {
+// DrawerContent component for the drawer navigation
+const CustomDrawerContent = ({ navigation, theme }) => {
+  return (
+    <View style={{ flex: 1, backgroundColor: theme.background, padding: 20 }}>
+      <View style={{ alignItems: 'center', marginVertical: 20 }}>
+        <Text style={{ fontSize: 22, fontWeight: 'bold', color: theme.text, marginTop: 10 }}>
+          Spiritual Condition Tracker
+        </Text>
+      </View>
+      
+      {/* Drawer Items */}
+      {['Dashboard', 'Activities', 'Nearby', 'Meetings', 'Messages', 'Settings'].map((routeName) => (
+        <View 
+          key={routeName}
+          style={{ 
+            flexDirection: 'row', 
+            alignItems: 'center', 
+            paddingVertical: 15,
+            borderBottomWidth: 1,
+            borderBottomColor: theme.border,
+          }}
+        >
+          <MaterialCommunityIcons 
+            name={getIconName(routeName, false)} 
+            size={24} 
+            color={theme.primary} 
+          />
+          <Text 
+            style={{ marginLeft: 15, fontSize: 16, color: theme.text }}
+            onPress={() => navigation.navigate(routeName)}
+          >
+            {routeName}
+          </Text>
+        </View>
+      ))}
+    </View>
+  );
+};
+
+// Tab Navigator Component
+const AppTabNavigator = () => {
   const { theme } = useTheme();
   
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
         tabBarIcon: ({ focused, color, size }) => {
-          let iconName;
-          
-          if (route.name === 'Dashboard') {
-            iconName = focused ? 'view-dashboard' : 'view-dashboard-outline';
-          } else if (route.name === 'Activities') {
-            iconName = focused ? 'notebook' : 'notebook-outline';
-          } else if (route.name === 'Nearby') {
-            iconName = focused ? 'account-group' : 'account-group-outline';
-          } else if (route.name === 'Meetings') {
-            iconName = focused ? 'calendar-check' : 'calendar-check-outline';
-          } else if (route.name === 'Messages') {
-            iconName = focused ? 'message-text' : 'message-text-outline';
-          } else if (route.name === 'Settings') {
-            iconName = focused ? 'cog' : 'cog-outline';
-          }
-          
+          const iconName = getIconName(route.name, focused);
           return <MaterialCommunityIcons name={iconName} size={size} color={color} />;
         },
         tabBarActiveTintColor: theme.primary,
         tabBarInactiveTintColor: theme.textSecondary,
+        headerShown: true,
+        tabBarStyle: { 
+          height: 60,
+          paddingTop: 5,
+          paddingBottom: 10,
+          backgroundColor: theme.tabBarBackground,
+        },
+        tabBarLabelStyle: {
+          fontSize: 12,
+          fontWeight: '500'
+        },
         headerStyle: {
           backgroundColor: theme.card,
         },
-        headerTintColor: theme.text,
+        headerTitleStyle: {
+          color: theme.text,
+        },
       })}
     >
       <Tab.Screen name="Dashboard" component={DashboardScreen} />
@@ -94,16 +142,18 @@ const TabNavigator = () => {
       <Tab.Screen name="Meetings" component={MeetingsScreen} />
       <Tab.Screen 
         name="Messages" 
-        component={MessagesStack} 
-        options={{ headerShown: false }}
+        component={MessagesStack}
+        options={{ 
+          headerShown: false,
+        }}
       />
       <Tab.Screen name="Settings" component={SettingsScreen} />
     </Tab.Navigator>
   );
 };
 
-// Drawer Navigator (for mobile)
-const DrawerNavigator = () => {
+// Drawer Navigator Component
+const AppDrawerNavigator = () => {
   const { theme } = useTheme();
   
   return (
@@ -113,9 +163,12 @@ const DrawerNavigator = () => {
           backgroundColor: theme.card,
         },
         headerTintColor: theme.text,
-        drawerActiveTintColor: theme.primary,
-        drawerInactiveTintColor: theme.text,
+        drawerStyle: {
+          backgroundColor: theme.background,
+          width: 280,
+        },
       }}
+      drawerContent={(props) => <CustomDrawerContent {...props} theme={theme} />}
     >
       <Drawer.Screen 
         name="Dashboard" 
@@ -175,58 +228,14 @@ const DrawerNavigator = () => {
   );
 };
 
-// App version - update with every change
-const APP_VERSION = "1.0.0 - May 6, 2025 - 01:35";
-
 function Main() {
   const [dbInitialized, setDbInitialized] = useState(false);
-  const [useMobileNav, setUseMobileNav] = useState(isMobile());
+  // Check if device is mobile-sized and set navigation type accordingly
+  const [isMobile, setIsMobile] = useState(isMobileDevice());
   const { theme, isDark } = useTheme();
-  
-  // Initialize database
-  useEffect(() => {
-    const setupDb = async () => {
-      try {
-        await initDatabase();
-        setDbInitialized(true);
-      } catch (error) {
-        console.error('Database initialization error:', error);
-      }
-    };
-    
-    setupDb();
-  }, []);
-  
-  // Set up responsive layout
-  useEffect(() => {
-    setUseMobileNav(isMobile());
-    
-    // Set up window resize listener for web
-    if (Platform.OS === 'web') {
-      const handleResize = () => {
-        setUseMobileNav(isMobile());
-      };
-      
-      window.addEventListener('resize', handleResize);
-      
-      // Expose toggle for testing
-      window.toggleNav = () => {
-        setUseMobileNav(prev => !prev);
-      };
-      
-      return () => window.removeEventListener('resize', handleResize);
-    }
-    
-    // For native, use Dimensions API
-    const subscription = Dimensions.addEventListener('change', () => {
-      setUseMobileNav(isMobile());
-    });
-    
-    return () => subscription.remove();
-  }, []);
-  
-  // Create custom theme for navigation
-  const navTheme = {
+
+  // Create custom navigation theme
+  const customNavigationTheme = {
     ...(isDark ? DarkTheme : DefaultTheme),
     colors: {
       ...(isDark ? DarkTheme.colors : DefaultTheme.colors),
@@ -236,40 +245,60 @@ function Main() {
       text: theme.text,
     },
   };
-  
-  // Show loading state while database initializes
+
+  // Set up dimension change listener for responsive design
+  useEffect(() => {
+    // Check device type on mount
+    setIsMobile(isMobileDevice());
+    
+    // Set up listener for dimension changes (like rotation or window resize)
+    const cleanupListener = addDimensionListener(() => {
+      setIsMobile(isMobileDevice());
+    });
+    
+    // Add toggle function to window for easy testing on web
+    if (Platform.OS === 'web') {
+      window.toggleNav = () => {
+        setIsMobile(prev => !prev);
+        console.log('Navigation mode toggled to:', isMobile ? 'desktop' : 'mobile');
+      };
+    }
+    
+    return cleanupListener;
+  }, []);
+
+  // Initialize database
+  useEffect(() => {
+    async function setupDatabase() {
+      try {
+        await initDatabase();
+        setDbInitialized(true);
+      } catch (error) {
+        console.error('Database initialization error:', error);
+      }
+    }
+    
+    setupDatabase();
+  }, []);
+
   if (!dbInitialized) {
-    return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: theme.background }}>
-        <Text style={{ color: theme.text }}>Loading...</Text>
-      </View>
-    );
+    // You could return a loading screen here
+    return null;
   }
-  
+
   return (
-    <View style={{ flex: 1 }}>
-      <NavigationContainer theme={navTheme}>
-        {useMobileNav ? <DrawerNavigator /> : <TabNavigator />}
-      </NavigationContainer>
-      
-      {/* Version footer */}
-      <View style={{ 
-        padding: 5, 
-        backgroundColor: theme.card,
-        alignItems: 'center',
-        borderTopWidth: 1,
-        borderTopColor: theme.border
-      }}>
-        <Text style={{ 
-          color: theme.textSecondary,
-          fontSize: 10
-        }}>
-          Version: {APP_VERSION}
-        </Text>
-      </View>
-      
-      <StatusBar style={isDark ? 'light' : 'dark'} />
-    </View>
+    <NavigationContainer theme={customNavigationTheme}>
+      {isMobile ? (
+        <View style={{ flex: 1 }}>
+          <AppDrawerNavigator />
+        </View>
+      ) : (
+        <View style={{ flex: 1 }}>
+          <AppTabNavigator />
+        </View>
+      )}
+      <StatusBar style={theme.statusBar} />
+    </NavigationContainer>
   );
 }
 
