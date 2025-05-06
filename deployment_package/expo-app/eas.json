@@ -1,0 +1,53 @@
+{
+  "cli": {
+    "version": ">= 3.18.0",
+    "appVersionSource": "remote"
+  },
+  "build": {
+    "base": {
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://api.yourdomain.com",
+        "EXPO_IMAGE_UTILS_NO_SHARP": "1",
+        "NODE_OPTIONS": "--preserve-symlinks"
+      },
+      "node": "18.18.0",
+      "prebuildCommand": "chmod +x ./eas-hooks/eas-build-pre-install.sh && ./eas-hooks/eas-build-pre-install.sh",
+      "postInstallCommand": "chmod +x ./eas-hooks/eas-build-post-install.sh && ./eas-hooks/eas-build-post-install.sh"
+    },
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal"
+    },
+    "preview": {
+      "distribution": "internal"
+    },
+    "production": {
+      "autoIncrement": true
+    },
+    "native": {
+      "ios": {
+        "resourceClass": "default",
+        "distribution": "internal",
+        "credentialsSource": "remote",
+        "image": "latest",
+        "env": {
+          "EXPO_IMAGE_UTILS_NO_SHARP": "1"
+        },
+        "buildConfiguration": "Release"
+      },
+      "android": {
+        "buildType": "apk",
+        "distribution": "internal",
+        "credentialsSource": "remote",
+        "image": "latest",
+        "env": {
+          "EXPO_IMAGE_UTILS_NO_SHARP": "1"
+        },
+        "gradleCommand": ":app:assembleRelease"
+      }
+    }
+  },
+  "submit": {
+    "production": {}
+  }
+}

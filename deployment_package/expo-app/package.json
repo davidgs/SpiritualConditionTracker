@@ -1,0 +1,46 @@
+{
+  "name": "spiritual-condition-tracker",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "expo start --offline",
+    "android": "expo start --offline --android",
+    "ios": "expo start --offline --ios",
+    "web": "expo start --offline --web --port 5000",
+    "check-env": "./check-build-environment.sh",
+    "eas-login": "./eas-login.sh",
+    "setup-token": "./setup-eas-token.sh",
+    "build:android": "eas build --platform android --profile native --non-interactive",
+    "build:ios": "eas build --platform ios --profile native --non-interactive",
+    "build:preview": "eas build --profile preview --non-interactive",
+    "build:prod:android": "eas build --platform android --profile production --non-interactive",
+    "build:prod:ios": "eas build --platform ios --profile production --non-interactive"
+  },
+  "dependencies": {
+    "expo": "~53.0.7",
+    "expo-status-bar": "~2.2.3",
+    "expo-sqlite": "~13.3.0",
+    "minimatch": "^9.0.3",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "react-native": "0.79.2",
+    "@react-navigation/native": "^6.1.9",
+    "@react-navigation/bottom-tabs": "^6.5.11",
+    "@react-navigation/native-stack": "^6.9.17",
+    "react-native-safe-area-context": "4.8.1",
+    "react-native-screens": "~3.29.0",
+    "@react-native-community/datetimepicker": "7.6.1",
+    "expo-calendar": "~14.1.4",
+    "expo-device": "~5.9.0",
+    "expo-location": "~16.5.0",
+    "expo-notifications": "~0.27.4",
+    "react-native-ble-plx": "^3.5.0",
+    "react-native-bluetooth-classic": "^1.73.0-rc.13",
+    "react-native-web": "~0.19.0",
+    "@expo/metro-runtime": "~2.2.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.20.0"
+  },
+  "private": true
+}
