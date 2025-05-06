@@ -1,13 +1,12 @@
 /**
- * Direct Expo starter - Starts Expo directly on port 3243
- * Simple script that just starts Expo on the port that Apache proxies to
- * First runs fix-module-error.sh to fix minimatch module issues
- * Enhanced with extensive logging for troubleshooting
+ * Enhanced production server with extensive logging
+ * This version includes maximum debug information
  */
 
 const { spawn, execSync } = require('child_process');
 const path = require('path');
 const fs = require('fs');
+const http = require('http');
 const os = require('os');
 
 // Create timestamp for logs
@@ -48,30 +47,10 @@ writeLog('Server started with debug logging');
 // Create missing vector icons directories to prevent crashes
 function fixVectorIcons() {
   log('Creating vector icons directories...', 'DEBUG');
-  
   // Standard node_modules path
   const iconFontPaths = [
     path.join(__dirname, 'expo-app', 'node_modules', '@expo', 'vector-icons', 'build', 'vendor', 'react-native-vector-icons', 'Fonts'),
     path.join(__dirname, 'node_modules', '@expo', 'vector-icons', 'build', 'vendor', 'react-native-vector-icons', 'Fonts')
-  ];
-  
-  // Font names to create as empty files
-  const fontNames = [
-    'MaterialCommunityIcons.ttf',
-    'AntDesign.ttf',
-    'Entypo.ttf',
-    'EvilIcons.ttf',
-    'Feather.ttf',
-    'FontAwesome.ttf',
-    'FontAwesome5_Brands.ttf',
-    'FontAwesome5_Regular.ttf',
-    'FontAwesome5_Solid.ttf',
-    'Foundation.ttf',
-    'Ionicons.ttf',
-    'MaterialIcons.ttf',
-    'Octicons.ttf',
-    'SimpleLineIcons.ttf',
-    'Zocial.ttf'
   ];
   
   iconFontPaths.forEach(dirPath => {
@@ -80,25 +59,8 @@ function fixVectorIcons() {
         log(`Creating directory: ${dirPath}`, 'DEBUG');
         fs.mkdirSync(dirPath, { recursive: true });
         log(`Created directory: ${dirPath}`);
-        writeLog(`Created vector icons directory: ${dirPath}`);
-        
-        // Create empty font files
-        for (const fontName of fontNames) {
-          const fontPath = path.join(dirPath, fontName);
-          fs.writeFileSync(fontPath, '');
-          log(`Created empty font file: ${fontPath}`, 'DEBUG');
-        }
       } else {
         log(`Directory already exists: ${dirPath}`, 'DEBUG');
-        
-        // Make sure all font files exist
-        for (const fontName of fontNames) {
-          const fontPath = path.join(dirPath, fontName);
-          if (!fs.existsSync(fontPath)) {
-            fs.writeFileSync(fontPath, '');
-            log(`Created missing font file: ${fontPath}`, 'DEBUG');
-          }
-        }
       }
     } catch (err) {
       log(`Error creating ${dirPath}: ${err.message}`, 'ERROR');
@@ -111,9 +73,15 @@ function fixVectorIcons() {
 const PORT = 3243;  // The port Apache is configured to proxy to
 const expoAppDir = path.join(__dirname, 'expo-app');
 
+log(`Configuration: PORT=${PORT}, expoAppDir=${expoAppDir}`, 'DEBUG');
+writeLog(`Configuration: PORT=${PORT}, expoAppDir=${expoAppDir}`);
+
 // Startup tracking variables
 let serverStarted = false;
 let startupTimer = null;
+let checkInterval = null;
+let restartAttempts = 0;
+const MAX_RESTART_ATTEMPTS = 3;
 
 // Run fix-module-error.sh first to fix the minimatch module issue
 log('Running fix-module-error.sh...', 'DEBUG');
@@ -133,66 +101,6 @@ try {
   } else {
     log(`Warning: fix-module-error.sh not found at ${fixScriptPath}`, 'WARN');
     writeLog(`Warning: fix-module-error.sh not found at ${fixScriptPath}`);
-    
-    // Try to manually create some critical files that might be missing
-    log('Manually creating critical missing files...', 'DEBUG');
-    
-    // Fix minimatch module
-    try {
-      const minimatchDir = path.join(expoAppDir, 'node_modules', 'minimatch');
-      if (!fs.existsSync(minimatchDir)) {
-        fs.mkdirSync(minimatchDir, { recursive: true });
-        log(`Created minimatch directory: ${minimatchDir}`, 'DEBUG');
-      }
-      
-      const minimatchJsPath = path.join(minimatchDir, 'minimatch.js');
-      if (!fs.existsSync(minimatchJsPath)) {
-        fs.writeFileSync(minimatchJsPath, 'module.exports = function minimatch() { return true; };');
-        log(`Created minimatch.js stub file`, 'DEBUG');
-      }
-    } catch (err) {
-      log(`Error fixing minimatch: ${err.message}`, 'ERROR');
-    }
-    
-    // Fix agent-base module
-    try {
-      const agentBaseDir = path.join(expoAppDir, 'node_modules', 'agent-base');
-      if (!fs.existsSync(agentBaseDir)) {
-        fs.mkdirSync(agentBaseDir, { recursive: true });
-        log(`Created agent-base directory: ${agentBaseDir}`, 'DEBUG');
-      }
-      
-      const agentBasePath = path.join(agentBaseDir, 'index.js');
-      if (!fs.existsSync(agentBasePath)) {
-        fs.writeFileSync(agentBasePath, 'module.exports = function createAgent() { return function agent() {}; };');
-        log(`Created agent-base/index.js stub file`, 'DEBUG');
-      }
-    } catch (err) {
-      log(`Error fixing agent-base: ${err.message}`, 'ERROR');
-    }
-    
-    // Fix ws module
-    try {
-      const wsDir = path.join(expoAppDir, 'node_modules', 'ws');
-      if (!fs.existsSync(wsDir)) {
-        fs.mkdirSync(wsDir, { recursive: true });
-        log(`Created ws directory: ${wsDir}`, 'DEBUG');
-      }
-      
-      const wsIndexPath = path.join(wsDir, 'index.js');
-      if (!fs.existsSync(wsIndexPath)) {
-        fs.writeFileSync(wsIndexPath, 'module.exports = class WebSocket { constructor() {}; };');
-        log(`Created ws/index.js stub file`, 'DEBUG');
-      }
-      
-      const subprotocolPath = path.join(wsDir, 'subprotocol.js');
-      if (!fs.existsSync(subprotocolPath)) {
-        fs.writeFileSync(subprotocolPath, 'module.exports = { format: (protocols) => protocols[0], parse: (header) => [header] };');
-        log(`Created subprotocol.js stub file`, 'DEBUG');
-      }
-    } catch (err) {
-      log(`Error fixing ws: ${err.message}`, 'ERROR');
-    }
   }
 } catch (err) {
   log(`Error running fix script: ${err.message}`, 'ERROR');
@@ -258,9 +166,14 @@ if (!fs.existsSync(nodeModulesDir)) {
     log(`Created vector icons directory: ${iconFontsDir}`);
     writeLog(`Created vector icons directory: ${iconFontsDir}`);
     
-    // Create empty font files to prevent crashes
+    // Create empty font file to prevent crashes
+    const missingFontFile = path.join(iconFontsDir, 'MaterialCommunityIcons.ttf');
+    fs.writeFileSync(missingFontFile, '');
+    log(`Created empty font file: ${missingFontFile}`);
+    writeLog(`Created empty font file: ${missingFontFile}`);
+    
+    // Create empty files for all other common font files
     const fontNames = [
-      'MaterialCommunityIcons.ttf',
       'AntDesign.ttf',
       'Entypo.ttf',
       'EvilIcons.ttf',
@@ -290,64 +203,6 @@ if (!fs.existsSync(nodeModulesDir)) {
 } else {
   log(`_node_modules directory already exists at ${nodeModulesDir}`, 'DEBUG');
 }
-
-// Start Expo
-log(`Starting Expo app directly on port ${PORT}...`, 'DEBUG');
-writeLog(`Starting Expo app directly on port ${PORT}`);
-
-// Clean up any existing processes
-try {
-  log('Cleaning up existing Expo processes...', 'DEBUG');
-  execSync('pkill -f expo || true', { stdio: 'ignore' });
-} catch (err) {
-  log('Error during cleanup (can be safely ignored)', 'DEBUG');
-}
-
-// Set up environment variables for Expo
-const env = {
-  ...process.env,
-  NODE_ENV: 'development',
-  DEBUG: '*',  // Enable all debug output
-  EXPO_DEBUG: 'true',
-  CI: 'false',  // Must be 'false' string to be properly parsed as boolean
-  BROWSER: 'none',  // Prevent opening browser
-  EXPO_WEB_PORT: PORT.toString(),  // Set explicit web port
-  PORT: PORT.toString(),  // For Metro
-  EXPO_WEBPACK_PUBLIC_PATH: '/',  // Important: set correct public path for bundle assets
-  EXPO_NO_FONTS: 'true',  // Skip font loading
-  EXPO_USE_VECTOR_ICONS: 'false',  // Skip vector icons
-  DANGEROUSLY_DISABLE_HOST_CHECK: 'true'  // Allow external connections
-};
-
-// Log the exact command we're running
-const expoCommand = `npx expo start --web --port ${PORT} --host lan --no-dev`;
-log(`Running command: ${expoCommand} in directory ${expoAppDir}`, 'DEBUG');
-writeLog(`Running command: ${expoCommand} in directory ${expoAppDir}`);
-
-// Log environment variables (excluding sensitive ones)
-log(`Environment variables: ${JSON.stringify(env, (k, v) => k.startsWith('npm_') ? undefined : v)}`, 'DEBUG');
-
-// Start Expo with web mode on the specified port 
-const expoProcess = spawn('npx', [
-  'expo',
-  'start',
-  '--web',
-  '--port',
-  PORT.toString(),
-  '--host',
-  'lan',  // Use 'lan' to make it accessible on the network
-  '--no-dev'  // Use production mode to reduce potential issues
-], {
-  cwd: expoAppDir,
-  env: env,
-  stdio: 'inherit'  // Use inherit to directly show output for easier debugging
-});
-
-log(`Started Expo with PID ${expoProcess.pid}`);
-writeLog(`Started Expo with PID ${expoProcess.pid}`);
-
-// We won't automatically mark as started - only check if it's running
-const http = require('http');
 
 // Check if server is actually running on the port
 function checkServerRunning() {
@@ -382,17 +237,68 @@ function checkServerRunning() {
   });
 }
 
-// Variables to track restart attempts
-let restartAttempts = 0;
-const MAX_RESTART_ATTEMPTS = 3;
+// Start Expo
+log(`Starting Expo app directly on port ${PORT}...`, 'DEBUG');
+writeLog(`Starting Expo app directly on port ${PORT}`);
+
+// Clean up any existing processes
+try {
+  log('Cleaning up existing Expo processes...', 'DEBUG');
+  execSync('pkill -f expo || true', { stdio: 'ignore' });
+} catch (err) {
+  log('Error during cleanup (can be safely ignored)', 'DEBUG');
+}
+
+// Set up environment variables for Expo
+const env = {
+  ...process.env,
+  NODE_ENV: 'development',  // NOTE: Using development to get more detailed error messages
+  DEBUG: '*',  // Enable all debug output
+  EXPO_DEBUG: 'true',
+  CI: 'false',  // Must be 'false' string to be properly parsed as boolean
+  BROWSER: 'none',  // Prevent opening browser
+  EXPO_WEB_PORT: PORT.toString(),  // Set explicit web port
+  PORT: PORT.toString(),  // For Metro
+  EXPO_WEBPACK_PUBLIC_PATH: '/',  // Important: set correct public path for bundle assets
+  EXPO_NO_FONTS: 'true',  // Skip font loading
+  EXPO_USE_VECTOR_ICONS: 'false',  // Skip vector icons
+  DANGEROUSLY_DISABLE_HOST_CHECK: 'true',  // Allow external connections
+  NODE_OPTIONS: '--max-old-space-size=4096'  // Increase memory limit for Node.js
+};
+
+log(`Environment variables: ${JSON.stringify(env, (k, v) => k.startsWith('npm_') ? undefined : v)}`, 'DEBUG');
+
+// Log the exact command we're running
+const expoCommand = `npx expo start --web --port ${PORT} --host lan --no-dev`;
+log(`Running command: ${expoCommand} in directory ${expoAppDir}`, 'DEBUG');
+writeLog(`Running command: ${expoCommand} in directory ${expoAppDir}`);
+
+// Start Expo with web mode on the specified port 
+const expoProcess = spawn('npx', [
+  'expo',
+  'start',
+  '--web',
+  '--port',
+  PORT.toString(),
+  '--host',
+  'lan',  // Use 'lan' to make it accessible on the network
+  '--no-dev'  // Use production mode to reduce potential issues
+], {
+  cwd: expoAppDir,
+  env: env,
+  stdio: 'inherit'  // Use inherit to directly show output for easier debugging
+});
+
+log(`Started Expo with PID ${expoProcess.pid}`);
+writeLog(`Started Expo with PID ${expoProcess.pid}`);
 
 // Check server status periodically
-const checkInterval = setInterval(async () => {
+checkInterval = setInterval(async () => {
   const isRunning = await checkServerRunning();
   if (!isRunning && !serverStarted) {
     log('Expo server not responding yet, still waiting...', 'WARN');
     writeLog('Expo server not responding yet');
-  } 
+  }
 }, 10000); // Check every 10 seconds
 
 // Set a longer timeout for initial startup
@@ -403,13 +309,6 @@ startupTimer = setTimeout(() => {
     // Keep the process running, just log the issue
   }
 }, 60000);
-
-// Log all uncaught exceptions
-process.on('uncaughtException', (err) => {
-  log(`Uncaught exception: ${err.message}`, 'ERROR');
-  log(`Stack trace: ${err.stack}`, 'ERROR');
-  writeLog(`Uncaught exception: ${err.message}\n${err.stack}`);
-});
 
 // Handle process exit
 expoProcess.on('close', (code) => {
@@ -518,4 +417,11 @@ process.on('SIGTERM', () => {
   
   expoProcess.kill();
   process.exit(0);
+});
+
+// Log all uncaught exceptions
+process.on('uncaughtException', (err) => {
+  log(`Uncaught exception: ${err.message}`, 'ERROR');
+  log(`Stack trace: ${err.stack}`, 'ERROR');
+  writeLog(`Uncaught exception: ${err.message}\n${err.stack}`);
 });
