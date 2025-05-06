@@ -1,0 +1,61 @@
+cat *.log
+[2025-05-06T00:58:33.428Z] Current directory: /var/www/vhosts/spiritual-condition.com/httpdocs/SpiritualConditionTracker
+[2025-05-06T00:58:33.430Z] Expo app directory: /var/www/vhosts/spiritual-condition.com/httpdocs/SpiritualConditionTracker/expo-app
+[2025-05-06T00:58:33.430Z] Node.js version: v21.5.0
+[2025-05-06T00:58:33.430Z] Platform: linux
+[2025-05-06T00:58:33.430Z] Architecture: x64
+[2025-05-06T00:58:33.430Z] Found package.json - dependencies:
+[2025-05-06T00:58:33.430Z] {
+  "expo": "~53.0.7",
+  "expo-status-bar": "~2.2.3",
+  "expo-sqlite": "~13.3.0",
+  "minimatch": "^9.0.3",
+  "react": "18.2.0",
+  "react-dom": "18.2.0",
+  "react-native": "0.79.2",
+  "@react-navigation/native": "^6.1.9",
+  "@react-navigation/bottom-tabs": "^6.5.11",
+  "@react-navigation/native-stack": "^6.9.17",
+  "react-native-safe-area-context": "4.8.1",
+  "react-native-screens": "~3.29.0",
+  "@react-native-community/datetimepicker": "7.6.1",
+  "expo-calendar": "~14.1.4",
+  "expo-device": "~5.9.0",
+  "expo-location": "~16.5.0",
+  "expo-notifications": "~0.27.4",
+  "react-native-ble-plx": "^3.5.0",
+  "react-native-bluetooth-classic": "^1.73.0-rc.13",
+  "react-native-web": "~0.19.0",
+  "@expo/metro-runtime": "~2.2.0"
+}
+[2025-05-06T00:58:33.430Z] Starting Expo with maximum debug output...
+[2025-05-06T00:58:33.430Z] Command: npx expo start --web --port 3243 --host lan --no-dev
+[2025-05-06T00:58:33.432Z] Started Expo with PID 4015781
+[2025-05-06T00:58:33.433Z] Debug script started - all output is being saved to expo-debug.log
+[2025-05-06T00:58:34.000Z] [STDERR] 2025-05-06T00:58:33.999Z expo:telemetry Switching strategy from detached to instant
+[2025-05-06T00:58:34.033Z] [STDERR] 2025-05-06T00:58:34.033Z expo:telemetry Recording 1 event(s)
+[2025-05-06T00:58:34.039Z] [STDERR] 2025-05-06T00:58:34.039Z expo:env /var/www/vhosts/spiritual-condition.com/httpdocs/SpiritualConditionTracker/expo-app/.env does not exist, skipping this env file
+[2025-05-06T00:58:34.040Z] [STDERR] 2025-05-06T00:58:34.039Z expo:env /var/www/vhosts/spiritual-condition.com/httpdocs/SpiritualConditionTracker/expo-app/.env.development does not exist, skipping this env file
+2025-05-06T00:58:34.039Z expo:env /var/www/vhosts/spiritual-condition.com/httpdocs/SpiritualConditionTracker/expo-app/.env.local does not exist, skipping this env file
+2025-05-06T00:58:34.040Z expo:env /var/www/vhosts/spiritual-condition.com/httpdocs/SpiritualConditionTracker/expo-app/.env.development.local does not exist, skipping this env file
+[2025-05-06T00:58:34.103Z] [STDOUT] Starting project at /var/www/vhosts/spiritual-condition.com/httpdocs/SpiritualConditionTracker/expo-app
+[2025-05-06T00:58:34.124Z] [STDERR] 2025-05-06T00:58:34.124Z expo:doctor:webSupport Ensuring web support is setup
+[2025-05-06T00:58:34.127Z] [STDERR] 2025-05-06T00:58:34.127Z expo:doctor:dependencies:getMissingPackages Required package "react-dom" found (no version constraint specified).
+[2025-05-06T00:58:34.127Z] [STDERR] 2025-05-06T00:58:34.127Z expo:doctor:dependencies:getMissingPackages Required package "react-native-web" found (no version constraint specified).
+[2025-05-06T00:58:34.128Z] [STDERR] 2025-05-06T00:58:34.128Z expo:doctor:dependencies:getMissingPackages Required package "@expo/metro-runtime" found (no version constraint specified).
+[2025-05-06T00:58:34.183Z] [STDERR] 2025-05-06T00:58:34.183Z expo:start:server:devServer Stopping dev server (bundler: metro)
+2025-05-06T00:58:34.183Z expo:start:server:devServer Stopped dev server (bundler: metro)
+[2025-05-06T00:58:34.185Z] [STDERR] 2025-05-06T00:58:34.185Z expo:start:server:metro:router Using app as the root directory for Expo Router.
+[2025-05-06T00:58:34.252Z] [STDERR] Error: GetEnv.NoBoolean:  is not a boolean.
+Error: GetEnv.NoBoolean:  is not a boolean.
+    at Object.boolish (/var/www/vhosts/spiritual-condition.com/httpdocs/SpiritualConditionTracker/node_modules/getenv/index.js:70:15)
+    at /var/www/vhosts/spiritual-condition.com/httpdocs/SpiritualConditionTracker/node_modules/getenv/index.js:84:27
+    at Env.CI (/var/www/vhosts/spiritual-condition.com/httpdocs/SpiritualConditionTracker/node_modules/@expo/cli/src/utils/env.ts:41:19)
+    at isInteractive (/var/www/vhosts/spiritual-condition.com/httpdocs/SpiritualConditionTracker/node_modules/@expo/cli/src/utils/interactive.ts:5:15)
+    at withExtendedResolver (/var/www/vhosts/spiritual-condition.com/httpdocs/SpiritualConditionTracker/node_modules/@expo/cli/src/start/server/metro/withMetroMultiPlatform.ts:235:36)
+    at withMetroMultiPlatformAsync (/var/www/vhosts/spiritual-condition.com/httpdocs/SpiritualConditionTracker/node_modules/@expo/cli/src/start/server/metro/withMetroMultiPlatform.ts:883:10)
+    at loadMetroConfigAsync (/var/www/vhosts/spiritual-condition.com/httpdocs/SpiritualConditionTracker/node_modules/@expo/cli/src/start/server/metro/instantiateMetro.ts:157:12)
+    at instantiateMetroAsync (/var/www/vhosts/spiritual-condition.com/httpdocs/SpiritualConditionTracker/node_modules/@expo/cli/src/start/server/metro/instantiateMetro.ts:200:7)
+    at MetroBundlerDevServer.startImplementationAsync (/var/www/vhosts/spiritual-condition.com/httpdocs/SpiritualConditionTracker/node_modules/@expo/cli/src/start/server/metro/MetroBundlerDevServer.ts:971:69)
+    at MetroBundlerDevServer.startAsync (/var/www/vhosts/spiritual-condition.com/httpdocs/SpiritualConditionTracker/node_modules/@expo/cli/src/start/server/BundlerDevServer.ts:160:18)
+[2025-05-06T00:58:34.270Z] Expo process exited with code 1

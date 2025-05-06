@@ -62,7 +62,7 @@ const env = {
   DEBUG: '*',  // Enable all debug output
   EXPO_DEBUG: 'true',
   PORT: PORT.toString(),
-  CI: '',  // Disable CI mode to ensure watching works
+  CI: 'false',  // Must be 'false' as string (not empty string) to be properly parsed as boolean
   DANGEROUSLY_DISABLE_HOST_CHECK: 'true'  // Allow external connections
 };
 

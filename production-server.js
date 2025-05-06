@@ -47,7 +47,7 @@ try {
 // Set up environment variables for Expo
 const env = {
   ...process.env,
-  CI: '1',  // Non-interactive mode
+  CI: 'false',  // Must be 'false' string to be properly parsed as boolean
   BROWSER: 'none',  // Prevent opening browser
   EXPO_WEB_PORT: PORT.toString(),  // Set explicit web port
   PORT: PORT.toString(),  // For Metro
