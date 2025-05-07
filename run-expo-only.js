@@ -35,32 +35,100 @@ const env = {
 
 // Fix React Native vector icons if needed
 function fixVectorIcons() {
-  console.log('Checking for vector icons directory...');
+  console.log('Setting up vector icons for web...');
   
   // Main node_modules vector icons path
   const iconFontsDir = path.join(expoAppDir, 'node_modules', '@expo', 'vector-icons', 'build', 'vendor', 'react-native-vector-icons', 'Fonts');
   
+  // Web directory path
+  const webDir = path.join(expoAppDir, 'web');
+  const webFontsDir = path.join(webDir, 'fonts');
+  
   if (!fs.existsSync(iconFontsDir)) {
     console.log(`Creating vector icons directory: ${iconFontsDir}`);
     fs.mkdirSync(iconFontsDir, { recursive: true });
-    
-    // Create empty font files
-    const fontNames = [
-      'MaterialCommunityIcons.ttf',
-      'AntDesign.ttf',
-      'FontAwesome.ttf',
-      'Ionicons.ttf',
-      'MaterialIcons.ttf'
-    ];
-    
-    for (const fontName of fontNames) {
-      const fontPath = path.join(iconFontsDir, fontName);
-      fs.writeFileSync(fontPath, '');
-      console.log(`Created empty font file: ${fontName}`);
-    }
-  } else {
-    console.log('Vector icons directory exists');
   }
+  
+  // Create web fonts directory if it doesn't exist
+  if (!fs.existsSync(webFontsDir)) {
+    console.log(`Creating web fonts directory: ${webFontsDir}`);
+    fs.mkdirSync(webFontsDir, { recursive: true });
+  }
+  
+  // Font names to create
+  const fontNames = [
+    'MaterialCommunityIcons.ttf',
+    'AntDesign.ttf',
+    'FontAwesome.ttf',
+    'Ionicons.ttf',
+    'MaterialIcons.ttf',
+    'Entypo.ttf',
+    'EvilIcons.ttf',
+    'Feather.ttf',
+    'FontAwesome5_Brands.ttf',
+    'FontAwesome5_Regular.ttf',
+    'FontAwesome5_Solid.ttf',
+    'Foundation.ttf',
+    'Octicons.ttf',
+    'SimpleLineIcons.ttf',
+    'Zocial.ttf'
+  ];
+  
+  // Create empty font files in the node_modules path
+  for (const fontName of fontNames) {
+    const fontPath = path.join(iconFontsDir, fontName);
+    if (!fs.existsSync(fontPath)) {
+      fs.writeFileSync(fontPath, '');
+      console.log(`Created empty font file in node_modules: ${fontName}`);
+    }
+    
+    // Also copy to web/fonts directory for web access
+    const webFontPath = path.join(webFontsDir, fontName);
+    fs.writeFileSync(webFontPath, '');
+    console.log(`Created empty font file in web directory: ${fontName}`);
+  }
+  
+  // Create a CSS file to include the fonts
+  const cssContent = fontNames.map(font => {
+    const fontFamily = font.replace('.ttf', '');
+    return `
+@font-face {
+  font-family: '${fontFamily}';
+  src: url('./fonts/${font}');
+  font-weight: normal;
+  font-style: normal;
+}`;
+  }).join('\n');
+  
+  const cssPath = path.join(webDir, 'vector-icons.css');
+  fs.writeFileSync(cssPath, cssContent);
+  console.log('Created CSS file for vector icons');
+  
+  // Inject the CSS into HTML when it's created
+  // We'll make this check periodically since Expo generates index.html dynamically
+  const injectCssToHtml = () => {
+    const indexHtmlPath = path.join(webDir, 'index.html');
+    if (fs.existsSync(indexHtmlPath)) {
+      let htmlContent = fs.readFileSync(indexHtmlPath, 'utf8');
+      
+      if (!htmlContent.includes('vector-icons.css')) {
+        htmlContent = htmlContent.replace(
+          '</head>',
+          `<link rel="stylesheet" href="vector-icons.css?v=${Date.now()}" />\n</head>`
+        );
+        fs.writeFileSync(indexHtmlPath, htmlContent);
+        console.log('Injected vector icons CSS into index.html');
+      }
+    }
+  };
+  
+  // Try to inject immediately if the file exists
+  injectCssToHtml();
+  
+  // Set up interval to check and inject periodically (Expo may regenerate the file)
+  setInterval(injectCssToHtml, 5000);
+  
+  console.log('Vector icons setup completed');
 }
 
 // Run fix script if needed
@@ -277,12 +345,84 @@ function injectVersionInfo() {
     let versionMatch = appJsContent.match(/APP_VERSION = "([^"]*)"/);
     const currentVersion = versionMatch ? versionMatch[1] : `1.0.2 - ${new Date().toLocaleString()}`;
     
-    // Create a tiny JS file that forces the app to show the correct version
+    // Create a tiny JS file that forces the app to show the correct version and helps with icons
     const versionJs = `
 // Force version refresh - created at ${new Date().toISOString()}
+// Also contains icon loading fixes
 window.FORCE_APP_VERSION = "${currentVersion}";
 window.BUILD_ID = "${BUILD_ID}";
 console.log("[Version Injector] Running version: " + window.FORCE_APP_VERSION);
+
+// Add icon loading support
+document.addEventListener('DOMContentLoaded', function() {
+  console.log("[Icon Helper] Adding icon support...");
+  
+  // Function to inject CSS for vector icons
+  function injectVectorIconsCSS() {
+    // Create style element for icon fonts
+    const style = document.createElement('style');
+    style.id = 'vector-icons-css';
+    style.textContent = 
+      "/* Vector icon font definitions */" +
+      "@font-face {" +
+      "  font-family: 'MaterialCommunityIcons';" +
+      "  src: url('./fonts/MaterialCommunityIcons.ttf') format('truetype');" +
+      "  font-weight: normal;" +
+      "  font-style: normal;" +
+      "}" +
+      
+      "@font-face {" +
+      "  font-family: 'FontAwesome';" +
+      "  src: url('./fonts/FontAwesome.ttf') format('truetype');" +
+      "  font-weight: normal;" +
+      "  font-style: normal;" +
+      "}" +
+      
+      "@font-face {" +
+      "  font-family: 'Ionicons';" +
+      "  src: url('./fonts/Ionicons.ttf') format('truetype');" +
+      "  font-weight: normal;" +
+      "  font-style: normal;" +
+      "}" +
+      
+      "/* Fix any broken SVG icons */" +
+      "svg[width='0'][height='0'] {" +
+      "  width: 24px !important;" +
+      "  height: 24px !important;" +
+      "}";
+    document.head.appendChild(style);
+    console.log("[Icon Helper] Added vector icons CSS");
+  }
+  
+  // Function to create font preload links
+  function createFontPreloads() {
+    const fonts = [
+      'MaterialCommunityIcons.ttf',
+      'FontAwesome.ttf',
+      'Ionicons.ttf'
+    ];
+    
+    fonts.forEach(font => {
+      const link = document.createElement('link');
+      link.rel = 'preload';
+      link.href = './fonts/' + font;
+      link.as = 'font';
+      link.type = 'font/ttf';
+      link.crossOrigin = 'anonymous';
+      document.head.appendChild(link);
+    });
+    console.log("[Icon Helper] Added font preloads");
+  }
+  
+  // Run our fixes with a slight delay to let other scripts initialize
+  setTimeout(function() {
+    injectVectorIconsCSS();
+    createFontPreloads();
+    
+    // Force SVG rendering in icon components by simulating a resize
+    setTimeout(() => window.dispatchEvent(new Event('resize')), 1000);
+  }, 500);
+});
 
 // Enforce version checking
 (function() {
@@ -401,15 +541,77 @@ console.log("[Version Injector] Running version: " + window.FORCE_APP_VERSION);
     const indexHtmlPath = path.join(expoAppDir, 'web', 'index.html');
     if (fs.existsSync(indexHtmlPath)) {
       let htmlContent = fs.readFileSync(indexHtmlPath, 'utf8');
+      let modified = false;
+      
+      // Add preload links for icon fonts
+      if (!htmlContent.includes('fonts/MaterialCommunityIcons.ttf')) {
+        const preloadLinks = 
+          '<link rel="preload" href="./fonts/MaterialCommunityIcons.ttf" as="font" type="font/ttf" crossorigin="anonymous" />\n' +
+          '<link rel="preload" href="./fonts/FontAwesome.ttf" as="font" type="font/ttf" crossorigin="anonymous" />\n' +
+          '<link rel="preload" href="./fonts/Ionicons.ttf" as="font" type="font/ttf" crossorigin="anonymous" />';
+        
+        htmlContent = htmlContent.replace(
+          '<head>',
+          '<head>\n' + preloadLinks
+        );
+        modified = true;
+        console.log('Added font preload links to index.html');
+      }
+      
+      // Add direct CSS for icon fonts
+      if (!htmlContent.includes('vector-icons-style')) {
+        const iconStyles = 
+          '<style id="vector-icons-style">\n' +
+          '  /* Direct CSS for vector icons */\n' +
+          '  @font-face {\n' +
+          '    font-family: "MaterialCommunityIcons";\n' +
+          '    src: url("./fonts/MaterialCommunityIcons.ttf") format("truetype");\n' +
+          '    font-weight: normal;\n' +
+          '    font-style: normal;\n' +
+          '  }\n' +
+          '  \n' +
+          '  @font-face {\n' +
+          '    font-family: "FontAwesome";\n' +
+          '    src: url("./fonts/FontAwesome.ttf") format("truetype");\n' +
+          '    font-weight: normal;\n' +
+          '    font-style: normal;\n' +
+          '  }\n' +
+          '  \n' +
+          '  @font-face {\n' +
+          '    font-family: "Ionicons";\n' +
+          '    src: url("./fonts/Ionicons.ttf") format("truetype");\n' +
+          '    font-weight: normal;\n' +
+          '    font-style: normal;\n' +
+          '  }\n' +
+          '  \n' +
+          '  /* Fix for broken SVGs */\n' +
+          '  svg[width="0"], svg[height="0"] {\n' +
+          '    width: 24px !important;\n' +
+          '    height: 24px !important;\n' +
+          '  }\n' +
+          '</style>';
+        
+        htmlContent = htmlContent.replace(
+          '</head>',
+          iconStyles + '\n</head>'
+        );
+        modified = true;
+        console.log('Added vector icon styles to index.html');
+      }
       
       // Inject our version script
       if (!htmlContent.includes('version-injector.js')) {
         htmlContent = htmlContent.replace(
           '</head>',
-          `<script src="version-injector.js?v=${Date.now()}"></script></head>`
+          `<script src="version-injector.js?v=${Date.now()}"></script>\n</head>`
         );
-        fs.writeFileSync(indexHtmlPath, htmlContent);
+        modified = true;
         console.log('Injected version script into index.html');
+      }
+      
+      if (modified) {
+        fs.writeFileSync(indexHtmlPath, htmlContent);
+        console.log('Updated index.html with vector icon support');
       }
     }
   } catch (error) {

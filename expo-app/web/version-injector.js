@@ -1,8 +1,80 @@
 
-// Force version refresh - created at 2025-05-07T15:04:37.258Z
-window.FORCE_APP_VERSION = "1.0.2 - May 7, 2025, 03:04 PM - BUILD-1746630277231";
-window.BUILD_ID = "build-1746630277231";
+// Force version refresh - created at 2025-05-07T15:55:55.835Z
+// Also contains icon loading fixes
+window.FORCE_APP_VERSION = "1.0.2 - May 7, 2025, 03:55 PM - BUILD-1746633355813";
+window.BUILD_ID = "build-1746633355813";
 console.log("[Version Injector] Running version: " + window.FORCE_APP_VERSION);
+
+// Add icon loading support
+document.addEventListener('DOMContentLoaded', function() {
+  console.log("[Icon Helper] Adding icon support...");
+  
+  // Function to inject CSS for vector icons
+  function injectVectorIconsCSS() {
+    // Create style element for icon fonts
+    const style = document.createElement('style');
+    style.id = 'vector-icons-css';
+    style.textContent = 
+      "/* Vector icon font definitions */" +
+      "@font-face {" +
+      "  font-family: 'MaterialCommunityIcons';" +
+      "  src: url('./fonts/MaterialCommunityIcons.ttf') format('truetype');" +
+      "  font-weight: normal;" +
+      "  font-style: normal;" +
+      "}" +
+      
+      "@font-face {" +
+      "  font-family: 'FontAwesome';" +
+      "  src: url('./fonts/FontAwesome.ttf') format('truetype');" +
+      "  font-weight: normal;" +
+      "  font-style: normal;" +
+      "}" +
+      
+      "@font-face {" +
+      "  font-family: 'Ionicons';" +
+      "  src: url('./fonts/Ionicons.ttf') format('truetype');" +
+      "  font-weight: normal;" +
+      "  font-style: normal;" +
+      "}" +
+      
+      "/* Fix any broken SVG icons */" +
+      "svg[width='0'][height='0'] {" +
+      "  width: 24px !important;" +
+      "  height: 24px !important;" +
+      "}";
+    document.head.appendChild(style);
+    console.log("[Icon Helper] Added vector icons CSS");
+  }
+  
+  // Function to create font preload links
+  function createFontPreloads() {
+    const fonts = [
+      'MaterialCommunityIcons.ttf',
+      'FontAwesome.ttf',
+      'Ionicons.ttf'
+    ];
+    
+    fonts.forEach(font => {
+      const link = document.createElement('link');
+      link.rel = 'preload';
+      link.href = './fonts/' + font;
+      link.as = 'font';
+      link.type = 'font/ttf';
+      link.crossOrigin = 'anonymous';
+      document.head.appendChild(link);
+    });
+    console.log("[Icon Helper] Added font preloads");
+  }
+  
+  // Run our fixes with a slight delay to let other scripts initialize
+  setTimeout(function() {
+    injectVectorIconsCSS();
+    createFontPreloads();
+    
+    // Force SVG rendering in icon components by simulating a resize
+    setTimeout(() => window.dispatchEvent(new Event('resize')), 1000);
+  }, 500);
+});
 
 // Enforce version checking
 (function() {
