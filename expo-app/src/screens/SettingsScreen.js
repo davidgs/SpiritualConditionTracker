@@ -316,6 +316,7 @@ function SettingsScreen() {
               saveLabel="Confirm"
               label="Select Sobriety Date"
               maxDate={new Date()}
+              locale="en"
             />
             
             <Text style={styles.label}>Home Group</Text>

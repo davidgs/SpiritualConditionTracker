@@ -11,6 +11,9 @@ import { enGB, registerTranslation } from 'react-native-paper-dates';
 
 // Register locale for react-native-paper-dates
 registerTranslation('en-GB', enGB);
+// Also register as default locale to prevent warnings
+registerTranslation('en', enGB);
+registerTranslation('undefined', enGB);
 
 // Import screens
 import DashboardScreen from './src/screens/DashboardScreen';
@@ -183,7 +186,7 @@ const DrawerNavigator = () => {
 };
 
 // App version - update with every change
-const APP_VERSION = "1.0.4 - May 7, 2025, 05:14 PM - BUILD-1746638061835";
+const APP_VERSION = "1.0.4 - May 7, 2025, 05:16 PM - BUILD-1746638202395";
 
 function Main() {
   const [dbInitialized, setDbInitialized] = useState(false);

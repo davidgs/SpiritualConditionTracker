@@ -248,6 +248,7 @@ function ActivityLogScreen() {
           saveLabel="Confirm"
           label="Select Activity Date"
           maxDate={new Date()}
+          locale="en"
         />
         
         <Text style={themedStyles.label}>Activity Type</Text>
