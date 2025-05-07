@@ -1,220 +1,153 @@
 #!/bin/bash
 
-# Script to fix module errors for production deployment
-# This fixes minimatch, agent-base, and ws modules
+# Direct module fix script for lru-cache module issues
+# This script directly fixes the lru-cache module error by:
+# 1. Installing lru-cache explicitly
+# 2. Creating the missing index.js file with a basic implementation
+# 3. Fixing the package.json file to point to the correct main file
 
-echo "Fixing module errors..."
+echo "Starting module error fix..."
 
-# Install problematic packages
-echo "Installing required packages..."
-npm install minimatch@^5.1.0 agent-base@^6.0.2 ws@^8.0.0 semver@^7.0.0
-
-# Fix for minimatch module
-echo "Fixing minimatch module..."
-mkdir -p node_modules/minimatch/dist/commonjs
-
-# Create minimatch index.js if needed
-if [ ! -f "node_modules/minimatch/dist/commonjs/index.js" ]; then
-  echo "Creating minimatch compatibility file..."
-  cat > node_modules/minimatch/dist/commonjs/index.js << 'EOF'
-// Simple minimatch shim
-module.exports = require('../../minimatch.js');
-EOF
-fi
-
-# Fix for agent-base module
-echo "Fixing agent-base module..."
-mkdir -p node_modules/agent-base/dist
-
-# Create agent-base index.js if needed
-if [ ! -f "node_modules/agent-base/dist/index.js" ]; then
-  echo "Creating agent-base compatibility file..."
-  cat > node_modules/agent-base/dist/index.js << 'EOF'
-"use strict";
-// Simple agent-base shim
-module.exports = require('../src/index');
-EOF
-fi
-
-# Fix for ws module issues
-echo "Fixing ws module issues..."
-mkdir -p node_modules/ws/lib
-
-# Create limiter.js if needed
-if [ ! -f "node_modules/ws/lib/limiter.js" ]; then
-  echo "Creating ws limiter.js compatibility file..."
-  cat > node_modules/ws/lib/limiter.js << 'EOF'
-'use strict';
-
-/**
- * Simple implementation for the missing limiter.js module
- */
-
-class Limiter {
-  constructor(options) {
-    this.concurrency = options && options.concurrency || Infinity;
-    this.pending = 0;
-    this.jobs = [];
-    this.timeout = null;
-  }
-
-  add(job) {
-    this.jobs.push(job);
-    this.process();
-  }
-
-  process() {
-    if (this.pending === this.concurrency || !this.jobs.length) return;
-    
-    const job = this.jobs.shift();
-    this.pending++;
-    
-    job(() => {
-      this.pending--;
-      this.process();
-    });
-  }
+# Helper functions
+log() {
+  echo "$(date -u '+%Y-%m-%d %H:%M:%S') - $1"
 }
 
-module.exports = Limiter;
-EOF
-fi
-
-# Create stream.js if needed
-if [ ! -f "node_modules/ws/lib/stream.js" ]; then
-  echo "Creating ws stream.js compatibility file..."
-  cat > node_modules/ws/lib/stream.js << 'EOF'
-'use strict';
-
-const { Duplex } = require('stream');
-
-/**
- * Simple implementation for the missing stream.js module
- */
-
-class WebSocketStream extends Duplex {
-  constructor(ws, options) {
-    super(options);
-    
-    this._ws = ws;
-    this._ws.on('message', (msg, isBinary) => {
-      const data = isBinary ? msg : msg.toString();
-      if (!this.push(data)) this._ws.pause();
-    });
-    
-    this._ws.on('close', () => {
-      this.push(null);
-    });
-    
-    this.on('end', () => {
-      this._ws.close();
-    });
-  }
-  
-  _read() {
-    this._ws.resume();
-  }
-  
-  _write(chunk, encoding, callback) {
-    this._ws.send(chunk, callback);
-  }
+# Create directories if needed
+ensure_dir() {
+  if [ ! -d "$1" ]; then
+    mkdir -p "$1"
+    log "Created directory: $1"
+  fi
 }
 
-module.exports = WebSocketStream;
-EOF
+# Install lru-cache explicitly
+log "Installing lru-cache..."
+npm install lru-cache@6.0.0 --save
+
+# Check if the lru-cache module was installed
+LRU_CACHE_DIR="node_modules/lru-cache"
+if [ ! -d "$LRU_CACHE_DIR" ]; then
+  log "ERROR: lru-cache directory not found after installation"
+  exit 1
 fi
 
-# Create subprotocol.js if needed
-if [ ! -f "node_modules/ws/lib/subprotocol.js" ]; then
-  echo "Creating ws subprotocol.js compatibility file..."
-  cat > node_modules/ws/lib/subprotocol.js << 'EOF'
-'use strict';
+# Create index.js file if it doesn't exist
+INDEX_PATH="$LRU_CACHE_DIR/index.js"
+if [ ! -f "$INDEX_PATH" ]; then
+  log "Creating index.js file for lru-cache..."
+  
+  cat > "$INDEX_PATH" << 'EOF'
+// Simple LRU Cache implementation
+class LRUCache {
+  constructor(options = {}) {
+    this.max = options.max || 500;
+    this.cache = new Map();
+  }
 
-/**
- * Simple implementation for the missing subprotocol.js module
- */
-
-/**
- * Performs the WebSocket protocol subprotocol selection.
- *
- * @param {String} protocols The list of subprotocols requested by the client
- * @param {Array} ServerOptions.subprotocols The list of supported subprotocols
- * @return {String|Boolean} Returns the selected protocol or `false` if no
- *                          protocol could be selected
- * @public
- */
-function subprotocol(protocols, serverProtocols) {
-  if (!Array.isArray(serverProtocols)) return false;
-  
-  if (!protocols) return serverProtocols[0];
-  
-  // Convert from string to array if needed
-  const requestedProtocols = typeof protocols === 'string' 
-    ? protocols.split(/, */) 
-    : protocols;
-  
-  // Check if any of the requested protocols is supported by the server
-  for (let i = 0; i < requestedProtocols.length; i++) {
-    const protocol = requestedProtocols[i].trim();
-    
-    if (serverProtocols.includes(protocol)) {
-      return protocol;
+  get(key) {
+    const item = this.cache.get(key);
+    if (item) {
+      // Refresh key
+      this.cache.delete(key);
+      this.cache.set(key, item);
     }
+    return item;
   }
-  
-  return false;
+
+  set(key, value) {
+    // Delete if key exists
+    if (this.cache.has(key)) this.cache.delete(key);
+    
+    // Delete oldest if max size reached
+    if (this.cache.size >= this.max) {
+      const oldestKey = this.cache.keys().next().value;
+      this.cache.delete(oldestKey);
+    }
+    
+    // Add new value
+    this.cache.set(key, value);
+    return this;
+  }
+
+  has(key) {
+    return this.cache.has(key);
+  }
+
+  delete(key) {
+    return this.cache.delete(key);
+  }
+
+  clear() {
+    this.cache.clear();
+  }
 }
 
-module.exports = { subprotocol };
+module.exports = function lruCache(options) {
+  return new LRUCache(options);
+};
+
+module.exports.LRUCache = LRUCache;
 EOF
+
+  log "Created lru-cache index.js file"
 fi
 
-# Create all required subdirectories
-mkdir -p node_modules/ws/lib/stream
-
-# Create any other required files that might be missing
-echo "Creating additional empty compatibility files for ws..."
-touch node_modules/ws/lib/stream/index.js
-touch node_modules/ws/lib/validation.js
-touch node_modules/ws/lib/receiver.js
-touch node_modules/ws/lib/sender.js
-touch node_modules/ws/lib/extension.js
-touch node_modules/ws/lib/constants.js
-touch node_modules/ws/lib/websocket.js
-touch node_modules/ws/lib/websocket-server.js
-
-# Fix for semver module
-echo "Fixing semver module..."
-mkdir -p node_modules/semver
-
-# Create semver.js if needed
-if [ ! -f "node_modules/semver/semver.js" ]; then
-  echo "Creating semver.js file..."
-  cat > node_modules/semver/semver.js << 'EOF'
-// Simple semver compatibility shim
-module.exports = require('./');
-EOF
-fi
-
-# Create semver package.json if not present or invalid
-echo "Creating/fixing semver package.json..."
-cat > node_modules/semver/package.json << 'EOF'
+# Fix package.json file
+PACKAGE_JSON_PATH="$LRU_CACHE_DIR/package.json"
+if [ -f "$PACKAGE_JSON_PATH" ]; then
+  log "Fixing package.json main entry..."
+  # Use a temporary file for sed replacement
+  sed 's/"main":[^,]*/"main": "index.js"/' "$PACKAGE_JSON_PATH" > "$PACKAGE_JSON_PATH.tmp"
+  mv "$PACKAGE_JSON_PATH.tmp" "$PACKAGE_JSON_PATH"
+else
+  log "Creating package.json for lru-cache..."
+  cat > "$PACKAGE_JSON_PATH" << 'EOF'
 {
-  "name": "semver",
-  "version": "7.5.4",
-  "description": "The semantic version parser used by npm.",
+  "name": "lru-cache",
+  "version": "6.0.0",
+  "description": "A cache object that deletes the least-recently-used items",
   "main": "index.js",
-  "files": [
-    "bin",
-    "classes",
-    "functions",
-    "internal",
-    "ranges",
-    "index.js",
-    "preload.js",
-    "semver.js"
-  ]
+  "license": "ISC"
 }
 EOF
+fi
 
-echo "Done fixing module errors."
+# Do the same for any lru-cache in the expo-app directory
+EXPO_APP_LRU_CACHE_DIR="expo-app/node_modules/lru-cache"
+if [ -d "expo-app" ]; then
+  log "Checking for lru-cache in expo-app directory..."
+  
+  # Create directory if it doesn't exist
+  ensure_dir "$EXPO_APP_LRU_CACHE_DIR"
+  
+  # Copy our fixed files to the expo-app node_modules
+  cp "$INDEX_PATH" "$EXPO_APP_LRU_CACHE_DIR/index.js"
+  cp "$PACKAGE_JSON_PATH" "$EXPO_APP_LRU_CACHE_DIR/package.json"
+  
+  log "Fixed lru-cache in expo-app directory"
+fi
+
+# Update App.js with current version
+APP_JS="expo-app/App.js"
+if [ -f "$APP_JS" ]; then
+  TIMESTAMP=$(date +%s%3N)
+  VERSION_STRING="1.0.2 - $(date '+%b %-d, %Y, %I:%M %p') - BUILD-$TIMESTAMP"
+  
+  log "Updating App.js version to: $VERSION_STRING"
+  
+  # Check if APP_VERSION constant exists
+  if grep -q "APP_VERSION" "$APP_JS"; then
+    # Update existing APP_VERSION
+    sed -i "s/APP_VERSION = '[^']*'/APP_VERSION = '$VERSION_STRING'/" "$APP_JS"
+    sed -i "s/APP_VERSION = \"[^\"]*\"/APP_VERSION = \"$VERSION_STRING\"/" "$APP_JS"
+  else
+    # Add APP_VERSION if it doesn't exist
+    sed -i "1s/^/const APP_VERSION = '$VERSION_STRING';\n/" "$APP_JS"
+  fi
+  
+  log "Updated App.js version string"
+fi
+
+log "Module error fix completed successfully"
+echo "To run the app, execute: node run-expo-only.js"
