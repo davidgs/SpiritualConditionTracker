@@ -573,25 +573,43 @@ document.addEventListener('DOMContentLoaded', function() {
     createFontPreloads();
     
     // Force SVG rendering in icon components by simulating a resize
-    setTimeout(() => window.dispatchEvent(new Event('resize')), 1000);
+    setTimeout(function() {
+      try {
+        window.dispatchEvent(new Event('resize'));
+        console.log("[Icon Helper] Dispatched resize event");
+      } catch(e) {
+        console.error("[Icon Helper] Error dispatching resize event:", e);
+      }
+    }, 1000);
     
-    // Add CSS-based hamburger icon fix
-    const iconStyle = document.createElement('style');
-    iconStyle.textContent = 
-      "/* Fix for empty hamburger menu icon */" +
-      "button[aria-label='Show navigation menu'] svg:empty," +
-      "button[aria-label='Open drawer'] svg:empty," +
-      "button[aria-label='Show navigation menu'] svg[width='0']," +
-      "button[aria-label='Open drawer'] svg[width='0'] {" +
-      "  background-image: url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\"><path fill=\"currentColor\" d=\"M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z\"/></svg>');" +
-      "  background-repeat: no-repeat;" +
-      "  background-position: center;" +
-      "  width: 24px !important;" +
-      "  height: 24px !important;" +
-      "  display: block;" +
-      "}";
-    document.head.appendChild(iconStyle);
-    console.log("[Icon Helper] Added hamburger icon fix via CSS");
+    // Simple function to add a basic hamburger menu icon CSS
+    try {
+      const iconStyle = document.createElement('style');
+      iconStyle.innerHTML = 
+        'button[aria-label="Show navigation menu"] svg:empty { ' +
+        '  background-image: url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'24\' height=\'24\' viewBox=\'0 0 24 24\'%3E%3Cpath d=\'M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z\' fill=\'currentColor\'/%3E%3C/svg%3E"); ' +
+        '  background-repeat: no-repeat; ' +
+        '  background-position: center; ' +
+        '  width: 24px !important; ' +
+        '  height: 24px !important; ' +
+        '  display: block; ' +
+        '}';
+      
+      if (document.head) {
+        document.head.appendChild(iconStyle);
+        console.log("[Icon Helper] Added hamburger icon fix via CSS");
+      } else {
+        console.log("[Icon Helper] Document head not ready, will retry later");
+        setTimeout(function() {
+          if (document.head) {
+            document.head.appendChild(iconStyle);
+            console.log("[Icon Helper] Added hamburger icon fix via CSS (delayed)");
+          }
+        }, 2000);
+      }
+    } catch(e) {
+      console.error("[Icon Helper] Error adding icon style:", e);
+    }
   }, 500);
 });
 
