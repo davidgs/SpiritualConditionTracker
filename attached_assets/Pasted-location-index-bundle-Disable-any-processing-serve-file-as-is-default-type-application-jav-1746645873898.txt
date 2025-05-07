@@ -1,0 +1,168 @@
+location = /index.bundle {
+	# Disable any processing, serve file as-is
+	default_type application/javascript;
+
+	# Add CORS headers if needed
+	add_header Access-Control-Allow-Origin *;
+
+	# Disable caching during testing
+	add_header Pragma "no-cache" always;
+	add_header Cache-Control "no-store, no-cache, must-revalidate, proxy-revalidate";
+	add_header X-Cache-Status $upstream_cache_status;
+	add_header Expires "0";
+	expires -1;
+	add_header Cache-Control "no-store, no-cache, must-revalidate";
+	add_header X-Cache-Status $upstream_cache_status;
+	proxy_pass http://localhost:3243$request_uri;
+}
+
+location ~ ^/index\.bundle {
+
+	# Set proper headers for proxying
+	proxy_set_header Host $host;
+	proxy_set_header X-Real-IP $remote_addr;
+	proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+	proxy_set_header X-Forwarded-Proto $scheme;
+
+	# Force JavaScript MIME type
+	proxy_hide_header Content-Type;
+	add_header Content-Type application/javascript always;
+
+	# Increase timeouts for large bundles
+	proxy_read_timeout 300s;
+	proxy_connect_timeout 300s;
+	proxy_send_timeout 300s;
+
+	# Don't buffer the response
+	proxy_buffering off;
+
+	# Disable caching
+	add_header Pragma "no-cache" always;
+	add_header Cache-Control "no-store, no-cache, must-revalidate, proxy-revalidate";
+	add_header X-Cache-Status $upstream_cache_status;
+	add_header Expires "0";
+	expires -1;
+	# Preserve the original query string
+	proxy_pass http://localhost:3243$request_uri;
+
+}
+# Directly fix the exact path you're seeing in your error
+location ~ ./_node_modules/@expo/vector-icons/build/vendor/react-native-vector-icons/Fonts/ {
+	alias /var/www/vhosts/spiritual-condition.com/httpdocs/fonts/;
+	add_header Access-Control-Allow-Origin "*";
+	add_header Cache-Control "public, max-age=31536000";
+	types {
+		application/font-ttf ttf;
+	}
+	add_header Content-Type application/font-ttf;
+}
+# Handle app path (proxy to Expo server)
+location /app/ {
+	# Remove the /app prefix when proxying to the Expo server
+	# Include an external HTML file containing icon styles
+	sub_filter '</head>' '<link rel="stylesheet" href="/fonts.css"><!--# include file="/var/www/vhosts/spiritual-condition.com/httpdocs/icon-styles.html" --></head>';
+	sub_filter_once on;
+
+	# Your existing proxy configuration
+	# ... other settings
+	# Set proper headers
+	proxy_set_header Host $host;
+	proxy_set_header X-Real-IP $remote_addr;
+	proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+	proxy_set_header X-Forwarded-Proto $scheme;
+
+	# Handle WebSocket connections
+	proxy_http_version 1.1;
+	proxy_set_header Upgrade $http_upgrade;
+	proxy_set_header Connection "upgrade";
+	add_header Pragma "no-cache" always;
+	add_header Cache-Control "no-store, no-cache, must-revalidate, proxy-revalidate";
+	add_header X-Cache-Status $upstream_cache_status;
+	add_header Expires "0";
+	expires -1;
+	add_header X-Cache-Status $upstream_cache_status;
+	# Increase timeouts
+	proxy_read_timeout 300s;
+	proxy_connect_timeout 300s;
+	proxy_send_timeout 300s;
+	rewrite ^/app/(.*) /$1 break;
+	proxy_pass http://localhost:3243/;
+
+}
+
+location /assets/ {
+	# First handle font requests in the unstable_path
+	if ($args ~ "unstable_path=.*%2FFonts%2F([^&]+)") {
+		set $font_name $1;
+		rewrite ^ /fonts/$font_name redirect;
+	}
+
+	# Regular settings for other asset requests
+	proxy_set_header Host $host;
+	proxy_set_header X-Real-IP $remote_addr;
+	proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+	proxy_set_header X-Forwarded-Proto $scheme;
+
+	# Handle WebSocket connections
+	proxy_http_version 1.1;
+	proxy_set_header Upgrade $http_upgrade;
+	proxy_set_header Connection "upgrade";
+	add_header Pragma "no-cache" always;
+	add_header Cache-Control "no-store, no-cache, must-revalidate, proxy-revalidate";
+	add_header X-Cache-Status $upstream_cache_status;
+	add_header Expires "0";
+	expires -1;
+	add_header X-Cache-Status $upstream_cache_status;
+
+	# Increase timeouts
+	proxy_read_timeout 300s;
+	proxy_connect_timeout 300s;
+	proxy_send_timeout 300s;
+	rewrite ^/app/(.*) /$1 break;
+	proxy_pass http://localhost:3243/;
+}
+
+# Add inside your server block
+location /fonts/ {
+	alias /var/www/vhosts/spiritual-condition.com/httpdocs/fonts/;
+	add_header Access-Control-Allow-Origin "*";
+	add_header Cache-Control "public, max-age=31536000";
+	types {
+		application/font-ttf ttf;
+	}
+}
+
+# Add for the CSS file
+location /fonts.css {
+	alias /var/www/vhosts/spiritual-condition.com/httpdocs/fonts.css;
+	add_header Access-Control-Allow-Origin "*";
+	add_header Cache-Control "public, max-age=31536000";
+}
+
+# Add for the favicon
+location = /favicon.ico {
+	alias /var/www/vhosts/spiritual-condition.com/httpdocs/favicon.ico;
+	access_log off;
+	log_not_found off;
+}
+
+# Also handle the /app/index.bundle path
+location = /app/index.bundle {
+	# Disable any processing, serve file as-is
+	alias /var/www/vhosts/spiritual-condition.com/httpdocs/index.bundle;
+	default_type application/javascript;
+
+	# Add CORS headers if needed
+	add_header Access-Control-Allow-Origin *;
+
+	# Disable caching during testing
+	add_header Pragma "no-cache" always;
+	add_header Cache-Control "no-store, no-cache, must-revalidate, proxy-revalidate";
+	add_header X-Cache-Status $upstream_cache_status;
+	add_header Expires "0";
+	expires -1;
+	add_header X-Cache-Status $upstream_cache_status;
+}
+
+# Continue with your regular proxy to the Expo server
+# For all other requests

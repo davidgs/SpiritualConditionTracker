@@ -506,10 +506,41 @@ document.addEventListener('DOMContentLoaded', function() {
       "  font-style: normal;" +
       "}" +
       
+      "@font-face {" +
+      "  font-family: 'MaterialIcons';" +
+      "  src: url('./fonts/MaterialIcons.ttf') format('truetype');" +
+      "  font-weight: normal;" +
+      "  font-style: normal;" +
+      "}" +
+      
       "/* Fix any broken SVG icons */" +
-      "svg[width='0'][height='0'] {" +
+      "svg[width='0'], svg[height='0'] {" +
       "  width: 24px !important;" +
       "  height: 24px !important;" +
+      "}" +
+      
+      "/* Target the navigation menu button specifically */" +
+      "button[aria-label='Show navigation menu'] {" +
+      "  position: relative;" +
+      "}" +
+      
+      "/* Add hamburger icon content to empty navigation buttons */" +
+      "button[aria-label='Show navigation menu'] .css-g5y9jx.r-1mlwlqe:empty::before {" +
+      "  content: '';" +
+      "  position: absolute;" +
+      "  top: 0;" +
+      "  left: 0;" +
+      "  right: 0;" +
+      "  bottom: 0;" +
+      "  background-image: url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z' fill='%23000000'/%3E%3C/svg%3E\");" +
+      "  background-size: 24px 24px;" +
+      "  background-position: center;" +
+      "  background-repeat: no-repeat;" +
+      "}" +
+      
+      "/* Target specifically the hamburger icon based on common attributes */" +
+      "[class*='menu-icon'], [class*='hamburger'], [class*='navbar-toggle'] {" +
+      "  font-family: 'MaterialIcons', 'MaterialCommunityIcons', sans-serif !important;" +
       "}";
     document.head.appendChild(style);
     console.log("[Icon Helper] Added vector icons CSS");
@@ -520,7 +551,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const fonts = [
       'MaterialCommunityIcons.ttf',
       'FontAwesome.ttf',
-      'Ionicons.ttf'
+      'Ionicons.ttf',
+      'MaterialIcons.ttf'
     ];
     
     fonts.forEach(font => {
@@ -669,7 +701,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const preloadLinks = 
           '<link rel="preload" href="./fonts/MaterialCommunityIcons.ttf" as="font" type="font/ttf" crossorigin="anonymous" />\n' +
           '<link rel="preload" href="./fonts/FontAwesome.ttf" as="font" type="font/ttf" crossorigin="anonymous" />\n' +
-          '<link rel="preload" href="./fonts/Ionicons.ttf" as="font" type="font/ttf" crossorigin="anonymous" />';
+          '<link rel="preload" href="./fonts/Ionicons.ttf" as="font" type="font/ttf" crossorigin="anonymous" />\n' +
+          '<link rel="preload" href="./fonts/MaterialIcons.ttf" as="font" type="font/ttf" crossorigin="anonymous" />';
         
         htmlContent = htmlContent.replace(
           '<head>',
@@ -705,10 +738,41 @@ document.addEventListener('DOMContentLoaded', function() {
           '    font-style: normal;\n' +
           '  }\n' +
           '  \n' +
+          '  @font-face {\n' +
+          '    font-family: "MaterialIcons";\n' +
+          '    src: url("./fonts/MaterialIcons.ttf") format("truetype");\n' +
+          '    font-weight: normal;\n' +
+          '    font-style: normal;\n' +
+          '  }\n' +
+          '  \n' +
           '  /* Fix for broken SVGs */\n' +
           '  svg[width="0"], svg[height="0"] {\n' +
           '    width: 24px !important;\n' +
           '    height: 24px !important;\n' +
+          '  }\n' +
+          '  \n' +
+          '  /* Target the navigation menu button specifically */\n' +
+          '  button[aria-label="Show navigation menu"] {\n' +
+          '    position: relative;\n' +
+          '  }\n' +
+          '  \n' +
+          '  /* Add hamburger icon content to empty navigation buttons */\n' +
+          '  button[aria-label="Show navigation menu"] .css-g5y9jx.r-1mlwlqe:empty::before {\n' +
+          '    content: "";\n' +
+          '    position: absolute;\n' +
+          '    top: 0;\n' +
+          '    left: 0;\n' +
+          '    right: 0;\n' +
+          '    bottom: 0;\n' +
+          '    background-image: url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'24\' height=\'24\' viewBox=\'0 0 24 24\'%3E%3Cpath d=\'M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z\' fill=\'%23000000\'/%3E%3C/svg%3E");\n' +
+          '    background-size: 24px 24px;\n' +
+          '    background-position: center;\n' +
+          '    background-repeat: no-repeat;\n' +
+          '  }\n' +
+          '  \n' +
+          '  /* Target specifically the hamburger icon based on common attributes */\n' +
+          '  [class*="menu-icon"], [class*="hamburger"], [class*="navbar-toggle"] {\n' +
+          '    font-family: "MaterialIcons", "MaterialCommunityIcons", sans-serif !important;\n' +
           '  }\n' +
           '</style>';
         

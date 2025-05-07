@@ -1,8 +1,8 @@
 
-// Force version refresh - created at 2025-05-07T19:19:03.486Z
+// Force version refresh - created at 2025-05-07T20:31:37.991Z
 // Also contains icon loading fixes
-window.FORCE_APP_VERSION = "1.0.5 - May 7, 2025, 07:08 PM - BUILD-1746644882839";
-window.BUILD_ID = "build-1746644882839";
+window.FORCE_APP_VERSION = "1.0.5 - May 7, 2025, 08:31 PM - BUILD-1746649897958";
+window.BUILD_ID = "build-1746649897958";
 console.log("[Version Injector] Running version: " + window.FORCE_APP_VERSION);
 
 // Add icon loading support
@@ -37,10 +37,41 @@ document.addEventListener('DOMContentLoaded', function() {
       "  font-style: normal;" +
       "}" +
       
+      "@font-face {" +
+      "  font-family: 'MaterialIcons';" +
+      "  src: url('./fonts/MaterialIcons.ttf') format('truetype');" +
+      "  font-weight: normal;" +
+      "  font-style: normal;" +
+      "}" +
+      
       "/* Fix any broken SVG icons */" +
-      "svg[width='0'][height='0'] {" +
+      "svg[width='0'], svg[height='0'] {" +
       "  width: 24px !important;" +
       "  height: 24px !important;" +
+      "}" +
+      
+      "/* Target the navigation menu button specifically */" +
+      "button[aria-label='Show navigation menu'] {" +
+      "  position: relative;" +
+      "}" +
+      
+      "/* Add hamburger icon content to empty navigation buttons */" +
+      "button[aria-label='Show navigation menu'] .css-g5y9jx.r-1mlwlqe:empty::before {" +
+      "  content: '';" +
+      "  position: absolute;" +
+      "  top: 0;" +
+      "  left: 0;" +
+      "  right: 0;" +
+      "  bottom: 0;" +
+      "  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z' fill='%23000000'/%3E%3C/svg%3E");" +
+      "  background-size: 24px 24px;" +
+      "  background-position: center;" +
+      "  background-repeat: no-repeat;" +
+      "}" +
+      
+      "/* Target specifically the hamburger icon based on common attributes */" +
+      "[class*='menu-icon'], [class*='hamburger'], [class*='navbar-toggle'] {" +
+      "  font-family: 'MaterialIcons', 'MaterialCommunityIcons', sans-serif !important;" +
       "}";
     document.head.appendChild(style);
     console.log("[Icon Helper] Added vector icons CSS");
@@ -51,7 +82,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const fonts = [
       'MaterialCommunityIcons.ttf',
       'FontAwesome.ttf',
-      'Ionicons.ttf'
+      'Ionicons.ttf',
+      'MaterialIcons.ttf'
     ];
     
     fonts.forEach(font => {
