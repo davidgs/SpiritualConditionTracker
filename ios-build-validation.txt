@@ -1,0 +1,19 @@
+iOS Build Validation Report
+Date: Wed May  7 17:53:08 EDT 2025
+
+Project Directory: /Users/davidgs/github.com/SpiritualConditionTracker/expo-app/ios
+Xcode Workspace: total 8
+drwxr-xr-x@  3 davidgs  staff   96 May  7 17:53 .
+drwxr-xr-x@ 13 davidgs  staff  416 May  7 17:53 ..
+-rw-r--r--@  1 davidgs  staff  243 May  7 17:53 contents.xcworkspacedata
+Podfile: -rw-r--r--@ 1 davidgs  staff  2483 May  7 17:52 /Users/davidgs/github.com/SpiritualConditionTracker/expo-app/ios/Podfile
+Info.plist: -rw-r--r--@ 1 davidgs  staff  3182 May  7 17:52 /Users/davidgs/github.com/SpiritualConditionTracker/expo-app/ios/SpiritualConditionTracker/Info.plist
+App Name: Spiritual Condition Tracker
+
+React Native SQLite Storage: Not installed!
+Platform-specific SQLite implementation: -rw-r--r--@ 1 davidgs  staff  3187 May  7 17:51 /Users/davidgs/github.com/SpiritualConditionTracker/expo-app/src/database/platforms/database.ios.js
+
+Next steps:
+1. Open the Xcode workspace at: /Users/davidgs/github.com/SpiritualConditionTracker/expo-app/ios/SpiritualConditionTracker.xcworkspace
+2. Select your team in Signing & Capabilities
+3. Run the app on a simulator or device
