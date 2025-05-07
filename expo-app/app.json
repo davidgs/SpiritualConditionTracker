@@ -1,35 +1,10 @@
 {
   "expo": {
-    "name": "Spiritual Condition Tracker",
-    "slug": "spiritual-condition-tracker",
-    "version": "1.0.0",
-    "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "automatic",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#01040c"
-    },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
-    "ios": {
-      "supportsTablet": true,
-      "bundleIdentifier": "com.davidgs.spiritualconditiontracker",
-      "buildNumber": "1",
-      "infoPlist": {
-        "NSCalendarsUsageDescription": "This app needs access to your calendar to add meetings and set reminders.",
-        "NSLocationWhenInUseUsageDescription": "This app needs access to your location to find nearby meetings and members.",
-        "NSBluetoothAlwaysUsageDescription": "This app needs access to Bluetooth to discover nearby members.",
-        "NSBluetoothPeripheralUsageDescription": "This app uses Bluetooth to connect with nearby AA members.",
-        "UIBackgroundModes": [
-          "bluetooth-central",
-          "bluetooth-peripheral",
-          "location",
-          "fetch"
-        ]
-      }
     },
     "android": {
       "adaptiveIcon": {
@@ -54,6 +29,31 @@
       "favicon": "./assets/favicon.png",
       "bundler": "metro",
       "publicPath": "app"
+    },
+    "name": "Spiritual Condition Tracker",
+    "slug": "spiritual-condition-tracker",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.davidgs.spiritualconditiontracker",
+      "buildNumber": "1",
+      "infoPlist": {
+        "NSCalendarsUsageDescription": "This app needs access to your calendar to add meetings and set reminders.",
+        "NSLocationWhenInUseUsageDescription": "This app needs access to your location to find nearby meetings and members.",
+        "NSBluetoothAlwaysUsageDescription": "This app needs access to Bluetooth to discover nearby members.",
+        "NSBluetoothPeripheralUsageDescription": "This app uses Bluetooth to connect with nearby AA members.",
+        "UIBackgroundModes": [
+          "bluetooth-central",
+          "bluetooth-peripheral",
+          "location",
+          "fetch"
+        ]
+      }
     },
     "extra": {
       "eas": {

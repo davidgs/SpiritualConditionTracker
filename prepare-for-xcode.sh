@@ -589,6 +589,51 @@ else
   echo "Warning: Info.plist not found at expected location!"
 fi
 
+# Copy the updated assets to iOS resources
+echo "Copying updated assets to iOS resources..."
+if [ -f "$PROJECT_ROOT/expo-app/assets/original-logo.jpg" ]; then
+  # Run the asset copy script if it exists
+  if [ -f "$PROJECT_ROOT/copy-assets-to-native.sh" ]; then
+    echo "Running asset copy script..."
+    "$PROJECT_ROOT/copy-assets-to-native.sh"
+  else
+    # Manual copy if the script doesn't exist
+    echo "Manually copying assets..."
+    
+    # Find the app name directory
+    APP_NAME=$(grep -o '"name": *"[^"]*"' "$PROJECT_ROOT/expo-app/app.json" | head -1 | cut -d'"' -f4)
+    if [ -z "$APP_NAME" ]; then
+      APP_NAME="SpiritualConditionTracker" # Fallback name
+    fi
+    
+    # Create Images.xcassets if needed
+    XCASSETS_DIR="$PROJECT_ROOT/expo-app/ios/$APP_NAME/Images.xcassets"
+    if [ ! -d "$XCASSETS_DIR" ]; then
+      echo "Creating Images.xcassets directory..."
+      mkdir -p "$XCASSETS_DIR"
+    fi
+    
+    # Copy the logo
+    echo "Copying logo.jpg to iOS resources..."
+    cp "$PROJECT_ROOT/expo-app/assets/original-logo.jpg" "$PROJECT_ROOT/expo-app/ios/$APP_NAME/logo.jpg"
+    
+    # Create AppIcon.appiconset if needed
+    APPICON_DIR="$XCASSETS_DIR/AppIcon.appiconset"
+    if [ ! -d "$APPICON_DIR" ]; then
+      echo "Creating AppIcon.appiconset directory..."
+      mkdir -p "$APPICON_DIR"
+    fi
+    
+    # Copy the icon if it exists
+    if [ -f "$PROJECT_ROOT/expo-app/assets/icon.png" ]; then
+      echo "Copying icon.png to AppIcon.appiconset..."
+      cp "$PROJECT_ROOT/expo-app/assets/icon.png" "$APPICON_DIR/icon.png"
+    fi
+  fi
+else
+  echo "Original logo not found, skipping asset copy."
+fi
+
 # Generate a quick validation report
 echo "Creating build validation report..."
 cat > "$PROJECT_ROOT/ios-build-validation.txt" << EOF
