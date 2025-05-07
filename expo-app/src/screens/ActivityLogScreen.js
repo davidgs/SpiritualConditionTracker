@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput, Switch, Platform } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import DateTimePicker from '@react-native-community/datetimepicker';
 import { useUser } from '../contexts/UserContext';
 import { useTheme } from '../contexts/ThemeContext';
 import { ACTIVITY_TYPES } from '../contexts/ActivitiesContext';
+import { DatePickerInput, DatePickerModal } from 'react-native-paper-dates';
+import { Provider as PaperProvider } from 'react-native-paper';
 
 function ActivityLogScreen() {
   const { logActivity } = useUser();
@@ -225,79 +226,29 @@ function ActivityLogScreen() {
         
         <Text style={themedStyles.label}>Activity Date</Text>
         
-        {Platform.OS === 'web' ? (
-          <View style={themedStyles.webDatePickerContainer}>
-            {/* Month dropdown */}
-            <View style={themedStyles.webDatePickerItem}>
-              <Text style={themedStyles.webDatePickerLabel}>Month</Text>
-              <View style={themedStyles.webDatePickerSelect}>
-                <select
-                  value={webDate.month}
-                  onChange={(e) => setWebDate({...webDate, month: e.target.value})}
-                  style={themedStyles.webDateDropdown}
-                >
-                  {months.map(month => (
-                    <option key={month.value} value={month.value}>{month.label}</option>
-                  ))}
-                </select>
-              </View>
-            </View>
-            
-            {/* Day dropdown */}
-            <View style={themedStyles.webDatePickerItem}>
-              <Text style={themedStyles.webDatePickerLabel}>Day</Text>
-              <View style={themedStyles.webDatePickerSelect}>
-                <select
-                  value={webDate.day}
-                  onChange={(e) => setWebDate({...webDate, day: e.target.value})}
-                  style={themedStyles.webDateDropdown}
-                >
-                  {days.map(day => (
-                    <option key={day} value={day}>{day}</option>
-                  ))}
-                </select>
-              </View>
-            </View>
-            
-            {/* Year dropdown */}
-            <View style={themedStyles.webDatePickerItem}>
-              <Text style={themedStyles.webDatePickerLabel}>Year</Text>
-              <View style={themedStyles.webDatePickerSelect}>
-                <select
-                  value={webDate.year}
-                  onChange={(e) => setWebDate({...webDate, year: e.target.value})}
-                  style={themedStyles.webDateDropdown}
-                >
-                  {years.map(year => (
-                    <option key={year} value={year}>{year}</option>
-                  ))}
-                </select>
-              </View>
-            </View>
-          </View>
-        ) : (
-          <>
-            <TouchableOpacity 
-              style={themedStyles.dateButton}
-              onPress={() => setShowDatePicker(true)}
-            >
-              <Text style={themedStyles.dateButtonText}>
-                {activityDate.toLocaleDateString()}
-              </Text>
-              <MaterialCommunityIcons name="calendar" size={20} color={theme.primary} />
-            </TouchableOpacity>
-            
-            {showDatePicker && (
-              <DateTimePicker
-                value={activityDate}
-                mode="date"
-                display="default"
-                onChange={handleDateChange}
-                maximumDate={new Date()}
-              />
-            )}
-          </>
-        )}
+        <TouchableOpacity 
+          style={themedStyles.dateButton}
+          onPress={() => setShowDatePicker(true)}
+        >
+          <Text style={themedStyles.dateButtonText}>
+            {activityDate.toLocaleDateString()}
+          </Text>
+          <MaterialCommunityIcons name="calendar" size={20} color={theme.primary} />
+        </TouchableOpacity>
+
+        <DatePickerModal
+          visible={showDatePicker}
+          mode="single"
+          onDismiss={() => setShowDatePicker(false)}
+          date={activityDate}
+          onConfirm={({ date }) => {
+            setShowDatePicker(false);
+            setActivityDate(date);
+          }}
+          saveLabel="Confirm"
+          label="Select Activity Date"
+          maxDate={new Date()}
+        />
         
         <Text style={themedStyles.label}>Activity Type</Text>
         <View style={styles.activityTypeContainer}>
@@ -478,4 +429,31 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ActivityLogScreen;
+// Wrap with PaperProvider for date picker theming
+const WrappedActivityLogScreen = () => {
+  const { theme, isDark } = useTheme();
+  
+  const paperTheme = {
+    colors: {
+      primary: theme.primary,
+      accent: theme.secondary,
+      background: theme.background,
+      surface: theme.card,
+      text: theme.text,
+      disabled: theme.textSecondary,
+      placeholder: theme.textSecondary,
+      backdrop: 'rgba(0,0,0,0.5)',
+      onSurface: theme.text,
+    },
+    dark: isDark,
+    roundness: 4,
+  };
+
+  return (
+    <PaperProvider theme={paperTheme}>
+      <ActivityLogScreen />
+    </PaperProvider>
+  );
+};
+
+export default WrappedActivityLogScreen;

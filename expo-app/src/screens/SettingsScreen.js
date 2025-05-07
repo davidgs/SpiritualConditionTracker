@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { View, Text, StyleSheet, ScrollView, Switch, TouchableOpacity, TextInput, Alert, Platform } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import DateTimePicker from '@react-native-community/datetimepicker';
 import { useUser } from '../contexts/UserContext';
 import { useTheme } from '../contexts/ThemeContext';
+import { DatePickerInput, DatePickerModal } from 'react-native-paper-dates';
+import { Provider as PaperProvider } from 'react-native-paper';
 
 function SettingsScreen() {
   const { user, updateUser } = useUser();
@@ -293,84 +294,29 @@ function SettingsScreen() {
             
             <Text style={styles.label}>Sobriety Date</Text>
             
-            {Platform.OS === 'web' ? (
-              <View>
-                <View style={styles.webDatePickerContainer}>
-                  {/* Month dropdown */}
-                  <View style={styles.webDatePickerItem}>
-                    <Text style={styles.webDatePickerLabel}>Month</Text>
-                    <View style={styles.webDatePickerSelect}>
-                      <select
-                        value={webDate.month}
-                        onChange={(e) => setWebDate({...webDate, month: e.target.value})}
-                        style={styles.webDateDropdown}
-                      >
-                        {months.map(month => (
-                          <option key={month.value} value={month.value}>{month.label}</option>
-                        ))}
-                      </select>
-                    </View>
-                  </View>
-                  
-                  {/* Day dropdown */}
-                  <View style={styles.webDatePickerItem}>
-                    <Text style={styles.webDatePickerLabel}>Day</Text>
-                    <View style={styles.webDatePickerSelect}>
-                      <select
-                        value={webDate.day}
-                        onChange={(e) => setWebDate({...webDate, day: e.target.value})}
-                        style={styles.webDateDropdown}
-                      >
-                        {days.map(day => (
-                          <option key={day} value={day}>{day}</option>
-                        ))}
-                      </select>
-                    </View>
-                  </View>
-                  
-                  {/* Year dropdown */}
-                  <View style={styles.webDatePickerItem}>
-                    <Text style={styles.webDatePickerLabel}>Year</Text>
-                    <View style={styles.webDatePickerSelect}>
-                      <select
-                        value={webDate.year}
-                        onChange={(e) => setWebDate({...webDate, year: e.target.value})}
-                        style={styles.webDateDropdown}
-                      >
-                        {years.map(year => (
-                          <option key={year} value={year}>{year}</option>
-                        ))}
-                      </select>
-                    </View>
-                  </View>
-                </View>
-                <Text style={styles.dateHelpText}>
-                  Your sobriety date: {profile.sobrietyDate.toLocaleDateString()}
-                </Text>
-              </View>
-            ) : (
-              <>
-                <TouchableOpacity 
-                  style={styles.dateButton}
-                  onPress={() => setShowDatePicker(true)}
-                >
-                  <Text style={styles.dateButtonText}>
-                    {profile.sobrietyDate.toLocaleDateString()}
-                  </Text>
-                  <MaterialCommunityIcons name="calendar" size={20} color="#4a86e8" />
-                </TouchableOpacity>
-                
-                {showDatePicker && (
-                  <DateTimePicker
-                    value={profile.sobrietyDate}
-                    mode="date"
-                    display="default"
-                    onChange={handleDateChange}
-                    maximumDate={new Date()}
-                  />
-                )}
-              </>
-            )}
+            <TouchableOpacity 
+              style={styles.dateButton}
+              onPress={() => setShowDatePicker(true)}
+            >
+              <Text style={styles.dateButtonText}>
+                {profile.sobrietyDate.toLocaleDateString()}
+              </Text>
+              <MaterialCommunityIcons name="calendar" size={20} color="#4a86e8" />
+            </TouchableOpacity>
+            
+            <DatePickerModal
+              visible={showDatePicker}
+              mode="single"
+              onDismiss={() => setShowDatePicker(false)}
+              date={profile.sobrietyDate}
+              onConfirm={({ date }) => {
+                setShowDatePicker(false);
+                setProfile({...profile, sobrietyDate: date});
+              }}
+              saveLabel="Confirm"
+              label="Select Sobriety Date"
+              maxDate={new Date()}
+            />
             
             <Text style={styles.label}>Home Group</Text>
             <TextInput
@@ -626,7 +572,7 @@ function SettingsScreen() {
       
       <View style={themedStyles.card}>
         <Text style={themedStyles.cardTitle}>App Information</Text>
-        <Text style={themedStyles.infoText}>Version: 1.0.0</Text>
+        <Text style={themedStyles.infoText}>Version: 1.0.4</Text>
         <Text style={themedStyles.infoText}>
           AA Recovery Tracker is designed to help members of Alcoholics Anonymous 
           track their recovery journey while maintaining anonymity and privacy.
@@ -847,4 +793,31 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SettingsScreen;
+// Wrap with PaperProvider for date picker theming
+const WrappedSettingsScreen = () => {
+  const { theme, isDark } = useTheme();
+  
+  const paperTheme = {
+    colors: {
+      primary: theme.primary,
+      accent: theme.secondary,
+      background: theme.background,
+      surface: theme.card,
+      text: theme.text,
+      disabled: theme.textSecondary,
+      placeholder: theme.textSecondary,
+      backdrop: 'rgba(0,0,0,0.5)',
+      onSurface: theme.text,
+    },
+    dark: isDark,
+    roundness: 4,
+  };
+
+  return (
+    <PaperProvider theme={paperTheme}>
+      <SettingsScreen />
+    </PaperProvider>
+  );
+};
+
+export default WrappedSettingsScreen;
