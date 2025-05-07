@@ -20,6 +20,11 @@ const env = {
   EXPO_WEB_PORT: PORT,     // Expo web port
   DANGEROUSLY_DISABLE_HOST_CHECK: 'true',  // Allow external connections
   
+  // Allow CORS from any domain (important for Replit)
+  EXPO_ALLOW_ORIGIN: '*',
+  EXPO_PUBLIC_ALLOW_ORIGIN: '*',
+  EXPO_USE_REFLECTION: 'true',
+  
   // Path configuration for nginx
   EXPO_WEBPACK_PUBLIC_PATH: PUBLIC_PATH,
   PUBLIC_URL: PUBLIC_PATH,
