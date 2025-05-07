@@ -344,7 +344,7 @@ if (fs.existsSync(appJsPath)) {
       // Update the existing version string
       appJsContent = appJsContent.replace(
         /APP_VERSION = "([^"]*)"/,
-        `APP_VERSION = "1.0.4 - ${currentDateString} - BUILD-${timestamp}"`
+        `APP_VERSION = "1.0.5 - ${currentDateString} - BUILD-${timestamp}"`
       );
       fs.writeFileSync(appJsPath, appJsContent);
       console.log(`Updated App.js version to include build timestamp: ${timestamp}`);

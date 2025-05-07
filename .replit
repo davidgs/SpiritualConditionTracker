@@ -27,7 +27,6 @@ author = "agent"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "node run-expo-only.js"
-waitForPort = 3243
 
 [[workflows.workflow]]
 name = "StatusChecker"

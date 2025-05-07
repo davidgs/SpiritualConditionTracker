@@ -1,0 +1,41 @@
+/* Direct font definitions for Spiritual Condition Tracker
+ * Copy this file to /var/www/vhosts/spiritual-condition.com/httpdocs/fonts.css 
+ */
+
+@font-face {
+  font-family: 'MaterialCommunityIcons';
+  src: url('/fonts/MaterialCommunityIcons.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+}
+
+@font-face {
+  font-family: 'FontAwesome';
+  src: url('/fonts/FontAwesome.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+}
+
+@font-face {
+  font-family: 'Ionicons';
+  src: url('/fonts/Ionicons.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+}
+
+@font-face {
+  font-family: 'MaterialIcons';
+  src: url('/fonts/MaterialIcons.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+}
+
+/* Fix for SVG icons that might have 0 width/height */
+svg[width="0"], svg[height="0"] {
+  width: 24px !important;
+  height: 24px !important;
+}
