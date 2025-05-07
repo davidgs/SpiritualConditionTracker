@@ -1,0 +1,36 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Font Debug Page</title>
+    <link rel="stylesheet" href="vector-icons.css">
+    <style>
+      .font-preview {
+        font-size: 30px;
+        margin: 20px;
+        padding: 10px;
+        border: 1px solid #ccc;
+      }
+      .material-icons::before {
+        font-family: 'MaterialCommunityIcons';
+        content: "\f012"; /* Random icon code for testing */
+      }
+      .fa-icons::before {
+        font-family: 'FontAwesome';
+        content: "\f015"; /* Random icon code for testing */
+      }
+      .ionicons::before {
+        font-family: 'Ionicons';
+        content: "\f107"; /* Random icon code for testing */
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Font Debug Page</h1>
+    <div class="font-preview material-icons">Material Community Icons</div>
+    <div class="font-preview fa-icons">Font Awesome Icons</div>
+    <div class="font-preview ionicons">Ionicons</div>
+  </body>
+</html>
+  

@@ -26,6 +26,9 @@ import { MessagingProvider } from './src/contexts/MessagingContext';
 // Import database functions
 import { initDatabase } from './src/database/database';
 
+// Import icon fallback for web
+import IconFallback from './src/components/IconFallback';
+
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -176,7 +179,7 @@ const DrawerNavigator = () => {
 };
 
 // App version - update with every change
-const APP_VERSION = "1.0.2 - May 7, 2025, 03:55 PM - BUILD-1746633355813";
+const APP_VERSION = "1.0.2 - May 7, 2025, 04:16 PM - BUILD-1746634571204";
 
 function Main() {
   const [dbInitialized, setDbInitialized] = useState(false);
@@ -280,6 +283,7 @@ export default function App() {
         <ActivitiesProvider>
           <UserProvider>
             <MessagingProvider>
+              <IconFallback />
               <Main />
             </MessagingProvider>
           </UserProvider>
