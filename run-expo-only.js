@@ -322,6 +322,13 @@ try {
   } else {
     console.log('Fix script not found, skipping...');
   }
+  
+  // Run buildCacheProvider fix
+  const buildCacheFixPath = path.join(__dirname, 'fix-build-cache-provider.js');
+  if (fs.existsSync(buildCacheFixPath)) {
+    console.log('Running buildCacheProvider fix...');
+    execSync(`node ${buildCacheFixPath}`, { stdio: 'inherit' });
+  }
 } catch (err) {
   console.error(`Error running fix script: ${err.message}`);
 }
