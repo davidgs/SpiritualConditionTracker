@@ -477,7 +477,7 @@ const expo = spawn('npx', [
   '--clear',             // Clear the cache
   '--no-dev',            // Disable development mode for better reliability
   '--reset-cache',       // Reset the cache entirely
-  '--max-workers', '2'   // Limit workers to avoid memory issues
+  '--max-workers', '4'   // Limit workers to avoid memory issues
 ], {
   cwd: expoAppDir,
   env: env,
