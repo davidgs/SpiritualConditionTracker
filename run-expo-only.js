@@ -35,29 +35,7 @@ const env = {
 
 // Fix React Native vector icons if needed
 function fixVectorIcons() {
-  console.log('Setting up vector icons for web...');
-  
-  // Original font files location
-  const originalFontsDir = path.join(__dirname, 'node_modules', 'react-native-vector-icons', 'Fonts');
-  
-  // Main node_modules vector icons path
-  const iconFontsDir = path.join(expoAppDir, 'node_modules', '@expo', 'vector-icons', 'build', 'vendor', 'react-native-vector-icons', 'Fonts');
-  
-  // Assets directory for when webpack is looking for assets
-  const assetsDir = path.join(expoAppDir, 'assets', 'fonts');
-  
-  // Web directory path
-  const webDir = path.join(expoAppDir, 'web');
-  const webFontsDir = path.join(webDir, 'fonts');
-  const webAssetsDir = path.join(webDir, 'assets');
-  
-  // Create all directories if they don't exist
-  [iconFontsDir, assetsDir, webFontsDir, webAssetsDir].forEach(dir => {
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true });
-      console.log(`Created directory: ${dir}`);
-    }
-  });
+  console.log('Setting up vector icons using React Native asset system...');
   
   // Font names to copy
   const fontNames = [
@@ -78,7 +56,28 @@ function fixVectorIcons() {
     'Zocial.ttf'
   ];
   
-  // Copy font files from original location to all required directories
+  // Original font files location
+  const originalFontsDir = path.join(__dirname, 'node_modules', 'react-native-vector-icons', 'Fonts');
+  
+  // Standard React Native assets directory structure
+  const assetsFontsDir = path.join(expoAppDir, 'assets', 'fonts');
+  if (!fs.existsSync(assetsFontsDir)) {
+    fs.mkdirSync(assetsFontsDir, { recursive: true });
+    console.log('Created standard React Native assets/fonts directory');
+  }
+  
+  // For web, we need the fonts in the web directory
+  const webDir = path.join(expoAppDir, 'web');
+  const webFontsDir = path.join(webDir, 'fonts');
+  if (!fs.existsSync(webFontsDir)) {
+    fs.mkdirSync(webFontsDir, { recursive: true });
+    console.log('Created web/fonts directory for Expo web');
+  }
+  
+  // Copy fonts to React Native asset system
+  let missingFonts = [];
+  let copiedFonts = [];
+  
   for (const fontName of fontNames) {
     const originalFontPath = path.join(originalFontsDir, fontName);
     
@@ -86,229 +85,124 @@ function fixVectorIcons() {
     if (fs.existsSync(originalFontPath)) {
       const fontContent = fs.readFileSync(originalFontPath);
       
-      // Copy to node_modules path
-      const nodeModulesFontPath = path.join(iconFontsDir, fontName);
-      fs.writeFileSync(nodeModulesFontPath, fontContent);
-      console.log(`Copied font to node_modules: ${fontName}`);
+      // Copy to assets/fonts directory (standard RN location)
+      const assetsFontPath = path.join(assetsFontsDir, fontName);
+      fs.writeFileSync(assetsFontPath, fontContent);
       
-      // Copy to web/fonts directory
+      // Copy to web/fonts directory (for Expo web)
       const webFontPath = path.join(webFontsDir, fontName);
       fs.writeFileSync(webFontPath, fontContent);
-      console.log(`Copied font to web directory: ${fontName}`);
       
-      // Copy to assets directory
-      const assetsFontPath = path.join(assetsDir, fontName);
-      fs.writeFileSync(assetsFontPath, fontContent);
-      console.log(`Copied font to assets directory: ${fontName}`);
-      
-      // Copy to web/assets directory (for webpack)
-      const webAssetsFontPath = path.join(webAssetsDir, fontName);
-      fs.writeFileSync(webAssetsFontPath, fontContent);
-      console.log(`Copied font to web/assets directory: ${fontName}`);
+      copiedFonts.push(fontName);
     } else {
-      console.log(`Original font not found: ${fontName}, creating empty placeholders`);
-      
-      // Create empty files as fallback
-      const nodeModulesFontPath = path.join(iconFontsDir, fontName);
-      fs.writeFileSync(nodeModulesFontPath, '');
-      
-      const webFontPath = path.join(webFontsDir, fontName);
-      fs.writeFileSync(webFontPath, '');
-      
-      const assetsFontPath = path.join(assetsDir, fontName);
-      fs.writeFileSync(assetsFontPath, '');
-      
-      const webAssetsFontPath = path.join(webAssetsDir, fontName);
-      fs.writeFileSync(webAssetsFontPath, '');
+      missingFonts.push(fontName);
+      console.log(`Warning: Font file not found: ${fontName}`);
     }
   }
   
-  // Create a CSS file with multiple paths to try to load the fonts
-  const cssContent = fontNames.map(font => {
-    const fontFamily = font.replace('.ttf', '');
-    return `
-@font-face {
-  font-family: '${fontFamily}';
-  src: url('./fonts/${font}') format('truetype'),
-       url('./assets/${font}') format('truetype'),
-       url('../assets/fonts/${font}') format('truetype'),
-       url('../node_modules/react-native-vector-icons/Fonts/${font}') format('truetype');
-  font-weight: normal;
-  font-style: normal;
-}`;
-  }).join('\n');
+  console.log(`Successfully installed ${copiedFonts.length} fonts in the React Native asset system`);
   
-  const cssPath = path.join(webDir, 'vector-icons.css');
-  fs.writeFileSync(cssPath, cssContent);
-  console.log('Created CSS file for vector icons with multiple font paths');
+  if (missingFonts.length > 0) {
+    console.log(`Warning: ${missingFonts.length} fonts were missing and could not be copied`);
+  }
   
-  // Create app.json file to ensure Expo knows about the fonts
+  // Create react-native.config.js if it doesn't exist (for proper asset linking)
+  const rnConfigPath = path.join(expoAppDir, 'react-native.config.js');
+  const rnConfigContent = `
+// This file configures the React Native asset system
+module.exports = {
+  project: {
+    ios: {},
+    android: {},
+  },
+  assets: ['./assets/fonts'],
+};
+`;
+  
+  fs.writeFileSync(rnConfigPath, rnConfigContent);
+  console.log('Created react-native.config.js for proper font asset linking');
+  
+  // Update app.json to use proper React Native font loading
   const appJsonPath = path.join(expoAppDir, 'app.json');
   if (fs.existsSync(appJsonPath)) {
     try {
       const appJson = JSON.parse(fs.readFileSync(appJsonPath, 'utf8'));
       
-      // Make sure the expo section exists
+      // Ensure the expo section exists
       if (!appJson.expo) {
         appJson.expo = {};
       }
       
-      // Define font paths for native
-      appJson.expo.packagerOpts = appJson.expo.packagerOpts || {};
-      appJson.expo.packagerOpts.assetExts = appJson.expo.packagerOpts.assetExts || [];
-      if (!appJson.expo.packagerOpts.assetExts.includes('ttf')) {
-        appJson.expo.packagerOpts.assetExts.push('ttf');
-      }
-      
-      // Define fonts to be loaded
+      // Proper way to define fonts in Expo/React Native
       appJson.expo.fonts = appJson.expo.fonts || [];
-      const fontPaths = fontNames.map(font => `./assets/fonts/${font}`);
+      const fontPaths = copiedFonts.map(font => `./assets/fonts/${font}`);
       
       // Add each font if not already in the list
+      let addedFonts = 0;
       fontPaths.forEach(fontPath => {
         if (!appJson.expo.fonts.includes(fontPath)) {
           appJson.expo.fonts.push(fontPath);
+          addedFonts++;
         }
       });
       
       // Write the updated app.json
       fs.writeFileSync(appJsonPath, JSON.stringify(appJson, null, 2));
-      console.log('Updated app.json with font configuration');
+      console.log(`Updated app.json with ${addedFonts} new font entries`);
     } catch (error) {
       console.error('Error updating app.json:', error);
     }
   }
   
-  // Create a simple index.html in the web directory that contains font includes
-  // This will be overwritten by Expo but can be used as a fallback for debugging
-  const fallbackHtmlPath = path.join(webDir, 'font-debug.html');
-  const fallbackHtml = `
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <title>Font Debug Page</title>
-    <link rel="stylesheet" href="vector-icons.css">
-    <style>
-      .font-preview {
-        font-size: 30px;
-        margin: 20px;
-        padding: 10px;
-        border: 1px solid #ccc;
-      }
-      .material-icons::before {
-        font-family: 'MaterialCommunityIcons';
-        content: "\\f012"; /* Random icon code for testing */
-      }
-      .fa-icons::before {
-        font-family: 'FontAwesome';
-        content: "\\f015"; /* Random icon code for testing */
-      }
-      .ionicons::before {
-        font-family: 'Ionicons';
-        content: "\\f107"; /* Random icon code for testing */
-      }
-    </style>
-  </head>
-  <body>
-    <h1>Font Debug Page</h1>
-    <div class="font-preview material-icons">Material Community Icons</div>
-    <div class="font-preview fa-icons">Font Awesome Icons</div>
-    <div class="font-preview ionicons">Ionicons</div>
-  </body>
-</html>
-  `;
-  fs.writeFileSync(fallbackHtmlPath, fallbackHtml);
-  console.log('Created font debug HTML page');
+  // Create a CSS file for web-only font support
+  // This is needed because React Native Web doesn't fully support the asset system for fonts
+  const cssContent = `/* React Native Vector Icons Font CSS for Web */
+${fontNames.map(font => {
+  const fontFamily = font.replace('.ttf', '');
+  return `
+@font-face {
+  font-family: '${fontFamily}';
+  src: url('./fonts/${font}') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}`;
+}).join('\n')}
+
+/* Fix for broken SVGs */
+svg[width="0"], svg[height="0"] {
+  width: 24px !important;
+  height: 24px !important;
+}
+`;
   
-  // Inject the CSS into HTML when it's created
-  // We'll make this check periodically since Expo generates index.html dynamically
+  const cssPath = path.join(webDir, 'vector-icons.css');
+  fs.writeFileSync(cssPath, cssContent);
+  console.log('Created CSS file for web font loading (web-only)');
+  
+  // Create a simple function to inject the CSS into the HTML
+  // This only runs once - React Native's asset system should handle the rest
   const injectCssToHtml = () => {
     const indexHtmlPath = path.join(webDir, 'index.html');
     if (fs.existsSync(indexHtmlPath)) {
       let htmlContent = fs.readFileSync(indexHtmlPath, 'utf8');
-      let modified = false;
       
-      // Add preload links for key fonts
-      if (!htmlContent.includes('preload') || !htmlContent.includes('fonts/MaterialCommunityIcons.ttf')) {
-        const preloadLinks = 
-          '<link rel="preload" href="./fonts/MaterialCommunityIcons.ttf" as="font" type="font/ttf" crossorigin="anonymous" />\n' +
-          '<link rel="preload" href="./fonts/FontAwesome.ttf" as="font" type="font/ttf" crossorigin="anonymous" />\n' +
-          '<link rel="preload" href="./fonts/Ionicons.ttf" as="font" type="font/ttf" crossorigin="anonymous" />';
-        
-        htmlContent = htmlContent.replace(
-          '<head>',
-          '<head>\n' + preloadLinks
-        );
-        modified = true;
-      }
-      
-      // Add the vector icons CSS link
+      // Only modify if needed
       if (!htmlContent.includes('vector-icons.css')) {
         htmlContent = htmlContent.replace(
           '</head>',
-          `<link rel="stylesheet" href="vector-icons.css?v=${Date.now()}" />\n</head>`
+          `<link rel="stylesheet" href="vector-icons.css" />\n</head>`
         );
-        modified = true;
-      }
-      
-      // Add direct CSS for icon fonts as a fallback
-      if (!htmlContent.includes('vector-icons-style')) {
-        const iconStyles = 
-          '<style id="vector-icons-style">\n' +
-          '  /* Direct CSS for vector icons */\n' +
-          '  @font-face {\n' +
-          '    font-family: "MaterialCommunityIcons";\n' +
-          '    src: url("./fonts/MaterialCommunityIcons.ttf") format("truetype"),\n' +
-          '         url("./assets/MaterialCommunityIcons.ttf") format("truetype");\n' +
-          '    font-weight: normal;\n' +
-          '    font-style: normal;\n' +
-          '  }\n' +
-          '  \n' +
-          '  @font-face {\n' +
-          '    font-family: "FontAwesome";\n' +
-          '    src: url("./fonts/FontAwesome.ttf") format("truetype"),\n' +
-          '         url("./assets/FontAwesome.ttf") format("truetype");\n' +
-          '    font-weight: normal;\n' +
-          '    font-style: normal;\n' +
-          '  }\n' +
-          '  \n' +
-          '  @font-face {\n' +
-          '    font-family: "Ionicons";\n' +
-          '    src: url("./fonts/Ionicons.ttf") format("truetype"),\n' +
-          '         url("./assets/Ionicons.ttf") format("truetype");\n' +
-          '    font-weight: normal;\n' +
-          '    font-style: normal;\n' +
-          '  }\n' +
-          '  \n' +
-          '  /* Fix for broken SVGs */\n' +
-          '  svg[width="0"], svg[height="0"] {\n' +
-          '    width: 24px !important;\n' +
-          '    height: 24px !important;\n' +
-          '  }\n' +
-          '</style>';
         
-        htmlContent = htmlContent.replace(
-          '</head>',
-          iconStyles + '\n</head>'
-        );
-        modified = true;
-      }
-      
-      if (modified) {
         fs.writeFileSync(indexHtmlPath, htmlContent);
-        console.log('Updated index.html with vector icon support');
+        console.log('Injected font CSS into index.html for web');
       }
     }
   };
   
-  // Try to inject immediately if the file exists
-  injectCssToHtml();
+  // Set a single-run timeout to inject CSS after Expo has generated the HTML
+  setTimeout(injectCssToHtml, 5000);
   
-  // Set up interval to check and inject periodically (Expo may regenerate the file)
-  setInterval(injectCssToHtml, 5000);
-  
-  console.log('Vector icons setup completed');
+  console.log('Vector icons setup completed using proper React Native asset system');
 }
 
 // Run fix script if needed
