@@ -1,242 +1,256 @@
-import React, { createContext, useState, useContext, useEffect } from 'react';
-import { calculateSpiritualFitness } from '../utils/calculations';
-import { useActivities } from './ActivitiesContext';
-import { getUserData, updateUserData, getUserSpiritualFitness, updateUserSpiritualFitness } from '../database/database';
-import { saveUserToLocalStorage, loadUserFromLocalStorage } from '../utils/webStorage';
+/**
+ * UserContext.js - Context for user data management
+ * 
+ * This context provides access to user data, sobriety information,
+ * spiritual fitness calculations, and other user-related functionality.
+ */
+import React, { createContext, useState, useEffect, useContext } from 'react';
+import { Alert } from 'react-native';
+import { 
+  initializeTables, 
+  executeSql, 
+  getSobrietyInfo,
+  calculateSpiritualFitness
+} from '../database/database';
 
+// Create context
 const UserContext = createContext();
 
+// UserProvider component
 export const UserProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [spiritualFitness, setSpiritualFitness] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [isInitialized, setIsInitialized] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [userData, setUserData] = useState(null);
+  const [sobrietyInfo, setSobrietyInfo] = useState({ days: 0, years: 0 });
+  const [spiritualFitness, setSpiritualFitness] = useState({ score: 0, activities: {} });
   const [error, setError] = useState(null);
-  const { activities, addActivity, deleteActivity, loadActivities } = useActivities();
 
-  // Load user from database on mount
+  // Initialize the database and load user data
   useEffect(() => {
-    loadUser();
+    const initializeDatabase = async () => {
+      try {
+        setIsLoading(true);
+        
+        // Initialize database tables
+        const initialized = await initializeTables();
+        if (!initialized) {
+          throw new Error('Failed to initialize database tables');
+        }
+        
+        setIsInitialized(true);
+        
+        // Load user data
+        await loadUserData();
+        
+        // Load sobriety information
+        await loadSobrietyInfo();
+        
+        // Load spiritual fitness
+        await loadSpiritualFitness();
+        
+        setError(null);
+      } catch (err) {
+        console.error('Database initialization error:', err);
+        setError(err.message);
+        
+        // Show error to user
+        Alert.alert(
+          'Database Error',
+          'There was an error initializing the database. Some features may not work correctly.',
+          [{ text: 'OK' }]
+        );
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    initializeDatabase();
   }, []);
 
-  const loadUser = async () => {
+  // Load user data from database
+  const loadUserData = async () => {
     try {
-      setLoading(true);
-      setError(null);
+      const result = await executeSql('SELECT * FROM user_settings WHERE id = 1');
       
-      // First try to load from database
-      let userData = await getUserData();
-      
-      // For web platform, also check localStorage for more recent data
-      const webStorageUser = loadUserFromLocalStorage('1');
-      if (webStorageUser) {
-        console.log('Found user data in web storage, using that instead');
-        userData = webStorageUser;
-      }
-      
-      if (userData) {
-        setUser(userData);
-        // Load activities for this user
-        loadActivities(userData.id);
-        // Load spiritual fitness data
-        await loadSpiritualFitness();
+      if (result.rows.length > 0) {
+        setUserData(result.rows.item(0));
       } else {
-        // Create a default user if none exists
-        const defaultUser = {
-          id: '1',
-          firstName: 'Anonymous',
-          lastName: '',
-          sobrietyDate: new Date().toISOString(),
-          homeGroup: '',
-          sponsorName: '',
-          sponsorPhone: '',
-          privacySettings: {
-            shareLocation: false,
-            shareFullName: false,
-            shareSobrietyDate: true,
-            allowBluetoothDiscovery: false,
-          },
-          notificationSettings: {
-            meetingReminders: true,
-            dailyReflection: false,
-            sobrietyMilestones: true,
-            reminderTime: 30,
-          },
-          recentActivities: [],
-        };
+        // This shouldn't happen, but just in case
+        console.warn('No user data found, initializing with defaults');
+        await executeSql(
+          'INSERT INTO user_settings (id, sobriety_date, reminder_minutes, dark_mode) VALUES (1, ?, 30, 0)',
+          [new Date().toISOString().split('T')[0]]
+        );
         
-        await updateUserData(defaultUser);
-        saveUserToLocalStorage(defaultUser); // Also save to web storage
-        setUser(defaultUser);
+        const newResult = await executeSql('SELECT * FROM user_settings WHERE id = 1');
+        setUserData(newResult.rows.item(0));
       }
-      
-      setLoading(false);
     } catch (err) {
-      setError('Failed to load user data');
-      setLoading(false);
       console.error('Error loading user data:', err);
+      setError('Error loading user data: ' + err.message);
     }
   };
 
-  const updateUser = async (userData) => {
+  // Load sobriety information
+  const loadSobrietyInfo = async () => {
     try {
-      setLoading(true);
-      setError(null);
-      
-      // Update the user object by merging with new data
-      const updatedUser = { ...user, ...userData };
-      
-      // Update in database
-      await updateUserData(updatedUser);
-      
-      // Also save to localStorage for web persistence
-      saveUserToLocalStorage(updatedUser);
-      
-      // Update state
-      setUser(updatedUser);
-      setLoading(false);
-      return updatedUser;
+      const info = await getSobrietyInfo();
+      setSobrietyInfo(info);
     } catch (err) {
-      setError('Failed to update user data');
-      setLoading(false);
+      console.error('Error loading sobriety info:', err);
+      setError('Error loading sobriety info: ' + err.message);
+    }
+  };
+
+  // Load spiritual fitness score
+  const loadSpiritualFitness = async (daysToConsider = 30) => {
+    try {
+      const fitness = await calculateSpiritualFitness(daysToConsider);
+      setSpiritualFitness(fitness);
+    } catch (err) {
+      console.error('Error calculating spiritual fitness:', err);
+      setError('Error calculating spiritual fitness: ' + err.message);
+    }
+  };
+
+  // Update user data
+  const updateUserData = async (updates) => {
+    try {
+      // Build SQL update statement
+      const updateFields = Object.keys(updates)
+        .map(field => `${field} = ?`)
+        .join(', ');
+      
+      const updateValues = Object.values(updates);
+      
+      // Execute update
+      await executeSql(
+        `UPDATE user_settings SET ${updateFields} WHERE id = 1`,
+        updateValues
+      );
+      
+      // Reload data
+      await loadUserData();
+      
+      // If sobriety date was updated, reload sobriety info
+      if ('sobriety_date' in updates) {
+        await loadSobrietyInfo();
+      }
+      
+      return true;
+    } catch (err) {
       console.error('Error updating user data:', err);
-      return null;
-    }
-  };
-
-  /**
-   * Load spiritual fitness data for the user
-   */
-  const loadSpiritualFitness = async () => {
-    try {
-      // First check if we have stored spiritual fitness data
-      const storedFitness = await getUserSpiritualFitness();
-      
-      if (storedFitness) {
-        setSpiritualFitness(storedFitness);
-        return storedFitness;
-      }
-      
-      // If no stored data or recalculating, compute from activities
-      if (activities.length > 0) {
-        const fitnessScore = calculateSpiritualFitness(activities);
-        await updateUserSpiritualFitness(fitnessScore);
-        setSpiritualFitness(fitnessScore);
-        return fitnessScore;
-      }
-      
-      // Default spiritual fitness if no activities
-      const defaultFitness = {
-        overall: 0.0,
-        prayer: 0.0,
-        meetings: 0.0,
-        literature: 0.0,
-        service: 0.0,
-        sponsorship: 0.0,
-        timestamp: new Date().toISOString(),
-      };
-      
-      setSpiritualFitness(defaultFitness);
-      await updateUserSpiritualFitness(defaultFitness);
-      return defaultFitness;
-    } catch (err) {
-      console.error('Error loading spiritual fitness:', err);
-      return null;
-    }
-  };
-
-  /**
-   * Log a new activity
-   */
-  const logActivity = async (activity) => {
-    try {
-      // Add activity to the activities list
-      const newActivity = await addActivity(activity);
-      
-      if (newActivity) {
-        // Update user's recent activities
-        const updatedRecentActivities = [
-          newActivity,
-          ...(user.recentActivities || []).slice(0, 4), // Keep only recent 5
-        ];
-        
-        await updateUser({
-          ...user,
-          recentActivities: updatedRecentActivities,
-        });
-        
-        // Recalculate spiritual fitness
-        await recalculateSpiritualFitness();
-      }
-      
-      return newActivity;
-    } catch (err) {
-      console.error('Error logging activity:', err);
-      return null;
-    }
-  };
-
-  /**
-   * Delete an activity
-   */
-  const removeActivity = async (activityId) => {
-    try {
-      // Delete activity from activities list
-      const success = await deleteActivity(activityId);
-      
-      if (success) {
-        // Update user's recent activities
-        const updatedRecentActivities = (user.recentActivities || [])
-          .filter(activity => activity.id !== activityId);
-        
-        await updateUser({
-          ...user,
-          recentActivities: updatedRecentActivities,
-        });
-        
-        // Recalculate spiritual fitness
-        await recalculateSpiritualFitness();
-      }
-      
-      return success;
-    } catch (err) {
-      console.error('Error removing activity:', err);
+      setError('Error updating user data: ' + err.message);
       return false;
     }
   };
 
-  /**
-   * Recalculate spiritual fitness
-   */
-  const recalculateSpiritualFitness = async () => {
+  // Set sobriety date
+  const setSobrietyDate = async (date) => {
     try {
-      const fitnessScore = calculateSpiritualFitness(activities);
-      await updateUserSpiritualFitness(fitnessScore);
-      setSpiritualFitness(fitnessScore);
-      return fitnessScore;
+      // Format the date as YYYY-MM-DD
+      const formattedDate = typeof date === 'string' 
+        ? date 
+        : date.toISOString().split('T')[0];
+      
+      // Update the sobriety date
+      const success = await updateUserData({ sobriety_date: formattedDate });
+      
+      if (success) {
+        // Reload sobriety info
+        await loadSobrietyInfo();
+        return true;
+      }
+      
+      return false;
     } catch (err) {
-      console.error('Error recalculating spiritual fitness:', err);
-      return null;
+      console.error('Error setting sobriety date:', err);
+      setError('Error setting sobriety date: ' + err.message);
+      return false;
     }
   };
 
+  // Log a new activity
+  const logActivity = async (activityType, date, duration, notes = null, meetingId = null) => {
+    try {
+      // Format the date as YYYY-MM-DD
+      const formattedDate = typeof date === 'string' 
+        ? date 
+        : date.toISOString().split('T')[0];
+      
+      // Insert the new activity
+      await executeSql(
+        `INSERT INTO activity_log (activity_type, date, duration, notes, meeting_id)
+         VALUES (?, ?, ?, ?, ?)`,
+        [activityType, formattedDate, duration, notes, meetingId]
+      );
+      
+      // Recalculate spiritual fitness
+      await loadSpiritualFitness();
+      
+      return true;
+    } catch (err) {
+      console.error('Error logging activity:', err);
+      setError('Error logging activity: ' + err.message);
+      return false;
+    }
+  };
+
+  // Get recent activities
+  const getRecentActivities = async (limit = 10) => {
+    try {
+      const result = await executeSql(
+        `SELECT * FROM activity_log 
+         ORDER BY date DESC, id DESC 
+         LIMIT ?`,
+        [limit]
+      );
+      
+      // Convert result to array for easier use
+      const activities = [];
+      for (let i = 0; i < result.rows.length; i++) {
+        activities.push(result.rows.item(i));
+      }
+      
+      return activities;
+    } catch (err) {
+      console.error('Error getting recent activities:', err);
+      setError('Error getting recent activities: ' + err.message);
+      return [];
+    }
+  };
+
+  // Context value
+  const contextValue = {
+    isInitialized,
+    isLoading,
+    userData,
+    sobrietyInfo,
+    spiritualFitness,
+    error,
+    loadUserData,
+    loadSobrietyInfo,
+    loadSpiritualFitness,
+    updateUserData,
+    setSobrietyDate,
+    logActivity,
+    getRecentActivities
+  };
+
   return (
-    <UserContext.Provider
-      value={{
-        user,
-        setUser,
-        spiritualFitness,
-        loading,
-        error,
-        updateUser,
-        loadSpiritualFitness,
-        logActivity,
-        removeActivity,
-        recalculateSpiritualFitness,
-      }}
-    >
+    <UserContext.Provider value={contextValue}>
       {children}
     </UserContext.Provider>
   );
 };
 
-export const useUser = () => useContext(UserContext);
+// Custom hook for using the context
+export const useUser = () => {
+  const context = useContext(UserContext);
+  if (!context) {
+    throw new Error('useUser must be used within a UserProvider');
+  }
+  return context;
+};
+
+export default UserContext;
