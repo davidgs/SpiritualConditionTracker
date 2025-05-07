@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>App Status</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    .card {
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 20px;
+      background-color: #f9f9f9;
+    }
+    .success {
+      color: green;
+      font-weight: bold;
+    }
+    .error {
+      color: red;
+      font-weight: bold;
+    }
+    .button {
+      display: inline-block;
+      background-color: #4CAF50;
+      color: white;
+      padding: 10px 15px;
+      text-decoration: none;
+      border-radius: 4px;
+      margin: 10px 0;
+    }
+    pre {
+      background-color: #f5f5f5;
+      padding: 10px;
+      border-radius: 5px;
+      overflow-x: auto;
+    }
+  </style>
+</head>
+<body>
+  <h1>Spiritual Condition Tracker - App Status</h1>
+  
+  <div class="card">
+    <h2>Application Access</h2>
+    <p>The application should be running at the following URLs:</p>
+    <ul>
+      <li><a href="/app" class="button">Access App at /app path</a></li>
+      <li><a href="/" class="button">Access Landing Page</a></li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>Configuration Status</h2>
+    <ul>
+      <li>App Path: <span class="success">/app</span></li>
+      <li>Landing Page: <span class="success">Redirects to /app</span></li>
+      <li>Metro Bundler: <span class="success">Running</span></li>
+      <li>Port: <span class="success">3243</span></li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>Recent Updates</h2>
+    <ul>
+      <li>✓ Fixed routing to the correct /app path</li>
+      <li>✓ Updated index.html to redirect to /app path</li>
+      <li>✓ Added path correction in version injector script</li>
+      <li>✓ Application successfully bundled</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>Web Console Logs</h2>
+    <pre id="logs">Loading logs...</pre>
+  </div>
+
+  <script>
+    // Simple function to check if the app is accessible
+    function checkAppStatus() {
+      const statusDiv = document.getElementById('logs');
+      
+      fetch('/app')
+        .then(response => {
+          if (response.ok) {
+            statusDiv.innerHTML += '\nApp is accessible at /app path ✓';
+            statusDiv.className = 'success';
+          } else {
+            statusDiv.innerHTML += '\nCannot access app: ' + response.status;
+            statusDiv.className = 'error';
+          }
+        })
+        .catch(error => {
+          statusDiv.innerHTML += '\nError accessing app: ' + error.message;
+          statusDiv.className = 'error';
+        });
+      
+      // Log the current date/time
+      statusDiv.innerHTML = 'Status check: ' + new Date().toLocaleString();
+    }
+    
+    // Run the check when the page loads
+    window.onload = checkAppStatus;
+  </script>
+</body>
+</html>

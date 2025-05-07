@@ -15,7 +15,7 @@
   <script>
     // Add timestamp to force cache refresh
     const timestamp = new Date().getTime();
-    const appPath = '/?v=' + timestamp; // Point directly to the root where Expo is serving
+    const appPath = '/app?v=' + timestamp; // Point to the /app path where Expo is serving
     
     // Log debug info
     console.log('Redirecting to app with timestamp: ' + timestamp);
@@ -57,6 +57,6 @@
   <p>Loading the latest version...</p>
   <div class="loader"></div>
   <p><small>Version 1.0.2 - Force reload: <%= new Date().toLocaleString() %></small></p>
-  <p><small>If the app doesn't load automatically, <a href="/?v=<%= new Date().getTime() %>">click here</a>.</small></p>
+  <p><small>If the app doesn't load automatically, <a href="/app?v=<%= new Date().getTime() %>">click here</a>.</small></p>
 </body>
 </html>

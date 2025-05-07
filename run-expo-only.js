@@ -320,6 +320,14 @@ console.log("[Version Injector] Running version: " + window.FORCE_APP_VERSION);
         });
       }
       
+      // For deployments with specific paths, ensure path prefix is correct
+      if (window.location.pathname.indexOf('/app') !== 0 && 
+          !window.location.pathname.includes('localhost')) {
+        console.log("[Version Injector] Path correction - redirecting to /app path");
+        window.location.href = '/app' + window.location.search;
+        return false;
+      }
+      
       console.log("[Version Injector] All storage cleared");
       return true;
     } catch(e) {
@@ -367,7 +375,9 @@ console.log("[Version Injector] Running version: " + window.FORCE_APP_VERSION);
         }
       }
     };
-    xhttp.open("GET", "version-injector.js?nocache=" + Date.now(), true);
+    // Ensure we're using the correct path for the version check
+    const basePath = window.location.pathname.startsWith('/app') ? '/app/' : '/';
+    xhttp.open("GET", basePath + "version-injector.js?nocache=" + Date.now(), true);
     xhttp.send();
   }, 300000); // Check every 5 minutes
 })();

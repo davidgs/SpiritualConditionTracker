@@ -1,7 +1,7 @@
 
-// Force version refresh - created at 2025-05-07T14:55:13.158Z
-window.FORCE_APP_VERSION = "1.0.2 - May 7, 2025, 02:54 PM - BUILD-1746629653129";
-window.BUILD_ID = "build-1746629653129";
+// Force version refresh - created at 2025-05-07T15:03:19.034Z
+window.FORCE_APP_VERSION = "1.0.2 - May 7, 2025, 03:03 PM - BUILD-1746630199007";
+window.BUILD_ID = "build-1746630199007";
 console.log("[Version Injector] Running version: " + window.FORCE_APP_VERSION);
 
 // Enforce version checking
@@ -43,6 +43,14 @@ console.log("[Version Injector] Running version: " + window.FORCE_APP_VERSION);
         navigator.serviceWorker.getRegistrations().then(registrations => {
           registrations.forEach(reg => reg.unregister());
         });
+      }
+      
+      // For deployments with specific paths, ensure path prefix is correct
+      if (window.location.pathname.indexOf('/app') !== 0 && 
+          !window.location.pathname.includes('localhost')) {
+        console.log("[Version Injector] Path correction - redirecting to /app path");
+        window.location.href = '/app' + window.location.search;
+        return false;
       }
       
       console.log("[Version Injector] All storage cleared");
@@ -92,7 +100,9 @@ console.log("[Version Injector] Running version: " + window.FORCE_APP_VERSION);
         }
       }
     };
-    xhttp.open("GET", "version-injector.js?nocache=" + Date.now(), true);
+    // Ensure we're using the correct path for the version check
+    const basePath = window.location.pathname.startsWith('/app') ? '/app/' : '/';
+    xhttp.open("GET", basePath + "version-injector.js?nocache=" + Date.now(), true);
     xhttp.send();
   }, 300000); // Check every 5 minutes
 })();

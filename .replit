@@ -16,6 +16,10 @@ author = "agent"
 task = "workflow.run"
 args = "ExpoServer"
 
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "StatusChecker"
+
 [[workflows.workflow]]
 name = "ExpoServer"
 author = "agent"
@@ -24,6 +28,15 @@ author = "agent"
 task = "shell.exec"
 args = "node run-expo-only.js"
 waitForPort = 3243
+
+[[workflows.workflow]]
+name = "StatusChecker"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "node check-app-status.js"
+waitForPort = 5000
 
 [deployment]
 run = ["sh", "-c", "node deployment-server.js"]
