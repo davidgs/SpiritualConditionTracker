@@ -1,199 +1,216 @@
 #!/bin/bash
 
-# This script fixes SQLite integration issues in iOS builds
+# iOS SQLite Fix Script for Spiritual Condition Tracker
+# This script fixes common SQLite issues for iOS builds
 
-echo "Fixing SQLite integration for iOS build..."
+echo "=========================================="
+echo "iOS SQLite Compatibility Fix Script"
+echo "=========================================="
 
-# Step 1: Clean Pods
-echo "Step 1: Cleaning Pods..."
+# Ensure we're in the project root
+cd $(dirname "$0")
+PROJECT_ROOT=$(pwd)
+echo "Project root: $PROJECT_ROOT"
+
+# Check if the iOS directory exists
+if [ ! -d "$PROJECT_ROOT/expo-app/ios" ]; then
+  echo "Error: iOS directory not found. Run prepare-ios-build.sh first."
+  exit 1
+fi
+
+# Go to the Expo app directory
+cd "$PROJECT_ROOT/expo-app"
+
+# 1. Fix SQLite dependencies in package.json
+echo "Checking and fixing SQLite dependencies in package.json..."
+
+# Check if react-native-sqlite-storage is installed
+if ! grep -q "react-native-sqlite-storage" package.json; then
+  echo "Installing react-native-sqlite-storage..."
+  npm install --save react-native-sqlite-storage
+else
+  echo "react-native-sqlite-storage is already installed."
+fi
+
+# 2. Check and fix the SQLite configuration
+echo "Applying SQLite configuration fix..."
+node "$PROJECT_ROOT/fix-sqlite-config.js"
+
+# 3. Create or update the iOS-specific database implementation
+echo "Updating iOS-specific database implementation..."
+
+# Create the platform-specific directory if it doesn't exist
+mkdir -p src/database/platforms
+
+# Create the iOS-specific database implementation
+cat > src/database/platforms/database.ios.js << 'EOF'
+/**
+ * iOS-specific database implementation
+ * This file contains iOS-specific SQLite initialization
+ */
+
+import SQLite from 'react-native-sqlite-storage';
+import { Platform } from 'react-native';
+
+// Enable SQLite debugging in development
+SQLite.DEBUG(process.env.NODE_ENV === 'development');
+
+// Prevent native crash on close
+SQLite.enablePromise(true);
+
+// Set database configuration for iOS
+const DATABASE_NAME = 'spiritualcondition.db';
+const DATABASE_LOCATION = 'Library/LocalDatabase';
+
+/**
+ * Initialize the database connection
+ * @returns {Promise<SQLite.SQLiteDatabase>} Database connection object
+ */
+export async function openDatabase() {
+  console.log('[iOS] Opening database connection to', DATABASE_NAME);
+  
+  try {
+    const db = await SQLite.openDatabase({
+      name: DATABASE_NAME,
+      location: DATABASE_LOCATION,
+      createFromLocation: 1
+    });
+    
+    console.log('[iOS] Database connection successful');
+    return db;
+  } catch (error) {
+    console.error('[iOS] Error opening database:', error.message);
+    throw error;
+  }
+}
+
+/**
+ * Close the database connection
+ * @param {SQLite.SQLiteDatabase} db Database connection to close
+ * @returns {Promise<void>}
+ */
+export async function closeDatabase(db) {
+  if (db) {
+    console.log('[iOS] Closing database connection');
+    try {
+      await db.close();
+      console.log('[iOS] Database connection closed successfully');
+    } catch (error) {
+      console.error('[iOS] Error closing database:', error.message);
+    }
+  }
+}
+
+/**
+ * Create a table if it doesn't exist
+ * @param {SQLite.SQLiteDatabase} db Database connection
+ * @param {string} tableName Name of the table to create
+ * @param {string} tableSchema SQL schema for the table
+ * @returns {Promise<void>}
+ */
+export async function createTable(db, tableName, tableSchema) {
+  console.log(`[iOS] Creating table if not exists: ${tableName}`);
+  
+  try {
+    await db.executeSql(`CREATE TABLE IF NOT EXISTS ${tableName} (${tableSchema})`);
+    console.log(`[iOS] Table ${tableName} created or already exists`);
+  } catch (error) {
+    console.error(`[iOS] Error creating table ${tableName}:`, error.message);
+    throw error;
+  }
+}
+
+/**
+ * Platform-specific database utilities
+ */
+export const platformUtils = {
+  // iOS-specific function to check if a table exists
+  tableExists: async (db, tableName) => {
+    try {
+      const [results] = await db.executeSql(
+        "SELECT name FROM sqlite_master WHERE type='table' AND name=?",
+        [tableName]
+      );
+      
+      return results.rows.length > 0;
+    } catch (error) {
+      console.error(`[iOS] Error checking if table ${tableName} exists:`, error.message);
+      throw error;
+    }
+  },
+  
+  // iOS-specific vacuum function to optimize database
+  vacuumDatabase: async (db) => {
+    try {
+      await db.executeSql('VACUUM');
+      console.log('[iOS] Database vacuumed successfully');
+    } catch (error) {
+      console.error('[iOS] Error vacuuming database:', error.message);
+    }
+  },
+  
+  // iOS-specific backup function
+  backupDatabase: async () => {
+    // iOS backup implementation would go here
+    console.log('[iOS] Database backup not implemented on iOS yet');
+  },
+};
+EOF
+
+echo "Created iOS-specific database implementation"
+
+# 4. Create an iOS podfile post-install hook for SQLite
+echo "Adding SQLite pod configuration..."
+
+# Go to the iOS directory
 cd ios
-rm -rf Pods
-rm -rf Podfile.lock
-rm -rf build
-rm -rf DerivedData
-rm -rf *.xcworkspace
 
-# Ensure we have a clean Podfile with working post_install hooks
-cat > Podfile << 'EOL'
-require_relative '../node_modules/react-native/scripts/react_native_pods'
+# Check if Podfile exists
+if [ ! -f "Podfile" ]; then
+  echo "Error: Podfile not found. Run prepare-ios-build.sh first."
+  exit 1
+fi
 
-# Define iOS platform version
-platform :ios, '15.1'
+# Backup Podfile
+cp Podfile Podfile.bak
 
-# Disable Codegen discovery to prevent failures
-ENV['RCT_NEW_ARCH_ENABLED'] = '0'
-ENV['NO_FLIPPER'] = '1'
+# Add post-install hook if it doesn't exist
+if ! grep -q "post_install do |installer|" Podfile; then
+  echo "Adding post_install hook to Podfile..."
+  
+  # Append post_install configuration
+  cat >> Podfile << 'EOF'
 
-prepare_react_native_project!
-
-# Install pods with deterministic UUIDs
-install! 'cocoapods', :deterministic_uuids => false
-
-target 'AARecoveryTracker' do
-  # Use direct references for reliability
-  config = { :reactNativePath => "../node_modules/react-native" }
-  
-  # React Native core - with simplified config
-  use_react_native!(
-    :path => config[:reactNativePath],
-    :hermes_enabled => true,
-    :app_path => "#{Pod::Config.instance.installation_root}/.."
-  )
-  
-  # Add SQLite for local storage - use a version that properly configures headers
-  pod 'react-native-sqlite-storage', :path => '../node_modules/react-native-sqlite-storage'
-  
-  # Explicitly link system SQLite
-  pod 'sqlite3', '~> 3.39.2'
-  
-  # Add DoubleConversion dependency explicitly
-  pod 'DoubleConversion', :podspec => '../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec'
-  
-  # Add other required native modules
-  pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
-  
-  # Navigation dependencies
-  pod 'RNScreens', :path => '../node_modules/react-native-screens'
-  pod 'RNGestureHandler', :path => '../node_modules/react-native-gesture-handler'
-  pod 'RNReanimated', :path => '../node_modules/react-native-reanimated'
-  pod 'react-native-safe-area-context', :path => '../node_modules/react-native-safe-area-context'
-  
-  # Fix header search paths and compiler flags for SQLite
-  post_install do |installer|
-    installer.pods_project.targets.each do |target|
-      target.build_configurations.each do |config|
-        config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.1'
-        
-        # Add SQLite header search paths if needed
-        if target.name == 'react-native-sqlite-storage'
-          config.build_settings['HEADER_SEARCH_PATHS'] ||= '$(inherited) '
-          config.build_settings['HEADER_SEARCH_PATHS'] += '"${PODS_ROOT}/sqlite3/sqlite3-all"'
-          config.build_settings['SWIFT_INCLUDE_PATHS'] = '$(inherited) $(PODS_ROOT)/sqlite3'
-        end
-        
-        # Handle Swift version
-        if config.build_settings['SWIFT_VERSION']
-          config.build_settings['SWIFT_VERSION'] = '5.0'
-        end
-        
-        # Support for M1 Macs
-        config.build_settings["EXCLUDED_ARCHS[sdk=iphonesimulator*]"] = "arm64"
-      end
-    end
-    
-    # Additional fixes from React Native post install
-    react_native_post_install(
-      installer,
-      config[:reactNativePath],
-      :mac_catalyst_enabled => false
-    )
-    
-    # Apply M1 workaround manually since the helper method doesn't exist
-    installer.pods_project.targets.each do |target|
-      target.build_configurations.each do |config|
-        if config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'].to_f < 12.0
-          config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '12.0'
-        end
+# Post install processing for SQLite compatibility
+post_install do |installer|
+  installer.pods_project.targets.each do |target|
+    target.build_configurations.each do |config|
+      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '12.0'
+      
+      # SQLite-specific settings
+      if target.name == 'react-native-sqlite-storage'
+        config.build_settings['CLANG_WARN_STRICT_PROTOTYPES'] = 'NO'
+        config.build_settings['HEADER_SEARCH_PATHS'] = '$(inherited) "${PODS_ROOT}/Headers/Public" "${PODS_ROOT}/Headers/Public/React-hermes"'
       end
     end
   end
 end
-EOL
+EOF
 
-# Step 2: Update Bridging Header and AppDelegate
-echo "Step 2: Making sure Bridging Header is correct..."
-cat > AARecoveryTracker/AARecoveryTracker-Bridging-Header.h << 'EOL'
-#ifndef AARecoveryTracker_Bridging_Header_h
-#define AARecoveryTracker_Bridging_Header_h
-
-// React Native imports
-#import <React/RCTBridgeModule.h>
-#import <React/RCTViewManager.h>
-#import <React/RCTEventEmitter.h>
-#import <React/RCTBridge.h>
-#import <React/RCTBundleURLProvider.h>
-#import <React/RCTRootView.h>
-
-// Use system SQLite import instead of trying to reference SQLite3 directly
-#import <sqlite3.h>
-
-#endif /* AARecoveryTracker_Bridging_Header_h */
-EOL
-
-# Update AppDelegate to remove Expo references
-echo "Step 2b: Replacing AppDelegate.swift with pure React Native version..."
-cat > AARecoveryTracker/AppDelegate.swift << 'EOL'
-import UIKit
-import React
-
-@UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate, RCTBridgeDelegate {
-  var window: UIWindow?
-
-  func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-    let jsCodeLocation: URL
-    
-    // Use the main bundle for production release
-    jsCodeLocation = RCTBundleURLProvider.sharedSettings().jsBundleURL(forBundleRoot: "index")
-    
-    let rootView = RCTRootView(
-      bundleURL: jsCodeLocation,
-      moduleName: "AARecoveryTracker",
-      initialProperties: nil,
-      launchOptions: launchOptions
-    )
-    
-    rootView.backgroundColor = UIColor(red: 1, green: 1, blue: 1, alpha: 1)
-    
-    let rootViewController = UIViewController()
-    rootViewController.view = rootView
-    
-    self.window = UIWindow(frame: UIScreen.main.bounds)
-    self.window?.rootViewController = rootViewController
-    self.window?.makeKeyAndVisible()
-    
-    return true
-  }
+  echo "Updated Podfile with SQLite configuration"
   
-  // MARK: - RCTBridgeDelegate Method
-  func sourceURL(for bridge: RCTBridge!) -> URL! {
-    return RCTBundleURLProvider.sharedSettings().jsBundleURL(forBundleRoot: "index")
-  }
-  
-  // MARK: - UISceneSession Lifecycle
-  func application(_ application: UIApplication, configurationForConnecting connectingSceneSession: UISceneSession, options: UIScene.ConnectionOptions) -> UISceneConfiguration {
-    return UISceneConfiguration(name: "Default Configuration", sessionRole: connectingSceneSession.role)
-  }
-  
-  func application(_ application: UIApplication, didDiscardSceneSessions sceneSessions: Set<UISceneSession>) {
-    // Called when the user discards a scene session
-  }
-}
-EOL
-
-# Step 3: Force SQLite framework linkage in the Xcode project (pbxproj)
-echo "Step 3: Updating project.pbxproj..."
-# Back up first
-cp AARecoveryTracker.xcodeproj/project.pbxproj AARecoveryTracker.xcodeproj/project.pbxproj.backup
-
-# Add libsqlite3.tbd to Frameworks if not present
-if ! grep -q "libsqlite3.tbd" AARecoveryTracker.xcodeproj/project.pbxproj; then
-  echo "Adding libsqlite3.tbd to frameworks..."
-  # This is a complex operation normally requiring PlistBuddy or xcodeproj gem
-  # For scripts, we'll need to manually inform the user to add it in Xcode
-  echo "NOTE: Please manually add libsqlite3.tbd to your project frameworks in Xcode"
-  echo "1. Open AARecoveryTracker.xcworkspace in Xcode"
-  echo "2. Select the AARecoveryTracker target"
-  echo "3. Go to 'Build Phases' tab"
-  echo "4. Expand 'Link Binary With Libraries'"
-  echo "5. Click + and search for 'libsqlite3.tbd', then add it"
+  # Run pod install again
+  echo "Running 'pod install' to apply changes..."
+  pod install
+else
+  echo "Podfile already has post_install hook, skipping modification."
 fi
 
-# Step 4: Install Pods with SQLite and correct search paths
-echo "Step 4: Running pod install..."
-pod install --verbose
-
-echo "Done! Please open the workspace in Xcode:"
-echo "open AARecoveryTracker.xcworkspace"
-echo ""
-echo "If you still encounter SQLite header issues, please follow the manual note above to add libsqlite3.tbd to your Xcode project."
+echo "=========================================="
+echo "iOS SQLite fixes applied!"
+echo "=========================================="
+echo "Important notes:"
+echo "1. Make sure to run the app on an iOS simulator or device to test SQLite"
+echo "2. Check app logs for any SQLite-related errors"
+echo "3. If issues persist, try cleaning the build and rebuilding"
+echo "=========================================="
