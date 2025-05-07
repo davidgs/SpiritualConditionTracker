@@ -284,13 +284,10 @@ try {
   // Remove .expo directory
   execSync('rm -rf .expo', { cwd: expoAppDir, stdio: 'inherit' });
   
-  // Remove web-build directory
-  execSync('rm -rf web-build', { cwd: expoAppDir, stdio: 'inherit' });
+  // Only remove node_modules/.cache and .expo, which are safe to delete
+  // Don't delete the web-build directory or global Expo caches to improve build times
   
-  // Remove any Metro bundler caches
-  execSync('rm -rf ~/.expo', { stdio: 'inherit' });
-  
-  // Clean require cache at runtime
+  // Clean require cache at runtime (only for this app's modules)
   Object.keys(require.cache).forEach(function(key) {
     if (key.includes('expo-app')) {
       delete require.cache[key];
@@ -421,7 +418,7 @@ const expo = spawn('npx', [
   '--clear',             // Clear the cache
   '--no-dev',            // Disable development mode for better reliability
   '--reset-cache',       // Reset the cache entirely
-  '--max-workers', '4'   // Limit workers to avoid memory issues
+  '--max-workers', '8'   // Increased workers for faster bundling
 ], {
   cwd: expoAppDir,
   env: env,
