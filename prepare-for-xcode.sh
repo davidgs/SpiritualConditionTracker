@@ -305,12 +305,220 @@ if [ ! -d "$PROJECT_ROOT/expo-app/ios" ]; then
   exit 1
 fi
 
+# Ensure CocoaPods is properly installed
+echo "Checking CocoaPods installation..."
+if ! command -v pod &> /dev/null; then
+  echo "CocoaPods not found. Installing CocoaPods..."
+  sudo gem install cocoapods
+fi
+
+# Find the app name from app.json first, we'll need it for the Podfile
+APP_NAME=$(grep -o '"name": *"[^"]*"' "$PROJECT_ROOT/expo-app/app.json" | head -1 | cut -d'"' -f4)
+if [ -z "$APP_NAME" ]; then
+  APP_NAME="SpiritualConditionTracker" # Fallback name
+fi
+
+# Convert to a valid target name (remove spaces, special chars)
+XCODE_TARGET_NAME=$(echo "$APP_NAME" | sed 's/[^a-zA-Z0-9]//g')
+echo "Using Xcode target name: $XCODE_TARGET_NAME"
+
+# Check if Podfile exists
+echo "Checking for Podfile..."
+cd "$PROJECT_ROOT/expo-app/ios"
+if [ ! -f "Podfile" ]; then
+  echo "Podfile not found. Creating a minimal Podfile..."
+  # We need to avoid using heredoc EOF to properly expand variables
+  echo 'require_relative "../node_modules/react-native/scripts/react_native_pods"' > Podfile
+  echo 'require_relative "../node_modules/@react-native-community/cli-platform-ios/native_modules"' >> Podfile
+  echo '' >> Podfile
+  echo 'platform :ios, min_ios_version_supported' >> Podfile
+  echo 'prepare_react_native_project!' >> Podfile
+  echo '' >> Podfile
+  echo '# If you are using a `react-native-flipper` your iOS build will fail when `NO_FLIPPER=1` is set.' >> Podfile
+  echo '# because `react-native-flipper` depends on (FlipperKit,...) that will be excluded' >> Podfile
+  echo '#' >> Podfile
+  echo '# To fix this you can also exclude `react-native-flipper` using a `react-native.config.js`' >> Podfile
+  echo '# ```js' >> Podfile
+  echo '# module.exports = {' >> Podfile
+  echo '#   dependencies: {' >> Podfile
+  echo '#     ...(process.env.NO_FLIPPER ? { "react-native-flipper": { platforms: { ios: null } } } : {}),' >> Podfile
+  echo '# ```' >> Podfile
+  echo 'flipper_config = ENV["NO_FLIPPER"] == "1" ? FlipperConfiguration.disabled : FlipperConfiguration.enabled' >> Podfile
+  echo '' >> Podfile
+  echo 'linkage = ENV["USE_FRAMEWORKS"]' >> Podfile
+  echo 'if linkage != nil' >> Podfile
+  echo '  Pod::UI.puts "Configuring Pod with #{linkage}ally linked Frameworks".green' >> Podfile
+  echo '  use_frameworks! :linkage => linkage.to_sym' >> Podfile
+  echo 'end' >> Podfile
+  echo '' >> Podfile
+  echo "target '$XCODE_TARGET_NAME' do" >> Podfile
+  echo '  config = use_native_modules!' >> Podfile
+  echo '' >> Podfile
+  echo '  # Flags change depending on the env values.' >> Podfile
+  echo '  flags = get_default_flags()' >> Podfile
+  echo '' >> Podfile
+  echo '  use_react_native!(' >> Podfile
+  echo '    :path => config[:reactNativePath],' >> Podfile
+  echo '    # Hermes is now enabled by default. Disable by setting this flag to false.' >> Podfile
+  echo '    :hermes_enabled => flags[:hermes_enabled],' >> Podfile
+  echo '    :fabric_enabled => flags[:fabric_enabled],' >> Podfile
+  echo '    # Enables Flipper.' >> Podfile
+  echo '    #' >> Podfile
+  echo '    # Note that if you have use_frameworks! enabled, Flipper will not work and' >> Podfile
+  echo '    # you should disable the next line.' >> Podfile
+  echo '    :flipper_configuration => flipper_config,' >> Podfile
+  echo '    # An absolute path to your application root.' >> Podfile
+  echo '    :app_path => "#{Pod::Config.instance.installation_root}/.."' >> Podfile
+  echo '  )' >> Podfile
+  echo '' >> Podfile
+  echo "  # SQLite specific pod" >> Podfile
+  echo "  pod 'react-native-sqlite-storage', :path => '../node_modules/react-native-sqlite-storage'" >> Podfile
+  echo '' >> Podfile
+  echo '  # Post install processing for SQLite compatibility' >> Podfile
+  echo '  post_install do |installer|' >> Podfile
+  echo '    installer.pods_project.targets.each do |target|' >> Podfile
+  echo '      target.build_configurations.each do |config|' >> Podfile
+  echo "        config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '12.0'" >> Podfile
+  echo '        ' >> Podfile
+  echo "        # SQLite-specific settings" >> Podfile
+  echo "        if target.name == 'react-native-sqlite-storage'" >> Podfile
+  echo "          config.build_settings['CLANG_WARN_STRICT_PROTOTYPES'] = 'NO'" >> Podfile
+  echo "          config.build_settings['HEADER_SEARCH_PATHS'] = '$(inherited) \"\${PODS_ROOT}/Headers/Public\" \"\${PODS_ROOT}/Headers/Public/React-hermes\"'" >> Podfile
+  echo '        end' >> Podfile
+  echo '      end' >> Podfile
+  echo '    end' >> Podfile
+  echo '    ' >> Podfile
+  echo '    # Additional code signing fix' >> Podfile
+  echo '    installer.pods_project.build_configurations.each do |config|' >> Podfile
+  echo '      config.build_settings["EXCLUDED_ARCHS[sdk=iphonesimulator*]"] = "arm64"' >> Podfile
+  echo '    end' >> Podfile
+  echo '  end' >> Podfile
+  echo 'end' >> Podfile
+  
+  echo "Created new Podfile with SQLite configuration"
+fi
+
+# Manually run pod install in the iOS directory to ensure dependencies are in sync
+echo "Running pod install to synchronize dependencies..."
+pod install
+
+# Create a JavaScript bundle directly to embed in the iOS app
+echo "Creating a JavaScript bundle for embedding in the iOS app..."
+cd "$PROJECT_ROOT/expo-app"
+
+# Create assets directory if it doesn't exist
+mkdir -p ios/assets
+
+# Bundle the JavaScript code
+echo "Building JavaScript bundle with Metro..."
+npx react-native bundle --entry-file=index.js --platform=ios --dev=false --bundle-output=ios/assets/main.jsbundle --assets-dest=ios/assets
+
+# Add code to use the embedded bundle in AppDelegate.m
+APPDELEGATE_PATH=$(find "$PROJECT_ROOT/expo-app/ios" -name "AppDelegate.m" | head -1)
+if [ -f "$APPDELEGATE_PATH" ]; then
+  echo "Found AppDelegate.m at $APPDELEGATE_PATH"
+  
+  # Check if we need to update the AppDelegate
+  if ! grep -q "jsCodeLocation = \[\[NSBundle mainBundle\] URLForResource:@\"main\" withExtension:@\"jsbundle\"\];" "$APPDELEGATE_PATH"; then
+    echo "Updating AppDelegate.m to use embedded JavaScript bundle..."
+    # Make a backup first
+    cp "$APPDELEGATE_PATH" "${APPDELEGATE_PATH}.bak"
+    
+    # Replace the jsCodeLocation line - handle macOS sed differently
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+      # macOS sed requires a suffix with -i
+      sed -i '' -e 's|jsCodeLocation = \[\[RCTBundleURLProvider sharedSettings\] jsBundleURLForBundleRoot:@"index"];|// Use this for release builds\n  jsCodeLocation = [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];\n  \n  // Use this for debugging\n  // jsCodeLocation = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index"];|g' "$APPDELEGATE_PATH"
+    else
+      # Linux sed works without a suffix
+      sed -i -e 's|jsCodeLocation = \[\[RCTBundleURLProvider sharedSettings\] jsBundleURLForBundleRoot:@"index"];|// Use this for release builds\n  jsCodeLocation = [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];\n  \n  // Use this for debugging\n  // jsCodeLocation = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index"];|g' "$APPDELEGATE_PATH"
+    fi
+    
+    echo "AppDelegate.m updated to use embedded bundle"
+  else
+    echo "AppDelegate.m already configured to use embedded bundle"
+  fi
+else
+  echo "Warning: Could not find AppDelegate.m"
+fi
+
 # After prebuild is done, prepare the iOS project for Xcode
 echo "Running 'npx expo run:ios' to prepare the build for Xcode..."
 echo "Note: This won't actually launch the simulator, just prepare the project for Xcode."
 
-# Use the --no-install flag to avoid installing pods again (already done in prebuild)
-cd "$PROJECT_ROOT/expo-app"
+# Ensure the jsbundle is included in the Xcode project
+echo "Checking for main.jsbundle in Xcode project..."
+if [ -f "$PROJECT_ROOT/expo-app/ios/assets/main.jsbundle" ]; then
+  # Check if the project has a reference to the jsbundle
+  PBXPROJ_PATH=$(find "$PROJECT_ROOT/expo-app/ios" -name "project.pbxproj" | head -1)
+  if [ -f "$PBXPROJ_PATH" ]; then
+    if ! grep -q "main.jsbundle" "$PBXPROJ_PATH"; then
+      echo "WARNING: main.jsbundle is not referenced in the Xcode project."
+      echo "You will need to manually add the bundle to your Xcode project:"
+      echo "1. Open Xcode and the workspace"
+      echo "2. Right-click on your project in the Project Navigator"
+      echo "3. Select 'Add Files to \"YourProject\"...'"
+      echo "4. Navigate to ios/assets/ and select main.jsbundle"
+      echo "5. Make sure 'Copy items if needed' is checked"
+      echo "6. Click Add"
+    else
+      echo "main.jsbundle is already referenced in the Xcode project."
+    fi
+  else
+    echo "WARNING: Could not find project.pbxproj file."
+  fi
+else
+  echo "WARNING: main.jsbundle was not generated. This may cause runtime errors."
+fi
+
+# Create a simple script for users to manually add the bundle if needed
+cat > "$PROJECT_ROOT/add-bundle-to-xcode.sh" << 'EOF'
+#!/bin/bash
+echo "This script will help you manually add the JavaScript bundle to your Xcode project."
+echo "Please run this script AFTER opening your Xcode project."
+echo ""
+
+# Find the app directory
+APP_DIR=$(find . -type d -name "ios" | head -1)
+if [ -z "$APP_DIR" ]; then
+  echo "Error: Could not find iOS directory."
+  exit 1
+fi
+
+# Check if the bundle exists
+if [ ! -f "$APP_DIR/assets/main.jsbundle" ]; then
+  echo "Error: main.jsbundle not found in $APP_DIR/assets/"
+  echo "Creating the assets directory and generating the bundle..."
+  mkdir -p "$APP_DIR/assets"
+  
+  # Build the bundle
+  npx react-native bundle --entry-file=index.js --platform=ios --dev=false --bundle-output="$APP_DIR/assets/main.jsbundle" --assets-dest="$APP_DIR/assets"
+  
+  if [ $? -ne 0 ]; then
+    echo "Failed to generate bundle. Please check the error message above."
+    exit 1
+  fi
+fi
+
+echo "Bundle generated at: $APP_DIR/assets/main.jsbundle"
+echo ""
+echo "Please follow these steps in Xcode:"
+echo "1. Right-click on your project in the Project Navigator"
+echo "2. Select 'Add Files to [YourProject]...'"
+echo "3. Navigate to $APP_DIR/assets/ and select main.jsbundle"
+echo "4. Make sure 'Copy items if needed' is checked"
+echo "5. Click Add"
+echo ""
+echo "After adding the bundle, make sure AppDelegate.m is configured to use it:"
+echo "Find the line with 'jsCodeLocation = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@\"index\"];'"
+echo "Replace it with: jsCodeLocation = [[NSBundle mainBundle] URLForResource:@\"main\" withExtension:@\"jsbundle\"];"
+echo ""
+echo "Then build and run the project again."
+EOF
+
+chmod +x "$PROJECT_ROOT/add-bundle-to-xcode.sh"
+echo "Created helper script: add-bundle-to-xcode.sh"
+
+# Run the bundled build with the generated assets
 npx expo run:ios --configuration Release --no-install --no-build
 
 # Validate the build
@@ -395,11 +603,24 @@ App Name: $APP_NAME
 
 React Native SQLite Storage: $(grep -q "react-native-sqlite-storage" "$PROJECT_ROOT/expo-app/package.json" && echo "Installed" || echo "Not installed!")
 Platform-specific SQLite implementation: $(ls -la "$PROJECT_ROOT/expo-app/src/database/platforms/database.ios.js" 2>/dev/null || echo "Not found!")
+JavaScript Bundle: $(ls -la "$PROJECT_ROOT/expo-app/ios/assets/main.jsbundle" 2>/dev/null || echo "Not found!")
+AppDelegate.m configuration: $(grep -q "URLForResource:@\"main\" withExtension:@\"jsbundle\"" "$APPDELEGATE_PATH" && echo "Configured to use embedded bundle" || echo "Using RCTBundleURLProvider")
 
 Next steps:
 1. Open the Xcode workspace at: $WORKSPACE_PATH
 2. Select your team in Signing & Capabilities
 3. Run the app on a simulator or device
+
+Troubleshooting:
+If you get 'No script URL provided' error:
+- Make sure the JavaScript bundle was generated in ios/assets/main.jsbundle
+- Verify AppDelegate.m is configured to use the embedded bundle
+- Check that the bundle is included in the Xcode project (Add files to project if needed)
+
+For other issues:
+- Check the console logs in Xcode for more specific error messages
+- Make sure all native dependencies are properly linked
+- Verify that the SQLite storage module is properly configured
 EOF
 
 echo "=========================================================="
