@@ -567,59 +567,6 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log("[Icon Helper] Added font preloads");
   }
   
-  // Function to fix hamburger menu icon specifically
-  function fixHamburgerMenu() {
-    console.log("[Icon Helper] Looking for hamburger menu to fix...");
-    
-    // Find the button with aria-label="Show navigation menu"
-    const menuButton = document.querySelector('button[aria-label="Show navigation menu"]');
-    if (menuButton) {
-      console.log("[Icon Helper] Found menu button, applying fix");
-      
-      // Check if the button already has content
-      const iconContainer = menuButton.querySelector('.css-g5y9jx.r-1mlwlqe');
-      if (iconContainer) {
-        // If the container is empty or has an SVG with no visible content
-        const svg = iconContainer.querySelector('svg');
-        if (!iconContainer.innerHTML || 
-            (svg && !svg.querySelector('path:not([fill="none"])')) ||
-            (svg && (svg.getAttribute('width') === '0' || svg.getAttribute('height') === '0'))) {
-          
-          // Create and inject a new hamburger icon SVG
-          console.log("[Icon Helper] Creating new hamburger icon");
-          iconContainer.innerHTML = 
-            '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">' +
-            '<path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" fill="currentColor"/>' +
-            '</svg>';
-          
-          // Add a class to track fixed elements
-          menuButton.classList.add('icon-fixed');
-          console.log("[Icon Helper] Hamburger icon fixed!");
-        }
-      } else {
-        // If there's no icon container at all, create one
-        console.log("[Icon Helper] Creating new icon container");
-        const newContainer = document.createElement('div');
-        newContainer.className = 'hamburger-icon-container';
-        newContainer.style.width = '24px';
-        newContainer.style.height = '24px';
-        
-        // Add hamburger SVG
-        newContainer.innerHTML = 
-          '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">' +
-          '<path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" fill="currentColor"/>' +
-          '</svg>';
-        
-        // Insert at the beginning of the button
-        menuButton.insertBefore(newContainer, menuButton.firstChild);
-        menuButton.classList.add('icon-fixed-container-added');
-        console.log("[Icon Helper] Created and added new hamburger icon");
-      }
-    } else {
-      console.log("[Icon Helper] No menu button found yet, will try again later");
-    }
-  }
-
   // Run our fixes with a slight delay to let other scripts initialize
   setTimeout(function() {
     injectVectorIconsCSS();
@@ -628,12 +575,23 @@ document.addEventListener('DOMContentLoaded', function() {
     // Force SVG rendering in icon components by simulating a resize
     setTimeout(() => window.dispatchEvent(new Event('resize')), 1000);
     
-    // Apply hamburger menu fix with several retries
-    fixHamburgerMenu();
-    setTimeout(fixHamburgerMenu, 1000);
-    setTimeout(fixHamburgerMenu, 2000);
-    setTimeout(fixHamburgerMenu, 3000);
-    setTimeout(fixHamburgerMenu, 5000);
+    // Add CSS-based hamburger icon fix
+    const iconStyle = document.createElement('style');
+    iconStyle.textContent = 
+      "/* Fix for empty hamburger menu icon */" +
+      "button[aria-label='Show navigation menu'] svg:empty," +
+      "button[aria-label='Open drawer'] svg:empty," +
+      "button[aria-label='Show navigation menu'] svg[width='0']," +
+      "button[aria-label='Open drawer'] svg[width='0'] {" +
+      "  background-image: url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\"><path fill=\"currentColor\" d=\"M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z\"/></svg>');" +
+      "  background-repeat: no-repeat;" +
+      "  background-position: center;" +
+      "  width: 24px !important;" +
+      "  height: 24px !important;" +
+      "  display: block;" +
+      "}";
+    document.head.appendChild(iconStyle);
+    console.log("[Icon Helper] Added hamburger icon fix via CSS");
   }, 500);
 });
 
