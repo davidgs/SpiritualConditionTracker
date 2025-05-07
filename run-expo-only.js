@@ -400,7 +400,7 @@ if (fs.existsSync(appJsPath)) {
       // Update the existing version string
       appJsContent = appJsContent.replace(
         /APP_VERSION = "([^"]*)"/,
-        `APP_VERSION = "1.0.3 - ${currentDateString} - BUILD-${timestamp}"`
+        `APP_VERSION = "1.0.4 - ${currentDateString} - BUILD-${timestamp}"`
       );
       fs.writeFileSync(appJsPath, appJsContent);
       console.log(`Updated App.js version to include build timestamp: ${timestamp}`);
@@ -523,7 +523,7 @@ function injectVersionInfo() {
     const appJsPath = path.join(expoAppDir, 'App.js');
     const appJsContent = fs.readFileSync(appJsPath, 'utf8');
     let versionMatch = appJsContent.match(/APP_VERSION = "([^"]*)"/);
-    const currentVersion = versionMatch ? versionMatch[1] : `1.0.3 - ${new Date().toLocaleString()}`;
+    const currentVersion = versionMatch ? versionMatch[1] : `1.0.4 - ${new Date().toLocaleString()}`;
     
     // Create a tiny JS file that forces the app to show the correct version and helps with icons
     const versionJs = `
