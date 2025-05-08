@@ -1,80 +1,77 @@
-# Xcode Project Configuration Checklist
+# iOS Xcode Build Checklist
 
-Use this checklist to ensure the iOS build is properly configured before building with Xcode.
+Use this checklist to ensure a successful build of the Spiritual Condition Tracker in Xcode.
 
-## Project Settings
+## Before Opening Xcode
 
-- [ ] **Bundle Identifier**: `com.example.aarecoverytracker` (change as needed)
-- [ ] **Version**: 1.0.0
-- [ ] **Build**: 1
-- [ ] **Deployment Target**: iOS 15.1 or higher
-- [ ] **Devices**: iPhone, iPad (Universal)
-- [ ] **Orientation**: Portrait only (as configured in app.json)
+- [ ] Run the prepare-ios-build.sh script
+- [ ] Verify iOS directory was created in expo-app folder
+- [ ] Verify CocoaPods dependencies were installed
 
-## Signing & Capabilities
+## Xcode Project Setup
 
-- [ ] **Signing Team**: Selected Apple Developer account team
-- [ ] **Automatically manage signing**: Enabled (recommended for simplicity)
+- [ ] Open the `.xcworkspace` file (not the .xcodeproj)
+- [ ] Select the main target in the project navigator
+- [ ] Go to Signing & Capabilities tab
+- [ ] Select your development team
+- [ ] Ensure "Automatically manage signing" is checked
+- [ ] Wait for provisioning profile generation to complete
 
-### Required Capabilities
-- [ ] **HealthKit**
-- [ ] **Push Notifications**
-- [ ] **App Groups**
-  - group.com.example.aarecoverytracker
-- [ ] **Associated Domains** (if using universal links)
-- [ ] **Background Modes**
-  - Location updates
-  - Remote notifications
+## Build Configuration
 
-## Info.plist Keys
+- [ ] Set the build scheme to "Debug" for testing or "Release" for production
+- [ ] Select a simulator or connected device as the build target
+- [ ] Clean the build folder (Product > Clean Build Folder)
 
-Ensure these keys are present in the Info.plist file:
+## Required Capabilities Verification
 
-- [ ] **NSLocationWhenInUseUsageDescription**: "This app uses your location to find nearby AA members when you enable discoverability."
-- [ ] **NSCalendarsUsageDescription**: "This app needs access to your calendar to add AA meeting reminders."
-- [ ] **NSRemindersUsageDescription**: "This app needs access to your reminders to set meeting alerts."
-- [ ] **NSUserActivityTypes**: Contains "AddToCalendarIntent"
-- [ ] **UIRequiresFullScreen**: Set to appropriate value
-- [ ] **UIStatusBarStyle**: Set to appropriate style
-- [ ] **LSApplicationQueriesSchemes**: If the app needs to open other apps
+Ensure these capabilities are properly configured:
 
-## Building Process
+- [ ] Background Modes (Required for Bluetooth and background operations)
+  - [ ] Bluetooth (Central & Peripheral)
+  - [ ] Location updates
+  - [ ] Background fetch
 
-### Development Build
-- [ ] Connect iOS device (if building for device)
-- [ ] Select appropriate scheme (Debug)
-- [ ] Select appropriate destination (device or simulator)
-- [ ] Run the app (⌘R)
+- [ ] Privacy permissions in Info.plist:
+  - [ ] NSCalendarsUsageDescription (Calendar access)
+  - [ ] NSLocationWhenInUseUsageDescription (Location access)
+  - [ ] NSBluetoothAlwaysUsageDescription (Bluetooth access)
+  - [ ] NSBluetoothPeripheralUsageDescription (Bluetooth peripheral access)
 
-### Archive for Distribution
-- [ ] Update version and build numbers if needed
-- [ ] Select "Any iOS Device" as build destination
-- [ ] Select Product > Archive from the menu
-- [ ] Use Organizer to validate and distribute the app
+## SQLite Configuration
+
+- [ ] Verify SQLite libraries are properly linked:
+  - [ ] libsqlite3.tbd is in the "Link Binary with Libraries" build phase
+  - [ ] Pods for react-native-sqlite-storage are installed
 
 ## Common Build Errors
 
-### Code Signing Errors
-- Check that the provisioning profile is valid and matches the bundle identifier
-- Ensure your Apple Developer account has the necessary entitlements
+If you encounter any of these issues, here are potential solutions:
 
-### Missing Dependencies
-- Run `pod install` in the ios directory to update CocoaPods dependencies
+### Build Failed: "Module not found"
+- Clean build folder and rebuild
+- Run `pod install` again in the iOS directory
 
-### Architecture Issues
-- Make sure you're building for the correct architecture (arm64 for newer devices)
+### SQLite Errors
+- Check database path configuration in database.ios.js
+- Verify SQLite libraries are properly linked
 
-### Build Optimization
-- Clean the build folder (⇧⌘K) before rebuilding if encountering strange errors
-- Delete derived data if necessary (Xcode > Preferences > Locations > Derived Data > delete)
+### Missing Icon Fonts
+- Check that all fonts are in assets/fonts directory
+- Run `npx react-native-asset` to link the fonts
+- Clean and rebuild the project
 
-## Final Testing Checklist
+### Signing Issues
+- Verify Apple Developer account is valid
+- Try refreshing provisioning profiles in Xcode
+- Check bundle identifier matches your provisioning profile
 
-Before submitting to the App Store:
+## Distribution Preparation
 
-- [ ] App launches correctly
-- [ ] All permissions are requested with clear explanations
-- [ ] All features work as expected
-- [ ] Performance is good on target devices
-- [ ] App follows Apple's Human Interface Guidelines
-- [ ] App complies with App Store Review Guidelines
+When ready to create an archive for distribution:
+
+- [ ] Update version and build number in app.json
+- [ ] Set build scheme to "Release"
+- [ ] Select "Any iOS Device (arm64)" as the build target
+- [ ] Product > Archive
+- [ ] Follow Xcode distribution workflow for TestFlight or App Store
