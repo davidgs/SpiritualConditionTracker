@@ -14,14 +14,12 @@ export const SimpleIconFallback = () => {
   }
   
   return (
-    <View style={styles.container} accessibilityElementsHidden={true}>
-      {/* These invisible icons ensure the fonts are loaded */}
+    <View style={styles.container}>
       <MaterialCommunityIcons name="home" size={1} color="transparent" />
       <MaterialCommunityIcons name="menu" size={1} color="transparent" />
+      <MaterialCommunityIcons name="account" size={1} color="transparent" />
       <FontAwesome name="home" size={1} color="transparent" />
-      <FontAwesome name="bars" size={1} color="transparent" />
       <Ionicons name="ios-home" size={1} color="transparent" />
-      <Ionicons name="ios-menu" size={1} color="transparent" />
     </View>
   );
 };
@@ -32,7 +30,8 @@ const styles = StyleSheet.create({
     opacity: 0,
     width: 0,
     height: 0,
-    overflow: 'hidden',
+    left: -1000,
+    top: -1000,
   },
 });
 

@@ -1,19 +1,9 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
 
 /**
- * IconFallback component - Completely simplified to fix bundling issues
- * This is just a placeholder that doesn't do anything
+ * IconFallback component - Completely simplified version
+ * This component intentionally does nothing to avoid any potential issues
  */
-export const IconFallback = () => {
-  // Return empty component to avoid any bundling issues
-  return null;
-};
-
-const styles = StyleSheet.create({
-  container: {
-    display: 'none',
-  },
-});
+export const IconFallback = () => null;
 
 export default IconFallback;
