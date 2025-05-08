@@ -134,6 +134,52 @@ export const executeQuery = (query, params = []) => {
     try {
       console.log('Executing query:', query, params);
       
+      // Special case for the spiritual fitness calculation query
+      if (query.includes('activity_type') && query.includes('COUNT(*)') && query.includes('GROUP BY')) {
+        console.log('Special handling for fitness calculation query');
+        
+        // Get data from activity_log table
+        const data = JSON.parse(localStorage.getItem(`${DB_PREFIX}activity_log`) || '[]');
+        
+        // Filter by date if needed
+        let filteredData = data;
+        if (params.length > 0 && query.includes('date >=')) {
+          const dateStr = params[0];
+          filteredData = data.filter(item => item.date >= dateStr);
+        }
+        
+        // Group by activity_type
+        const grouped = {};
+        filteredData.forEach(item => {
+          const type = item.activity_type;
+          if (!type) return; // Skip items with no activity_type
+          
+          if (!grouped[type]) {
+            grouped[type] = {
+              activity_type: type,
+              count: 0,
+              total_duration: 0
+            };
+          }
+          grouped[type].count++;
+          grouped[type].total_duration += (parseInt(item.duration) || 0);
+        });
+        
+        // Convert to array
+        const results = Object.values(grouped);
+        
+        console.log('Fitness calculation results:', results);
+        
+        resolve({
+          rows: {
+            _array: results,
+            length: results.length,
+            item: (index) => (index >= 0 && index < results.length) ? results[index] : null
+          }
+        });
+        return;
+      }
+      
       // CREATE TABLE - just ignore, tables are pre-created
       if (query.toLowerCase().startsWith('create table')) {
         resolve({ rowsAffected: 0 });
@@ -230,44 +276,7 @@ export const executeQuery = (query, params = []) => {
           // Get data from localStorage
           const data = JSON.parse(localStorage.getItem(tableName) || '[]');
           
-          // Special case for fitness calculation query
-          if (query.toLowerCase().includes('group by activity_type')) {
-            console.log('Handling special GROUP BY query for spiritual fitness calculation');
-            
-            // Extract date filter from WHERE clause if present
-            let filteredData = data;
-            if (query.toLowerCase().includes('where date >=')) {
-              const dateStr = params[0];
-              filteredData = data.filter(item => item.date >= dateStr);
-            }
-            
-            // Group by activity_type
-            const grouped = {};
-            filteredData.forEach(item => {
-              const type = item.activity_type;
-              if (!grouped[type]) {
-                grouped[type] = {
-                  activity_type: type,
-                  count: 0,
-                  total_duration: 0
-                };
-              }
-              grouped[type].count++;
-              grouped[type].total_duration += (item.duration || 0);
-            });
-            
-            // Convert to array
-            const results = Object.values(grouped);
-            
-            resolve({
-              rows: {
-                _array: results,
-                length: results.length,
-                item: (index) => (index >= 0 && index < results.length) ? results[index] : null
-              }
-            });
-            return;
-          }
+          // We handle the special Group By query at the top level
           
           // Regular SELECT query
           // Extract WHERE clause
