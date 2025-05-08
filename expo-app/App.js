@@ -33,8 +33,7 @@ import { MessagingProvider } from './src/contexts/MessagingContext';
 // Import database functions
 import { initDatabase } from './src/database/database';
 
-// Import icon fallback for web
-import IconFallback from './src/components/IconFallback';
+// No need for icon fallback anymore - it was causing bundling issues
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -186,7 +185,7 @@ const DrawerNavigator = () => {
 };
 
 // App version - update with every change
-const APP_VERSION = "1.0.6 - May 8, 2025, 01:12 AM - BUILD-1746666770738";
+const APP_VERSION = "1.0.6 - May 8, 2025, 01:15 AM - BUILD-1746666905005";
 
 function Main() {
   const [dbInitialized, setDbInitialized] = useState(false);
@@ -290,7 +289,6 @@ export default function App() {
         <ActivitiesProvider>
           <UserProvider>
             <MessagingProvider>
-              <IconFallback />
               <Main />
             </MessagingProvider>
           </UserProvider>
