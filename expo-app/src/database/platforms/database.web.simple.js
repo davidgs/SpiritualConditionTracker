@@ -230,6 +230,46 @@ export const executeQuery = (query, params = []) => {
           // Get data from localStorage
           const data = JSON.parse(localStorage.getItem(tableName) || '[]');
           
+          // Special case for fitness calculation query
+          if (query.toLowerCase().includes('group by activity_type')) {
+            console.log('Handling special GROUP BY query for spiritual fitness calculation');
+            
+            // Extract date filter from WHERE clause if present
+            let filteredData = data;
+            if (query.toLowerCase().includes('where date >=')) {
+              const dateStr = params[0];
+              filteredData = data.filter(item => item.date >= dateStr);
+            }
+            
+            // Group by activity_type
+            const grouped = {};
+            filteredData.forEach(item => {
+              const type = item.activity_type;
+              if (!grouped[type]) {
+                grouped[type] = {
+                  activity_type: type,
+                  count: 0,
+                  total_duration: 0
+                };
+              }
+              grouped[type].count++;
+              grouped[type].total_duration += (item.duration || 0);
+            });
+            
+            // Convert to array
+            const results = Object.values(grouped);
+            
+            resolve({
+              rows: {
+                _array: results,
+                length: results.length,
+                item: (index) => (index >= 0 && index < results.length) ? results[index] : null
+              }
+            });
+            return;
+          }
+          
+          // Regular SELECT query
           // Extract WHERE clause
           const whereMatch = query.match(/where\s+(.*?)(?:order by|group by|limit|$)/i);
           const whereClause = whereMatch ? whereMatch[1].trim() : null;
