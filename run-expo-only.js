@@ -679,19 +679,33 @@ document.addEventListener('DOMContentLoaded', function() {
   // Version check on load
   const CHECK_DELAY = 5000; // 5 seconds
   setTimeout(function() {
-    if (document.body) {
-      // Add version indicator on dev environments
-      if (window.location.hostname.includes('localhost') || 
-          window.location.hostname.includes('127.0.0.1') ||
-          window.location.hostname.includes('.repl.co')) {
-        document.body.appendChild(createVersionIndicator());
+    // First check if document and document.body are defined
+    if (typeof document !== 'undefined' && document && document.body) {
+      try {
+        // Add version indicator on dev environments
+        if (window.location.hostname.includes('localhost') || 
+            window.location.hostname.includes('127.0.0.1') ||
+            window.location.hostname.includes('.repl.co')) {
+          document.body.appendChild(createVersionIndicator());
+        }
+      } catch (err) {
+        console.log("[Version Injector] Could not append version indicator:", err.message);
       }
-      
-      // Check if displaying old version
-      if (!document.body.innerHTML.includes(window.FORCE_APP_VERSION)) {
-        console.log("[Version Injector] Version mismatch detected! Refreshing...");
-        clearAllStorage();
-        window.location.reload(true);
+    } else {
+      console.log("[Version Injector] Document body not available yet, skipping version indicator");
+    }
+    
+    // Only check version if document.body is available
+    if (typeof document !== 'undefined' && document && document.body) {
+      try {
+        // Check if displaying old version
+        if (!document.body.innerHTML.includes(window.FORCE_APP_VERSION)) {
+          console.log("[Version Injector] Version mismatch detected! Refreshing...");
+          clearAllStorage();
+          window.location.reload(true);
+        }
+      } catch (err) {
+        console.log("[Version Injector] Error checking version:", err.message);
       }
     }
   }, CHECK_DELAY);

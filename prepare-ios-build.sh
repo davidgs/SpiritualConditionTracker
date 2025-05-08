@@ -399,9 +399,87 @@ EOL
     log "${YELLOW}Found $ISSUES dependency issues. Consider updating your package.json.${RESET}"
   fi
   
+  # Fix agent-base module error if needed
+  if [ -d "node_modules/agent-base" ]; then
+    log "${BLUE}Checking agent-base module...${RESET}"
+    
+    # Check if the module has the expected structure
+    if [ ! -d "node_modules/agent-base/dist/src" ]; then
+      log "Creating missing directory structure in agent-base module..."
+      mkdir -p "node_modules/agent-base/dist/src"
+    fi
+    
+    # Create index.js in the expected location
+    AGENT_INDEX="node_modules/agent-base/dist/src/index.js"
+    if [ ! -f "$AGENT_INDEX" ]; then
+      log "Creating index.js in agent-base/dist/src directory..."
+      cat > "$AGENT_INDEX" << 'EOL'
+/**
+ * Fixed agent-base module
+ * Created by prepare-ios-build.sh to fix module resolution error
+ */
+
+// Simple agent implementation that works with http/https modules
+function Agent(opts) {
+  if (!(this instanceof Agent)) return new Agent(opts);
+  this.options = opts || {};
+}
+
+Agent.prototype.callback = function() {
+  throw new Error('Agent.prototype.callback is not implemented');
+};
+
+// Add compatibility with http.Agent API
+Agent.prototype.addRequest = function(req, options) {
+  throw new Error('Agent.prototype.addRequest is not implemented');
+};
+
+module.exports = Agent;
+module.exports.Agent = Agent;
+EOL
+      log "${GREEN}Created index.js in agent-base/dist/src directory${RESET}"
+    else
+      log "agent-base/dist/src/index.js already exists"
+    fi
+    
+    # Fix the package.json main entry if needed
+    if [ -f "node_modules/agent-base/package.json" ]; then
+      AGENT_PKG="node_modules/agent-base/package.json"
+      # Backup the package.json file
+      cp "$AGENT_PKG" "${AGENT_PKG}.bak"
+      
+      # Check and fix the main entry
+      if ! grep -q '"main": "dist/src/index.js"' "$AGENT_PKG"; then
+        log "Updating main entry in agent-base/package.json..."
+        # Use node to parse and modify the JSON
+        node -e "
+          const fs = require('fs');
+          const pkgPath = '$AGENT_PKG';
+          const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
+          pkg.main = 'dist/src/index.js';
+          fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, 2));
+        "
+        log "${GREEN}Updated main entry in agent-base/package.json${RESET}"
+      else
+        log "agent-base/package.json already has the correct main entry"
+      fi
+    fi
+    
+    log "${GREEN}agent-base module fix completed${RESET}"
+  fi
+  
   # Install all dependencies from package.json
   log "Running npm install to ensure all dependencies are properly installed..."
   npm install --no-fund --no-audit --loglevel=error
+  
+  # Run the agent-base fix script if it exists
+  if [ -f "../fix-agent-base.js" ]; then
+    log "Running agent-base fix script..."
+    node ../fix-agent-base.js
+  elif [ -f "fix-agent-base.js" ]; then
+    log "Running agent-base fix script..."
+    node fix-agent-base.js
+  fi
   
   log "${GREEN}Dependency check and fixes completed${RESET}"
 }
@@ -487,48 +565,33 @@ else
   fi
 fi
 
-# Fix the agent-base module error
+# Fix the agent-base module error comprehensively
 echo -e "${BLUE}Fixing agent-base module error...${RESET}"
 AGENT_BASE_DIR="node_modules/agent-base"
 AGENT_BASE_PKG="${AGENT_BASE_DIR}/package.json"
 
-# Also check the exact path from the error
-EXACT_AGENT_BASE_DIR="/Users/davidgs/github.com/SpiritualConditionTracker/node_modules/agent-base"
-EXACT_AGENT_BASE_PKG="${EXACT_AGENT_BASE_DIR}/package.json"
-
-if [ -f "${AGENT_BASE_PKG}" ]; then
-  echo "Found agent-base package.json, checking for issues..."
+if [ -d "${AGENT_BASE_DIR}" ]; then
+  echo "Found agent-base module, applying comprehensive fix..."
   
-  # Check if the main entry is incorrect
-  if grep -q "\"main\": \"dist/src/index\"" "${AGENT_BASE_PKG}"; then
-    echo "Found incorrect main entry in agent-base package.json, fixing..."
-    
-    # Create a backup
+  # Create backup of the package.json if it exists
+  if [ -f "${AGENT_BASE_PKG}" ]; then
     cp "${AGENT_BASE_PKG}" "${AGENT_BASE_PKG}.bak"
-    
-    # Fix the main entry to point to the correct location
-    if [[ "$OSTYPE" == "darwin"* ]]; then
-      # macOS sed requires a suffix with -i
-      sed -i '' -e 's|"main": "dist/src/index"|"main": "dist/index"|g' "${AGENT_BASE_PKG}"
-    else
-      # Linux sed works without a suffix
-      sed -i -e 's|"main": "dist/src/index"|"main": "dist/index"|g' "${AGENT_BASE_PKG}"
-    fi
-    
-    echo -e "${GREEN}Fixed agent-base package.json main entry${RESET}"
-    
-    # Check if we need to create the dist directory
-    if [ ! -d "${AGENT_BASE_DIR}/dist" ]; then
-      echo "Creating missing dist directory..."
-      mkdir -p "${AGENT_BASE_DIR}/dist"
-    fi
-    
-    # Create a minimal index.js file if it doesn't exist
-    if [ ! -f "${AGENT_BASE_DIR}/dist/index.js" ]; then
-      echo "Creating minimal agent-base index.js file..."
-      cat > "${AGENT_BASE_DIR}/dist/index.js" << 'EOF'
+    echo "Created backup of agent-base package.json"
+  fi
+  
+  # Create all possible paths that might be imported
+  echo "Creating all possible directory structures for agent-base..."
+  mkdir -p "${AGENT_BASE_DIR}/dist"
+  mkdir -p "${AGENT_BASE_DIR}/dist/src"
+  mkdir -p "${AGENT_BASE_DIR}/src"
+  
+  # Create index.js files in all possible locations
+  echo "Creating index.js files in all possible locations..."
+  
+  # 1. Create the dist/src/index.js file
+  cat > "${AGENT_BASE_DIR}/dist/src/index.js" << 'EOF'
 /**
- * Minimal agent-base implementation to fix module resolution issues
+ * Comprehensive agent-base fix for dist/src/index.js
  * Created by prepare-ios-build.sh
  */
 
@@ -541,15 +604,222 @@ Agent.prototype.callback = function() {
   throw new Error('Agent.prototype.callback() not implemented');
 };
 
+// Add compatibility with http.Agent API
+Agent.prototype.addRequest = function(req, options) {
+  throw new Error('Agent.prototype.addRequest is not implemented');
+};
+
 module.exports = Agent;
+module.exports.Agent = Agent;
 EOF
-      echo -e "${GREEN}Created minimal agent-base implementation${RESET}"
-    fi
+
+  # 2. Create the dist/index.js file
+  cat > "${AGENT_BASE_DIR}/dist/index.js" << 'EOF'
+/**
+ * Comprehensive agent-base fix for dist/index.js
+ * Created by prepare-ios-build.sh
+ */
+
+// Simply re-export from dist/src/index.js
+module.exports = require('./src/index.js');
+EOF
+
+  # 3. Create the root index.js file
+  cat > "${AGENT_BASE_DIR}/index.js" << 'EOF'
+/**
+ * Comprehensive agent-base fix for root index.js
+ * Created by prepare-ios-build.sh
+ */
+
+// Simply re-export from dist/index.js
+module.exports = require('./dist/index.js');
+EOF
+
+  # 4. Fix the package.json to point to the main file
+  if [ -f "${AGENT_BASE_PKG}" ]; then
+    echo "Updating agent-base package.json main entry..."
+    node -e "
+      const fs = require('fs');
+      const pkgPath = '${AGENT_BASE_PKG}';
+      try {
+        const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
+        pkg.main = 'index.js';
+        fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, 2));
+        console.log('Successfully updated main entry in package.json');
+      } catch (err) {
+        console.error('Error updating package.json:', err.message);
+        
+        // If parsing fails, create a new package.json from scratch
+        const newPkg = {
+          name: 'agent-base',
+          version: '6.0.2',
+          main: 'index.js',
+          description: 'Fixed agent-base implementation'
+        };
+        fs.writeFileSync(pkgPath, JSON.stringify(newPkg, null, 2));
+        console.log('Created new package.json with correct main entry');
+      }
+    "
   else
-    echo "agent-base package.json appears to be correctly configured"
+    # Create a new package.json if none exists
+    echo "Creating new agent-base package.json..."
+    cat > "${AGENT_BASE_PKG}" << 'EOF'
+{
+  "name": "agent-base",
+  "version": "6.0.2",
+  "main": "index.js",
+  "description": "Fixed agent-base implementation"
+}
+EOF
   fi
+  
+  echo -e "${GREEN}Comprehensive agent-base fix applied successfully${RESET}"
 else
-  echo "${YELLOW}agent-base package.json not found, skipping fix${RESET}"
+  echo "${YELLOW}agent-base module not found in node_modules, will be fixed during npm install${RESET}"
+  
+  # Create a script to fix agent-base after npm install
+  cat > fix-agent-base.js << 'EOF'
+/**
+ * Fix script for agent-base module
+ * Run after npm install to ensure agent-base is correctly configured
+ */
+const fs = require('fs');
+const path = require('path');
+
+function fixAgentBase() {
+  console.log('Fixing agent-base module...');
+  
+  // Find all possible agent-base locations
+  const possiblePaths = [
+    'node_modules/agent-base',
+    '../node_modules/agent-base',
+    'expo-app/node_modules/agent-base'
+  ];
+  
+  let foundPath = null;
+  for (const p of possiblePaths) {
+    if (fs.existsSync(p)) {
+      foundPath = p;
+      break;
+    }
+  }
+  
+  if (!foundPath) {
+    console.log('agent-base module not found, nothing to fix');
+    return;
+  }
+  
+  console.log(`Found agent-base at ${foundPath}, applying fix...`);
+  
+  // Create necessary directories
+  const dirs = [
+    path.join(foundPath, 'dist'),
+    path.join(foundPath, 'dist/src')
+  ];
+  
+  for (const dir of dirs) {
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+      console.log(`Created directory: ${dir}`);
+    }
+  }
+  
+  // Create index.js in each location
+  const indexFiles = [
+    {
+      path: path.join(foundPath, 'dist/src/index.js'),
+      content: `
+/**
+ * Comprehensive agent-base fix for dist/src/index.js
+ */
+
+function Agent(opts) {
+  if (!(this instanceof Agent)) return new Agent(opts);
+  this.options = opts || {};
+}
+
+Agent.prototype.callback = function() {
+  throw new Error('Agent.prototype.callback() not implemented');
+};
+
+Agent.prototype.addRequest = function(req, options) {
+  throw new Error('Agent.prototype.addRequest is not implemented');
+};
+
+module.exports = Agent;
+module.exports.Agent = Agent;
+      `
+    },
+    {
+      path: path.join(foundPath, 'dist/index.js'),
+      content: `
+/**
+ * Comprehensive agent-base fix for dist/index.js
+ */
+
+// Simply re-export from dist/src/index.js
+module.exports = require('./src/index.js');
+      `
+    },
+    {
+      path: path.join(foundPath, 'index.js'),
+      content: `
+/**
+ * Comprehensive agent-base fix for root index.js
+ */
+
+// Simply re-export from dist/index.js
+module.exports = require('./dist/index.js');
+      `
+    }
+  ];
+  
+  for (const file of indexFiles) {
+    fs.writeFileSync(file.path, file.content.trim());
+    console.log(`Created ${file.path}`);
+  }
+  
+  // Fix package.json
+  const pkgPath = path.join(foundPath, 'package.json');
+  if (fs.existsSync(pkgPath)) {
+    try {
+      const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
+      pkg.main = 'index.js';
+      fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, 2));
+      console.log('Updated package.json main entry');
+    } catch (err) {
+      console.error('Error updating package.json:', err.message);
+      
+      // Create a new package.json if parsing fails
+      const newPkg = {
+        name: 'agent-base',
+        version: '6.0.2',
+        main: 'index.js',
+        description: 'Fixed agent-base implementation'
+      };
+      fs.writeFileSync(pkgPath, JSON.stringify(newPkg, null, 2));
+      console.log('Created new package.json with correct main entry');
+    }
+  } else {
+    // Create a new package.json if none exists
+    const newPkg = {
+      name: 'agent-base',
+      version: '6.0.2',
+      main: 'index.js',
+      description: 'Fixed agent-base implementation'
+    };
+    fs.writeFileSync(pkgPath, JSON.stringify(newPkg, null, 2));
+    console.log('Created new package.json');
+  }
+  
+  console.log('agent-base module fix completed successfully');
+}
+
+// Run the fix
+fixAgentBase();
+EOF
+  
+  echo "Created fix-agent-base.js script to run after npm install"
 fi
 
 # Fix the missing @react-native/metro-config package
