@@ -88,9 +88,31 @@ fix_dependency_versions() {
   fi
 }
 
+# Install required CLI tools for bundle creation
+install_required_cli_tools() {
+  log "${BLUE}Installing React Native CLI tools for bundle creation...${RESET}"
+  
+  # Check if the @react-native-community/cli package is installed in devDependencies
+  if ! grep -q '"@react-native-community/cli"' package.json; then
+    log "Installing @react-native-community/cli for bundle creation..."
+    npm install --save-dev @react-native-community/cli --no-fund --no-audit --loglevel=error
+  fi
+
+  # Make sure we have metro and metro-config
+  if ! grep -q '"metro"' package.json; then
+    log "Installing metro and metro-config for bundle creation..."
+    npm install --save-dev metro metro-config --no-fund --no-audit --loglevel=error
+  fi
+  
+  log "${GREEN}CLI tools installation completed${RESET}"
+}
+
 # Fix AppDelegate to use the embedded JavaScript bundle
 fix_app_delegate() {
   log "${BLUE}Preparing to fix AppDelegate for bundled JavaScript...${RESET}"
+  
+  # Install required CLI tools first
+  install_required_cli_tools
   
   # Create assets directory if it doesn't exist
   mkdir -p ios/assets
@@ -106,23 +128,44 @@ fix_app_delegate() {
     log "${GREEN}Created index.js that imports App.js${RESET}"
   fi
   
-  # Attempt bundle generation with index.js
-  npx react-native bundle --entry-file=index.js --platform=ios --dev=false --bundle-output=ios/assets/main.jsbundle --assets-dest=ios/assets
+  # We'll try multiple bundle creation approaches
+  log "Attempting bundle creation with expo export first..."
   
-  # Check if bundle was created
+  # Try to use expo export first (more reliable)
+  npx expo export --platform ios --output-dir ios/bundle --no-build
+  
+  # Check if bundle exists from expo export
+  if [ -f "ios/bundle/ios-index.js" ]; then
+    log "${GREEN}Successfully created bundle with expo export${RESET}"
+    # Copy the bundle to the expected location
+    cp ios/bundle/ios-index.js ios/assets/main.jsbundle
+    # Copy any assets if they exist
+    if [ -d "ios/bundle/assets" ]; then
+      cp -R ios/bundle/assets/* ios/assets/
+    fi
+  else
+    # Attempt bundle generation with react-native CLI
+    log "Trying bundle creation with react-native CLI..."
+    
+    # First try with index.js
+    npx react-native bundle --entry-file=index.js --platform=ios --dev=false --bundle-output=ios/assets/main.jsbundle --assets-dest=ios/assets || {
+      log "${YELLOW}Failed with index.js, trying with App.js...${RESET}"
+      # Try with App.js if index.js didn't work
+      npx react-native bundle --entry-file=App.js --platform=ios --dev=false --bundle-output=ios/assets/main.jsbundle --assets-dest=ios/assets || {
+        log "${YELLOW}Still failed, trying with metro bundler directly...${RESET}"
+        # Last attempt using metro directly
+        npx metro bundle --entry-file=index.js --platform=ios --dev=false --out=ios/assets/main.jsbundle --reset-cache
+      }
+    }
+  fi
+  
+  # Final check if bundle was created
   if [ ! -f "ios/assets/main.jsbundle" ]; then
-    log "${YELLOW}Warning: Failed to create bundle with index.js, trying with App.js${RESET}"
+    log "${RED}Error: Failed to create JavaScript bundle after multiple attempts.${RESET}"
     
-    # Try using App.js if index.js didn't work
-    npx react-native bundle --entry-file=App.js --platform=ios --dev=false --bundle-output=ios/assets/main.jsbundle --assets-dest=ios/assets
-    
-    # Check again
-    if [ ! -f "ios/assets/main.jsbundle" ]; then
-      log "${RED}Error: Failed to create JavaScript bundle. This will cause runtime errors.${RESET}"
-      
-      # Create a basic bundle that at least shows an error message rather than crashing
-      log "${YELLOW}Creating a minimal JavaScript bundle to avoid crashes...${RESET}"
-      cat > ios/assets/main.jsbundle << EOL
+    # Create a basic bundle that at least shows an error message rather than crashing
+    log "${YELLOW}Creating a minimal JavaScript bundle to avoid crashes...${RESET}"
+    cat > ios/assets/main.jsbundle << EOL
 /**
  * Error recovery bundle
  * This is a minimal bundle that shows an error message instead of crashing
@@ -133,19 +176,29 @@ __d(function(g,r,i,a,m,e,d){"use strict";m.exports=r(d[0])},2,[3]);
 __d(function(g,r,i,a,m,e,d){"use strict";m.exports={createElement:function(e,t){return{type:e,props:t}}}},3,[]);
 require(0);
 EOL
-      log "${GREEN}Created minimal bundle for crash prevention.${RESET}"
-    else
-      log "${GREEN}Successfully created JavaScript bundle using App.js${RESET}"
-    fi
+    log "${GREEN}Created minimal bundle for crash prevention.${RESET}"
   else
-    log "${GREEN}Successfully created JavaScript bundle using index.js${RESET}"
+    log "${GREEN}Successfully created JavaScript bundle at ios/assets/main.jsbundle${RESET}"
+    # Show bundle size as a verification
+    BUNDLE_SIZE=$(du -h ios/assets/main.jsbundle | cut -f1)
+    log "Bundle size: $BUNDLE_SIZE"
   fi
   
-  # Find the AppDelegate file (could be .m or .mm)
-  if [ -f "ios/SpiritualConditionTracker/AppDelegate.mm" ]; then
-    APPDELEGATE_PATH="ios/SpiritualConditionTracker/AppDelegate.mm"
-  elif [ -f "ios/SpiritualConditionTracker/AppDelegate.m" ]; then
-    APPDELEGATE_PATH="ios/SpiritualConditionTracker/AppDelegate.m"
+  # Try to determine the actual project name by finding the xcodeproj directory
+  PROJECT_DIR=$(find ios -name "*.xcodeproj" -type d | head -1)
+  if [ -n "$PROJECT_DIR" ]; then
+    PROJECT_NAME=$(basename "$PROJECT_DIR" .xcodeproj)
+    log "Found iOS project name: $PROJECT_NAME"
+  else
+    PROJECT_NAME="SpiritualConditionTracker"
+    log "${YELLOW}Could not determine project name, using default: $PROJECT_NAME${RESET}"
+  fi
+  
+  # Find the AppDelegate file based on the project name
+  if [ -f "ios/$PROJECT_NAME/AppDelegate.mm" ]; then
+    APPDELEGATE_PATH="ios/$PROJECT_NAME/AppDelegate.mm"
+  elif [ -f "ios/$PROJECT_NAME/AppDelegate.m" ]; then
+    APPDELEGATE_PATH="ios/$PROJECT_NAME/AppDelegate.m"
   else
     # Try to find it if the project name is different
     APPDELEGATE_PATH=$(find ios -name "AppDelegate.mm" | head -1)
@@ -155,6 +208,24 @@ EOL
     
     if [ -z "$APPDELEGATE_PATH" ]; then
       log "${RED}Error: Could not find AppDelegate.m or AppDelegate.mm${RESET}"
+      # Create a helper script to add the bundle later
+      cat > add-bundle-to-xcode.sh << 'EOL'
+#!/bin/bash
+# Helper script to add main.jsbundle to Xcode project
+echo "This script helps you add the main.jsbundle to your Xcode project."
+echo "To use this script, open your project in Xcode first, then run this script."
+echo ""
+echo "Steps to add the bundle manually:"
+echo "1. Open your Xcode project"
+echo "2. Right-click on your project in the Project Navigator"
+echo "3. Select 'Add Files to \"YourProject\"...'"
+echo "4. Navigate to the ios/assets directory"
+echo "5. Select main.jsbundle"
+echo "6. Make sure 'Copy items if needed' is checked"
+echo "7. Click Add"
+EOL
+      chmod +x add-bundle-to-xcode.sh
+      log "Created helper script: add-bundle-to-xcode.sh"
       return 1
     fi
   fi
@@ -208,22 +279,6 @@ EOL
     log "${YELLOW}Warning: Could not find project.pbxproj file.${RESET}"
   fi
 }
-
-# Check if we need to clean existing iOS directory
-if [ -d "expo-app/ios" ]; then
-  echo -e "${YELLOW}Existing iOS build directory detected.${RESET}"
-  read -p "Do you want to clean it and create a fresh build? (y/n): " clean_ios
-  if [[ $clean_ios == "y" || $clean_ios == "Y" ]]; then
-    echo "Cleaning iOS directory..."
-    rm -rf expo-app/ios
-    echo -e "${GREEN}iOS directory cleaned.${RESET}"
-  else
-    echo "Keeping existing iOS directory."
-  fi
-fi
-
-# Navigate to expo app directory
-cd expo-app
 
 # Fix deprecated dependencies that cause memory leaks or other issues
 fix_deprecated_dependencies() {
@@ -316,6 +371,22 @@ EOL
   log "${GREEN}Completed dependency fixes for properly maintained packages${RESET}"
 }
 
+# Check if we need to clean existing iOS directory
+if [ -d "expo-app/ios" ]; then
+  echo -e "${YELLOW}Existing iOS build directory detected.${RESET}"
+  read -p "Do you want to clean it and create a fresh build? (y/n): " clean_ios
+  if [[ $clean_ios == "y" || $clean_ios == "Y" ]]; then
+    echo "Cleaning iOS directory..."
+    rm -rf expo-app/ios
+    echo -e "${GREEN}iOS directory cleaned.${RESET}"
+  else
+    echo "Keeping existing iOS directory."
+  fi
+fi
+
+# Navigate to expo app directory
+cd expo-app
+
 # Check and install node dependencies
 if [ ! -d "node_modules" ]; then
   echo -e "${YELLOW}Node modules not found. Installing dependencies...${RESET}"
@@ -375,10 +446,65 @@ fi
 echo -e "${GREEN}CocoaPods dependencies installed successfully.${RESET}"
 cd ..
 
-# Copy fonts if needed
-echo "Ensuring fonts are properly set up..."
-if [ ! -d "assets/fonts" ]; then
-  mkdir -p assets/fonts
+# Copy all assets to the iOS bundle
+log "${BLUE}Copying assets to iOS bundle directory...${RESET}"
+
+# Create the destination directories
+mkdir -p ios/assets
+mkdir -p ios/SpiritualConditionTracker/Images.xcassets/AppIcon.appiconset
+
+# Determine the project name if not already done
+if [ -z "$PROJECT_NAME" ]; then
+  PROJECT_DIR=$(find ios -name "*.xcodeproj" -type d | head -1)
+  if [ -n "$PROJECT_DIR" ]; then
+    PROJECT_NAME=$(basename "$PROJECT_DIR" .xcodeproj)
+    log "Found iOS project name: $PROJECT_NAME"
+    mkdir -p "ios/$PROJECT_NAME/Images.xcassets/AppIcon.appiconset"
+  else
+    PROJECT_NAME="SpiritualConditionTracker"
+    log "${YELLOW}Could not determine project name, using default: $PROJECT_NAME${RESET}"
+  fi
+fi
+
+# Determine the correct assets source directory
+ASSETS_SRC="./assets"
+if [ ! -d "$ASSETS_SRC" ]; then
+  if [ -d "../expo-app/assets" ]; then
+    ASSETS_SRC="../expo-app/assets"
+  elif [ -d "../assets" ]; then
+    ASSETS_SRC="../assets"
+  fi
+fi
+
+log "Using assets source directory: $ASSETS_SRC"
+
+# Copy all assets to iOS directory
+if [ -d "$ASSETS_SRC" ]; then
+  log "Copying assets from $ASSETS_SRC to iOS bundle..."
+  cp -R "$ASSETS_SRC"/* ios/assets/ 2>/dev/null || log "${YELLOW}Some assets could not be copied (this may be normal)${RESET}"
+  
+  # Copy app icon specifically
+  if [ -f "$ASSETS_SRC/icon.png" ]; then
+    log "Copying app icon to iOS resources..."
+    cp "$ASSETS_SRC/icon.png" "ios/$PROJECT_NAME/Images.xcassets/AppIcon.appiconset/" 2>/dev/null || true
+  fi
+  
+  # Copy fonts if needed
+  log "Ensuring fonts are properly set up..."
+  if [ ! -d "assets/fonts" ]; then
+    mkdir -p assets/fonts
+  fi
+  
+  # If we have vector fonts, copy them to the iOS app
+  if [ -d "$ASSETS_SRC/fonts" ]; then
+    log "Copying font files to iOS app..."
+    mkdir -p "ios/$PROJECT_NAME/fonts"
+    cp -R "$ASSETS_SRC/fonts"/* "ios/$PROJECT_NAME/fonts/" 2>/dev/null || true
+  fi
+  
+  log "${GREEN}Assets copied to iOS bundle${RESET}"
+else
+  log "${YELLOW}Warning: Could not find assets directory at $ASSETS_SRC${RESET}"
 fi
 
 # Return to project root
