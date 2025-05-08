@@ -72,35 +72,49 @@ fi
 
 echo "Successfully generated JavaScript bundle at: $ASSETS_DIR/main.jsbundle"
 
-# Find AppDelegate.m
-APPDELEGATE_PATH=$(find "$IOS_DIR" -name "AppDelegate.m" | head -1)
+# Find AppDelegate.m or AppDelegate.mm
+APPDELEGATE_PATH=$(find "$IOS_DIR" -name "AppDelegate.m" -o -name "AppDelegate.mm" | head -1)
 
 if [ -z "$APPDELEGATE_PATH" ]; then
-  echo "Error: Could not find AppDelegate.m in the iOS project."
+  echo "Error: Could not find AppDelegate.m or AppDelegate.mm in the iOS project."
   echo "Make sure the iOS project is properly generated."
   exit 1
 fi
 
-echo "Found AppDelegate.m at: $APPDELEGATE_PATH"
+echo "Found AppDelegate at: $APPDELEGATE_PATH"
 
-# Check if AppDelegate.m already configured for bundled JS
+# Check if AppDelegate is already configured for bundled JS
 if grep -q "URLForResource:@\"main\" withExtension:@\"jsbundle\"" "$APPDELEGATE_PATH"; then
-  echo "AppDelegate.m is already configured to use embedded bundle."
+  echo "AppDelegate is already configured to use embedded bundle."
 else
-  # Make a backup of AppDelegate.m
+  # Make a backup of AppDelegate
   cp "$APPDELEGATE_PATH" "${APPDELEGATE_PATH}.bak"
-  echo "Created backup of AppDelegate.m at ${APPDELEGATE_PATH}.bak"
+  echo "Created backup of AppDelegate at ${APPDELEGATE_PATH}.bak"
   
-  # Modify AppDelegate.m to use the bundled JS file
-  if [[ "$OSTYPE" == "darwin"* ]]; then
-    # macOS sed requires a suffix with -i
-    sed -i '' -e 's|jsCodeLocation = \[\[RCTBundleURLProvider sharedSettings\] jsBundleURLForBundleRoot:@"index"\];|// Use this for release builds\n  jsCodeLocation = [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];\n  \n  // Use this for debugging\n  // jsCodeLocation = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index"];|g' "$APPDELEGATE_PATH"
+  # Check which AppDelegate format we're dealing with
+  if grep -q "sourceURLForBridge:" "$APPDELEGATE_PATH"; then
+    echo "Detected modern AppDelegate with sourceURLForBridge method"
+    
+    # Modern format with sourceURLForBridge method
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+      # macOS sed requires a suffix with -i
+      sed -i '' -e 's|return \[\[RCTBundleURLProvider sharedSettings\] jsBundleURLForBundleRoot:@"index"\];|#if DEBUG\n    return [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index"];\n#else\n    return [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];\n#endif|g' "$APPDELEGATE_PATH"
+    else
+      # Linux sed works without a suffix
+      sed -i -e 's|return \[\[RCTBundleURLProvider sharedSettings\] jsBundleURLForBundleRoot:@"index"\];|#if DEBUG\n    return [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index"];\n#else\n    return [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];\n#endif|g' "$APPDELEGATE_PATH"
+    fi
   else
-    # Linux sed works without a suffix
-    sed -i -e 's|jsCodeLocation = \[\[RCTBundleURLProvider sharedSettings\] jsBundleURLForBundleRoot:@"index"\];|// Use this for release builds\n  jsCodeLocation = [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];\n  \n  // Use this for debugging\n  // jsCodeLocation = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index"];|g' "$APPDELEGATE_PATH"
+    # Legacy format with jsCodeLocation
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+      # macOS sed requires a suffix with -i
+      sed -i '' -e 's|jsCodeLocation = \[\[RCTBundleURLProvider sharedSettings\] jsBundleURLForBundleRoot:@"index"\];|// Use this for release builds\n  jsCodeLocation = [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];\n  \n  // Use this for debugging\n  // jsCodeLocation = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index"];|g' "$APPDELEGATE_PATH"
+    else
+      # Linux sed works without a suffix
+      sed -i -e 's|jsCodeLocation = \[\[RCTBundleURLProvider sharedSettings\] jsBundleURLForBundleRoot:@"index"\];|// Use this for release builds\n  jsCodeLocation = [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];\n  \n  // Use this for debugging\n  // jsCodeLocation = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index"];|g' "$APPDELEGATE_PATH"
+    fi
   fi
   
-  echo "Modified AppDelegate.m to use embedded JavaScript bundle."
+  echo "Modified AppDelegate to use embedded JavaScript bundle."
 fi
 
 # Check if a .xcworkspace file exists
