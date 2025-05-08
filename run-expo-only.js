@@ -692,25 +692,53 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     try {
-      // Add version indicator on dev environments
-      if (window.location.hostname.includes('localhost') || 
-          window.location.hostname.includes('127.0.0.1') ||
-          window.location.hostname.includes('.repl.co')) {
-        try {
-          document.body.appendChild(createVersionIndicator());
-          console.log("[Version Injector] Version indicator added");
-        } catch (err) {
-          console.log("[Version Injector] Could not append version indicator:", err.message);
+      // Add version indicator on dev environments only after DOM is fully loaded
+      function addVersionIndicator() {
+        if (window.location.hostname.includes('localhost') || 
+            window.location.hostname.includes('127.0.0.1') ||
+            window.location.hostname.includes('.repl.co')) {
+          try {
+            // Only manipulate DOM if document.body exists
+            if (document.body) {
+              document.body.appendChild(createVersionIndicator());
+              console.log("[Version Injector] Version indicator added");
+            } else {
+              console.log("[Version Injector] Document body not available yet");
+              // Retry in 100ms
+              setTimeout(addVersionIndicator, 100);
+            }
+          } catch (err) {
+            console.log("[Version Injector] Could not append version indicator:", err.message);
+          }
         }
       }
       
-      // Check if displaying old version
-      if (!document.body.innerHTML.includes(window.FORCE_APP_VERSION)) {
-        console.log("[Version Injector] Version mismatch detected! Refreshing...");
-        clearAllStorage();
-        window.location.reload(true);
+      // Check if displaying old version - safely check only if body exists
+      function checkVersionMismatch() {
+        if (document.body && !document.body.innerHTML.includes(window.FORCE_APP_VERSION)) {
+          console.log("[Version Injector] Version mismatch detected! Refreshing...");
+          clearAllStorage();
+        }
+      }
+      
+      // Wait for DOM to be ready before manipulating
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', function() {
+          addVersionIndicator();
+          checkVersionMismatch();
+        });
       } else {
-        console.log("[Version Injector] Version matched, no refresh needed");
+        // DOM already loaded
+        addVersionIndicator();
+        checkVersionMismatch();
+        
+        // Safely check version and reload if needed
+        if (document.body && !document.body.innerHTML.includes(window.FORCE_APP_VERSION)) {
+          console.log("[Version Injector] Version mismatch detected! Refreshing...");
+          window.location.reload(true);
+        } else {
+          console.log("[Version Injector] Version matched, no refresh needed");
+        }
       }
     } catch (err) {
       console.log("[Version Injector] Error during version check:", err.message);

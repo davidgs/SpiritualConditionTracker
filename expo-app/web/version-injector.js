@@ -1,8 +1,8 @@
 
-// Force version refresh - created at 2025-05-08T19:18:03.574Z
+// Force version refresh - created at 2025-05-08T20:09:20.349Z
 // Also contains icon loading fixes
-window.FORCE_APP_VERSION = "1.0.6 - May 8, 2025, 07:15 PM - BUILD-1746731703375";
-window.BUILD_ID = "build-1746731703375";
+window.FORCE_APP_VERSION = "1.0.6 - May 8, 2025, 08:09 PM - BUILD-1746734960309";
+window.BUILD_ID = "build-1746734960309";
 console.log("[Version Injector] Running version: " + window.FORCE_APP_VERSION);
 
 // Add icon loading support
@@ -223,25 +223,53 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     try {
-      // Add version indicator on dev environments
-      if (window.location.hostname.includes('localhost') || 
-          window.location.hostname.includes('127.0.0.1') ||
-          window.location.hostname.includes('.repl.co')) {
-        try {
-          document.body.appendChild(createVersionIndicator());
-          console.log("[Version Injector] Version indicator added");
-        } catch (err) {
-          console.log("[Version Injector] Could not append version indicator:", err.message);
+      // Add version indicator on dev environments only after DOM is fully loaded
+      function addVersionIndicator() {
+        if (window.location.hostname.includes('localhost') || 
+            window.location.hostname.includes('127.0.0.1') ||
+            window.location.hostname.includes('.repl.co')) {
+          try {
+            // Only manipulate DOM if document.body exists
+            if (document.body) {
+              document.body.appendChild(createVersionIndicator());
+              console.log("[Version Injector] Version indicator added");
+            } else {
+              console.log("[Version Injector] Document body not available yet");
+              // Retry in 100ms
+              setTimeout(addVersionIndicator, 100);
+            }
+          } catch (err) {
+            console.log("[Version Injector] Could not append version indicator:", err.message);
+          }
         }
       }
       
-      // Check if displaying old version
-      if (!document.body.innerHTML.includes(window.FORCE_APP_VERSION)) {
-        console.log("[Version Injector] Version mismatch detected! Refreshing...");
-        clearAllStorage();
-        window.location.reload(true);
+      // Check if displaying old version - safely check only if body exists
+      function checkVersionMismatch() {
+        if (document.body && !document.body.innerHTML.includes(window.FORCE_APP_VERSION)) {
+          console.log("[Version Injector] Version mismatch detected! Refreshing...");
+          clearAllStorage();
+        }
+      }
+      
+      // Wait for DOM to be ready before manipulating
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', function() {
+          addVersionIndicator();
+          checkVersionMismatch();
+        });
       } else {
-        console.log("[Version Injector] Version matched, no refresh needed");
+        // DOM already loaded
+        addVersionIndicator();
+        checkVersionMismatch();
+        
+        // Safely check version and reload if needed
+        if (document.body && !document.body.innerHTML.includes(window.FORCE_APP_VERSION)) {
+          console.log("[Version Injector] Version mismatch detected! Refreshing...");
+          window.location.reload(true);
+        } else {
+          console.log("[Version Injector] Version matched, no refresh needed");
+        }
       }
     } catch (err) {
       console.log("[Version Injector] Error during version check:", err.message);

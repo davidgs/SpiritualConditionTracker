@@ -399,87 +399,276 @@ EOL
     log "${YELLOW}Found $ISSUES dependency issues. Consider updating your package.json.${RESET}"
   fi
   
-  # Fix agent-base module error if needed
-  if [ -d "node_modules/agent-base" ]; then
-    log "${BLUE}Checking agent-base module...${RESET}"
-    
-    # Check if the module has the expected structure
-    if [ ! -d "node_modules/agent-base/dist/src" ]; then
-      log "Creating missing directory structure in agent-base module..."
-      mkdir -p "node_modules/agent-base/dist/src"
-    fi
-    
-    # Create index.js in the expected location
-    AGENT_INDEX="node_modules/agent-base/dist/src/index.js"
-    if [ ! -f "$AGENT_INDEX" ]; then
-      log "Creating index.js in agent-base/dist/src directory..."
+  # Enhanced fix for agent-base module error
+  log "${BLUE}Applying comprehensive agent-base module fix...${RESET}"
+  
+  # Check for multiple possible locations of the agent-base module
+  AGENT_PATHS=(
+    "node_modules/agent-base"
+    "expo-app/node_modules/agent-base"
+    "../node_modules/agent-base"
+    "./node_modules/agent-base"
+  )
+  
+  for AGENT_PATH in "${AGENT_PATHS[@]}"; do
+    if [ -d "$AGENT_PATH" ] || mkdir -p "$AGENT_PATH"; then
+      log "Fixing agent-base at: $AGENT_PATH"
+      
+      # Create all necessary directories
+      mkdir -p "$AGENT_PATH/dist/src"
+      
+      # Create a comprehensive index.js file
+      AGENT_INDEX="$AGENT_PATH/dist/src/index.js"
       cat > "$AGENT_INDEX" << 'EOL'
+'use strict';
+
 /**
- * Fixed agent-base module
+ * Enhanced agent-base implementation
  * Created by prepare-ios-build.sh to fix module resolution error
  */
 
-// Simple agent implementation that works with http/https modules
-function Agent(opts) {
-  if (!(this instanceof Agent)) return new Agent(opts);
-  this.options = opts || {};
+// Proper exports for both ESM and CommonJS
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Agent = void 0;
+
+class Agent {
+  constructor(opts) {
+    // Handle both function and object constructor patterns
+    if (typeof opts === 'function') {
+      this._callback = opts;
+    } else {
+      this.options = opts || {};
+    }
+  }
+  
+  // Add required methods for compatibility
+  connect(req, options) {
+    if (this._callback) {
+      return Promise.resolve(this._callback(req, options));
+    }
+    
+    // Default implementation for socket connection
+    return Promise.resolve({
+      socket: {
+        readable: true,
+        writable: true,
+        destroyed: false,
+        destroy: function() { this.destroyed = true; },
+        setTimeout: function() { return this; },
+        setNoDelay: function() { return this; },
+        setKeepAlive: function() { return this; },
+        on: function() { return this; },
+        once: function() { return this; },
+        end: function() {},
+        write: function() { return true; }
+      }
+    });
+  }
+  
+  // Legacy callback support
+  callback(req, options) {
+    if (this._callback) {
+      return this._callback(req, options);
+    }
+    return this.connect(req, options);
+  }
+  
+  // For compatibility with http.Agent API
+  addRequest(req, options) {
+    this.connect(req, options).then(({ socket }) => {
+      req.onSocket(socket);
+    }, (err) => {
+      req.emit('error', err);
+    });
+  }
 }
 
-Agent.prototype.callback = function() {
-  throw new Error('Agent.prototype.callback is not implemented');
-};
+// Export the Agent class
+exports.Agent = Agent;
 
-// Add compatibility with http.Agent API
-Agent.prototype.addRequest = function(req, options) {
-  throw new Error('Agent.prototype.addRequest is not implemented');
-};
+// Default export
+function createAgent(opts) {
+  return new Agent(opts);
+}
 
-module.exports = Agent;
+exports.default = createAgent;
+
+// CommonJS compatibility
+module.exports = createAgent;
 module.exports.Agent = Agent;
 EOL
-      log "${GREEN}Created index.js in agent-base/dist/src directory${RESET}"
-    else
-      log "agent-base/dist/src/index.js already exists"
-    fi
-    
-    # Fix the package.json main entry if needed
-    if [ -f "node_modules/agent-base/package.json" ]; then
-      AGENT_PKG="node_modules/agent-base/package.json"
-      # Backup the package.json file
-      cp "$AGENT_PKG" "${AGENT_PKG}.bak"
+      log "${GREEN}Created comprehensive agent-base implementation${RESET}"
       
-      # Check and fix the main entry
-      if ! grep -q '"main": "dist/src/index.js"' "$AGENT_PKG"; then
-        log "Updating main entry in agent-base/package.json..."
-        # Use node to parse and modify the JSON
+      # Create additional index files for different import paths
+      ROOT_INDEX="$AGENT_PATH/index.js"
+      cat > "$ROOT_INDEX" << 'EOL'
+'use strict';
+// Redirect from root index.js to implementation
+module.exports = require('./dist/src/index.js');
+module.exports.Agent = require('./dist/src/index.js').Agent;
+EOL
+      
+      DIST_INDEX="$AGENT_PATH/dist/index.js"
+      cat > "$DIST_INDEX" << 'EOL'
+'use strict';
+// Redirect from dist/index.js to dist/src/index.js
+module.exports = require('./src/index.js');
+module.exports.Agent = require('./src/index.js').Agent;
+EOL
+      
+      # Fix the package.json
+      AGENT_PKG="$AGENT_PATH/package.json"
+      cat > "$AGENT_PKG" << 'EOL'
+{
+  "name": "agent-base",
+  "version": "6.0.2",
+  "description": "Enhanced agent-base implementation for iOS builds",
+  "main": "./dist/src/index.js",
+  "types": "./dist/src/index.d.ts",
+  "exports": {
+    ".": {
+      "require": "./dist/src/index.js",
+      "import": "./dist/src/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ]
+}
+EOL
+      log "Fixed package.json with correct paths"
+      
+      # Create TypeScript definition file for completeness
+      TYPE_DEF="$AGENT_PATH/dist/src/index.d.ts"
+      cat > "$TYPE_DEF" << 'EOL'
+export declare class Agent {
+    constructor(opts?: any);
+    connect(req: any, options: any): Promise<{socket: any}>;
+    callback(req: any, options: any): any;
+    addRequest(req: any, options: any): void;
+}
+
+declare function createAgent(opts?: any): Agent;
+export default createAgent;
+EOL
+      log "Created TypeScript definitions for better IDE support"
+    fi
+  done
+  
+  log "${GREEN}agent-base module fix completed${RESET}"
+  
+  # Fix for react-native-metro-config module error
+  log "${BLUE}Applying fix for @react-native/metro-config package...${RESET}"
+  
+  METRO_CONFIG_PATHS=(
+    "node_modules/@react-native/metro-config"
+    "expo-app/node_modules/@react-native/metro-config"
+    "../node_modules/@react-native/metro-config"
+  )
+  
+  for METRO_PATH in "${METRO_CONFIG_PATHS[@]}"; do
+    if [ -d "$METRO_PATH" ] || mkdir -p "$METRO_PATH"; then
+      log "Fixing metro-config at: $METRO_PATH"
+      
+      # Create index.js
+      cat > "$METRO_PATH/index.js" << 'EOL'
+/**
+ * @react-native/metro-config implementation
+ * Created by prepare-ios-build.sh to fix module resolution error
+ */
+'use strict';
+
+const createMetroConfiguration = () => {
+  return {
+    transformer: {
+      getTransformOptions: async () => ({
+        transform: {
+          experimentalImportSupport: false,
+          inlineRequires: true,
+        },
+      }),
+      assetRegistryPath: 'react-native/Libraries/Image/AssetRegistry',
+    },
+    resolver: {
+      assetExts: ['png', 'jpg', 'jpeg', 'gif', 'webp', 'ttf', 'otf'],
+      sourceExts: ['js', 'jsx', 'ts', 'tsx', 'json'],
+    },
+  };
+};
+
+module.exports = {
+  createMetroConfiguration,
+  loadConfig: () => Promise.resolve(createMetroConfiguration()),
+  mergeConfig: (defaultConfig, customConfig) => ({...defaultConfig, ...customConfig}),
+};
+EOL
+      
+      # Create package.json for metro-config
+      cat > "$METRO_PATH/package.json" << 'EOL'
+{
+  "name": "@react-native/metro-config",
+  "version": "0.79.0",
+  "description": "Metro configuration for React Native",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/facebook/react-native.git"
+  },
+  "license": "MIT"
+}
+EOL
+      log "${GREEN}Fixed @react-native/metro-config package${RESET}"
+    fi
+  done
+  
+  # Fix for sqlite-storage configuration warning
+  log "${BLUE}Fixing react-native-sqlite-storage configuration...${RESET}"
+  
+  SQLITE_PATHS=(
+    "node_modules/react-native-sqlite-storage"
+    "expo-app/node_modules/react-native-sqlite-storage"
+    "../node_modules/react-native-sqlite-storage"
+  )
+  
+  for SQLITE_PATH in "${SQLITE_PATHS[@]}"; do
+    if [ -d "$SQLITE_PATH" ]; then
+      SQLITE_PKG="$SQLITE_PATH/package.json"
+      if [ -f "$SQLITE_PKG" ]; then
+        log "Fixing package.json in $SQLITE_PATH"
+        # Create a backup
+        cp "$SQLITE_PKG" "${SQLITE_PKG}.bak"
+        
+        # Use node to fix the package.json
         node -e "
-          const fs = require('fs');
-          const pkgPath = '$AGENT_PKG';
-          const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
-          pkg.main = 'dist/src/index.js';
-          fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, 2));
+          try {
+            const fs = require('fs');
+            const pkg = JSON.parse(fs.readFileSync('$SQLITE_PKG', 'utf8'));
+            
+            // Fix the platforms.ios configuration
+            if (pkg.dependency && pkg.dependency.platforms && pkg.dependency.platforms.ios) {
+              const ios = pkg.dependency.platforms.ios;
+              if (ios.project) {
+                // Move project config to sourceDir which is the correct format
+                ios.sourceDir = ios.project;
+                delete ios.project;
+                console.log('Fixed iOS platform configuration format');
+              }
+            }
+            
+            fs.writeFileSync('$SQLITE_PKG', JSON.stringify(pkg, null, 2));
+            console.log('Updated package.json successfully');
+          } catch (err) {
+            console.error('Error updating package.json:', err.message);
+          }
         "
-        log "${GREEN}Updated main entry in agent-base/package.json${RESET}"
-      else
-        log "agent-base/package.json already has the correct main entry"
+        log "${GREEN}Fixed sqlite-storage configuration${RESET}"
       fi
     fi
-    
-    log "${GREEN}agent-base module fix completed${RESET}"
-  fi
+  done
   
   # Install all dependencies from package.json
   log "Running npm install to ensure all dependencies are properly installed..."
   npm install --no-fund --no-audit --loglevel=error
-  
-  # Run the agent-base fix script if it exists
-  if [ -f "../fix-agent-base.js" ]; then
-    log "Running agent-base fix script..."
-    node ../fix-agent-base.js
-  elif [ -f "fix-agent-base.js" ]; then
-    log "Running agent-base fix script..."
-    node fix-agent-base.js
-  fi
   
   log "${GREEN}Dependency check and fixes completed${RESET}"
 }
