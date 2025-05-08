@@ -1,0 +1,29 @@
+warning: (arm64) /Users/davidgs/Library/Developer/Xcode/DerivedData/SpiritualConditionTracker-ckoogyvpbzemswfgbccimbjtvmxm/Build/Products/Debug-iphonesimulator/SpiritualConditionTracker.app/SpiritualConditionTracker empty dSYM file detected, dSYM was created with an executable with no debug info.
+nw_proxy_resolver_create_parsed_array [C1.1 proxy pac] Evaluation error: NSURLErrorDomain: -1202
+nw_proxy_resolver_create_parsed_array [C1.1 proxy pac] Evaluation error: NSURLErrorDomain: -1202
+nw_proxy_resolver_create_parsed_array [C1.1 proxy pac] Evaluation error: NSURLErrorDomain: -1202
+nw_socket_handle_socket_event [C1.1.1.1:2] Socket SO_ERROR [61: Connection refused]
+nw_protocol_socket_set_no_wake_from_sleep [C1.1.1.1:2] setsockopt SO_NOWAKEFROMSLEEP failed [22: Invalid argument]
+nw_protocol_socket_set_no_wake_from_sleep setsockopt SO_NOWAKEFROMSLEEP failed [22: Invalid argument]
+nw_endpoint_flow_failed_with_error [C1.1.1.1 ::1.8081 in_progress socket-flow (satisfied (Path is satisfied), interface: lo0, proxy)] already failing, returning
+nw_socket_handle_socket_event [C1.1.1.2:2] Socket SO_ERROR [61: Connection refused]
+nw_protocol_socket_set_no_wake_from_sleep [C1.1.1.2:2] setsockopt SO_NOWAKEFROMSLEEP failed [22: Invalid argument]
+nw_protocol_socket_set_no_wake_from_sleep setsockopt SO_NOWAKEFROMSLEEP failed [22: Invalid argument]
+nw_endpoint_flow_failed_with_error [C1.1.1.2 127.0.0.1:8081 in_progress socket-flow (satisfied (Path is satisfied), interface: lo0, proxy)] already failing, returning
+nw_endpoint_flow_failed_with_error [C1.1.1.2 127.0.0.1:8081 cancelled socket-flow ((null))] already failing, returning
+Connection 1: received failure notification
+Connection 1: failed to connect 1:61, reason -1
+Connection 1: encountered error(1:61)
+Task <DFE4162D-A538-439E-B47E-92376F2D97A7>.<1> HTTP load failed, 0/0 bytes (error code: -1004 [1:61])
+Task <DFE4162D-A538-439E-B47E-92376F2D97A7>.<1> finished with error [-1004] Error Domain=NSURLErrorDomain Code=-1004 "Could not connect to the server." UserInfo={_kCFStreamErrorCodeKey=61, NSUnderlyingError=0x600000c21500 {Error Domain=kCFErrorDomainCFNetwork Code=-1004 "(null)" UserInfo={_NSURLErrorNWPathKey=satisfied (Path is satisfied), interface: en0[802.11], proxy, uses wifi, _kCFStreamErrorCodeKey=61, _kCFStreamErrorDomainKey=1}}, _NSURLErrorFailingURLSessionTaskErrorKey=LocalDataTask <DFE4162D-A538-439E-B47E-92376F2D97A7>.<1>, _NSURLErrorRelatedURLSessionTaskErrorKey=(
+    "LocalDataTask <DFE4162D-A538-439E-B47E-92376F2D97A7>.<1>"
+), NSLocalizedDescription=Could not connect to the server., NSErrorFailingURLStringKey=http://localhost:8081/status, NSErrorFailingURLKey=http://localhost:8081/status, _kCFStreamErrorDomainKey=1}
+WARNING: Logging before InitGoogleLogging() is written to STDERR
+W0508 12:23:41.715255 71303680 Scheduler.cpp:148] Scheduler::~Scheduler() was called (address: 0x600003504790).
+No script URL provided. Make sure the packager is running or you have embedded a JS bundle in your application bundle.
+
+unsanitizedScriptURLString = (null)
+Failed to send CA Event for app launch measurements for ca_event_type: 0 event_name: com.apple.app_launch_measurement.FirstFramePresentationMetric
+W0508 12:23:41.879187 1815375872 UIManagerBinding.cpp:59] UIManagerBinding::~UIManagerBinding() was called (address: 0x600003b008d8).
+W0508 12:23:41.879302 1815375872 UIManager.cpp:64] UIManager::~UIManager() was called (address: 0x105110508).
+Failed to send CA Event for app launch measurements for ca_event_type: 1 event_name: com.apple.app_launch_measurement.ExtendedLaunchMetrics
