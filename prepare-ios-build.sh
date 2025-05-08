@@ -113,7 +113,7 @@ fix_app_delegate() {
   log "Attempting bundle creation with expo export first..."
   
   # Try to use expo export first (more reliable)
-  npx expo export --platform ios --output-dir ios/bundle --no-build
+  npx expo export --platform ios --output-dir ios/bundle
   
   # Check if bundle exists from expo export
   if [ -f "ios/bundle/ios-index.js" ]; then
