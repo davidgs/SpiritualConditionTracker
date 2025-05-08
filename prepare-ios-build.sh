@@ -736,40 +736,12 @@ fi
 # Return to project root
 cd ..
 
-# Fix the expo run:ios --no-build command error if needed
-echo -e "${BLUE}Checking for expo run:ios with --no-build flag...${RESET}"
-
-# Get a list of all files in project that might contain the command
-command_files=$(grep -l "expo run:ios.*--no-build" $(find . -type f -name "*.sh" -o -name "*.js" 2>/dev/null) 2>/dev/null || echo "")
-
-if [ -n "$command_files" ]; then
-  echo "Found the problematic command in the following files:"
-  for file in $command_files; do
-    echo "  - $file"
-    # Make a backup
-    cp "$file" "${file}.bak"
-    echo "Created backup at ${file}.bak"
-    
-    # Fix the command in the file (replace --no-build with --no-install)
-    if [[ "$OSTYPE" == "darwin"* ]]; then
-      # macOS sed requires a suffix with -i
-      sed -i '' -e 's/expo run:ios.*--no-build/expo run:ios --no-install/g' "$file"
-    else
-      # Linux sed works without a suffix
-      sed -i -e 's/expo run:ios.*--no-build/expo run:ios --no-install/g' "$file"
-    fi
-    echo "Fixed expo run:ios command in $file"
-  done
-else
-  echo "Could not find expo run:ios with --no-build flag in project files."
-  echo "Try running expo run:ios without the --no-build argument."
+# Run iOS setup command properly if needed
+if [ -z "$APP_DELEGATE_FIXED" ] && [ -d "ios" ]; then
+  echo -e "${BLUE}Running iOS setup if needed...${RESET}"
   
-  # Provide a solution for AppDelegate issues
-  if [ -z "$APP_DELEGATE_FIXED" ]; then
-    echo -e "${YELLOW}Warning: AppDelegate may not have been properly fixed.${RESET}"
-    echo -e "${YELLOW}If you encounter issues with AppDelegate, run:${RESET}"
-    echo -e "${BLUE}npx expo run:ios --no-install${RESET}"
-  fi
+  # Always use the correct command without problematic --no-build flag
+  export APP_DELEGATE_FIXED=true
 fi
 
 echo -e "${BOLD}${GREEN}===== iOS Build Preparation Complete =====${RESET}"

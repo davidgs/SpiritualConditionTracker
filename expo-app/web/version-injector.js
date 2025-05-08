@@ -1,8 +1,8 @@
 
-// Force version refresh - created at 2025-05-08T18:50:41.216Z
+// Force version refresh - created at 2025-05-08T18:53:51.298Z
 // Also contains icon loading fixes
-window.FORCE_APP_VERSION = "1.0.6 - May 8, 2025, 06:49 PM - BUILD-1746730181133";
-window.BUILD_ID = "build-1746730181133";
+window.FORCE_APP_VERSION = "1.0.6 - May 8, 2025, 06:53 PM - BUILD-1746730431272";
+window.BUILD_ID = "build-1746730431272";
 console.log("[Version Injector] Running version: " + window.FORCE_APP_VERSION);
 
 // Add icon loading support
