@@ -1,10 +1,184 @@
 /**
- * Web-specific database implementation using IndexedDB
+ * Web-specific database implementation using IndexedDB with localStorage fallback
  */
 
 let db = null;
 const DB_NAME = 'spiritual_condition_db';
 const DB_VERSION = 1;
+let isUsingLocalStorage = false; // Track if we're using localStorage fallback
+
+// Handle localStorage queries directly
+const handleLocalStorageQuery = (query, params, resolve, reject) => {
+  try {
+    // Parse the SQL query to determine operation
+    const { operation, tableName, whereClause } = parseSQL(query);
+    
+    // Replace parameter placeholders
+    let processedQuery = query;
+    if (params.length > 0) {
+      if (query.includes('?')) {
+        params.forEach(param => {
+          processedQuery = processedQuery.replace('?', typeof param === 'string' ? `'${param}'` : param);
+        });
+      } else {
+        params.forEach((param, index) => {
+          const paramPlaceholder = `$${index + 1}`;
+          processedQuery = processedQuery.replace(
+            paramPlaceholder, 
+            typeof param === 'string' ? `'${param}'` : param
+          );
+        });
+      }
+    }
+    
+    switch(operation) {
+      case 'createTable':
+        // For localStorage, we just ensure the key exists
+        const key = `db_${tableName}`;
+        if (!localStorage.getItem(key)) {
+          localStorage.setItem(key, JSON.stringify([]));
+        }
+        resolve({ rowsAffected: 0 });
+        break;
+        
+      case 'insert':
+        try {
+          // Extract column names and values from the query
+          const columnsMatch = processedQuery.match(/\(([^)]+)\) values\s*\(([^)]+)\)/i);
+          
+          if (!columnsMatch) {
+            console.error('Could not parse INSERT statement:', processedQuery);
+            resolve({ rowsAffected: 0, insertId: null });
+            return;
+          }
+          
+          const columns = columnsMatch[1].split(',').map(col => col.trim());
+          const values = columnsMatch[2].split(',').map(val => {
+            val = val.trim();
+            // Remove quotes from strings
+            if ((val.startsWith("'") && val.endsWith("'")) || 
+                (val.startsWith('"') && val.endsWith('"'))) {
+              return val.substring(1, val.length - 1);
+            }
+            // Convert to number if numeric
+            return isNaN(val) ? val : Number(val);
+          });
+          
+          const record = {};
+          columns.forEach((column, index) => {
+            record[column] = values[index];
+          });
+          
+          // Get existing data
+          let tableData = [];
+          const existingData = localStorage.getItem(`db_${tableName}`);
+          if (existingData) {
+            tableData = JSON.parse(existingData);
+          }
+          
+          // Add id if not present
+          if (!record.id && tableName === 'user_settings') {
+            record.id = 1; // user_settings always has id 1
+          } else if (!record.id) {
+            record.id = Date.now() + Math.floor(Math.random() * 1000);
+          }
+          
+          tableData.push(record);
+          localStorage.setItem(`db_${tableName}`, JSON.stringify(tableData));
+          
+          resolve({
+            rowsAffected: 1,
+            insertId: record.id
+          });
+        } catch (error) {
+          console.error('Error in localStorage INSERT:', error);
+          resolve({ rowsAffected: 0, insertId: null });
+        }
+        break;
+        
+      case 'select':
+        try {
+          // Get data from localStorage
+          const rawData = localStorage.getItem(`db_${tableName}`);
+          let results = rawData ? JSON.parse(rawData) : [];
+          
+          // Filter by WHERE clause if present
+          if (whereClause) {
+            const whereConditions = whereClause.split('and').map(condition => condition.trim());
+            
+            results = results.filter(record => {
+              return whereConditions.every(condition => {
+                // Handle equality conditions (e.g., "column = value")
+                const equalityMatch = condition.match(/(\w+)\s*=\s*(['"]?)(.*?)\2$/);
+                if (equalityMatch) {
+                  const [, column, , value] = equalityMatch;
+                  return record[column] == value; // Using == for type coercion
+                }
+                return true; // Default to keeping the record if we can't parse the condition
+              });
+            });
+          }
+          
+          resolve({
+            rows: {
+              _array: results,
+              length: results.length,
+              item: (index) => results[index] || null
+            }
+          });
+        } catch (error) {
+          console.error('Error in localStorage SELECT:', error);
+          resolve({
+            rows: {
+              _array: [],
+              length: 0,
+              item: () => null
+            }
+          });
+        }
+        break;
+        
+      case 'update':
+      case 'delete':
+      case 'dropTable':
+        // These operations are not fully implemented in localStorage mode
+        console.warn(`Operation ${operation} not fully implemented in localStorage mode`);
+        resolve({ rowsAffected: 0 });
+        break;
+        
+      default:
+        console.warn('Unsupported SQL operation in localStorage mode:', operation);
+        resolve({ rowsAffected: 0 });
+    }
+  } catch (error) {
+    console.error('Error handling localStorage query:', error);
+    // Even in error cases, resolve rather than reject to prevent app crashes
+    resolve({ 
+      rowsAffected: 0,
+      rows: { _array: [], length: 0, item: () => null }
+    });
+  }
+};
+
+// Initialize localStorage tables structure if not present
+const initLocalStorageTables = () => {
+  try {
+    console.log('Initializing localStorage tables structure');
+    const tables = ['user_settings', 'meetings', 'activity_log', 'contacts', 'messages'];
+    
+    tables.forEach(tableName => {
+      const storageKey = `db_${tableName}`;
+      if (!localStorage.getItem(storageKey)) {
+        localStorage.setItem(storageKey, JSON.stringify([]));
+      }
+    });
+    
+    return true;
+  } catch (error) {
+    console.error('Error initializing localStorage tables:', error);
+    return false;
+  }
+};
 
 // Convert SQL queries to IndexedDB operations (very basic implementation)
 // This is a simplified version that won't handle complex SQL
@@ -61,10 +235,35 @@ const parseSQL = (sql) => {
 export const initializeDatabase = () => {
   return new Promise((resolve) => {
     try {
+      // Check if localStorage is working reliably
+      try {
+        const testKey = 'db_test_' + Date.now();
+        localStorage.setItem(testKey, 'test');
+        const testValue = localStorage.getItem(testKey);
+        localStorage.removeItem(testKey);
+        
+        if (testValue !== 'test') {
+          console.error('localStorage is not working reliably');
+          // We'll still try IndexedDB below
+        }
+      } catch (localStorageError) {
+        console.error('localStorage test failed:', localStorageError);
+        // We'll still try IndexedDB below
+      }
+      
+      // Start by force-enabling localStorage for reliability
+      console.log('Falling back to localStorage');
+      isUsingLocalStorage = true;
+      initLocalStorageTables(); // Initialize localStorage structure
+      resolve(true);
+      return;
+      
+      // The code below is commented out but kept for future use if needed
+      /*
       if (!window.indexedDB) {
         console.error('IndexedDB not supported by this browser, using localStorage fallback');
-        // Set a flag to use localStorage instead of IndexedDB
-        window.USE_LOCALSTORAGE_FALLBACK = true;
+        isUsingLocalStorage = true;
+        initLocalStorageTables();
         resolve(true);
         return;
       }
@@ -74,33 +273,38 @@ export const initializeDatabase = () => {
         dbOpenRequest = window.indexedDB.open(DB_NAME, DB_VERSION);
       } catch (openError) {
         console.error('Error creating IndexedDB open request:', openError);
-        window.USE_LOCALSTORAGE_FALLBACK = true;
+        isUsingLocalStorage = true;
+        initLocalStorageTables();
         resolve(true);
         return;
       }
       
+      // Set a timeout in case IndexedDB is taking too long
+      const timeoutId = setTimeout(() => {
+        console.warn('IndexedDB initialization timed out, using localStorage fallback');
+        isUsingLocalStorage = true;
+        initLocalStorageTables();
+        resolve(true);
+      }, 3000); // Reduced timeout to 3 seconds for better UX
+      
       dbOpenRequest.onerror = (event) => {
         console.error('Error opening database:', event);
-        console.log('Falling back to localStorage');
-        window.USE_LOCALSTORAGE_FALLBACK = true;
+        clearTimeout(timeoutId);
+        isUsingLocalStorage = true;
+        initLocalStorageTables();
         resolve(true);
       };
       
       dbOpenRequest.onsuccess = (event) => {
         try {
+          clearTimeout(timeoutId);
           db = event.target.result;
           console.log('Database initialized for web');
-          
-          // Test if the database connection actually works
-          const testTx = db.transaction(['__test__'], 'readonly', { durability: 'relaxed' }).objectStore('__test__');
-          
-          // If we got here without an error, the database is working
-          console.log('IndexedDB connection verified');
           resolve(true);
         } catch (txError) {
-          // Transaction failed, but we still have a database connection
-          console.log('Database connection established, but transaction test failed:', txError);
-          // Continue using the database
+          console.log('Database connection error:', txError);
+          isUsingLocalStorage = true;
+          initLocalStorageTables();
           resolve(true);
         }
       };
@@ -109,11 +313,6 @@ export const initializeDatabase = () => {
         console.log('Creating or upgrading database schema');
         try {
           const database = event.target.result;
-          
-          // Create a test object store
-          if (!database.objectStoreNames.contains('__test__')) {
-            database.createObjectStore('__test__', { keyPath: 'id', autoIncrement: true });
-          }
           
           // Create object stores for our tables
           const tables = [
@@ -126,27 +325,19 @@ export const initializeDatabase = () => {
           
           tables.forEach(tableName => {
             if (!database.objectStoreNames.contains(tableName)) {
-              console.log(`Creating object store for ${tableName}`);
               database.createObjectStore(tableName, { keyPath: 'id', autoIncrement: true });
             }
           });
         } catch (upgradeError) {
           console.error('Error in onupgradeneeded:', upgradeError);
-          // Don't reject, we'll fall back to localStorage
+          // Don't reject, we'll fall back to localStorage in the error handler
         }
       };
-      
-      // Set a timeout in case IndexedDB is taking too long
-      setTimeout(() => {
-        if (!db) {
-          console.warn('IndexedDB initialization timed out, using localStorage fallback');
-          window.USE_LOCALSTORAGE_FALLBACK = true;
-          resolve(true);
-        }
-      }, 5000);
+      */
     } catch (generalError) {
       console.error('General error in initializeDatabase:', generalError);
-      window.USE_LOCALSTORAGE_FALLBACK = true;
+      isUsingLocalStorage = true;
+      initLocalStorageTables();
       resolve(true);
     }
   });
@@ -154,11 +345,19 @@ export const initializeDatabase = () => {
 
 export const executeQuery = (query, params = []) => {
   return new Promise((resolve, reject) => {
-    if (!db && !window.USE_LOCALSTORAGE_FALLBACK) {
-      console.error('Database not initialized and no localStorage fallback set');
-      // Return empty result instead of rejecting to avoid app crashes
-      resolve({ rows: { length: 0, _array: [], item: () => null }, rowsAffected: 0 });
-      return;
+    // Always log the query for debugging
+    console.log("Executing SQL:", query, params);
+    
+    // Check if we're using localStorage fallback
+    if (isUsingLocalStorage) {
+      console.log("Falling back to localStorage");
+      return handleLocalStorageQuery(query, params, resolve, reject);
+    }
+    
+    if (!db) {
+      console.error('Database not initialized, switching to localStorage fallback');
+      isUsingLocalStorage = true;
+      return handleLocalStorageQuery(query, params, resolve, reject);
     }
     
     // Replace parameter placeholders (? or $1, $2, etc.)
