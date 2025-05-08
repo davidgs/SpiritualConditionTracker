@@ -20,10 +20,6 @@ args = "ExpoServer"
 task = "workflow.run"
 args = "StatusChecker"
 
-[[workflows.workflow.tasks]]
-task = "workflow.run"
-args = "DebugServer"
-
 [[workflows.workflow]]
 name = "ExpoServer"
 author = "agent"
@@ -42,15 +38,6 @@ task = "shell.exec"
 args = "node check-app-status.js"
 waitForPort = 5000
 
-[[workflows.workflow]]
-name = "DebugServer"
-author = "agent"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "node debug-server.js"
-waitForPort = 4999
-
 [deployment]
 run = ["sh", "-c", "node deployment-server.js"]
 deploymentTarget = "cloudrun"
@@ -66,10 +53,6 @@ externalPort = 4200
 [[ports]]
 localPort = 3244
 externalPort = 5000
-
-[[ports]]
-localPort = 4999
-externalPort = 5173
 
 [[ports]]
 localPort = 5000

@@ -8,7 +8,18 @@
   console.log('[Icon Fix] Initializing icon fix for React Native Web');
   
   // This function will be called after the page loads
-  function fixReactNativeIcons() { console.log("[Icon Fix] Disabled to prevent bundling issues"); }
+  function fixReactNativeIcons() {
+    console.log('[Icon Fix] Applying icon fixes');
+    
+    // Create style tags with font faces for all icon fonts
+    const fontStyle = document.createElement('style');
+    fontStyle.textContent = `
+      @font-face {
+        font-family: 'MaterialCommunityIcons';
+        src: url('/fonts/MaterialCommunityIcons.ttf') format('truetype');
+        font-weight: normal;
+        font-style: normal;
+      }
       
       @font-face {
         font-family: 'FontAwesome';

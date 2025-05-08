@@ -354,21 +354,68 @@ function createIconComponent() {
     fs.mkdirSync(componentDir, { recursive: true });
   }
   
-  const componentContent = `import React from 'react';
-import { View, StyleSheet } from 'react-native';
+  const componentContent = `import React, { useEffect } from 'react';
+import { View, StyleSheet, Platform } from 'react-native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 /**
- * IconFallback component - Completely simplified to fix bundling issues
- * This is just a placeholder that doesn't do anything
+ * IconFallback component
+ * This is a workaround for web to ensure MaterialCommunityIcons are loaded
+ * It renders an invisible icon to trigger font loading
  */
 export const IconFallback = () => {
-  // Return empty component to avoid any bundling issues
-  return null;
+  // Only needed on web platform
+  if (Platform.OS !== 'web') {
+    return null;
+  }
+  
+  useEffect(() => {
+    // Fix for web platform - ensure icons are injected in the DOM
+    if (Platform.OS === 'web') {
+      // Add class to help diagnose icon issues
+      document.body.classList.add('has-icon-fallback');
+      
+      // Create a style element for icon fixes if it doesn't exist
+      if (!document.getElementById('material-icons-fix')) {
+        const style = document.createElement('style');
+        style.id = 'material-icons-fix';
+        style.textContent = \`
+          @font-face {
+            font-family: 'MaterialCommunityIcons';
+            src: url('\${window.EXPO_PUBLIC_PATH || ''}/fonts/MaterialCommunityIcons.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+            font-display: block;
+          }
+          
+          /* Fix for broken SVGs */
+          svg[width="0"], svg[height="0"] {
+            width: 24px !important;
+            height: 24px !important;
+          }
+        \`;
+        document.head.appendChild(style);
+      }
+    }
+  }, []);
+  
+  return (
+    <View style={styles.container}>
+      {/* These invisible icons ensure the font is loaded */}
+      <MaterialCommunityIcons name="home" size={1} color="transparent" />
+      <MaterialCommunityIcons name="menu" size={1} color="transparent" />
+      <MaterialCommunityIcons name="cog" size={1} color="transparent" />
+    </View>
+  );
 };
 
 const styles = StyleSheet.create({
   container: {
-    display: 'none',
+    position: 'absolute',
+    opacity: 0,
+    width: 0,
+    height: 0,
+    overflow: 'hidden',
   },
 });
 
@@ -376,34 +423,34 @@ export default IconFallback;
 `;
   
   fs.writeFileSync(componentPath, componentContent);
-  console.log('Created simplified IconFallback component (empty implementation)');
+  console.log('Created IconFallback component');
 }
 
-// Create a file to patch App.js to include SimpleIconFallback
+// Create a file to patch App.js to include IconFallback
 function createAppPatch() {
   const patchPath = path.join(appDir, 'AddIconFallback.js');
   
   const patchContent = `/**
- * This file helps add the SimpleIconFallback component to App.js
+ * This file helps add the IconFallback component to App.js
  * It can be imported in App.js as a custom component
  */
 
 import React from 'react';
 import { View } from 'react-native';
-import SimpleIconFallback from './src/components/SimpleIconFallback';
+import IconFallback from './src/components/IconFallback';
 
 // Wrap your app content with this component
 export const withIconFallback = (WrappedComponent) => {
   return (props) => (
     <View style={{ flex: 1 }}>
-      <SimpleIconFallback />
+      <IconFallback />
       <WrappedComponent {...props} />
     </View>
   );
 };
 
 // Alternative method: add this directly in your App.js render function
-export const IconFallbackRenderer = () => <SimpleIconFallback />;
+export const IconFallbackRenderer = () => <IconFallback />;
 `;
   
   fs.writeFileSync(patchPath, patchContent);

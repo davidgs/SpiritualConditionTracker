@@ -33,8 +33,8 @@ import { MessagingProvider } from './src/contexts/MessagingContext';
 // Import database functions
 import { initDatabase } from './src/database/database';
 
-// Import simplified icon fallback for web that doesn't use DOM manipulation
-import SimpleIconFallback from './src/components/SimpleIconFallback';
+// Import icon fallback for web
+import IconFallback from './src/components/IconFallback';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -186,7 +186,7 @@ const DrawerNavigator = () => {
 };
 
 // App version - update with every change
-const APP_VERSION = "1.0.6 - May 8, 2025, 01:48 AM - BUILD-1746668888236";
+const APP_VERSION = "1.0.6 - May 8, 2025, 01:56 AM - BUILD-1746669387977";
 
 function Main() {
   const [dbInitialized, setDbInitialized] = useState(false);
@@ -290,7 +290,7 @@ export default function App() {
         <ActivitiesProvider>
           <UserProvider>
             <MessagingProvider>
-              <SimpleIconFallback />
+              <IconFallback />
               <Main />
             </MessagingProvider>
           </UserProvider>

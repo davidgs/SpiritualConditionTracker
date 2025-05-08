@@ -128,6 +128,10 @@ export const initializeTables = async () => {
   }
 };
 
+// Import the web-specific implementation for spiritual fitness calculation
+import { calculateWebSpiritualFitness } from './platforms/webCalculation';
+import { Platform } from 'react-native';
+
 // Calculate spiritual fitness score based on activities
 export const calculateSpiritualFitness = async (daysToConsider = 30) => {
   try {
@@ -135,66 +139,103 @@ export const calculateSpiritualFitness = async (daysToConsider = 30) => {
     cutoffDate.setDate(cutoffDate.getDate() - daysToConsider);
     const cutoffDateStr = cutoffDate.toISOString().split('T')[0];
     
-    // Query all activities in the time period
-    const result = await executeSql(`
-      SELECT activity_type, COUNT(*) as count, SUM(duration) as total_duration
-      FROM activity_log
-      WHERE date >= ?
-      GROUP BY activity_type
-    `, [cutoffDateStr]);
-    
-    // Point values for different activities
-    const pointValues = {
-      'meeting': 1.0,      // Attending a meeting: 1 point
-      'step_work': 1.5,    // Step work: 1.5 points per hour
-      'service': 2.0,      // Service work: 2 points per hour
-      'reading': 1.0,      // Reading literature: 1 point per hour
-      'meditation': 1.5,   // Meditation: 1.5 points per hour
-      'prayer': 1.0,       // Prayer: 1 point per hour
-      'sponsor_call': 1.0, // Call with sponsor: 1 point
-      'sponsee_call': 1.5, // Call with sponsee: 1.5 points
-      'gratitude': 0.5     // Gratitude list: 0.5 points
-    };
-    
-    let totalPoints = 0;
-    const activityPoints = {};
-    
-    // Calculate points for each activity type
-    for (let i = 0; i < result.rows.length; i++) {
-      const activity = result.rows.item(i);
-      const { activity_type, count, total_duration } = activity;
-      
-      if (pointValues[activity_type]) {
-        let points = 0;
-        
-        // Some activities are scored per occurrence, others by duration
-        if (['meeting', 'sponsor_call', 'sponsee_call', 'gratitude'].includes(activity_type)) {
-          points = count * pointValues[activity_type];
-        } else {
-          // Convert duration from minutes to hours and calculate points
-          const hours = (total_duration || 0) / 60;
-          points = hours * pointValues[activity_type];
-        }
-        
-        activityPoints[activity_type] = points;
-        totalPoints += points;
+    // Special case for web platform
+    if (Platform.OS === 'web' && typeof window !== 'undefined' && window.indexedDB) {
+      try {
+        // Use the web-specific implementation that doesn't rely on GROUP BY
+        console.log('Using web-specific spiritual fitness calculation');
+        return await calculateWebSpiritualFitness(cutoffDateStr, window.indexedDB);
+      } catch (webError) {
+        console.error('Error in web-specific calculation:', webError);
+        console.log('Falling back to standard implementation');
+        // Continue with standard implementation as fallback
       }
     }
     
-    // Normalize to a 0-100 scale with max being about 75 for very active
-    // This means somebody doing everything daily would be around 100
-    const normalizedScore = Math.min(100, totalPoints * (100 / 75));
-    
-    // Return score with 2 decimal precision
-    return {
-      score: parseFloat(normalizedScore.toFixed(2)),
-      activities: activityPoints,
-      pointValues: pointValues,
-      daysConsidered: daysToConsider
-    };
+    // Standard implementation for native platforms
+    try {
+      // Query all activities in the time period
+      const result = await executeSql(`
+        SELECT activity_type, COUNT(*) as count, SUM(duration) as total_duration
+        FROM activity_log
+        WHERE date >= ?
+        GROUP BY activity_type
+      `, [cutoffDateStr]);
+      
+      // Point values for different activities
+      const pointValues = {
+        'meeting': 1.0,      // Attending a meeting: 1 point
+        'step_work': 1.5,    // Step work: 1.5 points per hour
+        'service': 2.0,      // Service work: 2 points per hour
+        'reading': 1.0,      // Reading literature: 1 point per hour
+        'meditation': 1.5,   // Meditation: 1.5 points per hour
+        'prayer': 1.0,       // Prayer: 1 point per hour
+        'sponsor_call': 1.0, // Call with sponsor: 1 point
+        'sponsee_call': 1.5, // Call with sponsee: 1.5 points
+        'gratitude': 0.5     // Gratitude list: 0.5 points
+      };
+      
+      let totalPoints = 0;
+      const activityPoints = {};
+      
+      // Calculate points for each activity type
+      for (let i = 0; i < result.rows.length; i++) {
+        const activity = result.rows.item(i);
+        const { activity_type, count, total_duration } = activity;
+        
+        if (pointValues[activity_type]) {
+          let points = 0;
+          
+          // Some activities are scored per occurrence, others by duration
+          if (['meeting', 'sponsor_call', 'sponsee_call', 'gratitude'].includes(activity_type)) {
+            points = count * pointValues[activity_type];
+          } else {
+            // Convert duration from minutes to hours and calculate points
+            const hours = (total_duration || 0) / 60;
+            points = hours * pointValues[activity_type];
+          }
+          
+          activityPoints[activity_type] = points;
+          totalPoints += points;
+        }
+      }
+      
+      // Normalize to a 0-100 scale with max being about 75 for very active
+      // This means somebody doing everything daily would be around 100
+      const normalizedScore = Math.min(100, totalPoints * (100 / 75));
+      
+      // Return score with 2 decimal precision
+      return {
+        score: parseFloat(normalizedScore.toFixed(2)),
+        activities: activityPoints,
+        pointValues: pointValues,
+        daysConsidered: daysToConsider
+      };
+    } catch (sqlError) {
+      console.error('Error executing SQL for spiritual fitness:', sqlError);
+      
+      // For web platform, provide a fallback with default values
+      if (Platform.OS === 'web') {
+        console.log('Using fallback values for spiritual fitness');
+        return {
+          score: 0,
+          activities: {},
+          pointValues: {},
+          daysConsidered: daysToConsider,
+          error: 'Unable to calculate (SQL error)'
+        };
+      }
+      throw sqlError;
+    }
   } catch (error) {
     console.error('Error calculating spiritual fitness:', error);
-    return { score: 0, activities: {}, error: error.message };
+    return { 
+      score: 0, 
+      activities: {}, 
+      pointValues: {},
+      daysConsidered: daysToConsider,
+      error: error.message 
+    };
   }
 };
 
