@@ -45,8 +45,64 @@ fi
 
 # Install dependencies if needed
 if [ ! -d "$PROJECT_ROOT/expo-app/node_modules" ]; then
-  echo "Installing node modules..."
-  npm install
+  echo "Installing node modules with dependency conflict handling..."
+  # Create .npmrc to handle peer dependency conflicts
+  echo "legacy-peer-deps=true" > .npmrc
+  npm install --legacy-peer-deps
+  
+  # If that fails, try with force
+  if [ $? -ne 0 ]; then
+    echo "Initial install failed, trying with --force..."
+    npm install --force
+  fi
+else
+  echo "Node modules already installed. Checking React/React Native compatibility..."
+  # Check if React and React Native versions are compatible
+  REACT_NATIVE_VERSION=$(grep -o '"react-native": *"[^"]*"' package.json | cut -d'"' -f4)
+  REACT_VERSION=$(grep -o '"react": *"[^"]*"' package.json | cut -d'"' -f4)
+  
+  echo "Found React Native version: $REACT_NATIVE_VERSION"
+  echo "Found React version: $REACT_VERSION"
+  
+  # If using React Native 0.79+ and React is not 19+, we need to update React
+  if [[ "$REACT_NATIVE_VERSION" == *"0.79"* ]] && [[ "$REACT_VERSION" != *"19"* ]]; then
+    echo "Detected incompatible React/React Native versions."
+    echo "React Native 0.79+ requires React 19+."
+    
+    read -p "Do you want to update React to match React Native requirements? (y/n) " -n 1 -r
+    echo
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+      echo "Creating backup of package.json..."
+      cp package.json package.json.bak
+      
+      # Update React version
+      if [[ "$OSTYPE" == "darwin"* ]]; then
+        # macOS sed
+        sed -i '' 's/"react": *"[^"]*"/"react": "^19.0.0"/' package.json
+        sed -i '' 's/"react-dom": *"[^"]*"/"react-dom": "^19.0.0"/' package.json
+      else
+        # GNU sed
+        sed -i 's/"react": *"[^"]*"/"react": "^19.0.0"/' package.json
+        sed -i 's/"react-dom": *"[^"]*"/"react-dom": "^19.0.0"/' package.json
+      fi
+      
+      echo "Updated package.json with React 19. Reinstalling dependencies..."
+      echo "legacy-peer-deps=true" > .npmrc
+      npm install --legacy-peer-deps
+      
+      if [ $? -ne 0 ]; then
+        echo "Dependency installation failed. Restoring backup..."
+        cp package.json.bak package.json
+        npm install
+        echo "WARNING: React/React Native version conflict remains unresolved."
+        echo "You may need to manually resolve dependency conflicts."
+      else
+        echo "Successfully updated React to be compatible with React Native."
+      fi
+    else
+      echo "Continuing with current versions. This may cause prebuild issues."
+    fi
+  fi
 fi
 
 # Making sure SQLite is properly installed
