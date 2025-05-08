@@ -41,40 +41,23 @@ log() {
   echo -e "${BOLD}[$(date +"%H:%M:%S")]${RESET} $1"
 }
 
-# Fix dependency versions
-fix_dependency_versions() {
-  log "${BLUE}Checking React dependency versions...${RESET}"
+# Verify dependency versions
+verify_dependencies() {
+  log "${BLUE}Verifying dependency versions...${RESET}"
   
-  # Get current React Native version
+  # Get current React Native and React versions
   RN_VERSION=$(grep -o '"react-native": "[^"]*"' package.json | cut -d'"' -f4)
-  log "React Native version: $RN_VERSION"
-  
-  # Check if React version is compatible
   REACT_VERSION=$(grep -o '"react": "[^"]*"' package.json | cut -d'"' -f4)
-  log "Current React version: $REACT_VERSION"
   
-  # For React Native 0.79.x, we need React 19.0.0
+  log "React Native version: $RN_VERSION"
+  log "React version: $REACT_VERSION"
+  
+  # Verify React and React Native compatibility
   if [[ $RN_VERSION == "0.79."* && $REACT_VERSION != "19.0.0" ]]; then
-    log "${YELLOW}React version mismatch detected. Updating to React 19.0.0...${RESET}"
-    # Use --no-fund --no-audit --loglevel=error to reduce warning noise
-    npm install react@19.0.0 react-dom@19.0.0 --save --no-fund --no-audit --loglevel=error
-    
-    # Verify the update
-    REACT_VERSION=$(grep -o '"react": "[^"]*"' package.json | cut -d'"' -f4)
-    log "${GREEN}React updated to version: $REACT_VERSION${RESET}"
+    log "${RED}Warning: React version mismatch detected. React Native 0.79.x requires React 19.0.0${RESET}"
+    log "Please update your package.json to match these versions."
   else
     log "${GREEN}React version is compatible with React Native.${RESET}"
-  fi
-  
-  # Check for react-native-paper and react-native-paper-dates
-  if ! grep -q '"react-native-paper":' package.json; then
-    log "${YELLOW}Installing react-native-paper...${RESET}"
-    npm install react-native-paper --save --no-fund --no-audit --loglevel=error
-  fi
-  
-  if ! grep -q '"react-native-paper-dates":' package.json; then
-    log "${YELLOW}Installing react-native-paper-dates...${RESET}"
-    npm install react-native-paper-dates --save --no-fund --no-audit --loglevel=error
   fi
   
   # Clean npm cache and node_modules if needed
@@ -88,31 +71,29 @@ fix_dependency_versions() {
   fi
 }
 
-# Install required CLI tools for bundle creation
-install_required_cli_tools() {
-  log "${BLUE}Installing React Native CLI tools for bundle creation...${RESET}"
+# Verify CLI tools for bundle creation
+verify_cli_tools() {
+  log "${BLUE}Verifying React Native CLI tools for bundle creation...${RESET}"
   
-  # Check if the @react-native-community/cli package is installed in devDependencies
-  if ! grep -q '"@react-native-community/cli"' package.json; then
-    log "Installing @react-native-community/cli for bundle creation..."
-    npm install --save-dev @react-native-community/cli --no-fund --no-audit --loglevel=error
-  fi
-
-  # Make sure we have metro and metro-config
-  if ! grep -q '"metro"' package.json; then
-    log "Installing metro and metro-config for bundle creation..."
-    npm install --save-dev metro metro-config --no-fund --no-audit --loglevel=error
+  # Check if the required CLI packages are installed
+  if grep -q '"@react-native-community/cli"' package.json && grep -q '"metro"' package.json; then
+    log "${GREEN}Required CLI tools are already installed in package.json${RESET}"
+  else
+    log "${YELLOW}Warning: Missing required CLI tools in package.json${RESET}"
+    log "Your package.json should include '@react-native-community/cli', 'metro', and 'metro-config' in devDependencies"
+    log "Running npm install to ensure all dependencies are installed"
+    npm install --no-fund --no-audit --loglevel=error
   fi
   
-  log "${GREEN}CLI tools installation completed${RESET}"
+  log "${GREEN}CLI tools verification completed${RESET}"
 }
 
 # Fix AppDelegate to use the embedded JavaScript bundle
 fix_app_delegate() {
   log "${BLUE}Preparing to fix AppDelegate for bundled JavaScript...${RESET}"
   
-  # Install required CLI tools first
-  install_required_cli_tools
+  # Verify CLI tools are installed
+  verify_cli_tools
   
   # Create assets directory if it doesn't exist
   mkdir -p ios/assets
@@ -280,16 +261,19 @@ EOL
   fi
 }
 
-# Fix deprecated dependencies that cause memory leaks or other issues
-fix_deprecated_dependencies() {
-  log "${BLUE}Fixing deprecated dependencies that may cause memory leaks...${RESET}"
+# Apply fixes for dependency issues that may cause memory leaks or other problems
+fix_dependency_issues() {
+  log "${BLUE}Checking for dependency issues...${RESET}"
   
-  # Fix inflight module memory leak by creating a direct replacement
+  # Fix inflight module memory leak by creating a direct replacement if needed
   if [ -d "node_modules/inflight" ]; then
-    log "Replacing memory-leaking inflight module with lru-cache implementation..."
+    log "Detected inflight module (known to cause memory leaks)..."
     
-    # Install lru-cache as a proper replacement
-    npm install lru-cache@7 --save --no-fund --no-audit --loglevel=error
+    # Verify we have lru-cache installed (should be in package.json)
+    if ! grep -q '"lru-cache"' package.json; then
+      log "${YELLOW}Warning: lru-cache not found in package.json${RESET}"
+      log "This package should be in your package.json as a dependency"
+    fi
     
     # Create a replacement implementation
     INFLIGHT_DIR="node_modules/inflight"
@@ -297,11 +281,11 @@ fix_deprecated_dependencies() {
     
     # Backup original
     if [ -f "$INFLIGHT_FILE" ]; then
+      log "Creating memory-safe replacement for inflight module..."
       cp "$INFLIGHT_FILE" "${INFLIGHT_FILE}.bak"
-    fi
-    
-    # Create new implementation using lru-cache
-    cat > "$INFLIGHT_FILE" << 'EOL'
+      
+      # Create new implementation using lru-cache
+      cat > "$INFLIGHT_FILE" << 'EOL'
 /**
  * inflight replacement using lru-cache
  * This module replaces the deprecated inflight module with a memory-safe implementation
@@ -344,31 +328,43 @@ function inflight(key, callback) {
 
 module.exports = inflight;
 EOL
-    log "${GREEN}Successfully replaced inflight with memory-safe implementation${RESET}"
+      log "${GREEN}Successfully created memory-safe replacement for inflight module${RESET}"
+    fi
   fi
   
-  # Update other deprecated packages
-  log "Updating other deprecated packages to maintained versions..."
+  # Verify package versions
+  log "Verifying dependency versions in package.json..."
   
-  # Check if we have old glob versions
-  if grep -q '"glob": ".*7\.' package.json; then
-    log "Upgrading glob to maintained version 9..."
-    npm install glob@9 --save --no-fund --no-audit --loglevel=error
+  # Check we have up-to-date versions of known problematic packages
+  # This is now informational only since the dependencies should be in package.json
+  ISSUES=0
+  
+  if ! grep -q '"glob": ".*9\.' package.json && grep -q '"glob"' package.json; then
+    log "${YELLOW}Warning: Using outdated glob version. Version 9.x is recommended.${RESET}"
+    ISSUES=$((ISSUES+1))
   fi
   
-  # Check if we have old rimraf versions
-  if grep -q '"rimraf": ".*3\.' package.json; then
-    log "Upgrading rimraf to maintained version 4..."
-    npm install rimraf@4 --save --no-fund --no-audit --loglevel=error
+  if ! grep -q '"rimraf": ".*4\.' package.json && grep -q '"rimraf"' package.json; then
+    log "${YELLOW}Warning: Using outdated rimraf version. Version 4.x is recommended.${RESET}"
+    ISSUES=$((ISSUES+1))
   fi
   
-  # Check if we have old xmldom versions
-  if grep -q '"@xmldom/xmldom": ".*0\.7' package.json; then
-    log "Upgrading @xmldom/xmldom to maintained version 0.8..."
-    npm install @xmldom/xmldom@0.8 --save --no-fund --no-audit --loglevel=error
+  if ! grep -q '"@xmldom/xmldom": ".*0\.8' package.json && grep -q '"@xmldom/xmldom"' package.json; then
+    log "${YELLOW}Warning: Using outdated @xmldom/xmldom version. Version 0.8.x is recommended.${RESET}"
+    ISSUES=$((ISSUES+1))
   fi
   
-  log "${GREEN}Completed dependency fixes for properly maintained packages${RESET}"
+  if [ $ISSUES -eq 0 ]; then
+    log "${GREEN}All checked dependencies appear to be using recommended versions${RESET}"
+  else 
+    log "${YELLOW}Found $ISSUES dependency issues. Consider updating your package.json.${RESET}"
+  fi
+  
+  # Install all dependencies from package.json
+  log "Running npm install to ensure all dependencies are properly installed..."
+  npm install --no-fund --no-audit --loglevel=error
+  
+  log "${GREEN}Dependency check and fixes completed${RESET}"
 }
 
 # Check if we need to clean existing iOS directory
@@ -399,8 +395,8 @@ else
   echo -e "${GREEN}Node modules already installed.${RESET}"
 fi
 
-# Fix deprecated dependencies that may cause memory leaks
-fix_deprecated_dependencies
+# Check for and fix dependency issues
+fix_dependency_issues
 
 # Fix React/React Native dependency versions
 fix_dependency_versions
