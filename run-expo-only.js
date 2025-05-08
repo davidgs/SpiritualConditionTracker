@@ -414,7 +414,7 @@ const expo = spawn('npx', [
   'start', 
   '--web', 
   '--port', PORT.toString(),
-  '--host', 'lan',       // Important: use LAN host mode for external access
+  '--host', 'lan',       // Use 'lan' mode which is a valid Expo host option
   '--clear',             // Clear the cache
   '--no-dev',            // Disable development mode for better reliability
   '--reset-cache',       // Reset the cache entirely
@@ -676,39 +676,49 @@ document.addEventListener('DOMContentLoaded', function() {
     window.location.reload(true);
   };
   
-  // Version check on load
+  // Version check on load with improved DOM readiness handling
   const CHECK_DELAY = 5000; // 5 seconds
-  setTimeout(function() {
-    // First check if document and document.body are defined
-    if (typeof document !== 'undefined' && document && document.body) {
-      try {
-        // Add version indicator on dev environments
-        if (window.location.hostname.includes('localhost') || 
-            window.location.hostname.includes('127.0.0.1') ||
-            window.location.hostname.includes('.repl.co')) {
-          document.body.appendChild(createVersionIndicator());
-        }
-      } catch (err) {
-        console.log("[Version Injector] Could not append version indicator:", err.message);
-      }
-    } else {
-      console.log("[Version Injector] Document body not available yet, skipping version indicator");
+  
+  // Function to safely check if DOM is ready and perform version checks
+  function safelyCheckVersion() {
+    console.log("[Version Injector] Running version check...");
+    
+    // Only proceed if document.body is available
+    if (typeof document === 'undefined' || !document || !document.body) {
+      console.log("[Version Injector] Document body not available yet, will retry");
+      // Retry after a delay
+      setTimeout(safelyCheckVersion, 1000);
+      return;
     }
     
-    // Only check version if document.body is available
-    if (typeof document !== 'undefined' && document && document.body) {
-      try {
-        // Check if displaying old version
-        if (!document.body.innerHTML.includes(window.FORCE_APP_VERSION)) {
-          console.log("[Version Injector] Version mismatch detected! Refreshing...");
-          clearAllStorage();
-          window.location.reload(true);
+    try {
+      // Add version indicator on dev environments
+      if (window.location.hostname.includes('localhost') || 
+          window.location.hostname.includes('127.0.0.1') ||
+          window.location.hostname.includes('.repl.co')) {
+        try {
+          document.body.appendChild(createVersionIndicator());
+          console.log("[Version Injector] Version indicator added");
+        } catch (err) {
+          console.log("[Version Injector] Could not append version indicator:", err.message);
         }
-      } catch (err) {
-        console.log("[Version Injector] Error checking version:", err.message);
       }
+      
+      // Check if displaying old version
+      if (!document.body.innerHTML.includes(window.FORCE_APP_VERSION)) {
+        console.log("[Version Injector] Version mismatch detected! Refreshing...");
+        clearAllStorage();
+        window.location.reload(true);
+      } else {
+        console.log("[Version Injector] Version matched, no refresh needed");
+      }
+    } catch (err) {
+      console.log("[Version Injector] Error during version check:", err.message);
     }
-  }, CHECK_DELAY);
+  }
+  
+  // Start the version check process after initial delay
+  setTimeout(safelyCheckVersion, CHECK_DELAY);
   
   // Periodic version check every 5 minutes
   setInterval(function() {
