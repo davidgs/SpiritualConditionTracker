@@ -109,6 +109,16 @@ fix_app_delegate() {
     log "${GREEN}Created index.js that imports App.js${RESET}"
   fi
   
+  # Fix the buildCacheProvider error that prevents bundle creation
+  log "Applying buildCacheProvider fix for Expo..."
+  if [ -f "../fix-buildcache-provider.js" ]; then
+    node ../fix-buildcache-provider.js
+  elif [ -f "./fix-buildcache-provider.js" ]; then
+    node ./fix-buildcache-provider.js
+  else
+    log "${YELLOW}Warning: fix-buildcache-provider.js not found. Bundle creation may fail.${RESET}"
+  fi
+  
   # We'll try multiple bundle creation approaches
   log "Attempting bundle creation with expo export first..."
   
