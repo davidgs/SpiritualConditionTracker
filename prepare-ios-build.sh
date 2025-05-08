@@ -109,14 +109,43 @@ fix_app_delegate() {
     log "${GREEN}Created index.js that imports App.js${RESET}"
   fi
   
-  # Fix the buildCacheProvider error that prevents bundle creation
-  log "Applying buildCacheProvider fix for Expo..."
-  if [ -f "../fix-buildcache-provider.js" ]; then
-    node ../fix-buildcache-provider.js
-  elif [ -f "./fix-buildcache-provider.js" ]; then
-    node ./fix-buildcache-provider.js
-  else
-    log "${YELLOW}Warning: fix-buildcache-provider.js not found. Bundle creation may fail.${RESET}"
+  # Apply buildCacheProvider fix again specifically for bundle creation
+  log "Applying buildCacheProvider fix for bundle creation..."
+  
+  # Fix for the specific path from your error message
+  DAVID_CONFIG_DIR="/Users/davidgs/github.com/SpiritualConditionTracker/node_modules/@expo/config/build"
+  DAVID_BUILDCACHE="${DAVID_CONFIG_DIR}/buildCacheProvider.js"
+  
+  # Try to create the directory and file (might fail if you don't have permission, but worth trying)
+  if [ ! -f "${DAVID_BUILDCACHE}" ]; then
+    log "Attempting to fix exact path from error message: ${DAVID_BUILDCACHE}"
+    mkdir -p "${DAVID_CONFIG_DIR}" 2>/dev/null || true
+    
+    # Create the file if directory exists
+    if [ -d "${DAVID_CONFIG_DIR}" ]; then
+      cat > "${DAVID_BUILDCACHE}" << 'EOF'
+/**
+ * This is a placeholder implementation for the missing buildCacheProvider module
+ * Created by prepare-ios-build.sh to resolve module import errors
+ */
+
+// Simple cache provider implementation that does nothing
+function createCacheProvider() {
+  return {
+    get: async () => null,
+    put: async () => {},
+    clear: async () => {},
+  };
+}
+
+module.exports = {
+  createCacheProvider,
+};
+EOF
+      log "${GREEN}Successfully created buildCacheProvider at exact path from error message${RESET}"
+    else
+      log "${YELLOW}Could not create directory for exact path - will rely on fallback method${RESET}"
+    fi
   fi
   
   # We'll try multiple bundle creation approaches
@@ -415,9 +444,85 @@ fix_dependency_versions
 echo "Applying SQLite configuration fix..."
 if [ -f "../fix-sqlite-config.js" ]; then
   node ../fix-sqlite-config.js
-  echo -e "${GREEN}SQLite configuration fixed.${RESET}"
+  echo -e "${GREEN}SQLite configuration fixed with script.${RESET}"
 else
-  echo -e "${YELLOW}Warning: fix-sqlite-config.js not found, skipping SQLite configuration.${RESET}"
+  echo -e "${YELLOW}fix-sqlite-config.js not found, applying SQLite configuration fix directly...${RESET}"
+  
+  # Find the react-native-sqlite-storage package.json
+  SQLITE_PACKAGE=$(find . -path "*/react-native-sqlite-storage/package.json" | head -1)
+  
+  if [ -n "$SQLITE_PACKAGE" ]; then
+    echo "Found SQLite package at: $SQLITE_PACKAGE"
+    
+    # Create a backup
+    cp "$SQLITE_PACKAGE" "${SQLITE_PACKAGE}.bak"
+    
+    # Fix the platforms.ios.project format by converting to string if needed
+    # This uses node to parse and modify the JSON correctly
+    node -e "
+      const fs = require('fs');
+      const path = '$SQLITE_PACKAGE';
+      const pkg = JSON.parse(fs.readFileSync(path, 'utf8'));
+      
+      // Check if platforms.ios.project exists and is an object
+      if (pkg.dependency && pkg.dependency.platforms && 
+          pkg.dependency.platforms.ios && 
+          typeof pkg.dependency.platforms.ios.project === 'object') {
+        
+        // Convert to string format
+        const project = pkg.dependency.platforms.ios.project;
+        pkg.dependency.platforms.ios.project = project.project || 'ios/SQLite.xcodeproj';
+        
+        // Write back the fixed package.json
+        fs.writeFileSync(path, JSON.stringify(pkg, null, 2));
+        console.log('Successfully fixed SQLite configuration in ' + path);
+      } else {
+        console.log('No configuration fix needed for SQLite package');
+      }
+    "
+    
+    echo -e "${GREEN}SQLite configuration fixed directly.${RESET}"
+  else
+    echo -e "${YELLOW}Could not find SQLite package, skipping configuration.${RESET}"
+  fi
+fi
+
+# Fix the buildCacheProvider error that affects module resolution
+echo -e "${BLUE}Fixing buildCacheProvider error before prebuild...${RESET}"
+EXPO_CONFIG_DIR="node_modules/@expo/config/build"
+BUILDCACHE_FILE="${EXPO_CONFIG_DIR}/buildCacheProvider.js"
+
+# Create directory if needed
+if [ ! -d "${EXPO_CONFIG_DIR}" ]; then
+  echo "Creating missing directory: ${EXPO_CONFIG_DIR}"
+  mkdir -p "${EXPO_CONFIG_DIR}"
+fi
+
+# Create the missing module file if it doesn't exist
+if [ ! -f "${BUILDCACHE_FILE}" ]; then
+  echo "Creating missing buildCacheProvider module..."
+  cat > "${BUILDCACHE_FILE}" << 'EOF'
+/**
+ * This is a placeholder implementation for the missing buildCacheProvider module
+ * Created by prepare-ios-build.sh to resolve module import errors
+ */
+
+// Simple cache provider implementation that does nothing
+function createCacheProvider() {
+  return {
+    get: async () => null,
+    put: async () => {},
+    clear: async () => {},
+  };
+}
+
+module.exports = {
+  createCacheProvider,
+};
+EOF
+  echo -e "${GREEN}Successfully created buildCacheProvider module${RESET}"
+else
+  echo "buildCacheProvider module already exists"
 fi
 
 # Create fresh prebuild
