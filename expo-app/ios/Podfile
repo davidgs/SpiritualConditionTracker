@@ -77,12 +77,8 @@ target 'SpiritualConditionTracker' do
             "RNSScreenStack.mm"
           ]
         end
-      elsif target.name == 'RNDateTimePicker'
-        target.build_configurations.each do |config|
-          config.build_settings['EXCLUDED_SOURCE_FILE_NAMES'] = [
-            "RNDateTimePickerShadowView.m"
-          ]
-        end  
+      # We no longer need to exclude RNDateTimePicker files
+      # as the package is completely removed from the project
       elsif target.name == 'RCT-Folly'
         target.build_configurations.each do |config|
           config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] ||= ['$(inherited)']
