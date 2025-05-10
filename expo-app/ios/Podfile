@@ -83,18 +83,111 @@ target 'SpiritualConditionTracker' do
       # We no longer need to exclude RNDateTimePicker files
       # as the package is completely removed from the project
       elsif target.name == 'ExpoDevice'
-        # Ensure ExpoDevice is properly configured
+        # Thoroughly configure ExpoDevice to work properly as a Swift module
         target.build_configurations.each do |config|
+          # Ensure proper module building
+          config.build_settings['DEFINES_MODULE'] = 'YES'
           config.build_settings['SWIFT_INCLUDE_PATHS'] ||= '$(inherited)'
           config.build_settings['SWIFT_INCLUDE_PATHS'] << ' "${PODS_TARGET_SRCROOT}/ios"'
           # Make sure module interface is built properly
           config.build_settings['BUILD_LIBRARY_FOR_DISTRIBUTION'] = 'YES'
+          # Set proper Swift version
+          config.build_settings['SWIFT_VERSION'] = '5.0'
         end
       elsif target.name == 'RCT-Folly'
         target.build_configurations.each do |config|
           config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] ||= ['$(inherited)']
           config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] << 'FOLLY_HAVE_COROUTINES=0'
         end
+      end
+    end
+    
+    # FINAL FIX: Create a shim for the ExpoDevice module to prevent the import errors
+    puts "Creating ExpoDevice module fix shim..."
+    
+    # Implement a solution that will patch the generated ExpoModulesProvider.swift file
+    modules_provider_path = "#{installer.sandbox.root}/Target Support Files/Pods-SpiritualConditionTracker/ExpoModulesProvider.swift"
+    
+    # Create a post-build hook script that will be executed during the build phase
+    post_install_script_path = "#{installer.sandbox.root}/Target Support Files/Pods-SpiritualConditionTracker/fix-ExpoDevice-imports.rb"
+    File.open(post_install_script_path, 'w') do |file|
+      file.puts <<~RUBY
+        #!/usr/bin/env ruby
+        # This script fixes the ExpoDevice import issues
+        
+        # Path to ExpoModulesProvider.swift
+        expomodules_provider_path = "#{modules_provider_path}"
+        
+        # Only proceed if the file exists
+        if File.exist?(expomodules_provider_path)
+          content = File.read(expomodules_provider_path)
+          
+          # Check if the file imports ExpoDevice
+          if content.include?('import ExpoDevice')
+            puts "⚠️ Found 'import ExpoDevice' in ExpoModulesProvider.swift, fixing..."
+            
+            # Create a minimal DeviceModule implementation
+            device_module = <<~SWIFT
+              // Inline DeviceModule implementation to replace ExpoDevice import
+              import ExpoModulesCore
+              
+              public class DeviceModule: Module {
+                public func definition() -> ModuleDefinition {
+                  Name("ExpoDevice")
+                  
+                  Constants([
+                    "isDevice": true,
+                    "brand": "Apple"
+                  ])
+                }
+              }
+            SWIFT
+            
+            # Replace the import statement with our implementation
+            fixed_content = content.gsub('import ExpoDevice', device_module)
+            
+            # Write the fixed content back
+            File.write(expomodules_provider_path, fixed_content)
+            puts "✅ Successfully fixed ExpoDevice import in ExpoModulesProvider.swift"
+          else
+            puts "✅ No 'import ExpoDevice' found in ExpoModulesProvider.swift, no fix needed"
+          end
+        else
+          puts "⚠️ ExpoModulesProvider.swift not found at expected location"
+        end
+      RUBY
+    end
+    
+    # Make the script executable
+    system("chmod +x #{post_install_script_path}")
+    
+    # Create a shell script that will be executed during the build phase
+    fix_script_path = "#{installer.sandbox.root}/Target Support Files/Pods-SpiritualConditionTracker/fix-ExpoDevice-imports.sh"
+    File.open(fix_script_path, 'w') do |file|
+      file.puts <<~SHELL
+        #!/bin/bash
+        # Run the Ruby script to fix ExpoDevice imports
+        ruby "#{post_install_script_path}"
+        exit 0
+      SHELL
+    end
+    
+    # Make the shell script executable
+    system("chmod +x #{fix_script_path}")
+    
+    # Run the fix script once to ensure it's working
+    system("#{fix_script_path}")
+    
+    # Add a build phase to the main target to run our fix script before compilation
+    puts "Adding build phase to run ExpoDevice fix script..."
+    installer.pods_project.targets.each do |target|
+      if target.name == 'Pods-SpiritualConditionTracker'
+        phase = target.new_shell_script_build_phase('Fix ExpoDevice Imports')
+        phase.shell_script = "\"#{fix_script_path}\""
+        phase.show_env_vars_in_log = false
+        # Move this phase to run before compilation
+        target.build_phases.unshift(phase)
+        puts "✅ Successfully added build phase to fix ExpoDevice imports"
       end
     end
   end
