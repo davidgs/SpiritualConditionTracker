@@ -205,16 +205,29 @@ svg[width="0"], svg[height="0"] {
   console.log('Vector icons setup completed using proper React Native asset system');
 }
 
-// Run fix script if needed
+// Check and install required dependencies directly
 try {
-  console.log('Running module error fixes...');
-  const fixScriptPath = path.join(__dirname, 'fix-module-error.sh');
+  console.log('Checking required dependencies...');
   
-  if (fs.existsSync(fixScriptPath)) {
-    execSync(`bash ${fixScriptPath}`, { stdio: 'inherit' });
-    console.log('Fix script completed');
-  } else {
-    console.log('Fix script not found, skipping...');
+  // List of required packages with their versions
+  const requiredPackages = [
+    { name: 'minimatch', version: '5.1.6' },
+    { name: 'agent-base', version: '6.0.2' },
+    { name: 'lru-cache', version: '6.0.0' },
+    { name: 'glob', version: '9.3.5' }
+  ];
+  
+  // Check if package is installed, install if missing
+  for (const pkg of requiredPackages) {
+    const pkgJsonPath = path.join(__dirname, 'node_modules', pkg.name, 'package.json');
+    
+    if (!fs.existsSync(pkgJsonPath)) {
+      console.log(`Installing missing package: ${pkg.name}@${pkg.version}...`);
+      execSync(`npm install ${pkg.name}@${pkg.version} --save-exact`, {
+        stdio: 'inherit',
+        cwd: __dirname
+      });
+    }
   }
   
   // INLINE FIX: Create the missing buildCacheProvider.js file directly
@@ -267,7 +280,7 @@ module.exports = {
   
   console.log('Module error fix completed successfully');
 } catch (err) {
-  console.error(`Error running fix script: ${err.message}`);
+  console.error(`Error checking dependencies: ${err.message}`);
 }
 
 // Fix vector icons
