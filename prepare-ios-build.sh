@@ -2,8 +2,8 @@
 
 # Improved iOS Build Preparation Script for Spiritual Condition Tracker
 # This script handles dependency installation, asset preparation, and JS bundle creation for iOS builds
-# Version: 2.3.0 (May 10, 2025) - Removes workarounds in favor of direct fixes
-#                                - Renames problematic files that cause build errors (both header and stack)
+# Version: 2.4.0 (May 10, 2025) - Removes workarounds in favor of direct fixes
+#                                - Renames problematic files that cause build errors (screens and datetime)
 #                                - Adds direct JavaScript bundle generation
 
 # Text formatting
@@ -15,7 +15,7 @@ BLUE="\033[34m"
 RESET="\033[0m"
 
 echo -e "${BOLD}${BLUE}===== Spiritual Condition Tracker iOS Build Preparation =====${RESET}"
-echo -e "Version: ${BOLD}2.3.0${RESET} (May 10, 2025)"
+echo -e "Version: ${BOLD}2.4.0${RESET} (May 10, 2025)"
 echo "This script prepares your project for iOS native build using Xcode."
 echo "Uses direct dependency installation and asset copying without hacks or workarounds."
 echo "Includes direct fix for problematic files and generates JavaScript bundle."
@@ -99,6 +99,16 @@ if [ -f "$SCREENS_STACK_FILE" ]; then
   log "${GREEN}Successfully renamed RNSScreenStack.mm${RESET}"
 else
   log "${YELLOW}File not found: $SCREENS_STACK_FILE${RESET}"
+fi
+
+# Handle problematic file in RNDateTimePicker
+DATETIME_FILE="expo-app/node_modules/@react-native-community/datetimepicker/ios/RNDateTimePickerShadowView.m"
+if [ -f "$DATETIME_FILE" ]; then
+  log "Renaming problematic RNDateTimePickerShadowView.m file..."
+  mv "$DATETIME_FILE" "${DATETIME_FILE}.bak"
+  log "${GREEN}Successfully renamed RNDateTimePickerShadowView.m${RESET}"
+else
+  log "${YELLOW}File not found: $DATETIME_FILE${RESET}"
 fi
 
 # Copy necessary assets
