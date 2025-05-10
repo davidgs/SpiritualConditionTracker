@@ -60,5 +60,28 @@ target 'SpiritualConditionTracker' do
         end
       end
     end
+    
+    # Fix for C++ files causing build errors in various libraries
+    installer.pods_project.targets.each do |target|
+      if target.name == 'react-native-safe-area-context'
+        target.build_configurations.each do |config|
+          config.build_settings['EXCLUDED_SOURCE_FILE_NAMES'] = [
+            "RNCSafeAreaViewShadowNode.cpp",
+            "RNCSafeAreaViewState.cpp"
+          ]
+        end
+      elsif target.name == 'react-native-screens'
+        target.build_configurations.each do |config|
+          config.build_settings['EXCLUDED_SOURCE_FILE_NAMES'] = [
+            "RNSScreenStackHeaderConfig.mm"
+          ]
+        end
+      elsif target.name == 'RCT-Folly'
+        target.build_configurations.each do |config|
+          config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] ||= ['$(inherited)']
+          config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] << 'FOLLY_HAVE_COROUTINES=0'
+        end
+      end
+    end
   end
 end
