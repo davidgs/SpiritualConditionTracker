@@ -18,25 +18,26 @@ const PORT = 5000;
 function checkExpoServer(callback) {
   // Try connecting to hosts in sequence
   function tryConnect(host, hostsToTry) {
+    console.log(`Checking if Expo server is running at ${host}:3243...`);
+    
+    // Try a direct HTTP request first - simpler and more reliable
     const options = {
       hostname: host,
       port: 3243,
       path: '/',
       method: 'GET',
-      timeout: 5000
+      timeout: 10000
     };
     
-    console.log(`Checking if Expo server is running at ${host}:3243...`);
-    
     const req = http.request(options, (res) => {
+      // If we get a response, the server is running
       let data = '';
-      res.on('data', (chunk) => {
-        data += chunk;
-      });
+      res.on('data', (chunk) => { data += chunk; });
+      
       res.on('end', () => {
-        // Update the last working host
+        // Success! Update the last working host
         lastWorkingHost = host;
-        console.log(`Updated last working host to: ${lastWorkingHost}`);
+        console.log(`Successfully connected to Expo at ${host}:3243`);
         
         callback({
           status: 'ok',
@@ -49,22 +50,32 @@ function checkExpoServer(callback) {
     });
     
     req.on('error', (err) => {
+      console.log(`HTTP request to ${host}:3243 failed: ${err.message}`);
+      tryNextHost();
+    });
+    
+    req.on('timeout', () => {
+      console.log(`HTTP request to ${host}:3243 timed out`);
+      req.destroy();
+      tryNextHost();
+    });
+    
+    req.end();
+    
+    // Function to try the next host in the list
+    function tryNextHost() {
       if (hostsToTry.length > 0) {
-        // Try the next host in the list
         const nextHost = hostsToTry.shift();
         console.log(`Could not connect to Expo on ${host}, trying ${nextHost}...`);
         tryConnect(nextHost, hostsToTry);
       } else {
-        // All hosts failed
         console.log(`All hosts failed, last attempt was ${host}`);
         callback({
           status: 'error',
-          message: `Error connecting to Expo: ${err.message}`
+          message: `Error connecting to Expo: connect ECONNREFUSED ${host}:3243`
         });
       }
-    });
-    
-    req.end();
+    }
   }
   
   // Use last known working host first if available, then try others

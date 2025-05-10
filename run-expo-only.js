@@ -427,7 +427,7 @@ const expo = spawn('npx', [
   'start', 
   '--web', 
   '--port', PORT.toString(),
-  '--host', 'lan',       // Use 'lan' mode which is a valid Expo host option
+  '--host', 'localhost',   // Use localhost which is an allowed value for Expo
   '--clear',             // Clear the cache
   '--no-dev',            // Disable development mode for better reliability
   '--reset-cache',       // Reset the cache entirely
