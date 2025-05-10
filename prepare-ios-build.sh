@@ -28,8 +28,14 @@ echo ""
 
 # Set the absolute path to the project root
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PROJECT_ROOT="$SCRIPT_DIR"
+PROJECT_ROOT="/Users/davidgs/github.com/SpiritualConditionTracker"
 EXPO_APP_DIR="$PROJECT_ROOT/expo-app"
+
+# If executing from within Replit, use the local path
+if [[ "$SCRIPT_DIR" != *"Users/davidgs"* ]]; then
+  PROJECT_ROOT="$SCRIPT_DIR"
+  EXPO_APP_DIR="$PROJECT_ROOT/expo-app"
+fi
 
 # Check if expo-app directory exists
 if [ ! -d "$EXPO_APP_DIR" ]; then
@@ -112,7 +118,7 @@ log "Fixing permissions on generated CocoaPods scripts..."
 find ./Pods -name "*.sh" -type f -exec chmod +x {} \;
 log "${GREEN}Successfully fixed permissions on CocoaPods scripts${RESET}"
 
-cd ../..
+cd "$PROJECT_ROOT"
 
 # Fix problematic files by renaming them
 log "${BLUE}Fixing problematic files...${RESET}"
@@ -146,11 +152,11 @@ if [ -d "$DATETIME_DIR" ]; then
   
   # Update package.json to remove the dependency
   log "Updating package.json to remove the dependency..."
-  cd expo-app
+  cd "$EXPO_APP_DIR"
   # Create a temporary file with the dependency removed
   cat package.json | grep -v "@react-native-community/datetimepicker" > package.json.new
   mv package.json.new package.json
-  cd ..
+  cd "$PROJECT_ROOT"
   log "${GREEN}Successfully removed datetimepicker from dependencies${RESET}"
 else
   log "${YELLOW}DateTimePicker package not found at $DATETIME_DIR${RESET}"
