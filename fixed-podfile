@@ -60,8 +60,17 @@ target 'SpiritualConditionTracker' do
         end
       end
     end
+
+    # Fix for problematic libraries - RCT-Folly missing coroutine support
+    installer.pods_project.targets.each do |target|
+      target.build_configurations.each do |config|
+        # Add preprocessor definitions to disable unsupported coroutine features in Folly
+        config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] ||= ['$(inherited)']
+        config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] << 'FOLLY_HAVE_COROUTINES=0'
+      end
+    end
     
-    # Fix for C++ files causing build errors
+    # Fix for react-native-safe-area-context C++ issues
     installer.pods_project.targets.each do |target|
       if target.name == 'react-native-safe-area-context'
         target.build_configurations.each do |config|
@@ -71,16 +80,17 @@ target 'SpiritualConditionTracker' do
             "RNCSafeAreaViewState.cpp"
           ]
         end
-      elsif target.name == 'react-native-screens'
+      end
+    end
+    
+    # Fix for react-native-screens issues 
+    installer.pods_project.targets.each do |target|
+      if target.name == 'react-native-screens'
         target.build_configurations.each do |config|
+          # Exclude the problematic .mm file
           config.build_settings['EXCLUDED_SOURCE_FILE_NAMES'] = [
             "RNSScreenStackHeaderConfig.mm"
           ]
-        end
-      elsif target.name == 'RCT-Folly'
-        target.build_configurations.each do |config|
-          config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] ||= ['$(inherited)']
-          config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] << 'FOLLY_HAVE_COROUTINES=0'
         end
       end
     end
