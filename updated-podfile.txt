@@ -73,7 +73,8 @@ target 'SpiritualConditionTracker' do
       elsif target.name == 'react-native-screens'
         target.build_configurations.each do |config|
           config.build_settings['EXCLUDED_SOURCE_FILE_NAMES'] = [
-            "RNSScreenStackHeaderConfig.mm"
+            "RNSScreenStackHeaderConfig.mm",
+            "RNSScreenStack.mm"
           ]
         end
       elsif target.name == 'RCT-Folly'

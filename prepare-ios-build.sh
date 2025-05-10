@@ -2,8 +2,8 @@
 
 # Improved iOS Build Preparation Script for Spiritual Condition Tracker
 # This script handles dependency installation, asset preparation, and JS bundle creation for iOS builds
-# Version: 2.2.0 (May 10, 2025) - Removes workarounds in favor of direct fixes
-#                                - Renames problematic files that cause build errors
+# Version: 2.3.0 (May 10, 2025) - Removes workarounds in favor of direct fixes
+#                                - Renames problematic files that cause build errors (both header and stack)
 #                                - Adds direct JavaScript bundle generation
 
 # Text formatting
@@ -15,7 +15,7 @@ BLUE="\033[34m"
 RESET="\033[0m"
 
 echo -e "${BOLD}${BLUE}===== Spiritual Condition Tracker iOS Build Preparation =====${RESET}"
-echo -e "Version: ${BOLD}2.2.0${RESET} (May 10, 2025)"
+echo -e "Version: ${BOLD}2.3.0${RESET} (May 10, 2025)"
 echo "This script prepares your project for iOS native build using Xcode."
 echo "Uses direct dependency installation and asset copying without hacks or workarounds."
 echo "Includes direct fix for problematic files and generates JavaScript bundle."
@@ -81,14 +81,24 @@ fi
 # Fix problematic files by renaming them
 log "${BLUE}Fixing problematic files...${RESET}"
 
-# Check for the problematic file in react-native-screens
-SCREENS_MM_FILE="expo-app/node_modules/react-native-screens/ios/RNSScreenStackHeaderConfig.mm"
-if [ -f "$SCREENS_MM_FILE" ]; then
+# Check for problematic files in react-native-screens
+SCREENS_HEADER_FILE="expo-app/node_modules/react-native-screens/ios/RNSScreenStackHeaderConfig.mm"
+if [ -f "$SCREENS_HEADER_FILE" ]; then
   log "Renaming problematic RNSScreenStackHeaderConfig.mm file..."
-  mv "$SCREENS_MM_FILE" "${SCREENS_MM_FILE}.bak"
-  log "${GREEN}Successfully renamed problematic file${RESET}"
+  mv "$SCREENS_HEADER_FILE" "${SCREENS_HEADER_FILE}.bak"
+  log "${GREEN}Successfully renamed RNSScreenStackHeaderConfig.mm${RESET}"
 else
-  log "${YELLOW}File not found: $SCREENS_MM_FILE${RESET}"
+  log "${YELLOW}File not found: $SCREENS_HEADER_FILE${RESET}"
+fi
+
+# Also handle RNSScreenStack.mm which causes similar issues
+SCREENS_STACK_FILE="expo-app/node_modules/react-native-screens/ios/RNSScreenStack.mm"
+if [ -f "$SCREENS_STACK_FILE" ]; then
+  log "Renaming problematic RNSScreenStack.mm file..."
+  mv "$SCREENS_STACK_FILE" "${SCREENS_STACK_FILE}.bak"
+  log "${GREEN}Successfully renamed RNSScreenStack.mm${RESET}"
+else
+  log "${YELLOW}File not found: $SCREENS_STACK_FILE${RESET}"
 fi
 
 # Copy necessary assets
