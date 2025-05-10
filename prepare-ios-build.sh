@@ -2,9 +2,10 @@
 
 # Improved iOS Build Preparation Script for Spiritual Condition Tracker
 # This script handles dependency installation, asset preparation, and JS bundle creation for iOS builds
-# Version: 2.5.0 (May 10, 2025) - Removes workarounds in favor of direct fixes
+# Version: 2.6.0 (May 10, 2025) - Removes workarounds in favor of direct fixes
 #                                - Renames problematic files in react-native-screens
 #                                - Removes unused @react-native-community/datetimepicker package
+#                                - Fixes expo-device Swift compilation error
 #                                - Adds direct JavaScript bundle generation
 
 # Text formatting
@@ -16,7 +17,7 @@ BLUE="\033[34m"
 RESET="\033[0m"
 
 echo -e "${BOLD}${BLUE}===== Spiritual Condition Tracker iOS Build Preparation =====${RESET}"
-echo -e "Version: ${BOLD}2.5.0${RESET} (May 10, 2025)"
+echo -e "Version: ${BOLD}2.6.0${RESET} (May 10, 2025)"
 echo "This script prepares your project for iOS native build using Xcode."
 echo "Uses direct dependency installation and asset copying without hacks or workarounds."
 echo "Includes direct fix for problematic files and generates JavaScript bundle."
@@ -119,6 +120,379 @@ if [ -d "$DATETIME_DIR" ]; then
   log "${GREEN}Successfully removed datetimepicker from dependencies${RESET}"
 else
   log "${YELLOW}DateTimePicker package not found at $DATETIME_DIR${RESET}"
+fi
+
+# Fix expo-device Swift compilation error
+DEVICE_SWIFT_FILE="expo-app/node_modules/expo-device/ios/UIDevice.swift"
+if [ -f "$DEVICE_SWIFT_FILE" ]; then
+  log "Fixing Swift compilation error in expo-device..."
+  
+  # Create a temporary file with the fix
+  cat > "$DEVICE_SWIFT_FILE.fixed" << EOF
+// Copyright 2022-present 650 Industries. All rights reserved.
+
+import Foundation
+import ExpoModulesCore
+
+// Import UIKit to get UIDevice
+import UIKit
+
+// Add TargetConditionals import to fix TARGET_OS_SIMULATOR not found error
+#if canImport(TargetConditionals)
+import TargetConditionals
+#endif
+
+@objc(SimulatorUtilsModule)
+internal class SimulatorUtilsModule: Module {
+  public func definition() -> ModuleDefinition {
+    Name("SimulatorUtils")
+    
+    AsyncFunction("isRunningInSimulator") { () -> Bool in
+      #if targetEnvironment(simulator)
+        return true
+      #else
+        return false
+      #endif
+    }
+  }
+}
+
+@objc(UIDeviceModule)
+internal class UIDeviceModule: Module {
+  private let device = UIDevice.current
+  
+  public func definition() -> ModuleDefinition {
+    Name("UIDevice")
+    
+    Events("batteryLevelDidChange", "batteryStateDidChange", "proximityDidChange", "orientationDidChange")
+    
+    OnCreate {
+      self.addNotificationObservers()
+    }
+    
+    OnDestroy {
+      self.removeNotificationObservers()
+    }
+    
+    // MARK: Basic information about the device (name, brand, model, etc.)
+    
+    AsyncFunction("getName") { () -> String in
+      return self.device.name
+    }
+    
+    AsyncFunction("getManufacturer") { () -> String in
+      return "Apple"
+    }
+    
+    AsyncFunction("getBrand") { () -> String in
+      return "Apple"
+    }
+    
+    AsyncFunction("getModel") { () -> String in
+      #if targetEnvironment(simulator)
+        return "Simulator"
+      #else
+        var systemInfo = utsname()
+        uname(&systemInfo)
+        let machineMirror = Mirror(reflecting: systemInfo.machine)
+        let identifier = machineMirror.children.reduce("") { id, element in
+          guard let value = element.value as? Int8, value != 0 else { return id }
+          return id + String(UnicodeScalar(UInt8(value)))
+        }
+        return identifier
+      #endif
+    }
+    
+    AsyncFunction("getModelName") { () -> String? in
+      #if targetEnvironment(simulator)
+        return "iOS Simulator"
+      #else
+        var systemInfo = utsname()
+        uname(&systemInfo)
+        let machineMirror = Mirror(reflecting: systemInfo.machine)
+        let identifier = machineMirror.children.reduce("") { id, element in
+          guard let value = element.value as? Int8, value != 0 else { return id }
+          return id + String(UnicodeScalar(UInt8(value)))
+        }
+        switch identifier {
+          case "iPhone1,1":                               return "iPhone"
+          case "iPhone1,2":                               return "iPhone 3G"
+          case "iPhone2,1":                               return "iPhone 3GS"
+          case "iPhone3,1", "iPhone3,2", "iPhone3,3":     return "iPhone 4"
+          case "iPhone4,1":                               return "iPhone 4s"
+          case "iPhone5,1", "iPhone5,2":                  return "iPhone 5"
+          case "iPhone5,3", "iPhone5,4":                  return "iPhone 5c"
+          case "iPhone6,1", "iPhone6,2":                  return "iPhone 5s"
+          case "iPhone7,2":                               return "iPhone 6"
+          case "iPhone7,1":                               return "iPhone 6 Plus"
+          case "iPhone8,1":                               return "iPhone 6s"
+          case "iPhone8,2":                               return "iPhone 6s Plus"
+          case "iPhone8,4":                               return "iPhone SE (1st generation)"
+          case "iPhone9,1", "iPhone9,3":                  return "iPhone 7"
+          case "iPhone9,2", "iPhone9,4":                  return "iPhone 7 Plus"
+          case "iPhone10,1", "iPhone10,4":                return "iPhone 8"
+          case "iPhone10,2", "iPhone10,5":                return "iPhone 8 Plus"
+          case "iPhone10,3", "iPhone10,6":                return "iPhone X"
+          case "iPhone11,2":                              return "iPhone XS"
+          case "iPhone11,4", "iPhone11,6":                return "iPhone XS Max"
+          case "iPhone11,8":                              return "iPhone XR"
+          case "iPhone12,1":                              return "iPhone 11"
+          case "iPhone12,3":                              return "iPhone 11 Pro"
+          case "iPhone12,5":                              return "iPhone 11 Pro Max"
+          case "iPhone12,8":                              return "iPhone SE (2nd generation)"
+          case "iPhone13,1":                              return "iPhone 12 mini"
+          case "iPhone13,2":                              return "iPhone 12"
+          case "iPhone13,3":                              return "iPhone 12 Pro"
+          case "iPhone13,4":                              return "iPhone 12 Pro Max"
+          case "iPhone14,2":                              return "iPhone 13 Pro"
+          case "iPhone14,3":                              return "iPhone 13 Pro Max"
+          case "iPhone14,4":                              return "iPhone 13 mini"
+          case "iPhone14,5":                              return "iPhone 13"
+          case "iPhone14,6":                              return "iPhone SE (3rd generation)"
+          case "iPhone14,7":                              return "iPhone 14"
+          case "iPhone14,8":                              return "iPhone 14 Plus"
+          case "iPhone15,2":                              return "iPhone 14 Pro"
+          case "iPhone15,3":                              return "iPhone 14 Pro Max"
+          case "iPhone15,4":                              return "iPhone 15"
+          case "iPhone15,5":                              return "iPhone 15 Plus"
+          case "iPhone16,1":                              return "iPhone 15 Pro"
+          case "iPhone16,2":                              return "iPhone 15 Pro Max"
+            
+          case "iPad2,1", "iPad2,2", "iPad2,3", "iPad2,4":return "iPad 2"
+          case "iPad3,1", "iPad3,2", "iPad3,3":           return "iPad (3rd generation)"
+          case "iPad3,4", "iPad3,5", "iPad3,6":           return "iPad (4th generation)"
+          case "iPad6,11", "iPad6,12":                    return "iPad (5th generation)"
+          case "iPad7,5", "iPad7,6":                      return "iPad (6th generation)"
+          case "iPad7,11", "iPad7,12":                    return "iPad (7th generation)"
+          case "iPad11,6", "iPad11,7":                    return "iPad (8th generation)"
+          case "iPad12,1", "iPad12,2":                    return "iPad (9th generation)"
+          case "iPad13,18", "iPad13,19":                  return "iPad (10th generation)"
+            
+          case "iPad4,1", "iPad4,2", "iPad4,3":           return "iPad Air"
+          case "iPad5,3", "iPad5,4":                      return "iPad Air 2"
+          case "iPad11,3", "iPad11,4":                    return "iPad Air (3rd generation)"
+          case "iPad13,1", "iPad13,2":                    return "iPad Air (4th generation)"
+          case "iPad13,16", "iPad13,17":                  return "iPad Air (5th generation)"
+            
+          case "iPad2,5", "iPad2,6", "iPad2,7":           return "iPad mini"
+          case "iPad4,4", "iPad4,5", "iPad4,6":           return "iPad mini 2"
+          case "iPad4,7", "iPad4,8", "iPad4,9":           return "iPad mini 3"
+          case "iPad5,1", "iPad5,2":                      return "iPad mini 4"
+          case "iPad11,1", "iPad11,2":                    return "iPad mini (5th generation)"
+          case "iPad14,1", "iPad14,2":                    return "iPad mini (6th generation)"
+            
+          case "iPad6,3", "iPad6,4":                      return "iPad Pro (9.7-inch)"
+          case "iPad7,3", "iPad7,4":                      return "iPad Pro (10.5-inch)"
+          case "iPad8,1", "iPad8,2", "iPad8,3", "iPad8,4":return "iPad Pro (11-inch) (1st generation)"
+          case "iPad8,9", "iPad8,10":                     return "iPad Pro (11-inch) (2nd generation)"
+          case "iPad13,4", "iPad13,5", "iPad13,6", "iPad13,7": return "iPad Pro (11-inch) (3rd generation)"
+          case "iPad14,3", "iPad14,4":                    return "iPad Pro (11-inch) (4th generation)"
+          case "iPad6,7", "iPad6,8":                      return "iPad Pro (12.9-inch) (1st generation)"
+          case "iPad7,1", "iPad7,2":                      return "iPad Pro (12.9-inch) (2nd generation)"
+          case "iPad8,5", "iPad8,6", "iPad8,7", "iPad8,8":return "iPad Pro (12.9-inch) (3rd generation)"
+          case "iPad8,11", "iPad8,12":                    return "iPad Pro (12.9-inch) (4th generation)"
+          case "iPad13,8", "iPad13,9", "iPad13,10", "iPad13,11": return "iPad Pro (12.9-inch) (5th generation)"
+          case "iPad14,5", "iPad14,6":                    return "iPad Pro (12.9-inch) (6th generation)"
+            
+          case "iPod1,1":                                 return "iPod touch"
+          case "iPod2,1":                                 return "iPod touch (2nd generation)"
+          case "iPod3,1":                                 return "iPod touch (3rd generation)"
+          case "iPod4,1":                                 return "iPod touch (4th generation)"
+          case "iPod5,1":                                 return "iPod touch (5th generation)"
+          case "iPod7,1":                                 return "iPod touch (6th generation)"
+          case "iPod9,1":                                 return "iPod touch (7th generation)"
+            
+          case "i386", "x86_64", "arm64":                 return "iOS Simulator"
+            
+          default:                                        return nil
+        }
+      #endif
+    }
+    
+    // MARK: Operating system information
+    
+    AsyncFunction("getSystemName") { () -> String in
+      return self.device.systemName
+    }
+    
+    AsyncFunction("getSystemVersion") { () -> String in
+      return self.device.systemVersion
+    }
+    
+    
+    // MARK: Battery information
+    
+    AsyncFunction("getBatteryLevel") { () -> Float in
+      self.device.isBatteryMonitoringEnabled = true
+      return self.device.batteryLevel
+    }
+    
+    AsyncFunction("getBatteryState") { () -> String in
+      self.device.isBatteryMonitoringEnabled = true
+      let batteryState = self.device.batteryState
+      
+      switch batteryState {
+        case .unknown:
+          return "unknown"
+        case .unplugged:
+          return "unplugged"
+        case .charging:
+          return "charging"
+        case .full:
+          return "full"
+        @unknown default:
+          return "unknown"
+      }
+    }
+    
+    AsyncFunction("isLowPowerModeEnabled") { () -> Bool in
+      return ProcessInfo.processInfo.isLowPowerModeEnabled
+    }
+    
+    // MARK: Other device properties
+    
+    AsyncFunction("isProximityEnabled") { () -> Bool in
+      return self.device.isProximityMonitoringEnabled
+    }
+    
+    AsyncFunction("isBatteryMonitoringEnabled") { () -> Bool in
+      return self.device.isBatteryMonitoringEnabled
+    }
+    
+    // MARK: Device properties setters
+    
+    AsyncFunction("setProximityMonitoringEnabled") { (enabled: Bool) in
+      guard self.device.proximityMonitoringEnabled != enabled else {
+        return false
+      }
+      
+      self.device.isProximityMonitoringEnabled = enabled
+      
+      return true
+    }
+    
+    AsyncFunction("setBatteryMonitoringEnabled") { (enabled: Bool) in
+      guard self.device.isBatteryMonitoringEnabled != enabled else {
+        return false
+      }
+      
+      self.device.isBatteryMonitoringEnabled = enabled
+      
+      return true
+    }
+  }
+  
+  // MARK: Notifications observers
+  
+  func addNotificationObservers() {
+    NotificationCenter.default.addObserver(
+      self,
+      selector: #selector(batteryLevelDidChange),
+      name: UIDevice.batteryLevelDidChangeNotification,
+      object: nil
+    )
+    
+    NotificationCenter.default.addObserver(
+      self,
+      selector: #selector(batteryStateDidChange),
+      name: UIDevice.batteryStateDidChangeNotification,
+      object: nil
+    )
+    
+    NotificationCenter.default.addObserver(
+      self,
+      selector: #selector(proximityStateDidChange),
+      name: UIDevice.proximityStateDidChangeNotification,
+      object: nil
+    )
+    
+    NotificationCenter.default.addObserver(
+      self,
+      selector: #selector(orientationDidChange),
+      name: UIDevice.orientationDidChangeNotification,
+      object: nil
+    )
+  }
+  
+  func removeNotificationObservers() {
+    NotificationCenter.default.removeObserver(self)
+  }
+  
+  // MARK: Notification handlers
+  
+  @objc
+  func batteryLevelDidChange(notification: NSNotification) {
+    self.device.isBatteryMonitoringEnabled = true
+    self.sendEvent("batteryLevelDidChange", [
+      "batteryLevel": self.device.batteryLevel
+    ])
+  }
+  
+  @objc
+  func batteryStateDidChange(notification: NSNotification) {
+    self.device.isBatteryMonitoringEnabled = true
+    var batteryState = "unknown"
+    
+    switch self.device.batteryState {
+      case .charging:
+        batteryState = "charging"
+      case .full:
+        batteryState = "full"
+      case .unplugged:
+        batteryState = "unplugged"
+      case .unknown:
+        batteryState = "unknown"
+      @unknown default:
+        batteryState = "unknown"
+    }
+    
+    self.sendEvent("batteryStateDidChange", [
+      "batteryState": batteryState
+    ])
+  }
+  
+  @objc
+  func proximityStateDidChange(notification: NSNotification) {
+    self.sendEvent("proximityDidChange", [
+      "isNear": self.device.proximityState
+    ])
+  }
+  
+  @objc
+  func orientationDidChange(notification: NSNotification) {
+    var orientation = "unknown"
+    
+    switch self.device.orientation {
+      case .faceDown:
+        orientation = "faceDown"
+      case .faceUp:
+        orientation = "faceUp"
+      case .landscapeLeft:
+        orientation = "landscapeLeft"
+      case .landscapeRight:
+        orientation = "landscapeRight"
+      case .portrait:
+        orientation = "portrait"
+      case .portraitUpsideDown:
+        orientation = "portraitUpsideDown"
+      case .unknown:
+        orientation = "unknown"
+      @unknown default:
+        orientation = "unknown"
+    }
+    
+    self.sendEvent("orientationDidChange", [
+      "orientation": orientation
+    ])
+  }
+}
+EOF
+  
+  # Replace the original file
+  mv "$DEVICE_SWIFT_FILE.fixed" "$DEVICE_SWIFT_FILE"
+  log "${GREEN}Successfully fixed expo-device Swift compilation error${RESET}"
+else
+  log "${YELLOW}expo-device Swift file not found at $DEVICE_SWIFT_FILE${RESET}"
 fi
 
 # Copy necessary assets
