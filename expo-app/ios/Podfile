@@ -16,8 +16,8 @@ prepare_react_native_project!
 target 'SpiritualConditionTracker' do
   use_expo_modules!
   
-  # Explicitly specify ExpoDevice to avoid duplicate sources
-  pod 'ExpoDevice', :path => '../node_modules/expo-device'
+  # ExpoDevice is managed by the autolinking process - do not specify it here
+  # Previous explicit pod declaration was causing duplicate source issues
 
   if ENV['EXPO_USE_COMMUNITY_AUTOLINKING'] == '1'
     config_command = ['node', '-e', "process.argv=['', '', 'config'];require('@react-native-community/cli').run()"];

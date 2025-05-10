@@ -125,6 +125,21 @@ if [ -d "Pods" ]; then
   rm -f Podfile.lock
 fi
 
+# Ensure Podfile has proper syntax and no conflicts
+log "Validating Podfile for conflicts..."
+grep -n "pod ['\"]ExpoDevice['\"]" Podfile || log "${GREEN}No explicit ExpoDevice pod declaration found (good)${RESET}"
+
+# Ensure clean state for installation
+log "Cleaning pod installation state..."
+if [ -d "Pods" ]; then
+  log "Removing existing Pods directory for clean installation..."
+  rm -rf Pods
+fi
+if [ -f "Podfile.lock" ]; then
+  log "Removing Podfile.lock for clean installation..."
+  rm -f Podfile.lock
+fi
+
 # Run pod install with full logging
 log "Running pod install with repository update..."
 pod install --repo-update --verbose
@@ -134,11 +149,26 @@ if [ $? -ne 0 ]; then
   log "${RED}Pod installation failed. Trying one more time with clean cache...${RESET}"
   pod cache clean --all
   pod install --repo-update
+  
+  # If it still fails, try removing the platform line and reinstalling
+  if [ $? -ne 0 ]; then
+    log "${RED}Pod installation failed again. Trying with modified Podfile...${RESET}"
+    sed -i.bak 's/platform :ios.*/platform :ios, '"'15.0'"'/' Podfile
+    log "Changed platform line to iOS 15.0"
+    pod install --repo-update
+  fi
 fi
 
 # Verify pod installation succeeded and found files
 log "Verifying pod installation results..."
 ls -la ./Pods || log "${YELLOW}Warning: Pods directory not created${RESET}"
+
+# Make sure Podfile.lock exists and is in sync with Pods directory
+if [ ! -f "Podfile.lock" ]; then
+  log "${RED}Warning: Podfile.lock does not exist after pod install${RESET}"
+  log "Forcing pod install one more time to generate Podfile.lock..."
+  pod install
+fi
 
 # Specifically check for the expo-configure-project.sh script
 EXPO_SCRIPT="Pods/Target Support Files/Pods-SpiritualConditionTracker/expo-configure-project.sh"
@@ -230,24 +260,58 @@ else
   log "${YELLOW}File not found: $SCREENS_STACK_FILE${RESET}"
 fi
 
-# Remove unused RNDateTimePicker package completely
-DATETIME_DIR="expo-app/node_modules/@react-native-community/datetimepicker"
+# Completely remove all traces of the unused RNDateTimePicker package
+log "${BLUE}Thoroughly removing all traces of @react-native-community/datetimepicker...${RESET}"
+
+# 1. Remove the actual package if it exists
+DATETIME_DIR="$EXPO_APP_DIR/node_modules/@react-native-community/datetimepicker"
 if [ -d "$DATETIME_DIR" ]; then
-  log "Removing unused @react-native-community/datetimepicker package..."
+  log "Removing unused @react-native-community/datetimepicker package directory..."
   rm -rf "$DATETIME_DIR"
-  log "${GREEN}Successfully removed unused @react-native-community/datetimepicker package${RESET}"
-  
-  # Update package.json to remove the dependency
-  log "Updating package.json to remove the dependency..."
-  cd "$EXPO_APP_DIR"
-  # Create a temporary file with the dependency removed
-  cat package.json | grep -v "@react-native-community/datetimepicker" > package.json.new
-  mv package.json.new package.json
-  cd "$PROJECT_ROOT"
-  log "${GREEN}Successfully removed datetimepicker from dependencies${RESET}"
+  log "${GREEN}Successfully removed package directory${RESET}"
 else
-  log "${YELLOW}DateTimePicker package not found at $DATETIME_DIR${RESET}"
+  log "${YELLOW}DateTimePicker package directory not found${RESET}"
 fi
+
+# 2. Remove from package.json
+cd "$EXPO_APP_DIR"
+if grep -q "@react-native-community/datetimepicker" package.json; then
+  log "Updating package.json to remove the dependency..."
+  # Create a new package.json without the dependency
+  jq 'del(.dependencies."@react-native-community/datetimepicker")' package.json > package.json.new
+  if [ $? -eq 0 ]; then
+    mv package.json.new package.json
+    log "${GREEN}Successfully removed datetimepicker from package.json dependencies${RESET}"
+  else
+    # Fallback if jq is not available
+    log "${YELLOW}jq not available, using grep to remove dependency${RESET}"
+    cat package.json | grep -v "@react-native-community/datetimepicker" > package.json.new
+    mv package.json.new package.json
+    log "${GREEN}Removed datetimepicker using grep${RESET}"
+  fi
+else
+  log "${GREEN}No reference to datetimepicker found in package.json${RESET}"
+fi
+
+# 3. Remove from node_modules/.cache to prevent Codegen from finding it
+CACHE_DIR="$EXPO_APP_DIR/node_modules/.cache"
+if [ -d "$CACHE_DIR" ]; then
+  log "Clearing node_modules/.cache to remove any datetimepicker references..."
+  find "$CACHE_DIR" -type d -name "*datetimepicker*" -exec rm -rf {} \; 2>/dev/null || true
+  log "${GREEN}Cleared datetimepicker from cache directories${RESET}"
+fi
+
+# 4. Check for and remove any references in yarn.lock or package-lock.json
+for LOCK_FILE in "$EXPO_APP_DIR/yarn.lock" "$EXPO_APP_DIR/package-lock.json"; do
+  if [ -f "$LOCK_FILE" ] && grep -q "datetimepicker" "$LOCK_FILE"; then
+    log "Found datetimepicker references in $(basename "$LOCK_FILE"), regenerating..."
+    rm -f "$LOCK_FILE"
+    log "${GREEN}Removed $(basename "$LOCK_FILE") for clean reinstall${RESET}"
+  fi
+done
+
+cd "$PROJECT_ROOT"
+log "${GREEN}✓ Thoroughly removed all traces of @react-native-community/datetimepicker${RESET}"
 
 # Fix expo-device Swift compilation errors
 DEVICE_SWIFT_FILE="expo-app/node_modules/expo-device/ios/UIDevice.swift"
