@@ -2,11 +2,12 @@
 
 # Improved iOS Build Preparation Script for Spiritual Condition Tracker
 # This script handles dependency installation, asset preparation, and JS bundle creation for iOS builds
-# Version: 2.7.1 (May 10, 2025) - Removes workarounds in favor of direct fixes
+# Version: 2.8.0 (May 10, 2025) - Removes workarounds in favor of direct fixes
 #                                - Renames problematic files in react-native-screens
 #                                - Removes unused @react-native-community/datetimepicker package
 #                                - Fixes all expo-device Swift compilation errors including component extraction
 #                                - Ensures all Swift code has proper syntax and no reference to script paths
+#                                - Fixes 'No such module ExpoDevice' error in ExpoModulesProvider.swift
 #                                - Adds direct JavaScript bundle generation
 
 # Text formatting
@@ -18,7 +19,7 @@ BLUE="\033[34m"
 RESET="\033[0m"
 
 echo -e "${BOLD}${BLUE}===== Spiritual Condition Tracker iOS Build Preparation =====${RESET}"
-echo -e "Version: ${BOLD}2.7.1${RESET} (May 10, 2025)"
+echo -e "Version: ${BOLD}2.8.0${RESET} (May 10, 2025)"
 echo "This script prepares your project for iOS native build using Xcode."
 echo "Uses direct dependency installation and asset copying without hacks or workarounds."
 echo "Includes direct fix for problematic files and generates JavaScript bundle."
@@ -80,6 +81,60 @@ else
   # npx expo prebuild --platform ios --no-install
   # cd ..
 fi
+
+# Make sure expo-device is properly linked and resolved
+log "${BLUE}Ensuring expo-device is properly installed and linked...${RESET}"
+cd expo-app
+if ! grep -q "expo-device" package.json; then
+  log "Installing expo-device package..."
+  npm install expo-device --save
+else
+  log "${GREEN}expo-device already in package.json${RESET}"
+fi
+
+# Force linking the expo-device module
+log "Force linking expo-device module..."
+npx pod-install
+
+# Create a modulemap for ExpoDevice if it doesn't exist
+log "Ensuring ExpoDevice module is properly set up..."
+MODULE_DIR="../ios/Pods/Headers/Public/ExpoDevice"
+if [ ! -d "$MODULE_DIR" ]; then
+  log "Creating ExpoDevice module directory..."
+  mkdir -p "$MODULE_DIR"
+fi
+
+MODULEMAP_FILE="$MODULE_DIR/ExpoDevice.modulemap"
+if [ ! -f "$MODULEMAP_FILE" ]; then
+  log "Creating ExpoDevice.modulemap file..."
+  cat > "$MODULEMAP_FILE" << EOF
+module ExpoDevice {
+  umbrella header "ExpoDevice.h"
+  export *
+  module * { export * }
+}
+EOF
+  log "${GREEN}Successfully created ExpoDevice.modulemap${RESET}"
+fi
+
+# Create the ExpoDevice.h header file if it doesn't exist
+HEADER_FILE="$MODULE_DIR/ExpoDevice.h"
+if [ ! -f "$HEADER_FILE" ]; then
+  log "Creating ExpoDevice.h header file..."
+  cat > "$HEADER_FILE" << EOF
+// ExpoDevice.h - Umbrella header for ExpoDevice module
+#import <Foundation/Foundation.h>
+
+//! Project version number for ExpoDevice.
+FOUNDATION_EXPORT double ExpoDeviceVersionNumber;
+
+//! Project version string for ExpoDevice.
+FOUNDATION_EXPORT const unsigned char ExpoDeviceVersionString[];
+EOF
+  log "${GREEN}Successfully created ExpoDevice.h${RESET}"
+fi
+
+cd ..
 
 # Fix problematic files by renaming them
 log "${BLUE}Fixing problematic files...${RESET}"
@@ -650,6 +705,39 @@ EOF
   log "${GREEN}Successfully fixed DeviceModule.swift compilation error${RESET}"
 else
   log "${YELLOW}DeviceModule.swift file not found at $DEVICE_MODULE_FILE${RESET}"
+fi
+
+# Fix ExpoModulesProvider.swift file
+MODULES_PROVIDER_FILE="expo-app/ios/Pods/Target Support Files/Pods-SpiritualConditionTracker/ExpoModulesProvider.swift"
+if [ -f "$MODULES_PROVIDER_FILE" ]; then
+  log "Checking ExpoModulesProvider.swift for 'No such module ExpoDevice' error..."
+  
+  # Check if the file imports ExpoDevice
+  if grep -q "import ExpoDevice" "$MODULES_PROVIDER_FILE"; then
+    log "ExpoModulesProvider.swift imports ExpoDevice, checking if the module is available..."
+    
+    # Check if ExpoDevice.modulemap exists
+    DEVICE_MODULE_MAP="expo-app/ios/Pods/Headers/Public/ExpoDevice/ExpoDevice.modulemap"
+    if [ ! -f "$DEVICE_MODULE_MAP" ]; then
+      log "${YELLOW}ExpoDevice.modulemap not found, creating a fixed version of ExpoModulesProvider.swift...${RESET}"
+      
+      # Create a fixed version without the ExpoDevice import
+      cat "$MODULES_PROVIDER_FILE" | grep -v "import ExpoDevice" | grep -v "ExpoDevice.DeviceModule" > "${MODULES_PROVIDER_FILE}.fixed"
+      
+      # Replace any ExpoDevice references in the providers array
+      sed -i -e 's/ExpoDevice.DeviceModule(),//g' "${MODULES_PROVIDER_FILE}.fixed"
+      
+      # Replace the original file
+      mv "${MODULES_PROVIDER_FILE}.fixed" "$MODULES_PROVIDER_FILE"
+      log "${GREEN}Successfully removed ExpoDevice references from ExpoModulesProvider.swift${RESET}"
+    else
+      log "${GREEN}ExpoDevice.modulemap exists, no need to fix ExpoModulesProvider.swift${RESET}"
+    fi
+  else
+    log "${GREEN}ExpoModulesProvider.swift does not import ExpoDevice, no need to fix${RESET}"
+  fi
+else
+  log "${YELLOW}ExpoModulesProvider.swift not found at $MODULES_PROVIDER_FILE${RESET}"
 fi
 
 # Copy necessary assets
