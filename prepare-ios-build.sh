@@ -2,10 +2,11 @@
 
 # Improved iOS Build Preparation Script for Spiritual Condition Tracker
 # This script handles dependency installation, asset preparation, and JS bundle creation for iOS builds
-# Version: 2.7.0 (May 10, 2025) - Removes workarounds in favor of direct fixes
+# Version: 2.7.1 (May 10, 2025) - Removes workarounds in favor of direct fixes
 #                                - Renames problematic files in react-native-screens
 #                                - Removes unused @react-native-community/datetimepicker package
-#                                - Fixes all expo-device Swift compilation errors in UIDevice.swift and DeviceModule.swift
+#                                - Fixes all expo-device Swift compilation errors including component extraction
+#                                - Ensures all Swift code has proper syntax and no reference to script paths
 #                                - Adds direct JavaScript bundle generation
 
 # Text formatting
@@ -17,7 +18,7 @@ BLUE="\033[34m"
 RESET="\033[0m"
 
 echo -e "${BOLD}${BLUE}===== Spiritual Condition Tracker iOS Build Preparation =====${RESET}"
-echo -e "Version: ${BOLD}2.7.0${RESET} (May 10, 2025)"
+echo -e "Version: ${BOLD}2.7.1${RESET} (May 10, 2025)"
 echo "This script prepares your project for iOS native build using Xcode."
 echo "Uses direct dependency installation and asset copying without hacks or workarounds."
 echo "Includes direct fix for problematic files and generates JavaScript bundle."
@@ -604,9 +605,14 @@ public class DeviceModule: Module {
       
       // Simplified classification by model
       if identifier.hasPrefix("iPhone") {
-        // Extract the number after "iPhone"
+        // Extract the number after "iPhone" - fixed syntax to avoid script path injection
         let components = identifier.components(separatedBy: CharacterSet.decimalDigits.inverted)
-        let numbers = components.compactMap { Int($0) }.filter { $0 > 0 }
+        // Using properly written closure syntax for compactMap and filter
+        let numbers = components.compactMap { (str) -> Int? in 
+          return Int(str) 
+        }.filter { (num) -> Bool in 
+          return num > 0 
+        }
         
         if let firstNumber = numbers.first {
           // Simplified mapping
