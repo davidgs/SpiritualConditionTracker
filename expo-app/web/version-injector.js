@@ -1,5 +1,5 @@
 
-// Force version refresh - created at 2025-05-10T13:39:10.832Z
+// Force version refresh - created at 2025-05-10T13:44:11.062Z
 // Also contains icon loading fixes
 window.FORCE_APP_VERSION = "1.0.6 - May 10, 2025, 01:37 PM - BUILD-1746884230697";
 window.BUILD_ID = "build-1746884230697";

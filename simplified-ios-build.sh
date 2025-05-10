@@ -88,9 +88,46 @@ install_pods() {
     # Backup Podfile before modifications
     cp Podfile Podfile.backup
     
-    # Add excluded source files for problematic libraries
-    if ! grep -q "EXCLUDED_SOURCE_FILE_NAMES" Podfile; then
-      log "Adding excluded source file configurations to Podfile..."
+    # Check for existing post_install hook
+    if grep -q "post_install" Podfile; then
+      log "Found existing post_install hook, modifying it..."
+      
+      # Check if we need to add the exclusion configs
+      if ! grep -q "EXCLUDED_SOURCE_FILE_NAMES" Podfile; then
+        # Find the line number where the post_install block begins
+        POST_INSTALL_LINE=$(grep -n "post_install" Podfile | head -1 | cut -d':' -f1)
+        
+        # Find the location right after the post_install do |installer| line
+        INSERT_LINE=$((POST_INSTALL_LINE + 1))
+        
+        # Insert our configuration into the existing post_install block
+        sed -i '' "${INSERT_LINE}a\\
+  # Fix for C++ file errors in certain libraries\\
+  installer.pods_project.targets.each do |target|\\
+    if target.name == \"react-native-safe-area-context\"\\
+      target.build_configurations.each do |config|\\
+        config.build_settings[\"EXCLUDED_SOURCE_FILE_NAMES\"] = [\\
+          \"RNCSafeAreaViewShadowNode.cpp\",\\
+          \"RNCSafeAreaViewState.cpp\"\\
+        ]\\
+      end\\
+    elsif target.name == \"react-native-screens\"\\
+      target.build_configurations.each do |config|\\
+        config.build_settings[\"EXCLUDED_SOURCE_FILE_NAMES\"] = [\\
+          \"RNSScreenStackHeaderConfig.mm\"\\
+        ]\\
+      end\\
+    elsif target.name == \"RCT-Folly\"\\
+      target.build_configurations.each do |config|\\
+        config.build_settings[\"GCC_PREPROCESSOR_DEFINITIONS\"] ||= [\"$(inherited)\"]\\
+        config.build_settings[\"GCC_PREPROCESSOR_DEFINITIONS\"] << \"FOLLY_HAVE_COROUTINES=0\"\\
+      end\\
+    end\\
+  end\\
+        " Podfile
+      fi
+    else
+      log "No existing post_install hook found, adding one..."
       
       # Insert the exclusion just before the last 'end' in the file
       sed -i '' -e '$i\ 
