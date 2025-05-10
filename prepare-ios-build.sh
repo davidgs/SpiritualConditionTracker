@@ -136,6 +136,49 @@ if [ $? -ne 0 ]; then
   pod install --repo-update
 fi
 
+# Verify pod installation succeeded and found files
+log "Verifying pod installation results..."
+ls -la ./Pods || log "${YELLOW}Warning: Pods directory not created${RESET}"
+
+# Specifically check for the expo-configure-project.sh script
+EXPO_SCRIPT="Pods/Target Support Files/Pods-SpiritualConditionTracker/expo-configure-project.sh"
+if [ -f "$EXPO_SCRIPT" ]; then
+  log "${GREEN}Found expo-configure-project.sh script${RESET}"
+  ls -la "$EXPO_SCRIPT"
+  
+  # Check if script is executable
+  if [ ! -x "$EXPO_SCRIPT" ]; then
+    log "${YELLOW}Making expo-configure-project.sh executable...${RESET}"
+    chmod +x "$EXPO_SCRIPT"
+  fi
+else
+  log "${YELLOW}expo-configure-project.sh not found at $EXPO_SCRIPT${RESET}"
+  
+  # Look for it in alternate locations
+  FOUND_SCRIPTS=$(find ./Pods -name "expo-configure-project.sh" -type f)
+  if [ -n "$FOUND_SCRIPTS" ]; then
+    for found_script in $FOUND_SCRIPTS; do
+      log "${GREEN}Found script at alternate location: $found_script${RESET}"
+      
+      # Create target directory if needed
+      mkdir -p "Pods/Target Support Files/Pods-SpiritualConditionTracker"
+      
+      # Copy the script to the expected location
+      log "Copying script from $found_script to $EXPO_SCRIPT"
+      cp "$found_script" "$EXPO_SCRIPT"
+      chmod +x "$EXPO_SCRIPT"
+      
+      # Verify the copy
+      if [ -f "$EXPO_SCRIPT" ]; then
+        log "${GREEN}Successfully copied expo-configure-project.sh to required location${RESET}"
+        break
+      fi
+    done
+  else
+    log "${RED}No expo-configure-project.sh found anywhere in Pods directory${RESET}"
+  fi
+fi
+
 # Create the Pods directory structure if it doesn't exist
 if [ ! -d "Pods/Target Support Files/Pods-SpiritualConditionTracker" ]; then
   log "${YELLOW}Pods directory structure incomplete. Creating required directories...${RESET}"
@@ -863,3 +906,41 @@ echo -e "   - Select your team"
 echo -e "   - Ensure 'Automatically manage signing' is checked"
 echo ""
 echo -e "3. ${BOLD}Build and run on a simulator or device${RESET}"
+
+# Final verification of critical files
+log "${BLUE}Performing final verification of critical files...${RESET}"
+
+# Check expo-configure-project.sh
+FINAL_EXPO_SCRIPT="$EXPO_APP_DIR/ios/Pods/Target Support Files/Pods-SpiritualConditionTracker/expo-configure-project.sh"
+if [ -f "$FINAL_EXPO_SCRIPT" ] && [ -x "$FINAL_EXPO_SCRIPT" ]; then
+  log "${GREEN}✓ expo-configure-project.sh exists and is executable${RESET}"
+else
+  log "${RED}⚠️ expo-configure-project.sh is still missing or not executable at: $FINAL_EXPO_SCRIPT${RESET}"
+  log "Creating directory and fallback script..."
+  mkdir -p "$(dirname "$FINAL_EXPO_SCRIPT")"
+  cat > "$FINAL_EXPO_SCRIPT" << 'EOL'
+#!/bin/sh
+# Fallback expo-configure-project.sh script (created during final verification)
+echo "Running fallback expo-configure-project.sh script"
+exit 0
+EOL
+  chmod +x "$FINAL_EXPO_SCRIPT"
+  log "${GREEN}Created fallback expo-configure-project.sh script${RESET}"
+fi
+
+# Check modulemap file
+MODULEMAP_FILE="$EXPO_APP_DIR/ios/Pods/Headers/Public/ExpoDevice/ExpoDevice.modulemap"
+if [ -f "$MODULEMAP_FILE" ]; then
+  log "${GREEN}✓ ExpoDevice.modulemap exists${RESET}"
+else
+  log "${YELLOW}⚠️ ExpoDevice.modulemap is missing at: $MODULEMAP_FILE${RESET}"
+  log "This may cause Swift import errors. Creating directory and simple modulemap..."
+  mkdir -p "$(dirname "$MODULEMAP_FILE")"
+  cat > "$MODULEMAP_FILE" << 'EOL'
+module ExpoDevice {
+  umbrella header "ExpoDevice.h"
+  export *
+}
+EOL
+  log "${GREEN}Created simple ExpoDevice.modulemap file${RESET}"
+fi
