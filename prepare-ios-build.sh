@@ -318,12 +318,39 @@ fi
 # Return to expo app directory for remaining operations
 cd "$EXPO_APP_DIR"
 
-# 3. Remove from node_modules/.cache to prevent Codegen from finding it
+# 3. Check for and remove references in node_modules
+log "Checking for datetimepicker references in node_modules..."
+
+# 3.1. Remove from node_modules/.cache to prevent Codegen from finding it 
 CACHE_DIR="$EXPO_APP_DIR/node_modules/.cache"
 if [ -d "$CACHE_DIR" ]; then
   log "Clearing node_modules/.cache to remove any datetimepicker references..."
   find "$CACHE_DIR" -type d -name "*datetimepicker*" -exec rm -rf {} \; 2>/dev/null || true
+  find "$CACHE_DIR" -type f -name "*.json" -exec grep -l "datetimepicker" {} \; 2>/dev/null | xargs rm -f 2>/dev/null || true
   log "${GREEN}Cleared datetimepicker from cache directories${RESET}"
+fi
+
+# 3.2. Check for any lingering node_modules references
+NODE_MODULES_DIR="$EXPO_APP_DIR/node_modules"
+if [ -d "$NODE_MODULES_DIR" ]; then
+  DATETIME_PATHS=$(find "$NODE_MODULES_DIR" -type d -name "*datetimepicker*" 2>/dev/null || true)
+  if [ -n "$DATETIME_PATHS" ]; then
+    log "${YELLOW}Found additional datetimepicker references in node_modules:${RESET}"
+    echo "$DATETIME_PATHS"
+    log "Removing all datetimepicker directories from node_modules..."
+    find "$NODE_MODULES_DIR" -type d -name "*datetimepicker*" -exec rm -rf {} \; 2>/dev/null || true
+    log "${GREEN}Removed all datetimepicker directories${RESET}"
+  else
+    log "${GREEN}No datetimepicker directories found in node_modules${RESET}"
+  fi
+fi
+
+# 3.3. Check for any references in Metro's haste map
+METRO_DIR="$EXPO_APP_DIR/node_modules/metro"
+if [ -d "$METRO_DIR" ]; then
+  log "Checking Metro module for cached references..."
+  find "$METRO_DIR" -type f -name "*.json" -exec grep -l "datetimepicker" {} \; 2>/dev/null | xargs rm -f 2>/dev/null || true
+  log "${GREEN}Cleared any Metro cache files with datetimepicker references${RESET}"
 fi
 
 # 4. Check for and remove any references in yarn.lock or package-lock.json
