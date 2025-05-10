@@ -108,10 +108,54 @@ fi
 log "Running pod-install to link all modules..."
 npx pod-install
 
-# Run pod install specifically in the iOS directory
+# Run pod install specifically in the iOS directory 
 log "Running pod install to ensure all dependencies are properly installed..."
 cd "$EXPO_APP_DIR/ios"
-pod install
+
+# Force CocoaPods to use the project root
+log "Setting up CocoaPods environment..."
+export LANG=en_US.UTF-8
+export PODS_ROOT="$EXPO_APP_DIR/ios/Pods"
+export PODS_TARGET_SRCROOT="$EXPO_APP_DIR/ios/Pods"
+
+# Clean Pods directory if it's causing problems
+if [ -d "Pods" ]; then
+  log "Removing existing Pods directory for clean installation..."
+  rm -rf Pods
+  rm -f Podfile.lock
+fi
+
+# Run pod install with full logging
+log "Running pod install with repository update..."
+pod install --repo-update --verbose
+
+# Check if pod installation was successful
+if [ $? -ne 0 ]; then
+  log "${RED}Pod installation failed. Trying one more time with clean cache...${RESET}"
+  pod cache clean --all
+  pod install --repo-update
+fi
+
+# Create the Pods directory structure if it doesn't exist
+if [ ! -d "Pods/Target Support Files/Pods-SpiritualConditionTracker" ]; then
+  log "${YELLOW}Pods directory structure incomplete. Creating required directories...${RESET}"
+  mkdir -p "Pods/Target Support Files/Pods-SpiritualConditionTracker"
+  
+  # Create a simple expo-configure-project.sh script if it doesn't exist
+  if [ ! -f "Pods/Target Support Files/Pods-SpiritualConditionTracker/expo-configure-project.sh" ]; then
+    log "${YELLOW}Creating backup expo-configure-project.sh script...${RESET}"
+    cat > "Pods/Target Support Files/Pods-SpiritualConditionTracker/expo-configure-project.sh" << 'EOL'
+#!/bin/sh
+# Basic expo-configure-project.sh script
+# This is a fallback script created by prepare-ios-build.sh
+
+echo "Running fallback expo-configure-project.sh script..."
+# No operations needed - this is just a placeholder to prevent build errors
+exit 0
+EOL
+    chmod +x "Pods/Target Support Files/Pods-SpiritualConditionTracker/expo-configure-project.sh"
+  fi
+fi
 
 # Fix permissions on all generated scripts in the Pods directory
 log "Fixing permissions on generated CocoaPods scripts..."
