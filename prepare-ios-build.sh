@@ -1044,19 +1044,64 @@ EOL
   log "${GREEN}Created fallback expo-configure-project.sh script${RESET}"
 fi
 
-# Check modulemap file
-MODULEMAP_FILE="$EXPO_APP_DIR/ios/Pods/Headers/Public/ExpoDevice/ExpoDevice.modulemap"
-if [ -f "$MODULEMAP_FILE" ]; then
-  log "${GREEN}✓ ExpoDevice.modulemap exists${RESET}"
-else
-  log "${YELLOW}⚠️ ExpoDevice.modulemap is missing at: $MODULEMAP_FILE${RESET}"
-  log "This may cause Swift import errors. Creating directory and simple modulemap..."
-  mkdir -p "$(dirname "$MODULEMAP_FILE")"
-  cat > "$MODULEMAP_FILE" << 'EOL'
+# Fix the ExpoDevice module import issue in ExpoModulesProvider.swift
+log "${BLUE}Fixing potential ExpoDevice module import issues...${RESET}"
+
+# Create modulemap file and directory if needed
+MODULEMAP_DIR="$EXPO_APP_DIR/ios/Pods/Headers/Public/ExpoDevice"
+MODULEMAP_FILE="$MODULEMAP_DIR/ExpoDevice.modulemap"
+mkdir -p "$MODULEMAP_DIR"
+
+# Create a proper modulemap file
+cat > "$MODULEMAP_FILE" << 'EOL'
 module ExpoDevice {
   umbrella header "ExpoDevice.h"
   export *
 }
 EOL
-  log "${GREEN}Created simple ExpoDevice.modulemap file${RESET}"
+log "${GREEN}Created ExpoDevice.modulemap file${RESET}"
+
+# Create a header file for ExpoDevice
+HEADER_FILE="$MODULEMAP_DIR/ExpoDevice.h"
+cat > "$HEADER_FILE" << 'EOL'
+// ExpoDevice.h
+// Empty header to satisfy modulemap
+#ifndef ExpoDevice_h
+#define ExpoDevice_h
+
+#endif /* ExpoDevice_h */
+EOL
+log "${GREEN}Created ExpoDevice.h header file${RESET}"
+
+# Fix the ExpoModulesProvider.swift file if it exists and contains ExpoDevice import
+MODULES_PROVIDER_FILE="$EXPO_APP_DIR/ios/Pods/Target Support Files/Pods-SpiritualConditionTracker/ExpoModulesProvider.swift"
+if [ -f "$MODULES_PROVIDER_FILE" ]; then
+  if grep -q "import ExpoDevice" "$MODULES_PROVIDER_FILE"; then
+    log "${YELLOW}Found ExpoDevice import in ExpoModulesProvider.swift, fixing...${RESET}"
+    
+    # Try different sed syntax for various platforms
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+      # macOS sed syntax
+      sed -i '' 's/import ExpoDevice/\/\/ import ExpoDevice/' "$MODULES_PROVIDER_FILE"
+    else
+      # Linux/other sed syntax
+      sed -i 's/import ExpoDevice/\/\/ import ExpoDevice/' "$MODULES_PROVIDER_FILE"
+    fi
+    
+    # Verify fix was applied
+    if grep -q "// import ExpoDevice" "$MODULES_PROVIDER_FILE"; then
+      log "${GREEN}Successfully commented out ExpoDevice import${RESET}"
+    else
+      # Fallback to direct file replacement if sed failed
+      log "${YELLOW}sed failed, trying direct file replacement...${RESET}"
+      TEMP_FILE="${MODULES_PROVIDER_FILE}.new"
+      cat "$MODULES_PROVIDER_FILE" | sed 's/import ExpoDevice/\/\/ import ExpoDevice/' > "$TEMP_FILE"
+      mv "$TEMP_FILE" "$MODULES_PROVIDER_FILE"
+      log "${GREEN}Applied direct file replacement for ExpoDevice import${RESET}"
+    fi
+  else
+    log "${GREEN}No ExpoDevice import found in ExpoModulesProvider.swift${RESET}"
+  fi
+else
+  log "${YELLOW}ExpoModulesProvider.swift not found at $MODULES_PROVIDER_FILE${RESET}"
 fi
