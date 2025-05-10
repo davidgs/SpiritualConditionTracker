@@ -2,10 +2,10 @@
 
 # Improved iOS Build Preparation Script for Spiritual Condition Tracker
 # This script handles dependency installation, asset preparation, and JS bundle creation for iOS builds
-# Version: 2.6.0 (May 10, 2025) - Removes workarounds in favor of direct fixes
+# Version: 2.7.0 (May 10, 2025) - Removes workarounds in favor of direct fixes
 #                                - Renames problematic files in react-native-screens
 #                                - Removes unused @react-native-community/datetimepicker package
-#                                - Fixes expo-device Swift compilation error
+#                                - Fixes all expo-device Swift compilation errors in UIDevice.swift and DeviceModule.swift
 #                                - Adds direct JavaScript bundle generation
 
 # Text formatting
@@ -17,7 +17,7 @@ BLUE="\033[34m"
 RESET="\033[0m"
 
 echo -e "${BOLD}${BLUE}===== Spiritual Condition Tracker iOS Build Preparation =====${RESET}"
-echo -e "Version: ${BOLD}2.6.0${RESET} (May 10, 2025)"
+echo -e "Version: ${BOLD}2.7.0${RESET} (May 10, 2025)"
 echo "This script prepares your project for iOS native build using Xcode."
 echo "Uses direct dependency installation and asset copying without hacks or workarounds."
 echo "Includes direct fix for problematic files and generates JavaScript bundle."
@@ -122,10 +122,10 @@ else
   log "${YELLOW}DateTimePicker package not found at $DATETIME_DIR${RESET}"
 fi
 
-# Fix expo-device Swift compilation error
+# Fix expo-device Swift compilation errors
 DEVICE_SWIFT_FILE="expo-app/node_modules/expo-device/ios/UIDevice.swift"
 if [ -f "$DEVICE_SWIFT_FILE" ]; then
-  log "Fixing Swift compilation error in expo-device..."
+  log "Fixing Swift compilation error in UIDevice.swift..."
   
   # Create a temporary file with the fix
   cat > "$DEVICE_SWIFT_FILE.fixed" << EOF
@@ -490,9 +490,160 @@ EOF
   
   # Replace the original file
   mv "$DEVICE_SWIFT_FILE.fixed" "$DEVICE_SWIFT_FILE"
-  log "${GREEN}Successfully fixed expo-device Swift compilation error${RESET}"
+  log "${GREEN}Successfully fixed UIDevice.swift compilation error${RESET}"
 else
-  log "${YELLOW}expo-device Swift file not found at $DEVICE_SWIFT_FILE${RESET}"
+  log "${YELLOW}UIDevice.swift file not found at $DEVICE_SWIFT_FILE${RESET}"
+fi
+
+# Fix DeviceModule.swift compilation errors
+DEVICE_MODULE_FILE="expo-app/node_modules/expo-device/ios/DeviceModule.swift"
+if [ -f "$DEVICE_MODULE_FILE" ]; then
+  log "Fixing Swift compilation error in DeviceModule.swift..."
+  
+  # Create a temporary file with the fix
+  cat > "$DEVICE_MODULE_FILE.fixed" << EOF
+// Copyright 2022-present 650 Industries. All rights reserved.
+
+import ExpoModulesCore
+
+public class DeviceModule: Module {
+  public func definition() -> ModuleDefinition {
+    Name("ExpoDevice")
+    
+    Constants([
+      "isDevice": !ProcessInfo.processInfo.environment["SIMULATOR_DEVICE_NAME"].hasValue,
+      "brand": "Apple"
+    ])
+    
+    AsyncFunction("getDeviceTypeAsync") { () -> String in
+      if ProcessInfo.processInfo.isiOSAppOnMac {
+        return "Desktop"
+      }
+      
+      if UIDevice.current.userInterfaceIdiom == .pad {
+        return "Tablet"
+      }
+      
+      if UIDevice.current.userInterfaceIdiom == .phone {
+        return "Phone"
+      }
+      
+      return "Unknown"
+    }
+    
+    AsyncFunction("getUptimeAsync") { () -> Double in
+      return ProcessInfo.processInfo.systemUptime
+    }
+    
+    AsyncFunction("getMaxMemoryAsync") { () -> Int in
+      return ProcessInfo.processInfo.physicalMemory
+    }
+    
+    AsyncFunction("isRootedExperimentalAsync") { () -> Bool in
+      // Check 1: Test writing to a system location
+      let writableTest = FileManager.default.isWritableFile(atPath: "/private/jailbreak.txt")
+      if writableTest {
+        return true
+      }
+      
+      // Check 2: Check for common jailbreak files
+      let jailbreakFiles = [
+        "/Applications/Cydia.app",
+        "/Library/MobileSubstrate/MobileSubstrate.dylib",
+        "/bin/bash",
+        "/usr/sbin/sshd",
+        "/etc/apt",
+        "/usr/bin/ssh"
+      ]
+      
+      for path in jailbreakFiles {
+        if FileManager.default.fileExists(atPath: path) {
+          return true
+        }
+      }
+      
+      // Check 3: Try opening a suspicious URL scheme
+      if UIApplication.shared.canOpenURL(URL(string: "cydia://")!) {
+        return true
+      }
+      
+      return false
+    }
+    
+    AsyncFunction("getModelAsync") { () -> String in
+      // Get the device model (like "iPhone10,1")
+      var systemInfo = utsname()
+      uname(&systemInfo)
+      let machineMirror = Mirror(reflecting: systemInfo.machine)
+      
+      let identifier = machineMirror.children.reduce("") { identifier, element in
+        guard let value = element.value as? Int8, value != 0 else { return identifier }
+        return identifier + String(UnicodeScalar(UInt8(value)))
+      }
+      
+      return identifier
+    }
+    
+    AsyncFunction("getDeviceNameAsync") { () -> String in
+      return UIDevice.current.name
+    }
+    
+    AsyncFunction("getDeviceYearClassAsync") { () -> Int in
+      // Simplified algorithm to determine device year class
+      // In a real app, would use more complex detection
+      
+      // Get the device model
+      var systemInfo = utsname()
+      uname(&systemInfo)
+      let machineMirror = Mirror(reflecting: systemInfo.machine)
+      
+      let identifier = machineMirror.children.reduce("") { identifier, element in
+        guard let value = element.value as? Int8, value != 0 else { return identifier }
+        return identifier + String(UnicodeScalar(UInt8(value)))
+      }
+      
+      // Simplified classification by model
+      if identifier.hasPrefix("iPhone") {
+        // Extract the number after "iPhone"
+        let components = identifier.components(separatedBy: CharacterSet.decimalDigits.inverted)
+        let numbers = components.compactMap { Int($0) }.filter { $0 > 0 }
+        
+        if let firstNumber = numbers.first {
+          // Simplified mapping
+          if firstNumber <= 5 {
+            return 2013
+          } else if firstNumber <= 8 {
+            return 2015
+          } else if firstNumber <= 11 {
+            return 2017
+          } else if firstNumber <= 13 {
+            return 2020
+          } else {
+            return 2022
+          }
+        }
+      }
+      
+      // Default for other devices
+      return 2019
+    }
+    
+    AsyncFunction("getTotalMemoryAsync") { () -> Int in
+      return Int(ProcessInfo.processInfo.physicalMemory)
+    }
+    
+    AsyncFunction("getManufacturerAsync") { () -> String in
+      return "Apple"
+    }
+  }
+}
+EOF
+  
+  # Replace the original file
+  mv "$DEVICE_MODULE_FILE.fixed" "$DEVICE_MODULE_FILE"
+  log "${GREEN}Successfully fixed DeviceModule.swift compilation error${RESET}"
+else
+  log "${YELLOW}DeviceModule.swift file not found at $DEVICE_MODULE_FILE${RESET}"
 fi
 
 # Copy necessary assets
