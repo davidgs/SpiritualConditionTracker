@@ -97,51 +97,32 @@ fi
 log "Force linking expo-device module..."
 npx pod-install
 
-# Update the Podfile to explicitly include ExpoDevice
-PODFILE="./ios/Podfile"
+# Verify that the Podfile is properly set up for ExpoDevice
+PODFILE="expo-app/ios/Podfile"
 if [ -f "$PODFILE" ]; then
-  log "Checking Podfile for ExpoDevice..."
+  log "Verifying Podfile includes ExpoDevice..."
   
-  if ! grep -q "pod 'ExpoDevice'" "$PODFILE"; then
-    log "Adding ExpoDevice to Podfile..."
-    
-    # Look for the target 'SpiritualConditionTracker' line to add ExpoDevice after it
-    TARGET_LINE=$(grep -n "target 'SpiritualConditionTracker' do" "$PODFILE" | cut -d ":" -f 1)
-    
-    if [ -n "$TARGET_LINE" ]; then
-      # Create a temporary file with the ExpoDevice pod added
-      HEAD_PART=$(head -n $TARGET_LINE "$PODFILE")
-      TAIL_PART=$(tail -n +$((TARGET_LINE+1)) "$PODFILE")
-      
-      echo "$HEAD_PART" > "${PODFILE}.new"
-      echo "  pod 'ExpoDevice', '5.9.4'" >> "${PODFILE}.new"
-      echo "$TAIL_PART" >> "${PODFILE}.new"
-      
-      mv "${PODFILE}.new" "$PODFILE"
-      log "${GREEN}Successfully added ExpoDevice pod to Podfile${RESET}"
-    else
-      log "${YELLOW}Could not find target line in Podfile to add ExpoDevice${RESET}"
-      
-      # Add the ExpoDevice pod at the end of the file as a fallback
-      echo "pod 'ExpoDevice', '5.9.4'" >> "$PODFILE"
-      log "${GREEN}Added ExpoDevice pod to the end of Podfile${RESET}"
-    fi
+  # Check if ExpoDevice is already present in the file
+  if grep -q "pod 'ExpoDevice'" "$PODFILE"; then
+    log "${GREEN}ExpoDevice already explicitly included in Podfile${RESET}"
   else
-    log "${GREEN}ExpoDevice already in Podfile${RESET}"
+    log "${YELLOW}ExpoDevice not found in Podfile. Please manually add it to expo-app/ios/Podfile${RESET}"
+    log "Example: pod 'ExpoDevice', :path => '../node_modules/expo-device'"
   fi
   
-  # Run pod install again to ensure ExpoDevice is installed
-  log "Running pod install to update ExpoDevice..."
-  cd ./ios
+  # Run pod install to refresh dependencies
+  log "Running pod install to refresh dependencies..."
+  cd expo-app/ios
   pod install
-  cd ..
+  cd ../..
+  log "${GREEN}Successfully refreshed pod dependencies${RESET}"
 else
-  log "${YELLOW}Podfile not found at $PODFILE${RESET}"
+  log "${YELLOW}Podfile not found at $PODFILE, may need to run 'npx expo prebuild --platform ios' first${RESET}"
 fi
 
 # Create a modulemap for ExpoDevice if it doesn't exist
 log "Ensuring ExpoDevice module is properly set up..."
-MODULE_DIR="../ios/Pods/Headers/Public/ExpoDevice"
+MODULE_DIR="expo-app/ios/Pods/Headers/Public/ExpoDevice"
 if [ ! -d "$MODULE_DIR" ]; then
   log "Creating ExpoDevice module directory..."
   mkdir -p "$MODULE_DIR"

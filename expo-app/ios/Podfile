@@ -15,6 +15,9 @@ prepare_react_native_project!
 
 target 'SpiritualConditionTracker' do
   use_expo_modules!
+  
+  # Explicitly include ExpoDevice to fix "No such module 'ExpoDevice'" error
+  pod 'ExpoDevice', :path => '../node_modules/expo-device'
 
   if ENV['EXPO_USE_COMMUNITY_AUTOLINKING'] == '1'
     config_command = ['node', '-e', "process.argv=['', '', 'config'];require('@react-native-community/cli').run()"];
@@ -79,6 +82,14 @@ target 'SpiritualConditionTracker' do
         end
       # We no longer need to exclude RNDateTimePicker files
       # as the package is completely removed from the project
+      elsif target.name == 'ExpoDevice'
+        # Ensure ExpoDevice is properly configured
+        target.build_configurations.each do |config|
+          config.build_settings['SWIFT_INCLUDE_PATHS'] ||= '$(inherited)'
+          config.build_settings['SWIFT_INCLUDE_PATHS'] << ' "${PODS_TARGET_SRCROOT}/ios"'
+          # Make sure module interface is built properly
+          config.build_settings['BUILD_LIBRARY_FOR_DISTRIBUTION'] = 'YES'
+        end
       elsif target.name == 'RCT-Folly'
         target.build_configurations.each do |config|
           config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] ||= ['$(inherited)']
