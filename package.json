@@ -34,7 +34,7 @@
     "chart.js": "^4.4.9",
     "cors": "^2.8.5",
     "eas-cli": "^16.4.0",
-    "expo": "~53.0.8",
+    "expo": "^53.0.9",
     "expo-bluetooth": "^0.0.0",
     "expo-calendar": "^14.1.4",
     "expo-cli": "^6.3.12",

@@ -736,8 +736,8 @@ if [ -d "$ASSETS_SRC" ]; then
   # Copy fonts if needed
   if [ -d "$ASSETS_SRC/fonts" ]; then
     log "Copying fonts..."
-    mkdir -p "expo-app/ios/$PROJECT_NAME/fonts"
-    cp -R "$ASSETS_SRC/fonts"/* "expo-app/ios/$PROJECT_NAME/fonts/"
+    mkdir -p "$EXPO_APP_DIR/ios/$PROJECT_NAME/fonts"
+    cp -R "$ASSETS_SRC/fonts"/* "$EXPO_APP_DIR/ios/$PROJECT_NAME/fonts/"
   fi
   
   log "${GREEN}Assets copied successfully${RESET}"
@@ -748,33 +748,33 @@ fi
 # Install CocoaPods dependencies
 log "${BLUE}Installing CocoaPods dependencies...${RESET}"
 
-cd expo-app/ios
+cd "$EXPO_APP_DIR/ios"
 
 # Note: We're NOT modifying the Podfile here since it's already properly configured
 log "Running 'pod install'..."
 pod install
 
-cd ../..
+cd "$PROJECT_ROOT"
 
 # Create JavaScript bundle for iOS
 log "${BLUE}Generating JavaScript bundle for iOS...${RESET}"
 
 # Create necessary directories
-BUNDLE_DIR="expo-app/ios/$PROJECT_NAME/main.jsbundle-assets"
+BUNDLE_DIR="$EXPO_APP_DIR/ios/$PROJECT_NAME/main.jsbundle-assets"
 mkdir -p "$BUNDLE_DIR"
-BUNDLE_FILE="expo-app/ios/$PROJECT_NAME/main.jsbundle"
+BUNDLE_FILE="$EXPO_APP_DIR/ios/$PROJECT_NAME/main.jsbundle"
 
 # Ensure node_modules exist
-if [ ! -d "expo-app/node_modules" ]; then
+if [ ! -d "$EXPO_APP_DIR/node_modules" ]; then
   log "Installing node dependencies..."
-  cd expo-app
+  cd "$EXPO_APP_DIR"
   npm install
-  cd ..
+  cd "$PROJECT_ROOT"
 fi
 
 # Generate the bundle using the React Native CLI
 log "Generating bundle with Metro..."
-cd expo-app
+cd "$EXPO_APP_DIR"
 export NODE_OPTIONS="--max-old-space-size=4096"
 npx react-native bundle \
   --entry-file=index.js \
@@ -798,13 +798,13 @@ else
   log "${RED}Failed to create bundle. Please check Metro errors.${RESET}"
 fi
 
-cd ..
+cd "$PROJECT_ROOT"
 
 echo -e "${BOLD}${GREEN}===== iOS Build Preparation Complete =====${RESET}"
 echo ""
 echo -e "Next steps:"
 echo -e "1. ${BOLD}Open the Xcode workspace:${RESET}"
-echo -e "   ${BLUE}open expo-app/ios/SpiritualConditionTracker.xcworkspace${RESET}"
+echo -e "   ${BLUE}open $EXPO_APP_DIR/ios/SpiritualConditionTracker.xcworkspace${RESET}"
 echo ""
 echo -e "2. ${BOLD}Configure signing in Xcode:${RESET}"
 echo -e "   - Select the main project target"
