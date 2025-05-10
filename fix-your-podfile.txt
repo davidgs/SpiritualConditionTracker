@@ -1,0 +1,81 @@
+The current Podfile has an error with multiple post_install hooks. Here's how to fix it directly:
+
+1. Open the Podfile at expo-app/ios/Podfile
+2. Find and fix the error where there's an `installer.pods_project.targets` section outside the post_install block
+3. Move that code inside the post_install block where it belongs
+
+Original problematic code around line 63-75:
+```ruby
+  end  # End of post_install block
+  installer.pods_project.targets.each do |target|
+    if target.name == 'react-native-safe-area-context'
+      target.build_configurations.each do |config|
+        # Exclude the problematic C++ files from the build
+        config.build_settings['EXCLUDED_SOURCE_FILE_NAMES'] = [
+          "RNCSafeAreaViewShadowNode.cpp",
+          "RNCSafeAreaViewState.cpp"
+        ]
+      end
+    end
+  end
+ end
+```
+
+Fixed version - Move this code inside the post_install block right before its end:
+```ruby
+  post_install do |installer|
+    react_native_post_install(
+      installer,
+      config[:reactNativePath],
+      :mac_catalyst_enabled => false,
+      :ccache_enabled => podfile_properties['apple.ccacheEnabled'] == 'true',
+    )
+
+    # This is necessary for Xcode 14, because it signs resource bundles by default
+    # when building for devices.
+    installer.target_installation_results.pod_target_installation_results
+      .each do |pod_name, target_installation_result|
+      target_installation_result.resource_bundle_targets.each do |resource_bundle_target|
+        resource_bundle_target.build_configurations.each do |config|
+          config.build_settings['CODE_SIGNING_ALLOWED'] = 'NO'
+        end
+      end
+    end
+    
+    # Fix for C++ files causing build errors
+    installer.pods_project.targets.each do |target|
+      if target.name == 'react-native-safe-area-context'
+        target.build_configurations.each do |config|
+          # Exclude the problematic C++ files from the build
+          config.build_settings['EXCLUDED_SOURCE_FILE_NAMES'] = [
+            "RNCSafeAreaViewShadowNode.cpp",
+            "RNCSafeAreaViewState.cpp"
+          ]
+        end
+      elsif target.name == 'react-native-screens'
+        target.build_configurations.each do |config|
+          config.build_settings['EXCLUDED_SOURCE_FILE_NAMES'] = [
+            "RNSScreenStackHeaderConfig.mm"
+          ]
+        end
+      elsif target.name == 'RCT-Folly'
+        target.build_configurations.each do |config|
+          config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] ||= ['$(inherited)']
+          config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] << 'FOLLY_HAVE_COROUTINES=0'
+        end
+      end
+    end
+  end
+end
+```
+
+This fix:
+1. Properly puts all installer modifications inside a single post_install block
+2. Adds the missing fixes for react-native-screens and RCT-Folly
+3. Keeps your existing fixes for react-native-safe-area-context
+
+After making this change, run:
+```
+cd expo-app/ios
+pod install
+```
