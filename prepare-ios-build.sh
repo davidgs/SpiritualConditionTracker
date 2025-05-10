@@ -93,72 +93,15 @@ else
   log "${GREEN}expo-device already in package.json${RESET}"
 fi
 
-# Force linking the expo-device module
-log "Force linking expo-device module..."
+# Force linking all expo modules using pod-install
+log "Running pod-install to link all modules..."
 npx pod-install
 
-# Verify that the Podfile is properly set up for ExpoDevice
-PODFILE="expo-app/ios/Podfile"
-if [ -f "$PODFILE" ]; then
-  log "Verifying Podfile includes ExpoDevice..."
-  
-  # Check if ExpoDevice is already present in the file
-  if grep -q "pod 'ExpoDevice'" "$PODFILE"; then
-    log "${GREEN}ExpoDevice already explicitly included in Podfile${RESET}"
-  else
-    log "${YELLOW}ExpoDevice not found in Podfile. Please manually add it to expo-app/ios/Podfile${RESET}"
-    log "Example: pod 'ExpoDevice', :path => '../node_modules/expo-device'"
-  fi
-  
-  # Run pod install to refresh dependencies
-  log "Running pod install to refresh dependencies..."
-  cd expo-app/ios
-  pod install
-  cd ../..
-  log "${GREEN}Successfully refreshed pod dependencies${RESET}"
-else
-  log "${YELLOW}Podfile not found at $PODFILE, may need to run 'npx expo prebuild --platform ios' first${RESET}"
-fi
-
-# Create a modulemap for ExpoDevice if it doesn't exist
-log "Ensuring ExpoDevice module is properly set up..."
-MODULE_DIR="expo-app/ios/Pods/Headers/Public/ExpoDevice"
-if [ ! -d "$MODULE_DIR" ]; then
-  log "Creating ExpoDevice module directory..."
-  mkdir -p "$MODULE_DIR"
-fi
-
-MODULEMAP_FILE="$MODULE_DIR/ExpoDevice.modulemap"
-if [ ! -f "$MODULEMAP_FILE" ]; then
-  log "Creating ExpoDevice.modulemap file..."
-  cat > "$MODULEMAP_FILE" << EOF
-module ExpoDevice {
-  umbrella header "ExpoDevice.h"
-  export *
-  module * { export * }
-}
-EOF
-  log "${GREEN}Successfully created ExpoDevice.modulemap${RESET}"
-fi
-
-# Create the ExpoDevice.h header file if it doesn't exist
-HEADER_FILE="$MODULE_DIR/ExpoDevice.h"
-if [ ! -f "$HEADER_FILE" ]; then
-  log "Creating ExpoDevice.h header file..."
-  cat > "$HEADER_FILE" << EOF
-// ExpoDevice.h - Umbrella header for ExpoDevice module
-#import <Foundation/Foundation.h>
-
-//! Project version number for ExpoDevice.
-FOUNDATION_EXPORT double ExpoDeviceVersionNumber;
-
-//! Project version string for ExpoDevice.
-FOUNDATION_EXPORT const unsigned char ExpoDeviceVersionString[];
-EOF
-  log "${GREEN}Successfully created ExpoDevice.h${RESET}"
-fi
-
-cd ..
+# Run pod install specifically in the iOS directory
+log "Running pod install to ensure all dependencies are properly installed..."
+cd expo-app/ios
+pod install
+cd ../..
 
 # Fix problematic files by renaming them
 log "${BLUE}Fixing problematic files...${RESET}"
