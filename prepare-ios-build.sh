@@ -2,12 +2,13 @@
 
 # Improved iOS Build Preparation Script for Spiritual Condition Tracker
 # This script handles dependency installation, asset preparation, and JS bundle creation for iOS builds
-# Version: 2.8.0 (May 10, 2025) - Removes workarounds in favor of direct fixes
+# Version: 2.9.0 (May 10, 2025) - Removes workarounds in favor of direct fixes
 #                                - Renames problematic files in react-native-screens
 #                                - Removes unused @react-native-community/datetimepicker package
 #                                - Fixes all expo-device Swift compilation errors including component extraction
 #                                - Ensures all Swift code has proper syntax and no reference to script paths
 #                                - Fixes 'No such module ExpoDevice' error in ExpoModulesProvider.swift
+#                                - Updates Podfile to explicitly include expo-device
 #                                - Adds direct JavaScript bundle generation
 
 # Text formatting
@@ -19,7 +20,7 @@ BLUE="\033[34m"
 RESET="\033[0m"
 
 echo -e "${BOLD}${BLUE}===== Spiritual Condition Tracker iOS Build Preparation =====${RESET}"
-echo -e "Version: ${BOLD}2.8.0${RESET} (May 10, 2025)"
+echo -e "Version: ${BOLD}2.9.0${RESET} (May 10, 2025)"
 echo "This script prepares your project for iOS native build using Xcode."
 echo "Uses direct dependency installation and asset copying without hacks or workarounds."
 echo "Includes direct fix for problematic files and generates JavaScript bundle."
@@ -95,6 +96,48 @@ fi
 # Force linking the expo-device module
 log "Force linking expo-device module..."
 npx pod-install
+
+# Update the Podfile to explicitly include ExpoDevice
+PODFILE="./ios/Podfile"
+if [ -f "$PODFILE" ]; then
+  log "Checking Podfile for ExpoDevice..."
+  
+  if ! grep -q "pod 'ExpoDevice'" "$PODFILE"; then
+    log "Adding ExpoDevice to Podfile..."
+    
+    # Look for the target 'SpiritualConditionTracker' line to add ExpoDevice after it
+    TARGET_LINE=$(grep -n "target 'SpiritualConditionTracker' do" "$PODFILE" | cut -d ":" -f 1)
+    
+    if [ -n "$TARGET_LINE" ]; then
+      # Create a temporary file with the ExpoDevice pod added
+      HEAD_PART=$(head -n $TARGET_LINE "$PODFILE")
+      TAIL_PART=$(tail -n +$((TARGET_LINE+1)) "$PODFILE")
+      
+      echo "$HEAD_PART" > "${PODFILE}.new"
+      echo "  pod 'ExpoDevice', '5.9.4'" >> "${PODFILE}.new"
+      echo "$TAIL_PART" >> "${PODFILE}.new"
+      
+      mv "${PODFILE}.new" "$PODFILE"
+      log "${GREEN}Successfully added ExpoDevice pod to Podfile${RESET}"
+    else
+      log "${YELLOW}Could not find target line in Podfile to add ExpoDevice${RESET}"
+      
+      # Add the ExpoDevice pod at the end of the file as a fallback
+      echo "pod 'ExpoDevice', '5.9.4'" >> "$PODFILE"
+      log "${GREEN}Added ExpoDevice pod to the end of Podfile${RESET}"
+    fi
+  else
+    log "${GREEN}ExpoDevice already in Podfile${RESET}"
+  fi
+  
+  # Run pod install again to ensure ExpoDevice is installed
+  log "Running pod install to update ExpoDevice..."
+  cd ./ios
+  pod install
+  cd ..
+else
+  log "${YELLOW}Podfile not found at $PODFILE${RESET}"
+fi
 
 # Create a modulemap for ExpoDevice if it doesn't exist
 log "Ensuring ExpoDevice module is properly set up..."
