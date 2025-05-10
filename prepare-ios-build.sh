@@ -2,7 +2,7 @@
 
 # Improved iOS Build Preparation Script for Spiritual Condition Tracker
 # This script handles dependency installation and asset preparation for iOS builds
-# Version: 2.0.0
+# Version: 2.0.1 (May 10, 2025) - Removes workarounds in favor of direct fixes
 
 # Text formatting
 BOLD="\033[1m"
@@ -13,7 +13,9 @@ BLUE="\033[34m"
 RESET="\033[0m"
 
 echo -e "${BOLD}${BLUE}===== Spiritual Condition Tracker iOS Build Preparation =====${RESET}"
+echo -e "Version: ${BOLD}2.0.1${RESET} (May 10, 2025)"
 echo "This script prepares your project for iOS native build using Xcode."
+echo "Uses direct dependency installation and asset copying without hacks or workarounds."
 echo ""
 
 # Check if we're in the right directory
