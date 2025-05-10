@@ -273,25 +273,50 @@ else
   log "${YELLOW}DateTimePicker package directory not found${RESET}"
 fi
 
-# 2. Remove from package.json
-cd "$EXPO_APP_DIR"
-if grep -q "@react-native-community/datetimepicker" package.json; then
-  log "Updating package.json to remove the dependency..."
-  # Create a new package.json without the dependency
-  jq 'del(.dependencies."@react-native-community/datetimepicker")' package.json > package.json.new
-  if [ $? -eq 0 ]; then
-    mv package.json.new package.json
-    log "${GREEN}Successfully removed datetimepicker from package.json dependencies${RESET}"
+# 2. Remove from package.json files
+# Function to clean package.json files
+clean_package_json() {
+  local pkg_file="$1"
+  local pkg_name="$(basename "$(dirname "$pkg_file")")/$(basename "$pkg_file")"
+  
+  if grep -q "@react-native-community/datetimepicker" "$pkg_file"; then
+    log "Updating $pkg_name to remove the dependency..."
+    # Try using jq first (cleaner approach)
+    if command -v jq >/dev/null 2>&1; then
+      jq 'del(.dependencies."@react-native-community/datetimepicker")' "$pkg_file" > "$pkg_file.new"
+      if [ $? -eq 0 ]; then
+        mv "$pkg_file.new" "$pkg_file"
+        log "${GREEN}Successfully removed datetimepicker from $pkg_name dependencies${RESET}"
+      else
+        log "${YELLOW}jq failed, falling back to grep for $pkg_name${RESET}"
+        cat "$pkg_file" | grep -v "@react-native-community/datetimepicker" > "$pkg_file.new"
+        mv "$pkg_file.new" "$pkg_file"
+      fi
+    else
+      # Fallback if jq is not available
+      log "${YELLOW}jq not available, using grep to remove dependency from $pkg_name${RESET}"
+      cat "$pkg_file" | grep -v "@react-native-community/datetimepicker" > "$pkg_file.new"
+      mv "$pkg_file.new" "$pkg_file"
+    fi
+    log "${GREEN}Removed datetimepicker from $pkg_name${RESET}"
   else
-    # Fallback if jq is not available
-    log "${YELLOW}jq not available, using grep to remove dependency${RESET}"
-    cat package.json | grep -v "@react-native-community/datetimepicker" > package.json.new
-    mv package.json.new package.json
-    log "${GREEN}Removed datetimepicker using grep${RESET}"
+    log "${GREEN}No reference to datetimepicker found in $pkg_name${RESET}"
   fi
-else
-  log "${GREEN}No reference to datetimepicker found in package.json${RESET}"
+}
+
+# Clean expo-app package.json
+cd "$EXPO_APP_DIR"
+clean_package_json "package.json"
+
+# Also clean root package.json if it exists
+cd "$PROJECT_ROOT"
+if [ -f "package.json" ]; then
+  log "Checking root package.json for datetimepicker references..."
+  clean_package_json "package.json"
 fi
+
+# Return to expo app directory for remaining operations
+cd "$EXPO_APP_DIR"
 
 # 3. Remove from node_modules/.cache to prevent Codegen from finding it
 CACHE_DIR="$EXPO_APP_DIR/node_modules/.cache"
