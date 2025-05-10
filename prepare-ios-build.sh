@@ -26,9 +26,14 @@ echo "Uses direct dependency installation and asset copying without hacks or wor
 echo "Includes direct fix for problematic files and generates JavaScript bundle."
 echo ""
 
-# Check if we're in the right directory
-if [ ! -d "expo-app" ]; then
-  echo -e "${RED}Error: Please run this script from the project root directory${RESET}"
+# Set the absolute path to the project root
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$SCRIPT_DIR"
+EXPO_APP_DIR="$PROJECT_ROOT/expo-app"
+
+# Check if expo-app directory exists
+if [ ! -d "$EXPO_APP_DIR" ]; then
+  echo -e "${RED}Error: expo-app directory not found at $EXPO_APP_DIR${RESET}"
   exit 1
 fi
 
@@ -68,24 +73,24 @@ npm cache clean --force
 log "${BLUE}Preparing iOS project directory...${RESET}"
 
 # Create or update the ios directory
-if [ ! -d "expo-app/ios" ]; then
+if [ ! -d "$EXPO_APP_DIR/ios" ]; then
   log "Creating iOS project directory..."
-  cd expo-app
+  cd "$EXPO_APP_DIR"
   npx expo prebuild --platform ios --clean
-  cd ..
+  cd "$PROJECT_ROOT"
 else
   log "${GREEN}iOS project directory already exists${RESET}"
   
   # Update prebuild if needed - uncomment if you want to force update
   # log "Updating iOS project..."
-  # cd expo-app
+  # cd "$EXPO_APP_DIR"
   # npx expo prebuild --platform ios --no-install
-  # cd ..
+  # cd "$PROJECT_ROOT"
 fi
 
 # Make sure expo-device is properly linked and resolved
 log "${BLUE}Ensuring expo-device is properly installed and linked...${RESET}"
-cd expo-app
+cd "$EXPO_APP_DIR"
 if ! grep -q "expo-device" package.json; then
   log "Installing expo-device package..."
   npm install expo-device --save
@@ -99,7 +104,7 @@ npx pod-install
 
 # Run pod install specifically in the iOS directory
 log "Running pod install to ensure all dependencies are properly installed..."
-cd expo-app/ios
+cd "$EXPO_APP_DIR/ios"
 pod install
 
 # Fix permissions on all generated scripts in the Pods directory
