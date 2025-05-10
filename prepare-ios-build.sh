@@ -101,6 +101,12 @@ npx pod-install
 log "Running pod install to ensure all dependencies are properly installed..."
 cd expo-app/ios
 pod install
+
+# Fix permissions on all generated scripts in the Pods directory
+log "Fixing permissions on generated CocoaPods scripts..."
+find ./Pods -name "*.sh" -type f -exec chmod +x {} \;
+log "${GREEN}Successfully fixed permissions on CocoaPods scripts${RESET}"
+
 cd ../..
 
 # Fix problematic files by renaming them
