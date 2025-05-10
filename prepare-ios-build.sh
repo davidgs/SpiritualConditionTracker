@@ -1,9 +1,10 @@
 #!/bin/bash
 
 # Improved iOS Build Preparation Script for Spiritual Condition Tracker
-# This script handles dependency installation and asset preparation for iOS builds
-# Version: 2.1.0 (May 10, 2025) - Removes workarounds in favor of direct fixes
+# This script handles dependency installation, asset preparation, and JS bundle creation for iOS builds
+# Version: 2.2.0 (May 10, 2025) - Removes workarounds in favor of direct fixes
 #                                - Renames problematic files that cause build errors
+#                                - Adds direct JavaScript bundle generation
 
 # Text formatting
 BOLD="\033[1m"
@@ -14,10 +15,10 @@ BLUE="\033[34m"
 RESET="\033[0m"
 
 echo -e "${BOLD}${BLUE}===== Spiritual Condition Tracker iOS Build Preparation =====${RESET}"
-echo -e "Version: ${BOLD}2.1.0${RESET} (May 10, 2025)"
+echo -e "Version: ${BOLD}2.2.0${RESET} (May 10, 2025)"
 echo "This script prepares your project for iOS native build using Xcode."
 echo "Uses direct dependency installation and asset copying without hacks or workarounds."
-echo "Includes direct fix for problematic RNSScreenStackHeaderConfig.mm file."
+echo "Includes direct fix for problematic files and generates JavaScript bundle."
 echo ""
 
 # Check if we're in the right directory
@@ -127,6 +128,50 @@ log "Running 'pod install'..."
 pod install
 
 cd ../..
+
+# Create JavaScript bundle for iOS
+log "${BLUE}Generating JavaScript bundle for iOS...${RESET}"
+
+# Create necessary directories
+BUNDLE_DIR="expo-app/ios/$PROJECT_NAME/main.jsbundle-assets"
+mkdir -p "$BUNDLE_DIR"
+BUNDLE_FILE="expo-app/ios/$PROJECT_NAME/main.jsbundle"
+
+# Ensure node_modules exist
+if [ ! -d "expo-app/node_modules" ]; then
+  log "Installing node dependencies..."
+  cd expo-app
+  npm install
+  cd ..
+fi
+
+# Generate the bundle using the React Native CLI
+log "Generating bundle with Metro..."
+cd expo-app
+export NODE_OPTIONS="--max-old-space-size=4096"
+npx react-native bundle \
+  --entry-file=index.js \
+  --platform=ios \
+  --dev=false \
+  --bundle-output=ios/$PROJECT_NAME/main.jsbundle \
+  --assets-dest=ios/$PROJECT_NAME/main.jsbundle-assets
+
+# Check if bundle was created successfully
+if [ -f "ios/$PROJECT_NAME/main.jsbundle" ]; then
+  log "${GREEN}Bundle created successfully at ios/$PROJECT_NAME/main.jsbundle${RESET}"
+  
+  # Get bundle size for verification
+  BUNDLE_SIZE=$(du -h "ios/$PROJECT_NAME/main.jsbundle" | cut -f1)
+  log "Bundle size: $BUNDLE_SIZE"
+  
+  # Count assets
+  ASSET_COUNT=$(find "ios/$PROJECT_NAME/main.jsbundle-assets" -type f | wc -l)
+  log "Asset count: $ASSET_COUNT"
+else
+  log "${RED}Failed to create bundle. Please check Metro errors.${RESET}"
+fi
+
+cd ..
 
 echo -e "${BOLD}${GREEN}===== iOS Build Preparation Complete =====${RESET}"
 echo ""
