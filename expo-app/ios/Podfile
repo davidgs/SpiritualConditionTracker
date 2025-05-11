@@ -2,55 +2,94 @@ require File.join(File.dirname(`node --print "require.resolve('expo/package.json
 require File.join(File.dirname(`node --print "require.resolve('react-native/package.json')"`), "scripts/react_native_pods")
 require File.join(File.dirname(`node --print "require.resolve('@react-native-community/cli-platform-ios/package.json')"`), "native_modules")
 
-# Disable new architecture completely
+# Completely disable all new architecture features
 ENV['RCT_NEW_ARCH_ENABLED'] = '0'
 ENV['USE_HERMES'] = '0'
-ENV['USE_BRIDGELESS'] = '0'
+ENV['USE_FABRICCXX'] = '0'
+ENV['USE_BRIDGELESS'] = '0' 
 ENV['USE_FRAMEWORKS'] = 'static'
+ENV['FABRIC_ENABLED'] = '0'
+ENV['NEW_ARCH_ENABLED'] = '0'
+ENV['EXPO_DISABLE_MERCURY'] = '1'
+ENV['EXPO_USE_FLIPPER'] = '0'
+
+# Disable bridging and codegen
+ENV['BRIDGING_CPP_ENABLED'] = '0'
+ENV['CODEGEN_DISABLE_ALL'] = '1'
+ENV['JS_RUNTIME_HERMES_ENABLED'] = '0'
+ENV['USE_REACT_FABRIC'] = '0'
 
 platform :ios, '16.0'
 prepare_react_native_project!
 
-# Define excluded pods that are causing issues
-def excluded_pods
-  [
-    'ReactCommon-Samples',
-    'React-Fabric',
-    'React-RCTFabric',
-    'React-Fabric-cplinker',
-    'React-FabricImage',
-    'FBReactNativeSpec',
-    'ReactAppDependencyProvider',
-    'ReactCommon-turbomodule',
-    'React-utils',
-    'ReactCommon'
-  ]
+# List of problematic files that might cause issues
+$problem_files = [
+  'TurboModuleBinding.cpp',
+  'TurboModuleBinding.h',
+  'TurboModuleUtils.cpp',
+  'TurboModuleUtils.h',
+  'LongLivedObject.h',
+  'CallbackWrapper.h',
+  'react_native_assert.h',
+  'RunLoopObserver.cpp',
+  'ReactCommon/react/nativemodule/core',
+  'ReactCommon/react/bridging',
+  'ReactCommon/react/debug'
+]
+
+# List of targets to completely disable or remove
+$disabled_targets = [
+  'React-Fabric',
+  'React-RCTFabric',
+  'React-Fabric-cplinker',
+  'React-FabricImage',
+  'FBReactNativeSpec',
+  'ReactAppDependencyProvider',
+  'React-utils',
+  'React-debug',
+  'React-bridging',
+  'ReactCommon-turbomodule-core'
+]
+
+# Configure correct header search paths
+$header_search_paths = [
+  '$(PODS_ROOT)/Headers/Public',
+  '$(PODS_ROOT)/Headers/Public/React-Core',
+  '$(PODS_ROOT)/boost',
+  '$(PODS_ROOT)/DoubleConversion',
+  '$(PODS_ROOT)/fmt/include',
+  '$(PODS_ROOT)/RCT-Folly'
+]
+
+# Helper method to properly disable a target
+def disable_target(target)
+  if target.respond_to?(:product_type) && target.product_type == "com.apple.product-type.bundle"
+    target.build_configurations.each do |config|
+      config.build_settings['CODE_SIGNING_ALLOWED'] = 'NO'
+    end
+  end
+  
+  if target.respond_to?(:build_configurations)
+    target.build_configurations.each do |config|
+      config.build_settings['EXCLUDED_ARCHS'] = 'arm64 x86_64'
+      config.build_settings['ONLY_ACTIVE_ARCH'] = 'NO'
+      config.build_settings['VALID_ARCHS'] = ''
+      config.build_settings['CLANG_CXX_LANGUAGE_STANDARD'] = 'c++17'
+    end
+  end
+  
+  # Remove source files if possible to avoid compilation errors
+  if target.respond_to?(:source_build_phase) && target.source_build_phase
+    target.source_build_phase.files.to_a.each do |build_file|
+      build_file.remove_from_project
+    end
+  end
 end
 
 target 'SpiritualConditionTracker' do
   use_expo_modules!
   
-  # First, specifically exclude ReactCommon's TurboModule files
-  pod 'ReactCommon', :modular_headers => false, :subspecs => [
-    'react/runtime',          # Include only what we need
-    'yoga',                   # Required
-    'cxxreact',               # Required
-    'jsiexecutor',            # Required
-    'jsinspector',            # Required
-    'callinvoker'             # Required
-    # Explicitly exclude problematic subspecs by not including them
-    # 'react/bridging'
-    # 'react/nativemodule/core'
-    # 'react/debug'
-  ]
-  
-  # Exclude other problematic pods  
-  excluded_pods.each do |excluded_pod|
-    next if excluded_pod == 'ReactCommon' # Already handled above
-    pod excluded_pod, :inhibit_warnings => true, :configuration => ['Release'], :modular_headers => false
-  end
-  
-  # Use React Native with JSC, explicitly disable anything new-arch related
+  # Use React Native with JSC, explicitly disable fabric and related features
   use_react_native!(
     :path => "../node_modules/react-native",
     :hermes_enabled => false,
@@ -58,99 +97,84 @@ target 'SpiritualConditionTracker' do
     :app_path => ".."
   )
   
-  # Add this override to prevent compilation of files
-  post_install do |installer|
-    puts "Running custom post_install..."
+  # Special fix for React Native 0.79.x
+  pre_install do |installer|
+    puts "Running pre-install hooks..."
     
-    # Define problematic files to remove or exclude
-    problem_files = [
-      'TurboModuleBinding.cpp',
-      'TurboModuleBinding.h',
-      'TurboModuleUtils.cpp',
-      'TurboModuleUtils.h',
-      'LongLivedObject.h',
-      'CallbackWrapper.h',
-      'react_native_assert.h',
-      'RunLoopObserver.cpp'
-    ]
-    
-    # Remove problematic source files from the project
-    installer.pods_project.files.each do |file|
-      problem_files.each do |problem_filename|
-        if file.path.include?(problem_filename)
-          puts "Removing problematic file: #{file.path}"
-          file.remove_from_project
+    # Create a hash to track subspecs for ReactCommon
+    installer.pod_targets.each do |pod|
+      # Handle ReactCommon subspecs conflict
+      if pod.name.include?('ReactCommon/turbomodule') || pod.name.include?('React-debug')
+        puts "📦 Disabling target: #{pod.name}"
+        installer.aggregate_targets.each do |target|
+          target.xcconfigs.each do |config_name, config_file|
+            config_file.frameworks.delete(pod.name)
+          end
         end
       end
     end
-    
-    # Handle each target appropriately
+  end
+  
+  post_install do |installer|
     installer.pods_project.targets.each do |target|
-      # Check if this target should be excluded
-      if excluded_pods.any? { |excluded_pod| target.name.include?(excluded_pod) }
-        puts "Excluding target from build: #{target.name}"
-        
-        # Remove all source files from the target
-        if target.source_build_phase
-          target.source_build_phase.files.to_a.each do |build_file|
-            build_file.remove_from_project
-          end
-        end
-        
-        # Set the deployment target to an impossible version
-        target.build_configurations.each do |config|
-          config.build_settings['EXCLUDED_ARCHS'] = 'arm64 x86_64'
-          config.build_settings['ONLY_ACTIVE_ARCH'] = 'NO'
-          config.build_settings['VALID_ARCHS'] = ''
-          config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '99.0'
-          config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] = ['$(inherited)', 'RCT_NEW_ARCH_ENABLED=0']
-        end
-      elsif target.name == 'ReactCommon'
-        puts "Applying special handling for ReactCommon target"
-        
-        # For ReactCommon, we need to exclude problematic files from compilation
-        if target.source_build_phase
-          target.source_build_phase.files.to_a.each do |build_file|
-            file_ref = build_file.file_ref
-            if file_ref && file_ref.path && problem_files.any? { |prob| file_ref.path.include?(prob) }
-              puts "Removing problematic file from build phase: #{file_ref.path}"
+      # Step 1: Remove problematic files from all targets
+      if target.respond_to?(:source_build_phase) && target.source_build_phase
+        target.source_build_phase.files.to_a.each do |build_file|
+          if build_file.respond_to?(:file_ref) && build_file.file_ref.respond_to?(:path)
+            file_path = build_file.file_ref.path.to_s
+            if $problem_files.any? { |problem| file_path.include?(problem) }
+              puts "🔴 Removing problematic file from build: #{file_path}"
               build_file.remove_from_project
             end
           end
         end
+      end
+      
+      # Step 2: Set minimum iOS version for all targets
+      target.build_configurations.each do |config|
+        config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '16.0'
         
-        # Also apply special build settings
-        target.build_configurations.each do |config|
-          config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '16.0'
-          config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] = ['$(inherited)', 'RCT_NEW_ARCH_ENABLED=0']
-          
-          # Add direct include paths to avoid module resolution issues
-          if !config.build_settings['HEADER_SEARCH_PATHS']
-            config.build_settings['HEADER_SEARCH_PATHS'] = ['$(inherited)']
-          end
-          config.build_settings['HEADER_SEARCH_PATHS'] << '$(PODS_ROOT)/Headers/Public'
-          config.build_settings['HEADER_SEARCH_PATHS'] << '$(PODS_ROOT)/Headers/Public/React-Core'
+        # Add define to disable new architecture in all files
+        if config.build_settings['GCC_PREPROCESSOR_DEFINITIONS']
+          config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] << 'RCT_NEW_ARCH_ENABLED=0'
+          config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] << 'FABRIC_ENABLED=0'
+        else
+          config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] = ['$(inherited)', 'RCT_NEW_ARCH_ENABLED=0', 'FABRIC_ENABLED=0']
         end
-      else
-        # For normal targets, just set the deployment target
-        target.build_configurations.each do |config|
-          config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '16.0'
-          
-          # Add preprocessor definitions to ensure new arch code is not compiled
-          if config.build_settings['GCC_PREPROCESSOR_DEFINITIONS']
-            config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] << 'RCT_NEW_ARCH_ENABLED=0'
-          else
-            config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] = ['$(inherited)', 'RCT_NEW_ARCH_ENABLED=0']
+        
+        # Add direct include paths to avoid module resolution issues
+        if config.build_settings['HEADER_SEARCH_PATHS']
+          $header_search_paths.each do |path|
+            unless config.build_settings['HEADER_SEARCH_PATHS'].include?(path)
+              config.build_settings['HEADER_SEARCH_PATHS'] << path
+            end
           end
+        else
+          config.build_settings['HEADER_SEARCH_PATHS'] = ['$(inherited)'] + $header_search_paths
         end
+      end
+      
+      # Step 3: Handle specific problematic targets
+      if $disabled_targets.any? { |name| target.name.include?(name) } ||
+         target.name.include?('bridging') ||
+         target.name.include?('turbomodule')
+         
+        puts "🚫 Disabling problematic target: #{target.name}"
+        disable_target(target)
       end
     end
     
-    # Run standard React Native post-install but with our additional options
+    # Step 4: Run standard React Native post-install hook
     react_native_post_install(
       installer,
-      File.join(File.dirname(`node --print "require.resolve('react-native/package.json')"`), "scripts", "react_native_pods.rb"),
+      File.join(File.dirname(`node --print "require.resolve('react-native/package.json')"`), "scripts/react_native_pods.rb"),
       :mac_catalyst_enabled => false
     )
+    
+    # Step 5: Fix potential compiler flags
+    installer.pods_project.build_configurations.each do |config|
+      config.build_settings["EXCLUDED_ARCHS[sdk=iphonesimulator*]"] = "arm64"
+      config.build_settings['ONLY_ACTIVE_ARCH'] = 'YES'
+    end
   end
 end

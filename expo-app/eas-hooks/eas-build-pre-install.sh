@@ -47,13 +47,20 @@ fi
 # Set environment variables to force old architecture with more aggressive settings
 export RCT_NEW_ARCH_ENABLED=0
 export USE_HERMES=0
-export USE_BRIDGELESS=0
+export USE_FABRICCXX=0
+export USE_BRIDGELESS=0 
 export USE_FRAMEWORKS=static
 export FABRIC_ENABLED=0
 export NEW_ARCH_ENABLED=0
-export CODEGEN_DISABLE_ALL=1
-export DISABLE_CODEGEN=1
+export EXPO_DISABLE_MERCURY=1
+export EXPO_USE_FLIPPER=0
+
+# Disable bridging and codegen
 export BRIDGING_CPP_ENABLED=0
+export CODEGEN_DISABLE_ALL=1
+export JS_RUNTIME_HERMES_ENABLED=0
+export USE_REACT_FABRIC=0
+export DISABLE_CODEGEN=1
 export REACT_FABRIC_ENABLED=0
 
 echo "✅ Set environment variables to disable new architecture features"
