@@ -1,0 +1,20 @@
+› Executing react-native Pods/React-Fabric » [CP-User] [RN]Check rncore
+
+❌  error: Codegen did not run properly in your project. Please reinstall cocoapods with `bundle exec pod install`.
+
+› Executing react-native Pods/React-RCTFBReactNativeSpec » [CP-User] [RN]Check FBReactNativeSpec
+    None of the architectures in ARCHS (arm64) are valid. Consider setting ARCHS to $(ARCHS_STANDARD) or updating it to include at least one value from VALID_ARCHS (arm64, arm64e, armv7, armv7s) which is not in EXCLUDED_ARCHS (arm64, x86_64). (in target 'React-RCTFabric' from project 'Pods')
+    None of the architectures in ARCHS (arm64) are valid. Consider setting ARCHS to $(ARCHS_STANDARD) or updating it to include at least one value from VALID_ARCHS (arm64, arm64e, armv7, armv7s) which is not in EXCLUDED_ARCHS (arm64, x86_64). (in target 'React-RCTFBReactNativeSpec' from project 'Pods')
+    None of the architectures in ARCHS (arm64) are valid. Consider setting ARCHS to $(ARCHS_STANDARD) or updating it to include at least one value from VALID_ARCHS (arm64, arm64e, armv7, armv7s) which is not in EXCLUDED_ARCHS (arm64, x86_64). (in target 'React-FabricImage' from project 'Pods')
+    None of the architectures in ARCHS (arm64) are valid. Consider setting ARCHS to $(ARCHS_STANDARD) or updating it to include at least one value from VALID_ARCHS (arm64, arm64e, armv7, armv7s) which is not in EXCLUDED_ARCHS (arm64, x86_64). (in target 'React-FabricComponents' from project 'Pods')
+    None of the architectures in ARCHS (arm64) are valid. Consider setting ARCHS to $(ARCHS_STANDARD) or updating it to include at least one value from VALID_ARCHS (arm64, arm64e, armv7, armv7s) which is not in EXCLUDED_ARCHS (arm64, x86_64). (in target 'React-Fabric' from project 'Pods')
+▸ ** ARCHIVE FAILED **
+▸ The following build commands failed:
+▸ 	PhaseScriptExecution [CP-User]\ [RN]Check\ rncore /Users/expo/Library/Developer/Xcode/DerivedData/SpiritualConditionTracker-ervprrfkuwxavrepqtlafrawhwaw/Build/Intermediates.noindex/ArchiveIntermediates/SpiritualConditionTracker/IntermediateBuildFilesPath/Pods.build/Release-iphoneos/React-Fabric.build/Script-46EB2E0001FCC0.sh (in target 'React-Fabric' from project 'Pods')
+▸ 	Archiving workspace SpiritualConditionTracker with scheme SpiritualConditionTracker
+▸ (2 failures)
+** ARCHIVE FAILED **
+The following build commands failed:
+	PhaseScriptExecution [CP-User]\ [RN]Check\ rncore /Users/expo/Library/Developer/Xcode/DerivedData/SpiritualConditionTracker-ervprrfkuwxavrepqtlafrawhwaw/Build/Intermediates.noindex/ArchiveIntermediates/SpiritualConditionTracker/IntermediateBuildFilesPath/Pods.build/Release-iphoneos/React-Fabric.build/Script-46EB2E0001FCC0.sh (in target 'React-Fabric' from project 'Pods')
+	Archiving workspace SpiritualConditionTracker with scheme SpiritualConditionTracker
+(2 failures)
