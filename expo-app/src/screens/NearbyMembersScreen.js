@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Switch, Alert } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import * as Location from 'expo-location';
-import * as Device from 'expo-device';
 import { useUser } from '../contexts/UserContext';
 import ProximityWizard from '../components/ProximityWizard';
 
