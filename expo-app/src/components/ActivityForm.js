@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
-import DateTimePicker from '@react-native-community/datetimepicker';
+import { DatePickerModal } from 'react-native-paper-dates';
 import { useTheme } from '../contexts/ThemeContext';
 import { useActivities } from '../contexts/ActivitiesContext';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -29,10 +29,10 @@ function ActivityForm({ onSuccess }) {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
   
-  const handleDateChange = (event, selectedDate) => {
+  const handleDateChange = ({ date }) => {
     setShowDatePicker(false);
-    if (selectedDate) {
-      setFormData(prev => ({ ...prev, date: selectedDate }));
+    if (date) {
+      setFormData(prev => ({ ...prev, date }));
     }
   };
   
@@ -188,14 +188,17 @@ function ActivityForm({ onSuccess }) {
           </Text>
         </TouchableOpacity>
         
-        {showDatePicker && (
-          <DateTimePicker
-            value={formData.date}
-            mode="date"
-            display="default"
-            onChange={handleDateChange}
-          />
-        )}
+        <DatePickerModal
+          visible={showDatePicker}
+          mode="single"
+          onDismiss={() => setShowDatePicker(false)}
+          date={formData.date}
+          onConfirm={handleDateChange}
+          saveLabel="Confirm"
+          label="Select Date"
+          animationType="slide"
+          locale="en"
+        />
       </View>
       
       {/* Duration */}
