@@ -31,15 +31,9 @@ echo "Setting up EAS credentials for build..."
 
 # Login to EAS with the token
 echo "Logging in to EAS with provided token..."
-# Create temporary file with the token
-TOKEN_FILE=$(mktemp)
-echo "$EXPO_TOKEN" > "$TOKEN_FILE"
 
-# Login using the token file
-npx eas-cli login --non-interactive < "$TOKEN_FILE"
-
-# Remove the temporary file
-rm "$TOKEN_FILE"
+# Use environment variable directly - this is the proper way
+npx eas-cli login --token "$EXPO_TOKEN"
 
 # Verify login was successful
 echo "Verifying EAS login status..."
@@ -81,8 +75,7 @@ cd ./expo-app
 echo "Starting EAS build..."
 npx eas-cli build \
   --platform $PLATFORM \
-  --profile $BUILD_PROFILE \
-  --non-interactive
+  --profile $BUILD_PROFILE
 
 echo "========================================"
 echo "Build started successfully!"
