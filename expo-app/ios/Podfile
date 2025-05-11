@@ -2,18 +2,29 @@ require File.join(File.dirname(`node --print "require.resolve('expo/package.json
 require File.join(File.dirname(`node --print "require.resolve('react-native/package.json')"`), "scripts/react_native_pods")
 require File.join(File.dirname(`node --print "require.resolve('@react-native-community/cli-platform-ios/package.json')"`), "native_modules")
 
-# Basic environment setup - keep it simple
+# Disable all new architecture related features
 ENV['RCT_NEW_ARCH_ENABLED'] = '0'
 ENV['USE_HERMES'] = '0'
 ENV['USE_FRAMEWORKS'] = 'static'
+ENV['USE_FABRIC'] = '0'
+ENV['FABRIC_ENABLED'] = '0'
 
 platform :ios, '16.0'
 prepare_react_native_project!
 
+# Create a list of problematic files we need to remove
+$excluded_files = [
+  'TurboModuleBinding.cpp',
+  'TurboModuleUtils.cpp',
+  'TurboModuleUtils.h',
+  'CallbackWrapper.h',
+  'react_native_assert.h'
+]
+
 target 'SpiritualConditionTracker' do
   use_expo_modules!
   
-  # Basic use_react_native with just what we need
+  # Explicitly disable fabric and hermes
   use_react_native!(
     :path => "../node_modules/react-native",
     :hermes_enabled => false,
@@ -21,20 +32,68 @@ target 'SpiritualConditionTracker' do
     :app_path => ".."
   )
   
+  # Add this pre_install hook to fix file issues before the pods are installed
+  pre_install do |installer|
+    # Disable ReactCommon turbomodule targets
+    installer.pod_targets.each do |pod|
+      if pod.name.include?('ReactCommon/turbomodule') || 
+         pod.name.include?('React-Fabric') || 
+         pod.name.include?('React-RCTFabric')
+        puts "🚫 Disabling problematic target: #{pod.name}"
+        pod.instance_variable_set(:@build_type, Pod::Target::BuildType.static_library)
+      end
+    end
+  end
+
   post_install do |installer|
-    # Set proper iOS deployment target for all pods
+    # Fix problematic source files
     installer.pods_project.targets.each do |target|
+      # Remove problematic files from build phases
+      if target.respond_to?(:source_build_phase) && target.source_build_phase
+        target.source_build_phase.files.to_a.each do |build_file|
+          next unless build_file.respond_to?(:file_ref) && build_file.file_ref.respond_to?(:path)
+          file_path = build_file.file_ref.path.to_s
+          
+          if $excluded_files.any? { |excluded| file_path.include?(excluded) }
+            puts "🗑️ Removing file from build: #{file_path}"
+            build_file.remove_from_project
+          end
+        end
+      end
+      
+      # Configure all targets
       target.build_configurations.each do |config|
+        # Always use iOS 16.0 minimum
         config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '16.0'
         
         # Ensure all builds have new architecture disabled
         config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] ||= ['$(inherited)']
         config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] << 'RCT_NEW_ARCH_ENABLED=0'
+        config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] << 'FABRIC_ENABLED=0'
         
-        # Handle troublesome targets
-        if ['React-Fabric', 'React-RCTFabric', 'FBReactNativeSpec', 
-            'ReactAppDependencyProvider', 'React-utils'].include?(target.name)
-          config.build_settings['EXCLUDED_ARCHS'] = 'arm64 x86_64'
+        # Add important header search paths
+        config.build_settings['HEADER_SEARCH_PATHS'] ||= ['$(inherited)']
+        ['$(PODS_ROOT)/Headers/Public',
+         '$(PODS_ROOT)/Headers/Public/React-Core',
+         '$(PODS_ROOT)/boost',
+         '$(PODS_ROOT)/DoubleConversion',
+         '$(PODS_ROOT)/fmt/include',
+         '$(PODS_ROOT)/RCT-Folly'].each do |path|
+          config.build_settings['HEADER_SEARCH_PATHS'] << path unless config.build_settings['HEADER_SEARCH_PATHS'].include?(path)
+        end
+        
+        # Disable problematic targets by excluding all architectures
+        if ['React-Fabric', 'React-RCTFabric', 'FBReactNativeSpec',
+            'ReactAppDependencyProvider', 'React-utils', 'React-bridging',
+            'React-debug'].any? { |name| target.name.include?(name) }
+            
+          # This effectively disables these targets completely
+          config.build_settings['EXCLUDED_ARCHS'] = 'arm64 x86_64 arm64e'
+          
+          # Ensure we don't even try to build these targets
+          if config.build_settings['OTHER_LDFLAGS']
+            config.build_settings['OTHER_LDFLAGS'].delete_if { |flag| flag.include?('React-Fabric') || flag.include?('React-RCTFabric') }
+          end
         end
       end
     end
@@ -45,5 +104,10 @@ target 'SpiritualConditionTracker' do
       File.join(File.dirname(`node --print "require.resolve('react-native/package.json')"`), "scripts", "react_native_pods.rb"),
       :mac_catalyst_enabled => false
     )
+    
+    # Fix simulator architecture exclusions
+    installer.pods_project.build_configurations.each do |config|
+      config.build_settings["EXCLUDED_ARCHS[sdk=iphonesimulator*]"] = "arm64"
+    end
   end
 end

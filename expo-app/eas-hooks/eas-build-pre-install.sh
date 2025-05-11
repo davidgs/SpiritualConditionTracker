@@ -114,6 +114,26 @@ if [ -f "$TURBO_MODULE_PATH" ]; then
   echo "✅ Patched TurboModuleUtils.cpp"
 fi
 
+# Also patch TurboModuleUtils.h to resolve bridging errors
+TURBO_MODULE_HEADER_PATH="$APP_ROOT/node_modules/react-native/ReactCommon/react/nativemodule/core/ReactCommon/TurboModuleUtils.h"
+if [ -f "$TURBO_MODULE_HEADER_PATH" ]; then
+  echo "🔧 Patching TurboModuleUtils.h to remove bridging dependencies..."
+  
+  # Create a backup
+  cp "$TURBO_MODULE_HEADER_PATH" "${TURBO_MODULE_HEADER_PATH}.bak"
+  
+  # Comment out the include for CallbackWrapper.h
+  sed -i.bak 's/#include <react\/bridging\/CallbackWrapper.h>/\/\/ #include <react\/bridging\/CallbackWrapper.h>/g' "$TURBO_MODULE_HEADER_PATH"
+  
+  # Comment out the include for LongLivedObject.h
+  sed -i.bak 's/#include <react\/bridging\/LongLivedObject.h>/\/\/ #include <react\/bridging\/LongLivedObject.h>/g' "$TURBO_MODULE_HEADER_PATH"
+  
+  # Remove backup files
+  rm -f "${TURBO_MODULE_HEADER_PATH}.bak"
+  
+  echo "✅ Patched TurboModuleUtils.h"
+fi
+
 # Also patch TurboModuleBinding.cpp
 TURBO_BINDING_PATH="$APP_ROOT/node_modules/react-native/ReactCommon/react/nativemodule/core/ReactCommon/TurboModuleBinding.cpp"
 if [ -f "$TURBO_BINDING_PATH" ]; then
@@ -130,5 +150,34 @@ if [ -f "$TURBO_BINDING_PATH" ]; then
   
   echo "✅ Patched TurboModuleBinding.cpp"
 fi
+
+# Also patch TurboModuleBinding.h
+TURBO_BINDING_HEADER_PATH="$APP_ROOT/node_modules/react-native/ReactCommon/react/nativemodule/core/ReactCommon/TurboModuleBinding.h"
+if [ -f "$TURBO_BINDING_HEADER_PATH" ]; then
+  echo "🔧 Patching TurboModuleBinding.h to remove bridging dependencies..."
+  
+  # Create a backup
+  cp "$TURBO_BINDING_HEADER_PATH" "${TURBO_BINDING_HEADER_PATH}.bak"
+  
+  # Comment out problematic includes
+  sed -i.bak 's/#include <react\/bridging\/AnyBinding.h>/\/\/ #include <react\/bridging\/AnyBinding.h>/g' "$TURBO_BINDING_HEADER_PATH"
+  
+  # Remove backup files
+  rm -f "${TURBO_BINDING_HEADER_PATH}.bak"
+  
+  echo "✅ Patched TurboModuleBinding.h"
+fi
+
+# Create an empty placeholder for problematic header files
+echo "🔧 Creating empty placeholder headers for React bridging..."
+REACT_BRIDGING_DIR="$APP_ROOT/node_modules/react-native/ReactCommon/react/bridging"
+mkdir -p "$REACT_BRIDGING_DIR"
+
+# Create an empty CallbackWrapper.h file
+echo "// Empty placeholder to prevent build errors" > "$REACT_BRIDGING_DIR/CallbackWrapper.h"
+echo "// Empty placeholder to prevent build errors" > "$REACT_BRIDGING_DIR/LongLivedObject.h"
+echo "// Empty placeholder to prevent build errors" > "$REACT_BRIDGING_DIR/AnyBinding.h"
+
+echo "✅ Created empty placeholder header files"
 
 echo "✅ Pre-install hook completed successfully"
