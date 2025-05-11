@@ -18,7 +18,14 @@
       "distribution": "internal"
     },
     "preview": {
-      "distribution": "internal"
+      "distribution": "internal",
+      "env": {
+        "RCT_NEW_ARCH_ENABLED": "0",
+        "USE_HERMES": "0",
+        "USE_FABRIC": "0",
+        "DISABLE_CODEGEN": "1",
+        "USE_FRAMEWORKS": "static"
+      }
     },
     "production": {
       "autoIncrement": true
@@ -30,7 +37,12 @@
         "credentialsSource": "remote",
         "image": "latest",
         "env": {
-          "EXPO_IMAGE_UTILS_NO_SHARP": "1"
+          "EXPO_IMAGE_UTILS_NO_SHARP": "1",
+          "RCT_NEW_ARCH_ENABLED": "0",
+          "USE_HERMES": "0",
+          "USE_FABRIC": "0",
+          "DISABLE_CODEGEN": "1",
+          "USE_FRAMEWORKS": "static"
         },
         "buildConfiguration": "Release"
       },

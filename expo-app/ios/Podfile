@@ -1,16 +1,42 @@
 require File.join(File.dirname(`node --print "require.resolve('expo/package.json')"`), "scripts/autolinking")
+
+# Load our custom codegen utils first to override React Native's implementation
+require_relative 'codegen_utils.rb'
+
 require File.join(File.dirname(`node --print "require.resolve('react-native/package.json')"`), "scripts/react_native_pods")
 require File.join(File.dirname(`node --print "require.resolve('@react-native-community/cli-platform-ios/package.json')"`), "native_modules")
 
-# Force disable new architecture
+# Force disable new architecture and all related features
 ENV['RCT_NEW_ARCH_ENABLED'] = '0'
 ENV['USE_HERMES'] = '0'
+ENV['USE_FABRIC'] = '0'
+ENV['USE_FRAMEWORKS'] = 'static'
+ENV['EXTRA_FLAGS'] = '-DNON_TURBO=1 -DCODESIGNING_REQUIRED=NO'
+
+# Disable codegen completely to avoid errors
+ENV['DISABLE_CODEGEN'] = '1'
 
 platform :ios, '16.0'
 prepare_react_native_project!
 
 # Disable Flipper
 ENV['NO_FLIPPER'] = "1"
+
+# Fabric-related pods to be excluded completely
+EXCLUDED_PODS = %w[
+  React-Fabric
+  React-RCTFabric
+  React-FabricCore
+  React-FabricComponents
+  React-FabricImage
+  React-Codegen
+  FBReactNativeSpec
+  glog
+  RCT-Folly
+  ReactCommon
+  DoubleConversion
+  FBReactNativeSpecCxx
+]
 
 target 'SpiritualConditionTracker' do
   use_expo_modules!
@@ -24,14 +50,26 @@ target 'SpiritualConditionTracker' do
 end
 
 post_install do |installer|
-  # Set deployment target for all pods
+  # Explicitly delete all fabric-related pods from the project
   installer.pods_project.targets.each do |target|
-    target.build_configurations.each do |config|
-      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '16.0'
-      
-      # Disable Fabric-related pods if they exist
-      if target.name.include?('Fabric') || target.name.include?('FBReactNativeSpec')
+    if EXCLUDED_PODS.any? { |excluded| target.name.include?(excluded) }
+      puts "Excluding #{target.name} from target build"
+      target.build_configurations.each do |config|
+        # Set invalid architectures for problematic pods
         config.build_settings['EXCLUDED_ARCHS'] = 'arm64 x86_64'
+        # Add a preprocessor flag to prevent compilation
+        if !config.build_settings['GCC_PREPROCESSOR_DEFINITIONS']
+          config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] = ['$(inherited)']
+        end
+        config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] << 'FABRIC_DISABLED=1'
+        
+        # Skip building these targets completely
+        config.build_settings['SKIP_INSTALL'] = 'YES'
+      end
+    else
+      # For all other targets, set the deployment target
+      target.build_configurations.each do |config|
+        config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '16.0'
       end
     end
   end

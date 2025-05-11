@@ -59,6 +59,13 @@ export EAS_BUILD_AUTOCOMMIT=0
 export NODE_OPTIONS="--max-old-space-size=8192"
 export EXPO_DEBUG=1
 
+# Disable React Native new architecture and Hermes
+export RCT_NEW_ARCH_ENABLED=0
+export USE_HERMES=0
+export USE_FABRIC=0
+export DISABLE_CODEGEN=1
+export USE_FRAMEWORKS=static
+
 # Run the pre-install script directly
 echo "Running pre-install setup..."
 if [ -f "./expo-app/eas-hooks/eas-build-pre-install.sh" ]; then
