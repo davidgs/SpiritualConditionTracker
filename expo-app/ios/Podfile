@@ -2,11 +2,40 @@ require File.join(File.dirname(`node --print "require.resolve('expo/package.json
 require File.join(File.dirname(`node --print "require.resolve('react-native/package.json')"`), "scripts/react_native_pods")
 require File.join(File.dirname(`node --print "require.resolve('@react-native-community/cli-platform-ios/package.json')"`), "native_modules")
 
+# Force disable new architecture completely
+ENV['RCT_NEW_ARCH_ENABLED'] = '0'
+ENV['USE_HERMES'] = '0'
+
+# Define a function to exclude problematic pods
+def exclude_fabric_pods(installer)
+  # These are the pods we need to exclude completely to prevent the Codegen issues
+  excluded_pods = [
+    'React-Fabric',
+    'React-RCTFabric',
+    'React-FabricCore',
+    'FBReactNativeSpec',
+    'ReactCommon/react/renderer'
+  ]
+  
+  installer.pod_targets.each do |pod|
+    excluded_pods.each do |excluded|
+      if pod.name.include?(excluded)
+        puts "Excluding pod: #{pod.name}"
+        pod.specs.each do |spec|
+          spec.attributes_hash["platforms"] = {
+            "ios" => "99.0"  # This makes the pod unavailable for any iOS version
+          }
+        end
+      end
+    end
+  end
+end
+
 platform :ios, '16.0'
 prepare_react_native_project!
 
 # Disable Flipper
-ENV['NO_FLIPPER'] = "1"
+ENV['NO_FLIPPER'] = "1" 
 
 target 'SpiritualConditionTracker' do
   use_expo_modules!
@@ -14,17 +43,32 @@ target 'SpiritualConditionTracker' do
   # Use React Native with JSC (not Hermes)
   use_react_native!(
     :path => "../node_modules/react-native",
-    :hermes_enabled => false
+    :hermes_enabled => false,
+    # Explicitly set fabric to false
+    :fabric_enabled => false
   )
+  
 end
 
+# Combine all post-install hooks
 post_install do |installer|
+  # Exclude problematic Fabric-related pods
+  exclude_fabric_pods(installer)
+  
+  # Set deployment target for all pods
   installer.pods_project.targets.each do |target|
     target.build_configurations.each do |config|
       config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '16.0'
+      
+      # Also disable any Fabric targets by setting their EXCLUDED_ARCHS
+      if target.name.include?('Fabric') || target.name.include?('FBReactNativeSpec')
+        config.build_settings['EXCLUDED_ARCHS'] = 'arm64 x86_64'
+        puts "Disabled #{target.name} by excluding architectures"
+      end
     end
   end
   
+  # Standard React Native post install
   react_native_post_install(
     installer,
     File.join(File.dirname(`node --print "require.resolve('react-native/package.json')"`), "scripts", "react_native_pods.rb"),
