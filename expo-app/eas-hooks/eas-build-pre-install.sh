@@ -93,14 +93,70 @@ done
 echo "📄 Modified package.json:"
 cat package.json
 
-# Prepare fix for Podfile (will be created during build process)
-echo "🔍 Setting up Podfile fix for EAS build..."
+# Directly fix the Podfile template in the @expo/config-plugins module
+echo "🔧 Directly fixing Podfile template in @expo/config-plugins..."
 
-# Create the eas-hooks/ios directory if it doesn't exist
-mkdir -p ./eas-hooks/ios
+# Find the Expo Config Plugin's Podfile template
+EXPO_CONFIG_PLUGINS_PATH="./node_modules/@expo/config-plugins"
+TEMPLATE_PATHS=(
+  "$EXPO_CONFIG_PLUGINS_PATH/build/plugins/ios-plugins/react-native-podfile/templates/Podfile"
+  "$EXPO_CONFIG_PLUGINS_PATH/ios/react-native-podfile/templates/Podfile"
+  "$EXPO_CONFIG_PLUGINS_PATH/templates/ios/Podfile"
+)
 
-# Create a script to fix the Podfile after it's generated during build
-cat << 'EOF' > ./eas-hooks/ios/fix-podfile.sh
+# Search for the Podfile template
+TEMPLATE_PATH=""
+for POSSIBLE_PATH in "${TEMPLATE_PATHS[@]}"; do
+  if [ -f "$POSSIBLE_PATH" ]; then
+    TEMPLATE_PATH="$POSSIBLE_PATH"
+    break
+  fi
+done
+
+if [ -z "$TEMPLATE_PATH" ]; then
+  echo "❌ Could not find Podfile template in @expo/config-plugins"
+  echo "Searched in:"
+  for P in "${TEMPLATE_PATHS[@]}"; do
+    echo "  - $P"
+  done
+  echo "Creating a fallback Podfile fix script instead..."
+else
+  # Found the template, create a backup and fix it
+  echo "📝 Found Podfile template at: $TEMPLATE_PATH"
+  BACKUP_PATH="${TEMPLATE_PATH}.bak"
+  if [ ! -f "$BACKUP_PATH" ]; then
+    cp "$TEMPLATE_PATH" "$BACKUP_PATH"
+    echo "✅ Created backup at: $BACKUP_PATH"
+  fi
+
+  # Fix the template - replace the path to React Native
+  sed -i.tmp 's/use_react_native!(\s*:path => config\[:reactNativePath\],/use_react_native!(:path => "..\/node_modules\/react-native",/g' "$TEMPLATE_PATH"
+  rm -f "${TEMPLATE_PATH}.tmp"
+  echo "✅ Patched Podfile template with correct React Native path"
+
+  # Add post_install hook for C++20 if needed
+  if ! grep -q "post_install" "$TEMPLATE_PATH"; then
+    cat << 'EOF' >> "$TEMPLATE_PATH"
+
+post_install do |installer|
+  installer.pods_project.targets.each do |target|
+    target.build_configurations.each do |config|
+      # Set C++20 for all C++ files
+      config.build_settings['CLANG_CXX_LANGUAGE_STANDARD'] = 'c++20'
+      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.0'
+    end
+  end
+end
+EOF
+    echo "✅ Added post_install hook for C++20 compatibility"
+  fi
+
+  echo "✅ Podfile template has been successfully patched"
+fi
+
+# Create a backup fix script for the Podfile in case the template fix doesn't work
+mkdir -p ./ios
+cat << 'EOF' > ./ios/fix-podfile.sh
 #!/bin/bash
 # Fix Podfile react-native path
 if [ -f "./Podfile" ]; then
