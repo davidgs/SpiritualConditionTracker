@@ -15,7 +15,7 @@ def exclude_specific_pods(installer)
   end
 end
 
-platform :ios, '15.0'
+platform :ios, '16.0'
 prepare_react_native_project!
 
 # Disable Flipper completely for compatibility with EAS builds
@@ -32,16 +32,11 @@ target 'SpiritualConditionTracker' do
   use_expo_modules!
   
   # Define the React Native path directly - no variable resolution needed
-  # Completely disable Hermes JavaScript engine to avoid React-RuntimeHermes issues
   use_react_native!(
     :path => "../node_modules/react-native",
     # An absolute path to your application root.
-    :app_path => "#{Pod::Config.instance.installation_root}/..",
-    :hermes_enabled => false
+    :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
-  
-  # Explicitly exclude the problematic pod
-  pod 'React-RuntimeHermes', :path => '../node_modules/react-native/ReactCommon/react/runtime', :modular_headers => true, :inhibit_warnings => true
 end
 
 post_install do |installer|
@@ -62,16 +57,16 @@ post_install do |installer|
       config.build_settings['CLANG_CXX_LANGUAGE_STANDARD'] = 'c++20'
       
       # Ensure minimum iOS version is set
-      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.0'
+      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '16.0'
       
       # Special case for React-RuntimeHermes
       if target.name == "React-RuntimeHermes"
-        config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.0'
+        config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '16.0'
       end
       
       # Special case for React-RuntimeCore
       if target.name == "React-RuntimeCore"
-        config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.0'
+        config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '16.0'
       end
       
       # Fix arm64 architecture for simulators 
