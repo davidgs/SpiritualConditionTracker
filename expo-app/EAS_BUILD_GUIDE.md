@@ -1,80 +1,67 @@
 # EAS Build Guide for Spiritual Condition Tracker
 
-This guide explains how to build the Spiritual Condition Tracker app using EAS (Expo Application Services).
+This guide explains how we've solved the Podfile path error in EAS builds.
 
-## Prerequisites
+## The Problem
 
-1. Install EAS CLI:
-```bash
-npm install -g eas-cli
+EAS builds for iOS were failing with the following error:
+
+```
+[!] Invalid `Podfile` file: Couldn't find the React Native package.json file at ../../node_modules/react-native/package.json.
+ #  from /Users/expo/workingdir/build/expo-app/Podfile:40
+ #  -------------------------------------------
+ #  
+ >    use_react_native!(
+ #      :path => config[:reactNativePath],
+ #  -------------------------------------------
 ```
 
-2. Log in to your Expo account:
-```bash
-eas login
-```
+The issue is that the Podfile is looking for React Native in the wrong location.
 
-3. Set up your EXPO_TOKEN (for CI/CD):
-```bash
-export EXPO_TOKEN=your_expo_token
-```
+## Our Solution
 
-## Configuration Files
+We've created a pre-configured `Podfile` in the `ios` directory that:
 
-The app's build configuration is defined in several key files:
+1. Directly references React Native at the correct path (`../node_modules/react-native`)
+2. Sets the proper C++20 language standard for compatibility
+3. Configures iOS deployment target to 13.0 
+4. Fixes simulator architecture issues
 
-- **eas.json**: Main configuration for EAS builds
-- **app.json**: Expo app configuration with native settings
-- **metro.config.js**: Metro bundler configuration
-- **eas-hooks/eas-build-pre-install.sh**: Pre-install script for build fixes
+Our `eas-hooks/eas-build-pre-install.sh` script copies this Podfile to the correct location in the EAS build environment.
 
-## Running an iOS Build
+## Building for iOS
 
-From the `expo-app` directory:
+To build for iOS:
 
 ```bash
-# For internal testing build
-eas build --platform ios --profile preview --no-wait
-
-# For production build
-eas build --platform ios --profile production --no-wait
+cd expo-app
+eas build --platform ios --profile preview
 ```
 
-## Build Profiles
+## How It Works
 
-The `eas.json` file defines several build profiles:
-
-- **development**: For development client builds
-- **preview**: For internal testing builds
-- **native**: Custom native build with iOS/Android specific settings
-- **production**: For App Store/Play Store builds
-
-## Important Fixes
-
-The app includes several fixes for common EAS build issues:
-
-1. **C++ Compatibility**: The pre-install script automatically fixes C++ `.contains()` method calls.
-2. **Dependency Resolution**: Key dependencies are ensured via the pre-install script.
-3. **Metro Configuration**: Proper module resolution is configured in metro.config.js.
-4. **Font Assets**: React Native Vector Icons are properly set up.
+1. The `prebuildCommand` in `eas.json` runs our `eas-hooks/eas-build-pre-install.sh` script
+2. The script copies our pre-configured Podfile to the EAS build directory
+3. The script also fixes any C++ compatibility issues in React Native source code
+4. EAS build proceeds with our fixed Podfile instead of generating a problematic one
 
 ## Troubleshooting
 
-If your build fails, check the following:
+If you still encounter build issues:
 
-1. **EAS Build Logs**: Use the EAS dashboard to view detailed build logs.
-2. **Pre-install Script**: Ensure the pre-install script executed properly.
-3. **Dependency Issues**: Check for missing or incompatible dependencies.
+1. Check the EAS build logs for specific errors
+2. Make sure you're using the latest version of eas-cli:
+   ```
+   npm install -g eas-cli
+   ```
+3. Try a local build to debug issues more easily:
+   ```
+   eas build --platform ios --profile preview --local
+   ```
 
-For specific issues, run a build with verbose logging:
+## Version Compatibility
 
-```bash
-eas build --platform ios --profile preview --no-wait --verbose
-```
-
-## Notes
-
-- The app uses version 1.0.6 with build number 6 for iOS
-- The project uses a custom metro.config.js for proper module resolution
-- C++ compatibility fixes ensure proper native module compilation
-- AsyncStorage and react-native-paper-dates are properly configured
+This fix has been tested with:
+- React Native 0.79.x
+- Expo SDK 51
+- iOS 13.0+ target
