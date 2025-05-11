@@ -46,12 +46,38 @@ if [ -f "$APP_ROOT/app.json" ]; then
   fi
 fi
 
-# Ensure Podfile has hermes_enabled = false
+# Ensure Podfile has hermes and fabric disabled
 if [ -f "$APP_ROOT/ios/Podfile" ]; then
-  echo "🔧 Ensuring Podfile has Hermes disabled..."
+  echo "🔧 Ensuring Podfile has Hermes and Fabric disabled..."
+  
+  # Check for hermes_enabled setting
   if ! grep -q "hermes_enabled => false" "$APP_ROOT/ios/Podfile"; then
     sed -i.bak 's/:app_path => "#{Pod::Config.instance.installation_root}\/.."/&,\n    :hermes_enabled => false/' "$APP_ROOT/ios/Podfile"
     rm -f "$APP_ROOT/ios/Podfile.bak"
+  fi
+  
+  # Check for fabric_enabled setting
+  if ! grep -q "fabric_enabled => false" "$APP_ROOT/ios/Podfile"; then
+    sed -i.bak 's/:hermes_enabled => false/&,\n    :fabric_enabled => false/' "$APP_ROOT/ios/Podfile"
+    rm -f "$APP_ROOT/ios/Podfile.bak"
+  fi
+  
+  # Check for new_arch_enabled setting
+  if ! grep -q "new_arch_enabled => false" "$APP_ROOT/ios/Podfile"; then
+    sed -i.bak 's/:fabric_enabled => false/&,\n    :new_arch_enabled => false/' "$APP_ROOT/ios/Podfile"
+    rm -f "$APP_ROOT/ios/Podfile.bak"
+  fi
+  
+  echo "✅ Podfile configuration updated"
+fi
+
+# Also add these settings to the app.json file for consistent configuration
+if [ -f "$APP_ROOT/app.json" ]; then
+  echo "🔧 Updating app.json with architecture settings..."
+  # This is a simple pattern match and replace, but should be sufficient
+  if ! grep -q "\"newArchEnabled\": false" "$APP_ROOT/app.json"; then
+    sed -i.bak 's/"jsEngine": "jsc"/&,\n    "newArchEnabled": false/' "$APP_ROOT/app.json"
+    rm -f "$APP_ROOT/app.json.bak"
   fi
 fi
 
