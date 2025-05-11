@@ -9,27 +9,6 @@ APP_ROOT=$(pwd)
 
 echo "📂 Current directory: $APP_ROOT"
 
-# Check if ios/Podfile exists
-if [ -f "./ios/Podfile" ]; then
-  echo "📄 Found Podfile in ios directory"
-  
-  # Ensure the directory exists in the EAS build environment
-  if [ ! -d "$HOME/workingdir/build/ios" ]; then
-    echo "📂 Creating ios directory in EAS build environment"
-    mkdir -p "$HOME/workingdir/build/ios"
-  fi
-  
-  # Copy our working Podfile to the EAS build environment
-  echo "📋 Copying our working Podfile to EAS build environment"
-  cp "./ios/Podfile" "$HOME/workingdir/build/ios/Podfile"
-  
-  echo "✅ Podfile copied successfully"
-else
-  echo "❌ Podfile not found in ios directory"
-  echo "Please make sure the Podfile exists at ./ios/Podfile"
-  exit 1
-fi
-
 # Fix any C++ compatibility issues
 echo "🔧 Fixing C++ compatibility issues for EAS build..."
 
