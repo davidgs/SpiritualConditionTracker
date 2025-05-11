@@ -47,6 +47,9 @@ target 'SpiritualConditionTracker' do
     :hermes_enabled => false,
     :fabric_enabled => false
   )
+  
+  # Add our custom podspec for ReactAppDependencyProvider
+  pod 'ReactAppDependencyProvider', :path => './empty-podspecs'
 end
 
 post_install do |installer|
