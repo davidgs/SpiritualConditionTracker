@@ -14,7 +14,15 @@ fi
 
 # Login to EAS with the token
 echo "Logging in to EAS with provided token..."
-npx eas-cli login --non-interactive --token $EXPO_TOKEN
+# Create temporary file with the token
+TOKEN_FILE=$(mktemp)
+echo "$EXPO_TOKEN" > "$TOKEN_FILE"
+
+# Login using the token file
+npx eas-cli login --non-interactive < "$TOKEN_FILE"
+
+# Remove the temporary file
+rm "$TOKEN_FILE"
 
 # Verify login was successful
 echo "Verifying EAS login status..."
