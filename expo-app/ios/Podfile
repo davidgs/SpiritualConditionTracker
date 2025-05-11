@@ -21,8 +21,6 @@ target 'SpiritualConditionTracker' do
   # Define the React Native path directly - no variable resolution needed
   use_react_native!(
     :path => "../node_modules/react-native",
-    # Completely disable Flipper for EAS builds
-    :flipper_configuration => nil,
     # An absolute path to your application root.
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
