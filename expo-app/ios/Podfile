@@ -24,33 +24,28 @@ target 'SpiritualConditionTracker' do
     # An absolute path to your application root.
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
+end
 
-  target 'SpiritualConditionTrackerTests' do
-    inherit! :complete
-    # Pods for testing
-  end
-
-  post_install do |installer|
-    # https://github.com/facebook/react-native/blob/main/packages/react-native/scripts/react_native_pods.rb#L197-L202
-    react_native_post_install(
-      installer,
-      File.join(File.dirname(`node --print "require.resolve('react-native/package.json')"`), "scripts", "react_native_pods.rb"),
-      :mac_catalyst_enabled => false
-    )
-    
-    # Fix C++ compatibility issues
-    installer.pods_project.targets.each do |target|
-      target.build_configurations.each do |config|
-        # Set C++20 for all C++ files
-        config.build_settings['CLANG_CXX_LANGUAGE_STANDARD'] = 'c++20'
-        
-        # Ensure minimum iOS version is set
-        config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.0'
-        
-        # Fix arm64 architecture for simulators 
-        if config.build_settings['SDKROOT'] == 'iphoneos' && target.name != 'React-Core-AccessibilityResources'
-          config.build_settings['EXCLUDED_ARCHS[sdk=iphonesimulator*]'] = 'arm64'
-        end
+post_install do |installer|
+  # https://github.com/facebook/react-native/blob/main/packages/react-native/scripts/react_native_pods.rb#L197-L202
+  react_native_post_install(
+    installer,
+    File.join(File.dirname(`node --print "require.resolve('react-native/package.json')"`), "scripts", "react_native_pods.rb"),
+    :mac_catalyst_enabled => false
+  )
+  
+  # Fix C++ compatibility issues
+  installer.pods_project.targets.each do |target|
+    target.build_configurations.each do |config|
+      # Set C++20 for all C++ files
+      config.build_settings['CLANG_CXX_LANGUAGE_STANDARD'] = 'c++20'
+      
+      # Ensure minimum iOS version is set
+      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.0'
+      
+      # Fix arm64 architecture for simulators 
+      if config.build_settings['SDKROOT'] == 'iphoneos' && target.name != 'React-Core-AccessibilityResources'
+        config.build_settings['EXCLUDED_ARCHS[sdk=iphonesimulator*]'] = 'arm64'
       end
     end
   end
