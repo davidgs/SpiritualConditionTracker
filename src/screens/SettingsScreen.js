@@ -87,17 +87,7 @@ const SettingsScreen = () => {
     }
   };
   
-  // Handle sobriety date change
-  const handleSobrietyDateChange = (event, date) => {
-    setShowSobrietyDatePicker(Platform.OS === 'ios');
-    
-    if (date) {
-      setSobrietyDate(date);
-      updateUserProfile({
-        sobrietyDate: date.toISOString().split('T')[0]
-      });
-    }
-  };
+  // Date handling is now managed through the DatePickerModal's onConfirm
   
   // Handle profile update
   const handleUpdateProfile = async () => {
