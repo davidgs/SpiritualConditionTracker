@@ -14,11 +14,16 @@ EAS creates a Podfile during the build process that incorrectly references React
 
 We've implemented an automatic fix through:
 
-1. **Pre-install Hook**: Updated `eas-hooks/eas-build-pre-install.sh` to create a `fix-podfile.sh` script that will run during the build
+1. **Pre-install Hook**: Updated `eas-hooks/eas-build-pre-install.sh` to create a `fix-podfile.sh` script in the `eas-hooks/ios` directory.
 
-2. **Post-Install Command**: Added a `postInstallCommand` in `eas.json` that runs the fix-podfile.sh script after npm dependencies are installed
+2. **Manual Application**: During the EAS build, after the Podfile is generated, you'll need to run the fix-podfile.sh script manually. The script will:
+   - Replace `:path => config[:reactNativePath]` with `:path => "../node_modules/react-native"`
+   - Add C++20 language settings to ensure compatibility
 
-3. **Podfile Patching**: The script replaces `:path => config[:reactNativePath]` with `:path => "../node_modules/react-native"` and adds C++20 language settings
+3. **Easy Access**: The fix script has been placed in three locations for convenience:
+   - `./eas-hooks/ios/fix-podfile.sh` (primary location)
+   - `./ios/fix-podfile.sh` (for use within the ios directory)
+   - `./fix-podfile.sh` (symlink in the root directory)
 
 ## Manual Fix (if needed)
 
@@ -54,24 +59,49 @@ If the automatic fix doesn't work, you can also:
    end
    ```
 
-## Verifying the Fix
+## Using the Fix During a Build
 
-When running an EAS build, you should see output like:
-
-```
-[+] Running script 'Run postInstall script'
-[!] Podfile has been modified, running pod install...
-🔧 Fixing Podfile react-native path  
-✅ Podfile fixed successfully
-```
-
-## Building with Fixed Configuration
-
-To run a build with our fixed configuration:
+When running an EAS build, use the `--local` flag to get interactive access:
 
 ```bash
 cd expo-app
-eas build --platform ios --profile preview --no-wait
+eas build --platform ios --profile preview --local
 ```
 
-The build should now proceed without the Podfile error.
+Then, when the Podfile has been generated, run the fix script:
+
+```bash
+# If you're in the project root
+./fix-podfile.sh
+
+# Or if you're in the ios directory
+./fix-podfile.sh
+```
+
+## Building with Remote EAS Build
+
+For a remote build, you'll need to modify the Podfile manually through the EAS dashboard after the build has started. When you see the Podfile error in the logs:
+
+1. Go to the EAS Dashboard
+2. Find your build
+3. Click "Cancel build" 
+4. Start a new build with the `--local` flag
+5. Apply the fix when prompted
+
+```bash
+cd expo-app
+eas build --platform ios --profile preview --local
+```
+
+Once you have a successful build, you can submit the same configuration for remote builds.
+
+## Additional Troubleshooting
+
+If you encounter issues with the Podfile, you can:
+
+1. Run `npm run clean-ios` (if available) to clean the iOS build 
+2. Use `eas build:configure` to regenerate the EAS configuration
+3. Try the `development` profile which may have different CocoaPods settings:
+   ```bash
+   eas build --platform ios --profile development --local
+   ```

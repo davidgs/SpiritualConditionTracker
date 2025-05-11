@@ -11,8 +11,7 @@
         "NODE_OPTIONS": "--preserve-symlinks"
       },
       "node": "18.18.0",
-      "prebuildCommand": "chmod +x ./eas-hooks/eas-build-pre-install.sh && ./eas-hooks/eas-build-pre-install.sh",
-      "postInstallCommand": "[ -f ./ios/fix-podfile.sh ] && (cd ios && chmod +x ./fix-podfile.sh && ./fix-podfile.sh) || echo 'No Podfile fix script found'"
+      "prebuildCommand": "chmod +x ./eas-hooks/eas-build-pre-install.sh && ./eas-hooks/eas-build-pre-install.sh"
     },
     "development": {
       "developmentClient": true,

@@ -93,18 +93,14 @@ done
 echo "📄 Modified package.json:"
 cat package.json
 
-# Fix Podfile if it exists (created during build process)
-echo "🔍 Checking for Podfile issues..."
-if [ -d "./ios" ]; then
-  PODFILE_PATH="./ios/Podfile"
-  
-  # Create Podfile if it doesn't exist yet (will be generated later)
-  if [ ! -f "$PODFILE_PATH" ]; then
-    echo "ℹ️ Podfile doesn't exist yet, will be fixed after generation"
-    
-    # Create a script to fix the Podfile after it's generated
-    mkdir -p ./ios
-    cat << 'EOF' > ./ios/fix-podfile.sh
+# Prepare fix for Podfile (will be created during build process)
+echo "🔍 Setting up Podfile fix for EAS build..."
+
+# Create the eas-hooks/ios directory if it doesn't exist
+mkdir -p ./eas-hooks/ios
+
+# Create a script to fix the Podfile after it's generated during build
+cat << 'EOF' > ./eas-hooks/ios/fix-podfile.sh
 #!/bin/bash
 # Fix Podfile react-native path
 if [ -f "./Podfile" ]; then
@@ -135,17 +131,22 @@ else
   echo "⚠️ No Podfile found to fix"
 fi
 EOF
-    chmod +x ./ios/fix-podfile.sh
-    echo "✅ Created fix-podfile.sh script that will run during build"
-  else
-    echo "🔧 Fixing existing Podfile"
-    # Fix the existing Podfile
-    sed -i.bak 's|:path => config\[:reactNativePath\]|:path => "../node_modules/react-native"|g' "$PODFILE_PATH"
-    
-    # Clean up backup
-    rm -f "${PODFILE_PATH}.bak"
-    echo "✅ Podfile fixed successfully"
-  fi
-fi
+chmod +x ./eas-hooks/ios/fix-podfile.sh
+
+# Also copy to the ios directory for convenience
+mkdir -p ./ios
+cp ./eas-hooks/ios/fix-podfile.sh ./ios/
+
+# Make both scripts executable
+chmod +x ./ios/fix-podfile.sh
+chmod +x ./eas-hooks/ios/fix-podfile.sh
+
+echo "✅ Created fix-podfile.sh scripts for use during build"
+
+# Create a link to the fix script in the project root for manual execution
+ln -sf ./eas-hooks/ios/fix-podfile.sh ./fix-podfile.sh
+chmod +x ./fix-podfile.sh
+
+echo "✅ Created fix-podfile.sh link in project root"
 
 echo "✅ Pre-install hook completed successfully"
