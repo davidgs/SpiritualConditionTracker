@@ -14,10 +14,29 @@ ENV['CODEGEN_DISABLE_ALL'] = '1'
 # Disable Flipper
 ENV['NO_FLIPPER'] = "1"
 
+# Find React Native path for pre-processing
+react_native_path = File.dirname(`node --print "require.resolve('react-native/package.json')"`)
+
+# Define a function to filter source files that cause bridging issues
+def filter_out_bridging_files(installer)
+  puts "Filtering out bridging and new architecture files..."
+  
+  installer.pods_project.files.each do |file|
+    if file.path.end_with?("TurboModuleBinding.cpp", 
+                           "TurboModuleUtils.cpp", 
+                           "TurboModulePerfLogger.cpp",
+                           "CallbackWrapper.h",
+                           "LongLivedObject.h")
+      file.remove_from_project
+      puts "Removed problematic file: #{file.path}"
+    end
+  end
+end
+
 platform :ios, '16.0'
 prepare_react_native_project!
 
-# This is a bare-bones, simple Podfile with no clever tricks
+# This is a bare-bones Podfile that specifically excludes New Architecture components
 target 'SpiritualConditionTracker' do
   use_expo_modules!
   
@@ -26,21 +45,34 @@ target 'SpiritualConditionTracker' do
     :path => "../node_modules/react-native",
     :hermes_enabled => false,
     :fabric_enabled => false,
-    :app_path => "../"
+    :app_path => "../",
+    :bridging_cpp_enabled => false   # Disable bridging directly
   )
 end
 
-# Post-integrate hook for disabling problematic targets
+# Custom pre_integrate hook to remove specific problematic source files
+pre_integrate do |installer|
+  filter_out_bridging_files(installer)
+end
+
+# Post-integrate hook to disable problematic targets
 post_integrate do |installer|
   puts "Disabling problematic targets in post_integrate hook..."
   installer.pods_project.targets.each do |target|
     if target.name == 'FBReactNativeSpec' || 
        target.name.include?('React-Fabric') || 
        target.name.include?('React-RCTFabric') ||
-       target.name == 'ReactAppDependencyProvider'
+       target.name == 'ReactAppDependencyProvider' ||
+       target.name.include?('ReactCommon') ||
+       target.name.include?('bridging')
       puts "Disabling target: #{target.name}"
+      
+      # Completely disable the target
       target.build_configurations.each do |config|
         config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '99.0'  # Effectively disables the target
+        config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] = '$(inherited) RCT_NEW_ARCH_ENABLED=0'
+        config.build_settings['OTHER_CPLUSPLUSFLAGS'] = '$(inherited) -DRCT_NEW_ARCH_ENABLED=0'
+        config.build_settings['EXCLUDED_ARCHS'] = 'arm64 x86_64'  # Exclude all archs for this target
       end
     end
   end
@@ -52,13 +84,19 @@ post_install do |installer|
   installer.pods_project.targets.each do |target|
     target.build_configurations.each do |config|
       config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '16.0'
+      
+      # Add specific build flags to disable new arch in all builds
+      config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] ||= ['$(inherited)']
+      config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] << 'RCT_NEW_ARCH_ENABLED=0'
+      config.build_settings['OTHER_CPLUSPLUSFLAGS'] ||= ['$(inherited)']
+      config.build_settings['OTHER_CPLUSPLUSFLAGS'] << '-DRCT_NEW_ARCH_ENABLED=0'
     end
   end
   
   # Run standard React Native post-install
   react_native_post_install(
     installer,
-    File.join(File.dirname(`node --print "require.resolve('react-native/package.json')"`), "scripts/react_native_pods.rb"),
+    react_native_path,
     :mac_catalyst_enabled => false
   )
 end

@@ -44,7 +44,7 @@ if [ -f "$APP_ROOT/app.json" ]; then
   echo "✅ Updated app.json configuration"
 fi
 
-# Set environment variables to force old architecture
+# Set environment variables to force old architecture with more aggressive settings
 export RCT_NEW_ARCH_ENABLED=0
 export USE_HERMES=0
 export USE_BRIDGELESS=0
@@ -53,45 +53,75 @@ export FABRIC_ENABLED=0
 export NEW_ARCH_ENABLED=0
 export CODEGEN_DISABLE_ALL=1
 export DISABLE_CODEGEN=1
+export BRIDGING_CPP_ENABLED=0
+export REACT_FABRIC_ENABLED=0
 
 echo "✅ Set environment variables to disable new architecture features"
 
-# Create directories needed during build
+# Create needed build directory
 mkdir -p "$APP_ROOT/build/generated/ios"
-mkdir -p "$APP_ROOT/ios/dummy_pods/FBReactNativeSpec"
-mkdir -p "$APP_ROOT/ios/dummy_pods/ReactAppDependencyProvider"
 
-# Create a dummy header file for FBReactNativeSpec
-echo "// Empty header file for FBReactNativeSpec" > "$APP_ROOT/ios/dummy_pods/FBReactNativeSpec/dummy.h"
-echo "// Empty implementation file for FBReactNativeSpec" > "$APP_ROOT/ios/dummy_pods/FBReactNativeSpec/dummy.m"
+echo "✅ Created build directory"
 
-# Create a dummy header file for ReactAppDependencyProvider
-echo "// Empty header file for ReactAppDependencyProvider" > "$APP_ROOT/ios/dummy_pods/ReactAppDependencyProvider/dummy.h"
-echo "// Empty implementation file for ReactAppDependencyProvider" > "$APP_ROOT/ios/dummy_pods/ReactAppDependencyProvider/dummy.m"
-
-echo "✅ Created necessary directories and files"
-
-# This approach modifies app.json directly to completely disable new architecture features
+# Update app.json to disable New Architecture features
 if [ -f "$APP_ROOT/app.json" ]; then
-  # Use jq if available, otherwise fall back to sed
+  echo "🔧 Updating app.json for old architecture only..."
+
+  # Use jq if available, otherwise use sed
   if command -v jq >/dev/null 2>&1; then
-    echo "🔧 Using jq to update app.json..."
-    # Create a temporary file with the modified JSON
     jq '.expo.jsEngine = "jsc" | .expo.newArchEnabled = false' "$APP_ROOT/app.json" > "$APP_ROOT/app.json.tmp"
     mv "$APP_ROOT/app.json.tmp" "$APP_ROOT/app.json"
   else
-    echo "🔧 Using sed to update app.json..."
-    # Direct sed replacements
+    # Replace Hermes with JSC
     sed -i.bak 's/"jsEngine": "hermes"/"jsEngine": "jsc"/g' "$APP_ROOT/app.json"
     
-    # Add newArchEnabled: false if it doesn't exist
-    if ! grep -q '"newArchEnabled":' "$APP_ROOT/app.json"; then
+    # Set newArchEnabled to false
+    if grep -q '"newArchEnabled":' "$APP_ROOT/app.json"; then
+      sed -i.bak 's/"newArchEnabled": true/"newArchEnabled": false/g' "$APP_ROOT/app.json"
+    else
       sed -i.bak 's/"version": "[^"]*"/"version": "&",\n    "newArchEnabled": false/g' "$APP_ROOT/app.json"
     fi
     
     rm -f "$APP_ROOT/app.json.bak"
   fi
   echo "✅ Updated app.json configuration"
+fi
+
+# Create patch for TurboModuleUtils.cpp to resolve bridging errors
+TURBO_MODULE_PATH="$APP_ROOT/node_modules/react-native/ReactCommon/react/nativemodule/core/ReactCommon/TurboModuleUtils.cpp"
+if [ -f "$TURBO_MODULE_PATH" ]; then
+  echo "🔧 Patching TurboModuleUtils.cpp to remove bridging dependencies..."
+  
+  # Create a backup
+  cp "$TURBO_MODULE_PATH" "${TURBO_MODULE_PATH}.bak"
+  
+  # Comment out the include for CallbackWrapper.h
+  sed -i.bak 's/#include <react\/bridging\/CallbackWrapper.h>/\/\/ #include <react\/bridging\/CallbackWrapper.h>/g' "$TURBO_MODULE_PATH"
+  
+  # Comment out the include for LongLivedObject.h
+  sed -i.bak 's/#include <react\/bridging\/LongLivedObject.h>/\/\/ #include <react\/bridging\/LongLivedObject.h>/g' "$TURBO_MODULE_PATH"
+  
+  # Remove backup files
+  rm -f "${TURBO_MODULE_PATH}.bak"
+  
+  echo "✅ Patched TurboModuleUtils.cpp"
+fi
+
+# Also patch TurboModuleBinding.cpp
+TURBO_BINDING_PATH="$APP_ROOT/node_modules/react-native/ReactCommon/react/nativemodule/core/ReactCommon/TurboModuleBinding.cpp"
+if [ -f "$TURBO_BINDING_PATH" ]; then
+  echo "🔧 Patching TurboModuleBinding.cpp to remove bridging dependencies..."
+  
+  # Create a backup
+  cp "$TURBO_BINDING_PATH" "${TURBO_BINDING_PATH}.bak"
+  
+  # Comment out the include for LongLivedObject.h
+  sed -i.bak 's/#include <react\/bridging\/LongLivedObject.h>/\/\/ #include <react\/bridging\/LongLivedObject.h>/g' "$TURBO_BINDING_PATH"
+  
+  # Remove backup files
+  rm -f "${TURBO_BINDING_PATH}.bak"
+  
+  echo "✅ Patched TurboModuleBinding.cpp"
 fi
 
 echo "✅ Pre-install hook completed successfully"
