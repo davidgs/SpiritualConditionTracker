@@ -70,20 +70,51 @@ target 'SpiritualConditionTracker' do
         target.build_configurations.each do |config|
           config.build_settings['EXCLUDED_SOURCE_FILE_NAMES'] = [
             "RNCSafeAreaViewShadowNode.cpp",
-            "RNCSafeAreaViewState.cpp"
+            "RNCSafeAreaViewState.cpp",
+            # Additional files that might cause errors
+            "RNCSafeAreaViewComponentView.mm",
+            "RNCSafeAreaViewComponentView.cpp",
+            "RNCSafeAreaViewComponentDescriptor.*",
+            "RNCSafeAreaView.cpp"
           ]
+          
+          # Make sure C++ modules are properly linked
+          if config.build_settings['OTHER_CPLUSPLUSFLAGS'] == nil
+            config.build_settings['OTHER_CPLUSPLUSFLAGS'] = '-std=c++17'
+          end
         end
       elsif target.name == 'react-native-screens'
         target.build_configurations.each do |config|
           config.build_settings['EXCLUDED_SOURCE_FILE_NAMES'] = [
             "RNSScreenStackHeaderConfig.mm",
-            "RNSScreenStack.mm"
+            "RNSScreenStack.mm",
+            # Additional files that might cause errors
+            "RNSScreen.mm",
+            "RNSScreenNavigationContainer.mm",
+            "RNSScreenStackAnimator.mm",
+            "RNSScreenStackHeaderConfig.mm"
           ]
+          
+          # Make sure C++ modules are properly linked
+          if config.build_settings['OTHER_CPLUSPLUSFLAGS'] == nil
+            config.build_settings['OTHER_CPLUSPLUSFLAGS'] = '-std=c++17'
+          end
         end
       elsif target.name == 'RCT-Folly'
         target.build_configurations.each do |config|
           config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] ||= ['$(inherited)']
           config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] << 'FOLLY_HAVE_COROUTINES=0'
+        end
+      end
+      
+      # Add this to enable proper Objective-C++ module support for all targets
+      target.build_configurations.each do |config|
+        config.build_settings['CLANG_CXX_LANGUAGE_STANDARD'] = 'c++17'
+        config.build_settings['GCC_ENABLE_CPP_EXCEPTIONS'] = "YES"
+        
+        # Prevent duplicate symbol errors
+        if !config.build_settings['OTHER_LDFLAGS']&.include?('-ObjC')
+          config.build_settings['OTHER_LDFLAGS'] = ['-ObjC']
         end
       end
     end
