@@ -31,13 +31,55 @@ for DIR in "${FIX_DIRS[@]}"; do
   fi
 done
 
-# Disable Fabric codegen
-echo "🔧 Disabling New Architecture/Fabric codegen..."
+# Aggressively disable Fabric codegen and New Architecture
+echo "🔧 Aggressively disabling New Architecture/Fabric codegen..."
 if [ -f "node_modules/react-native/scripts/react_native_pods.rb" ]; then
   echo "Modifying react_native_pods.rb to force disable Fabric..."
+  
+  # Force fabric_enabled to false
   sed -i.bak 's/fabric_enabled = options\[:fabric_enabled\]/fabric_enabled = false/g' "node_modules/react-native/scripts/react_native_pods.rb"
+  
+  # Skip pod dependencies for Fabric-related components
+  sed -i.bak '/pod.*React-Fabric/s/^/#DISABLED: /' "node_modules/react-native/scripts/react_native_pods.rb"
+  sed -i.bak '/pod.*React-RCTFabric/s/^/#DISABLED: /' "node_modules/react-native/scripts/react_native_pods.rb"
+  sed -i.bak '/pod.*React-RuntimeCore/s/^/#DISABLED: /' "node_modules/react-native/scripts/react_native_pods.rb"
+  sed -i.bak '/pod.*Yoga/s/^/#DISABLED: /' "node_modules/react-native/scripts/react_native_pods.rb"
+  sed -i.bak '/pod.*FBReactNativeSpec/s/^/#DISABLED: /' "node_modules/react-native/scripts/react_native_pods.rb"
+  
+  # Clean up backup files
   rm -f "node_modules/react-native/scripts/react_native_pods.rb.bak"
+  
+  echo "✅ Modified React Native pods configuration"
 fi
+
+# Set environment variables for the build process to enforce old architecture
+export RCT_NEW_ARCH_ENABLED=0
+export USE_HERMES=0
+
+# Create a patch file in the build area that disables Fabric
+echo "🔧 Creating a patch to disable codegen and fabric..."
+mkdir -p "$APP_ROOT/ios/build-patch"
+cat > "$APP_ROOT/ios/build-patch/disable-fabric.rb" << 'EOL'
+# Patch to disable React Native new architecture
+ENV['RCT_NEW_ARCH_ENABLED'] = '0'
+ENV['USE_HERMES'] = '0'
+
+module ReactNativePodsFix
+  def use_react_native!(options={})
+    options[:fabric_enabled] = false
+    options[:hermes_enabled] = false
+    options[:app_use_fabric] = false
+    options[:app_use_hermes] = false
+    super(options)
+  end
+end
+
+class Pod::Podfile
+  prepend ReactNativePodsFix
+end
+EOL
+
+echo "✅ Created Fabric disable patch"
 
 # Ensure we're using JSC instead of Hermes
 if [ -f "$APP_ROOT/app.json" ]; then
