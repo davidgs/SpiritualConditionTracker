@@ -61,7 +61,7 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "EXPO_TOKEN=$EXPO_TOKEN cd expo-app && npm i -g eas-cli && npx eas-cli build --platform ios --profile preview"
+args = "cd expo-app && echo 'n' | npx eas-cli build --platform ios --profile preview --non-interactive"
 
 [deployment]
 run = ["sh", "-c", "node deployment-server.js"]

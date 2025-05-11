@@ -48,8 +48,8 @@ target 'SpiritualConditionTracker' do
     :fabric_enabled => false
   )
   
-  # Add our custom podspec for ReactAppDependencyProvider
-  pod 'ReactAppDependencyProvider', :path => './empty-podspecs'
+  # We already have a ReactAppDependencyProvider in build/generated/ios
+  # So we don't need to add it here
 end
 
 post_install do |installer|
