@@ -31,6 +31,14 @@ for DIR in "${FIX_DIRS[@]}"; do
   fi
 done
 
+# Disable Fabric codegen
+echo "🔧 Disabling New Architecture/Fabric codegen..."
+if [ -f "node_modules/react-native/scripts/react_native_pods.rb" ]; then
+  echo "Modifying react_native_pods.rb to force disable Fabric..."
+  sed -i.bak 's/fabric_enabled = options\[:fabric_enabled\]/fabric_enabled = false/g' "node_modules/react-native/scripts/react_native_pods.rb"
+  rm -f "node_modules/react-native/scripts/react_native_pods.rb.bak"
+fi
+
 # Ensure we're using JSC instead of Hermes
 if [ -f "$APP_ROOT/app.json" ]; then
   echo "🔧 Ensuring app.json has JSC engine configured..."

@@ -40,8 +40,6 @@ target 'SpiritualConditionTracker' do
     :hermes_enabled => false,
     # Disable Fabric (React Native's new architecture)
     :fabric_enabled => false,
-    # Disable Codegen since it's causing issues
-    :app_use_reactive_fabric => false,
     # Use the old architecture
     :new_arch_enabled => false
   )
