@@ -93,4 +93,59 @@ done
 echo "📄 Modified package.json:"
 cat package.json
 
+# Fix Podfile if it exists (created during build process)
+echo "🔍 Checking for Podfile issues..."
+if [ -d "./ios" ]; then
+  PODFILE_PATH="./ios/Podfile"
+  
+  # Create Podfile if it doesn't exist yet (will be generated later)
+  if [ ! -f "$PODFILE_PATH" ]; then
+    echo "ℹ️ Podfile doesn't exist yet, will be fixed after generation"
+    
+    # Create a script to fix the Podfile after it's generated
+    mkdir -p ./ios
+    cat << 'EOF' > ./ios/fix-podfile.sh
+#!/bin/bash
+# Fix Podfile react-native path
+if [ -f "./Podfile" ]; then
+  echo "🔧 Fixing Podfile react-native path"
+  sed -i.bak 's|:path => config\[:reactNativePath\]|:path => "../node_modules/react-native"|g' Podfile
+  
+  # Add C++20 configuration if missing
+  if ! grep -q "post_install" Podfile; then
+    echo "Adding post_install hook to Podfile"
+    cat << 'POSTINSTALL' >> Podfile
+
+post_install do |installer|
+  installer.pods_project.targets.each do |target|
+    target.build_configurations.each do |config|
+      # Set C++20 for all C++ files
+      config.build_settings['CLANG_CXX_LANGUAGE_STANDARD'] = 'c++20'
+      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.0'
+    end
+  end
+end
+POSTINSTALL
+  fi
+  
+  # Clean up backup
+  rm -f Podfile.bak
+  echo "✅ Podfile fixed successfully"
+else
+  echo "⚠️ No Podfile found to fix"
+fi
+EOF
+    chmod +x ./ios/fix-podfile.sh
+    echo "✅ Created fix-podfile.sh script that will run during build"
+  else
+    echo "🔧 Fixing existing Podfile"
+    # Fix the existing Podfile
+    sed -i.bak 's|:path => config\[:reactNativePath\]|:path => "../node_modules/react-native"|g' "$PODFILE_PATH"
+    
+    # Clean up backup
+    rm -f "${PODFILE_PATH}.bak"
+    echo "✅ Podfile fixed successfully"
+  fi
+fi
+
 echo "✅ Pre-install hook completed successfully"
