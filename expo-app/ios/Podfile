@@ -2,6 +2,19 @@ require File.join(File.dirname(`node --print "require.resolve('expo/package.json
 require File.join(File.dirname(`node --print "require.resolve('react-native/package.json')"`), "scripts/react_native_pods")
 require File.join(File.dirname(`node --print "require.resolve('@react-native-community/cli-platform-ios/package.json')"`), "native_modules")
 
+# Define a patch method that excludes specific pods like React-RuntimeHermes
+def exclude_specific_pods(installer)
+  installer.pods_project.targets.each do |target|
+    if target.name == 'React-RuntimeHermes'
+      # Mark target for removal
+      target.build_configurations.each do |config|
+        config.build_settings['EXCLUDED_ARCHS'] = 'arm64 x86_64'
+      end
+      puts "Disabled React-RuntimeHermes (incompatible with deployment target)"
+    end
+  end
+end
+
 platform :ios, '15.0'
 prepare_react_native_project!
 
@@ -19,14 +32,22 @@ target 'SpiritualConditionTracker' do
   use_expo_modules!
   
   # Define the React Native path directly - no variable resolution needed
+  # Completely disable Hermes JavaScript engine to avoid React-RuntimeHermes issues
   use_react_native!(
     :path => "../node_modules/react-native",
     # An absolute path to your application root.
-    :app_path => "#{Pod::Config.instance.installation_root}/.."
+    :app_path => "#{Pod::Config.instance.installation_root}/..",
+    :hermes_enabled => false
   )
+  
+  # Explicitly exclude the problematic pod
+  pod 'React-RuntimeHermes', :path => '../node_modules/react-native/ReactCommon/react/runtime', :modular_headers => true, :inhibit_warnings => true
 end
 
 post_install do |installer|
+  # Apply our custom pod exclusion logic
+  exclude_specific_pods(installer)
+  
   # https://github.com/facebook/react-native/blob/main/packages/react-native/scripts/react_native_pods.rb#L197-L202
   react_native_post_install(
     installer,
