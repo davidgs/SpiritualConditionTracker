@@ -42,7 +42,7 @@ if [ -f "$TURBO_MODULE_PATH" ]; then
   echo "✅ Patched TurboModuleUtils.cpp"
 fi
 
-# Also patch TurboModuleBinding.cpp
+# Patch TurboModuleBinding.cpp
 TURBO_BINDING_PATH="$APP_ROOT/node_modules/react-native/ReactCommon/react/nativemodule/core/ReactCommon/TurboModuleBinding.cpp"
 if [ -f "$TURBO_BINDING_PATH" ]; then
   echo "🔧 Patching TurboModuleBinding.cpp to remove bridging dependencies..."
@@ -58,6 +58,48 @@ if [ -f "$TURBO_BINDING_PATH" ]; then
   
   echo "✅ Patched TurboModuleBinding.cpp"
 fi
+
+# Patch RunLoopObserver.cpp for the missing react_native_assert.h
+RUN_LOOP_PATH="$APP_ROOT/node_modules/react-native/ReactCommon/react/utils/RunLoopObserver.cpp"
+if [ -f "$RUN_LOOP_PATH" ]; then
+  echo "🔧 Patching RunLoopObserver.cpp to remove dependency on react_native_assert.h..."
+  
+  # Create a backup
+  cp "$RUN_LOOP_PATH" "${RUN_LOOP_PATH}.bak"
+  
+  # Comment out the include for react_native_assert.h
+  sed -i'.bak' 's/#include <react\/debug\/react_native_assert.h>/\/\/ #include <react\/debug\/react_native_assert.h>\n#include <assert.h>/g' "$RUN_LOOP_PATH"
+  
+  # Replace any usages of react_native_assert with standard assert
+  sed -i'.bak' 's/react_native_assert/assert/g' "$RUN_LOOP_PATH"
+  
+  # Remove backup files
+  rm -f "${RUN_LOOP_PATH}.bak"
+  
+  echo "✅ Patched RunLoopObserver.cpp"
+fi
+
+# Check for other files that might include react_native_assert.h
+OTHER_FILES=$(grep -r "#include <react/debug/react_native_assert.h>" "$APP_ROOT/node_modules/react-native" --include="*.cpp" --include="*.h" --include="*.mm" | awk -F: '{print $1}')
+for file in $OTHER_FILES; do
+  if [ -f "$file" ]; then
+    echo "🔧 Patching $file to replace react_native_assert.h dependency..."
+    
+    # Create a backup
+    cp "$file" "${file}.bak"
+    
+    # Replace react_native_assert.h with standard assert.h
+    sed -i'.bak' 's/#include <react\/debug\/react_native_assert.h>/\/\/ #include <react\/debug\/react_native_assert.h>\n#include <assert.h>/g' "$file"
+    
+    # Replace any usages of react_native_assert with standard assert
+    sed -i'.bak' 's/react_native_assert/assert/g' "$file"
+    
+    # Remove backup files
+    rm -f "${file}.bak"
+    
+    echo "✅ Patched $file"
+  fi
+done
 
 # Patch app.json
 if [ -f "$APP_ROOT/app.json" ]; then
