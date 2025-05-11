@@ -31,5 +31,30 @@ for DIR in "${FIX_DIRS[@]}"; do
   fi
 done
 
+# Ensure we're using JSC instead of Hermes
+if [ -f "$APP_ROOT/app.json" ]; then
+  echo "🔧 Ensuring app.json has JSC engine configured..."
+  # Use jq if available, otherwise sed
+  if command -v jq &> /dev/null; then
+    jq '.expo.jsEngine = "jsc" | .expo.ios.jsEngine = "jsc" | .expo.android.jsEngine = "jsc"' "$APP_ROOT/app.json" > "$APP_ROOT/app.json.tmp"
+    mv "$APP_ROOT/app.json.tmp" "$APP_ROOT/app.json"
+  else
+    # Fallback to manually checking if JSC is in the file
+    if ! grep -q '"jsEngine"' "$APP_ROOT/app.json"; then
+      echo "⚠️ Couldn't find jsEngine in app.json, please add it manually"
+    fi
+  fi
+fi
+
+# Ensure Podfile has hermes_enabled = false
+if [ -f "$APP_ROOT/ios/Podfile" ]; then
+  echo "🔧 Ensuring Podfile has Hermes disabled..."
+  if ! grep -q "hermes_enabled => false" "$APP_ROOT/ios/Podfile"; then
+    sed -i.bak 's/:app_path => "#{Pod::Config.instance.installation_root}\/.."/&,\n    :hermes_enabled => false/' "$APP_ROOT/ios/Podfile"
+    rm -f "$APP_ROOT/ios/Podfile.bak"
+  fi
+fi
+
 echo "✅ C++ compatibility fixes applied"
+echo "✅ JSC engine configuration verified"
 echo "✅ Pre-install hook completed successfully"

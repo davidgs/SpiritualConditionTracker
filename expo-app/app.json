@@ -3,6 +3,7 @@
     "name": "Spiritual Condition Tracker",
     "slug": "spiritual-condition-tracker",
     "version": "1.0.6",
+    "jsEngine": "jsc",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
@@ -18,6 +19,7 @@
       },
       "package": "com.davidgs.spiritualconditiontracker",
       "versionCode": 1,
+      "jsEngine": "jsc",
       "permissions": [
         "ACCESS_FINE_LOCATION",
         "ACCESS_COARSE_LOCATION",
@@ -43,6 +45,7 @@
       "bundleIdentifier": "com.davidgs.spiritualconditiontracker",
       "buildNumber": "6",
       "deploymentTarget": "16.0",
+      "jsEngine": "jsc",
       "infoPlist": {
         "NSCalendarsUsageDescription": "This app needs access to your calendar to add meetings and set reminders.",
         "NSLocationWhenInUseUsageDescription": "This app needs access to your location to find nearby meetings and members.",

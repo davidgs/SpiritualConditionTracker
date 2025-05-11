@@ -35,7 +35,9 @@ target 'SpiritualConditionTracker' do
   use_react_native!(
     :path => "../node_modules/react-native",
     # An absolute path to your application root.
-    :app_path => "#{Pod::Config.instance.installation_root}/.."
+    :app_path => "#{Pod::Config.instance.installation_root}/..",
+    # Explicitly disable Hermes and use JSC instead
+    :hermes_enabled => false
   )
 end
 
