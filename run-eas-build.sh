@@ -27,7 +27,23 @@ if [ -z "$EXPO_TOKEN" ]; then
 fi
 
 # Setup credentials if needed
-if ./setup-eas-credentials.sh; then
+echo "Setting up EAS credentials for build..."
+
+# Login to EAS with the token
+echo "Logging in to EAS with provided token..."
+# Create temporary file with the token
+TOKEN_FILE=$(mktemp)
+echo "$EXPO_TOKEN" > "$TOKEN_FILE"
+
+# Login using the token file
+npx eas-cli login --non-interactive < "$TOKEN_FILE"
+
+# Remove the temporary file
+rm "$TOKEN_FILE"
+
+# Verify login was successful
+echo "Verifying EAS login status..."
+if npx eas-cli whoami; then
   echo "EAS credentials setup successful"
 else
   echo "Error setting up EAS credentials"
@@ -46,20 +62,27 @@ export EXPO_DEBUG=1
 
 # Run the pre-install script directly
 echo "Running pre-install setup..."
-if ./eas-build-pre-install.sh; then
-  echo "Pre-install setup completed successfully"
+if [ -f "./expo-app/eas-hooks/eas-build-pre-install.sh" ]; then
+  chmod +x ./expo-app/eas-hooks/eas-build-pre-install.sh
+  if ./expo-app/eas-hooks/eas-build-pre-install.sh; then
+    echo "Pre-install setup completed successfully"
+  else
+    echo "Error in pre-install setup"
+    exit 1
+  fi
 else
-  echo "Error in pre-install setup"
-  exit 1
+  echo "Warning: Pre-install script not found - continuing without it"
 fi
+
+# Change to the expo-app directory
+cd ./expo-app
 
 # Run the EAS build command
 echo "Starting EAS build..."
 npx eas-cli build \
   --platform $PLATFORM \
   --profile $BUILD_PROFILE \
-  --non-interactive \
-  --no-wait
+  --non-interactive
 
 echo "========================================"
 echo "Build started successfully!"
