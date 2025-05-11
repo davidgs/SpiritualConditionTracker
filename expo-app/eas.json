@@ -23,7 +23,11 @@
         "RCT_NEW_ARCH_ENABLED": "0",
         "USE_HERMES": "0",
         "USE_FABRIC": "0",
+        "FABRIC_ENABLED": "0",
+        "NEW_ARCH_ENABLED": "0",
+        "USE_BRIDGELESS": "0",
         "DISABLE_CODEGEN": "1",
+        "CODEGEN_DISABLE_ALL": "1",
         "USE_FRAMEWORKS": "static"
       }
     },
@@ -41,7 +45,11 @@
           "RCT_NEW_ARCH_ENABLED": "0",
           "USE_HERMES": "0",
           "USE_FABRIC": "0",
+          "FABRIC_ENABLED": "0",
+          "NEW_ARCH_ENABLED": "0",
+          "USE_BRIDGELESS": "0",
           "DISABLE_CODEGEN": "1",
+          "CODEGEN_DISABLE_ALL": "1",
           "USE_FRAMEWORKS": "static"
         },
         "buildConfiguration": "Release"

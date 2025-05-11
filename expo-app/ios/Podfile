@@ -1,41 +1,15 @@
 require File.join(File.dirname(`node --print "require.resolve('expo/package.json')"`), "scripts/autolinking")
-
-# We need to modify the use_native_modules function to avoid dependency on ReactAppDependencyProvider
-react_native_path = File.join(File.dirname(`node --print "require.resolve('react-native/package.json')`))
-
-# Override use_native_modules to skip codegen-related dependencies
-def patch_use_native_modules
-  # Get the original method
-  original_method = Object.method(:use_native_modules)
-  
-  # Define our patched version
-  Object.define_singleton_method(:use_native_modules) do |config = {}|
-    # Call the original but handle any exceptions related to ReactAppDependencyProvider
-    begin
-      original_method.call(config)
-    rescue StandardError => e
-      if e.message.include?('ReactAppDependencyProvider')
-        puts "Ignoring ReactAppDependencyProvider dependency error"
-      else
-        raise e
-      end
-    end
-  end
-end
-
-# Apply our patch
-patch_use_native_modules
-
-# Now load the required scripts
-require File.join(react_native_path, "scripts/react_native_pods")
+require File.join(File.dirname(`node --print "require.resolve('react-native/package.json')"`), "scripts/react_native_pods")
 require File.join(File.dirname(`node --print "require.resolve('@react-native-community/cli-platform-ios/package.json')"`), "native_modules")
 
-# Disable new architecture and related features
+# Disable new architecture completely
 ENV['RCT_NEW_ARCH_ENABLED'] = '0'
 ENV['USE_HERMES'] = '0'
 ENV['USE_BRIDGELESS'] = '0'
 ENV['USE_FRAMEWORKS'] = 'static'
-ENV['CODEGEN_DISABLE_ALL'] = '1'  # Disable all codegen
+ENV['FABRIC_ENABLED'] = '0'
+ENV['NEW_ARCH_ENABLED'] = '0'
+ENV['CODEGEN_DISABLE_ALL'] = '1'
 
 # Disable Flipper
 ENV['NO_FLIPPER'] = "1"
@@ -43,26 +17,29 @@ ENV['NO_FLIPPER'] = "1"
 platform :ios, '16.0'
 prepare_react_native_project!
 
+# This is a very simple Podfile with no magic tricks
 target 'SpiritualConditionTracker' do
   use_expo_modules!
   
-  # Use React Native with JSC (not Hermes), explicitly disable Fabric
+  # Use React Native with JSC (not Hermes), explicitly disable Fabric and other new architecture features
   use_react_native!(
     :path => "../node_modules/react-native",
     :hermes_enabled => false,
     :fabric_enabled => false,
-    :app_path => "#{Pod::Config.instance.installation_root}/.."
+    :app_path => "../"
   )
   
-  # Explicitly exclude problematic dependencies
-  pre_install do |installer|
-    installer.pod_targets.each do |pod|
-      if pod.name.include?('ReactAppDependencyProvider') || 
-         pod.name.include?('React-Fabric') || 
-         pod.name.include?('React-RCTFabric') ||
-         pod.name.include?('FBReactNativeSpec')
-        pod.specs.each do |spec|
-          spec.attributes_hash['platforms'] = { 'ios' => '99.0' }  # Set an impossible platform version
+  # Disable Fabric-requiring modules by setting an unreachable deployment target
+  post_integrate do |installer|
+    puts "Disabling problematic targets after integration..."
+    installer.pods_project.targets.each do |target|
+      if target.name == 'FBReactNativeSpec' || 
+         target.name.include?('React-Fabric') || 
+         target.name.include?('React-RCTFabric') ||
+         target.name == 'ReactAppDependencyProvider'
+        puts "Disabling target #{target.name}..."
+        target.build_configurations.each do |config|
+          config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '99.0'  # Effectively disables the target
         end
       end
     end
@@ -70,9 +47,9 @@ target 'SpiritualConditionTracker' do
 end
 
 post_install do |installer|
+  # Ensure all pods use correct iOS deployment target
   installer.pods_project.targets.each do |target|
     target.build_configurations.each do |config|
-      # Set deployment target
       config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '16.0'
     end
   end
@@ -80,7 +57,7 @@ post_install do |installer|
   # Standard React Native post install
   react_native_post_install(
     installer,
-    react_native_path,
+    File.join(File.dirname(`node --print "require.resolve('react-native/package.json')"`), "scripts/react_native_pods.rb"),
     :mac_catalyst_enabled => false
   )
 end
