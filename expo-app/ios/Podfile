@@ -15,7 +15,7 @@ prepare_react_native_project!
 
 target 'SpiritualConditionTracker' do
   use_expo_modules!
-  
+
   # We've removed the expo-device package from the project
   # Do not specify any direct pod declarations here
 
@@ -63,7 +63,7 @@ target 'SpiritualConditionTracker' do
         end
       end
     end
-    
+
     # Fix for C++ files causing build errors in various libraries
     installer.pods_project.targets.each do |target|
       if target.name == 'react-native-safe-area-context'
@@ -77,11 +77,12 @@ target 'SpiritualConditionTracker' do
             "RNCSafeAreaViewComponentDescriptor.*",
             "RNCSafeAreaView.cpp"
           ]
-          
-          # Make sure C++ modules are properly linked
-          if config.build_settings['OTHER_CPLUSPLUSFLAGS'] == nil
-            config.build_settings['OTHER_CPLUSPLUSFLAGS'] = '-std=c++17'
-          end
+          # Force C++20 standard with libc++ library
+          config.build_settings['CLANG_CXX_LANGUAGE_STANDARD'] = 'c++20'
+          config.build_settings['CLANG_CXX_LIBRARY'] = 'libc++'
+
+          # Add additional flags for experimental C++20 features if needed
+          config.build_settings['OTHER_CPLUSPLUSFLAGS'] = '$(inherited) -std=c++20'
         end
       elsif target.name == 'react-native-screens'
         target.build_configurations.each do |config|
@@ -94,11 +95,6 @@ target 'SpiritualConditionTracker' do
             "RNSScreenStackAnimator.mm",
             "RNSScreenStackHeaderConfig.mm"
           ]
-          
-          # Make sure C++ modules are properly linked
-          if config.build_settings['OTHER_CPLUSPLUSFLAGS'] == nil
-            config.build_settings['OTHER_CPLUSPLUSFLAGS'] = '-std=c++17'
-          end
         end
       elsif target.name == 'RCT-Folly'
         target.build_configurations.each do |config|
@@ -106,12 +102,11 @@ target 'SpiritualConditionTracker' do
           config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] << 'FOLLY_HAVE_COROUTINES=0'
         end
       end
-      
+
       # Add this to enable proper Objective-C++ module support for all targets
       target.build_configurations.each do |config|
-        config.build_settings['CLANG_CXX_LANGUAGE_STANDARD'] = 'c++17'
         config.build_settings['GCC_ENABLE_CPP_EXCEPTIONS'] = "YES"
-        
+
         # Prevent duplicate symbol errors
         if !config.build_settings['OTHER_LDFLAGS']&.include?('-ObjC')
           config.build_settings['OTHER_LDFLAGS'] = ['-ObjC']

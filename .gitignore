@@ -36,3 +36,5 @@ project.xcworkspace
 
 # CocoaPods
 /Pods/
+expo-app/android/
+expo-app/ios/
