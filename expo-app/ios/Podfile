@@ -6,82 +6,21 @@ require File.join(File.dirname(`node --print "require.resolve('@react-native-com
 ENV['RCT_NEW_ARCH_ENABLED'] = '0'
 ENV['USE_HERMES'] = '0'
 
-# Create a custom function to hook into the CocoaPods resolution process
-# This will completely prevent Fabric-related pods from being included in the build
-module Pod
-  class Podfile
-    # Method to hook into use_react_native!
-    def self.prepend_react_native_monkey_patch
-      # If not already patched
-      unless self.singleton_class.method_defined?(:_original_use_react_native!)
-        # Store the original method
-        self.singleton_class.send(:alias_method, :_original_use_react_native!, :use_react_native!)
-        
-        # Replace it with our patched version
-        self.singleton_class.send(:define_method, :use_react_native!) do |*args, &block|
-          options = args.last.is_a?(Hash) ? args.pop.dup : {}
-          # Force disable Fabric and Hermes
-          options[:fabric_enabled] = false
-          options[:hermes_enabled] = false
-          
-          # Call the original with our modified options
-          _original_use_react_native!(*args, options, &block)
-        end
-      end
-    end
-  end
-end
-
-# Apply our monkey patch
-Pod::Podfile.prepend_react_native_monkey_patch
-
 platform :ios, '16.0'
 prepare_react_native_project!
 
 # Disable Flipper
 ENV['NO_FLIPPER'] = "1"
 
-# Fabric-related pods to be excluded
-EXCLUDED_PODS = [
-  'React-Fabric',
-  'React-RCTFabric',
-  'React-FabricCore',
-  'FBReactNativeSpec',
-  'React-FabricComponents',
-  'React-FabricImage'
-]
-
-# Modify the standard Pod resolver to skip Fabric pods
-module Pod
-  class Resolver
-    alias_method :old_resolve, :resolve
-    def resolve
-      # First let the normal resolver work
-      result = old_resolve
-      
-      # Then filter out any Fabric-related pods
-      result.delete_if do |spec|
-        EXCLUDED_PODS.any? { |excluded| spec.name.include?(excluded) }
-      end
-      
-      return result
-    end
-  end
-end
-
 target 'SpiritualConditionTracker' do
   use_expo_modules!
   
-  # Use React Native with JSC (not Hermes)
+  # Use React Native with JSC (not Hermes), explicitly disable Fabric
   use_react_native!(
     :path => "../node_modules/react-native",
-    :hermes_enabled => false
+    :hermes_enabled => false,
+    :fabric_enabled => false
   )
-  
-  # Explicitly exclude Fabric-related pods
-  EXCLUDED_PODS.each do |pod_name|
-    pod pod_name, :inhibit_warnings => true, :configurations => []
-  end
 end
 
 post_install do |installer|
@@ -90,12 +29,9 @@ post_install do |installer|
     target.build_configurations.each do |config|
       config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '16.0'
       
-      # If this is a Fabric pod, configure it to be skipped
-      if EXCLUDED_PODS.any? { |excluded| target.name.include?(excluded) }
+      # Disable Fabric-related pods if they exist
+      if target.name.include?('Fabric') || target.name.include?('FBReactNativeSpec')
         config.build_settings['EXCLUDED_ARCHS'] = 'arm64 x86_64'
-        config.build_settings['VALID_ARCHS'] = ''
-        config.build_settings['ONLY_ACTIVE_ARCH'] = 'NO'
-        puts "Disabled #{target.name} in post_install"
       end
     end
   end
