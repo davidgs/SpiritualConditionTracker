@@ -42,6 +42,7 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.davidgs.spiritualconditiontracker",
       "buildNumber": "6",
+      "deploymentTarget": "15.0",
       "infoPlist": {
         "NSCalendarsUsageDescription": "This app needs access to your calendar to add meetings and set reminders.",
         "NSLocationWhenInUseUsageDescription": "This app needs access to your location to find nearby meetings and members.",

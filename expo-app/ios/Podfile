@@ -2,7 +2,7 @@ require File.join(File.dirname(`node --print "require.resolve('expo/package.json
 require File.join(File.dirname(`node --print "require.resolve('react-native/package.json')"`), "scripts/react_native_pods")
 require File.join(File.dirname(`node --print "require.resolve('@react-native-community/cli-platform-ios/package.json')"`), "native_modules")
 
-platform :ios, '14.0'
+platform :ios, '15.0'
 prepare_react_native_project!
 
 # Disable Flipper completely for compatibility with EAS builds
@@ -41,7 +41,17 @@ post_install do |installer|
       config.build_settings['CLANG_CXX_LANGUAGE_STANDARD'] = 'c++20'
       
       # Ensure minimum iOS version is set
-      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '14.0'
+      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.0'
+      
+      # Special case for React-RuntimeHermes
+      if target.name == "React-RuntimeHermes"
+        config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.0'
+      end
+      
+      # Special case for React-RuntimeCore
+      if target.name == "React-RuntimeCore"
+        config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.0'
+      end
       
       # Fix arm64 architecture for simulators 
       if config.build_settings['SDKROOT'] == 'iphoneos' && target.name != 'React-Core-AccessibilityResources'
