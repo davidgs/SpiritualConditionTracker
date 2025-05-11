@@ -12,7 +12,8 @@ import {
   Platform
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
-import DateTimePicker from '@react-native-community/datetimepicker';
+import { DatePickerModal } from 'react-native-paper-dates';
+import { Provider as PaperProvider } from 'react-native-paper';
 
 import { useUser } from '../contexts/UserContext';
 import { calculateSobrietyDays, calculateSobrietyYears } from '../utils/calculations';
@@ -178,15 +179,25 @@ const SettingsScreen = () => {
             <Text style={styles.buttonText}>Change Sobriety Date</Text>
           </TouchableOpacity>
           
-          {showSobrietyDatePicker && (
-            <DateTimePicker
-              value={sobrietyDate}
-              mode="date"
-              display="default"
-              onChange={handleSobrietyDateChange}
-              maximumDate={new Date()}
-            />
-          )}
+          <DatePickerModal
+            visible={showSobrietyDatePicker}
+            mode="single"
+            onDismiss={() => setShowSobrietyDatePicker(false)}
+            date={sobrietyDate}
+            onConfirm={({ date }) => {
+              setShowSobrietyDatePicker(false);
+              if (date) {
+                setSobrietyDate(date);
+                updateUserProfile({
+                  sobrietyDate: date
+                });
+              }
+            }}
+            saveLabel="Confirm"
+            label="Select Sobriety Date"
+            maxDate={new Date()}
+            locale="en"
+          />
         </View>
         
         {/* Notifications Section */}
