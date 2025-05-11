@@ -32,8 +32,13 @@ echo "Setting up EAS credentials for build..."
 # Login to EAS with the token
 echo "Logging in to EAS with provided token..."
 
-# Use environment variable directly - this is the proper way
-npx eas-cli login --token "$EXPO_TOKEN"
+# Create temporary session token file
+TOKEN_FILE=$(mktemp)
+echo "$EXPO_TOKEN" > "$TOKEN_FILE"
+
+# Login using the standard EAS CLI approach
+npx eas-cli login --non-interactive < "$TOKEN_FILE"
+rm -f "$TOKEN_FILE"
 
 # Verify login was successful
 echo "Verifying EAS login status..."
