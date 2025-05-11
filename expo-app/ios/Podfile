@@ -1,37 +1,18 @@
 require File.join(File.dirname(`node --print "require.resolve('expo/package.json')"`), "scripts/autolinking")
-
-# We'll keep track of skipped dependencies to avoid failures
-SKIPPED_PODS = ['ReactAppDependencyProvider', 
-                'React-Fabric', 
-                'React-RCTFabric', 
-                'React-FabricCore',
-                'FBReactNativeSpec']
-
-# Define our own React Native pod processor
-$INTERNAL_REACT_PROCESSORS = []
-
-# Define our direct pod override
-def pod(name, *requirements)
-  if SKIPPED_PODS.include?(name)
-    puts "Skipping #{name} to avoid codegen issues"
-    return
-  end
-  Kernel.send(:pod, name, *requirements)
-end
-
-# Now load React Native pods 
 require File.join(File.dirname(`node --print "require.resolve('react-native/package.json')"`), "scripts/react_native_pods")
 require File.join(File.dirname(`node --print "require.resolve('@react-native-community/cli-platform-ios/package.json')"`), "native_modules")
 
-# Force disable new architecture and Hermes
+# Disable new architecture completely
 ENV['RCT_NEW_ARCH_ENABLED'] = '0'
 ENV['USE_HERMES'] = '0'
-
-platform :ios, '16.0'
-prepare_react_native_project!
+ENV['USE_BRIDGELESS'] = '0'
+ENV['USE_FRAMEWORKS'] = 'static'
 
 # Disable Flipper
 ENV['NO_FLIPPER'] = "1"
+
+platform :ios, '16.0'
+prepare_react_native_project!
 
 target 'SpiritualConditionTracker' do
   use_expo_modules!
@@ -45,15 +26,17 @@ target 'SpiritualConditionTracker' do
 end
 
 post_install do |installer|
-  # Set deployment target for all pods
   installer.pods_project.targets.each do |target|
     target.build_configurations.each do |config|
+      # Set deployment target
       config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '16.0'
       
-      # Disable any Fabric-related pods if they exist
-      if SKIPPED_PODS.any? { |excluded| target.name.include?(excluded) }
+      # Disable specific pods by architecture if needed
+      if target.name.include?('Fabric') || 
+         target.name.include?('FBReactNativeSpec') || 
+         target.name.include?('ReactAppDependencyProvider') || 
+         target.name.include?('RCTFabric')
         config.build_settings['EXCLUDED_ARCHS'] = 'arm64 x86_64'
-        config.build_settings['SKIP_INSTALL'] = 'YES'
       end
     end
   end
