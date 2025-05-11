@@ -51,8 +51,13 @@
           "bluetooth-central",
           "bluetooth-peripheral",
           "location",
+          "fetch",
+          "bluetooth-central",
+          "bluetooth-peripheral",
+          "location",
           "fetch"
-        ]
+        ],
+        "ITSAppUsesNonExemptEncryption": false
       }
     },
     "extra": {
@@ -66,6 +71,6 @@
     },
     "updates": {
       "enabled": true
-    },
+    }
   }
 }

@@ -1,6 +1,6 @@
 {
   "cli": {
-    "version": ">= 3.18.0",
+    "version": ">= 16.4.0",
     "appVersionSource": "remote"
   },
   "build": {
@@ -11,7 +11,7 @@
         "NODE_OPTIONS": "--preserve-symlinks"
       },
       "node": "18.18.0",
-      "prebuildCommand": "chmod +x ./eas-hooks/eas-build-pre-install.sh && ./eas-hooks/eas-build-pre-install.sh",
+      "prebuildCommand": "chmod +x ./eas-hooks/eas-build-pre-install.sh && ./eas-hooks/eas-build-pre-install.sh"
     },
     "development": {
       "developmentClient": true,

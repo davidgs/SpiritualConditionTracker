@@ -17,7 +17,7 @@
     "build:prod:ios": "eas build --platform ios --profile production --non-interactive"
   },
   "dependencies": {
-    "@expo/metro-config": "^0.20.14",
+    "@expo/metro-config": "0.20.14",
     "@expo/metro-runtime": "~5.0.4",
     "@react-native/metro-config": "^0.74.0",
     "@react-navigation/bottom-tabs": "^6.5.11",
@@ -44,7 +44,6 @@
     "react-native-sqlite-storage": "^6.0.1",
     "react-native-web": "^0.20.0",
     "rimraf": "^4.0.0",
-    "metro-config": "0.82.3",
     "metro": "0.82.3"
   },
   "overrides": {
