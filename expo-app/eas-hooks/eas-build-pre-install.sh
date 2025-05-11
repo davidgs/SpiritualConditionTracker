@@ -47,29 +47,13 @@ fi
 # Set environment variables to force old architecture
 export RCT_NEW_ARCH_ENABLED=0
 export USE_HERMES=0
+export USE_BRIDGELESS=0
+export USE_FRAMEWORKS=static
+export CODEGEN_DISABLE_ALL=1
 
-# Create dummy podspec for ReactAppDependencyProvider
-echo "🔧 Creating dummy podspec for ReactAppDependencyProvider..."
+echo "✅ Set environment variables to disable new architecture features"
+
+# Create directory for generated files to prevent errors
 mkdir -p "$APP_ROOT/build/generated/ios"
 
-cat > "$APP_ROOT/build/generated/ios/ReactAppDependencyProvider.podspec" << EOF
-Pod::Spec.new do |s|
-  s.name         = "ReactAppDependencyProvider"
-  s.version      = "0.0.1"
-  s.summary      = "Empty podspec for ReactAppDependencyProvider"
-  s.description  = "Empty dummy implementation to satisfy dependencies"
-  s.homepage     = "https://facebook.github.io/react-native/"
-  s.license      = "MIT"
-  s.author       = "Facebook, Inc. and its affiliates"
-  s.platforms    = { :ios => "16.0" }
-  s.source       = { :git => "https://github.com/facebook/react-native.git" }
-  s.source_files = "dummy.{h,m}"
-end
-EOF
-
-# Create dummy files
-touch "$APP_ROOT/build/generated/ios/dummy.h"
-touch "$APP_ROOT/build/generated/ios/dummy.m"
-
-echo "✅ Created dummy podspec for ReactAppDependencyProvider"
 echo "✅ Pre-install hook completed successfully"
