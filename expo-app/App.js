@@ -186,7 +186,7 @@ const DrawerNavigator = () => {
 };
 
 // App version - update with every change
-const APP_VERSION = "1.0.6 - May 12, 2025, 12:34 AM - BUILD-1747010054793";
+const APP_VERSION = "1.0.6 - May 12, 2025, 12:37 AM - BUILD-1747010254706";
 
 function Main() {
   const [dbInitialized, setDbInitialized] = useState(false);

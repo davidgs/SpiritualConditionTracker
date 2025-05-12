@@ -14,16 +14,22 @@ prepare_react_native_project!
 
 target 'SpiritualConditionTracker' do
   use_expo_modules!
+  use_native_modules!
   
-  # Use standard React Native pods but with fabric disabled
+  # Use React Native pods but manually disable ReactAppDependencyProvider
   use_react_native!(
     :path => "../node_modules/react-native",
     :hermes_enabled => false,
-    :fabric_enabled => false,
-    # The following line disables all the ReactAppDependencyProvider specs
-    :app_path => nil
+    :fabric_enabled => false
   )
 
+  # Exclude problematic pod
+  pod 'React-Core', :path => '../node_modules/react-native/', :modular_headers => true, :subspecs => [
+    'Default',
+    'DevSupport',
+    'RCTWebSocket',
+  ]
+    
   post_install do |installer|
     # Configure all targets
     installer.pods_project.targets.each do |target|
