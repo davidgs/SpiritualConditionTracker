@@ -19,9 +19,6 @@
     },
     "preview": {
       "distribution": "internal",
-      "hooks": {
-        "postInstall": "bash ./eas-hooks/disable-bridging.sh"
-      },
       "env": {
         "RCT_NEW_ARCH_ENABLED": "0",
         "USE_HERMES": "0",
@@ -55,12 +52,19 @@
           "RCT_NEW_ARCH_ENABLED": "0",
           "USE_HERMES": "0",
           "USE_FABRIC": "0",
+          "USE_FABRICCXX": "0",
           "FABRIC_ENABLED": "0",
           "NEW_ARCH_ENABLED": "0",
           "USE_BRIDGELESS": "0",
           "DISABLE_CODEGEN": "1",
           "CODEGEN_DISABLE_ALL": "1",
-          "USE_FRAMEWORKS": "static"
+          "USE_FRAMEWORKS": "static",
+          "EXPO_DISABLE_MERCURY": "1",
+          "EXPO_USE_FLIPPER": "0",
+          "BRIDGING_CPP_ENABLED": "0",
+          "JS_RUNTIME_HERMES_ENABLED": "0",
+          "USE_REACT_FABRIC": "0",
+          "REACT_FABRIC_ENABLED": "0"
         },
         "buildConfiguration": "Release"
       },

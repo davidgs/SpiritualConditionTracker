@@ -1,139 +1,77 @@
-# iOS Build Error Fixes for Spiritual Condition Tracker
+# iOS Build Fix Guide
 
-This guide contains fixes for the iOS build errors you're encountering. It addresses the following issues:
+This guide documents the steps taken to fix iOS build issues with React Native 0.79.x and Expo, particularly focused on resolving the missing header files and Codegen errors.
 
-1. **agent-base module error**: `Cannot find module '/Users/davidgs/github.com/SpiritualConditionTracker/node_modules/agent-base/dist/src/index'`
-2. **metro-config error**: `Cannot resolve the path to @react-native/metro-config package`
-3. **sqlite-storage warning**: `Package react-native-sqlite-storage contains invalid configuration: dependency.platforms.ios.project is not allowed`
-4. **buildCacheProvider error**: Missing module in `@expo/config/build`
-5. **Command error**: `Unknown arguments: --no-build` with `npx expo run:ios`
+## Problem Summary
 
-## Quick Start
+The iOS build was failing with multiple errors:
 
-For the fastest solution, follow these steps:
+1. Missing header files:
+   - `react/bridging/CallbackWrapper.h`
+   - `react/bridging/LongLivedObject.h`
+   - `react/debug/react_native_assert.h`
 
-1. Copy all fix scripts to your project root:
-   - `fix-ios-agent-base.js`
-   - `fix-react-native-metro-config.js`
-   - `fix-sqlite-storage.js`
-   - `fix-ios-build.sh`
+2. Architecture exclusion issues:
+   - Targets like `React-Fabric`, `React-RCTFabric`, and `ReactAppDependencyProvider` were having architecture conflicts
 
-2. Run the combined fix script:
-   ```bash
-   bash fix-ios-build.sh
-   ```
+3. Codegen errors:
+   - "Codegen did not run properly in your project"
 
-3. Run your prepare-ios-build.sh script WITHOUT the --no-build flag:
-   ```bash
-   bash prepare-ios-build.sh
-   ```
+## Solution Overview
 
-4. Open the iOS project in Xcode and build.
+Our approach uses several key strategies:
 
-## Detailed Solutions
+1. **Disable New Architecture**: We completely disable all New Architecture features including Fabric, Codegen, and Hermes.
 
-### 1. agent-base Module Fix
+2. **File Patching**: We modify problematic source files to comment out references to missing headers.
 
-This error occurs because the agent-base module is missing files or has an incorrect file structure.
+3. **Empty Header Placeholders**: We create empty placeholder files for missing headers to satisfy the compiler.
 
-The `fix-ios-agent-base.js` script:
-- Creates all necessary directories and files
-- Implements a working version of the agent-base module
-- Fixes package.json to point to the correct entry point
+4. **Architecture Exclusions**: We exclude critical architectures for problematic targets to prevent them from building.
 
-If the automated fix doesn't work, you can manually create the file at:
-```
-/Users/davidgs/github.com/SpiritualConditionTracker/node_modules/agent-base/dist/src/index.js
-```
+5. **Environment Variables**: We set comprehensive environment variables to ensure consistent configuration.
 
-### 2. react-native/metro-config Fix
+## Implementation Details
 
-This error occurs because the Metro configuration module can't be found.
+### 1. Updated Podfile
 
-The `fix-react-native-metro-config.js` script:
-- Creates a compatible implementation of the metro-config package
-- Provides the required API for the build process
+The Podfile has been simplified to focus on the core issues:
 
-### 3. sqlite-storage Configuration Fix
+- Setting environment variables to disable all New Architecture features
+- Removing problematic files from build phases
+- Adding important header search paths
+- Completely disabling problematic targets 
 
-This warning is caused by an invalid configuration in the react-native-sqlite-storage package.
+### 2. Enhanced Pre-install Script
 
-The `fix-sqlite-storage.js` script:
-- Removes the invalid `project` property from the package.json
-- Keeps all other configuration intact
+The `eas-hooks/eas-build-pre-install.sh` script now:
 
-### 4. buildCacheProvider Fix
+- Patches TurboModuleUtils.cpp, TurboModuleUtils.h, and TurboModuleBinding.cpp
+- Comments out references to missing headers
+- Creates empty placeholder files for missing bridging headers
+- Updates app.json to disable the New Architecture
 
-This error occurs when the `buildCacheProvider.js` module is missing from the @expo/config package.
+### 3. EAS Build Configuration
 
-Our fix script:
-- Creates the missing module with a basic implementation
-- Allows the build process to continue without errors
+The eas.json file includes:
 
-### 5. --no-build Flag Fix
+- Comprehensive environment variables to disable New Architecture features
+- A prebuildCommand that runs our pre-install script
+- Consistent configuration across preview and native iOS builds
 
-The prepare-ios-build.sh script is using an unsupported flag (`--no-build`) with the `npx expo run:ios` command.
+## Testing and Verification
 
-The solution is to:
-- Remove this flag from the command
-- Or ensure the command is compatible with the installed Expo version
+These changes should be tested with:
 
-## Integrating with prepare-ios-build.sh
+1. Local development: `npx expo run:ios`
+2. EAS build: `npx eas-cli build --platform ios --profile preview`
 
-To make the fixes permanent, add this code at the beginning of your prepare-ios-build.sh script:
+## Troubleshooting Tips
 
-```bash
-# Apply all fixes first
-if [ -f "fix-ios-agent-base.js" ]; then
-  echo "Running agent-base fix..."
-  node fix-ios-agent-base.js
-fi
+If you encounter additional issues:
 
-if [ -f "fix-react-native-metro-config.js" ]; then
-  echo "Running metro-config fix..."
-  node fix-react-native-metro-config.js
-fi
-
-if [ -f "fix-sqlite-storage.js" ]; then
-  echo "Running sqlite fix..."
-  node fix-sqlite-storage.js
-fi
-```
-
-## Troubleshooting
-
-If you still encounter errors after applying these fixes:
-
-1. **Clean the build**:
-   ```bash
-   cd ios
-   xcodebuild clean
-   cd ..
-   rm -rf ios/build
-   ```
-
-2. **Reinstall dependencies**:
-   ```bash
-   npm ci
-   ```
-
-3. **Run the fixes again**:
-   ```bash
-   bash fix-ios-build.sh
-   ```
-
-4. **Try the build without using prepare-ios-build.sh**:
-   ```bash
-   npx expo prebuild --platform ios --clean
-   cd ios
-   pod install
-   ```
-
-5. **Open Xcode and build from there**:
-   ```bash
-   open ios/SpiritualConditionTracker.xcworkspace
-   ```
-
-## Contact
-
-If you continue to experience issues, please provide detailed error logs so we can further troubleshoot and refine these fixes.
+1. Check the build logs for specific file references causing errors
+2. Consider adding those files to the exclusion list or patching them
+3. Verify that all environment variables are properly set
+4. Ensure the pre-install script is executing correctly
+5. If needed, update the placeholder approach to handle additional missing files
