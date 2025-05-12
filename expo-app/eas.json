@@ -23,8 +23,13 @@
         "simulator": true
       },
       "cache": {
-        "key": "v1-preview"
+        "key": "v2-preview"
       },
+      "prebuildCommands": [
+        "mkdir -p ./build/generated/ios/ReactAppDependencyProvider",
+        "touch ./build/generated/ios/ReactAppDependencyProvider.podspec",
+        "touch ./build/generated/ios/ReactAppDependencyProvider/ReactAppDependencyProvider.h"
+      ],
       "env": {
         "RCT_NEW_ARCH_ENABLED": "0",
         "USE_HERMES": "0",

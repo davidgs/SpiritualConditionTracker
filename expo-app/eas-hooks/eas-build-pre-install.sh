@@ -66,9 +66,45 @@ export REACT_FABRIC_ENABLED=0
 echo "✅ Set environment variables to disable new architecture features"
 
 # Create needed build directory
-mkdir -p "$APP_ROOT/build/generated/ios"
+mkdir -p "$APP_ROOT/build/generated/ios/ReactAppDependencyProvider"
 
-echo "✅ Created build directory"
+# Create the podspec file
+cat > "$APP_ROOT/build/generated/ios/ReactAppDependencyProvider.podspec" << 'EOF'
+Pod::Spec.new do |s|
+  s.name         = "ReactAppDependencyProvider"
+  s.version      = "1.0.0"
+  s.summary      = "Empty placeholder to prevent build errors"
+  s.description  = "This is a placeholder to satisfy pod dependencies"
+  s.homepage     = "https://github.com/facebook/react-native"
+  s.license      = "MIT"
+  s.author       = "Facebook, Inc. and its affiliates"
+  s.platforms    = { :ios => "16.0" }
+  s.source       = { :git => "https://github.com/facebook/react-native.git", :tag => "v#{s.version}" }
+  s.source_files = "ReactAppDependencyProvider/**/*.{h,m,mm}"
+  s.requires_arc = true
+end
+EOF
+
+# Create empty header file
+cat > "$APP_ROOT/build/generated/ios/ReactAppDependencyProvider/ReactAppDependencyProvider.h" << 'EOF'
+#ifndef ReactAppDependencyProvider_h
+#define ReactAppDependencyProvider_h
+
+// Empty header file to prevent build errors
+// This is a placeholder class that does nothing
+
+#endif /* ReactAppDependencyProvider_h */
+EOF
+
+# Create empty implementation file
+cat > "$APP_ROOT/build/generated/ios/ReactAppDependencyProvider/ReactAppDependencyProvider.mm" << 'EOF'
+#import "ReactAppDependencyProvider.h"
+
+// Empty implementation file to prevent build errors
+// This is a placeholder implementation that does nothing
+EOF
+
+echo "✅ Created build directory with ReactAppDependencyProvider placeholder files"
 
 # Update app.json to disable New Architecture features
 if [ -f "$APP_ROOT/app.json" ]; then
