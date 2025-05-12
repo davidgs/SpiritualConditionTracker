@@ -10,6 +10,7 @@ rm -rf ./ios/Pods
 rm -rf ./ios/Podfile.lock
 
 echo "🔧 Running pre-install fixes..."
+chmod +x ./eas-hooks/eas-build-pre-install.sh
 ./eas-hooks/eas-build-pre-install.sh
 
 echo "📦 Installing pods..."
