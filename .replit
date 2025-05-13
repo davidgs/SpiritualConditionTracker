@@ -18,15 +18,15 @@ args = "BasicProxy"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "SimpleProxy"
-
-[[workflows.workflow.tasks]]
-task = "workflow.run"
 args = "StatusChecker"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
 args = "ExpoServer"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "VersionChecker"
 
 [[workflows.workflow]]
 name = "BasicProxy"
@@ -36,15 +36,6 @@ author = "agent"
 task = "shell.exec"
 args = "node basic-proxy.js"
 waitForPort = 5005
-
-[[workflows.workflow]]
-name = "SimpleProxy"
-author = "agent"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "node simple-proxy.js"
-waitForPort = 3000
 
 [[workflows.workflow]]
 name = "StatusChecker"
@@ -63,6 +54,15 @@ author = "agent"
 task = "shell.exec"
 args = "node run-expo-only.js"
 waitForPort = 3243
+
+[[workflows.workflow]]
+name = "VersionChecker"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "node static-version-checker.js"
+waitForPort = 8080
 
 [deployment]
 run = ["sh", "-c", "node deployment-server.js"]
@@ -103,6 +103,10 @@ externalPort = 3002
 [[ports]]
 localPort = 5005
 externalPort = 6000
+
+[[ports]]
+localPort = 8080
+externalPort = 8080
 
 [[ports]]
 localPort = 19006
