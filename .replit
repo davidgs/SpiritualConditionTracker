@@ -28,6 +28,10 @@ args = "ExpoServer"
 task = "workflow.run"
 args = "RunEasBuild"
 
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "WebBuildServer"
+
 [[workflows.workflow]]
 name = "StatusChecker"
 author = "agent"
@@ -63,6 +67,15 @@ author = "agent"
 task = "shell.exec"
 args = "cd expo-app && npx eas-cli build --platform ios --profile preview --non-interactive"
 
+[[workflows.workflow]]
+name = "WebBuildServer"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "node simple-static-server.js"
+waitForPort = 5003
+
 [deployment]
 run = ["sh", "-c", "node deployment-server.js"]
 deploymentTarget = "cloudrun"
@@ -94,6 +107,10 @@ externalPort = 3000
 [[ports]]
 localPort = 5002
 externalPort = 3002
+
+[[ports]]
+localPort = 5003
+externalPort = 6000
 
 [[ports]]
 localPort = 19006
