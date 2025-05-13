@@ -14,16 +14,16 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "AppServer"
+args = "ExpoServer"
 
 [[workflows.workflow]]
-name = "AppServer"
+name = "ExpoServer"
 author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "node basic-app-server.js"
-waitForPort = 5000
+args = "node run-expo-only.js"
+waitForPort = 3243
 
 [deployment]
 run = ["sh", "-c", "node deployment-server.js"]

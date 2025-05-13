@@ -1,16 +1,20 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, StatusBar, Button, SafeAreaView, ActivityIndicator } from 'react-native';
-import database from './src/utils/database';
+import { View, Text, StyleSheet, ScrollView, StatusBar, Button, SafeAreaView, ActivityIndicator, Platform } from 'react-native';
+import database from './src/utils/database-adapter';
 
 export default function App() {
   const [dbStatus, setDbStatus] = useState('Not initialized');
   const [testUserId, setTestUserId] = useState(null);
   const [testResults, setTestResults] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [platformInfo, setPlatformInfo] = useState('Detecting...');
 
   useEffect(() => {
     // Initialize database when component mounts
     initDb();
+    
+    // Set platform info
+    setPlatformInfo(`Platform: ${Platform.OS} (${Platform.Version || 'unknown version'})`);
   }, []);
 
   const initDb = async () => {
@@ -18,6 +22,7 @@ export default function App() {
       await database.initDatabase();
       setDbStatus('Initialized');
       log('Database initialized successfully');
+      log(`Using ${Platform.OS === 'web' ? 'localStorage' : 'SQLite'} database implementation`);
       setLoading(false);
     } catch (error) {
       setDbStatus(`Error: ${error.message}`);
@@ -163,8 +168,8 @@ export default function App() {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="dark-content" />
-      <Text style={styles.title}>AA Recovery Tracker</Text>
-      <Text style={styles.subtitle}>SQLite Integration Test</Text>
+      <Text style={styles.title}>Spiritual Condition Tracker</Text>
+      <Text style={styles.subtitle}>Database Integration Test</Text>
       
       <View style={styles.statusContainer}>
         <Text style={styles.statusLabel}>Database Status:</Text>
@@ -175,6 +180,11 @@ export default function App() {
         ]}>
           {dbStatus}
         </Text>
+      </View>
+      
+      <View style={styles.statusContainer}>
+        <Text style={styles.statusLabel}>Platform:</Text>
+        <Text style={styles.statusValue}>{platformInfo}</Text>
       </View>
 
       <View style={styles.buttonContainer}>
