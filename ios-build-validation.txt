@@ -1,19 +1,33 @@
 iOS Build Validation Report
-Date: Wed May  7 17:53:08 EDT 2025
+Date: Fri May  9 13:42:30 EDT 2025
 
 Project Directory: /Users/davidgs/github.com/SpiritualConditionTracker/expo-app/ios
 Xcode Workspace: total 8
-drwxr-xr-x@  3 davidgs  staff   96 May  7 17:53 .
-drwxr-xr-x@ 13 davidgs  staff  416 May  7 17:53 ..
--rw-r--r--@  1 davidgs  staff  243 May  7 17:53 contents.xcworkspacedata
-Podfile: -rw-r--r--@ 1 davidgs  staff  2483 May  7 17:52 /Users/davidgs/github.com/SpiritualConditionTracker/expo-app/ios/Podfile
-Info.plist: -rw-r--r--@ 1 davidgs  staff  3182 May  7 17:52 /Users/davidgs/github.com/SpiritualConditionTracker/expo-app/ios/SpiritualConditionTracker/Info.plist
+drwxr-xr-x  4 davidgs  staff  128 May  9 13:42 .
+drwxr-xr-x  5 davidgs  staff  160 May  9 13:42 ..
+-rw-r--r--  1 davidgs  staff  135 May  9 13:42 contents.xcworkspacedata
+drwxr-xr-x  3 davidgs  staff   96 May  9 13:42 xcshareddata
+Podfile: -rw-r--r--  1 davidgs  staff  2483 May  9 13:42 /Users/davidgs/github.com/SpiritualConditionTracker/expo-app/ios/Podfile
+Info.plist: -rw-r--r--  1 davidgs  staff  3424 May  9 13:42 /Users/davidgs/github.com/SpiritualConditionTracker/expo-app/ios/SpiritualConditionTracker/Info.plist
 App Name: Spiritual Condition Tracker
 
-React Native SQLite Storage: Not installed!
-Platform-specific SQLite implementation: -rw-r--r--@ 1 davidgs  staff  3187 May  7 17:51 /Users/davidgs/github.com/SpiritualConditionTracker/expo-app/src/database/platforms/database.ios.js
+React Native SQLite Storage: Installed
+Platform-specific SQLite implementation: -rw-r--r--  1 davidgs  staff  3187 May  9 13:38 /Users/davidgs/github.com/SpiritualConditionTracker/expo-app/src/database/platforms/database.ios.js
+JavaScript Bundle: Not found!
+AppDelegate.m configuration: Using RCTBundleURLProvider
 
 Next steps:
-1. Open the Xcode workspace at: /Users/davidgs/github.com/SpiritualConditionTracker/expo-app/ios/SpiritualConditionTracker.xcworkspace
+1. Open the Xcode workspace at: /Users/davidgs/github.com/SpiritualConditionTracker/expo-app/ios/SpiritualConditionTracker.xcodeproj/project.xcworkspace
 2. Select your team in Signing & Capabilities
 3. Run the app on a simulator or device
+
+Troubleshooting:
+If you get 'No script URL provided' error:
+- Make sure the JavaScript bundle was generated in ios/assets/main.jsbundle
+- Verify AppDelegate.m is configured to use the embedded bundle
+- Check that the bundle is included in the Xcode project (Add files to project if needed)
+
+For other issues:
+- Check the console logs in Xcode for more specific error messages
+- Make sure all native dependencies are properly linked
+- Verify that the SQLite storage module is properly configured
