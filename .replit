@@ -14,19 +14,37 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "StatusChecker"
+args = "BasicProxy"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "DebugServer"
+args = "SimpleProxy"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "StatusChecker"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
 args = "ExpoServer"
 
+[[workflows.workflow]]
+name = "BasicProxy"
+author = "agent"
+
 [[workflows.workflow.tasks]]
-task = "workflow.run"
-args = "RunEasBuild"
+task = "shell.exec"
+args = "node basic-proxy.js"
+waitForPort = 5005
+
+[[workflows.workflow]]
+name = "SimpleProxy"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "node simple-proxy.js"
+waitForPort = 3000
 
 [[workflows.workflow]]
 name = "StatusChecker"
@@ -34,17 +52,8 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "node check-app-status.js"
-waitForPort = 5000
-
-[[workflows.workflow]]
-name = "DebugServer"
-author = "agent"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "node debug-server.js"
-waitForPort = 4999
+args = "node simple-status-server.js"
+waitForPort = 4000
 
 [[workflows.workflow]]
 name = "ExpoServer"
@@ -54,14 +63,6 @@ author = "agent"
 task = "shell.exec"
 args = "node run-expo-only.js"
 waitForPort = 3243
-
-[[workflows.workflow]]
-name = "RunEasBuild"
-author = "agent"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "cd expo-app && npx eas-cli build --platform ios --profile preview --non-interactive"
 
 [deployment]
 run = ["sh", "-c", "node deployment-server.js"]
@@ -80,6 +81,10 @@ localPort = 3244
 externalPort = 5000
 
 [[ports]]
+localPort = 4000
+externalPort = 6800
+
+[[ports]]
 localPort = 4999
 externalPort = 5173
 
@@ -94,6 +99,10 @@ externalPort = 3000
 [[ports]]
 localPort = 5002
 externalPort = 3002
+
+[[ports]]
+localPort = 5005
+externalPort = 6000
 
 [[ports]]
 localPort = 19006
