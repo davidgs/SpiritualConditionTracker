@@ -14,32 +14,46 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "DebugServer"
+args = "BasicProxy"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "SimpleProxy"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "StatusChecker"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
 args = "ExpoServer"
 
-[[workflows.workflow.tasks]]
-task = "workflow.run"
-args = "WebBuildServer"
-
-[[workflows.workflow.tasks]]
-task = "workflow.run"
-args = "ExpoProxy"
-
-[[workflows.workflow.tasks]]
-task = "workflow.run"
-args = "StaticHTMLServer"
-
 [[workflows.workflow]]
-name = "DebugServer"
+name = "BasicProxy"
 author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "node debug-server.js"
-waitForPort = 4999
+args = "node basic-proxy.js"
+waitForPort = 5005
+
+[[workflows.workflow]]
+name = "SimpleProxy"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "node simple-proxy.js"
+waitForPort = 3000
+
+[[workflows.workflow]]
+name = "StatusChecker"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "node simple-status-server.js"
+waitForPort = 4000
 
 [[workflows.workflow]]
 name = "ExpoServer"
@@ -49,33 +63,6 @@ author = "agent"
 task = "shell.exec"
 args = "node run-expo-only.js"
 waitForPort = 3243
-
-[[workflows.workflow]]
-name = "WebBuildServer"
-author = "agent"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "node public-web-server.js"
-waitForPort = 5001
-
-[[workflows.workflow]]
-name = "ExpoProxy"
-author = "agent"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "node minimal-expo-proxy.js"
-waitForPort = 5000
-
-[[workflows.workflow]]
-name = "StaticHTMLServer"
-author = "agent"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "node serve-static-html.js"
-waitForPort = 5000
 
 [deployment]
 run = ["sh", "-c", "node deployment-server.js"]
@@ -94,6 +81,10 @@ localPort = 3244
 externalPort = 5000
 
 [[ports]]
+localPort = 4000
+externalPort = 6800
+
+[[ports]]
 localPort = 4999
 externalPort = 5173
 
@@ -110,12 +101,8 @@ localPort = 5002
 externalPort = 3002
 
 [[ports]]
-localPort = 5003
+localPort = 5005
 externalPort = 6000
-
-[[ports]]
-localPort = 5173
-externalPort = 6800
 
 [[ports]]
 localPort = 19006

@@ -1,12 +1,54 @@
 // Learn more https://docs.expo.io/guides/customizing-metro
-const { getDefaultConfig } = require('@expo/metro-config');
+const { getDefaultConfig } = require('expo/metro-config');
+const path = require('path');
 
-const defaultConfig = getDefaultConfig(__dirname);
+// Find the project and app directories
+const projectRoot = __dirname;
+const appRoot = path.resolve(projectRoot, 'expo-app');
 
-// Add platform-specific extensions for module resolution
-// This ensures .web.js files are used when running on web platform
-defaultConfig.resolver.sourceExts = process.env.RN_SRC_EXT
-  ? [...process.env.RN_SRC_EXT.split(',').map(ext => ext.trim()), ...defaultConfig.resolver.sourceExts]
-  : [...defaultConfig.resolver.sourceExts, 'web.js', 'web.ts', 'web.tsx', 'web.jsx'];
+const config = getDefaultConfig(projectRoot);
 
-module.exports = defaultConfig;
+// 1. Extra node_modules folders to include
+config.resolver.nodeModulesPaths = [
+  path.resolve(projectRoot, 'node_modules'),
+  path.resolve(appRoot, 'node_modules'),
+];
+
+// 2. Watch all files in the project for changes
+config.watchFolders = [
+  projectRoot,
+  appRoot,
+];
+
+// 3. Ensure specific dependencies are properly resolved
+config.resolver.extraNodeModules = {
+  '@react-native-async-storage/async-storage': 
+    path.resolve(projectRoot, 'node_modules', '@react-native-async-storage', 'async-storage'),
+  '@expo/metro-config': 
+    path.resolve(projectRoot, 'node_modules', '@expo', 'metro-config'),
+  '@expo/metro-runtime': 
+    path.resolve(projectRoot, 'node_modules', '@expo', 'metro-runtime'),
+  'react-native-paper-dates': 
+    path.resolve(projectRoot, 'node_modules', 'react-native-paper-dates'),
+  'react-native-paper': 
+    path.resolve(projectRoot, 'node_modules', 'react-native-paper'),
+};
+
+// 4. Make Metro use the proper babel transformer
+config.transformer = {
+  ...config.transformer,
+  babelTransformerPath: require.resolve('metro-react-native-babel-transformer'),
+};
+
+// 5. Handle common asset extensions
+config.resolver.assetExts = [
+  ...config.resolver.assetExts,
+  'db',
+  'sqlite',
+  'ttf',
+  'obj',
+  'png',
+  'jpg',
+];
+
+module.exports = config;

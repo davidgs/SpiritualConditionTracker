@@ -1,114 +1,190 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
+  <title>Spiritual Condition Tracker - Status</title>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>App Status</title>
   <style>
     body {
       font-family: Arial, sans-serif;
+      line-height: 1.6;
+      color: #333;
       max-width: 800px;
       margin: 0 auto;
       padding: 20px;
-      line-height: 1.6;
     }
-    .card {
-      border: 1px solid #ddd;
-      border-radius: 8px;
+    .status {
       padding: 15px;
-      margin-bottom: 20px;
-      background-color: #f9f9f9;
+      border-radius: 5px;
+      margin-bottom: 15px;
     }
-    .success {
-      color: green;
-      font-weight: bold;
+    .running {
+      background-color: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
     }
     .error {
-      color: red;
-      font-weight: bold;
+      background-color: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
     }
-    .button {
-      display: inline-block;
-      background-color: #4CAF50;
-      color: white;
-      padding: 10px 15px;
-      text-decoration: none;
-      border-radius: 4px;
-      margin: 10px 0;
+    .info {
+      background-color: #cce5ff;
+      color: #004085;
+      border: 1px solid #b8daff;
     }
     pre {
-      background-color: #f5f5f5;
+      background-color: #f8f9fa;
       padding: 10px;
       border-radius: 5px;
       overflow-x: auto;
     }
+    .timestamp {
+      color: #6c757d;
+      font-size: 0.9rem;
+    }
   </style>
 </head>
 <body>
-  <h1>Spiritual Condition Tracker - App Status</h1>
+  <h1>Spiritual Condition Tracker - Version Status</h1>
   
-  <div class="card">
-    <h2>Application Access</h2>
-    <p>The application should be running at the following URLs:</p>
-    <ul>
-      <li><a href="/app" class="button">Access App at /app path</a></li>
-      <li><a href="/" class="button">Access Landing Page</a></li>
-    </ul>
-    <p>Or view the app directly in the iframe below:</p>
-    <iframe src="http://localhost:3243/app" style="width:100%; height:600px; border:1px solid #ddd; border-radius:5px;"></iframe>
+  <div class="status info">
+    <h3>Version Injector Status Check</h3>
+    <p>This page checks if the version-injector.js modifications are working correctly.</p>
   </div>
-
-  <div class="card">
-    <h2>Configuration Status</h2>
-    <ul>
-      <li>App Path: <span class="success">/app</span></li>
-      <li>Landing Page: <span class="success">Redirects to /app</span></li>
-      <li>Metro Bundler: <span class="success">Running</span></li>
-      <li>Port: <span class="success">3243</span></li>
-    </ul>
+  
+  <h2>Version Information</h2>
+  <div id="version-info" class="status running">
+    <p>Loading version information...</p>
   </div>
-
-  <div class="card">
-    <h2>Recent Updates</h2>
-    <ul>
-      <li>✓ Fixed routing to the correct /app path</li>
-      <li>✓ Updated index.html to redirect to /app path</li>
-      <li>✓ Added path correction in version injector script</li>
-      <li>✓ Application successfully bundled</li>
-    </ul>
+  
+  <h2>File Status</h2>
+  <div class="status info">
+    <h3>version-injector.js File</h3>
+    <pre id="file-status">Checking file status...</pre>
   </div>
-
-  <div class="card">
-    <h2>Web Console Logs</h2>
-    <pre id="logs">Loading logs...</pre>
-  </div>
-
+  
+  <h2>Log</h2>
+  <pre id="log"></pre>
+  
   <script>
-    // Simple function to check if the app is accessible
-    function checkAppStatus() {
-      const statusDiv = document.getElementById('logs');
+    // Log function
+    function log(message) {
+      const logEl = document.getElementById('log');
+      const timestamp = new Date().toISOString();
+      logEl.innerHTML += `[${timestamp}] ${message}\n`;
+      console.log(`[${timestamp}] ${message}`);
+    }
+    
+    // Load version injector script
+    function loadVersionInjector() {
+      log('Loading version-injector.js...');
       
-      fetch('/app')
+      const script = document.createElement('script');
+      script.src = 'version-injector.js?' + Date.now(); // Add timestamp to bypass cache
+      script.onload = function() {
+        log('version-injector.js loaded successfully');
+        displayVersionInfo();
+      };
+      script.onerror = function() {
+        log('Error loading version-injector.js');
+        displayError();
+      };
+      document.head.appendChild(script);
+    }
+    
+    // Display version information
+    function displayVersionInfo() {
+      const versionInfoEl = document.getElementById('version-info');
+      
+      if (window.FORCE_APP_VERSION) {
+        versionInfoEl.innerHTML = `
+          <h3>Version Information Found</h3>
+          <p>App Version: <strong>${window.FORCE_APP_VERSION}</strong></p>
+          <p>Build ID: <strong>${window.BUILD_ID || 'Not set'}</strong></p>
+          <p>This shows that version-injector.js is working correctly.</p>
+        `;
+        
+        // Check if version contains dynamic date/timestamp
+        const hasTimestamp = window.FORCE_APP_VERSION.includes(new Date().getFullYear()) || 
+                            window.FORCE_APP_VERSION.includes(new Date().getDate());
+        
+        if (hasTimestamp) {
+          log('WARNING: Version still contains dynamic timestamp');
+          versionInfoEl.innerHTML += `
+            <p class="error">WARNING: Version still appears to contain dynamic timestamp.</p>
+          `;
+        } else {
+          log('SUCCESS: Version appears to be fixed (no dynamic timestamp)');
+          versionInfoEl.innerHTML += `
+            <p>SUCCESS: Version appears to be fixed (no dynamic timestamp).</p>
+          `;
+        }
+      } else {
+        displayError();
+      }
+    }
+    
+    // Display error
+    function displayError() {
+      const versionInfoEl = document.getElementById('version-info');
+      versionInfoEl.className = 'status error';
+      versionInfoEl.innerHTML = `
+        <h3>Version Information Not Found</h3>
+        <p>Could not find FORCE_APP_VERSION in the window object.</p>
+        <p>This suggests that version-injector.js was not loaded correctly.</p>
+      `;
+    }
+    
+    // Check file status
+    function checkFileStatus() {
+      log('Checking version-injector.js file status...');
+      
+      const fileStatusEl = document.getElementById('file-status');
+      
+      // Fetch the file and check when it was last modified
+      fetch('version-injector.js', { method: 'HEAD' })
         .then(response => {
-          if (response.ok) {
-            statusDiv.innerHTML += '\nApp is accessible at /app path ✓';
-            statusDiv.className = 'success';
+          const lastModified = response.headers.get('last-modified');
+          const contentType = response.headers.get('content-type');
+          
+          fileStatusEl.innerHTML = `File exists
+Last-Modified: ${lastModified || 'Unknown'}
+Content-Type: ${contentType || 'Unknown'}`;
+          
+          log(`File exists. Last-Modified: ${lastModified}`);
+          
+          // Now fetch the content
+          return fetch('version-injector.js');
+        })
+        .then(response => response.text())
+        .then(content => {
+          // Add content info
+          fileStatusEl.innerHTML += `\nFile Size: ${content.length} bytes
+Content Preview:
+${content.substring(0, 500)}${content.length > 500 ? '...' : ''}`;
+          
+          log(`File content loaded (${content.length} bytes)`);
+          
+          // Check for auto-update code
+          if (content.includes('setInterval') || content.includes('setTimeout')) {
+            log('WARNING: File appears to contain auto-update code');
+            fileStatusEl.innerHTML += `\n\nWARNING: File appears to contain auto-update code`;
           } else {
-            statusDiv.innerHTML += '\nCannot access app: ' + response.status;
-            statusDiv.className = 'error';
+            log('SUCCESS: No auto-update code detected');
+            fileStatusEl.innerHTML += `\n\nSUCCESS: No auto-update code detected`;
           }
         })
         .catch(error => {
-          statusDiv.innerHTML += '\nError accessing app: ' + error.message;
-          statusDiv.className = 'error';
+          fileStatusEl.innerHTML = `Error checking file: ${error.message}`;
+          log(`Error checking file: ${error.message}`);
         });
-      
-      // Log the current date/time
-      statusDiv.innerHTML = 'Status check: ' + new Date().toLocaleString();
     }
     
-    // Run the check when the page loads
-    window.onload = checkAppStatus;
+    // Start checking
+    log('Starting version-injector.js status check');
+    loadVersionInjector();
+    checkFileStatus();
   </script>
 </body>
 </html>

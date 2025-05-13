@@ -8,7 +8,7 @@ const fs = require('fs');
 
 // Configuration
 const PORT = 3243; 
-const expoAppDir = path.join(__dirname, 'expo-app');
+const expoAppDir = __dirname; // Use current directory instead of 'expo-app'
 const PUBLIC_PATH = 'app';  // Path configured in nginx
 
 // Additional environment variables to help Expo work behind nginx
@@ -427,10 +427,8 @@ const expo = spawn('npx', [
   'start', 
   '--web', 
   '--port', PORT.toString(),
-  '--host', 'localhost',   // Use localhost which is an allowed value for Expo
+  '--host', '0.0.0.0',   // Use 0.0.0.0 to allow external connections
   '--clear',             // Clear the cache
-  '--no-dev',            // Disable development mode for better reliability
-  '--reset-cache',       // Reset the cache entirely
   '--max-workers', '2'   // Increased workers for faster bundling
 ], {
   cwd: expoAppDir,
@@ -473,19 +471,21 @@ console.log(`Started Expo with PID ${expo.pid}`);
 // This function runs periodically to ensure the version is always current
 function injectVersionInfo() {
   try {
-    // Read the current App.js version
+    // Read the current App.js version, but use a fixed version
     const appJsPath = path.join(expoAppDir, 'App.js');
     const appJsContent = fs.readFileSync(appJsPath, 'utf8');
     let versionMatch = appJsContent.match(/APP_VERSION = "([^"]*)"/);
-    const currentVersion = versionMatch ? versionMatch[1] : `1.0.6 - ${new Date().toLocaleString()}`;
+    // Use a fixed version that doesn't change
+    const currentVersion = "1.0.6 - Fixed Version";
     
-    // Create a tiny JS file that forces the app to show the correct version and helps with icons
+    // Create a fixed tiny JS file that forces the app to show the correct version and helps with icons
     const versionJs = `
-// Force version refresh - created at ${new Date().toISOString()}
+// Static version for Spiritual Condition Tracker
+// Created with fixed content - DOES NOT UPDATE
 // Also contains icon loading fixes
 window.FORCE_APP_VERSION = "${currentVersion}";
-window.BUILD_ID = "${BUILD_ID}";
-console.log("[Version Injector] Running version: " + window.FORCE_APP_VERSION);
+window.BUILD_ID = "fixed-build-id";
+console.log("[Version Injector] Running FIXED version: " + window.FORCE_APP_VERSION);
 
 // Add icon loading support
 document.addEventListener('DOMContentLoaded', function() {
@@ -726,32 +726,26 @@ document.addEventListener('DOMContentLoaded', function() {
         }
       }
       
-      // Check if displaying old version - safely check only if body exists
+      // Version mismatch checking has been DISABLED
       function checkVersionMismatch() {
-        if (document.body && !document.body.innerHTML.includes(window.FORCE_APP_VERSION)) {
-          console.log("[Version Injector] Version mismatch detected! Refreshing...");
-          clearAllStorage();
-        }
+        // Function disabled - no auto refresh or clearing storage
+        console.log("[Version Injector] Version mismatch checking DISABLED");
+        return;
       }
       
       // Wait for DOM to be ready before manipulating
       if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', function() {
           addVersionIndicator();
-          checkVersionMismatch();
+          // Version checking disabled
         });
       } else {
         // DOM already loaded
         addVersionIndicator();
-        checkVersionMismatch();
+        // Version checking disabled
         
-        // Safely check version and reload if needed
-        if (document.body && !document.body.innerHTML.includes(window.FORCE_APP_VERSION)) {
-          console.log("[Version Injector] Version mismatch detected! Refreshing...");
-          window.location.reload(true);
-        } else {
-          console.log("[Version Injector] Version matched, no refresh needed");
-        }
+        // No auto-reload based on version
+        console.log("[Version Injector] Auto version refresh DISABLED");
       }
     } catch (err) {
       console.log("[Version Injector] Error during version check:", err.message);
@@ -761,24 +755,14 @@ document.addEventListener('DOMContentLoaded', function() {
   // Start the version check process after initial delay
   setTimeout(safelyCheckVersion, CHECK_DELAY);
   
-  // Periodic version check every 5 minutes
-  setInterval(function() {
-    const xhttp = new XMLHttpRequest();
-    xhttp.onreadystatechange = function() {
-      if (this.readyState == 4 && this.status == 200) {
-        const match = this.responseText.match(/FORCE_APP_VERSION = "([^"]*)"/);
-        if (match && match[1] && match[1] !== window.FORCE_APP_VERSION) {
-          console.log("[Version Injector] New version detected:", match[1]);
-          clearAllStorage();
-          window.location.reload(true);
-        }
-      }
-    };
-    // Ensure we're using the correct path for the version check
-    const basePath = window.location.pathname.startsWith('/app') ? '/app/' : '/';
-    xhttp.open("GET", basePath + "version-injector.js?nocache=" + Date.now(), true);
-    xhttp.send();
-  }, 300000); // Check every 5 minutes
+  // Periodic version check has been DISABLED
+  // No automatic version checking or page reloading
+  console.log("[Version Injector] Automatic version checking has been DISABLED");
+  
+  /*
+  setInterval function removed to prevent automatic updates
+  This improves stability by preventing unwanted page reloads
+  */
 })();
 `;
     
@@ -905,23 +889,24 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 }
 
-// Initial run to set up version injection
+// Initial run to set up version injection - ONLY ONCE, NO UPDATES
 injectVersionInfo();
 
-// Set up a periodic check to make sure version is always current
-const versionInjectorInterval = setInterval(injectVersionInfo, 60000);
+// No periodic checks - version injector is DISABLED
+// const versionInjectorInterval = setInterval(injectVersionInfo, 60000); 
+console.log('Version injector periodic updates have been DISABLED');
 
 // Simple process handlers
 process.on('SIGINT', () => {
   console.log('Shutting down Expo...');
-  clearInterval(versionInjectorInterval);
+  // No interval to clear since version injector updates are disabled
   expo.kill();
   process.exit(0);
 });
 
 process.on('SIGTERM', () => {
   console.log('Terminating Expo...');
-  clearInterval(versionInjectorInterval);
+  // No interval to clear since version injector updates are disabled
   expo.kill();
   process.exit(0);
 });

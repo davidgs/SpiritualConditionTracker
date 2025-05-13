@@ -1,15 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, StatusBar, Button, SafeAreaView, ActivityIndicator, Platform } from 'react-native';
-
-// Dynamic database import based on platform
-let database;
-if (Platform.OS === 'web') {
-  console.log("Loading web-specific database implementation");
-  database = require('./src/utils/database.web').default;
-} else {
-  console.log("Loading native database implementation");
-  database = require('./src/utils/database').default;
-}
+import { View, Text, StyleSheet, ScrollView, StatusBar, Button, SafeAreaView, ActivityIndicator } from 'react-native';
+import database from './src/utils/database';
 
 export default function App() {
   const [dbStatus, setDbStatus] = useState('Not initialized');
@@ -19,22 +10,16 @@ export default function App() {
 
   useEffect(() => {
     // Initialize database when component mounts
-    console.log("App mounted, initializing database on platform:", Platform.OS);
-    console.log("Database module type:", typeof database);
-    console.log("Database functions available:", Object.keys(database));
     initDb();
   }, []);
 
   const initDb = async () => {
     try {
-      console.log("Starting database initialization...");
       await database.initDatabase();
-      console.log("Database initialization completed successfully!");
       setDbStatus('Initialized');
       log('Database initialized successfully');
       setLoading(false);
     } catch (error) {
-      console.error("Database initialization error:", error);
       setDbStatus(`Error: ${error.message}`);
       log(`Database init error: ${error.message}`);
       setLoading(false);
