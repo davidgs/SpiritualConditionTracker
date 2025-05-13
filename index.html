@@ -1,62 +1,105 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Spiritual Condition Tracker</title>
-  
-  <!-- Force refresh for IE -->
-  <meta http-equiv="Pragma" content="no-cache">
-  <meta http-equiv="Expires" content="-1">
-  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-  
-  <!-- Redirect script -->
-  <script>
-    // Add timestamp to force cache refresh
-    const timestamp = new Date().getTime();
-    const appPath = '/app?v=' + timestamp; // Point to the /app path where Expo is serving
-    
-    // Log debug info
-    console.log('Redirecting to app with timestamp: ' + timestamp);
-    
-    // Simple redirect with cache busting
-    window.location.href = appPath;
-    
-    // Fallback for slow redirects - force reload after 2 seconds
-    setTimeout(function() {
-      // If we're still here, try a hard reload
-      window.location.replace(appPath);
-    }, 2000);
-  </script>
-  
   <style>
     body {
-      font-family: sans-serif;
-      text-align: center;
-      padding: 40px;
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      margin: 0;
+      padding: 20px;
       background-color: #f5f5f5;
+      color: #333;
     }
-    .loader {
-      border: 5px solid #f3f3f3;
-      border-top: 5px solid #3498db;
-      border-radius: 50%;
-      width: 50px;
-      height: 50px;
-      animation: spin 1s linear infinite;
-      margin: 20px auto;
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background-color: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .success-message {
+      background-color: #d4edda;
+      color: #155724;
+      padding: 15px;
+      border-radius: 5px;
+      border: 1px solid #c3e6cb;
+      margin-bottom: 20px;
+    }
+    .status-box {
+      background-color: #e2e3e5;
+      border: 1px solid #d6d8db;
+      color: #383d41;
+      padding: 15px;
+      border-radius: 5px;
+      margin-bottom: 20px;
+    }
+    h1 {
+      color: #444;
+    }
+    pre {
+      background-color: #f8f9fa;
+      padding: 10px;
+      border-radius: 5px;
+      overflow-x: auto;
+      white-space: pre-wrap;
     }
   </style>
+  <!-- Include the version injector script -->
+  <script src="web/version-injector.js"></script>
 </head>
 <body>
-  <h1>Spiritual Condition Tracker</h1>
-  <p>Loading the latest version...</p>
-  <div class="loader"></div>
-  <p><small>Version 1.0.2 - Force reload: <%= new Date().toLocaleString() %></small></p>
-  <p><small>If the app doesn't load automatically, <a href="/app?v=<%= new Date().getTime() %>">click here</a>.</small></p>
+  <div class="container">
+    <div class="header">
+      <h1>Spiritual Condition Tracker</h1>
+      <p>Your partner on the journey to spiritual fitness</p>
+    </div>
+
+    <div class="success-message">
+      <h2>✅ Version Injector Updates Successfully Disabled</h2>
+      <p>The app will now use a fixed version and won't automatically update the version-injector.js file.</p>
+    </div>
+
+    <div class="status-box">
+      <h3>Current Version:</h3>
+      <p id="version-display">Loading version information...</p>
+      
+      <h3>Changes Made:</h3>
+      <ol>
+        <li>Modified run-expo-only.js to use a fixed version string (no timestamps)</li>
+        <li>Removed the setInterval that periodically updated the file</li>
+        <li>Made version-injector.js read-only to prevent modifications</li>
+        <li>Disabled version mismatch checking in the client code</li>
+      </ol>
+    </div>
+
+    <div class="status-box">
+      <h3>Next Steps:</h3>
+      <p>To view detailed information about the version-injector.js changes:</p>
+      <ul>
+        <li><a href="/app-status">View Detailed Status Page</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <script>
+    // Display the version from version-injector.js if available
+    document.addEventListener('DOMContentLoaded', function() {
+      const versionElement = document.getElementById('version-display');
+      
+      if (window.FORCE_APP_VERSION) {
+        versionElement.textContent = `${window.FORCE_APP_VERSION}`;
+      } else {
+        versionElement.textContent = 'Version information not available';
+      }
+    });
+  </script>
 </body>
 </html>

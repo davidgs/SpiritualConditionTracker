@@ -14,28 +14,11 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "BasicProxy"
-
-[[workflows.workflow.tasks]]
-task = "workflow.run"
 args = "StatusChecker"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "ExpoServer"
-
-[[workflows.workflow.tasks]]
-task = "workflow.run"
-args = "VersionChecker"
-
-[[workflows.workflow]]
-name = "BasicProxy"
-author = "agent"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "node basic-proxy.js"
-waitForPort = 5005
+args = "AppServer"
 
 [[workflows.workflow]]
 name = "StatusChecker"
@@ -44,25 +27,16 @@ author = "agent"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "node simple-status-server.js"
+waitForPort = 5000
+
+[[workflows.workflow]]
+name = "AppServer"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "node app-server.js"
 waitForPort = 4000
-
-[[workflows.workflow]]
-name = "ExpoServer"
-author = "agent"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "node run-expo-only.js"
-waitForPort = 3243
-
-[[workflows.workflow]]
-name = "VersionChecker"
-author = "agent"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "node static-version-checker.js"
-waitForPort = 8080
 
 [deployment]
 run = ["sh", "-c", "node deployment-server.js"]
