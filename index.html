@@ -1,62 +1,12 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <title>Spiritual Condition Tracker</title>
-  
-  <!-- Force refresh for IE -->
-  <meta http-equiv="Pragma" content="no-cache">
-  <meta http-equiv="Expires" content="-1">
-  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-  
-  <!-- Redirect script -->
-  <script>
-    // Add timestamp to force cache refresh
-    const timestamp = new Date().getTime();
-    const appPath = '/app?v=' + timestamp; // Point to the /app path where Expo is serving
-    
-    // Log debug info
-    console.log('Redirecting to app with timestamp: ' + timestamp);
-    
-    // Simple redirect with cache busting
-    window.location.href = appPath;
-    
-    // Fallback for slow redirects - force reload after 2 seconds
-    setTimeout(function() {
-      // If we're still here, try a hard reload
-      window.location.replace(appPath);
-    }, 2000);
-  </script>
-  
-  <style>
-    body {
-      font-family: sans-serif;
-      text-align: center;
-      padding: 40px;
-      background-color: #f5f5f5;
-    }
-    .loader {
-      border: 5px solid #f3f3f3;
-      border-top: 5px solid #3498db;
-      border-radius: 50%;
-      width: 50px;
-      height: 50px;
-      animation: spin 1s linear infinite;
-      margin: 20px auto;
-    }
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-  </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta http-equiv="refresh" content="0;url=http://localhost:5001" />
+  <title>Redirecting to Web Build Server</title>
 </head>
 <body>
-  <h1>Spiritual Condition Tracker</h1>
-  <p>Loading the latest version...</p>
-  <div class="loader"></div>
-  <p><small>Version 1.0.2 - Force reload: <%= new Date().toLocaleString() %></small></p>
-  <p><small>If the app doesn't load automatically, <a href="/app?v=<%= new Date().getTime() %>">click here</a>.</small></p>
+  <p>Redirecting to the Web Build Server... If you are not redirected automatically, <a href="http://localhost:5001">click here</a>.</p>
 </body>
 </html>
