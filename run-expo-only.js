@@ -7,30 +7,26 @@ const path = require('path');
 const fs = require('fs');
 
 // Configuration
-const PORT = 3243; 
+const PORT = 5000; // Use port 5000 directly for the preview pane
 const expoAppDir = __dirname; // Use current directory instead of 'expo-app'
-const PUBLIC_PATH = 'app';  // Path configured in nginx
+const PUBLIC_PATH = '';  // No path prefix needed
 
-// Additional environment variables to help Expo work behind nginx
+// Environment variables for direct access in the preview pane
 const env = {
   ...process.env,
   NODE_ENV: 'development',
   CI: '1',                 // Auto-accept alternate port
   BROWSER: 'none',         // Don't open browser
-  EXPO_WEB_PORT: PORT,     // Expo web port
+  EXPO_WEB_PORT: PORT,     // Use port 5000 for Expo web
+  
+  // These settings make Expo web work properly in Replit
   DANGEROUSLY_DISABLE_HOST_CHECK: 'true',  // Allow external connections
+  EXPO_ALLOW_ORIGIN: '*',                  // Allow CORS from any domain
+  WEB_HOST: '0.0.0.0',                      // Listen on all interfaces
   
-  // Allow CORS from any domain (important for Replit)
-  EXPO_ALLOW_ORIGIN: '*',
-  EXPO_PUBLIC_ALLOW_ORIGIN: '*',
-  EXPO_USE_REFLECTION: 'true',
-  
-  // Path configuration for nginx
-  EXPO_WEBPACK_PUBLIC_PATH: PUBLIC_PATH,
+  // Use empty path prefix (direct access)
   PUBLIC_URL: PUBLIC_PATH,
-  ASSET_PATH: PUBLIC_PATH,
-  BASE_PATH: PUBLIC_PATH,
-  WEBPACK_PUBLIC_PATH: PUBLIC_PATH,
+  WEB_PUBLIC_URL: PUBLIC_PATH,
 };
 
 // Fix React Native vector icons if needed
@@ -421,20 +417,20 @@ const bundleTimeout = setTimeout(() => {
   }
 }, 300000); // 5 minutes
 
-// Start Expo with output piping for better debugging
+// Start Expo web directly on port 5000 (simplest approach) 
 const expo = spawn('npx', [
   'expo', 
   'start', 
-  '--web', 
+  '--web',
   '--port', PORT.toString(),
-  '--host', '0.0.0.0',   // Use 0.0.0.0 to allow external connections
-  '--clear',             // Clear the cache
-  '--max-workers', '2'   // Increased workers for faster bundling
+  '--host', '0.0.0.0',   // Use 0.0.0.0 to allow external connections 
+  '--clear',             // Clear the cache for good measure
+  '--no-dev',            // Disable dev tools for better performance
+  '--max-workers', '2'   // Use fewer workers to avoid memory issues
 ], {
   cwd: expoAppDir,
   env: env,
-  // Use pipe instead of inherit for better control
-  stdio: ['ignore', 'pipe', 'pipe']
+  stdio: ['ignore', 'pipe', 'pipe'] // Pipe output for logging
 });
 
 // Handle output

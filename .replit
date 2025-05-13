@@ -14,28 +14,15 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "ExpoServer"
-
-[[workflows.workflow.tasks]]
-task = "workflow.run"
-args = "PreviewServer"
+args = "ExpoApp"
 
 [[workflows.workflow]]
-name = "ExpoServer"
+name = "ExpoApp"
 author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "node run-expo-only.js"
-waitForPort = 3243
-
-[[workflows.workflow]]
-name = "PreviewServer"
-author = "agent"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "node preview-server.js"
+args = "node direct-expo-server.js"
 waitForPort = 5000
 
 [deployment]
