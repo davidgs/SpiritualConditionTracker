@@ -38,18 +38,43 @@ const expo = spawn('npx', [
 
 console.log(`Started Expo on webpack port ${WEBPACK_PORT}`);
 
+// Create a custom route for serving the app bundle at /app
+const APP_BUNDLE_PATH = path.join(__dirname, 'index.html');
+
 // Our proxy server will add the expo-platform header
 const server = http.createServer((req, res) => {
   // Parse the URL to handle routes properly
   const parsedUrl = url.parse(req.url, true);
   let targetPath = parsedUrl.path;
   
-  // Check if this is an /app route
-  if (targetPath.startsWith('/app')) {
-    // Strip the /app prefix and proxy to root route
+  // Special handling for /app route - serve the main app
+  if (targetPath === '/app' || targetPath === '/app/') {
+    console.log('Serving app bundle at /app');
+    try {
+      // Read index.html and serve it
+      const indexContent = fs.readFileSync(APP_BUNDLE_PATH, 'utf8');
+      
+      // Update asset paths to use absolute URLs
+      const modifiedContent = indexContent
+        .replace(/src="\/static\//g, `src="http://localhost:${WEBPACK_PORT}/static/`)
+        .replace(/href="\/static\//g, `href="http://localhost:${WEBPACK_PORT}/static/`);
+        
+      res.writeHead(200, { 'Content-Type': 'text/html' });
+      res.end(modifiedContent);
+      return;
+    } catch (err) {
+      console.error(`Error serving app bundle: ${err.message}`);
+      res.writeHead(500);
+      res.end(`Failed to serve app: ${err.message}`);
+      return;
+    }
+  }
+  
+  // For other paths that start with /app/
+  if (targetPath.startsWith('/app/')) {
+    // Strip the /app prefix for assets and API calls
     targetPath = targetPath.replace(/^\/app/, '');
-    if (!targetPath) targetPath = '/'; // If just /app, change to /
-    console.log(`App route ${req.url} -> ${targetPath}`);
+    console.log(`App asset/API request ${req.url} -> ${targetPath}`);
   }
   
   const options = {
