@@ -28,10 +28,6 @@ args = "ExpoServer"
 task = "workflow.run"
 args = "RunEasBuild"
 
-[[workflows.workflow.tasks]]
-task = "workflow.run"
-args = "SourceBrowser"
-
 [[workflows.workflow]]
 name = "StatusChecker"
 author = "agent"
@@ -66,15 +62,6 @@ author = "agent"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "cd expo-app && npx eas-cli build --platform ios --profile preview --non-interactive"
-
-[[workflows.workflow]]
-name = "SourceBrowser"
-author = "agent"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "node simple-src-browser.js"
-waitForPort = 5001
 
 [deployment]
 run = ["sh", "-c", "node deployment-server.js"]
