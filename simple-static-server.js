@@ -3,7 +3,7 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 
-const PORT = 5003;
+const PORT = 4999;
 const WEB_BUILD_DIR = path.join(__dirname, 'web-build');
 
 // MIME types for different file extensions

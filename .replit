@@ -73,8 +73,8 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "node simple-static-server.js"
-waitForPort = 5003
+args = "node public-web-server.js"
+waitForPort = 5001
 
 [deployment]
 run = ["sh", "-c", "node deployment-server.js"]
