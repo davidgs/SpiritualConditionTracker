@@ -28,6 +28,10 @@ args = "WebBuildServer"
 task = "workflow.run"
 args = "ExpoProxy"
 
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "StaticHTMLServer"
+
 [[workflows.workflow]]
 name = "DebugServer"
 author = "agent"
@@ -62,6 +66,15 @@ author = "agent"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "node minimal-expo-proxy.js"
+waitForPort = 5000
+
+[[workflows.workflow]]
+name = "StaticHTMLServer"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "node serve-static-html.js"
 waitForPort = 5000
 
 [deployment]
@@ -99,6 +112,10 @@ externalPort = 3002
 [[ports]]
 localPort = 5003
 externalPort = 6000
+
+[[ports]]
+localPort = 5173
+externalPort = 6800
 
 [[ports]]
 localPort = 19006

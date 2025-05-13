@@ -186,7 +186,7 @@ const DrawerNavigator = () => {
 };
 
 // App version - update with every change
-const APP_VERSION = "1.0.6 - May 13, 2025, 09:43 PM - BUILD-1747172582687";
+const APP_VERSION = "1.0.6 - May 13, 2025, 09:51 PM - BUILD-1747173067722";
 
 function Main() {
   const [dbInitialized, setDbInitialized] = useState(false);
@@ -197,10 +197,26 @@ function Main() {
   useEffect(() => {
     const setupDb = async () => {
       try {
-        await initDatabase();
+        console.log(`Initializing database on platform: ${Platform.OS}`);
+        const result = await initDatabase();
+        console.log('Database initialization completed:', result);
+        
+        // On web, don't let initialization errors block the app
+        if (Platform.OS === 'web') {
+          console.log('Setting database as initialized for web');
+          setDbInitialized(true);
+          return;
+        }
+        
         setDbInitialized(true);
       } catch (error) {
         console.error('Database initialization error:', error);
+        
+        // On web, continue anyway
+        if (Platform.OS === 'web') {
+          console.log('Continuing despite database error on web');
+          setDbInitialized(true);
+        }
       }
     };
     

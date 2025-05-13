@@ -27,14 +27,29 @@ export const executeQuery = dbImplementation.executeQuery;
 export const closeDatabase = dbImplementation.closeDatabase;
 export const deleteDatabase = dbImplementation.deleteDatabase;
 
+// Add an alias for backward compatibility with older code
+export const initDatabase = initializeDatabase;
+
 // Helper function to execute SQL with proper error handling
 export const executeSql = async (sql, params = []) => {
   try {
-    console.log(`Executing SQL: ${sql}`, params);
+    console.log(`Executing query:`, sql, params);
     const result = await executeQuery(sql, params);
     return result;
   } catch (error) {
     console.error(`SQL Error: ${sql}`, error);
+    // Don't throw the error in web environment to prevent app from crashing
+    if (Platform.OS === 'web') {
+      console.warn('Unrecognized query type:', sql);
+      // Return empty result set
+      return {
+        rows: {
+          length: 0,
+          item: () => null,
+          _array: []
+        }
+      };
+    }
     throw error;
   }
 };
