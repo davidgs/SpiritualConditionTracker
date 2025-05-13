@@ -14,20 +14,7 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "StatusChecker"
-
-[[workflows.workflow.tasks]]
-task = "workflow.run"
 args = "AppServer"
-
-[[workflows.workflow]]
-name = "StatusChecker"
-author = "agent"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "node simple-status-server.js"
-waitForPort = 5000
 
 [[workflows.workflow]]
 name = "AppServer"
@@ -35,8 +22,8 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "node app-server.js"
-waitForPort = 4000
+args = "node minimal-app-server.js"
+waitForPort = 5000
 
 [deployment]
 run = ["sh", "-c", "node deployment-server.js"]
