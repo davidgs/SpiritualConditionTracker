@@ -22,7 +22,7 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "node minimal-app-server.js"
+args = "node basic-app-server.js"
 waitForPort = 5000
 
 [deployment]
