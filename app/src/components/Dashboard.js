@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import logoImg from '../assets/logo-small.png';
-import { formatDateForDisplay, compareDatesForSorting } from '../utils/dateUtils';
+import { formatDateForDisplay } from '../utils/dateUtils';
+import ActivityList from './ActivityList';
 
 export default function Dashboard({ setCurrentView, user, activities, spiritualFitness }) {
   // Simplify dark mode detection for now

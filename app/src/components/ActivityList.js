@@ -1,0 +1,231 @@
+import React from 'react';
+import { formatDateForDisplay, compareDatesForSorting } from '../utils/dateUtils';
+
+export default function ActivityList({ 
+  activities, 
+  darkMode = false, 
+  limit = null, 
+  filter = 'all',
+  showDate = true,
+  maxDaysAgo = null,
+  title = null
+}) {
+  // Get icon for activity type
+  const getActivityIcon = (type) => {
+    switch (type) {
+      case 'prayer': return 'fa-pray';
+      case 'meditation': return 'fa-om';
+      case 'literature': return 'fa-book-open';
+      case 'service': return 'fa-hands-helping';
+      case 'sponsor': return 'fa-phone';
+      case 'sponsee': return 'fa-user-friends';
+      case 'aa_call': return 'fa-phone-alt';
+      case 'call': return 'fa-phone';
+      case 'meeting': return 'fa-users';
+      case 'multiple': return 'fa-phone';
+      default: return 'fa-check-circle';
+    }
+  };
+  
+  // Use the shared date formatting function from utils
+  const formatDate = formatDateForDisplay;
+  
+  // Filter activities
+  const today = new Date();
+  const filteredActivities = activities
+    ? [...activities]
+        // Filter to make sure we don't have duplicate IDs
+        .filter((activity, index, self) => 
+          index === self.findIndex(a => (a.id === activity.id))
+        )
+        // Filter by activity type if a filter is specified
+        .filter(activity => filter === 'all' || activity.type === filter)
+        // Filter by maximum days ago if specified
+        .filter(activity => {
+          if (!maxDaysAgo) return true;
+          
+          const activityDate = new Date(activity.date);
+          const diffTime = Math.abs(today - activityDate);
+          const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+          return diffDays <= maxDaysAgo;
+        })
+        // Sort by date (newest first)
+        .sort(compareDatesForSorting)
+        // Limit the number of activities if specified
+        .slice(0, limit || activities.length)
+    : [];
+    
+  if (filteredActivities.length === 0) {
+    return (
+      <div style={{ 
+        color: darkMode ? '#9ca3af' : '#6b7280', 
+        textAlign: 'center',
+        padding: '1rem',
+        fontStyle: 'italic',
+        fontSize: '0.875rem'
+      }}>
+        No activities to display.
+      </div>
+    );
+  }
+  
+  return (
+    <div>
+      {title && (
+        <div style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          marginBottom: '0.5rem'
+        }}>
+          <h2 style={{
+            fontSize: '1.1rem',
+            fontWeight: 600,
+            color: darkMode ? '#d1d5db' : '#374151'
+          }}>{title}</h2>
+        </div>
+      )}
+      
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+        {filteredActivities.map((activity, index) => (
+          <div key={activity.id || `${activity.date}-${activity.type}-${index}`} style={{
+            display: 'flex',
+            alignItems: 'center',
+            borderBottom: darkMode ? '1px solid #374151' : '1px solid #f3f4f6',
+            paddingBottom: '0.5rem',
+            marginBottom: '0.25rem'
+          }}>
+            <div style={{
+              width: '1.75rem',
+              height: '1.75rem',
+              borderRadius: '50%',
+              backgroundColor: darkMode ? '#1e3a8a' : '#dbeafe',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginRight: '0.5rem',
+              flexShrink: 0
+            }}>
+              <i className={`fas ${getActivityIcon(activity.type)}`} style={{
+                fontSize: '0.8rem',
+                color: darkMode ? '#60a5fa' : '#3b82f6'
+              }}></i>
+            </div>
+            <div style={{ flexGrow: 1, minWidth: 0 }}>
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                fontWeight: 500,
+                fontSize: '0.8rem',
+                color: darkMode ? '#e5e7eb' : '#374151',
+                lineHeight: '1.2',
+                marginBottom: '0.1rem'
+              }}>
+                {/* For call types, show the appropriate label */}
+                {activity.type === 'call' 
+                  ? 'Call' 
+                  : activity.type.charAt(0).toUpperCase() + activity.type.slice(1)}
+                
+                {/* Add role pills for meetings */}
+                {activity.type === 'meeting' && (
+                  <div style={{ display: 'flex', marginLeft: '6px', gap: '4px' }}>
+                    {activity.wasChair && (
+                      <span style={{
+                        fontSize: '0.6rem',
+                        padding: '1px 5px',
+                        borderRadius: '10px',
+                        backgroundColor: darkMode ? '#065f46' : '#d1fae5',
+                        color: darkMode ? '#10b981' : '#047857',
+                        fontWeight: 'bold'
+                      }}>Chair</span>
+                    )}
+                    {activity.wasShare && (
+                      <span style={{
+                        fontSize: '0.6rem',
+                        padding: '1px 5px',
+                        borderRadius: '10px',
+                        backgroundColor: darkMode ? '#1e40af' : '#dbeafe',
+                        color: darkMode ? '#60a5fa' : '#1e40af',
+                        fontWeight: 'bold'
+                      }}>Share</span>
+                    )}
+                    {activity.wasSpeaker && (
+                      <span style={{
+                        fontSize: '0.6rem',
+                        padding: '1px 5px',
+                        borderRadius: '10px',
+                        backgroundColor: darkMode ? '#7e22ce' : '#f3e8ff',
+                        color: darkMode ? '#c084fc' : '#7e22ce',
+                        fontWeight: 'bold'
+                      }}>Speaker</span>
+                    )}
+                  </div>
+                )}
+                
+                {/* Add pills for call types */}
+                {activity.type === 'call' && (
+                  <div style={{ display: 'flex', marginLeft: '6px', gap: '4px' }}>
+                    {activity.isSponsorCall && (
+                      <span style={{
+                        fontSize: '0.6rem',
+                        padding: '1px 5px',
+                        borderRadius: '10px',
+                        backgroundColor: darkMode ? '#065f46' : '#d1fae5',
+                        color: darkMode ? '#10b981' : '#047857',
+                        fontWeight: 'bold'
+                      }}>Sponsor</span>
+                    )}
+                    {activity.isSponseeCall && (
+                      <span style={{
+                        fontSize: '0.6rem',
+                        padding: '1px 5px',
+                        borderRadius: '10px',
+                        backgroundColor: darkMode ? '#1e40af' : '#dbeafe',
+                        color: darkMode ? '#60a5fa' : '#1e40af',
+                        fontWeight: 'bold'
+                      }}>Sponsee</span>
+                    )}
+                    {activity.isAAMemberCall && (
+                      <span style={{
+                        fontSize: '0.6rem',
+                        padding: '1px 5px',
+                        borderRadius: '10px',
+                        backgroundColor: darkMode ? '#7e22ce' : '#f3e8ff',
+                        color: darkMode ? '#c084fc' : '#7e22ce',
+                        fontWeight: 'bold'
+                      }}>AA Member</span>
+                    )}
+                  </div>
+                )}
+              </div>
+              <div style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                fontSize: '0.75rem',
+                color: darkMode ? '#9ca3af' : '#6b7280',
+                lineHeight: '1.2'
+              }}>
+                <div style={{
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  marginRight: '0.5rem'
+                }}>
+                  {activity.duration ? `${activity.duration} min` : 'Done'} 
+                  {activity.meetingName ? ` - ${activity.meetingName}` : ''}
+                  {activity.literatureTitle ? ` - ${activity.literatureTitle}` : ''}
+                  {activity.notes && !activity.meetingName && !activity.literatureTitle ? ` - ${activity.notes}` : ''}
+                </div>
+                {showDate && (
+                  <div style={{ flexShrink: 0, fontSize: '0.7rem' }}>
+                    {formatDate(activity.date)}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
