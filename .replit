@@ -22,7 +22,7 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "node proxy-server.js"
+args = "node simple-app-server.js"
 waitForPort = 5000
 
 [deployment]
