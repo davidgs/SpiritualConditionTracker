@@ -1,103 +1,112 @@
-// History component for viewing activity history
-import React from 'react';
+import React, { useState } from 'react';
 
 export default function History({ setCurrentView, activities }) {
-  // Sort activities by date, newest first
-  const sortedActivities = [...(activities || [])].sort((a, b) => 
-    new Date(b.date) - new Date(a.date)
-  );
+  const [filter, setFilter] = useState('all');
   
-  // Helper function for activity icon classes
-  const getActivityIconClass = (type) => {
-    const classes = {
-      meeting: 'w-10 h-10 rounded-full flex items-center justify-center bg-blue-100 text-blue-600',
-      meditation: 'w-10 h-10 rounded-full flex items-center justify-center bg-green-100 text-green-600',
-      reading: 'w-10 h-10 rounded-full flex items-center justify-center bg-purple-100 text-purple-600',
-      prayer: 'w-10 h-10 rounded-full flex items-center justify-center bg-indigo-100 text-indigo-600',
-      sponsor: 'w-10 h-10 rounded-full flex items-center justify-center bg-yellow-100 text-yellow-600',
-      service: 'w-10 h-10 rounded-full flex items-center justify-center bg-red-100 text-red-600'
-    };
-    return classes[type] || 'w-10 h-10 rounded-full flex items-center justify-center bg-gray-100 text-gray-600';
+  // Format date for display
+  const formatDate = (dateString) => {
+    const options = { month: 'short', day: 'numeric', year: 'numeric' };
+    return new Date(dateString).toLocaleDateString(undefined, options);
   };
   
-  // Helper function for activity icons
+  // Get icon for activity type
   const getActivityIcon = (type) => {
-    const icons = {
-      meeting: 'fa-solid fa-users',
-      meditation: 'fa-solid fa-brain',
-      reading: 'fa-solid fa-book',
-      prayer: 'fa-solid fa-praying-hands',
-      sponsor: 'fa-solid fa-handshake',
-      service: 'fa-solid fa-hands-helping'
-    };
-    return icons[type] || 'fa-solid fa-star';
+    switch (type) {
+      case 'prayer': return 'fa-pray';
+      case 'meditation': return 'fa-om';
+      case 'literature': return 'fa-book-open';
+      case 'service': return 'fa-hands-helping';
+      case 'sponsee': return 'fa-user-friends';
+      case 'meeting': return 'fa-users';
+      default: return 'fa-check-circle';
+    }
   };
+  
+  // Filter activities based on selected filter
+  const filteredActivities = activities
+    ? activities
+        .filter(activity => filter === 'all' || activity.type === filter)
+        .sort((a, b) => new Date(b.date) - new Date(a.date))
+    : [];
   
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-semibold text-gray-800">Activity History</h2>
+    <div className="p-4 pb-20">
+      <div className="flex items-center mb-6">
         <button 
+          className="mr-2 text-blue-500"
           onClick={() => setCurrentView('dashboard')}
-          className="text-blue-500 hover:text-blue-700"
         >
-          <i className="fa-solid fa-arrow-left mr-1"></i> Back
+          <i className="fas fa-arrow-left"></i>
         </button>
+        <h1 className="text-2xl font-bold">Activity History</h1>
       </div>
       
-      <div className="flex justify-between items-center">
-        <h3 className="text-lg font-medium">All Activities</h3>
-        <button 
-          onClick={() => setCurrentView('activity')}
-          className="btn-primary"
+      {/* Activity Type Filter */}
+      <div className="mb-4">
+        <label className="block text-gray-700 mb-2">Filter by Type</label>
+        <select
+          className="w-full p-2 border border-gray-300 rounded"
+          value={filter}
+          onChange={(e) => setFilter(e.target.value)}
         >
-          <i className="fa-solid fa-plus mr-2"></i>
-          New Activity
-        </button>
+          <option value="all">All Activities</option>
+          <option value="prayer">Prayer</option>
+          <option value="meditation">Meditation</option>
+          <option value="literature">Reading Literature</option>
+          <option value="service">Service Work</option>
+          <option value="sponsee">Sponsee Call/Meeting</option>
+          <option value="meeting">AA Meeting</option>
+        </select>
       </div>
       
-      {sortedActivities.length > 0 ? (
-        <div className="space-y-4">
-          {sortedActivities.map(activity => (
-            <div key={activity.id} className="card hover:shadow-md transition">
-              <div className="flex items-center">
-                <div className={getActivityIconClass(activity.type)}>
-                  <i className={getActivityIcon(activity.type)}></i>
-                </div>
-                <div className="ml-3 flex-1">
-                  <div className="font-medium text-gray-800 flex justify-between">
-                    <span>
-                      {activity.type.charAt(0).toUpperCase() + activity.type.slice(1)}
-                      {activity.name ? `: ${activity.name}` : ''}
-                    </span>
-                    <span className="text-sm text-gray-500">
-                      {new Date(activity.date).toLocaleDateString()}
-                    </span>
+      {/* Activities List */}
+      <div className="bg-white rounded-lg shadow">
+        {filteredActivities.length > 0 ? (
+          <div className="divide-y divide-gray-100">
+            {filteredActivities.map(activity => (
+              <div key={activity.id} className="p-4">
+                <div className="flex items-center">
+                  <div className="bg-blue-100 h-10 w-10 rounded-full flex items-center justify-center mr-3">
+                    <i className={`fas ${getActivityIcon(activity.type)} text-blue-500`}></i>
                   </div>
-                  <div className="text-sm text-gray-600">
-                    Duration: {activity.duration} minutes
+                  <div className="flex-grow">
+                    <div className="flex justify-between">
+                      <div className="font-medium">
+                        {activity.type.charAt(0).toUpperCase() + activity.type.slice(1)}
+                      </div>
+                      <div className="text-sm text-gray-500">
+                        {formatDate(activity.date)}
+                      </div>
+                    </div>
+                    <div className="text-sm text-gray-500 mt-1">
+                      {activity.duration ? `${activity.duration} minutes` : 'Completed'}
+                    </div>
+                    {activity.notes && (
+                      <div className="text-sm text-gray-600 mt-2 bg-gray-50 p-2 rounded">
+                        {activity.notes}
+                      </div>
+                    )}
                   </div>
-                  {activity.notes ? (
-                    <p className="mt-2 text-sm text-gray-600">{activity.notes}</p>
-                  ) : null}
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
-      ) : (
-        <div className="card text-center py-8">
-          <i className="fa-solid fa-folder-open text-gray-300 text-5xl mb-3"></i>
-          <h3 className="text-lg font-medium text-gray-700 mb-2">No Activities Yet</h3>
-          <p className="text-gray-500 mb-4">Start tracking your recovery journey by logging your first activity.</p>
-          <button 
-            onClick={() => setCurrentView('activity')}
-            className="btn-primary"
-          >
-            Log First Activity
-          </button>
-        </div>
-      )}
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-8 text-gray-500">
+            <i className="fas fa-clipboard-list text-3xl mb-2"></i>
+            <p>No activities found</p>
+            {filter !== 'all' && (
+              <p className="text-sm mt-1">Try changing the filter</p>
+            )}
+            <button 
+              className="mt-4 bg-blue-500 text-white px-4 py-2 rounded"
+              onClick={() => setCurrentView('activity')}
+            >
+              Log New Activity
+            </button>
+          </div>
+        )}
+      </div>
     </div>
   );
-};
+}

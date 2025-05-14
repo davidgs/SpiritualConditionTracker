@@ -1,104 +1,121 @@
-// ActivityLog component for Spiritual Condition Tracker
-import React from 'react';
+import React, { useState } from 'react';
 
 export default function ActivityLog({ setCurrentView, onSave }) {
+  const [activityType, setActivityType] = useState('prayer');
+  const [duration, setDuration] = useState('');
+  const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
+  const [notes, setNotes] = useState('');
+  const [errors, setErrors] = useState({});
+
+  // Handle form submission
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    
+    // Validate form
+    const newErrors = {};
+    if (!activityType) newErrors.activityType = 'Activity type is required';
+    if (!duration) newErrors.duration = 'Duration is required';
+    if (!date) newErrors.date = 'Date is required';
+    
+    // If there are errors, show them and don't submit
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+    
+    // Create new activity object
+    const newActivity = {
+      type: activityType,
+      duration: parseInt(duration, 10),
+      date: new Date(date).toISOString(),
+      notes: notes.trim(),
+    };
+    
+    // Save the activity
+    onSave(newActivity);
+  };
+
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-semibold text-gray-800">Log Activity</h2>
+    <div className="p-4 pb-20">
+      <div className="flex items-center mb-6">
         <button 
+          className="mr-2 text-blue-500"
           onClick={() => setCurrentView('dashboard')}
-          className="text-blue-500 hover:text-blue-700"
         >
-          <i className="fa-solid fa-arrow-left mr-1"></i> Back
+          <i className="fas fa-arrow-left"></i>
         </button>
+        <h1 className="text-2xl font-bold">Log New Activity</h1>
       </div>
       
-      <div className="card">
-        <h3 className="text-lg font-medium mb-4">New Activity</h3>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="space-y-2">
+          <label className="block text-gray-700 font-medium">Activity Type</label>
+          <select
+            className="w-full p-2 border border-gray-300 rounded"
+            value={activityType}
+            onChange={(e) => setActivityType(e.target.value)}
+          >
+            <option value="prayer">Prayer</option>
+            <option value="meditation">Meditation</option>
+            <option value="literature">Reading Literature</option>
+            <option value="service">Service Work</option>
+            <option value="sponsee">Sponsee Call/Meeting</option>
+            <option value="meeting">AA Meeting</option>
+          </select>
+          {errors.activityType && (
+            <p className="text-red-500 text-sm">{errors.activityType}</p>
+          )}
+        </div>
         
-        <form 
-          className="space-y-4"
-          onSubmit={(e) => {
-            e.preventDefault();
-            
-            const formData = new FormData(e.target);
-            const newActivity = {
-              type: formData.get('activity-type'),
-              name: formData.get('activity-name'),
-              duration: parseInt(formData.get('activity-duration'), 10),
-              date: formData.get('activity-date'),
-              notes: formData.get('activity-notes'),
-              id: Date.now().toString() // Simple placeholder ID
-            };
-            
-            onSave(newActivity);
-          }}
-        >
-          <div>
-            <label className="block text-gray-700 text-sm font-medium mb-2">Activity Type</label>
-            <select 
-              name="activity-type"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="meeting">Meeting</option>
-              <option value="meditation">Meditation</option>
-              <option value="reading">Reading</option>
-              <option value="prayer">Prayer</option>
-              <option value="sponsor">Sponsor Interaction</option>
-              <option value="service">Service Work</option>
-            </select>
-          </div>
-          
-          <div>
-            <label className="block text-gray-700 text-sm font-medium mb-2">Name (Optional)</label>
-            <input 
-              type="text" 
-              name="activity-name"
-              placeholder="Meeting name, book title, etc." 
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-          
-          <div>
-            <label className="block text-gray-700 text-sm font-medium mb-2">Duration (minutes)</label>
-            <input 
-              type="number" 
-              name="activity-duration"
-              min="1" 
-              defaultValue="60" 
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-          
-          <div>
-            <label className="block text-gray-700 text-sm font-medium mb-2">Date</label>
-            <input 
-              type="date" 
-              name="activity-date"
-              defaultValue={new Date().toISOString().split('T')[0]} 
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-          
-          <div>
-            <label className="block text-gray-700 text-sm font-medium mb-2">Notes (Optional)</label>
-            <textarea 
-              name="activity-notes"
-              rows="3" 
-              placeholder="Any additional notes..." 
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            ></textarea>
-          </div>
-          
-          <button 
-            type="submit" 
-            className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition"
+        <div className="space-y-2">
+          <label className="block text-gray-700 font-medium">Duration (minutes)</label>
+          <input
+            type="number"
+            className="w-full p-2 border border-gray-300 rounded"
+            placeholder="Enter duration in minutes"
+            value={duration}
+            onChange={(e) => setDuration(e.target.value)}
+            min="1"
+          />
+          {errors.duration && (
+            <p className="text-red-500 text-sm">{errors.duration}</p>
+          )}
+        </div>
+        
+        <div className="space-y-2">
+          <label className="block text-gray-700 font-medium">Date</label>
+          <input
+            type="date"
+            className="w-full p-2 border border-gray-300 rounded"
+            value={date}
+            onChange={(e) => setDate(e.target.value)}
+            max={new Date().toISOString().split('T')[0]}
+          />
+          {errors.date && (
+            <p className="text-red-500 text-sm">{errors.date}</p>
+          )}
+        </div>
+        
+        <div className="space-y-2">
+          <label className="block text-gray-700 font-medium">Notes (optional)</label>
+          <textarea
+            className="w-full p-2 border border-gray-300 rounded"
+            placeholder="Add any notes about this activity..."
+            value={notes}
+            onChange={(e) => setNotes(e.target.value)}
+            rows="3"
+          ></textarea>
+        </div>
+        
+        <div className="pt-4">
+          <button
+            type="submit"
+            className="w-full bg-blue-500 text-white p-3 rounded font-medium"
           >
             Save Activity
           </button>
-        </form>
-      </div>
+        </div>
+      </form>
     </div>
   );
-};
+}
