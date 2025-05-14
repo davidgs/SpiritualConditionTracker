@@ -55,6 +55,14 @@ export default function Profile({ setCurrentView, user, onUpdate }) {
   const sobrietyYears = sobrietyDate 
     ? window.db?.calculateSobrietyYears(sobrietyDate, 2) || 0
     : 0;
+    
+  // Determine whether to display years or days prominently
+  const showYearsProminent = sobrietyYears >= 1;
+  
+  // Format number with commas
+  const formatNumber = (num) => {
+    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  };
 
   return (
     <div className="p-4 pb-20 max-w-md mx-auto">
@@ -66,18 +74,72 @@ export default function Profile({ setCurrentView, user, onUpdate }) {
       </div>
       
       {sobrietyDate && (
-        <div className="bg-blue-50 dark:bg-blue-900 p-4 rounded-lg mb-6 border border-blue-100 dark:border-blue-800">
-          <h2 className="text-lg font-semibold text-blue-700 dark:text-blue-300 mb-2">Sobriety Milestone</h2>
-          <div className="flex justify-around">
-            <div className="text-center">
-              <div className="text-3xl font-bold text-blue-600 dark:text-blue-400">{sobrietyDays}</div>
-              <div className="text-sm text-blue-700 dark:text-blue-300">Days</div>
+        <div style={{
+          backgroundColor: 'var(--color-bg-primary, #ffffff)',
+          borderRadius: '0.5rem',
+          padding: '1rem',
+          marginBottom: '1.5rem',
+          border: '1px solid var(--color-border, #e5e7eb)'
+        }} className="dark:bg-gray-800 dark:border-gray-700">
+          <h3 style={{
+            fontSize: '1.25rem',
+            fontWeight: 600,
+            color: 'var(--color-text-heading, #374151)',
+            marginBottom: '1rem',
+            textAlign: 'left'
+          }} className="dark:text-gray-300">Sobriety Milestone</h3>
+          
+          {showYearsProminent ? (
+            <div style={{ textAlign: 'left' }}>
+              <div style={{ display: 'flex', alignItems: 'baseline', marginBottom: '10px' }}>
+                <span style={{ 
+                  fontSize: '2rem', 
+                  fontWeight: 'bold', 
+                  color: '#3b82f6',
+                  marginRight: '8px'
+                }} className="dark:text-blue-400">
+                  {sobrietyYears.toFixed(2)}
+                </span>
+                <span style={{ 
+                  fontSize: '1.25rem', 
+                  color: '#6b7280'
+                }} className="dark:text-gray-400">
+                  years
+                </span>
+              </div>
+              <div style={{ 
+                fontSize: '1.25rem', 
+                color: '#3b82f6'
+              }} className="dark:text-blue-400">
+                {formatNumber(sobrietyDays)} days
+              </div>
             </div>
-            <div className="text-center">
-              <div className="text-3xl font-bold text-blue-600 dark:text-blue-400">{sobrietyYears}</div>
-              <div className="text-sm text-blue-700 dark:text-blue-300">Years</div>
+          ) : (
+            <div style={{ textAlign: 'left' }}>
+              <div style={{ display: 'flex', alignItems: 'baseline', marginBottom: '10px' }}>
+                <span style={{ 
+                  fontSize: '2rem', 
+                  fontWeight: 'bold', 
+                  color: '#3b82f6',
+                  marginRight: '8px'
+                }} className="dark:text-blue-400">
+                  {formatNumber(sobrietyDays)}
+                </span>
+                <span style={{ 
+                  fontSize: '1.25rem', 
+                  color: '#6b7280'
+                }} className="dark:text-gray-400">
+                  days
+                </span>
+              </div>
+              <div style={{ 
+                fontSize: '1.25rem', 
+                color: '#3b82f6'
+              }} className="dark:text-blue-400">
+                {sobrietyYears.toFixed(2)} years
+              </div>
             </div>
-          </div>
+          )}
         </div>
       )}
       

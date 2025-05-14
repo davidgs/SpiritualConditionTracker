@@ -29076,6 +29076,14 @@ function Profile(_ref) {
   // Calculate sobriety information if user has a sobriety date
   var sobrietyDays = sobrietyDate ? ((_window$db = window.db) === null || _window$db === void 0 ? void 0 : _window$db.calculateSobrietyDays(sobrietyDate)) || 0 : 0;
   var sobrietyYears = sobrietyDate ? ((_window$db2 = window.db) === null || _window$db2 === void 0 ? void 0 : _window$db2.calculateSobrietyYears(sobrietyDate, 2)) || 0 : 0;
+
+  // Determine whether to display years or days prominently
+  var showYearsProminent = sobrietyYears >= 1;
+
+  // Format number with commas
+  var formatNumber = function formatNumber(num) {
+    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  };
   return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     className: "p-4 pb-20 max-w-md mx-auto"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
@@ -29085,24 +29093,84 @@ function Profile(_ref) {
   }, "Recovery Tracker"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("p", {
     className: "text-sm text-gray-500 dark:text-gray-400"
   }, "Your personal profile"))), sobrietyDate && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
-    className: "bg-blue-50 dark:bg-blue-900 p-4 rounded-lg mb-6 border border-blue-100 dark:border-blue-800"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("h2", {
-    className: "text-lg font-semibold text-blue-700 dark:text-blue-300 mb-2"
-  }, "Sobriety Milestone"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
-    className: "flex justify-around"
+    style: {
+      backgroundColor: 'var(--color-bg-primary, #ffffff)',
+      borderRadius: '0.5rem',
+      padding: '1rem',
+      marginBottom: '1.5rem',
+      border: '1px solid var(--color-border, #e5e7eb)'
+    },
+    className: "dark:bg-gray-800 dark:border-gray-700"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("h3", {
+    style: {
+      fontSize: '1.25rem',
+      fontWeight: 600,
+      color: 'var(--color-text-heading, #374151)',
+      marginBottom: '1rem',
+      textAlign: 'left'
+    },
+    className: "dark:text-gray-300"
+  }, "Sobriety Milestone"), showYearsProminent ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+    style: {
+      textAlign: 'left'
+    }
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
-    className: "text-center"
+    style: {
+      display: 'flex',
+      alignItems: 'baseline',
+      marginBottom: '10px'
+    }
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("span", {
+    style: {
+      fontSize: '2rem',
+      fontWeight: 'bold',
+      color: '#3b82f6',
+      marginRight: '8px'
+    },
+    className: "dark:text-blue-400"
+  }, sobrietyYears.toFixed(2)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("span", {
+    style: {
+      fontSize: '1.25rem',
+      color: '#6b7280'
+    },
+    className: "dark:text-gray-400"
+  }, "years")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+    style: {
+      fontSize: '1.25rem',
+      color: '#3b82f6'
+    },
+    className: "dark:text-blue-400"
+  }, formatNumber(sobrietyDays), " days")) : /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+    style: {
+      textAlign: 'left'
+    }
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
-    className: "text-3xl font-bold text-blue-600 dark:text-blue-400"
-  }, sobrietyDays), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
-    className: "text-sm text-blue-700 dark:text-blue-300"
-  }, "Days")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
-    className: "text-center"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
-    className: "text-3xl font-bold text-blue-600 dark:text-blue-400"
-  }, sobrietyYears), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
-    className: "text-sm text-blue-700 dark:text-blue-300"
-  }, "Years")))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+    style: {
+      display: 'flex',
+      alignItems: 'baseline',
+      marginBottom: '10px'
+    }
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("span", {
+    style: {
+      fontSize: '2rem',
+      fontWeight: 'bold',
+      color: '#3b82f6',
+      marginRight: '8px'
+    },
+    className: "dark:text-blue-400"
+  }, formatNumber(sobrietyDays)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("span", {
+    style: {
+      fontSize: '1.25rem',
+      color: '#6b7280'
+    },
+    className: "dark:text-gray-400"
+  }, "days")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+    style: {
+      fontSize: '1.25rem',
+      color: '#3b82f6'
+    },
+    className: "dark:text-blue-400"
+  }, sobrietyYears.toFixed(2), " years"))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     className: "mb-6"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("h2", {
     className: "text-lg font-medium text-gray-700 dark:text-gray-300 mb-3"
