@@ -28108,7 +28108,10 @@ function ActivityLog(_ref) {
     _useState6 = _slicedToArray(_useState5, 2),
     duration = _useState6[0],
     setDuration = _useState6[1];
-  var _useState7 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(new Date().toISOString().split('T')[0]),
+  // Initialize with current date in YYYY-MM-DD format
+  var today = new Date();
+  var formattedDate = "".concat(today.getFullYear(), "-").concat(String(today.getMonth() + 1).padStart(2, '0'), "-").concat(String(today.getDate()).padStart(2, '0'));
+  var _useState7 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(formattedDate),
     _useState8 = _slicedToArray(_useState7, 2),
     date = _useState8[0],
     setDate = _useState8[1];
@@ -28181,6 +28184,7 @@ function ActivityLog(_ref) {
   // Handle form submission
   var handleSubmit = function handleSubmit(e) {
     e.preventDefault();
+    console.log("Form submission - date value:", date);
 
     // Validate form
     var newErrors = {};
@@ -28202,11 +28206,35 @@ function ActivityLog(_ref) {
       return;
     }
 
+    // Ensure the date is properly formatted by manually parsing it
+    var activityDate;
+    try {
+      // Create a Date object using the date string
+      // For date inputs, the value is in YYYY-MM-DD format
+      activityDate = new Date(date);
+
+      // Check if it's a valid date
+      if (isNaN(activityDate.getTime())) {
+        console.error("Invalid date:", date);
+        setErrors({
+          date: 'Invalid date format'
+        });
+        return;
+      }
+      console.log("Parsed date:", activityDate);
+    } catch (error) {
+      console.error("Error parsing date:", error);
+      setErrors({
+        date: 'Error parsing date'
+      });
+      return;
+    }
+
     // Create new activity object with core fields
     var newActivity = {
       type: activityType,
       duration: parseInt(duration, 10),
-      date: new Date(date).toISOString(),
+      date: activityDate.toISOString(),
       notes: notes.trim()
     };
 
@@ -28473,9 +28501,10 @@ function ActivityLog(_ref) {
     style: inputStyle,
     value: date,
     onChange: function onChange(e) {
-      return setDate(e.target.value);
+      console.log("Date changed:", e.target.value);
+      setDate(e.target.value);
     },
-    max: new Date().toISOString().split('T')[0]
+    max: formattedDate
   }), errors.date && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("p", {
     style: errorStyle
   }, errors.date)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {

@@ -23,7 +23,10 @@ export default function ActivityLog({ setCurrentView, onSave }) {
 
   const [activityType, setActivityType] = useState('prayer');
   const [duration, setDuration] = useState('15');
-  const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
+  // Initialize with current date in YYYY-MM-DD format
+  const today = new Date();
+  const formattedDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+  const [date, setDate] = useState(formattedDate);
   const [notes, setNotes] = useState('');
   const [errors, setErrors] = useState({});
   const [showSuccess, setShowSuccess] = useState(false);
@@ -71,6 +74,8 @@ export default function ActivityLog({ setCurrentView, onSave }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     
+    console.log("Form submission - date value:", date);
+    
     // Validate form
     const newErrors = {};
     if (!activityType) newErrors.activityType = 'Activity type is required';
@@ -92,11 +97,32 @@ export default function ActivityLog({ setCurrentView, onSave }) {
       return;
     }
     
+    // Ensure the date is properly formatted by manually parsing it
+    let activityDate;
+    try {
+      // Create a Date object using the date string
+      // For date inputs, the value is in YYYY-MM-DD format
+      activityDate = new Date(date);
+      
+      // Check if it's a valid date
+      if (isNaN(activityDate.getTime())) {
+        console.error("Invalid date:", date);
+        setErrors({ date: 'Invalid date format' });
+        return;
+      }
+      
+      console.log("Parsed date:", activityDate);
+    } catch (error) {
+      console.error("Error parsing date:", error);
+      setErrors({ date: 'Error parsing date' });
+      return;
+    }
+    
     // Create new activity object with core fields
     const newActivity = {
       type: activityType,
       duration: parseInt(duration, 10),
-      date: new Date(date).toISOString(),
+      date: activityDate.toISOString(),
       notes: notes.trim(),
     };
     
@@ -369,8 +395,11 @@ export default function ActivityLog({ setCurrentView, onSave }) {
             type="date"
             style={inputStyle}
             value={date}
-            onChange={(e) => setDate(e.target.value)}
-            max={new Date().toISOString().split('T')[0]}
+            onChange={(e) => {
+              console.log("Date changed:", e.target.value);
+              setDate(e.target.value);
+            }}
+            max={formattedDate}
           />
           {errors.date && (
             <p style={errorStyle}>{errors.date}</p>
