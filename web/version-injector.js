@@ -119,7 +119,7 @@ document.addEventListener('DOMContentLoaded', function() {
       const iconStyle = document.createElement('style');
       iconStyle.innerHTML = 
         'button[aria-label="Show navigation menu"] svg:empty { ' +
-        '  background-image: url(\'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"%3E%3Cpath d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" fill="currentColor"/%3E%3C/svg%3E\'); ' +
+        '  background-image: url(\'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBkPSJNMyAxOGgxOHYtMkgzdjJ6bTAtNWgxOHYtMkgzdjJ6bTAtN3YyaDE4VjZIM3oiIGZpbGw9ImN1cnJlbnRDb2xvciIvPjwvc3ZnPg==\'); ' +
         '  background-repeat: no-repeat; ' +
         '  background-position: center; ' +
         '  width: 24px !important; ' +
