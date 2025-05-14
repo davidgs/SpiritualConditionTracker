@@ -1,13 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import Dashboard from './components/Dashboard';
-import ActivityLog from './components/ActivityLog';
-import NavBar from './components/NavBar';
-import NearbyMembers from './components/NearbyMembers';
-import Profile from './components/Profile';
-import History from './components/History';
-
 // Main App Component
 function App() {
+  const { useState, useEffect } = React;
   const [currentView, setCurrentView] = useState('dashboard');
   const [user, setUser] = useState(null);
   const [activities, setActivities] = useState([]);

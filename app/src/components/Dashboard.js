@@ -1,6 +1,4 @@
-import React from 'react';
-
-export default function Dashboard({ setCurrentView, user, activities, spiritualFitness }) {
+function Dashboard({ setCurrentView, user, activities, spiritualFitness }) {
   // Get recent activities (last 5)
   const recentActivities = activities
     ? [...activities].sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 5)

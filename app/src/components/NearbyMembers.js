@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react';
-
-export default function NearbyMembers({ setCurrentView, user, onUpdatePrivacy }) {
+function NearbyMembers({ setCurrentView, user, onUpdatePrivacy }) {
+  const { useState, useEffect } = React;
   const [isDiscoverable, setIsDiscoverable] = useState(true);
   const [radius, setRadius] = useState(1);
   const [searchingNearby, setSearchingNearby] = useState(false);

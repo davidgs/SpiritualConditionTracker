@@ -1,6 +1,5 @@
-import React, { useState } from 'react';
-
-export default function ActivityLog({ setCurrentView, onSave }) {
+function ActivityLog({ setCurrentView, onSave }) {
+  const { useState } = React;
   const [activityType, setActivityType] = useState('prayer');
   const [duration, setDuration] = useState('');
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);

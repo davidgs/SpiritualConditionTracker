@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react';
-
-export default function Profile({ setCurrentView, user, onUpdate }) {
+function Profile({ setCurrentView, user, onUpdate }) {
+  const { useState, useEffect } = React;
   const [name, setName] = useState('');
   const [sobrietyDate, setSobrietyDate] = useState('');
   const [homeGroup, setHomeGroup] = useState('');

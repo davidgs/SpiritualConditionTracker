@@ -1,6 +1,5 @@
-import React, { useState } from 'react';
-
-export default function History({ setCurrentView, activities }) {
+function History({ setCurrentView, activities }) {
+  const { useState } = React;
   const [filter, setFilter] = useState('all');
   
   // Format date for display
