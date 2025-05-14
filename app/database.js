@@ -1,10 +1,7 @@
 /**
- * Database implementation for Spiritual Condition Tracker Web Version
- * Uses the existing utilities from the React Native app
+ * Web-specific database implementation for Spiritual Condition Tracker
+ * Uses localStorage to store data in the browser
  */
-
-// Create a namespace for our database functionality
-window.Database = {};
 
 // Storage keys for each "table"
 const STORAGE_KEYS = {
@@ -15,6 +12,9 @@ const STORAGE_KEYS = {
   meetingReminders: 'aa_tracker_meeting_reminders',
   nearbyMembers: 'aa_tracker_nearby_members'
 };
+
+// Create a global database namespace
+window.Database = window.Database || {};
 
 /**
  * Initialize all data stores
@@ -34,101 +34,6 @@ Database.initDatabase = async () => {
   } catch (error) {
     console.error('Error initializing web database:', error);
     throw error;
-  }
-};
-
-/**
- * Initialize SQLite WASM database
- * @returns {Promise<Object>} SQLite database instance
- */
-Database.initSqliteWasm = async () => {
-  try {
-    console.log('Initializing SQLite WASM database...');
-    
-    // Check if SQL.js is loaded
-    if (!window.initSqlJs) {
-      console.error('SQL.js not loaded');
-      return null;
-    }
-    
-    // Initialize SQLite with WASM
-    const SQL = await window.initSqlJs({
-      locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/${file}`
-    });
-    
-    // Create a database
-    const db = new SQL.Database();
-    
-    // Create tables
-    db.run(`
-      CREATE TABLE IF NOT EXISTS users (
-        id TEXT PRIMARY KEY,
-        name TEXT,
-        sobrietyDate TEXT,
-        homeGroup TEXT,
-        phone TEXT,
-        email TEXT,
-        sponsorId TEXT,
-        privacySettings TEXT,
-        createdAt TEXT,
-        updatedAt TEXT
-      );
-    `);
-    
-    db.run(`
-      CREATE TABLE IF NOT EXISTS activities (
-        id TEXT PRIMARY KEY,
-        userId TEXT,
-        type TEXT,
-        date TEXT,
-        duration INTEGER,
-        notes TEXT,
-        createdAt TEXT,
-        FOREIGN KEY(userId) REFERENCES users(id)
-      );
-    `);
-    
-    db.run(`
-      CREATE TABLE IF NOT EXISTS spiritual_fitness (
-        id TEXT PRIMARY KEY,
-        userId TEXT,
-        score REAL,
-        prayerScore REAL,
-        meditationScore REAL,
-        readingScore REAL,
-        meetingScore REAL,
-        serviceScore REAL,
-        calculatedAt TEXT,
-        FOREIGN KEY(userId) REFERENCES users(id)
-      );
-    `);
-    
-    db.run(`
-      CREATE TABLE IF NOT EXISTS meetings (
-        id TEXT PRIMARY KEY,
-        name TEXT,
-        day TEXT,
-        time TEXT,
-        location TEXT,
-        address TEXT,
-        city TEXT,
-        state TEXT,
-        zip TEXT,
-        type TEXT,
-        notes TEXT,
-        shared INTEGER,
-        createdBy TEXT,
-        createdAt TEXT,
-        updatedAt TEXT,
-        FOREIGN KEY(createdBy) REFERENCES users(id)
-      );
-    `);
-    
-    console.log('SQLite WASM database initialized successfully');
-    return db;
-  } catch (error) {
-    console.error('Error initializing SQLite WASM database:', error);
-    return null;
   }
 };
 
@@ -158,8 +63,8 @@ Database.getAll = (collection) => {
  * @param {string} id - The item ID
  * @returns {Object|null} The found item or null
  */
-Database. getById = (collection, id) => {
-  const items = getAll(collection);
+Database.getById = (collection, id) => {
+  const items = Database.getAll(collection);
   return items.find(item => item.id === id) || null;
 };
 
@@ -169,7 +74,7 @@ Database. getById = (collection, id) => {
  * @param {Object} item - The item to add
  * @returns {Object} The added item
  */
-Database. insert = (collection, item) => {
+Database.insert = (collection, item) => {
   const key = STORAGE_KEYS[collection];
   if (!key) {
     console.error(`Unknown collection: ${collection}`);
@@ -177,7 +82,7 @@ Database. insert = (collection, item) => {
   }
   
   try {
-    const items = getAll(collection);
+    const items = Database.getAll(collection);
     items.push(item);
     localStorage.setItem(key, JSON.stringify(items));
     return item;
@@ -194,7 +99,7 @@ Database. insert = (collection, item) => {
  * @param {Object} updates - The updates to apply
  * @returns {Object|null} The updated item or null if not found
  */
-Database. update = (collection, id, updates) => {
+Database.update = (collection, id, updates) => {
   const key = STORAGE_KEYS[collection];
   if (!key) {
     console.error(`Unknown collection: ${collection}`);
@@ -202,7 +107,7 @@ Database. update = (collection, id, updates) => {
   }
   
   try {
-    const items = getAll(collection);
+    const items = Database.getAll(collection);
     const index = items.findIndex(item => item.id === id);
     
     if (index === -1) {
@@ -226,7 +131,7 @@ Database. update = (collection, id, updates) => {
  * @param {string} id - The item ID
  * @returns {boolean} Whether the item was removed
  */
-Database. deleteById = (collection, id) => {
+Database.deleteById = (collection, id) => {
   const key = STORAGE_KEYS[collection];
   if (!key) {
     console.error(`Unknown collection: ${collection}`);
@@ -234,7 +139,7 @@ Database. deleteById = (collection, id) => {
   }
   
   try {
-    const items = getAll(collection);
+    const items = Database.getAll(collection);
     const filteredItems = items.filter(item => item.id !== id);
     
     if (filteredItems.length === items.length) {
@@ -255,8 +160,8 @@ Database. deleteById = (collection, id) => {
  * @param {Function} predicate - Filter function
  * @returns {Array} Filtered items
  */
-Database. query = (collection, predicate) => {
-  const items = getAll(collection);
+Database.query = (collection, predicate) => {
+  const items = Database.getAll(collection);
   return items.filter(predicate);
 };
 
@@ -268,7 +173,7 @@ Database. query = (collection, predicate) => {
  * @param {number} lon2 - Longitude of second point
  * @returns {number} - Distance in miles
  */
-Database. calculateDistance = (lat1, lon1, lat2, lon2) => {
+Database.calculateDistance = (lat1, lon1, lat2, lon2) => {
   if (lat1 === lat2 && lon1 === lon2) {
     return 0;
   }
@@ -279,7 +184,7 @@ Database. calculateDistance = (lat1, lon1, lat2, lon2) => {
   const radtheta = (Math.PI * theta) / 180;
   
   let dist = Math.sin(radlat1) * Math.sin(radlat2) + 
-            Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
+             Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
   
   if (dist > 1) dist = 1;
   
@@ -295,7 +200,7 @@ Database. calculateDistance = (lat1, lon1, lat2, lon2) => {
  * @param {string} sobrietyDate - Sobriety date in ISO format
  * @returns {number} - Number of days sober
  */
-Database. calculateSobrietyDays = (sobrietyDate) => {
+Database.calculateSobrietyDays = (sobrietyDate) => {
   if (!sobrietyDate) return 0;
   
   const start = new Date(sobrietyDate);
@@ -317,16 +222,20 @@ Database. calculateSobrietyDays = (sobrietyDate) => {
  * @param {number} decimalPlaces - Number of decimal places
  * @returns {number} - Years of sobriety with decimal precision
  */
-Database. calculateSobrietyYears = (sobrietyDate, decimalPlaces = 2) => {
-  const days = calculateSobrietyDays(sobrietyDate);
+Database.calculateSobrietyYears = (sobrietyDate, decimalPlaces = 2) => {
+  const days = Database.calculateSobrietyDays(sobrietyDate);
   const years = days / 365.25; // Account for leap years
   
   return parseFloat(years.toFixed(decimalPlaces));
 };
 
 // User operations
-Database. userOperations = {
-  createUser: (userData) => {
+Database.userOperations = {
+  getAll: () => Database.getAll('users'),
+  
+  get: (userId) => Database.getById('users', userId),
+  
+  create: (userData) => {
     const now = new Date().toISOString();
     const userId = userData.id || `user_${Date.now()}`;
     
@@ -337,33 +246,56 @@ Database. userOperations = {
       homeGroup: userData.homeGroup || '',
       phone: userData.phone || '',
       email: userData.email || '',
-      sponsorId: userData.sponsorId || null,
-      privacySettings: userData.privacySettings || {},
+      privacySettings: userData.privacySettings || {
+        shareLocation: false,
+        shareActivities: false
+      },
       createdAt: now,
       updatedAt: now
     };
     
-    insert('users', user);
-    return userId;
+    Database.insert('users', user);
+    return user;
   },
   
-  getUserById: (userId) => {
-    return getById('users', userId);
-  },
-  
-  updateUser: (userId, userData) => {
+  update: (userId, userData) => {
     const updates = {
-      updatedAt: new Date().toISOString(),
-      ...userData
+      ...userData,
+      updatedAt: new Date().toISOString()
     };
     
-    return update('users', userId, updates);
-  }
+    return Database.update('users', userId, updates);
+  },
+  
+  delete: (userId) => Database.deleteById('users', userId)
 };
 
 // Activity operations
-Database. activityOperations = {
-  createActivity: (activityData) => {
+Database.activityOperations = {
+  getAll: (options = {}) => {
+    const activities = Database.getAll('activities');
+    
+    let filtered = activities;
+    
+    // Filter by user ID if provided
+    if (options.userId) {
+      filtered = filtered.filter(a => a.userId === options.userId);
+    }
+    
+    // Sort by date (newest first)
+    filtered.sort((a, b) => new Date(b.date) - new Date(a.date));
+    
+    // Apply limit if provided
+    if (options.limit && options.limit > 0) {
+      filtered = filtered.slice(0, options.limit);
+    }
+    
+    return filtered;
+  },
+  
+  get: (activityId) => Database.getById('activities', activityId),
+  
+  create: (activityData) => {
     const now = new Date().toISOString();
     const activityId = activityData.id || `activity_${Date.now()}`;
     
@@ -371,158 +303,112 @@ Database. activityOperations = {
       id: activityId,
       userId: activityData.userId,
       type: activityData.type,
-      date: activityData.date || now,
+      name: activityData.name || '',
+      date: activityData.date || now.split('T')[0],
       duration: activityData.duration || 0,
       notes: activityData.notes || '',
       createdAt: now
     };
     
-    insert('activities', activity);
-    return activityId;
+    Database.insert('activities', activity);
+    return activity;
   },
   
-  getUserActivities: (userId) => {
-    return query('activities', activity => activity.userId === userId)
-      .sort((a, b) => new Date(b.date) - new Date(a.date));
+  update: (activityId, activityData) => {
+    return Database.update('activities', activityId, activityData);
   },
   
-  getRecentActivities: (userId, limit = 10) => {
-    return query('activities', activity => activity.userId === userId)
-      .sort((a, b) => new Date(b.date) - new Date(a.date))
-      .slice(0, limit);
-  },
-  
-  deleteActivity: (activityId) => {
-    return deleteById('activities', activityId);
-  }
+  delete: (activityId) => Database.deleteById('activities', activityId)
 };
 
 // Spiritual fitness operations
-Database. spiritualFitnessOperations = {
-  calculateSpiritualFitness: (userId) => {
-    // Define weights for different activity types
-    const weights = {
-      meeting: 10,   // Attending a meeting
-      prayer: 8,     // Prayer
-      meditation: 8, // Meditation
-      reading: 6,    // Reading AA literature
-      callSponsor: 5, // Calling sponsor
-      callSponsee: 4, // Calling sponsee
-      service: 9,    // Service work
-      stepWork: 10   // Working on steps
-    };
+Database.spiritualFitnessOperations = {
+  getForUser: (userId) => {
+    const records = Database.getAll('spiritualFitness');
     
-    // Get user activities for the last 30 days
-    const thirtyDaysAgo = new Date();
-    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+    return records
+      .filter(record => record.userId === userId)
+      .sort((a, b) => new Date(b.calculatedAt) - new Date(a.calculatedAt))[0] || null;
+  },
+  
+  calculateAndSave: (userId, activities) => {
+    // Get activities for the last 30 days
+    const now = new Date();
+    const thirtyDaysAgo = new Date(now);
+    thirtyDaysAgo.setDate(now.getDate() - 30);
     
-    const activities = query('activities', 
-      activity => activity.userId === userId && new Date(activity.date) >= thirtyDaysAgo
-    );
-    
-    // Initialize scores
-    let totalScore = 0;
-    let eligibleActivities = 0;
-    
-    // Group activities by type and calculate scores
-    const breakdown = {};
-    
-    activities.forEach(activity => {
-      const type = activity.type;
-      if (!weights[type]) return;
-      
-      // Initialize type in breakdown if not exists
-      if (!breakdown[type]) {
-        breakdown[type] = {
-          count: 0,
-          points: 0,
-          recentDates: []
-        };
-      }
-      
-      // Update breakdown
-      breakdown[type].count++;
-      breakdown[type].points += weights[type];
-      breakdown[type].recentDates.push(activity.date);
-      
-      // Update total score
-      totalScore += weights[type];
-      eligibleActivities++;
+    // Filter recent activities
+    const recentActivities = activities.filter(activity => {
+      const activityDate = new Date(activity.date);
+      return activityDate >= thirtyDaysAgo && activity.userId === userId;
     });
     
-    // Calculate final score (normalized to 10)
-    let finalScore = 0;
-    if (eligibleActivities > 0) {
-      // Base score on total points, but cap at 10 and round to 2 decimal places
-      finalScore = Math.min(10, (totalScore / (eligibleActivities * 4)));
-      finalScore = Math.round(finalScore * 100) / 100;
-    }
+    // Count activity types
+    const activityCounts = {
+      meeting: 0,
+      prayer: 0,
+      meditation: 0,
+      reading: 0,
+      service: 0,
+      stepwork: 0,
+      sponsorship: 0
+    };
     
-    // Save to database
+    recentActivities.forEach(activity => {
+      if (activityCounts[activity.type] !== undefined) {
+        activityCounts[activity.type]++;
+      }
+    });
+    
+    // Calculate components (max 10 points total)
+    const scoreComponents = {
+      meetings: Math.min(activityCounts.meeting / 10, 1) * 3, // 30% - Attendance at meetings (max 3 points)
+      prayer: Math.min((activityCounts.prayer + activityCounts.meditation) / 20, 1) * 2, // 20% - Prayer/meditation (max 2 points)
+      reading: Math.min(activityCounts.reading / 15, 1) * 1.5, // 15% - Reading program literature (max 1.5 points)
+      service: Math.min(activityCounts.service / 5, 1) * 1.5, // 15% - Service work (max 1.5 points)
+      stepwork: Math.min(activityCounts.stepwork / 5, 1) * 1, // 10% - Step work (max 1 point)
+      sponsorship: Math.min(activityCounts.sponsorship / 5, 1) * 1 // 10% - Sponsorship (max 1 point)
+    };
+    
+    // Calculate total score (max 10 points)
+    const totalScore = Object.values(scoreComponents).reduce((sum, score) => sum + score, 0);
+    
+    // Create and save the record
     const now = new Date().toISOString();
     const fitnessId = `sf_${Date.now()}`;
     
-    const fitnessRecord = {
+    const fitness = {
       id: fitnessId,
-      userId: userId,
-      score: finalScore,
-      breakdown: JSON.stringify(breakdown),
+      userId,
+      score: parseFloat(totalScore.toFixed(2)),
+      components: scoreComponents,
+      activityCounts,
       calculatedAt: now
     };
     
-    insert('spiritualFitness', fitnessRecord);
+    Database.insert('spiritualFitness', fitness);
     
-    return {
-      score: finalScore,
-      breakdown,
-      eligibleActivities,
-      totalPoints: totalScore,
-      calculatedAt: now
-    };
-  },
-  
-  getLatestSpiritualFitness: (userId) => {
-    const fitnessRecords = query('spiritualFitness', 
-      record => record.userId === userId
-    ).sort((a, b) => new Date(b.calculatedAt) - new Date(a.calculatedAt));
-    
-    if (fitnessRecords.length === 0) {
-      return spiritualFitnessOperations.calculateSpiritualFitness(userId);
-    }
-    
-    const latestRecord = fitnessRecords[0];
-    
-    // Parse breakdown if it's a string
-    if (typeof latestRecord.breakdown === 'string') {
-      try {
-        latestRecord.breakdown = JSON.parse(latestRecord.breakdown);
-      } catch (error) {
-        console.error('Error parsing breakdown:', error);
-        latestRecord.breakdown = {};
-      }
-    }
-    
-    return latestRecord;
+    return fitness;
   }
 };
 
 // Meeting operations
-Database. meetingOperations = {
-  createMeeting: (meetingData) => {
+Database.meetingOperations = {
+  getAll: () => Database.getAll('meetings'),
+  
+  get: (meetingId) => Database.getById('meetings', meetingId),
+  
+  create: (meetingData) => {
     const now = new Date().toISOString();
     const meetingId = meetingData.id || `meeting_${Date.now()}`;
     
     const meeting = {
       id: meetingId,
       name: meetingData.name || '',
+      type: meetingData.type || '',
       day: meetingData.day || '',
       time: meetingData.time || '',
       location: meetingData.location || '',
-      address: meetingData.address || '',
-      city: meetingData.city || '',
-      state: meetingData.state || '',
-      zip: meetingData.zip || '',
-      type: meetingData.type || '',
       notes: meetingData.notes || '',
       shared: meetingData.shared === true,
       createdBy: meetingData.createdBy || null,
@@ -530,36 +416,21 @@ Database. meetingOperations = {
       updatedAt: now
     };
     
-    insert('meetings', meeting);
-    return meetingId;
+    Database.insert('meetings', meeting);
+    return meeting;
   },
   
-  getSharedMeetings: () => {
-    return query('meetings', meeting => meeting.shared === true)
-      .sort((a, b) => {
-        // Sort by day of week, then time
-        const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
-        const dayDiff = days.indexOf(a.day.toLowerCase()) - days.indexOf(b.day.toLowerCase());
-        if (dayDiff !== 0) return dayDiff;
-        return a.time.localeCompare(b.time);
-      });
+  update: (meetingId, meetingData) => {
+    const updates = {
+      ...meetingData,
+      updatedAt: new Date().toISOString()
+    };
+    
+    return Database.update('meetings', meetingId, updates);
   },
   
-  getUserMeetings: (userId) => {
-    return query('meetings', meeting => meeting.createdBy === userId)
-      .sort((a, b) => {
-        // Sort by day of week, then time
-        const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
-        const dayDiff = days.indexOf(a.day.toLowerCase()) - days.indexOf(b.day.toLowerCase());
-        if (dayDiff !== 0) return dayDiff;
-        return a.time.localeCompare(b.time);
-      });
-  },
-  
-  deleteMeeting: (meetingId) => {
-    return deleteById('meetings', meetingId);
-  }
+  delete: (meetingId) => Database.deleteById('meetings', meetingId)
 };
 
-// All functions are now attached to the Database object
-// No need for module exports
+// Use a console message to confirm
+console.log('Database module loaded');
