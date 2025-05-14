@@ -10,24 +10,37 @@ function NavBar({ currentView, setCurrentView }) {
   ];
   
   return (
-    <nav className="md:hidden fixed bottom-0 left-0 right-0 z-10">
-      <div className="flex justify-around">
-        {navItems.map((item) => (
-          <button 
-            key={item.id}
-            onClick={() => setCurrentView(item.id)}
-            className={`flex flex-col items-center py-3 flex-1 ${
-              currentView === item.id 
-                ? 'text-blue-600 dark:text-blue-400' 
-                : 'text-gray-500 dark:text-gray-400'
-            }`}
-          >
-            <i className={`${item.icon} text-lg`}></i>
-            <span className="text-xs mt-1">{item.name}</span>
-          </button>
-        ))}
-      </div>
-    </nav>
+    <div style={{
+      position: 'fixed',
+      bottom: 0,
+      left: 0,
+      right: 0,
+      zIndex: 10,
+      display: 'flex',
+      justifyContent: 'space-around',
+      backgroundColor: 'transparent'
+    }}>
+      {navItems.map((item) => (
+        <button 
+          key={item.id}
+          onClick={() => setCurrentView(item.id)}
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            padding: '12px 0',
+            flex: 1,
+            backgroundColor: 'transparent',
+            border: 'none',
+            color: currentView === item.id ? '#3b82f6' : '#6b7280',
+            cursor: 'pointer'
+          }}
+        >
+          <i className={`${item.icon}`} style={{ fontSize: '1.25rem' }}></i>
+          <span style={{ fontSize: '0.75rem', marginTop: '4px' }}>{item.name}</span>
+        </button>
+      ))}
+    </div>
   );
 }
 

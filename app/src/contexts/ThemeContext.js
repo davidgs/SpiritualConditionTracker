@@ -28,45 +28,50 @@ export function ThemeProvider({ children }) {
   
   const [theme, setTheme] = useState(getInitialTheme);
   
-  // Apply dark mode class to HTML element
-  const applyTheme = (themeName) => {
+  // Update document class and localStorage when theme changes
+  useEffect(() => {
     try {
-      const root = window.document.documentElement;
-      const body = window.document.body;
+      // Apply theme to HTML element for Tailwind
+      const htmlEl = document.documentElement;
       
-      // First, clean up any existing theme classes
-      root.classList.remove('light', 'dark');
-      body.classList.remove('light', 'dark');
-      
-      // Apply the new theme
-      if (themeName === 'dark') {
-        console.log('Applying dark theme');
-        root.classList.add('dark');
-        body.classList.add('dark');
-        // Force background color via direct style for debugging
+      if (theme === 'dark') {
+        htmlEl.classList.add('dark');
         document.body.style.backgroundColor = '#111827';
+        document.body.style.color = '#f3f4f6';
+        console.log('Dark mode activated');
       } else {
-        console.log('Applying light theme');
+        htmlEl.classList.remove('dark');
         document.body.style.backgroundColor = '#f0f2f5';
+        document.body.style.color = '#111827';
+        console.log('Light mode activated');
       }
       
       // Save theme choice to localStorage
-      localStorage.setItem('theme', themeName);
+      localStorage.setItem('theme', theme);
     } catch (error) {
       console.error('Error applying theme:', error);
     }
-  };
-  
-  // Update body class and localStorage when theme changes
-  useEffect(() => {
-    applyTheme(theme);
+    
+    // Clean up function
+    return () => {
+      try {
+        document.documentElement.classList.remove('dark');
+        document.body.style.backgroundColor = '';
+        document.body.style.color = '';
+      } catch (error) {
+        console.error('Error cleaning up theme:', error);
+      }
+    };
   }, [theme]);
   
   // Toggle between light and dark mode
   const toggleTheme = () => {
-    const newTheme = theme === 'light' ? 'dark' : 'light';
-    setTheme(newTheme);
-    console.log('Theme toggled to:', newTheme);
+    console.log('Toggling theme from', theme);
+    setTheme(prevTheme => {
+      const newTheme = prevTheme === 'light' ? 'dark' : 'light';
+      console.log('Theme toggled to:', newTheme);
+      return newTheme;
+    });
   };
   
   return (
