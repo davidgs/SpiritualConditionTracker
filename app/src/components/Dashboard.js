@@ -39,7 +39,7 @@ export default function Dashboard({ setCurrentView, user, activities, spiritualF
     <div className="p-4 pb-20 max-w-md mx-auto">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">Your Dashboard</h1>
+          <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">Recovery Tracker</h1>
           <p className="text-sm text-gray-500 dark:text-gray-400">Track your spiritual journey</p>
         </div>
         <img 
