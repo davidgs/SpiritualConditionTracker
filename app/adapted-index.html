@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Spiritual Condition Tracker</title>
+  
+  <!-- CSS Styles -->
+  <link rel="stylesheet" href="adapted-styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <link rel="icon" type="image/jpg" href="/logo.jpg">
+  
+  <!-- Load database first -->
+  <script src="database.js"></script>
+  
+  <!-- Load components -->
+  <script src="dashboard-component.js"></script>
+  
+  <!-- Load main app -->
+  <script src="adapted-app.js"></script>
+</head>
+<body>
+  <div id="root">
+    <!-- App will be loaded here -->
+    <div class="loadingContainer">
+      <div class="loadingSpinner"></div>
+      <p>Loading Spiritual Condition Tracker...</p>
+    </div>
+  </div>
+</body>
+</html>

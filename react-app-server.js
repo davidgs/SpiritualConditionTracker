@@ -37,7 +37,7 @@ const server = http.createServer((req, res) => {
   if (req.url === '/app' || req.url === '/app/') {
     console.log('Serving app index.html');
     
-    const appIndexPath = path.join(__dirname, 'app', 'index.html');
+    const appIndexPath = path.join(__dirname, 'app', 'adapted-index.html');
     fs.readFile(appIndexPath, (err, content) => {
       if (err) {
         console.error(`Error reading app index.html: ${err.message}`);
