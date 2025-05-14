@@ -34,82 +34,111 @@ function renderDashboard(user, spiritualFitness, activities, onNavigate) {
   const fitnessScore = spiritualFitness?.score || 0;
   const formattedScore = fitnessScore.toFixed(2);
   
-  // Create HTML structure based on the original React Native component
+  // Create HTML structure based on the src/components/Dashboard.js
   rootElement.innerHTML = `
-    <div class="container">
-      <div class="header">
-        <h1 class="greeting">Hello, ${user?.name || 'Friend'}</h1>
-        <p class="subHeading">Your Recovery Dashboard</p>
+    <div class="space-y-6 max-w-md mx-auto px-4">
+      <div class="flex items-center justify-between mt-4">
+        <h2 class="text-2xl font-semibold text-gray-800">Hello, ${user?.name || 'Friend'}</h2>
+        <button id="log-activity-btn" class="btn-primary">
+          <i class="fa-solid fa-plus mr-2"></i>
+          Log Activity
+        </button>
+      </div>
+      
+      <!-- Spiritual Fitness Card -->
+      <div class="card bg-gradient-to-r from-blue-500 to-blue-600 text-white">
+        <div class="flex justify-between items-center">
+          <div>
+            <h3 class="text-lg font-medium mb-1">Spiritual Fitness</h3>
+            <p class="text-white text-opacity-80 text-sm">Based on your recent activities</p>
+          </div>
+          <div class="text-right">
+            <div class="text-3xl font-bold">${formattedScore}</div>
+            <button id="view-fitness-btn" class="text-sm text-white text-opacity-90 hover:text-opacity-100 mt-1">
+              View Details <i class="fa-solid fa-arrow-right ml-1"></i>
+            </button>
+          </div>
+        </div>
       </div>
       
       <!-- Sobriety Counter -->
-      <div class="card sobrietyCard">
-        <div class="cardHeader sobrietyHeader">
-          <i class="fas fa-calendar-check"></i>
-          <h2 class="cardTitle">Sobriety</h2>
+      <div class="card">
+        <div class="flex justify-between items-center mb-3">
+          <h3 class="text-lg font-medium">Sobriety</h3>
+          <button id="update-sobriety-btn" class="text-sm text-blue-600 hover:text-blue-800">
+            Update
+          </button>
         </div>
-        <div class="sobrietyInfo">
-          <div class="sobrietyMetric">
-            <div class="sobrietyValue">${formattedSobrietyDays}</div>
-            <div class="sobrietyLabel">Days</div>
+        <div class="flex justify-around items-center my-3">
+          <div class="flex flex-col items-center text-center">
+            <div class="text-3xl font-bold text-green-500">${formattedSobrietyDays}</div>
+            <div class="text-sm text-gray-500 mt-1">Days</div>
           </div>
-          <div class="sobrietySeparator"></div>
-          <div class="sobrietyMetric">
-            <div class="sobrietyValue">${sobrietyYears}</div>
-            <div class="sobrietyLabel">Years</div>
+          <div class="h-10 w-px bg-gray-200"></div>
+          <div class="flex flex-col items-center text-center">
+            <div class="text-3xl font-bold text-green-500">${sobrietyYears}</div>
+            <div class="text-sm text-gray-500 mt-1">Years</div>
           </div>
         </div>
-        <button class="cardButton" id="update-sobriety-btn">Update Sobriety Date</button>
       </div>
       
-      <!-- Spiritual Fitness Score -->
-      <div class="card fitnessCard">
-        <div class="cardHeader fitnessHeader">
-          <i class="fas fa-heart"></i>
-          <h2 class="cardTitle">Spiritual Fitness</h2>
+      <!-- Recent Activities -->
+      <div class="card">
+        <div class="flex justify-between items-center mb-3">
+          <h3 class="text-lg font-medium">Recent Activities</h3>
+          <button class="text-sm text-blue-600 hover:text-blue-800">
+            View All
+          </button>
         </div>
-        <div class="scoreContainer">
-          <div class="scoreCircle">
-            <span class="scoreValue">${formattedScore}</span>
-            <span class="scoreMax">/10</span>
+        
+        ${recentActivities.length > 0 ? `
+          <div class="space-y-3">
+            <div class="text-center p-3">
+              <p class="text-gray-700">
+                You've logged <span class="font-semibold text-blue-500">${recentActivities.length}</span> recovery 
+                activities in the last 30 days.
+              </p>
+            </div>
           </div>
-        </div>
-        <button class="cardButton" id="view-fitness-btn">View Details</button>
-      </div>
-      
-      <!-- Recovery Activities -->
-      <div class="card activityCard">
-        <div class="cardHeader activityHeader">
-          <i class="fas fa-list-alt"></i>
-          <h2 class="cardTitle">Recovery Activities</h2>
-        </div>
-        <div class="activitySummary">
-          <p class="activityText">
-            You've logged <span class="activityHighlight">${recentActivities.length}</span> recovery 
-            activities in the last 30 days.
-          </p>
-        </div>
-        <button class="cardButton" id="log-activity-btn">Log New Activity</button>
+        ` : `
+          <div class="text-center py-6">
+            <p class="text-gray-500">No activities logged yet.</p>
+            <button id="first-activity-btn" class="mt-2 btn-primary">
+              Log Your First Activity
+            </button>
+          </div>
+        `}
       </div>
       
       <!-- Quick Actions -->
-      <div class="quickActions">
-        <h2 class="sectionTitle">Quick Actions</h2>
-        <div class="actionButtons">
-          <button class="actionButton" id="find-meetings-btn">
-            <i class="fas fa-users"></i>
-            <span class="actionButtonText">Find Meetings</span>
+      <div class="mt-6 mb-8">
+        <h2 class="text-lg font-semibold text-gray-800 mb-4">Quick Actions</h2>
+        <div class="grid grid-cols-3 gap-4">
+          <button id="find-meetings-btn" class="text-center p-3 bg-blue-50 rounded-lg">
+            <i class="fa-solid fa-users text-2xl text-blue-500 mb-2"></i>
+            <p class="text-sm text-gray-600">Find Meetings</p>
           </button>
           
-          <button class="actionButton" id="nearby-members-btn">
-            <i class="fas fa-map-marker-alt"></i>
-            <span class="actionButtonText">Nearby Members</span>
+          <button id="nearby-members-btn" class="text-center p-3 bg-green-50 rounded-lg">
+            <i class="fa-solid fa-map-marker-alt text-2xl text-green-500 mb-2"></i>
+            <p class="text-sm text-gray-600">Nearby Members</p>
           </button>
           
-          <button class="actionButton" id="track-progress-btn">
-            <i class="fas fa-chart-line"></i>
-            <span class="actionButtonText">Track Progress</span>
+          <button id="track-progress-btn" class="text-center p-3 bg-purple-50 rounded-lg">
+            <i class="fa-solid fa-chart-line text-2xl text-purple-500 mb-2"></i>
+            <p class="text-sm text-gray-600">Track Progress</p>
           </button>
+        </div>
+      </div>
+      
+      <!-- Inspiration Quote -->
+      <div class="card bg-gradient-to-r from-blue-50 to-indigo-50">
+        <div class="text-center p-3">
+          <i class="fa-solid fa-quote-left text-blue-300 text-3xl mb-3"></i>
+          <p class="text-gray-700 italic">
+            "First things first. This twenty-four hours. Recovery. Unity. Service. The day is now."
+          </p>
+          <p class="text-sm text-gray-500 mt-2">AA Wisdom</p>
         </div>
       </div>
     </div>

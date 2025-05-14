@@ -145,26 +145,26 @@ class SpiritualConditionTracker {
   setupNavigation() {
     // Create the bottom navigation (similar to React Native's TabNavigator)
     const navHTML = `
-      <nav class="appNav">
-        <a id="nav-dashboard" class="navItem active">
-          <i class="fas fa-home"></i>
-          <span>Home</span>
+      <nav class="fixed bottom-0 left-0 right-0 bg-white flex justify-around py-3 shadow-md z-10">
+        <a id="nav-dashboard" class="flex flex-col items-center text-blue-500 cursor-pointer">
+          <i class="fa-solid fa-home text-lg mb-1"></i>
+          <span class="text-xs">Home</span>
         </a>
-        <a id="nav-activities" class="navItem">
-          <i class="fas fa-clipboard-list"></i>
-          <span>Activities</span>
+        <a id="nav-activities" class="flex flex-col items-center text-gray-500 cursor-pointer">
+          <i class="fa-solid fa-clipboard-list text-lg mb-1"></i>
+          <span class="text-xs">Activities</span>
         </a>
-        <a id="nav-meetings" class="navItem">
-          <i class="fas fa-users"></i>
-          <span>Meetings</span>
+        <a id="nav-meetings" class="flex flex-col items-center text-gray-500 cursor-pointer">
+          <i class="fa-solid fa-users text-lg mb-1"></i>
+          <span class="text-xs">Meetings</span>
         </a>
-        <a id="nav-nearby" class="navItem">
-          <i class="fas fa-map-marker-alt"></i>
-          <span>Nearby</span>
+        <a id="nav-nearby" class="flex flex-col items-center text-gray-500 cursor-pointer">
+          <i class="fa-solid fa-map-marker-alt text-lg mb-1"></i>
+          <span class="text-xs">Nearby</span>
         </a>
-        <a id="nav-settings" class="navItem">
-          <i class="fas fa-user"></i>
-          <span>Profile</span>
+        <a id="nav-settings" class="flex flex-col items-center text-gray-500 cursor-pointer">
+          <i class="fa-solid fa-user text-lg mb-1"></i>
+          <span class="text-xs">Profile</span>
         </a>
       </nav>
     `;
