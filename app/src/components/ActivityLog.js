@@ -239,15 +239,7 @@ export default function ActivityLog({ setCurrentView, onSave, activities }) {
     marginBottom: '0.5rem'
   };
   
-  // Filter duplicate activities by ID and sort by date (newest first)
-  const sortedActivities = activities
-    ? [...activities]
-        // Filter to make sure we don't have duplicate IDs
-        .filter((activity, index, self) => 
-          index === self.findIndex(a => (a.id === activity.id))
-        )
-        .sort(compareDatesForSorting)
-    : [];
+  // We'll use the ActivityList component instead of manually sorting and filtering activities
 
   return (
     <div className="p-3 pb-16 max-w-md mx-auto">
