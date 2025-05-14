@@ -1,0 +1,287 @@
+import React, { useState, useEffect } from 'react';
+import { meetingOperations } from '../utils/database';
+
+export default function MeetingForm({ 
+  meeting = null, 
+  onSave, 
+  onCancel,
+  isOverlay = false
+}) {
+  // Form state
+  const [meetingName, setMeetingName] = useState('');
+  const [meetingDays, setMeetingDays] = useState({
+    monday: false,
+    tuesday: false,
+    wednesday: false,
+    thursday: false,
+    friday: false,
+    saturday: false,
+    sunday: false
+  });
+  const [meetingTime, setMeetingTime] = useState('');
+  const [meetingAddress, setMeetingAddress] = useState('');
+  const [location, setLocation] = useState(null);
+  const [error, setError] = useState('');
+  const [searchingLocation, setSearchingLocation] = useState(false);
+  
+  // Dark mode detection
+  const darkMode = document.documentElement.classList.contains('dark');
+  
+  // Initialize form with meeting data if provided
+  useEffect(() => {
+    if (meeting) {
+      setMeetingName(meeting.name);
+      
+      // Set days
+      const days = {
+        monday: false,
+        tuesday: false,
+        wednesday: false,
+        thursday: false,
+        friday: false,
+        saturday: false,
+        sunday: false
+      };
+      
+      meeting.days.forEach(day => {
+        days[day] = true;
+      });
+      
+      setMeetingDays(days);
+      setMeetingTime(meeting.time);
+      setMeetingAddress(meeting.address);
+      setLocation(meeting.coordinates);
+    }
+  }, [meeting]);
+  
+  // Try to get user location
+  const detectLocation = () => {
+    setSearchingLocation(true);
+    setError('');
+    
+    if (!navigator.geolocation) {
+      setError('Geolocation is not supported by your browser');
+      setSearchingLocation(false);
+      return;
+    }
+    
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        try {
+          const { latitude, longitude } = position.coords;
+          setLocation({ latitude, longitude });
+          
+          // Try to get address from coordinates
+          const response = await fetch(
+            `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`
+          );
+          
+          if (response.ok) {
+            const data = await response.json();
+            if (data.display_name) {
+              setMeetingAddress(data.display_name);
+            }
+          }
+        } catch (error) {
+          console.error('Error getting address:', error);
+        } finally {
+          setSearchingLocation(false);
+        }
+      },
+      (error) => {
+        console.error('Error getting location:', error);
+        setError('Unable to retrieve your location. Please enter address manually.');
+        setSearchingLocation(false);
+      }
+    );
+  };
+  
+  // Handle form submission
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setError('');
+    
+    if (!meetingName.trim()) {
+      setError('Meeting name is required');
+      return;
+    }
+    
+    if (!Object.values(meetingDays).some(day => day)) {
+      setError('Please select at least one day of the week');
+      return;
+    }
+    
+    if (!meetingTime) {
+      setError('Meeting time is required');
+      return;
+    }
+    
+    if (!meetingAddress.trim()) {
+      setError('Meeting address is required');
+      return;
+    }
+    
+    const meetingData = {
+      id: meeting ? meeting.id : Date.now().toString(),
+      name: meetingName.trim(),
+      days: Object.entries(meetingDays)
+        .filter(([_, selected]) => selected)
+        .map(([day]) => day),
+      time: meetingTime,
+      address: meetingAddress.trim(),
+      coordinates: location,
+      createdAt: meeting ? meeting.createdAt : new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+    
+    try {
+      if (meeting) {
+        meetingOperations.update(meeting.id, meetingData);
+      } else {
+        meetingOperations.create(meetingData);
+      }
+      
+      // Call the onSave callback with the meeting data
+      if (onSave) {
+        onSave(meetingData);
+      }
+    } catch (error) {
+      console.error('Error saving meeting:', error);
+      setError('Failed to save meeting. Please try again.');
+    }
+  };
+  
+  // Toggle day selection
+  const toggleDay = (day) => {
+    setMeetingDays(prev => ({
+      ...prev,
+      [day]: !prev[day]
+    }));
+  };
+  
+  // Format day name
+  const formatDay = (day) => {
+    return day.charAt(0).toUpperCase() + day.slice(1);
+  };
+  
+  const containerClass = isOverlay 
+    ? "fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+    : "bg-white dark:bg-gray-800 rounded-lg shadow p-4 mb-4";
+    
+  const formClass = isOverlay
+    ? "bg-white dark:bg-gray-800 rounded-lg shadow p-4 max-w-md w-full max-h-[90vh] overflow-y-auto"
+    : "";
+  
+  return (
+    <div className={containerClass}>
+      <div className={formClass}>
+        <h3 className="text-lg font-semibold mb-4 text-gray-800 dark:text-gray-100">
+          {meeting ? 'Edit Meeting' : 'Add New Meeting'}
+        </h3>
+        
+        {error && (
+          <div className="mb-4 p-2 bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200 rounded">
+            {error}
+          </div>
+        )}
+        
+        <form onSubmit={handleSubmit}>
+          {/* Meeting Name */}
+          <div className="mb-4">
+            <label className="block text-gray-700 dark:text-gray-300 mb-2">
+              Meeting Name
+            </label>
+            <input
+              type="text"
+              className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200"
+              value={meetingName}
+              onChange={(e) => setMeetingName(e.target.value)}
+              placeholder="Enter meeting name"
+            />
+          </div>
+          
+          {/* Days of the Week */}
+          <div className="mb-4">
+            <label className="block text-gray-700 dark:text-gray-300 mb-2">
+              Days of the Week
+            </label>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
+              {Object.keys(meetingDays).map(day => (
+                <label 
+                  key={day} 
+                  className={`flex items-center p-2 rounded cursor-pointer ${
+                    meetingDays[day] 
+                      ? 'bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200' 
+                      : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
+                  }`}
+                >
+                  <input
+                    type="checkbox"
+                    className="mr-2"
+                    checked={meetingDays[day]}
+                    onChange={() => toggleDay(day)}
+                  />
+                  {formatDay(day)}
+                </label>
+              ))}
+            </div>
+          </div>
+          
+          {/* Meeting Time */}
+          <div className="mb-4">
+            <label className="block text-gray-700 dark:text-gray-300 mb-2">
+              Meeting Time
+            </label>
+            <input
+              type="time"
+              className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200"
+              value={meetingTime}
+              onChange={(e) => setMeetingTime(e.target.value)}
+            />
+          </div>
+          
+          {/* Meeting Address */}
+          <div className="mb-4">
+            <label className="block text-gray-700 dark:text-gray-300 mb-2">
+              Meeting Address
+            </label>
+            <div className="flex">
+              <input
+                type="text"
+                className="flex-grow p-2 border border-gray-300 dark:border-gray-600 rounded-l bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200"
+                value={meetingAddress}
+                onChange={(e) => setMeetingAddress(e.target.value)}
+                placeholder="Enter meeting address"
+              />
+              <button
+                type="button"
+                className="bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded-r"
+                onClick={detectLocation}
+                disabled={searchingLocation}
+              >
+                {searchingLocation ? 'Detecting...' : 'Detect'}
+              </button>
+            </div>
+          </div>
+          
+          {/* Action Buttons */}
+          <div className="flex justify-between mt-6">
+            <button
+              type="button"
+              className="px-4 py-2 bg-gray-300 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded hover:bg-gray-400 dark:hover:bg-gray-600"
+              onClick={onCancel}
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+            >
+              {meeting ? 'Update' : 'Save'} Meeting
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
