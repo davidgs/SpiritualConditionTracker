@@ -17,45 +17,46 @@
   <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   
+  <!-- Load the database module first -->
+  <script src="database.js"></script>
+
   <!-- Custom styles -->
   <style>
     /* Card styles */
     .card {
-      @apply bg-white rounded-lg shadow-md p-4 mb-4;
+      background-color: white;
+      border-radius: 0.5rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+      padding: 1rem;
+      margin-bottom: 1rem;
     }
     
     /* Button styles */
     .btn-primary {
-      @apply bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition;
+      background-color: #3b82f6;
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 0.375rem;
+      transition: background-color 0.2s;
     }
     
-    /* Container styles */
-    .container-custom {
-      @apply max-w-6xl mx-auto px-4;
+    .btn-primary:hover {
+      background-color: #2563eb;
     }
     
     /* App styles */
     .app-container {
-      @apply max-w-md mx-auto px-4 pb-20 pt-4;
+      max-width: 28rem;
+      margin-left: auto;
+      margin-right: auto;
+      padding-left: 1rem;
+      padding-right: 1rem;
+      padding-bottom: 5rem;
+      padding-top: 1rem;
     }
   </style>
-  
-  <!-- Load the database module first -->
-  <script src="database.js"></script>
-  
-  <!-- Load all components -->
-  <script type="text/babel" src="components/NavBar.js"></script>
-  <script type="text/babel" src="components/Dashboard.js"></script>
-  <script type="text/babel" src="components/ActivityLog.js"></script>
-  <script type="text/babel" src="components/SpiritualFitness.js"></script>
-  <script type="text/babel" src="components/History.js"></script>
-  <script type="text/babel" src="components/NearbyMembers.js"></script>
-  <script type="text/babel" src="components/Profile.js"></script>
-  
-  <!-- Then load the main app module last -->
-  <script type="text/babel" src="app.js"></script>
 </head>
-<body>
+<body class="bg-gray-50">
   <div id="root">
     <!-- App will be loaded here -->
     <div class="flex justify-center items-center h-screen">
@@ -65,5 +66,1002 @@
       </div>
     </div>
   </div>
+
+  <!-- Single combined script with all components and app logic -->
+  <script type="text/babel">
+    // Wait for DOM content to be loaded
+    document.addEventListener('DOMContentLoaded', () => {
+      console.log('DOM loaded, initializing app');
+      initApp();
+    });
+
+    // -----------------------------------------
+    // COMPONENTS
+    // -----------------------------------------
+
+    // NavBar Component
+    function NavBar({ currentView, setCurrentView }) {
+      const navItems = [
+        { id: 'dashboard', name: 'Dashboard', icon: 'fa-solid fa-house' },
+        { id: 'activity', name: 'Log Activity', icon: 'fa-solid fa-plus' },
+        { id: 'fitness', name: 'Spiritual Fitness', icon: 'fa-solid fa-heart' },
+        { id: 'history', name: 'History', icon: 'fa-solid fa-clock-rotate-left' },
+        { id: 'nearby', name: 'Nearby', icon: 'fa-solid fa-users' },
+        { id: 'profile', name: 'Profile', icon: 'fa-solid fa-user' }
+      ];
+      
+      return (
+        <nav className="fixed bottom-0 left-0 right-0 bg-white shadow-lg z-10">
+          <div className="flex justify-around">
+            {navItems.map((item) => (
+              <button 
+                key={item.id}
+                onClick={() => setCurrentView(item.id)}
+                className={`flex flex-col items-center py-3 flex-1 ${
+                  currentView === item.id 
+                    ? 'text-blue-600' 
+                    : 'text-gray-500'
+                }`}
+              >
+                <i className={`${item.icon} text-lg`}></i>
+                <span className="text-xs mt-1">{item.name}</span>
+              </button>
+            ))}
+          </div>
+        </nav>
+      );
+    }
+
+    // Dashboard Component
+    function Dashboard({ setCurrentView, user, activities, spiritualFitness }) {
+      // Get the recent 5 activities for display
+      const recentActivities = activities 
+        ? activities.sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 5)
+        : [];
+
+      // Calculate streaks for different activity types
+      const calculateStreaks = () => {
+        if (!activities || activities.length === 0) {
+          return { meetings: 0, meditation: 0, reading: 0 };
+        }
+
+        // Group activities by type
+        const grouped = activities.reduce((acc, activity) => {
+          if (!acc[activity.type]) acc[activity.type] = [];
+          acc[activity.type].push(activity);
+          return acc;
+        }, {});
+
+        // Calculate streak for each type
+        const today = new Date();
+        const calculateStreak = (activities, daysBack = 7) => {
+          if (!activities || activities.length === 0) return 0;
+          
+          activities.sort((a, b) => new Date(b.date) - new Date(a.date));
+          
+          let streak = 0;
+          let currentDate = new Date(today);
+          
+          for (let i = 0; i < daysBack; i++) {
+            const dateStr = currentDate.toISOString().split('T')[0];
+            const found = activities.some(a => a.date.split('T')[0] === dateStr);
+            
+            if (found) {
+              streak++;
+            } else if (streak > 0) {
+              break;
+            }
+            
+            currentDate.setDate(currentDate.getDate() - 1);
+          }
+          
+          return streak;
+        };
+
+        return {
+          meetings: calculateStreak(grouped['meeting']),
+          meditation: calculateStreak(grouped['meditation']),
+          reading: calculateStreak(grouped['reading'])
+        };
+      };
+
+      const streaks = calculateStreaks();
+
+      // Helper functions for activity icons
+      const getActivityIconClass = (type) => {
+        const classes = {
+          meeting: 'w-10 h-10 rounded-full flex items-center justify-center bg-blue-100 text-blue-600',
+          meditation: 'w-10 h-10 rounded-full flex items-center justify-center bg-green-100 text-green-600',
+          reading: 'w-10 h-10 rounded-full flex items-center justify-center bg-purple-100 text-purple-600',
+          prayer: 'w-10 h-10 rounded-full flex items-center justify-center bg-indigo-100 text-indigo-600',
+          sponsor: 'w-10 h-10 rounded-full flex items-center justify-center bg-yellow-100 text-yellow-600',
+          service: 'w-10 h-10 rounded-full flex items-center justify-center bg-red-100 text-red-600'
+        };
+        return classes[type] || 'w-10 h-10 rounded-full flex items-center justify-center bg-gray-100 text-gray-600';
+      };
+      
+      const getActivityIcon = (type) => {
+        const icons = {
+          meeting: 'fa-solid fa-users',
+          meditation: 'fa-solid fa-brain',
+          reading: 'fa-solid fa-book',
+          prayer: 'fa-solid fa-praying-hands',
+          sponsor: 'fa-solid fa-handshake',
+          service: 'fa-solid fa-hands-helping'
+        };
+        return icons[type] || 'fa-solid fa-star';
+      };
+
+      return (
+        <div className="space-y-6">
+          <div className="flex items-center justify-between">
+            <h2 className="text-2xl font-semibold text-gray-800">Your Recovery Journey</h2>
+            <button 
+              onClick={() => setCurrentView('activity')}
+              className="btn-primary"
+            >
+              <i className="fa-solid fa-plus mr-2"></i>
+              Log Activity
+            </button>
+          </div>
+          
+          {/* Spiritual Fitness Card */}
+          <div className="card bg-gradient-to-r from-blue-500 to-blue-600 text-white">
+            <div className="flex justify-between items-center">
+              <div>
+                <h3 className="text-lg font-medium mb-1">Spiritual Fitness</h3>
+                <p className="text-white text-opacity-80 text-sm">Based on your recent activities</p>
+              </div>
+              <div className="text-right">
+                <div className="text-3xl font-bold">{spiritualFitness?.score ? spiritualFitness.score.toFixed(2) : "0.00"}%</div>
+                <button 
+                  onClick={() => setCurrentView('fitness')}
+                  className="text-sm text-white text-opacity-90 hover:text-opacity-100 mt-1"
+                >
+                  View Details <i className="fa-solid fa-arrow-right ml-1"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+          
+          {/* Streaks */}
+          <div className="card">
+            <h3 className="text-lg font-medium mb-3">Current Streaks</h3>
+            <div className="grid grid-cols-3 gap-4">
+              <div className="text-center p-3 bg-blue-50 rounded-lg">
+                <i className="fa-solid fa-users text-2xl text-blue-500 mb-2"></i>
+                <p className="font-semibold text-xl">{streaks.meetings}</p>
+                <p className="text-sm text-gray-600">Meetings</p>
+              </div>
+              <div className="text-center p-3 bg-green-50 rounded-lg">
+                <i className="fa-solid fa-brain text-2xl text-green-500 mb-2"></i>
+                <p className="font-semibold text-xl">{streaks.meditation}</p>
+                <p className="text-sm text-gray-600">Meditation</p>
+              </div>
+              <div className="text-center p-3 bg-purple-50 rounded-lg">
+                <i className="fa-solid fa-book text-2xl text-purple-500 mb-2"></i>
+                <p className="font-semibold text-xl">{streaks.reading}</p>
+                <p className="text-sm text-gray-600">Reading</p>
+              </div>
+            </div>
+          </div>
+          
+          {/* Recent Activities */}
+          <div className="card">
+            <div className="flex justify-between items-center mb-3">
+              <h3 className="text-lg font-medium">Recent Activities</h3>
+              <button 
+                onClick={() => setCurrentView('history')}
+                className="text-sm text-blue-600 hover:text-blue-800"
+              >
+                View All
+              </button>
+            </div>
+            
+            {recentActivities.length > 0 ? (
+              <div className="space-y-3">
+                {recentActivities.map((activity) => (
+                  <div key={activity.id} className="flex items-center p-3 border border-gray-100 rounded-lg hover:bg-gray-50">
+                    <div className={getActivityIconClass(activity.type)}>
+                      <i className={getActivityIcon(activity.type)}></i>
+                    </div>
+                    <div className="ml-3 flex-1">
+                      <div className="font-medium text-gray-800">
+                        {activity.type.charAt(0).toUpperCase() + activity.type.slice(1)}
+                        {activity.name && `: ${activity.name}`}
+                      </div>
+                      <div className="text-sm text-gray-500">
+                        {activity.duration} min · {new Date(activity.date).toLocaleDateString()}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-6">
+                <p className="text-gray-500">No activities logged yet.</p>
+                <button 
+                  onClick={() => setCurrentView('activity')}
+                  className="mt-2 btn-primary"
+                >
+                  Log Your First Activity
+                </button>
+              </div>
+            )}
+          </div>
+          
+          {/* Nearby AA Members Card */}
+          <div className="card bg-gradient-to-r from-purple-50 to-blue-50">
+            <div className="flex justify-between items-center">
+              <div>
+                <h3 className="text-lg font-medium mb-1">Nearby AA Members</h3>
+                <p className="text-gray-600 text-sm">Connect with others in your area</p>
+              </div>
+              <button 
+                onClick={() => setCurrentView('nearby')}
+                className="btn-primary bg-blue-500"
+              >
+                <i className="fa-solid fa-users mr-2"></i>
+                Find Members
+              </button>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // ActivityLog Component
+    function ActivityLog({ setCurrentView, onSave }) {
+      return (
+        <div className="space-y-6">
+          <div className="flex items-center justify-between">
+            <h2 className="text-2xl font-semibold text-gray-800">Log Activity</h2>
+            <button 
+              onClick={() => setCurrentView('dashboard')}
+              className="text-blue-500 hover:text-blue-700"
+            >
+              <i className="fa-solid fa-arrow-left mr-1"></i> Back
+            </button>
+          </div>
+          
+          <div className="card">
+            <h3 className="text-lg font-medium mb-4">New Activity</h3>
+            
+            <form 
+              className="space-y-4"
+              onSubmit={(e) => {
+                e.preventDefault();
+                
+                const formData = new FormData(e.target);
+                const newActivity = {
+                  type: formData.get('activity-type'),
+                  name: formData.get('activity-name'),
+                  duration: parseInt(formData.get('activity-duration'), 10),
+                  date: formData.get('activity-date'),
+                  notes: formData.get('activity-notes'),
+                  id: Date.now().toString() // Simple placeholder ID
+                };
+                
+                onSave(newActivity);
+              }}
+            >
+              <div>
+                <label className="block text-gray-700 text-sm font-medium mb-2">Activity Type</label>
+                <select 
+                  name="activity-type"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="meeting">Meeting</option>
+                  <option value="meditation">Meditation</option>
+                  <option value="reading">Reading</option>
+                  <option value="prayer">Prayer</option>
+                  <option value="sponsor">Sponsor Interaction</option>
+                  <option value="service">Service Work</option>
+                </select>
+              </div>
+              
+              <div>
+                <label className="block text-gray-700 text-sm font-medium mb-2">Name (Optional)</label>
+                <input 
+                  type="text" 
+                  name="activity-name"
+                  placeholder="Meeting name, book title, etc." 
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-gray-700 text-sm font-medium mb-2">Duration (minutes)</label>
+                <input 
+                  type="number" 
+                  name="activity-duration"
+                  min="1" 
+                  defaultValue="60" 
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-gray-700 text-sm font-medium mb-2">Date</label>
+                <input 
+                  type="date" 
+                  name="activity-date"
+                  defaultValue={new Date().toISOString().split('T')[0]} 
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-gray-700 text-sm font-medium mb-2">Notes (Optional)</label>
+                <textarea 
+                  name="activity-notes"
+                  rows="3" 
+                  placeholder="Any additional notes..." 
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                ></textarea>
+              </div>
+              
+              <button 
+                type="submit" 
+                className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition"
+              >
+                Save Activity
+              </button>
+            </form>
+          </div>
+        </div>
+      );
+    }
+
+    // SpiritualFitness Component
+    function SpiritualFitness({ setCurrentView, spiritualFitness }) {
+      const components = spiritualFitness?.components || {};
+      const activityCounts = spiritualFitness?.activityCounts || {};
+      
+      return (
+        <div className="space-y-6">
+          <div className="flex items-center justify-between">
+            <h2 className="text-2xl font-semibold text-gray-800">Spiritual Fitness</h2>
+            <button 
+              onClick={() => setCurrentView('dashboard')}
+              className="text-blue-500 hover:text-blue-700"
+            >
+              <i className="fa-solid fa-arrow-left mr-1"></i> Back
+            </button>
+          </div>
+          
+          {/* Score Card */}
+          <div className="card bg-blue-500 text-white">
+            <div className="text-center">
+              <h3 className="text-xl font-semibold mb-2">Your Score</h3>
+              <div className="text-5xl font-bold mb-2">{spiritualFitness?.score ? spiritualFitness.score.toFixed(2) : "0.00"}%</div>
+              <p className="text-white text-opacity-80">Based on your activities in the last 30 days</p>
+            </div>
+          </div>
+          
+          {/* Score Breakdown */}
+          <div className="card">
+            <h3 className="text-lg font-medium mb-4">Score Breakdown</h3>
+            
+            {/* Meeting Attendance */}
+            <div className="mb-6">
+              <div className="flex justify-between mb-1">
+                <span className="font-medium">Meeting Attendance</span>
+                <span className="text-blue-600 font-medium">{((components.meetings || 0) * 3).toFixed(1)}/3.0</span>
+              </div>
+              <div className="h-2 bg-gray-200 rounded overflow-hidden">
+                <div className="h-full bg-blue-500" style={{width: `${Math.min(((components.meetings || 0) * 100), 100)}%`}}></div>
+              </div>
+              <p className="text-sm text-gray-500 mt-1">
+                {activityCounts.meeting || 0} meetings in the last 30 days
+              </p>
+            </div>
+            
+            {/* Prayer & Meditation */}
+            <div className="mb-6">
+              <div className="flex justify-between mb-1">
+                <span className="font-medium">Prayer & Meditation</span>
+                <span className="text-green-600 font-medium">{((components.prayer || 0) * 2).toFixed(1)}/2.0</span>
+              </div>
+              <div className="h-2 bg-gray-200 rounded overflow-hidden">
+                <div className="h-full bg-green-500" style={{width: `${Math.min(((components.prayer || 0) * 100), 100)}%`}}></div>
+              </div>
+              <p className="text-sm text-gray-500 mt-1">
+                {(activityCounts.prayer || 0) + (activityCounts.meditation || 0)} sessions in the last 30 days
+              </p>
+            </div>
+            
+            {/* Reading AA Literature */}
+            <div className="mb-6">
+              <div className="flex justify-between mb-1">
+                <span className="font-medium">Reading AA Literature</span>
+                <span className="text-purple-600 font-medium">{((components.reading || 0) * 1.5).toFixed(1)}/1.5</span>
+              </div>
+              <div className="h-2 bg-gray-200 rounded overflow-hidden">
+                <div className="h-full bg-purple-500" style={{width: `${Math.min(((components.reading || 0) * 100), 100)}%`}}></div>
+              </div>
+              <p className="text-sm text-gray-500 mt-1">
+                {activityCounts.reading || 0} reading sessions in the last 30 days
+              </p>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // History Component
+    function History({ setCurrentView, activities }) {
+      // Sort activities by date, newest first
+      const sortedActivities = [...(activities || [])].sort((a, b) => 
+        new Date(b.date) - new Date(a.date)
+      );
+      
+      // Helper function for activity icon classes
+      const getActivityIconClass = (type) => {
+        const classes = {
+          meeting: 'w-10 h-10 rounded-full flex items-center justify-center bg-blue-100 text-blue-600',
+          meditation: 'w-10 h-10 rounded-full flex items-center justify-center bg-green-100 text-green-600',
+          reading: 'w-10 h-10 rounded-full flex items-center justify-center bg-purple-100 text-purple-600',
+          prayer: 'w-10 h-10 rounded-full flex items-center justify-center bg-indigo-100 text-indigo-600',
+          sponsor: 'w-10 h-10 rounded-full flex items-center justify-center bg-yellow-100 text-yellow-600',
+          service: 'w-10 h-10 rounded-full flex items-center justify-center bg-red-100 text-red-600'
+        };
+        return classes[type] || 'w-10 h-10 rounded-full flex items-center justify-center bg-gray-100 text-gray-600';
+      };
+      
+      // Helper function for activity icons
+      const getActivityIcon = (type) => {
+        const icons = {
+          meeting: 'fa-solid fa-users',
+          meditation: 'fa-solid fa-brain',
+          reading: 'fa-solid fa-book',
+          prayer: 'fa-solid fa-praying-hands',
+          sponsor: 'fa-solid fa-handshake',
+          service: 'fa-solid fa-hands-helping'
+        };
+        return icons[type] || 'fa-solid fa-star';
+      };
+      
+      return (
+        <div className="space-y-6">
+          <div className="flex items-center justify-between">
+            <h2 className="text-2xl font-semibold text-gray-800">Activity History</h2>
+            <button 
+              onClick={() => setCurrentView('dashboard')}
+              className="text-blue-500 hover:text-blue-700"
+            >
+              <i className="fa-solid fa-arrow-left mr-1"></i> Back
+            </button>
+          </div>
+          
+          <div className="flex justify-between items-center">
+            <h3 className="text-lg font-medium">All Activities</h3>
+            <button 
+              onClick={() => setCurrentView('activity')}
+              className="btn-primary"
+            >
+              <i className="fa-solid fa-plus mr-2"></i>
+              New Activity
+            </button>
+          </div>
+          
+          {sortedActivities.length > 0 ? (
+            <div className="space-y-4">
+              {sortedActivities.map(activity => (
+                <div key={activity.id} className="card hover:shadow-md transition">
+                  <div className="flex items-center">
+                    <div className={getActivityIconClass(activity.type)}>
+                      <i className={getActivityIcon(activity.type)}></i>
+                    </div>
+                    <div className="ml-3 flex-1">
+                      <div className="font-medium text-gray-800 flex justify-between">
+                        <span>
+                          {activity.type.charAt(0).toUpperCase() + activity.type.slice(1)}
+                          {activity.name ? `: ${activity.name}` : ''}
+                        </span>
+                        <span className="text-sm text-gray-500">
+                          {new Date(activity.date).toLocaleDateString()}
+                        </span>
+                      </div>
+                      <div className="text-sm text-gray-600">
+                        Duration: {activity.duration} minutes
+                      </div>
+                      {activity.notes ? (
+                        <p className="mt-2 text-sm text-gray-600">{activity.notes}</p>
+                      ) : null}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="card text-center py-8">
+              <i className="fa-solid fa-folder-open text-gray-300 text-5xl mb-3"></i>
+              <h3 className="text-lg font-medium text-gray-700 mb-2">No Activities Yet</h3>
+              <p className="text-gray-500 mb-4">Start tracking your recovery journey by logging your first activity.</p>
+              <button 
+                onClick={() => setCurrentView('activity')}
+                className="btn-primary"
+              >
+                Log First Activity
+              </button>
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    // NearbyMembers Component
+    function NearbyMembers({ setCurrentView, user, onUpdatePrivacy }) {
+      const handlePrivacyChange = (setting, value) => {
+        onUpdatePrivacy({ [setting]: value });
+      };
+      
+      return (
+        <div className="space-y-6">
+          <div className="flex items-center justify-between">
+            <h2 className="text-2xl font-semibold text-gray-800">Nearby AA Members</h2>
+            <button 
+              onClick={() => setCurrentView('dashboard')}
+              className="text-blue-500 hover:text-blue-700"
+            >
+              <i className="fa-solid fa-arrow-left mr-1"></i> Back
+            </button>
+          </div>
+          
+          <div className="card">
+            <div className="text-center p-6">
+              <i className="fa-solid fa-location-dot text-blue-500 text-5xl mb-4"></i>
+              <h3 className="text-xl font-medium mb-2">Find Members Nearby</h3>
+              <p className="text-gray-600 mb-6">Connect with other AA members in your area for support and fellowship.</p>
+              
+              <button 
+                onClick={() => alert('This feature is coming soon!')}
+                className="btn-primary w-full"
+              >
+                <i className="fa-solid fa-broadcast-tower mr-2"></i>
+                Start Discovery
+              </button>
+              
+              <p className="text-xs text-gray-500 mt-4">
+                Your privacy is protected. Your location and personal information are only shared when you choose to connect.
+              </p>
+            </div>
+          </div>
+          
+          {/* Privacy Settings Card */}
+          <div className="card">
+            <h3 className="text-lg font-medium mb-4">Discovery Settings</h3>
+            
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <p className="font-medium text-gray-800">Share My Location</p>
+                <p className="text-sm text-gray-500">Allow nearby members to see you</p>
+              </div>
+              <label className="relative inline-flex items-center cursor-pointer">
+                <input 
+                  type="checkbox" 
+                  className="sr-only peer" 
+                  checked={user?.privacySettings?.shareLocation || false}
+                  onChange={(e) => handlePrivacyChange('shareLocation', e.target.checked)}
+                />
+                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-500"></div>
+              </label>
+            </div>
+            
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="font-medium text-gray-800">Share Activities</p>
+                <p className="text-sm text-gray-500">Share recent activities with connections</p>
+              </div>
+              <label className="relative inline-flex items-center cursor-pointer">
+                <input 
+                  type="checkbox" 
+                  className="sr-only peer" 
+                  checked={user?.privacySettings?.shareActivities || false}
+                  onChange={(e) => handlePrivacyChange('shareActivities', e.target.checked)}
+                />
+                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-500"></div>
+              </label>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // Profile Component
+    function Profile({ setCurrentView, user, onUpdate }) {
+      const handleSubmit = (e) => {
+        e.preventDefault();
+        
+        const formData = new FormData(e.target);
+        const updates = {
+          name: formData.get('profile-name'),
+          sobrietyDate: formData.get('profile-sobriety-date'),
+          homeGroup: formData.get('profile-home-group'),
+          phone: formData.get('profile-phone'),
+          email: formData.get('profile-email'),
+        };
+        
+        onUpdate(updates);
+      };
+      
+      // Calculate sobriety stats if available
+      const sobrietyDays = user?.sobrietyDate ? window.Database.calculateSobrietyDays(user.sobrietyDate) : 0;
+      const sobrietyYears = user?.sobrietyDate ? window.Database.calculateSobrietyYears(user.sobrietyDate) : 0;
+      
+      return (
+        <div className="space-y-6">
+          <div className="flex items-center justify-between">
+            <h2 className="text-2xl font-semibold text-gray-800">Profile</h2>
+            <button 
+              onClick={() => setCurrentView('dashboard')}
+              className="text-blue-500 hover:text-blue-700"
+            >
+              <i className="fa-solid fa-arrow-left mr-1"></i> Back
+            </button>
+          </div>
+          
+          {/* Profile Card */}
+          <div className="card text-center">
+            <div className="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <i className="fa-solid fa-user text-blue-500 text-4xl"></i>
+            </div>
+            <h3 className="text-xl font-semibold mb-1">{user?.name || 'User'}</h3>
+            <p className="text-gray-500 mb-4">Member since {new Date(user?.createdAt || Date.now()).toLocaleDateString()}</p>
+            
+            <div className="flex justify-center space-x-8 mb-2">
+              <div className="text-center">
+                <div className="text-2xl font-bold text-green-500">{sobrietyDays}</div>
+                <div className="text-sm text-gray-500">Days</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-green-500">{sobrietyYears.toFixed(2)}</div>
+                <div className="text-sm text-gray-500">Years</div>
+              </div>
+            </div>
+            
+            <p className="text-sm text-gray-500">
+              Sober since {user?.sobrietyDate ? new Date(user.sobrietyDate).toLocaleDateString() : 'Not set'}
+            </p>
+          </div>
+          
+          {/* Profile Form */}
+          <div className="card">
+            <h3 className="text-lg font-medium mb-4">Personal Information</h3>
+            
+            <form id="profile-form" className="space-y-4" onSubmit={handleSubmit}>
+              <div>
+                <label className="block text-gray-700 text-sm font-medium mb-2">Name</label>
+                <input 
+                  type="text" 
+                  name="profile-name" 
+                  defaultValue={user?.name || ''} 
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-gray-700 text-sm font-medium mb-2">Sobriety Date</label>
+                <input 
+                  type="date" 
+                  name="profile-sobriety-date" 
+                  defaultValue={user?.sobrietyDate || ''} 
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-gray-700 text-sm font-medium mb-2">Home Group</label>
+                <input 
+                  type="text" 
+                  name="profile-home-group" 
+                  defaultValue={user?.homeGroup || ''} 
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-gray-700 text-sm font-medium mb-2">Phone</label>
+                <input 
+                  type="tel" 
+                  name="profile-phone" 
+                  defaultValue={user?.phone || ''} 
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-gray-700 text-sm font-medium mb-2">Email</label>
+                <input 
+                  type="email" 
+                  name="profile-email" 
+                  defaultValue={user?.email || ''} 
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              
+              <button 
+                type="submit" 
+                className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition"
+              >
+                Save Profile
+              </button>
+            </form>
+          </div>
+        </div>
+      );
+    }
+
+    // -----------------------------------------
+    // MAIN APP COMPONENT
+    // -----------------------------------------
+    function App() {
+      const { useState, useEffect } = React;
+      
+      // State variables
+      const [currentView, setCurrentView] = useState('dashboard');
+      const [user, setUser] = useState(null);
+      const [activities, setActivities] = useState([]);
+      const [spiritualFitness, setSpiritualFitness] = useState({ score: 0 });
+      const [loading, setLoading] = useState(true);
+      
+      // Load data on component mount
+      useEffect(() => {
+        console.log('App component mounted, loading data...');
+        loadData();
+      }, []);
+      
+      // Load all user data
+      async function loadData() {
+        try {
+          // Get user
+          const users = window.Database.userOperations.getAll();
+          if (users && users.length > 0) {
+            const currentUser = users[0];
+            setUser(currentUser);
+            
+            // Get activities
+            const userActivities = window.Database.activityOperations.getAll({ 
+              userId: currentUser.id 
+            }) || [];
+            setActivities(userActivities);
+            
+            // Calculate fitness
+            const fitness = window.Database.spiritualFitnessOperations.calculateAndSave(
+              currentUser.id, 
+              userActivities
+            );
+            setSpiritualFitness(fitness);
+          } else {
+            console.error('No user found');
+          }
+        } catch (error) {
+          console.error('Error loading data:', error);
+        } finally {
+          setLoading(false);
+        }
+      }
+      
+      // Handler for saving new activities
+      function handleSaveActivity(newActivity) {
+        try {
+          // Add to database
+          const savedActivity = window.Database.activityOperations.create({
+            ...newActivity,
+            userId: user.id
+          });
+          
+          // Update state
+          setActivities(prev => [...prev, savedActivity]);
+          
+          // Recalculate spiritual fitness
+          const updatedFitness = window.Database.spiritualFitnessOperations.calculateAndSave(
+            user.id, 
+            [...activities, savedActivity]
+          );
+          setSpiritualFitness(updatedFitness);
+          
+          // Navigate back to dashboard
+          setCurrentView('dashboard');
+        } catch (error) {
+          console.error('Error saving activity:', error);
+        }
+      }
+      
+      // Handler for updating user profile
+      function handleUpdateProfile(updates) {
+        try {
+          // Update in database
+          window.Database.userOperations.update(user.id, updates);
+          
+          // Update state
+          setUser(prev => ({ ...prev, ...updates }));
+          
+          // Navigate back to dashboard
+          setCurrentView('dashboard');
+        } catch (error) {
+          console.error('Error updating profile:', error);
+        }
+      }
+      
+      // Handler for updating privacy settings
+      function handleUpdatePrivacy(changes) {
+        try {
+          const updatedSettings = {
+            ...user.privacySettings,
+            ...changes
+          };
+          
+          // Update in database
+          window.Database.userOperations.update(user.id, {
+            privacySettings: updatedSettings
+          });
+          
+          // Update state
+          setUser(prev => ({
+            ...prev,
+            privacySettings: updatedSettings
+          }));
+        } catch (error) {
+          console.error('Error updating privacy settings:', error);
+        }
+      }
+      
+      // Loading screen
+      if (loading) {
+        return (
+          <div className="flex justify-center items-center h-screen">
+            <div className="text-center">
+              <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+              <p className="mt-4 text-gray-600">Loading your data...</p>
+            </div>
+          </div>
+        );
+      }
+      
+      // Render the main view
+      return (
+        <div className="app-container">
+          {/* Main Content Area */}
+          <div className="pb-16">
+            {currentView === 'dashboard' && (
+              <Dashboard 
+                setCurrentView={setCurrentView} 
+                user={user}
+                activities={activities}
+                spiritualFitness={spiritualFitness}
+              />
+            )}
+            
+            {currentView === 'activity' && (
+              <ActivityLog
+                setCurrentView={setCurrentView}
+                onSave={handleSaveActivity}
+              />
+            )}
+            
+            {currentView === 'fitness' && (
+              <SpiritualFitness
+                setCurrentView={setCurrentView}
+                spiritualFitness={spiritualFitness}
+              />
+            )}
+            
+            {currentView === 'history' && (
+              <History
+                setCurrentView={setCurrentView}
+                activities={activities}
+              />
+            )}
+            
+            {currentView === 'nearby' && (
+              <NearbyMembers
+                setCurrentView={setCurrentView}
+                user={user}
+                onUpdatePrivacy={handleUpdatePrivacy}
+              />
+            )}
+            
+            {currentView === 'profile' && (
+              <Profile
+                setCurrentView={setCurrentView}
+                user={user}
+                onUpdate={handleUpdateProfile}
+              />
+            )}
+          </div>
+          
+          {/* Bottom Navigation */}
+          <NavBar currentView={currentView} setCurrentView={setCurrentView} />
+        </div>
+      );
+    }
+
+    // -----------------------------------------
+    // DATABASE & APP INITIALIZATION
+    // -----------------------------------------
+    /**
+     * Initialize the application
+     */
+    async function initApp() {
+      try {
+        console.log('Initializing app...');
+        
+        // Initialize database
+        await initDatabase();
+        
+        // Render the React app
+        ReactDOM.render(
+          <App />,
+          document.getElementById('root')
+        );
+        
+      } catch (error) {
+        console.error('Error initializing app:', error);
+        showError('Failed to initialize the application. Please try again later.');
+      }
+    }
+
+    /**
+     * Initialize the database
+     */
+    async function initDatabase() {
+      console.log('Initializing database...');
+      
+      if (!window.Database) {
+        throw new Error('Database module not loaded');
+      }
+      
+      try {
+        await window.Database.initDatabase();
+        
+        // Check if we have any users
+        const users = window.Database.userOperations.getAll();
+        
+        if (!users || users.length === 0) {
+          console.log('Creating default user...');
+          // Create a default user
+          window.Database.userOperations.create({
+            name: 'Test User',
+            sobrietyDate: '2020-01-01',
+            homeGroup: 'Thursday Night Group',
+            phone: '555-123-4567',
+            email: 'test@example.com',
+            privacySettings: {
+              shareLocation: false,
+              shareActivities: true
+            }
+          });
+        }
+        
+        console.log('Database initialization complete');
+      } catch (error) {
+        console.error('Error initializing database:', error);
+        throw error;
+      }
+    }
+
+    /**
+     * Show an error message
+     */
+    function showError(message) {
+      const rootElement = document.getElementById('root');
+      if (!rootElement) return;
+      
+      rootElement.innerHTML = `
+        <div class="h-screen flex flex-col items-center justify-center p-4">
+          <div class="text-center">
+            <i class="fa-solid fa-exclamation-circle text-red-500 text-5xl mb-4"></i>
+            <h1 class="text-2xl font-bold text-gray-800 mb-2">Something went wrong</h1>
+            <p class="text-gray-600 mb-6">${message}</p>
+            <button onclick="window.location.reload()" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition">
+              Reload Application
+            </button>
+          </div>
+        </div>
+      `;
+    }
+  </script>
 </body>
 </html>
