@@ -71,6 +71,24 @@ const server = http.createServer((req, res) => {
     return;
   }
   
+  if (req.url === '/database.js') {
+    console.log('Serving database.js');
+    
+    const dbJsPath = path.join(__dirname, 'app', 'database.js');
+    fs.readFile(dbJsPath, (err, content) => {
+      if (err) {
+        console.error(`Error reading database.js: ${err.message}`);
+        res.writeHead(500);
+        res.end('Error loading database script');
+        return;
+      }
+      
+      res.writeHead(200, { 'Content-Type': 'application/javascript' });
+      res.end(content);
+    });
+    return;
+  }
+  
   if (req.url === '/styles.css') {
     console.log('Serving styles.css');
     

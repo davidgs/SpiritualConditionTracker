@@ -847,6 +847,37 @@ textarea:focus {
   font-size: 0.9rem;
 }
 
+/* Loading Spinner */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  text-align: center;
+  padding: 20px;
+}
+
+.loading-spinner {
+  width: 50px;
+  height: 50px;
+  border: 5px solid rgba(0, 0, 0, 0.1);
+  border-radius: 50%;
+  border-top: 5px solid var(--primary-color);
+  animation: spin 1s linear infinite;
+  margin-bottom: 20px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loading-container p {
+  color: var(--text-medium);
+  font-size: 1.1rem;
+}
+
 /* Error page */
 .error-container {
   display: flex;
