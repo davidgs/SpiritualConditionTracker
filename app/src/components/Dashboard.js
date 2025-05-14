@@ -13,6 +13,11 @@ export default function Dashboard({ setCurrentView, user, activities, spiritualF
     return new Date(dateString).toLocaleDateString(undefined, options);
   };
 
+  // Format number with thousands separator
+  const formatNumber = (number) => {
+    return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  };
+
   // Get icon for activity type
   const getActivityIcon = (type) => {
     switch (type) {
@@ -35,28 +40,43 @@ export default function Dashboard({ setCurrentView, user, activities, spiritualF
     ? window.db?.calculateSobrietyYears(user.sobrietyDate, 2) || 0
     : 0;
 
+  // Determine whether to show years or days more prominently
+  const showYearsProminent = sobrietyYears >= 1;
+
   return (
     <div className="p-4 pb-20 max-w-md mx-auto">
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">Recovery Tracker</h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400">Track your spiritual journey</p>
-        </div>
+      {/* Centered logo at the top */}
+      <div className="flex flex-col items-center justify-center mb-6">
         <img 
           src={logoImg} 
           alt="App Logo" 
-          className="h-8 w-8 object-cover rounded-full"
-          style={{ maxWidth: '32px', maxHeight: '32px' }}
+          className="h-20 w-20 object-cover rounded-lg mb-3"
+          style={{ maxWidth: '80px', maxHeight: '80px' }}
         />
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">Recovery Tracker</h1>
+          <p className="text-sm text-gray-500 dark:text-gray-400">Track your spiritual journey</p>
+        </div>
       </div>
       
       {/* Sobriety & Spiritual Fitness Stats */}
       <div className="grid grid-cols-2 gap-4 mb-6">
         <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700 text-center">
           <h3 className="text-md font-medium text-gray-700 dark:text-gray-300 mb-1">Sobriety</h3>
-          <div className="text-3xl font-bold text-blue-500 dark:text-blue-400 mb-1">{sobrietyDays}</div>
-          <div className="text-sm text-gray-500 dark:text-gray-400">days</div>
-          <div className="text-sm text-gray-700 dark:text-gray-300 mt-1">{sobrietyYears} years</div>
+          
+          {showYearsProminent ? (
+            <>
+              <div className="text-3xl font-bold text-blue-500 dark:text-blue-400 mb-1">{sobrietyYears.toFixed(2)}</div>
+              <div className="text-sm text-gray-500 dark:text-gray-400">years</div>
+              <div className="text-sm text-gray-700 dark:text-gray-300 mt-1">{formatNumber(sobrietyDays)} days</div>
+            </>
+          ) : (
+            <>
+              <div className="text-3xl font-bold text-blue-500 dark:text-blue-400 mb-1">{formatNumber(sobrietyDays)}</div>
+              <div className="text-sm text-gray-500 dark:text-gray-400">days</div>
+              <div className="text-sm text-gray-700 dark:text-gray-300 mt-1">{sobrietyYears.toFixed(2)} years</div>
+            </>
+          )}
         </div>
         <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700 text-center">
           <h3 className="text-md font-medium text-gray-700 dark:text-gray-300 mb-1">Spiritual Fitness</h3>
