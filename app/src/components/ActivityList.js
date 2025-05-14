@@ -76,6 +76,34 @@ export default function ActivityList({
     );
   }
   
+  // Group activities by date
+  const groupByDate = (activities) => {
+    const groups = {};
+    
+    activities.forEach(activity => {
+      // Get the date portion only in YYYY-MM-DD format
+      const dateObj = new Date(activity.date);
+      const dateKey = dateObj.toISOString().split('T')[0];
+      
+      if (!groups[dateKey]) {
+        groups[dateKey] = [];
+      }
+      
+      groups[dateKey].push(activity);
+    });
+    
+    // Sort the dates (newest first)
+    const sortedDateKeys = Object.keys(groups).sort((a, b) => {
+      return new Date(b) - new Date(a);
+    });
+    
+    // Return the grouped result with dates in order
+    return { groups, sortedDateKeys };
+  };
+  
+  // Get grouped activities
+  const { groups, sortedDateKeys } = groupByDate(filteredActivities);
+  
   return (
     <div>
       {title && (
@@ -93,15 +121,31 @@ export default function ActivityList({
         </div>
       )}
       
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-        {filteredActivities.map((activity, index) => (
-          <div key={activity.id || `${activity.date}-${activity.type}-${index}`} style={{
-            display: 'flex',
-            alignItems: 'center',
-            borderBottom: darkMode ? '1px solid #374151' : '1px solid #f3f4f6',
-            paddingBottom: '0.5rem',
-            marginBottom: '0.25rem'
-          }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+        {sortedDateKeys.map(dateKey => (
+          <div key={dateKey}>
+            {/* Date header */}
+            <div style={{
+              fontSize: '0.9rem',
+              fontWeight: 500,
+              color: darkMode ? '#9ca3af' : '#6b7280',
+              marginBottom: '0.5rem',
+              paddingBottom: '0.25rem',
+              borderBottom: darkMode ? '1px solid #374151' : '1px solid #e5e7eb'
+            }}>
+              {formatDate(dateKey)}
+            </div>
+            
+            {/* Activities for this date */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+              {groups[dateKey].map((activity, index) => (
+                <div key={activity.id || `${activity.date}-${activity.type}-${index}`} style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  borderBottom: darkMode ? '1px solid #374151' : '1px solid #f3f4f6',
+                  paddingBottom: '0.5rem',
+                  marginBottom: '0.25rem'
+                }}
             <div style={{
               width: '1.75rem',
               height: '1.75rem',
