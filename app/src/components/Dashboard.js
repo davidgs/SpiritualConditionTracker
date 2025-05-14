@@ -41,7 +41,7 @@ export default function Dashboard({ setCurrentView, user, activities, spiritualF
         <img 
           src="/app/assets/logo.png" 
           alt="App Logo" 
-          className="h-10 w-10 rounded-full"
+          className="h-8 w-8 object-cover rounded-full"
         />
       </div>
       
