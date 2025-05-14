@@ -1,7 +1,7 @@
 // Navigation component for the Spiritual Condition Tracker
-// Making component available globally
+import React from 'react';
 
-window.NavBar = function NavBar({ currentView, setCurrentView }) {
+export default function NavBar({ currentView, setCurrentView }) {
   const navItems = [
     { id: 'dashboard', name: 'Dashboard', icon: 'fa-solid fa-house' },
     { id: 'activity', name: 'Log Activity', icon: 'fa-solid fa-plus' },

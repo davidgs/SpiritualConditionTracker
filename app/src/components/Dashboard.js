@@ -1,7 +1,7 @@
 // Dashboard component - Main dashboard view for Spiritual Condition Tracker
-// Making this available as a global for browser-based imports
+import React from 'react';
 
-window.Dashboard = function Dashboard({ setCurrentView, user, activities, spiritualFitness }) {
+export default function Dashboard({ setCurrentView, user, activities, spiritualFitness }) {
   // Get the recent 5 activities for display
   const recentActivities = activities 
     ? activities.sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 5)
