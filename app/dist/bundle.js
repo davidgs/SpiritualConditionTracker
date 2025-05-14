@@ -28480,7 +28480,18 @@ function Dashboard(_ref) {
     className: "relative inline-block"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("button", {
     ref: buttonRef,
-    className: "text-blue-500 dark:text-blue-400 text-xs mt-2 px-2 py-1 border border-blue-400 rounded-md hover:bg-blue-50 dark:hover:bg-blue-900 transition-colors",
+    style: {
+      backgroundColor: darkMode ? '#1e40af' : '#dbeafe',
+      color: darkMode ? '#93c5fd' : '#1e40af',
+      padding: '0.375rem 0.75rem',
+      borderRadius: '0.375rem',
+      fontSize: '0.75rem',
+      fontWeight: '500',
+      marginTop: '0.5rem',
+      border: darkMode ? '1px solid #3b82f6' : '1px solid #93c5fd',
+      cursor: 'pointer',
+      transition: 'background-color 0.2s'
+    },
     onClick: function onClick() {
       return setShowPopover(!showPopover);
     }
@@ -28510,7 +28521,17 @@ function Dashboard(_ref) {
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("h2", {
     className: "text-lg font-medium text-gray-800 dark:text-gray-200"
   }, "Recent Activities"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("button", {
-    className: "text-blue-500 dark:text-blue-400 text-sm",
+    style: {
+      backgroundColor: darkMode ? '#2563eb' : '#3b82f6',
+      color: 'white',
+      padding: '0.375rem 0.75rem',
+      borderRadius: '0.375rem',
+      fontSize: '0.875rem',
+      fontWeight: '500',
+      transition: 'background-color 0.2s',
+      border: 'none',
+      cursor: 'pointer'
+    },
     onClick: function onClick() {
       return setCurrentView('history');
     }
