@@ -1,5 +1,5 @@
 {
-  "hostType": "lan",
+  "hostType": "0.0.0.0",
   "lanType": "ip",
   "dev": true,
   "minify": false,

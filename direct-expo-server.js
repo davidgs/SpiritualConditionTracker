@@ -21,7 +21,6 @@ const expo = spawn('npx', [
   'expo',
   'start',
   '--web',
-  '--no-dev',
   '--port', '3243', // Use a different port for native, we'll use webpack port
   '--host', '0.0.0.0'
 ], {
@@ -29,10 +28,9 @@ const expo = spawn('npx', [
   env: {
     ...process.env,
     BROWSER: 'none',
-    CI: '1',
     EXPO_WEB_PORT: WEBPACK_PORT.toString(),
     PUBLIC_URL: '',
-    BASE_PATH: ''
+    NODE_OPTIONS: '--no-warnings'
   }
 });
 
@@ -46,9 +44,9 @@ const server = http.createServer((req, res) => {
   
   // Serve our custom landing page for the root route only - but not for app.html requests
   if ((targetPath === '/' || targetPath === '') && !req.url.startsWith('/app') && !req.url.includes('app.html')) {
-    const landingPagePath = path.join(__dirname, 'landing-page.html');
+    const indexPath = path.join(__dirname, 'index.html');
     
-    fs.readFile(landingPagePath, (err, content) => {
+    fs.readFile(indexPath, (err, content) => {
       if (err) {
         res.writeHead(500);
         res.end('Error loading landing page');
@@ -178,8 +176,7 @@ function getContentType(filePath) {
 
 // Helper function to proxy requests to Expo
 function proxyToExpo(req, res, targetPath) {
-  // Don't add platform parameters as they're causing issues with Expo server
-  
+  // Add expo-platform header to help with routing
   const options = {
     hostname: 'localhost',
     port: WEBPACK_PORT,
@@ -188,13 +185,12 @@ function proxyToExpo(req, res, targetPath) {
     headers: {
       ...req.headers,
       host: `localhost:${WEBPACK_PORT}`,
-      // Use either ios or android as the platform for Native Expo requests
-      // 'expo-platform': 'ios',
+      'expo-platform': 'web',
       'x-forwarded-proto': 'http'
     }
   };
 
-  console.log(`Proxying request ${req.url} to ${targetPath}`);
+  console.log(`Proxying request ${req.url} to Expo at ${targetPath}`);
 
   // Create proxy request
   const proxyReq = http.request(options, (proxyRes) => {
@@ -210,13 +206,13 @@ function proxyToExpo(req, res, targetPath) {
     console.error(`Proxy error for ${req.url}: ${err.message}`);
     
     if (err.code === 'ECONNREFUSED') {
-      // Expo is still starting up
-      // Create a temporary HTML page that will retry automatically
-      const retryHtml = `
+      // Show a basic loading page that auto-refreshes
+      const loadingPage = `
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Connecting to Expo...</title>
+  <title>Loading Application</title>
+  <meta http-equiv="refresh" content="5">
   <style>
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -254,55 +250,19 @@ function proxyToExpo(req, res, targetPath) {
       color: #7f8c8d;
       margin-bottom: 1.5rem;
     }
-    .retry-counter {
-      font-size: 0.8rem;
-      color: #95a5a6;
-    }
   </style>
 </head>
 <body>
   <div class="container">
     <div class="spinner"></div>
-    <h2>Connecting to the Application</h2>
-    <p>The application server is starting up. This page will automatically reconnect when it's ready.</p>
-    <div class="retry-counter">Retry attempt: <span id="count">1</span></div>
+    <h2>Starting Application</h2>
+    <p>Please wait while the application loads. This page will refresh automatically every 5 seconds.</p>
   </div>
-
-  <script>
-    let count = 1;
-    const countEl = document.getElementById('count');
-    
-    // Retry connection every 2 seconds
-    function retryConnection() {
-      count++;
-      countEl.textContent = count;
-      
-      // Fetch the current URL
-      fetch(window.location.href)
-        .then(response => {
-          if (response.status === 200) {
-            // If successful, reload the page
-            window.location.reload();
-          } else {
-            // Try again in 2 seconds
-            setTimeout(retryConnection, 2000);
-          }
-        })
-        .catch(error => {
-          // Error connecting, try again in 2 seconds
-          setTimeout(retryConnection, 2000);
-        });
-    }
-    
-    // Start the retry process after 3 seconds
-    setTimeout(retryConnection, 3000);
-  </script>
 </body>
-</html>
-      `;
+</html>`;
       
       res.writeHead(503, { 'Content-Type': 'text/html' });
-      res.end(retryHtml);
+      res.end(loadingPage);
     } else {
       res.writeHead(500);
       res.end(`Server error: ${err.message}`);

@@ -2,189 +2,215 @@
  * Simple and reliable server for Spiritual Condition Tracker app
  * This server serves the landing page and proxies requests to the Expo app
  */
-
-const express = require('express');
-const { spawn } = require('child_process');
-const path = require('path');
 const http = require('http');
-const httpProxy = require('http-proxy');
 const fs = require('fs');
+const path = require('path');
+const { spawn } = require('child_process');
+const httpProxy = require('http-proxy');
 
 // Configuration
-const PORT = process.env.PORT || 3243;
-const HOST = process.env.HOST || '0.0.0.0';
+const PORT = 5000;
+const EXPO_PORT = 19006; // Default Expo web port
 
-// Create Express app
-const app = express();
-const server = http.createServer(app);
+// Create a proxy server instance
+const proxy = httpProxy.createProxyServer({});
 
-// Create a proxy for Expo
-const proxy = httpProxy.createProxyServer({
-  ws: true,
-  changeOrigin: true
-});
-
-// Handle proxy errors
-proxy.on('error', function(err, req, res) {
+// Add error handler
+proxy.on('error', (err, req, res) => {
   console.error('Proxy error:', err);
-  if (!res.headersSent) {
+  
+  if (err.code === 'ECONNREFUSED') {
+    const waitingPage = `
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Starting Expo App</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #f5f5f5;
+    }
+    .container {
+      text-align: center;
+      padding: 2rem;
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      max-width: 500px;
+    }
+    .spinner {
+      width: 40px;
+      height: 40px;
+      margin: 0 auto 20px;
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #3498db;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    h2 {
+      color: #2c3e50;
+      margin-top: 0;
+    }
+    p {
+      color: #7f8c8d;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="spinner"></div>
+    <h2>Starting the app...</h2>
+    <p>Please wait while the Expo development server starts. This page will automatically refresh.</p>
+    
+    <script>
+      // Refresh the page after 5 seconds
+      setTimeout(() => {
+        window.location.reload();
+      }, 5000);
+    </script>
+  </div>
+</body>
+</html>`;
+    
+    res.writeHead(503, { 'Content-Type': 'text/html' });
+    res.end(waitingPage);
+  } else {
     res.writeHead(500);
     res.end('Proxy error');
   }
 });
 
-// Serve static files
-app.use(express.static(path.join(__dirname)));
-app.use('/public', express.static(path.join(__dirname, 'public')));
-
-// Ensure the logo is available
-try {
-  // Create public directory if it doesn't exist
-  if (!fs.existsSync('public')) {
-    fs.mkdirSync('public', { recursive: true });
+// Create HTTP server
+const server = http.createServer((req, res) => {
+  console.log(`Request: ${req.url}`);
+  
+  // Serve landing page at root
+  if (req.url === '/' || req.url === '') {
+    console.log('Serving landing page');
+    
+    fs.readFile(path.join(__dirname, 'landing-page.html'), (err, content) => {
+      if (err) {
+        console.error(`Error reading landing page: ${err.message}`);
+        res.writeHead(500);
+        res.end('Error loading landing page');
+        return;
+      }
+      
+      res.writeHead(200, { 'Content-Type': 'text/html' });
+      res.end(content);
+    });
+    return;
   }
   
-  // Copy logo to public directory
-  if (fs.existsSync('logo.jpg')) {
-    fs.copyFileSync('logo.jpg', path.join('public', 'logo.jpg'));
-    console.log('Logo copied to public directory');
+  // Serve static assets at the root
+  if (req.url.endsWith('.jpg') || req.url.endsWith('.png') || req.url.endsWith('.ico')) {
+    const filePath = path.join(__dirname, req.url);
+    
+    fs.access(filePath, fs.constants.F_OK, (err) => {
+      if (err) {
+        res.writeHead(404);
+        res.end('File not found');
+        return;
+      }
+      
+      fs.readFile(filePath, (err, content) => {
+        if (err) {
+          res.writeHead(500);
+          res.end('Error reading file');
+          return;
+        }
+        
+        let contentType = 'application/octet-stream';
+        if (req.url.endsWith('.jpg') || req.url.endsWith('.jpeg')) contentType = 'image/jpeg';
+        if (req.url.endsWith('.png')) contentType = 'image/png';
+        if (req.url.endsWith('.ico')) contentType = 'image/x-icon';
+        
+        res.writeHead(200, { 'Content-Type': contentType });
+        res.end(content);
+      });
+    });
+    
+    return;
   }
   
-  // Fix HTML paths
-  const indexPath = path.join(__dirname, 'public', 'index.html');
-  if (fs.existsSync(indexPath)) {
-    let html = fs.readFileSync(indexPath, 'utf8');
-    html = html.replace(/src="[^"]*logo\.jpg"/g, 'src="/logo.jpg"');
-    fs.writeFileSync(indexPath, html);
-    console.log('Fixed paths in index.html');
+  // Proxy requests to /app path to Expo
+  if (req.url.startsWith('/app')) {
+    console.log(`Proxying ${req.url} to Expo`);
+    
+    // Rewrite path to remove /app prefix
+    const targetUrl = req.url.replace(/^\/app/, '') || '/';
+    
+    // Add Expo platform header
+    req.headers['expo-platform'] = 'web';
+    
+    // Forward the request to Expo
+    proxy.web(req, res, { 
+      target: `http://localhost:${EXPO_PORT}`,
+      ignorePath: true,
+      changeOrigin: true
+    });
+    
+    return;
   }
-} catch (err) {
-  console.error('Error with static files:', err);
-}
+  
+  // Default 404 response
+  res.writeHead(404);
+  res.end('Not found');
+});
 
-// Start Expo in the background
+// Start Expo development server
 async function startExpoApp() {
-  console.log('Starting Expo app...');
+  console.log('Starting Expo development server...');
   
-  const expoAppDir = path.join(__dirname, 'expo-app');
-  if (!fs.existsSync(expoAppDir)) {
-    console.error('Error: expo-app directory not found');
-    throw new Error('expo-app directory not found');
-  }
-  
-  try {
-    console.log('Cleaning up existing processes...');
-    spawn('pkill', ['-f', 'npx expo'], { stdio: 'ignore' });
-    await new Promise(resolve => setTimeout(resolve, 1000));
-  } catch (err) {
-    console.log('No processes to clean up');
-  }
-  
-  console.log('Installing minimatch (may be needed)...');
-  try {
-    // Try to install minimatch separately to fix the missing module error
-    spawn('npm', ['install', 'minimatch@^5.1.0', '--no-save'], {
-      cwd: __dirname,
-      stdio: 'inherit'
-    });
-    await new Promise(resolve => setTimeout(resolve, 2000));
-  } catch (err) {
-    console.error('Error installing minimatch:', err);
-  }
-  
-  // Start the Expo process with proper environment variables
-  const expoProcess = spawn('npx', [
-    'expo',
-    'start',
-    '--offline',
-    '--web',
-    '--port',
-    '5001'
-  ], {
-    cwd: expoAppDir,
-    env: { 
-      ...process.env, 
-      CI: '1',
-      DANGEROUSLY_DISABLE_HOST_CHECK: 'true',
-      PUBLIC_URL: '/'
-    },
-    stdio: 'pipe'
+  const expo = spawn('npx', ['expo', 'start', '--web', '--non-interactive'], {
+    stdio: 'pipe',
+    env: {
+      ...process.env,
+      BROWSER: 'none',
+      EXPO_WEB_PORT: EXPO_PORT.toString()
+    }
   });
   
-  expoProcess.stdout.on('data', (data) => {
-    console.log(`Expo: ${data}`);
+  expo.stdout.on('data', (data) => {
+    console.log(`[Expo] ${data.toString().trim()}`);
   });
   
-  expoProcess.stderr.on('data', (data) => {
-    console.error(`Expo error: ${data}`);
+  expo.stderr.on('data', (data) => {
+    console.error(`[Expo Error] ${data.toString().trim()}`);
   });
   
-  console.log('Waiting for Expo to start...');
-  await new Promise(resolve => setTimeout(resolve, 15000));
-  
-  return expoProcess;
+  // Clean up on exit
+  process.on('SIGINT', () => {
+    console.log('Shutting down Expo...');
+    expo.kill();
+    process.exit(0);
+  });
 }
 
-// Main function
+// Start everything
 async function main() {
-  try {
-    // Basic home page
-    app.get('/', (req, res) => {
-      res.sendFile(path.join(__dirname, 'public', 'index.html'));
-    });
-    
-    // Server test page
-    app.get('/server-test', (req, res) => {
-      res.send(`
-        <html>
-          <head><title>Server Test</title></head>
-          <body>
-            <h1>Server is running!</h1>
-            <p>Time: ${new Date().toISOString()}</p>
-            <p><a href="/">Home</a> | <a href="/app">App</a></p>
-          </body>
-        </html>
-      `);
-    });
-    
-    console.log('Starting Expo app...');
-    const expoProcess = await startExpoApp();
-    
-    // Simple '/app' handler that works without path-to-regexp
-    app.use(function(req, res, next) {
-      if (req.url.startsWith('/app')) {
-        console.log(`Proxying to Expo: ${req.url}`);
-        proxy.web(req, res, { target: 'http://localhost:5001' });
-      } else {
-        next();
-      }
-    });
-    
-    // Handle WebSocket connections
-    server.on('upgrade', function(req, socket, head) {
-      if (req.url.startsWith('/app')) {
-        console.log(`WebSocket upgrade: ${req.url}`);
-        proxy.ws(req, socket, head, { target: 'http://localhost:5001' });
-      }
-    });
-    
-    // Catch-all route for SPA
-    app.get('*', (req, res) => {
-      res.sendFile(path.join(__dirname, 'public', 'index.html'));
-    });
-    
-    // Start the server
-    server.listen(PORT, HOST, () => {
-      console.log(`Server running at http://${HOST}:${PORT}`);
-      console.log(`- Home page: http://localhost:${PORT}/`);
-      console.log(`- App: http://localhost:${PORT}/app`);
-      console.log(`- Test page: http://localhost:${PORT}/server-test`);
-    });
-  } catch (err) {
-    console.error('Server error:', err);
-    process.exit(1);
-  }
+  // Start the Expo development server first
+  await startExpoApp();
+  
+  // Then start our HTTP server
+  server.listen(PORT, '0.0.0.0', () => {
+    console.log(`Server running on port ${PORT}`);
+    console.log(`Landing page at http://localhost:${PORT}/`);
+    console.log(`App at http://localhost:${PORT}/app`);
+  });
 }
 
-// Start the server
-main();
+main().catch(err => {
+  console.error('Server error:', err);
+  process.exit(1);
+});
