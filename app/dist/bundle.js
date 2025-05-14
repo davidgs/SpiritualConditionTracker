@@ -27944,8 +27944,8 @@ function App() {
       return [].concat(_toConsumableArray(prev), [savedActivity]);
     });
 
-    // Set view back to dashboard after saving
-    setCurrentView('dashboard');
+    // Stay on activity screen to allow logging multiple activities
+    // No longer redirecting to dashboard
   }
 
   // Handle saving a new meeting
@@ -27999,7 +27999,8 @@ function App() {
       case 'activity':
         return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_components_ActivityLog__WEBPACK_IMPORTED_MODULE_2__["default"], {
           setCurrentView: setCurrentView,
-          onSave: handleSaveActivity
+          onSave: handleSaveActivity,
+          activities: activities
         });
       case 'history':
         return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_components_History__WEBPACK_IMPORTED_MODULE_5__["default"], {
@@ -28067,6 +28068,10 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
 function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
 function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
 function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+function _toConsumableArray(r) { return _arrayWithoutHoles(r) || _iterableToArray(r) || _unsupportedIterableToArray(r) || _nonIterableSpread(); }
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+function _iterableToArray(r) { if ("undefined" != typeof Symbol && null != r[Symbol.iterator] || null != r["@@iterator"]) return Array.from(r); }
+function _arrayWithoutHoles(r) { if (Array.isArray(r)) return _arrayLikeToArray(r); }
 function _slicedToArray(r, e) { return _arrayWithHoles(r) || _iterableToArrayLimit(r, e) || _unsupportedIterableToArray(r, e) || _nonIterableRest(); }
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
@@ -28076,7 +28081,8 @@ function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
 
 function ActivityLog(_ref) {
   var setCurrentView = _ref.setCurrentView,
-    onSave = _ref.onSave;
+    onSave = _ref.onSave,
+    activities = _ref.activities;
   // Check for dark mode
   var darkMode = document.documentElement.classList.contains('dark');
   // Re-render when dark mode changes
@@ -28206,35 +28212,16 @@ function ActivityLog(_ref) {
       return;
     }
 
-    // Ensure the date is properly formatted by manually parsing it
-    var activityDate;
-    try {
-      // Create a Date object using the date string
-      // For date inputs, the value is in YYYY-MM-DD format
-      activityDate = new Date(date);
+    // Create a unique ID for the activity
+    var activityId = Date.now().toString();
 
-      // Check if it's a valid date
-      if (isNaN(activityDate.getTime())) {
-        console.error("Invalid date:", date);
-        setErrors({
-          date: 'Invalid date format'
-        });
-        return;
-      }
-      console.log("Parsed date:", activityDate);
-    } catch (error) {
-      console.error("Error parsing date:", error);
-      setErrors({
-        date: 'Error parsing date'
-      });
-      return;
-    }
-
-    // Create new activity object with core fields
+    // Create new activity object with core fields - store the date string directly
     var newActivity = {
+      id: activityId,
       type: activityType,
       duration: parseInt(duration, 10),
-      date: activityDate.toISOString(),
+      date: date,
+      // Store as-is in YYYY-MM-DD format
       notes: notes.trim()
     };
 
@@ -28248,6 +28235,7 @@ function ActivityLog(_ref) {
       newActivity.wasShare = wasShare;
       newActivity.wasSpeaker = wasSpeaker;
     }
+    console.log("Saving activity:", newActivity);
 
     // Save the activity
     onSave(newActivity);
@@ -28298,6 +28286,16 @@ function ActivityLog(_ref) {
     }
   };
 
+  // Format date for display
+  var formatDate = function formatDate(dateString) {
+    var options = {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric'
+    };
+    return new Date(dateString).toLocaleDateString(undefined, options);
+  };
+
   // Common styles for form elements
   var labelStyle = {
     display: 'block',
@@ -28325,6 +28323,11 @@ function ActivityLog(_ref) {
     alignItems: 'center',
     marginBottom: '0.5rem'
   };
+
+  // Sort activities by date (newest first)
+  var sortedActivities = activities ? _toConsumableArray(activities).sort(function (a, b) {
+    return new Date(b.date) - new Date(a.date);
+  }) : [];
   return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     className: "p-3 pb-16 max-w-md mx-auto"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
@@ -28532,9 +28535,147 @@ function ActivityLog(_ref) {
       fontWeight: '500',
       fontSize: '0.875rem',
       border: 'none',
-      cursor: 'pointer'
+      cursor: 'pointer',
+      marginBottom: '2rem'
     }
-  }, "Save Activity")));
+  }, "Save Activity")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+    style: {
+      backgroundColor: darkMode ? '#1f2937' : '#ffffff',
+      borderRadius: '0.5rem',
+      padding: '0.75rem',
+      border: darkMode ? '1px solid #374151' : '1px solid #e5e7eb',
+      marginBottom: '2rem'
+    }
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+    style: {
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: '0.75rem'
+    }
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("h2", {
+    style: {
+      fontSize: '1.1rem',
+      fontWeight: 600,
+      color: darkMode ? '#d1d5db' : '#374151'
+    }
+  }, "Activity History")), sortedActivities.length > 0 ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+    style: {
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '0.5rem'
+    }
+  }, sortedActivities.map(function (activity) {
+    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+      key: activity.id || activity.date + activity.type,
+      style: {
+        display: 'flex',
+        alignItems: 'center',
+        borderBottom: darkMode ? '1px solid #374151' : '1px solid #f3f4f6',
+        paddingBottom: '0.5rem',
+        marginBottom: '0.25rem'
+      }
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+      style: {
+        width: '1.75rem',
+        height: '1.75rem',
+        borderRadius: '50%',
+        backgroundColor: darkMode ? '#1e3a8a' : '#dbeafe',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginRight: '0.5rem',
+        flexShrink: 0
+      }
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("i", {
+      className: "fas ".concat(getActivityIcon(activity.type)),
+      style: {
+        fontSize: '0.8rem',
+        color: darkMode ? '#60a5fa' : '#3b82f6'
+      }
+    })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+      style: {
+        flexGrow: 1,
+        minWidth: 0
+      }
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+      style: {
+        display: 'flex',
+        alignItems: 'center',
+        fontWeight: 500,
+        fontSize: '0.8rem',
+        color: darkMode ? '#e5e7eb' : '#374151',
+        lineHeight: '1.2',
+        marginBottom: '0.1rem'
+      }
+    }, activity.type.charAt(0).toUpperCase() + activity.type.slice(1), activity.type === 'meeting' && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+      style: {
+        display: 'flex',
+        marginLeft: '6px',
+        gap: '4px'
+      }
+    }, activity.wasChair && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("span", {
+      style: {
+        fontSize: '0.6rem',
+        padding: '1px 5px',
+        borderRadius: '10px',
+        backgroundColor: darkMode ? '#065f46' : '#d1fae5',
+        color: darkMode ? '#10b981' : '#047857',
+        fontWeight: 'bold'
+      }
+    }, "Chair"), activity.wasShare && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("span", {
+      style: {
+        fontSize: '0.6rem',
+        padding: '1px 5px',
+        borderRadius: '10px',
+        backgroundColor: darkMode ? '#1e40af' : '#dbeafe',
+        color: darkMode ? '#60a5fa' : '#1e40af',
+        fontWeight: 'bold'
+      }
+    }, "Share"), activity.wasSpeaker && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("span", {
+      style: {
+        fontSize: '0.6rem',
+        padding: '1px 5px',
+        borderRadius: '10px',
+        backgroundColor: darkMode ? '#7e22ce' : '#f3e8ff',
+        color: darkMode ? '#c084fc' : '#7e22ce',
+        fontWeight: 'bold'
+      }
+    }, "Speaker"))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+      style: {
+        display: 'flex',
+        justifyContent: 'space-between',
+        fontSize: '0.75rem',
+        color: darkMode ? '#9ca3af' : '#6b7280',
+        lineHeight: '1.2'
+      }
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+      style: {
+        whiteSpace: 'nowrap',
+        overflow: 'hidden',
+        textOverflow: 'ellipsis'
+      }
+    }, activity.duration ? "".concat(activity.duration, " min") : 'Done', activity.meetingName ? " - ".concat(activity.meetingName) : '', activity.literatureTitle ? " - ".concat(activity.literatureTitle) : '', activity.notes && !activity.meetingName && !activity.literatureTitle ? " - ".concat(activity.notes) : ''), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+      style: {
+        fontSize: '0.7rem',
+        color: darkMode ? '#6b7280' : '#9ca3af',
+        marginLeft: '8px',
+        flexShrink: 0
+      }
+    }, formatDate(activity.date)))));
+  })) : /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+    style: {
+      textAlign: 'center',
+      padding: '1rem',
+      backgroundColor: darkMode ? '#374151' : '#f9fafb',
+      borderRadius: '0.375rem'
+    }
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("p", {
+    style: {
+      fontSize: '0.875rem',
+      color: darkMode ? '#9ca3af' : '#6b7280'
+    }
+  }, "No activities recorded yet"))));
 }
 
 /***/ }),
@@ -28936,19 +29077,54 @@ function Dashboard(_ref) {
       }
     }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
       style: {
+        display: 'flex',
+        alignItems: 'center',
         fontWeight: 500,
         fontSize: '0.8rem',
         color: darkMode ? '#e5e7eb' : '#374151',
         lineHeight: '1.1',
         marginBottom: '0.1rem'
       }
-    }, activity.type.charAt(0).toUpperCase() + activity.type.slice(1)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+    }, activity.type.charAt(0).toUpperCase() + activity.type.slice(1), activity.type === 'meeting' && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+      style: {
+        display: 'flex',
+        marginLeft: '6px',
+        gap: '4px'
+      }
+    }, activity.wasChair && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("span", {
+      style: {
+        fontSize: '0.6rem',
+        padding: '1px 5px',
+        borderRadius: '10px',
+        backgroundColor: darkMode ? '#065f46' : '#d1fae5',
+        color: darkMode ? '#10b981' : '#047857',
+        fontWeight: 'bold'
+      }
+    }, "Chair"), activity.wasShare && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("span", {
+      style: {
+        fontSize: '0.6rem',
+        padding: '1px 5px',
+        borderRadius: '10px',
+        backgroundColor: darkMode ? '#1e40af' : '#dbeafe',
+        color: darkMode ? '#60a5fa' : '#1e40af',
+        fontWeight: 'bold'
+      }
+    }, "Share"), activity.wasSpeaker && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("span", {
+      style: {
+        fontSize: '0.6rem',
+        padding: '1px 5px',
+        borderRadius: '10px',
+        backgroundColor: darkMode ? '#7e22ce' : '#f3e8ff',
+        color: darkMode ? '#c084fc' : '#7e22ce',
+        fontWeight: 'bold'
+      }
+    }, "Speaker"))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
       style: {
         fontSize: '0.7rem',
         color: darkMode ? '#9ca3af' : '#6b7280',
         lineHeight: '1.1'
       }
-    }, activity.duration ? "".concat(activity.duration, " min") : 'Done', activity.notes ? " - ".concat(activity.notes) : '')), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+    }, activity.duration ? "".concat(activity.duration, " min") : 'Done', activity.meetingName ? " - ".concat(activity.meetingName) : '', activity.literatureTitle ? " - ".concat(activity.literatureTitle) : '', activity.notes && !activity.meetingName && !activity.literatureTitle ? " - ".concat(activity.notes) : '')), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
       style: {
         fontSize: '0.65rem',
         color: darkMode ? '#6b7280' : '#9ca3af'

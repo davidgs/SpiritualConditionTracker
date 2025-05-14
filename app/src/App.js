@@ -77,8 +77,8 @@ function App() {
     // Update activities state
     setActivities(prev => [...prev, savedActivity]);
     
-    // Set view back to dashboard after saving
-    setCurrentView('dashboard');
+    // Stay on activity screen to allow logging multiple activities
+    // No longer redirecting to dashboard
   }
 
   // Handle saving a new meeting
@@ -134,6 +134,7 @@ function App() {
           <ActivityLog 
             setCurrentView={setCurrentView}
             onSave={handleSaveActivity}
+            activities={activities}
           />
         );
       case 'history':
