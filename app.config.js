@@ -6,7 +6,7 @@ const fs = require('fs');
 // Read the current version from App.js if available
 let version = '1.0.6';
 try {
-  const appJsPath = path.join(__dirname, 'expo-app', 'App.js');
+  const appJsPath = path.join(__dirname, 'App.js');
   if (fs.existsSync(appJsPath)) {
     const appJsContent = fs.readFileSync(appJsPath, 'utf8');
     const versionMatch = appJsContent.match(/APP_VERSION = "([^"]*?)"/);
