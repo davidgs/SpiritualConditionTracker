@@ -150,26 +150,26 @@ class SpiritualConditionTracker {
   setupNavigation() {
     // Create the bottom navigation
     const navHTML = `
-      <nav class="app-nav">
-        <a id="nav-dashboard" class="nav-item active">
-          <i class="fas fa-home"></i>
-          <span>Home</span>
+      <nav style="position: fixed; bottom: 0; left: 0; right: 0; background-color: white; display: flex; flex-direction: row; justify-content: space-around; padding: 10px 0; box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1); z-index: 1000;">
+        <a id="nav-dashboard" style="display: flex; flex-direction: column; align-items: center; color: #3498db; text-decoration: none; cursor: pointer;">
+          <i class="fas fa-home" style="font-size: 22px; margin-bottom: 5px;"></i>
+          <span style="font-size: 12px;">Home</span>
         </a>
-        <a id="nav-activities" class="nav-item">
-          <i class="fas fa-clipboard-list"></i>
-          <span>Activities</span>
+        <a id="nav-activities" style="display: flex; flex-direction: column; align-items: center; color: #7f8c8d; text-decoration: none; cursor: pointer;">
+          <i class="fas fa-clipboard-list" style="font-size: 22px; margin-bottom: 5px;"></i>
+          <span style="font-size: 12px;">Activities</span>
         </a>
-        <a id="nav-meetings" class="nav-item">
-          <i class="fas fa-users"></i>
-          <span>Meetings</span>
+        <a id="nav-meetings" style="display: flex; flex-direction: column; align-items: center; color: #7f8c8d; text-decoration: none; cursor: pointer;">
+          <i class="fas fa-users" style="font-size: 22px; margin-bottom: 5px;"></i>
+          <span style="font-size: 12px;">Meetings</span>
         </a>
-        <a id="nav-nearby" class="nav-item">
-          <i class="fas fa-map-marker-alt"></i>
-          <span>Nearby</span>
+        <a id="nav-nearby" style="display: flex; flex-direction: column; align-items: center; color: #7f8c8d; text-decoration: none; cursor: pointer;">
+          <i class="fas fa-map-marker-alt" style="font-size: 22px; margin-bottom: 5px;"></i>
+          <span style="font-size: 12px;">Nearby</span>
         </a>
-        <a id="nav-profile" class="nav-item">
-          <i class="fas fa-user"></i>
-          <span>Profile</span>
+        <a id="nav-profile" style="display: flex; flex-direction: column; align-items: center; color: #7f8c8d; text-decoration: none; cursor: pointer;">
+          <i class="fas fa-user" style="font-size: 22px; margin-bottom: 5px;"></i>
+          <span style="font-size: 12px;">Profile</span>
         </a>
       </nav>
     `;
@@ -256,113 +256,91 @@ class SpiritualConditionTracker {
     const sobrietyDays = this.calculateSobrietyDays();
     const sobrietyYears = this.calculateSobrietyYears();
     
-    // Get recent activities (up to 5)
+    // Count total activities in the last 30 days
+    const now = new Date();
+    const thirtyDaysAgo = new Date(now);
+    thirtyDaysAgo.setDate(now.getDate() - 30);
+    
     const recentActivities = [...(this.activities || [])]
-      .sort((a, b) => new Date(b.date) - new Date(a.date))
-      .slice(0, 5);
+      .filter(activity => new Date(activity.date) >= thirtyDaysAgo);
     
     // Format score
     const fitnessScore = this.spiritualFitness?.score || 0;
     const formattedScore = fitnessScore.toFixed(2);
     
-    // Create activity items HTML
-    let activitiesHTML = '';
-    
-    if (recentActivities.length > 0) {
-      recentActivities.forEach(activity => {
-        activitiesHTML += `
-          <div class="activity-item">
-            <div class="activity-icon ${activity.type}-icon">
-              <i class="${this.getActivityIcon(activity.type)}"></i>
-            </div>
-            <div class="activity-details">
-              <div class="activity-title">${activity.name}</div>
-              <div class="activity-meta">${this.formatDate(activity.date)} · ${activity.duration} mins</div>
-              ${activity.notes ? `<div class="activity-notes">${activity.notes}</div>` : ''}
-            </div>
-          </div>
-        `;
-      });
-    } else {
-      activitiesHTML = `
-        <div class="empty-state">
-          <p>No recent activities. Start tracking your recovery journey!</p>
-        </div>
-      `;
-    }
-    
-    // Create dashboard HTML
+    // Create dashboard HTML with improved styling to match React Native
     this.root.innerHTML = `
       <div class="dashboard-container">
-        <header>
-          <h1>Hello, ${this.user?.name || 'Friend'}</h1>
-          <p class="subtitle">Your Recovery Dashboard</p>
+        <header style="margin-bottom: 20px; margin-top: 10px;">
+          <h1 style="font-size: 28px; font-weight: bold; color: #2c3e50; margin: 0;">Hello, ${this.user?.name || 'Friend'}</h1>
+          <p style="font-size: 16px; color: #7f8c8d; margin-top: 5px; margin-bottom: 0;">Your Recovery Dashboard</p>
         </header>
         
         <!-- Sobriety Counter -->
-        <div class="card sobriety-card">
-          <div class="card-header">
-            <i class="fas fa-calendar-check"></i>
-            <h2>Sobriety</h2>
+        <div style="background-color: #fff; border-radius: 12px; padding: 16px; margin-bottom: 16px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); border-left: 4px solid #27ae60;">
+          <div style="display: flex; flex-direction: row; align-items: center; margin-bottom: 12px;">
+            <i class="fas fa-calendar-check" style="font-size: 22px; color: #27ae60; margin-right: 8px;"></i>
+            <h2 style="font-size: 18px; font-weight: bold; color: #2c3e50; margin: 0;">Sobriety</h2>
           </div>
-          <div class="sobriety-info">
-            <div class="sobriety-metric">
-              <div class="sobriety-value">${this.formatNumberWithCommas(sobrietyDays)}</div>
-              <div class="sobriety-label">Days</div>
+          <div style="display: flex; flex-direction: row; justify-content: space-around; align-items: center; margin: 10px 0;">
+            <div style="display: flex; flex-direction: column; align-items: center; text-align: center;">
+              <div style="font-size: 28px; font-weight: bold; color: #27ae60; margin: 0;">${this.formatNumberWithCommas(sobrietyDays)}</div>
+              <div style="font-size: 14px; color: #7f8c8d; margin-top: 4px;">Days</div>
             </div>
-            <div class="sobriety-separator"></div>
-            <div class="sobriety-metric">
-              <div class="sobriety-value">${sobrietyYears}</div>
-              <div class="sobriety-label">Years</div>
+            <div style="height: 40px; width: 1px; background-color: #ecf0f1;"></div>
+            <div style="display: flex; flex-direction: column; align-items: center; text-align: center;">
+              <div style="font-size: 28px; font-weight: bold; color: #27ae60; margin: 0;">${sobrietyYears}</div>
+              <div style="font-size: 14px; color: #7f8c8d; margin-top: 4px;">Years</div>
             </div>
           </div>
-          <button class="card-button" id="update-sobriety-btn">Update Sobriety Date</button>
+          <button style="display: flex; justify-content: center; align-items: center; background-color: #f4f6f7; border-radius: 8px; padding: 12px; margin-top: 10px; font-weight: 600; color: #2c3e50; text-align: center; border: none; width: 100%; cursor: pointer;" id="update-sobriety-btn">Update Sobriety Date</button>
         </div>
         
         <!-- Spiritual Fitness Score -->
-        <div class="card fitness-card">
-          <div class="card-header">
-            <i class="fas fa-heart"></i>
-            <h2>Spiritual Fitness</h2>
+        <div style="background-color: #fff; border-radius: 12px; padding: 16px; margin-bottom: 16px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); border-left: 4px solid #e74c3c;">
+          <div style="display: flex; flex-direction: row; align-items: center; margin-bottom: 12px;">
+            <i class="fas fa-heart" style="font-size: 22px; color: #e74c3c; margin-right: 8px;"></i>
+            <h2 style="font-size: 18px; font-weight: bold; color: #2c3e50; margin: 0;">Spiritual Fitness</h2>
           </div>
-          <div class="score-container">
-            <div class="score-circle">
-              <span class="score-value">${formattedScore}</span>
-              <span class="score-max">/10</span>
+          <div style="display: flex; align-items: center; justify-content: center; margin: 10px 0;">
+            <div style="width: 100px; height: 100px; border-radius: 50%; background-color: #fef9f9; border: 4px solid #e74c3c; display: flex; flex-direction: row; justify-content: center; align-items: center;">
+              <span style="font-size: 28px; font-weight: bold; color: #e74c3c;">${formattedScore}</span>
+              <span style="font-size: 14px; color: #e74c3c; align-self: flex-end; margin-bottom: 5px;">/10</span>
             </div>
           </div>
-          <button class="card-button" id="view-fitness-btn">View Details</button>
+          <button style="display: flex; justify-content: center; align-items: center; background-color: #f4f6f7; border-radius: 8px; padding: 12px; margin-top: 10px; font-weight: 600; color: #2c3e50; text-align: center; border: none; width: 100%; cursor: pointer;" id="view-fitness-btn">View Details</button>
         </div>
         
-        <!-- Recent Activity -->
-        <div class="card activity-card">
-          <div class="card-header">
-            <i class="fas fa-list-alt"></i>
-            <h2>Recent Activities</h2>
+        <!-- Recovery Activities -->
+        <div style="background-color: #fff; border-radius: 12px; padding: 16px; margin-bottom: 16px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); border-left: 4px solid #3498db;">
+          <div style="display: flex; flex-direction: row; align-items: center; margin-bottom: 12px;">
+            <i class="fas fa-list-alt" style="font-size: 22px; color: #3498db; margin-right: 8px;"></i>
+            <h2 style="font-size: 18px; font-weight: bold; color: #2c3e50; margin: 0;">Recovery Activities</h2>
           </div>
-          <div class="activity-list">
-            ${activitiesHTML}
+          <div style="margin: 10px 0; display: flex; flex-direction: column; align-items: center;">
+            <p style="font-size: 16px; text-align: center; color: #2c3e50; line-height: 24px; margin: 0;">
+              You've logged <span style="font-weight: bold; color: #3498db;">${recentActivities.length}</span> recovery 
+              activities in the last 30 days.
+            </p>
           </div>
-          <button class="card-button" id="log-activity-btn">Log New Activity</button>
+          <button style="display: flex; justify-content: center; align-items: center; background-color: #f4f6f7; border-radius: 8px; padding: 12px; margin-top: 10px; font-weight: 600; color: #2c3e50; text-align: center; border: none; width: 100%; cursor: pointer;" id="log-activity-btn">Log New Activity</button>
         </div>
         
         <!-- Quick Actions -->
-        <div class="quick-actions">
-          <h2>Quick Actions</h2>
-          <div class="action-buttons">
-            <button class="action-button" id="find-meetings-btn">
-              <i class="fas fa-users"></i>
-              <span>Find Meetings</span>
+        <div style="margin-top: 10px; margin-bottom: 30px;">
+          <h2 style="font-size: 18px; font-weight: bold; margin-bottom: 16px; color: #2c3e50;">Quick Actions</h2>
+          <div style="display: flex; flex-direction: row; justify-content: space-between;">
+            <button style="flex: 1; display: flex; flex-direction: column; align-items: center; background-color: #fff; padding: 16px; border-radius: 12px; margin-right: 8px; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05); border: none; cursor: pointer;" id="find-meetings-btn">
+              <i class="fas fa-users" style="font-size: 24px; margin-bottom: 8px; color: #3498db;"></i>
+              <span style="font-size: 12px; color: #2c3e50; text-align: center;">Find Meetings</span>
             </button>
-            
-            <button class="action-button" id="nearby-members-btn">
-              <i class="fas fa-map-marker-alt"></i>
-              <span>Nearby Members</span>
+            <button style="flex: 1; display: flex; flex-direction: column; align-items: center; background-color: #fff; padding: 16px; border-radius: 12px; margin: 0 4px; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05); border: none; cursor: pointer;" id="nearby-members-btn">
+              <i class="fas fa-map-marker-alt" style="font-size: 24px; margin-bottom: 8px; color: #3498db;"></i>
+              <span style="font-size: 12px; color: #2c3e50; text-align: center;">Nearby Members</span>
             </button>
-            
-            <button class="action-button" id="track-progress-btn">
-              <i class="fas fa-chart-line"></i>
-              <span>Track Progress</span>
+            <button style="flex: 1; display: flex; flex-direction: column; align-items: center; background-color: #fff; padding: 16px; border-radius: 12px; margin-left: 8px; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05); border: none; cursor: pointer;" id="track-progress-btn">
+              <i class="fas fa-chart-line" style="font-size: 24px; margin-bottom: 8px; color: #3498db;"></i>
+              <span style="font-size: 12px; color: #2c3e50; text-align: center;">Track Progress</span>
             </button>
           </div>
         </div>
