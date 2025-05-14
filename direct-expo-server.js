@@ -44,8 +44,8 @@ const server = http.createServer((req, res) => {
   const parsedUrl = url.parse(req.url, true);
   let targetPath = parsedUrl.path;
   
-  // Serve our custom landing page for the root route
-  if (targetPath === '/' || targetPath === '') {
+  // Serve our custom landing page for the root route only
+  if ((targetPath === '/' || targetPath === '') && !req.url.startsWith('/app')) {
     const landingPagePath = path.join(__dirname, 'landing-page.html');
     
     fs.readFile(landingPagePath, (err, content) => {
@@ -91,13 +91,33 @@ const server = http.createServer((req, res) => {
     return;
   }
   
-  // Check if this is an /app route - send to Expo
-  if (targetPath.startsWith('/app')) {
-    // Strip the /app prefix and proxy to root route
+  // Check if this is an /app route - serve our app.html for the main route
+  if (req.url === '/app' || req.url === '/app/') {
+    // Use our custom app.html for the main /app route
+    const appPagePath = path.join(__dirname, 'app.html');
+    
+    fs.readFile(appPagePath, (err, content) => {
+      if (err) {
+        res.writeHead(500);
+        res.end('Error loading app page');
+        return;
+      }
+      
+      res.writeHead(200, { 'Content-Type': 'text/html' });
+      res.end(content);
+    });
+    
+    return;
+  }
+  
+  // For other /app/* routes, proxy to Expo after stripping the /app prefix
+  if (req.url.startsWith('/app/')) {
+    // Strip the /app prefix and proxy to appropriate route
     targetPath = targetPath.replace(/^\/app/, '');
-    if (!targetPath) targetPath = '/'; // If just /app, change to /
     console.log(`App route ${req.url} -> ${targetPath}`);
     
+    // Add special header to ensure we're requesting the app and not the landing page
+    req.headers['x-requested-app'] = 'true';
     proxyToExpo(req, res, targetPath);
     return;
   }
@@ -121,6 +141,13 @@ function getContentType(filePath) {
 
 // Helper function to proxy requests to Expo
 function proxyToExpo(req, res, targetPath) {
+  // Ensure the platform query parameter is added if not already present
+  if (targetPath.indexOf('?') === -1) {
+    targetPath += '?platform=web';
+  } else if (!targetPath.includes('platform=')) {
+    targetPath += '&platform=web';
+  }
+  
   const options = {
     hostname: 'localhost',
     port: WEBPACK_PORT,
@@ -129,7 +156,8 @@ function proxyToExpo(req, res, targetPath) {
     headers: {
       ...req.headers,
       host: `localhost:${WEBPACK_PORT}`,
-      'expo-platform': 'web'  // This is the key header Expo requires
+      'expo-platform': 'web',  // This is the key header Expo requires
+      'x-forwarded-proto': 'http'
     }
   };
 
