@@ -1,40 +1,17 @@
 /**
- * Direct Expo server on port 5000 with header fix
- * This is a minimal wrapper to make the expo-platform header work correctly
+ * Direct server on port 5000 - modified to serve index.html without starting Expo
  */
 
 const http = require('http');
-const { spawn } = require('child_process');
 const path = require('path');
 const fs = require('fs');
 const url = require('url');
 
 // Configuration for direct access
 const PORT = 5000;
-const WEBPACK_PORT = 19006;
+const WEBPACK_PORT = 19006; // Not used, but kept for compatibility
 
-// Spawn Expo in the background
-console.log('Starting Expo bundler in the background...');
-
-// Start Expo web on port 19006
-const expo = spawn('npx', [
-  'expo',
-  'start',
-  '--web',
-  '--port', '3243', // Use a different port for native, we'll use webpack port
-  '--host', '0.0.0.0'
-], {
-  stdio: 'inherit',
-  env: {
-    ...process.env,
-    BROWSER: 'none',
-    EXPO_WEB_PORT: WEBPACK_PORT.toString(),
-    PUBLIC_URL: '',
-    NODE_OPTIONS: '--no-warnings'
-  }
-});
-
-console.log(`Started Expo on webpack port ${WEBPACK_PORT}`);
+// No Expo server is started, we'll just serve static content
 
 // Our server will handle both the landing page and the Expo app
 const server = http.createServer((req, res) => {
@@ -89,24 +66,137 @@ const server = http.createServer((req, res) => {
     return;
   }
   
-  // Handle /app route by serving our static bundle
+  // Handle /app route with a simple app placeholder
   if (req.url === '/app' || req.url === '/app/') {
-    console.log(`Serving static bundle at ${req.url}`);
+    console.log(`Serving app at ${req.url}`);
     
-    // Serve the index.html file from the static-bundle directory
-    const indexPath = path.join(__dirname, 'static-bundle', 'index.html');
+    // Create a simplified app placeholder
+    const appHtml = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Spiritual Condition Tracker</title>
+  <style>
+    body, html {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #f5f5f5;
+      color: #333;
+    }
+    .app-container {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    header {
+      background-color: #3498db;
+      color: white;
+      padding: 16px;
+      text-align: center;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .content {
+      flex: 1;
+      padding: 20px;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .card {
+      background-color: white;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    footer {
+      background-color: #34495e;
+      color: white;
+      padding: 16px;
+      text-align: center;
+    }
+    .status {
+      padding: 16px;
+      margin: 20px 0;
+      background-color: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+      border-radius: 4px;
+      text-align: center;
+    }
+    h1 { margin: 0; font-size: 24px; }
+    h2 { margin-top: 0; color: #2c3e50; }
+    p { line-height: 1.6; }
+    .counter {
+      display: flex;
+      justify-content: space-around;
+      margin-top: 20px;
+      text-align: center;
+    }
+    .counter-item {
+      padding: 10px;
+    }
+    .counter-value {
+      font-size: 36px;
+      font-weight: bold;
+      color: #3498db;
+    }
+    .counter-label {
+      font-size: 14px;
+      color: #7f8c8d;
+      margin-top: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <header>
+      <h1>Spiritual Condition Tracker</h1>
+    </header>
     
-    fs.readFile(indexPath, (err, content) => {
-      if (err) {
-        console.error(`Error reading static bundle index.html: ${err.message}`);
-        res.writeHead(500);
-        res.end('Error loading app');
-        return;
-      }
+    <div class="content">
+      <div class="status">
+        <strong>Development Mode:</strong> This is a preview of the application. The Expo development server is not running.
+      </div>
       
-      res.writeHead(200, { 'Content-Type': 'text/html' });
-      res.end(content);
-    });
+      <div class="card">
+        <h2>Recovery Dashboard</h2>
+        <p>Welcome to your spiritual condition tracker. This application helps you monitor your recovery journey and track your spiritual fitness.</p>
+        
+        <div class="counter">
+          <div class="counter-item">
+            <div class="counter-value">2.45</div>
+            <div class="counter-label">Years Sober</div>
+          </div>
+          <div class="counter-item">
+            <div class="counter-value">128</div>
+            <div class="counter-label">Meetings Attended</div>
+          </div>
+          <div class="counter-item">
+            <div class="counter-value">85%</div>
+            <div class="counter-label">Spiritual Fitness</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="card">
+        <h2>Development Notes</h2>
+        <p>The full application cannot be displayed because the Expo development server is not running properly. This is a placeholder interface showing the basic concept of the application.</p>
+        <p>To run the full application, please resolve the webpack dependency issues or run the application on a physical device using the Expo Go app.</p>
+      </div>
+    </div>
+    
+    <footer>
+      Spiritual Condition Tracker - AA Recovery App
+    </footer>
+  </div>
+</body>
+</html>`;
+    
+    res.writeHead(200, { 'Content-Type': 'text/html' });
+    res.end(appHtml);
     return;
   }
   
