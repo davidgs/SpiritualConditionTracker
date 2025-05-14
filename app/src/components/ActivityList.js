@@ -81,9 +81,15 @@ export default function ActivityList({
     const groups = {};
     
     activities.forEach(activity => {
+      // Debug log to see what dates we're working with
+      console.log('Grouping activity with date:', activity.date, 'Type:', typeof activity.date);
+      
       // Get the date portion only in YYYY-MM-DD format
       const dateObj = new Date(activity.date);
+      console.log('Date object created:', dateObj, 'Valid?', !isNaN(dateObj.getTime()));
+      
       const dateKey = dateObj.toISOString().split('T')[0];
+      console.log('Generated dateKey:', dateKey);
       
       if (!groups[dateKey]) {
         groups[dateKey] = [];
