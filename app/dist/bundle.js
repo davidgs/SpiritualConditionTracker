@@ -28347,7 +28347,7 @@ function Dashboard(_ref) {
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     style: {
       textAlign: 'center',
-      marginBottom: '1.5rem',
+      marginBottom: '1rem',
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
@@ -28358,23 +28358,33 @@ function Dashboard(_ref) {
       width: '100%',
       display: 'flex',
       justifyContent: 'center',
-      marginBottom: '12px'
+      marginBottom: '5px'
     }
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("img", {
     src: "/app/assets/logo.png",
     alt: "App Logo",
     style: {
-      width: '80px',
-      height: '80px',
+      width: '70px',
+      height: '70px',
       objectFit: 'contain',
       borderRadius: '12px',
       marginLeft: 'auto',
       marginRight: 'auto'
     }
   })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("h1", {
-    className: "text-2xl font-bold text-gray-800 dark:text-gray-100"
+    style: {
+      fontSize: '1.5rem',
+      fontWeight: 'bold',
+      color: darkMode ? '#f3f4f6' : '#1f2937',
+      marginBottom: '2px',
+      lineHeight: '1.2'
+    }
   }, "Recovery Tracker"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("p", {
-    className: "text-sm text-gray-500 dark:text-gray-400"
+    style: {
+      fontSize: '0.875rem',
+      color: darkMode ? '#9ca3af' : '#6b7280',
+      lineHeight: '1.2'
+    }
   }, "Track your spiritual journey")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     className: "grid grid-cols-2 gap-4 mb-6"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {

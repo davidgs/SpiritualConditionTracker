@@ -50,7 +50,7 @@ export default function Dashboard({ setCurrentView, user, activities, spiritualF
       {/* Centered logo at the top with forceful inline styles */}
       <div style={{ 
         textAlign: 'center',
-        marginBottom: '1.5rem',
+        marginBottom: '1rem',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
@@ -60,15 +60,15 @@ export default function Dashboard({ setCurrentView, user, activities, spiritualF
           width: '100%',
           display: 'flex',
           justifyContent: 'center',
-          marginBottom: '12px'
+          marginBottom: '5px'
         }}>
           {/* Use static path to logo instead of import */}
           <img 
             src="/app/assets/logo.png"
             alt="App Logo" 
             style={{ 
-              width: '80px',
-              height: '80px',
+              width: '70px',
+              height: '70px',
               objectFit: 'contain',
               borderRadius: '12px',
               marginLeft: 'auto',
@@ -76,8 +76,22 @@ export default function Dashboard({ setCurrentView, user, activities, spiritualF
             }}
           />
         </div>
-        <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">Recovery Tracker</h1>
-        <p className="text-sm text-gray-500 dark:text-gray-400">Track your spiritual journey</p>
+        <h1 style={{ 
+          fontSize: '1.5rem', 
+          fontWeight: 'bold', 
+          color: darkMode ? '#f3f4f6' : '#1f2937',
+          marginBottom: '2px',
+          lineHeight: '1.2'
+        }}>
+          Recovery Tracker
+        </h1>
+        <p style={{ 
+          fontSize: '0.875rem', 
+          color: darkMode ? '#9ca3af' : '#6b7280',
+          lineHeight: '1.2'
+        }}>
+          Track your spiritual journey
+        </p>
       </div>
       
       {/* Sobriety & Spiritual Fitness Stats */}
