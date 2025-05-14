@@ -1,46 +1,100 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* This file uses CSS variables instead of Tailwind */
 
-@layer base {
-  html {
-    font-family: 'Poppins', sans-serif;
+/* Custom styles on top of Tailwind */
+:root {
+  /* Light mode variables */
+  --primary-color: #4F86C6;
+  --secondary-color: #7BAEDC;
+  --accent-color: #5BC0BE;
+  --text-primary: #333333;
+  --text-secondary: #666666;
+  --bg-light: #F5F9FF;
+  --bg-card: #FFFFFF;
+  --bg-app: #f0f2f5;
+  --border-color: #e5e7eb;
+}
+
+.dark {
+  /* Dark mode variables */
+  --primary-color: #5B8BD8;
+  --secondary-color: #7BAEDC;
+  --accent-color: #4DB6B4;
+  --text-primary: #E6E6E6;
+  --text-secondary: #A3A3A3;
+  --bg-light: #1E293B;
+  --bg-card: #283548;
+  --bg-app: #111827;
+  --border-color: #374151;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  color: var(--text-primary);
+  background-color: var(--bg-app);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Button variants */
+.btn-primary {
+  @apply bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200;
+}
+
+.btn-secondary {
+  @apply bg-gray-200 hover:bg-gray-300 text-gray-700 font-medium py-2 px-4 rounded-lg transition-colors duration-200;
+}
+
+/* Card styling with CSS variables for dark mode support */
+.card {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 0.75rem;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Input fields with dark mode support */
+.input-field {
+  @apply w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400;
+  border-color: var(--border-color);
+  background-color: var(--bg-card);
+  color: var(--text-primary);
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}
+
+/* Container utility */
+.container-custom {
+  @apply max-w-screen-lg mx-auto px-4;
+}
+
+/* Animation for loading states */
+.pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
   }
-  
-  body {
-    @apply bg-gray-50 text-gray-900 dark:bg-gray-900 dark:text-gray-100;
-    transition: background-color 0.3s ease, color 0.3s ease;
+  50% {
+    opacity: 0.5;
   }
 }
 
-@layer components {
-  .btn-primary {
-    @apply bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200;
-  }
+/* Dark mode toggle button */
+.theme-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  background-color: #f3f4f6;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
 
-  .btn-secondary {
-    @apply bg-gray-200 hover:bg-gray-300 text-gray-700 font-medium py-2 px-4 rounded-lg transition-colors duration-200 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-200;
-  }
-
-  .card {
-    @apply bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 mb-4 transition-colors duration-200;
-  }
-
-  .input-field {
-    @apply w-full px-4 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-400 transition-colors duration-200;
-  }
-
-  .container-custom {
-    @apply max-w-screen-lg mx-auto px-4;
-  }
-  
-  .theme-toggle {
-    @apply flex items-center justify-between p-3 rounded-lg bg-gray-100 dark:bg-gray-800 cursor-pointer transition-colors duration-200;
-  }
-  
-  .icon-circle {
-    @apply rounded-full flex items-center justify-center h-10 w-10 mr-3 bg-blue-100 dark:bg-blue-900/30;
-  }
+html.dark .theme-toggle {
+  background-color: #374151;
 }
