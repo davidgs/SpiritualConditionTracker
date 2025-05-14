@@ -1,13 +1,11 @@
 import React, { useState } from 'react';
+import { formatDateForDisplay, compareDatesForSorting } from '../utils/dateUtils';
 
 export default function History({ setCurrentView, activities }) {
   const [filter, setFilter] = useState('all');
   
-  // Format date for display
-  const formatDate = (dateString) => {
-    const options = { month: 'short', day: 'numeric', year: 'numeric' };
-    return new Date(dateString).toLocaleDateString(undefined, options);
-  };
+  // Use the shared date formatting function from utils
+  const formatDate = formatDateForDisplay;
   
   // Get icon for activity type
   const getActivityIcon = (type) => {
@@ -16,7 +14,9 @@ export default function History({ setCurrentView, activities }) {
       case 'meditation': return 'fa-om';
       case 'literature': return 'fa-book-open';
       case 'service': return 'fa-hands-helping';
+      case 'sponsor': return 'fa-phone';
       case 'sponsee': return 'fa-user-friends';
+      case 'aa_call': return 'fa-phone-alt';
       case 'meeting': return 'fa-users';
       default: return 'fa-check-circle';
     }
@@ -25,8 +25,12 @@ export default function History({ setCurrentView, activities }) {
   // Filter activities based on selected filter
   const filteredActivities = activities
     ? activities
+        // Filter to make sure we don't have duplicate IDs
+        .filter((activity, index, self) => 
+          index === self.findIndex(a => (a.id === activity.id))
+        )
         .filter(activity => filter === 'all' || activity.type === filter)
-        .sort((a, b) => new Date(b.date) - new Date(a.date))
+        .sort(compareDatesForSorting)
     : [];
   
   return (

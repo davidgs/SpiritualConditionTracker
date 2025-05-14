@@ -64,7 +64,9 @@ export default function Dashboard({ setCurrentView, user, activities, spiritualF
       case 'meditation': return 'fa-om';
       case 'literature': return 'fa-book-open';
       case 'service': return 'fa-hands-helping';
+      case 'sponsor': return 'fa-phone';
       case 'sponsee': return 'fa-user-friends';
+      case 'aa_call': return 'fa-phone-alt';
       case 'meeting': return 'fa-users';
       default: return 'fa-check-circle';
     }

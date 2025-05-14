@@ -160,7 +160,9 @@ export default function ActivityLog({ setCurrentView, onSave, activities }) {
       case 'meditation': return 'fa-om';
       case 'literature': return 'fa-book-open';
       case 'service': return 'fa-hands-helping';
+      case 'sponsor': return 'fa-phone';
       case 'sponsee': return 'fa-user-friends';
+      case 'aa_call': return 'fa-phone-alt';
       case 'meeting': return 'fa-users';
       default: return 'fa-check-circle';
     }
@@ -259,7 +261,9 @@ export default function ActivityLog({ setCurrentView, onSave, activities }) {
             <option value="meditation">Meditation</option>
             <option value="literature">Reading Literature</option>
             <option value="service">Service Work</option>
-            <option value="sponsee">Sponsee Call/Meeting</option>
+            <option value="sponsor">Sponsor Call</option>
+            <option value="sponsee">Sponsee Call</option>
+            <option value="aa_call">AA Member Call</option>
             <option value="meeting">AA Meeting</option>
           </select>
           {errors.activityType && (
