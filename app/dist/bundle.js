@@ -28279,8 +28279,12 @@ function ActivityLog(_ref) {
         return 'fa-book-open';
       case 'service':
         return 'fa-hands-helping';
+      case 'sponsor':
+        return 'fa-phone';
       case 'sponsee':
         return 'fa-user-friends';
+      case 'aa_call':
+        return 'fa-phone-alt';
       case 'meeting':
         return 'fa-users';
       default:
@@ -28378,8 +28382,12 @@ function ActivityLog(_ref) {
   }, "Reading Literature"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("option", {
     value: "service"
   }, "Service Work"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("option", {
+    value: "sponsor"
+  }, "Sponsor Call"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("option", {
     value: "sponsee"
-  }, "Sponsee Call/Meeting"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("option", {
+  }, "Sponsee Call"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("option", {
+    value: "aa_call"
+  }, "AA Member Call"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("option", {
     value: "meeting"
   }, "AA Meeting")), errors.activityType && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("p", {
     style: errorStyle
@@ -28774,8 +28782,12 @@ function Dashboard(_ref) {
         return 'fa-book-open';
       case 'service':
         return 'fa-hands-helping';
+      case 'sponsor':
+        return 'fa-phone';
       case 'sponsee':
         return 'fa-user-friends';
+      case 'aa_call':
+        return 'fa-phone-alt';
       case 'meeting':
         return 'fa-users';
       default:
@@ -29161,12 +29173,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _utils_dateUtils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../utils/dateUtils */ "./src/utils/dateUtils.js");
 function _slicedToArray(r, e) { return _arrayWithHoles(r) || _iterableToArrayLimit(r, e) || _unsupportedIterableToArray(r, e) || _nonIterableRest(); }
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
 function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
 function _iterableToArrayLimit(r, l) { var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (null != t) { var e, n, i, u, a = [], f = !0, o = !1; try { if (i = (t = t.call(r)).next, 0 === l) { if (Object(t) !== t) return; f = !1; } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0); } catch (r) { o = !0, n = r; } finally { try { if (!f && null != t["return"] && (u = t["return"](), Object(u) !== u)) return; } finally { if (o) throw n; } } return a; } }
 function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
+
 
 function History(_ref) {
   var setCurrentView = _ref.setCurrentView,
@@ -29176,15 +29190,8 @@ function History(_ref) {
     filter = _useState2[0],
     setFilter = _useState2[1];
 
-  // Format date for display
-  var formatDate = function formatDate(dateString) {
-    var options = {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric'
-    };
-    return new Date(dateString).toLocaleDateString(undefined, options);
-  };
+  // Use the shared date formatting function from utils
+  var formatDate = _utils_dateUtils__WEBPACK_IMPORTED_MODULE_1__.formatDateForDisplay;
 
   // Get icon for activity type
   var getActivityIcon = function getActivityIcon(type) {
@@ -29197,8 +29204,12 @@ function History(_ref) {
         return 'fa-book-open';
       case 'service':
         return 'fa-hands-helping';
+      case 'sponsor':
+        return 'fa-phone';
       case 'sponsee':
         return 'fa-user-friends';
+      case 'aa_call':
+        return 'fa-phone-alt';
       case 'meeting':
         return 'fa-users';
       default:
@@ -29207,11 +29218,15 @@ function History(_ref) {
   };
 
   // Filter activities based on selected filter
-  var filteredActivities = activities ? activities.filter(function (activity) {
+  var filteredActivities = activities ? activities
+  // Filter to make sure we don't have duplicate IDs
+  .filter(function (activity, index, self) {
+    return index === self.findIndex(function (a) {
+      return a.id === activity.id;
+    });
+  }).filter(function (activity) {
     return filter === 'all' || activity.type === filter;
-  }).sort(function (a, b) {
-    return new Date(b.date) - new Date(a.date);
-  }) : [];
+  }).sort(_utils_dateUtils__WEBPACK_IMPORTED_MODULE_1__.compareDatesForSorting) : [];
   return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     className: "p-4 pb-20"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
@@ -29246,8 +29261,12 @@ function History(_ref) {
   }, "Reading Literature"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("option", {
     value: "service"
   }, "Service Work"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("option", {
+    value: "sponsor"
+  }, "Sponsor Call"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("option", {
     value: "sponsee"
-  }, "Sponsee Call/Meeting"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("option", {
+  }, "Sponsee Call"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("option", {
+    value: "aa_call"
+  }, "AA Member Call"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("option", {
     value: "meeting"
   }, "AA Meeting"))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     className: "bg-white dark:bg-gray-800 rounded-lg shadow border border-gray-200 dark:border-gray-700"

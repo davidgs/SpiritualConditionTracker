@@ -58,7 +58,9 @@ export default function History({ setCurrentView, activities }) {
           <option value="meditation">Meditation</option>
           <option value="literature">Reading Literature</option>
           <option value="service">Service Work</option>
-          <option value="sponsee">Sponsee Call/Meeting</option>
+          <option value="sponsor">Sponsor Call</option>
+          <option value="sponsee">Sponsee Call</option>
+          <option value="aa_call">AA Member Call</option>
           <option value="meeting">AA Meeting</option>
         </select>
       </div>
