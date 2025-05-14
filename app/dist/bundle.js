@@ -28513,17 +28513,18 @@ function Dashboard(_ref) {
   }, formattedScore), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     style: {
       position: 'relative',
-      height: '10px',
+      height: '16px',
       width: '100%',
-      borderRadius: '6px',
+      borderRadius: '8px',
       background: "linear-gradient(\n              90deg,\n              ".concat(darkMode ? '#DC2626' : '#EF4444', " 0%,\n              ").concat(darkMode ? '#E76B6B' : '#F87171', " 25%,\n              ").concat(darkMode ? '#D97706' : '#F59E0B', " 50%,\n              ").concat(darkMode ? '#65A30D' : '#84CC16', " 75%,\n              ").concat(darkMode ? '#16A34A' : '#22C55E', " 100%\n            )"),
-      marginBottom: '4px',
+      marginBottom: '6px',
       border: darkMode ? '1px solid #4B5563' : '1px solid #D1D5DB',
-      overflow: 'hidden'
+      overflow: 'hidden',
+      boxShadow: darkMode ? '0 1px 2px rgba(0,0,0,0.2) inset' : '0 1px 2px rgba(0,0,0,0.1) inset'
     }
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     style: {
-      borderRadius: '0 6px 6px 0',
+      borderRadius: '0 8px 8px 0',
       backgroundColor: darkMode ? '#374151' : '#F3F4F6',
       position: 'absolute',
       right: 0,
@@ -28532,14 +28533,6 @@ function Dashboard(_ref) {
       width: "".concat(100 - Math.min(spiritualFitness, 100), "%")
     }
   })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
-    style: {
-      display: 'flex',
-      justifyContent: 'space-between',
-      fontSize: '0.65rem',
-      color: darkMode ? '#9ca3af' : '#6b7280',
-      marginBottom: '3px'
-    }
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("span", null, "0"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("span", null, "100")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     style: {
       fontSize: '0.7rem',
       color: darkMode ? '#9ca3af' : '#6b7280'
