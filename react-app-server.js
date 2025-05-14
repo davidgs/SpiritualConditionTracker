@@ -37,7 +37,7 @@ const server = http.createServer((req, res) => {
   if (req.url === '/app' || req.url === '/app/') {
     console.log('Serving app index.html');
     
-    const appIndexPath = path.join(__dirname, 'app', 'index.html');
+    const appIndexPath = path.join(__dirname, 'app', 'fresh-index.html');
     fs.readFile(appIndexPath, (err, content) => {
       if (err) {
         console.error(`Error reading app index.html: ${err.message}`);
@@ -62,6 +62,24 @@ const server = http.createServer((req, res) => {
         console.error(`Error reading app.js: ${err.message}`);
         res.writeHead(500);
         res.end('Error loading application script');
+        return;
+      }
+      
+      res.writeHead(200, { 'Content-Type': 'application/javascript' });
+      res.end(content);
+    });
+    return;
+  }
+  
+  if (req.url === '/main.js') {
+    console.log('Serving main.js');
+    
+    const mainJsPath = path.join(__dirname, 'app', 'main.js');
+    fs.readFile(mainJsPath, (err, content) => {
+      if (err) {
+        console.error(`Error reading main.js: ${err.message}`);
+        res.writeHead(500);
+        res.end('Error loading main script');
         return;
       }
       
