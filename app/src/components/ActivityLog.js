@@ -1,11 +1,32 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 export default function ActivityLog({ setCurrentView, onSave }) {
+  // Check for dark mode
+  const darkMode = document.documentElement.classList.contains('dark');
+  // Re-render when dark mode changes
+  const [isDarkMode, setIsDarkMode] = useState(darkMode);
+  
+  useEffect(() => {
+    // Watch for dark mode changes
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.attributeName === 'class') {
+          setIsDarkMode(document.documentElement.classList.contains('dark'));
+        }
+      });
+    });
+    
+    observer.observe(document.documentElement, { attributes: true });
+    
+    return () => observer.disconnect();
+  }, []);
+
   const [activityType, setActivityType] = useState('prayer');
   const [duration, setDuration] = useState('');
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
   const [notes, setNotes] = useState('');
   const [errors, setErrors] = useState({});
+  const [showSuccess, setShowSuccess] = useState(false);
 
   // Handle form submission
   const handleSubmit = (e) => {
@@ -33,25 +54,89 @@ export default function ActivityLog({ setCurrentView, onSave }) {
     
     // Save the activity
     onSave(newActivity);
+    
+    // Show success message
+    setShowSuccess(true);
+    
+    // Reset form
+    setDuration('');
+    setNotes('');
+    
+    // Hide success message after 2 seconds
+    setTimeout(() => {
+      setShowSuccess(false);
+    }, 2000);
+  };
+
+  // Get activity icon
+  const getActivityIcon = (type) => {
+    switch (type) {
+      case 'prayer': return 'fa-pray';
+      case 'meditation': return 'fa-om';
+      case 'literature': return 'fa-book-open';
+      case 'service': return 'fa-hands-helping';
+      case 'sponsee': return 'fa-user-friends';
+      case 'meeting': return 'fa-users';
+      default: return 'fa-check-circle';
+    }
   };
 
   return (
-    <div className="p-4 pb-20">
-      <div className="flex items-center mb-6">
-        <button 
-          className="mr-2 text-blue-500"
-          onClick={() => setCurrentView('dashboard')}
-        >
-          <i className="fas fa-arrow-left"></i>
-        </button>
-        <h1 className="text-2xl font-bold">Log New Activity</h1>
+    <div className="p-3 pb-16 max-w-md mx-auto">
+      {/* Page header */}
+      <div style={{ 
+        textAlign: 'center',
+        marginBottom: '1rem'
+      }}>
+        <h1 style={{ 
+          fontSize: '1.3rem', 
+          fontWeight: 'bold',
+          color: darkMode ? '#f3f4f6' : '#1f2937',
+          marginBottom: '0.5rem'
+        }}>Log New Activity</h1>
       </div>
       
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="space-y-2">
-          <label className="block text-gray-700 font-medium">Activity Type</label>
+      {/* Success message */}
+      {showSuccess && (
+        <div style={{
+          backgroundColor: darkMode ? '#064e3b' : '#d1fae5',
+          color: darkMode ? '#6ee7b7' : '#065f46',
+          padding: '0.75rem',
+          borderRadius: '0.375rem',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          marginBottom: '1rem',
+          fontWeight: '500',
+          fontSize: '0.875rem'
+        }}>
+          <i className="fas fa-check-circle mr-2"></i>
+          Activity saved successfully!
+        </div>
+      )}
+      
+      <form onSubmit={handleSubmit}>
+        {/* Activity Type */}
+        <div style={{ marginBottom: '1rem' }}>
+          <label style={{
+            display: 'block',
+            fontSize: '0.875rem',
+            fontWeight: '500',
+            marginBottom: '0.25rem',
+            color: darkMode ? '#e5e7eb' : '#4b5563'
+          }}>
+            Activity Type
+          </label>
           <select
-            className="w-full p-2 border border-gray-300 rounded"
+            style={{
+              width: '100%',
+              padding: '0.5rem 0.75rem',
+              borderRadius: '0.375rem',
+              backgroundColor: darkMode ? '#1f2937' : '#ffffff',
+              color: darkMode ? '#e5e7eb' : '#1f2937',
+              border: darkMode ? '1px solid #4b5563' : '1px solid #d1d5db',
+              fontSize: '0.875rem'
+            }}
             value={activityType}
             onChange={(e) => setActivityType(e.target.value)}
           >
@@ -63,43 +148,100 @@ export default function ActivityLog({ setCurrentView, onSave }) {
             <option value="meeting">AA Meeting</option>
           </select>
           {errors.activityType && (
-            <p className="text-red-500 text-sm">{errors.activityType}</p>
+            <p style={{ color: '#ef4444', fontSize: '0.75rem', marginTop: '0.25rem' }}>
+              {errors.activityType}
+            </p>
           )}
         </div>
         
-        <div className="space-y-2">
-          <label className="block text-gray-700 font-medium">Duration (minutes)</label>
+        {/* Duration */}
+        <div style={{ marginBottom: '1rem' }}>
+          <label style={{
+            display: 'block',
+            fontSize: '0.875rem',
+            fontWeight: '500',
+            marginBottom: '0.25rem',
+            color: darkMode ? '#e5e7eb' : '#4b5563'
+          }}>
+            Duration (minutes)
+          </label>
           <input
             type="number"
-            className="w-full p-2 border border-gray-300 rounded"
+            style={{
+              width: '100%',
+              padding: '0.5rem 0.75rem',
+              borderRadius: '0.375rem',
+              backgroundColor: darkMode ? '#1f2937' : '#ffffff',
+              color: darkMode ? '#e5e7eb' : '#1f2937',
+              border: darkMode ? '1px solid #4b5563' : '1px solid #d1d5db',
+              fontSize: '0.875rem'
+            }}
             placeholder="Enter duration in minutes"
             value={duration}
             onChange={(e) => setDuration(e.target.value)}
             min="1"
           />
           {errors.duration && (
-            <p className="text-red-500 text-sm">{errors.duration}</p>
+            <p style={{ color: '#ef4444', fontSize: '0.75rem', marginTop: '0.25rem' }}>
+              {errors.duration}
+            </p>
           )}
         </div>
         
-        <div className="space-y-2">
-          <label className="block text-gray-700 font-medium">Date</label>
+        {/* Date */}
+        <div style={{ marginBottom: '1rem' }}>
+          <label style={{
+            display: 'block',
+            fontSize: '0.875rem',
+            fontWeight: '500',
+            marginBottom: '0.25rem',
+            color: darkMode ? '#e5e7eb' : '#4b5563'
+          }}>
+            Date
+          </label>
           <input
             type="date"
-            className="w-full p-2 border border-gray-300 rounded"
+            style={{
+              width: '100%',
+              padding: '0.5rem 0.75rem',
+              borderRadius: '0.375rem',
+              backgroundColor: darkMode ? '#1f2937' : '#ffffff',
+              color: darkMode ? '#e5e7eb' : '#1f2937',
+              border: darkMode ? '1px solid #4b5563' : '1px solid #d1d5db',
+              fontSize: '0.875rem'
+            }}
             value={date}
             onChange={(e) => setDate(e.target.value)}
             max={new Date().toISOString().split('T')[0]}
           />
           {errors.date && (
-            <p className="text-red-500 text-sm">{errors.date}</p>
+            <p style={{ color: '#ef4444', fontSize: '0.75rem', marginTop: '0.25rem' }}>
+              {errors.date}
+            </p>
           )}
         </div>
         
-        <div className="space-y-2">
-          <label className="block text-gray-700 font-medium">Notes (optional)</label>
+        {/* Notes */}
+        <div style={{ marginBottom: '1.5rem' }}>
+          <label style={{
+            display: 'block',
+            fontSize: '0.875rem',
+            fontWeight: '500',
+            marginBottom: '0.25rem',
+            color: darkMode ? '#e5e7eb' : '#4b5563'
+          }}>
+            Notes (optional)
+          </label>
           <textarea
-            className="w-full p-2 border border-gray-300 rounded"
+            style={{
+              width: '100%',
+              padding: '0.5rem 0.75rem',
+              borderRadius: '0.375rem',
+              backgroundColor: darkMode ? '#1f2937' : '#ffffff',
+              color: darkMode ? '#e5e7eb' : '#1f2937',
+              border: darkMode ? '1px solid #4b5563' : '1px solid #d1d5db',
+              fontSize: '0.875rem'
+            }}
             placeholder="Add any notes about this activity..."
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
@@ -107,14 +249,23 @@ export default function ActivityLog({ setCurrentView, onSave }) {
           ></textarea>
         </div>
         
-        <div className="pt-4">
-          <button
-            type="submit"
-            className="w-full bg-blue-500 text-white p-3 rounded font-medium"
-          >
-            Save Activity
-          </button>
-        </div>
+        {/* Submit Button */}
+        <button
+          type="submit"
+          style={{
+            width: '100%',
+            padding: '0.625rem 1rem',
+            backgroundColor: darkMode ? '#2563eb' : '#3b82f6',
+            color: '#ffffff',
+            borderRadius: '0.375rem',
+            fontWeight: '500',
+            fontSize: '0.875rem',
+            border: 'none',
+            cursor: 'pointer'
+          }}
+        >
+          Save Activity
+        </button>
       </form>
     </div>
   );

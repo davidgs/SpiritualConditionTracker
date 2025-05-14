@@ -28114,26 +28114,53 @@ function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
 function ActivityLog(_ref) {
   var setCurrentView = _ref.setCurrentView,
     onSave = _ref.onSave;
-  var _useState = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)('prayer'),
+  // Check for dark mode
+  var darkMode = document.documentElement.classList.contains('dark');
+  // Re-render when dark mode changes
+  var _useState = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(darkMode),
     _useState2 = _slicedToArray(_useState, 2),
-    activityType = _useState2[0],
-    setActivityType = _useState2[1];
-  var _useState3 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(''),
+    isDarkMode = _useState2[0],
+    setIsDarkMode = _useState2[1];
+  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(function () {
+    // Watch for dark mode changes
+    var observer = new MutationObserver(function (mutations) {
+      mutations.forEach(function (mutation) {
+        if (mutation.attributeName === 'class') {
+          setIsDarkMode(document.documentElement.classList.contains('dark'));
+        }
+      });
+    });
+    observer.observe(document.documentElement, {
+      attributes: true
+    });
+    return function () {
+      return observer.disconnect();
+    };
+  }, []);
+  var _useState3 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)('prayer'),
     _useState4 = _slicedToArray(_useState3, 2),
-    duration = _useState4[0],
-    setDuration = _useState4[1];
-  var _useState5 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(new Date().toISOString().split('T')[0]),
+    activityType = _useState4[0],
+    setActivityType = _useState4[1];
+  var _useState5 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(''),
     _useState6 = _slicedToArray(_useState5, 2),
-    date = _useState6[0],
-    setDate = _useState6[1];
-  var _useState7 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(''),
+    duration = _useState6[0],
+    setDuration = _useState6[1];
+  var _useState7 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(new Date().toISOString().split('T')[0]),
     _useState8 = _slicedToArray(_useState7, 2),
-    notes = _useState8[0],
-    setNotes = _useState8[1];
-  var _useState9 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)({}),
+    date = _useState8[0],
+    setDate = _useState8[1];
+  var _useState9 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(''),
     _useState0 = _slicedToArray(_useState9, 2),
-    errors = _useState0[0],
-    setErrors = _useState0[1];
+    notes = _useState0[0],
+    setNotes = _useState0[1];
+  var _useState1 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)({}),
+    _useState10 = _slicedToArray(_useState1, 2),
+    errors = _useState10[0],
+    setErrors = _useState10[1];
+  var _useState11 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false),
+    _useState12 = _slicedToArray(_useState11, 2),
+    showSuccess = _useState12[0],
+    setShowSuccess = _useState12[1];
 
   // Handle form submission
   var handleSubmit = function handleSubmit(e) {
@@ -28161,29 +28188,92 @@ function ActivityLog(_ref) {
 
     // Save the activity
     onSave(newActivity);
+
+    // Show success message
+    setShowSuccess(true);
+
+    // Reset form
+    setDuration('');
+    setNotes('');
+
+    // Hide success message after 2 seconds
+    setTimeout(function () {
+      setShowSuccess(false);
+    }, 2000);
+  };
+
+  // Get activity icon
+  var getActivityIcon = function getActivityIcon(type) {
+    switch (type) {
+      case 'prayer':
+        return 'fa-pray';
+      case 'meditation':
+        return 'fa-om';
+      case 'literature':
+        return 'fa-book-open';
+      case 'service':
+        return 'fa-hands-helping';
+      case 'sponsee':
+        return 'fa-user-friends';
+      case 'meeting':
+        return 'fa-users';
+      default:
+        return 'fa-check-circle';
+    }
   };
   return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
-    className: "p-4 pb-20"
+    className: "p-3 pb-16 max-w-md mx-auto"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
-    className: "flex items-center mb-6"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("button", {
-    className: "mr-2 text-blue-500",
-    onClick: function onClick() {
-      return setCurrentView('dashboard');
+    style: {
+      textAlign: 'center',
+      marginBottom: '1rem'
+    }
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("h1", {
+    style: {
+      fontSize: '1.3rem',
+      fontWeight: 'bold',
+      color: darkMode ? '#f3f4f6' : '#1f2937',
+      marginBottom: '0.5rem'
+    }
+  }, "Log New Activity")), showSuccess && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+    style: {
+      backgroundColor: darkMode ? '#064e3b' : '#d1fae5',
+      color: darkMode ? '#6ee7b7' : '#065f46',
+      padding: '0.75rem',
+      borderRadius: '0.375rem',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginBottom: '1rem',
+      fontWeight: '500',
+      fontSize: '0.875rem'
     }
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("i", {
-    className: "fas fa-arrow-left"
-  })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("h1", {
-    className: "text-2xl font-bold"
-  }, "Log New Activity")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("form", {
-    onSubmit: handleSubmit,
-    className: "space-y-4"
+    className: "fas fa-check-circle mr-2"
+  }), "Activity saved successfully!"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("form", {
+    onSubmit: handleSubmit
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
-    className: "space-y-2"
+    style: {
+      marginBottom: '1rem'
+    }
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("label", {
-    className: "block text-gray-700 font-medium"
+    style: {
+      display: 'block',
+      fontSize: '0.875rem',
+      fontWeight: '500',
+      marginBottom: '0.25rem',
+      color: darkMode ? '#e5e7eb' : '#4b5563'
+    }
   }, "Activity Type"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("select", {
-    className: "w-full p-2 border border-gray-300 rounded",
+    style: {
+      width: '100%',
+      padding: '0.5rem 0.75rem',
+      borderRadius: '0.375rem',
+      backgroundColor: darkMode ? '#1f2937' : '#ffffff',
+      color: darkMode ? '#e5e7eb' : '#1f2937',
+      border: darkMode ? '1px solid #4b5563' : '1px solid #d1d5db',
+      fontSize: '0.875rem'
+    },
     value: activityType,
     onChange: function onChange(e) {
       return setActivityType(e.target.value);
@@ -28201,14 +28291,34 @@ function ActivityLog(_ref) {
   }, "Sponsee Call/Meeting"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("option", {
     value: "meeting"
   }, "AA Meeting")), errors.activityType && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("p", {
-    className: "text-red-500 text-sm"
+    style: {
+      color: '#ef4444',
+      fontSize: '0.75rem',
+      marginTop: '0.25rem'
+    }
   }, errors.activityType)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
-    className: "space-y-2"
+    style: {
+      marginBottom: '1rem'
+    }
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("label", {
-    className: "block text-gray-700 font-medium"
+    style: {
+      display: 'block',
+      fontSize: '0.875rem',
+      fontWeight: '500',
+      marginBottom: '0.25rem',
+      color: darkMode ? '#e5e7eb' : '#4b5563'
+    }
   }, "Duration (minutes)"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("input", {
     type: "number",
-    className: "w-full p-2 border border-gray-300 rounded",
+    style: {
+      width: '100%',
+      padding: '0.5rem 0.75rem',
+      borderRadius: '0.375rem',
+      backgroundColor: darkMode ? '#1f2937' : '#ffffff',
+      color: darkMode ? '#e5e7eb' : '#1f2937',
+      border: darkMode ? '1px solid #4b5563' : '1px solid #d1d5db',
+      fontSize: '0.875rem'
+    },
     placeholder: "Enter duration in minutes",
     value: duration,
     onChange: function onChange(e) {
@@ -28216,39 +28326,87 @@ function ActivityLog(_ref) {
     },
     min: "1"
   }), errors.duration && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("p", {
-    className: "text-red-500 text-sm"
+    style: {
+      color: '#ef4444',
+      fontSize: '0.75rem',
+      marginTop: '0.25rem'
+    }
   }, errors.duration)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
-    className: "space-y-2"
+    style: {
+      marginBottom: '1rem'
+    }
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("label", {
-    className: "block text-gray-700 font-medium"
+    style: {
+      display: 'block',
+      fontSize: '0.875rem',
+      fontWeight: '500',
+      marginBottom: '0.25rem',
+      color: darkMode ? '#e5e7eb' : '#4b5563'
+    }
   }, "Date"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("input", {
     type: "date",
-    className: "w-full p-2 border border-gray-300 rounded",
+    style: {
+      width: '100%',
+      padding: '0.5rem 0.75rem',
+      borderRadius: '0.375rem',
+      backgroundColor: darkMode ? '#1f2937' : '#ffffff',
+      color: darkMode ? '#e5e7eb' : '#1f2937',
+      border: darkMode ? '1px solid #4b5563' : '1px solid #d1d5db',
+      fontSize: '0.875rem'
+    },
     value: date,
     onChange: function onChange(e) {
       return setDate(e.target.value);
     },
     max: new Date().toISOString().split('T')[0]
   }), errors.date && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("p", {
-    className: "text-red-500 text-sm"
+    style: {
+      color: '#ef4444',
+      fontSize: '0.75rem',
+      marginTop: '0.25rem'
+    }
   }, errors.date)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
-    className: "space-y-2"
+    style: {
+      marginBottom: '1.5rem'
+    }
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("label", {
-    className: "block text-gray-700 font-medium"
+    style: {
+      display: 'block',
+      fontSize: '0.875rem',
+      fontWeight: '500',
+      marginBottom: '0.25rem',
+      color: darkMode ? '#e5e7eb' : '#4b5563'
+    }
   }, "Notes (optional)"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("textarea", {
-    className: "w-full p-2 border border-gray-300 rounded",
+    style: {
+      width: '100%',
+      padding: '0.5rem 0.75rem',
+      borderRadius: '0.375rem',
+      backgroundColor: darkMode ? '#1f2937' : '#ffffff',
+      color: darkMode ? '#e5e7eb' : '#1f2937',
+      border: darkMode ? '1px solid #4b5563' : '1px solid #d1d5db',
+      fontSize: '0.875rem'
+    },
     placeholder: "Add any notes about this activity...",
     value: notes,
     onChange: function onChange(e) {
       return setNotes(e.target.value);
     },
     rows: "3"
-  })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
-    className: "pt-4"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("button", {
+  })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("button", {
     type: "submit",
-    className: "w-full bg-blue-500 text-white p-3 rounded font-medium"
-  }, "Save Activity"))));
+    style: {
+      width: '100%',
+      padding: '0.625rem 1rem',
+      backgroundColor: darkMode ? '#2563eb' : '#3b82f6',
+      color: '#ffffff',
+      borderRadius: '0.375rem',
+      fontWeight: '500',
+      fontSize: '0.875rem',
+      border: 'none',
+      cursor: 'pointer'
+    }
+  }, "Save Activity")));
 }
 
 /***/ }),
