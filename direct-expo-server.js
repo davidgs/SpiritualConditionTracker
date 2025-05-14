@@ -1,120 +1,114 @@
 /**
- * Expo server with platform header handling
- * This server starts Expo and handles the expo-platform header issue
+ * Direct Expo server on port 5000 with header fix
+ * This is a minimal wrapper to make the expo-platform header work correctly
  */
 
 const http = require('http');
-const fs = require('fs');
-const path = require('path');
 const { spawn } = require('child_process');
+const path = require('path');
+const fs = require('fs');
+const url = require('url');
 
-// Configuration
+// Configuration for direct access
 const PORT = 5000;
-const EXPO_PORT = 19000;
+const WEBPACK_PORT = 19006;
 
-// Check if index.html exists
-if (fs.existsSync('./index.html')) {
-  console.log('Found index.html file, serving it directly');
-}
+// Spawn Expo in the background
+console.log('Starting Expo bundler in the background...');
 
-// Create a proxy server to add headers
+// Start Expo web on port 19006
+const expo = spawn('npx', [
+  'expo',
+  'start',
+  '--web',
+  '--no-dev',
+  '--port', '3243', // Use a different port for native, we'll use webpack port
+  '--host', '0.0.0.0'
+], {
+  stdio: 'inherit',
+  env: {
+    ...process.env,
+    BROWSER: 'none',
+    CI: '1',
+    EXPO_WEB_PORT: WEBPACK_PORT.toString(),
+    PUBLIC_URL: '',
+    BASE_PATH: ''
+  }
+});
+
+console.log(`Started Expo on webpack port ${WEBPACK_PORT}`);
+
+// Our proxy server will add the expo-platform header
 const server = http.createServer((req, res) => {
-  console.log(`Request for: ${req.url}`);
+  // Parse the URL to handle routes properly
+  const parsedUrl = url.parse(req.url, true);
+  let targetPath = parsedUrl.path;
   
-  // Check if we should serve index.html directly
-  if (req.url === '/' || req.url === '/index.html') {
-    try {
-      const indexContent = fs.readFileSync('./index.html');
-      res.writeHead(200, { 'Content-Type': 'text/html' });
-      res.end(indexContent);
-      return;
-    } catch (err) {
-      console.error('Error reading index.html:', err);
-      // Fall through to proxying
-    }
+  // Check if this is an /app route
+  if (targetPath.startsWith('/app')) {
+    // Strip the /app prefix and proxy to root route
+    targetPath = targetPath.replace(/^\/app/, '');
+    if (!targetPath) targetPath = '/'; // If just /app, change to /
+    console.log(`App route ${req.url} -> ${targetPath}`);
   }
   
-  // Create a new request to the Expo server with added headers
   const options = {
     hostname: 'localhost',
-    port: EXPO_PORT,
-    path: req.url,
+    port: WEBPACK_PORT,
+    path: targetPath,
     method: req.method,
     headers: {
       ...req.headers,
-      'expo-platform': 'web'  // Add the required header
+      host: `localhost:${WEBPACK_PORT}`,
+      'expo-platform': 'web'  // This is the key header Expo requires
     }
   };
-  
-  // Make the proxied request
+
+  console.log(`Proxying request ${req.url} to ${targetPath}`);
+
+  // Create proxy request
   const proxyReq = http.request(options, (proxyRes) => {
-    res.writeHead(proxyRes.statusCode, proxyRes.headers);
+    // Copy all response headers
+    Object.keys(proxyRes.headers).forEach(key => {
+      res.setHeader(key, proxyRes.headers[key]);
+    });
+    res.writeHead(proxyRes.statusCode);
     proxyRes.pipe(res);
   });
-  
-  // Handle errors
-  proxyReq.on('error', (err) => {
-    console.error('Proxy request error:', err);
-    
-    // Send a basic response if proxy fails
-    res.writeHead(500, { 'Content-Type': 'text/html' });
-    res.end(`
-      <!DOCTYPE html>
-      <html>
-        <head>
-          <title>Spiritual Condition Tracker</title>
-        </head>
-        <body>
-          <h1>Spiritual Condition Tracker</h1>
-          <p>Error connecting to Expo server: ${err.message}</p>
-          <p>The server is probably still starting up. Please refresh in a moment.</p>
-        </body>
-      </html>
-    `);
-  });
-  
-  // End the proxy request
-  req.pipe(proxyReq, { end: true });
-});
 
-// Start the server
-server.listen(PORT, '0.0.0.0', () => {
-  console.log(`Server running on port ${PORT}`);
-  
-  // Start Expo on a different port
-  console.log(`Starting Expo on port ${EXPO_PORT}...`);
-  
-  // Launch Expo with the right settings
-  const expo = spawn('npx', [
-    'expo', 
-    'start',
-    '--web',
-    '--port', EXPO_PORT.toString(),
-    '--host', 'localhost'
-  ], {
-    stdio: 'inherit',
-    env: {
-      ...process.env,
-      BROWSER: 'none',
-      FORCE_COLOR: '1',
-      EXPO_NO_DOCTOR: 'true',
-      EXPO_PLATFORM_HEADER: 'web'
+  proxyReq.on('error', (err) => {
+    console.error(`Proxy error for ${req.url}: ${err.message}`);
+    
+    if (err.code === 'ECONNREFUSED') {
+      // Expo is still starting up
+      res.writeHead(503);
+      res.end('Expo is starting up, please try again in a moment...');
+    } else {
+      res.writeHead(500);
+      res.end(`Server error: ${err.message}`);
     }
   });
-  
-  // Handle errors
-  expo.on('error', (err) => {
-    console.error('Error starting Expo:', err);
-  });
-  
-  // Handle exit
-  expo.on('exit', (code) => {
-    console.log(`Expo process exited with code ${code}`);
-  });
+
+  // Forward POST/PUT body
+  if (req.method === 'POST' || req.method === 'PUT') {
+    req.pipe(proxyReq);
+  } else {
+    proxyReq.end();
+  }
+});
+
+// Listen on port 5000
+server.listen(PORT, '0.0.0.0', () => {
+  console.log(`Server running on port ${PORT}`);
+  console.log(`Forwarding requests to Expo web on port ${WEBPACK_PORT}`);
+  console.log(`Access the app at http://localhost:${PORT}/`);
+  console.log(`Alternative route at http://localhost:${PORT}/app/`);
 });
 
 // Handle cleanup
 process.on('SIGINT', () => {
-  console.log('Shutting down...');
+  console.log('Shutting down server...');
+  expo.kill();
+  server.close();
   process.exit(0);
 });
