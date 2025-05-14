@@ -14,12 +14,12 @@ const server = http.createServer((req, res) => {
   // Normalize URL to handle both /app and /app/
   const url = req.url === '/app' ? '/app/' : req.url;
   
-  // Handle root path
+  // Handle root path - use the original landing page
   if (url === '/') {
-    fs.readFile(path.join(__dirname, 'index.html'), (err, content) => {
+    fs.readFile(path.join(__dirname, 'app', 'landing-page.html'), (err, content) => {
       if (err) {
         res.writeHead(500);
-        res.end(`Error loading index.html: ${err.code}`);
+        res.end(`Error loading landing page: ${err.code}`);
       } else {
         res.writeHead(200, { 'Content-Type': contentType });
         res.end(content, 'utf-8');
