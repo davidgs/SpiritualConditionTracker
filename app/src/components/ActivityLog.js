@@ -51,6 +51,9 @@ export default function ActivityLog({ setCurrentView, onSave, activities }) {
     setWasChair(false);
     setWasShare(false);
     setWasSpeaker(false);
+    setIsSponsorCall(false);
+    setIsSponseeCall(false);
+    setIsAAMemberCall(false);
   }, [activityType]);
 
   // Get duration options based on activity type
@@ -96,6 +99,10 @@ export default function ActivityLog({ setCurrentView, onSave, activities }) {
       newErrors.meetingName = 'Meeting name is required';
     }
     
+    if (activityType === 'call' && !isSponsorCall && !isSponseeCall && !isAAMemberCall) {
+      newErrors.callType = 'At least one call type must be selected';
+    }
+    
     // If there are errors, show them and don't submit
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
@@ -126,6 +133,23 @@ export default function ActivityLog({ setCurrentView, onSave, activities }) {
       newActivity.wasSpeaker = wasSpeaker;
     }
     
+    if (activityType === 'call') {
+      newActivity.isSponsorCall = isSponsorCall;
+      newActivity.isSponseeCall = isSponseeCall;
+      newActivity.isAAMemberCall = isAAMemberCall;
+      
+      // Determine the actual type for filtering/display purposes
+      if (isSponsorCall && !isSponseeCall && !isAAMemberCall) {
+        newActivity.callType = 'sponsor';
+      } else if (!isSponsorCall && isSponseeCall && !isAAMemberCall) {
+        newActivity.callType = 'sponsee';
+      } else if (!isSponsorCall && !isSponseeCall && isAAMemberCall) {
+        newActivity.callType = 'aa_call';
+      } else {
+        newActivity.callType = 'multiple'; // Multiple types selected
+      }
+    }
+    
     console.log("Saving activity:", newActivity);
     
     // Save the activity
@@ -135,8 +159,11 @@ export default function ActivityLog({ setCurrentView, onSave, activities }) {
     setShowSuccess(true);
     
     // Reset form fields that should clear after submission
-    if (activityType !== 'meeting' && activityType !== 'literature') {
+    if (activityType === 'call') {
       setDuration('15');
+      setIsSponsorCall(false);
+      setIsSponseeCall(false);
+      setIsAAMemberCall(false);
       setNotes('');
     } else if (activityType === 'literature') {
       setDuration('15');
@@ -148,6 +175,9 @@ export default function ActivityLog({ setCurrentView, onSave, activities }) {
       setWasChair(false);
       setWasShare(false);
       setWasSpeaker(false);
+      setNotes('');
+    } else {
+      setDuration('15');
       setNotes('');
     }
     
@@ -167,7 +197,9 @@ export default function ActivityLog({ setCurrentView, onSave, activities }) {
       case 'sponsor': return 'fa-phone';
       case 'sponsee': return 'fa-user-friends';
       case 'aa_call': return 'fa-phone-alt';
+      case 'call': return 'fa-phone';
       case 'meeting': return 'fa-users';
+      case 'multiple': return 'fa-phone';
       default: return 'fa-check-circle';
     }
   };
@@ -265,9 +297,7 @@ export default function ActivityLog({ setCurrentView, onSave, activities }) {
             <option value="meditation">Meditation</option>
             <option value="literature">Reading Literature</option>
             <option value="service">Service Work</option>
-            <option value="sponsor">Sponsor Call</option>
-            <option value="sponsee">Sponsee Call</option>
-            <option value="aa_call">AA Member Call</option>
+            <option value="call">Call</option>
             <option value="meeting">AA Meeting</option>
           </select>
           {errors.activityType && (
@@ -291,6 +321,72 @@ export default function ActivityLog({ setCurrentView, onSave, activities }) {
             <p style={errorStyle}>{errors.duration}</p>
           )}
         </div>
+        
+        {/* Call Type Options - only for Call activity type */}
+        {activityType === 'call' && (
+          <div style={{ marginBottom: '1rem' }}>
+            <label style={{...labelStyle, marginBottom: '0.5rem'}}>
+              Call Type
+            </label>
+            <div style={checkboxStyle}>
+              <input
+                type="checkbox"
+                id="isSponsorCall"
+                checked={isSponsorCall}
+                onChange={() => setIsSponsorCall(!isSponsorCall)}
+                style={{ marginRight: '0.5rem' }}
+              />
+              <label 
+                htmlFor="isSponsorCall"
+                style={{
+                  fontSize: '0.875rem',
+                  color: isDarkMode ? '#e5e7eb' : '#4b5563'
+                }}
+              >
+                Sponsor
+              </label>
+            </div>
+            <div style={checkboxStyle}>
+              <input
+                type="checkbox"
+                id="isSponseeCall"
+                checked={isSponseeCall}
+                onChange={() => setIsSponseeCall(!isSponseeCall)}
+                style={{ marginRight: '0.5rem' }}
+              />
+              <label 
+                htmlFor="isSponseeCall"
+                style={{
+                  fontSize: '0.875rem',
+                  color: isDarkMode ? '#e5e7eb' : '#4b5563'
+                }}
+              >
+                Sponsee
+              </label>
+            </div>
+            <div style={checkboxStyle}>
+              <input
+                type="checkbox"
+                id="isAAMemberCall"
+                checked={isAAMemberCall}
+                onChange={() => setIsAAMemberCall(!isAAMemberCall)}
+                style={{ marginRight: '0.5rem' }}
+              />
+              <label 
+                htmlFor="isAAMemberCall"
+                style={{
+                  fontSize: '0.875rem',
+                  color: isDarkMode ? '#e5e7eb' : '#4b5563'
+                }}
+              >
+                AA Member
+              </label>
+            </div>
+            {errors.callType && (
+              <p style={errorStyle}>{errors.callType}</p>
+            )}
+          </div>
+        )}
         
         {/* Literature Title - only for Reading Literature */}
         {activityType === 'literature' && (
