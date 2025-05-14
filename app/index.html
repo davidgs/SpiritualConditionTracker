@@ -8,8 +8,11 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
   <link rel="icon" type="image/jpg" href="/logo.jpg">
   
-  <!-- Main app script will load from simple-app.js via server -->
-  <script src="main.js" defer></script>
+  <!-- Load the database module first -->
+  <script src="database.js"></script>
+  
+  <!-- Then load the main app module -->
+  <script src="app.js"></script>
 </head>
 <body>
   <div id="root">

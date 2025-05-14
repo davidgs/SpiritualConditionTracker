@@ -236,7 +236,7 @@ Database.userOperations = {
   get: (userId) => Database.getById('users', userId),
   
   create: (userData) => {
-    const now = new Date().toISOString();
+    const timestamp = new Date().toISOString();
     const userId = userData.id || `user_${Date.now()}`;
     
     const user = {
@@ -250,8 +250,8 @@ Database.userOperations = {
         shareLocation: false,
         shareActivities: false
       },
-      createdAt: now,
-      updatedAt: now
+      createdAt: timestamp,
+      updatedAt: timestamp
     };
     
     Database.insert('users', user);
@@ -296,7 +296,7 @@ Database.activityOperations = {
   get: (activityId) => Database.getById('activities', activityId),
   
   create: (activityData) => {
-    const now = new Date().toISOString();
+    const timestamp = new Date().toISOString();
     const activityId = activityData.id || `activity_${Date.now()}`;
     
     const activity = {
@@ -304,10 +304,10 @@ Database.activityOperations = {
       userId: activityData.userId,
       type: activityData.type,
       name: activityData.name || '',
-      date: activityData.date || now.split('T')[0],
+      date: activityData.date || timestamp.split('T')[0],
       duration: activityData.duration || 0,
       notes: activityData.notes || '',
-      createdAt: now
+      createdAt: timestamp
     };
     
     Database.insert('activities', activity);
@@ -374,7 +374,7 @@ Database.spiritualFitnessOperations = {
     const totalScore = Object.values(scoreComponents).reduce((sum, score) => sum + score, 0);
     
     // Create and save the record
-    const now = new Date().toISOString();
+    const timestamp = new Date().toISOString();
     const fitnessId = `sf_${Date.now()}`;
     
     const fitness = {
@@ -383,7 +383,7 @@ Database.spiritualFitnessOperations = {
       score: parseFloat(totalScore.toFixed(2)),
       components: scoreComponents,
       activityCounts,
-      calculatedAt: now
+      calculatedAt: timestamp
     };
     
     Database.insert('spiritualFitness', fitness);
@@ -399,7 +399,7 @@ Database.meetingOperations = {
   get: (meetingId) => Database.getById('meetings', meetingId),
   
   create: (meetingData) => {
-    const now = new Date().toISOString();
+    const timestamp = new Date().toISOString();
     const meetingId = meetingData.id || `meeting_${Date.now()}`;
     
     const meeting = {
@@ -412,8 +412,8 @@ Database.meetingOperations = {
       notes: meetingData.notes || '',
       shared: meetingData.shared === true,
       createdBy: meetingData.createdBy || null,
-      createdAt: now,
-      updatedAt: now
+      createdAt: timestamp,
+      updatedAt: timestamp
     };
     
     Database.insert('meetings', meeting);
