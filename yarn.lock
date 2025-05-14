@@ -2817,6 +2817,22 @@
     serve-static "^1.13.1"
     ws "^6.2.3"
 
+"@react-native-community/cli-tools@^17.0.0":
+  version "17.0.0"
+  resolved "https://registry.npmjs.org/@react-native-community/cli-tools/-/cli-tools-17.0.0.tgz"
+  integrity sha512-mVXH7U/uXd7yizqm2iE+W4SSVc4FGYYEafAu29HihA+FHttonqdg35zVAnIX2FKbyla+TotR1ACNSgo7KFDq+w==
+  dependencies:
+    "@vscode/sudo-prompt" "^9.0.0"
+    appdirsjs "^1.2.4"
+    chalk "^4.1.2"
+    execa "^5.0.0"
+    find-up "^5.0.0"
+    launch-editor "^2.9.1"
+    mime "^2.4.1"
+    ora "^5.4.1"
+    prompts "^2.4.2"
+    semver "^7.5.2"
+
 "@react-native-community/cli-tools@18.0.0":
   version "18.0.0"
   resolved "https://registry.npmjs.org/@react-native-community/cli-tools/-/cli-tools-18.0.0.tgz"
@@ -2870,6 +2886,22 @@
   version "4.5.6"
   resolved "https://registry.npmjs.org/@react-native-community/slider/-/slider-4.5.6.tgz"
   integrity sha512-UhLPFeqx0YfPLrEz8ffT3uqAyXWu6iqFjohNsbp4cOU7hnJwg2RXtDnYHoHMr7MOkZDVdlLMdrSrAuzY6KGqrg==
+
+"@react-native-vector-icons/common@^12.0.0":
+  version "12.0.0"
+  resolved "https://registry.npmjs.org/@react-native-vector-icons/common/-/common-12.0.0.tgz"
+  integrity sha512-hGeWU+DVa1vi49WhjDI+YvGn/vnpLSKJEPoAJagOZae4ewJKSfjoaANcHpxVmDVm/fpA10+a0e3rU7gbzS9lZA==
+  dependencies:
+    "@react-native-community/cli-tools" "^17.0.0"
+    picocolors "^1.1.1"
+    plist "^3.1.0"
+
+"@react-native-vector-icons/material-design-icons@^12.0.0":
+  version "12.0.0"
+  resolved "https://registry.npmjs.org/@react-native-vector-icons/material-design-icons/-/material-design-icons-12.0.0.tgz"
+  integrity sha512-yFyxn6YxIY5LfM8HGfW9SwoPCuzBJ7j6yb6aP6tVuhHRxYKjlDRuiEpW0Q53g6w3VUTzJIrthXIFkhLHfGZOZg==
+  dependencies:
+    "@react-native-vector-icons/common" "^12.0.0"
 
 "@react-native/assets-registry@^0.79.2", "@react-native/assets-registry@0.79.2":
   version "0.79.2"
@@ -10470,7 +10502,7 @@ pkg-up@^3.1.0:
   dependencies:
     find-up "^3.0.0"
 
-plist@^3.0.5:
+plist@^3.0.5, plist@^3.1.0:
   version "3.1.0"
   resolved "https://registry.npmjs.org/plist/-/plist-3.1.0.tgz"
   integrity sha512-uysumyrvkUX0rX/dEVqt8gC3sTBzd4zoWfLeS29nb53imdaXVvLINYXTI2GNqzaMuvacNx4uJQ8+b3zXR0pkgQ==
