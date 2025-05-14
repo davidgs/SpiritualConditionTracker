@@ -1,6 +1,6 @@
 /**
  * Simple server for Spiritual Condition Tracker
- * Serves landing page at / and static app at /app
+ * Serves landing page at / and static app bundle at /app
  */
 const http = require('http');
 const fs = require('fs');
@@ -33,7 +33,7 @@ const server = http.createServer((req, res) => {
   
   // Serve the app at /app
   if (req.url === '/app' || req.url === '/app/') {
-    console.log('Serving app page');
+    console.log('Serving app at /app from static bundle');
     
     // Read the app index.html
     const appIndexPath = path.join(__dirname, 'static-bundle', 'index.html');
@@ -162,7 +162,7 @@ const server = http.createServer((req, res) => {
 server.listen(PORT, '0.0.0.0', () => {
   console.log(`Server running on port ${PORT}`);
   console.log(`Landing page available at http://localhost:${PORT}/`);
-  console.log(`Application available at http://localhost:${PORT}/app/`);
+  console.log(`Static app bundle available at http://localhost:${PORT}/app/`);
 });
 
 // Handle graceful shutdown
