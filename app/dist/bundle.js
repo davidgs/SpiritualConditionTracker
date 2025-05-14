@@ -27880,7 +27880,7 @@ function App() {
   // Load data from the database
   function loadData() {
     return _loadData.apply(this, arguments);
-  } // Calculate spiritual fitness score
+  } // Calculate spiritual fitness score using the database function
   function _loadData() {
     _loadData = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
       var userData, activitiesData, meetingsData;
@@ -27917,59 +27917,16 @@ function App() {
     return _loadData.apply(this, arguments);
   }
   function calculateSpiritualFitness() {
-    if (!activities.length) return;
-    var now = new Date();
-    var thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+    if (!window.db) {
+      console.error('Database not initialized');
+      return;
+    }
 
-    // Get activities from the last 30 days
-    var recentActivities = activities.filter(function (activity) {
-      var activityDate = new Date(activity.date);
-      return activityDate >= thirtyDaysAgo;
-    });
+    // Use the database function to calculate spiritual fitness
+    var score = window.db.calculateSpiritualFitness();
 
-    // Calculate score based on different activity types
-    var totalScore = recentActivities.reduce(function (score, activity) {
-      switch (activity.type) {
-        case 'prayer':
-        case 'meditation':
-          // 2 points per 30 minutes
-          return score + activity.duration / 30 * 2;
-        case 'literature':
-          // 2 points per 30 minutes
-          return score + activity.duration / 30 * 2;
-        case 'sponsor':
-          // 3 points per 30 minutes
-          return score + activity.duration / 30 * 3;
-        case 'sponsee':
-          // 4 points per 30 minutes (max 20)
-          var sponseePoints = activity.duration / 30 * 4;
-          return score + Math.min(sponseePoints, 20);
-        case 'meeting':
-          // 5 points per meeting (extra points for sharing/speaking)
-          var meetingPoints = 5;
-          if (activity.didShare) meetingPoints += 1;
-          if (activity.wasChair) meetingPoints += 3;
-          return score + meetingPoints;
-        case 'call':
-          // 1 point per call (no limit)
-          return score + 1;
-        default:
-          return score;
-      }
-    }, 0);
-
-    // Calculate variety bonus (count unique activity types)
-    var activityTypes = new Set(recentActivities.map(function (activity) {
-      return activity.type;
-    }));
-    var varietyBonus = activityTypes.size >= 3 ? activityTypes.size * 2 : 0;
-
-    // Calculate final score (cap at 100)
-    var finalScore = Math.min(totalScore + varietyBonus, 100);
-
-    // Round to 2 decimal places
-    var fitness = parseFloat(finalScore.toFixed(2));
-    setSpiritualFitness(fitness);
+    // Set the spiritual fitness score in state
+    setSpiritualFitness(score);
   }
 
   // Handle saving a new activity
@@ -28104,6 +28061,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
+function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
+function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
+function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
 function _slicedToArray(r, e) { return _arrayWithHoles(r) || _iterableToArrayLimit(r, e) || _unsupportedIterableToArray(r, e) || _nonIterableRest(); }
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
@@ -28141,7 +28104,7 @@ function ActivityLog(_ref) {
     _useState4 = _slicedToArray(_useState3, 2),
     activityType = _useState4[0],
     setActivityType = _useState4[1];
-  var _useState5 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(''),
+  var _useState5 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)('15'),
     _useState6 = _slicedToArray(_useState5, 2),
     duration = _useState6[0],
     setDuration = _useState6[1];
@@ -28162,6 +28125,59 @@ function ActivityLog(_ref) {
     showSuccess = _useState12[0],
     setShowSuccess = _useState12[1];
 
+  // Additional fields for specific activity types
+  var _useState13 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(''),
+    _useState14 = _slicedToArray(_useState13, 2),
+    literatureTitle = _useState14[0],
+    setLiteratureTitle = _useState14[1];
+  var _useState15 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(''),
+    _useState16 = _slicedToArray(_useState15, 2),
+    meetingName = _useState16[0],
+    setMeetingName = _useState16[1];
+  var _useState17 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false),
+    _useState18 = _slicedToArray(_useState17, 2),
+    wasChair = _useState18[0],
+    setWasChair = _useState18[1];
+  var _useState19 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false),
+    _useState20 = _slicedToArray(_useState19, 2),
+    wasShare = _useState20[0],
+    setWasShare = _useState20[1];
+  var _useState21 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false),
+    _useState22 = _slicedToArray(_useState21, 2),
+    wasSpeaker = _useState22[0],
+    setWasSpeaker = _useState22[1];
+
+  // Reset additional fields when activity type changes
+  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(function () {
+    setDuration('15'); // Default duration for all
+    setLiteratureTitle('');
+    setMeetingName('');
+    setWasChair(false);
+    setWasShare(false);
+    setWasSpeaker(false);
+  }, [activityType]);
+
+  // Get duration options based on activity type
+  var getDurationOptions = function getDurationOptions() {
+    var options = [];
+    var maxMinutes = 60; // Default max is 1 hour
+    var increment = 15; // Default increment is 15 minutes
+
+    if (activityType === 'meeting') {
+      maxMinutes = 150; // 2.5 hours
+      increment = 30; // 30 minute increments
+    } else if (activityType === 'sponsee' || activityType === 'service') {
+      maxMinutes = 120; // 2 hours
+    }
+    for (var i = increment; i <= maxMinutes; i += increment) {
+      options.push(/*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("option", {
+        key: i,
+        value: i.toString()
+      }, i, " minutes"));
+    }
+    return options;
+  };
+
   // Handle form submission
   var handleSubmit = function handleSubmit(e) {
     e.preventDefault();
@@ -28172,13 +28188,21 @@ function ActivityLog(_ref) {
     if (!duration) newErrors.duration = 'Duration is required';
     if (!date) newErrors.date = 'Date is required';
 
+    // Validate activity-specific fields
+    if (activityType === 'literature' && !literatureTitle.trim()) {
+      newErrors.literatureTitle = 'Literature title is required';
+    }
+    if (activityType === 'meeting' && !meetingName.trim()) {
+      newErrors.meetingName = 'Meeting name is required';
+    }
+
     // If there are errors, show them and don't submit
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       return;
     }
 
-    // Create new activity object
+    // Create new activity object with core fields
     var newActivity = {
       type: activityType,
       duration: parseInt(duration, 10),
@@ -28186,15 +28210,39 @@ function ActivityLog(_ref) {
       notes: notes.trim()
     };
 
+    // Add activity-specific fields
+    if (activityType === 'literature') {
+      newActivity.literatureTitle = literatureTitle.trim();
+    }
+    if (activityType === 'meeting') {
+      newActivity.meetingName = meetingName.trim();
+      newActivity.wasChair = wasChair;
+      newActivity.wasShare = wasShare;
+      newActivity.wasSpeaker = wasSpeaker;
+    }
+
     // Save the activity
     onSave(newActivity);
 
     // Show success message
     setShowSuccess(true);
 
-    // Reset form
-    setDuration('');
-    setNotes('');
+    // Reset form fields that should clear after submission
+    if (activityType !== 'meeting' && activityType !== 'literature') {
+      setDuration('15');
+      setNotes('');
+    } else if (activityType === 'literature') {
+      setDuration('15');
+      setLiteratureTitle('');
+      setNotes('');
+    } else if (activityType === 'meeting') {
+      setDuration('30');
+      setMeetingName('');
+      setWasChair(false);
+      setWasShare(false);
+      setWasSpeaker(false);
+      setNotes('');
+    }
 
     // Hide success message after 2 seconds
     setTimeout(function () {
@@ -28220,6 +28268,34 @@ function ActivityLog(_ref) {
       default:
         return 'fa-check-circle';
     }
+  };
+
+  // Common styles for form elements
+  var labelStyle = {
+    display: 'block',
+    fontSize: '0.875rem',
+    fontWeight: '500',
+    marginBottom: '0.25rem',
+    color: darkMode ? '#e5e7eb' : '#4b5563'
+  };
+  var inputStyle = {
+    width: '100%',
+    padding: '0.5rem 0.75rem',
+    borderRadius: '0.375rem',
+    backgroundColor: darkMode ? '#1f2937' : '#ffffff',
+    color: darkMode ? '#e5e7eb' : '#1f2937',
+    border: darkMode ? '1px solid #4b5563' : '1px solid #d1d5db',
+    fontSize: '0.875rem'
+  };
+  var errorStyle = {
+    color: '#ef4444',
+    fontSize: '0.75rem',
+    marginTop: '0.25rem'
+  };
+  var checkboxStyle = {
+    display: 'flex',
+    alignItems: 'center',
+    marginBottom: '0.5rem'
   };
   return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     className: "p-3 pb-16 max-w-md mx-auto"
@@ -28257,23 +28333,9 @@ function ActivityLog(_ref) {
       marginBottom: '1rem'
     }
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("label", {
-    style: {
-      display: 'block',
-      fontSize: '0.875rem',
-      fontWeight: '500',
-      marginBottom: '0.25rem',
-      color: darkMode ? '#e5e7eb' : '#4b5563'
-    }
+    style: labelStyle
   }, "Activity Type"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("select", {
-    style: {
-      width: '100%',
-      padding: '0.5rem 0.75rem',
-      borderRadius: '0.375rem',
-      backgroundColor: darkMode ? '#1f2937' : '#ffffff',
-      color: darkMode ? '#e5e7eb' : '#1f2937',
-      border: darkMode ? '1px solid #4b5563' : '1px solid #d1d5db',
-      fontSize: '0.875rem'
-    },
+    style: inputStyle,
     value: activityType,
     onChange: function onChange(e) {
       return setActivityType(e.target.value);
@@ -28291,102 +28353,139 @@ function ActivityLog(_ref) {
   }, "Sponsee Call/Meeting"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("option", {
     value: "meeting"
   }, "AA Meeting")), errors.activityType && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("p", {
-    style: {
-      color: '#ef4444',
-      fontSize: '0.75rem',
-      marginTop: '0.25rem'
-    }
+    style: errorStyle
   }, errors.activityType)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     style: {
       marginBottom: '1rem'
     }
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("label", {
-    style: {
-      display: 'block',
-      fontSize: '0.875rem',
-      fontWeight: '500',
-      marginBottom: '0.25rem',
-      color: darkMode ? '#e5e7eb' : '#4b5563'
-    }
-  }, "Duration (minutes)"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("input", {
-    type: "number",
-    style: {
-      width: '100%',
-      padding: '0.5rem 0.75rem',
-      borderRadius: '0.375rem',
-      backgroundColor: darkMode ? '#1f2937' : '#ffffff',
-      color: darkMode ? '#e5e7eb' : '#1f2937',
-      border: darkMode ? '1px solid #4b5563' : '1px solid #d1d5db',
-      fontSize: '0.875rem'
-    },
-    placeholder: "Enter duration in minutes",
+    style: labelStyle
+  }, "Duration"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("select", {
+    style: inputStyle,
     value: duration,
     onChange: function onChange(e) {
       return setDuration(e.target.value);
-    },
-    min: "1"
-  }), errors.duration && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("p", {
-    style: {
-      color: '#ef4444',
-      fontSize: '0.75rem',
-      marginTop: '0.25rem'
     }
-  }, errors.duration)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+  }, getDurationOptions()), errors.duration && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("p", {
+    style: errorStyle
+  }, errors.duration)), activityType === 'literature' && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     style: {
       marginBottom: '1rem'
     }
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("label", {
+    style: labelStyle
+  }, "Literature Title"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("input", {
+    type: "text",
+    style: inputStyle,
+    placeholder: "Enter title of what you were reading",
+    value: literatureTitle,
+    onChange: function onChange(e) {
+      return setLiteratureTitle(e.target.value);
+    }
+  }), errors.literatureTitle && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("p", {
+    style: errorStyle
+  }, errors.literatureTitle)), activityType === 'meeting' && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     style: {
-      display: 'block',
+      marginBottom: '1rem'
+    }
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("label", {
+    style: labelStyle
+  }, "Meeting Name"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("input", {
+    type: "text",
+    style: inputStyle,
+    placeholder: "Enter name of the meeting",
+    value: meetingName,
+    onChange: function onChange(e) {
+      return setMeetingName(e.target.value);
+    }
+  }), errors.meetingName && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("p", {
+    style: errorStyle
+  }, errors.meetingName)), activityType === 'meeting' && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+    style: {
+      marginBottom: '1rem'
+    }
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("label", {
+    style: _objectSpread(_objectSpread({}, labelStyle), {}, {
+      marginBottom: '0.5rem'
+    })
+  }, "Meeting Role"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+    style: checkboxStyle
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("input", {
+    type: "checkbox",
+    id: "wasChair",
+    checked: wasChair,
+    onChange: function onChange() {
+      return setWasChair(!wasChair);
+    },
+    style: {
+      marginRight: '0.5rem'
+    }
+  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("label", {
+    htmlFor: "wasChair",
+    style: {
       fontSize: '0.875rem',
-      fontWeight: '500',
-      marginBottom: '0.25rem',
       color: darkMode ? '#e5e7eb' : '#4b5563'
     }
+  }, "I chaired this meeting")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+    style: checkboxStyle
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("input", {
+    type: "checkbox",
+    id: "wasShare",
+    checked: wasShare,
+    onChange: function onChange() {
+      return setWasShare(!wasShare);
+    },
+    style: {
+      marginRight: '0.5rem'
+    }
+  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("label", {
+    htmlFor: "wasShare",
+    style: {
+      fontSize: '0.875rem',
+      color: darkMode ? '#e5e7eb' : '#4b5563'
+    }
+  }, "I shared during this meeting")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+    style: checkboxStyle
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("input", {
+    type: "checkbox",
+    id: "wasSpeaker",
+    checked: wasSpeaker,
+    onChange: function onChange() {
+      return setWasSpeaker(!wasSpeaker);
+    },
+    style: {
+      marginRight: '0.5rem'
+    }
+  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("label", {
+    htmlFor: "wasSpeaker",
+    style: {
+      fontSize: '0.875rem',
+      color: darkMode ? '#e5e7eb' : '#4b5563'
+    }
+  }, "I was the speaker at this meeting"))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+    style: {
+      marginBottom: '1rem'
+    }
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("label", {
+    style: labelStyle
   }, "Date"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("input", {
     type: "date",
-    style: {
-      width: '100%',
-      padding: '0.5rem 0.75rem',
-      borderRadius: '0.375rem',
-      backgroundColor: darkMode ? '#1f2937' : '#ffffff',
-      color: darkMode ? '#e5e7eb' : '#1f2937',
-      border: darkMode ? '1px solid #4b5563' : '1px solid #d1d5db',
-      fontSize: '0.875rem'
-    },
+    style: inputStyle,
     value: date,
     onChange: function onChange(e) {
       return setDate(e.target.value);
     },
     max: new Date().toISOString().split('T')[0]
   }), errors.date && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("p", {
-    style: {
-      color: '#ef4444',
-      fontSize: '0.75rem',
-      marginTop: '0.25rem'
-    }
+    style: errorStyle
   }, errors.date)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     style: {
       marginBottom: '1.5rem'
     }
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("label", {
-    style: {
-      display: 'block',
-      fontSize: '0.875rem',
-      fontWeight: '500',
-      marginBottom: '0.25rem',
-      color: darkMode ? '#e5e7eb' : '#4b5563'
-    }
+    style: labelStyle
   }, "Notes (optional)"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("textarea", {
-    style: {
-      width: '100%',
-      padding: '0.5rem 0.75rem',
-      borderRadius: '0.375rem',
-      backgroundColor: darkMode ? '#1f2937' : '#ffffff',
-      color: darkMode ? '#e5e7eb' : '#1f2937',
-      border: darkMode ? '1px solid #4b5563' : '1px solid #d1d5db',
-      fontSize: '0.875rem'
-    },
+    style: inputStyle,
     placeholder: "Add any notes about this activity...",
     value: notes,
     onChange: function onChange(e) {
@@ -28729,7 +28828,7 @@ function Dashboard(_ref) {
     className: "text-xs text-gray-600 dark:text-gray-400 mb-2"
   }, "Your score is calculated based on activities from the past 30 days:"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("ul", {
     className: "text-xs text-gray-600 dark:text-gray-400 list-disc pl-4 space-y-1 mb-2"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("li", null, "AA Meeting: 5 points (speaker +3, shared +1)"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("li", null, "Reading Literature: 2 points per 30 min"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("li", null, "Prayer/Meditation: 2 points per 30 min"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("li", null, "Talking with Sponsor: 3 points per 30 min"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("li", null, "Working with Sponsee: 4 points per 30 min (max 20)"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("li", null, "AA Calls: 1 point each (no limit)")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("p", {
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("li", null, "AA Meeting: 5 points (speaker +3, shared +1, chair +1)"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("li", null, "Reading Literature: 2 points per 30 min"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("li", null, "Prayer/Meditation: 2 points per 30 min"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("li", null, "Talking with Sponsor: 3 points per 30 min"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("li", null, "Working with Sponsee: 4 points per 30 min (max 20)"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("li", null, "AA Calls: 1 point each (no limit)")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("p", {
     className: "text-xs text-gray-600 dark:text-gray-400"
   }, "Variety of activities earns bonus points."), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     className: "absolute -bottom-6 left-1/2 transform -translate-x-1/2 w-3 h-3 rotate-45 bg-white dark:bg-gray-800 border-r border-b border-gray-200 dark:border-gray-700"

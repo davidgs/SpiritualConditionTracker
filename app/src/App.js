@@ -50,60 +50,18 @@ function App() {
     calculateSpiritualFitness();
   }
 
-  // Calculate spiritual fitness score
+  // Calculate spiritual fitness score using the database function
   function calculateSpiritualFitness() {
-    if (!activities.length) return;
-
-    const now = new Date();
-    const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+    if (!window.db) {
+      console.error('Database not initialized');
+      return;
+    }
     
-    // Get activities from the last 30 days
-    const recentActivities = activities.filter(activity => {
-      const activityDate = new Date(activity.date);
-      return activityDate >= thirtyDaysAgo;
-    });
-
-    // Calculate score based on different activity types
-    const totalScore = recentActivities.reduce((score, activity) => {
-      switch (activity.type) {
-        case 'prayer':
-        case 'meditation':
-          // 2 points per 30 minutes
-          return score + (activity.duration / 30) * 2;
-        case 'literature':
-          // 2 points per 30 minutes
-          return score + (activity.duration / 30) * 2;
-        case 'sponsor':
-          // 3 points per 30 minutes
-          return score + (activity.duration / 30) * 3;
-        case 'sponsee':
-          // 4 points per 30 minutes (max 20)
-          const sponseePoints = (activity.duration / 30) * 4;
-          return score + Math.min(sponseePoints, 20);
-        case 'meeting':
-          // 5 points per meeting (extra points for sharing/speaking)
-          let meetingPoints = 5;
-          if (activity.didShare) meetingPoints += 1;
-          if (activity.wasChair) meetingPoints += 3;
-          return score + meetingPoints;
-        case 'call':
-          // 1 point per call (no limit)
-          return score + 1;
-        default:
-          return score;
-      }
-    }, 0);
-
-    // Calculate variety bonus (count unique activity types)
-    const activityTypes = new Set(recentActivities.map(activity => activity.type));
-    const varietyBonus = activityTypes.size >= 3 ? activityTypes.size * 2 : 0;
+    // Use the database function to calculate spiritual fitness
+    const score = window.db.calculateSpiritualFitness();
     
-    // Calculate final score (cap at 100)
-    const finalScore = Math.min(totalScore + varietyBonus, 100);
-    
-    // Round to 2 decimal places
-    const fitness = parseFloat(finalScore.toFixed(2));
-    setSpiritualFitness(fitness);
+    // Set the spiritual fitness score in state
+    setSpiritualFitness(score);
   }
 
   // Handle saving a new activity
