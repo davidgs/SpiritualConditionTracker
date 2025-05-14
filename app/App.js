@@ -68,42 +68,118 @@ class App {
   
   async loadUserData() {
     try {
-      // Attempt to load existing user data
-      const storedUser = localStorage.getItem('user');
-      if (storedUser) {
-        this.user = JSON.parse(storedUser);
-        console.log('User data loaded:', this.user);
-      } else {
-        // Create default user if none exists
-        this.user = {
-          id: 'user_' + Date.now(),
-          name: 'Friend',
-          sobrietyDate: '2020-01-01', // Default date
-          homeGroup: '',
-          phone: '',
-          email: '',
-          privacySettings: { shareLocation: false, shareActivities: false },
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString()
-        };
+      // Check if we have the Database utility available
+      if (window.Database && typeof window.Database.getAll === 'function') {
+        // Get users from the database
+        const users = window.Database.getAll('users');
         
-        // Save to storage
-        localStorage.setItem('user', JSON.stringify(this.user));
-        console.log('Default user created');
-      }
-      
-      // Load activities
-      const storedActivities = localStorage.getItem('activities');
-      if (storedActivities) {
-        this.activities = JSON.parse(storedActivities);
+        if (users && users.length > 0) {
+          // Use the first user found
+          this.user = users[0];
+          console.log('User data loaded from database:', this.user);
+        } else {
+          // Create default user if none exists
+          this.user = {
+            id: 'user_' + Date.now(),
+            name: 'Friend',
+            sobrietyDate: '2020-01-01', // Default date
+            homeGroup: '',
+            phone: '',
+            email: '',
+            privacySettings: { shareLocation: false, shareActivities: false },
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString()
+          };
+          
+          // Save to database
+          if (window.Database.userOperations && typeof window.Database.userOperations.createUser === 'function') {
+            window.Database.userOperations.createUser(this.user);
+          } else {
+            // Fallback to localStorage
+            const users = [];
+            users.push(this.user);
+            localStorage.setItem('aa_tracker_users', JSON.stringify(users));
+          }
+          
+          console.log('Default user created');
+        }
+        
+        // Load activities
+        if (window.Database.activityOperations && typeof window.Database.activityOperations.getUserActivities === 'function') {
+          this.activities = window.Database.activityOperations.getUserActivities(this.user.id);
+        } else {
+          // Fallback to localStorage
+          const storedActivities = localStorage.getItem('aa_tracker_activities');
+          if (storedActivities) {
+            const allActivities = JSON.parse(storedActivities);
+            this.activities = allActivities.filter(activity => activity.userId === this.user.id);
+          } else {
+            this.activities = [];
+          }
+        }
+        
         console.log(`Loaded ${this.activities.length} activities`);
-      }
-      
-      // Load meetings
-      const storedMeetings = localStorage.getItem('meetings');
-      if (storedMeetings) {
-        this.meetings = JSON.parse(storedMeetings);
+        
+        // Load meetings
+        if (window.Database.meetingOperations && typeof window.Database.meetingOperations.getUserMeetings === 'function') {
+          this.meetings = window.Database.meetingOperations.getUserMeetings(this.user.id);
+        } else {
+          // Fallback to localStorage
+          const storedMeetings = localStorage.getItem('aa_tracker_meetings');
+          if (storedMeetings) {
+            const allMeetings = JSON.parse(storedMeetings);
+            this.meetings = allMeetings.filter(meeting => meeting.createdBy === this.user.id);
+          } else {
+            this.meetings = [];
+          }
+        }
+        
         console.log(`Loaded ${this.meetings.length} meetings`);
+      } else {
+        // Fallback to direct localStorage if Database utility not available
+        console.warn('Database utility not available, using direct localStorage');
+        
+        // Attempt to load existing user data
+        const storedUser = localStorage.getItem('user');
+        if (storedUser) {
+          this.user = JSON.parse(storedUser);
+          console.log('User data loaded from localStorage:', this.user);
+        } else {
+          // Create default user if none exists
+          this.user = {
+            id: 'user_' + Date.now(),
+            name: 'Friend',
+            sobrietyDate: '2020-01-01', // Default date
+            homeGroup: '',
+            phone: '',
+            email: '',
+            privacySettings: { shareLocation: false, shareActivities: false },
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString()
+          };
+          
+          // Save to storage
+          localStorage.setItem('user', JSON.stringify(this.user));
+          console.log('Default user created in localStorage');
+        }
+        
+        // Load activities
+        const storedActivities = localStorage.getItem('activities');
+        if (storedActivities) {
+          this.activities = JSON.parse(storedActivities);
+          console.log(`Loaded ${this.activities.length} activities from localStorage`);
+        } else {
+          this.activities = [];
+        }
+        
+        // Load meetings
+        const storedMeetings = localStorage.getItem('meetings');
+        if (storedMeetings) {
+          this.meetings = JSON.parse(storedMeetings);
+          console.log(`Loaded ${this.meetings.length} meetings from localStorage`);
+        } else {
+          this.meetings = [];
+        }
       }
       
       // Calculate spiritual fitness
@@ -111,11 +187,39 @@ class App {
       
     } catch (error) {
       console.error('Error loading user data:', error);
-      throw error;
+      // Create a minimal user to avoid breaking the app
+      this.user = {
+        id: 'user_' + Date.now(),
+        name: 'Friend',
+        sobrietyDate: '2020-01-01',
+        privacySettings: { shareLocation: false, shareActivities: false }
+      };
+      this.activities = [];
+      this.meetings = [];
+      console.log('Created recovery user after error');
     }
   }
   
   calculateSpiritualFitness() {
+    // Check if Database utility has spiritualFitnessOperations
+    if (window.Database && 
+        window.Database.spiritualFitnessOperations && 
+        typeof window.Database.spiritualFitnessOperations.calculateSpiritualFitness === 'function') {
+      
+      try {
+        // Use the Database utility to calculate spiritual fitness
+        this.spiritualFitness = window.Database.spiritualFitnessOperations.calculateSpiritualFitness(this.user.id);
+        console.log('Spiritual fitness calculated using Database utility:', this.spiritualFitness);
+        return this.spiritualFitness;
+      } catch (error) {
+        console.error('Error calculating spiritual fitness with Database utility:', error);
+        // Fall back to internal calculation
+      }
+    }
+    
+    // Fallback to internal calculation
+    console.log('Using internal calculation for spiritual fitness');
+    
     // Define weights for activity types
     const weights = {
       meeting: 10,    // Attending a meeting
@@ -177,8 +281,25 @@ class App {
       calculatedAt: new Date().toISOString()
     };
     
-    console.log('Spiritual fitness calculated:', this.spiritualFitness);
-    localStorage.setItem('spiritualFitness', JSON.stringify(this.spiritualFitness));
+    console.log('Spiritual fitness calculated internally:', this.spiritualFitness);
+    
+    // Store in localStorage, either using database or direct
+    if (window.Database && 
+        window.Database.insert && 
+        typeof window.Database.insert === 'function') {
+      
+      const fitnessRecord = {
+        id: `sf_${Date.now()}`,
+        userId: this.user.id,
+        score: finalScore,
+        breakdown: JSON.stringify(breakdown),
+        calculatedAt: new Date().toISOString()
+      };
+      
+      window.Database.insert('spiritualFitness', fitnessRecord);
+    } else {
+      localStorage.setItem('spiritualFitness', JSON.stringify(this.spiritualFitness));
+    }
     
     return this.spiritualFitness;
   }
@@ -198,11 +319,34 @@ class App {
     activity.userId = this.user.id;
     activity.createdAt = activity.createdAt || new Date().toISOString();
     
-    // Add to activities array
-    this.activities.push(activity);
-    
-    // Save to storage
-    localStorage.setItem('activities', JSON.stringify(this.activities));
+    // Try to save using Database utility first
+    if (window.Database && 
+        window.Database.activityOperations && 
+        typeof window.Database.activityOperations.createActivity === 'function') {
+      
+      try {
+        window.Database.activityOperations.createActivity(activity);
+        console.log('Activity saved using Database utility:', activity);
+        
+        // Refresh activities list
+        if (typeof window.Database.activityOperations.getUserActivities === 'function') {
+          this.activities = window.Database.activityOperations.getUserActivities(this.user.id);
+        } else {
+          // Just add to local array if we can't refresh from database
+          this.activities.push(activity);
+        }
+      } catch (error) {
+        console.error('Error saving activity with Database utility:', error);
+        // Fall back to direct localStorage
+        this.activities.push(activity);
+        localStorage.setItem('activities', JSON.stringify(this.activities));
+      }
+    } else {
+      // Fall back to direct localStorage
+      console.log('Using direct localStorage for saving activity');
+      this.activities.push(activity);
+      localStorage.setItem('activities', JSON.stringify(this.activities));
+    }
     
     // Recalculate spiritual fitness
     this.calculateSpiritualFitness();
@@ -228,11 +372,34 @@ class App {
     meeting.createdAt = meeting.createdAt || new Date().toISOString();
     meeting.updatedAt = new Date().toISOString();
     
-    // Add to meetings array
-    this.meetings.push(meeting);
-    
-    // Save to storage
-    localStorage.setItem('meetings', JSON.stringify(this.meetings));
+    // Try to save using Database utility first
+    if (window.Database && 
+        window.Database.meetingOperations && 
+        typeof window.Database.meetingOperations.createMeeting === 'function') {
+      
+      try {
+        window.Database.meetingOperations.createMeeting(meeting);
+        console.log('Meeting saved using Database utility:', meeting);
+        
+        // Refresh meetings list
+        if (typeof window.Database.meetingOperations.getUserMeetings === 'function') {
+          this.meetings = window.Database.meetingOperations.getUserMeetings(this.user.id);
+        } else {
+          // Just add to local array if we can't refresh from database
+          this.meetings.push(meeting);
+        }
+      } catch (error) {
+        console.error('Error saving meeting with Database utility:', error);
+        // Fall back to direct localStorage
+        this.meetings.push(meeting);
+        localStorage.setItem('meetings', JSON.stringify(this.meetings));
+      }
+    } else {
+      // Fall back to direct localStorage
+      console.log('Using direct localStorage for saving meeting');
+      this.meetings.push(meeting);
+      localStorage.setItem('meetings', JSON.stringify(this.meetings));
+    }
     
     console.log('Meeting saved:', meeting);
     
@@ -240,11 +407,32 @@ class App {
   }
   
   updateUser(userData) {
-    // Update user object
-    this.user = { ...this.user, ...userData, updatedAt: new Date().toISOString() };
+    // Add timestamp
+    userData.updatedAt = new Date().toISOString();
     
-    // Save to storage
-    localStorage.setItem('user', JSON.stringify(this.user));
+    // Try to update using Database utility first
+    if (window.Database && 
+        window.Database.userOperations && 
+        typeof window.Database.userOperations.updateUser === 'function') {
+      
+      try {
+        window.Database.userOperations.updateUser(this.user.id, userData);
+        console.log('User updated using Database utility');
+        
+        // Update our local user object
+        this.user = { ...this.user, ...userData };
+      } catch (error) {
+        console.error('Error updating user with Database utility:', error);
+        // Fall back to direct localStorage
+        this.user = { ...this.user, ...userData };
+        localStorage.setItem('user', JSON.stringify(this.user));
+      }
+    } else {
+      // Fall back to direct localStorage
+      console.log('Using direct localStorage for updating user');
+      this.user = { ...this.user, ...userData };
+      localStorage.setItem('user', JSON.stringify(this.user));
+    }
     
     console.log('User updated:', this.user);
     
@@ -1154,11 +1342,34 @@ class App {
   
   deleteActivity(activityId) {
     if (confirm('Are you sure you want to delete this activity?')) {
-      // Filter out the activity
-      this.activities = this.activities.filter(activity => activity.id !== activityId);
-      
-      // Save to storage
-      localStorage.setItem('activities', JSON.stringify(this.activities));
+      // Try to delete using Database utility first
+      if (window.Database && 
+          window.Database.activityOperations && 
+          typeof window.Database.activityOperations.deleteActivity === 'function') {
+        
+        try {
+          window.Database.activityOperations.deleteActivity(activityId);
+          console.log('Activity deleted using Database utility');
+          
+          // Refresh activities list
+          if (typeof window.Database.activityOperations.getUserActivities === 'function') {
+            this.activities = window.Database.activityOperations.getUserActivities(this.user.id);
+          } else {
+            // Just filter local array if we can't refresh from database
+            this.activities = this.activities.filter(activity => activity.id !== activityId);
+          }
+        } catch (error) {
+          console.error('Error deleting activity with Database utility:', error);
+          // Fall back to direct localStorage
+          this.activities = this.activities.filter(activity => activity.id !== activityId);
+          localStorage.setItem('activities', JSON.stringify(this.activities));
+        }
+      } else {
+        // Fall back to direct localStorage
+        console.log('Using direct localStorage for deleting activity');
+        this.activities = this.activities.filter(activity => activity.id !== activityId);
+        localStorage.setItem('activities', JSON.stringify(this.activities));
+      }
       
       // Recalculate spiritual fitness
       this.calculateSpiritualFitness();
@@ -1170,11 +1381,34 @@ class App {
   
   deleteMeeting(meetingId) {
     if (confirm('Are you sure you want to delete this meeting?')) {
-      // Filter out the meeting
-      this.meetings = this.meetings.filter(meeting => meeting.id !== meetingId);
-      
-      // Save to storage
-      localStorage.setItem('meetings', JSON.stringify(this.meetings));
+      // Try to delete using Database utility first
+      if (window.Database && 
+          window.Database.meetingOperations && 
+          typeof window.Database.meetingOperations.deleteMeeting === 'function') {
+        
+        try {
+          window.Database.meetingOperations.deleteMeeting(meetingId);
+          console.log('Meeting deleted using Database utility');
+          
+          // Refresh meetings list
+          if (typeof window.Database.meetingOperations.getUserMeetings === 'function') {
+            this.meetings = window.Database.meetingOperations.getUserMeetings(this.user.id);
+          } else {
+            // Just filter local array if we can't refresh from database
+            this.meetings = this.meetings.filter(meeting => meeting.id !== meetingId);
+          }
+        } catch (error) {
+          console.error('Error deleting meeting with Database utility:', error);
+          // Fall back to direct localStorage
+          this.meetings = this.meetings.filter(meeting => meeting.id !== meetingId);
+          localStorage.setItem('meetings', JSON.stringify(this.meetings));
+        }
+      } else {
+        // Fall back to direct localStorage
+        console.log('Using direct localStorage for deleting meeting');
+        this.meetings = this.meetings.filter(meeting => meeting.id !== meetingId);
+        localStorage.setItem('meetings', JSON.stringify(this.meetings));
+      }
       
       // Refresh current screen
       this.renderMeetings();
