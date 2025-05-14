@@ -118,21 +118,7 @@ const server = http.createServer((req, res) => {
     return;
   }
   
-  // Special handling for Expo assets requested from /app/
-  if (req.url.startsWith('/app/static/') || 
-      req.url.startsWith('/app/assets/') ||
-      req.url.startsWith('/app/manifest')) {
-      
-    // Strip the /app prefix and proxy to appropriate route
-    targetPath = targetPath.replace(/^\/app/, '');
-    console.log(`App asset ${req.url} -> ${targetPath}`);
-    
-    // Don't add problem-causing platform headers
-    proxyToExpo(req, res, targetPath);
-    return;
-  }
-  
-  // For specific API routes within /app/
+  // For specific API routes within /app/ - handled separately to add specific headers
   if (req.url.startsWith('/app/api/')) {
     // Strip the /app prefix and proxy to appropriate route
     targetPath = targetPath.replace(/^\/app/, '');
@@ -142,18 +128,6 @@ const server = http.createServer((req, res) => {
     req.headers['x-requested-app'] = 'true';
     req.headers['expo-platform'] = 'web';
     proxyToExpo(req, res, targetPath);
-    return;
-  }
-  
-  // For all other /app/* routes, redirect to root path
-  if (req.url.startsWith('/app/')) {
-    console.log(`Redirecting ${req.url} -> /`);
-    
-    // Return a redirect response
-    res.writeHead(302, {
-      'Location': '/'
-    });
-    res.end();
     return;
   }
   
@@ -209,8 +183,98 @@ function proxyToExpo(req, res, targetPath) {
     
     if (err.code === 'ECONNREFUSED') {
       // Expo is still starting up
-      res.writeHead(503);
-      res.end('Expo is starting up, please try again in a moment...');
+      // Create a temporary HTML page that will retry automatically
+      const retryHtml = `
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Connecting to Expo...</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #f5f5f5;
+    }
+    .container {
+      text-align: center;
+      padding: 2rem;
+      max-width: 500px;
+    }
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #3498db;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 20px;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    h2 {
+      color: #2c3e50;
+      margin-bottom: 1rem;
+    }
+    p {
+      color: #7f8c8d;
+      margin-bottom: 1.5rem;
+    }
+    .retry-counter {
+      font-size: 0.8rem;
+      color: #95a5a6;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="spinner"></div>
+    <h2>Connecting to the Application</h2>
+    <p>The application server is starting up. This page will automatically reconnect when it's ready.</p>
+    <div class="retry-counter">Retry attempt: <span id="count">1</span></div>
+  </div>
+
+  <script>
+    let count = 1;
+    const countEl = document.getElementById('count');
+    
+    // Retry connection every 2 seconds
+    function retryConnection() {
+      count++;
+      countEl.textContent = count;
+      
+      // Fetch the current URL
+      fetch(window.location.href)
+        .then(response => {
+          if (response.status === 200) {
+            // If successful, reload the page
+            window.location.reload();
+          } else {
+            // Try again in 2 seconds
+            setTimeout(retryConnection, 2000);
+          }
+        })
+        .catch(error => {
+          // Error connecting, try again in 2 seconds
+          setTimeout(retryConnection, 2000);
+        });
+    }
+    
+    // Start the retry process after 3 seconds
+    setTimeout(retryConnection, 3000);
+  </script>
+</body>
+</html>
+      `;
+      
+      res.writeHead(503, { 'Content-Type': 'text/html' });
+      res.end(retryHtml);
     } else {
       res.writeHead(500);
       res.end(`Server error: ${err.message}`);
