@@ -2,8 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Spiritual Condition Tracker</title>
+  
   <!-- Include Tailwind CSS -->
   <link rel="stylesheet" href="/src/styles/tailwind.css">
   
@@ -63,15 +64,16 @@
   <!-- Load the database module first -->
   <script src="database.js"></script>
   
-  <!-- Then load the main app module -->
-  <script src="app.js"></script>
+  <!-- Load the app script -->
+  <script src="app/new-app-with-tailwind.js"></script>
 </head>
-<body>
-  <div id="root">
-    <!-- App will be loaded here -->
-    <div class="loading-container">
-      <div class="loading-spinner"></div>
-      <p>Loading Spiritual Condition Tracker...</p>
+<body class="bg-gray-50">
+  <div id="root" class="container mx-auto px-4 max-w-md">
+    <div class="flex justify-center items-center h-screen">
+      <div class="text-center">
+        <div class="spinner-border text-blue-500 mb-4"></div>
+        <p>Loading Spiritual Condition Tracker...</p>
+      </div>
     </div>
   </div>
 </body>
