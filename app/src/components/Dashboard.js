@@ -10,6 +10,19 @@ export default function Dashboard({ setCurrentView, user, activities, spiritualF
   const popoverRef = useRef(null);
   const buttonRef = useRef(null);
   
+  // Format score to 2 decimal places for display
+  const formattedScore = spiritualFitness > 0 ? spiritualFitness.toFixed(2) : '0';
+  
+  // Determine color based on score
+  const getScoreColor = (score) => {
+    if (score < 30) return darkMode ? '#ef4444' : '#dc2626'; // Red
+    if (score < 75) return darkMode ? '#f59e0b' : '#d97706'; // Yellow/Amber
+    return darkMode ? '#22c55e' : '#16a34a'; // Green
+  };
+  
+  // Calculate progress percentage, capped at 100%
+  const progressPercent = Math.min(spiritualFitness, 100);
+  
   // Close popover when clicking outside
   useEffect(() => {
     function handleClickOutside(event) {
@@ -115,11 +128,11 @@ export default function Dashboard({ setCurrentView, user, activities, spiritualF
       </div>
       
       {/* Sobriety & Spiritual Fitness Stats */}
-      <div className="grid grid-cols-2 gap-4 mb-6">
+      <div className="grid grid-cols-2 gap-4 mb-4">
         <div style={{
           backgroundColor: darkMode ? '#1f2937' : '#ffffff',
           borderRadius: '0.5rem',
-          padding: '1rem',
+          padding: '0.75rem',
           textAlign: 'left',
           border: darkMode ? '1px solid #374151' : '1px solid #e5e7eb'
         }}>
@@ -183,9 +196,35 @@ export default function Dashboard({ setCurrentView, user, activities, spiritualF
             </div>
           )}
         </div>
-        <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700 text-center">
-          <h3 className="text-md font-medium text-gray-700 dark:text-gray-300 mb-1">Spiritual Fitness</h3>
-          <div className="text-3xl font-bold text-green-500 dark:text-green-400 mb-1">{spiritualFitness}</div>
+        <div className="bg-white dark:bg-gray-800 rounded-lg p-3 border border-gray-200 dark:border-gray-700 text-center">
+          <h3 className="text-md font-medium text-gray-700 dark:text-gray-300 mb-2">Spiritual Fitness</h3>
+          
+          {/* Score display with dynamic color */}
+          <div 
+            className="text-3xl font-bold mb-2"
+            style={{ color: getScoreColor(spiritualFitness) }}
+          >
+            {formattedScore}
+          </div>
+          
+          {/* Progress bar */}
+          <div className="w-full h-4 bg-gray-200 dark:bg-gray-700 rounded-full mb-3 overflow-hidden">
+            <div 
+              className="h-full rounded-full transition-all duration-500 ease-out"
+              style={{ 
+                width: `${progressPercent}%`, 
+                backgroundColor: getScoreColor(spiritualFitness)
+              }}
+            ></div>
+          </div>
+          
+          {/* Score range indicators */}
+          <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400 mb-2">
+            <span>0</span>
+            <span>50</span>
+            <span>100</span>
+          </div>
+          
           <div className="text-sm text-gray-500 dark:text-gray-400">30-day score</div>
           <div className="relative inline-block">
             <button 
@@ -245,8 +284,8 @@ export default function Dashboard({ setCurrentView, user, activities, spiritualF
       </div>
       
       {/* Recent Activities Section */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700 mb-6">
-        <div className="flex justify-between items-center mb-4">
+      <div className="bg-white dark:bg-gray-800 rounded-lg p-3 border border-gray-200 dark:border-gray-700 mb-4">
+        <div className="flex justify-between items-center mb-2">
           <h2 className="text-lg font-medium text-gray-800 dark:text-gray-200">Recent Activities</h2>
           <button 
             style={{
@@ -269,7 +308,7 @@ export default function Dashboard({ setCurrentView, user, activities, spiritualF
         {recentActivities.length > 0 ? (
           <div className="space-y-3">
             {recentActivities.map(activity => (
-              <div key={activity.id} className="flex items-center border-b border-gray-100 dark:border-gray-700 pb-3">
+              <div key={activity.id} className="flex items-center border-b border-gray-100 dark:border-gray-700 pb-2 mb-2">
                 <div className="icon-circle bg-blue-50 dark:bg-blue-900">
                   <i className={`fas ${getActivityIcon(activity.type)} icon text-blue-500 dark:text-blue-400`}></i>
                 </div>

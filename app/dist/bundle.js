@@ -28295,6 +28295,19 @@ function Dashboard(_ref) {
   var popoverRef = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)(null);
   var buttonRef = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)(null);
 
+  // Format score to 2 decimal places for display
+  var formattedScore = spiritualFitness > 0 ? spiritualFitness.toFixed(2) : '0';
+
+  // Determine color based on score
+  var getScoreColor = function getScoreColor(score) {
+    if (score < 30) return darkMode ? '#ef4444' : '#dc2626'; // Red
+    if (score < 75) return darkMode ? '#f59e0b' : '#d97706'; // Yellow/Amber
+    return darkMode ? '#22c55e' : '#16a34a'; // Green
+  };
+
+  // Calculate progress percentage, capped at 100%
+  var progressPercent = Math.min(spiritualFitness, 100);
+
   // Close popover when clicking outside
   (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(function () {
     function handleClickOutside(event) {
@@ -28397,12 +28410,12 @@ function Dashboard(_ref) {
       lineHeight: '1.2'
     }
   }, "Track your spiritual journey")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
-    className: "grid grid-cols-2 gap-4 mb-6"
+    className: "grid grid-cols-2 gap-4 mb-4"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     style: {
       backgroundColor: darkMode ? '#1f2937' : '#ffffff',
       borderRadius: '0.5rem',
-      padding: '1rem',
+      padding: '0.75rem',
       textAlign: 'left',
       border: darkMode ? '1px solid #374151' : '1px solid #e5e7eb'
     }
@@ -28469,12 +28482,25 @@ function Dashboard(_ref) {
       color: darkMode ? '#60a5fa' : '#3b82f6'
     }
   }, sobrietyYears.toFixed(2), " years"))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
-    className: "bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700 text-center"
+    className: "bg-white dark:bg-gray-800 rounded-lg p-3 border border-gray-200 dark:border-gray-700 text-center"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("h3", {
-    className: "text-md font-medium text-gray-700 dark:text-gray-300 mb-1"
+    className: "text-md font-medium text-gray-700 dark:text-gray-300 mb-2"
   }, "Spiritual Fitness"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
-    className: "text-3xl font-bold text-green-500 dark:text-green-400 mb-1"
-  }, spiritualFitness), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+    className: "text-3xl font-bold mb-2",
+    style: {
+      color: getScoreColor(spiritualFitness)
+    }
+  }, formattedScore), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+    className: "w-full h-4 bg-gray-200 dark:bg-gray-700 rounded-full mb-3 overflow-hidden"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+    className: "h-full rounded-full transition-all duration-500 ease-out",
+    style: {
+      width: "".concat(progressPercent, "%"),
+      backgroundColor: getScoreColor(spiritualFitness)
+    }
+  })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+    className: "flex justify-between text-xs text-gray-500 dark:text-gray-400 mb-2"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("span", null, "0"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("span", null, "50"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("span", null, "100")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     className: "text-sm text-gray-500 dark:text-gray-400"
   }, "30-day score"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     className: "relative inline-block"
@@ -28515,9 +28541,9 @@ function Dashboard(_ref) {
   }, "Variety of activities earns bonus points."), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     className: "absolute -bottom-6 left-1/2 transform -translate-x-1/2 w-3 h-3 rotate-45 bg-white dark:bg-gray-800 border-r border-b border-gray-200 dark:border-gray-700"
   })))))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
-    className: "bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700 mb-6"
+    className: "bg-white dark:bg-gray-800 rounded-lg p-3 border border-gray-200 dark:border-gray-700 mb-4"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
-    className: "flex justify-between items-center mb-4"
+    className: "flex justify-between items-center mb-2"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("h2", {
     className: "text-lg font-medium text-gray-800 dark:text-gray-200"
   }, "Recent Activities"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("button", {
@@ -28540,7 +28566,7 @@ function Dashboard(_ref) {
   }, recentActivities.map(function (activity) {
     return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
       key: activity.id,
-      className: "flex items-center border-b border-gray-100 dark:border-gray-700 pb-3"
+      className: "flex items-center border-b border-gray-100 dark:border-gray-700 pb-2 mb-2"
     }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
       className: "icon-circle bg-blue-50 dark:bg-blue-900"
     }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("i", {
