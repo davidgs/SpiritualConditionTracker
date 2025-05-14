@@ -28343,22 +28343,20 @@ function Dashboard(_ref) {
   return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     className: "p-4 pb-20 max-w-md mx-auto"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
-    className: "flex flex-col items-center justify-center mb-6"
+    className: "text-center mb-6"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("img", {
     src: _assets_logo_small_png__WEBPACK_IMPORTED_MODULE_1__,
     alt: "App Logo",
-    className: "h-20 w-20 object-cover rounded-lg mb-3",
+    className: "h-20 w-20 object-cover rounded-lg mb-3 mx-auto",
     style: {
       maxWidth: '80px',
       maxHeight: '80px'
     }
-  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
-    className: "text-center"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("h1", {
+  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("h1", {
     className: "text-2xl font-bold text-gray-800 dark:text-gray-100"
   }, "Recovery Tracker"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("p", {
     className: "text-sm text-gray-500 dark:text-gray-400"
-  }, "Track your spiritual journey"))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+  }, "Track your spiritual journey")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     className: "grid grid-cols-2 gap-4 mb-6"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     className: "bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700 text-center"
@@ -28367,15 +28365,15 @@ function Dashboard(_ref) {
   }, "Sobriety"), showYearsProminent ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement((react__WEBPACK_IMPORTED_MODULE_0___default().Fragment), null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     className: "text-3xl font-bold text-blue-500 dark:text-blue-400 mb-1"
   }, sobrietyYears.toFixed(2)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
-    className: "text-sm text-gray-500 dark:text-gray-400"
+    className: "text-sm text-gray-500 dark:text-gray-400 mb-1"
   }, "years"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
-    className: "text-sm text-gray-700 dark:text-gray-300 mt-1"
+    className: "text-sm text-blue-500 dark:text-blue-400"
   }, formatNumber(sobrietyDays), " days")) : /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement((react__WEBPACK_IMPORTED_MODULE_0___default().Fragment), null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     className: "text-3xl font-bold text-blue-500 dark:text-blue-400 mb-1"
   }, formatNumber(sobrietyDays)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
-    className: "text-sm text-gray-500 dark:text-gray-400"
+    className: "text-sm text-gray-500 dark:text-gray-400 mb-1"
   }, "days"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
-    className: "text-sm text-gray-700 dark:text-gray-300 mt-1"
+    className: "text-sm text-blue-500 dark:text-blue-400"
   }, sobrietyYears.toFixed(2), " years"))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     className: "bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700 text-center"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("h3", {

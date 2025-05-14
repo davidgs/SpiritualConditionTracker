@@ -45,18 +45,16 @@ export default function Dashboard({ setCurrentView, user, activities, spiritualF
 
   return (
     <div className="p-4 pb-20 max-w-md mx-auto">
-      {/* Centered logo at the top */}
-      <div className="flex flex-col items-center justify-center mb-6">
+      {/* Centered logo at the top with text-align center to ensure proper centering */}
+      <div className="text-center mb-6">
         <img 
           src={logoImg} 
           alt="App Logo" 
-          className="h-20 w-20 object-cover rounded-lg mb-3"
+          className="h-20 w-20 object-cover rounded-lg mb-3 mx-auto"
           style={{ maxWidth: '80px', maxHeight: '80px' }}
         />
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">Recovery Tracker</h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400">Track your spiritual journey</p>
-        </div>
+        <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">Recovery Tracker</h1>
+        <p className="text-sm text-gray-500 dark:text-gray-400">Track your spiritual journey</p>
       </div>
       
       {/* Sobriety & Spiritual Fitness Stats */}
@@ -67,14 +65,14 @@ export default function Dashboard({ setCurrentView, user, activities, spiritualF
           {showYearsProminent ? (
             <>
               <div className="text-3xl font-bold text-blue-500 dark:text-blue-400 mb-1">{sobrietyYears.toFixed(2)}</div>
-              <div className="text-sm text-gray-500 dark:text-gray-400">years</div>
-              <div className="text-sm text-gray-700 dark:text-gray-300 mt-1">{formatNumber(sobrietyDays)} days</div>
+              <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">years</div>
+              <div className="text-sm text-blue-500 dark:text-blue-400">{formatNumber(sobrietyDays)} days</div>
             </>
           ) : (
             <>
               <div className="text-3xl font-bold text-blue-500 dark:text-blue-400 mb-1">{formatNumber(sobrietyDays)}</div>
-              <div className="text-sm text-gray-500 dark:text-gray-400">days</div>
-              <div className="text-sm text-gray-700 dark:text-gray-300 mt-1">{sobrietyYears.toFixed(2)} years</div>
+              <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">days</div>
+              <div className="text-sm text-blue-500 dark:text-blue-400">{sobrietyYears.toFixed(2)} years</div>
             </>
           )}
         </div>
