@@ -6,47 +6,10 @@
   <title>Spiritual Condition Tracker</title>
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-  <link rel="icon" href="assets/favicon.png">
+  <link rel="icon" type="image/jpg" href="/logo.jpg">
   
-  <!-- SQLite WASM library -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/sql-wasm.js"></script>
-  
-  <script>
-    // Initialize the app when the page loads
-    document.addEventListener('DOMContentLoaded', function() {
-      console.log('Spiritual Condition Tracker App loaded');
-      
-      // Initialize the app directly
-      initApp();
-    });
-    
-    // Initialize the app
-    function initApp() {
-      try {
-        // Get the root element
-        const rootElement = document.getElementById('root');
-        
-        // Create and initialize the app
-        window.app = new SpiritualConditionTracker(rootElement);
-        console.log('App initialized successfully');
-        
-      } catch (error) {
-        console.error('Error initializing app:', error);
-        // Show error in the root element
-        const rootElement = document.getElementById('root');
-        rootElement.innerHTML = `
-          <div class="error-container">
-            <div class="error-icon">
-              <i class="fas fa-exclamation-triangle"></i>
-            </div>
-            <h1>Error Starting App</h1>
-            <p>${error.message || 'An unexpected error occurred'}</p>
-            <button class="button-primary" onclick="location.reload()">Retry</button>
-          </div>
-        `;
-      }
-    }
-  </script>
+  <!-- Main app script will load from simple-app.js via server -->
+  <script src="main.js" defer></script>
 </head>
 <body>
   <div id="root">
@@ -56,8 +19,5 @@
       <p>Loading Spiritual Condition Tracker...</p>
     </div>
   </div>
-  
-  <script src="database.js"></script>
-  <script src="app.js"></script>
 </body>
 </html>
