@@ -28062,6 +28062,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _utils_dateUtils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../utils/dateUtils */ "./src/utils/dateUtils.js");
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
 function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
@@ -28078,6 +28079,7 @@ function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) 
 function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
 function _iterableToArrayLimit(r, l) { var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (null != t) { var e, n, i, u, a = [], f = !0, o = !1; try { if (i = (t = t.call(r)).next, 0 === l) { if (Object(t) !== t) return; f = !1; } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0); } catch (r) { o = !0, n = r; } finally { try { if (!f && null != t["return"] && (u = t["return"](), Object(u) !== u)) return; } finally { if (o) throw n; } } return a; } }
 function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
+
 
 function ActivityLog(_ref) {
   var setCurrentView = _ref.setCurrentView,
@@ -28286,30 +28288,8 @@ function ActivityLog(_ref) {
     }
   };
 
-  // Format date for display
-  var formatDate = function formatDate(dateString) {
-    var options = {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric'
-    };
-
-    // If the date is in YYYY-MM-DD format without time
-    if (dateString.length === 10 && dateString.includes('-')) {
-      var _dateString$split$map = dateString.split('-').map(function (num) {
-          return parseInt(num, 10);
-        }),
-        _dateString$split$map2 = _slicedToArray(_dateString$split$map, 3),
-        year = _dateString$split$map2[0],
-        month = _dateString$split$map2[1],
-        day = _dateString$split$map2[2];
-      // Use UTC to avoid timezone issues
-      return new Date(Date.UTC(year, month - 1, day)).toLocaleDateString(undefined, options);
-    } else {
-      // Fallback for other date formats
-      return new Date(dateString).toLocaleDateString(undefined, options);
-    }
-  };
+  // Use the shared date formatting function from utils
+  var formatDate = _utils_dateUtils__WEBPACK_IMPORTED_MODULE_1__.formatDateForDisplay;
 
   // Common styles for form elements
   var labelStyle = {
@@ -28340,14 +28320,7 @@ function ActivityLog(_ref) {
   };
 
   // Sort activities by date (newest first)
-  var sortedActivities = activities ? _toConsumableArray(activities).sort(function (a, b) {
-    // For YYYY-MM-DD format, we can sort directly as strings
-    if (a.date.length === 10 && a.date.includes('-') && b.date.length === 10 && b.date.includes('-')) {
-      return b.date.localeCompare(a.date); // Sort in descending order
-    }
-    // Fallback to date object comparison
-    return new Date(b.date) - new Date(a.date);
-  }) : [];
+  var sortedActivities = activities ? _toConsumableArray(activities).sort(_utils_dateUtils__WEBPACK_IMPORTED_MODULE_1__.compareDatesForSorting) : [];
   return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     className: "p-3 pb-16 max-w-md mx-auto"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
@@ -28713,6 +28686,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _assets_logo_small_png__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../assets/logo-small.png */ "./src/assets/logo-small.png");
+/* harmony import */ var _utils_dateUtils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../utils/dateUtils */ "./src/utils/dateUtils.js");
 function _toConsumableArray(r) { return _arrayWithoutHoles(r) || _iterableToArray(r) || _unsupportedIterableToArray(r) || _nonIterableSpread(); }
 function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 function _iterableToArray(r) { if ("undefined" != typeof Symbol && null != r[Symbol.iterator] || null != r["@@iterator"]) return Array.from(r); }
@@ -28723,6 +28697,7 @@ function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) 
 function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
 function _iterableToArrayLimit(r, l) { var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (null != t) { var e, n, i, u, a = [], f = !0, o = !1; try { if (i = (t = t.call(r)).next, 0 === l) { if (Object(t) !== t) return; f = !1; } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0); } catch (r) { o = !0, n = r; } finally { try { if (!f && null != t["return"] && (u = t["return"](), Object(u) !== u)) return; } finally { if (o) throw n; } } return a; } }
 function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
+
 
 
 function Dashboard(_ref) {
@@ -28768,39 +28743,10 @@ function Dashboard(_ref) {
     };
   }, [popoverRef, buttonRef]);
   // Get recent activities (last 5)
-  var recentActivities = activities ? _toConsumableArray(activities).sort(function (a, b) {
-    // For YYYY-MM-DD format, we can sort directly as strings
-    if (a.date.length === 10 && a.date.includes('-') && b.date.length === 10 && b.date.includes('-')) {
-      return b.date.localeCompare(a.date); // Sort in descending order
-    }
-    // Fallback to date object comparison
-    return new Date(b.date) - new Date(a.date);
-  }).slice(0, 5) : [];
+  var recentActivities = activities ? _toConsumableArray(activities).sort(_utils_dateUtils__WEBPACK_IMPORTED_MODULE_2__.compareDatesForSorting).slice(0, 5) : [];
 
-  // Format date for display
-  var formatDate = function formatDate(dateString) {
-    var options = {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric'
-    };
-
-    // If the date is in YYYY-MM-DD format without time
-    if (dateString.length === 10 && dateString.includes('-')) {
-      var _dateString$split$map = dateString.split('-').map(function (num) {
-          return parseInt(num, 10);
-        }),
-        _dateString$split$map2 = _slicedToArray(_dateString$split$map, 3),
-        year = _dateString$split$map2[0],
-        month = _dateString$split$map2[1],
-        day = _dateString$split$map2[2];
-      // Use UTC to avoid timezone issues
-      return new Date(Date.UTC(year, month - 1, day)).toLocaleDateString(undefined, options);
-    } else {
-      // Fallback for other date formats
-      return new Date(dateString).toLocaleDateString(undefined, options);
-    }
-  };
+  // Use the shared date formatting function from utils
+  var formatDate = _utils_dateUtils__WEBPACK_IMPORTED_MODULE_2__.formatDateForDisplay;
 
   // Format number with thousands separator
   var formatNumber = function formatNumber(number) {
@@ -29943,6 +29889,95 @@ var update = _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js
 
        /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_css_loader_dist_cjs_js_node_modules_postcss_loader_dist_cjs_js_tailwind_css__WEBPACK_IMPORTED_MODULE_6__["default"] && _node_modules_css_loader_dist_cjs_js_node_modules_postcss_loader_dist_cjs_js_tailwind_css__WEBPACK_IMPORTED_MODULE_6__["default"].locals ? _node_modules_css_loader_dist_cjs_js_node_modules_postcss_loader_dist_cjs_js_tailwind_css__WEBPACK_IMPORTED_MODULE_6__["default"].locals : undefined);
 
+
+/***/ }),
+
+/***/ "./src/utils/dateUtils.js":
+/*!********************************!*\
+  !*** ./src/utils/dateUtils.js ***!
+  \********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   compareDatesForSorting: () => (/* binding */ compareDatesForSorting),
+/* harmony export */   formatDateForDisplay: () => (/* binding */ formatDateForDisplay)
+/* harmony export */ });
+function _slicedToArray(r, e) { return _arrayWithHoles(r) || _iterableToArrayLimit(r, e) || _unsupportedIterableToArray(r, e) || _nonIterableRest(); }
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
+function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
+function _iterableToArrayLimit(r, l) { var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (null != t) { var e, n, i, u, a = [], f = !0, o = !1; try { if (i = (t = t.call(r)).next, 0 === l) { if (Object(t) !== t) return; f = !1; } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0); } catch (r) { o = !0, n = r; } finally { try { if (!f && null != t["return"] && (u = t["return"](), Object(u) !== u)) return; } finally { if (o) throw n; } } return a; } }
+function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
+/**
+ * Utility functions for handling dates across the application
+ */
+
+/**
+ * Format a date string for display without timezone issues
+ * Handles both YYYY-MM-DD format and ISO date strings
+ * 
+ * @param {string} dateString - Date string to format
+ * @returns {string} Formatted date string (e.g., "May 14, 2025")
+ */
+function formatDateForDisplay(dateString) {
+  console.log("Formatting date:", dateString);
+  if (!dateString) {
+    console.error("Empty date string provided to formatDateForDisplay");
+    return "Invalid date";
+  }
+  try {
+    // YYYY-MM-DD format (from date input)
+    if (dateString.length === 10 && dateString.includes('-')) {
+      var _dateString$split$map = dateString.split('-').map(function (num) {
+          return parseInt(num, 10);
+        }),
+        _dateString$split$map2 = _slicedToArray(_dateString$split$map, 3),
+        year = _dateString$split$map2[0],
+        month = _dateString$split$map2[1],
+        day = _dateString$split$map2[2];
+      var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      return "".concat(months[month - 1], " ").concat(day, ", ").concat(year);
+    }
+
+    // Handle ISO format
+    var date = new Date(dateString);
+    if (isNaN(date.getTime())) {
+      console.error("Invalid date:", dateString);
+      return "Invalid date";
+    }
+    var options = {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric'
+    };
+    return date.toLocaleDateString(undefined, options);
+  } catch (error) {
+    console.error("Error formatting date:", error);
+    return "Error formatting date";
+  }
+}
+
+/**
+ * Compare dates for sorting (newest first)
+ * Works with any date format (YYYY-MM-DD or ISO string)
+ * 
+ * @param {object} a - First activity object with date property
+ * @param {object} b - Second activity object with date property
+ * @returns {number} Comparison result for sorting (negative if b is newer)
+ */
+function compareDatesForSorting(a, b) {
+  var _a$date, _b$date;
+  // For YYYY-MM-DD format, we can sort directly as strings
+  if (((_a$date = a.date) === null || _a$date === void 0 ? void 0 : _a$date.length) === 10 && a.date.includes('-') && ((_b$date = b.date) === null || _b$date === void 0 ? void 0 : _b$date.length) === 10 && b.date.includes('-')) {
+    return b.date.localeCompare(a.date); // Sort in descending order
+  }
+
+  // For ISO format or mixed formats, convert to timestamp
+  var dateA = new Date(a.date || 0).getTime();
+  var dateB = new Date(b.date || 0).getTime();
+  return dateB - dateA;
+}
 
 /***/ })
 
