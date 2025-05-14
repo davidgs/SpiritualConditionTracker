@@ -38,6 +38,10 @@ export default function ActivityLog({ setCurrentView, onSave, activities }) {
   const [wasChair, setWasChair] = useState(false);
   const [wasShare, setWasShare] = useState(false);
   const [wasSpeaker, setWasSpeaker] = useState(false);
+  // Call type checkboxes
+  const [isSponsorCall, setIsSponsorCall] = useState(false);
+  const [isSponseeCall, setIsSponseeCall] = useState(false);
+  const [isAAMemberCall, setIsAAMemberCall] = useState(false);
 
   // Reset additional fields when activity type changes
   useEffect(() => {
