@@ -84,12 +84,33 @@ export default function ActivityList({
       // Debug log to see what dates we're working with
       console.log('Grouping activity with date:', activity.date, 'Type:', typeof activity.date);
       
-      // Get the date portion only in YYYY-MM-DD format
-      const dateObj = new Date(activity.date);
-      console.log('Date object created:', dateObj, 'Valid?', !isNaN(dateObj.getTime()));
+      let dateKey;
       
-      const dateKey = dateObj.toISOString().split('T')[0];
-      console.log('Generated dateKey:', dateKey);
+      // First check if the date is already in YYYY-MM-DD format
+      if (activity.date && activity.date.length === 10 && activity.date.includes('-')) {
+        // Already in YYYY-MM-DD format, use it directly
+        dateKey = activity.date;
+        console.log('Using direct YYYY-MM-DD dateKey:', dateKey);
+      } else {
+        // Handle ISO format or any other format
+        // Get the date portion only in YYYY-MM-DD format
+        const dateObj = new Date(activity.date);
+        console.log('Date object created:', dateObj);
+        
+        if (isNaN(dateObj.getTime())) {
+          console.error('Invalid date object for:', activity.date);
+          // Skip this activity if date is invalid
+          return;
+        }
+        
+        // Extract only the date part (YYYY-MM-DD) in browser's local timezone
+        // This ensures the date shown matches the user's calendar day
+        const year = dateObj.getFullYear();
+        const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+        const day = String(dateObj.getDate()).padStart(2, '0');
+        dateKey = `${year}-${month}-${day}`;
+        console.log('Generated dateKey from object:', dateKey);
+      }
       
       if (!groups[dateKey]) {
         groups[dateKey] = [];
