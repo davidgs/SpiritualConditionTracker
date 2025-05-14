@@ -28510,59 +28510,28 @@ function Dashboard(_ref) {
       color: getScoreColor(spiritualFitness),
       lineHeight: '1.1'
     }
-  }, formattedScore), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("table", {
+  }, formattedScore), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     style: {
+      position: 'relative',
+      height: '10px',
       width: '100%',
-      height: '8px',
-      borderCollapse: 'collapse',
-      marginBottom: '4px'
+      borderRadius: '6px',
+      background: "linear-gradient(\n              90deg,\n              ".concat(darkMode ? '#DC2626' : '#EF4444', " 0%,\n              ").concat(darkMode ? '#E76B6B' : '#F87171', " 25%,\n              ").concat(darkMode ? '#D97706' : '#F59E0B', " 50%,\n              ").concat(darkMode ? '#65A30D' : '#84CC16', " 75%,\n              ").concat(darkMode ? '#16A34A' : '#22C55E', " 100%\n            )"),
+      marginBottom: '4px',
+      border: darkMode ? '1px solid #4B5563' : '1px solid #D1D5DB',
+      overflow: 'hidden'
     }
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("tbody", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("tr", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("td", {
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     style: {
-      backgroundColor: darkMode ? '#dc2626' : '#ef4444',
-      // Red
-      width: '30%',
-      height: '8px',
-      border: '1px solid #aaa',
-      padding: 0
+      borderRadius: '0 6px 6px 0',
+      backgroundColor: darkMode ? '#374151' : '#F3F4F6',
+      position: 'absolute',
+      right: 0,
+      bottom: 0,
+      top: 0,
+      width: "".concat(100 - Math.min(spiritualFitness, 100), "%")
     }
-  }, spiritualFitness <= 30 && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
-    style: {
-      backgroundColor: 'rgba(255, 255, 255, 0.3)',
-      width: "".concat(spiritualFitness / 30 * 100, "%"),
-      height: '100%'
-    }
-  })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("td", {
-    style: {
-      backgroundColor: darkMode ? '#d97706' : '#f59e0b',
-      // Yellow/Amber
-      width: '45%',
-      height: '8px',
-      border: '1px solid #aaa',
-      padding: 0
-    }
-  }, spiritualFitness > 30 && spiritualFitness <= 75 && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
-    style: {
-      backgroundColor: 'rgba(255, 255, 255, 0.3)',
-      width: "".concat((spiritualFitness - 30) / 45 * 100, "%"),
-      height: '100%'
-    }
-  })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("td", {
-    style: {
-      backgroundColor: darkMode ? '#16a34a' : '#22c55e',
-      // Green
-      width: '25%',
-      height: '8px',
-      border: '1px solid #aaa',
-      padding: 0
-    }
-  }, spiritualFitness > 75 && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
-    style: {
-      backgroundColor: 'rgba(255, 255, 255, 0.3)',
-      width: "".concat((spiritualFitness - 75) / 25 * 100, "%"),
-      height: '100%'
-    }
-  }))))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+  })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     style: {
       display: 'flex',
       justifyContent: 'space-between',

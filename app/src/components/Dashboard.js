@@ -229,64 +229,34 @@ export default function Dashboard({ setCurrentView, user, activities, spiritualF
             {formattedScore}
           </div>
           
-          {/* Simple progress bar using HTML table */}
-          <table style={{ width: '100%', height: '8px', borderCollapse: 'collapse', marginBottom: '4px' }}>
-            <tbody>
-              <tr>
-                <td 
-                  style={{ 
-                    backgroundColor: darkMode ? '#dc2626' : '#ef4444', // Red
-                    width: '30%',
-                    height: '8px',
-                    border: '1px solid #aaa',
-                    padding: 0
-                  }}
-                >
-                  {spiritualFitness <= 30 && (
-                    <div style={{ 
-                      backgroundColor: 'rgba(255, 255, 255, 0.3)', 
-                      width: `${(spiritualFitness / 30) * 100}%`,
-                      height: '100%'
-                    }}></div>
-                  )}
-                </td>
-                <td 
-                  style={{ 
-                    backgroundColor: darkMode ? '#d97706' : '#f59e0b', // Yellow/Amber
-                    width: '45%',
-                    height: '8px',
-                    border: '1px solid #aaa',
-                    padding: 0
-                  }}
-                >
-                  {spiritualFitness > 30 && spiritualFitness <= 75 && (
-                    <div style={{ 
-                      backgroundColor: 'rgba(255, 255, 255, 0.3)', 
-                      width: `${((spiritualFitness - 30) / 45) * 100}%`,
-                      height: '100%'
-                    }}></div>
-                  )}
-                </td>
-                <td 
-                  style={{ 
-                    backgroundColor: darkMode ? '#16a34a' : '#22c55e', // Green
-                    width: '25%',
-                    height: '8px',
-                    border: '1px solid #aaa',
-                    padding: 0
-                  }}
-                >
-                  {spiritualFitness > 75 && (
-                    <div style={{ 
-                      backgroundColor: 'rgba(255, 255, 255, 0.3)', 
-                      width: `${((spiritualFitness - 75) / 25) * 100}%`,
-                      height: '100%'
-                    }}></div>
-                  )}
-                </td>
-              </tr>
-            </tbody>
-          </table>
+          {/* Gradient progress bar with mask */}
+          <div style={{ 
+            position: 'relative',
+            height: '10px',
+            width: '100%',
+            borderRadius: '6px',
+            background: `linear-gradient(
+              90deg,
+              ${darkMode ? '#DC2626' : '#EF4444'} 0%,
+              ${darkMode ? '#E76B6B' : '#F87171'} 25%,
+              ${darkMode ? '#D97706' : '#F59E0B'} 50%,
+              ${darkMode ? '#65A30D' : '#84CC16'} 75%,
+              ${darkMode ? '#16A34A' : '#22C55E'} 100%
+            )`,
+            marginBottom: '4px',
+            border: darkMode ? '1px solid #4B5563' : '1px solid #D1D5DB',
+            overflow: 'hidden'
+          }}>
+            <div style={{
+              borderRadius: '0 6px 6px 0',
+              backgroundColor: darkMode ? '#374151' : '#F3F4F6',
+              position: 'absolute',
+              right: 0,
+              bottom: 0,
+              top: 0,
+              width: `${100 - Math.min(spiritualFitness, 100)}%`
+            }}></div>
+          </div>
           
           {/* Score range indicators */}
           <div style={{ 
