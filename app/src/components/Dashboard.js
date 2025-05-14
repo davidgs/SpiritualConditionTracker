@@ -39,13 +39,31 @@ export default function Dashboard({ setCurrentView, user, activities, spiritualF
   }, [popoverRef, buttonRef]);
   // Get recent activities (last 5)
   const recentActivities = activities
-    ? [...activities].sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 5)
+    ? [...activities].sort((a, b) => {
+        // For YYYY-MM-DD format, we can sort directly as strings
+        if (a.date.length === 10 && a.date.includes('-') &&
+            b.date.length === 10 && b.date.includes('-')) {
+          return b.date.localeCompare(a.date); // Sort in descending order
+        }
+        // Fallback to date object comparison
+        return new Date(b.date) - new Date(a.date);
+      }).slice(0, 5)
     : [];
 
   // Format date for display
   const formatDate = (dateString) => {
     const options = { month: 'short', day: 'numeric', year: 'numeric' };
-    return new Date(dateString).toLocaleDateString(undefined, options);
+    
+    // If the date is in YYYY-MM-DD format without time
+    if (dateString.length === 10 && dateString.includes('-')) {
+      const [year, month, day] = dateString.split('-').map(num => parseInt(num, 10));
+      // Use UTC to avoid timezone issues
+      return new Date(Date.UTC(year, month - 1, day))
+        .toLocaleDateString(undefined, options);
+    } else {
+      // Fallback for other date formats
+      return new Date(dateString).toLocaleDateString(undefined, options);
+    }
   };
 
   // Format number with thousands separator

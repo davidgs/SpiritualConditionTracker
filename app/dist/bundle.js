@@ -28293,7 +28293,22 @@ function ActivityLog(_ref) {
       day: 'numeric',
       year: 'numeric'
     };
-    return new Date(dateString).toLocaleDateString(undefined, options);
+
+    // If the date is in YYYY-MM-DD format without time
+    if (dateString.length === 10 && dateString.includes('-')) {
+      var _dateString$split$map = dateString.split('-').map(function (num) {
+          return parseInt(num, 10);
+        }),
+        _dateString$split$map2 = _slicedToArray(_dateString$split$map, 3),
+        year = _dateString$split$map2[0],
+        month = _dateString$split$map2[1],
+        day = _dateString$split$map2[2];
+      // Use UTC to avoid timezone issues
+      return new Date(Date.UTC(year, month - 1, day)).toLocaleDateString(undefined, options);
+    } else {
+      // Fallback for other date formats
+      return new Date(dateString).toLocaleDateString(undefined, options);
+    }
   };
 
   // Common styles for form elements
@@ -28326,6 +28341,11 @@ function ActivityLog(_ref) {
 
   // Sort activities by date (newest first)
   var sortedActivities = activities ? _toConsumableArray(activities).sort(function (a, b) {
+    // For YYYY-MM-DD format, we can sort directly as strings
+    if (a.date.length === 10 && a.date.includes('-') && b.date.length === 10 && b.date.includes('-')) {
+      return b.date.localeCompare(a.date); // Sort in descending order
+    }
+    // Fallback to date object comparison
     return new Date(b.date) - new Date(a.date);
   }) : [];
   return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
@@ -28565,9 +28585,9 @@ function ActivityLog(_ref) {
       flexDirection: 'column',
       gap: '0.5rem'
     }
-  }, sortedActivities.map(function (activity) {
+  }, sortedActivities.map(function (activity, index) {
     return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
-      key: activity.id || activity.date + activity.type,
+      key: activity.id || "".concat(activity.date, "-").concat(activity.type, "-").concat(index),
       style: {
         display: 'flex',
         alignItems: 'center',
@@ -28749,6 +28769,11 @@ function Dashboard(_ref) {
   }, [popoverRef, buttonRef]);
   // Get recent activities (last 5)
   var recentActivities = activities ? _toConsumableArray(activities).sort(function (a, b) {
+    // For YYYY-MM-DD format, we can sort directly as strings
+    if (a.date.length === 10 && a.date.includes('-') && b.date.length === 10 && b.date.includes('-')) {
+      return b.date.localeCompare(a.date); // Sort in descending order
+    }
+    // Fallback to date object comparison
     return new Date(b.date) - new Date(a.date);
   }).slice(0, 5) : [];
 
@@ -28759,7 +28784,22 @@ function Dashboard(_ref) {
       day: 'numeric',
       year: 'numeric'
     };
-    return new Date(dateString).toLocaleDateString(undefined, options);
+
+    // If the date is in YYYY-MM-DD format without time
+    if (dateString.length === 10 && dateString.includes('-')) {
+      var _dateString$split$map = dateString.split('-').map(function (num) {
+          return parseInt(num, 10);
+        }),
+        _dateString$split$map2 = _slicedToArray(_dateString$split$map, 3),
+        year = _dateString$split$map2[0],
+        month = _dateString$split$map2[1],
+        day = _dateString$split$map2[2];
+      // Use UTC to avoid timezone issues
+      return new Date(Date.UTC(year, month - 1, day)).toLocaleDateString(undefined, options);
+    } else {
+      // Fallback for other date formats
+      return new Date(dateString).toLocaleDateString(undefined, options);
+    }
   };
 
   // Format number with thousands separator
