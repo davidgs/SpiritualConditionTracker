@@ -141,11 +141,11 @@ const server = http.createServer((req, res) => {
   
   // For all other /app/* routes, redirect to root path
   if (req.url.startsWith('/app/')) {
-    console.log(`Redirecting ${req.url} -> /?platform=web`);
+    console.log(`Redirecting ${req.url} -> /`);
     
     // Return a redirect response
     res.writeHead(302, {
-      'Location': '/?platform=web'
+      'Location': '/'
     });
     res.end();
     return;
@@ -170,12 +170,7 @@ function getContentType(filePath) {
 
 // Helper function to proxy requests to Expo
 function proxyToExpo(req, res, targetPath) {
-  // Ensure the platform query parameter is added if not already present
-  if (targetPath.indexOf('?') === -1) {
-    targetPath += '?platform=web';
-  } else if (!targetPath.includes('platform=')) {
-    targetPath += '&platform=web';
-  }
+  // Don't add platform parameters as they're causing issues with Expo server
   
   const options = {
     hostname: 'localhost',
@@ -185,7 +180,8 @@ function proxyToExpo(req, res, targetPath) {
     headers: {
       ...req.headers,
       host: `localhost:${WEBPACK_PORT}`,
-      'expo-platform': 'web',  // This is the key header Expo requires
+      // Use either ios or android as the platform for Native Expo requests
+      // 'expo-platform': 'ios',
       'x-forwarded-proto': 'http'
     }
   };

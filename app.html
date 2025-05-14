@@ -86,12 +86,12 @@
 
   <!-- Simple script to redirect directly to the app -->
   <script>
-    // Simple redirect to main app with platform=web
+    // Simple redirect to main app
     document.addEventListener('DOMContentLoaded', function() {
       // Display a message for a short time, then redirect
       setTimeout(function() {
         console.log('Redirecting to main app...');
-        window.location.href = '/?platform=web&expo-platform=web';
+        window.location.href = '/';
       }, 1000);
     });
   </script>
