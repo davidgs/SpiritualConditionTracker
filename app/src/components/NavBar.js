@@ -10,7 +10,7 @@ function NavBar({ currentView, setCurrentView }) {
   ];
   
   return (
-    <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-800 shadow-lg z-10">
+    <nav className="md:hidden fixed bottom-0 left-0 right-0 z-10">
       <div className="flex justify-around">
         {navItems.map((item) => (
           <button 
