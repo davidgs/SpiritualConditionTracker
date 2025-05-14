@@ -89,6 +89,9 @@ function getById(collection, id) {
  * @returns {Object} The added item
  */
 function add(collection, item) {
+  console.log(`Adding to ${collection}:`, item);
+  console.log(`Date before saving:`, item.date);
+  
   if (!collections[collection]) {
     collections[collection] = [];
   }
@@ -102,6 +105,12 @@ function add(collection, item) {
   // Generate a unique ID if none is provided
   if (!item.id) {
     item.id = Date.now().toString();
+  }
+  
+  // For activities, ensure the date is preserved exactly as submitted
+  if (collection === 'activities' && item.date) {
+    // Keep the date exactly as is - do not convert to Date object
+    console.log(`Keeping original date: ${item.date}`);
   }
   
   // Add timestamps

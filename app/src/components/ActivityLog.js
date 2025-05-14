@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { formatDateForDisplay, compareDatesForSorting } from '../utils/dateUtils';
 
 export default function ActivityLog({ setCurrentView, onSave, activities }) {
   // Check for dark mode
@@ -165,21 +166,8 @@ export default function ActivityLog({ setCurrentView, onSave, activities }) {
     }
   };
   
-  // Format date for display
-  const formatDate = (dateString) => {
-    const options = { month: 'short', day: 'numeric', year: 'numeric' };
-    
-    // If the date is in YYYY-MM-DD format without time
-    if (dateString.length === 10 && dateString.includes('-')) {
-      const [year, month, day] = dateString.split('-').map(num => parseInt(num, 10));
-      // Use UTC to avoid timezone issues
-      return new Date(Date.UTC(year, month - 1, day))
-        .toLocaleDateString(undefined, options);
-    } else {
-      // Fallback for other date formats
-      return new Date(dateString).toLocaleDateString(undefined, options);
-    }
-  };
+  // Use the shared date formatting function from utils
+  const formatDate = formatDateForDisplay;
 
   // Common styles for form elements
   const labelStyle = {
@@ -214,15 +202,7 @@ export default function ActivityLog({ setCurrentView, onSave, activities }) {
   
   // Sort activities by date (newest first)
   const sortedActivities = activities
-    ? [...activities].sort((a, b) => {
-        // For YYYY-MM-DD format, we can sort directly as strings
-        if (a.date.length === 10 && a.date.includes('-') &&
-            b.date.length === 10 && b.date.includes('-')) {
-          return b.date.localeCompare(a.date); // Sort in descending order
-        }
-        // Fallback to date object comparison
-        return new Date(b.date) - new Date(a.date);
-      })
+    ? [...activities].sort(compareDatesForSorting)
     : [];
 
   return (
