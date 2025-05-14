@@ -2,8 +2,8 @@ import React from 'react';
 
 export default function NavBar({ currentView, setCurrentView }) {
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-white shadow-lg border-t border-gray-200">
-      <div className="max-w-md mx-auto flex justify-around p-2">
+    <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200">
+      <div className="max-w-md mx-auto flex justify-around">
         <NavButton 
           icon="fa-home" 
           label="Home" 
@@ -46,16 +46,15 @@ export default function NavBar({ currentView, setCurrentView }) {
 function NavButton({ icon, label, isActive, onClick }) {
   return (
     <button 
-      className={`flex flex-col items-center py-1 px-3 rounded-lg transition-colors ${
+      className={`flex flex-col items-center py-2 px-4 ${
         isActive 
-          ? 'text-blue-600 bg-blue-50' 
-          : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
+          ? 'text-blue-500 border-t-2 border-blue-500 -mt-px' 
+          : 'text-gray-500'
       }`}
       onClick={onClick}
     >
-      <i className={`fas ${icon} ${isActive ? 'text-xl mb-1' : 'text-lg mb-1'}`}></i>
-      <span className={`text-xs font-medium ${isActive ? 'font-semibold' : ''}`}>{label}</span>
-      {isActive && <div className="h-1 w-4 bg-blue-500 rounded-full mt-1"></div>}
+      <i className={`fas ${icon} text-lg mb-1`}></i>
+      <span className="text-xs">{label}</span>
     </button>
   );
 }
