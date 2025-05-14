@@ -12,6 +12,12 @@ body, html {
   line-height: 1.5;
 }
 
+/* Dark mode styles for body */
+body.dark {
+  background-color: #111827;
+  color: #f3f4f6;
+}
+
 /* Improved app container */
 #app {
   height: 100%;
@@ -47,6 +53,43 @@ button, a {
 
 .hover\:shadow-lg:hover {
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+/* Modern icon styling */
+.icon-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* Icon styles for light and dark mode */
+.icon {
+  font-size: 1.25rem;
+  transition: transform 0.2s ease;
+}
+
+.icon-active {
+  transform: scale(1.1);
+}
+
+/* Activity icon circle styling */
+.icon-circle {
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  width: 40px;
+  margin-right: 12px;
+  background-color: rgba(59, 130, 246, 0.1);
+}
+
+.dark .icon-circle {
+  background-color: rgba(59, 130, 246, 0.2);
 }
 
 /* Enhanced rounded corners */
@@ -112,11 +155,6 @@ button, a {
 
 .hover\:underline:hover {
   text-decoration: underline;
-}
-
-#app {
-  height: 100%;
-  width: 100%;
 }
 
 /* Tailwind-like utility classes */

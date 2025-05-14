@@ -53,7 +53,7 @@ function NavButton({ icon, label, isActive, onClick }) {
       }`}
       onClick={onClick}
     >
-      <i className={`fas ${icon} text-lg mb-1`}></i>
+      <i className={`fas ${icon} ${isActive ? 'icon icon-active' : 'icon'} mb-1`}></i>
       <span className="text-xs">{label}</span>
     </button>
   );

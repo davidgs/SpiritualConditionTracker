@@ -217,7 +217,7 @@ function App() {
 
   return (
     <ThemeProvider>
-      <div className="app-container h-full flex flex-col">
+      <div className="app-container h-full flex flex-col bg-white dark:bg-gray-900 transition-colors duration-200">
         <div className="flex-grow overflow-auto">
           {renderCurrentView()}
         </div>

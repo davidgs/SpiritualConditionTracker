@@ -87,8 +87,8 @@ export default function Dashboard({ setCurrentView, user, activities, spiritualF
           <div className="space-y-3">
             {recentActivities.map(activity => (
               <div key={activity.id} className="flex items-center border-b border-gray-100 dark:border-gray-700 pb-3">
-                <div className="bg-blue-50 dark:bg-blue-900 h-10 w-10 rounded-full flex items-center justify-center mr-3">
-                  <i className={`fas ${getActivityIcon(activity.type)} text-blue-500 dark:text-blue-400`}></i>
+                <div className="icon-circle bg-blue-50 dark:bg-blue-900">
+                  <i className={`fas ${getActivityIcon(activity.type)} icon text-blue-500 dark:text-blue-400`}></i>
                 </div>
                 <div className="flex-grow">
                   <div className="font-medium text-gray-800 dark:text-gray-200">{activity.type.charAt(0).toUpperCase() + activity.type.slice(1)}</div>

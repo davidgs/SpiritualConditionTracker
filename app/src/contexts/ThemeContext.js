@@ -27,12 +27,15 @@ export function ThemeProvider({ children }) {
   // Update body class and localStorage when theme changes
   useEffect(() => {
     const root = window.document.documentElement;
+    const body = window.document.body;
     
     // For Tailwind dark mode support using the 'class' strategy
     if (theme === 'dark') {
       root.classList.add('dark');
+      body.classList.add('dark');
     } else {
       root.classList.remove('dark');
+      body.classList.remove('dark');
     }
     
     // Save theme choice to localStorage
