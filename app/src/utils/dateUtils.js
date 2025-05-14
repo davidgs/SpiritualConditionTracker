@@ -49,14 +49,22 @@ export function formatDateForDisplay(dateString) {
  * @returns {number} Comparison result for sorting (negative if b is newer)
  */
 export function compareDatesForSorting(a, b) {
+  // Ensure we have date strings to work with
+  const dateStrA = a.date || '';
+  const dateStrB = b.date || '';
+  
   // For YYYY-MM-DD format, we can sort directly as strings
-  if (a.date?.length === 10 && a.date.includes('-') &&
-      b.date?.length === 10 && b.date.includes('-')) {
-    return b.date.localeCompare(a.date); // Sort in descending order
+  // This works because YYYY-MM-DD format sorts correctly when compared lexicographically
+  if (dateStrA.length === 10 && dateStrA.includes('-') &&
+      dateStrB.length === 10 && dateStrB.includes('-')) {
+    return dateStrB.localeCompare(dateStrA); // Sort in descending order (newest first)
   }
   
-  // For ISO format or mixed formats, convert to timestamp
-  const dateA = new Date(a.date || 0).getTime();
-  const dateB = new Date(b.date || 0).getTime();
-  return dateB - dateA;
+  // For ISO format or mixed formats, convert to timestamp for reliable comparison
+  // Using Date.parse which handles various formats
+  const timestampA = Date.parse(dateStrA) || 0;
+  const timestampB = Date.parse(dateStrB) || 0;
+  
+  // Sort newest first (descending)
+  return timestampB - timestampA;
 }

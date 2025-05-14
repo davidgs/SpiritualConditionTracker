@@ -342,7 +342,7 @@ export default function Dashboard({ setCurrentView, user, activities, spiritualF
         <ActivityList 
           activities={activities}
           darkMode={darkMode}
-          limit={5}
+          limit={15}
           maxDaysAgo={7}
           showDate={true}
         />
