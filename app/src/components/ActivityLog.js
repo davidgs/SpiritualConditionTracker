@@ -238,8 +238,6 @@ export default function ActivityLog({ setCurrentView, onSave, activities }) {
     alignItems: 'center',
     marginBottom: '0.5rem'
   };
-  
-  // We'll use the ActivityList component instead of manually sorting and filtering activities
 
   return (
     <div className="p-3 pb-16 max-w-md mx-auto">
@@ -333,7 +331,7 @@ export default function ActivityLog({ setCurrentView, onSave, activities }) {
                 htmlFor="isSponsorCall"
                 style={{
                   fontSize: '0.875rem',
-                  color: isDarkMode ? '#e5e7eb' : '#4b5563'
+                  color: darkMode ? '#e5e7eb' : '#4b5563'
                 }}
               >
                 Sponsor
@@ -351,7 +349,7 @@ export default function ActivityLog({ setCurrentView, onSave, activities }) {
                 htmlFor="isSponseeCall"
                 style={{
                   fontSize: '0.875rem',
-                  color: isDarkMode ? '#e5e7eb' : '#4b5563'
+                  color: darkMode ? '#e5e7eb' : '#4b5563'
                 }}
               >
                 Sponsee
@@ -369,7 +367,7 @@ export default function ActivityLog({ setCurrentView, onSave, activities }) {
                 htmlFor="isAAMemberCall"
                 style={{
                   fontSize: '0.875rem',
-                  color: isDarkMode ? '#e5e7eb' : '#4b5563'
+                  color: darkMode ? '#e5e7eb' : '#4b5563'
                 }}
               >
                 AA Member
