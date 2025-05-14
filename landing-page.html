@@ -3,141 +3,143 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spiritual Condition Tracker for AA Recovery</title>
+    <title>Spiritual Condition Tracker</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f5f5f5;
-            color: #333;
+            background-color: #1e1e1e;
+            color: white;
         }
         .container {
             max-width: 900px;
             margin: 0 auto;
             padding: 20px;
         }
-        header {
-            background-color: #2c3e50;
+        .header {
+            background-color: #1a237e;
             color: white;
             padding: 40px 0;
             text-align: center;
         }
+        .logo {
+            width: 100px;
+            height: 100px;
+            margin-bottom: 20px;
+        }
         h1 {
             margin: 0;
             font-size: 2.5rem;
+            margin-bottom: 10px;
         }
         .tagline {
-            font-style: italic;
-            margin-top: 10px;
+            font-size: 1.2rem;
             font-weight: 300;
         }
-        .features {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
-            margin: 40px 0;
+        h2 {
+            text-align: center;
+            font-size: 2.2rem;
+            margin: 40px 0 20px;
         }
-        .feature {
-            flex-basis: 30%;
-            background-color: white;
-            padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
-        }
-        .feature h3 {
-            color: #2c3e50;
-            margin-top: 0;
+        .subtitle {
+            text-align: center;
+            margin-bottom: 40px;
         }
         .cta {
             text-align: center;
-            margin: 50px 0;
+            margin: 40px 0;
         }
         .button {
             display: inline-block;
-            background-color: #3498db;
+            background-color: #1976d2;
             color: white;
-            padding: 15px 30px;
+            padding: 12px 30px;
             text-decoration: none;
-            border-radius: 5px;
+            border-radius: 4px;
             font-weight: bold;
-            font-size: 1.2rem;
-            transition: background-color 0.3s;
+            font-size: 1.1rem;
+            border: none;
+            cursor: pointer;
         }
         .button:hover {
-            background-color: #2980b9;
+            background-color: #1565c0;
+        }
+        .features {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 40px 0;
+        }
+        .feature {
+            background-color: #252525;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        .feature h3 {
+            color: #64b5f6;
+            margin-top: 0;
+            font-size: 1.3rem;
         }
         footer {
-            background-color: #2c3e50;
-            color: white;
             text-align: center;
             padding: 20px 0;
             margin-top: 40px;
-        }
-        .privacy-note {
-            background-color: #ecf0f1;
-            padding: 20px;
-            border-radius: 5px;
-            margin: 40px 0;
+            font-size: 0.9rem;
+            color: #aaa;
         }
         @media (max-width: 768px) {
-            .feature {
-                flex-basis: 100%;
+            .features {
+                grid-template-columns: 1fr;
             }
         }
     </style>
 </head>
 <body>
-    <header>
-        <div class="container">
-            <h1>Spiritual Condition Tracker</h1>
-            <p class="tagline">Supporting your journey in Alcoholics Anonymous recovery</p>
-        </div>
-    </header>
+    <div class="header">
+        <img src="logo.jpg" alt="Spiritual Condition Tracker Logo" class="logo">
+        <h1>Spiritual Condition Tracker</h1>
+        <p class="tagline">Your personal companion for recovery and spiritual growth</p>
+    </div>
 
     <div class="container">
+        <h2>Track Your Journey to Spiritual Wellness</h2>
+        <p class="subtitle">Monitor your daily activities, track your progress, and connect with others on the same path.</p>
+
+        <div class="cta">
+            <a href="/app" class="button">Launch App</a>
+        </div>
+
         <div class="features">
             <div class="feature">
-                <h3>Track Your Progress</h3>
-                <p>Log your prayer time, meditation, meetings attended, and literature read to calculate your Spiritual Fitness score.</p>
+                <h3>Daily Activity Tracking</h3>
+                <p>Log your meetings, meditation, readings, and service work to see your spiritual fitness score improve over time.</p>
+            </div>
+            <div class="feature">
+                <h3>Connect with Others</h3>
+                <p>Find and connect with others in recovery nearby to build your support network.</p>
             </div>
             <div class="feature">
                 <h3>Meeting Management</h3>
-                <p>Keep track of your meetings, get reminders, and share meeting lists with others in your network.</p>
+                <p>Keep track of your meetings, get reminders, and share your schedule with sponsors and sponsees.</p>
             </div>
             <div class="feature">
-                <h3>Community Connection</h3>
-                <p>Connect with sponsors and sponsees, and discover nearby members through our proximity finder.</p>
+                <h3>Private & Secure</h3>
+                <p>Your data stays on your device with end-to-end encryption for all communications.</p>
             </div>
             <div class="feature">
-                <h3>Calendar Integration</h3>
-                <p>Sync your meetings and commitments with your device calendar for timely reminders.</p>
+                <h3>Sobriety Tracking</h3>
+                <p>Monitor your sobriety time with precision and celebrate your milestones.</p>
             </div>
             <div class="feature">
-                <h3>Private Messaging</h3>
-                <p>Communicate securely with your connections through encrypted messaging.</p>
+                <h3>Personal Insights</h3>
+                <p>Gain valuable insights into your recovery patterns and spiritual growth.</p>
             </div>
-            <div class="feature">
-                <h3>100% Private</h3>
-                <p>All your data is stored locally on your device. No servers. No sharing. Your recovery is your business.</p>
-            </div>
-        </div>
-
-        <div class="privacy-note">
-            <h3>Privacy First</h3>
-            <p>Your anonymity and privacy are our top priorities. The Spiritual Condition Tracker stores all data locally on your device using SQLite (mobile) or localStorage (web). We don't use any servers to store your personal information—it stays with you, where it belongs.</p>
-        </div>
-
-        <div class="cta">
-            <a href="/app" class="button">Launch the App</a>
         </div>
     </div>
 
     <footer>
-        <div class="container">
-            <p>&copy; 2025 Spiritual Condition Tracker. Created to support the AA community.</p>
-        </div>
+        <p>© 2025 Spiritual Condition Tracker. All rights reserved.</p>
     </footer>
 </body>
 </html>
