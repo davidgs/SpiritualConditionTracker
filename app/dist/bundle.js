@@ -27919,42 +27919,56 @@ function App() {
   function calculateSpiritualFitness() {
     if (!activities.length) return;
     var now = new Date();
-    var oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+    var thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
 
-    // Get activities from the last week
+    // Get activities from the last 30 days
     var recentActivities = activities.filter(function (activity) {
       var activityDate = new Date(activity.date);
-      return activityDate >= oneWeekAgo;
+      return activityDate >= thirtyDaysAgo;
     });
 
     // Calculate score based on different activity types
     var totalScore = recentActivities.reduce(function (score, activity) {
       switch (activity.type) {
         case 'prayer':
-          return score + activity.duration / 60 * 0.5;
-        // 0.5 points per minute
         case 'meditation':
-          return score + activity.duration / 60 * 0.7;
-        // 0.7 points per minute
+          // 2 points per 30 minutes
+          return score + activity.duration / 30 * 2;
         case 'literature':
-          return score + activity.duration / 60 * 0.4;
-        // 0.4 points per minute
-        case 'service':
-          return score + activity.duration * 0.02;
-        // 0.02 points per minute
+          // 2 points per 30 minutes
+          return score + activity.duration / 30 * 2;
+        case 'sponsor':
+          // 3 points per 30 minutes
+          return score + activity.duration / 30 * 3;
         case 'sponsee':
-          return score + activity.duration * 0.03;
-        // 0.03 points per minute
+          // 4 points per 30 minutes (max 20)
+          var sponseePoints = activity.duration / 30 * 4;
+          return score + Math.min(sponseePoints, 20);
         case 'meeting':
-          return score + 2;
-        // 2 points per meeting
+          // 5 points per meeting (extra points for sharing/speaking)
+          var meetingPoints = 5;
+          if (activity.didShare) meetingPoints += 1;
+          if (activity.wasChair) meetingPoints += 3;
+          return score + meetingPoints;
+        case 'call':
+          // 1 point per call (no limit)
+          return score + 1;
         default:
           return score;
       }
     }, 0);
 
+    // Calculate variety bonus (count unique activity types)
+    var activityTypes = new Set(recentActivities.map(function (activity) {
+      return activity.type;
+    }));
+    var varietyBonus = activityTypes.size >= 3 ? activityTypes.size * 2 : 0;
+
+    // Calculate final score (cap at 100)
+    var finalScore = Math.min(totalScore + varietyBonus, 100);
+
     // Round to 2 decimal places
-    var fitness = parseFloat(totalScore.toFixed(2));
+    var fitness = parseFloat(finalScore.toFixed(2));
     setSpiritualFitness(fitness);
   }
 
@@ -28254,10 +28268,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _assets_logo_small_png__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../assets/logo-small.png */ "./src/assets/logo-small.png");
 function _toConsumableArray(r) { return _arrayWithoutHoles(r) || _iterableToArray(r) || _unsupportedIterableToArray(r) || _nonIterableSpread(); }
 function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
 function _iterableToArray(r) { if ("undefined" != typeof Symbol && null != r[Symbol.iterator] || null != r["@@iterator"]) return Array.from(r); }
 function _arrayWithoutHoles(r) { if (Array.isArray(r)) return _arrayLikeToArray(r); }
+function _slicedToArray(r, e) { return _arrayWithHoles(r) || _iterableToArrayLimit(r, e) || _unsupportedIterableToArray(r, e) || _nonIterableRest(); }
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
 function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
+function _iterableToArrayLimit(r, l) { var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (null != t) { var e, n, i, u, a = [], f = !0, o = !1; try { if (i = (t = t.call(r)).next, 0 === l) { if (Object(t) !== t) return; f = !1; } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0); } catch (r) { o = !0, n = r; } finally { try { if (!f && null != t["return"] && (u = t["return"](), Object(u) !== u)) return; } finally { if (o) throw n; } } return a; } }
+function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
 
 
 function Dashboard(_ref) {
@@ -28268,6 +28286,27 @@ function Dashboard(_ref) {
     spiritualFitness = _ref.spiritualFitness;
   // Simplify dark mode detection for now
   var darkMode = document.documentElement.classList.contains('dark');
+
+  // State for controlling popover visibility
+  var _useState = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false),
+    _useState2 = _slicedToArray(_useState, 2),
+    showPopover = _useState2[0],
+    setShowPopover = _useState2[1];
+  var popoverRef = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)(null);
+  var buttonRef = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)(null);
+
+  // Close popover when clicking outside
+  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(function () {
+    function handleClickOutside(event) {
+      if (popoverRef.current && !popoverRef.current.contains(event.target) && buttonRef.current && !buttonRef.current.contains(event.target)) {
+        setShowPopover(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return function () {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [popoverRef, buttonRef]);
   // Get recent activities (last 5)
   var recentActivities = activities ? _toConsumableArray(activities).sort(function (a, b) {
     return new Date(b.date) - new Date(a.date);
@@ -28437,12 +28476,34 @@ function Dashboard(_ref) {
     className: "text-3xl font-bold text-green-500 dark:text-green-400 mb-1"
   }, spiritualFitness), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     className: "text-sm text-gray-500 dark:text-gray-400"
-  }, "weekly score"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("button", {
-    className: "text-blue-500 dark:text-blue-400 text-xs mt-1",
+  }, "30-day score"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+    className: "relative inline-block"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("button", {
+    ref: buttonRef,
+    className: "text-blue-500 dark:text-blue-400 text-xs mt-2 px-2 py-1 border border-blue-400 rounded-md hover:bg-blue-50 dark:hover:bg-blue-900 transition-colors",
     onClick: function onClick() {
-      return alert('Spiritual fitness is calculated based on your logged prayer, meditation, literature reading, meetings, and service work over the past 7 days. Higher scores reflect greater spiritual engagement.');
+      return setShowPopover(!showPopover);
     }
-  }, "How is this calculated?"))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+  }, "How is this calculated?"), showPopover && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+    ref: popoverRef,
+    className: "absolute z-10 bottom-full mb-2 left-1/2 transform -translate-x-1/2 w-64 bg-white dark:bg-gray-800 shadow-lg rounded-md border border-gray-200 dark:border-gray-700 p-3 text-left",
+    style: {
+      // Add a triangle pointer at the bottom
+      filter: 'drop-shadow(0 2px 5px rgba(0, 0, 0, 0.1))'
+    }
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+    className: "relative"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("h4", {
+    className: "text-sm font-semibold text-gray-800 dark:text-gray-200 mb-2"
+  }, "Spiritual Fitness Score (0-100)"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("p", {
+    className: "text-xs text-gray-600 dark:text-gray-400 mb-2"
+  }, "Your score is calculated based on activities from the past 30 days:"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("ul", {
+    className: "text-xs text-gray-600 dark:text-gray-400 list-disc pl-4 space-y-1 mb-2"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("li", null, "AA Meeting: 5 points (speaker +3, shared +1)"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("li", null, "Reading Literature: 2 points per 30 min"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("li", null, "Prayer/Meditation: 2 points per 30 min"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("li", null, "Talking with Sponsor: 3 points per 30 min"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("li", null, "Working with Sponsee: 4 points per 30 min (max 20)"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("li", null, "AA Calls: 1 point each (no limit)")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("p", {
+    className: "text-xs text-gray-600 dark:text-gray-400"
+  }, "Variety of activities earns bonus points."), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+    className: "absolute -bottom-6 left-1/2 transform -translate-x-1/2 w-3 h-3 rotate-45 bg-white dark:bg-gray-800 border-r border-b border-gray-200 dark:border-gray-700"
+  })))))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     className: "bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700 mb-6"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     className: "flex justify-between items-center mb-4"

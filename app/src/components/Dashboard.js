@@ -1,9 +1,29 @@
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import logoImg from '../assets/logo-small.png';
 
 export default function Dashboard({ setCurrentView, user, activities, spiritualFitness }) {
   // Simplify dark mode detection for now
   const darkMode = document.documentElement.classList.contains('dark');
+  
+  // State for controlling popover visibility
+  const [showPopover, setShowPopover] = useState(false);
+  const popoverRef = useRef(null);
+  const buttonRef = useRef(null);
+  
+  // Close popover when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (popoverRef.current && !popoverRef.current.contains(event.target) && 
+          buttonRef.current && !buttonRef.current.contains(event.target)) {
+        setShowPopover(false);
+      }
+    }
+    
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [popoverRef, buttonRef]);
   // Get recent activities (last 5)
   const recentActivities = activities
     ? [...activities].sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 5)
@@ -166,13 +186,50 @@ export default function Dashboard({ setCurrentView, user, activities, spiritualF
         <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700 text-center">
           <h3 className="text-md font-medium text-gray-700 dark:text-gray-300 mb-1">Spiritual Fitness</h3>
           <div className="text-3xl font-bold text-green-500 dark:text-green-400 mb-1">{spiritualFitness}</div>
-          <div className="text-sm text-gray-500 dark:text-gray-400">weekly score</div>
-          <button 
-            className="text-blue-500 dark:text-blue-400 text-xs mt-1"
-            onClick={() => alert('Spiritual fitness is calculated based on your logged prayer, meditation, literature reading, meetings, and service work over the past 7 days. Higher scores reflect greater spiritual engagement.')}
-          >
-            How is this calculated?
-          </button>
+          <div className="text-sm text-gray-500 dark:text-gray-400">30-day score</div>
+          <div className="relative inline-block">
+            <button 
+              ref={buttonRef}
+              className="text-blue-500 dark:text-blue-400 text-xs mt-2 px-2 py-1 border border-blue-400 rounded-md hover:bg-blue-50 dark:hover:bg-blue-900 transition-colors"
+              onClick={() => setShowPopover(!showPopover)}
+            >
+              How is this calculated?
+            </button>
+            
+            {showPopover && (
+              <div 
+                ref={popoverRef}
+                className="absolute z-10 bottom-full mb-2 left-1/2 transform -translate-x-1/2 w-64 bg-white dark:bg-gray-800 shadow-lg rounded-md border border-gray-200 dark:border-gray-700 p-3 text-left"
+                style={{ 
+                  // Add a triangle pointer at the bottom
+                  filter: 'drop-shadow(0 2px 5px rgba(0, 0, 0, 0.1))',
+                }}
+              >
+                <div className="relative">
+                  <h4 className="text-sm font-semibold text-gray-800 dark:text-gray-200 mb-2">Spiritual Fitness Score (0-100)</h4>
+                  <p className="text-xs text-gray-600 dark:text-gray-400 mb-2">
+                    Your score is calculated based on activities from the past 30 days:
+                  </p>
+                  <ul className="text-xs text-gray-600 dark:text-gray-400 list-disc pl-4 space-y-1 mb-2">
+                    <li>AA Meeting: 5 points (speaker +3, shared +1)</li>
+                    <li>Reading Literature: 2 points per 30 min</li>
+                    <li>Prayer/Meditation: 2 points per 30 min</li>
+                    <li>Talking with Sponsor: 3 points per 30 min</li>
+                    <li>Working with Sponsee: 4 points per 30 min (max 20)</li>
+                    <li>AA Calls: 1 point each (no limit)</li>
+                  </ul>
+                  <p className="text-xs text-gray-600 dark:text-gray-400">
+                    Variety of activities earns bonus points.
+                  </p>
+                  
+                  {/* Triangle pointer */}
+                  <div 
+                    className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 w-3 h-3 rotate-45 bg-white dark:bg-gray-800 border-r border-b border-gray-200 dark:border-gray-700"
+                  ></div>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </div>
       
