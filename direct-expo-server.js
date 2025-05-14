@@ -91,92 +91,30 @@ const server = http.createServer((req, res) => {
     return;
   }
   
-  // Handle /app route by serving the public/index.html file
+  // Handle /app route by serving the actual Expo app
   if (req.url === '/app' || req.url === '/app/') {
-    console.log(`Serving app at ${req.url}`);
+    console.log(`Proxying app request to Expo at ${req.url}`);
     
-    // Serve the index.html file from public directory
-    const indexHtmlPath = path.join(__dirname, 'public', 'index.html');
+    // Add the correct platform header for Expo
+    req.headers['expo-platform'] = 'web';
     
-    fs.readFile(indexHtmlPath, (err, content) => {
-      if (err) {
-        // Fallback to the landing page if index.html doesn't exist
-        const landingPagePath = path.join(__dirname, 'landing-page.html');
-        
-        fs.readFile(landingPagePath, (err, content) => {
-          if (err) {
-            res.writeHead(500);
-            res.end('Error loading page');
-            return;
-          }
-          
-          res.writeHead(200, { 'Content-Type': 'text/html' });
-          res.end(content);
-        });
-        return;
-      }
-      
-      res.writeHead(200, { 'Content-Type': 'text/html' });
-      res.end(content);
-    });
-    
+    // Proxy to Expo index.html
+    const expoPath = '/';
+    proxyToExpo(req, res, expoPath);
     return;
   }
   
-  // First handle special case for app.js at /app route
-  if (req.url === '/app/app.js') {
-    const appJsPath = path.join(__dirname, 'public', 'app.js');
+  // For all /app paths, proxy to Expo with the correct platform header
+  if (req.url.startsWith('/app/') && !req.url.startsWith('/app/api/')) {
+    // Strip the /app prefix and proxy to Expo
+    const expoPath = req.url.replace(/^\/app/, '');
+    console.log(`Proxying app request ${req.url} to Expo at ${expoPath}`);
     
-    fs.readFile(appJsPath, (err, content) => {
-      if (err) {
-        console.log(`Error reading app.js: ${err}`);
-        res.writeHead(500);
-        res.end('Error loading app.js');
-        return;
-      }
-      
-      res.writeHead(200, { 'Content-Type': 'application/javascript' });
-      res.end(content);
-    });
+    // Add the correct platform header for Expo
+    req.headers['expo-platform'] = 'web';
     
-    return;
-  }
-  
-  // Handle other static file requests for the /app route
-  if (req.url.startsWith('/app/') && (
-      req.url.endsWith('.js') || 
-      req.url.endsWith('.css') || 
-      req.url.endsWith('.png') || 
-      req.url.endsWith('.jpg') || 
-      req.url.endsWith('.svg') || 
-      req.url.endsWith('.json'))) {
-    
-    // Get the file path relative to public directory
-    const filePath = path.join(__dirname, 'public', req.url.replace('/app/', ''));
-    
-    // Check if file exists
-    fs.access(filePath, fs.constants.F_OK, (err) => {
-      if (err) {
-        console.log(`File not found: ${filePath}`);
-        res.writeHead(404);
-        res.end('File not found');
-        return;
-      }
-      
-      // Read and serve the file
-      fs.readFile(filePath, (err, content) => {
-        if (err) {
-          res.writeHead(500);
-          res.end('Error reading file');
-          return;
-        }
-        
-        const contentType = getContentType(filePath);
-        res.writeHead(200, { 'Content-Type': contentType });
-        res.end(content);
-      });
-    });
-    
+    // Proxy to Expo
+    proxyToExpo(req, res, expoPath);
     return;
   }
   
