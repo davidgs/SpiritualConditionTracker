@@ -28361,13 +28361,12 @@ function Dashboard(_ref) {
       marginBottom: '12px'
     }
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("img", {
-    src: _assets_logo_small_png__WEBPACK_IMPORTED_MODULE_1__ + '?v=' + Date.now() // Add cache-busting parameter
-    ,
+    src: "/app/assets/logo.png",
     alt: "App Logo",
     style: {
       width: '80px',
       height: '80px',
-      objectFit: 'cover',
+      objectFit: 'contain',
       borderRadius: '12px',
       marginLeft: 'auto',
       marginRight: 'auto'
@@ -28388,10 +28387,10 @@ function Dashboard(_ref) {
     }
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("h3", {
     style: {
-      fontSize: '1rem',
-      fontWeight: 500,
+      fontSize: '1.25rem',
+      fontWeight: 600,
       color: darkMode ? '#d1d5db' : '#374151',
-      marginBottom: '0.75rem',
+      marginBottom: '1rem',
       textAlign: 'left'
     }
   }, "Sobriety"), showYearsProminent ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
@@ -28402,23 +28401,23 @@ function Dashboard(_ref) {
     style: {
       display: 'flex',
       alignItems: 'baseline',
-      marginBottom: '8px'
+      marginBottom: '10px'
     }
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("span", {
     style: {
-      fontSize: '1.5rem',
+      fontSize: '2rem',
       fontWeight: 'bold',
       color: darkMode ? '#60a5fa' : '#3b82f6',
-      marginRight: '4px'
+      marginRight: '8px'
     }
   }, sobrietyYears.toFixed(2)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("span", {
     style: {
-      fontSize: '0.875rem',
+      fontSize: '1.25rem',
       color: darkMode ? '#9ca3af' : '#6b7280'
     }
   }, "years")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     style: {
-      fontSize: '0.875rem',
+      fontSize: '1.25rem',
       color: darkMode ? '#60a5fa' : '#3b82f6'
     }
   }, formatNumber(sobrietyDays), " days")) : /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
@@ -28429,23 +28428,23 @@ function Dashboard(_ref) {
     style: {
       display: 'flex',
       alignItems: 'baseline',
-      marginBottom: '8px'
+      marginBottom: '10px'
     }
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("span", {
     style: {
-      fontSize: '1.5rem',
+      fontSize: '2rem',
       fontWeight: 'bold',
       color: darkMode ? '#60a5fa' : '#3b82f6',
-      marginRight: '4px'
+      marginRight: '8px'
     }
   }, formatNumber(sobrietyDays)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("span", {
     style: {
-      fontSize: '0.875rem',
+      fontSize: '1.25rem',
       color: darkMode ? '#9ca3af' : '#6b7280'
     }
   }, "days")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     style: {
-      fontSize: '0.875rem',
+      fontSize: '1.25rem',
       color: darkMode ? '#60a5fa' : '#3b82f6'
     }
   }, sobrietyYears.toFixed(2), " years"))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {

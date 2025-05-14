@@ -62,13 +62,14 @@ export default function Dashboard({ setCurrentView, user, activities, spiritualF
           justifyContent: 'center',
           marginBottom: '12px'
         }}>
+          {/* Use static path to logo instead of import */}
           <img 
-            src={logoImg + '?v=' + Date.now()} // Add cache-busting parameter
+            src="/app/assets/logo.png"
             alt="App Logo" 
             style={{ 
               width: '80px',
               height: '80px',
-              objectFit: 'cover',
+              objectFit: 'contain',
               borderRadius: '12px',
               marginLeft: 'auto',
               marginRight: 'auto'
@@ -89,33 +90,33 @@ export default function Dashboard({ setCurrentView, user, activities, spiritualF
           border: darkMode ? '1px solid #374151' : '1px solid #e5e7eb'
         }}>
           <h3 style={{
-            fontSize: '1rem',
-            fontWeight: 500,
+            fontSize: '1.25rem',
+            fontWeight: 600,
             color: darkMode ? '#d1d5db' : '#374151',
-            marginBottom: '0.75rem',
+            marginBottom: '1rem',
             textAlign: 'left'
           }}>Sobriety</h3>
           
           {showYearsProminent ? (
             <div style={{ textAlign: 'left' }}>
-              <div style={{ display: 'flex', alignItems: 'baseline', marginBottom: '8px' }}>
+              <div style={{ display: 'flex', alignItems: 'baseline', marginBottom: '10px' }}>
                 <span style={{ 
-                  fontSize: '1.5rem', 
+                  fontSize: '2rem', 
                   fontWeight: 'bold', 
                   color: darkMode ? '#60a5fa' : '#3b82f6',
-                  marginRight: '4px'
+                  marginRight: '8px'
                 }}>
                   {sobrietyYears.toFixed(2)}
                 </span>
                 <span style={{ 
-                  fontSize: '0.875rem', 
+                  fontSize: '1.25rem', 
                   color: darkMode ? '#9ca3af' : '#6b7280'
                 }}>
                   years
                 </span>
               </div>
               <div style={{ 
-                fontSize: '0.875rem', 
+                fontSize: '1.25rem', 
                 color: darkMode ? '#60a5fa' : '#3b82f6'
               }}>
                 {formatNumber(sobrietyDays)} days
@@ -123,24 +124,24 @@ export default function Dashboard({ setCurrentView, user, activities, spiritualF
             </div>
           ) : (
             <div style={{ textAlign: 'left' }}>
-              <div style={{ display: 'flex', alignItems: 'baseline', marginBottom: '8px' }}>
+              <div style={{ display: 'flex', alignItems: 'baseline', marginBottom: '10px' }}>
                 <span style={{ 
-                  fontSize: '1.5rem', 
+                  fontSize: '2rem', 
                   fontWeight: 'bold', 
                   color: darkMode ? '#60a5fa' : '#3b82f6',
-                  marginRight: '4px'
+                  marginRight: '8px'
                 }}>
                   {formatNumber(sobrietyDays)}
                 </span>
                 <span style={{ 
-                  fontSize: '0.875rem', 
+                  fontSize: '1.25rem', 
                   color: darkMode ? '#9ca3af' : '#6b7280'
                 }}>
                   days
                 </span>
               </div>
               <div style={{ 
-                fontSize: '0.875rem', 
+                fontSize: '1.25rem', 
                 color: darkMode ? '#60a5fa' : '#3b82f6'
               }}>
                 {sobrietyYears.toFixed(2)} years
