@@ -240,7 +240,7 @@ export default function ActivityLog({ setCurrentView, onSave, activities }) {
   };
 
   return (
-    <div className="p-3 pb-16 max-w-md mx-auto">
+    <div className="p-3 pb-16 max-w-md mx-auto h-full overflow-y-auto">
       {/* Page header */}
       <div style={{ 
         textAlign: 'center',
