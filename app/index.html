@@ -11,8 +11,106 @@
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="/app/assets/favicon.png">
   
-  <!-- Load the CSS -->
+  <!-- Load CSS in correct order -->
+  <link rel="stylesheet" href="/app/src/styles/tailwind.css">
   <link rel="stylesheet" href="/app/src/styles/main.css">
+  
+  <style>
+    /* Add some critical basic styles inline to ensure basic appearance until bundle loads */
+    .card, .bg-white {
+      background-color: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 0.5rem;
+      padding: 1rem;
+      margin-bottom: 1rem;
+    }
+    
+    .icon-circle {
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 40px;
+      width: 40px;
+      margin-right: 12px;
+      background-color: rgba(59, 130, 246, 0.1);
+    }
+    
+    html.dark .icon-circle {
+      background-color: rgba(59, 130, 246, 0.2);
+    }
+    
+    .text-blue-500 {
+      color: #3b82f6;
+    }
+    
+    .bg-blue-500 {
+      background-color: #3b82f6;
+      color: white;
+    }
+    
+    .bg-blue-500:hover {
+      background-color: #2563eb;
+    }
+    
+    .bg-green-500 {
+      background-color: #10b981;
+      color: white;
+    }
+    
+    .bg-green-500:hover {
+      background-color: #059669;
+    }
+    
+    .text-green-500 {
+      color: #10b981;
+    }
+    
+    .rounded-lg {
+      border-radius: 0.5rem;
+    }
+    
+    .text-white {
+      color: white;
+    }
+    
+    .p-3 {
+      padding: 0.75rem;
+    }
+    
+    .p-4 {
+      padding: 1rem;
+    }
+    
+    button {
+      cursor: pointer;
+    }
+    
+    /* Dark mode overrides */
+    html.dark .bg-white {
+      background-color: #1f2937;
+      border-color: #374151;
+    }
+    
+    html.dark .text-blue-500 {
+      color: #60a5fa;
+    }
+    
+    html.dark .text-green-500 {
+      color: #34d399;
+    }
+    
+    html.dark .text-gray-600, 
+    html.dark .text-gray-700, 
+    html.dark .text-gray-800 {
+      color: #e5e7eb;
+    }
+    
+    html.dark .text-gray-400, 
+    html.dark .text-gray-500 {
+      color: #9ca3af;
+    }
+  </style>
   
   <!-- Load the database module first -->
   <script src="/app/database.js"></script>
