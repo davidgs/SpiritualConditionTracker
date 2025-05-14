@@ -79,11 +79,11 @@ export default function Dashboard({ setCurrentView, user, activities, spiritualF
   const showYearsProminent = sobrietyYears >= 1;
 
   return (
-    <div className="p-4 pb-20 max-w-md mx-auto">
+    <div className="p-3 pb-16 max-w-md mx-auto">
       {/* Centered logo at the top with forceful inline styles */}
       <div style={{ 
         textAlign: 'center',
-        marginBottom: '1rem',
+        marginBottom: '0.5rem',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
@@ -93,15 +93,15 @@ export default function Dashboard({ setCurrentView, user, activities, spiritualF
           width: '100%',
           display: 'flex',
           justifyContent: 'center',
-          marginBottom: '5px'
+          marginBottom: '2px'
         }}>
           {/* Use static path to logo instead of import */}
           <img 
             src="/app/assets/logo.png"
             alt="App Logo" 
             style={{ 
-              width: '70px',
-              height: '70px',
+              width: '60px',
+              height: '60px',
               objectFit: 'contain',
               borderRadius: '12px',
               marginLeft: 'auto',
@@ -110,134 +110,213 @@ export default function Dashboard({ setCurrentView, user, activities, spiritualF
           />
         </div>
         <h1 style={{ 
-          fontSize: '1.5rem', 
+          fontSize: '1.3rem', 
           fontWeight: 'bold', 
           color: darkMode ? '#f3f4f6' : '#1f2937',
-          marginBottom: '2px',
-          lineHeight: '1.2'
+          marginBottom: '0px',
+          lineHeight: '1.1'
         }}>
           Recovery Tracker
         </h1>
         <p style={{ 
-          fontSize: '0.875rem', 
+          fontSize: '0.8rem', 
           color: darkMode ? '#9ca3af' : '#6b7280',
-          lineHeight: '1.2'
+          lineHeight: '1.1'
         }}>
           Track your spiritual journey
         </p>
       </div>
       
       {/* Sobriety & Spiritual Fitness Stats */}
-      <div className="grid grid-cols-2 gap-4 mb-4">
+      <div className="grid grid-cols-2 gap-2 mb-3">
         <div style={{
           backgroundColor: darkMode ? '#1f2937' : '#ffffff',
           borderRadius: '0.5rem',
-          padding: '0.75rem',
+          padding: '0.5rem',
           textAlign: 'left',
           border: darkMode ? '1px solid #374151' : '1px solid #e5e7eb'
         }}>
           <h3 style={{
-            fontSize: '1.25rem',
+            fontSize: '1.1rem',
             fontWeight: 600,
             color: darkMode ? '#d1d5db' : '#374151',
-            marginBottom: '1rem',
+            marginBottom: '0.5rem',
             textAlign: 'left'
           }}>Sobriety</h3>
           
           {showYearsProminent ? (
             <div style={{ textAlign: 'left' }}>
-              <div style={{ display: 'flex', alignItems: 'baseline', marginBottom: '10px' }}>
+              <div style={{ display: 'flex', alignItems: 'baseline', marginBottom: '5px' }}>
                 <span style={{ 
-                  fontSize: '2rem', 
+                  fontSize: '1.6rem', 
                   fontWeight: 'bold', 
                   color: darkMode ? '#60a5fa' : '#3b82f6',
-                  marginRight: '8px'
+                  marginRight: '4px',
+                  lineHeight: '1.1'
                 }}>
                   {sobrietyYears.toFixed(2)}
                 </span>
                 <span style={{ 
-                  fontSize: '1.25rem', 
-                  color: darkMode ? '#9ca3af' : '#6b7280'
+                  fontSize: '1rem', 
+                  color: darkMode ? '#9ca3af' : '#6b7280',
+                  lineHeight: '1.1'
                 }}>
                   years
                 </span>
               </div>
               <div style={{ 
-                fontSize: '1.25rem', 
-                color: darkMode ? '#60a5fa' : '#3b82f6'
+                fontSize: '1rem', 
+                color: darkMode ? '#60a5fa' : '#3b82f6',
+                lineHeight: '1.1'
               }}>
                 {formatNumber(sobrietyDays)} days
               </div>
             </div>
           ) : (
             <div style={{ textAlign: 'left' }}>
-              <div style={{ display: 'flex', alignItems: 'baseline', marginBottom: '10px' }}>
+              <div style={{ display: 'flex', alignItems: 'baseline', marginBottom: '5px' }}>
                 <span style={{ 
-                  fontSize: '2rem', 
+                  fontSize: '1.6rem', 
                   fontWeight: 'bold', 
                   color: darkMode ? '#60a5fa' : '#3b82f6',
-                  marginRight: '8px'
+                  marginRight: '4px',
+                  lineHeight: '1.1'
                 }}>
                   {formatNumber(sobrietyDays)}
                 </span>
                 <span style={{ 
-                  fontSize: '1.25rem', 
-                  color: darkMode ? '#9ca3af' : '#6b7280'
+                  fontSize: '1rem', 
+                  color: darkMode ? '#9ca3af' : '#6b7280',
+                  lineHeight: '1.1'
                 }}>
                   days
                 </span>
               </div>
               <div style={{ 
-                fontSize: '1.25rem', 
-                color: darkMode ? '#60a5fa' : '#3b82f6'
+                fontSize: '1rem', 
+                color: darkMode ? '#60a5fa' : '#3b82f6',
+                lineHeight: '1.1'
               }}>
                 {sobrietyYears.toFixed(2)} years
               </div>
             </div>
           )}
         </div>
-        <div className="bg-white dark:bg-gray-800 rounded-lg p-3 border border-gray-200 dark:border-gray-700 text-center">
-          <h3 className="text-md font-medium text-gray-700 dark:text-gray-300 mb-2">Spiritual Fitness</h3>
+        <div style={{
+          backgroundColor: darkMode ? '#1f2937' : '#ffffff',
+          borderRadius: '0.5rem',
+          padding: '0.5rem',
+          textAlign: 'center',
+          border: darkMode ? '1px solid #374151' : '1px solid #e5e7eb'
+        }}>
+          <h3 style={{
+            fontSize: '1.1rem',
+            fontWeight: 600,
+            color: darkMode ? '#d1d5db' : '#374151',
+            marginBottom: '0.5rem'
+          }}>Spiritual Fitness</h3>
           
           {/* Score display with dynamic color */}
           <div 
-            className="text-3xl font-bold mb-2"
-            style={{ color: getScoreColor(spiritualFitness) }}
+            style={{ 
+              fontSize: '1.6rem', 
+              fontWeight: 'bold',
+              marginBottom: '0.5rem',
+              color: getScoreColor(spiritualFitness),
+              lineHeight: '1.1'
+            }}
           >
             {formattedScore}
           </div>
           
-          {/* Progress bar */}
-          <div className="w-full h-5 bg-gray-200 dark:bg-gray-700 rounded-full mb-3 overflow-hidden border border-gray-300 dark:border-gray-600">
-            <div 
-              className="h-full rounded-full transition-all duration-500 ease-out"
-              style={{ 
-                width: `${progressPercent || 1}%`, // Set minimum width to make it visible even at 0
-                backgroundColor: getScoreColor(spiritualFitness),
-                boxShadow: 'inset 0 1px 2px rgba(255, 255, 255, 0.3)'
-              }}
-            ></div>
-          </div>
+          {/* Simple progress bar using HTML table */}
+          <table style={{ width: '100%', height: '8px', borderCollapse: 'collapse', marginBottom: '4px' }}>
+            <tbody>
+              <tr>
+                <td 
+                  style={{ 
+                    backgroundColor: darkMode ? '#dc2626' : '#ef4444', // Red
+                    width: '30%',
+                    height: '8px',
+                    border: '1px solid #aaa',
+                    padding: 0
+                  }}
+                >
+                  {spiritualFitness <= 30 && (
+                    <div style={{ 
+                      backgroundColor: 'rgba(255, 255, 255, 0.3)', 
+                      width: `${(spiritualFitness / 30) * 100}%`,
+                      height: '100%'
+                    }}></div>
+                  )}
+                </td>
+                <td 
+                  style={{ 
+                    backgroundColor: darkMode ? '#d97706' : '#f59e0b', // Yellow/Amber
+                    width: '45%',
+                    height: '8px',
+                    border: '1px solid #aaa',
+                    padding: 0
+                  }}
+                >
+                  {spiritualFitness > 30 && spiritualFitness <= 75 && (
+                    <div style={{ 
+                      backgroundColor: 'rgba(255, 255, 255, 0.3)', 
+                      width: `${((spiritualFitness - 30) / 45) * 100}%`,
+                      height: '100%'
+                    }}></div>
+                  )}
+                </td>
+                <td 
+                  style={{ 
+                    backgroundColor: darkMode ? '#16a34a' : '#22c55e', // Green
+                    width: '25%',
+                    height: '8px',
+                    border: '1px solid #aaa',
+                    padding: 0
+                  }}
+                >
+                  {spiritualFitness > 75 && (
+                    <div style={{ 
+                      backgroundColor: 'rgba(255, 255, 255, 0.3)', 
+                      width: `${((spiritualFitness - 75) / 25) * 100}%`,
+                      height: '100%'
+                    }}></div>
+                  )}
+                </td>
+              </tr>
+            </tbody>
+          </table>
           
           {/* Score range indicators */}
-          <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400 mb-2">
-            <span style={{ paddingLeft: '2px' }}>0</span>
-            <span>50</span>
-            <span style={{ paddingRight: '2px' }}>100</span>
+          <div style={{ 
+            display: 'flex', 
+            justifyContent: 'space-between', 
+            fontSize: '0.65rem',
+            color: darkMode ? '#9ca3af' : '#6b7280',
+            marginBottom: '3px'
+          }}>
+            <span>0</span>
+            <span style={{ marginLeft: '28%' }}>30</span>
+            <span style={{ marginRight: '24%' }}>75</span>
+            <span>100</span>
           </div>
           
-          <div className="text-sm text-gray-500 dark:text-gray-400">30-day score</div>
+          <div style={{ 
+            fontSize: '0.7rem',
+            color: darkMode ? '#9ca3af' : '#6b7280'
+          }}>30-day score</div>
           <div className="relative inline-block">
             <button 
               ref={buttonRef}
               style={{
                 backgroundColor: darkMode ? '#1e40af' : '#dbeafe',
                 color: darkMode ? '#93c5fd' : '#1e40af',
-                padding: '0.375rem 0.75rem',
-                borderRadius: '0.375rem',
-                fontSize: '0.75rem',
+                padding: '0.25rem 0.5rem',
+                borderRadius: '0.25rem',
+                fontSize: '0.65rem',
                 fontWeight: '500',
-                marginTop: '0.5rem',
+                marginTop: '0.25rem',
                 border: darkMode ? '1px solid #3b82f6' : '1px solid #93c5fd',
                 cursor: 'pointer',
                 transition: 'background-color 0.2s'
@@ -285,16 +364,31 @@ export default function Dashboard({ setCurrentView, user, activities, spiritualF
       </div>
       
       {/* Recent Activities Section */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg p-3 border border-gray-200 dark:border-gray-700 mb-4">
-        <div className="flex justify-between items-center mb-2">
-          <h2 className="text-lg font-medium text-gray-800 dark:text-gray-200">Recent Activities</h2>
+      <div style={{
+          backgroundColor: darkMode ? '#1f2937' : '#ffffff',
+          borderRadius: '0.5rem',
+          padding: '0.5rem',
+          border: darkMode ? '1px solid #374151' : '1px solid #e5e7eb',
+          marginBottom: '0.75rem'
+      }}>
+        <div style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          marginBottom: '0.5rem'
+        }}>
+          <h2 style={{
+            fontSize: '1.1rem',
+            fontWeight: 600,
+            color: darkMode ? '#d1d5db' : '#374151'
+          }}>Recent Activities</h2>
           <button 
             style={{
               backgroundColor: darkMode ? '#2563eb' : '#3b82f6',
               color: 'white',
-              padding: '0.375rem 0.75rem',
-              borderRadius: '0.375rem',
-              fontSize: '0.875rem',
+              padding: '0.25rem 0.5rem',
+              borderRadius: '0.25rem',
+              fontSize: '0.7rem',
               fontWeight: '500',
               transition: 'background-color 0.2s',
               border: 'none',
