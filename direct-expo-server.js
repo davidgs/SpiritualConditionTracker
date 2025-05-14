@@ -44,8 +44,8 @@ const server = http.createServer((req, res) => {
   const parsedUrl = url.parse(req.url, true);
   let targetPath = parsedUrl.path;
   
-  // Serve our custom landing page for the root route only
-  if ((targetPath === '/' || targetPath === '') && !req.url.startsWith('/app')) {
+  // Serve our custom landing page for the root route only - but not for app.html requests
+  if ((targetPath === '/' || targetPath === '') && !req.url.startsWith('/app') && !req.url.includes('app.html')) {
     const landingPagePath = path.join(__dirname, 'landing-page.html');
     
     fs.readFile(landingPagePath, (err, content) => {
@@ -91,22 +91,15 @@ const server = http.createServer((req, res) => {
     return;
   }
   
-  // Serve the landing page for both /app and / routes for now
+  // Handle /app route with a server-side redirect to the root
   if (req.url === '/app' || req.url === '/app/') {
-    // For now, serve the landing page for /app route as well until we resolve the Metro bundle issues
-    const landingPagePath = path.join(__dirname, 'landing-page.html');
+    console.log(`Redirecting ${req.url} to Expo app at /`);
     
-    fs.readFile(landingPagePath, (err, content) => {
-      if (err) {
-        res.writeHead(500);
-        res.end('Error loading landing page');
-        return;
-      }
-      
-      res.writeHead(200, { 'Content-Type': 'text/html' });
-      res.end(content);
+    // Send a temporary redirect to the root
+    res.writeHead(302, {
+      'Location': '/'
     });
-    
+    res.end();
     return;
   }
   
