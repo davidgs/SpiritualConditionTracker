@@ -242,6 +242,91 @@ function calculateSobrietyYears(sobrietyDate, decimalPlaces = 2) {
   return parseFloat(years.toFixed(decimalPlaces));
 }
 
+/**
+ * Calculate spiritual fitness score based on activities in the last 30 days
+ * @returns {number} - Spiritual fitness score (0-100)
+ */
+function calculateSpiritualFitness() {
+  if (!collections.activities || collections.activities.length === 0) {
+    return 0;
+  }
+  
+  // Get current date and date 30 days ago
+  const now = new Date();
+  const thirtyDaysAgo = new Date(now);
+  thirtyDaysAgo.setDate(now.getDate() - 30);
+  
+  // Filter activities in the last 30 days
+  const recentActivities = collections.activities.filter(activity => {
+    const activityDate = new Date(activity.date);
+    return activityDate >= thirtyDaysAgo && activityDate <= now;
+  });
+  
+  if (recentActivities.length === 0) {
+    return 0;
+  }
+  
+  let score = 0;
+  let meetingsCount = 0;
+  let sponseeTime = 0; // Track sponsee time for capping
+  
+  // Count activities by type for variety bonus
+  const activityTypes = new Set();
+  
+  recentActivities.forEach(activity => {
+    activityTypes.add(activity.type);
+    
+    switch (activity.type) {
+      case 'meeting':
+        // Base points for meeting attendance
+        score += 5;
+        meetingsCount++;
+        
+        // Additional points for roles
+        if (activity.wasSpeaker) score += 3;
+        if (activity.wasShare) score += 1;
+        if (activity.wasChair) score += 1; // New: chair bonus
+        break;
+      
+      case 'prayer':
+      case 'meditation':
+        // 2 points per 30 min
+        score += Math.ceil(activity.duration / 30) * 2;
+        break;
+      
+      case 'literature':
+        // 2 points per 30 min
+        score += Math.ceil(activity.duration / 30) * 2;
+        break;
+      
+      case 'service':
+        // 3 points per 30 min
+        score += Math.ceil(activity.duration / 30) * 3;
+        break;
+      
+      case 'sponsee':
+        // 4 points per 30 min, maximum 20 points
+        const sponseePoints = Math.ceil(activity.duration / 30) * 4;
+        sponseeTime += sponseePoints;
+        break;
+      
+      default:
+        // 1 point for any other activity type
+        score += 1;
+    }
+  });
+  
+  // Apply cap to sponsee time
+  score += Math.min(sponseeTime, 20);
+  
+  // Add variety bonus (1-5 additional points)
+  const varietyBonus = Math.min(activityTypes.size, 5);
+  score += varietyBonus;
+  
+  // Cap the score at 100
+  return Math.min(score, 100);
+}
+
 // Export database functions
 window.db = {
   init: initDatabase,
@@ -253,5 +338,6 @@ window.db = {
   query,
   calculateDistance,
   calculateSobrietyDays,
-  calculateSobrietyYears
+  calculateSobrietyYears,
+  calculateSpiritualFitness
 };

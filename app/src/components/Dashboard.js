@@ -298,7 +298,7 @@ export default function Dashboard({ setCurrentView, user, activities, spiritualF
                     Your score is calculated based on activities from the past 30 days:
                   </p>
                   <ul className="text-xs text-gray-600 dark:text-gray-400 list-disc pl-4 space-y-1 mb-2">
-                    <li>AA Meeting: 5 points (speaker +3, shared +1)</li>
+                    <li>AA Meeting: 5 points (speaker +3, shared +1, chair +1)</li>
                     <li>Reading Literature: 2 points per 30 min</li>
                     <li>Prayer/Meditation: 2 points per 30 min</li>
                     <li>Talking with Sponsor: 3 points per 30 min</li>
