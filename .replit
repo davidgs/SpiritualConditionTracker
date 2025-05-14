@@ -22,7 +22,7 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "node direct-expo-server.js"
+args = "node landing-server.js"
 waitForPort = 5000
 
 [deployment]
