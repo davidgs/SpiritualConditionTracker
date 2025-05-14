@@ -2,10 +2,9 @@
 const { getDefaultConfig } = require('expo/metro-config');
 const path = require('path');
 
-// Find the project directory
+// Find the project and app directories
 const projectRoot = __dirname;
-// App is now directly in the project root
-const appRoot = projectRoot;
+const appRoot = path.resolve(projectRoot, 'src');
 
 const config = getDefaultConfig(projectRoot);
 
@@ -17,6 +16,7 @@ config.resolver.nodeModulesPaths = [
 // 2. Watch all files in the project for changes
 config.watchFolders = [
   projectRoot,
+  appRoot,
 ];
 
 // 3. Ensure specific dependencies are properly resolved

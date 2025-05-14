@@ -3,10 +3,10 @@ const appJson = require('./app.json');
 const path = require('path');
 const fs = require('fs');
 
-// Read the current version from App.js if available
+// Read the current version from App.js in src directory if available
 let version = '1.0.6';
 try {
-  const appJsPath = path.join(__dirname, 'App.js');
+  const appJsPath = path.join(__dirname, 'src', 'App.js');
   if (fs.existsSync(appJsPath)) {
     const appJsContent = fs.readFileSync(appJsPath, 'utf8');
     const versionMatch = appJsContent.match(/APP_VERSION = "([^"]*?)"/);
@@ -19,7 +19,7 @@ try {
     }
   }
 } catch (error) {
-  console.warn('Could not read version from App.js:', error.message);
+  console.warn('Could not read version from src/App.js:', error.message);
 }
 
 // Generate a timestamp for the build
