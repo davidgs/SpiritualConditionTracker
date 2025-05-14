@@ -172,7 +172,7 @@ function App() {
   return (
     <ThemeProvider>
       <div className="app-container h-full flex flex-col bg-white dark:bg-gray-900 transition-colors duration-200">
-        <div className="flex-grow overflow-y-auto" style={{ maxHeight: 'calc(100vh - 60px)' }}>
+        <div className="flex-grow" style={{ height: 'calc(100vh - 60px)', overflow: 'hidden' }}>
           {renderCurrentView()}
         </div>
         <NavBar currentView={currentView} setCurrentView={setCurrentView} />

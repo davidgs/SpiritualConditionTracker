@@ -22,6 +22,18 @@ html.dark body {
   overflow-x: hidden;
 }
 
+/* Scrollable content area */
+.content-scrollable {
+  max-height: calc(100vh - 60px);
+  overflow-y: auto;
+}
+
+/* Explicitly set a minimum height for activity containers */
+.activity-container {
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
 /* Simple transition styles */
 .transition-200 {
   transition: all 0.2s ease;
