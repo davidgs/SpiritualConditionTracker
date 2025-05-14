@@ -1,7 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import ThemeToggle from './ThemeToggle';
+import { ThemeContext } from '../contexts/ThemeContext';
 
 export default function Profile({ setCurrentView, user, onUpdate }) {
+  const { theme } = useContext(ThemeContext);
+  const darkMode = theme === 'dark';
+  
   const [name, setName] = useState('');
   const [sobrietyDate, setSobrietyDate] = useState('');
   const [homeGroup, setHomeGroup] = useState('');
@@ -75,19 +79,20 @@ export default function Profile({ setCurrentView, user, onUpdate }) {
       
       {sobrietyDate && (
         <div style={{
-          backgroundColor: 'var(--color-bg-primary, #ffffff)',
+          backgroundColor: darkMode ? '#1f2937' : '#ffffff',
           borderRadius: '0.5rem',
           padding: '1rem',
           marginBottom: '1.5rem',
-          border: '1px solid var(--color-border, #e5e7eb)'
-        }} className="dark:bg-gray-800 dark:border-gray-700">
+          border: darkMode ? '1px solid #374151' : '1px solid #e5e7eb',
+          textAlign: 'left'
+        }}>
           <h3 style={{
             fontSize: '1.25rem',
             fontWeight: 600,
-            color: 'var(--color-text-heading, #374151)',
+            color: darkMode ? '#d1d5db' : '#374151',
             marginBottom: '1rem',
             textAlign: 'left'
-          }} className="dark:text-gray-300">Sobriety Milestone</h3>
+          }}>Sobriety Milestone</h3>
           
           {showYearsProminent ? (
             <div style={{ textAlign: 'left' }}>
@@ -95,22 +100,22 @@ export default function Profile({ setCurrentView, user, onUpdate }) {
                 <span style={{ 
                   fontSize: '2rem', 
                   fontWeight: 'bold', 
-                  color: '#3b82f6',
+                  color: darkMode ? '#60a5fa' : '#3b82f6',
                   marginRight: '8px'
-                }} className="dark:text-blue-400">
+                }}>
                   {sobrietyYears.toFixed(2)}
                 </span>
                 <span style={{ 
                   fontSize: '1.25rem', 
-                  color: '#6b7280'
-                }} className="dark:text-gray-400">
+                  color: darkMode ? '#9ca3af' : '#6b7280'
+                }}>
                   years
                 </span>
               </div>
               <div style={{ 
                 fontSize: '1.25rem', 
-                color: '#3b82f6'
-              }} className="dark:text-blue-400">
+                color: darkMode ? '#60a5fa' : '#3b82f6'
+              }}>
                 {formatNumber(sobrietyDays)} days
               </div>
             </div>
@@ -120,22 +125,22 @@ export default function Profile({ setCurrentView, user, onUpdate }) {
                 <span style={{ 
                   fontSize: '2rem', 
                   fontWeight: 'bold', 
-                  color: '#3b82f6',
+                  color: darkMode ? '#60a5fa' : '#3b82f6',
                   marginRight: '8px'
-                }} className="dark:text-blue-400">
+                }}>
                   {formatNumber(sobrietyDays)}
                 </span>
                 <span style={{ 
                   fontSize: '1.25rem', 
-                  color: '#6b7280'
-                }} className="dark:text-gray-400">
+                  color: darkMode ? '#9ca3af' : '#6b7280'
+                }}>
                   days
                 </span>
               </div>
               <div style={{ 
                 fontSize: '1.25rem', 
-                color: '#3b82f6'
-              }} className="dark:text-blue-400">
+                color: darkMode ? '#60a5fa' : '#3b82f6'
+              }}>
                 {sobrietyYears.toFixed(2)} years
               </div>
             </div>

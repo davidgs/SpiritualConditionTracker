@@ -28997,6 +28997,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _ThemeToggle__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ThemeToggle */ "./src/components/ThemeToggle.js");
+/* harmony import */ var _contexts_ThemeContext__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../contexts/ThemeContext */ "./src/contexts/ThemeContext.js");
 function _slicedToArray(r, e) { return _arrayWithHoles(r) || _iterableToArrayLimit(r, e) || _unsupportedIterableToArray(r, e) || _nonIterableRest(); }
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
@@ -29005,11 +29006,15 @@ function _iterableToArrayLimit(r, l) { var t = null == r ? null : "undefined" !=
 function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
 
 
+
 function Profile(_ref) {
   var _window$db, _window$db2;
   var setCurrentView = _ref.setCurrentView,
     user = _ref.user,
     onUpdate = _ref.onUpdate;
+  var _useContext = (0,react__WEBPACK_IMPORTED_MODULE_0__.useContext)(_contexts_ThemeContext__WEBPACK_IMPORTED_MODULE_2__.ThemeContext),
+    theme = _useContext.theme;
+  var darkMode = theme === 'dark';
   var _useState = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(''),
     _useState2 = _slicedToArray(_useState, 2),
     name = _useState2[0],
@@ -29094,22 +29099,21 @@ function Profile(_ref) {
     className: "text-sm text-gray-500 dark:text-gray-400"
   }, "Your personal profile"))), sobrietyDate && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     style: {
-      backgroundColor: 'var(--color-bg-primary, #ffffff)',
+      backgroundColor: darkMode ? '#1f2937' : '#ffffff',
       borderRadius: '0.5rem',
       padding: '1rem',
       marginBottom: '1.5rem',
-      border: '1px solid var(--color-border, #e5e7eb)'
-    },
-    className: "dark:bg-gray-800 dark:border-gray-700"
+      border: darkMode ? '1px solid #374151' : '1px solid #e5e7eb',
+      textAlign: 'left'
+    }
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("h3", {
     style: {
       fontSize: '1.25rem',
       fontWeight: 600,
-      color: 'var(--color-text-heading, #374151)',
+      color: darkMode ? '#d1d5db' : '#374151',
       marginBottom: '1rem',
       textAlign: 'left'
-    },
-    className: "dark:text-gray-300"
+    }
   }, "Sobriety Milestone"), showYearsProminent ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     style: {
       textAlign: 'left'
@@ -29124,22 +29128,19 @@ function Profile(_ref) {
     style: {
       fontSize: '2rem',
       fontWeight: 'bold',
-      color: '#3b82f6',
+      color: darkMode ? '#60a5fa' : '#3b82f6',
       marginRight: '8px'
-    },
-    className: "dark:text-blue-400"
+    }
   }, sobrietyYears.toFixed(2)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("span", {
     style: {
       fontSize: '1.25rem',
-      color: '#6b7280'
-    },
-    className: "dark:text-gray-400"
+      color: darkMode ? '#9ca3af' : '#6b7280'
+    }
   }, "years")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     style: {
       fontSize: '1.25rem',
-      color: '#3b82f6'
-    },
-    className: "dark:text-blue-400"
+      color: darkMode ? '#60a5fa' : '#3b82f6'
+    }
   }, formatNumber(sobrietyDays), " days")) : /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     style: {
       textAlign: 'left'
@@ -29154,22 +29155,19 @@ function Profile(_ref) {
     style: {
       fontSize: '2rem',
       fontWeight: 'bold',
-      color: '#3b82f6',
+      color: darkMode ? '#60a5fa' : '#3b82f6',
       marginRight: '8px'
-    },
-    className: "dark:text-blue-400"
+    }
   }, formatNumber(sobrietyDays)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("span", {
     style: {
       fontSize: '1.25rem',
-      color: '#6b7280'
-    },
-    className: "dark:text-gray-400"
+      color: darkMode ? '#9ca3af' : '#6b7280'
+    }
   }, "days")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     style: {
       fontSize: '1.25rem',
-      color: '#3b82f6'
-    },
-    className: "dark:text-blue-400"
+      color: darkMode ? '#60a5fa' : '#3b82f6'
+    }
   }, sobrietyYears.toFixed(2), " years"))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     className: "mb-6"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("h2", {
