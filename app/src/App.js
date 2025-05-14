@@ -217,4 +217,4 @@ function App() {
   );
 }
 
-export default App;
+// Component is globally available via the function name
