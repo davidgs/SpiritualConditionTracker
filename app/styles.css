@@ -1,5 +1,6 @@
-/* Main Styles for Spiritual Condition Tracker */
+/* Styles for Spiritual Condition Tracker */
 
+/* Base styles */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -10,271 +11,175 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   background-color: #f5f5f5;
   color: #333;
-  line-height: 1.6;
+  line-height: 1.5;
 }
 
 #root {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  padding: 0;
 }
 
-header {
-  background-color: #3498db;
-  color: white;
-  padding: 1rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-header h1 {
-  margin: 0;
-  font-size: 1.5rem;
-}
-
-.header-content {
+.app-container {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-.subtitle {
-  font-size: 0.9rem;
-  margin-top: 0.5rem;
-  opacity: 0.85;
-}
-
-.date-display {
-  font-size: 0.8rem;
-  margin-top: 0.5rem;
-  opacity: 0.7;
-}
-
-main {
-  flex: 1;
-  padding: 1rem;
-  max-width: 1200px;
+  flex-direction: column;
+  min-height: 100vh;
+  padding: 16px;
+  max-width: 800px;
   margin: 0 auto;
   width: 100%;
 }
 
-.dashboard {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 1rem;
-  margin-top: 1rem;
+/* Loading screen */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f9fafb;
 }
 
-.card {
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  padding: 1.5rem;
-  transition: transform 0.2s, box-shadow 0.2s;
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #3b82f6;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
 }
 
-.card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
-.card h2 {
-  color: #2c3e50;
-  font-size: 1.2rem;
-  margin-bottom: 1rem;
-  padding-bottom: 0.5rem;
-  border-bottom: 1px solid #eee;
+.loading-text {
+  margin-top: 16px;
+  font-size: 16px;
+  color: #4b5563;
 }
 
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 0.5rem;
+/* App header */
+header {
+  margin-bottom: 20px;
   text-align: center;
 }
 
-.stat {
-  padding: 0.5rem;
-}
-
-.stat-value {
-  font-size: 1.8rem;
+.title {
+  font-size: 24px;
   font-weight: bold;
-  color: #3498db;
-  margin-bottom: 0.25rem;
+  color: #2c3e50;
+  margin-bottom: 5px;
 }
 
-.stat-label {
-  font-size: 0.8rem;
+.subtitle {
+  font-size: 18px;
   color: #7f8c8d;
+  margin-bottom: 20px;
 }
 
-.button {
+/* Status displays */
+.status-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+  background-color: white;
+  padding: 10px;
+  border-radius: 5px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.status-label {
+  font-size: 16px;
+  font-weight: 600;
+  margin-right: 10px;
+}
+
+.status-value {
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.status-good {
+  color: green;
+}
+
+.status-bad {
+  color: red;
+}
+
+.status-pending {
+  color: orange;
+}
+
+/* Button styles */
+.button-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.app-button {
+  padding: 10px 15px;
   background-color: #3498db;
   color: white;
   border: none;
   border-radius: 4px;
-  padding: 0.5rem 1rem;
-  font-size: 0.9rem;
   cursor: pointer;
+  font-size: 14px;
   transition: background-color 0.2s;
 }
 
-.button:hover {
+.app-button:hover {
   background-color: #2980b9;
 }
 
-.button-group {
-  display: flex;
-  gap: 0.5rem;
-  margin-top: 1rem;
-  justify-content: center;
+.clear-btn {
+  background-color: #95a5a6;
 }
 
-.activity-list {
-  list-style-type: none;
-  margin-top: 1rem;
+.clear-btn:hover {
+  background-color: #7f8c8d;
 }
 
-.activity-item {
-  padding: 0.75rem;
-  border-bottom: 1px solid #eee;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+/* Logs area */
+.logs-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 10px;
 }
 
-.activity-type {
-  font-weight: 500;
+.logs-container {
+  background-color: white;
+  border-radius: 5px;
+  padding: 10px;
+  flex: 1;
+  overflow-y: auto;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  font-family: 'Courier New', monospace;
+  max-height: 400px;
 }
 
-.activity-date {
-  font-size: 0.8rem;
-  color: #7f8c8d;
+.log-line {
+  margin-bottom: 5px;
+  font-size: 14px;
+  color: #34495e;
 }
 
-footer {
-  background-color: #2c3e50;
-  color: white;
-  text-align: center;
-  padding: 1rem;
-  margin-top: auto;
-}
-
-.footer-content {
-  max-width: 1200px;
-  margin: 0 auto;
-  font-size: 0.8rem;
-}
-
-.sober-time {
-  font-size: 2.5rem;
-  font-weight: bold;
-  text-align: center;
-  margin: 1rem 0;
-  color: #2c3e50;
-}
-
-.sober-time-label {
-  font-size: 1rem;
-  color: #7f8c8d;
-  text-align: center;
-  margin-bottom: 1.5rem;
-}
-
-.tab-container {
-  margin-top: 1rem;
-}
-
-.tabs {
-  display: flex;
-  border-bottom: 1px solid #ddd;
-  margin-bottom: 1rem;
-}
-
-.tab {
-  padding: 0.5rem 1rem;
-  cursor: pointer;
-  border-bottom: 2px solid transparent;
-}
-
-.tab.active {
-  border-bottom: 2px solid #3498db;
-  font-weight: 500;
-}
-
-.tab-content {
-  padding: 0.5rem;
-}
-
-/* Form styling */
-.form-group {
-  margin-bottom: 1rem;
-}
-
-label {
-  display: block;
-  margin-bottom: 0.5rem;
-  font-weight: 500;
-}
-
-input, select, textarea {
-  width: 100%;
-  padding: 0.5rem;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 1rem;
-}
-
-/* Navigation */
-nav {
-  background-color: #2c3e50;
-}
-
-.nav-container {
-  display: flex;
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-.nav-item {
-  color: white;
-  text-decoration: none;
-  padding: 0.75rem 1rem;
-  transition: background-color 0.2s;
-}
-
-.nav-item:hover, .nav-item.active {
-  background-color: #3498db;
-}
-
-/* Progress bar */
-.progress-container {
-  width: 100%;
-  background-color: #f1f1f1;
-  border-radius: 10px;
-  margin: 0.5rem 0;
-}
-
-.progress-bar {
-  height: 10px;
-  border-radius: 10px;
-  background-color: #3498db;
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  .dashboard {
-    grid-template-columns: 1fr;
+/* Media queries for responsive design */
+@media (max-width: 600px) {
+  .app-container {
+    padding: 10px;
   }
   
-  .header-content {
+  .button-container {
     flex-direction: column;
-    text-align: center;
   }
   
-  .button-group {
-    flex-direction: column;
+  .app-button {
+    width: 100%;
   }
 }
