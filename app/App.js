@@ -1480,8 +1480,11 @@ class App {
   }
 }
 
-// Initialize the app when the document is loaded
-document.addEventListener('DOMContentLoaded', function() {
+/**
+ * Initialization function to be called after DOM is loaded
+ * This sets up the app and attaches it to the window
+ */
+function initializeApp(rootElement) {
   // Load FontAwesome (since we're using it in the app)
   if (!document.getElementById('fontawesome-css')) {
     const link = document.createElement('link');
@@ -1517,16 +1520,13 @@ document.addEventListener('DOMContentLoaded', function() {
     </nav>
   `;
   
-  // Get the root element
-  const rootEl = document.getElementById('root');
-  
   // Add the navigation after the root element
   const navEl = document.createElement('div');
   navEl.innerHTML = navHTML;
-  rootEl.parentNode.insertBefore(navEl.firstElementChild, rootEl.nextSibling);
+  document.body.insertBefore(navEl.firstElementChild, rootElement.nextSibling);
   
   // Initialize the app
-  const app = new App(rootEl);
+  const app = new App(rootElement);
   
   // Listen for hash changes and navigate accordingly
   window.addEventListener('hashchange', () => {
@@ -1538,8 +1538,11 @@ document.addEventListener('DOMContentLoaded', function() {
   if (!window.location.hash) {
     window.location.hash = '#dashboard';
   }
-});
+  
+  return app;
+}
 
-// Export the App class
-window.SpiritualConditionTracker = App;
-export default App;
+// Export the App class by attaching to window
+window.SpiritualConditionTracker = function(rootElement) {
+  return new App(rootElement);
+};

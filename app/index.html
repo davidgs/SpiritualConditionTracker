@@ -12,53 +12,38 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/sql-wasm.js"></script>
   
   <script>
-    // Initialize the SQLite database when the page loads
+    // Initialize the app when the page loads
     document.addEventListener('DOMContentLoaded', function() {
       console.log('Spiritual Condition Tracker App loaded');
       
-      // Set up a global variable to track initialization status
-      window.dbInitialized = false;
-      
-      // Initialize the database
-      initDatabase();
+      // Initialize the app directly
+      initApp();
     });
     
-    // Initialize the database
-    async function initDatabase() {
+    // Initialize the app
+    function initApp() {
       try {
-        console.log('Initializing web localStorage database...');
-        // For now, we'll use localStorage as a fallback
-        // Later, we'll properly implement SQLite with WebAssembly
-        window.dbInitialized = true;
-        console.log('Web localStorage database initialized');
-        console.log('Database initialized successfully');
-        console.log('Using localStorage database implementation');
+        // Get the root element
+        const rootElement = document.getElementById('root');
         
-        // Create a test user if none exists
-        setTimeout(createTestUser, 2000);
+        // Create and initialize the app
+        window.app = new SpiritualConditionTracker(rootElement);
+        console.log('App initialized successfully');
+        
       } catch (error) {
-        console.error('Error initializing database:', error);
-      }
-    }
-    
-    // Create a test user for demonstration
-    function createTestUser() {
-      const storedUser = localStorage.getItem('user');
-      if (!storedUser) {
-        const user = {
-          id: 'user_' + Date.now(),
-          name: 'John D.',
-          sobrietyDate: '2020-01-01',
-          homeGroup: 'Downtown Group',
-          phone: '',
-          email: '',
-          privacySettings: { shareLocation: false, shareActivities: false },
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString()
-        };
-        
-        localStorage.setItem('user', JSON.stringify(user));
-        console.log('Created test user with ID:', user.id);
+        console.error('Error initializing app:', error);
+        // Show error in the root element
+        const rootElement = document.getElementById('root');
+        rootElement.innerHTML = `
+          <div class="error-container">
+            <div class="error-icon">
+              <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <h1>Error Starting App</h1>
+            <p>${error.message || 'An unexpected error occurred'}</p>
+            <button class="button-primary" onclick="location.reload()">Retry</button>
+          </div>
+        `;
       }
     }
   </script>
