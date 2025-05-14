@@ -28491,16 +28491,26 @@ function Dashboard(_ref) {
       color: getScoreColor(spiritualFitness)
     }
   }, formattedScore), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
-    className: "w-full h-4 bg-gray-200 dark:bg-gray-700 rounded-full mb-3 overflow-hidden"
+    className: "w-full h-5 bg-gray-200 dark:bg-gray-700 rounded-full mb-3 overflow-hidden border border-gray-300 dark:border-gray-600"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     className: "h-full rounded-full transition-all duration-500 ease-out",
     style: {
-      width: "".concat(progressPercent, "%"),
-      backgroundColor: getScoreColor(spiritualFitness)
+      width: "".concat(progressPercent || 1, "%"),
+      // Set minimum width to make it visible even at 0
+      backgroundColor: getScoreColor(spiritualFitness),
+      boxShadow: 'inset 0 1px 2px rgba(255, 255, 255, 0.3)'
     }
   })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     className: "flex justify-between text-xs text-gray-500 dark:text-gray-400 mb-2"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("span", null, "0"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("span", null, "50"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("span", null, "100")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("span", {
+    style: {
+      paddingLeft: '2px'
+    }
+  }, "0"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("span", null, "50"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("span", {
+    style: {
+      paddingRight: '2px'
+    }
+  }, "100")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     className: "text-sm text-gray-500 dark:text-gray-400"
   }, "30-day score"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     className: "relative inline-block"

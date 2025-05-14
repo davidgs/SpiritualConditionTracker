@@ -208,21 +208,22 @@ export default function Dashboard({ setCurrentView, user, activities, spiritualF
           </div>
           
           {/* Progress bar */}
-          <div className="w-full h-4 bg-gray-200 dark:bg-gray-700 rounded-full mb-3 overflow-hidden">
+          <div className="w-full h-5 bg-gray-200 dark:bg-gray-700 rounded-full mb-3 overflow-hidden border border-gray-300 dark:border-gray-600">
             <div 
               className="h-full rounded-full transition-all duration-500 ease-out"
               style={{ 
-                width: `${progressPercent}%`, 
-                backgroundColor: getScoreColor(spiritualFitness)
+                width: `${progressPercent || 1}%`, // Set minimum width to make it visible even at 0
+                backgroundColor: getScoreColor(spiritualFitness),
+                boxShadow: 'inset 0 1px 2px rgba(255, 255, 255, 0.3)'
               }}
             ></div>
           </div>
           
           {/* Score range indicators */}
           <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400 mb-2">
-            <span>0</span>
+            <span style={{ paddingLeft: '2px' }}>0</span>
             <span>50</span>
-            <span>100</span>
+            <span style={{ paddingRight: '2px' }}>100</span>
           </div>
           
           <div className="text-sm text-gray-500 dark:text-gray-400">30-day score</div>
