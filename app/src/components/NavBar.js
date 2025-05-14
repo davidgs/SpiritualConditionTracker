@@ -1,6 +1,14 @@
-import React from 'react';
+import React, { useContext } from 'react';
+import { ThemeContext } from '../contexts/ThemeContext';
 
 function NavBar({ currentView, setCurrentView }) {
+  const { theme } = useContext(ThemeContext);
+  const darkMode = theme === 'dark';
+  
+  // In dark mode, use a slightly lighter background than the main dark background
+  // In light mode, use a slightly darker background than the main light background
+  const navBackgroundColor = darkMode ? '#1f2937' : '#f3f4f6';
+  
   const navItems = [
     { id: 'dashboard', name: 'Dashboard', icon: 'fa-solid fa-house' },
     { id: 'activity', name: 'Log Activity', icon: 'fa-solid fa-plus' },
@@ -18,7 +26,9 @@ function NavBar({ currentView, setCurrentView }) {
       zIndex: 10,
       display: 'flex',
       justifyContent: 'space-around',
-      backgroundColor: 'transparent'
+      backgroundColor: navBackgroundColor,
+      borderTop: darkMode ? '1px solid #374151' : '1px solid #e5e7eb',
+      paddingBottom: '5px' // Add some bottom padding for devices with home indicators
     }}>
       {navItems.map((item) => (
         <button 
@@ -32,7 +42,7 @@ function NavBar({ currentView, setCurrentView }) {
             flex: 1,
             backgroundColor: 'transparent',
             border: 'none',
-            color: currentView === item.id ? '#3b82f6' : '#6b7280',
+            color: currentView === item.id ? '#3b82f6' : (darkMode ? '#9ca3af' : '#6b7280'),
             cursor: 'pointer'
           }}
         >

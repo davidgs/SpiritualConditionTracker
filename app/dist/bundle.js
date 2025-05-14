@@ -28687,10 +28687,19 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _contexts_ThemeContext__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../contexts/ThemeContext */ "./src/contexts/ThemeContext.js");
+
 
 function NavBar(_ref) {
   var currentView = _ref.currentView,
     setCurrentView = _ref.setCurrentView;
+  var _useContext = (0,react__WEBPACK_IMPORTED_MODULE_0__.useContext)(_contexts_ThemeContext__WEBPACK_IMPORTED_MODULE_1__.ThemeContext),
+    theme = _useContext.theme;
+  var darkMode = theme === 'dark';
+
+  // In dark mode, use a slightly lighter background than the main dark background
+  // In light mode, use a slightly darker background than the main light background
+  var navBackgroundColor = darkMode ? '#1f2937' : '#f3f4f6';
   var navItems = [{
     id: 'dashboard',
     name: 'Dashboard',
@@ -28721,7 +28730,9 @@ function NavBar(_ref) {
       zIndex: 10,
       display: 'flex',
       justifyContent: 'space-around',
-      backgroundColor: 'transparent'
+      backgroundColor: navBackgroundColor,
+      borderTop: darkMode ? '1px solid #374151' : '1px solid #e5e7eb',
+      paddingBottom: '5px' // Add some bottom padding for devices with home indicators
     }
   }, navItems.map(function (item) {
     return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("button", {
@@ -28737,7 +28748,7 @@ function NavBar(_ref) {
         flex: 1,
         backgroundColor: 'transparent',
         border: 'none',
-        color: currentView === item.id ? '#3b82f6' : '#6b7280',
+        color: currentView === item.id ? '#3b82f6' : darkMode ? '#9ca3af' : '#6b7280',
         cursor: 'pointer'
       }
     }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("i", {
@@ -29216,6 +29227,7 @@ function ThemeToggle() {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   ThemeContext: () => (/* binding */ ThemeContext),
 /* harmony export */   ThemeProvider: () => (/* binding */ ThemeProvider),
 /* harmony export */   useTheme: () => (/* binding */ useTheme)
 /* harmony export */ });

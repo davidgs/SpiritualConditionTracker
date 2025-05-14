@@ -1,7 +1,7 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
 
 // Create a context for theme management
-const ThemeContext = createContext();
+export const ThemeContext = createContext();
 
 // Theme provider component
 export function ThemeProvider({ children }) {
