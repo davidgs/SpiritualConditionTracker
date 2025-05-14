@@ -53,37 +53,31 @@ const server = http.createServer((req, res) => {
   }
   
   // Serve app assets (JS, CSS, etc.)
-  if (req.url === '/app.js') {
-    console.log('Serving app.js');
-    
-    const appJsPath = path.join(__dirname, 'app', 'app.js');
-    fs.readFile(appJsPath, (err, content) => {
-      if (err) {
-        console.error(`Error reading app.js: ${err.message}`);
-        res.writeHead(500);
-        res.end('Error loading application script');
-        return;
-      }
-      
-      res.writeHead(200, { 'Content-Type': 'application/javascript' });
-      res.end(content);
-    });
-    return;
-  }
+  // Define a list of supported file types and their content types
+  const supportedFiles = {
+    '/app.js': { path: 'app/app.js', contentType: 'application/javascript' },
+    '/adapted-app.js': { path: 'app/adapted-app.js', contentType: 'application/javascript' },
+    '/dashboard-component.js': { path: 'app/dashboard-component.js', contentType: 'application/javascript' },
+    '/database.js': { path: 'app/database.js', contentType: 'application/javascript' },
+    '/styles.css': { path: 'app/styles.css', contentType: 'text/css' },
+    '/adapted-styles.css': { path: 'app/adapted-styles.css', contentType: 'text/css' }
+  };
   
-  if (req.url === '/app.js') {
-    console.log('Serving app.js');
+  // Check if the requested file is in our supported files list
+  if (supportedFiles[req.url]) {
+    const fileInfo = supportedFiles[req.url];
+    console.log(`Serving ${req.url}`);
     
-    const appJsPath = path.join(__dirname, 'app', 'app.js');
-    fs.readFile(appJsPath, (err, content) => {
+    const filePath = path.join(__dirname, fileInfo.path);
+    fs.readFile(filePath, (err, content) => {
       if (err) {
-        console.error(`Error reading app.js: ${err.message}`);
+        console.error(`Error reading ${req.url}: ${err.message}`);
         res.writeHead(500);
-        res.end('Error loading application script');
+        res.end(`Error loading ${req.url}`);
         return;
       }
       
-      res.writeHead(200, { 'Content-Type': 'application/javascript' });
+      res.writeHead(200, { 'Content-Type': fileInfo.contentType });
       res.end(content);
     });
     return;
@@ -114,37 +108,30 @@ const server = http.createServer((req, res) => {
     return;
   }
   
-  if (req.url === '/database.js') {
-    console.log('Serving database.js');
+  // Handle remaining static files
+  if (req.url.match(/\.(jpg|jpeg|png|gif|svg|ico)$/)) {
+    console.log(`Serving static file: ${path.join(__dirname, req.url)}`);
     
-    const dbJsPath = path.join(__dirname, 'app', 'database.js');
-    fs.readFile(dbJsPath, (err, content) => {
+    const filePath = path.join(__dirname, req.url);
+    fs.readFile(filePath, (err, content) => {
       if (err) {
-        console.error(`Error reading database.js: ${err.message}`);
-        res.writeHead(500);
-        res.end('Error loading database script');
+        console.error(`Error reading static file ${req.url}: ${err.message}`);
+        res.writeHead(404);
+        res.end('File not found');
         return;
       }
       
-      res.writeHead(200, { 'Content-Type': 'application/javascript' });
-      res.end(content);
-    });
-    return;
-  }
-  
-  if (req.url === '/styles.css') {
-    console.log('Serving styles.css');
-    
-    const stylesPath = path.join(__dirname, 'app', 'styles.css');
-    fs.readFile(stylesPath, (err, content) => {
-      if (err) {
-        console.error(`Error reading styles.css: ${err.message}`);
-        res.writeHead(500);
-        res.end('Error loading styles');
-        return;
-      }
+      // Determine content type based on file extension
+      let contentType = 'application/octet-stream';
+      const ext = path.extname(req.url).toLowerCase();
       
-      res.writeHead(200, { 'Content-Type': 'text/css' });
+      if (ext === '.jpg' || ext === '.jpeg') contentType = 'image/jpeg';
+      else if (ext === '.png') contentType = 'image/png';
+      else if (ext === '.gif') contentType = 'image/gif';
+      else if (ext === '.svg') contentType = 'image/svg+xml';
+      else if (ext === '.ico') contentType = 'image/x-icon';
+      
+      res.writeHead(200, { 'Content-Type': contentType });
       res.end(content);
     });
     return;
