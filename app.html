@@ -4,7 +4,11 @@
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <meta name="expo-platform" content="web" />
   <title>Spiritual Condition Tracker App</title>
+  <!-- Add preload for critical resources -->
+  <link rel="preload" href="/static/js/web/index.bundle?platform=web&dev=false&hot=false" as="script" />
+  <link rel="preload" href="/manifest.json?platform=web" as="fetch" crossorigin="anonymous" />
   <style>
     html, body, #root {
       width: 100%;
@@ -43,6 +47,27 @@
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
     }
+    .error-message {
+      display: none;
+      color: #e74c3c;
+      margin-top: 20px;
+      padding: 10px;
+      text-align: center;
+    }
+    .button {
+      display: none;
+      margin-top: 20px;
+      padding: 10px 20px;
+      background-color: #3498db;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .button:hover {
+      background-color: #2980b9;
+    }
   </style>
 </head>
 <body>
@@ -50,19 +75,79 @@
     <div class="loading">
       <div class="spinner"></div>
       <div class="loading-text">Loading Spiritual Condition Tracker...</div>
+      <div id="error-message" class="error-message">
+        There was a problem loading the app. Please try again.
+      </div>
+      <button id="retry-button" class="button" onclick="loadExpoAppDirectly()">
+        Try Again
+      </button>
     </div>
   </div>
 
   <!-- Load app assets from Expo server -->
   <script>
-    // This script will redirect to the actual Expo app
-    window.onload = function() {
-      // Wait a moment for Expo to be ready
-      setTimeout(function() {
-        // Redirect to the actual Expo app page with the proper headers/query params
-        window.location.href = "/?platform=web";
-      }, 800);
-    };
+    // Function to load the app directly from the Expo page
+    function loadExpoAppDirectly() {
+      window.location.href = '/?platform=web';
+    }
+    
+    // Function to show error UI
+    function showError() {
+      document.getElementById('error-message').style.display = 'block';
+      document.getElementById('retry-button').style.display = 'block';
+    }
+    
+    // Function to attempt loading the app via the bundle
+    function attemptLoadApp() {
+      // First, load the manifest
+      fetch('/manifest.json?platform=web')
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Manifest not available');
+          }
+          return response.json();
+        })
+        .then(manifest => {
+          console.log('Manifest loaded, attempting to load app bundle');
+          
+          // Now load the bundle
+          var script = document.createElement('script');
+          script.src = '/static/js/web/index.bundle?platform=web&dev=false&hot=false';
+          
+          var loadTimeout = setTimeout(function() {
+            console.error('Timeout loading app bundle');
+            showError();
+          }, 10000); // 10 second timeout
+          
+          script.onload = function() {
+            clearTimeout(loadTimeout);
+            console.log('App bundle loaded successfully');
+          };
+          
+          script.onerror = function() {
+            clearTimeout(loadTimeout);
+            console.error('Failed to load app bundle');
+            showError();
+          };
+          
+          document.body.appendChild(script);
+        })
+        .catch(error => {
+          console.error('Error loading manifest:', error);
+          
+          // Wait a bit and try direct loading as fallback
+          setTimeout(function() {
+            // Just use a direct navigation as ultimate fallback
+            loadExpoAppDirectly();
+          }, 3000);
+        });
+    }
+    
+    // Wait for DOM to be fully loaded
+    document.addEventListener('DOMContentLoaded', function() {
+      // Give Expo time to start up before attempting to load the app
+      setTimeout(attemptLoadApp, 2000);
+    });
   </script>
 </body>
 </html>

@@ -110,14 +110,32 @@ const server = http.createServer((req, res) => {
     return;
   }
   
-  // For other /app/* routes, proxy to Expo after stripping the /app prefix
-  if (req.url.startsWith('/app/')) {
+  // Special handling for app assets requested from /app/
+  if (req.url.startsWith('/app/static/') || 
+      req.url.startsWith('/app/assets/') ||
+      req.url.startsWith('/app/manifest')) {
+      
     // Strip the /app prefix and proxy to appropriate route
     targetPath = targetPath.replace(/^\/app/, '');
-    console.log(`App route ${req.url} -> ${targetPath}`);
+    console.log(`App asset ${req.url} -> ${targetPath}`);
     
     // Add special header to ensure we're requesting the app and not the landing page
     req.headers['x-requested-app'] = 'true';
+    req.headers['expo-platform'] = 'web';
+    proxyToExpo(req, res, targetPath);
+    return;
+  }
+  
+  // For all other /app/* routes, proxying to root path in Expo
+  if (req.url.startsWith('/app/')) {
+    // Add special header to ensure we're requesting the app and not the landing page
+    req.headers['x-requested-app'] = 'true';
+    req.headers['expo-platform'] = 'web';
+    
+    // Map to root path with platform parameter
+    targetPath = '/?platform=web';
+    console.log(`App route ${req.url} -> ${targetPath}`);
+    
     proxyToExpo(req, res, targetPath);
     return;
   }
