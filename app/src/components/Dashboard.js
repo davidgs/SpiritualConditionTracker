@@ -401,27 +401,70 @@ export default function Dashboard({ setCurrentView, user, activities, spiritualF
         </div>
         
         {recentActivities.length > 0 ? (
-          <div className="space-y-3">
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
             {recentActivities.map(activity => (
-              <div key={activity.id} className="flex items-center border-b border-gray-100 dark:border-gray-700 pb-2 mb-2">
-                <div className="icon-circle bg-blue-50 dark:bg-blue-900">
-                  <i className={`fas ${getActivityIcon(activity.type)} icon text-blue-500 dark:text-blue-400`}></i>
+              <div key={activity.id} style={{
+                display: 'flex',
+                alignItems: 'center',
+                borderBottom: darkMode ? '1px solid #374151' : '1px solid #f3f4f6',
+                paddingBottom: '0.25rem',
+                marginBottom: '0.25rem'
+              }}>
+                <div style={{
+                  width: '1.5rem',
+                  height: '1.5rem',
+                  borderRadius: '50%',
+                  backgroundColor: darkMode ? '#1e3a8a' : '#dbeafe',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  marginRight: '0.5rem'
+                }}>
+                  <i className={`fas ${getActivityIcon(activity.type)}`} style={{
+                    fontSize: '0.7rem',
+                    color: darkMode ? '#60a5fa' : '#3b82f6'
+                  }}></i>
                 </div>
-                <div className="flex-grow">
-                  <div className="font-medium text-gray-800 dark:text-gray-200">{activity.type.charAt(0).toUpperCase() + activity.type.slice(1)}</div>
-                  <div className="text-sm text-gray-500 dark:text-gray-400">
-                    {activity.duration ? `${activity.duration} minutes` : 'Completed'} 
+                <div style={{ flexGrow: 1 }}>
+                  <div style={{
+                    fontWeight: 500,
+                    fontSize: '0.8rem',
+                    color: darkMode ? '#e5e7eb' : '#374151',
+                    lineHeight: '1.1',
+                    marginBottom: '0.1rem'
+                  }}>{activity.type.charAt(0).toUpperCase() + activity.type.slice(1)}</div>
+                  <div style={{
+                    fontSize: '0.7rem',
+                    color: darkMode ? '#9ca3af' : '#6b7280',
+                    lineHeight: '1.1'
+                  }}>
+                    {activity.duration ? `${activity.duration} min` : 'Done'} 
                     {activity.notes ? ` - ${activity.notes}` : ''}
                   </div>
                 </div>
-                <div className="text-xs text-gray-400 dark:text-gray-500">{formatDate(activity.date)}</div>
+                <div style={{
+                  fontSize: '0.65rem',
+                  color: darkMode ? '#6b7280' : '#9ca3af'
+                }}>{formatDate(activity.date)}</div>
               </div>
             ))}
           </div>
         ) : (
-          <div className="text-center py-6 bg-gray-50 dark:bg-gray-700 rounded-lg">
-            <p className="text-gray-600 dark:text-gray-400">No activities recorded yet</p>
-            <p className="text-gray-500 dark:text-gray-500 text-sm mt-1">Use the navigation to log a new activity</p>
+          <div style={{
+            textAlign: 'center',
+            padding: '0.75rem',
+            backgroundColor: darkMode ? '#374151' : '#f9fafb',
+            borderRadius: '0.375rem'
+          }}>
+            <p style={{
+              fontSize: '0.8rem',
+              color: darkMode ? '#9ca3af' : '#6b7280'
+            }}>No activities recorded yet</p>
+            <p style={{
+              fontSize: '0.7rem',
+              color: darkMode ? '#6b7280' : '#9ca3af',
+              marginTop: '0.25rem'
+            }}>Use the navigation to log a new activity</p>
           </div>
         )}
       </div>

@@ -28367,11 +28367,11 @@ function Dashboard(_ref) {
   // Determine whether to show years or days more prominently
   var showYearsProminent = sobrietyYears >= 1;
   return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
-    className: "p-4 pb-20 max-w-md mx-auto"
+    className: "p-3 pb-16 max-w-md mx-auto"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     style: {
       textAlign: 'center',
-      marginBottom: '1rem',
+      marginBottom: '0.5rem',
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
@@ -28382,14 +28382,14 @@ function Dashboard(_ref) {
       width: '100%',
       display: 'flex',
       justifyContent: 'center',
-      marginBottom: '5px'
+      marginBottom: '2px'
     }
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("img", {
     src: "/app/assets/logo.png",
     alt: "App Logo",
     style: {
-      width: '70px',
-      height: '70px',
+      width: '60px',
+      height: '60px',
       objectFit: 'contain',
       borderRadius: '12px',
       marginLeft: 'auto',
@@ -28397,34 +28397,34 @@ function Dashboard(_ref) {
     }
   })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("h1", {
     style: {
-      fontSize: '1.5rem',
+      fontSize: '1.3rem',
       fontWeight: 'bold',
       color: darkMode ? '#f3f4f6' : '#1f2937',
-      marginBottom: '2px',
-      lineHeight: '1.2'
+      marginBottom: '0px',
+      lineHeight: '1.1'
     }
   }, "Recovery Tracker"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("p", {
     style: {
-      fontSize: '0.875rem',
+      fontSize: '0.8rem',
       color: darkMode ? '#9ca3af' : '#6b7280',
-      lineHeight: '1.2'
+      lineHeight: '1.1'
     }
   }, "Track your spiritual journey")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
-    className: "grid grid-cols-2 gap-4 mb-4"
+    className: "grid grid-cols-2 gap-2 mb-3"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     style: {
       backgroundColor: darkMode ? '#1f2937' : '#ffffff',
       borderRadius: '0.5rem',
-      padding: '0.75rem',
+      padding: '0.5rem',
       textAlign: 'left',
       border: darkMode ? '1px solid #374151' : '1px solid #e5e7eb'
     }
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("h3", {
     style: {
-      fontSize: '1.25rem',
+      fontSize: '1.1rem',
       fontWeight: 600,
       color: darkMode ? '#d1d5db' : '#374151',
-      marginBottom: '1rem',
+      marginBottom: '0.5rem',
       textAlign: 'left'
     }
   }, "Sobriety"), showYearsProminent ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
@@ -28435,24 +28435,27 @@ function Dashboard(_ref) {
     style: {
       display: 'flex',
       alignItems: 'baseline',
-      marginBottom: '10px'
+      marginBottom: '5px'
     }
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("span", {
     style: {
-      fontSize: '2rem',
+      fontSize: '1.6rem',
       fontWeight: 'bold',
       color: darkMode ? '#60a5fa' : '#3b82f6',
-      marginRight: '8px'
+      marginRight: '4px',
+      lineHeight: '1.1'
     }
   }, sobrietyYears.toFixed(2)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("span", {
     style: {
-      fontSize: '1.25rem',
-      color: darkMode ? '#9ca3af' : '#6b7280'
+      fontSize: '1rem',
+      color: darkMode ? '#9ca3af' : '#6b7280',
+      lineHeight: '1.1'
     }
   }, "years")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     style: {
-      fontSize: '1.25rem',
-      color: darkMode ? '#60a5fa' : '#3b82f6'
+      fontSize: '1rem',
+      color: darkMode ? '#60a5fa' : '#3b82f6',
+      lineHeight: '1.1'
     }
   }, formatNumber(sobrietyDays), " days")) : /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     style: {
@@ -28462,56 +28465,124 @@ function Dashboard(_ref) {
     style: {
       display: 'flex',
       alignItems: 'baseline',
-      marginBottom: '10px'
+      marginBottom: '5px'
     }
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("span", {
     style: {
-      fontSize: '2rem',
+      fontSize: '1.6rem',
       fontWeight: 'bold',
       color: darkMode ? '#60a5fa' : '#3b82f6',
-      marginRight: '8px'
+      marginRight: '4px',
+      lineHeight: '1.1'
     }
   }, formatNumber(sobrietyDays)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("span", {
     style: {
-      fontSize: '1.25rem',
-      color: darkMode ? '#9ca3af' : '#6b7280'
+      fontSize: '1rem',
+      color: darkMode ? '#9ca3af' : '#6b7280',
+      lineHeight: '1.1'
     }
   }, "days")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     style: {
-      fontSize: '1.25rem',
-      color: darkMode ? '#60a5fa' : '#3b82f6'
+      fontSize: '1rem',
+      color: darkMode ? '#60a5fa' : '#3b82f6',
+      lineHeight: '1.1'
     }
   }, sobrietyYears.toFixed(2), " years"))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
-    className: "bg-white dark:bg-gray-800 rounded-lg p-3 border border-gray-200 dark:border-gray-700 text-center"
+    style: {
+      backgroundColor: darkMode ? '#1f2937' : '#ffffff',
+      borderRadius: '0.5rem',
+      padding: '0.5rem',
+      textAlign: 'center',
+      border: darkMode ? '1px solid #374151' : '1px solid #e5e7eb'
+    }
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("h3", {
-    className: "text-md font-medium text-gray-700 dark:text-gray-300 mb-2"
+    style: {
+      fontSize: '1.1rem',
+      fontWeight: 600,
+      color: darkMode ? '#d1d5db' : '#374151',
+      marginBottom: '0.5rem'
+    }
   }, "Spiritual Fitness"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
-    className: "text-3xl font-bold mb-2",
     style: {
-      color: getScoreColor(spiritualFitness)
+      fontSize: '1.6rem',
+      fontWeight: 'bold',
+      marginBottom: '0.5rem',
+      color: getScoreColor(spiritualFitness),
+      lineHeight: '1.1'
     }
-  }, formattedScore), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
-    className: "w-full h-5 bg-gray-200 dark:bg-gray-700 rounded-full mb-3 overflow-hidden border border-gray-300 dark:border-gray-600"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
-    className: "h-full rounded-full transition-all duration-500 ease-out",
+  }, formattedScore), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("table", {
     style: {
-      width: "".concat(progressPercent || 1, "%"),
-      // Set minimum width to make it visible even at 0
-      backgroundColor: getScoreColor(spiritualFitness),
-      boxShadow: 'inset 0 1px 2px rgba(255, 255, 255, 0.3)'
+      width: '100%',
+      height: '8px',
+      borderCollapse: 'collapse',
+      marginBottom: '4px'
     }
-  })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
-    className: "flex justify-between text-xs text-gray-500 dark:text-gray-400 mb-2"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("span", {
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("tbody", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("tr", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("td", {
     style: {
-      paddingLeft: '2px'
+      backgroundColor: darkMode ? '#dc2626' : '#ef4444',
+      // Red
+      width: '30%',
+      height: '8px',
+      border: '1px solid #aaa',
+      padding: 0
     }
-  }, "0"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("span", null, "50"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("span", {
+  }, spiritualFitness <= 30 && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     style: {
-      paddingRight: '2px'
+      backgroundColor: 'rgba(255, 255, 255, 0.3)',
+      width: "".concat(spiritualFitness / 30 * 100, "%"),
+      height: '100%'
     }
-  }, "100")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
-    className: "text-sm text-gray-500 dark:text-gray-400"
+  })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("td", {
+    style: {
+      backgroundColor: darkMode ? '#d97706' : '#f59e0b',
+      // Yellow/Amber
+      width: '45%',
+      height: '8px',
+      border: '1px solid #aaa',
+      padding: 0
+    }
+  }, spiritualFitness > 30 && spiritualFitness <= 75 && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+    style: {
+      backgroundColor: 'rgba(255, 255, 255, 0.3)',
+      width: "".concat((spiritualFitness - 30) / 45 * 100, "%"),
+      height: '100%'
+    }
+  })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("td", {
+    style: {
+      backgroundColor: darkMode ? '#16a34a' : '#22c55e',
+      // Green
+      width: '25%',
+      height: '8px',
+      border: '1px solid #aaa',
+      padding: 0
+    }
+  }, spiritualFitness > 75 && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+    style: {
+      backgroundColor: 'rgba(255, 255, 255, 0.3)',
+      width: "".concat((spiritualFitness - 75) / 25 * 100, "%"),
+      height: '100%'
+    }
+  }))))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+    style: {
+      display: 'flex',
+      justifyContent: 'space-between',
+      fontSize: '0.65rem',
+      color: darkMode ? '#9ca3af' : '#6b7280',
+      marginBottom: '3px'
+    }
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("span", null, "0"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("span", {
+    style: {
+      marginLeft: '28%'
+    }
+  }, "30"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("span", {
+    style: {
+      marginRight: '24%'
+    }
+  }, "75"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("span", null, "100")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+    style: {
+      fontSize: '0.7rem',
+      color: darkMode ? '#9ca3af' : '#6b7280'
+    }
   }, "30-day score"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     className: "relative inline-block"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("button", {
@@ -28519,11 +28590,11 @@ function Dashboard(_ref) {
     style: {
       backgroundColor: darkMode ? '#1e40af' : '#dbeafe',
       color: darkMode ? '#93c5fd' : '#1e40af',
-      padding: '0.375rem 0.75rem',
-      borderRadius: '0.375rem',
-      fontSize: '0.75rem',
+      padding: '0.25rem 0.5rem',
+      borderRadius: '0.25rem',
+      fontSize: '0.65rem',
       fontWeight: '500',
-      marginTop: '0.5rem',
+      marginTop: '0.25rem',
       border: darkMode ? '1px solid #3b82f6' : '1px solid #93c5fd',
       cursor: 'pointer',
       transition: 'background-color 0.2s'
@@ -28551,18 +28622,33 @@ function Dashboard(_ref) {
   }, "Variety of activities earns bonus points."), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     className: "absolute -bottom-6 left-1/2 transform -translate-x-1/2 w-3 h-3 rotate-45 bg-white dark:bg-gray-800 border-r border-b border-gray-200 dark:border-gray-700"
   })))))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
-    className: "bg-white dark:bg-gray-800 rounded-lg p-3 border border-gray-200 dark:border-gray-700 mb-4"
+    style: {
+      backgroundColor: darkMode ? '#1f2937' : '#ffffff',
+      borderRadius: '0.5rem',
+      padding: '0.5rem',
+      border: darkMode ? '1px solid #374151' : '1px solid #e5e7eb',
+      marginBottom: '0.75rem'
+    }
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
-    className: "flex justify-between items-center mb-2"
+    style: {
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: '0.5rem'
+    }
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("h2", {
-    className: "text-lg font-medium text-gray-800 dark:text-gray-200"
+    style: {
+      fontSize: '1.1rem',
+      fontWeight: 600,
+      color: darkMode ? '#d1d5db' : '#374151'
+    }
   }, "Recent Activities"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("button", {
     style: {
       backgroundColor: darkMode ? '#2563eb' : '#3b82f6',
       color: 'white',
-      padding: '0.375rem 0.75rem',
-      borderRadius: '0.375rem',
-      fontSize: '0.875rem',
+      padding: '0.25rem 0.5rem',
+      borderRadius: '0.25rem',
+      fontSize: '0.7rem',
       fontWeight: '500',
       transition: 'background-color 0.2s',
       border: 'none',
@@ -28572,30 +28658,80 @@ function Dashboard(_ref) {
       return setCurrentView('history');
     }
   }, "View All")), recentActivities.length > 0 ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
-    className: "space-y-3"
+    style: {
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '0.25rem'
+    }
   }, recentActivities.map(function (activity) {
     return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
       key: activity.id,
-      className: "flex items-center border-b border-gray-100 dark:border-gray-700 pb-2 mb-2"
+      style: {
+        display: 'flex',
+        alignItems: 'center',
+        borderBottom: darkMode ? '1px solid #374151' : '1px solid #f3f4f6',
+        paddingBottom: '0.25rem',
+        marginBottom: '0.25rem'
+      }
     }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
-      className: "icon-circle bg-blue-50 dark:bg-blue-900"
+      style: {
+        width: '1.5rem',
+        height: '1.5rem',
+        borderRadius: '50%',
+        backgroundColor: darkMode ? '#1e3a8a' : '#dbeafe',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginRight: '0.5rem'
+      }
     }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("i", {
-      className: "fas ".concat(getActivityIcon(activity.type), " icon text-blue-500 dark:text-blue-400")
+      className: "fas ".concat(getActivityIcon(activity.type)),
+      style: {
+        fontSize: '0.7rem',
+        color: darkMode ? '#60a5fa' : '#3b82f6'
+      }
     })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
-      className: "flex-grow"
+      style: {
+        flexGrow: 1
+      }
     }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
-      className: "font-medium text-gray-800 dark:text-gray-200"
+      style: {
+        fontWeight: 500,
+        fontSize: '0.8rem',
+        color: darkMode ? '#e5e7eb' : '#374151',
+        lineHeight: '1.1',
+        marginBottom: '0.1rem'
+      }
     }, activity.type.charAt(0).toUpperCase() + activity.type.slice(1)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
-      className: "text-sm text-gray-500 dark:text-gray-400"
-    }, activity.duration ? "".concat(activity.duration, " minutes") : 'Completed', activity.notes ? " - ".concat(activity.notes) : '')), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
-      className: "text-xs text-gray-400 dark:text-gray-500"
+      style: {
+        fontSize: '0.7rem',
+        color: darkMode ? '#9ca3af' : '#6b7280',
+        lineHeight: '1.1'
+      }
+    }, activity.duration ? "".concat(activity.duration, " min") : 'Done', activity.notes ? " - ".concat(activity.notes) : '')), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+      style: {
+        fontSize: '0.65rem',
+        color: darkMode ? '#6b7280' : '#9ca3af'
+      }
     }, formatDate(activity.date)));
   })) : /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
-    className: "text-center py-6 bg-gray-50 dark:bg-gray-700 rounded-lg"
+    style: {
+      textAlign: 'center',
+      padding: '0.75rem',
+      backgroundColor: darkMode ? '#374151' : '#f9fafb',
+      borderRadius: '0.375rem'
+    }
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("p", {
-    className: "text-gray-600 dark:text-gray-400"
+    style: {
+      fontSize: '0.8rem',
+      color: darkMode ? '#9ca3af' : '#6b7280'
+    }
   }, "No activities recorded yet"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("p", {
-    className: "text-gray-500 dark:text-gray-500 text-sm mt-1"
+    style: {
+      fontSize: '0.7rem',
+      color: darkMode ? '#6b7280' : '#9ca3af',
+      marginTop: '0.25rem'
+    }
   }, "Use the navigation to log a new activity"))));
 }
 
