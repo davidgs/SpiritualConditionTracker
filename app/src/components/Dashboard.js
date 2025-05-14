@@ -398,7 +398,10 @@ export default function Dashboard({ setCurrentView, user, activities, spiritualF
                     lineHeight: '1.1',
                     marginBottom: '0.1rem'
                   }}>
-                    {activity.type.charAt(0).toUpperCase() + activity.type.slice(1)}
+                    {/* For call types, show the appropriate label */}
+                    {activity.type === 'call' 
+                      ? 'Call' 
+                      : activity.type.charAt(0).toUpperCase() + activity.type.slice(1)}
                     
                     {/* Add role pills for meetings */}
                     {activity.type === 'meeting' && (
@@ -432,6 +435,42 @@ export default function Dashboard({ setCurrentView, user, activities, spiritualF
                             color: darkMode ? '#c084fc' : '#7e22ce',
                             fontWeight: 'bold'
                           }}>Speaker</span>
+                        )}
+                      </div>
+                    )}
+                    
+                    {/* Add pills for call types */}
+                    {activity.type === 'call' && (
+                      <div style={{ display: 'flex', marginLeft: '6px', gap: '4px' }}>
+                        {activity.isSponsorCall && (
+                          <span style={{
+                            fontSize: '0.6rem',
+                            padding: '1px 5px',
+                            borderRadius: '10px',
+                            backgroundColor: darkMode ? '#065f46' : '#d1fae5',
+                            color: darkMode ? '#10b981' : '#047857',
+                            fontWeight: 'bold'
+                          }}>Sponsor</span>
+                        )}
+                        {activity.isSponseeCall && (
+                          <span style={{
+                            fontSize: '0.6rem',
+                            padding: '1px 5px',
+                            borderRadius: '10px',
+                            backgroundColor: darkMode ? '#1e40af' : '#dbeafe',
+                            color: darkMode ? '#60a5fa' : '#1e40af',
+                            fontWeight: 'bold'
+                          }}>Sponsee</span>
+                        )}
+                        {activity.isAAMemberCall && (
+                          <span style={{
+                            fontSize: '0.6rem',
+                            padding: '1px 5px',
+                            borderRadius: '10px',
+                            backgroundColor: darkMode ? '#7e22ce' : '#f3e8ff',
+                            color: darkMode ? '#c084fc' : '#7e22ce',
+                            fontWeight: 'bold'
+                          }}>AA Member</span>
                         )}
                       </div>
                     )}

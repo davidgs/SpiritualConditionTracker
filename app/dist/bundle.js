@@ -29231,7 +29231,7 @@ function Dashboard(_ref) {
         lineHeight: '1.1',
         marginBottom: '0.1rem'
       }
-    }, activity.type.charAt(0).toUpperCase() + activity.type.slice(1), activity.type === 'meeting' && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+    }, activity.type === 'call' ? 'Call' : activity.type.charAt(0).toUpperCase() + activity.type.slice(1), activity.type === 'meeting' && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
       style: {
         display: 'flex',
         marginLeft: '6px',
@@ -29264,7 +29264,40 @@ function Dashboard(_ref) {
         color: darkMode ? '#c084fc' : '#7e22ce',
         fontWeight: 'bold'
       }
-    }, "Speaker"))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+    }, "Speaker")), activity.type === 'call' && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+      style: {
+        display: 'flex',
+        marginLeft: '6px',
+        gap: '4px'
+      }
+    }, activity.isSponsorCall && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("span", {
+      style: {
+        fontSize: '0.6rem',
+        padding: '1px 5px',
+        borderRadius: '10px',
+        backgroundColor: darkMode ? '#065f46' : '#d1fae5',
+        color: darkMode ? '#10b981' : '#047857',
+        fontWeight: 'bold'
+      }
+    }, "Sponsor"), activity.isSponseeCall && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("span", {
+      style: {
+        fontSize: '0.6rem',
+        padding: '1px 5px',
+        borderRadius: '10px',
+        backgroundColor: darkMode ? '#1e40af' : '#dbeafe',
+        color: darkMode ? '#60a5fa' : '#1e40af',
+        fontWeight: 'bold'
+      }
+    }, "Sponsee"), activity.isAAMemberCall && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("span", {
+      style: {
+        fontSize: '0.6rem',
+        padding: '1px 5px',
+        borderRadius: '10px',
+        backgroundColor: darkMode ? '#7e22ce' : '#f3e8ff',
+        color: darkMode ? '#c084fc' : '#7e22ce',
+        fontWeight: 'bold'
+      }
+    }, "AA Member"))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
       style: {
         fontSize: '0.7rem',
         color: darkMode ? '#9ca3af' : '#6b7280',
