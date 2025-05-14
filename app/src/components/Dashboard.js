@@ -384,19 +384,61 @@ export default function Dashboard({ setCurrentView, user, activities, spiritualF
                 </div>
                 <div style={{ flexGrow: 1 }}>
                   <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
                     fontWeight: 500,
                     fontSize: '0.8rem',
                     color: darkMode ? '#e5e7eb' : '#374151',
                     lineHeight: '1.1',
                     marginBottom: '0.1rem'
-                  }}>{activity.type.charAt(0).toUpperCase() + activity.type.slice(1)}</div>
+                  }}>
+                    {activity.type.charAt(0).toUpperCase() + activity.type.slice(1)}
+                    
+                    {/* Add role pills for meetings */}
+                    {activity.type === 'meeting' && (
+                      <div style={{ display: 'flex', marginLeft: '6px', gap: '4px' }}>
+                        {activity.wasChair && (
+                          <span style={{
+                            fontSize: '0.6rem',
+                            padding: '1px 5px',
+                            borderRadius: '10px',
+                            backgroundColor: darkMode ? '#065f46' : '#d1fae5',
+                            color: darkMode ? '#10b981' : '#047857',
+                            fontWeight: 'bold'
+                          }}>Chair</span>
+                        )}
+                        {activity.wasShare && (
+                          <span style={{
+                            fontSize: '0.6rem',
+                            padding: '1px 5px',
+                            borderRadius: '10px',
+                            backgroundColor: darkMode ? '#1e40af' : '#dbeafe',
+                            color: darkMode ? '#60a5fa' : '#1e40af',
+                            fontWeight: 'bold'
+                          }}>Share</span>
+                        )}
+                        {activity.wasSpeaker && (
+                          <span style={{
+                            fontSize: '0.6rem',
+                            padding: '1px 5px',
+                            borderRadius: '10px',
+                            backgroundColor: darkMode ? '#7e22ce' : '#f3e8ff',
+                            color: darkMode ? '#c084fc' : '#7e22ce',
+                            fontWeight: 'bold'
+                          }}>Speaker</span>
+                        )}
+                      </div>
+                    )}
+                  </div>
                   <div style={{
                     fontSize: '0.7rem',
                     color: darkMode ? '#9ca3af' : '#6b7280',
                     lineHeight: '1.1'
                   }}>
                     {activity.duration ? `${activity.duration} min` : 'Done'} 
-                    {activity.notes ? ` - ${activity.notes}` : ''}
+                    {activity.meetingName ? ` - ${activity.meetingName}` : ''}
+                    {activity.literatureTitle ? ` - ${activity.literatureTitle}` : ''}
+                    {activity.notes && !activity.meetingName && !activity.literatureTitle ? ` - ${activity.notes}` : ''}
                   </div>
                 </div>
                 <div style={{

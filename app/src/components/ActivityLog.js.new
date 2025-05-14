@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-export default function ActivityLog({ setCurrentView, onSave }) {
+export default function ActivityLog({ setCurrentView, onSave, activities }) {
   // Check for dark mode
   const darkMode = document.documentElement.classList.contains('dark');
   // Re-render when dark mode changes
@@ -97,46 +97,17 @@ export default function ActivityLog({ setCurrentView, onSave }) {
       return;
     }
     
-    // Ensure the date is properly formatted by manually parsing it
-    // For date inputs, the value is in YYYY-MM-DD format (e.g., "2025-05-14")
-    try {
-      console.log("Selected date value:", date);
-      
-      // Split the YYYY-MM-DD string and create a date object
-      // This ensures we're using the local time zone and not adjusting for timezone
-      const [year, month, day] = date.split('-').map(num => parseInt(num, 10));
-      
-      // Validate date parts
-      if (isNaN(year) || isNaN(month) || isNaN(day)) {
-        console.error("Invalid date parts:", year, month, day);
-        setErrors({ date: 'Invalid date format' });
-        return;
-      }
-      
-      // Create a new date object - month is 0-indexed in JavaScript
-      const activityDate = new Date(year, month - 1, day, 12, 0, 0);
-      
-      // Check if it's a valid date
-      if (isNaN(activityDate.getTime())) {
-        console.error("Invalid date object created:", activityDate);
-        setErrors({ date: 'Invalid date format' });
-        return;
-      }
-      
-      console.log("Parsed date object:", activityDate);
-      
-      // Format the date in a predictable way for storage (YYYY-MM-DD)
-      const formattedDateString = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-      console.log("Formatted date string for storage:", formattedDateString);
-      
-      // Create new activity object with core fields
-      const newActivity = {
-        type: activityType,
-        duration: parseInt(duration, 10),
-        date: formattedDateString,
-        notes: notes.trim(),
-      };
+    // Create a unique ID for the activity
+    const activityId = Date.now().toString();
     
+    // Create new activity object with core fields - store the date string directly
+    const newActivity = {
+      id: activityId,
+      type: activityType,
+      duration: parseInt(duration, 10),
+      date: date, // Store as-is in YYYY-MM-DD format
+      notes: notes.trim(),
+    };
     
     // Add activity-specific fields
     if (activityType === 'literature') {
@@ -149,6 +120,8 @@ export default function ActivityLog({ setCurrentView, onSave }) {
       newActivity.wasShare = wasShare;
       newActivity.wasSpeaker = wasSpeaker;
     }
+    
+    console.log("Saving activity:", newActivity);
     
     // Save the activity
     onSave(newActivity);
