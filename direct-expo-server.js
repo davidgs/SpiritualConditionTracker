@@ -91,19 +91,96 @@ const server = http.createServer((req, res) => {
     return;
   }
   
-  // Handle /app route with a server-side redirect to the root
+  // Handle /app route by serving the public/index.html file
   if (req.url === '/app' || req.url === '/app/') {
-    console.log(`Redirecting ${req.url} to Expo app at /`);
+    console.log(`Serving app at ${req.url}`);
     
-    // Send a temporary redirect to the root
-    res.writeHead(302, {
-      'Location': '/'
+    // Serve the index.html file from public directory
+    const indexHtmlPath = path.join(__dirname, 'public', 'index.html');
+    
+    fs.readFile(indexHtmlPath, (err, content) => {
+      if (err) {
+        // Fallback to the landing page if index.html doesn't exist
+        const landingPagePath = path.join(__dirname, 'landing-page.html');
+        
+        fs.readFile(landingPagePath, (err, content) => {
+          if (err) {
+            res.writeHead(500);
+            res.end('Error loading page');
+            return;
+          }
+          
+          res.writeHead(200, { 'Content-Type': 'text/html' });
+          res.end(content);
+        });
+        return;
+      }
+      
+      res.writeHead(200, { 'Content-Type': 'text/html' });
+      res.end(content);
     });
-    res.end();
+    
     return;
   }
   
-  // Special handling for app assets requested from /app/
+  // First handle special case for app.js at /app route
+  if (req.url === '/app/app.js') {
+    const appJsPath = path.join(__dirname, 'public', 'app.js');
+    
+    fs.readFile(appJsPath, (err, content) => {
+      if (err) {
+        console.log(`Error reading app.js: ${err}`);
+        res.writeHead(500);
+        res.end('Error loading app.js');
+        return;
+      }
+      
+      res.writeHead(200, { 'Content-Type': 'application/javascript' });
+      res.end(content);
+    });
+    
+    return;
+  }
+  
+  // Handle other static file requests for the /app route
+  if (req.url.startsWith('/app/') && (
+      req.url.endsWith('.js') || 
+      req.url.endsWith('.css') || 
+      req.url.endsWith('.png') || 
+      req.url.endsWith('.jpg') || 
+      req.url.endsWith('.svg') || 
+      req.url.endsWith('.json'))) {
+    
+    // Get the file path relative to public directory
+    const filePath = path.join(__dirname, 'public', req.url.replace('/app/', ''));
+    
+    // Check if file exists
+    fs.access(filePath, fs.constants.F_OK, (err) => {
+      if (err) {
+        console.log(`File not found: ${filePath}`);
+        res.writeHead(404);
+        res.end('File not found');
+        return;
+      }
+      
+      // Read and serve the file
+      fs.readFile(filePath, (err, content) => {
+        if (err) {
+          res.writeHead(500);
+          res.end('Error reading file');
+          return;
+        }
+        
+        const contentType = getContentType(filePath);
+        res.writeHead(200, { 'Content-Type': contentType });
+        res.end(content);
+      });
+    });
+    
+    return;
+  }
+  
+  // Special handling for Expo assets requested from /app/
   if (req.url.startsWith('/app/static/') || 
       req.url.startsWith('/app/assets/') ||
       req.url.startsWith('/app/manifest')) {
