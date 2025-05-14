@@ -6,7 +6,7 @@ import {
   ScrollView, 
   TouchableOpacity,
   SafeAreaView
-} from 'react-native';
+} from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 
 // Contexts
