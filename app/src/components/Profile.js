@@ -19,8 +19,8 @@ export default function Profile({ setCurrentView, user, onUpdate }) {
   };
   
   // Calculate sobriety stats if available
-  const sobrietyDays = user?.sobrietyDate ? window.Database.calculateSobrietyDays(user.sobrietyDate) : 0;
-  const sobrietyYears = user?.sobrietyDate ? window.Database.calculateSobrietyYears(user.sobrietyDate) : 0;
+  const sobrietyDays = user?.sobrietyDate ? calculateSobrietyDays(user.sobrietyDate) : 0;
+  const sobrietyYears = user?.sobrietyDate ? calculateSobrietyYears(user.sobrietyDate) : 0;
   
   return (
     <div className="space-y-6">
