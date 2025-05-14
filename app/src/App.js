@@ -1,217 +1,224 @@
 import React, { useState, useEffect } from 'react';
 import Dashboard from './components/Dashboard';
 import ActivityLog from './components/ActivityLog';
-import SpiritualFitness from './components/SpiritualFitness';
-import History from './components/History';
+import NavBar from './components/NavBar';
 import NearbyMembers from './components/NearbyMembers';
 import Profile from './components/Profile';
-import NavBar from './components/NavBar';
-import { initDatabase } from './utils/database';
+import History from './components/History';
 
+// Main App Component
 function App() {
-  // State variables
   const [currentView, setCurrentView] = useState('dashboard');
   const [user, setUser] = useState(null);
   const [activities, setActivities] = useState([]);
-  const [spiritualFitness, setSpiritualFitness] = useState({ score: 0 });
-  const [loading, setLoading] = useState(true);
-  
-  // Load data on component mount
+  const [meetings, setMeetings] = useState([]);
+  const [spiritualFitness, setSpiritualFitness] = useState(0);
+
+  // Load data when component mounts
   useEffect(() => {
-    console.log('App component mounted, loading data...');
-    setupDatabase();
+    loadData();
   }, []);
-  
-  // Initialize database and load data
-  const setupDatabase = async () => {
-    try {
-      // Initialize database
-      await initDatabase();
-      
-      // Load data
-      loadData();
-    } catch (error) {
-      console.error('Error initializing app:', error);
-      setLoading(false);
+
+  // Calculate spiritual fitness score when activities change
+  useEffect(() => {
+    if (activities.length > 0) {
+      calculateSpiritualFitness();
     }
-  };
-  
-  // Load all user data
-  const loadData = async () => {
-    try {
-      // Get user
-      const users = window.Database?.userOperations?.getAll() || [];
-      if (users && users.length > 0) {
-        const currentUser = users[0];
-        setUser(currentUser);
-        
-        // Get activities
-        const userActivities = window.Database?.activityOperations?.getAll({ 
-          userId: currentUser.id 
-        }) || [];
-        setActivities(userActivities);
-        
-        // Calculate fitness
-        const fitness = window.Database?.spiritualFitnessOperations?.calculateAndSave(
-          currentUser.id, 
-          userActivities
-        ) || { score: 0 };
-        setSpiritualFitness(fitness);
-      } else {
-        console.log('No user found, creating default user');
-        // Create a default user if none exists
-        const defaultUser = {
-          name: 'Test User',
-          sobrietyDate: '2020-01-01',
-          homeGroup: 'Thursday Night Group',
-          phone: '555-123-4567',
-          email: 'test@example.com',
-          privacySettings: {
-            shareLocation: false,
-            shareActivities: true
-          }
-        };
-        
-        const newUser = window.Database?.userOperations?.create(defaultUser);
-        setUser(newUser || defaultUser);
-      }
-    } catch (error) {
-      console.error('Error loading data:', error);
-    } finally {
-      setLoading(false);
+  }, [activities]);
+
+  // Load data from the database
+  async function loadData() {
+    if (!window.db) {
+      console.error('Database not initialized');
+      return;
     }
-  };
-  
-  // Handler for saving new activities
-  const handleSaveActivity = (newActivity) => {
-    try {
-      // Add to database
-      const savedActivity = window.Database?.activityOperations?.create({
-        ...newActivity,
-        userId: user.id
-      }) || newActivity;
-      
-      // Update state
-      setActivities(prev => [...prev, savedActivity]);
-      
-      // Recalculate spiritual fitness
-      const updatedFitness = window.Database?.spiritualFitnessOperations?.calculateAndSave(
-        user.id, 
-        [...activities, savedActivity]
-      ) || { score: 0 };
-      setSpiritualFitness(updatedFitness);
-      
-      // Navigate back to dashboard
-      setCurrentView('dashboard');
-    } catch (error) {
-      console.error('Error saving activity:', error);
-    }
-  };
-  
-  // Handler for updating user profile
-  const handleUpdateProfile = (updates) => {
-    try {
-      // Update in database
-      window.Database?.userOperations?.update(user.id, updates);
-      
-      // Update state
-      setUser(prev => ({ ...prev, ...updates }));
-      
-      // Navigate back to dashboard
-      setCurrentView('dashboard');
-    } catch (error) {
-      console.error('Error updating profile:', error);
-    }
-  };
-  
-  // Handler for updating privacy settings
-  const handleUpdatePrivacy = (changes) => {
-    try {
-      const updatedSettings = {
-        ...user.privacySettings,
-        ...changes
-      };
-      
-      // Update in database
-      window.Database?.userOperations?.update(user.id, {
-        privacySettings: updatedSettings
-      });
-      
-      // Update state
-      setUser(prev => ({
-        ...prev,
-        privacySettings: updatedSettings
-      }));
-    } catch (error) {
-      console.error('Error updating privacy settings:', error);
-    }
-  };
-  
-  // Loading screen
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <div className="text-center">
-          <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-          <p className="mt-4 text-gray-600">Loading your data...</p>
-        </div>
-      </div>
-    );
+
+    // Get user data
+    const userData = window.db.getAll('user');
+    setUser(userData);
+
+    // Get activities
+    const activitiesData = window.db.getAll('activities');
+    setActivities(activitiesData);
+
+    // Get meetings
+    const meetingsData = window.db.getAll('meetings');
+    setMeetings(meetingsData);
+
+    // Calculate spiritual fitness
+    calculateSpiritualFitness();
   }
-  
-  // Render the main view
-  return (
-    <div className="app-container">
-      {/* Main Content Area */}
-      <div className="pb-16">
-        {currentView === 'dashboard' && (
+
+  // Calculate spiritual fitness score
+  function calculateSpiritualFitness() {
+    if (!activities.length) return;
+
+    const now = new Date();
+    const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+    
+    // Get activities from the last week
+    const recentActivities = activities.filter(activity => {
+      const activityDate = new Date(activity.date);
+      return activityDate >= oneWeekAgo;
+    });
+
+    // Calculate score based on different activity types
+    const totalScore = recentActivities.reduce((score, activity) => {
+      switch (activity.type) {
+        case 'prayer':
+          return score + (activity.duration / 60) * 0.5; // 0.5 points per minute
+        case 'meditation':
+          return score + (activity.duration / 60) * 0.7; // 0.7 points per minute
+        case 'literature':
+          return score + (activity.duration / 60) * 0.4; // 0.4 points per minute
+        case 'service':
+          return score + activity.duration * 0.02; // 0.02 points per minute
+        case 'sponsee':
+          return score + activity.duration * 0.03; // 0.03 points per minute
+        case 'meeting':
+          return score + 2; // 2 points per meeting
+        default:
+          return score;
+      }
+    }, 0);
+
+    // Round to 2 decimal places
+    const fitness = parseFloat(totalScore.toFixed(2));
+    setSpiritualFitness(fitness);
+  }
+
+  // Handle saving a new activity
+  function handleSaveActivity(newActivity) {
+    if (!window.db) {
+      console.error('Database not initialized');
+      return;
+    }
+
+    // Add activity to database
+    const savedActivity = window.db.add('activities', newActivity);
+    
+    // Update activities state
+    setActivities(prev => [...prev, savedActivity]);
+    
+    // Set view back to dashboard after saving
+    setCurrentView('dashboard');
+  }
+
+  // Handle saving a new meeting
+  function handleSaveMeeting(newMeeting) {
+    if (!window.db) {
+      console.error('Database not initialized');
+      return;
+    }
+
+    // Add meeting to database
+    const savedMeeting = window.db.add('meetings', newMeeting);
+    
+    // Update meetings state
+    setMeetings(prev => [...prev, savedMeeting]);
+    
+    // Set view back to dashboard after saving
+    setCurrentView('dashboard');
+  }
+
+  // Handle updating user profile
+  function handleUpdateProfile(updates) {
+    if (!window.db) {
+      console.error('Database not initialized');
+      return;
+    }
+
+    // Update user in database
+    const updatedUser = window.db.update('user', user.id, updates);
+    
+    // Update user state
+    setUser(updatedUser);
+    
+    // Set view back to dashboard after updating
+    setCurrentView('dashboard');
+  }
+
+  // Handle updating privacy settings
+  function handleUpdatePrivacy(changes) {
+    if (!window.db || !user) {
+      console.error('Database not initialized or user not loaded');
+      return;
+    }
+
+    const currentSettings = user.privacySettings || {};
+    const updatedSettings = { ...currentSettings, ...changes };
+    
+    // Update user with new privacy settings
+    const updates = { privacySettings: updatedSettings };
+    const updatedUser = window.db.update('user', user.id, updates);
+    
+    // Update user state
+    setUser(updatedUser);
+  }
+
+  // Render current view based on navigation state
+  function renderCurrentView() {
+    switch (currentView) {
+      case 'dashboard':
+        return (
           <Dashboard 
-            setCurrentView={setCurrentView} 
+            setCurrentView={setCurrentView}
             user={user}
             activities={activities}
             spiritualFitness={spiritualFitness}
           />
-        )}
-        
-        {currentView === 'activity' && (
-          <ActivityLog
+        );
+      case 'activity':
+        return (
+          <ActivityLog 
             setCurrentView={setCurrentView}
             onSave={handleSaveActivity}
           />
-        )}
-        
-        {currentView === 'fitness' && (
-          <SpiritualFitness
-            setCurrentView={setCurrentView}
-            spiritualFitness={spiritualFitness}
-          />
-        )}
-        
-        {currentView === 'history' && (
+        );
+      case 'history':
+        return (
           <History
             setCurrentView={setCurrentView}
             activities={activities}
           />
-        )}
-        
-        {currentView === 'nearby' && (
+        );
+      case 'nearby':
+        return (
           <NearbyMembers
             setCurrentView={setCurrentView}
             user={user}
             onUpdatePrivacy={handleUpdatePrivacy}
           />
-        )}
-        
-        {currentView === 'profile' && (
+        );
+      case 'profile':
+        return (
           <Profile
             setCurrentView={setCurrentView}
             user={user}
             onUpdate={handleUpdateProfile}
           />
-        )}
+        );
+      default:
+        return (
+          <div className="p-4">
+            <h2 className="text-xl font-bold mb-4">Page Not Found</h2>
+            <p>The requested page does not exist.</p>
+            <button 
+              className="mt-4 bg-blue-500 text-white px-4 py-2 rounded"
+              onClick={() => setCurrentView('dashboard')}
+            >
+              Return to Dashboard
+            </button>
+          </div>
+        );
+    }
+  }
+
+  return (
+    <div className="app-container h-full flex flex-col">
+      <div className="flex-grow overflow-auto">
+        {renderCurrentView()}
       </div>
-      
-      {/* Bottom Navigation */}
       <NavBar currentView={currentView} setCurrentView={setCurrentView} />
     </div>
   );

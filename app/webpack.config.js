@@ -1,12 +1,11 @@
 const path = require('path');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
   entry: './src/index.js',
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: 'bundle.js',
-    publicPath: '/app/',
+    publicPath: '/app/dist/',
   },
   module: {
     rules: [
@@ -41,21 +40,6 @@ module.exports = {
       assets: path.resolve(__dirname, 'assets/'),
     }
   },
-  plugins: [
-    new HtmlWebpackPlugin({
-      template: './index.html',
-      filename: 'index.html'
-    })
-  ],
-  devServer: {
-    static: {
-      directory: path.join(__dirname, 'dist'),
-    },
-    historyApiFallback: {
-      rewrites: [{ from: /^\/app\/.*/, to: '/app/index.html' }],
-    },
-    compress: true,
-    port: 5000,
-    host: '0.0.0.0',
-  }
+  mode: 'development',
+  devtool: 'source-map'
 };
