@@ -39,7 +39,7 @@ export default function History({ setCurrentView, activities }) {
       </div>
       
       {/* Activities List */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow border border-gray-200 dark:border-gray-700 p-4">
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow border border-gray-200 dark:border-gray-700 p-4" style={{ maxHeight: '60vh', overflowY: 'auto' }}>
         <ActivityList 
           activities={activities}
           darkMode={darkMode}
