@@ -38,20 +38,89 @@ const expo = spawn('npx', [
 
 console.log(`Started Expo on webpack port ${WEBPACK_PORT}`);
 
-// Our proxy server will add the expo-platform header
+// Our server will handle both the landing page and the Expo app
 const server = http.createServer((req, res) => {
   // Parse the URL to handle routes properly
   const parsedUrl = url.parse(req.url, true);
   let targetPath = parsedUrl.path;
   
-  // Check if this is an /app route
+  // Serve our custom landing page for the root route
+  if (targetPath === '/' || targetPath === '') {
+    const landingPagePath = path.join(__dirname, 'landing-page.html');
+    
+    fs.readFile(landingPagePath, (err, content) => {
+      if (err) {
+        res.writeHead(500);
+        res.end('Error loading landing page');
+        return;
+      }
+      
+      res.writeHead(200, { 'Content-Type': 'text/html' });
+      res.end(content);
+    });
+    
+    return;
+  }
+  
+  // Check if this is a static asset request
+  if (targetPath.endsWith('.jpg') || targetPath.endsWith('.png') || 
+      targetPath.endsWith('.ico') || targetPath.endsWith('.svg')) {
+    const assetPath = path.join(__dirname, targetPath);
+    
+    // Try to serve the file if it exists
+    fs.access(assetPath, fs.constants.F_OK, (err) => {
+      if (!err) {
+        const contentType = getContentType(targetPath);
+        fs.readFile(assetPath, (err, content) => {
+          if (err) {
+            res.writeHead(500);
+            res.end('Error loading asset');
+            return;
+          }
+          
+          res.writeHead(200, { 'Content-Type': contentType });
+          res.end(content);
+        });
+        return;
+      }
+      
+      // Otherwise proxy to Expo
+      proxyToExpo(req, res, targetPath);
+    });
+    
+    return;
+  }
+  
+  // Check if this is an /app route - send to Expo
   if (targetPath.startsWith('/app')) {
     // Strip the /app prefix and proxy to root route
     targetPath = targetPath.replace(/^\/app/, '');
     if (!targetPath) targetPath = '/'; // If just /app, change to /
     console.log(`App route ${req.url} -> ${targetPath}`);
+    
+    proxyToExpo(req, res, targetPath);
+    return;
   }
   
+  // Default: proxy to Expo
+  proxyToExpo(req, res, targetPath);
+});
+
+// Helper function to determine content type of static assets
+function getContentType(filePath) {
+  if (filePath.endsWith('.html')) return 'text/html';
+  if (filePath.endsWith('.css')) return 'text/css';
+  if (filePath.endsWith('.js')) return 'application/javascript';
+  if (filePath.endsWith('.json')) return 'application/json';
+  if (filePath.endsWith('.png')) return 'image/png';
+  if (filePath.endsWith('.jpg') || filePath.endsWith('.jpeg')) return 'image/jpeg';
+  if (filePath.endsWith('.svg')) return 'image/svg+xml';
+  if (filePath.endsWith('.ico')) return 'image/x-icon';
+  return 'text/plain';
+}
+
+// Helper function to proxy requests to Expo
+function proxyToExpo(req, res, targetPath) {
   const options = {
     hostname: 'localhost',
     port: WEBPACK_PORT,
@@ -95,7 +164,7 @@ const server = http.createServer((req, res) => {
   } else {
     proxyReq.end();
   }
-});
+}
 
 // Listen on port 5000
 server.listen(PORT, '0.0.0.0', () => {
