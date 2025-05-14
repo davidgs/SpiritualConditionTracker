@@ -3,6 +3,9 @@
  * Uses the existing utilities from the React Native app
  */
 
+// Create a namespace for our database functionality
+window.Database = {};
+
 // Storage keys for each "table"
 const STORAGE_KEYS = {
   users: 'aa_tracker_users',
@@ -16,7 +19,7 @@ const STORAGE_KEYS = {
 /**
  * Initialize all data stores
  */
-export const initDatabase = async () => {
+Database.initDatabase = async () => {
   console.log('Initializing web localStorage database...');
   try {
     // Initialize each "table" if it doesn't exist
@@ -38,7 +41,7 @@ export const initDatabase = async () => {
  * Initialize SQLite WASM database
  * @returns {Promise<Object>} SQLite database instance
  */
-export const initSqliteWasm = async () => {
+Database.initSqliteWasm = async () => {
   try {
     console.log('Initializing SQLite WASM database...');
     
@@ -134,7 +137,7 @@ export const initSqliteWasm = async () => {
  * @param {string} collection - The collection name
  * @returns {Array} All items in the collection
  */
-export const getAll = (collection) => {
+Database.getAll = (collection) => {
   const key = STORAGE_KEYS[collection];
   if (!key) {
     console.error(`Unknown collection: ${collection}`);
@@ -155,7 +158,7 @@ export const getAll = (collection) => {
  * @param {string} id - The item ID
  * @returns {Object|null} The found item or null
  */
-export const getById = (collection, id) => {
+Database. getById = (collection, id) => {
   const items = getAll(collection);
   return items.find(item => item.id === id) || null;
 };
@@ -166,7 +169,7 @@ export const getById = (collection, id) => {
  * @param {Object} item - The item to add
  * @returns {Object} The added item
  */
-export const insert = (collection, item) => {
+Database. insert = (collection, item) => {
   const key = STORAGE_KEYS[collection];
   if (!key) {
     console.error(`Unknown collection: ${collection}`);
@@ -191,7 +194,7 @@ export const insert = (collection, item) => {
  * @param {Object} updates - The updates to apply
  * @returns {Object|null} The updated item or null if not found
  */
-export const update = (collection, id, updates) => {
+Database. update = (collection, id, updates) => {
   const key = STORAGE_KEYS[collection];
   if (!key) {
     console.error(`Unknown collection: ${collection}`);
@@ -223,7 +226,7 @@ export const update = (collection, id, updates) => {
  * @param {string} id - The item ID
  * @returns {boolean} Whether the item was removed
  */
-export const deleteById = (collection, id) => {
+Database. deleteById = (collection, id) => {
   const key = STORAGE_KEYS[collection];
   if (!key) {
     console.error(`Unknown collection: ${collection}`);
@@ -252,7 +255,7 @@ export const deleteById = (collection, id) => {
  * @param {Function} predicate - Filter function
  * @returns {Array} Filtered items
  */
-export const query = (collection, predicate) => {
+Database. query = (collection, predicate) => {
   const items = getAll(collection);
   return items.filter(predicate);
 };
@@ -265,7 +268,7 @@ export const query = (collection, predicate) => {
  * @param {number} lon2 - Longitude of second point
  * @returns {number} - Distance in miles
  */
-export const calculateDistance = (lat1, lon1, lat2, lon2) => {
+Database. calculateDistance = (lat1, lon1, lat2, lon2) => {
   if (lat1 === lat2 && lon1 === lon2) {
     return 0;
   }
@@ -292,7 +295,7 @@ export const calculateDistance = (lat1, lon1, lat2, lon2) => {
  * @param {string} sobrietyDate - Sobriety date in ISO format
  * @returns {number} - Number of days sober
  */
-export const calculateSobrietyDays = (sobrietyDate) => {
+Database. calculateSobrietyDays = (sobrietyDate) => {
   if (!sobrietyDate) return 0;
   
   const start = new Date(sobrietyDate);
@@ -314,7 +317,7 @@ export const calculateSobrietyDays = (sobrietyDate) => {
  * @param {number} decimalPlaces - Number of decimal places
  * @returns {number} - Years of sobriety with decimal precision
  */
-export const calculateSobrietyYears = (sobrietyDate, decimalPlaces = 2) => {
+Database. calculateSobrietyYears = (sobrietyDate, decimalPlaces = 2) => {
   const days = calculateSobrietyDays(sobrietyDate);
   const years = days / 365.25; // Account for leap years
   
@@ -322,7 +325,7 @@ export const calculateSobrietyYears = (sobrietyDate, decimalPlaces = 2) => {
 };
 
 // User operations
-export const userOperations = {
+Database. userOperations = {
   createUser: (userData) => {
     const now = new Date().toISOString();
     const userId = userData.id || `user_${Date.now()}`;
@@ -359,7 +362,7 @@ export const userOperations = {
 };
 
 // Activity operations
-export const activityOperations = {
+Database. activityOperations = {
   createActivity: (activityData) => {
     const now = new Date().toISOString();
     const activityId = activityData.id || `activity_${Date.now()}`;
@@ -395,7 +398,7 @@ export const activityOperations = {
 };
 
 // Spiritual fitness operations
-export const spiritualFitnessOperations = {
+Database. spiritualFitnessOperations = {
   calculateSpiritualFitness: (userId) => {
     // Define weights for different activity types
     const weights = {
@@ -504,7 +507,7 @@ export const spiritualFitnessOperations = {
 };
 
 // Meeting operations
-export const meetingOperations = {
+Database. meetingOperations = {
   createMeeting: (meetingData) => {
     const now = new Date().toISOString();
     const meetingId = meetingData.id || `meeting_${Date.now()}`;
@@ -558,21 +561,5 @@ export const meetingOperations = {
   }
 };
 
-// Export the database interface
-export default {
-  initDatabase,
-  initSqliteWasm,
-  getAll,
-  getById,
-  insert,
-  update,
-  deleteById,
-  query,
-  calculateDistance,
-  calculateSobrietyDays,
-  calculateSobrietyYears,
-  userOperations,
-  activityOperations,
-  spiritualFitnessOperations,
-  meetingOperations
-};
+// All functions are now attached to the Database object
+// No need for module exports

@@ -21,92 +21,48 @@ class App {
   
   async initializeDatabase() {
     try {
-      // Initialize SQLite database using WebAssembly
-      this.dbInitialized = false;
-      
-      if (window.initSqlJs) {
-        const SQL = await window.initSqlJs({
-          locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/${file}`
+      // Initialize the database using our Database utility
+      if (window.Database && typeof window.Database.initDatabase === 'function') {
+        await window.Database.initDatabase();
+        
+        // Try to initialize SQLite WASM if available
+        try {
+          this.db = await window.Database.initSqliteWasm();
+          if (this.db) {
+            console.log('SQLite WASM database initialized successfully');
+          } else {
+            console.log('Using localStorage database implementation');
+          }
+        } catch (sqliteError) {
+          console.warn('Error initializing SQLite WASM, using localStorage instead:', sqliteError);
+        }
+        
+        this.dbInitialized = true;
+        return true;
+      } else {
+        console.warn('Database utility not found, initializing internal database');
+        // Initialize localStorage directly as fallback
+        const storageKeys = {
+          users: 'aa_tracker_users',
+          activities: 'aa_tracker_activities',
+          spiritualFitness: 'aa_tracker_spiritual_fitness',
+          meetings: 'aa_tracker_meetings'
+        };
+        
+        Object.values(storageKeys).forEach(key => {
+          if (!localStorage.getItem(key)) {
+            localStorage.setItem(key, JSON.stringify([]));
+          }
         });
         
-        // Create a new database
-        this.db = new SQL.Database();
-        
-        // Create tables
-        this.db.run(`
-          CREATE TABLE IF NOT EXISTS users (
-            id TEXT PRIMARY KEY,
-            name TEXT,
-            sobrietyDate TEXT,
-            homeGroup TEXT,
-            phone TEXT,
-            email TEXT,
-            privacySettings TEXT,
-            createdAt TEXT,
-            updatedAt TEXT
-          );
-        `);
-        
-        this.db.run(`
-          CREATE TABLE IF NOT EXISTS activities (
-            id TEXT PRIMARY KEY,
-            userId TEXT,
-            type TEXT,
-            date TEXT,
-            duration INTEGER,
-            name TEXT,
-            notes TEXT,
-            createdAt TEXT,
-            FOREIGN KEY(userId) REFERENCES users(id)
-          );
-        `);
-        
-        this.db.run(`
-          CREATE TABLE IF NOT EXISTS meetings (
-            id TEXT PRIMARY KEY,
-            name TEXT,
-            day TEXT,
-            time TEXT,
-            location TEXT,
-            address TEXT,
-            city TEXT,
-            state TEXT,
-            zip TEXT,
-            type TEXT,
-            notes TEXT,
-            shared INTEGER,
-            createdBy TEXT,
-            createdAt TEXT,
-            updatedAt TEXT,
-            FOREIGN KEY(createdBy) REFERENCES users(id)
-          );
-        `);
-        
-        this.db.run(`
-          CREATE TABLE IF NOT EXISTS spiritual_fitness (
-            id TEXT PRIMARY KEY,
-            userId TEXT,
-            score REAL,
-            calculatedAt TEXT,
-            FOREIGN KEY(userId) REFERENCES users(id)
-          );
-        `);
-        
         this.dbInitialized = true;
-        console.log('SQLite database initialized successfully');
-      } else {
-        // Fallback to localStorage if SQLite initialization fails
-        console.warn('SQLite not available, falling back to localStorage');
-        this.dbInitialized = true;
+        return true;
       }
-      
-      return this.dbInitialized;
     } catch (error) {
       console.error('Error initializing database:', error);
-      // Fallback to localStorage
-      console.warn('Falling back to localStorage due to error');
+      // Last resort fallback
       this.dbInitialized = true;
-      return this.dbInitialized;
+      return true;
     }
   }
   
@@ -1352,3 +1308,4 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Export the App class
 window.SpiritualConditionTracker = App;
+export default App;
