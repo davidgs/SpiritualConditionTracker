@@ -22,7 +22,7 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "node simple-app-server.js"
+args = "node expo-proxy-server.js"
 waitForPort = 5000
 
 [deployment]
@@ -76,3 +76,7 @@ externalPort = 8000
 [[ports]]
 localPort = 19006
 externalPort = 3003
+
+[[ports]]
+localPort = 19007
+externalPort = 8008
