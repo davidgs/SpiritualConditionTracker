@@ -540,7 +540,9 @@ export default function ActivityLog({ setCurrentView, onSave, activities }) {
         borderRadius: '0.5rem',
         padding: '0.75rem',
         border: darkMode ? '1px solid #374151' : '1px solid #e5e7eb',
-        marginBottom: '2rem'
+        marginBottom: '2rem',
+        maxHeight: '60vh',
+        overflowY: 'auto'
       }}>
         <ActivityList 
           activities={activities}
