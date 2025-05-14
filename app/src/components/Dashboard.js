@@ -266,34 +266,13 @@ export default function Dashboard({ setCurrentView, user, activities, spiritualF
         ) : (
           <div className="text-center py-6 bg-gray-50 dark:bg-gray-700 rounded-lg">
             <i className="fas fa-clipboard-list text-3xl text-gray-300 dark:text-gray-500 mb-2"></i>
-            <p className="text-gray-600 dark:text-gray-400 mb-2">No activities recorded yet</p>
-            <button 
-              className="mt-2 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
-              onClick={() => setCurrentView('activity')}
-            >
-              Log Activity
-            </button>
+            <p className="text-gray-600 dark:text-gray-400">No activities recorded yet</p>
+            <p className="text-gray-500 dark:text-gray-500 text-sm mt-1">Use the navigation to log a new activity</p>
           </div>
         )}
       </div>
       
-      {/* Quick Actions */}
-      <div className="grid grid-cols-2 gap-4">
-        <button 
-          className="bg-blue-500 hover:bg-blue-600 text-white p-3 rounded-lg flex flex-col items-center transition-colors"
-          onClick={() => setCurrentView('activity')}
-        >
-          <i className="fas fa-plus-circle text-xl mb-1"></i>
-          <span>Log Activity</span>
-        </button>
-        <button 
-          className="bg-green-500 hover:bg-green-600 text-white p-3 rounded-lg flex flex-col items-center transition-colors"
-          onClick={() => setCurrentView('nearby')}
-        >
-          <i className="fas fa-users text-xl mb-1"></i>
-          <span>Find Nearby</span>
-        </button>
-      </div>
+      {/* No quick actions - they've been removed */}
     </div>
   );
 }

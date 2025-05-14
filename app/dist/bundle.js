@@ -28538,29 +28538,10 @@ function Dashboard(_ref) {
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("i", {
     className: "fas fa-clipboard-list text-3xl text-gray-300 dark:text-gray-500 mb-2"
   }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("p", {
-    className: "text-gray-600 dark:text-gray-400 mb-2"
-  }, "No activities recorded yet"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("button", {
-    className: "mt-2 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded",
-    onClick: function onClick() {
-      return setCurrentView('activity');
-    }
-  }, "Log Activity"))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
-    className: "grid grid-cols-2 gap-4"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("button", {
-    className: "bg-blue-500 hover:bg-blue-600 text-white p-3 rounded-lg flex flex-col items-center transition-colors",
-    onClick: function onClick() {
-      return setCurrentView('activity');
-    }
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("i", {
-    className: "fas fa-plus-circle text-xl mb-1"
-  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("span", null, "Log Activity")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("button", {
-    className: "bg-green-500 hover:bg-green-600 text-white p-3 rounded-lg flex flex-col items-center transition-colors",
-    onClick: function onClick() {
-      return setCurrentView('nearby');
-    }
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("i", {
-    className: "fas fa-users text-xl mb-1"
-  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("span", null, "Find Nearby"))));
+    className: "text-gray-600 dark:text-gray-400"
+  }, "No activities recorded yet"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("p", {
+    className: "text-gray-500 dark:text-gray-500 text-sm mt-1"
+  }, "Use the navigation to log a new activity"))));
 }
 
 /***/ }),
