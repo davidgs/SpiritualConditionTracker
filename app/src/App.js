@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Dashboard from './components/Dashboard';
 import ActivityLog from './components/ActivityLog';
 import NavBar from './components/NavBar';
-import NearbyMembers from './components/NearbyMembers';
+// Removed NearbyMembers import as we won't be using Bluetooth
 import Profile from './components/Profile';
 import History from './components/History';
 import { ThemeProvider } from './contexts/ThemeContext';
@@ -139,23 +139,7 @@ function App() {
     setCurrentView('dashboard');
   }
 
-  // Handle updating privacy settings
-  function handleUpdatePrivacy(changes) {
-    if (!window.db || !user) {
-      console.error('Database not initialized or user not loaded');
-      return;
-    }
-
-    const currentSettings = user.privacySettings || {};
-    const updatedSettings = { ...currentSettings, ...changes };
-    
-    // Update user with new privacy settings
-    const updates = { privacySettings: updatedSettings };
-    const updatedUser = window.db.update('user', user.id, updates);
-    
-    // Update user state
-    setUser(updatedUser);
-  }
+  // Privacy settings function removed - was primarily used for Nearby features
 
   // Render current view based on navigation state
   function renderCurrentView() {
@@ -183,14 +167,7 @@ function App() {
             activities={activities}
           />
         );
-      case 'nearby':
-        return (
-          <NearbyMembers
-            setCurrentView={setCurrentView}
-            user={user}
-            onUpdatePrivacy={handleUpdatePrivacy}
-          />
-        );
+      // Nearby feature removed as it requires Bluetooth which isn't available in web apps
       case 'profile':
         return (
           <Profile
