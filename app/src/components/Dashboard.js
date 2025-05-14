@@ -1,7 +1,11 @@
 import React from 'react';
 import logoImg from '../assets/logo-small.png';
+import { useTheme } from '../contexts/ThemeContext';
 
 export default function Dashboard({ setCurrentView, user, activities, spiritualFitness }) {
+  // Get theme context for dark mode
+  const { theme } = useTheme();
+  const darkMode = theme === 'dark';
   // Get recent activities (last 5)
   const recentActivities = activities
     ? [...activities].sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 5)
@@ -45,14 +49,34 @@ export default function Dashboard({ setCurrentView, user, activities, spiritualF
 
   return (
     <div className="p-4 pb-20 max-w-md mx-auto">
-      {/* Centered logo at the top with text-align center to ensure proper centering */}
-      <div className="text-center mb-6">
-        <img 
-          src={logoImg} 
-          alt="App Logo" 
-          className="h-20 w-20 object-cover rounded-lg mb-3 mx-auto"
-          style={{ maxWidth: '80px', maxHeight: '80px' }}
-        />
+      {/* Centered logo at the top with forceful inline styles */}
+      <div style={{ 
+        textAlign: 'center',
+        marginBottom: '1.5rem',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center'
+      }}>
+        <div style={{
+          width: '100%',
+          display: 'flex',
+          justifyContent: 'center',
+          marginBottom: '12px'
+        }}>
+          <img 
+            src={logoImg + '?v=' + Date.now()} // Add cache-busting parameter
+            alt="App Logo" 
+            style={{ 
+              width: '80px',
+              height: '80px',
+              objectFit: 'cover',
+              borderRadius: '12px',
+              marginLeft: 'auto',
+              marginRight: 'auto'
+            }}
+          />
+        </div>
         <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">Recovery Tracker</h1>
         <p className="text-sm text-gray-500 dark:text-gray-400">Track your spiritual journey</p>
       </div>
@@ -63,17 +87,53 @@ export default function Dashboard({ setCurrentView, user, activities, spiritualF
           <h3 className="text-md font-medium text-gray-700 dark:text-gray-300 mb-1">Sobriety</h3>
           
           {showYearsProminent ? (
-            <>
-              <div className="text-3xl font-bold text-blue-500 dark:text-blue-400 mb-1">{sobrietyYears.toFixed(2)}</div>
-              <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">years</div>
-              <div className="text-sm text-blue-500 dark:text-blue-400">{formatNumber(sobrietyDays)} days</div>
-            </>
+            <div style={{ textAlign: 'center' }}>
+              <div style={{ 
+                fontSize: '1.875rem', 
+                fontWeight: 'bold', 
+                color: darkMode ? '#60a5fa' : '#3b82f6', 
+                marginBottom: '4px'
+              }}>
+                {sobrietyYears.toFixed(2)}
+              </div>
+              <div style={{ 
+                fontSize: '0.875rem', 
+                color: darkMode ? '#9ca3af' : '#6b7280', 
+                marginBottom: '8px'
+              }}>
+                years
+              </div>
+              <div style={{ 
+                fontSize: '0.875rem', 
+                color: darkMode ? '#60a5fa' : '#3b82f6'
+              }}>
+                {formatNumber(sobrietyDays)} days
+              </div>
+            </div>
           ) : (
-            <>
-              <div className="text-3xl font-bold text-blue-500 dark:text-blue-400 mb-1">{formatNumber(sobrietyDays)}</div>
-              <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">days</div>
-              <div className="text-sm text-blue-500 dark:text-blue-400">{sobrietyYears.toFixed(2)} years</div>
-            </>
+            <div style={{ textAlign: 'center' }}>
+              <div style={{ 
+                fontSize: '1.875rem', 
+                fontWeight: 'bold', 
+                color: darkMode ? '#60a5fa' : '#3b82f6', 
+                marginBottom: '4px'
+              }}>
+                {formatNumber(sobrietyDays)}
+              </div>
+              <div style={{ 
+                fontSize: '0.875rem', 
+                color: darkMode ? '#9ca3af' : '#6b7280', 
+                marginBottom: '8px'
+              }}>
+                days
+              </div>
+              <div style={{ 
+                fontSize: '0.875rem', 
+                color: darkMode ? '#60a5fa' : '#3b82f6'
+              }}>
+                {sobrietyYears.toFixed(2)} years
+              </div>
+            </div>
           )}
         </div>
         <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700 text-center">
