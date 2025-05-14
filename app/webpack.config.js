@@ -6,6 +6,7 @@ module.exports = {
     path: path.resolve(__dirname, 'dist'),
     filename: 'bundle.js',
     publicPath: '/app/dist/',
+    assetModuleFilename: 'assets/[hash][ext][query]'
   },
   module: {
     rules: [

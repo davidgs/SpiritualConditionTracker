@@ -1,4 +1,5 @@
 import React from 'react';
+import logoImg from '../assets/logo-small.png';
 
 export default function Dashboard({ setCurrentView, user, activities, spiritualFitness }) {
   // Get recent activities (last 5)
@@ -39,9 +40,10 @@ export default function Dashboard({ setCurrentView, user, activities, spiritualF
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold">Your Spiritual Dashboard</h1>
         <img 
-          src="/app/assets/logo.png" 
+          src={logoImg} 
           alt="App Logo" 
           className="h-8 w-8 object-cover rounded-full"
+          style={{ maxWidth: '32px', maxHeight: '32px' }}
         />
       </div>
       
