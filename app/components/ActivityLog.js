@@ -1,93 +1,104 @@
-import React, { useState } from 'react';
-import ActivityForm from './ActivityForm';
-import MeetingCheckIn from './MeetingCheckIn';
+// ActivityLog component for Spiritual Condition Tracker
+// Making component available globally
 
-function ActivityLog({ setCurrentView }) {
-  const [activeTab, setActiveTab] = useState('activity');
-  
+window.ActivityLog = function ActivityLog({ setCurrentView, onSave }) {
   return (
-    <div>
-      <div className="flex items-center mb-6">
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h2 className="text-2xl font-semibold text-gray-800">Log Activity</h2>
         <button 
           onClick={() => setCurrentView('dashboard')}
-          className="mr-3 text-gray-600 hover:text-gray-800"
+          className="text-blue-500 hover:text-blue-700"
         >
-          <i className="fa-solid fa-arrow-left"></i>
+          <i className="fa-solid fa-arrow-left mr-1"></i> Back
         </button>
-        <h2 className="text-2xl font-semibold text-gray-800">Log Your Recovery Activities</h2>
       </div>
       
-      <div className="bg-white rounded-xl shadow-sm overflow-hidden mb-6">
-        <div className="flex border-b">
-          <button
-            className={`py-4 px-6 font-medium text-sm transition-colors duration-200 ${
-              activeTab === 'activity' 
-                ? 'text-blue-600 border-b-2 border-blue-600' 
-                : 'text-gray-600 hover:text-gray-900'
-            }`}
-            onClick={() => setActiveTab('activity')}
-          >
-            <i className="fa-solid fa-list-check mr-2"></i>
-            Activity Log
-          </button>
-          <button
-            className={`py-4 px-6 font-medium text-sm transition-colors duration-200 ${
-              activeTab === 'meeting' 
-                ? 'text-blue-600 border-b-2 border-blue-600' 
-                : 'text-gray-600 hover:text-gray-900'
-            }`}
-            onClick={() => setActiveTab('meeting')}
-          >
-            <i className="fa-solid fa-users mr-2"></i>
-            Meeting Check-In
-          </button>
-        </div>
+      <div className="card">
+        <h3 className="text-lg font-medium mb-4">New Activity</h3>
         
-        <div className="p-6">
-          {activeTab === 'activity' ? (
-            <ActivityForm onSuccess={() => setCurrentView('dashboard')} />
-          ) : (
-            <MeetingCheckIn onSuccess={() => setCurrentView('dashboard')} />
-          )}
-        </div>
-      </div>
-      
-      {/* Quick Activity Tips */}
-      <div className="grid md:grid-cols-2 gap-4 mt-8">
-        <div className="card bg-blue-50">
-          <h3 className="text-lg font-medium mb-2 text-blue-800">Why Track Recovery?</h3>
-          <p className="text-gray-700">
-            Consistent tracking helps identify patterns in your recovery journey and reinforces positive habits. Regular activities contribute to greater spiritual fitness.
-          </p>
-        </div>
-        
-        <div className="card bg-green-50">
-          <h3 className="text-lg font-medium mb-2 text-green-800">Activity Balance</h3>
-          <p className="text-gray-700">
-            A balanced recovery includes meetings, meditation, literature, connection with others, and service work. Try to incorporate multiple activities into your routine.
-          </p>
-        </div>
-      </div>
-      
-      {/* Imagery */}
-      <div className="grid md:grid-cols-2 gap-4 mt-4">
-        <div className="card overflow-hidden p-0">
-          <img 
-            src="https://images.unsplash.com/photo-1499728603263-13726abce5fd" 
-            alt="Meditation practice" 
-            className="w-full h-48 object-cover"
-          />
-        </div>
-        <div className="card overflow-hidden p-0">
-          <img 
-            src="https://images.unsplash.com/photo-1528736189815-2cc50c5586f2" 
-            alt="Reading literature" 
-            className="w-full h-48 object-cover"
-          />
-        </div>
+        <form 
+          className="space-y-4"
+          onSubmit={(e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const newActivity = {
+              type: formData.get('activity-type'),
+              name: formData.get('activity-name'),
+              duration: parseInt(formData.get('activity-duration'), 10),
+              date: formData.get('activity-date'),
+              notes: formData.get('activity-notes'),
+              id: Date.now().toString() // Simple placeholder ID
+            };
+            
+            onSave(newActivity);
+          }}
+        >
+          <div>
+            <label className="block text-gray-700 text-sm font-medium mb-2">Activity Type</label>
+            <select 
+              name="activity-type"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="meeting">Meeting</option>
+              <option value="meditation">Meditation</option>
+              <option value="reading">Reading</option>
+              <option value="prayer">Prayer</option>
+              <option value="sponsor">Sponsor Interaction</option>
+              <option value="service">Service Work</option>
+            </select>
+          </div>
+          
+          <div>
+            <label className="block text-gray-700 text-sm font-medium mb-2">Name (Optional)</label>
+            <input 
+              type="text" 
+              name="activity-name"
+              placeholder="Meeting name, book title, etc." 
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          
+          <div>
+            <label className="block text-gray-700 text-sm font-medium mb-2">Duration (minutes)</label>
+            <input 
+              type="number" 
+              name="activity-duration"
+              min="1" 
+              defaultValue="60" 
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          
+          <div>
+            <label className="block text-gray-700 text-sm font-medium mb-2">Date</label>
+            <input 
+              type="date" 
+              name="activity-date"
+              defaultValue={new Date().toISOString().split('T')[0]} 
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          
+          <div>
+            <label className="block text-gray-700 text-sm font-medium mb-2">Notes (Optional)</label>
+            <textarea 
+              name="activity-notes"
+              rows="3" 
+              placeholder="Any additional notes..." 
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            ></textarea>
+          </div>
+          
+          <button 
+            type="submit" 
+            className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition"
+          >
+            Save Activity
+          </button>
+        </form>
       </div>
     </div>
   );
-}
-
-export default ActivityLog;
+};

@@ -1,85 +1,59 @@
-import React, { useState, useEffect } from 'react';
-import { fetchRecentActivities, fetchSpiritualFitness } from '../utils/storage';
+// Dashboard component - Main dashboard view for Spiritual Condition Tracker
+// Making this available as a global for browser-based imports
 
-function Dashboard({ setCurrentView }) {
-  const [recentActivities, setRecentActivities] = useState([]);
-  const [spiritualFitness, setSpiritualFitness] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [streaks, setStreaks] = useState({ meetings: 0, meditation: 0, reading: 0 });
-  
-  useEffect(() => {
-    const loadDashboardData = async () => {
-      setIsLoading(true);
+window.Dashboard = function Dashboard({ setCurrentView, user, activities, spiritualFitness }) {
+  // Get the recent 5 activities for display
+  const recentActivities = activities 
+    ? activities.sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 5)
+    : [];
+
+  // Calculate streaks for different activity types
+  const calculateStreaks = () => {
+    if (!activities || activities.length === 0) {
+      return { meetings: 0, meditation: 0, reading: 0 };
+    }
+
+    // Group activities by type
+    const grouped = activities.reduce((acc, activity) => {
+      if (!acc[activity.type]) acc[activity.type] = [];
+      acc[activity.type].push(activity);
+      return acc;
+    }, {});
+
+    // Calculate streak for each type
+    const today = new Date();
+    const calculateStreak = (activities, daysBack = 7) => {
+      if (!activities || activities.length === 0) return 0;
       
-      try {
-        // Fetch recent activities and spiritual fitness data
-        const activities = await fetchRecentActivities(5);
-        const fitness = await fetchSpiritualFitness();
+      activities.sort((a, b) => new Date(b.date) - new Date(a.date));
+      
+      let streak = 0;
+      let currentDate = new Date(today);
+      
+      for (let i = 0; i < daysBack; i++) {
+        const dateStr = currentDate.toISOString().split('T')[0];
+        const found = activities.some(a => a.date.split('T')[0] === dateStr);
         
-        setRecentActivities(activities);
-        setSpiritualFitness(fitness);
+        if (found) {
+          streak++;
+        } else if (streak > 0) {
+          break;
+        }
         
-        // Calculate streaks (simple version)
-        const allActivities = await fetchRecentActivities();
-        
-        // Group by activity type and sort by date
-        const grouped = allActivities.reduce((acc, activity) => {
-          if (!acc[activity.type]) acc[activity.type] = [];
-          acc[activity.type].push(activity);
-          return acc;
-        }, {});
-        
-        // Calculate basic streaks
-        const today = new Date();
-        const calculateStreak = (activities, daysBack = 7) => {
-          if (!activities || activities.length === 0) return 0;
-          
-          activities.sort((a, b) => new Date(b.date) - new Date(a.date));
-          
-          let streak = 0;
-          let currentDate = new Date(today);
-          
-          for (let i = 0; i < daysBack; i++) {
-            const dateStr = currentDate.toISOString().split('T')[0];
-            const found = activities.some(a => a.date.split('T')[0] === dateStr);
-            
-            if (found) {
-              streak++;
-            } else if (streak > 0) {
-              break;
-            }
-            
-            currentDate.setDate(currentDate.getDate() - 1);
-          }
-          
-          return streak;
-        };
-        
-        setStreaks({
-          meetings: calculateStreak(grouped['meeting']),
-          meditation: calculateStreak(grouped['meditation']),
-          reading: calculateStreak(grouped['reading'])
-        });
-        
-      } catch (error) {
-        console.error('Error loading dashboard data:', error);
-      } finally {
-        setIsLoading(false);
+        currentDate.setDate(currentDate.getDate() - 1);
       }
+      
+      return streak;
     };
-    
-    loadDashboardData();
-  }, []);
-  
-  if (isLoading) {
-    return (
-      <div className="flex justify-center items-center h-64">
-        <div className="spinner-border text-primary" role="status">
-          <span className="sr-only">Loading...</span>
-        </div>
-      </div>
-    );
-  }
+
+    return {
+      meetings: calculateStreak(grouped['meeting']),
+      meditation: calculateStreak(grouped['meditation']),
+      reading: calculateStreak(grouped['reading'])
+    };
+  };
+
+  const streaks = calculateStreaks();
   
   return (
     <div className="space-y-6">
@@ -102,7 +76,7 @@ function Dashboard({ setCurrentView }) {
             <p className="text-white text-opacity-80 text-sm">Based on your recent activities</p>
           </div>
           <div className="text-right">
-            <div className="text-3xl font-bold">{spiritualFitness?.score || 0}%</div>
+            <div className="text-3xl font-bold">{spiritualFitness?.score ? spiritualFitness.score.toFixed(2) : "0.00"}%</div>
             <button 
               onClick={() => setCurrentView('fitness')}
               className="text-sm text-white text-opacity-90 hover:text-opacity-100 mt-1"
@@ -236,6 +210,4 @@ function Dashboard({ setCurrentView }) {
       </div>
     </div>
   );
-}
-
-export default Dashboard;
+};
