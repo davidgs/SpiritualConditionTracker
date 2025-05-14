@@ -35,9 +35,9 @@ const server = http.createServer((req, res) => {
   
   // Serve the app index.html at /app
   if (req.url === '/app' || req.url === '/app/') {
-    console.log('Serving app index.html');
+    console.log('Serving new app index.html');
     
-    const appIndexPath = path.join(__dirname, 'app', 'adapted-index.html');
+    const appIndexPath = path.join(__dirname, 'app', 'new-index.html');
     fs.readFile(appIndexPath, (err, content) => {
       if (err) {
         console.error(`Error reading app index.html: ${err.message}`);
@@ -56,6 +56,7 @@ const server = http.createServer((req, res) => {
   // Define a list of supported file types and their content types
   const supportedFiles = {
     '/app.js': { path: 'app/app.js', contentType: 'application/javascript' },
+    '/new-app.js': { path: 'new-app.js', contentType: 'application/javascript' },
     '/adapted-app.js': { path: 'app/adapted-app.js', contentType: 'application/javascript' },
     '/dashboard-component.js': { path: 'app/dashboard-component.js', contentType: 'application/javascript' },
     '/database.js': { path: 'app/database.js', contentType: 'application/javascript' },
