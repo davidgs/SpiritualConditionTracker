@@ -39,14 +39,14 @@ function renderDashboard(user, spiritualFitness, activities, onNavigate) {
     <div class="space-y-6 max-w-md mx-auto px-4">
       <div class="flex items-center justify-between mt-4">
         <h2 class="text-2xl font-semibold text-gray-800">Hello, ${user?.name || 'Friend'}</h2>
-        <button id="log-activity-btn" class="btn-primary">
-          <i class="fa-solid fa-plus mr-2"></i>
+        <button id="log-activity-btn" class="bg-blue-500 text-white px-3 py-2 rounded-md flex items-center space-x-1 hover:bg-blue-600 transition">
+          <i class="fas fa-plus mr-2"></i>
           Log Activity
         </button>
       </div>
       
       <!-- Spiritual Fitness Card -->
-      <div class="card bg-gradient-to-r from-blue-500 to-blue-600 text-white">
+      <div class="bg-blue-500 text-white p-4 rounded-xl shadow-md">
         <div class="flex justify-between items-center">
           <div>
             <h3 class="text-lg font-medium mb-1">Spiritual Fitness</h3>
@@ -54,17 +54,17 @@ function renderDashboard(user, spiritualFitness, activities, onNavigate) {
           </div>
           <div class="text-right">
             <div class="text-3xl font-bold">${formattedScore}</div>
-            <button id="view-fitness-btn" class="text-sm text-white text-opacity-90 hover:text-opacity-100 mt-1">
-              View Details <i class="fa-solid fa-arrow-right ml-1"></i>
+            <button id="view-fitness-btn" class="text-sm text-white text-opacity-90 hover:text-opacity-100 mt-1 flex items-center justify-end w-full">
+              View Details <i class="fas fa-arrow-right ml-1"></i>
             </button>
           </div>
         </div>
       </div>
       
       <!-- Sobriety Counter -->
-      <div class="card">
+      <div class="bg-white p-4 rounded-xl shadow-md">
         <div class="flex justify-between items-center mb-3">
-          <h3 class="text-lg font-medium">Sobriety</h3>
+          <h3 class="text-lg font-medium text-gray-800">Sobriety</h3>
           <button id="update-sobriety-btn" class="text-sm text-blue-600 hover:text-blue-800">
             Update
           </button>
@@ -83,9 +83,9 @@ function renderDashboard(user, spiritualFitness, activities, onNavigate) {
       </div>
       
       <!-- Recent Activities -->
-      <div class="card">
+      <div class="bg-white p-4 rounded-xl shadow-md">
         <div class="flex justify-between items-center mb-3">
-          <h3 class="text-lg font-medium">Recent Activities</h3>
+          <h3 class="text-lg font-medium text-gray-800">Recent Activities</h3>
           <button class="text-sm text-blue-600 hover:text-blue-800">
             View All
           </button>
@@ -103,7 +103,7 @@ function renderDashboard(user, spiritualFitness, activities, onNavigate) {
         ` : `
           <div class="text-center py-6">
             <p class="text-gray-500">No activities logged yet.</p>
-            <button id="first-activity-btn" class="mt-2 btn-primary">
+            <button id="first-activity-btn" class="mt-2 bg-blue-500 text-white px-3 py-2 rounded-md hover:bg-blue-600 transition">
               Log Your First Activity
             </button>
           </div>
@@ -114,27 +114,27 @@ function renderDashboard(user, spiritualFitness, activities, onNavigate) {
       <div class="mt-6 mb-8">
         <h2 class="text-lg font-semibold text-gray-800 mb-4">Quick Actions</h2>
         <div class="grid grid-cols-3 gap-4">
-          <button id="find-meetings-btn" class="text-center p-3 bg-blue-50 rounded-lg">
-            <i class="fa-solid fa-users text-2xl text-blue-500 mb-2"></i>
+          <button id="find-meetings-btn" class="text-center p-3 bg-blue-50 rounded-lg hover:bg-blue-100 transition">
+            <i class="fas fa-users text-2xl text-blue-500 mb-2 block"></i>
             <p class="text-sm text-gray-600">Find Meetings</p>
           </button>
           
-          <button id="nearby-members-btn" class="text-center p-3 bg-green-50 rounded-lg">
-            <i class="fa-solid fa-map-marker-alt text-2xl text-green-500 mb-2"></i>
+          <button id="nearby-members-btn" class="text-center p-3 bg-green-50 rounded-lg hover:bg-green-100 transition">
+            <i class="fas fa-map-marker-alt text-2xl text-green-500 mb-2 block"></i>
             <p class="text-sm text-gray-600">Nearby Members</p>
           </button>
           
-          <button id="track-progress-btn" class="text-center p-3 bg-purple-50 rounded-lg">
-            <i class="fa-solid fa-chart-line text-2xl text-purple-500 mb-2"></i>
+          <button id="track-progress-btn" class="text-center p-3 bg-purple-50 rounded-lg hover:bg-purple-100 transition">
+            <i class="fas fa-chart-line text-2xl text-purple-500 mb-2 block"></i>
             <p class="text-sm text-gray-600">Track Progress</p>
           </button>
         </div>
       </div>
       
       <!-- Inspiration Quote -->
-      <div class="card bg-gradient-to-r from-blue-50 to-indigo-50">
+      <div class="bg-blue-50 p-4 rounded-xl shadow-md">
         <div class="text-center p-3">
-          <i class="fa-solid fa-quote-left text-blue-300 text-3xl mb-3"></i>
+          <i class="fas fa-quote-left text-blue-300 text-3xl mb-3 block"></i>
           <p class="text-gray-700 italic">
             "First things first. This twenty-four hours. Recovery. Unity. Service. The day is now."
           </p>

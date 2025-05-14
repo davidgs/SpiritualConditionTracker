@@ -147,23 +147,23 @@ class SpiritualConditionTracker {
     const navHTML = `
       <nav class="fixed bottom-0 left-0 right-0 bg-white flex justify-around py-3 shadow-md z-10">
         <a id="nav-dashboard" class="flex flex-col items-center text-blue-500 cursor-pointer">
-          <i class="fa-solid fa-home text-lg mb-1"></i>
+          <i class="fas fa-home text-lg mb-1"></i>
           <span class="text-xs">Home</span>
         </a>
         <a id="nav-activities" class="flex flex-col items-center text-gray-500 cursor-pointer">
-          <i class="fa-solid fa-clipboard-list text-lg mb-1"></i>
+          <i class="fas fa-clipboard-list text-lg mb-1"></i>
           <span class="text-xs">Activities</span>
         </a>
         <a id="nav-meetings" class="flex flex-col items-center text-gray-500 cursor-pointer">
-          <i class="fa-solid fa-users text-lg mb-1"></i>
+          <i class="fas fa-users text-lg mb-1"></i>
           <span class="text-xs">Meetings</span>
         </a>
         <a id="nav-nearby" class="flex flex-col items-center text-gray-500 cursor-pointer">
-          <i class="fa-solid fa-map-marker-alt text-lg mb-1"></i>
+          <i class="fas fa-map-marker-alt text-lg mb-1"></i>
           <span class="text-xs">Nearby</span>
         </a>
         <a id="nav-settings" class="flex flex-col items-center text-gray-500 cursor-pointer">
-          <i class="fa-solid fa-user text-lg mb-1"></i>
+          <i class="fas fa-user text-lg mb-1"></i>
           <span class="text-xs">Profile</span>
         </a>
       </nav>
@@ -199,13 +199,15 @@ class SpiritualConditionTracker {
    */
   navigateTo(screenName) {
     // Update active tab
-    document.querySelectorAll('.navItem').forEach(item => {
-      item.classList.remove('active');
+    document.querySelectorAll('nav a').forEach(item => {
+      item.classList.remove('text-blue-500');
+      item.classList.add('text-gray-500');
     });
     
     const activeNav = document.getElementById(`nav-${screenName}`);
     if (activeNav) {
-      activeNav.classList.add('active');
+      activeNav.classList.remove('text-gray-500');
+      activeNav.classList.add('text-blue-500');
     }
     
     // Render the appropriate screen
