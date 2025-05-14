@@ -5,6 +5,7 @@ import NavBar from './components/NavBar';
 import NearbyMembers from './components/NearbyMembers';
 import Profile from './components/Profile';
 import History from './components/History';
+import { ThemeProvider } from './contexts/ThemeContext';
 
 // Main App Component
 function App() {
@@ -215,12 +216,14 @@ function App() {
   }
 
   return (
-    <div className="app-container h-full flex flex-col">
-      <div className="flex-grow overflow-auto">
-        {renderCurrentView()}
+    <ThemeProvider>
+      <div className="app-container h-full flex flex-col">
+        <div className="flex-grow overflow-auto">
+          {renderCurrentView()}
+        </div>
+        <NavBar currentView={currentView} setCurrentView={setCurrentView} />
       </div>
-      <NavBar currentView={currentView} setCurrentView={setCurrentView} />
-    </div>
+    </ThemeProvider>
   );
 }
 
