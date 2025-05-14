@@ -84,69 +84,15 @@
     </div>
   </div>
 
-  <!-- Load app assets from Expo server -->
+  <!-- Simple script to redirect directly to the app -->
   <script>
-    // Function to load the app directly from the Expo page
-    function loadExpoAppDirectly() {
-      window.location.href = '/?platform=web';
-    }
-    
-    // Function to show error UI
-    function showError() {
-      document.getElementById('error-message').style.display = 'block';
-      document.getElementById('retry-button').style.display = 'block';
-    }
-    
-    // Function to attempt loading the app via the bundle
-    function attemptLoadApp() {
-      // First, load the manifest
-      fetch('/manifest.json?platform=web')
-        .then(response => {
-          if (!response.ok) {
-            throw new Error('Manifest not available');
-          }
-          return response.json();
-        })
-        .then(manifest => {
-          console.log('Manifest loaded, attempting to load app bundle');
-          
-          // Now load the bundle
-          var script = document.createElement('script');
-          script.src = '/static/js/web/index.bundle?platform=web&dev=false&hot=false';
-          
-          var loadTimeout = setTimeout(function() {
-            console.error('Timeout loading app bundle');
-            showError();
-          }, 10000); // 10 second timeout
-          
-          script.onload = function() {
-            clearTimeout(loadTimeout);
-            console.log('App bundle loaded successfully');
-          };
-          
-          script.onerror = function() {
-            clearTimeout(loadTimeout);
-            console.error('Failed to load app bundle');
-            showError();
-          };
-          
-          document.body.appendChild(script);
-        })
-        .catch(error => {
-          console.error('Error loading manifest:', error);
-          
-          // Wait a bit and try direct loading as fallback
-          setTimeout(function() {
-            // Just use a direct navigation as ultimate fallback
-            loadExpoAppDirectly();
-          }, 3000);
-        });
-    }
-    
-    // Wait for DOM to be fully loaded
+    // Simple redirect to main app with platform=web
     document.addEventListener('DOMContentLoaded', function() {
-      // Give Expo time to start up before attempting to load the app
-      setTimeout(attemptLoadApp, 2000);
+      // Display a message for a short time, then redirect
+      setTimeout(function() {
+        console.log('Redirecting to main app...');
+        window.location.href = '/?platform=web&expo-platform=web';
+      }, 1000);
     });
   </script>
 </body>

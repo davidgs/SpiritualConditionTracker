@@ -126,17 +126,28 @@ const server = http.createServer((req, res) => {
     return;
   }
   
-  // For all other /app/* routes, proxying to root path in Expo
-  if (req.url.startsWith('/app/')) {
+  // For specific API routes within /app/
+  if (req.url.startsWith('/app/api/')) {
+    // Strip the /app prefix and proxy to appropriate route
+    targetPath = targetPath.replace(/^\/app/, '');
+    console.log(`App API route ${req.url} -> ${targetPath}`);
+    
     // Add special header to ensure we're requesting the app and not the landing page
     req.headers['x-requested-app'] = 'true';
     req.headers['expo-platform'] = 'web';
-    
-    // Map to root path with platform parameter
-    targetPath = '/?platform=web';
-    console.log(`App route ${req.url} -> ${targetPath}`);
-    
     proxyToExpo(req, res, targetPath);
+    return;
+  }
+  
+  // For all other /app/* routes, redirect to root path
+  if (req.url.startsWith('/app/')) {
+    console.log(`Redirecting ${req.url} -> /?platform=web`);
+    
+    // Return a redirect response
+    res.writeHead(302, {
+      'Location': '/?platform=web'
+    });
+    res.end();
     return;
   }
   
