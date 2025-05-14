@@ -258,7 +258,7 @@ export default function Dashboard({ setCurrentView, user, activities, spiritualF
             }}></div>
           </div>
           
-          {/* Score range indicators */}
+          {/* Score range indicators - simplified */}
           <div style={{ 
             display: 'flex', 
             justifyContent: 'space-between', 
@@ -267,8 +267,6 @@ export default function Dashboard({ setCurrentView, user, activities, spiritualF
             marginBottom: '3px'
           }}>
             <span>0</span>
-            <span style={{ marginLeft: '28%' }}>30</span>
-            <span style={{ marginRight: '24%' }}>75</span>
             <span>100</span>
           </div>
           
