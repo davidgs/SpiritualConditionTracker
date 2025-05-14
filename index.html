@@ -2,46 +2,100 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <meta name="format-detection" content="telephone=no">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <title>Spiritual Condition Tracker</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Welcome to Spiritual Condition Tracker</title>
   <style>
-    /* Add react-native-web styles */
-    #root, body, html {
-      width: 100%;
-      height: 100%;
-      -webkit-overflow-scrolling: touch;
-      margin: 0px;
-      padding: 0px;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    }
-    #root {
-      flex-shrink: 0;
-      flex-basis: auto;
-      flex-grow: 1;
-      display: flex;
-      flex: 1;
-    }
-    html {
-      scroll-behavior: smooth;
-      -webkit-text-size-adjust: 100%;
-      height: 100%;
-    }
     body {
-      display: flex;
-      overflow-y: auto;
-      overscroll-behavior-y: none;
-      text-rendering: optimizeLegibility;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-      -ms-overflow-style: scrollbar;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f8f9fa;
+      color: #333;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem 1rem;
+      text-align: center;
+    }
+    header {
+      margin-bottom: 2rem;
+    }
+    h1 {
+      font-size: 2.5rem;
+      color: #3b82f6;
+      margin-bottom: 0.5rem;
+    }
+    p.subtitle {
+      font-size: 1.25rem;
+      color: #6b7280;
+      margin-bottom: 2rem;
+    }
+    .cta-button {
+      display: inline-block;
+      background-color: #3b82f6;
+      color: white;
+      font-weight: 600;
+      text-decoration: none;
+      padding: 0.75rem 2rem;
+      border-radius: 0.375rem;
+      font-size: 1.125rem;
+      transition: background-color 0.2s;
+    }
+    .cta-button:hover {
+      background-color: #2563eb;
+    }
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      margin-top: 4rem;
+      text-align: left;
+    }
+    .feature {
+      background-color: white;
+      border-radius: 0.5rem;
+      padding: 1.5rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+    .feature h3 {
+      color: #3b82f6;
+      margin-top: 0;
+    }
+    footer {
+      margin-top: 4rem;
+      padding-top: 2rem;
+      border-top: 1px solid #e5e7eb;
+      color: #6b7280;
     }
   </style>
 </head>
 <body>
-  <div id="root"></div>
-  <script src="/static/js/web.bundle"></script>
+  <div class="container">
+    <header>
+      <h1>Spiritual Condition Tracker</h1>
+      <p class="subtitle">Supporting your journey in Alcoholics Anonymous recovery</p>
+      <a href="/app" class="cta-button">Launch Application</a>
+    </header>
+    
+    <div class="features">
+      <div class="feature">
+        <h3>Track Your Journey</h3>
+        <p>Log meetings, meditation sessions, and readings to keep a complete record of your recovery activities.</p>
+      </div>
+      <div class="feature">
+        <h3>Monitor Spiritual Fitness</h3>
+        <p>Get insights into your spiritual condition with a personalized fitness score based on your activities.</p>
+      </div>
+      <div class="feature">
+        <h3>Connect with Others</h3>
+        <p>Find nearby AA members and build a supportive network for your recovery journey.</p>
+      </div>
+    </div>
+    
+    <footer>
+      <p>&copy; 2025 Spiritual Condition Tracker. Privacy-focused and locally stored.</p>
+    </footer>
+  </div>
 </body>
 </html>
