@@ -1,0 +1,125 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+/* Custom styles on top of Tailwind */
+:root {
+  /* Light mode variables */
+  --primary-color: #4F86C6;
+  --secondary-color: #7BAEDC;
+  --accent-color: #5BC0BE;
+  --text-primary: #333333;
+  --text-secondary: #666666;
+  --bg-light: #F5F9FF;
+  --bg-card: #FFFFFF;
+  --bg-app: #f0f2f5;
+  --border-color: #e5e7eb;
+}
+
+.dark {
+  /* Dark mode variables */
+  --primary-color: #5B8BD8;
+  --secondary-color: #7BAEDC;
+  --accent-color: #4DB6B4;
+  --text-primary: #E6E6E6;
+  --text-secondary: #A3A3A3;
+  --bg-light: #1E293B;
+  --bg-card: #283548;
+  --bg-app: #111827;
+  --border-color: #374151;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  color: var(--text-primary);
+  background-color: var(--bg-app);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.btn-primary {
+  @apply bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200;
+}
+
+.btn-secondary {
+  @apply bg-gray-200 hover:bg-gray-300 text-gray-700 font-medium py-2 px-4 rounded-lg transition-colors duration-200;
+}
+
+.card {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 0.75rem;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.input-field {
+  @apply w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400;
+  border-color: var(--border-color);
+  background-color: var(--bg-card);
+  color: var(--text-primary);
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}
+
+.navbar {
+  background-color: var(--bg-card);
+  border-color: var(--border-color);
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+  @apply py-3 px-4 mb-6;
+}
+
+.container-custom {
+  @apply max-w-screen-lg mx-auto px-4;
+}
+
+/* Text colors for dark mode */
+.dark-text-white {
+  color: var(--text-primary);
+}
+
+.dark-text-gray {
+  color: var(--text-secondary);
+}
+
+.dark-bg-card {
+  background-color: var(--bg-card);
+}
+
+.dark-bg-app {
+  background-color: var(--bg-app);
+}
+
+.dark-border {
+  border-color: var(--border-color);
+}
+
+/* Animation for loading states */
+.pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* Dark mode toggle button */
+.theme-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
+  border-radius: 50%;
+  transition: background-color 0.2s ease;
+  cursor: pointer;
+}
+
+.dark .theme-toggle {
+  color: #FFC107;
+}
+
+.light .theme-toggle {
+  color: #6B7280;
+}

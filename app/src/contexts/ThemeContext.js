@@ -28,10 +28,12 @@ export function ThemeProvider({ children }) {
   useEffect(() => {
     const root = window.document.documentElement;
     
-    // Remove existing theme class
-    root.classList.remove('light', 'dark');
-    // Add new theme class
-    root.classList.add(theme);
+    // For Tailwind dark mode support using the 'class' strategy
+    if (theme === 'dark') {
+      root.classList.add('dark');
+    } else {
+      root.classList.remove('dark');
+    }
     
     // Save theme choice to localStorage
     localStorage.setItem('theme', theme);
