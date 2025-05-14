@@ -14,13 +14,6 @@
   <!-- Load the CSS -->
   <link rel="stylesheet" href="/app/src/styles/main.css">
   
-  <!-- Load React via CDN -->
-  <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
-  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-  
-  <!-- Load Babel for JSX transformation -->
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-  
   <!-- Load the database module first -->
   <script src="/app/database.js"></script>
 </head>
@@ -35,35 +28,7 @@
     </div>
   </div>
   
-  <!-- Load components directly with Babel transformation -->
-  <script type="text/babel" src="/app/src/components/NavBar.js"></script>
-  <script type="text/babel" src="/app/src/components/Dashboard.js"></script>
-  <script type="text/babel" src="/app/src/components/ActivityLog.js"></script>
-  <script type="text/babel" src="/app/src/components/History.js"></script>
-  <script type="text/babel" src="/app/src/components/Profile.js"></script>
-  <script type="text/babel" src="/app/src/components/NearbyMembers.js"></script>
-  <script type="text/babel" src="/app/src/App.js"></script>
-  
-  <!-- Initialize the React application -->
-  <script type="text/babel">
-    // Wait for DOM to be ready
-    document.addEventListener('DOMContentLoaded', async () => {
-      try {
-        // Initialize the database
-        if (window.db) {
-          await window.db.init();
-        } else {
-          console.error('Database not initialized. Make sure database.js is loaded first.');
-        }
-        
-        // Render the React application
-        const rootElement = document.getElementById('app');
-        const root = ReactDOM.createRoot(rootElement);
-        root.render(React.createElement(App));
-      } catch (error) {
-        console.error('Error initializing app:', error);
-      }
-    });
-  </script>
+  <!-- Load the bundled application -->
+  <script src="/app/dist/bundle.js"></script>
 </body>
 </html>
