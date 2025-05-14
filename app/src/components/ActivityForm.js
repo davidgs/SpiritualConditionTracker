@@ -69,14 +69,14 @@ function ActivityForm({ onSuccess }) {
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       {error && (
-        <div className="bg-red-50 text-red-600 p-3 rounded-lg">
+        <div className="bg-red-50 dark:bg-red-900 text-red-600 dark:text-red-200 p-3 rounded-lg">
           <i className="fa-solid fa-triangle-exclamation mr-2"></i> {error}
         </div>
       )}
       
       {/* Activity Type Selection */}
       <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
           Activity Type
         </label>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
@@ -86,8 +86,8 @@ function ActivityForm({ onSuccess }) {
               className={`
                 flex items-center p-3 border rounded-lg cursor-pointer transition-colors
                 ${formData.type === type.id 
-                  ? 'bg-blue-50 border-blue-300 text-blue-600' 
-                  : 'border-gray-200 hover:bg-gray-50'
+                  ? 'bg-blue-50 dark:bg-blue-900 border-blue-300 dark:border-blue-700 text-blue-600 dark:text-blue-200' 
+                  : 'border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700'
                 }
               `}
             >
@@ -100,7 +100,7 @@ function ActivityForm({ onSuccess }) {
                 className="sr-only"
               />
               <i className={`fa-solid ${type.icon} text-lg mr-3`}></i>
-              <span>{type.label}</span>
+              <span className="dark:text-gray-200">{type.label}</span>
             </label>
           ))}
         </div>
@@ -109,7 +109,7 @@ function ActivityForm({ onSuccess }) {
       {/* Date and Time */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label htmlFor="date" className="block text-sm font-medium text-gray-700 mb-2">
+          <label htmlFor="date" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
             Date
           </label>
           <input
@@ -118,12 +118,12 @@ function ActivityForm({ onSuccess }) {
             id="date"
             value={formData.date}
             onChange={handleChange}
-            className="input-field"
+            className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-white"
             required
           />
         </div>
         <div>
-          <label htmlFor="time" className="block text-sm font-medium text-gray-700 mb-2">
+          <label htmlFor="time" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
             Time
           </label>
           <input
@@ -132,7 +132,7 @@ function ActivityForm({ onSuccess }) {
             id="time"
             value={formData.time}
             onChange={handleChange}
-            className="input-field"
+            className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-white"
             required
           />
         </div>
@@ -140,7 +140,7 @@ function ActivityForm({ onSuccess }) {
       
       {/* Duration */}
       <div>
-        <label htmlFor="duration" className="block text-sm font-medium text-gray-700 mb-2">
+        <label htmlFor="duration" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
           Duration (minutes)
         </label>
         <input
@@ -151,14 +151,14 @@ function ActivityForm({ onSuccess }) {
           max="1440"
           value={formData.duration}
           onChange={handleChange}
-          className="input-field"
+          className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-white"
           required
         />
       </div>
       
       {/* Activity Name */}
       <div>
-        <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
+        <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
           Activity Name (optional)
         </label>
         <input
@@ -175,13 +175,13 @@ function ActivityForm({ onSuccess }) {
             formData.type === 'service' ? 'e.g., Coffee Service' :
             'e.g., Recovery Workshop'
           }
-          className="input-field"
+          className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-white"
         />
       </div>
       
       {/* Notes */}
       <div>
-        <label htmlFor="notes" className="block text-sm font-medium text-gray-700 mb-2">
+        <label htmlFor="notes" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
           Notes (optional)
         </label>
         <textarea
@@ -191,7 +191,7 @@ function ActivityForm({ onSuccess }) {
           value={formData.notes}
           onChange={handleChange}
           placeholder="Any thoughts or reflections about this activity..."
-          className="input-field"
+          className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-white"
         ></textarea>
       </div>
       
@@ -200,7 +200,7 @@ function ActivityForm({ onSuccess }) {
         <button
           type="submit"
           disabled={isSubmitting}
-          className={`btn-primary ${isSubmitting ? 'opacity-70 cursor-not-allowed' : ''}`}
+          className={`bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded transition-colors ${isSubmitting ? 'opacity-70 cursor-not-allowed' : ''}`}
         >
           {isSubmitting ? (
             <>
