@@ -544,22 +544,13 @@ export default function ActivityLog({ setCurrentView, onSave, activities }) {
         border: darkMode ? '1px solid #374151' : '1px solid #e5e7eb',
         marginBottom: '2rem'
       }}>
-        <div style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          marginBottom: '0.75rem'
-        }}>
-          <h2 style={{
-            fontSize: '1.1rem',
-            fontWeight: 600,
-            color: darkMode ? '#d1d5db' : '#374151'
-          }}>Activity History</h2>
-        </div>
-        
-        {sortedActivities.length > 0 ? (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-            {sortedActivities.map((activity, index) => (
+        <ActivityList 
+          activities={activities}
+          darkMode={darkMode}
+          limit={10}
+          showDate={true}
+          title="Activity History"
+        />
               <div key={activity.id || `${activity.date}-${activity.type}-${index}`} style={{
                 display: 'flex',
                 alignItems: 'center',
