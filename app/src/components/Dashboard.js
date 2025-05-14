@@ -286,7 +286,6 @@ export default function Dashboard({ setCurrentView, user, activities, spiritualF
           </div>
         ) : (
           <div className="text-center py-6 bg-gray-50 dark:bg-gray-700 rounded-lg">
-            <i className="fas fa-clipboard-list text-3xl text-gray-300 dark:text-gray-500 mb-2"></i>
             <p className="text-gray-600 dark:text-gray-400">No activities recorded yet</p>
             <p className="text-gray-500 dark:text-gray-500 text-sm mt-1">Use the navigation to log a new activity</p>
           </div>

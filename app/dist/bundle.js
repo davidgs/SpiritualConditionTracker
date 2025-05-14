@@ -28556,9 +28556,7 @@ function Dashboard(_ref) {
     }, formatDate(activity.date)));
   })) : /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     className: "text-center py-6 bg-gray-50 dark:bg-gray-700 rounded-lg"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("i", {
-    className: "fas fa-clipboard-list text-3xl text-gray-300 dark:text-gray-500 mb-2"
-  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("p", {
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("p", {
     className: "text-gray-600 dark:text-gray-400"
   }, "No activities recorded yet"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("p", {
     className: "text-gray-500 dark:text-gray-500 text-sm mt-1"
