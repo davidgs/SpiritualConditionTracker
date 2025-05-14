@@ -1,7 +1,7 @@
 // History component for viewing activity history
-// Making component available globally
+import React from 'react';
 
-window.History = function History({ setCurrentView, activities }) {
+export default function History({ setCurrentView, activities }) {
   // Sort activities by date, newest first
   const sortedActivities = [...(activities || [])].sort((a, b) => 
     new Date(b.date) - new Date(a.date)

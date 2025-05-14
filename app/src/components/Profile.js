@@ -1,7 +1,8 @@
 // Profile component for user profile management
-// Making component available globally
+import React from 'react';
+import { calculateSobrietyDays, calculateSobrietyYears } from '../utils/calculations';
 
-window.Profile = function Profile({ setCurrentView, user, onUpdate }) {
+export default function Profile({ setCurrentView, user, onUpdate }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     

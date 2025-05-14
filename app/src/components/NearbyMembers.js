@@ -1,7 +1,7 @@
 // NearbyMembers component for finding nearby AA members
-// Making component available globally
+import React from 'react';
 
-window.NearbyMembers = function NearbyMembers({ setCurrentView, user, onUpdatePrivacy }) {
+export default function NearbyMembers({ setCurrentView, user, onUpdatePrivacy }) {
   const handlePrivacyChange = (setting, value) => {
     onUpdatePrivacy({ [setting]: value });
   };

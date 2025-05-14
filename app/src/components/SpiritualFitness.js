@@ -1,7 +1,7 @@
 // SpiritualFitness component for displaying fitness score and details
-// Making component available globally
+import React from 'react';
 
-window.SpiritualFitness = function SpiritualFitness({ setCurrentView, spiritualFitness }) {
+export default function SpiritualFitness({ setCurrentView, spiritualFitness }) {
   const components = spiritualFitness?.components || {};
   const activityCounts = spiritualFitness?.activityCounts || {};
   

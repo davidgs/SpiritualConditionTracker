@@ -1,7 +1,7 @@
 // ActivityLog component for Spiritual Condition Tracker
-// Making component available globally
+import React from 'react';
 
-window.ActivityLog = function ActivityLog({ setCurrentView, onSave }) {
+export default function ActivityLog({ setCurrentView, onSave }) {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
