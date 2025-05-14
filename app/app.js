@@ -1,5 +1,5 @@
-// Main app component that adapts React Native components for web
-import React, { useState, useEffect } from 'react';
+// Main app component for Spiritual Condition Tracker
+// Adapts React Native components for direct web use
 
 // Initialize database and state
 document.addEventListener('DOMContentLoaded', function() {
