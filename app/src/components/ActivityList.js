@@ -132,7 +132,7 @@ export default function ActivityList({
   const { groups, sortedDateKeys } = groupByDate(filteredActivities);
   
   return (
-    <div className="activity-container content-scrollable" style={{ maxHeight: '80vh', overflowY: 'auto' }}>
+    <div className="activity-container max-h-[80vh] overflow-y-auto">
       {title && (
         <div style={{
           display: 'flex',

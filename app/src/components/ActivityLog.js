@@ -535,15 +535,7 @@ export default function ActivityLog({ setCurrentView, onSave, activities }) {
       </form>
       
       {/* All Activities Section */}
-      <div style={{
-        backgroundColor: darkMode ? '#1f2937' : '#ffffff',
-        borderRadius: '0.5rem',
-        padding: '0.75rem',
-        border: darkMode ? '1px solid #374151' : '1px solid #e5e7eb',
-        marginBottom: '2rem',
-        maxHeight: '60vh',
-        overflowY: 'auto'
-      }}>
+      <div className={`rounded-lg p-3 mb-8 max-h-[60vh] overflow-y-auto ${darkMode ? 'bg-gray-800 border border-gray-700' : 'bg-white border border-gray-200'}`}>
         <ActivityList 
           activities={activities}
           darkMode={darkMode}
