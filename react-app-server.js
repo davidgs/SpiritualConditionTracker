@@ -72,14 +72,14 @@ const server = http.createServer((req, res) => {
   }
   
   if (req.url === '/main.js') {
-    console.log('Serving main.js');
+    console.log('Serving simple-app.js as main.js');
     
-    const mainJsPath = path.join(__dirname, 'app', 'main.js');
-    fs.readFile(mainJsPath, (err, content) => {
+    const appJsPath = path.join(__dirname, 'app', 'simple-app.js');
+    fs.readFile(appJsPath, (err, content) => {
       if (err) {
-        console.error(`Error reading main.js: ${err.message}`);
+        console.error(`Error reading simple-app.js: ${err.message}`);
         res.writeHead(500);
-        res.end('Error loading main script');
+        res.end('Error loading application script');
         return;
       }
       

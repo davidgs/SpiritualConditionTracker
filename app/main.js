@@ -156,43 +156,59 @@ class SpiritualConditionTracker {
   }
   
   setupNavigation() {
-    // Create the bottom navigation
-    const navHTML = `
-      <nav class="app-nav">
-        <a id="nav-dashboard" class="nav-item active">
-          <i class="fas fa-home"></i>
-          <span>Home</span>
-        </a>
-        <a id="nav-activities" class="nav-item">
-          <i class="fas fa-clipboard-list"></i>
-          <span>Activities</span>
-        </a>
-        <a id="nav-meetings" class="nav-item">
-          <i class="fas fa-users"></i>
-          <span>Meetings</span>
-        </a>
-        <a id="nav-nearby" class="nav-item">
-          <i class="fas fa-map-marker-alt"></i>
-          <span>Nearby</span>
-        </a>
-        <a id="nav-profile" class="nav-item">
-          <i class="fas fa-user"></i>
-          <span>Profile</span>
-        </a>
-      </nav>
-    `;
-    
-    // Add the navigation after the root element
-    const navEl = document.createElement('div');
-    navEl.innerHTML = navHTML;
-    document.body.appendChild(navEl.firstChild);
-    
-    // Add event listeners
-    document.getElementById('nav-dashboard').addEventListener('click', () => this.navigateTo('dashboard'));
-    document.getElementById('nav-activities').addEventListener('click', () => this.navigateTo('activities'));
-    document.getElementById('nav-meetings').addEventListener('click', () => this.navigateTo('meetings'));
-    document.getElementById('nav-nearby').addEventListener('click', () => this.navigateTo('nearby'));
-    document.getElementById('nav-profile').addEventListener('click', () => this.navigateTo('profile'));
+    try {
+      // Create the bottom navigation
+      const navHTML = `
+        <nav class="app-nav">
+          <a id="nav-dashboard" class="nav-item active">
+            <i class="fas fa-home"></i>
+            <span>Home</span>
+          </a>
+          <a id="nav-activities" class="nav-item">
+            <i class="fas fa-clipboard-list"></i>
+            <span>Activities</span>
+          </a>
+          <a id="nav-meetings" class="nav-item">
+            <i class="fas fa-users"></i>
+            <span>Meetings</span>
+          </a>
+          <a id="nav-nearby" class="nav-item">
+            <i class="fas fa-map-marker-alt"></i>
+            <span>Nearby</span>
+          </a>
+          <a id="nav-profile" class="nav-item">
+            <i class="fas fa-user"></i>
+            <span>Profile</span>
+          </a>
+        </nav>
+      `;
+      
+      // Create the navigation element
+      const navEl = document.createElement('div');
+      navEl.innerHTML = navHTML;
+      const navBar = navEl.firstElementChild;
+      
+      // Add to the body
+      document.body.appendChild(navBar);
+      
+      // Add click event handlers directly
+      const dashboardLink = navBar.querySelector('#nav-dashboard');
+      const activitiesLink = navBar.querySelector('#nav-activities');
+      const meetingsLink = navBar.querySelector('#nav-meetings');
+      const nearbyLink = navBar.querySelector('#nav-nearby');
+      const profileLink = navBar.querySelector('#nav-profile');
+      
+      if (dashboardLink) dashboardLink.addEventListener('click', () => this.navigateTo('dashboard'));
+      if (activitiesLink) activitiesLink.addEventListener('click', () => this.navigateTo('activities'));
+      if (meetingsLink) meetingsLink.addEventListener('click', () => this.navigateTo('meetings'));
+      if (nearbyLink) nearbyLink.addEventListener('click', () => this.navigateTo('nearby'));
+      if (profileLink) profileLink.addEventListener('click', () => this.navigateTo('profile'));
+      
+      console.log('Navigation setup complete');
+    } catch (error) {
+      console.error('Error setting up navigation:', error);
+      // Continue without navigation if it fails
+    }
   }
   
   navigateTo(screen) {
@@ -236,16 +252,33 @@ class SpiritualConditionTracker {
   }
   
   renderDashboard() {
-    const sobrietyDays = this.calculateSobrietyDays();
-    const sobrietyYears = this.calculateSobrietyYears();
+    console.log('Rendering dashboard...');
+    
+    // Default to 0 if calculations fail
+    let sobrietyDays = 0;
+    let sobrietyYears = 0;
+    try {
+      sobrietyDays = this.calculateSobrietyDays();
+      sobrietyYears = this.calculateSobrietyYears();
+    } catch (error) {
+      console.error('Error calculating sobriety time:', error);
+    }
+    
     const fitnessScore = this.spiritualFitness?.score || 0;
     
-    // Get recent activities (up to 5)
-    const recentActivities = [...this.activities]
-      .sort((a, b) => new Date(b.date) - new Date(a.date))
-      .slice(0, 5);
-    
-    this.root.innerHTML = `
+    // Get recent activities (up to 5) with error handling
+    let recentActivities = [];
+    try {
+      if (Array.isArray(this.activities)) {
+        recentActivities = [...this.activities]
+          .sort((a, b) => new Date(b.date) - new Date(a.date))
+          .slice(0, 5);
+      }
+    } catch (error) {
+      console.error('Error processing activities:', error);
+    }
+      
+      this.root.innerHTML = `
       <div class="dashboard-container">
         <header>
           <h1>Hello, ${this.user?.name || 'Friend'}</h1>
@@ -346,13 +379,48 @@ class SpiritualConditionTracker {
       </div>
     `;
     
-    // Add event listeners
-    document.getElementById('update-sobriety-btn').addEventListener('click', () => this.navigateTo('profile'));
-    document.getElementById('view-fitness-btn').addEventListener('click', () => this.showSpiritualFitnessDetails());
-    document.getElementById('log-activity-btn').addEventListener('click', () => this.navigateTo('activities'));
-    document.getElementById('find-meetings-btn').addEventListener('click', () => this.navigateTo('meetings'));
-    document.getElementById('nearby-members-btn').addEventListener('click', () => this.navigateTo('nearby'));
-    document.getElementById('track-progress-btn').addEventListener('click', () => this.showSpiritualFitnessDetails());
+    // Add event listeners with error handling
+    try {
+      // Update sobriety button
+      const updateSobrietyBtn = document.getElementById('update-sobriety-btn');
+      if (updateSobrietyBtn) {
+        updateSobrietyBtn.addEventListener('click', () => this.navigateTo('profile'));
+      }
+      
+      // View fitness details button
+      const viewFitnessBtn = document.getElementById('view-fitness-btn');
+      if (viewFitnessBtn) {
+        viewFitnessBtn.addEventListener('click', () => this.showSpiritualFitnessDetails());
+      }
+      
+      // Log activity button
+      const logActivityBtn = document.getElementById('log-activity-btn');
+      if (logActivityBtn) {
+        logActivityBtn.addEventListener('click', () => this.navigateTo('activities'));
+      }
+      
+      // Find meetings button
+      const findMeetingsBtn = document.getElementById('find-meetings-btn');
+      if (findMeetingsBtn) {
+        findMeetingsBtn.addEventListener('click', () => this.navigateTo('meetings'));
+      }
+      
+      // Nearby members button
+      const nearbyMembersBtn = document.getElementById('nearby-members-btn');
+      if (nearbyMembersBtn) {
+        nearbyMembersBtn.addEventListener('click', () => this.navigateTo('nearby'));
+      }
+      
+      // Track progress button
+      const trackProgressBtn = document.getElementById('track-progress-btn');
+      if (trackProgressBtn) {
+        trackProgressBtn.addEventListener('click', () => this.showSpiritualFitnessDetails());
+      }
+      
+      console.log('Dashboard event listeners attached');
+    } catch (error) {
+      console.error('Error attaching dashboard event listeners:', error);
+    }
   }
   
   renderActivities() {
