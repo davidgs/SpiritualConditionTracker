@@ -1,11 +1,9 @@
 import React from 'react';
 import logoImg from '../assets/logo-small.png';
-import { useTheme } from '../contexts/ThemeContext';
 
 export default function Dashboard({ setCurrentView, user, activities, spiritualFitness }) {
-  // Get theme context for dark mode
-  const { theme } = useTheme();
-  const darkMode = theme === 'dark';
+  // Simplify dark mode detection for now
+  const darkMode = document.documentElement.classList.contains('dark');
   // Get recent activities (last 5)
   const recentActivities = activities
     ? [...activities].sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 5)
@@ -83,25 +81,38 @@ export default function Dashboard({ setCurrentView, user, activities, spiritualF
       
       {/* Sobriety & Spiritual Fitness Stats */}
       <div className="grid grid-cols-2 gap-4 mb-6">
-        <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700 text-center">
-          <h3 className="text-md font-medium text-gray-700 dark:text-gray-300 mb-1">Sobriety</h3>
+        <div style={{
+          backgroundColor: darkMode ? '#1f2937' : '#ffffff',
+          borderRadius: '0.5rem',
+          padding: '1rem',
+          textAlign: 'left',
+          border: darkMode ? '1px solid #374151' : '1px solid #e5e7eb'
+        }}>
+          <h3 style={{
+            fontSize: '1rem',
+            fontWeight: 500,
+            color: darkMode ? '#d1d5db' : '#374151',
+            marginBottom: '0.75rem',
+            textAlign: 'left'
+          }}>Sobriety</h3>
           
           {showYearsProminent ? (
-            <div style={{ textAlign: 'center' }}>
-              <div style={{ 
-                fontSize: '1.875rem', 
-                fontWeight: 'bold', 
-                color: darkMode ? '#60a5fa' : '#3b82f6', 
-                marginBottom: '4px'
-              }}>
-                {sobrietyYears.toFixed(2)}
-              </div>
-              <div style={{ 
-                fontSize: '0.875rem', 
-                color: darkMode ? '#9ca3af' : '#6b7280', 
-                marginBottom: '8px'
-              }}>
-                years
+            <div style={{ textAlign: 'left' }}>
+              <div style={{ display: 'flex', alignItems: 'baseline', marginBottom: '8px' }}>
+                <span style={{ 
+                  fontSize: '1.5rem', 
+                  fontWeight: 'bold', 
+                  color: darkMode ? '#60a5fa' : '#3b82f6',
+                  marginRight: '4px'
+                }}>
+                  {sobrietyYears.toFixed(2)}
+                </span>
+                <span style={{ 
+                  fontSize: '0.875rem', 
+                  color: darkMode ? '#9ca3af' : '#6b7280'
+                }}>
+                  years
+                </span>
               </div>
               <div style={{ 
                 fontSize: '0.875rem', 
@@ -111,21 +122,22 @@ export default function Dashboard({ setCurrentView, user, activities, spiritualF
               </div>
             </div>
           ) : (
-            <div style={{ textAlign: 'center' }}>
-              <div style={{ 
-                fontSize: '1.875rem', 
-                fontWeight: 'bold', 
-                color: darkMode ? '#60a5fa' : '#3b82f6', 
-                marginBottom: '4px'
-              }}>
-                {formatNumber(sobrietyDays)}
-              </div>
-              <div style={{ 
-                fontSize: '0.875rem', 
-                color: darkMode ? '#9ca3af' : '#6b7280', 
-                marginBottom: '8px'
-              }}>
-                days
+            <div style={{ textAlign: 'left' }}>
+              <div style={{ display: 'flex', alignItems: 'baseline', marginBottom: '8px' }}>
+                <span style={{ 
+                  fontSize: '1.5rem', 
+                  fontWeight: 'bold', 
+                  color: darkMode ? '#60a5fa' : '#3b82f6',
+                  marginRight: '4px'
+                }}>
+                  {formatNumber(sobrietyDays)}
+                </span>
+                <span style={{ 
+                  fontSize: '0.875rem', 
+                  color: darkMode ? '#9ca3af' : '#6b7280'
+                }}>
+                  days
+                </span>
               </div>
               <div style={{ 
                 fontSize: '0.875rem', 

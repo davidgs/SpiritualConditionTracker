@@ -28280,7 +28280,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _assets_logo_small_png__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../assets/logo-small.png */ "./src/assets/logo-small.png");
-/* harmony import */ var _contexts_ThemeContext__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../contexts/ThemeContext */ "./src/contexts/ThemeContext.js");
 function _toConsumableArray(r) { return _arrayWithoutHoles(r) || _iterableToArray(r) || _unsupportedIterableToArray(r) || _nonIterableSpread(); }
 function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
@@ -28289,16 +28288,14 @@ function _arrayWithoutHoles(r) { if (Array.isArray(r)) return _arrayLikeToArray(
 function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
 
 
-
 function Dashboard(_ref) {
   var _window$db, _window$db2;
   var setCurrentView = _ref.setCurrentView,
     user = _ref.user,
     activities = _ref.activities,
     spiritualFitness = _ref.spiritualFitness;
-  // Get theme context for dark mode
-  var _useContext = (0,react__WEBPACK_IMPORTED_MODULE_0__.useContext)(_contexts_ThemeContext__WEBPACK_IMPORTED_MODULE_2__.ThemeContext),
-    darkMode = _useContext.darkMode;
+  // Simplify dark mode detection for now
+  var darkMode = document.documentElement.classList.contains('dark');
   // Get recent activities (last 5)
   var recentActivities = activities ? _toConsumableArray(activities).sort(function (a, b) {
     return new Date(b.date) - new Date(a.date);
@@ -28382,49 +28379,71 @@ function Dashboard(_ref) {
   }, "Track your spiritual journey")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     className: "grid grid-cols-2 gap-4 mb-6"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
-    className: "bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700 text-center"
+    style: {
+      backgroundColor: darkMode ? '#1f2937' : '#ffffff',
+      borderRadius: '0.5rem',
+      padding: '1rem',
+      textAlign: 'left',
+      border: darkMode ? '1px solid #374151' : '1px solid #e5e7eb'
+    }
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("h3", {
-    className: "text-md font-medium text-gray-700 dark:text-gray-300 mb-1"
+    style: {
+      fontSize: '1rem',
+      fontWeight: 500,
+      color: darkMode ? '#d1d5db' : '#374151',
+      marginBottom: '0.75rem',
+      textAlign: 'left'
+    }
   }, "Sobriety"), showYearsProminent ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     style: {
-      textAlign: 'center'
+      textAlign: 'left'
     }
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     style: {
-      fontSize: '1.875rem',
-      fontWeight: 'bold',
-      color: darkMode ? '#60a5fa' : '#3b82f6',
-      marginBottom: '4px'
-    }
-  }, sobrietyYears.toFixed(2)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
-    style: {
-      fontSize: '0.875rem',
-      color: darkMode ? '#9ca3af' : '#6b7280',
+      display: 'flex',
+      alignItems: 'baseline',
       marginBottom: '8px'
     }
-  }, "years"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("span", {
+    style: {
+      fontSize: '1.5rem',
+      fontWeight: 'bold',
+      color: darkMode ? '#60a5fa' : '#3b82f6',
+      marginRight: '4px'
+    }
+  }, sobrietyYears.toFixed(2)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("span", {
+    style: {
+      fontSize: '0.875rem',
+      color: darkMode ? '#9ca3af' : '#6b7280'
+    }
+  }, "years")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     style: {
       fontSize: '0.875rem',
       color: darkMode ? '#60a5fa' : '#3b82f6'
     }
   }, formatNumber(sobrietyDays), " days")) : /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     style: {
-      textAlign: 'center'
+      textAlign: 'left'
     }
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     style: {
-      fontSize: '1.875rem',
-      fontWeight: 'bold',
-      color: darkMode ? '#60a5fa' : '#3b82f6',
-      marginBottom: '4px'
-    }
-  }, formatNumber(sobrietyDays)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
-    style: {
-      fontSize: '0.875rem',
-      color: darkMode ? '#9ca3af' : '#6b7280',
+      display: 'flex',
+      alignItems: 'baseline',
       marginBottom: '8px'
     }
-  }, "days"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("span", {
+    style: {
+      fontSize: '1.5rem',
+      fontWeight: 'bold',
+      color: darkMode ? '#60a5fa' : '#3b82f6',
+      marginRight: '4px'
+    }
+  }, formatNumber(sobrietyDays)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("span", {
+    style: {
+      fontSize: '0.875rem',
+      color: darkMode ? '#9ca3af' : '#6b7280'
+    }
+  }, "days")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     style: {
       fontSize: '0.875rem',
       color: darkMode ? '#60a5fa' : '#3b82f6'
