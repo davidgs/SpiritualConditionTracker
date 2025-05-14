@@ -52,13 +52,13 @@ export default function Dashboard({ setCurrentView, user, activities, spiritualF
       
       {/* Sobriety & Spiritual Fitness Stats */}
       <div className="grid grid-cols-2 gap-4 mb-6">
-        <div className="card text-center">
+        <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700 text-center">
           <h3 className="text-md font-medium text-gray-700 dark:text-gray-300 mb-1">Sobriety</h3>
           <div className="text-3xl font-bold text-blue-500 dark:text-blue-400 mb-1">{sobrietyDays}</div>
           <div className="text-sm text-gray-500 dark:text-gray-400">days</div>
           <div className="text-sm text-gray-700 dark:text-gray-300 mt-1">{sobrietyYears} years</div>
         </div>
-        <div className="card text-center">
+        <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700 text-center">
           <h3 className="text-md font-medium text-gray-700 dark:text-gray-300 mb-1">Spiritual Fitness</h3>
           <div className="text-3xl font-bold text-green-500 dark:text-green-400 mb-1">{spiritualFitness}</div>
           <div className="text-sm text-gray-500 dark:text-gray-400">weekly score</div>
@@ -72,7 +72,7 @@ export default function Dashboard({ setCurrentView, user, activities, spiritualF
       </div>
       
       {/* Recent Activities Section */}
-      <div className="card mb-6">
+      <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700 mb-6">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-lg font-medium text-gray-800 dark:text-gray-200">Recent Activities</h2>
           <button 
