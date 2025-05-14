@@ -91,30 +91,58 @@ const server = http.createServer((req, res) => {
     return;
   }
   
-  // Handle /app route by serving the actual Expo app
+  // Handle /app route by serving our static bundle
   if (req.url === '/app' || req.url === '/app/') {
-    console.log(`Proxying app request to Expo at ${req.url}`);
+    console.log(`Serving static bundle at ${req.url}`);
     
-    // Add the correct platform header for Expo
-    req.headers['expo-platform'] = 'web';
+    // Serve the index.html file from the static-bundle directory
+    const indexPath = path.join(__dirname, 'static-bundle', 'index.html');
     
-    // Proxy to Expo index.html
-    const expoPath = '/';
-    proxyToExpo(req, res, expoPath);
+    fs.readFile(indexPath, (err, content) => {
+      if (err) {
+        console.error(`Error reading static bundle index.html: ${err.message}`);
+        res.writeHead(500);
+        res.end('Error loading app');
+        return;
+      }
+      
+      res.writeHead(200, { 'Content-Type': 'text/html' });
+      res.end(content);
+    });
     return;
   }
   
-  // For all /app paths, proxy to Expo with the correct platform header
-  if (req.url.startsWith('/app/') && !req.url.startsWith('/app/api/')) {
-    // Strip the /app prefix and proxy to Expo
-    const expoPath = req.url.replace(/^\/app/, '');
-    console.log(`Proxying app request ${req.url} to Expo at ${expoPath}`);
+  // Handle static assets from the /app path
+  if (req.url.startsWith('/app/')) {
+    // Extract the file path by removing the /app prefix
+    const filePath = req.url.replace(/^\/app\//, '');
+    const fullPath = path.join(__dirname, 'static-bundle', filePath);
     
-    // Add the correct platform header for Expo
-    req.headers['expo-platform'] = 'web';
+    console.log(`Serving static file: ${fullPath}`);
     
-    // Proxy to Expo
-    proxyToExpo(req, res, expoPath);
+    // Check if the file exists
+    fs.access(fullPath, fs.constants.F_OK, (err) => {
+      if (err) {
+        console.error(`Static file not found: ${fullPath}`);
+        res.writeHead(404);
+        res.end('File not found');
+        return;
+      }
+      
+      // Read and serve the file
+      fs.readFile(fullPath, (err, content) => {
+        if (err) {
+          console.error(`Error reading file: ${err.message}`);
+          res.writeHead(500);
+          res.end('Error reading file');
+          return;
+        }
+        
+        const contentType = getContentType(fullPath);
+        res.writeHead(200, { 'Content-Type': contentType });
+        res.end(content);
+      });
+    });
     return;
   }
   

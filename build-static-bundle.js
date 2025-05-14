@@ -100,27 +100,79 @@ function createIndexHtml() {
   console.log(`Created index.html at ${indexPath}`);
 }
 
-// Run Metro bundler to create a JavaScript bundle
+// Build the web bundle using Expo's bundling tools
 function runMetroBundler() {
-  console.log('\nStarting Metro bundler...');
+  console.log('\nStarting Expo web build...');
   try {
-    // First try using the new Expo CLI syntax
-    const command = `npx react-native bundle ` +
-      `--entry-file ${ENTRY_FILE} ` +
-      `--platform web ` +
-      `--dev false ` +
-      `--bundle-output ${path.join(OUTPUT_DIR, 'main.bundle.js')} ` +
-      `--assets-dest ${OUTPUT_DIR}`;
+    // Create a temporary build script for Expo export
+    const buildScriptPath = path.join(__dirname, 'temp-build-script.js');
+    const buildScriptContent = `
+// Temporary script to build web bundle
+const { execSync } = require('child_process');
+const path = require('path');
+
+// Run the Expo build process
+console.log('Building Expo web bundle...');
+execSync('npx expo build:web --no-pwa', { 
+  stdio: 'inherit',
+  env: {
+    ...process.env,
+    // Force build mode
+    NODE_ENV: 'production',
+    // Prevent browser opening
+    BROWSER: 'none'
+  }
+});
+
+// Export completed
+console.log('Expo web build completed!');
+    `;
     
-    console.log(`Running command: ${command}\n`);
+    // Write the script to a file
+    fs.writeFileSync(buildScriptPath, buildScriptContent);
+    console.log(`Created temporary build script at ${buildScriptPath}`);
     
-    // Execute the command
-    execSync(command, { stdio: 'inherit' });
+    // Execute the build script
+    console.log('Running Expo web build...');
+    execSync(`node ${buildScriptPath}`, { stdio: 'inherit' });
     
-    console.log('\nMetro bundle created successfully!');
+    // Copy the build output to our static bundle directory
+    const webBuildDir = path.join(__dirname, 'web-build');
+    
+    if (fs.existsSync(webBuildDir)) {
+      console.log(`Copying build output from ${webBuildDir} to ${OUTPUT_DIR}`);
+      
+      // Copy all contents from web-build to output directory
+      const files = fs.readdirSync(webBuildDir);
+      for (const file of files) {
+        const sourcePath = path.join(webBuildDir, file);
+        const destPath = path.join(OUTPUT_DIR, file);
+        
+        if (fs.lstatSync(sourcePath).isDirectory()) {
+          // For directories, copy recursively
+          execSync(`cp -r "${sourcePath}" "${destPath}"`, { stdio: 'inherit' });
+        } else {
+          // For files, copy directly
+          fs.copyFileSync(sourcePath, destPath);
+        }
+      }
+      
+      // Clean up web-build directory
+      console.log('Cleaning up temporary web-build directory...');
+      fs.rmSync(webBuildDir, { recursive: true, force: true });
+    } else {
+      console.error(`Web build directory ${webBuildDir} not found!`);
+      return false;
+    }
+    
+    // Clean up temporary script
+    fs.unlinkSync(buildScriptPath);
+    console.log('Removed temporary build script');
+    
+    console.log('\nExpo web build completed successfully!');
     return true;
   } catch (error) {
-    console.error('\nMetro bundling failed:');
+    console.error('\nExpo web build failed:');
     console.error(error.message);
     return false;
   }
@@ -161,10 +213,7 @@ async function buildStaticBundle() {
   // Step 1: Prepare the output directory
   cleanOutputDir();
   
-  // Step 2: Create index.html
-  createIndexHtml();
-  
-  // Step 3: Run Metro bundler
+  // Step 2: Run Expo web bundler (will create index.html and all other required files)
   const bundleSuccess = runMetroBundler();
   
   if (!bundleSuccess) {
@@ -172,7 +221,7 @@ async function buildStaticBundle() {
     return;
   }
   
-  // Step 4: Copy any additional assets if needed
+  // Step 3: Copy any additional assets if needed
   copyAssets();
   
   console.log('\n✅ Static bundle build completed!');
