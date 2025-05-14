@@ -28157,6 +28157,19 @@ function ActivityLog(_ref) {
     _useState22 = _slicedToArray(_useState21, 2),
     wasSpeaker = _useState22[0],
     setWasSpeaker = _useState22[1];
+  // Call type checkboxes
+  var _useState23 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false),
+    _useState24 = _slicedToArray(_useState23, 2),
+    isSponsorCall = _useState24[0],
+    setIsSponsorCall = _useState24[1];
+  var _useState25 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false),
+    _useState26 = _slicedToArray(_useState25, 2),
+    isSponseeCall = _useState26[0],
+    setIsSponseeCall = _useState26[1];
+  var _useState27 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false),
+    _useState28 = _slicedToArray(_useState27, 2),
+    isAAMemberCall = _useState28[0],
+    setIsAAMemberCall = _useState28[1];
 
   // Reset additional fields when activity type changes
   (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(function () {
@@ -28166,6 +28179,9 @@ function ActivityLog(_ref) {
     setWasChair(false);
     setWasShare(false);
     setWasSpeaker(false);
+    setIsSponsorCall(false);
+    setIsSponseeCall(false);
+    setIsAAMemberCall(false);
   }, [activityType]);
 
   // Get duration options based on activity type
@@ -28207,6 +28223,9 @@ function ActivityLog(_ref) {
     if (activityType === 'meeting' && !meetingName.trim()) {
       newErrors.meetingName = 'Meeting name is required';
     }
+    if (activityType === 'call' && !isSponsorCall && !isSponseeCall && !isAAMemberCall) {
+      newErrors.callType = 'At least one call type must be selected';
+    }
 
     // If there are errors, show them and don't submit
     if (Object.keys(newErrors).length > 0) {
@@ -28237,6 +28256,22 @@ function ActivityLog(_ref) {
       newActivity.wasShare = wasShare;
       newActivity.wasSpeaker = wasSpeaker;
     }
+    if (activityType === 'call') {
+      newActivity.isSponsorCall = isSponsorCall;
+      newActivity.isSponseeCall = isSponseeCall;
+      newActivity.isAAMemberCall = isAAMemberCall;
+
+      // Determine the actual type for filtering/display purposes
+      if (isSponsorCall && !isSponseeCall && !isAAMemberCall) {
+        newActivity.callType = 'sponsor';
+      } else if (!isSponsorCall && isSponseeCall && !isAAMemberCall) {
+        newActivity.callType = 'sponsee';
+      } else if (!isSponsorCall && !isSponseeCall && isAAMemberCall) {
+        newActivity.callType = 'aa_call';
+      } else {
+        newActivity.callType = 'multiple'; // Multiple types selected
+      }
+    }
     console.log("Saving activity:", newActivity);
 
     // Save the activity
@@ -28246,8 +28281,11 @@ function ActivityLog(_ref) {
     setShowSuccess(true);
 
     // Reset form fields that should clear after submission
-    if (activityType !== 'meeting' && activityType !== 'literature') {
+    if (activityType === 'call') {
       setDuration('15');
+      setIsSponsorCall(false);
+      setIsSponseeCall(false);
+      setIsAAMemberCall(false);
       setNotes('');
     } else if (activityType === 'literature') {
       setDuration('15');
@@ -28259,6 +28297,9 @@ function ActivityLog(_ref) {
       setWasChair(false);
       setWasShare(false);
       setWasSpeaker(false);
+      setNotes('');
+    } else {
+      setDuration('15');
       setNotes('');
     }
 
@@ -28285,8 +28326,12 @@ function ActivityLog(_ref) {
         return 'fa-user-friends';
       case 'aa_call':
         return 'fa-phone-alt';
+      case 'call':
+        return 'fa-phone';
       case 'meeting':
         return 'fa-users';
+      case 'multiple':
+        return 'fa-phone';
       default:
         return 'fa-check-circle';
     }
@@ -28382,12 +28427,8 @@ function ActivityLog(_ref) {
   }, "Reading Literature"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("option", {
     value: "service"
   }, "Service Work"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("option", {
-    value: "sponsor"
-  }, "Sponsor Call"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("option", {
-    value: "sponsee"
-  }, "Sponsee Call"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("option", {
-    value: "aa_call"
-  }, "AA Member Call"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("option", {
+    value: "call"
+  }, "Call"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("option", {
     value: "meeting"
   }, "AA Meeting")), errors.activityType && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("p", {
     style: errorStyle
@@ -28405,7 +28446,71 @@ function ActivityLog(_ref) {
     }
   }, getDurationOptions()), errors.duration && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("p", {
     style: errorStyle
-  }, errors.duration)), activityType === 'literature' && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+  }, errors.duration)), activityType === 'call' && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+    style: {
+      marginBottom: '1rem'
+    }
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("label", {
+    style: _objectSpread(_objectSpread({}, labelStyle), {}, {
+      marginBottom: '0.5rem'
+    })
+  }, "Call Type"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+    style: checkboxStyle
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("input", {
+    type: "checkbox",
+    id: "isSponsorCall",
+    checked: isSponsorCall,
+    onChange: function onChange() {
+      return setIsSponsorCall(!isSponsorCall);
+    },
+    style: {
+      marginRight: '0.5rem'
+    }
+  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("label", {
+    htmlFor: "isSponsorCall",
+    style: {
+      fontSize: '0.875rem',
+      color: isDarkMode ? '#e5e7eb' : '#4b5563'
+    }
+  }, "Sponsor")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+    style: checkboxStyle
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("input", {
+    type: "checkbox",
+    id: "isSponseeCall",
+    checked: isSponseeCall,
+    onChange: function onChange() {
+      return setIsSponseeCall(!isSponseeCall);
+    },
+    style: {
+      marginRight: '0.5rem'
+    }
+  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("label", {
+    htmlFor: "isSponseeCall",
+    style: {
+      fontSize: '0.875rem',
+      color: isDarkMode ? '#e5e7eb' : '#4b5563'
+    }
+  }, "Sponsee")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+    style: checkboxStyle
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("input", {
+    type: "checkbox",
+    id: "isAAMemberCall",
+    checked: isAAMemberCall,
+    onChange: function onChange() {
+      return setIsAAMemberCall(!isAAMemberCall);
+    },
+    style: {
+      marginRight: '0.5rem'
+    }
+  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("label", {
+    htmlFor: "isAAMemberCall",
+    style: {
+      fontSize: '0.875rem',
+      color: isDarkMode ? '#e5e7eb' : '#4b5563'
+    }
+  }, "AA Member")), errors.callType && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("p", {
+    style: errorStyle
+  }, errors.callType)), activityType === 'literature' && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     style: {
       marginBottom: '1rem'
     }
@@ -28614,7 +28719,7 @@ function ActivityLog(_ref) {
         lineHeight: '1.2',
         marginBottom: '0.1rem'
       }
-    }, activity.type.charAt(0).toUpperCase() + activity.type.slice(1), activity.type === 'meeting' && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+    }, activity.type === 'call' ? 'Call' : activity.type.charAt(0).toUpperCase() + activity.type.slice(1), activity.type === 'meeting' && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
       style: {
         display: 'flex',
         marginLeft: '6px',
@@ -28647,7 +28752,40 @@ function ActivityLog(_ref) {
         color: darkMode ? '#c084fc' : '#7e22ce',
         fontWeight: 'bold'
       }
-    }, "Speaker"))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+    }, "Speaker")), activity.type === 'call' && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+      style: {
+        display: 'flex',
+        marginLeft: '6px',
+        gap: '4px'
+      }
+    }, activity.isSponsorCall && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("span", {
+      style: {
+        fontSize: '0.6rem',
+        padding: '1px 5px',
+        borderRadius: '10px',
+        backgroundColor: darkMode ? '#065f46' : '#d1fae5',
+        color: darkMode ? '#10b981' : '#047857',
+        fontWeight: 'bold'
+      }
+    }, "Sponsor"), activity.isSponseeCall && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("span", {
+      style: {
+        fontSize: '0.6rem',
+        padding: '1px 5px',
+        borderRadius: '10px',
+        backgroundColor: darkMode ? '#1e40af' : '#dbeafe',
+        color: darkMode ? '#60a5fa' : '#1e40af',
+        fontWeight: 'bold'
+      }
+    }, "Sponsee"), activity.isAAMemberCall && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("span", {
+      style: {
+        fontSize: '0.6rem',
+        padding: '1px 5px',
+        borderRadius: '10px',
+        backgroundColor: darkMode ? '#7e22ce' : '#f3e8ff',
+        color: darkMode ? '#c084fc' : '#7e22ce',
+        fontWeight: 'bold'
+      }
+    }, "AA Member"))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
       style: {
         display: 'flex',
         justifyContent: 'space-between',
@@ -29210,8 +29348,12 @@ function History(_ref) {
         return 'fa-user-friends';
       case 'aa_call':
         return 'fa-phone-alt';
+      case 'call':
+        return 'fa-phone';
       case 'meeting':
         return 'fa-users';
+      case 'multiple':
+        return 'fa-phone';
       default:
         return 'fa-check-circle';
     }

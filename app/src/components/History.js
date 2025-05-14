@@ -17,7 +17,9 @@ export default function History({ setCurrentView, activities }) {
       case 'sponsor': return 'fa-phone';
       case 'sponsee': return 'fa-user-friends';
       case 'aa_call': return 'fa-phone-alt';
+      case 'call': return 'fa-phone';
       case 'meeting': return 'fa-users';
+      case 'multiple': return 'fa-phone';
       default: return 'fa-check-circle';
     }
   };
