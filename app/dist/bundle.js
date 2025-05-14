@@ -28319,8 +28319,13 @@ function ActivityLog(_ref) {
     marginBottom: '0.5rem'
   };
 
-  // Sort activities by date (newest first)
-  var sortedActivities = activities ? _toConsumableArray(activities).sort(_utils_dateUtils__WEBPACK_IMPORTED_MODULE_1__.compareDatesForSorting) : [];
+  // Filter duplicate activities by ID and sort by date (newest first)
+  var sortedActivities = activities ? _toConsumableArray(activities) // Filter to make sure we don't have duplicate IDs
+  .filter(function (activity, index, self) {
+    return index === self.findIndex(function (a) {
+      return a.id === activity.id;
+    });
+  }).sort(_utils_dateUtils__WEBPACK_IMPORTED_MODULE_1__.compareDatesForSorting) : [];
   return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     className: "p-3 pb-16 max-w-md mx-auto"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
@@ -28743,7 +28748,12 @@ function Dashboard(_ref) {
     };
   }, [popoverRef, buttonRef]);
   // Get recent activities (last 5)
-  var recentActivities = activities ? _toConsumableArray(activities).sort(_utils_dateUtils__WEBPACK_IMPORTED_MODULE_2__.compareDatesForSorting).slice(0, 5) : [];
+  var recentActivities = activities ? _toConsumableArray(activities) // Filter to make sure we don't have duplicate IDs
+  .filter(function (activity, index, self) {
+    return index === self.findIndex(function (a) {
+      return a.id === activity.id;
+    });
+  }).sort(_utils_dateUtils__WEBPACK_IMPORTED_MODULE_2__.compareDatesForSorting).slice(0, 5) : [];
 
   // Use the shared date formatting function from utils
   var formatDate = _utils_dateUtils__WEBPACK_IMPORTED_MODULE_2__.formatDateForDisplay;

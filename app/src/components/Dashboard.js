@@ -40,7 +40,13 @@ export default function Dashboard({ setCurrentView, user, activities, spiritualF
   }, [popoverRef, buttonRef]);
   // Get recent activities (last 5)
   const recentActivities = activities
-    ? [...activities].sort(compareDatesForSorting).slice(0, 5)
+    ? [...activities]
+        // Filter to make sure we don't have duplicate IDs
+        .filter((activity, index, self) => 
+          index === self.findIndex(a => (a.id === activity.id))
+        )
+        .sort(compareDatesForSorting)
+        .slice(0, 5)
     : [];
 
   // Use the shared date formatting function from utils
