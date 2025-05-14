@@ -9,7 +9,7 @@ export default function History({ setCurrentView, activities }) {
   const darkMode = document.documentElement.classList.contains('dark');
   
   return (
-    <div className="p-4 pb-20 h-full overflow-y-auto">
+    <div className="p-4 pb-20 min-h-full">
       <div className="flex items-center mb-6">
         <button 
           className="mr-2 text-blue-500 dark:text-blue-400"
