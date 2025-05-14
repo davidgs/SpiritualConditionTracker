@@ -33,10 +33,20 @@ config.resolver.extraNodeModules = {
     path.resolve(projectRoot, 'node_modules', 'react-native-paper'),
 };
 
-// 4. Make Metro use the proper babel transformer
+// 4. Make Metro use the proper babel transformer with enhanced configuration
 config.transformer = {
   ...config.transformer,
   babelTransformerPath: require.resolve('metro-react-native-babel-transformer'),
+  assetPlugins: ['expo-asset/tools/hashAssetFiles'],
+  minifierConfig: {
+    keep_classnames: true,
+    keep_fnames: true,
+    mangle: {
+      toplevel: false,
+      keep_classnames: true,
+      keep_fnames: true,
+    },
+  },
 };
 
 // 5. Handle common asset extensions
@@ -45,9 +55,23 @@ config.resolver.assetExts = [
   'db',
   'sqlite',
   'ttf',
+  'otf',
   'obj',
   'png',
   'jpg',
+  'jpeg',
+  'svg',
+  'gif',
+  'webp',
+  'bmp',
+  'ico',
+];
+
+// 6. Ensure proper MIME type handling for web assets
+config.resolver.sourceExts = [
+  ...config.resolver.sourceExts, 
+  'jsx', 
+  'tsx',
 ];
 
 module.exports = config;

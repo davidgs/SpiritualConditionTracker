@@ -91,15 +91,15 @@ const server = http.createServer((req, res) => {
     return;
   }
   
-  // Check if this is an /app route - serve our app.html for the main route
+  // Serve the landing page for both /app and / routes for now
   if (req.url === '/app' || req.url === '/app/') {
-    // Use our custom app.html for the main /app route
-    const appPagePath = path.join(__dirname, 'app.html');
+    // For now, serve the landing page for /app route as well until we resolve the Metro bundle issues
+    const landingPagePath = path.join(__dirname, 'landing-page.html');
     
-    fs.readFile(appPagePath, (err, content) => {
+    fs.readFile(landingPagePath, (err, content) => {
       if (err) {
         res.writeHead(500);
-        res.end('Error loading app page');
+        res.end('Error loading landing page');
         return;
       }
       
@@ -119,9 +119,7 @@ const server = http.createServer((req, res) => {
     targetPath = targetPath.replace(/^\/app/, '');
     console.log(`App asset ${req.url} -> ${targetPath}`);
     
-    // Add special header to ensure we're requesting the app and not the landing page
-    req.headers['x-requested-app'] = 'true';
-    req.headers['expo-platform'] = 'web';
+    // Don't add problem-causing platform headers
     proxyToExpo(req, res, targetPath);
     return;
   }

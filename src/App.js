@@ -1,113 +1,20 @@
 import React from 'react';
-import { SafeAreaView, StyleSheet, StatusBar, View, Text, ActivityIndicator } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import Icon from 'react-native-vector-icons/FontAwesome5';
+import { View, Text, StyleSheet, SafeAreaView, StatusBar } from 'react-native';
 
-// Contexts
-import { UserProvider, useUser } from './contexts/UserContext';
-import { ActivitiesProvider } from './contexts/ActivitiesContext';
+// Minimal version for testing the Expo workflow
 
-// Import screens
-import DashboardScreen from './screens/DashboardScreen';
-import ActivityLogScreen from './screens/ActivityLogScreen';
-import SpiritualFitnessScreen from './screens/SpiritualFitnessScreen';
-import MeetingsScreen from './screens/MeetingsScreen';
-import ProximityWizardScreen from './screens/ProximityWizardScreen';
-import NearbyMembersScreen from './screens/NearbyMembersScreen';
-import SettingsScreen from './screens/SettingsScreen';
-
-// Initialize navigation
-const Tab = createBottomTabNavigator();
-const Stack = createNativeStackNavigator();
-
-// Loading screen while database initializes
-const LoadingScreen = () => (
-  <View style={styles.loadingContainer}>
-    <ActivityIndicator size="large" color="#0000ff" />
-    <Text style={styles.loadingText}>Loading AA Recovery Tracker...</Text>
-  </View>
-);
-
-// Main tab navigation
-const MainTabNavigator = () => {
-  return (
-    <Tab.Navigator
-      screenOptions={({ route }) => ({
-        tabBarIcon: ({ focused, color, size }) => {
-          let iconName;
-          
-          if (route.name === 'Dashboard') {
-            iconName = 'home';
-          } else if (route.name === 'Activities') {
-            iconName = 'list-alt';
-          } else if (route.name === 'Spiritual') {
-            iconName = 'heart';
-          } else if (route.name === 'Meetings') {
-            iconName = 'users';
-          } else if (route.name === 'Nearby') {
-            iconName = 'map-marker-alt';
-          } else if (route.name === 'Settings') {
-            iconName = 'cog';
-          }
-          
-          return <Icon name={iconName} size={size} color={color} />;
-        },
-        tabBarActiveTintColor: '#3498db',
-        tabBarInactiveTintColor: 'gray',
-        headerShown: false
-      })}
-    >
-      <Tab.Screen name="Dashboard" component={DashboardScreen} />
-      <Tab.Screen name="Activities" component={ActivityLogScreen} />
-      <Tab.Screen name="Spiritual" component={SpiritualFitnessScreen} />
-      <Tab.Screen name="Meetings" component={MeetingsScreen} />
-      <Tab.Screen name="Nearby" component={NearbyStackNavigator} />
-      <Tab.Screen name="Settings" component={SettingsScreen} />
-    </Tab.Navigator>
-  );
-};
-
-// Nested stack navigator for nearby screens
-const NearbyStackNavigator = () => {
-  return (
-    <Stack.Navigator
-      screenOptions={{
-        headerShown: false
-      }}
-    >
-      <Stack.Screen name="NearbyMembers" component={NearbyMembersScreen} />
-      <Stack.Screen name="ProximityWizard" component={ProximityWizardScreen} />
-    </Stack.Navigator>
-  );
-};
-
-// App container with context providers
-const AppContainer = () => {
-  const { isLoading } = useUser();
-  
-  if (isLoading) {
-    return <LoadingScreen />;
-  }
-  
-  return (
-    <NavigationContainer>
-      <MainTabNavigator />
-    </NavigationContainer>
-  );
-};
-
-// Root component with providers
 const App = () => {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="dark-content" />
-      <UserProvider>
-        <ActivitiesProvider>
-          <AppContainer />
-        </ActivitiesProvider>
-      </UserProvider>
+      <View style={styles.content}>
+        <Text style={styles.title}>Spiritual Condition Tracker</Text>
+        <Text style={styles.subtitle}>AA Recovery App</Text>
+        <View style={styles.card}>
+          <Text style={styles.cardText}>Welcome to your recovery journey</Text>
+          <Text style={styles.cardSubText}>This app will help you track your spiritual condition and recovery progress</Text>
+        </View>
+      </View>
     </SafeAreaView>
   );
 };
@@ -115,19 +22,48 @@ const App = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff'
+    backgroundColor: '#f5f5f5',
   },
-  loadingContainer: {
+  content: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#f5f5f5'
+    padding: 20,
   },
-  loadingText: {
-    marginTop: 20,
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 10,
+    color: '#2c3e50',
+  },
+  subtitle: {
     fontSize: 18,
-    color: '#333'
-  }
+    marginBottom: 30,
+    color: '#34495e',
+  },
+  card: {
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    padding: 20,
+    width: '100%',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  cardText: {
+    fontSize: 18,
+    fontWeight: '500',
+    marginBottom: 10,
+    color: '#3498db',
+  },
+  cardSubText: {
+    fontSize: 14,
+    color: '#7f8c8d',
+    textAlign: 'center',
+  },
 });
 
 export default App;
