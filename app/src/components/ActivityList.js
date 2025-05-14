@@ -32,6 +32,7 @@ export default function ActivityList({
   
   // Filter activities
   const today = new Date();
+  // Create a new copy of the activities array to avoid mutation issues
   const filteredActivities = activities
     ? [...activities]
         // Filter to make sure we don't have duplicate IDs
@@ -49,8 +50,14 @@ export default function ActivityList({
           const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
           return diffDays <= maxDaysAgo;
         })
-        // Sort by date (newest first)
-        .sort(compareDatesForSorting)
+        // Force proper date sorting (newest first)
+        .sort((a, b) => {
+          // Explicit conversion to ensure we're comparing dates correctly
+          const dateA = new Date(a.date);
+          const dateB = new Date(b.date);
+          // Sort in descending order (newest first)
+          return dateB - dateA;
+        })
         // Limit the number of activities if specified
         .slice(0, limit || activities.length)
     : [];
