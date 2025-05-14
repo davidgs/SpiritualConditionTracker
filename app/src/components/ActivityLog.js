@@ -46,7 +46,13 @@ export default function ActivityLog({ setCurrentView, onSave, activities }) {
 
   // Reset additional fields when activity type changes
   useEffect(() => {
-    setDuration('15'); // Default duration for all
+    // Set default duration based on activity type
+    if (activityType === 'meeting') {
+      setDuration('60'); // Default duration for meetings is 60 minutes
+    } else {
+      setDuration('15'); // Default duration for other activities
+    }
+    
     setLiteratureTitle('');
     setMeetingName('');
     setWasChair(false);
