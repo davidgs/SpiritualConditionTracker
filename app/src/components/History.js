@@ -11,12 +11,6 @@ export default function History({ setCurrentView, activities }) {
   return (
     <div className="p-4 pb-20 content-scrollable">
       <div className="flex items-center mb-6">
-        <button 
-          className="mr-2 text-blue-500 dark:text-blue-400"
-          onClick={() => setCurrentView('dashboard')}
-        >
-          <i className="fas fa-arrow-left"></i>
-        </button>
         <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">Activity History</h1>
       </div>
       
