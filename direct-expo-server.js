@@ -1,17 +1,42 @@
 /**
- * Direct server on port 5000 - modified to serve index.html without starting Expo
+ * Direct Expo server on port 5000 with header fix
+ * This is a minimal wrapper to make the expo-platform header work correctly
  */
 
 const http = require('http');
+const { spawn } = require('child_process');
 const path = require('path');
 const fs = require('fs');
 const url = require('url');
 
 // Configuration for direct access
 const PORT = 5000;
-const WEBPACK_PORT = 19006; // Not used, but kept for compatibility
+const WEBPACK_PORT = 19006;
 
-// No Expo server is started, we'll just serve static content
+// Spawn Expo in the background
+console.log('Starting Expo bundler in the background...');
+
+// Start Expo web on port 19006
+const expo = spawn('npx', [
+  'expo',
+  'start',
+  '--web',
+  '--no-dev',
+  '--port', '3243', // Use a different port for native, we'll use webpack port
+  '--host', '0.0.0.0'
+], {
+  stdio: 'inherit',
+  env: {
+    ...process.env,
+    BROWSER: 'none',
+    CI: '1',
+    EXPO_WEB_PORT: WEBPACK_PORT.toString(),
+    PUBLIC_URL: '',
+    BASE_PATH: ''
+  }
+});
+
+console.log(`Started Expo on webpack port ${WEBPACK_PORT}`);
 
 // Our server will handle both the landing page and the Expo app
 const server = http.createServer((req, res) => {
@@ -21,9 +46,9 @@ const server = http.createServer((req, res) => {
   
   // Serve our custom landing page for the root route only - but not for app.html requests
   if ((targetPath === '/' || targetPath === '') && !req.url.startsWith('/app') && !req.url.includes('app.html')) {
-    const indexPath = path.join(__dirname, 'index.html');
+    const landingPagePath = path.join(__dirname, 'landing-page.html');
     
-    fs.readFile(indexPath, (err, content) => {
+    fs.readFile(landingPagePath, (err, content) => {
       if (err) {
         res.writeHead(500);
         res.end('Error loading landing page');
@@ -66,137 +91,24 @@ const server = http.createServer((req, res) => {
     return;
   }
   
-  // Handle /app route with a simple app placeholder
+  // Handle /app route by serving our static bundle
   if (req.url === '/app' || req.url === '/app/') {
-    console.log(`Serving app at ${req.url}`);
+    console.log(`Serving static bundle at ${req.url}`);
     
-    // Create a simplified app placeholder
-    const appHtml = `<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Spiritual Condition Tracker</title>
-  <style>
-    body, html {
-      height: 100%;
-      margin: 0;
-      padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background-color: #f5f5f5;
-      color: #333;
-    }
-    .app-container {
-      display: flex;
-      flex-direction: column;
-      min-height: 100vh;
-    }
-    header {
-      background-color: #3498db;
-      color: white;
-      padding: 16px;
-      text-align: center;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-    .content {
-      flex: 1;
-      padding: 20px;
-      max-width: 800px;
-      margin: 0 auto;
-    }
-    .card {
-      background-color: white;
-      border-radius: 8px;
-      padding: 20px;
-      margin-bottom: 20px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-    footer {
-      background-color: #34495e;
-      color: white;
-      padding: 16px;
-      text-align: center;
-    }
-    .status {
-      padding: 16px;
-      margin: 20px 0;
-      background-color: #f8d7da;
-      color: #721c24;
-      border: 1px solid #f5c6cb;
-      border-radius: 4px;
-      text-align: center;
-    }
-    h1 { margin: 0; font-size: 24px; }
-    h2 { margin-top: 0; color: #2c3e50; }
-    p { line-height: 1.6; }
-    .counter {
-      display: flex;
-      justify-content: space-around;
-      margin-top: 20px;
-      text-align: center;
-    }
-    .counter-item {
-      padding: 10px;
-    }
-    .counter-value {
-      font-size: 36px;
-      font-weight: bold;
-      color: #3498db;
-    }
-    .counter-label {
-      font-size: 14px;
-      color: #7f8c8d;
-      margin-top: 5px;
-    }
-  </style>
-</head>
-<body>
-  <div class="app-container">
-    <header>
-      <h1>Spiritual Condition Tracker</h1>
-    </header>
+    // Serve the index.html file from the static-bundle directory
+    const indexPath = path.join(__dirname, 'static-bundle', 'index.html');
     
-    <div class="content">
-      <div class="status">
-        <strong>Development Mode:</strong> This is a preview of the application. The Expo development server is not running.
-      </div>
+    fs.readFile(indexPath, (err, content) => {
+      if (err) {
+        console.error(`Error reading static bundle index.html: ${err.message}`);
+        res.writeHead(500);
+        res.end('Error loading app');
+        return;
+      }
       
-      <div class="card">
-        <h2>Recovery Dashboard</h2>
-        <p>Welcome to your spiritual condition tracker. This application helps you monitor your recovery journey and track your spiritual fitness.</p>
-        
-        <div class="counter">
-          <div class="counter-item">
-            <div class="counter-value">2.45</div>
-            <div class="counter-label">Years Sober</div>
-          </div>
-          <div class="counter-item">
-            <div class="counter-value">128</div>
-            <div class="counter-label">Meetings Attended</div>
-          </div>
-          <div class="counter-item">
-            <div class="counter-value">85%</div>
-            <div class="counter-label">Spiritual Fitness</div>
-          </div>
-        </div>
-      </div>
-      
-      <div class="card">
-        <h2>Development Notes</h2>
-        <p>The full application cannot be displayed because the Expo development server is not running properly. This is a placeholder interface showing the basic concept of the application.</p>
-        <p>To run the full application, please resolve the webpack dependency issues or run the application on a physical device using the Expo Go app.</p>
-      </div>
-    </div>
-    
-    <footer>
-      Spiritual Condition Tracker - AA Recovery App
-    </footer>
-  </div>
-</body>
-</html>`;
-    
-    res.writeHead(200, { 'Content-Type': 'text/html' });
-    res.end(appHtml);
+      res.writeHead(200, { 'Content-Type': 'text/html' });
+      res.end(content);
+    });
     return;
   }
   
@@ -266,7 +178,8 @@ function getContentType(filePath) {
 
 // Helper function to proxy requests to Expo
 function proxyToExpo(req, res, targetPath) {
-  // Add expo-platform header to help with routing
+  // Don't add platform parameters as they're causing issues with Expo server
+  
   const options = {
     hostname: 'localhost',
     port: WEBPACK_PORT,
@@ -275,12 +188,13 @@ function proxyToExpo(req, res, targetPath) {
     headers: {
       ...req.headers,
       host: `localhost:${WEBPACK_PORT}`,
-      'expo-platform': 'web',
+      // Use either ios or android as the platform for Native Expo requests
+      // 'expo-platform': 'ios',
       'x-forwarded-proto': 'http'
     }
   };
 
-  console.log(`Proxying request ${req.url} to Expo at ${targetPath}`);
+  console.log(`Proxying request ${req.url} to ${targetPath}`);
 
   // Create proxy request
   const proxyReq = http.request(options, (proxyRes) => {
@@ -296,13 +210,13 @@ function proxyToExpo(req, res, targetPath) {
     console.error(`Proxy error for ${req.url}: ${err.message}`);
     
     if (err.code === 'ECONNREFUSED') {
-      // Show a basic loading page that auto-refreshes
-      const loadingPage = `
+      // Expo is still starting up
+      // Create a temporary HTML page that will retry automatically
+      const retryHtml = `
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Loading Application</title>
-  <meta http-equiv="refresh" content="5">
+  <title>Connecting to Expo...</title>
   <style>
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -340,19 +254,55 @@ function proxyToExpo(req, res, targetPath) {
       color: #7f8c8d;
       margin-bottom: 1.5rem;
     }
+    .retry-counter {
+      font-size: 0.8rem;
+      color: #95a5a6;
+    }
   </style>
 </head>
 <body>
   <div class="container">
     <div class="spinner"></div>
-    <h2>Starting Application</h2>
-    <p>Please wait while the application loads. This page will refresh automatically every 5 seconds.</p>
+    <h2>Connecting to the Application</h2>
+    <p>The application server is starting up. This page will automatically reconnect when it's ready.</p>
+    <div class="retry-counter">Retry attempt: <span id="count">1</span></div>
   </div>
+
+  <script>
+    let count = 1;
+    const countEl = document.getElementById('count');
+    
+    // Retry connection every 2 seconds
+    function retryConnection() {
+      count++;
+      countEl.textContent = count;
+      
+      // Fetch the current URL
+      fetch(window.location.href)
+        .then(response => {
+          if (response.status === 200) {
+            // If successful, reload the page
+            window.location.reload();
+          } else {
+            // Try again in 2 seconds
+            setTimeout(retryConnection, 2000);
+          }
+        })
+        .catch(error => {
+          // Error connecting, try again in 2 seconds
+          setTimeout(retryConnection, 2000);
+        });
+    }
+    
+    // Start the retry process after 3 seconds
+    setTimeout(retryConnection, 3000);
+  </script>
 </body>
-</html>`;
+</html>
+      `;
       
       res.writeHead(503, { 'Content-Type': 'text/html' });
-      res.end(loadingPage);
+      res.end(retryHtml);
     } else {
       res.writeHead(500);
       res.end(`Server error: ${err.message}`);
