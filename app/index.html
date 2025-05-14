@@ -12,13 +12,45 @@
   
   <link rel="icon" type="image/jpg" href="/logo.jpg">
   
-  <!-- Load the database module first -->
-  <script src="database.js"></script>
-  
-  <!-- Load React and ReactDOM for component support -->
+  <!-- Load React and ReactDOM -->
   <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
   <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  
+  <!-- Custom styles -->
+  <style>
+    /* Card styles */
+    .card {
+      @apply bg-white rounded-lg shadow-md p-4 mb-4;
+    }
+    
+    /* Button styles */
+    .btn-primary {
+      @apply bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition;
+    }
+    
+    /* Container styles */
+    .container-custom {
+      @apply max-w-6xl mx-auto px-4;
+    }
+    
+    /* App styles */
+    .app-container {
+      @apply max-w-md mx-auto px-4 pb-20 pt-4;
+    }
+  </style>
+  
+  <!-- Load the database module first -->
+  <script src="database.js"></script>
+  
+  <!-- Load all components -->
+  <script type="text/babel" src="components/NavBar.js"></script>
+  <script type="text/babel" src="components/Dashboard.js"></script>
+  <script type="text/babel" src="components/ActivityLog.js"></script>
+  <script type="text/babel" src="components/SpiritualFitness.js"></script>
+  <script type="text/babel" src="components/History.js"></script>
+  <script type="text/babel" src="components/NearbyMembers.js"></script>
+  <script type="text/babel" src="components/Profile.js"></script>
   
   <!-- Then load the main app module last -->
   <script type="text/babel" src="app.js"></script>
@@ -26,9 +58,11 @@
 <body>
   <div id="root">
     <!-- App will be loaded here -->
-    <div class="loading-container">
-      <div class="loading-spinner"></div>
-      <p>Loading Spiritual Condition Tracker...</p>
+    <div class="flex justify-center items-center h-screen">
+      <div class="text-center">
+        <div class="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+        <p class="text-gray-600">Loading Spiritual Condition Tracker...</p>
+      </div>
     </div>
   </div>
 </body>

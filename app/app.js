@@ -1,52 +1,11 @@
 // Main React App for Spiritual Condition Tracker
 
-// Import the components at the top level
-// Note: These import statements are handled by Babel in the browser
-const Dashboard = window.Dashboard;
-const ActivityLog = window.ActivityLog;
-const SpiritualFitness = window.SpiritualFitness;
-const History = window.History;
-const NavBar = window.NavBar;
-const NearbyMembers = window.NearbyMembers;
-const Profile = window.Profile;
-
 // Wait for DOM & React to load
 document.addEventListener('DOMContentLoaded', function() {
-  // First load all component scripts
-  loadComponents().then(() => {
-    initApp();
-  });
+  // Initialize the app once the DOM is loaded
+  console.log('DOM loaded, initializing app');
+  initApp();
 });
-
-// Function to dynamically load component scripts
-async function loadComponents() {
-  const components = [
-    'Dashboard', 
-    'ActivityLog', 
-    'SpiritualFitness', 
-    'History', 
-    'NavBar', 
-    'NearbyMembers', 
-    'Profile'
-  ];
-  
-  // Load each component script
-  for (const component of components) {
-    await loadScript(`/app/components/${component}.js`);
-  }
-}
-
-// Helper function to load a script and wait for it to load
-function loadScript(src) {
-  return new Promise((resolve, reject) => {
-    const script = document.createElement('script');
-    script.type = 'text/babel';
-    script.src = src;
-    script.onload = () => resolve();
-    script.onerror = (err) => reject(err);
-    document.head.appendChild(script);
-  });
-}
 
 /**
  * Initialize the application
