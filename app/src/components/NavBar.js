@@ -2,7 +2,7 @@ import React from 'react';
 
 export default function NavBar({ currentView, setCurrentView }) {
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200">
+    <nav className="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
       <div className="max-w-md mx-auto flex justify-around">
         <NavButton 
           icon="fa-home" 
@@ -48,8 +48,8 @@ function NavButton({ icon, label, isActive, onClick }) {
     <button 
       className={`flex flex-col items-center py-2 px-4 ${
         isActive 
-          ? 'text-blue-500 border-t-2 border-blue-500 -mt-px' 
-          : 'text-gray-500'
+          ? 'text-blue-500 dark:text-blue-400 border-t-2 border-blue-500 dark:border-blue-400 -mt-px' 
+          : 'text-gray-500 dark:text-gray-400'
       }`}
       onClick={onClick}
     >

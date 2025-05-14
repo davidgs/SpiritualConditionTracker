@@ -2,6 +2,7 @@ import React from 'react';
 import { createRoot } from 'react-dom/client';
 import App from './App';
 import './styles/main.css';
+import '../styles/tailwind.css';
 
 // Wait for DOM to be ready
 document.addEventListener('DOMContentLoaded', async () => {

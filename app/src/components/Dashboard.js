@@ -39,8 +39,8 @@ export default function Dashboard({ setCurrentView, user, activities, spiritualF
     <div className="p-4 pb-20 max-w-md mx-auto">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-800">Your Dashboard</h1>
-          <p className="text-sm text-gray-500">Track your spiritual journey</p>
+          <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">Your Dashboard</h1>
+          <p className="text-sm text-gray-500 dark:text-gray-400">Track your spiritual journey</p>
         </div>
         <img 
           src={logoImg} 
@@ -52,18 +52,18 @@ export default function Dashboard({ setCurrentView, user, activities, spiritualF
       
       {/* Sobriety & Spiritual Fitness Stats */}
       <div className="grid grid-cols-2 gap-4 mb-6">
-        <div className="bg-white rounded-lg border border-gray-200 p-4 text-center">
-          <h3 className="text-md font-medium text-gray-700 mb-1">Sobriety</h3>
-          <div className="text-3xl font-bold text-blue-500 mb-1">{sobrietyDays}</div>
-          <div className="text-sm text-gray-500">days</div>
-          <div className="text-sm text-gray-700 mt-1">{sobrietyYears} years</div>
+        <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4 text-center">
+          <h3 className="text-md font-medium text-gray-700 dark:text-gray-300 mb-1">Sobriety</h3>
+          <div className="text-3xl font-bold text-blue-500 dark:text-blue-400 mb-1">{sobrietyDays}</div>
+          <div className="text-sm text-gray-500 dark:text-gray-400">days</div>
+          <div className="text-sm text-gray-700 dark:text-gray-300 mt-1">{sobrietyYears} years</div>
         </div>
-        <div className="bg-white rounded-lg border border-gray-200 p-4 text-center">
-          <h3 className="text-md font-medium text-gray-700 mb-1">Spiritual Fitness</h3>
-          <div className="text-3xl font-bold text-green-500 mb-1">{spiritualFitness}</div>
-          <div className="text-sm text-gray-500">weekly score</div>
+        <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4 text-center">
+          <h3 className="text-md font-medium text-gray-700 dark:text-gray-300 mb-1">Spiritual Fitness</h3>
+          <div className="text-3xl font-bold text-green-500 dark:text-green-400 mb-1">{spiritualFitness}</div>
+          <div className="text-sm text-gray-500 dark:text-gray-400">weekly score</div>
           <button 
-            className="text-blue-500 text-xs mt-1"
+            className="text-blue-500 dark:text-blue-400 text-xs mt-1"
             onClick={() => alert('Spiritual fitness is calculated based on your logged prayer, meditation, literature reading, meetings, and service work over the past 7 days. Higher scores reflect greater spiritual engagement.')}
           >
             How is this calculated?
@@ -72,11 +72,11 @@ export default function Dashboard({ setCurrentView, user, activities, spiritualF
       </div>
       
       {/* Recent Activities Section */}
-      <div className="bg-white rounded-lg border border-gray-200 p-4 mb-6">
+      <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4 mb-6">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-lg font-medium text-gray-800">Recent Activities</h2>
+          <h2 className="text-lg font-medium text-gray-800 dark:text-gray-200">Recent Activities</h2>
           <button 
-            className="text-blue-500 text-sm"
+            className="text-blue-500 dark:text-blue-400 text-sm"
             onClick={() => setCurrentView('history')}
           >
             View All
@@ -86,27 +86,27 @@ export default function Dashboard({ setCurrentView, user, activities, spiritualF
         {recentActivities.length > 0 ? (
           <div className="space-y-3">
             {recentActivities.map(activity => (
-              <div key={activity.id} className="flex items-center border-b border-gray-100 pb-3">
-                <div className="bg-blue-50 h-10 w-10 rounded-full flex items-center justify-center mr-3">
-                  <i className={`fas ${getActivityIcon(activity.type)} text-blue-500`}></i>
+              <div key={activity.id} className="flex items-center border-b border-gray-100 dark:border-gray-700 pb-3">
+                <div className="bg-blue-50 dark:bg-blue-900 h-10 w-10 rounded-full flex items-center justify-center mr-3">
+                  <i className={`fas ${getActivityIcon(activity.type)} text-blue-500 dark:text-blue-400`}></i>
                 </div>
                 <div className="flex-grow">
-                  <div className="font-medium">{activity.type.charAt(0).toUpperCase() + activity.type.slice(1)}</div>
-                  <div className="text-sm text-gray-500">
+                  <div className="font-medium text-gray-800 dark:text-gray-200">{activity.type.charAt(0).toUpperCase() + activity.type.slice(1)}</div>
+                  <div className="text-sm text-gray-500 dark:text-gray-400">
                     {activity.duration ? `${activity.duration} minutes` : 'Completed'} 
                     {activity.notes ? ` - ${activity.notes}` : ''}
                   </div>
                 </div>
-                <div className="text-xs text-gray-400">{formatDate(activity.date)}</div>
+                <div className="text-xs text-gray-400 dark:text-gray-500">{formatDate(activity.date)}</div>
               </div>
             ))}
           </div>
         ) : (
-          <div className="text-center py-6 bg-gray-50 rounded-lg">
-            <i className="fas fa-clipboard-list text-3xl text-gray-300 mb-2"></i>
-            <p className="text-gray-600 mb-2">No activities recorded yet</p>
+          <div className="text-center py-6 bg-gray-50 dark:bg-gray-700 rounded-lg">
+            <i className="fas fa-clipboard-list text-3xl text-gray-300 dark:text-gray-500 mb-2"></i>
+            <p className="text-gray-600 dark:text-gray-400 mb-2">No activities recorded yet</p>
             <button 
-              className="mt-2 bg-blue-500 text-white px-4 py-2 rounded"
+              className="mt-2 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
               onClick={() => setCurrentView('activity')}
             >
               Log Activity
@@ -118,14 +118,14 @@ export default function Dashboard({ setCurrentView, user, activities, spiritualF
       {/* Quick Actions */}
       <div className="grid grid-cols-2 gap-4">
         <button 
-          className="bg-blue-500 text-white p-3 rounded-lg flex flex-col items-center"
+          className="bg-blue-500 hover:bg-blue-600 text-white p-3 rounded-lg flex flex-col items-center transition-colors"
           onClick={() => setCurrentView('activity')}
         >
           <i className="fas fa-plus-circle text-xl mb-1"></i>
           <span>Log Activity</span>
         </button>
         <button 
-          className="bg-green-500 text-white p-3 rounded-lg flex flex-col items-center"
+          className="bg-green-500 hover:bg-green-600 text-white p-3 rounded-lg flex flex-col items-center transition-colors"
           onClick={() => setCurrentView('nearby')}
         >
           <i className="fas fa-users text-xl mb-1"></i>
