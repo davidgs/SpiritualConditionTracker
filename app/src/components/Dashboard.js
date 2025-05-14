@@ -39,38 +39,12 @@ export default function Dashboard({ setCurrentView, user, activities, spiritualF
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [popoverRef, buttonRef]);
-  // Get recent activities (last 5)
-  const recentActivities = activities
-    ? [...activities]
-        // Filter to make sure we don't have duplicate IDs
-        .filter((activity, index, self) => 
-          index === self.findIndex(a => (a.id === activity.id))
-        )
-        .sort(compareDatesForSorting)
-        .slice(0, 5)
-    : [];
-
   // Use the shared date formatting function from utils
   const formatDate = formatDateForDisplay;
 
   // Format number with thousands separator
   const formatNumber = (number) => {
     return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-  };
-
-  // Get icon for activity type
-  const getActivityIcon = (type) => {
-    switch (type) {
-      case 'prayer': return 'fa-pray';
-      case 'meditation': return 'fa-om';
-      case 'literature': return 'fa-book-open';
-      case 'service': return 'fa-hands-helping';
-      case 'sponsor': return 'fa-phone';
-      case 'sponsee': return 'fa-user-friends';
-      case 'aa_call': return 'fa-phone-alt';
-      case 'meeting': return 'fa-users';
-      default: return 'fa-check-circle';
-    }
   };
 
   // Calculate sobriety information if user has a sobriety date
@@ -364,154 +338,14 @@ export default function Dashboard({ setCurrentView, user, activities, spiritualF
           </button>
         </div>
         
-        {recentActivities.length > 0 ? (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
-            {recentActivities.map(activity => (
-              <div key={activity.id} style={{
-                display: 'flex',
-                alignItems: 'center',
-                borderBottom: darkMode ? '1px solid #374151' : '1px solid #f3f4f6',
-                paddingBottom: '0.25rem',
-                marginBottom: '0.25rem'
-              }}>
-                <div style={{
-                  width: '1.5rem',
-                  height: '1.5rem',
-                  borderRadius: '50%',
-                  backgroundColor: darkMode ? '#1e3a8a' : '#dbeafe',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  marginRight: '0.5rem'
-                }}>
-                  <i className={`fas ${getActivityIcon(activity.type)}`} style={{
-                    fontSize: '0.7rem',
-                    color: darkMode ? '#60a5fa' : '#3b82f6'
-                  }}></i>
-                </div>
-                <div style={{ flexGrow: 1 }}>
-                  <div style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    fontWeight: 500,
-                    fontSize: '0.8rem',
-                    color: darkMode ? '#e5e7eb' : '#374151',
-                    lineHeight: '1.1',
-                    marginBottom: '0.1rem'
-                  }}>
-                    {/* For call types, show the appropriate label */}
-                    {activity.type === 'call' 
-                      ? 'Call' 
-                      : activity.type.charAt(0).toUpperCase() + activity.type.slice(1)}
-                    
-                    {/* Add role pills for meetings */}
-                    {activity.type === 'meeting' && (
-                      <div style={{ display: 'flex', marginLeft: '6px', gap: '4px' }}>
-                        {activity.wasChair && (
-                          <span style={{
-                            fontSize: '0.6rem',
-                            padding: '1px 5px',
-                            borderRadius: '10px',
-                            backgroundColor: darkMode ? '#065f46' : '#d1fae5',
-                            color: darkMode ? '#10b981' : '#047857',
-                            fontWeight: 'bold'
-                          }}>Chair</span>
-                        )}
-                        {activity.wasShare && (
-                          <span style={{
-                            fontSize: '0.6rem',
-                            padding: '1px 5px',
-                            borderRadius: '10px',
-                            backgroundColor: darkMode ? '#1e40af' : '#dbeafe',
-                            color: darkMode ? '#60a5fa' : '#1e40af',
-                            fontWeight: 'bold'
-                          }}>Share</span>
-                        )}
-                        {activity.wasSpeaker && (
-                          <span style={{
-                            fontSize: '0.6rem',
-                            padding: '1px 5px',
-                            borderRadius: '10px',
-                            backgroundColor: darkMode ? '#7e22ce' : '#f3e8ff',
-                            color: darkMode ? '#c084fc' : '#7e22ce',
-                            fontWeight: 'bold'
-                          }}>Speaker</span>
-                        )}
-                      </div>
-                    )}
-                    
-                    {/* Add pills for call types */}
-                    {activity.type === 'call' && (
-                      <div style={{ display: 'flex', marginLeft: '6px', gap: '4px' }}>
-                        {activity.isSponsorCall && (
-                          <span style={{
-                            fontSize: '0.6rem',
-                            padding: '1px 5px',
-                            borderRadius: '10px',
-                            backgroundColor: darkMode ? '#065f46' : '#d1fae5',
-                            color: darkMode ? '#10b981' : '#047857',
-                            fontWeight: 'bold'
-                          }}>Sponsor</span>
-                        )}
-                        {activity.isSponseeCall && (
-                          <span style={{
-                            fontSize: '0.6rem',
-                            padding: '1px 5px',
-                            borderRadius: '10px',
-                            backgroundColor: darkMode ? '#1e40af' : '#dbeafe',
-                            color: darkMode ? '#60a5fa' : '#1e40af',
-                            fontWeight: 'bold'
-                          }}>Sponsee</span>
-                        )}
-                        {activity.isAAMemberCall && (
-                          <span style={{
-                            fontSize: '0.6rem',
-                            padding: '1px 5px',
-                            borderRadius: '10px',
-                            backgroundColor: darkMode ? '#7e22ce' : '#f3e8ff',
-                            color: darkMode ? '#c084fc' : '#7e22ce',
-                            fontWeight: 'bold'
-                          }}>AA Member</span>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                  <div style={{
-                    fontSize: '0.7rem',
-                    color: darkMode ? '#9ca3af' : '#6b7280',
-                    lineHeight: '1.1'
-                  }}>
-                    {activity.duration ? `${activity.duration} min` : 'Done'} 
-                    {activity.meetingName ? ` - ${activity.meetingName}` : ''}
-                    {activity.literatureTitle ? ` - ${activity.literatureTitle}` : ''}
-                    {activity.notes && !activity.meetingName && !activity.literatureTitle ? ` - ${activity.notes}` : ''}
-                  </div>
-                </div>
-                <div style={{
-                  fontSize: '0.65rem',
-                  color: darkMode ? '#6b7280' : '#9ca3af'
-                }}>{formatDate(activity.date)}</div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div style={{
-            textAlign: 'center',
-            padding: '0.75rem',
-            backgroundColor: darkMode ? '#374151' : '#f9fafb',
-            borderRadius: '0.375rem'
-          }}>
-            <p style={{
-              fontSize: '0.8rem',
-              color: darkMode ? '#9ca3af' : '#6b7280'
-            }}>No activities recorded yet</p>
-            <p style={{
-              fontSize: '0.7rem',
-              color: darkMode ? '#6b7280' : '#9ca3af',
-              marginTop: '0.25rem'
-            }}>Use the navigation to log a new activity</p>
-          </div>
-        )}
+        {/* Use the reusable ActivityList component */}
+        <ActivityList 
+          activities={activities}
+          darkMode={darkMode}
+          limit={5}
+          maxDaysAgo={7}
+          showDate={true}
+        />
       </div>
       
       {/* No quick actions - they've been removed */}

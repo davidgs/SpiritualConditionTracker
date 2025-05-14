@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { formatDateForDisplay, compareDatesForSorting } from '../utils/dateUtils';
+import { formatDateForDisplay } from '../utils/dateUtils';
+import ActivityList from './ActivityList';
 
 export default function ActivityLog({ setCurrentView, onSave, activities }) {
   // Check for dark mode

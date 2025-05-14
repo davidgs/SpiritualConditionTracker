@@ -1,39 +1,12 @@
 import React, { useState } from 'react';
-import { formatDateForDisplay, compareDatesForSorting } from '../utils/dateUtils';
+import { formatDateForDisplay } from '../utils/dateUtils';
+import ActivityList from './ActivityList';
 
 export default function History({ setCurrentView, activities }) {
   const [filter, setFilter] = useState('all');
   
-  // Use the shared date formatting function from utils
-  const formatDate = formatDateForDisplay;
-  
-  // Get icon for activity type
-  const getActivityIcon = (type) => {
-    switch (type) {
-      case 'prayer': return 'fa-pray';
-      case 'meditation': return 'fa-om';
-      case 'literature': return 'fa-book-open';
-      case 'service': return 'fa-hands-helping';
-      case 'sponsor': return 'fa-phone';
-      case 'sponsee': return 'fa-user-friends';
-      case 'aa_call': return 'fa-phone-alt';
-      case 'call': return 'fa-phone';
-      case 'meeting': return 'fa-users';
-      case 'multiple': return 'fa-phone';
-      default: return 'fa-check-circle';
-    }
-  };
-  
-  // Filter activities based on selected filter
-  const filteredActivities = activities
-    ? activities
-        // Filter to make sure we don't have duplicate IDs
-        .filter((activity, index, self) => 
-          index === self.findIndex(a => (a.id === activity.id))
-        )
-        .filter(activity => filter === 'all' || activity.type === filter)
-        .sort(compareDatesForSorting)
-    : [];
+  // Dark mode detection
+  const darkMode = document.documentElement.classList.contains('dark');
   
   return (
     <div className="p-4 pb-20">
@@ -60,52 +33,23 @@ export default function History({ setCurrentView, activities }) {
           <option value="meditation">Meditation</option>
           <option value="literature">Reading Literature</option>
           <option value="service">Service Work</option>
-          <option value="sponsor">Sponsor Call</option>
-          <option value="sponsee">Sponsee Call</option>
-          <option value="aa_call">AA Member Call</option>
+          <option value="call">Call</option>
           <option value="meeting">AA Meeting</option>
         </select>
       </div>
       
       {/* Activities List */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow border border-gray-200 dark:border-gray-700">
-        {filteredActivities.length > 0 ? (
-          <div className="divide-y divide-gray-100 dark:divide-gray-700">
-            {filteredActivities.map(activity => (
-              <div key={activity.id} className="p-4">
-                <div className="flex items-center">
-                  <div className="bg-blue-100 dark:bg-blue-900 h-10 w-10 rounded-full flex items-center justify-center mr-3">
-                    <i className={`fas ${getActivityIcon(activity.type)} text-blue-500 dark:text-blue-400`}></i>
-                  </div>
-                  <div className="flex-grow">
-                    <div className="flex justify-between">
-                      <div className="font-medium text-gray-800 dark:text-gray-200">
-                        {activity.type.charAt(0).toUpperCase() + activity.type.slice(1)}
-                      </div>
-                      <div className="text-sm text-gray-500 dark:text-gray-400">
-                        {formatDate(activity.date)}
-                      </div>
-                    </div>
-                    <div className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                      {activity.duration ? `${activity.duration} minutes` : 'Completed'}
-                    </div>
-                    {activity.notes && (
-                      <div className="text-sm text-gray-600 dark:text-gray-300 mt-2 bg-gray-50 dark:bg-gray-700 p-2 rounded">
-                        {activity.notes}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="text-center py-8 text-gray-500 dark:text-gray-400">
-            <i className="fas fa-clipboard-list text-3xl mb-2"></i>
-            <p>No activities found</p>
-            {filter !== 'all' && (
-              <p className="text-sm mt-1">Try changing the filter</p>
-            )}
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow border border-gray-200 dark:border-gray-700 p-4">
+        <ActivityList 
+          activities={activities}
+          darkMode={darkMode}
+          filter={filter}
+          showDate={true}
+        />
+        
+        {/* Show Log New Activity button if no activities or filtered to none */}
+        {(activities.length === 0 || (filter !== 'all' && activities.filter(a => a.type === filter).length === 0)) && (
+          <div className="text-center mt-4">
             <button 
               className="mt-4 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
               onClick={() => setCurrentView('activity')}
