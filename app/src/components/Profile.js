@@ -58,13 +58,7 @@ export default function Profile({ setCurrentView, user, onUpdate }) {
 
   return (
     <div className="p-4 pb-20">
-      <div className="flex items-center mb-6">
-        <button 
-          className="mr-2 text-blue-500 dark:text-blue-400"
-          onClick={() => setCurrentView('dashboard')}
-        >
-          <i className="fas fa-arrow-left"></i>
-        </button>
+      <div className="mb-6">
         <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">Your Profile</h1>
       </div>
       
