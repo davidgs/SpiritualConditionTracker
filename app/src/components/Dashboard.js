@@ -60,7 +60,7 @@ export default function Dashboard({ setCurrentView, user, activities, spiritualF
   const showYearsProminent = sobrietyYears >= 1;
 
   return (
-    <div className="p-3 pb-16 max-w-md mx-auto">
+    <div className="p-3 max-w-md mx-auto">
       {/* Centered logo at the top with forceful inline styles */}
       <div style={{ 
         textAlign: 'center',

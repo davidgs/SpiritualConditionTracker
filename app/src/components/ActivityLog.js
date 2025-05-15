@@ -289,7 +289,7 @@ export default function ActivityLog({ setCurrentView, onSave, onSaveMeeting, act
   };
 
   return (
-    <div className="p-3 pb-16 max-w-md mx-auto content-scrollable">
+    <div className="p-3 max-w-md mx-auto content-scrollable">
       {/* Page header */}
       <div style={{ 
         textAlign: 'center',
