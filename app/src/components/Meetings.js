@@ -178,15 +178,18 @@ export default function Meetings({ setCurrentView, meetings = [], onSave }) {
         </div>
       )}
       
-      {/* Add Meeting Button */}
+      {/* Add Meeting Button - Floating Action Button style */}
       {!showForm && (
-        <button
-          className="mb-6 p-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg flex justify-center items-center shadow-md transition duration-200 transform hover:translate-y-[-2px] w-full font-medium"
-          onClick={() => setShowForm(true)}
-        >
-          <i className="fa-solid fa-plus w-4 h-4 mr-2"></i>
-          {localMeetings.length > 0 ? 'Add New Meeting' : 'Add Your First Meeting'}
-        </button>
+        <div className="fixed bottom-20 right-6 z-10">
+          <button
+            className="w-14 h-14 bg-blue-600 hover:bg-blue-700 text-white rounded-full flex justify-center items-center shadow-lg transition duration-200 transform hover:scale-110"
+            onClick={() => setShowForm(true)}
+            aria-label="Add new meeting"
+            title={localMeetings.length > 0 ? 'Add New Meeting' : 'Add Your First Meeting'}
+          >
+            <i className="fa-solid fa-plus text-xl"></i>
+          </button>
+        </div>
       )}
       
       {/* Meeting Form */}
@@ -214,7 +217,7 @@ export default function Meetings({ setCurrentView, meetings = [], onSave }) {
               You haven't added any meetings to your schedule yet.
             </p>
             <p className="text-gray-500 dark:text-gray-500 text-sm">
-              Click the "Add Your First Meeting" button to get started.
+              Click the <i className="fa-solid fa-plus text-blue-500"></i> button to add your first meeting.
             </p>
           </div>
         )}
