@@ -108,7 +108,7 @@ function Header({ title, menuOpen, setMenuOpen, isMobile }) {
           onClick={() => setMenuOpen(!menuOpen)}
           style={{
             background: 'none',
-            border: 'none',
+            border: '1px',
             color: darkMode ? '#9ca3af' : '#6b7280',
             fontSize: '1.75rem',
             cursor: 'pointer',
