@@ -188,7 +188,7 @@ export default function Meetings({ setCurrentView, meetings = [], onSave }) {
             title={localMeetings.length > 0 ? 'Add New Meeting' : 'Add Your First Meeting'}
             style={{ backgroundColor: 'transparent' }} // Ensure no background color
           >
-            <i className="fa-solid fa-circle-plus text-blue-500 dark:text-blue-400" style={{ fontSize: '3rem' }}></i>
+            <i className="fa-solid fa-calendar-plus text-gray-500 dark:text-gray-200" style={{ fontSize: '3rem' }}></i>
           </button>
         </div>
       )}
