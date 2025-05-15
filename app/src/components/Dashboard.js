@@ -60,11 +60,8 @@ export default function Dashboard({ setCurrentView, user, activities, spiritualF
   const showYearsProminent = sobrietyYears >= 1;
 
   return (
-    <div className="p-3 max-w-md mx-auto">
-      {/* Centered logo at the top with forceful inline styles */}
-      
-      
-      {/* Sobriety & Spiritual Fitness Stats */}
+    <div className="p-3 max-w-md mx-auto" style={{ height: '100%', overflowY: 'auto' }}>
+      {/* Sobriety & Spiritual Fitness Stats - Fixed height section */}
       <div className="grid grid-cols-2 gap-2 mb-3">
         <div style={{
           backgroundColor: darkMode ? '#1f2937' : '#ffffff',
@@ -259,11 +256,12 @@ export default function Dashboard({ setCurrentView, user, activities, spiritualF
       
       {/* Recent Activities Section */}
       <div style={{
-          backgroundColor: darkMode ? '#1f2937' : '#ffffff',
-          borderRadius: '0.5rem',
-          padding: '0.5rem',
-          border: darkMode ? '1px solid #374151' : '1px solid #e5e7eb',
-          marginBottom: '0.75rem'
+        backgroundColor: darkMode ? '#1f2937' : '#ffffff',
+        borderRadius: '0.5rem',
+        padding: '0.5rem',
+        border: darkMode ? '1px solid #374151' : '1px solid #e5e7eb',
+        marginBottom: '0.75rem',
+        // No fixed height or overflow here - the entire page scrolls
       }}>
         <div style={{
           display: 'flex',
@@ -303,8 +301,6 @@ export default function Dashboard({ setCurrentView, user, activities, spiritualF
           showDate={true}
         />
       </div>
-      
-      {/* No quick actions - they've been removed */}
     </div>
   );
 }

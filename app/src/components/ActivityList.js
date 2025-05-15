@@ -148,7 +148,12 @@ export default function ActivityList({
         </div>
       )}
       
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+      <div style={{ 
+        display: 'flex', 
+        flexDirection: 'column', 
+        gap: '1rem',
+        // Removed any potential overflow or max-height styling
+      }}>
         {sortedDateKeys.map(dateKey => (
           <div key={dateKey}>
             {/* Date header */}
