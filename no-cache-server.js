@@ -4,12 +4,20 @@ const path = require('path');
 
 const PORT = process.env.PORT || 5000;
 
-// Create a simple HTTP server
+// Create a simple HTTP server with no caching headers
 const server = http.createServer((req, res) => {
   console.log(`Request for ${req.url}`);
   
   // Set default content type
   let contentType = 'text/html';
+  
+  // Add no-cache headers to all responses
+  const noCacheHeaders = {
+    'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0',
+    'Pragma': 'no-cache',
+    'Expires': '0',
+    'Surrogate-Control': 'no-store'
+  };
   
   // Normalize URL to handle both /app and /app/
   const url = req.url === '/app' ? '/app/' : req.url;
@@ -18,10 +26,13 @@ const server = http.createServer((req, res) => {
   if (url === '/') {
     fs.readFile(path.join(__dirname, 'app', 'landing-page.html'), (err, content) => {
       if (err) {
-        res.writeHead(500);
+        res.writeHead(500, noCacheHeaders);
         res.end(`Error loading landing page: ${err.code}`);
       } else {
-        res.writeHead(200, { 'Content-Type': contentType });
+        res.writeHead(200, { 
+          'Content-Type': contentType,
+          ...noCacheHeaders 
+        });
         res.end(content, 'utf-8');
       }
     });
@@ -32,10 +43,13 @@ const server = http.createServer((req, res) => {
   if (url === '/app/') {
     fs.readFile(path.join(__dirname, 'app', 'index.html'), (err, content) => {
       if (err) {
-        res.writeHead(500);
+        res.writeHead(500, noCacheHeaders);
         res.end(`Error loading app/index.html: ${err.code}`);
       } else {
-        res.writeHead(200, { 'Content-Type': contentType });
+        res.writeHead(200, { 
+          'Content-Type': contentType,
+          ...noCacheHeaders
+        });
         res.end(content, 'utf-8');
       }
     });
@@ -78,33 +92,32 @@ const server = http.createServer((req, res) => {
           // For app routes, fallback to app/index.html for SPA routing
           fs.readFile(path.join(__dirname, 'app', 'index.html'), (err, content) => {
             if (err) {
-              res.writeHead(500);
+              res.writeHead(500, noCacheHeaders);
               res.end(`Error loading app/index.html: ${err.code}`);
             } else {
-              res.writeHead(200, { 'Content-Type': 'text/html' });
+              res.writeHead(200, { 
+                'Content-Type': 'text/html',
+                ...noCacheHeaders
+              });
               res.end(content, 'utf-8');
             }
           });
         } else {
           // For other routes, return 404
-          res.writeHead(404);
+          res.writeHead(404, noCacheHeaders);
           res.end('Not Found');
         }
       } else {
         // Server error
-        res.writeHead(500);
+        res.writeHead(500, noCacheHeaders);
         res.end(`Server Error: ${err.code}`);
       }
     } else {
-      // Success - Add cache-control headers to prevent caching
-      const headers = {
+      // Success
+      res.writeHead(200, { 
         'Content-Type': contentType,
-        'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
-        'Pragma': 'no-cache',
-        'Expires': '0',
-        'Surrogate-Control': 'no-store'
-      };
-      res.writeHead(200, headers);
+        ...noCacheHeaders
+      });
       res.end(content, 'utf-8');
     }
   });
@@ -115,4 +128,5 @@ server.listen(PORT, '0.0.0.0', () => {
   console.log(`Server is running on http://0.0.0.0:${PORT}`);
   console.log(`App is available at http://0.0.0.0:${PORT}/app`);
   console.log(`Landing page is at http://0.0.0.0:${PORT}/`);
+  console.log(`All responses include no-cache headers`);
 });

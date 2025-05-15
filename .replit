@@ -22,7 +22,7 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "node react-app-server.js"
+args = "node no-cache-server.js"
 waitForPort = 5000
 
 [deployment]
