@@ -110,7 +110,7 @@ export default function ActivityLog({ setCurrentView, onSave, activities, meetin
       newErrors.literatureTitle = 'Literature title is required';
     }
     
-    if (activityType === 'meeting' && !meetingName.trim()) {
+    if (activityType === 'meeting' && !showMeetingForm && !meetingName.trim()) {
       newErrors.meetingName = 'Meeting name is required';
     }
     
@@ -146,6 +146,11 @@ export default function ActivityLog({ setCurrentView, onSave, activities, meetin
       newActivity.wasChair = wasChair;
       newActivity.wasShare = wasShare;
       newActivity.wasSpeaker = wasSpeaker;
+      
+      // Include meeting ID if one was selected
+      if (selectedMeetingId) {
+        newActivity.meetingId = selectedMeetingId;
+      }
     }
     
     if (activityType === 'call') {
@@ -439,8 +444,60 @@ export default function ActivityLog({ setCurrentView, onSave, activities, meetin
           </div>
         )}
         
-        {/* Meeting Name - only for AA Meeting */}
-        {activityType === 'meeting' && (
+        {/* Meeting Selection - only for AA Meeting */}
+        {activityType === 'meeting' && !showMeetingForm && (
+          <div style={{ marginBottom: '1rem' }}>
+            <label style={labelStyle}>
+              Select Meeting
+            </label>
+            <div style={{ display: 'flex', gap: '0.5rem' }}>
+              <select
+                style={{ ...inputStyle, flex: '1' }}
+                value={selectedMeetingId}
+                onChange={handleMeetingSelect}
+              >
+                <option value="">-- Select a meeting --</option>
+                {meetings.map(meeting => (
+                  <option key={meeting.id} value={meeting.id}>
+                    {meeting.name} {meeting.location ? `(${meeting.location})` : ''}
+                  </option>
+                ))}
+              </select>
+              <button
+                type="button"
+                onClick={() => setShowMeetingForm(true)}
+                style={{
+                  padding: '0.5rem 0.75rem',
+                  backgroundColor: darkMode ? '#4b5563' : '#e5e7eb',
+                  color: darkMode ? '#e5e7eb' : '#4b5563',
+                  border: 'none',
+                  borderRadius: '0.375rem',
+                  fontSize: '0.875rem',
+                  cursor: 'pointer'
+                }}
+              >
+                New
+              </button>
+            </div>
+          </div>
+        )}
+        
+        {/* Meeting Form */}
+        {activityType === 'meeting' && showMeetingForm && (
+          <div style={{ marginBottom: '1rem', padding: '1rem', backgroundColor: darkMode ? '#1f2937' : '#f3f4f6', borderRadius: '0.5rem' }}>
+            <h3 style={{ marginTop: 0, marginBottom: '1rem', fontSize: '1rem', fontWeight: 'bold', color: darkMode ? '#e5e7eb' : '#1f2937' }}>
+              Add New Meeting
+            </h3>
+            <MeetingForm 
+              onSave={handleSaveMeeting}
+              onCancel={() => setShowMeetingForm(false)}
+              darkMode={darkMode}
+            />
+          </div>
+        )}
+        
+        {/* Meeting Name - only for AA Meeting when not adding a new meeting */}
+        {activityType === 'meeting' && !showMeetingForm && (
           <div style={{ marginBottom: '1rem' }}>
             <label style={labelStyle}>
               Meeting Name
