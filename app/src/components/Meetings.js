@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { meetingOperations } from '../utils/database';
 import MeetingForm from './MeetingForm';
 
-export default function Meetings({ setCurrentView }) {
-  const [meetings, setMeetings] = useState([]);
+export default function Meetings({ setCurrentView, meetings = [] }) {
+  const [localMeetings, setLocalMeetings] = useState(meetings);
   const [showForm, setShowForm] = useState(false);
   const [currentMeeting, setCurrentMeeting] = useState(null);
   const [error, setError] = useState('');
@@ -11,21 +11,10 @@ export default function Meetings({ setCurrentView }) {
   // Dark mode detection
   const darkMode = document.documentElement.classList.contains('dark');
   
-  // Load meetings on component mount
+  // Update localMeetings when meetings prop changes
   useEffect(() => {
-    loadMeetings();
-  }, []);
-  
-  // Load user's meetings
-  const loadMeetings = async () => {
-    try {
-      const userMeetings = meetingOperations.getAll();
-      setMeetings(userMeetings);
-    } catch (error) {
-      console.error('Error loading meetings:', error);
-      setError('Failed to load meetings. Please try again.');
-    }
-  };
+    setLocalMeetings(meetings);
+  }, [meetings]);
   
   // Edit an existing meeting
   const handleEdit = (meeting) => {
@@ -37,8 +26,15 @@ export default function Meetings({ setCurrentView }) {
   const handleDelete = (meetingId) => {
     if (window.confirm('Are you sure you want to delete this meeting?')) {
       try {
-        meetingOperations.delete(meetingId);
-        loadMeetings();
+        if (window.db) {
+          window.db.remove('meetings', meetingId);
+          // Update the local meetings list
+          setLocalMeetings(prevMeetings => 
+            prevMeetings.filter(meeting => meeting.id !== meetingId)
+          );
+        } else {
+          throw new Error('Database not initialized');
+        }
       } catch (error) {
         console.error('Error deleting meeting:', error);
         setError('Failed to delete meeting. Please try again.');
@@ -48,10 +44,38 @@ export default function Meetings({ setCurrentView }) {
   
   // Handle form save
   const handleSaveMeeting = (meetingData) => {
-    // Reset form and reload meetings
-    setCurrentMeeting(null);
-    setShowForm(false);
-    loadMeetings();
+    try {
+      if (window.db) {
+        let savedMeeting;
+        
+        if (currentMeeting) {
+          // Update existing meeting
+          savedMeeting = window.db.update('meetings', currentMeeting.id, meetingData);
+          
+          // Update local state
+          setLocalMeetings(prevMeetings => 
+            prevMeetings.map(meeting => 
+              meeting.id === savedMeeting.id ? savedMeeting : meeting
+            )
+          );
+        } else {
+          // Add new meeting
+          savedMeeting = window.db.add('meetings', meetingData);
+          
+          // Update local state
+          setLocalMeetings(prevMeetings => [...prevMeetings, savedMeeting]);
+        }
+      } else {
+        throw new Error('Database not initialized');
+      }
+      
+      // Reset form
+      setCurrentMeeting(null);
+      setShowForm(false);
+    } catch (error) {
+      console.error('Error saving meeting:', error);
+      setError('Failed to save meeting. Please try again.');
+    }
   };
   
   // Format day name
@@ -110,6 +134,19 @@ export default function Meetings({ setCurrentView }) {
         My Meetings
       </h1>
       
+      {/* Error Message */}
+      {error && (
+        <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg">
+          <p>{error}</p>
+          <button 
+            className="text-sm text-red-700 underline mt-1"
+            onClick={() => setError('')}
+          >
+            Dismiss
+          </button>
+        </div>
+      )}
+      
       {/* Add Meeting Button */}
       {!showForm && (
         <button
@@ -135,8 +172,8 @@ export default function Meetings({ setCurrentView }) {
       
       {/* Meetings List */}
       <div className="mt-4 max-h-[60vh] overflow-y-auto">
-        {meetings.length > 0 ? (
-          meetings.map(meeting => renderMeetingItem(meeting))
+        {localMeetings.length > 0 ? (
+          localMeetings.map(meeting => renderMeetingItem(meeting))
         ) : (
           <div className="text-center p-6 bg-gray-100 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
             <p className="text-gray-600 dark:text-gray-400 mb-4">
