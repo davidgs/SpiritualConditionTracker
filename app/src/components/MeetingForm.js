@@ -405,7 +405,7 @@ export default function MeetingForm({
               <div className="flex">
                 <input
                   type="text"
-                  className="flex-grow p-3 border border-gray-300 dark:border-gray-600 rounded-l bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 shadow-sm"
+                  className="flex-grow p-3 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 shadow-sm"
                   value={streetAddress}
                   onChange={(e) => setStreetAddress(e.target.value)}
                   placeholder="Street address"
@@ -413,14 +413,15 @@ export default function MeetingForm({
                 />
                 <button
                   type="button"
-                  className="fa-solid fa-map h-4 w-4 hover:bg-blue-700 px-4 py-3 rounded-r flex items-center justify-center shadow-sm"
+                  className="bg-transparent border-0 flex items-center justify-center ml-2"
                   onClick={detectLocation}
                   disabled={searchingLocation}
+                  title="Detect your location"
                 >
                   {searchingLocation ? (
-                    <i className="fa-solid fa-spinner fa-spin h-4 w-4"></i>
+                    <i className="fa-solid fa-spinner fa-spin text-blue-500 dark:text-blue-400" style={{ fontSize: '1.5rem' }}></i>
                   ) : (
-                    <i className="fa-solid fa-location-dot h-4 w-4"></i>
+                    <i className="fa-solid fa-location-dot text-blue-500 dark:text-blue-400" style={{ fontSize: '1.5rem' }}></i>
                   )}
                 </button>
               </div>
@@ -471,16 +472,18 @@ export default function MeetingForm({
           <div className="flex justify-between mt-8">
             <button
               type="button"
-              className="bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 py-3 px-6 rounded-md font-medium shadow-sm transition duration-150 border border-gray-300 dark:border-gray-600"
+              className="bg-transparent border-0 p-0 transition duration-200 transform hover:scale-110"
               onClick={onCancel}
+              title="Cancel"
             >
-              <i classname="fa-regular fa-rectangle-xmark"></i>
+              <i className="fa-regular fa-circle-xmark text-red-500 dark:text-red-400" style={{ fontSize: '2rem' }}></i>
             </button>
             <button
               type="submit"
-              className="bg-blue-600 hover:bg-blue-700 text-white py-3 px-6 rounded-md font-medium shadow-sm transition duration-150"
+              className="bg-transparent border-0 p-0 transition duration-200 transform hover:scale-110"
+              title={meeting ? "Save changes" : "Add meeting"}
             >
-              {meeting ? <i class="fa-regular circle-check"></i> : <i class="fa-regular fa-circle-xmark"></i>} 
+              <i className="fa-regular fa-circle-check text-green-500 dark:text-green-400" style={{ fontSize: '2rem' }}></i>
             </button>
           </div>
         </form>
