@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useContext } from 'react';
 import { connectionOperations, messageOperations } from '../utils/database';
-import { encryptMessage, decryptMessage } from '../utils/encryption';
 import { ThemeContext } from '../contexts/ThemeContext';
+import { createConnection, sendMessage, getDecryptedMessages, markMessagesAsRead } from '../utils/messagingUtils';
 
 export default function Messages({ setCurrentView, user }) {
   const { theme } = useContext(ThemeContext);
@@ -77,36 +77,21 @@ export default function Messages({ setCurrentView, user }) {
         return;
       }
       
-      // Get encrypted messages
-      const encryptedMessages = messageOperations.getByConversationId(connectionId);
+      // Get and decrypt messages using utility function
+      const decryptedMessages = await getDecryptedMessages(
+        connectionId, 
+        connection.encryptionKey
+      );
       
-      // Decrypt messages if encryption key exists
-      if (connection.encryptionKey) {
-        const decryptedMessages = await Promise.all(
-          encryptedMessages.map(async (msg) => {
-            try {
-              if (msg.encrypted) {
-                return {
-                  ...msg,
-                  content: await decryptMessage(msg.content, connection.encryptionKey),
-                  decrypted: true
-                };
-              }
-              return msg;
-            } catch (err) {
-              console.error('Failed to decrypt message:', err);
-              return {
-                ...msg,
-                content: '[Encrypted message - unable to decrypt]',
-                decryptError: true
-              };
-            }
-          })
-        );
-        setMessages(decryptedMessages);
-      } else {
-        // If no encryption key, just show the messages as is
-        setMessages(encryptedMessages);
+      setMessages(decryptedMessages);
+      
+      // Mark unread messages as read
+      const unreadMessages = decryptedMessages
+        .filter(msg => !msg.read && msg.senderId !== user.id)
+        .map(msg => msg.id);
+        
+      if (unreadMessages.length > 0) {
+        markMessagesAsRead(unreadMessages);
       }
       
       setLoading(false);
@@ -118,42 +103,15 @@ export default function Messages({ setCurrentView, user }) {
   };
 
   // Send a new message
-  const sendMessage = async () => {
+  const handleSendMessage = async () => {
     if (!newMessage.trim() || !activeConnection) return;
     
     try {
-      let messageContent = newMessage;
-      let isEncrypted = false;
+      // Use messaging utility to send the message
+      const message = await sendMessage(user, activeConnection, newMessage);
       
-      // Encrypt the message if an encryption key exists
-      if (activeConnection.encryptionKey) {
-        messageContent = await encryptMessage(newMessage, activeConnection.encryptionKey);
-        isEncrypted = true;
-      }
-      
-      // Create message object
-      const message = {
-        id: Date.now().toString(),
-        conversationId: activeConnection.id,
-        senderId: user.id,
-        receiverId: activeConnection.userId === user.id 
-          ? activeConnection.contactId 
-          : activeConnection.userId,
-        content: messageContent,
-        encrypted: isEncrypted,
-        read: false,
-        createdAt: new Date().toISOString()
-      };
-      
-      // Save to database
-      const savedMessage = messageOperations.create(message);
-      
-      // Update UI with decrypted version
-      setMessages(prev => [...prev, {
-        ...savedMessage,
-        content: newMessage,
-        decrypted: true
-      }]);
+      // Update UI
+      setMessages(prev => [...prev, message]);
       
       // Clear input
       setNewMessage('');
@@ -164,34 +122,18 @@ export default function Messages({ setCurrentView, user }) {
   };
 
   // Create a new connection
-  const createConnection = () => {
+  const handleCreateConnection = async () => {
     if (!newConnectionData.name.trim()) {
       setError('Please enter a name for this connection');
       return;
     }
     
     try {
-      // Generate a shared encryption key for this conversation
-      const encryptionKey = window.btoa(
-        Array.from(crypto.getRandomValues(new Uint8Array(32)))
-          .map(byte => String.fromCharCode(byte))
-          .join('')
-      );
-      
-      // Create new connection
-      const newConnection = {
-        id: Date.now().toString(),
-        userId: user.id,
-        contactId: `contact-${Date.now()}`, // Temporary ID for the contact
+      // Use messaging utility to create a new connection
+      const savedConnection = await createConnection(user, {
         name: newConnectionData.name,
-        contactInfo: newConnectionData.contactInfo,
-        encryptionKey: encryptionKey,
-        status: 'active',
-        createdAt: new Date().toISOString()
-      };
-      
-      // Save to database
-      const savedConnection = connectionOperations.create(newConnection);
+        contactInfo: newConnectionData.contactInfo
+      });
       
       // Update UI
       setConnections(prev => [...prev, savedConnection]);
@@ -348,10 +290,10 @@ export default function Messages({ setCurrentView, user }) {
                       placeholder="Type a message..."
                       value={newMessage}
                       onChange={(e) => setNewMessage(e.target.value)}
-                      onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
+                      onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
                     />
                     <button
-                      onClick={sendMessage}
+                      onClick={handleSendMessage}
                       className="bg-blue-500 hover:bg-blue-600 text-white p-2 rounded-r px-4"
                     >
                       <i className="fa-solid fa-paper-plane"></i>
@@ -419,7 +361,7 @@ export default function Messages({ setCurrentView, user }) {
                   Cancel
                 </button>
                 <button
-                  onClick={createConnection}
+                  onClick={handleCreateConnection}
                   className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded"
                 >
                   Create
