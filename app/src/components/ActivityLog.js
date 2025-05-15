@@ -637,7 +637,7 @@ export default function ActivityLog({ setCurrentView, onSave, onSaveMeeting, act
       </form>
       
       {/* All Activities Section */}
-      <div className={`rounded-lg p-3 mb-8 max-h-[60vh] overflow-y-auto ${darkMode ? 'bg-gray-800 border border-gray-700' : 'bg-white border border-gray-200'}`}>
+      <div className={`rounded-lg p-3 mb-8 ${darkMode ? 'bg-gray-800 border border-gray-700' : 'bg-white border border-gray-200'}`}>
         <ActivityList 
           activities={activities}
           darkMode={darkMode}
