@@ -34,13 +34,12 @@ export default function History({ setCurrentView, activities }) {
       
       {/* Activities List */}
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow border border-gray-200 dark:border-gray-700 p-4">
-        <div className="activity-list-wrapper" style={{ width: '100%', height: 'auto' }}>
-          <ActivityList 
-            activities={activities}
-            darkMode={darkMode}
-            filter={filter}
-            showDate={true}
-          />
+        <ActivityList 
+          activities={activities}
+          darkMode={darkMode}
+          filter={filter}
+          showDate={true}
+        />
         
         {/* Show Log New Activity button if no activities or filtered to none */}
         {(activities.length === 0 || (filter !== 'all' && activities.filter(a => a.type === filter).length === 0)) && (
@@ -53,7 +52,6 @@ export default function History({ setCurrentView, activities }) {
             </button>
           </div>
         )}
-        </div>
       </div>
     </div>
   );
