@@ -145,7 +145,8 @@ export default function MeetingForm({
               const addressData = {
                 streetAddress: (data.address.house_number ? data.address.house_number + ' ' : '') + 
                               (data.address.road || data.address.street || ''),
-                city: data.address.city || data.address.town || data.address.village || '',
+                city: data.address.city || data.address.town || data.address.village || 
+                     data.address.hamlet || data.address.neighbourhood || data.address.suburb || '',
                 state: data.address.state || data.address.county || '',
                 zipCode: data.address.postcode || ''
               };
