@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { formatDateForDisplay } from '../utils/dateUtils';
 import ActivityList from './ActivityList';
+import MeetingForm from './MeetingForm';
+import { meetingOperations } from '../utils/database';
 
-export default function ActivityLog({ setCurrentView, onSave, activities }) {
+export default function ActivityLog({ setCurrentView, onSave, activities, meetings = [] }) {
   // Check for dark mode
   const darkMode = document.documentElement.classList.contains('dark');
   // Re-render when dark mode changes
@@ -43,6 +45,10 @@ export default function ActivityLog({ setCurrentView, onSave, activities }) {
   const [isSponsorCall, setIsSponsorCall] = useState(false);
   const [isSponseeCall, setIsSponseeCall] = useState(false);
   const [isAAMemberCall, setIsAAMemberCall] = useState(false);
+  
+  // Meeting selection fields
+  const [selectedMeetingId, setSelectedMeetingId] = useState('');
+  const [showMeetingForm, setShowMeetingForm] = useState(false);
 
   // Reset additional fields when activity type changes
   useEffect(() => {
@@ -61,6 +67,8 @@ export default function ActivityLog({ setCurrentView, onSave, activities }) {
     setIsSponsorCall(false);
     setIsSponseeCall(false);
     setIsAAMemberCall(false);
+    setSelectedMeetingId('');
+    setShowMeetingForm(false);
   }, [activityType]);
 
   // Get duration options based on activity type
@@ -193,6 +201,33 @@ export default function ActivityLog({ setCurrentView, onSave, activities }) {
       setShowSuccess(false);
     }, 2000);
   };
+  
+  // Handle meeting selection
+  function handleMeetingSelect(e) {
+    const meetingId = e.target.value;
+    setSelectedMeetingId(meetingId);
+    
+    if (meetingId) {
+      const meeting = meetings.find(m => m.id === meetingId);
+      if (meeting) {
+        setMeetingName(meeting.name);
+      }
+    } else {
+      setMeetingName('');
+    }
+  }
+  
+  // Handle saving a meeting from the meeting form
+  function handleSaveMeeting(meeting) {
+    setShowMeetingForm(false);
+    
+    // If the meeting is saved to the database, it will show up in the meetings list
+    // on the next render, so we can just select it
+    if (meeting && meeting.id) {
+      setSelectedMeetingId(meeting.id);
+      setMeetingName(meeting.name);
+    }
+  }
 
   // Get activity icon
   const getActivityIcon = (type) => {
