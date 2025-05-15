@@ -257,9 +257,9 @@ function App() {
           className="flex-grow overflow-y-auto" 
           style={{ 
             height: 'calc(100vh - 60px)', // 60px is the header height
-            paddingBottom: '80px', // Increased padding for desktop bottom nav (was 70px)
+            paddingBottom: '100px', // Significantly increased padding to ensure content is visible
             paddingTop: '10px', // Space after the header
-            marginBottom: '20px' // Added margin to ensure content doesn't get cut off
+            overflowY: 'auto' // Ensure this container scrolls
           }}
         >
           {renderCurrentView()}

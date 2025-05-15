@@ -132,7 +132,7 @@ export default function ActivityList({
   const { groups, sortedDateKeys } = groupByDate(filteredActivities);
   
   return (
-    <div className="activity-list-container" style={{ paddingBottom: '20px', marginBottom: '20px' }}>
+    <div className="activity-list-container">
       {title && (
         <div style={{
           display: 'flex',
@@ -151,8 +151,7 @@ export default function ActivityList({
       <div style={{ 
         display: 'flex', 
         flexDirection: 'column', 
-        gap: '1rem',
-        paddingBottom: '30px' // Extra padding at the bottom for content
+        gap: '1rem'
       }}>
         {sortedDateKeys.map(dateKey => (
           <div key={dateKey}>
