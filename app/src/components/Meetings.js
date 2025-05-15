@@ -70,35 +70,79 @@ export default function Meetings({ setCurrentView, meetings = [], onSave }) {
     return day.charAt(0).toUpperCase() + day.slice(1);
   };
   
+  // Format address for display
+  const formatAddress = (meeting) => {
+    // If we have the individual components, use them
+    if (meeting.streetAddress) {
+      return (
+        <>
+          <div>{meeting.streetAddress}</div>
+          {meeting.city && meeting.state && (
+            <div>{meeting.city}, {meeting.state} {meeting.zipCode}</div>
+          )}
+        </>
+      );
+    }
+    
+    // Otherwise, split the address at commas for better display
+    const parts = meeting.address.split(',');
+    if (parts.length > 2) {
+      // Show first line, and then city, state, zip together
+      return (
+        <>
+          <div>{parts[0]}</div>
+          <div>{parts.slice(1).join(',')}</div>
+        </>
+      );
+    }
+    
+    // If simple address, just show as is
+    return meeting.address;
+  };
+
   // Render a single meeting item
   const renderMeetingItem = (meeting) => {
     return (
       <div key={meeting.id} className="bg-white dark:bg-gray-800 rounded-lg shadow border border-gray-200 dark:border-gray-700 p-4 mb-4">
         <div className="flex justify-between items-start">
-          <div>
+          <div className="flex-grow mr-4">
             <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
               {meeting.name}
             </h3>
             
             <div className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-              <p>
-                <span className="font-medium">Days:</span>{' '}
+              <div className="flex items-center mb-1">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                <span className="font-medium mr-1">Days:</span>
                 {meeting.days.map(formatDay).join(', ')}
-              </p>
-              <p>
-                <span className="font-medium">Time:</span>{' '}
+              </div>
+              
+              <div className="flex items-center mb-1">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span className="font-medium mr-1">Time:</span>
                 {new Date(`2000-01-01T${meeting.time}`).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
-              </p>
-              <p>
-                <span className="font-medium">Address:</span>{' '}
-                {meeting.address}
-              </p>
+              </div>
+              
+              <div className="flex items-start">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                <div>
+                  <span className="font-medium mr-1">Address:</span>
+                  {formatAddress(meeting)}
+                </div>
+              </div>
             </div>
           </div>
           
-          <div className="flex space-x-2">
+          <div className="flex space-x-1">
             <button
-              className="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 p-1 rounded-full"
+              className="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 p-2 rounded-full hover:bg-blue-100 dark:hover:bg-blue-900"
               onClick={() => handleEdit(meeting)}
               aria-label="Edit meeting"
             >
@@ -107,7 +151,7 @@ export default function Meetings({ setCurrentView, meetings = [], onSave }) {
               </svg>
             </button>
             <button
-              className="text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 p-1 rounded-full"
+              className="text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 p-2 rounded-full hover:bg-red-100 dark:hover:bg-red-900"
               onClick={() => handleDelete(meeting.id)}
               aria-label="Delete meeting"
             >

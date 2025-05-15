@@ -18,7 +18,16 @@ export default function MeetingForm({
     sunday: false
   });
   const [meetingTime, setMeetingTime] = useState('');
+  
+  // Address fields
+  const [streetAddress, setStreetAddress] = useState('');
+  const [city, setCity] = useState('');
+  const [state, setState] = useState('');
+  const [zipCode, setZipCode] = useState('');
+  
+  // Store full address for backward compatibility
   const [meetingAddress, setMeetingAddress] = useState('');
+  
   const [location, setLocation] = useState(null);
   const [error, setError] = useState('');
   const [searchingLocation, setSearchingLocation] = useState(false);
@@ -48,10 +57,57 @@ export default function MeetingForm({
       
       setMeetingDays(days);
       setMeetingTime(meeting.time);
+      
+      // Set full address
       setMeetingAddress(meeting.address);
+      
+      // Try to extract address components if available
+      if (meeting.streetAddress) {
+        setStreetAddress(meeting.streetAddress);
+        setCity(meeting.city || '');
+        setState(meeting.state || '');
+        setZipCode(meeting.zipCode || '');
+      } else {
+        // Attempt to parse address components from full address
+        try {
+          const addressParts = meeting.address.split(',').map(part => part.trim());
+          
+          if (addressParts.length >= 4) {
+            // Assume the format is like: "Street, City, State, Zip"
+            setStreetAddress(addressParts[0]);
+            setCity(addressParts[1]);
+            setState(addressParts[2]);
+            setZipCode(addressParts[3]);
+          }
+        } catch (error) {
+          console.error('Error parsing address:', error);
+          // Keep full address in first field as fallback
+          setStreetAddress(meeting.address);
+        }
+      }
+      
       setLocation(meeting.coordinates);
     }
   }, [meeting]);
+  
+  // Helper function to update address fields
+  const updateAddressFields = (addressData) => {
+    // Combine different address fields for backward compatibility
+    const fullAddress = [
+      addressData.streetAddress || addressData.street || addressData.road || '',
+      addressData.city || addressData.town || addressData.village || '',
+      addressData.state || addressData.county || '',
+      addressData.zipCode || addressData.postcode || ''
+    ].filter(Boolean).join(', ');
+    
+    setMeetingAddress(fullAddress);
+    
+    // Update individual fields
+    setStreetAddress(addressData.streetAddress || addressData.street || addressData.road || '');
+    setCity(addressData.city || addressData.town || addressData.village || '');
+    setState(addressData.state || addressData.county || '');
+    setZipCode(addressData.zipCode || addressData.postcode || '');
+  };
   
   // Try to get user location
   const detectLocation = () => {
@@ -77,8 +133,32 @@ export default function MeetingForm({
           
           if (response.ok) {
             const data = await response.json();
-            if (data.display_name) {
+            
+            if (data.address) {
+              // Extract address components from Nominatim response
+              const addressData = {
+                streetAddress: data.address.road || data.address.street || '',
+                city: data.address.city || data.address.town || data.address.village || '',
+                state: data.address.state || data.address.county || '',
+                zipCode: data.address.postcode || ''
+              };
+              
+              // Update the form fields
+              updateAddressFields(addressData);
+            } else if (data.display_name) {
+              // Fallback to display_name and try to parse it
               setMeetingAddress(data.display_name);
+              
+              const parts = data.display_name.split(',').map(part => part.trim());
+              if (parts.length >= 4) {
+                setStreetAddress(parts[0]);
+                setCity(parts[1]);
+                setState(parts[2]);
+                setZipCode(parts[3]);
+              } else {
+                // If we can't parse properly, put display name in street address
+                setStreetAddress(data.display_name);
+              }
             }
           }
         } catch (error) {
@@ -115,10 +195,18 @@ export default function MeetingForm({
       return;
     }
     
-    if (!meetingAddress.trim()) {
-      setError('Meeting address is required');
+    if (!streetAddress.trim()) {
+      setError('Street address is required');
       return;
     }
+    
+    // Combine address fields for display and backwards compatibility
+    const formattedAddress = [
+      streetAddress.trim(),
+      city.trim(),
+      state.trim(),
+      zipCode.trim()
+    ].filter(Boolean).join(', ');
     
     const meetingData = {
       id: meeting ? meeting.id : Date.now().toString(),
@@ -127,7 +215,12 @@ export default function MeetingForm({
         .filter(([_, selected]) => selected)
         .map(([day]) => day),
       time: meetingTime,
-      address: meetingAddress.trim(),
+      address: formattedAddress,
+      // Store individual address components for better editing
+      streetAddress: streetAddress.trim(),
+      city: city.trim(),
+      state: state.trim(),
+      zipCode: zipCode.trim(),
       coordinates: location,
       createdAt: meeting ? meeting.createdAt : new Date().toISOString(),
       updatedAt: new Date().toISOString()
@@ -276,30 +369,82 @@ export default function MeetingForm({
             </select>
           </div>
           
-          {/* Meeting Address */}
+          {/* Meeting Address - Split into multiple fields */}
           <div className="mb-4">
             <label className="block text-gray-700 dark:text-gray-300 mb-2">
-              Meeting Address
+              Meeting Location
             </label>
-            <div className="flex">
+            
+            {/* Street Address with Detect button */}
+            <div className="mb-2">
+              <label className="text-sm text-gray-600 dark:text-gray-400">Street Address</label>
+              <div className="flex">
+                <input
+                  type="text"
+                  className="flex-grow p-2 border border-gray-300 dark:border-gray-600 rounded-l bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200"
+                  value={streetAddress}
+                  onChange={(e) => setStreetAddress(e.target.value)}
+                  placeholder="Street address"
+                  required
+                />
+                <button
+                  type="button"
+                  className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded-r flex items-center justify-center"
+                  onClick={detectLocation}
+                  disabled={searchingLocation}
+                >
+                  {searchingLocation ? (
+                    <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                  ) : (
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
+                    </svg>
+                  )}
+                </button>
+              </div>
+            </div>
+            
+            {/* City and State */}
+            <div className="grid grid-cols-2 gap-2 mb-2">
+              <div>
+                <label className="text-sm text-gray-600 dark:text-gray-400">City</label>
+                <input
+                  type="text"
+                  className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200"
+                  value={city}
+                  onChange={(e) => setCity(e.target.value)}
+                  placeholder="City"
+                />
+              </div>
+              <div>
+                <label className="text-sm text-gray-600 dark:text-gray-400">State/Province</label>
+                <input
+                  type="text"
+                  className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200"
+                  value={state}
+                  onChange={(e) => setState(e.target.value)}
+                  placeholder="State/Province"
+                />
+              </div>
+            </div>
+            
+            {/* Zip/Postal Code */}
+            <div>
+              <label className="text-sm text-gray-600 dark:text-gray-400">Zip/Postal Code</label>
               <input
                 type="text"
-                className="flex-grow p-2 border border-gray-300 dark:border-gray-600 rounded-l bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200"
-                value={meetingAddress}
-                onChange={(e) => setMeetingAddress(e.target.value)}
-                placeholder="Enter meeting address"
+                className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200"
+                value={zipCode}
+                onChange={(e) => setZipCode(e.target.value)}
+                placeholder="Zip/Postal Code"
               />
-              <button
-                type="button"
-                className="bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded-r"
-                onClick={detectLocation}
-                disabled={searchingLocation}
-              >
-                {searchingLocation ? 'Detecting...' : 'Detect'}
-              </button>
             </div>
-            <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-              Include full address details or use the detect button to find your current location
+            
+            <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
+              Fill in the address details or use the detect button to find your current location
             </p>
           </div>
           
