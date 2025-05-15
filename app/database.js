@@ -10,7 +10,10 @@ let collections = {
   meetings: [],
   nearbyUsers: [],
   connections: [],
-  messages: []
+  messages: [],
+  preferences: {
+    scoreTimeframe: 30 // Default to 30 days for spiritual fitness score
+  }
 };
 
 /**
@@ -18,6 +21,15 @@ let collections = {
  */
 async function initDatabase() {
   console.log('Initializing database...');
+  
+  // Load preferences from localStorage
+  const preferencesData = localStorage.getItem('preferences');
+  if (preferencesData) {
+    collections.preferences = JSON.parse(preferencesData);
+  } else {
+    // Save default preferences to localStorage
+    localStorage.setItem('preferences', JSON.stringify(collections.preferences));
+  }
   
   // Check for existing user data in localStorage
   const userData = localStorage.getItem('user');
@@ -357,6 +369,92 @@ function calculateSpiritualFitness() {
   return Math.min(score, 100);
 }
 
+/**
+ * Get user preference
+ * @param {string} key - The preference key
+ * @returns {any} The preference value
+ */
+function getPreference(key) {
+  return collections.preferences[key];
+}
+
+/**
+ * Set user preference
+ * @param {string} key - The preference key
+ * @param {any} value - The preference value
+ */
+function setPreference(key, value) {
+  collections.preferences[key] = value;
+  localStorage.setItem('preferences', JSON.stringify(collections.preferences));
+  return value;
+}
+
+/**
+ * Calculate spiritual fitness with a custom timeframe
+ * @param {number} timeframe - Number of days to calculate score for
+ * @returns {number} - Spiritual fitness score (0-100)
+ */
+function calculateSpiritualFitnessWithTimeframe(timeframe = 30) {
+  const today = new Date();
+  const timeframeDate = new Date(today);
+  timeframeDate.setDate(today.getDate() - timeframe);
+  
+  // Get activities within the specified timeframe
+  const recentActivities = collections.activities.filter(activity => {
+    const activityDate = new Date(activity.date);
+    return activityDate >= timeframeDate;
+  });
+  
+  // The rest of the calculation is the same as calculateSpiritualFitness
+  let score = 0;
+  let meetingsCount = 0;
+  let sponseeTime = 0;
+  
+  const activityTypes = new Set();
+  
+  recentActivities.forEach(activity => {
+    activityTypes.add(activity.type);
+    
+    switch (activity.type) {
+      case 'meeting':
+        score += 5;
+        meetingsCount++;
+        if (activity.wasSpeaker) score += 3;
+        if (activity.wasShare) score += 1;
+        if (activity.wasChair) score += 1;
+        break;
+      
+      case 'prayer':
+      case 'meditation':
+        score += Math.ceil(activity.duration / 30) * 2;
+        break;
+      
+      case 'literature':
+        score += Math.ceil(activity.duration / 30) * 2;
+        break;
+      
+      case 'service':
+        score += Math.ceil(activity.duration / 30) * 3;
+        break;
+      
+      case 'sponsee':
+        const sponseePoints = Math.ceil(activity.duration / 30) * 4;
+        sponseeTime += sponseePoints;
+        break;
+      
+      default:
+        score += 1;
+    }
+  });
+  
+  score += Math.min(sponseeTime, 20);
+  
+  const varietyBonus = Math.min(activityTypes.size, 5);
+  score += varietyBonus;
+  
+  return Math.min(score, 100);
+}
+
 // Export database functions
 window.db = {
   init: initDatabase,
@@ -369,5 +467,8 @@ window.db = {
   calculateDistance,
   calculateSobrietyDays,
   calculateSobrietyYears,
-  calculateSpiritualFitness
+  calculateSpiritualFitness,
+  calculateSpiritualFitnessWithTimeframe,
+  getPreference,
+  setPreference
 };

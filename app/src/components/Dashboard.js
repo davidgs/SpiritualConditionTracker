@@ -7,13 +7,18 @@ export default function Dashboard({ setCurrentView, user, activities, spiritualF
   // Simplify dark mode detection for now
   const darkMode = document.documentElement.classList.contains('dark');
   
-  // State for controlling popover visibility
+  // State for controlling popover visibility and score timeframe
   const [showPopover, setShowPopover] = useState(false);
+  const [scoreTimeframe, setScoreTimeframe] = useState(
+    window.db?.getPreference('scoreTimeframe') || 30
+  );
+  const [currentScore, setCurrentScore] = useState(spiritualFitness);
+  
   const popoverRef = useRef(null);
   const buttonRef = useRef(null);
   
   // Format score to 2 decimal places for display
-  const formattedScore = spiritualFitness > 0 ? spiritualFitness.toFixed(2) : '0';
+  const formattedScore = currentScore > 0 ? currentScore.toFixed(2) : '0';
   
   // Determine color based on score
   const getScoreColor = (score) => {
@@ -24,6 +29,14 @@ export default function Dashboard({ setCurrentView, user, activities, spiritualF
   
   // Calculate progress percentage, capped at 100%
   const progressPercent = Math.min(spiritualFitness, 100);
+  
+  // Effect to recalculate score when timeframe changes
+  useEffect(() => {
+    if (window.db?.calculateSpiritualFitnessWithTimeframe) {
+      const newScore = window.db.calculateSpiritualFitnessWithTimeframe(scoreTimeframe);
+      setCurrentScore(newScore);
+    }
+  }, [scoreTimeframe]);
   
   // Close popover when clicking outside
   useEffect(() => {
@@ -39,6 +52,25 @@ export default function Dashboard({ setCurrentView, user, activities, spiritualF
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [popoverRef, buttonRef]);
+  
+  // Function to cycle through timeframe options
+  const cycleTimeframe = () => {
+    let newTimeframe;
+    switch(scoreTimeframe) {
+      case 30: newTimeframe = 60; break;
+      case 60: newTimeframe = 90; break;
+      case 90: newTimeframe = 180; break;
+      case 180: newTimeframe = 365; break;
+      default: newTimeframe = 30;
+    }
+    
+    // Save preference to database
+    if (window.db?.setPreference) {
+      window.db.setPreference('scoreTimeframe', newTimeframe);
+    }
+    
+    setScoreTimeframe(newTimeframe);
+  };
   // Use the shared date formatting function from utils
   const formatDate = formatDateForDisplay;
 
