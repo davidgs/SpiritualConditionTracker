@@ -8,7 +8,9 @@ let collections = {
   user: null,
   activities: [],
   meetings: [],
-  nearbyUsers: []
+  nearbyUsers: [],
+  connections: [],
+  messages: []
 };
 
 /**
@@ -31,11 +33,18 @@ async function initDatabase() {
       sponsorName: '',
       sponsorPhone: '',
       sponsees: [],
+      // Keys for secure messaging
+      messagingKeys: {
+        publicKey: '',
+        privateKey: '',
+        fingerprint: ''
+      },
       privacySettings: {
         discoverable: true,
         shareActivities: false,
         shareMeetings: true,
-        proximityRadius: 1 // miles
+        proximityRadius: 1, // miles
+        allowMessages: true
       }
     };
     localStorage.setItem('user', JSON.stringify(collections.user));
@@ -51,6 +60,18 @@ async function initDatabase() {
   const meetingsData = localStorage.getItem('meetings');
   if (meetingsData) {
     collections.meetings = JSON.parse(meetingsData);
+  }
+  
+  // Load connections from localStorage
+  const connectionsData = localStorage.getItem('connections');
+  if (connectionsData) {
+    collections.connections = JSON.parse(connectionsData);
+  }
+  
+  // Load messages from localStorage
+  const messagesData = localStorage.getItem('messages');
+  if (messagesData) {
+    collections.messages = JSON.parse(messagesData);
   }
   
   console.log('Database initialized successfully');

@@ -129,11 +129,83 @@ export const meetingOperations = {
   }
 };
 
+// Connections operations
+export const connectionOperations = {
+  getAll: (filters = {}) => {
+    return window.Database?.connectionOperations?.getAll(filters) || 
+           window.db?.getAll('connections') || [];
+  },
+  
+  getById: (id) => {
+    return window.Database?.connectionOperations?.getById(id) || 
+           window.db?.getById('connections', id);
+  },
+
+  getByUserId: (userId) => {
+    const connections = window.Database?.connectionOperations?.getAll() || 
+                        window.db?.getAll('connections') || [];
+    return connections.filter(c => c.userId === userId || c.contactId === userId);
+  },
+  
+  create: (connectionData) => {
+    return window.Database?.connectionOperations?.create(connectionData) || 
+           window.db?.add('connections', connectionData);
+  },
+  
+  update: (id, updates) => {
+    return window.Database?.connectionOperations?.update(id, updates) || 
+           window.db?.update('connections', id, updates);
+  },
+  
+  delete: (id) => {
+    return window.Database?.connectionOperations?.delete(id) || 
+           window.db?.remove('connections', id);
+  }
+};
+
+// Messages operations
+export const messageOperations = {
+  getAll: (filters = {}) => {
+    return window.Database?.messageOperations?.getAll(filters) || 
+           window.db?.getAll('messages') || [];
+  },
+  
+  getById: (id) => {
+    return window.Database?.messageOperations?.getById(id) || 
+           window.db?.getById('messages', id);
+  },
+  
+  // Get messages for a specific conversation
+  getByConversationId: (conversationId) => {
+    const messages = window.Database?.messageOperations?.getAll() || 
+                     window.db?.getAll('messages') || [];
+    return messages.filter(m => m.conversationId === conversationId)
+                   .sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+  },
+  
+  create: (messageData) => {
+    return window.Database?.messageOperations?.create(messageData) || 
+           window.db?.add('messages', messageData);
+  },
+  
+  update: (id, updates) => {
+    return window.Database?.messageOperations?.update(id, updates) || 
+           window.db?.update('messages', id, updates);
+  },
+  
+  delete: (id) => {
+    return window.Database?.messageOperations?.delete(id) || 
+           window.db?.remove('messages', id);
+  }
+};
+
 // Export the full database interface
 export default {
   initDatabase,
   userOperations,
   activityOperations,
   spiritualFitnessOperations,
-  meetingOperations
+  meetingOperations,
+  connectionOperations,
+  messageOperations
 };
