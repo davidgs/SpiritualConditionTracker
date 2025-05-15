@@ -110,7 +110,7 @@ function Header({ title, menuOpen, setMenuOpen, isMobile }) {
             background: 'none',
             border: 'none',
             color: darkMode ? '#9ca3af' : '#6b7280',
-            fontSize: '1.5rem',
+            fontSize: '1.75rem',
             cursor: 'pointer',
             padding: '4px',
             display: 'flex',
@@ -119,7 +119,7 @@ function Header({ title, menuOpen, setMenuOpen, isMobile }) {
           }}
           aria-label={menuOpen ? "Close menu" : "Open menu"}
         >
-          <i className={menuOpen ? "fa-solid fa-xmark" : "fa-solid fa-bars"} />
+          {menuOpen ? '✕' : '☰'}
         </button>
       )}
     </header>

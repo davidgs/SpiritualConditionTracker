@@ -52,14 +52,14 @@ function NavBar({ currentView, setCurrentView }) {
   // Mobile menu styles
   const mobileMenuStyles = {
     menu: {
-      position: 'absolute',
-      top: menuOpen ? '100%' : '-300px', // Position relative to the header
+      position: 'fixed',
+      top: menuOpen ? '60px' : '-300px', // Fixed position from top of viewport
       left: 0,
       right: 0,
       zIndex: 19, // Below header but above content
       backgroundColor: navBackgroundColor,
       boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-      transition: 'top 0.3s ease-in-out, opacity 0.3s ease-in-out',
+      transition: 'all 0.3s ease-in-out',
       opacity: menuOpen ? 1 : 0,
       padding: '8px 16px',
       display: 'flex',
