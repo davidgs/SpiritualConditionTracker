@@ -129,28 +129,53 @@ export default function MeetingForm({
           const { latitude, longitude } = position.coords;
           setLocation({ latitude, longitude });
           
-          // Try to get address from coordinates using geojson format
+          // Try to get address from coordinates
+          // First try GeoJSON format, which provides more structured data
           console.log('Making request to Nominatim with GeoJSON format');
-          const response = await fetch(
+          let response = await fetch(
             `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=geojson`
           );
           
+          // If GeoJSON fails for some reason, fall back to regular JSON format
+          if (!response.ok) {
+            console.log('GeoJSON request failed, falling back to JSON format');
+            response = await fetch(
+              `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`
+            );
+          }
+          
           if (response.ok) {
-            const geojsonData = await response.json();
-            console.log('GeoJSON response:', geojsonData);
+            const data = await response.json();
+            console.log('Response data:', data);
             
-            // GeoJSON format is different, properties are in 'features[0].properties'
-            if (geojsonData.features && geojsonData.features.length > 0) {
-              const properties = geojsonData.features[0].properties;
+            // Determine if we're dealing with GeoJSON or regular JSON format
+            const isGeoJson = data.type === 'FeatureCollection' && data.features;
+            
+            if (isGeoJson && data.features.length > 0) {
+              // Process as GeoJSON
+              console.log('Processing as GeoJSON');
+              const properties = data.features[0].properties;
               console.log('GeoJSON properties:', properties);
               
               if (properties.address) {
                 // Extract address components from GeoJSON properties
+                // Process street address (always include house number and street when available)
+                const streetAddress = (properties.address.house_number ? properties.address.house_number + ' ' : '') + 
+                                     (properties.address.road || properties.address.street || '');
+                
+                // For city, ONLY use actual city/town/village - don't use alternatives like neighborhood
+                // This will leave city blank when a proper city name isn't available
+                const city = properties.address.city || properties.address.town || properties.address.village || '';
+                
+                // Log whether we found a city or not
+                if (!city) {
+                  console.log('No city/town/village found in the address data');
+                  console.log('Available address fields:', Object.keys(properties.address));
+                }
+                
                 const addressData = {
-                  streetAddress: (properties.address.house_number ? properties.address.house_number + ' ' : '') + 
-                                (properties.address.road || properties.address.street || ''),
-                  city: properties.address.city || properties.address.town || properties.address.village || 
-                       properties.address.hamlet || properties.address.neighbourhood || properties.address.suburb || '',
+                  streetAddress: streetAddress,
+                  city: city,  // This will be blank if no city/town/village is available
                   state: properties.address.state || properties.address.county || '',
                   zipCode: properties.address.postcode || ''
                 };
@@ -174,10 +199,10 @@ export default function MeetingForm({
                   setStreetAddress(parts[0]);
                 }
                 
-                // Second part is often city or neighborhood
-                if (parts.length >= 2) {
-                  setCity(parts[1]);
-                }
+                // We'll leave city blank in the fallback mode, as we can't reliably determine
+                // if the second part is actually a city or some other location entity
+                // This will prompt the user to manually fill in the city if needed
+                console.log('Leaving city field blank in fallback mode - cannot reliably determine city from display_name');
                 
                 // Third part might be county or state 
                 if (parts.length >= 3) {
@@ -195,6 +220,61 @@ export default function MeetingForm({
                     setZipCode(parts[4]);
                   }
                 }
+              }
+            } else if (data.address) {
+              // Process as regular JSON
+              console.log('Processing as regular JSON');
+              console.log('JSON address:', data.address);
+              
+              // Process street address (always include house number and street when available)
+              const streetAddress = (data.address.house_number ? data.address.house_number + ' ' : '') + 
+                                 (data.address.road || data.address.street || '');
+              
+              // For city, ONLY use actual city/town/village - don't use alternatives
+              const city = data.address.city || data.address.town || data.address.village || '';
+              
+              // Log whether we found a city or not
+              if (!city) {
+                console.log('No city/town/village found in the address data');
+                console.log('Available address fields:', Object.keys(data.address));
+              }
+              
+              const addressData = {
+                streetAddress: streetAddress,
+                city: city,  // This will be blank if no city/town/village is available
+                state: data.address.state || data.address.county || '',
+                zipCode: data.address.postcode || ''
+              };
+              
+              console.log('Extracted address data from JSON:', addressData);
+              
+              // Update the form fields
+              updateAddressFields(addressData);
+            } else if (data.display_name) {
+              // Fallback to display_name for either format
+              console.log('Using display_name fallback:', data.display_name);
+              setMeetingAddress(data.display_name);
+              
+              // Extract just the street address from display_name if possible
+              const parts = data.display_name.split(',').map(part => part.trim());
+              console.log('Display name parts:', parts);
+              
+              if (parts.length >= 1) {
+                setStreetAddress(parts[0]);
+              }
+              
+              // Leave city blank as we can't reliably determine it
+              console.log('Leaving city field blank in fallback mode');
+              
+              // Try to get state from parts
+              if (parts.length >= 3) {
+                setState(parts[2]);
+              }
+              
+              // Try to extract zip code
+              const zipMatch = data.display_name.match(/\b\d{5}(?:-\d{4})?\b/);
+              if (zipMatch) {
+                setZipCode(zipMatch[0]);
               }
             }
           }
