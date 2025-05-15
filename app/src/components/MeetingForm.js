@@ -172,9 +172,12 @@ export default function MeetingForm({
   return (
     <div className={containerClass}>
       <div className={formClass}>
-        <h3 className="text-lg font-semibold mb-4 text-gray-800 dark:text-gray-100">
+        <h3 className="text-lg font-semibold mb-2 text-gray-800 dark:text-gray-100">
           {meeting ? 'Edit Meeting' : 'Add New Meeting'}
         </h3>
+        <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+          Add details for your regular AA meeting. Most meetings occur in the evenings, typically between 6-9 PM.
+        </p>
         
         {error && (
           <div className="mb-4 p-2 bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200 rounded">
@@ -295,6 +298,9 @@ export default function MeetingForm({
                 {searchingLocation ? 'Detecting...' : 'Detect'}
               </button>
             </div>
+            <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+              Include full address details or use the detect button to find your current location
+            </p>
           </div>
           
           {/* Action Buttons */}
