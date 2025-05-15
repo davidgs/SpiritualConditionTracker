@@ -5,6 +5,7 @@ import NavBar from './components/NavBar';
 // Removed NearbyMembers import as we won't be using Bluetooth
 import Profile from './components/Profile';
 import History from './components/History';
+import Meetings from './components/Meetings';
 import { ThemeProvider } from './contexts/ThemeContext';
 
 // Main App Component
@@ -135,6 +136,14 @@ function App() {
             setCurrentView={setCurrentView}
             onSave={handleSaveActivity}
             activities={activities}
+            meetings={meetings}
+          />
+        );
+      case 'meetings':
+        return (
+          <Meetings
+            setCurrentView={setCurrentView}
+            meetings={meetings}
           />
         );
       case 'history':
