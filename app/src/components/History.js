@@ -9,7 +9,7 @@ export default function History({ setCurrentView, activities }) {
   const darkMode = document.documentElement.classList.contains('dark');
   
   return (
-    <div className="p-4 pb-20 content-scrollable">
+    <div className="p-4 content-scrollable">
       <div className="flex items-center mb-6">
         <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">Activity History</h1>
       </div>
