@@ -162,7 +162,7 @@ export default function Meetings({ setCurrentView, meetings = [], onSave }) {
     <div className="p-4 content-scrollable">
       <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-4 flex items-center">
         <i className="fa-solid fa-building mr-2 text-blue-600"></i>
-        My Meetings
+        &nbsp;My Meetings
       </h1>
       
       {/* Error Message */}
@@ -182,12 +182,12 @@ export default function Meetings({ setCurrentView, meetings = [], onSave }) {
       {!showForm && (
         <div className="fixed bottom-20 right-6 z-10">
           <button
-            className="fa-solid fa-plus text-xl w-14 h-14 bg-blue-600 hover:bg-blue-700 text-white rounded-full flex justify-center items-center shadow-lg transition duration-200 transform hover:scale-110"
+            className="w-14 h-14 bg-blue-600 hover:bg-blue-700 text-white rounded-full flex justify-center items-center shadow-lg transition duration-200 transform hover:scale-110"
             onClick={() => setShowForm(true)}
             aria-label="Add new meeting"
             title={localMeetings.length > 0 ? 'Add New Meeting' : 'Add Your First Meeting'}
           >
-            {/* <i className=""></i> */}
+            <i className="fa-regular fa-calendar-plus"></i>
           </button>
         </div>
       )}
