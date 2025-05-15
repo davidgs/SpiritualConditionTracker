@@ -28,7 +28,7 @@ export default function Dashboard({ setCurrentView, user, activities, spiritualF
   };
   
   // Calculate progress percentage, capped at 100%
-  const progressPercent = Math.min(spiritualFitness, 100);
+  const progressPercent = Math.min(currentScore, 100);
   
   // Effect to recalculate score when timeframe changes
   useEffect(() => {
@@ -99,7 +99,7 @@ export default function Dashboard({ setCurrentView, user, activities, spiritualF
           backgroundColor: darkMode ? '#1f2937' : '#ffffff',
           borderRadius: '0.5rem',
           padding: '0.5rem',
-          textAlign: 'left',
+          textAlign: 'center',
           border: darkMode ? '1px solid #374151' : '1px solid #e5e7eb'
         }}>
           <h3 style={{
@@ -107,12 +107,24 @@ export default function Dashboard({ setCurrentView, user, activities, spiritualF
             fontWeight: 600,
             color: darkMode ? '#d1d5db' : '#374151',
             marginBottom: '0.5rem',
-            textAlign: 'left'
+            textAlign: 'center'
           }}>Sobriety</h3>
           
+          {/* Add sobriety date display */}
+          {user?.sobrietyDate && (
+            <div style={{ 
+              fontSize: '0.85rem', 
+              color: darkMode ? '#9ca3af' : '#6b7280',
+              marginBottom: '0.5rem',
+              textAlign: 'center'
+            }}>
+              Since {formatDate(user.sobrietyDate)}
+            </div>
+          )}
+          
           {showYearsProminent ? (
-            <div style={{ textAlign: 'left' }}>
-              <div style={{ display: 'flex', alignItems: 'baseline', marginBottom: '5px' }}>
+            <div style={{ textAlign: 'center' }}>
+              <div style={{ display: 'flex', alignItems: 'baseline', marginBottom: '5px', justifyContent: 'center' }}>
                 <span style={{ 
                   fontSize: '1.6rem', 
                   fontWeight: 'bold', 
@@ -133,14 +145,15 @@ export default function Dashboard({ setCurrentView, user, activities, spiritualF
               <div style={{ 
                 fontSize: '1rem', 
                 color: darkMode ? '#60a5fa' : '#3b82f6',
-                lineHeight: '1.1'
+                lineHeight: '1.1',
+                textAlign: 'center'
               }}>
                 {formatNumber(sobrietyDays)} days
               </div>
             </div>
           ) : (
-            <div style={{ textAlign: 'left' }}>
-              <div style={{ display: 'flex', alignItems: 'baseline', marginBottom: '5px' }}>
+            <div style={{ textAlign: 'center' }}>
+              <div style={{ display: 'flex', alignItems: 'baseline', marginBottom: '5px', justifyContent: 'center' }}>
                 <span style={{ 
                   fontSize: '1.6rem', 
                   fontWeight: 'bold', 
@@ -161,7 +174,8 @@ export default function Dashboard({ setCurrentView, user, activities, spiritualF
               <div style={{ 
                 fontSize: '1rem', 
                 color: darkMode ? '#60a5fa' : '#3b82f6',
-                lineHeight: '1.1'
+                lineHeight: '1.1',
+                textAlign: 'center'
               }}>
                 {sobrietyYears.toFixed(2)} years
               </div>
@@ -188,7 +202,7 @@ export default function Dashboard({ setCurrentView, user, activities, spiritualF
               fontSize: '1.6rem', 
               fontWeight: 'bold',
               marginBottom: '0.5rem',
-              color: getScoreColor(spiritualFitness),
+              color: getScoreColor(currentScore),
               lineHeight: '1.1'
             }}
           >
@@ -221,14 +235,37 @@ export default function Dashboard({ setCurrentView, user, activities, spiritualF
               right: 0,
               bottom: 0,
               top: 0,
-              width: `${100 - Math.min(spiritualFitness, 100)}%`
+              width: `${100 - progressPercent}%`
             }}></div>
           </div>
           
           <div style={{ 
-            fontSize: '0.7rem',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '0.5rem',
+            fontSize: '0.85rem',
             color: darkMode ? '#9ca3af' : '#6b7280'
-          }}>30-day score</div>
+          }}>
+            <span>{scoreTimeframe}-day score</span>
+            <button 
+              onClick={cycleTimeframe}
+              style={{
+                backgroundColor: 'transparent',
+                border: 'none',
+                cursor: 'pointer',
+                color: darkMode ? '#60a5fa' : '#3b82f6',
+                padding: '2px',
+                borderRadius: '4px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}
+              title="Change timeframe"
+            >
+              <i className="fa-solid fa-shuffle"></i>
+            </button>
+          </div>
           <div className="relative inline-block">
             <button 
               ref={buttonRef}
