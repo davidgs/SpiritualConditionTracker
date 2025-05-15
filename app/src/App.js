@@ -6,7 +6,9 @@ import NavBar from './components/NavBar';
 import Profile from './components/Profile';
 import History from './components/History';
 import Meetings from './components/Meetings';
+import Messages from './components/Messages';
 import { ThemeProvider } from './contexts/ThemeContext';
+import { generateKeyPair } from './utils/encryption';
 
 // Main App Component
 function App() {
@@ -37,7 +39,34 @@ function App() {
 
     // Get user data
     const userData = window.db.getAll('user');
-    setUser(userData);
+    
+    // Initialize messaging keys if they don't exist
+    if (userData && (!userData.messagingKeys || !userData.messagingKeys.publicKey)) {
+      try {
+        console.log('Generating messaging keys for secure communications...');
+        // Generate key pair for secure messaging
+        const keyPair = await generateKeyPair();
+        
+        // Create fingerprint (simple hash of public key for identification)
+        const fingerprint = await getKeyFingerprint(keyPair.publicKey);
+        
+        // Update user with new keys
+        const updatedUser = window.db.update('user', userData.id, {
+          messagingKeys: {
+            publicKey: keyPair.publicKey,
+            privateKey: keyPair.privateKey,
+            fingerprint
+          }
+        });
+        
+        setUser(updatedUser);
+      } catch (err) {
+        console.error('Failed to generate messaging keys:', err);
+        setUser(userData);
+      }
+    } else {
+      setUser(userData);
+    }
 
     // Get activities
     const activitiesData = window.db.getAll('activities');
@@ -49,6 +78,25 @@ function App() {
 
     // Calculate spiritual fitness
     calculateSpiritualFitness();
+  }
+  
+  // Generate a simple fingerprint from the public key
+  async function getKeyFingerprint(publicKey) {
+    try {
+      // Create a hash of the public key
+      const msgBuffer = new TextEncoder().encode(publicKey);
+      const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      
+      // Take the first 8 bytes and format as hex with colons
+      return hashArray
+        .slice(0, 8)
+        .map(b => b.toString(16).padStart(2, '0'))
+        .join(':');
+    } catch (err) {
+      console.error('Error generating key fingerprint:', err);
+      return 'unknown-fingerprint';
+    }
   }
 
   // Calculate spiritual fitness score using the database function
@@ -167,6 +215,13 @@ function App() {
           <History
             setCurrentView={setCurrentView}
             activities={activities}
+          />
+        );
+      case 'messages':
+        return (
+          <Messages
+            setCurrentView={setCurrentView}
+            user={user}
           />
         );
       // Nearby feature removed as it requires Bluetooth which isn't available in web apps

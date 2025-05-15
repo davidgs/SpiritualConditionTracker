@@ -13,6 +13,7 @@ function NavBar({ currentView, setCurrentView }) {
     { id: 'dashboard', name: 'Dashboard', icon: 'fa-solid fa-house' },
     { id: 'activity', name: 'Log Activity', icon: 'fa-solid fa-plus' },
     { id: 'meetings', name: 'Meetings', icon: 'fa-solid fa-map-marker-alt' },
+    { id: 'messages', name: 'Messages', icon: 'fa-solid fa-comments' },
     { id: 'history', name: 'History', icon: 'fa-solid fa-clock-rotate-left' },
     { id: 'profile', name: 'Profile', icon: 'fa-solid fa-user' }
   ];

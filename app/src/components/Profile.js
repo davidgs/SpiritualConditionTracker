@@ -38,13 +38,20 @@ export default function Profile({ setCurrentView, user, onUpdate }) {
       return;
     }
     
-    // Create updates object
+    // Get the current state of the messaging toggle
+    const allowMessages = document.getElementById('allowMessages').checked;
+    
+    // Create updates object with privacy settings
     const updates = {
       name,
       sobrietyDate: sobrietyDate ? new Date(sobrietyDate).toISOString() : '',
       homeGroup,
       sponsorName,
-      sponsorPhone
+      sponsorPhone,
+      privacySettings: {
+        ...(user?.privacySettings || {}),
+        allowMessages
+      }
     };
     
     // Update the profile
@@ -151,7 +158,43 @@ export default function Profile({ setCurrentView, user, onUpdate }) {
       {/* App Settings */}
       <div className="mb-6">
         <h2 className="text-lg font-medium text-gray-700 dark:text-gray-300 mb-3">App Settings</h2>
-        <ThemeToggle />
+        <div className="mb-4">
+          <ThemeToggle />
+        </div>
+        
+        <h3 className="text-md font-medium text-gray-700 dark:text-gray-300 mb-2">Privacy & Messaging</h3>
+        <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4 mb-4">
+          <div className="flex items-center justify-between mb-3">
+            <label className="text-gray-700 dark:text-gray-300">
+              Allow Messaging
+            </label>
+            <div className="relative inline-block w-10 mr-2 align-middle select-none">
+              <input 
+                type="checkbox" 
+                name="allowMessages" 
+                id="allowMessages" 
+                className="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer"
+                defaultChecked={user?.privacySettings?.allowMessages !== false}
+                onChange={(e) => {
+                  // This will be handled in the form submit
+                }}
+                style={{
+                  right: user?.privacySettings?.allowMessages !== false ? '0' : 'auto',
+                  left: user?.privacySettings?.allowMessages !== false ? 'auto' : '0',
+                  borderColor: user?.privacySettings?.allowMessages !== false ? '#4ade80' : '#f87171',
+                  backgroundColor: user?.privacySettings?.allowMessages !== false ? '#4ade80' : '#f87171'
+                }}
+              />
+              <label 
+                htmlFor="allowMessages" 
+                className="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 dark:bg-gray-600 cursor-pointer"
+              ></label>
+            </div>
+          </div>
+          <p className="text-xs text-gray-500 dark:text-gray-400">
+            When enabled, your connections can send you secure messages.
+          </p>
+        </div>
       </div>
       
       <form onSubmit={handleSubmit} className="space-y-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4">

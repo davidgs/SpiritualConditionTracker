@@ -70,3 +70,23 @@ html.dark .toggle-slider {
 html.dark .toggle-slider:after {
   transform: translateX(16px);
 }
+
+/* Custom toggle checkbox styling for settings */
+.toggle-checkbox {
+  transition: all 0.3s ease;
+}
+
+.toggle-label {
+  transition: background-color 0.3s ease;
+}
+
+.toggle-checkbox:checked + .toggle-label {
+  background-color: #4ade80;
+}
+
+.toggle-checkbox:checked {
+  right: 0;
+  left: auto;
+  border-color: #4ade80;
+  background-color: #4ade80;
+}
