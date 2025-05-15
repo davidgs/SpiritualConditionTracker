@@ -294,23 +294,23 @@ export default function MeetingForm({
           </div>
           
           {/* Days of the Week */}
-          <div className="mb-4">
-            <label className="block text-gray-700 dark:text-gray-300 mb-2">
+          <div className="mb-6">
+            <label className="block text-gray-700 dark:text-gray-300 mb-2 text-xl font-medium">
               Days of the Week
             </label>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
+            <div className="flex flex-wrap gap-2">
               {Object.keys(meetingDays).map(day => (
                 <label 
                   key={day} 
-                  className={`flex items-center p-2 rounded cursor-pointer ${
+                  className={`flex items-center px-3 py-2 rounded-md cursor-pointer ${
                     meetingDays[day] 
-                      ? 'bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200' 
-                      : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
+                      ? 'bg-blue-600 text-white font-medium' 
+                      : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600'
                   }`}
                 >
                   <input
                     type="checkbox"
-                    className="mr-2"
+                    className="sr-only"
                     checked={meetingDays[day]}
                     onChange={() => toggleDay(day)}
                   />
@@ -321,52 +321,69 @@ export default function MeetingForm({
           </div>
           
           {/* Meeting Time */}
-          <div className="mb-4">
-            <label className="block text-gray-700 dark:text-gray-300 mb-2">
-              Meeting Time (24-hour format, e.g. 18:00 for 6 PM)
+          <div className="mb-6">
+            <label className="block text-gray-700 dark:text-gray-300 mb-2 text-xl font-medium">
+              Meeting Time
             </label>
-            <select
-              className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200"
-              value={meetingTime}
-              onChange={(e) => setMeetingTime(e.target.value)}
-            >
-              <option value="">Select a time</option>
-              {/* Morning times */}
-              <option value="06:00">6:00 AM</option>
-              <option value="06:30">6:30 AM</option>
-              <option value="07:00">7:00 AM</option>
-              <option value="07:30">7:30 AM</option>
-              <option value="08:00">8:00 AM</option>
-              <option value="08:30">8:30 AM</option>
-              <option value="09:00">9:00 AM</option>
-              <option value="09:30">9:30 AM</option>
-              <option value="10:00">10:00 AM</option>
-              <option value="10:30">10:30 AM</option>
-              <option value="11:00">11:00 AM</option>
-              <option value="11:30">11:30 AM</option>
-              <option value="12:00">12:00 PM (Noon)</option>
-              {/* Afternoon/Evening times */}
-              <option value="12:30">12:30 PM</option>
-              <option value="13:00">1:00 PM</option>
-              <option value="13:30">1:30 PM</option>
-              <option value="14:00">2:00 PM</option>
-              <option value="14:30">2:30 PM</option>
-              <option value="15:00">3:00 PM</option>
-              <option value="15:30">3:30 PM</option>
-              <option value="16:00">4:00 PM</option>
-              <option value="16:30">4:30 PM</option>
-              <option value="17:00">5:00 PM</option>
-              <option value="17:30">5:30 PM</option>
-              <option value="18:00">6:00 PM</option>
-              <option value="18:30">6:30 PM</option>
-              <option value="19:00">7:00 PM</option>
-              <option value="19:30">7:30 PM</option>
-              <option value="20:00">8:00 PM</option>
-              <option value="20:30">8:30 PM</option>
-              <option value="21:00">9:00 PM</option>
-              <option value="21:30">9:30 PM</option>
-              <option value="22:00">10:00 PM</option>
-            </select>
+            <div className="relative">
+              <select
+                className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 appearance-none pr-10"
+                value={meetingTime}
+                onChange={(e) => setMeetingTime(e.target.value)}
+              >
+                <option value="">Select a time</option>
+                {/* Common evening times for AA meetings first */}
+                <optgroup label="Evening (Most Common)">
+                  <option value="18:00">6:00 PM</option>
+                  <option value="18:30">6:30 PM</option>
+                  <option value="19:00">7:00 PM</option>
+                  <option value="19:30">7:30 PM</option>
+                  <option value="20:00">8:00 PM</option>
+                  <option value="20:30">8:30 PM</option>
+                </optgroup>
+                {/* Morning times */}
+                <optgroup label="Morning">
+                  <option value="06:00">6:00 AM</option>
+                  <option value="06:30">6:30 AM</option>
+                  <option value="07:00">7:00 AM</option>
+                  <option value="07:30">7:30 AM</option>
+                  <option value="08:00">8:00 AM</option>
+                  <option value="08:30">8:30 AM</option>
+                  <option value="09:00">9:00 AM</option>
+                  <option value="09:30">9:30 AM</option>
+                  <option value="10:00">10:00 AM</option>
+                  <option value="10:30">10:30 AM</option>
+                  <option value="11:00">11:00 AM</option>
+                  <option value="11:30">11:30 AM</option>
+                  <option value="12:00">12:00 PM (Noon)</option>
+                </optgroup>
+                {/* Afternoon times */}
+                <optgroup label="Afternoon">
+                  <option value="12:30">12:30 PM</option>
+                  <option value="13:00">1:00 PM</option>
+                  <option value="13:30">1:30 PM</option>
+                  <option value="14:00">2:00 PM</option>
+                  <option value="14:30">2:30 PM</option>
+                  <option value="15:00">3:00 PM</option>
+                  <option value="15:30">3:30 PM</option>
+                  <option value="16:00">4:00 PM</option>
+                  <option value="16:30">4:30 PM</option>
+                  <option value="17:00">5:00 PM</option>
+                  <option value="17:30">5:30 PM</option>
+                </optgroup>
+                {/* Late evening times */}
+                <optgroup label="Late Evening">
+                  <option value="21:00">9:00 PM</option>
+                  <option value="21:30">9:30 PM</option>
+                  <option value="22:00">10:00 PM</option>
+                </optgroup>
+              </select>
+              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700 dark:text-gray-300">
+                <svg className="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+                </svg>
+              </div>
+            </div>
           </div>
           
           {/* Meeting Address - Split into multiple fields */}
