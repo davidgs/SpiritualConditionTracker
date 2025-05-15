@@ -254,12 +254,12 @@ function App() {
       <div className="app-container h-full flex flex-col bg-white dark:bg-gray-900 transition-colors duration-200">
         <NavBar currentView={currentView} setCurrentView={setCurrentView} />
         <div 
-          className="flex-grow overflow-y-auto" 
+          className="flex-grow" 
           style={{ 
-            height: 'calc(100vh - 60px)', // 60px is the header height
+            minHeight: 'calc(100vh - 60px)', // 60px is the header height
             paddingBottom: '100px', // Significantly increased padding to ensure content is visible
             paddingTop: '10px', // Space after the header
-            overflowY: 'auto' // Ensure this container scrolls
+            overflowY: 'visible' // Don't add scrollbar to this container
           }}
         >
           {renderCurrentView()}
