@@ -194,7 +194,7 @@ export default function Meetings({ setCurrentView, meetings = [], onSave }) {
               boxShadow: 'none'
             }}
           >
-            <i className="fa-solid fa-circle-plus text-blue-500 dark:text-blue-400" style={{ fontSize: '3.5rem' }}></i>
+            <i className="fa-solid fa-calendar-plus text-gray-500 dark:text-gray-200" style={{ fontSize: '3.5rem' }}></i>
           </button>
         </div>
       )}

@@ -413,11 +413,18 @@ export default function MeetingForm({
                 />
                 <button
                   type="button"
-                  className="bg-transparent border-0 flex items-center justify-center ml-2"
                   onClick={detectLocation}
                   disabled={searchingLocation}
                   title="Detect your location"
-                  style={{ backgroundColor: 'transparent', border: 'none', boxShadow: 'none' }}
+                  style={{ 
+                    background: 'none', 
+                    border: 'none', 
+                    padding: 0,
+                    margin: '0 0 0 10px',
+                    cursor: 'pointer',
+                    outline: 'none',
+                    boxShadow: 'none'
+                  }}
                 >
                   {searchingLocation ? (
                     <i className="fa-solid fa-spinner fa-spin text-blue-500 dark:text-blue-400" style={{ fontSize: '1.5rem' }}></i>
@@ -473,18 +480,39 @@ export default function MeetingForm({
           <div className="flex justify-between mt-8">
             <button
               type="button"
-              className="bg-transparent border-0 p-0 transition duration-200 transform hover:scale-110"
               onClick={onCancel}
               title="Cancel"
-              style={{ backgroundColor: 'transparent', border: 'none', boxShadow: 'none' }}
+              style={{ 
+                background: 'none', 
+                border: 'none', 
+                padding: 0,
+                cursor: 'pointer',
+                outline: 'none',
+                boxShadow: 'none',
+                transition: 'transform 0.2s',
+                transform: 'scale(1)',
+                ':hover': {
+                  transform: 'scale(1.1)'
+                }
+              }}
             >
               <i className="fa-regular fa-circle-xmark text-red-500 dark:text-red-400" style={{ fontSize: '2rem' }}></i>
             </button>
             <button
               type="submit"
-              className="bg-transparent border-0 p-0 transition duration-200 transform hover:scale-110"
               title={meeting ? "Save changes" : "Add meeting"}
-              style={{ backgroundColor: 'transparent', border: 'none', boxShadow: 'none' }}
+              style={{ 
+                background: 'none', 
+                border: 'none', 
+                padding: 0,
+                cursor: 'pointer',
+                outline: 'none',
+                boxShadow: 'none',
+                transition: 'transform 0.2s',
+                transform: 'scale(1)'
+              }}
+              onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.1)'}
+              onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
             >
               <i className="fa-regular fa-circle-check text-green-500 dark:text-green-400" style={{ fontSize: '2rem' }}></i>
             </button>
