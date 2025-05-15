@@ -60,7 +60,7 @@ export default function Dashboard({ setCurrentView, user, activities, spiritualF
   const showYearsProminent = sobrietyYears >= 1;
 
   return (
-    <div className="p-3 max-w-md mx-auto" style={{ height: '100%', overflowY: 'auto' }}>
+    <div className="p-3 max-w-md mx-auto">
       {/* Sobriety & Spiritual Fitness Stats - Fixed height section */}
       <div className="grid grid-cols-2 gap-2 mb-3">
         <div style={{

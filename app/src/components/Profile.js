@@ -76,7 +76,7 @@ export default function Profile({ setCurrentView, user, onUpdate }) {
   };
 
   return (
-    <div className="p-4 max-w-md mx-auto" style={{ height: '100%', overflowY: 'auto' }}>
+    <div className="p-4 max-w-md mx-auto">
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">Recovery Tracker</h1>
