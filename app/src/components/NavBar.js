@@ -53,7 +53,7 @@ function NavBar({ currentView, setCurrentView }) {
   const mobileMenuStyles = {
     menu: {
       position: 'fixed',
-      top: menuOpen ? '60px' : '-300px', // Position below header when open
+      top: menuOpen ? '48px' : '-300px', // Position below header when open (adjusted for smaller header)
       left: 0,
       right: 0,
       zIndex: 19, // Below header but above content
@@ -87,7 +87,7 @@ function NavBar({ currentView, setCurrentView }) {
     overlay: {
       display: menuOpen ? 'block' : 'none',
       position: 'fixed',
-      top: '60px', // Start below header
+      top: '48px', // Start below header (adjusted for smaller header)
       left: 0,
       right: 0,
       bottom: 0,

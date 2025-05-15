@@ -62,51 +62,7 @@ export default function Dashboard({ setCurrentView, user, activities, spiritualF
   return (
     <div className="p-3 max-w-md mx-auto">
       {/* Centered logo at the top with forceful inline styles */}
-      <div style={{ 
-        textAlign: 'center',
-        marginBottom: '0.5rem',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center'
-      }}>
-        <div style={{
-          width: '100%',
-          display: 'flex',
-          justifyContent: 'center',
-          marginBottom: '2px'
-        }}>
-          {/* Use static path to logo instead of import */}
-          <img 
-            src="/app/assets/logo.png"
-            alt="App Logo" 
-            style={{ 
-              width: '60px',
-              height: '60px',
-              objectFit: 'contain',
-              borderRadius: '12px',
-              marginLeft: 'auto',
-              marginRight: 'auto'
-            }}
-          />
-        </div>
-        <h1 style={{ 
-          fontSize: '1.3rem', 
-          fontWeight: 'bold', 
-          color: darkMode ? '#f3f4f6' : '#1f2937',
-          marginBottom: '0px',
-          lineHeight: '1.1'
-        }}>
-          Recovery Tracker
-        </h1>
-        <p style={{ 
-          fontSize: '0.8rem', 
-          color: darkMode ? '#9ca3af' : '#6b7280',
-          lineHeight: '1.1'
-        }}>
-          Track your spiritual journey
-        </p>
-      </div>
+      
       
       {/* Sobriety & Spiritual Fitness Stats */}
       <div className="grid grid-cols-2 gap-2 mb-3">

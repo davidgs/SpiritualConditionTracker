@@ -18,23 +18,25 @@ function Header({ title, menuOpen, setMenuOpen, isMobile }) {
         zIndex: 20,
         backgroundColor: headerBackgroundColor,
         borderBottom: darkMode ? '1px solid #374151' : '1px solid #e5e7eb',
-        padding: '12px 16px',
+        padding: '0.75rem 1rem',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+        boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
       }}
     >
       {/* App Logo and Title */}
-      <div style={{ display: 'flex', alignItems: 'center' }}>
-        <i className="fa-solid fa-seedling text-green-500" style={{ fontSize: '1.5rem', marginRight: '10px' }}></i>
+      <div style={{ 
+        display: 'flex',
+        alignItems: 'center'
+      }}>
         <h1 style={{ 
-          margin: 0, 
-          fontSize: '1.25rem', 
-          fontWeight: 'bold',
-          color: headerTextColor
+          fontSize: '1.2rem', 
+          fontWeight: 'bold', 
+          color: darkMode ? '#f3f4f6' : '#1f2937',
+          margin: 0
         }}>
-          Spiritual Condition Tracker
+          {title || 'Spiritual Condition Tracker'}
         </h1>
       </div>
       
