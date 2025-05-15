@@ -339,6 +339,12 @@ export default function Dashboard({ setCurrentView, user, activities, spiritualF
           showDate={true}
         />
       </div>
+      
+      {/* Spiritual Fitness Modal */}
+      <SpiritualFitnessModal 
+        isOpen={showScoreModal}
+        onClose={() => setShowScoreModal(false)}
+      />
     </div>
   );
 }
