@@ -1,82 +1,150 @@
-import React from 'react';
-import Modal from './Modal';
+import * as React from 'react';
+import { styled } from '@mui/material/styles';
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
+import DialogActions from '@mui/material/DialogActions';
+import IconButton from '@mui/material/IconButton';
+import CloseIcon from '@mui/icons-material/Close';
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
+import Box from '@mui/material/Box';
+import { useTheme as useMuiTheme } from '@mui/material/styles';
 import { useTheme } from '../contexts/ThemeContext';
 
+// Style the Dialog
+const StyledDialog = styled(Dialog)(({ theme }) => ({
+  '& .MuiDialogContent-root': {
+    padding: theme.spacing(3),
+  },
+  '& .MuiDialogActions-root': {
+    padding: theme.spacing(1),
+  },
+  '& .MuiPaper-root': {
+    maxWidth: '500px',
+    width: '100%',
+  },
+}));
+
 /**
- * Modal component that explains how the Spiritual Fitness score is calculated
+ * Material UI Dialog component that explains how the Spiritual Fitness score is calculated
  * 
  * @param {Object} props - Component props
- * @param {boolean} props.isOpen - Whether the modal is open
- * @param {Function} props.onClose - Function to call when the modal should close
- * @returns {React.ReactElement} The modal component
+ * @param {boolean} props.isOpen - Whether the dialog is open
+ * @param {Function} props.onClose - Function to call when the dialog should close
+ * @returns {React.ReactElement} The dialog component
  */
 const SpiritualFitnessModal = ({ isOpen, onClose }) => {
   const { darkMode } = useTheme();
+  const muiTheme = useMuiTheme();
   
-  const sectionClass = "space-y-2";
-  const headingClass = "text-md font-semibold " + 
-    (darkMode ? "text-gray-300" : "text-gray-700") + 
-    " mb-2";
-  const listClass = "text-sm " + 
-    (darkMode ? "text-gray-400" : "text-gray-600") + 
-    " list-disc pl-5 space-y-1";
-  const paragraphClass = "text-sm " + 
-    (darkMode ? "text-gray-400" : "text-gray-600");
+  // Use a theme mode that matches our app's theme context
+  muiTheme.palette.mode = darkMode ? 'dark' : 'light';
   
   return (
-    <Modal
-      isOpen={isOpen}
+    <StyledDialog
       onClose={onClose}
-      title="Spiritual Fitness Score"
-      size="md"
+      aria-labelledby="spiritual-fitness-dialog-title"
+      open={isOpen}
     >
-      <div className="space-y-5">
-        <section className={sectionClass}>
-          <h3 className={headingClass}>
+      <DialogTitle sx={{ m: 0, p: 2 }} id="spiritual-fitness-dialog-title">
+        Spiritual Fitness Score
+      </DialogTitle>
+      
+      <IconButton
+        aria-label="close"
+        onClick={onClose}
+        sx={{
+          position: 'absolute',
+          right: 8,
+          top: 8,
+          color: (theme) => theme.palette.grey[500],
+        }}
+      >
+        <CloseIcon />
+      </IconButton>
+      
+      <DialogContent dividers>
+        <Box sx={{ mb: 3 }}>
+          <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: 'medium' }}>
             Base Points for Activities
-          </h3>
-          <ul className={listClass}>
-            <li>AA Meeting: 5 points (speaker +3, shared +1, chair +1)</li>
-            <li>Reading Literature: 2 points per 30 min</li>
-            <li>Prayer/Meditation: 2 points per 30 min</li>
-            <li>Talking with Sponsor: 3 points per 30 min</li>
-            <li>Working with Sponsee: 4 points per 30 min (max 20)</li>
-            <li>AA Calls: 1 point each (no limit)</li>
-            <li>Variety of activities: 1-5 bonus points</li>
+          </Typography>
+          <ul style={{ paddingLeft: '1.5rem', marginTop: '0.5rem' }}>
+            <Typography component="li" variant="body2" gutterBottom>
+              AA Meeting: 5 points (speaker +3, shared +1, chair +1)
+            </Typography>
+            <Typography component="li" variant="body2" gutterBottom>
+              Reading Literature: 2 points per 30 min
+            </Typography>
+            <Typography component="li" variant="body2" gutterBottom>
+              Prayer/Meditation: 2 points per 30 min
+            </Typography>
+            <Typography component="li" variant="body2" gutterBottom>
+              Talking with Sponsor: 3 points per 30 min
+            </Typography>
+            <Typography component="li" variant="body2" gutterBottom>
+              Working with Sponsee: 4 points per 30 min (max 20)
+            </Typography>
+            <Typography component="li" variant="body2" gutterBottom>
+              AA Calls: 1 point each (no limit)
+            </Typography>
+            <Typography component="li" variant="body2" gutterBottom>
+              Variety of activities: 1-5 bonus points
+            </Typography>
           </ul>
-        </section>
+        </Box>
         
-        <section className={sectionClass}>
-          <h3 className={headingClass}>
+        <Box sx={{ mb: 3 }}>
+          <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: 'medium' }}>
             Timeframe Adjustments
-          </h3>
-          <ul className={listClass}>
-            <li>Consistency bonus for regular activity across weeks</li>
-            <li>Higher expectations for longer timeframes</li>
-            <li>Recent activity weighted more heavily</li>
-            <li>Score reflects sustained engagement over time</li>
+          </Typography>
+          <ul style={{ paddingLeft: '1.5rem', marginTop: '0.5rem' }}>
+            <Typography component="li" variant="body2" gutterBottom>
+              Consistency bonus for regular activity across weeks
+            </Typography>
+            <Typography component="li" variant="body2" gutterBottom>
+              Higher expectations for longer timeframes
+            </Typography>
+            <Typography component="li" variant="body2" gutterBottom>
+              Recent activity weighted more heavily
+            </Typography>
+            <Typography component="li" variant="body2" gutterBottom>
+              Score reflects sustained engagement over time
+            </Typography>
           </ul>
-        </section>
+        </Box>
         
-        <section className={sectionClass}>
-          <h3 className={headingClass}>
+        <Box sx={{ mb: 3 }}>
+          <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: 'medium' }}>
             How Timeframes Affect Your Score
-          </h3>
-          <p className={paragraphClass}>
+          </Typography>
+          <Typography variant="body2" gutterBottom>
             Shorter timeframes (30 days) focus on recent activity, while 
             longer timeframes (60-365 days) measure your consistent 
             engagement over time. A high score over a 365-day period 
             demonstrates sustained spiritual fitness.
-          </p>
-        </section>
+          </Typography>
+        </Box>
         
-        <div className="pt-2 text-center">
-          <p className={"font-semibold " + paragraphClass}>
+        <Box sx={{ textAlign: 'center', mt: 2 }}>
+          <Typography 
+            variant="body1" 
+            sx={{ 
+              fontWeight: 'medium', 
+              color: darkMode ? 'primary.light' : 'primary.main' 
+            }}
+          >
             Maximum score is 100
-          </p>
-        </div>
-      </div>
-    </Modal>
+          </Typography>
+        </Box>
+      </DialogContent>
+      
+      <DialogActions>
+        <Button onClick={onClose} color="primary">
+          Close
+        </Button>
+      </DialogActions>
+    </StyledDialog>
   );
 };
 
