@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import Dashboard from './components/Dashboard';
-import ActivityLog from './components/ActivityLog';
+import ActivityPage from './components/ActivityPage';
 import NavBar from './components/NavBar';
 // Removed NearbyMembers import as we won't be using Bluetooth
 import Profile from './components/Profile';
-import History from './components/History';
 import Meetings from './components/Meetings';
 import Messages from './components/Messages';
 import { ThemeProvider } from './contexts/ThemeContext';
@@ -194,7 +193,7 @@ function App() {
         );
       case 'activity':
         return (
-          <ActivityLog 
+          <ActivityPage 
             setCurrentView={setCurrentView}
             onSave={handleSaveActivity}
             onSaveMeeting={handleSaveMeeting}
@@ -208,13 +207,6 @@ function App() {
             setCurrentView={setCurrentView}
             meetings={meetings}
             onSave={handleSaveMeeting}
-          />
-        );
-      case 'history':
-        return (
-          <History
-            setCurrentView={setCurrentView}
-            activities={activities}
           />
         );
       case 'messages':

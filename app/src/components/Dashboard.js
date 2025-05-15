@@ -324,7 +324,7 @@ export default function Dashboard({ setCurrentView, user, activities, spiritualF
               border: 'none',
               cursor: 'pointer'
             }}
-            onClick={() => setCurrentView('history')}
+            onClick={() => setCurrentView('activity')}
           >
             View All
           </button>
