@@ -22,17 +22,9 @@ html.dark body {
   overflow-x: hidden;
 }
 
-/* Scrollable content area */
-.content-scrollable {
-  max-height: calc(100vh - 60px);
-  overflow-y: auto;
-}
+/* Removed scrollable content area class - main scrolling handled at App level */
 
-/* Explicitly set a minimum height for activity containers */
-.activity-container {
-  max-height: 80vh;
-  overflow-y: auto;
-}
+/* No more separate scroll areas needed */
 
 /* Simple transition styles */
 .transition-200 {
