@@ -4,7 +4,7 @@ import ActivityList from './ActivityList';
 import MeetingForm from './MeetingForm';
 import { meetingOperations } from '../utils/database';
 
-export default function ActivityLog({ setCurrentView, onSave, activities, meetings = [] }) {
+export default function ActivityLog({ setCurrentView, onSave, onSaveMeeting, activities, meetings = [] }) {
   // Check for dark mode
   const darkMode = document.documentElement.classList.contains('dark');
   // Re-render when dark mode changes
@@ -224,14 +224,17 @@ export default function ActivityLog({ setCurrentView, onSave, activities, meetin
   
   // Handle saving a meeting from the meeting form
   function handleSaveMeeting(meeting) {
-    setShowMeetingForm(false);
-    
-    // If the meeting is saved to the database, it will show up in the meetings list
-    // on the next render, so we can just select it
-    if (meeting && meeting.id) {
-      setSelectedMeetingId(meeting.id);
-      setMeetingName(meeting.name);
+    // Call the parent's onSaveMeeting function to persist the meeting
+    if (onSaveMeeting) {
+      const savedMeeting = onSaveMeeting(meeting);
+      if (savedMeeting) {
+        setSelectedMeetingId(savedMeeting.id);
+        setMeetingName(savedMeeting.name);
+      }
     }
+    
+    // Close the form
+    setShowMeetingForm(false);
   }
 
   // Get activity icon
@@ -492,6 +495,7 @@ export default function ActivityLog({ setCurrentView, onSave, activities, meetin
               onSave={handleSaveMeeting}
               onCancel={() => setShowMeetingForm(false)}
               darkMode={darkMode}
+              meeting={null} // Ensure we're creating a new meeting
             />
           </div>
         )}

@@ -89,14 +89,28 @@ function App() {
       return;
     }
 
-    // Add meeting to database
-    const savedMeeting = window.db.add('meetings', newMeeting);
+    // Check if this is an update or new meeting
+    let savedMeeting;
     
-    // Update meetings state
-    setMeetings(prev => [...prev, savedMeeting]);
+    // If the meeting has an ID and exists in our meetings array, update it
+    if (newMeeting.id && meetings.some(m => m.id === newMeeting.id)) {
+      // This is an update to an existing meeting
+      savedMeeting = window.db.update('meetings', newMeeting.id, newMeeting);
+      
+      // Update the meetings state
+      setMeetings(prev => prev.map(m => m.id === savedMeeting.id ? savedMeeting : m));
+    } else {
+      // This is a new meeting
+      savedMeeting = window.db.add('meetings', newMeeting);
+      
+      // Update meetings state
+      setMeetings(prev => [...prev, savedMeeting]);
+    }
     
-    // Set view back to dashboard after saving
-    setCurrentView('dashboard');
+    console.log("Meeting saved:", savedMeeting);
+    
+    // Return the saved meeting for the callback chain
+    return savedMeeting;
   }
 
   // Handle updating user profile
@@ -135,6 +149,7 @@ function App() {
           <ActivityLog 
             setCurrentView={setCurrentView}
             onSave={handleSaveActivity}
+            onSaveMeeting={handleSaveMeeting}
             activities={activities}
             meetings={meetings}
           />

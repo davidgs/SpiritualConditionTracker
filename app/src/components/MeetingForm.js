@@ -134,22 +134,13 @@ export default function MeetingForm({
     };
     
     try {
-      if (!window.db) {
-        throw new Error('Database not initialized');
-      }
-      
-      let savedMeeting;
-      if (meeting) {
-        // Update existing meeting
-        savedMeeting = window.db.update('meetings', meeting.id, meetingData);
-      } else {
-        // Create new meeting
-        savedMeeting = window.db.add('meetings', meetingData);
-      }
-      
-      // Call the onSave callback with the saved meeting data
+      // Call the onSave callback with the meeting data
+      // Let the parent component handle the actual database operation
       if (onSave) {
-        onSave(savedMeeting);
+        onSave(meetingData);
+      } else {
+        console.error('No onSave callback provided');
+        setError('Cannot save meeting. Please try again later.');
       }
     } catch (error) {
       console.error('Error saving meeting:', error);
