@@ -182,12 +182,12 @@ export default function Meetings({ setCurrentView, meetings = [], onSave }) {
       {!showForm && (
         <div className="fixed bottom-20 right-6 z-10">
           <button
-            className="w-14 h-14 bg-blue-600 hover:bg-blue-700 text-white rounded-full flex justify-center items-center shadow-lg transition duration-200 transform hover:scale-110"
+            className="w-14 h-14 hover:bg-blue-700 text-white rounded-full flex justify-center items-center shadow-lg transition duration-200 transform hover:scale-110"
             onClick={() => setShowForm(true)}
             aria-label="Add new meeting"
             title={localMeetings.length > 0 ? 'Add New Meeting' : 'Add Your First Meeting'}
           >
-            <i className="fa-regular fa-calendar-plus mx-auto text-gray-400 dark:text-gray-500 mb-3" style={{ fontSize: '4rem', display: 'block' }}></i>
+            <i className="fa-regular fa-calendar-days mx-auto text-gray-400 dark:text-gray-500 mb-3" style={{ fontSize: '4rem', display: 'block' }}></i>
           </button>
         </div>
       )}

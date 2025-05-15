@@ -413,7 +413,7 @@ export default function MeetingForm({
                 />
                 <button
                   type="button"
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 rounded-r flex items-center justify-center shadow-sm"
+                  className="fa-solid fa-map h-4 w-4 hover:bg-blue-700 px-4 py-3 rounded-r flex items-center justify-center shadow-sm"
                   onClick={detectLocation}
                   disabled={searchingLocation}
                 >
@@ -474,13 +474,13 @@ export default function MeetingForm({
               className="bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 py-3 px-6 rounded-md font-medium shadow-sm transition duration-150 border border-gray-300 dark:border-gray-600"
               onClick={onCancel}
             >
-              Cancel
+              <i classname="fa-regular fa-rectangle-xmark"></i>
             </button>
             <button
               type="submit"
               className="bg-blue-600 hover:bg-blue-700 text-white py-3 px-6 rounded-md font-medium shadow-sm transition duration-150"
             >
-              {meeting ? 'Update' : 'Save'} Meeting
+              {meeting ? <i class="fa-regular circle-check"></i> : <i class="fa-regular fa-circle-xmark"></i>} 
             </button>
           </div>
         </form>
