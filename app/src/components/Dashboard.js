@@ -14,7 +14,7 @@ export default function Dashboard({ setCurrentView, user, activities, spiritualF
   );
   const [currentScore, setCurrentScore] = useState(spiritualFitness);
   
-  const popoverRef = useRef(null);
+  const modalRef = useRef(null);
   const buttonRef = useRef(null);
   
   // Format score to 2 decimal places for display
@@ -41,7 +41,7 @@ export default function Dashboard({ setCurrentView, user, activities, spiritualF
   // Close popover when clicking outside
   useEffect(() => {
     function handleClickOutside(event) {
-      if (popoverRef.current && !popoverRef.current.contains(event.target) && 
+      if (modalRef.current && !modalRef.current.contains(event.target) && 
           buttonRef.current && !buttonRef.current.contains(event.target)) {
         setShowPopover(false);
       }
@@ -51,7 +51,7 @@ export default function Dashboard({ setCurrentView, user, activities, spiritualF
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [popoverRef, buttonRef]);
+  }, [modalRef, buttonRef]);
   
   // Function to cycle through timeframe options
   const cycleTimeframe = () => {
@@ -281,19 +281,19 @@ export default function Dashboard({ setCurrentView, user, activities, spiritualF
                 cursor: 'pointer',
                 transition: 'background-color 0.2s'
               }}
-              onClick={() => setShowPopover(!showPopover)}
+              onClick={() => setShowScoreModal(!showScoreModal)}
             >
               How is this calculated?
             </button>
             
-            {showPopover && (
+            {showScoreModal && (
               <div 
-                ref={popoverRef}
+                ref={modalRef}
                 className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
                 onClick={(e) => {
                   // Close when clicking outside the content area
                   if (e.target === e.currentTarget) {
-                    setShowPopover(false);
+                    setShowScoreModal(false);
                   }
                 }}
               >
