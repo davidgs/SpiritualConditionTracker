@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { meetingOperations } from '../utils/database';
 
 export default function MeetingForm({ 
   meeting = null, 
@@ -135,15 +134,22 @@ export default function MeetingForm({
     };
     
     try {
-      if (meeting) {
-        meetingOperations.update(meeting.id, meetingData);
-      } else {
-        meetingOperations.create(meetingData);
+      if (!window.db) {
+        throw new Error('Database not initialized');
       }
       
-      // Call the onSave callback with the meeting data
+      let savedMeeting;
+      if (meeting) {
+        // Update existing meeting
+        savedMeeting = window.db.update('meetings', meeting.id, meetingData);
+      } else {
+        // Create new meeting
+        savedMeeting = window.db.add('meetings', meetingData);
+      }
+      
+      // Call the onSave callback with the saved meeting data
       if (onSave) {
-        onSave(meetingData);
+        onSave(savedMeeting);
       }
     } catch (error) {
       console.error('Error saving meeting:', error);
