@@ -405,16 +405,38 @@ function calculateSpiritualFitnessWithTimeframe(timeframe = 30) {
     return activityDate >= timeframeDate;
   });
   
-  // The rest of the calculation is the same as calculateSpiritualFitness
+  // Base calculation
   let score = 0;
   let meetingsCount = 0;
   let sponseeTime = 0;
   
   const activityTypes = new Set();
   
+  // Group activities by week to analyze consistency
+  const activityByWeek = {};
+  const totalWeeks = Math.ceil(timeframe / 7);
+  
   recentActivities.forEach(activity => {
     activityTypes.add(activity.type);
     
+    // Calculate week number (0 = current week, 1 = last week, etc.)
+    const activityDate = new Date(activity.date);
+    const daysDiff = Math.floor((today - activityDate) / (1000 * 60 * 60 * 24));
+    const weekNum = Math.floor(daysDiff / 7);
+    
+    // Initialize the week if not already
+    if (!activityByWeek[weekNum]) {
+      activityByWeek[weekNum] = {
+        count: 0,
+        types: new Set()
+      };
+    }
+    
+    // Add to week stats
+    activityByWeek[weekNum].count++;
+    activityByWeek[weekNum].types.add(activity.type);
+    
+    // Calculate base score as before
     switch (activity.type) {
       case 'meeting':
         score += 5;
@@ -447,12 +469,70 @@ function calculateSpiritualFitnessWithTimeframe(timeframe = 30) {
     }
   });
   
+  // Add sponsee time with cap
   score += Math.min(sponseeTime, 20);
   
+  // Add variety bonus
   const varietyBonus = Math.min(activityTypes.size, 5);
   score += varietyBonus;
   
-  return Math.min(score, 100);
+  // Apply consistency factor based on timeframe
+  // Count how many weeks had activities
+  const activeWeeks = Object.keys(activityByWeek).length;
+  
+  // Longer timeframes should have more consistency
+  let consistencyScore = 0;
+  
+  if (timeframe <= 30) {
+    // For 30 days, at least 3 of 4 weeks should have activities
+    consistencyScore = Math.min(activeWeeks / 4, 1) * 10;
+  } else if (timeframe <= 90) {
+    // For 60-90 days, we expect more consistency over more weeks
+    // For 60 days, that's ~8 weeks, for 90 days, that's ~12 weeks
+    const expectedActiveWeeks = Math.ceil(timeframe / 7) * 0.75; // Expect activity in 75% of weeks
+    consistencyScore = Math.min(activeWeeks / expectedActiveWeeks, 1) * 15;
+  } else {
+    // For longer timeframes (180-365 days), consistency is even more important
+    // We expect activity in at least 70% of weeks
+    const expectedActiveWeeks = Math.ceil(timeframe / 7) * 0.7;
+    consistencyScore = Math.min(activeWeeks / expectedActiveWeeks, 1) * 20;
+    
+    // For longer timeframes, we also check for recent activity in the last 30 days
+    const recentWeeks = Object.keys(activityByWeek).filter(week => week < 5).length;
+    if (recentWeeks === 0) {
+      // Significant penalty for no recent activity in last month
+      consistencyScore -= 10;
+    } else if (recentWeeks < 3) {
+      // Some penalty for limited recent activity
+      consistencyScore -= 5;
+    }
+  }
+  
+  // Add consistency score
+  score += consistencyScore;
+  
+  // Normalize score based on timeframe - longer timeframes have higher expectations
+  let normalizedScore = score;
+  
+  if (timeframe > 30) {
+    // For timeframes over 30 days, we adjust expectations upward
+    // The divisor increases as the timeframe increases, making it harder to maintain a high score
+    const timeframeAdjustment = 1 + ((timeframe - 30) / 120); // Gradual increase
+    normalizedScore = score / timeframeAdjustment;
+  }
+  
+  // Debug output
+  console.log("Spiritual Fitness Calculation:", {
+    timeframe,
+    activities: recentActivities.length,
+    activeWeeks,
+    totalWeeks,
+    rawScore: score,
+    consistencyScore,
+    finalScore: Math.min(Math.round(normalizedScore), 100)
+  });
+  
+  return Math.min(Math.round(normalizedScore), 100);
 }
 
 // Export database functions
