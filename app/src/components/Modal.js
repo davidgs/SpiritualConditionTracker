@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom';
 import { useTheme } from '../contexts/ThemeContext';
 
 /**
- * Modal component that renders its children in a portal
+ * Material Design inspired Modal component
  * 
  * @param {Object} props - Component props
  * @param {boolean} props.isOpen - Whether the modal is open
@@ -16,6 +16,7 @@ import { useTheme } from '../contexts/ThemeContext';
 const Modal = ({ isOpen, onClose, children, title, size = 'md' }) => {
   const { darkMode } = useTheme();
   const modalRef = useRef(null);
+  const contentRef = useRef(null);
   
   // Handle ESC key press to close modal
   useEffect(() => {
@@ -29,6 +30,16 @@ const Modal = ({ isOpen, onClose, children, title, size = 'md' }) => {
       document.addEventListener('keydown', handleEscKey);
       // Prevent body scrolling when modal is open
       document.body.style.overflow = 'hidden';
+      
+      // Add entrance animation class
+      if (contentRef.current) {
+        contentRef.current.classList.add('modal-enter');
+        setTimeout(() => {
+          if (contentRef.current) {
+            contentRef.current.classList.remove('modal-enter');
+          }
+        }, 300);
+      }
     }
     
     return () => {
@@ -66,43 +77,58 @@ const Modal = ({ isOpen, onClose, children, title, size = 'md' }) => {
       aria-modal="true"
       role="dialog"
       aria-labelledby={title ? 'modal-title' : undefined}
+      ref={modalRef}
+      onClick={handleClickOutside}
     >
+      {/* Backdrop with Material-like animation */}
       <div 
-        className="fixed inset-0 bg-black bg-opacity-50 transition-opacity"
+        className="fixed inset-0 bg-black bg-opacity-50 transition-opacity backdrop-blur-sm"
+        style={{
+          animation: 'fadeIn 0.2s ease-out forwards'
+        }}
         aria-hidden="true"
       ></div>
       
-      <div 
-        className="flex min-h-screen items-center justify-center p-4 text-center"
-        onClick={handleClickOutside}
-      >
+      {/* Modal container with proper centering */}
+      <div className="flex min-h-screen items-center justify-center p-4 text-center">
+        {/* Modal content with Material design elevation */}
         <div 
-          ref={modalRef}
-          className={`${getModalWidth()} w-full transform overflow-hidden rounded-lg 
+          ref={contentRef}
+          className={`${getModalWidth()} w-full overflow-hidden rounded-md
             ${darkMode ? 'bg-gray-800 text-white' : 'bg-white text-gray-900'} 
-            p-6 text-left align-middle shadow-xl transition-all`}
+            text-left shadow-xl transform transition-all`}
+          style={{
+            boxShadow: darkMode ? 
+              '0 24px 38px 3px rgba(0,0,0,0.14), 0 9px 46px 8px rgba(0,0,0,0.12), 0 11px 15px -7px rgba(0,0,0,0.2)' :
+              '0 24px 38px 3px rgba(0,0,0,0.07), 0 9px 46px 8px rgba(0,0,0,0.06), 0 11px 15px -7px rgba(0,0,0,0.1)'
+          }}
         >
+          {/* Title bar with more prominent styling */}
           {title && (
-            <h3 
-              id="modal-title"
-              className="text-xl font-bold mb-4 text-center"
-            >
-              {title}
-            </h3>
+            <div className={`px-6 py-4 border-b ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}>
+              <h3 
+                id="modal-title"
+                className={`text-xl font-medium ${darkMode ? 'text-gray-100' : 'text-gray-900'}`}
+              >
+                {title}
+              </h3>
+            </div>
           )}
           
-          {/* Close button */}
+          {/* Close button with better positioning and material-like ripple effect */}
           <button 
-            className={`absolute top-3 right-3 
-              ${darkMode ? 'text-gray-400 hover:text-gray-200' : 'text-gray-500 hover:text-gray-700'}
-              transition-colors duration-200`}
+            className={`absolute top-4 right-4 rounded-full p-1.5
+              ${darkMode ? 'text-gray-400 hover:bg-gray-700 focus:bg-gray-700' : 
+                          'text-gray-500 hover:bg-gray-100 focus:bg-gray-100'}
+              transition-colors duration-200 focus:outline-none`}
             onClick={onClose}
             aria-label="Close modal"
           >
-            <i className="fa-solid fa-xmark text-xl"></i>
+            <i className="fa-solid fa-xmark text-lg"></i>
           </button>
           
-          <div className="mt-2">
+          {/* Content area with proper padding */}
+          <div className={`px-6 py-5 ${!title ? 'pt-10' : ''}`}>
             {children}
           </div>
         </div>
