@@ -187,7 +187,7 @@ export default function Meetings({ setCurrentView, meetings = [], onSave }) {
             aria-label="Add new meeting"
             title={localMeetings.length > 0 ? 'Add New Meeting' : 'Add Your First Meeting'}
           >
-            <i className="fa-regular fa-calendar-plus"></i>
+            <i className="fa-regular fa-calendar-plus mx-auto text-gray-400 dark:text-gray-500 mb-3" style={{ fontSize: '4rem', display: 'block' }}></i>
           </button>
         </div>
       )}
@@ -211,7 +211,7 @@ export default function Meetings({ setCurrentView, meetings = [], onSave }) {
           localMeetings.map(meeting => renderMeetingItem(meeting))
         ) : (
           <div className="text-center p-6 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
-            <i className="fa-regular fa-calendar-plus mx-auto text-gray-400 dark:text-gray-500 mb-3" style={{ fontSize: '4rem', display: 'block' }}></i>
+            
             <h3 className="text-lg font-medium text-gray-700 dark:text-gray-300 mb-2">No Meetings Found</h3>
             <p className="text-gray-600 dark:text-gray-400 mb-3">
               You haven't added any meetings to your schedule yet.
