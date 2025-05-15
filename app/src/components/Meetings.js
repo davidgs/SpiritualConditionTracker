@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { meetingOperations } from '../utils/database';
 import MeetingForm from './MeetingForm';
 
-export default function Meetings({ setCurrentView, meetings = [] }) {
+export default function Meetings({ setCurrentView, meetings = [], onSave }) {
   const [localMeetings, setLocalMeetings] = useState(meetings);
   const [showForm, setShowForm] = useState(false);
   const [currentMeeting, setCurrentMeeting] = useState(null);
@@ -45,28 +45,49 @@ export default function Meetings({ setCurrentView, meetings = [] }) {
   // Handle form save
   const handleSaveMeeting = (meetingData) => {
     try {
-      if (window.db) {
-        let savedMeeting;
+      // If we have the onSave prop from parent component, use it
+      if (onSave) {
+        const savedMeeting = onSave(meetingData);
         
-        if (currentMeeting) {
-          // Update existing meeting
-          savedMeeting = window.db.update('meetings', currentMeeting.id, meetingData);
-          
-          // Update local state
-          setLocalMeetings(prevMeetings => 
-            prevMeetings.map(meeting => 
-              meeting.id === savedMeeting.id ? savedMeeting : meeting
-            )
-          );
-        } else {
-          // Add new meeting
-          savedMeeting = window.db.add('meetings', meetingData);
-          
-          // Update local state
-          setLocalMeetings(prevMeetings => [...prevMeetings, savedMeeting]);
+        // If onSave returns a meeting, update local state
+        if (savedMeeting) {
+          if (currentMeeting) {
+            // Update existing meeting in local state
+            setLocalMeetings(prevMeetings => 
+              prevMeetings.map(meeting => 
+                meeting.id === savedMeeting.id ? savedMeeting : meeting
+              )
+            );
+          } else {
+            // Add new meeting to local state
+            setLocalMeetings(prevMeetings => [...prevMeetings, savedMeeting]);
+          }
         }
       } else {
-        throw new Error('Database not initialized');
+        // Fallback to direct DB operation if no onSave prop
+        if (window.db) {
+          let savedMeeting;
+          
+          if (currentMeeting) {
+            // Update existing meeting
+            savedMeeting = window.db.update('meetings', currentMeeting.id, meetingData);
+            
+            // Update local state
+            setLocalMeetings(prevMeetings => 
+              prevMeetings.map(meeting => 
+                meeting.id === savedMeeting.id ? savedMeeting : meeting
+              )
+            );
+          } else {
+            // Add new meeting
+            savedMeeting = window.db.add('meetings', meetingData);
+            
+            // Update local state
+            setLocalMeetings(prevMeetings => [...prevMeetings, savedMeeting]);
+          }
+        } else {
+          throw new Error('Database not initialized');
+        }
       }
       
       // Reset form
@@ -167,6 +188,7 @@ export default function Meetings({ setCurrentView, meetings = [] }) {
             setCurrentMeeting(null);
             setShowForm(false);
           }}
+          darkMode={darkMode}
         />
       )}
       

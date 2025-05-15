@@ -144,6 +144,7 @@ function App() {
           <Meetings
             setCurrentView={setCurrentView}
             meetings={meetings}
+            onSave={handleSaveMeeting}
           />
         );
       case 'history':
