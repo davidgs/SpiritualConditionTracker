@@ -248,7 +248,7 @@ export default function Messages({ setCurrentView, user }) {
                   )}
                 </div>
 
-                <div className="flex-grow overflow-y-auto p-3">
+                <div className="flex-grow p-3">
                   {messages.length === 0 ? (
                     <div className="h-full flex flex-col items-center justify-center text-center">
                       <i className="fa-solid fa-envelope text-gray-300 dark:text-gray-600 text-4xl mb-2"></i>
