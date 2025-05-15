@@ -175,7 +175,7 @@ export default function Meetings({ setCurrentView, meetings = [], onSave }) {
           onClick={() => setShowForm(true)}
         >
           <i className="fas fa-plus mr-2"></i>
-          Add New Meeting
+          {localMeetings.length > 0 ? 'Add New Meeting' : 'Add Your First Meeting'}
         </button>
       )}
       
@@ -198,17 +198,9 @@ export default function Meetings({ setCurrentView, meetings = [], onSave }) {
           localMeetings.map(meeting => renderMeetingItem(meeting))
         ) : (
           <div className="text-center p-6 bg-gray-100 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
-            <p className="text-gray-600 dark:text-gray-400 mb-4">
+            <p className="text-gray-600 dark:text-gray-400">
               You haven't added any meetings yet.
             </p>
-            {!showForm && (
-              <button
-                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-                onClick={() => setShowForm(true)}
-              >
-                Add Your First Meeting
-              </button>
-            )}
           </div>
         )}
       </div>
