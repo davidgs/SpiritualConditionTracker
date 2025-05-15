@@ -165,7 +165,7 @@ export default function Messages({ setCurrentView, user }) {
   };
 
   return (
-    <div className="p-4 h-full flex flex-col">
+    <div className="p-4 flex flex-col" style={{ height: '100%', overflowY: 'auto' }}>
       <div className="flex items-center justify-between mb-4">
         <div>
           <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">Messages</h1>
@@ -210,7 +210,7 @@ export default function Messages({ setCurrentView, user }) {
           </button>
         </div>
       ) : (
-        <div className="flex-grow flex h-full overflow-hidden">
+        <div className="flex-grow flex" style={{ height: 'calc(100% - 100px)' }}>
           {/* Connections sidebar */}
           <div className="w-1/3 pr-2 border-r border-gray-200 dark:border-gray-700 overflow-y-auto">
             {connections.map(connection => (

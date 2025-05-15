@@ -159,7 +159,7 @@ export default function Meetings({ setCurrentView, meetings = [], onSave }) {
   };
   
   return (
-    <div className="p-4 content-scrollable">
+    <div className="p-4" style={{ height: '100%', overflowY: 'auto' }}>
       <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-4 flex items-center">
         <i className="fa-solid fa-building mr-2 text-blue-600"></i>
         &nbsp;My Meetings
@@ -213,7 +213,7 @@ export default function Meetings({ setCurrentView, meetings = [], onSave }) {
       )}
       
       {/* Meetings List */}
-      <div className="mt-4 max-h-[60vh] overflow-y-auto">
+      <div className="mt-4">
         {localMeetings.length > 0 ? (
           localMeetings.map(meeting => renderMeetingItem(meeting))
         ) : (
