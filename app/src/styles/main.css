@@ -1,13 +1,24 @@
 /* Main application styles */
 
 /* Base styles that won't conflict with Tailwind */
-body, html {
+html {
   margin: 0;
   padding: 0;
   height: 100%;
   width: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+  width: 100%;
   line-height: 1.5;
   transition: background-color 0.3s ease, color 0.3s ease;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 /* Dark mode toggle basics */
@@ -17,9 +28,10 @@ html.dark body {
 
 /* App container */
 #app {
-  height: 100%;
+  min-height: 100%;
   width: 100%;
   overflow-x: hidden;
+  overflow-y: visible;
 }
 
 /* Removed scrollable content area class - main scrolling handled at App level */
