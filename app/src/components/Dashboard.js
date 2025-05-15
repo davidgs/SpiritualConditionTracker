@@ -289,42 +289,77 @@ export default function Dashboard({ setCurrentView, user, activities, spiritualF
             {showPopover && (
               <div 
                 ref={popoverRef}
-                className="absolute z-10 bottom-full mb-2 left-1/2 transform -translate-x-1/2 w-72 bg-white dark:bg-gray-800 shadow-lg rounded-md border border-gray-200 dark:border-gray-700 p-3 text-left"
-                style={{ 
-                  // Add a triangle pointer at the bottom
-                  filter: 'drop-shadow(0 2px 5px rgba(0, 0, 0, 0.1))',
+                className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+                onClick={(e) => {
+                  // Close when clicking outside the content area
+                  if (e.target === e.currentTarget) {
+                    setShowPopover(false);
+                  }
                 }}
               >
-                <div className="relative">
-                  <h4 className="text-sm font-semibold text-gray-800 dark:text-gray-200 mb-2 text-center">Spiritual Fitness Score (0-100)</h4>
+                <div 
+                  className="relative bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto m-4"
+                >
+                  {/* Close button */}
+                  <button 
+                    className="absolute top-3 right-3 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
+                    onClick={() => setShowPopover(false)}
+                  >
+                    <i className="fa-solid fa-xmark text-xl"></i>
+                  </button>
                   
-                  <p className="text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Base points for activities:
-                  </p>
-                  <ul className="text-xs text-gray-600 dark:text-gray-400 list-disc pl-5 space-y-1 mb-3">
-                    <li>AA Meeting: 5 points (speaker +3, shared +1, chair +1)</li>
-                    <li>Reading Literature: 2 points per 30 min</li>
-                    <li>Prayer/Meditation: 2 points per 30 min</li>
-                    <li>Talking with Sponsor: 3 points per 30 min</li>
-                    <li>Working with Sponsee: 4 points per 30 min (max 20)</li>
-                    <li>AA Calls: 1 point each (no limit)</li>
-                    <li>Variety of activities: 1-5 bonus points</li>
-                  </ul>
-                  
-                  <p className="text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Timeframe adjustments:
-                  </p>
-                  <ul className="text-xs text-gray-600 dark:text-gray-400 list-disc pl-5 space-y-1 mb-2">
-                    <li>Consistency bonus for regular activity</li>
-                    <li>Higher expectations for longer timeframes</li>
-                    <li>Recent activity weighted more heavily</li>
-                    <li>Score reflects sustained engagement over time</li>
-                  </ul>
-                  
-                  {/* Triangle pointer */}
-                  <div 
-                    className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 w-3 h-3 rotate-45 bg-white dark:bg-gray-800 border-r border-b border-gray-200 dark:border-gray-700"
-                  ></div>
+                  <div className="p-5">
+                    <h2 className="text-xl font-bold text-gray-800 dark:text-gray-200 mb-4 text-center">
+                      Spiritual Fitness Score
+                    </h2>
+                    
+                    <div className="space-y-4">
+                      <div>
+                        <h3 className="text-md font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                          Base Points for Activities
+                        </h3>
+                        <ul className="text-sm text-gray-600 dark:text-gray-400 list-disc pl-5 space-y-1">
+                          <li>AA Meeting: 5 points (speaker +3, shared +1, chair +1)</li>
+                          <li>Reading Literature: 2 points per 30 min</li>
+                          <li>Prayer/Meditation: 2 points per 30 min</li>
+                          <li>Talking with Sponsor: 3 points per 30 min</li>
+                          <li>Working with Sponsee: 4 points per 30 min (max 20)</li>
+                          <li>AA Calls: 1 point each (no limit)</li>
+                          <li>Variety of activities: 1-5 bonus points</li>
+                        </ul>
+                      </div>
+                      
+                      <div>
+                        <h3 className="text-md font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                          Timeframe Adjustments
+                        </h3>
+                        <ul className="text-sm text-gray-600 dark:text-gray-400 list-disc pl-5 space-y-1">
+                          <li>Consistency bonus for regular activity across weeks</li>
+                          <li>Higher expectations for longer timeframes</li>
+                          <li>Recent activity weighted more heavily</li>
+                          <li>Score reflects sustained engagement over time</li>
+                        </ul>
+                      </div>
+                      
+                      <div>
+                        <h3 className="text-md font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                          How Timeframes Affect Your Score
+                        </h3>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                          Shorter timeframes (30 days) focus on recent activity, while 
+                          longer timeframes (60-365 days) measure your consistent 
+                          engagement over time. A high score over a 365-day period 
+                          demonstrates sustained spiritual fitness.
+                        </p>
+                      </div>
+                      
+                      <div className="pt-2 text-center">
+                        <p className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+                          Maximum score is 100
+                        </p>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             )}
