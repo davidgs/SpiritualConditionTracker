@@ -52,14 +52,15 @@ function NavBar({ currentView, setCurrentView }) {
   // Mobile menu styles
   const mobileMenuStyles = {
     menu: {
-      position: 'fixed',
-      top: menuOpen ? '48px' : '-300px', // Position below header when open (adjusted for smaller header)
+      position: 'absolute',
+      top: menuOpen ? '100%' : '-300px', // Position relative to the header
       left: 0,
       right: 0,
       zIndex: 19, // Below header but above content
       backgroundColor: navBackgroundColor,
       boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-      transition: 'top 0.3s ease-in-out',
+      transition: 'top 0.3s ease-in-out, opacity 0.3s ease-in-out',
+      opacity: menuOpen ? 1 : 0,
       padding: '8px 16px',
       display: 'flex',
       flexDirection: 'column'
@@ -87,7 +88,7 @@ function NavBar({ currentView, setCurrentView }) {
     overlay: {
       display: menuOpen ? 'block' : 'none',
       position: 'fixed',
-      top: '48px', // Start below header (adjusted for smaller header)
+      top: 0,
       left: 0,
       right: 0,
       bottom: 0,
