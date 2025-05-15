@@ -129,69 +129,71 @@ export default function MeetingForm({
           const { latitude, longitude } = position.coords;
           setLocation({ latitude, longitude });
           
-          // Try to get address from coordinates
+          // Try to get address from coordinates using geojson format
+          console.log('Making request to Nominatim with GeoJSON format');
           const response = await fetch(
-            `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`
+            `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=geojson`
           );
           
           if (response.ok) {
-            const data = await response.json();
+            const geojsonData = await response.json();
+            console.log('GeoJSON response:', geojsonData);
             
-            if (data.address) {
-              // Log the full response to see what we're getting
-              console.log('Nominatim response:', data);
+            // GeoJSON format is different, properties are in 'features[0].properties'
+            if (geojsonData.features && geojsonData.features.length > 0) {
+              const properties = geojsonData.features[0].properties;
+              console.log('GeoJSON properties:', properties);
               
-              // Extract address components from Nominatim response
-              const addressData = {
-                streetAddress: (data.address.house_number ? data.address.house_number + ' ' : '') + 
-                              (data.address.road || data.address.street || ''),
-                city: data.address.city || data.address.town || data.address.village || 
-                     data.address.hamlet || data.address.neighbourhood || data.address.suburb || '',
-                state: data.address.state || data.address.county || '',
-                zipCode: data.address.postcode || ''
-              };
-              
-              console.log('Extracted address data:', addressData);
-              
-              // Update the form fields
-              updateAddressFields(addressData);
-            } else if (data.display_name) {
-              // Fallback to display_name and try to parse it
-              console.log('Using display_name fallback:', data.display_name);
-              setMeetingAddress(data.display_name);
-              
-              // Log the full response to see what we're getting
-              console.log('Nominatim fallback response:', data);
-              
-              // More sophisticated parsing of display_name
-              const parts = data.display_name.split(',').map(part => part.trim());
-              console.log('Display name parts:', parts);
-              
-              // Try to extract meaningful address components
-              // First part usually contains house number and street
-              if (parts.length >= 1) {
-                setStreetAddress(parts[0]);
-              }
-              
-              // Second part is often city or neighborhood
-              if (parts.length >= 2) {
-                setCity(parts[1]);
-              }
-              
-              // Third part might be county or state 
-              if (parts.length >= 3) {
-                setState(parts[2]);
-              }
-              
-              // Fourth part could be postal code or country
-              if (parts.length >= 4) {
-                // Check if it looks like a postal code (mostly numbers)
-                const isPostalCode = /\d/.test(parts[3]);
-                if (isPostalCode) {
-                  setZipCode(parts[3]);
-                } else if (parts.length >= 5) {
-                  // Try the fifth part if fourth doesn't look like a postal code
-                  setZipCode(parts[4]);
+              if (properties.address) {
+                // Extract address components from GeoJSON properties
+                const addressData = {
+                  streetAddress: (properties.address.house_number ? properties.address.house_number + ' ' : '') + 
+                                (properties.address.road || properties.address.street || ''),
+                  city: properties.address.city || properties.address.town || properties.address.village || 
+                       properties.address.hamlet || properties.address.neighbourhood || properties.address.suburb || '',
+                  state: properties.address.state || properties.address.county || '',
+                  zipCode: properties.address.postcode || ''
+                };
+                
+                console.log('Extracted address data from GeoJSON:', addressData);
+                
+                // Update the form fields
+                updateAddressFields(addressData);
+              } else if (properties.display_name) {
+                // Fallback to display_name
+                console.log('Using GeoJSON display_name fallback:', properties.display_name);
+                setMeetingAddress(properties.display_name);
+                
+                // More sophisticated parsing of display_name
+                const parts = properties.display_name.split(',').map(part => part.trim());
+                console.log('GeoJSON display name parts:', parts);
+                
+                // Try to extract meaningful address components
+                // First part usually contains house number and street
+                if (parts.length >= 1) {
+                  setStreetAddress(parts[0]);
+                }
+                
+                // Second part is often city or neighborhood
+                if (parts.length >= 2) {
+                  setCity(parts[1]);
+                }
+                
+                // Third part might be county or state 
+                if (parts.length >= 3) {
+                  setState(parts[2]);
+                }
+                
+                // Fourth part could be postal code or country
+                if (parts.length >= 4) {
+                  // Check if it looks like a postal code (mostly numbers)
+                  const isPostalCode = /\d/.test(parts[3]);
+                  if (isPostalCode) {
+                    setZipCode(parts[3]);
+                  } else if (parts.length >= 5) {
+                    // Try the fifth part if fourth doesn't look like a postal code
+                    setZipCode(parts[4]);
+                  }
                 }
               }
             }
