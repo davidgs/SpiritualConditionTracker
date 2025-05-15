@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import logoImg from '../assets/logo-small.png';
 import { formatDateForDisplay } from '../utils/dateUtils';
 import ActivityList from './ActivityList';
+import SpiritualFitnessModal from './SpiritualFitnessModal';
 
 export default function Dashboard({ setCurrentView, user, activities, spiritualFitness }) {
   // Simplify dark mode detection for now
@@ -266,7 +267,7 @@ export default function Dashboard({ setCurrentView, user, activities, spiritualF
               <i className="fa-solid fa-shuffle"></i>
             </button>
           </div>
-          <div className="relative inline-block">
+          <div className="inline-block">
             <button 
               ref={buttonRef}
               style={{
@@ -285,85 +286,9 @@ export default function Dashboard({ setCurrentView, user, activities, spiritualF
             >
               How is this calculated?
             </button>
-            
-            {showScoreModal && (
-              <div 
-                ref={modalRef}
-                className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
-                onClick={(e) => {
-                  // Close when clicking outside the content area
-                  if (e.target === e.currentTarget) {
-                    setShowScoreModal(false);
-                  }
-                }}
-              >
-                <div 
-                  className="relative bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto m-4"
-                >
-                  {/* Close button */}
-                  <button 
-                    className="absolute top-3 right-3 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
-                    onClick={() => setShowScoreModal(false)}
-                  >
-                    <i className="fa-solid fa-xmark text-xl"></i>
-                  </button>
-                  
-                  <div className="p-5">
-                    <h2 className="text-xl font-bold text-gray-800 dark:text-gray-200 mb-4 text-center">
-                      Spiritual Fitness Score
-                    </h2>
-                    
-                    <div className="space-y-4">
-                      <div>
-                        <h3 className="text-md font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                          Base Points for Activities
-                        </h3>
-                        <ul className="text-sm text-gray-600 dark:text-gray-400 list-disc pl-5 space-y-1">
-                          <li>AA Meeting: 5 points (speaker +3, shared +1, chair +1)</li>
-                          <li>Reading Literature: 2 points per 30 min</li>
-                          <li>Prayer/Meditation: 2 points per 30 min</li>
-                          <li>Talking with Sponsor: 3 points per 30 min</li>
-                          <li>Working with Sponsee: 4 points per 30 min (max 20)</li>
-                          <li>AA Calls: 1 point each (no limit)</li>
-                          <li>Variety of activities: 1-5 bonus points</li>
-                        </ul>
-                      </div>
-                      
-                      <div>
-                        <h3 className="text-md font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                          Timeframe Adjustments
-                        </h3>
-                        <ul className="text-sm text-gray-600 dark:text-gray-400 list-disc pl-5 space-y-1">
-                          <li>Consistency bonus for regular activity across weeks</li>
-                          <li>Higher expectations for longer timeframes</li>
-                          <li>Recent activity weighted more heavily</li>
-                          <li>Score reflects sustained engagement over time</li>
-                        </ul>
-                      </div>
-                      
-                      <div>
-                        <h3 className="text-md font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                          How Timeframes Affect Your Score
-                        </h3>
-                        <p className="text-sm text-gray-600 dark:text-gray-400">
-                          Shorter timeframes (30 days) focus on recent activity, while 
-                          longer timeframes (60-365 days) measure your consistent 
-                          engagement over time. A high score over a 365-day period 
-                          demonstrates sustained spiritual fitness.
-                        </p>
-                      </div>
-                      
-                      <div className="pt-2 text-center">
-                        <p className="text-sm font-semibold text-gray-700 dark:text-gray-300">
-                          Maximum score is 100
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
           </div>
+          
+          {/* Render modal at the end of the Dashboard component body to avoid positioning issues */}
         </div>
       </div>
       
