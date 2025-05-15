@@ -38,12 +38,12 @@ export default function Dashboard({ setCurrentView, user, activities, spiritualF
     }
   }, [scoreTimeframe]);
   
-  // Close popover when clicking outside
+  // Close modal when clicking outside
   useEffect(() => {
     function handleClickOutside(event) {
       if (modalRef.current && !modalRef.current.contains(event.target) && 
           buttonRef.current && !buttonRef.current.contains(event.target)) {
-        setShowPopover(false);
+        setShowScoreModal(false);
       }
     }
     
@@ -303,7 +303,7 @@ export default function Dashboard({ setCurrentView, user, activities, spiritualF
                   {/* Close button */}
                   <button 
                     className="absolute top-3 right-3 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
-                    onClick={() => setShowPopover(false)}
+                    onClick={() => setShowScoreModal(false)}
                   >
                     <i className="fa-solid fa-xmark text-xl"></i>
                   </button>
