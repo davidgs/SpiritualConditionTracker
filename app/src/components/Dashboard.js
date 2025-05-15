@@ -342,7 +342,7 @@ export default function Dashboard({ setCurrentView, user, activities, spiritualF
       
       {/* Material UI Dialog for Spiritual Fitness */}
       <SpiritualFitnessModal 
-        isOpen={showScoreModal} 
+        open={showScoreModal} 
         onClose={() => setShowScoreModal(false)}
       />
     </div>
