@@ -289,28 +289,37 @@ export default function Dashboard({ setCurrentView, user, activities, spiritualF
             {showPopover && (
               <div 
                 ref={popoverRef}
-                className="absolute z-10 bottom-full mb-2 left-1/2 transform -translate-x-1/2 w-64 bg-white dark:bg-gray-800 shadow-lg rounded-md border border-gray-200 dark:border-gray-700 p-3 text-left"
+                className="absolute z-10 bottom-full mb-2 left-1/2 transform -translate-x-1/2 w-72 bg-white dark:bg-gray-800 shadow-lg rounded-md border border-gray-200 dark:border-gray-700 p-3 text-left"
                 style={{ 
                   // Add a triangle pointer at the bottom
                   filter: 'drop-shadow(0 2px 5px rgba(0, 0, 0, 0.1))',
                 }}
               >
                 <div className="relative">
-                  <h4 className="text-sm font-semibold text-gray-800 dark:text-gray-200 mb-2">Spiritual Fitness Score (0-100)</h4>
-                  <p className="text-xs text-gray-600 dark:text-gray-400 mb-2">
-                    Your score is calculated based on activities from the past 30 days:
+                  <h4 className="text-sm font-semibold text-gray-800 dark:text-gray-200 mb-2 text-center">Spiritual Fitness Score (0-100)</h4>
+                  
+                  <p className="text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    Base points for activities:
                   </p>
-                  <ul className="text-xs text-gray-600 dark:text-gray-400 list-disc pl-4 space-y-1 mb-2">
+                  <ul className="text-xs text-gray-600 dark:text-gray-400 list-disc pl-5 space-y-1 mb-3">
                     <li>AA Meeting: 5 points (speaker +3, shared +1, chair +1)</li>
                     <li>Reading Literature: 2 points per 30 min</li>
                     <li>Prayer/Meditation: 2 points per 30 min</li>
                     <li>Talking with Sponsor: 3 points per 30 min</li>
                     <li>Working with Sponsee: 4 points per 30 min (max 20)</li>
                     <li>AA Calls: 1 point each (no limit)</li>
+                    <li>Variety of activities: 1-5 bonus points</li>
                   </ul>
-                  <p className="text-xs text-gray-600 dark:text-gray-400">
-                    Variety of activities earns bonus points.
+                  
+                  <p className="text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    Timeframe adjustments:
                   </p>
+                  <ul className="text-xs text-gray-600 dark:text-gray-400 list-disc pl-5 space-y-1 mb-2">
+                    <li>Consistency bonus for regular activity</li>
+                    <li>Higher expectations for longer timeframes</li>
+                    <li>Recent activity weighted more heavily</li>
+                    <li>Score reflects sustained engagement over time</li>
+                  </ul>
                   
                   {/* Triangle pointer */}
                   <div 
