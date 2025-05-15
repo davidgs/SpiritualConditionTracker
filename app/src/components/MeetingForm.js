@@ -102,6 +102,9 @@ export default function MeetingForm({
     
     setMeetingAddress(fullAddress);
     
+    console.log('Setting street address to:', addressData.streetAddress);
+    console.log('Setting city to:', addressData.city);
+    
     // Update individual fields
     setStreetAddress(addressData.streetAddress || addressData.street || addressData.road || '');
     setCity(addressData.city || addressData.town || addressData.village || '');
@@ -135,29 +138,60 @@ export default function MeetingForm({
             const data = await response.json();
             
             if (data.address) {
+              // Log the full response to see what we're getting
+              console.log('Nominatim response:', data);
+              
               // Extract address components from Nominatim response
               const addressData = {
-                streetAddress: data.address.road || data.address.street || '',
+                streetAddress: (data.address.house_number ? data.address.house_number + ' ' : '') + 
+                              (data.address.road || data.address.street || ''),
                 city: data.address.city || data.address.town || data.address.village || '',
                 state: data.address.state || data.address.county || '',
                 zipCode: data.address.postcode || ''
               };
               
+              console.log('Extracted address data:', addressData);
+              
               // Update the form fields
               updateAddressFields(addressData);
             } else if (data.display_name) {
               // Fallback to display_name and try to parse it
+              console.log('Using display_name fallback:', data.display_name);
               setMeetingAddress(data.display_name);
               
+              // Log the full response to see what we're getting
+              console.log('Nominatim fallback response:', data);
+              
+              // More sophisticated parsing of display_name
               const parts = data.display_name.split(',').map(part => part.trim());
-              if (parts.length >= 4) {
+              console.log('Display name parts:', parts);
+              
+              // Try to extract meaningful address components
+              // First part usually contains house number and street
+              if (parts.length >= 1) {
                 setStreetAddress(parts[0]);
+              }
+              
+              // Second part is often city or neighborhood
+              if (parts.length >= 2) {
                 setCity(parts[1]);
+              }
+              
+              // Third part might be county or state 
+              if (parts.length >= 3) {
                 setState(parts[2]);
-                setZipCode(parts[3]);
-              } else {
-                // If we can't parse properly, put display name in street address
-                setStreetAddress(data.display_name);
+              }
+              
+              // Fourth part could be postal code or country
+              if (parts.length >= 4) {
+                // Check if it looks like a postal code (mostly numbers)
+                const isPostalCode = /\d/.test(parts[3]);
+                if (isPostalCode) {
+                  setZipCode(parts[3]);
+                } else if (parts.length >= 5) {
+                  // Try the fifth part if fourth doesn't look like a postal code
+                  setZipCode(parts[4]);
+                }
               }
             }
           }
@@ -501,20 +535,29 @@ export default function MeetingForm({
             <button
               type="submit"
               title={meeting ? "Save changes" : "Add meeting"}
+              disabled={!name || !time || !days.length || !streetAddress}
               style={{ 
                 background: 'none', 
                 border: 'none', 
                 padding: 0,
-                cursor: 'pointer',
+                cursor: !name || !time || !days.length || !streetAddress ? 'not-allowed' : 'pointer',
                 outline: 'none',
                 boxShadow: 'none',
                 transition: 'transform 0.2s',
                 transform: 'scale(1)'
               }}
-              onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.1)'}
+              onMouseOver={(e) => {
+                if (name && time && days.length && streetAddress) {
+                  e.currentTarget.style.transform = 'scale(1.1)';
+                }
+              }}
               onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
             >
-              <i className="fa-regular fa-circle-check text-green-500 dark:text-green-400" style={{ fontSize: '2rem' }}></i>
+              <i className={`fa-regular fa-circle-check ${
+                !name || !time || !days.length || !streetAddress 
+                  ? 'text-gray-400 dark:text-gray-600' 
+                  : 'text-green-500 dark:text-green-400'
+              }`} style={{ fontSize: '2rem' }}></i>
             </button>
           </div>
         </form>
