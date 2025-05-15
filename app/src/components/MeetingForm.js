@@ -417,6 +417,7 @@ export default function MeetingForm({
                   onClick={detectLocation}
                   disabled={searchingLocation}
                   title="Detect your location"
+                  style={{ backgroundColor: 'transparent', border: 'none', boxShadow: 'none' }}
                 >
                   {searchingLocation ? (
                     <i className="fa-solid fa-spinner fa-spin text-blue-500 dark:text-blue-400" style={{ fontSize: '1.5rem' }}></i>
@@ -475,6 +476,7 @@ export default function MeetingForm({
               className="bg-transparent border-0 p-0 transition duration-200 transform hover:scale-110"
               onClick={onCancel}
               title="Cancel"
+              style={{ backgroundColor: 'transparent', border: 'none', boxShadow: 'none' }}
             >
               <i className="fa-regular fa-circle-xmark text-red-500 dark:text-red-400" style={{ fontSize: '2rem' }}></i>
             </button>
@@ -482,6 +484,7 @@ export default function MeetingForm({
               type="submit"
               className="bg-transparent border-0 p-0 transition duration-200 transform hover:scale-110"
               title={meeting ? "Save changes" : "Add meeting"}
+              style={{ backgroundColor: 'transparent', border: 'none', boxShadow: 'none' }}
             >
               <i className="fa-regular fa-circle-check text-green-500 dark:text-green-400" style={{ fontSize: '2rem' }}></i>
             </button>

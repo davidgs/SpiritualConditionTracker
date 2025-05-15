@@ -186,6 +186,7 @@ export default function Meetings({ setCurrentView, meetings = [], onSave }) {
             onClick={() => setShowForm(true)}
             aria-label="Add new meeting"
             title={localMeetings.length > 0 ? 'Add New Meeting' : 'Add Your First Meeting'}
+            style={{ backgroundColor: 'transparent' }} // Ensure no background color
           >
             <i className="fa-solid fa-circle-plus text-blue-500 dark:text-blue-400" style={{ fontSize: '3rem' }}></i>
           </button>
