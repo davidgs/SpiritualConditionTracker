@@ -52,15 +52,17 @@ function NavBar({ currentView, setCurrentView }) {
   // Mobile menu styles
   const mobileMenuStyles = {
     menu: {
-      position: 'fixed',
-      top: menuOpen ? '60px' : '-300px', // Fixed position from top of viewport
+      position: 'absolute', // Position relative to the nearest positioned ancestor (header)
+      top: '100%', // Position directly below the header
       left: 0,
       right: 0,
       zIndex: 19, // Below header but above content
       backgroundColor: navBackgroundColor,
       boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-      transition: 'all 0.3s ease-in-out',
+      transform: menuOpen ? 'translateY(0)' : 'translateY(-100%)',
       opacity: menuOpen ? 1 : 0,
+      visibility: menuOpen ? 'visible' : 'hidden',
+      transition: 'transform 0.3s ease, opacity 0.3s ease, visibility 0.3s ease',
       padding: '8px 16px',
       display: 'flex',
       flexDirection: 'column'
@@ -99,22 +101,18 @@ function NavBar({ currentView, setCurrentView }) {
 
   return (
     <>
-      {/* Header is always visible on both mobile and desktop */}
-      <Header 
-        title={getCurrentTitle()}
-        menuOpen={menuOpen}
-        setMenuOpen={setMenuOpen}
-        isMobile={isMobile}
-      />
-      
-      {/* Mobile menu and overlay */}
-      {isMobile && (
-        <>
-          <div 
-            style={mobileMenuStyles.overlay}
-            onClick={() => setMenuOpen(false)}
-          />
-          
+      {/* Container for header and mobile menu for proper positioning */}
+      <div style={{ position: 'relative' }}>
+        {/* Header is always visible on both mobile and desktop */}
+        <Header 
+          title={getCurrentTitle()}
+          menuOpen={menuOpen}
+          setMenuOpen={setMenuOpen}
+          isMobile={isMobile}
+        />
+        
+        {/* Mobile menu directly below header */}
+        {isMobile && (
           <div style={mobileMenuStyles.menu}>
             {navItems.map((item) => (
               <button 
@@ -131,7 +129,15 @@ function NavBar({ currentView, setCurrentView }) {
               </button>
             ))}
           </div>
-        </>
+        )}
+      </div>
+      
+      {/* Mobile overlay - separate from the menu positioning */}
+      {isMobile && menuOpen && (
+        <div 
+          style={mobileMenuStyles.overlay}
+          onClick={() => setMenuOpen(false)}
+        />
       )}
       
       {/* Desktop bottom navigation - only shown on desktop */}
