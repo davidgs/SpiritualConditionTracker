@@ -7,8 +7,8 @@ export default function Dashboard({ setCurrentView, user, activities, spiritualF
   // Simplify dark mode detection for now
   const darkMode = document.documentElement.classList.contains('dark');
   
-  // State for controlling popover visibility and score timeframe
-  const [showPopover, setShowPopover] = useState(false);
+  // State for controlling modal visibility and score timeframe
+  const [showScoreModal, setShowScoreModal] = useState(false);
   const [scoreTimeframe, setScoreTimeframe] = useState(
     window.db?.getPreference('scoreTimeframe') || 30
   );
