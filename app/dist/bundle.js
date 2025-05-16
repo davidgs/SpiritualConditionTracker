@@ -65029,7 +65029,11 @@ function Meetings(_ref) {
       }
     }), "\xA0", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("span", {
       className: "text-gray-600 dark:text-gray-300"
-    }, (0,_utils_dateUtils__WEBPACK_IMPORTED_MODULE_4__.formatTimeByPreference)(meeting.time, use24HourFormat))))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+    }, use24HourFormat ? meeting.time // Already in 24hr format in the database
+    : meeting.time.split(':').map(function (part, i) {
+      return i === 0 ? parseInt(part) % 12 || 12 : part;
+    }) // Convert first part (hours)
+    .join(':') + (parseInt(meeting.time.split(':')[0]) >= 12 ? ' PM' : ' AM'))))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
       className: "text-gray-600 dark:text-gray-300 flex items-start"
     }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
       className: "w-full"
