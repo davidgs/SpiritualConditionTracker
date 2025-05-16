@@ -298,14 +298,21 @@ export default function ActivityPage({ setCurrentView, onSave, onSaveMeeting, ac
           Activities
         </h1>
         
-        {/* Toggle form visibility button */}
+        {/* Toggle form visibility button - icon only with tooltip */}
         <button
-          className={`${darkMode ? 'bg-gray-700 hover:bg-gray-600' : 'bg-gray-200 hover:bg-gray-300'} 
-            px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200 flex items-center`}
+          className="text-gray-600 dark:text-gray-300 hover:text-blue-500 dark:hover:text-blue-400 transition-colors duration-200"
           onClick={() => setShowForm(!showForm)}
+          title={showForm ? "Hide activity form" : "Log new activity"}
+          aria-label={showForm ? "Hide activity form" : "Log new activity"}
+          style={{ 
+            fontSize: '1.5rem', 
+            background: 'transparent',
+            border: 'none',
+            cursor: 'pointer',
+            padding: '0.5rem'
+          }}
         >
-          <i className={`fas ${showForm ? 'fa-times' : 'fa-plus'} mr-2`}></i>
-          {showForm ? 'Hide Form' : 'Log New Activity'}
+          <i className={`fa-solid ${showForm ? 'fa-xmark' : 'fa-scroll'}`}></i>
         </button>
       </div>
       
@@ -671,11 +678,18 @@ export default function ActivityPage({ setCurrentView, onSave, onSaveMeeting, ac
               No activities to display.
             </p>
             <button 
-              className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
+              className="text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300 transition-colors duration-200"
               onClick={() => setShowForm(true)}
+              title="Log new activity"
+              aria-label="Log new activity"  
+              style={{ 
+                fontSize: '1.5rem', 
+                background: 'transparent',
+                border: 'none',
+                cursor: 'pointer'
+              }}
             >
-              <i className="fas fa-plus mr-2"></i>
-              Log New Activity
+              <i className="fa-solid fa-scroll"></i>
             </button>
           </div>
         )}
