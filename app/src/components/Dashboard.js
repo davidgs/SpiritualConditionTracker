@@ -3,13 +3,16 @@ import logoImg from '../assets/logo-small.png';
 import { formatDateForDisplay } from '../utils/dateUtils';
 import ActivityList from './ActivityList';
 import SpiritualFitnessModal from './SpiritualFitnessModal';
+import LogActivityModal from './LogActivityModal';
 
-export default function Dashboard({ setCurrentView, user, activities, spiritualFitness }) {
+export default function Dashboard({ setCurrentView, user, activities, meetings = [], onSave, onSaveMeeting, spiritualFitness }) {
   // Simplify dark mode detection for now
   const darkMode = document.documentElement.classList.contains('dark');
   
   // State for controlling modal visibility and score timeframe
   const [showScoreModal, setShowScoreModal] = useState(false);
+  const [showActivityModal, setShowActivityModal] = useState(false);
+  const [activityDaysFilter, setActivityDaysFilter] = useState(7);
   const [scoreTimeframe, setScoreTimeframe] = useState(
     window.db?.getPreference('scoreTimeframe') || 30
   );
@@ -311,23 +314,54 @@ export default function Dashboard({ setCurrentView, user, activities, spiritualF
             fontSize: '1.1rem',
             fontWeight: 600,
             color: darkMode ? '#d1d5db' : '#374151'
-          }}>Recent Activities</h2>
-          <button 
-            style={{
-              backgroundColor: darkMode ? '#2563eb' : '#3b82f6',
-              color: 'white',
-              padding: '0.25rem 0.5rem',
-              borderRadius: '0.25rem',
-              fontSize: '0.7rem',
-              fontWeight: '500',
-              transition: 'background-color 0.2s',
-              border: 'none',
-              cursor: 'pointer'
-            }}
-            onClick={() => setCurrentView('activity')}
-          >
-            View All
-          </button>
+          }}>Activities</h2>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            {/* Activity timeframe selector */}
+            <select 
+              style={{
+                backgroundColor: 'transparent',
+                border: darkMode ? '1px solid #4b5563' : '1px solid #d1d5db',
+                borderRadius: '0.25rem',
+                color: darkMode ? '#d1d5db' : '#374151',
+                padding: '0.15rem 0.5rem',
+                fontSize: '0.7rem',
+                cursor: 'pointer'
+              }}
+              defaultValue="7"
+              onChange={(e) => {
+                const days = parseInt(e.target.value, 10);
+                // Update the maxDaysAgo property in ActivityList
+                // This is a placeholder; we'll add actual implementation
+              }}
+            >
+              <option value="7">Last 7 days</option>
+              <option value="14">Last 14 days</option>
+              <option value="30">Last 30 days</option>
+              <option value="90">Last 90 days</option>
+              <option value="0">All activities</option>
+            </select>
+            
+            {/* Log new activity button */}
+            <button
+              style={{
+                backgroundColor: darkMode ? '#2563eb' : '#3b82f6',
+                color: 'white',
+                padding: '0.25rem 0.5rem',
+                borderRadius: '0.25rem',
+                fontSize: '0.75rem',
+                border: 'none',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.25rem'
+              }}
+              onClick={() => setShowActivityModal(true)}
+              title="Add activity"
+            >
+              <i className="fas fa-plus"></i>
+              <span>Add</span>
+            </button>
+          </div>
         </div>
         
         {/* Use the reusable ActivityList component */}
@@ -344,6 +378,15 @@ export default function Dashboard({ setCurrentView, user, activities, spiritualF
       <SpiritualFitnessModal 
         open={showScoreModal} 
         onClose={() => setShowScoreModal(false)}
+      />
+      
+      {/* Activity Log Modal */}
+      <LogActivityModal 
+        open={showActivityModal}
+        onClose={() => setShowActivityModal(false)}
+        onSave={onSave}
+        onSaveMeeting={onSaveMeeting}
+        meetings={meetings}
       />
     </div>
   );

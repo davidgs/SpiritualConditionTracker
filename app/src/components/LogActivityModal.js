@@ -742,7 +742,7 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
                   color="primary"
                   startIcon={<i className="fas fa-save"></i>}
                 >
-                  Save Activity
+                  Save
                 </Button>
               </DialogActions>
             </form>

@@ -59575,6 +59575,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _utils_dateUtils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../utils/dateUtils */ "./src/utils/dateUtils.js");
 /* harmony import */ var _ActivityList__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./ActivityList */ "./src/components/ActivityList.js");
 /* harmony import */ var _SpiritualFitnessModal__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./SpiritualFitnessModal */ "./src/components/SpiritualFitnessModal.js");
+/* harmony import */ var _LogActivityModal__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./LogActivityModal */ "./src/components/LogActivityModal.js");
 function _slicedToArray(r, e) { return _arrayWithHoles(r) || _iterableToArrayLimit(r, e) || _unsupportedIterableToArray(r, e) || _nonIterableRest(); }
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
@@ -59586,11 +59587,16 @@ function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
 
 
 
+
 function Dashboard(_ref) {
   var _window$db, _window$db4, _window$db5;
   var setCurrentView = _ref.setCurrentView,
     user = _ref.user,
     activities = _ref.activities,
+    _ref$meetings = _ref.meetings,
+    meetings = _ref$meetings === void 0 ? [] : _ref$meetings,
+    onSave = _ref.onSave,
+    onSaveMeeting = _ref.onSaveMeeting,
     spiritualFitness = _ref.spiritualFitness;
   // Simplify dark mode detection for now
   var darkMode = document.documentElement.classList.contains('dark');
@@ -59600,14 +59606,22 @@ function Dashboard(_ref) {
     _useState2 = _slicedToArray(_useState, 2),
     showScoreModal = _useState2[0],
     setShowScoreModal = _useState2[1];
-  var _useState3 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(((_window$db = window.db) === null || _window$db === void 0 ? void 0 : _window$db.getPreference('scoreTimeframe')) || 30),
+  var _useState3 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false),
     _useState4 = _slicedToArray(_useState3, 2),
-    scoreTimeframe = _useState4[0],
-    setScoreTimeframe = _useState4[1];
-  var _useState5 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(spiritualFitness),
+    showActivityModal = _useState4[0],
+    setShowActivityModal = _useState4[1];
+  var _useState5 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(7),
     _useState6 = _slicedToArray(_useState5, 2),
-    currentScore = _useState6[0],
-    setCurrentScore = _useState6[1];
+    activityDaysFilter = _useState6[0],
+    setActivityDaysFilter = _useState6[1];
+  var _useState7 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(((_window$db = window.db) === null || _window$db === void 0 ? void 0 : _window$db.getPreference('scoreTimeframe')) || 30),
+    _useState8 = _slicedToArray(_useState7, 2),
+    scoreTimeframe = _useState8[0],
+    setScoreTimeframe = _useState8[1];
+  var _useState9 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(spiritualFitness),
+    _useState0 = _slicedToArray(_useState9, 2),
+    currentScore = _useState0[0],
+    setCurrentScore = _useState0[1];
   var modalRef = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)(null);
   var buttonRef = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)(null);
 
@@ -59889,22 +59903,58 @@ function Dashboard(_ref) {
       fontWeight: 600,
       color: darkMode ? '#d1d5db' : '#374151'
     }
-  }, "Recent Activities"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("button", {
+  }, "Activities"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+    style: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: '0.5rem'
+    }
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("select", {
+    style: {
+      backgroundColor: 'transparent',
+      border: darkMode ? '1px solid #4b5563' : '1px solid #d1d5db',
+      borderRadius: '0.25rem',
+      color: darkMode ? '#d1d5db' : '#374151',
+      padding: '0.15rem 0.5rem',
+      fontSize: '0.7rem',
+      cursor: 'pointer'
+    },
+    defaultValue: "7",
+    onChange: function onChange(e) {
+      var days = parseInt(e.target.value, 10);
+      // Update the maxDaysAgo property in ActivityList
+      // This is a placeholder; we'll add actual implementation
+    }
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("option", {
+    value: "7"
+  }, "Last 7 days"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("option", {
+    value: "14"
+  }, "Last 14 days"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("option", {
+    value: "30"
+  }, "Last 30 days"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("option", {
+    value: "90"
+  }, "Last 90 days"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("option", {
+    value: "0"
+  }, "All activities")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("button", {
     style: {
       backgroundColor: darkMode ? '#2563eb' : '#3b82f6',
       color: 'white',
       padding: '0.25rem 0.5rem',
       borderRadius: '0.25rem',
-      fontSize: '0.7rem',
-      fontWeight: '500',
-      transition: 'background-color 0.2s',
+      fontSize: '0.75rem',
       border: 'none',
-      cursor: 'pointer'
+      cursor: 'pointer',
+      display: 'flex',
+      alignItems: 'center',
+      gap: '0.25rem'
     },
     onClick: function onClick() {
-      return setCurrentView('activity');
-    }
-  }, "View All")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_ActivityList__WEBPACK_IMPORTED_MODULE_3__["default"], {
+      return setShowActivityModal(true);
+    },
+    title: "Add activity"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("i", {
+    className: "fas fa-plus"
+  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("span", null, "Add")))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_ActivityList__WEBPACK_IMPORTED_MODULE_3__["default"], {
     activities: activities,
     darkMode: darkMode,
     limit: 15,
@@ -59915,6 +59965,14 @@ function Dashboard(_ref) {
     onClose: function onClose() {
       return setShowScoreModal(false);
     }
+  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_LogActivityModal__WEBPACK_IMPORTED_MODULE_5__["default"], {
+    open: showActivityModal,
+    onClose: function onClose() {
+      return setShowActivityModal(false);
+    },
+    onSave: onSave,
+    onSaveMeeting: onSaveMeeting,
+    meetings: meetings
   }));
 }
 
@@ -60895,7 +60953,7 @@ var LogActivityModal = function LogActivityModal(_ref2) {
     startIcon: /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("i", {
       className: "fas fa-save"
     })
-  }, "Save Activity"))))));
+  }, "Save"))))));
 };
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (LogActivityModal);
 
