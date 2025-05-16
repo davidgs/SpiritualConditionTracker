@@ -613,10 +613,10 @@ export default function MeetingForm({
             {/* Street Address with Detect button */}
             <div className="mb-3">
               <label className="block mb-1 font-medium text-gray-700 dark:text-gray-300">Street Address</label>
-              <div className="flex">
+              <div className="flex items-center w-full">
                 <input
                   type="text"
-                  className="flex-grow p-3 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 shadow-sm"
+                  className="flex-grow p-3 border border-gray-300 dark:border-gray-600 rounded-l bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 shadow-sm"
                   value={streetAddress}
                   onChange={(e) => setStreetAddress(e.target.value)}
                   placeholder="Street address"
@@ -627,20 +627,16 @@ export default function MeetingForm({
                   onClick={detectLocation}
                   disabled={searchingLocation}
                   title="Detect your location"
-                  style={{ 
-                    background: 'none', 
-                    border: 'none', 
-                    padding: 0,
-                    margin: '0 0 0 10px',
-                    cursor: 'pointer',
-                    outline: 'none',
-                    boxShadow: 'none'
-                  }}
+                  className={`h-12 w-12 flex items-center justify-center rounded-r border border-l-0 ${
+                    searchingLocation 
+                      ? 'bg-gray-100 dark:bg-gray-800 border-gray-300 dark:border-gray-600' 
+                      : 'bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800/30 hover:bg-blue-100 dark:hover:bg-blue-800/30'
+                  }`}
                 >
                   {searchingLocation ? (
-                    <i className="fa-solid fa-spinner fa-spin text-blue-500 dark:text-blue-400" style={{ fontSize: '1.5rem' }}></i>
+                    <i className="fa-solid fa-spinner fa-spin text-blue-500 dark:text-blue-400"></i>
                   ) : (
-                    <i className="fa-solid fa-location-dot text-blue-500 dark:text-blue-400" style={{ fontSize: '1.5rem' }}></i>
+                    <i className="fa-solid fa-location-dot text-blue-500 dark:text-blue-400"></i>
                   )}
                 </button>
               </div>
