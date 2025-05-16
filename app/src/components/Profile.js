@@ -136,8 +136,8 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
       }
     };
     
-    // Update the profile
-    onUpdate(updates);
+    // Update the profile and stay on the Profile page
+    onUpdate(updates, { redirectToDashboard: false });
   };
 
   // Calculate sobriety information if user has a sobriety date
