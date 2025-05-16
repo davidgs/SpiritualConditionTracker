@@ -169,12 +169,29 @@ export default function Meetings({ setCurrentView, meetings = [], onSave, user }
                     <div className="flex items-center">
                       <i className="fa-regular fa-clock text-gray-500 dark:text-gray-400 mr-3" style={{ fontSize: '1rem' }}></i>&nbsp;
                       <span className="text-gray-600 dark:text-gray-300">
-                        {use24HourFormat 
-                          ? meeting.time  // Already in 24hr format in the database
-                          : meeting.time.split(':')
-                              .map((part, i) => i === 0 ? parseInt(part) % 12 || 12 : part) // Convert first part (hours)
-                              .join(':') + (parseInt(meeting.time.split(':')[0]) >= 12 ? ' PM' : ' AM')
-                        }
+                        {(() => {
+                          console.log('Meeting time to format:', meeting.time, 'Use 24h format:', use24HourFormat);
+                          
+                          // If we're using 24-hour format, no conversion needed
+                          if (use24HourFormat) {
+                            return meeting.time;
+                          }
+                          
+                          // Convert to 12-hour format with AM/PM
+                          try {
+                            const parts = meeting.time.split(':');
+                            const hours = parseInt(parts[0], 10);
+                            const minutes = parts[1];
+                            const period = hours >= 12 ? 'PM' : 'AM';
+                            const hours12 = hours % 12 || 12;
+                            const result = `${hours12}:${minutes} ${period}`;
+                            console.log('Converted time:', result);
+                            return result;
+                          } catch (e) {
+                            console.error('Error formatting time:', e);
+                            return meeting.time;
+                          }
+                        })()}
                       </span>
                     </div>
                   )}
