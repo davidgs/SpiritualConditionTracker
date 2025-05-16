@@ -472,7 +472,7 @@ export default function MeetingForm({
     ? "bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 max-w-md w-full border border-gray-200 dark:border-gray-700"
     : "";
   
-  // Modal overlay styles
+  // Modal overlay styles - with no-cache support for dev mode
   const overlayClass = isOverlay 
     ? "fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-70 z-50 flex items-center justify-center p-4 overflow-y-auto"
     : "";
@@ -517,7 +517,7 @@ export default function MeetingForm({
             <div className="mb-6">
               <div className="flex items-center mb-2 relative">
                 <div className="text-xl font-medium text-gray-700 dark:text-gray-300">Meeting Schedule
-                <div className="relative ml-2" ref={tooltipRef}>
+                <div className="relative ml-1" ref={tooltipRef}>
                   <i 
                     className="fa-solid fa-circle-info text-blue-500 dark:text-blue-400 cursor-pointer"
                     onClick={() => setShowTooltip(!showTooltip)}

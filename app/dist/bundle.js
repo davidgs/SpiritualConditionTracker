@@ -52637,7 +52637,7 @@ function MeetingForm(_ref) {
   var containerClass = isOverlay ? "fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 backdrop-blur-sm" : "bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mb-6 border border-gray-200 dark:border-gray-700";
   var formClass = isOverlay ? "bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 max-w-md w-full border border-gray-200 dark:border-gray-700" : "";
 
-  // Modal overlay styles
+  // Modal overlay styles - with no-cache support for dev mode
   var overlayClass = isOverlay ? "fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-70 z-50 flex items-center justify-center p-4 overflow-y-auto" : "";
   return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     className: "".concat(overlayClass, " transition-all duration-300 ease-in-out")
@@ -52684,7 +52684,7 @@ function MeetingForm(_ref) {
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     className: "text-xl font-medium text-gray-700 dark:text-gray-300"
   }, "Meeting Schedule", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
-    className: "relative ml-2",
+    className: "relative ml-1",
     ref: tooltipRef
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("i", {
     className: "fa-solid fa-circle-info text-blue-500 dark:text-blue-400 cursor-pointer",
