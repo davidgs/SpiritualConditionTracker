@@ -204,58 +204,9 @@ function App() {
     }
     
     try {
-      // Get the spiritual fitness preferences to determine timeframe
-      const timeframePreference = await window.db.getPreference('fitnessTimeframe') || 30;
-      
-      // Calculate score based on activities in the specified timeframe
-      const timeframe = parseInt(timeframePreference, 10);
-      
-      // Start with a base score
-      const baseScore = 20;
-      let score = baseScore;
-      const now = new Date();
-      const cutoffDate = new Date();
-      cutoffDate.setDate(cutoffDate.getDate() - timeframe);
-      
-      // Filter activities to those within the timeframe
-      const recentActivities = activities.filter(activity => 
-        new Date(activity.date) >= cutoffDate && new Date(activity.date) <= now
-      );
-      
-      if (recentActivities.length === 0) {
-        setSpiritualFitness(baseScore); // Base score only if no activities
-        return baseScore;
-      }
-      
-      // Calculate points based on activities
-      const activityPoints = Math.min(40, recentActivities.length * 2); // Cap at 40 points
-      
-      // Calculate consistency points
-      // Group activities by day to check daily activity
-      const activityDayMap = {};
-      recentActivities.forEach(activity => {
-        const day = new Date(activity.date).toISOString().split('T')[0];
-        if (!activityDayMap[day]) {
-          activityDayMap[day] = [];
-        }
-        activityDayMap[day].push(activity);
-      });
-      
-      // Count days with activities
-      const daysWithActivities = Object.keys(activityDayMap).length;
-      
-      // Calculate consistency as a percentage of the timeframe days
-      const consistencyPercentage = daysWithActivities / timeframe;
-      const consistencyPoints = Math.round(consistencyPercentage * 40); // Up to 40 points for consistency
-      
-      // Total score
-      score = baseScore + activityPoints + consistencyPoints;
-      
-      // Ensure score doesn't exceed 100
-      score = Math.min(100, score);
-      
-      // Round to 2 decimal places
-      score = Math.round(score * 100) / 100;
+      // Use the database method to calculate spiritual fitness
+      // This allows us to keep the calculation logic in one place
+      const score = await window.db.calculateSpiritualFitness(activities);
       
       // Set the spiritual fitness score in state
       setSpiritualFitness(score);

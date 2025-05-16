@@ -6,7 +6,6 @@
 const express = require('express');
 const path = require('path');
 const cors = require('cors');
-const fs = require('fs');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -16,18 +15,14 @@ app.use(cors());
 
 // Set no-cache headers for all responses
 app.use((req, res, next) => {
-  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
-  res.setHeader('Pragma', 'no-cache');
-  res.setHeader('Expires', '0');
-  res.setHeader('Surrogate-Control', 'no-store');
+  res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+  res.set('Pragma', 'no-cache');
+  res.set('Expires', '0');
   next();
 });
 
 // Serve static files from the built app directory
-app.use(express.static(path.join(__dirname, 'app/build'), {
-  etag: false,
-  lastModified: false
-}));
+app.use(express.static(path.join(__dirname, 'app/build')));
 
 // Redirect root to app path
 app.get('/', (req, res) => {
@@ -52,11 +47,6 @@ app.get('/landing', (req, res) => {
 // Fallback handler for any other routes
 app.use((req, res) => {
   console.log(`Requested path not found: ${req.path}`);
-  
-  // Check if this is an API request or a page request
-  if (req.path.startsWith('/api/')) {
-    return res.status(404).json({ error: 'API endpoint not found' });
-  }
   
   // For non-API requests, serve the landing page as a fallback
   res.status(200).sendFile(path.join(__dirname, 'app/landing-page.html'));

@@ -13,20 +13,29 @@ export async function initDatabase() {
   console.log("Initializing SQLite database...");
   
   try {
-    // Import SQLite
-    const openDatabase = window.openDatabase || window.sqlitePlugin?.openDatabase;
-    
-    if (!openDatabase) {
-      console.error("SQLite plugin not available - falling back to localStorage");
+    // Check for browser or native SQLite implementations
+    if (window.openDatabase) {
+      // Browser implementation (WebSQL)
+      console.log("Using WebSQL implementation for browser");
+      db = window.openDatabase(
+        'spiritualTracker.db',
+        '1.0',
+        'Spiritual Condition Tracker Database',
+        5 * 1024 * 1024 // 5MB
+      );
+    } else if (window.sqlitePlugin && window.sqlitePlugin.openDatabase) {
+      // Native SQLite implementation (Cordova/React Native)
+      console.log("Using native SQLite implementation");
+      db = window.sqlitePlugin.openDatabase({
+        name: 'spiritualTracker.db',
+        location: 'default'
+      });
+    } else {
+      // No SQLite implementation available
+      console.error("SQLite not available - falling back to localStorage");
       initLocalStorageBackup();
       return false;
     }
-    
-    // Open the database
-    db = openDatabase({
-      name: 'spiritualTracker.db',
-      location: 'default'
-    });
     
     // Create tables if they don't exist
     await createTables();
@@ -671,7 +680,71 @@ export function setupGlobalDbObject() {
     query,
     calculateDistance,
     getPreference,
-    setPreference
+    setPreference,
+    
+    // Add a calculateSpiritualFitness method that works with activities
+    calculateSpiritualFitness: async function(activities, timeframe = 30) {
+      if (!activities || activities.length === 0) {
+        return 20; // Base score if no activities
+      }
+      
+      try {
+        // Get user preference for timeframe if available
+        const storedTimeframe = await getPreference('fitnessTimeframe');
+        const calculationTimeframe = storedTimeframe ? parseInt(storedTimeframe, 10) : timeframe;
+        
+        // Start with a base score
+        const baseScore = 20;
+        let score = baseScore;
+        const now = new Date();
+        const cutoffDate = new Date();
+        cutoffDate.setDate(cutoffDate.getDate() - calculationTimeframe);
+        
+        // Filter activities to those within the timeframe
+        const recentActivities = activities.filter(activity => 
+          new Date(activity.date) >= cutoffDate && new Date(activity.date) <= now
+        );
+        
+        if (recentActivities.length === 0) {
+          return baseScore; // Base score only if no recent activities
+        }
+        
+        // Calculate points based on activities
+        const activityPoints = Math.min(40, recentActivities.length * 2); // Cap at 40 points
+        
+        // Calculate consistency points
+        // Group activities by day to check daily activity
+        const activityDayMap = {};
+        recentActivities.forEach(activity => {
+          const day = new Date(activity.date).toISOString().split('T')[0];
+          if (!activityDayMap[day]) {
+            activityDayMap[day] = [];
+          }
+          activityDayMap[day].push(activity);
+        });
+        
+        // Count days with activities
+        const daysWithActivities = Object.keys(activityDayMap).length;
+        
+        // Calculate consistency as a percentage of the timeframe days
+        const consistencyPercentage = daysWithActivities / calculationTimeframe;
+        const consistencyPoints = Math.round(consistencyPercentage * 40); // Up to 40 points for consistency
+        
+        // Total score
+        score = baseScore + activityPoints + consistencyPoints;
+        
+        // Ensure score doesn't exceed 100
+        score = Math.min(100, score);
+        
+        // Round to 2 decimal places
+        score = Math.round(score * 100) / 100;
+        
+        return score;
+      } catch (error) {
+        console.error('Error calculating spiritual fitness:', error);
+        return 20; // Default base score on error
+      }
+    }
   };
   
   return window.db;
