@@ -64141,11 +64141,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _mui_material__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @mui/material */ "./node_modules/@mui/material/esm/Box/Box.js");
 /* harmony import */ var _mui_material__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @mui/material */ "./node_modules/@mui/material/esm/Typography/Typography.js");
 /* harmony import */ var _mui_material__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @mui/material */ "./node_modules/@mui/material/esm/Paper/Paper.js");
-/* harmony import */ var _mui_material__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @mui/material */ "./node_modules/@mui/material/esm/Divider/Divider.js");
-/* harmony import */ var _mui_material__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @mui/material */ "./node_modules/@mui/material/esm/FormControlLabel/FormControlLabel.js");
-/* harmony import */ var _mui_material__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @mui/material */ "./node_modules/@mui/material/esm/Switch/Switch.js");
-/* harmony import */ var _mui_material__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @mui/material */ "./node_modules/@mui/material/esm/TextField/TextField.js");
-/* harmony import */ var _mui_material__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! @mui/material */ "./node_modules/@mui/material/esm/Button/Button.js");
+/* harmony import */ var _mui_material__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @mui/material */ "./node_modules/@mui/material/esm/IconButton/IconButton.js");
+/* harmony import */ var _mui_material__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @mui/material */ "./node_modules/@mui/material/esm/TextField/TextField.js");
+/* harmony import */ var _mui_material__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @mui/material */ "./node_modules/@mui/material/esm/Button/Button.js");
+/* harmony import */ var _mui_material__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @mui/material */ "./node_modules/@mui/material/esm/Divider/Divider.js");
+/* harmony import */ var _mui_material__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! @mui/material */ "./node_modules/@mui/material/esm/FormControlLabel/FormControlLabel.js");
+/* harmony import */ var _mui_material__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! @mui/material */ "./node_modules/@mui/material/esm/Switch/Switch.js");
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
 function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
@@ -64246,12 +64247,29 @@ function Profile(_ref) {
   var sobrietyDays = sobrietyDate ? ((_window$db = window.db) === null || _window$db === void 0 ? void 0 : _window$db.calculateSobrietyDays(sobrietyDate)) || 0 : 0;
   var sobrietyYears = sobrietyDate ? ((_window$db2 = window.db) === null || _window$db2 === void 0 ? void 0 : _window$db2.calculateSobrietyYears(sobrietyDate, 2)) || 0 : 0;
 
+  // State for editing sobriety date
+  var _useState13 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false),
+    _useState14 = _slicedToArray(_useState13, 2),
+    editingSobriety = _useState14[0],
+    setEditingSobriety = _useState14[1];
+
   // Determine whether to display years or days prominently
   var showYearsProminent = sobrietyYears >= 1;
 
   // Format number with commas
   var formatNumber = function formatNumber(num) {
     return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  };
+
+  // Format date for display (YYYY-MM-DD -> Month Day, Year)
+  var formatDateForDisplay = function formatDateForDisplay(dateString) {
+    if (!dateString) return '';
+    var date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
   };
   return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_3__["default"], {
     sx: {
@@ -64274,7 +64292,7 @@ function Profile(_ref) {
     sx: {
       color: darkMode ? '#9ca3af' : '#6b7280'
     }
-  }, "Your personal profile")), sobrietyDate && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_5__["default"], {
+  }, "Your personal profile")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_5__["default"], {
     elevation: 0,
     sx: {
       p: 3,
@@ -64283,19 +64301,111 @@ function Profile(_ref) {
       borderRadius: 2,
       border: darkMode ? '1px solid #374151' : '1px solid #e5e7eb'
     }
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_3__["default"], {
+    sx: {
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      mb: 2
+    }
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_4__["default"], {
     variant: "h6",
     sx: {
-      mb: 2,
       color: darkMode ? '#d1d5db' : '#374151'
     }
-  }, "Sobriety Milestone"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_3__["default"], {
+  }, "Sobriety Milestone"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_6__["default"], {
+    onClick: function onClick() {
+      return setEditingSobriety(!editingSobriety);
+    },
+    size: "small",
+    "aria-label": "Edit sobriety date",
+    sx: {
+      color: darkMode ? '#9ca3af' : '#6b7280',
+      '&:hover': {
+        color: darkMode ? '#60a5fa' : '#3b82f6',
+        backgroundColor: 'transparent'
+      }
+    }
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("i", {
+    className: "fas fa-edit"
+  }))), editingSobriety ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_3__["default"], {
+    sx: {
+      mb: 2
+    }
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_7__["default"], {
+    label: "Sobriety Date",
+    required: true,
+    fullWidth: true,
+    type: "date",
+    value: sobrietyDate,
+    onChange: function onChange(e) {
+      return setSobrietyDate(e.target.value);
+    },
+    inputProps: {
+      max: new Date().toISOString().split('T')[0]
+    },
+    variant: "outlined",
+    error: !!errors.sobrietyDate,
+    helperText: errors.sobrietyDate,
+    size: "small",
+    InputLabelProps: {
+      shrink: true,
+      style: {
+        color: darkMode ? '#9ca3af' : '#6b7280'
+      }
+    },
+    InputProps: {
+      style: {
+        color: darkMode ? '#d1d5db' : '#374151',
+        backgroundColor: darkMode ? 'rgba(55, 65, 81, 0.3)' : '#ffffff'
+      }
+    },
+    sx: {
+      mb: 1
+    }
+  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_3__["default"], {
+    sx: {
+      display: 'flex',
+      justifyContent: 'flex-end',
+      gap: 1
+    }
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_8__["default"], {
+    size: "small",
+    onClick: function onClick() {
+      return setEditingSobriety(false);
+    },
+    sx: {
+      color: darkMode ? '#d1d5db' : '#374151',
+      '&:hover': {
+        backgroundColor: 'transparent'
+      }
+    }
+  }, "Cancel"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_8__["default"], {
+    size: "small",
+    variant: "contained",
+    color: "primary",
+    onClick: function onClick() {
+      if (sobrietyDate) {
+        setEditingSobriety(false);
+      } else {
+        setErrors(_objectSpread(_objectSpread({}, errors), {}, {
+          sobrietyDate: 'Sobriety date is required'
+        }));
+      }
+    },
+    sx: {
+      bgcolor: darkMode ? '#3b82f6' : '#2563eb',
+      '&:hover': {
+        bgcolor: darkMode ? '#2563eb' : '#1d4ed8'
+      }
+    }
+  }, "Save"))) : /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement((react__WEBPACK_IMPORTED_MODULE_0___default().Fragment), null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_3__["default"], {
     sx: {
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'flex-start'
     }
-  }, showYearsProminent ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement((react__WEBPACK_IMPORTED_MODULE_0___default().Fragment), null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_3__["default"], {
+  }, sobrietyDate ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement((react__WEBPACK_IMPORTED_MODULE_0___default().Fragment), null, showYearsProminent ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement((react__WEBPACK_IMPORTED_MODULE_0___default().Fragment), null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_3__["default"], {
     sx: {
       display: 'flex',
       alignItems: 'baseline',
@@ -64341,7 +64451,17 @@ function Profile(_ref) {
       fontSize: '1.25rem',
       color: darkMode ? '#60a5fa' : '#3b82f6'
     }
-  }, sobrietyYears.toFixed(2), " years")))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_5__["default"], {
+  }, sobrietyYears.toFixed(2), " years")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_4__["default"], {
+    variant: "body2",
+    sx: {
+      mt: 2,
+      color: darkMode ? '#9ca3af' : '#6b7280'
+    }
+  }, "Sober since ", formatDateForDisplay(sobrietyDate))) : /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_4__["default"], {
+    sx: {
+      color: darkMode ? '#9ca3af' : '#6b7280'
+    }
+  }, "No sobriety date set. Click the edit button to set your sobriety date.")))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_5__["default"], {
     elevation: 0,
     sx: {
       p: 3,
@@ -64360,7 +64480,7 @@ function Profile(_ref) {
     sx: {
       mb: 3
     }
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_ThemeToggle__WEBPACK_IMPORTED_MODULE_1__["default"], null)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_6__["default"], {
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_ThemeToggle__WEBPACK_IMPORTED_MODULE_1__["default"], null)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_9__["default"], {
     sx: {
       mb: 2
     }
@@ -64370,8 +64490,8 @@ function Profile(_ref) {
       mb: 1,
       color: darkMode ? '#d1d5db' : '#374151'
     }
-  }, "Privacy & Messaging"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_7__["default"], {
-    control: /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_8__["default"], {
+  }, "Privacy & Messaging"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_10__["default"], {
+    control: /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_11__["default"], {
       id: "allowMessages",
       name: "allowMessages",
       checked: allowMessages,
@@ -64416,7 +64536,7 @@ function Profile(_ref) {
       gap: 2.5,
       mb: 3
     }
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_9__["default"], {
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_7__["default"], {
     label: "Your Name",
     fullWidth: true,
     value: name,
@@ -64436,34 +64556,7 @@ function Profile(_ref) {
         backgroundColor: darkMode ? 'rgba(55, 65, 81, 0.3)' : '#ffffff'
       }
     }
-  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_9__["default"], {
-    label: "Sobriety Date",
-    required: true,
-    fullWidth: true,
-    type: "date",
-    value: sobrietyDate,
-    onChange: function onChange(e) {
-      return setSobrietyDate(e.target.value);
-    },
-    inputProps: {
-      max: new Date().toISOString().split('T')[0]
-    },
-    variant: "outlined",
-    error: !!errors.sobrietyDate,
-    helperText: errors.sobrietyDate,
-    InputLabelProps: {
-      shrink: true,
-      style: {
-        color: darkMode ? '#9ca3af' : '#6b7280'
-      }
-    },
-    InputProps: {
-      style: {
-        color: darkMode ? '#d1d5db' : '#374151',
-        backgroundColor: darkMode ? 'rgba(55, 65, 81, 0.3)' : '#ffffff'
-      }
-    }
-  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_9__["default"], {
+  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_7__["default"], {
     label: "Home Group",
     fullWidth: true,
     value: homeGroup,
@@ -64483,7 +64576,7 @@ function Profile(_ref) {
         backgroundColor: darkMode ? 'rgba(55, 65, 81, 0.3)' : '#ffffff'
       }
     }
-  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_9__["default"], {
+  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_7__["default"], {
     label: "Sponsor's Name",
     fullWidth: true,
     value: sponsorName,
@@ -64503,7 +64596,7 @@ function Profile(_ref) {
         backgroundColor: darkMode ? 'rgba(55, 65, 81, 0.3)' : '#ffffff'
       }
     }
-  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_9__["default"], {
+  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_7__["default"], {
     label: "Sponsor's Phone",
     fullWidth: true,
     type: "tel",
@@ -64524,7 +64617,7 @@ function Profile(_ref) {
         backgroundColor: darkMode ? 'rgba(55, 65, 81, 0.3)' : '#ffffff'
       }
     }
-  })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_10__["default"], {
+  })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_8__["default"], {
     type: "submit",
     variant: "contained",
     color: "primary",

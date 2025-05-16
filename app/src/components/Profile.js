@@ -9,7 +9,8 @@ import {
   Paper, 
   Typography, 
   Box, 
-  Divider
+  Divider,
+  IconButton
 } from '@mui/material';
 
 export default function Profile({ setCurrentView, user, onUpdate }) {
@@ -77,12 +78,26 @@ export default function Profile({ setCurrentView, user, onUpdate }) {
     ? window.db?.calculateSobrietyYears(sobrietyDate, 2) || 0
     : 0;
     
+  // State for editing sobriety date
+  const [editingSobriety, setEditingSobriety] = useState(false);
+  
   // Determine whether to display years or days prominently
   const showYearsProminent = sobrietyYears >= 1;
   
   // Format number with commas
   const formatNumber = (num) => {
     return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  };
+  
+  // Format date for display (YYYY-MM-DD -> Month Day, Year)
+  const formatDateForDisplay = (dateString) => {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', { 
+      year: 'numeric', 
+      month: 'long', 
+      day: 'numeric' 
+    });
   };
 
   return (
@@ -96,65 +111,157 @@ export default function Profile({ setCurrentView, user, onUpdate }) {
         </Typography>
       </Box>
       
-      {sobrietyDate && (
-        <Paper elevation={0} sx={{ 
+      <Paper elevation={0} sx={{ 
           p: 3,
           mb: 3,
           bgcolor: darkMode ? '#1f2937' : '#ffffff',
           borderRadius: 2,
           border: darkMode ? '1px solid #374151' : '1px solid #e5e7eb'
         }}>
-          <Typography variant="h6" sx={{ mb: 2, color: darkMode ? '#d1d5db' : '#374151' }}>
-            Sobriety Milestone
-          </Typography>
-          
-          <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-            {showYearsProminent ? (
-              <>
-                <Box sx={{ display: 'flex', alignItems: 'baseline', mb: 1 }}>
-                  <Typography variant="h3" sx={{ 
-                    fontWeight: 'bold', 
-                    color: darkMode ? '#60a5fa' : '#3b82f6',
-                    mr: 1
-                  }}>
-                    {sobrietyYears.toFixed(2)}
-                  </Typography>
-                  <Typography variant="h6" sx={{ color: darkMode ? '#9ca3af' : '#6b7280' }}>
-                    years
-                  </Typography>
-                </Box>
-                <Typography sx={{ 
-                  fontSize: '1.25rem', 
-                  color: darkMode ? '#60a5fa' : '#3b82f6' 
-                }}>
-                  {formatNumber(sobrietyDays)} days
-                </Typography>
-              </>
-            ) : (
-              <>
-                <Box sx={{ display: 'flex', alignItems: 'baseline', mb: 1 }}>
-                  <Typography variant="h3" sx={{ 
-                    fontWeight: 'bold', 
-                    color: darkMode ? '#60a5fa' : '#3b82f6',
-                    mr: 1
-                  }}>
-                    {formatNumber(sobrietyDays)}
-                  </Typography>
-                  <Typography variant="h6" sx={{ color: darkMode ? '#9ca3af' : '#6b7280' }}>
-                    days
-                  </Typography>
-                </Box>
-                <Typography sx={{ 
-                  fontSize: '1.25rem', 
-                  color: darkMode ? '#60a5fa' : '#3b82f6' 
-                }}>
-                  {sobrietyYears.toFixed(2)} years
-                </Typography>
-              </>
-            )}
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+            <Typography variant="h6" sx={{ color: darkMode ? '#d1d5db' : '#374151' }}>
+              Sobriety Milestone
+            </Typography>
+            <IconButton 
+              onClick={() => setEditingSobriety(!editingSobriety)}
+              size="small"
+              aria-label="Edit sobriety date"
+              sx={{ 
+                color: darkMode ? '#9ca3af' : '#6b7280',
+                '&:hover': {
+                  color: darkMode ? '#60a5fa' : '#3b82f6',
+                  backgroundColor: 'transparent'
+                }
+              }}
+            >
+              <i className="fas fa-edit"></i>
+            </IconButton>
           </Box>
+          
+          {editingSobriety ? (
+            <Box sx={{ mb: 2 }}>
+              <TextField
+                label="Sobriety Date"
+                required
+                fullWidth
+                type="date"
+                value={sobrietyDate}
+                onChange={(e) => setSobrietyDate(e.target.value)}
+                inputProps={{
+                  max: new Date().toISOString().split('T')[0]
+                }}
+                variant="outlined"
+                error={!!errors.sobrietyDate}
+                helperText={errors.sobrietyDate}
+                size="small"
+                InputLabelProps={{
+                  shrink: true,
+                  style: { color: darkMode ? '#9ca3af' : '#6b7280' }
+                }}
+                InputProps={{
+                  style: { 
+                    color: darkMode ? '#d1d5db' : '#374151',
+                    backgroundColor: darkMode ? 'rgba(55, 65, 81, 0.3)' : '#ffffff'
+                  }
+                }}
+                sx={{ mb: 1 }}
+              />
+              <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1 }}>
+                <Button 
+                  size="small"
+                  onClick={() => setEditingSobriety(false)}
+                  sx={{ 
+                    color: darkMode ? '#d1d5db' : '#374151',
+                    '&:hover': {
+                      backgroundColor: 'transparent'
+                    }
+                  }}
+                >
+                  Cancel
+                </Button>
+                <Button 
+                  size="small"
+                  variant="contained"
+                  color="primary"
+                  onClick={() => {
+                    if (sobrietyDate) {
+                      setEditingSobriety(false);
+                    } else {
+                      setErrors({...errors, sobrietyDate: 'Sobriety date is required'});
+                    }
+                  }}
+                  sx={{ 
+                    bgcolor: darkMode ? '#3b82f6' : '#2563eb',
+                    '&:hover': {
+                      bgcolor: darkMode ? '#2563eb' : '#1d4ed8'
+                    }
+                  }}
+                >
+                  Save
+                </Button>
+              </Box>
+            </Box>
+          ) : (
+            <>
+              <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+                {sobrietyDate ? (
+                  <>
+                    {showYearsProminent ? (
+                      <>
+                        <Box sx={{ display: 'flex', alignItems: 'baseline', mb: 1 }}>
+                          <Typography variant="h3" sx={{ 
+                            fontWeight: 'bold', 
+                            color: darkMode ? '#60a5fa' : '#3b82f6',
+                            mr: 1
+                          }}>
+                            {sobrietyYears.toFixed(2)}
+                          </Typography>
+                          <Typography variant="h6" sx={{ color: darkMode ? '#9ca3af' : '#6b7280' }}>
+                            years
+                          </Typography>
+                        </Box>
+                        <Typography sx={{ 
+                          fontSize: '1.25rem', 
+                          color: darkMode ? '#60a5fa' : '#3b82f6' 
+                        }}>
+                          {formatNumber(sobrietyDays)} days
+                        </Typography>
+                      </>
+                    ) : (
+                      <>
+                        <Box sx={{ display: 'flex', alignItems: 'baseline', mb: 1 }}>
+                          <Typography variant="h3" sx={{ 
+                            fontWeight: 'bold', 
+                            color: darkMode ? '#60a5fa' : '#3b82f6',
+                            mr: 1
+                          }}>
+                            {formatNumber(sobrietyDays)}
+                          </Typography>
+                          <Typography variant="h6" sx={{ color: darkMode ? '#9ca3af' : '#6b7280' }}>
+                            days
+                          </Typography>
+                        </Box>
+                        <Typography sx={{ 
+                          fontSize: '1.25rem', 
+                          color: darkMode ? '#60a5fa' : '#3b82f6' 
+                        }}>
+                          {sobrietyYears.toFixed(2)} years
+                        </Typography>
+                      </>
+                    )}
+                    <Typography variant="body2" sx={{ mt: 2, color: darkMode ? '#9ca3af' : '#6b7280' }}>
+                      Sober since {formatDateForDisplay(sobrietyDate)}
+                    </Typography>
+                  </>
+                ) : (
+                  <Typography sx={{ color: darkMode ? '#9ca3af' : '#6b7280' }}>
+                    No sobriety date set. Click the edit button to set your sobriety date.
+                  </Typography>
+                )}
+              </Box>
+            </>
+          )}
         </Paper>
-      )}
       
       {/* App Settings */}
       <Paper elevation={0} sx={{ 
@@ -224,31 +331,6 @@ export default function Profile({ setCurrentView, user, onUpdate }) {
             placeholder="Enter your name"
             variant="outlined"
             InputLabelProps={{
-              style: { color: darkMode ? '#9ca3af' : '#6b7280' }
-            }}
-            InputProps={{
-              style: { 
-                color: darkMode ? '#d1d5db' : '#374151',
-                backgroundColor: darkMode ? 'rgba(55, 65, 81, 0.3)' : '#ffffff'
-              }
-            }}
-          />
-          
-          <TextField
-            label="Sobriety Date"
-            required
-            fullWidth
-            type="date"
-            value={sobrietyDate}
-            onChange={(e) => setSobrietyDate(e.target.value)}
-            inputProps={{
-              max: new Date().toISOString().split('T')[0]
-            }}
-            variant="outlined"
-            error={!!errors.sobrietyDate}
-            helperText={errors.sobrietyDate}
-            InputLabelProps={{
-              shrink: true,
               style: { color: darkMode ? '#9ca3af' : '#6b7280' }
             }}
             InputProps={{
