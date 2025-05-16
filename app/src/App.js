@@ -20,7 +20,8 @@ function App() {
 
   // Load data when component mounts
   useEffect(() => {
-    loadData();
+    // Initialize database first, then load data
+    initDatabaseAndLoadData();
   }, []);
 
   // Calculate spiritual fitness score when activities change
@@ -29,6 +30,31 @@ function App() {
       calculateSpiritualFitness();
     }
   }, [activities]);
+  
+  // Initialize the database and load data
+  async function initDatabaseAndLoadData() {
+    try {
+      // Import the database operations
+      const { initDatabase, setupGlobalDbObject } = await import('./utils/sqliteDatabase');
+      
+      // Initialize the database
+      const success = await initDatabase();
+      
+      if (success) {
+        console.log("SQLite database initialized successfully");
+        
+        // Setup global db object for compatibility
+        setupGlobalDbObject();
+      } else {
+        console.warn("Using localStorage fallback for data storage");
+      }
+      
+      // Now load the data
+      await loadData();
+    } catch (error) {
+      console.error("Database initialization error:", error);
+    }
+  }
 
   // Load data from the database
   async function loadData() {
