@@ -66363,13 +66363,18 @@ function Profile(_ref) {
         var newValue = e.target.checked;
         setUse24HourFormat(newValue);
 
-        // Save the preference change immediately
+        // Save the preference change immediately without redirecting
         var updates = _objectSpread(_objectSpread({}, user), {}, {
           preferences: _objectSpread(_objectSpread({}, (user === null || user === void 0 ? void 0 : user.preferences) || {}), {}, {
             use24HourFormat: newValue
           })
         });
-        onUpdate(updates);
+        // Use a different update method that doesn't trigger navigation
+        window.db.update('user', user.id, {
+          preferences: _objectSpread(_objectSpread({}, (user === null || user === void 0 ? void 0 : user.preferences) || {}), {}, {
+            use24HourFormat: newValue
+          })
+        });
       },
       color: "primary",
       size: "small"

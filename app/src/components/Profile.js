@@ -464,7 +464,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
                   const newValue = e.target.checked;
                   setUse24HourFormat(newValue);
                   
-                  // Save the preference change immediately
+                  // Save the preference change immediately without redirecting
                   const updates = {
                     ...user,
                     preferences: {
@@ -472,7 +472,13 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
                       use24HourFormat: newValue
                     }
                   };
-                  onUpdate(updates);
+                  // Use a different update method that doesn't trigger navigation
+                  window.db.update('user', user.id, {
+                    preferences: {
+                      ...(user?.preferences || {}),
+                      use24HourFormat: newValue
+                    }
+                  });
                 }}
                 color="primary"
                 size="small"
