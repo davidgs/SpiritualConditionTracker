@@ -103,52 +103,71 @@ export default function Meetings({ setCurrentView, meetings = [], onSave }) {
   // Render a single meeting item
   const renderMeetingItem = (meeting) => {
     return (
-      <div key={meeting.id} className="bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 p-5 mb-5 transition-all hover:shadow-lg">
+      <div key={meeting.id} className="bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 p-6 mb-6 transition-all hover:shadow-lg">
         <div className="flex flex-col">
           <div className="flex justify-between items-center mb-3">
             <h3 className="text-xl font-bold text-gray-800 dark:text-gray-100">
               {meeting.name}
             </h3>
             
-            <div className="flex space-x-2">
+            <div className="flex space-x-4">
               <button
-                className="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 p-2 rounded-full hover:bg-blue-100 dark:hover:bg-blue-900"
+                className="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors duration-200"
                 onClick={() => handleEdit(meeting)}
                 aria-label="Edit meeting"
+                title="Edit meeting"
+                style={{ 
+                  background: 'transparent',
+                  border: 'none',
+                  cursor: 'pointer',
+                  fontSize: '1.25rem',
+                  padding: '0.25rem'
+                }}
               >
-                <i className="fa-solid fa-pen-to-square w-5 h-5"></i>
+                <i className="fa-solid fa-pen-to-square"></i>
               </button>
               <button
-                className="text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 p-2 rounded-full hover:bg-red-100 dark:hover:bg-red-900"
+                className="text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 transition-colors duration-200"
                 onClick={() => handleDelete(meeting.id)}
                 aria-label="Delete meeting"
+                title="Delete meeting"
+                style={{ 
+                  background: 'transparent',
+                  border: 'none',
+                  cursor: 'pointer',
+                  fontSize: '1.25rem',
+                  padding: '0.25rem'
+                }}
               >
-                <i className="fa-solid fa-trash-can w-5 h-5"></i>
+                <i className="fa-solid fa-trash-can"></i>
               </button>
             </div>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm text-gray-600 dark:text-gray-300 mt-1">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm mt-3">
+            {/* Days */}
             <div className="flex items-center">
-              <i className="fa-solid fa-calendar-days h-4 w-4 text-blue-500 mr-2 flex-shrink-0"></i>
+              <i className="fa-solid fa-calendar-days text-blue-500 mr-3 flex-shrink-0" style={{ fontSize: '1.1rem' }}></i>
               <div>
-                <span className="font-semibold text-gray-700 dark:text-gray-100 block">Days</span>
-                <span>{meeting.days.map(formatDay).join(', ')}</span>
+                <span className="font-semibold text-gray-700 dark:text-gray-100 block mb-1">Days</span>
+                <span className="text-gray-600 dark:text-gray-300">{meeting.days.map(formatDay).join(', ')}</span>
               </div>
             </div>
             
+            {/* Time */}
             <div className="flex items-center">
-              <i className="fa-regular fa-clock h-4 w-4 text-blue-500 mr-2 flex-shrink-0"></i>
+              <i className="fa-regular fa-clock text-blue-500 mr-3 flex-shrink-0" style={{ fontSize: '1.1rem' }}></i>
               <div>
-                <span className="font-semibold text-gray-700 dark:text-gray-100 block">Time</span>
-                <span>{new Date(`2000-01-01T${meeting.time}`).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+                <span className="font-semibold text-gray-700 dark:text-gray-100 block mb-1">Time</span>
+                <span className="text-gray-600 dark:text-gray-300">{new Date(`2000-01-01T${meeting.time}`).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
               </div>
             </div>
             
-            <div className="flex items-start col-span-1 md:col-span-3 mt-2">
-              <i className="fa-solid fa-location-dot h-4 w-4 text-blue-500 mr-2 mt-0.5 flex-shrink-0"></i>
+            {/* Address - full width */}
+            <div className="flex items-start col-span-1 md:col-span-2 mt-1">
+              <i className="fa-solid fa-location-dot text-blue-500 mr-3 mt-1 flex-shrink-0" style={{ fontSize: '1.1rem' }}></i>
               <div>
-                <span className="font-semibold text-gray-700 dark:text-gray-100 block">Address</span>
+                <span className="font-semibold text-gray-700 dark:text-gray-100 block mb-1">Address</span>
                 <div className="text-gray-600 dark:text-gray-300">{formatAddress(meeting)}</div>
               </div>
             </div>
@@ -160,9 +179,8 @@ export default function Meetings({ setCurrentView, meetings = [], onSave }) {
   
   return (
     <div className="p-4">
-      <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-4 flex items-center">
-        <i className="fa-solid fa-building mr-2 text-blue-600"></i>
-        &nbsp;My Meetings
+      <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-6">
+        Meetings
       </h1>
       
       {/* Error Message */}
@@ -185,16 +203,18 @@ export default function Meetings({ setCurrentView, meetings = [], onSave }) {
             onClick={() => setShowForm(true)}
             aria-label="Add new meeting"
             title={localMeetings.length > 0 ? 'Add New Meeting' : 'Add Your First Meeting'}
+            className="text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300 transition-colors duration-200"
             style={{ 
-              background: 'none', 
+              background: 'transparent', 
               border: 'none', 
-              padding: 0,
               cursor: 'pointer',
               outline: 'none',
-              boxShadow: 'none'
+              boxShadow: 'none',
+              fontSize: '2rem',  
+              padding: '0.5rem'
             }}
           >
-            <i className="fa-solid fa-calendar-plus text-gray-500 dark:text-gray-200" style={{ fontSize: '3.5rem' }}></i>
+            <i className="fa-solid fa-calendar-plus"></i>
           </button>
         </div>
       )}
@@ -217,14 +237,14 @@ export default function Meetings({ setCurrentView, meetings = [], onSave }) {
         {localMeetings.length > 0 ? (
           localMeetings.map(meeting => renderMeetingItem(meeting))
         ) : (
-          <div className="text-center p-6 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
-            
+          <div className="text-center p-8 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
+            <i className="fa-solid fa-calendar text-gray-300 dark:text-gray-600 mb-4" style={{ fontSize: '2.5rem' }}></i>
             <h3 className="text-lg font-medium text-gray-700 dark:text-gray-300 mb-2">No Meetings Found</h3>
             <p className="text-gray-600 dark:text-gray-400 mb-3">
               You haven't added any meetings to your schedule yet.
             </p>
             <p className="text-gray-500 dark:text-gray-500 text-sm">
-              Click the <i className="fa-solid fa-plus text-blue-500"></i> button to add your first meeting.
+              Click the <i className="fa-solid fa-calendar-plus text-blue-500"></i> button to add your first meeting.
             </p>
           </div>
         )}
