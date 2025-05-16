@@ -322,8 +322,6 @@ export default function ActivityPage({ setCurrentView, onSave, onSaveMeeting, ac
       {showForm && (
         <div className={`bg-white dark:bg-gray-800 rounded-lg shadow border border-gray-200 dark:border-gray-700 p-4 mb-6 ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>
           <div className="flex justify-between items-center mb-4">
-            <h2 className="text-xl font-semibold">Log New Activity</h2>
-            
             {/* Close button inside card */}
             <button
               className="text-gray-500 dark:text-gray-400 hover:text-red-500 dark:hover:text-red-400 transition-colors duration-200"
@@ -340,6 +338,9 @@ export default function ActivityPage({ setCurrentView, onSave, onSaveMeeting, ac
             >
               <i className="fa-solid fa-xmark"></i>
             </button>
+            <h2 className="text-xl font-semibold">Log New Activity</h2>
+            
+            
           </div>
           
           {/* Success message */}
