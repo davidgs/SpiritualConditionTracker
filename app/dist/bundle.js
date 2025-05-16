@@ -26617,7 +26617,57 @@ html.dark .toggle-slider:after {
 
 .modal-enter {
   animation: scaleIn 0.2s ease-out forwards;
-}`, "",{"version":3,"sources":["webpack://./src/styles/main.css"],"names":[],"mappings":"AAAA,4BAA4B;;AAE5B,kDAAkD;AAClD;EACE,SAAS;EACT,UAAU;EACV,YAAY;EACZ,WAAW;EACX,kBAAkB;EAClB,gBAAgB;AAClB;;AAEA;EACE,SAAS;EACT,UAAU;EACV,gBAAgB;EAChB,WAAW;EACX,gBAAgB;EAChB,uDAAuD;EACvD,kBAAkB;EAClB,gBAAgB;AAClB;;AAEA,4BAA4B;AAC5B;EACE,uDAAuD;AACzD;;AAEA,kBAAkB;AAClB;EACE,gBAAgB;EAChB,WAAW;EACX,kBAAkB;EAClB,mBAAmB;AACrB;;AAEA,gFAAgF;;AAEhF,yCAAyC;;AAEzC,6BAA6B;AAC7B;EACE,yBAAyB;AAC3B;;AAEA,6BAA6B;AAC7B;EACE,kBAAkB;EAClB,qBAAqB;EACrB,WAAW;EACX,YAAY;EACZ,mBAAmB;EACnB,yBAAyB;EACzB,sCAAsC;AACxC;;AAEA;EACE,WAAW;EACX,kBAAkB;EAClB,SAAS;EACT,QAAQ;EACR,WAAW;EACX,YAAY;EACZ,kBAAkB;EAClB,uBAAuB;EACvB,wCAAwC;EACxC,+BAA+B;AACjC;;AAEA;EACE,yBAAyB;AAC3B;;AAEA;EACE,2BAA2B;AAC7B;;AAEA,gDAAgD;AAChD;EACE,yBAAyB;AAC3B;;AAEA;EACE,sCAAsC;AACxC;;AAEA;EACE,yBAAyB;AAC3B;;AAEA;EACE,QAAQ;EACR,UAAU;EACV,qBAAqB;EACrB,yBAAyB;AAC3B;;AAEA,qBAAqB;AACrB;EACE,OAAO,UAAU,EAAE;EACnB,KAAK,UAAU,EAAE;AACnB;;AAEA;EACE;IACE,UAAU;IACV,2BAA2B;EAC7B;EACA;IACE,UAAU;IACV,wBAAwB;EAC1B;AACF;;AAEA;EACE;IACE,UAAU;IACV,sBAAsB;EACxB;EACA;IACE,UAAU;IACV,mBAAmB;EACrB;AACF;;AAEA;EACE,yCAAyC;AAC3C","sourcesContent":["/* Main application styles */\n\n/* Base styles that won't conflict with Tailwind */\nhtml {\n  margin: 0;\n  padding: 0;\n  height: 100%;\n  width: 100%;\n  overflow-x: hidden;\n  overflow-y: auto;\n}\n\nbody {\n  margin: 0;\n  padding: 0;\n  min-height: 100%;\n  width: 100%;\n  line-height: 1.5;\n  transition: background-color 0.3s ease, color 0.3s ease;\n  overflow-x: hidden;\n  overflow-y: auto;\n}\n\n/* Dark mode toggle basics */\nhtml.dark body {\n  transition: background-color 0.3s ease, color 0.3s ease;\n}\n\n/* App container */\n#app {\n  min-height: 100%;\n  width: 100%;\n  overflow-x: hidden;\n  overflow-y: visible;\n}\n\n/* Removed scrollable content area class - main scrolling handled at App level */\n\n/* No more separate scroll areas needed */\n\n/* Simple transition styles */\n.transition-200 {\n  transition: all 0.2s ease;\n}\n\n/* Dark mode toggle styling */\n.toggle-slider {\n  position: relative;\n  display: inline-block;\n  width: 40px;\n  height: 24px;\n  border-radius: 12px;\n  background-color: #d1d5db;\n  transition: background-color 0.2s ease;\n}\n\n.toggle-slider:after {\n  content: '';\n  position: absolute;\n  left: 2px;\n  top: 2px;\n  width: 20px;\n  height: 20px;\n  border-radius: 50%;\n  background-color: white;\n  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);\n  transition: transform 0.2s ease;\n}\n\nhtml.dark .toggle-slider {\n  background-color: #3b82f6;\n}\n\nhtml.dark .toggle-slider:after {\n  transform: translateX(16px);\n}\n\n/* Custom toggle checkbox styling for settings */\n.toggle-checkbox {\n  transition: all 0.3s ease;\n}\n\n.toggle-label {\n  transition: background-color 0.3s ease;\n}\n\n.toggle-checkbox:checked + .toggle-label {\n  background-color: #4ade80;\n}\n\n.toggle-checkbox:checked {\n  right: 0;\n  left: auto;\n  border-color: #4ade80;\n  background-color: #4ade80;\n}\n\n/* Modal animations */\n@keyframes fadeIn {\n  from { opacity: 0; }\n  to { opacity: 1; }\n}\n\n@keyframes slideUp {\n  from { \n    opacity: 0;\n    transform: translateY(20px);\n  }\n  to { \n    opacity: 1;\n    transform: translateY(0);\n  }\n}\n\n@keyframes scaleIn {\n  from { \n    opacity: 0;\n    transform: scale(0.95);\n  }\n  to { \n    opacity: 1;\n    transform: scale(1);\n  }\n}\n\n.modal-enter {\n  animation: scaleIn 0.2s ease-out forwards;\n}"],"sourceRoot":""}]);
+}
+
+/* Material UI Form Field styling for light/dark mode */
+.meeting-form-field .MuiOutlinedInput-root {
+  background-color: transparent;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Light mode styling */
+.meeting-form-field .MuiOutlinedInput-root {
+  background-color: white;
+  color: #1f2937;
+}
+
+.meeting-form-field .MuiOutlinedInput-notchedOutline {
+  border-color: #d1d5db;
+}
+
+.meeting-form-field .MuiInputLabel-root {
+  color: #4b5563;
+}
+
+.meeting-form-field .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline {
+  border-color: #9ca3af;
+}
+
+.meeting-form-field .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
+  border-color: #3b82f6;
+}
+
+/* Dark mode styling */
+html.dark .meeting-form-field .MuiOutlinedInput-root {
+  background-color: #374151;
+  color: #f3f4f6;
+}
+
+html.dark .meeting-form-field .MuiOutlinedInput-notchedOutline {
+  border-color: #4b5563;
+}
+
+html.dark .meeting-form-field .MuiInputLabel-root {
+  color: #9ca3af;
+}
+
+html.dark .meeting-form-field .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline {
+  border-color: #6b7280;
+}
+
+html.dark .meeting-form-field .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
+  border-color: #60a5fa;
+}`, "",{"version":3,"sources":["webpack://./src/styles/main.css"],"names":[],"mappings":"AAAA,4BAA4B;;AAE5B,kDAAkD;AAClD;EACE,SAAS;EACT,UAAU;EACV,YAAY;EACZ,WAAW;EACX,kBAAkB;EAClB,gBAAgB;AAClB;;AAEA;EACE,SAAS;EACT,UAAU;EACV,gBAAgB;EAChB,WAAW;EACX,gBAAgB;EAChB,uDAAuD;EACvD,kBAAkB;EAClB,gBAAgB;AAClB;;AAEA,4BAA4B;AAC5B;EACE,uDAAuD;AACzD;;AAEA,kBAAkB;AAClB;EACE,gBAAgB;EAChB,WAAW;EACX,kBAAkB;EAClB,mBAAmB;AACrB;;AAEA,gFAAgF;;AAEhF,yCAAyC;;AAEzC,6BAA6B;AAC7B;EACE,yBAAyB;AAC3B;;AAEA,6BAA6B;AAC7B;EACE,kBAAkB;EAClB,qBAAqB;EACrB,WAAW;EACX,YAAY;EACZ,mBAAmB;EACnB,yBAAyB;EACzB,sCAAsC;AACxC;;AAEA;EACE,WAAW;EACX,kBAAkB;EAClB,SAAS;EACT,QAAQ;EACR,WAAW;EACX,YAAY;EACZ,kBAAkB;EAClB,uBAAuB;EACvB,wCAAwC;EACxC,+BAA+B;AACjC;;AAEA;EACE,yBAAyB;AAC3B;;AAEA;EACE,2BAA2B;AAC7B;;AAEA,gDAAgD;AAChD;EACE,yBAAyB;AAC3B;;AAEA;EACE,sCAAsC;AACxC;;AAEA;EACE,yBAAyB;AAC3B;;AAEA;EACE,QAAQ;EACR,UAAU;EACV,qBAAqB;EACrB,yBAAyB;AAC3B;;AAEA,qBAAqB;AACrB;EACE,OAAO,UAAU,EAAE;EACnB,KAAK,UAAU,EAAE;AACnB;;AAEA;EACE;IACE,UAAU;IACV,2BAA2B;EAC7B;EACA;IACE,UAAU;IACV,wBAAwB;EAC1B;AACF;;AAEA;EACE;IACE,UAAU;IACV,sBAAsB;EACxB;EACA;IACE,UAAU;IACV,mBAAmB;EACrB;AACF;;AAEA;EACE,yCAAyC;AAC3C;;AAEA,uDAAuD;AACvD;EACE,6BAA6B;EAC7B,8DAA8D;AAChE;;AAEA,uBAAuB;AACvB;EACE,uBAAuB;EACvB,cAAc;AAChB;;AAEA;EACE,qBAAqB;AACvB;;AAEA;EACE,cAAc;AAChB;;AAEA;EACE,qBAAqB;AACvB;;AAEA;EACE,qBAAqB;AACvB;;AAEA,sBAAsB;AACtB;EACE,yBAAyB;EACzB,cAAc;AAChB;;AAEA;EACE,qBAAqB;AACvB;;AAEA;EACE,cAAc;AAChB;;AAEA;EACE,qBAAqB;AACvB;;AAEA;EACE,qBAAqB;AACvB","sourcesContent":["/* Main application styles */\n\n/* Base styles that won't conflict with Tailwind */\nhtml {\n  margin: 0;\n  padding: 0;\n  height: 100%;\n  width: 100%;\n  overflow-x: hidden;\n  overflow-y: auto;\n}\n\nbody {\n  margin: 0;\n  padding: 0;\n  min-height: 100%;\n  width: 100%;\n  line-height: 1.5;\n  transition: background-color 0.3s ease, color 0.3s ease;\n  overflow-x: hidden;\n  overflow-y: auto;\n}\n\n/* Dark mode toggle basics */\nhtml.dark body {\n  transition: background-color 0.3s ease, color 0.3s ease;\n}\n\n/* App container */\n#app {\n  min-height: 100%;\n  width: 100%;\n  overflow-x: hidden;\n  overflow-y: visible;\n}\n\n/* Removed scrollable content area class - main scrolling handled at App level */\n\n/* No more separate scroll areas needed */\n\n/* Simple transition styles */\n.transition-200 {\n  transition: all 0.2s ease;\n}\n\n/* Dark mode toggle styling */\n.toggle-slider {\n  position: relative;\n  display: inline-block;\n  width: 40px;\n  height: 24px;\n  border-radius: 12px;\n  background-color: #d1d5db;\n  transition: background-color 0.2s ease;\n}\n\n.toggle-slider:after {\n  content: '';\n  position: absolute;\n  left: 2px;\n  top: 2px;\n  width: 20px;\n  height: 20px;\n  border-radius: 50%;\n  background-color: white;\n  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);\n  transition: transform 0.2s ease;\n}\n\nhtml.dark .toggle-slider {\n  background-color: #3b82f6;\n}\n\nhtml.dark .toggle-slider:after {\n  transform: translateX(16px);\n}\n\n/* Custom toggle checkbox styling for settings */\n.toggle-checkbox {\n  transition: all 0.3s ease;\n}\n\n.toggle-label {\n  transition: background-color 0.3s ease;\n}\n\n.toggle-checkbox:checked + .toggle-label {\n  background-color: #4ade80;\n}\n\n.toggle-checkbox:checked {\n  right: 0;\n  left: auto;\n  border-color: #4ade80;\n  background-color: #4ade80;\n}\n\n/* Modal animations */\n@keyframes fadeIn {\n  from { opacity: 0; }\n  to { opacity: 1; }\n}\n\n@keyframes slideUp {\n  from { \n    opacity: 0;\n    transform: translateY(20px);\n  }\n  to { \n    opacity: 1;\n    transform: translateY(0);\n  }\n}\n\n@keyframes scaleIn {\n  from { \n    opacity: 0;\n    transform: scale(0.95);\n  }\n  to { \n    opacity: 1;\n    transform: scale(1);\n  }\n}\n\n.modal-enter {\n  animation: scaleIn 0.2s ease-out forwards;\n}\n\n/* Material UI Form Field styling for light/dark mode */\n.meeting-form-field .MuiOutlinedInput-root {\n  background-color: transparent;\n  transition: background-color 0.3s ease, border-color 0.3s ease;\n}\n\n/* Light mode styling */\n.meeting-form-field .MuiOutlinedInput-root {\n  background-color: white;\n  color: #1f2937;\n}\n\n.meeting-form-field .MuiOutlinedInput-notchedOutline {\n  border-color: #d1d5db;\n}\n\n.meeting-form-field .MuiInputLabel-root {\n  color: #4b5563;\n}\n\n.meeting-form-field .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline {\n  border-color: #9ca3af;\n}\n\n.meeting-form-field .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {\n  border-color: #3b82f6;\n}\n\n/* Dark mode styling */\nhtml.dark .meeting-form-field .MuiOutlinedInput-root {\n  background-color: #374151;\n  color: #f3f4f6;\n}\n\nhtml.dark .meeting-form-field .MuiOutlinedInput-notchedOutline {\n  border-color: #4b5563;\n}\n\nhtml.dark .meeting-form-field .MuiInputLabel-root {\n  color: #9ca3af;\n}\n\nhtml.dark .meeting-form-field .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline {\n  border-color: #6b7280;\n}\n\nhtml.dark .meeting-form-field .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {\n  border-color: #60a5fa;\n}"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -61083,15 +61133,19 @@ function MeetingForm(_ref) {
     onChange: function onChange(e) {
       return setMeetingName(e.target.value);
     },
-    placeholder: "Enter meeting name"
+    placeholder: "Enter meeting name",
+    className: "meeting-form-field"
   })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     className: "mb-6"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     className: "flex items-center mb-2 relative"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     className: "text-xl font-medium text-gray-700 dark:text-gray-300"
-  }, "Meeting Schedule", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
-    className: "relative ml-1",
+  }, "Meeting Schedule\xA0", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("span", {
+    className: "relative ml-1 cursor-pointer",
+    style: {
+      cursor: 'pointer'
+    },
     ref: tooltipRef
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("i", {
     className: "fa-solid fa-circle-info text-blue-500 dark:text-blue-400 cursor-pointer",
@@ -61122,6 +61176,7 @@ function MeetingForm(_ref) {
       return setStreetAddress(e.target.value);
     },
     placeholder: "Street address",
+    className: "meeting-form-field",
     InputProps: {
       endAdornment: /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_3__["default"], {
         position: "end"
@@ -61139,6 +61194,10 @@ function MeetingForm(_ref) {
       })))
     }
   })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+    style: {
+      paddingTop: '2px'
+    }
+  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     className: "grid grid-cols-3 gap-3 mb-3"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     className: "col-span-1"
@@ -61150,8 +61209,13 @@ function MeetingForm(_ref) {
     onChange: function onChange(e) {
       return setCity(e.target.value);
     },
-    placeholder: "City"
+    placeholder: "City",
+    className: "meeting-form-field"
   })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+    style: {
+      paddingTop: '2px'
+    }
+  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     className: "col-span-1"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_2__["default"], {
     fullWidth: true,
@@ -61161,8 +61225,13 @@ function MeetingForm(_ref) {
     onChange: function onChange(e) {
       return setState(e.target.value);
     },
-    placeholder: "State"
+    placeholder: "State",
+    className: "meeting-form-field"
   })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+    style: {
+      paddingTop: '2px'
+    }
+  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     className: "col-span-1"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_2__["default"], {
     fullWidth: true,
@@ -61172,7 +61241,8 @@ function MeetingForm(_ref) {
     onChange: function onChange(e) {
       return setZipCode(e.target.value);
     },
-    placeholder: "Zip Code"
+    placeholder: "Zip Code",
+    className: "meeting-form-field"
   })))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     className: "flex justify-between items-center mt-8",
     style: {

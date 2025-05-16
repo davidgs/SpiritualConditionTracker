@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import SimpleMeetingSchedule from './SimpleMeetingSchedule';
-import { TextField, InputAdornment, IconButton } from '@mui/material';
+import { TextField, InputAdornment, IconButton, FormControl, Input, InputLabel, PasswordOutlined } from '@mui/material';
 
 export default function MeetingForm({ 
   meeting = null, 
@@ -509,14 +509,15 @@ export default function MeetingForm({
                 value={meetingName}
                 onChange={(e) => setMeetingName(e.target.value)}
                 placeholder="Enter meeting name"
+                className="meeting-form-field"
               />
             </div>
             
             {/* Meeting Schedule with tooltip */}
             <div className="mb-6">
               <div className="flex items-center mb-2 relative">
-                <div className="text-xl font-medium text-gray-700 dark:text-gray-300">Meeting Schedule
-                <div className="relative ml-1" ref={tooltipRef}>
+                <div className="text-xl font-medium text-gray-700 dark:text-gray-300">Meeting Schedule&nbsp;
+                <span className="relative ml-1 cursor-pointer" style={{cursor: 'pointer'}} ref={tooltipRef}>
                   <i 
                     className="fa-solid fa-circle-info text-blue-500 dark:text-blue-400 cursor-pointer"
                     onClick={() => setShowTooltip(!showTooltip)}
@@ -529,7 +530,8 @@ export default function MeetingForm({
                       </p>
                     </div>
                   )}
-                </div></div>
+                </span>
+                </div>
               </div>
               
               <SimpleMeetingSchedule 
@@ -537,7 +539,6 @@ export default function MeetingForm({
                 onChange={setMeetingSchedule} 
               />
             </div>
-            
             {/* Meeting Address - Split into multiple fields */}
             <div className="mb-6">
               <div className="flex items-center mb-2">
@@ -553,6 +554,7 @@ export default function MeetingForm({
                   value={streetAddress}
                   onChange={(e) => setStreetAddress(e.target.value)}
                   placeholder="Street address"
+                  className="meeting-form-field"
                   InputProps={{
                     endAdornment: (
                       <InputAdornment position="end">
@@ -575,7 +577,7 @@ export default function MeetingForm({
                   }}
                 />
               </div>
-              
+              <div style={{ paddingTop: '2px' }}></div>
               {/* City, State, and Zip with Material UI TextFields */}
               <div className="grid grid-cols-3 gap-3 mb-3">
                 <div className="col-span-1">
@@ -586,8 +588,11 @@ export default function MeetingForm({
                     value={city}
                     onChange={(e) => setCity(e.target.value)}
                     placeholder="City"
+                    className="meeting-form-field"
                   />
                 </div>
+                <div style={{ paddingTop: '2px' }}></div>
+
                 <div className="col-span-1">
                   <TextField
                     fullWidth
@@ -596,8 +601,11 @@ export default function MeetingForm({
                     value={state}
                     onChange={(e) => setState(e.target.value)}
                     placeholder="State"
+                    className="meeting-form-field"
                   />
                 </div>
+                <div style={{ paddingTop: '2px' }}></div>
+
                 <div className="col-span-1">
                   <TextField
                     fullWidth
@@ -606,6 +614,7 @@ export default function MeetingForm({
                     value={zipCode}
                     onChange={(e) => setZipCode(e.target.value)}
                     placeholder="Zip Code"
+                    className="meeting-form-field"
                   />
                 </div>
               </div>
