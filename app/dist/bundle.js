@@ -64494,7 +64494,7 @@ function Profile(_ref) {
       fontSize: '1.25rem',
       color: darkMode ? '#60a5fa' : '#3b82f6'
     }
-  }, sobrietyYears.toFixed(2), " years"))) : null, ")}"))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_5__["default"], {
+  }, sobrietyYears.toFixed(2), " years"))) : null))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_5__["default"], {
     elevation: 0,
     sx: {
       p: 3,
