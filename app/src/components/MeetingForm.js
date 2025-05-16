@@ -44,6 +44,12 @@ export default function MeetingForm({
   
   // Initialize form with meeting data if provided
   useEffect(() => {
+    // If it's a new meeting, start with one schedule item
+    if (!meeting) {
+      setMeetingSchedule([{ day: 'monday', time: '18:00' }]);
+      return;
+    }
+    
     if (meeting) {
       setMeetingName(meeting.name);
       

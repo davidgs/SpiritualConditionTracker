@@ -112,17 +112,29 @@ export default function Meetings({ setCurrentView, meetings = [], onSave }) {
           </div>
           
           <div className="flex flex-col gap-3 text-sm">
-            {/* Days & Time in a grid */}
-            <div className="grid grid-cols-2 gap-2">
-              <div className="flex items-center">
-                <i className="fa-solid fa-calendar-days text-gray-500 dark:text-gray-400 mr-3 flex-shrink-0" style={{ fontSize: '1rem' }}></i>&nbsp;
-                <span className="text-gray-600 dark:text-gray-300">{meeting.days.map(formatDay).join(', ')}</span>
-              </div>
-              
-              <div className="flex items-center">
-                <i className="fa-regular fa-clock text-gray-500 dark:text-gray-400 mr-3 flex-shrink-0" style={{ fontSize: '1rem' }}></i>&nbsp;
-                <span className="text-gray-600 dark:text-gray-300">{new Date(`2000-01-01T${meeting.time}`).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
-              </div>
+            {/* Use schedule if available, otherwise use days/time */}
+            <div className="space-y-2">
+              {meeting.schedule && Array.isArray(meeting.schedule) && meeting.schedule.length > 0 ? (
+                // Display each schedule item
+                meeting.schedule.map((item, idx) => (
+                  <div key={idx} className="flex items-center gap-2">
+                    <i className="fa-solid fa-calendar-days text-gray-500 dark:text-gray-400 mr-3 flex-shrink-0" style={{ fontSize: '1rem' }}></i>
+                    <span className="text-gray-600 dark:text-gray-300">{formatDay(item.day)}</span>
+                    <span className="text-gray-500 dark:text-gray-500 mx-2">•</span>
+                    <i className="fa-regular fa-clock text-gray-500 dark:text-gray-400 mr-2 flex-shrink-0" style={{ fontSize: '1rem' }}></i>
+                    <span className="text-gray-600 dark:text-gray-300">{new Date(`2000-01-01T${item.time}`).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+                  </div>
+                ))
+              ) : (
+                // Legacy format fallback
+                <div className="flex items-center gap-2">
+                  <i className="fa-solid fa-calendar-days text-gray-500 dark:text-gray-400 mr-3 flex-shrink-0" style={{ fontSize: '1rem' }}></i>
+                  <span className="text-gray-600 dark:text-gray-300">{meeting.days.map(formatDay).join(', ')}</span>
+                  <span className="text-gray-500 dark:text-gray-500 mx-2">•</span>
+                  <i className="fa-regular fa-clock text-gray-500 dark:text-gray-400 mr-2 flex-shrink-0" style={{ fontSize: '1rem' }}></i>
+                  <span className="text-gray-600 dark:text-gray-300">{new Date(`2000-01-01T${meeting.time}`).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+                </div>
+              )}
             </div>
             
             {/* Address */}
