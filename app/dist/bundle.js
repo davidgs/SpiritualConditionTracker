@@ -64303,10 +64303,13 @@ function Profile(_ref) {
     }
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_3__["default"], {
     sx: {
+      mb: 2
+    }
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_3__["default"], {
+    sx: {
       display: 'flex',
       justifyContent: 'space-between',
-      alignItems: 'center',
-      mb: 2
+      alignItems: 'center'
     }
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_4__["default"], {
     variant: "h6",
@@ -64328,7 +64331,14 @@ function Profile(_ref) {
     }
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("i", {
     className: "fas fa-edit"
-  }))), editingSobriety ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_3__["default"], {
+  }))), sobrietyDate && !editingSobriety && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_4__["default"], {
+    variant: "subtitle1",
+    sx: {
+      mt: 0.5,
+      color: darkMode ? '#9ca3af' : '#6b7280',
+      fontWeight: 500
+    }
+  }, "Sober since ", formatDateForDisplay(sobrietyDate))), editingSobriety ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_3__["default"], {
     sx: {
       mb: 2
     }
@@ -64451,13 +64461,7 @@ function Profile(_ref) {
       fontSize: '1.25rem',
       color: darkMode ? '#60a5fa' : '#3b82f6'
     }
-  }, sobrietyYears.toFixed(2), " years")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_4__["default"], {
-    variant: "body2",
-    sx: {
-      mt: 2,
-      color: darkMode ? '#9ca3af' : '#6b7280'
-    }
-  }, "Sober since ", formatDateForDisplay(sobrietyDate))) : /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_4__["default"], {
+  }, sobrietyYears.toFixed(2), " years"))) : /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_4__["default"], {
     sx: {
       color: darkMode ? '#9ca3af' : '#6b7280'
     }

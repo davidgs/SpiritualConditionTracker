@@ -118,24 +118,36 @@ export default function Profile({ setCurrentView, user, onUpdate }) {
           borderRadius: 2,
           border: darkMode ? '1px solid #374151' : '1px solid #e5e7eb'
         }}>
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-            <Typography variant="h6" sx={{ color: darkMode ? '#d1d5db' : '#374151' }}>
-              Sobriety Milestone
-            </Typography>
-            <IconButton 
-              onClick={() => setEditingSobriety(!editingSobriety)}
-              size="small"
-              aria-label="Edit sobriety date"
-              sx={{ 
+          <Box sx={{ mb: 2 }}>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <Typography variant="h6" sx={{ color: darkMode ? '#d1d5db' : '#374151' }}>
+                Sobriety Milestone
+              </Typography>
+              <IconButton 
+                onClick={() => setEditingSobriety(!editingSobriety)}
+                size="small"
+                aria-label="Edit sobriety date"
+                sx={{ 
+                  color: darkMode ? '#9ca3af' : '#6b7280',
+                  '&:hover': {
+                    color: darkMode ? '#60a5fa' : '#3b82f6',
+                    backgroundColor: 'transparent'
+                  }
+                }}
+              >
+                <i className="fas fa-edit"></i>
+              </IconButton>
+            </Box>
+            
+            {sobrietyDate && !editingSobriety && (
+              <Typography variant="subtitle1" sx={{ 
+                mt: 0.5, 
                 color: darkMode ? '#9ca3af' : '#6b7280',
-                '&:hover': {
-                  color: darkMode ? '#60a5fa' : '#3b82f6',
-                  backgroundColor: 'transparent'
-                }
-              }}
-            >
-              <i className="fas fa-edit"></i>
-            </IconButton>
+                fontWeight: 500
+              }}>
+                Sober since {formatDateForDisplay(sobrietyDate)}
+              </Typography>
+            )}
           </Box>
           
           {editingSobriety ? (
@@ -249,9 +261,6 @@ export default function Profile({ setCurrentView, user, onUpdate }) {
                         </Typography>
                       </>
                     )}
-                    <Typography variant="body2" sx={{ mt: 2, color: darkMode ? '#9ca3af' : '#6b7280' }}>
-                      Sober since {formatDateForDisplay(sobrietyDate)}
-                    </Typography>
                   </>
                 ) : (
                   <Typography sx={{ color: darkMode ? '#9ca3af' : '#6b7280' }}>
