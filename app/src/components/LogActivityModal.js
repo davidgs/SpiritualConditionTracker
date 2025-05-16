@@ -310,14 +310,28 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
     setShowMeetingForm(false);
   }
   
-  // Common styles for form elements using theme
-  const { palette } = MuiThemeProvider.useTheme ? MuiThemeProvider.useTheme() : { 
-    palette: { 
-      mode: darkMode ? 'dark' : 'light',
-      background: { paper: darkMode ? '#1f2937' : '#ffffff' },
-      text: { primary: darkMode ? '#e5e7eb' : '#1f2937', secondary: darkMode ? '#9ca3af' : '#4b5563' },
-      grey: { 300: '#d1d5db', 700: '#4b5563' }
-    } 
+  // Common styles for form elements using the current dark/light mode
+  // Don't use complex theme for now, just direct color mapping
+  const palette = {
+    mode: darkMode ? 'dark' : 'light',
+    background: { 
+      paper: darkMode ? '#1f2937' : '#ffffff',
+      default: darkMode ? '#111827' : '#f9fafb'
+    },
+    text: { 
+      primary: darkMode ? '#e5e7eb' : '#1f2937', 
+      secondary: darkMode ? '#9ca3af' : '#4b5563' 
+    },
+    grey: { 
+      300: darkMode ? '#4b5563' : '#d1d5db', 
+      700: darkMode ? '#1f2937' : '#374151' 
+    },
+    primary: {
+      main: darkMode ? '#60a5fa' : '#3b82f6'
+    },
+    error: {
+      main: darkMode ? '#ef4444' : '#dc2626'
+    }
   };
   
   const labelStyle = {
@@ -357,9 +371,21 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
         onClose={onClose}
         aria-labelledby="log-activity-dialog-title"
         maxWidth="md"
+        PaperProps={{
+          style: {
+            backgroundColor: darkMode ? '#1f2937' : '#ffffff',
+            color: darkMode ? '#e5e7eb' : '#1f2937',
+          },
+        }}
       >
         <DialogTitle 
           id="log-activity-dialog-title"
+          sx={{
+            backgroundColor: darkMode ? '#111827' : '#f9fafb',
+            color: darkMode ? '#f3f4f6' : '#111827',
+            borderBottom: '1px solid',
+            borderColor: darkMode ? '#374151' : '#e5e7eb',
+          }}
         >
           Log New Activity
         </DialogTitle>
@@ -377,7 +403,13 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
           <CloseIcon />
         </IconButton>
         
-        <DialogContent dividers>
+        <DialogContent 
+          dividers
+          sx={{
+            backgroundColor: darkMode ? '#1f2937' : '#ffffff',
+            color: darkMode ? '#e5e7eb' : '#1f2937',
+          }}
+        >
           {/* Success message */}
           {showSuccess && (
             <div style={{

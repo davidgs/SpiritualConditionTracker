@@ -60459,24 +60459,29 @@ var LogActivityModal = function LogActivityModal(_ref2) {
     setShowMeetingForm(false);
   }
 
-  // Common styles for form elements using theme
-  var _ref3 = _contexts_MuiThemeProvider__WEBPACK_IMPORTED_MODULE_1__["default"].useTheme ? _contexts_MuiThemeProvider__WEBPACK_IMPORTED_MODULE_1__["default"].useTheme() : {
-      palette: {
-        mode: darkMode ? 'dark' : 'light',
-        background: {
-          paper: darkMode ? '#1f2937' : '#ffffff'
-        },
-        text: {
-          primary: darkMode ? '#e5e7eb' : '#1f2937',
-          secondary: darkMode ? '#9ca3af' : '#4b5563'
-        },
-        grey: {
-          300: '#d1d5db',
-          700: '#4b5563'
-        }
-      }
+  // Common styles for form elements using the current dark/light mode
+  // Don't use complex theme for now, just direct color mapping
+  var palette = {
+    mode: darkMode ? 'dark' : 'light',
+    background: {
+      paper: darkMode ? '#1f2937' : '#ffffff',
+      "default": darkMode ? '#111827' : '#f9fafb'
     },
-    palette = _ref3.palette;
+    text: {
+      primary: darkMode ? '#e5e7eb' : '#1f2937',
+      secondary: darkMode ? '#9ca3af' : '#4b5563'
+    },
+    grey: {
+      300: darkMode ? '#4b5563' : '#d1d5db',
+      700: darkMode ? '#1f2937' : '#374151'
+    },
+    primary: {
+      main: darkMode ? '#60a5fa' : '#3b82f6'
+    },
+    error: {
+      main: darkMode ? '#ef4444' : '#dc2626'
+    }
+  };
   var labelStyle = {
     display: 'block',
     fontSize: '0.875rem',
@@ -60507,9 +60512,21 @@ var LogActivityModal = function LogActivityModal(_ref2) {
     open: open,
     onClose: onClose,
     "aria-labelledby": "log-activity-dialog-title",
-    maxWidth: "md"
+    maxWidth: "md",
+    PaperProps: {
+      style: {
+        backgroundColor: darkMode ? '#1f2937' : '#ffffff',
+        color: darkMode ? '#e5e7eb' : '#1f2937'
+      }
+    }
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_DialogTitle__WEBPACK_IMPORTED_MODULE_5__["default"], {
-    id: "log-activity-dialog-title"
+    id: "log-activity-dialog-title",
+    sx: {
+      backgroundColor: darkMode ? '#111827' : '#f9fafb',
+      color: darkMode ? '#f3f4f6' : '#111827',
+      borderBottom: '1px solid',
+      borderColor: darkMode ? '#374151' : '#e5e7eb'
+    }
   }, "Log New Activity"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_IconButton__WEBPACK_IMPORTED_MODULE_6__["default"], {
     "aria-label": "close",
     onClick: onClose,
@@ -60520,7 +60537,11 @@ var LogActivityModal = function LogActivityModal(_ref2) {
       color: palette.text.secondary
     }
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_icons_material_Close__WEBPACK_IMPORTED_MODULE_7__["default"], null)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_DialogContent__WEBPACK_IMPORTED_MODULE_8__["default"], {
-    dividers: true
+    dividers: true,
+    sx: {
+      backgroundColor: darkMode ? '#1f2937' : '#ffffff',
+      color: darkMode ? '#e5e7eb' : '#1f2937'
+    }
   }, showSuccess && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     style: {
       backgroundColor: darkMode ? '#064e3b' : '#d1fae5',
