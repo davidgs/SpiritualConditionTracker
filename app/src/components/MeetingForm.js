@@ -595,7 +595,7 @@ export default function MeetingForm({
                           onClick={() => addScheduleItem(dayInfo.key, '18:00')}
                         >
                           <i className="fa-solid fa-plus mr-2"></i>
-                          <span>Add time</span>
+                          
                         </button>
                       )}
                     </div>
