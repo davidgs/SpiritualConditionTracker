@@ -64216,7 +64216,7 @@ function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
 
 
 function Profile(_ref) {
-  var _user$privacySettings, _user$privacySettings2, _window$db, _window$db2, _window$db3, _window$db4;
+  var _user$privacySettings, _user$privacySettings2, _window$db, _window$db2;
   var setCurrentView = _ref.setCurrentView,
     user = _ref.user,
     onUpdate = _ref.onUpdate,
@@ -64858,15 +64858,18 @@ function Profile(_ref) {
     }
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_12__["default"], {
     value: ""
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("em", null, "None")), (_window$db3 = window.db) === null || _window$db3 === void 0 || (_window$db3 = _window$db3.meetings) === null || _window$db3 === void 0 ? void 0 : _window$db3.map(function (meeting) {
-    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_12__["default"], {
-      key: meeting.id,
-      value: meeting.name
-    }, meeting.name);
-  }), ((_window$db4 = window.db) === null || _window$db4 === void 0 || (_window$db4 = _window$db4.meetings) === null || _window$db4 === void 0 ? void 0 : _window$db4.length) === 0 && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_12__["default"], {
-    value: "none",
-    disabled: true
-  }, "No saved meetings"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_12__["default"], {
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("em", null, "None")), function (_window$db3) {
+    var meetings = ((_window$db3 = window.db) === null || _window$db3 === void 0 ? void 0 : _window$db3.getAllMeetings()) || [];
+    return meetings.length > 0 ? meetings.map(function (meeting) {
+      return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_12__["default"], {
+        key: meeting.id,
+        value: meeting.name
+      }, meeting.name);
+    }) : /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_12__["default"], {
+      value: "none",
+      disabled: true
+    }, "No saved meetings");
+  }(), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_12__["default"], {
     value: "add_new",
     sx: {
       color: darkMode ? '#60a5fa' : '#3b82f6'

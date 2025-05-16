@@ -581,12 +581,14 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
                   <em>None</em>
                 </MenuItem>
                 {/* Generate menu items from meetings */}
-                {window.db?.meetings?.map(meeting => (
-                  <MenuItem key={meeting.id} value={meeting.name}>{meeting.name}</MenuItem>
-                ))}
-                {window.db?.meetings?.length === 0 && (
-                  <MenuItem value="none" disabled>No saved meetings</MenuItem>
-                )}
+                {(() => {
+                  const meetings = window.db?.getAllMeetings() || [];
+                  return meetings.length > 0 
+                    ? meetings.map(meeting => (
+                        <MenuItem key={meeting.id} value={meeting.name}>{meeting.name}</MenuItem>
+                      ))
+                    : <MenuItem value="none" disabled>No saved meetings</MenuItem>;
+                })()}
                 <MenuItem value="add_new" sx={{ color: darkMode ? '#60a5fa' : '#3b82f6' }}>
                   <i className="fas fa-plus" style={{ marginRight: '8px', fontSize: '0.75rem' }}></i>
                   Add New Meeting
