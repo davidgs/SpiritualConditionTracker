@@ -60614,7 +60614,8 @@ function App() {
         return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_components_Meetings__WEBPACK_IMPORTED_MODULE_4__["default"], {
           setCurrentView: setCurrentView,
           meetings: meetings,
-          onSave: handleSaveMeeting
+          onSave: handleSaveMeeting,
+          user: user
         });
       case 'messages':
         return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_components_Messages__WEBPACK_IMPORTED_MODULE_5__["default"], {

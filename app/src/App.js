@@ -199,6 +199,7 @@ function App() {
             setCurrentView={setCurrentView}
             meetings={meetings}
             onSave={handleSaveMeeting}
+            user={user}
           />
         );
       case 'messages':
