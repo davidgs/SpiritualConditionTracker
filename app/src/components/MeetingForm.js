@@ -479,7 +479,7 @@ export default function MeetingForm({
     
   return (
     <div className={`${overlayClass} transition-all duration-300 ease-in-out`}>
-      <div className={`max-w-2xl w-full bg-white dark:bg-gray-800 rounded-xl shadow-xl overflow-hidden transition-all duration-300 transform ${isOverlay ? 'scale-100' : 'scale-95'}`}>
+      <div className={`max-w-lg w-full bg-white dark:bg-gray-800 rounded-xl shadow-xl overflow-hidden transition-all duration-300 transform ${isOverlay ? 'scale-100' : 'scale-95'}`}>
         <div className="p-6">
           <div className="flex items-center mb-4">
             <i className="fa-regular fa-calendar-plus mr-3 text-gray-400 dark:text-gray-500" style={{ fontSize: '2.5rem' }}></i>
@@ -545,25 +545,23 @@ export default function MeetingForm({
                 <span className="text-xl font-medium text-gray-700 dark:text-gray-300">Meeting Location</span>
               </div>
               
-              {/* Street Address with Detect button */}
+              {/* Street Address with Detect button - properly inline */}
               <div className="mb-3">
-                <div className="flex items-center" style={{ boxSizing: 'border-box' }}>
-                  <div className="flex-grow" style={{ width: 'calc(100% - 40px)' }}>
-                    <input
-                      type="text"
-                      className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 shadow-sm"
-                      value={streetAddress}
-                      onChange={(e) => setStreetAddress(e.target.value)}
-                      placeholder="Street address"
-                      required
-                    />
-                  </div>
+                <div className="flex flex-row items-center">
+                  <input
+                    type="text"
+                    className="flex-1 p-3 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 shadow-sm"
+                    value={streetAddress}
+                    onChange={(e) => setStreetAddress(e.target.value)}
+                    placeholder="Street address"
+                    required
+                  />
                   <button
                     type="button"
                     onClick={detectLocation}
                     disabled={searchingLocation}
                     title="Detect your location"
-                    className="ml-2 text-blue-500 dark:text-blue-400"
+                    className="ml-2 text-blue-500 dark:text-blue-400 flex-shrink-0"
                     style={{
                       width: '40px',
                       background: 'transparent',

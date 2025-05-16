@@ -52642,7 +52642,7 @@ function MeetingForm(_ref) {
   return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     className: "".concat(overlayClass, " transition-all duration-300 ease-in-out")
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
-    className: "max-w-2xl w-full bg-white dark:bg-gray-800 rounded-xl shadow-xl overflow-hidden transition-all duration-300 transform ".concat(isOverlay ? 'scale-100' : 'scale-95')
+    className: "max-w-lg w-full bg-white dark:bg-gray-800 rounded-xl shadow-xl overflow-hidden transition-all duration-300 transform ".concat(isOverlay ? 'scale-100' : 'scale-95')
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     className: "p-6"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
@@ -52707,30 +52707,22 @@ function MeetingForm(_ref) {
   }, "Meeting Location")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     className: "mb-3"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
-    className: "flex items-center",
-    style: {
-      boxSizing: 'border-box'
-    }
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
-    className: "flex-grow",
-    style: {
-      width: 'calc(100% - 40px)'
-    }
+    className: "flex flex-row items-center"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("input", {
     type: "text",
-    className: "w-full p-3 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 shadow-sm",
+    className: "flex-1 p-3 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 shadow-sm",
     value: streetAddress,
     onChange: function onChange(e) {
       return setStreetAddress(e.target.value);
     },
     placeholder: "Street address",
     required: true
-  })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("button", {
+  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("button", {
     type: "button",
     onClick: detectLocation,
     disabled: searchingLocation,
     title: "Detect your location",
-    className: "ml-2 text-blue-500 dark:text-blue-400",
+    className: "ml-2 text-blue-500 dark:text-blue-400 flex-shrink-0",
     style: {
       width: '40px',
       background: 'transparent',
