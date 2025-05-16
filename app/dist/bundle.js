@@ -61527,11 +61527,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _contexts_ThemeContext__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./contexts/ThemeContext */ "./src/contexts/ThemeContext.js");
 /* harmony import */ var _utils_encryption__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./utils/encryption */ "./src/utils/encryption.js");
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
-function _regeneratorRuntime() { "use strict"; /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/babel/babel/blob/main/packages/babel-helpers/LICENSE */ _regeneratorRuntime = function _regeneratorRuntime() { return r; }; var t, r = {}, e = Object.prototype, n = e.hasOwnProperty, o = "function" == typeof Symbol ? Symbol : {}, i = o.iterator || "@@iterator", a = o.asyncIterator || "@@asyncIterator", u = o.toStringTag || "@@toStringTag"; function c(t, r, e, n) { return Object.defineProperty(t, r, { value: e, enumerable: !n, configurable: !n, writable: !n }); } try { c({}, ""); } catch (t) { c = function c(t, r, e) { return t[r] = e; }; } function h(r, e, n, o) { var i = e && e.prototype instanceof Generator ? e : Generator, a = Object.create(i.prototype); return c(a, "_invoke", function (r, e, n) { var o = 1; return function (i, a) { if (3 === o) throw Error("Generator is already running"); if (4 === o) { if ("throw" === i) throw a; return { value: t, done: !0 }; } for (n.method = i, n.arg = a;;) { var u = n.delegate; if (u) { var c = d(u, n); if (c) { if (c === f) continue; return c; } } if ("next" === n.method) n.sent = n._sent = n.arg;else if ("throw" === n.method) { if (1 === o) throw o = 4, n.arg; n.dispatchException(n.arg); } else "return" === n.method && n.abrupt("return", n.arg); o = 3; var h = s(r, e, n); if ("normal" === h.type) { if (o = n.done ? 4 : 2, h.arg === f) continue; return { value: h.arg, done: n.done }; } "throw" === h.type && (o = 4, n.method = "throw", n.arg = h.arg); } }; }(r, n, new Context(o || [])), !0), a; } function s(t, r, e) { try { return { type: "normal", arg: t.call(r, e) }; } catch (t) { return { type: "throw", arg: t }; } } r.wrap = h; var f = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} var l = {}; c(l, i, function () { return this; }); var p = Object.getPrototypeOf, y = p && p(p(x([]))); y && y !== e && n.call(y, i) && (l = y); var v = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(l); function g(t) { ["next", "throw", "return"].forEach(function (r) { c(t, r, function (t) { return this._invoke(r, t); }); }); } function AsyncIterator(t, r) { function e(o, i, a, u) { var c = s(t[o], t, i); if ("throw" !== c.type) { var h = c.arg, f = h.value; return f && "object" == _typeof(f) && n.call(f, "__await") ? r.resolve(f.__await).then(function (t) { e("next", t, a, u); }, function (t) { e("throw", t, a, u); }) : r.resolve(f).then(function (t) { h.value = t, a(h); }, function (t) { return e("throw", t, a, u); }); } u(c.arg); } var o; c(this, "_invoke", function (t, n) { function i() { return new r(function (r, o) { e(t, n, r, o); }); } return o = o ? o.then(i, i) : i(); }, !0); } function d(r, e) { var n = e.method, o = r.i[n]; if (o === t) return e.delegate = null, "throw" === n && r.i["return"] && (e.method = "return", e.arg = t, d(r, e), "throw" === e.method) || "return" !== n && (e.method = "throw", e.arg = new TypeError("The iterator does not provide a '" + n + "' method")), f; var i = s(o, r.i, e.arg); if ("throw" === i.type) return e.method = "throw", e.arg = i.arg, e.delegate = null, f; var a = i.arg; return a ? a.done ? (e[r.r] = a.value, e.next = r.n, "return" !== e.method && (e.method = "next", e.arg = t), e.delegate = null, f) : a : (e.method = "throw", e.arg = new TypeError("iterator result is not an object"), e.delegate = null, f); } function w(t) { this.tryEntries.push(t); } function m(r) { var e = r[4] || {}; e.type = "normal", e.arg = t, r[4] = e; } function Context(t) { this.tryEntries = [[-1]], t.forEach(w, this), this.reset(!0); } function x(r) { if (null != r) { var e = r[i]; if (e) return e.call(r); if ("function" == typeof r.next) return r; if (!isNaN(r.length)) { var o = -1, a = function e() { for (; ++o < r.length;) if (n.call(r, o)) return e.value = r[o], e.done = !1, e; return e.value = t, e.done = !0, e; }; return a.next = a; } } throw new TypeError(_typeof(r) + " is not iterable"); } return GeneratorFunction.prototype = GeneratorFunctionPrototype, c(v, "constructor", GeneratorFunctionPrototype), c(GeneratorFunctionPrototype, "constructor", GeneratorFunction), GeneratorFunction.displayName = c(GeneratorFunctionPrototype, u, "GeneratorFunction"), r.isGeneratorFunction = function (t) { var r = "function" == typeof t && t.constructor; return !!r && (r === GeneratorFunction || "GeneratorFunction" === (r.displayName || r.name)); }, r.mark = function (t) { return Object.setPrototypeOf ? Object.setPrototypeOf(t, GeneratorFunctionPrototype) : (t.__proto__ = GeneratorFunctionPrototype, c(t, u, "GeneratorFunction")), t.prototype = Object.create(v), t; }, r.awrap = function (t) { return { __await: t }; }, g(AsyncIterator.prototype), c(AsyncIterator.prototype, a, function () { return this; }), r.AsyncIterator = AsyncIterator, r.async = function (t, e, n, o, i) { void 0 === i && (i = Promise); var a = new AsyncIterator(h(t, e, n, o), i); return r.isGeneratorFunction(e) ? a : a.next().then(function (t) { return t.done ? t.value : a.next(); }); }, g(v), c(v, u, "Generator"), c(v, i, function () { return this; }), c(v, "toString", function () { return "[object Generator]"; }), r.keys = function (t) { var r = Object(t), e = []; for (var n in r) e.unshift(n); return function t() { for (; e.length;) if ((n = e.pop()) in r) return t.value = n, t.done = !1, t; return t.done = !0, t; }; }, r.values = x, Context.prototype = { constructor: Context, reset: function reset(r) { if (this.prev = this.next = 0, this.sent = this._sent = t, this.done = !1, this.delegate = null, this.method = "next", this.arg = t, this.tryEntries.forEach(m), !r) for (var e in this) "t" === e.charAt(0) && n.call(this, e) && !isNaN(+e.slice(1)) && (this[e] = t); }, stop: function stop() { this.done = !0; var t = this.tryEntries[0][4]; if ("throw" === t.type) throw t.arg; return this.rval; }, dispatchException: function dispatchException(r) { if (this.done) throw r; var e = this; function n(t) { a.type = "throw", a.arg = r, e.next = t; } for (var o = e.tryEntries.length - 1; o >= 0; --o) { var i = this.tryEntries[o], a = i[4], u = this.prev, c = i[1], h = i[2]; if (-1 === i[0]) return n("end"), !1; if (!c && !h) throw Error("try statement without catch or finally"); if (null != i[0] && i[0] <= u) { if (u < c) return this.method = "next", this.arg = t, n(c), !0; if (u < h) return n(h), !1; } } }, abrupt: function abrupt(t, r) { for (var e = this.tryEntries.length - 1; e >= 0; --e) { var n = this.tryEntries[e]; if (n[0] > -1 && n[0] <= this.prev && this.prev < n[2]) { var o = n; break; } } o && ("break" === t || "continue" === t) && o[0] <= r && r <= o[2] && (o = null); var i = o ? o[4] : {}; return i.type = t, i.arg = r, o ? (this.method = "next", this.next = o[2], f) : this.complete(i); }, complete: function complete(t, r) { if ("throw" === t.type) throw t.arg; return "break" === t.type || "continue" === t.type ? this.next = t.arg : "return" === t.type ? (this.rval = this.arg = t.arg, this.method = "return", this.next = "end") : "normal" === t.type && r && (this.next = r), f; }, finish: function finish(t) { for (var r = this.tryEntries.length - 1; r >= 0; --r) { var e = this.tryEntries[r]; if (e[2] === t) return this.complete(e[4], e[3]), m(e), f; } }, "catch": function _catch(t) { for (var r = this.tryEntries.length - 1; r >= 0; --r) { var e = this.tryEntries[r]; if (e[0] === t) { var n = e[4]; if ("throw" === n.type) { var o = n.arg; m(e); } return o; } } throw Error("illegal catch attempt"); }, delegateYield: function delegateYield(r, e, n) { return this.delegate = { i: x(r), r: e, n: n }, "next" === this.method && (this.arg = t), f; } }, r; }
 function _toConsumableArray(r) { return _arrayWithoutHoles(r) || _iterableToArray(r) || _unsupportedIterableToArray(r) || _nonIterableSpread(); }
 function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 function _iterableToArray(r) { if ("undefined" != typeof Symbol && null != r[Symbol.iterator] || null != r["@@iterator"]) return Array.from(r); }
 function _arrayWithoutHoles(r) { if (Array.isArray(r)) return _arrayLikeToArray(r); }
+function _regeneratorRuntime() { "use strict"; /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/babel/babel/blob/main/packages/babel-helpers/LICENSE */ _regeneratorRuntime = function _regeneratorRuntime() { return r; }; var t, r = {}, e = Object.prototype, n = e.hasOwnProperty, o = "function" == typeof Symbol ? Symbol : {}, i = o.iterator || "@@iterator", a = o.asyncIterator || "@@asyncIterator", u = o.toStringTag || "@@toStringTag"; function c(t, r, e, n) { return Object.defineProperty(t, r, { value: e, enumerable: !n, configurable: !n, writable: !n }); } try { c({}, ""); } catch (t) { c = function c(t, r, e) { return t[r] = e; }; } function h(r, e, n, o) { var i = e && e.prototype instanceof Generator ? e : Generator, a = Object.create(i.prototype); return c(a, "_invoke", function (r, e, n) { var o = 1; return function (i, a) { if (3 === o) throw Error("Generator is already running"); if (4 === o) { if ("throw" === i) throw a; return { value: t, done: !0 }; } for (n.method = i, n.arg = a;;) { var u = n.delegate; if (u) { var c = d(u, n); if (c) { if (c === f) continue; return c; } } if ("next" === n.method) n.sent = n._sent = n.arg;else if ("throw" === n.method) { if (1 === o) throw o = 4, n.arg; n.dispatchException(n.arg); } else "return" === n.method && n.abrupt("return", n.arg); o = 3; var h = s(r, e, n); if ("normal" === h.type) { if (o = n.done ? 4 : 2, h.arg === f) continue; return { value: h.arg, done: n.done }; } "throw" === h.type && (o = 4, n.method = "throw", n.arg = h.arg); } }; }(r, n, new Context(o || [])), !0), a; } function s(t, r, e) { try { return { type: "normal", arg: t.call(r, e) }; } catch (t) { return { type: "throw", arg: t }; } } r.wrap = h; var f = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} var l = {}; c(l, i, function () { return this; }); var p = Object.getPrototypeOf, y = p && p(p(x([]))); y && y !== e && n.call(y, i) && (l = y); var v = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(l); function g(t) { ["next", "throw", "return"].forEach(function (r) { c(t, r, function (t) { return this._invoke(r, t); }); }); } function AsyncIterator(t, r) { function e(o, i, a, u) { var c = s(t[o], t, i); if ("throw" !== c.type) { var h = c.arg, f = h.value; return f && "object" == _typeof(f) && n.call(f, "__await") ? r.resolve(f.__await).then(function (t) { e("next", t, a, u); }, function (t) { e("throw", t, a, u); }) : r.resolve(f).then(function (t) { h.value = t, a(h); }, function (t) { return e("throw", t, a, u); }); } u(c.arg); } var o; c(this, "_invoke", function (t, n) { function i() { return new r(function (r, o) { e(t, n, r, o); }); } return o = o ? o.then(i, i) : i(); }, !0); } function d(r, e) { var n = e.method, o = r.i[n]; if (o === t) return e.delegate = null, "throw" === n && r.i["return"] && (e.method = "return", e.arg = t, d(r, e), "throw" === e.method) || "return" !== n && (e.method = "throw", e.arg = new TypeError("The iterator does not provide a '" + n + "' method")), f; var i = s(o, r.i, e.arg); if ("throw" === i.type) return e.method = "throw", e.arg = i.arg, e.delegate = null, f; var a = i.arg; return a ? a.done ? (e[r.r] = a.value, e.next = r.n, "return" !== e.method && (e.method = "next", e.arg = t), e.delegate = null, f) : a : (e.method = "throw", e.arg = new TypeError("iterator result is not an object"), e.delegate = null, f); } function w(t) { this.tryEntries.push(t); } function m(r) { var e = r[4] || {}; e.type = "normal", e.arg = t, r[4] = e; } function Context(t) { this.tryEntries = [[-1]], t.forEach(w, this), this.reset(!0); } function x(r) { if (null != r) { var e = r[i]; if (e) return e.call(r); if ("function" == typeof r.next) return r; if (!isNaN(r.length)) { var o = -1, a = function e() { for (; ++o < r.length;) if (n.call(r, o)) return e.value = r[o], e.done = !1, e; return e.value = t, e.done = !0, e; }; return a.next = a; } } throw new TypeError(_typeof(r) + " is not iterable"); } return GeneratorFunction.prototype = GeneratorFunctionPrototype, c(v, "constructor", GeneratorFunctionPrototype), c(GeneratorFunctionPrototype, "constructor", GeneratorFunction), GeneratorFunction.displayName = c(GeneratorFunctionPrototype, u, "GeneratorFunction"), r.isGeneratorFunction = function (t) { var r = "function" == typeof t && t.constructor; return !!r && (r === GeneratorFunction || "GeneratorFunction" === (r.displayName || r.name)); }, r.mark = function (t) { return Object.setPrototypeOf ? Object.setPrototypeOf(t, GeneratorFunctionPrototype) : (t.__proto__ = GeneratorFunctionPrototype, c(t, u, "GeneratorFunction")), t.prototype = Object.create(v), t; }, r.awrap = function (t) { return { __await: t }; }, g(AsyncIterator.prototype), c(AsyncIterator.prototype, a, function () { return this; }), r.AsyncIterator = AsyncIterator, r.async = function (t, e, n, o, i) { void 0 === i && (i = Promise); var a = new AsyncIterator(h(t, e, n, o), i); return r.isGeneratorFunction(e) ? a : a.next().then(function (t) { return t.done ? t.value : a.next(); }); }, g(v), c(v, u, "Generator"), c(v, i, function () { return this; }), c(v, "toString", function () { return "[object Generator]"; }), r.keys = function (t) { var r = Object(t), e = []; for (var n in r) e.unshift(n); return function t() { for (; e.length;) if ((n = e.pop()) in r) return t.value = n, t.done = !1, t; return t.done = !0, t; }; }, r.values = x, Context.prototype = { constructor: Context, reset: function reset(r) { if (this.prev = this.next = 0, this.sent = this._sent = t, this.done = !1, this.delegate = null, this.method = "next", this.arg = t, this.tryEntries.forEach(m), !r) for (var e in this) "t" === e.charAt(0) && n.call(this, e) && !isNaN(+e.slice(1)) && (this[e] = t); }, stop: function stop() { this.done = !0; var t = this.tryEntries[0][4]; if ("throw" === t.type) throw t.arg; return this.rval; }, dispatchException: function dispatchException(r) { if (this.done) throw r; var e = this; function n(t) { a.type = "throw", a.arg = r, e.next = t; } for (var o = e.tryEntries.length - 1; o >= 0; --o) { var i = this.tryEntries[o], a = i[4], u = this.prev, c = i[1], h = i[2]; if (-1 === i[0]) return n("end"), !1; if (!c && !h) throw Error("try statement without catch or finally"); if (null != i[0] && i[0] <= u) { if (u < c) return this.method = "next", this.arg = t, n(c), !0; if (u < h) return n(h), !1; } } }, abrupt: function abrupt(t, r) { for (var e = this.tryEntries.length - 1; e >= 0; --e) { var n = this.tryEntries[e]; if (n[0] > -1 && n[0] <= this.prev && this.prev < n[2]) { var o = n; break; } } o && ("break" === t || "continue" === t) && o[0] <= r && r <= o[2] && (o = null); var i = o ? o[4] : {}; return i.type = t, i.arg = r, o ? (this.method = "next", this.next = o[2], f) : this.complete(i); }, complete: function complete(t, r) { if ("throw" === t.type) throw t.arg; return "break" === t.type || "continue" === t.type ? this.next = t.arg : "return" === t.type ? (this.rval = this.arg = t.arg, this.method = "return", this.next = "end") : "normal" === t.type && r && (this.next = r), f; }, finish: function finish(t) { for (var r = this.tryEntries.length - 1; r >= 0; --r) { var e = this.tryEntries[r]; if (e[2] === t) return this.complete(e[4], e[3]), m(e), f; } }, "catch": function _catch(t) { for (var r = this.tryEntries.length - 1; r >= 0; --r) { var e = this.tryEntries[r]; if (e[0] === t) { var n = e[4]; if ("throw" === n.type) { var o = n.arg; m(e); } return o; } } throw Error("illegal catch attempt"); }, delegateYield: function delegateYield(r, e, n) { return this.delegate = { i: x(r), r: e, n: n }, "next" === this.method && (this.arg = t), f; } }, r; }
 function asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.value; } catch (n) { return void e(n); } i.done ? t(u) : Promise.resolve(u).then(r, o); }
 function _asyncToGenerator(n) { return function () { var t = this, e = arguments; return new Promise(function (r, o) { var a = n.apply(t, e); function _next(n) { asyncGeneratorStep(a, r, o, _next, _throw, "next", n); } function _throw(n) { asyncGeneratorStep(a, r, o, _next, _throw, "throw", n); } _next(void 0); }); }; }
 function _slicedToArray(r, e) { return _arrayWithHoles(r) || _iterableToArrayLimit(r, e) || _unsupportedIterableToArray(r, e) || _nonIterableRest(); }
@@ -61577,7 +61577,8 @@ function App() {
 
   // Load data when component mounts
   (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(function () {
-    loadData();
+    // Initialize database first, then load data
+    initDatabaseAndLoadData();
   }, []);
 
   // Calculate spiritual fitness score when activities change
@@ -61587,77 +61588,228 @@ function App() {
     }
   }, [activities]);
 
-  // Load data from the database
-  function loadData() {
-    return _loadData.apply(this, arguments);
-  } // Generate a simple fingerprint from the public key
-  function _loadData() {
-    _loadData = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
-      var userData, keyPair, fingerprint, updatedUser, activitiesData, meetingsData;
+  // Initialize the database and load data
+  function initDatabaseAndLoadData() {
+    return _initDatabaseAndLoadData.apply(this, arguments);
+  } // Load data from the database
+  function _initDatabaseAndLoadData() {
+    _initDatabaseAndLoadData = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
+      var _yield$import, initDatabase, setupGlobalDbObject, _yield$import2, hasLocalStorageData, migrateFromLocalStorage, success, dbObj;
       return _regeneratorRuntime().wrap(function _callee$(_context) {
         while (1) switch (_context.prev = _context.next) {
           case 0:
-            if (window.db) {
-              _context.next = 3;
-              break;
-            }
-            console.error('Database not initialized');
-            return _context.abrupt("return");
+            _context.prev = 0;
+            _context.next = 3;
+            return __webpack_require__.e(/*! import() */ "src_utils_sqliteDatabase_js").then(__webpack_require__.bind(__webpack_require__, /*! ./utils/sqliteDatabase */ "./src/utils/sqliteDatabase.js"));
           case 3:
-            // Get user data
-            userData = window.db.getAll('user'); // Initialize messaging keys if they don't exist
-            if (!(userData && (!userData.messagingKeys || !userData.messagingKeys.publicKey))) {
+            _yield$import = _context.sent;
+            initDatabase = _yield$import.initDatabase;
+            setupGlobalDbObject = _yield$import.setupGlobalDbObject;
+            _context.next = 8;
+            return __webpack_require__.e(/*! import() */ "src_utils_databaseMigration_js").then(__webpack_require__.bind(__webpack_require__, /*! ./utils/databaseMigration */ "./src/utils/databaseMigration.js"));
+          case 8:
+            _yield$import2 = _context.sent;
+            hasLocalStorageData = _yield$import2.hasLocalStorageData;
+            migrateFromLocalStorage = _yield$import2.migrateFromLocalStorage;
+            _context.next = 13;
+            return initDatabase();
+          case 13:
+            success = _context.sent;
+            if (!success) {
               _context.next = 23;
               break;
             }
-            _context.prev = 5;
-            console.log('Generating messaging keys for secure communications...');
-            // Generate key pair for secure messaging
-            _context.next = 9;
-            return (0,_utils_encryption__WEBPACK_IMPORTED_MODULE_9__.generateKeyPair)();
-          case 9:
-            keyPair = _context.sent;
-            _context.next = 12;
-            return getKeyFingerprint(keyPair.publicKey);
-          case 12:
-            fingerprint = _context.sent;
-            // Update user with new keys
-            updatedUser = window.db.update('user', userData.id, {
-              messagingKeys: {
-                publicKey: keyPair.publicKey,
-                privateKey: keyPair.privateKey,
-                fingerprint: fingerprint
-              }
-            });
-            setUser(updatedUser);
+            console.log("SQLite database initialized successfully");
+
+            // Setup global db object for compatibility
+            dbObj = setupGlobalDbObject(); // Check if we need to migrate data from localStorage
+            if (!hasLocalStorageData()) {
+              _context.next = 21;
+              break;
+            }
+            console.log("Found existing data in localStorage, migrating to SQLite...");
             _context.next = 21;
-            break;
-          case 17:
-            _context.prev = 17;
-            _context.t0 = _context["catch"](5);
-            console.error('Failed to generate messaging keys:', _context.t0);
-            setUser(userData);
+            return migrateFromLocalStorage(dbObj);
           case 21:
             _context.next = 24;
             break;
           case 23:
-            setUser(userData);
+            console.warn("Using localStorage fallback for data storage");
           case 24:
-            // Get activities
-            activitiesData = window.db.getAll('activities');
-            setActivities(activitiesData);
-
-            // Get meetings
-            meetingsData = window.db.getAll('meetings');
-            setMeetings(meetingsData);
-
-            // Calculate spiritual fitness
-            calculateSpiritualFitness();
-          case 29:
+            _context.next = 26;
+            return loadData();
+          case 26:
+            _context.next = 31;
+            break;
+          case 28:
+            _context.prev = 28;
+            _context.t0 = _context["catch"](0);
+            console.error("Database initialization error:", _context.t0);
+          case 31:
           case "end":
             return _context.stop();
         }
-      }, _callee, null, [[5, 17]]);
+      }, _callee, null, [[0, 28]]);
+    }));
+    return _initDatabaseAndLoadData.apply(this, arguments);
+  }
+  function loadData() {
+    return _loadData.apply(this, arguments);
+  } // Generate a simple fingerprint from the public key
+  function _loadData() {
+    _loadData = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee2() {
+      var usersData, userData, newUser, keyPair, fingerprint, _keyPair, _fingerprint, activitiesData, meetingsData;
+      return _regeneratorRuntime().wrap(function _callee2$(_context2) {
+        while (1) switch (_context2.prev = _context2.next) {
+          case 0:
+            if (window.db) {
+              _context2.next = 3;
+              break;
+            }
+            console.error('Database not initialized');
+            return _context2.abrupt("return");
+          case 3:
+            _context2.prev = 3;
+            _context2.next = 6;
+            return window.db.getAll('users');
+          case 6:
+            usersData = _context2.sent;
+            userData = null; // Check if we have any users
+            if (usersData && usersData.length > 0) {
+              userData = usersData[0]; // Use the first user
+            }
+
+            // If no user found, create default user
+            if (userData) {
+              _context2.next = 32;
+              break;
+            }
+            console.log("No user found, creating default user...");
+            // Create default user
+            newUser = {
+              id: 'user_' + Date.now(),
+              name: 'David',
+              lastName: '',
+              sobrietyDate: '1986-05-15T00:00:00.000Z',
+              homeGroup: 'Arch to Freedom',
+              homeGroups: ['Arch to Freedom'],
+              phone: '',
+              email: 'davidgs@me.com',
+              privacySettings: {
+                shareLocation: false,
+                shareActivities: false,
+                allowMessages: true,
+                shareLastName: true
+              },
+              preferences: {
+                use24HourFormat: false
+              },
+              createdAt: new Date().toISOString(),
+              updatedAt: new Date().toISOString()
+            }; // Generate messaging keys for the new user
+            _context2.prev = 12;
+            console.log('Generating messaging keys for new user...');
+            _context2.next = 16;
+            return (0,_utils_encryption__WEBPACK_IMPORTED_MODULE_9__.generateKeyPair)();
+          case 16:
+            keyPair = _context2.sent;
+            _context2.next = 19;
+            return getKeyFingerprint(keyPair.publicKey);
+          case 19:
+            fingerprint = _context2.sent;
+            // Add messaging keys to the user
+            newUser.messagingKeys = {
+              publicKey: keyPair.publicKey,
+              privateKey: keyPair.privateKey,
+              fingerprint: fingerprint
+            };
+            _context2.next = 27;
+            break;
+          case 23:
+            _context2.prev = 23;
+            _context2.t0 = _context2["catch"](12);
+            console.error('Error generating messaging keys for new user:', _context2.t0);
+            newUser.messagingKeys = {};
+          case 27:
+            _context2.next = 29;
+            return window.db.add('users', newUser);
+          case 29:
+            userData = _context2.sent;
+            _context2.next = 49;
+            break;
+          case 32:
+            if (!(!userData.messagingKeys || !userData.messagingKeys.publicKey)) {
+              _context2.next = 49;
+              break;
+            }
+            _context2.prev = 33;
+            console.log('Generating messaging keys for secure communications...');
+            // Generate key pair for secure messaging
+            _context2.next = 37;
+            return (0,_utils_encryption__WEBPACK_IMPORTED_MODULE_9__.generateKeyPair)();
+          case 37:
+            _keyPair = _context2.sent;
+            _context2.next = 40;
+            return getKeyFingerprint(_keyPair.publicKey);
+          case 40:
+            _fingerprint = _context2.sent;
+            _context2.next = 43;
+            return window.db.update('users', userData.id, {
+              messagingKeys: {
+                publicKey: _keyPair.publicKey,
+                privateKey: _keyPair.privateKey,
+                fingerprint: _fingerprint
+              }
+            });
+          case 43:
+            userData = _context2.sent;
+            _context2.next = 49;
+            break;
+          case 46:
+            _context2.prev = 46;
+            _context2.t1 = _context2["catch"](33);
+            console.error('Failed to generate messaging keys:', _context2.t1);
+          case 49:
+            // Set the user data
+            setUser(userData);
+
+            // Get activities - using async version
+            _context2.next = 52;
+            return window.db.getAll('activities');
+          case 52:
+            activitiesData = _context2.sent;
+            if (activitiesData && activitiesData.length > 0) {
+              setActivities(activitiesData);
+            } else {
+              console.log("No activities found in database");
+              setActivities([]);
+            }
+
+            // Get meetings - using async version
+            _context2.next = 56;
+            return window.db.getAll('meetings');
+          case 56:
+            meetingsData = _context2.sent;
+            if (meetingsData && meetingsData.length > 0) {
+              setMeetings(meetingsData);
+            } else {
+              console.log("No meetings found in database");
+              setMeetings([]);
+            }
+
+            // Calculate spiritual fitness
+            calculateSpiritualFitness();
+            _context2.next = 64;
+            break;
+          case 61:
+            _context2.prev = 61;
+            _context2.t2 = _context2["catch"](3);
+            console.error("Error loading data:", _context2.t2);
+          case 64:
+          case "end":
+            return _context2.stop();
+        }
+      }, _callee2, null, [[3, 61], [12, 23], [33, 46]]);
     }));
     return _loadData.apply(this, arguments);
   }
@@ -61665,131 +61817,239 @@ function App() {
     return _getKeyFingerprint.apply(this, arguments);
   } // Calculate spiritual fitness score using the database function
   function _getKeyFingerprint() {
-    _getKeyFingerprint = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee2(publicKey) {
+    _getKeyFingerprint = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee3(publicKey) {
       var msgBuffer, hashBuffer, hashArray;
-      return _regeneratorRuntime().wrap(function _callee2$(_context2) {
-        while (1) switch (_context2.prev = _context2.next) {
+      return _regeneratorRuntime().wrap(function _callee3$(_context3) {
+        while (1) switch (_context3.prev = _context3.next) {
           case 0:
-            _context2.prev = 0;
+            _context3.prev = 0;
             // Create a hash of the public key
             msgBuffer = new TextEncoder().encode(publicKey);
-            _context2.next = 4;
+            _context3.next = 4;
             return crypto.subtle.digest('SHA-256', msgBuffer);
           case 4:
-            hashBuffer = _context2.sent;
+            hashBuffer = _context3.sent;
             hashArray = Array.from(new Uint8Array(hashBuffer)); // Take the first 8 bytes and format as hex with colons
-            return _context2.abrupt("return", hashArray.slice(0, 8).map(function (b) {
+            return _context3.abrupt("return", hashArray.slice(0, 8).map(function (b) {
               return b.toString(16).padStart(2, '0');
             }).join(':'));
           case 9:
-            _context2.prev = 9;
-            _context2.t0 = _context2["catch"](0);
-            console.error('Error generating key fingerprint:', _context2.t0);
-            return _context2.abrupt("return", 'unknown-fingerprint');
+            _context3.prev = 9;
+            _context3.t0 = _context3["catch"](0);
+            console.error('Error generating key fingerprint:', _context3.t0);
+            return _context3.abrupt("return", 'unknown-fingerprint');
           case 13:
           case "end":
-            return _context2.stop();
+            return _context3.stop();
         }
-      }, _callee2, null, [[0, 9]]);
+      }, _callee3, null, [[0, 9]]);
     }));
     return _getKeyFingerprint.apply(this, arguments);
   }
   function calculateSpiritualFitness() {
-    if (!window.db) {
-      console.error('Database not initialized');
-      return;
-    }
-
-    // Use the database function to calculate spiritual fitness
-    var score = window.db.calculateSpiritualFitness();
-
-    // Set the spiritual fitness score in state
-    setSpiritualFitness(score);
+    return _calculateSpiritualFitness.apply(this, arguments);
+  } // Handle saving a new activity
+  function _calculateSpiritualFitness() {
+    _calculateSpiritualFitness = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee4() {
+      var score;
+      return _regeneratorRuntime().wrap(function _callee4$(_context4) {
+        while (1) switch (_context4.prev = _context4.next) {
+          case 0:
+            if (window.db) {
+              _context4.next = 3;
+              break;
+            }
+            console.error('Database not initialized');
+            return _context4.abrupt("return");
+          case 3:
+            _context4.prev = 3;
+            _context4.next = 6;
+            return window.db.calculateSpiritualFitness(activities);
+          case 6:
+            score = _context4.sent;
+            // Set the spiritual fitness score in state
+            setSpiritualFitness(score);
+            return _context4.abrupt("return", score);
+          case 11:
+            _context4.prev = 11;
+            _context4.t0 = _context4["catch"](3);
+            console.error('Error calculating spiritual fitness:', _context4.t0);
+            setSpiritualFitness(20); // Default base score on error
+            return _context4.abrupt("return", 20);
+          case 16:
+          case "end":
+            return _context4.stop();
+        }
+      }, _callee4, null, [[3, 11]]);
+    }));
+    return _calculateSpiritualFitness.apply(this, arguments);
   }
+  function handleSaveActivity(_x2) {
+    return _handleSaveActivity.apply(this, arguments);
+  } // Handle saving a new meeting
+  function _handleSaveActivity() {
+    _handleSaveActivity = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee5(newActivity) {
+      var savedActivity;
+      return _regeneratorRuntime().wrap(function _callee5$(_context5) {
+        while (1) switch (_context5.prev = _context5.next) {
+          case 0:
+            if (window.db) {
+              _context5.next = 3;
+              break;
+            }
+            console.error('Database not initialized');
+            return _context5.abrupt("return");
+          case 3:
+            _context5.prev = 3;
+            _context5.next = 6;
+            return window.db.add('activities', newActivity);
+          case 6:
+            savedActivity = _context5.sent;
+            // Update activities state
+            setActivities(function (prev) {
+              return [].concat(_toConsumableArray(prev), [savedActivity]);
+            });
 
-  // Handle saving a new activity
-  function handleSaveActivity(newActivity) {
-    if (!window.db) {
-      console.error('Database not initialized');
-      return;
-    }
-
-    // Add activity to database
-    var savedActivity = window.db.add('activities', newActivity);
-
-    // Update activities state
-    setActivities(function (prev) {
-      return [].concat(_toConsumableArray(prev), [savedActivity]);
-    });
-
-    // Stay on activity screen to allow logging multiple activities
-    // No longer redirecting to dashboard
+            // Calculate spiritual fitness after adding activity
+            calculateSpiritualFitness();
+            return _context5.abrupt("return", savedActivity);
+          case 12:
+            _context5.prev = 12;
+            _context5.t0 = _context5["catch"](3);
+            console.error('Error saving activity:', _context5.t0);
+            return _context5.abrupt("return", null);
+          case 16:
+          case "end":
+            return _context5.stop();
+        }
+      }, _callee5, null, [[3, 12]]);
+    }));
+    return _handleSaveActivity.apply(this, arguments);
   }
+  function handleSaveMeeting(_x3) {
+    return _handleSaveMeeting.apply(this, arguments);
+  } // Handle updating user profile
+  function _handleSaveMeeting() {
+    _handleSaveMeeting = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee6(newMeeting) {
+      var savedMeeting;
+      return _regeneratorRuntime().wrap(function _callee6$(_context6) {
+        while (1) switch (_context6.prev = _context6.next) {
+          case 0:
+            if (window.db) {
+              _context6.next = 3;
+              break;
+            }
+            console.error('Database not initialized');
+            return _context6.abrupt("return");
+          case 3:
+            _context6.prev = 3;
+            if (!(newMeeting.id && meetings.some(function (m) {
+              return m.id === newMeeting.id;
+            }))) {
+              _context6.next = 14;
+              break;
+            }
+            _context6.next = 7;
+            return window.db.update('meetings', newMeeting.id, newMeeting);
+          case 7:
+            savedMeeting = _context6.sent;
+            if (savedMeeting) {
+              _context6.next = 11;
+              break;
+            }
+            console.error('Failed to update meeting - meeting not found');
+            return _context6.abrupt("return", null);
+          case 11:
+            // Update the meetings state
+            setMeetings(function (prev) {
+              return prev.map(function (m) {
+                return m.id === savedMeeting.id ? savedMeeting : m;
+              });
+            });
+            _context6.next = 18;
+            break;
+          case 14:
+            _context6.next = 16;
+            return window.db.add('meetings', newMeeting);
+          case 16:
+            savedMeeting = _context6.sent;
+            // Update meetings state
+            setMeetings(function (prev) {
+              return [].concat(_toConsumableArray(prev), [savedMeeting]);
+            });
+          case 18:
+            console.log("Meeting saved:", savedMeeting);
 
-  // Handle saving a new meeting
-  function handleSaveMeeting(newMeeting) {
-    if (!window.db) {
-      console.error('Database not initialized');
-      return;
-    }
-
-    // Check if this is an update or new meeting
-    var savedMeeting;
-
-    // If the meeting has an ID and exists in our meetings array, update it
-    if (newMeeting.id && meetings.some(function (m) {
-      return m.id === newMeeting.id;
-    })) {
-      // This is an update to an existing meeting
-      savedMeeting = window.db.update('meetings', newMeeting.id, newMeeting);
-
-      // Update the meetings state
-      setMeetings(function (prev) {
-        return prev.map(function (m) {
-          return m.id === savedMeeting.id ? savedMeeting : m;
-        });
-      });
-    } else {
-      // This is a new meeting
-      savedMeeting = window.db.add('meetings', newMeeting);
-
-      // Update meetings state
-      setMeetings(function (prev) {
-        return [].concat(_toConsumableArray(prev), [savedMeeting]);
-      });
-    }
-    console.log("Meeting saved:", savedMeeting);
-
-    // Return the saved meeting for the callback chain
-    return savedMeeting;
+            // Return the saved meeting for the callback chain
+            return _context6.abrupt("return", savedMeeting);
+          case 22:
+            _context6.prev = 22;
+            _context6.t0 = _context6["catch"](3);
+            console.error('Error saving meeting:', _context6.t0);
+            return _context6.abrupt("return", null);
+          case 26:
+          case "end":
+            return _context6.stop();
+        }
+      }, _callee6, null, [[3, 22]]);
+    }));
+    return _handleSaveMeeting.apply(this, arguments);
   }
-
-  // Handle updating user profile
-  function handleUpdateProfile(updates) {
-    var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {
-      redirectToDashboard: true
-    };
-    if (!window.db) {
-      console.error('Database not initialized');
-      return;
-    }
-
-    // Update user in database
-    var updatedUser = window.db.update('user', user.id, updates);
-
-    // Update user state
-    setUser(updatedUser);
-
-    // Set view back to dashboard only if specified (default true)
-    if (options.redirectToDashboard) {
-      setCurrentView('dashboard');
-    }
-    return updatedUser;
-  }
-
-  // Privacy settings function removed - was primarily used for Nearby features
-
+  function handleUpdateProfile(_x4) {
+    return _handleUpdateProfile.apply(this, arguments);
+  } // Privacy settings function removed - was primarily used for Nearby features
   // Render current view based on navigation state
+  function _handleUpdateProfile() {
+    _handleUpdateProfile = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee7(updates) {
+      var options,
+        updatedUser,
+        _args7 = arguments;
+      return _regeneratorRuntime().wrap(function _callee7$(_context7) {
+        while (1) switch (_context7.prev = _context7.next) {
+          case 0:
+            options = _args7.length > 1 && _args7[1] !== undefined ? _args7[1] : {
+              redirectToDashboard: true
+            };
+            if (window.db) {
+              _context7.next = 4;
+              break;
+            }
+            console.error('Database not initialized');
+            return _context7.abrupt("return");
+          case 4:
+            _context7.prev = 4;
+            _context7.next = 7;
+            return window.db.update('users', user.id, updates);
+          case 7:
+            updatedUser = _context7.sent;
+            if (updatedUser) {
+              _context7.next = 11;
+              break;
+            }
+            console.error('Failed to update user - user not found');
+            return _context7.abrupt("return", null);
+          case 11:
+            // Update user state
+            setUser(updatedUser);
+
+            // Set view back to dashboard only if specified (default true)
+            if (options.redirectToDashboard) {
+              setCurrentView('dashboard');
+            }
+            return _context7.abrupt("return", updatedUser);
+          case 16:
+            _context7.prev = 16;
+            _context7.t0 = _context7["catch"](4);
+            console.error('Error updating user profile:', _context7.t0);
+            return _context7.abrupt("return", null);
+          case 20:
+          case "end":
+            return _context7.stop();
+        }
+      }, _callee7, null, [[4, 16]]);
+    }));
+    return _handleUpdateProfile.apply(this, arguments);
+  }
   function renderCurrentView() {
     switch (currentView) {
       case 'dashboard':
@@ -70038,6 +70298,9 @@ function _deleteConnection() {
 /******/ 		return module.exports;
 /******/ 	}
 /******/ 	
+/******/ 	// expose the modules object (__webpack_modules__)
+/******/ 	__webpack_require__.m = __webpack_modules__;
+/******/ 	
 /************************************************************************/
 /******/ 	/* webpack/runtime/compat get default export */
 /******/ 	(() => {
@@ -70093,6 +70356,28 @@ function _deleteConnection() {
 /******/ 		};
 /******/ 	})();
 /******/ 	
+/******/ 	/* webpack/runtime/ensure chunk */
+/******/ 	(() => {
+/******/ 		__webpack_require__.f = {};
+/******/ 		// This file contains only the entry chunk.
+/******/ 		// The chunk loading function for additional chunks
+/******/ 		__webpack_require__.e = (chunkId) => {
+/******/ 			return Promise.all(Object.keys(__webpack_require__.f).reduce((promises, key) => {
+/******/ 				__webpack_require__.f[key](chunkId, promises);
+/******/ 				return promises;
+/******/ 			}, []));
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/get javascript chunk filename */
+/******/ 	(() => {
+/******/ 		// This function allow to reference async chunks
+/******/ 		__webpack_require__.u = (chunkId) => {
+/******/ 			// return url for filenames based on template
+/******/ 			return "" + chunkId + ".bundle.js";
+/******/ 		};
+/******/ 	})();
+/******/ 	
 /******/ 	/* webpack/runtime/global */
 /******/ 	(() => {
 /******/ 		__webpack_require__.g = (function() {
@@ -70108,6 +70393,52 @@ function _deleteConnection() {
 /******/ 	/* webpack/runtime/hasOwnProperty shorthand */
 /******/ 	(() => {
 /******/ 		__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/load script */
+/******/ 	(() => {
+/******/ 		var inProgress = {};
+/******/ 		var dataWebpackPrefix = "spiritual-condition-tracker:";
+/******/ 		// loadScript function to load a script via script tag
+/******/ 		__webpack_require__.l = (url, done, key, chunkId) => {
+/******/ 			if(inProgress[url]) { inProgress[url].push(done); return; }
+/******/ 			var script, needAttach;
+/******/ 			if(key !== undefined) {
+/******/ 				var scripts = document.getElementsByTagName("script");
+/******/ 				for(var i = 0; i < scripts.length; i++) {
+/******/ 					var s = scripts[i];
+/******/ 					if(s.getAttribute("src") == url || s.getAttribute("data-webpack") == dataWebpackPrefix + key) { script = s; break; }
+/******/ 				}
+/******/ 			}
+/******/ 			if(!script) {
+/******/ 				needAttach = true;
+/******/ 				script = document.createElement('script');
+/******/ 		
+/******/ 				script.charset = 'utf-8';
+/******/ 				script.timeout = 120;
+/******/ 				if (__webpack_require__.nc) {
+/******/ 					script.setAttribute("nonce", __webpack_require__.nc);
+/******/ 				}
+/******/ 				script.setAttribute("data-webpack", dataWebpackPrefix + key);
+/******/ 		
+/******/ 				script.src = url;
+/******/ 			}
+/******/ 			inProgress[url] = [done];
+/******/ 			var onScriptComplete = (prev, event) => {
+/******/ 				// avoid mem leaks in IE.
+/******/ 				script.onerror = script.onload = null;
+/******/ 				clearTimeout(timeout);
+/******/ 				var doneFns = inProgress[url];
+/******/ 				delete inProgress[url];
+/******/ 				script.parentNode && script.parentNode.removeChild(script);
+/******/ 				doneFns && doneFns.forEach((fn) => (fn(event)));
+/******/ 				if(prev) return prev(event);
+/******/ 			}
+/******/ 			var timeout = setTimeout(onScriptComplete.bind(null, undefined, { type: 'timeout', target: script }), 120000);
+/******/ 			script.onerror = onScriptComplete.bind(null, script.onerror);
+/******/ 			script.onload = onScriptComplete.bind(null, script.onload);
+/******/ 			needAttach && document.head.appendChild(script);
+/******/ 		};
 /******/ 	})();
 /******/ 	
 /******/ 	/* webpack/runtime/make namespace object */
@@ -70133,6 +70464,96 @@ function _deleteConnection() {
 /******/ 	/* webpack/runtime/publicPath */
 /******/ 	(() => {
 /******/ 		__webpack_require__.p = "/app/dist/";
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/jsonp chunk loading */
+/******/ 	(() => {
+/******/ 		// no baseURI
+/******/ 		
+/******/ 		// object to store loaded and loading chunks
+/******/ 		// undefined = chunk not loaded, null = chunk preloaded/prefetched
+/******/ 		// [resolve, reject, Promise] = chunk loading, 0 = chunk loaded
+/******/ 		var installedChunks = {
+/******/ 			"main": 0
+/******/ 		};
+/******/ 		
+/******/ 		__webpack_require__.f.j = (chunkId, promises) => {
+/******/ 				// JSONP chunk loading for javascript
+/******/ 				var installedChunkData = __webpack_require__.o(installedChunks, chunkId) ? installedChunks[chunkId] : undefined;
+/******/ 				if(installedChunkData !== 0) { // 0 means "already installed".
+/******/ 		
+/******/ 					// a Promise means "currently loading".
+/******/ 					if(installedChunkData) {
+/******/ 						promises.push(installedChunkData[2]);
+/******/ 					} else {
+/******/ 						if(true) { // all chunks have JS
+/******/ 							// setup Promise in chunk cache
+/******/ 							var promise = new Promise((resolve, reject) => (installedChunkData = installedChunks[chunkId] = [resolve, reject]));
+/******/ 							promises.push(installedChunkData[2] = promise);
+/******/ 		
+/******/ 							// start chunk loading
+/******/ 							var url = __webpack_require__.p + __webpack_require__.u(chunkId);
+/******/ 							// create error before stack unwound to get useful stacktrace later
+/******/ 							var error = new Error();
+/******/ 							var loadingEnded = (event) => {
+/******/ 								if(__webpack_require__.o(installedChunks, chunkId)) {
+/******/ 									installedChunkData = installedChunks[chunkId];
+/******/ 									if(installedChunkData !== 0) installedChunks[chunkId] = undefined;
+/******/ 									if(installedChunkData) {
+/******/ 										var errorType = event && (event.type === 'load' ? 'missing' : event.type);
+/******/ 										var realSrc = event && event.target && event.target.src;
+/******/ 										error.message = 'Loading chunk ' + chunkId + ' failed.\n(' + errorType + ': ' + realSrc + ')';
+/******/ 										error.name = 'ChunkLoadError';
+/******/ 										error.type = errorType;
+/******/ 										error.request = realSrc;
+/******/ 										installedChunkData[1](error);
+/******/ 									}
+/******/ 								}
+/******/ 							};
+/******/ 							__webpack_require__.l(url, loadingEnded, "chunk-" + chunkId, chunkId);
+/******/ 						}
+/******/ 					}
+/******/ 				}
+/******/ 		};
+/******/ 		
+/******/ 		// no prefetching
+/******/ 		
+/******/ 		// no preloaded
+/******/ 		
+/******/ 		// no HMR
+/******/ 		
+/******/ 		// no HMR manifest
+/******/ 		
+/******/ 		// no on chunks loaded
+/******/ 		
+/******/ 		// install a JSONP callback for chunk loading
+/******/ 		var webpackJsonpCallback = (parentChunkLoadingFunction, data) => {
+/******/ 			var [chunkIds, moreModules, runtime] = data;
+/******/ 			// add "moreModules" to the modules object,
+/******/ 			// then flag all "chunkIds" as loaded and fire callback
+/******/ 			var moduleId, chunkId, i = 0;
+/******/ 			if(chunkIds.some((id) => (installedChunks[id] !== 0))) {
+/******/ 				for(moduleId in moreModules) {
+/******/ 					if(__webpack_require__.o(moreModules, moduleId)) {
+/******/ 						__webpack_require__.m[moduleId] = moreModules[moduleId];
+/******/ 					}
+/******/ 				}
+/******/ 				if(runtime) var result = runtime(__webpack_require__);
+/******/ 			}
+/******/ 			if(parentChunkLoadingFunction) parentChunkLoadingFunction(data);
+/******/ 			for(;i < chunkIds.length; i++) {
+/******/ 				chunkId = chunkIds[i];
+/******/ 				if(__webpack_require__.o(installedChunks, chunkId) && installedChunks[chunkId]) {
+/******/ 					installedChunks[chunkId][0]();
+/******/ 				}
+/******/ 				installedChunks[chunkId] = 0;
+/******/ 			}
+/******/ 		
+/******/ 		}
+/******/ 		
+/******/ 		var chunkLoadingGlobal = self["webpackChunkspiritual_condition_tracker"] = self["webpackChunkspiritual_condition_tracker"] || [];
+/******/ 		chunkLoadingGlobal.forEach(webpackJsonpCallback.bind(null, 0));
+/******/ 		chunkLoadingGlobal.push = webpackJsonpCallback.bind(null, chunkLoadingGlobal.push.bind(chunkLoadingGlobal));
 /******/ 	})();
 /******/ 	
 /******/ 	/* webpack/runtime/nonce */
@@ -70171,23 +70592,12 @@ document.addEventListener('DOMContentLoaded', /*#__PURE__*/_asyncToGenerator(/*#
   return _regeneratorRuntime().wrap(function _callee$(_context) {
     while (1) switch (_context.prev = _context.next) {
       case 0:
-        if (!window.db) {
-          _context.next = 5;
-          break;
-        }
-        _context.next = 3;
-        return window.db.init();
-      case 3:
-        _context.next = 6;
-        break;
-      case 5:
-        console.error('Database not initialized. Make sure database.js is loaded first.');
-      case 6:
-        // Render the React application
+        // Render the React application - database initialization is now handled in App.js
+        // This prevents race conditions and ensures proper loading sequence
         rootElement = document.getElementById('app');
         root = (0,react_dom_client__WEBPACK_IMPORTED_MODULE_1__.createRoot)(rootElement);
         root.render(/*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_App__WEBPACK_IMPORTED_MODULE_2__["default"], null));
-      case 9:
+      case 3:
       case "end":
         return _context.stop();
     }
