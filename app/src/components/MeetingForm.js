@@ -1,30 +1,33 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import SimpleMeetingSchedule from './SimpleMeetingSchedule';
-import { TextField, InputAdornment, IconButton, FormControl, Input, InputLabel, PasswordOutlined } from '@mui/material';
+import { ThemeContext } from '../contexts/ThemeContext';
+import { 
+  TextField, 
+  InputAdornment, 
+  IconButton, 
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Box,
+  CircularProgress,
+  Alert,
+  Typography,
+  Divider
+} from '@mui/material';
 
 export default function MeetingForm({ 
   meeting = null, 
   onSave, 
-  onCancel,
-  isOverlay = true
+  onClose,
+  isEdit = false,
+  open = true,
+  darkMode: propDarkMode
 }) {
-  // Tooltip state
-  const [showTooltip, setShowTooltip] = useState(false);
-  const tooltipRef = useRef(null);
-  
-  // Close tooltip when clicking outside
-  useEffect(() => {
-    function handleClickOutside(event) {
-      if (tooltipRef.current && !tooltipRef.current.contains(event.target)) {
-        setShowTooltip(false);
-      }
-    }
-    
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
+  // Get theme context
+  const themeContext = useContext(ThemeContext);
+  const darkMode = propDarkMode !== undefined ? propDarkMode : (themeContext?.theme === 'dark');
   // Form state
   const [meetingName, setMeetingName] = useState('');
   
