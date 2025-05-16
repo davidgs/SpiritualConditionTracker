@@ -64872,6 +64872,7 @@ function Meetings(_ref) {
       var homeGroups = user.homeGroups ? user.homeGroups : user.homeGroup ? [user.homeGroup] : [];
       setUserHomeGroups(homeGroups);
       console.log('User: ', user);
+      console.log('Meetings: ', meetings);
     }
   }, [user, meetings]); // Refresh when user or meetings change
 
@@ -64934,11 +64935,6 @@ function Meetings(_ref) {
     }
   };
 
-  // Format day name
-  var formatDay = function formatDay(day) {
-    return day.charAt(0).toUpperCase() + day.slice(1);
-  };
-
   // Format address for display
   var formatAddress = function formatAddress(meeting) {
     // If we have the individual components, use them
@@ -64998,14 +64994,14 @@ function Meetings(_ref) {
         }
       }), "\xA0", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("span", {
         className: "text-gray-600 dark:text-gray-300"
-      }, formatDay(item.day)), "\xA0", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("i", {
+      }, (0,_utils_dateUtils__WEBPACK_IMPORTED_MODULE_4__.formatDay)(item.day)), "\xA0", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("i", {
         className: "fa-regular fa-clock text-gray-500 dark:text-gray-400 mx-1 flex-shrink-0",
         style: {
           fontSize: '0.85rem'
         }
       }), "\xA0", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("span", {
         className: "text-gray-600 dark:text-gray-300"
-      }, item.time));
+      }, (0,_utils_dateUtils__WEBPACK_IMPORTED_MODULE_4__.formatTimeByPreference)(item.time, use24HourFormat)));
     }) :
     /*#__PURE__*/
     // Legacy format
@@ -65023,7 +65019,7 @@ function Meetings(_ref) {
     }, meeting.days && meeting.days.map(function (day, idx) {
       return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("span", {
         key: "".concat(meeting.id, "-day-").concat(idx)
-      }, idx > 0 && ', ', formatDay(day));
+      }, idx > 0 && ', ', (0,_utils_dateUtils__WEBPACK_IMPORTED_MODULE_4__.formatDay)(day));
     }))), meeting.time && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
       className: "flex items-center"
     }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("i", {
@@ -67787,6 +67783,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   compareDatesForSorting: () => (/* binding */ compareDatesForSorting),
 /* harmony export */   formatDateForDisplay: () => (/* binding */ formatDateForDisplay),
+/* harmony export */   formatDay: () => (/* binding */ formatDay),
 /* harmony export */   formatTimeByPreference: () => (/* binding */ formatTimeByPreference)
 /* harmony export */ });
 function _slicedToArray(r, e) { return _arrayWithHoles(r) || _iterableToArrayLimit(r, e) || _unsupportedIterableToArray(r, e) || _nonIterableRest(); }
@@ -67842,6 +67839,10 @@ function formatDateForDisplay(dateString) {
     console.error("Error formatting date:", error);
     return "Error formatting date";
   }
+}
+function formatDay(day) {
+  console.log("Formatting day:", day);
+  return day.charAt(0).toUpperCase() + day.slice(1);
 }
 
 /**

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { meetingOperations } from '../utils/database';
 import MeetingFormDialog from './MeetingFormDialog';
 import { ThemeContext } from '../contexts/ThemeContext';
-import { formatTimeByPreference } from '../utils/dateUtils';
+import { formatDay, formatTimeByPreference } from '../utils/dateUtils';
 
 export default function Meetings({ setCurrentView, meetings = [], onSave, user }) {
   // Get dark mode from theme context
@@ -33,6 +33,7 @@ export default function Meetings({ setCurrentView, meetings = [], onSave, user }
         : (user.homeGroup ? [user.homeGroup] : []);
       setUserHomeGroups(homeGroups);
       console.log('User: ', user);
+      console.log('Meetings: ', meetings);
     }
   }, [user, meetings]); // Refresh when user or meetings change
   
@@ -86,10 +87,7 @@ export default function Meetings({ setCurrentView, meetings = [], onSave, user }
     }
   };
   
-  // Format day name
-  const formatDay = (day) => {
-    return day.charAt(0).toUpperCase() + day.slice(1);
-  };
+ 
   
   // Format address for display
   const formatAddress = (meeting) => {
@@ -149,7 +147,7 @@ export default function Meetings({ setCurrentView, meetings = [], onSave, user }
                     <i className="fa-solid fa-calendar-days text-gray-500 dark:text-gray-400 mr-3 flex-shrink-0" style={{ fontSize: '1rem' }}></i>&nbsp;
                     <span className="text-gray-600 dark:text-gray-300">{formatDay(item.day)}</span>&nbsp;
                     <i className="fa-regular fa-clock text-gray-500 dark:text-gray-400 mx-1 flex-shrink-0" style={{ fontSize: '0.85rem' }}></i>&nbsp;
-                    <span className="text-gray-600 dark:text-gray-300">{item.time}</span>
+                    <span className="text-gray-600 dark:text-gray-300">{formatTimeByPreference(item.time, use24HourFormat)}</span>
                   </div>
                 ))
               ) : (

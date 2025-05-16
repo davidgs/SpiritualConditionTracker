@@ -40,6 +40,11 @@ export function formatDateForDisplay(dateString) {
   }
 }
 
+export function formatDay(day) {
+  console.log("Formatting day:", day);
+    return day.charAt(0).toUpperCase() + day.slice(1);
+  }
+
 /**
  * Format time based on user preference (12 or 24 hour format)
  * 
