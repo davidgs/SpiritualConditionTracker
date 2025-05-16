@@ -376,8 +376,22 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
         onClose={onClose}
         aria-labelledby="log-activity-dialog-title"
         maxWidth="md"
+        PaperProps={{
+          style: {
+            backgroundColor: darkMode ? '#1f2937' : '#ffffff',
+            color: darkMode ? '#e5e7eb' : '#1f2937',
+          },
+        }}
       >
-        <DialogTitle sx={{ m: 0, p: 2 }} id="log-activity-dialog-title">
+        <DialogTitle 
+          sx={{ 
+            m: 0, 
+            p: 2,
+            backgroundColor: darkMode ? '#111827' : '#f9fafb',
+            color: darkMode ? '#f3f4f6' : '#111827', 
+          }} 
+          id="log-activity-dialog-title"
+        >
           Log New Activity
         </DialogTitle>
         
@@ -388,13 +402,15 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
             position: 'absolute',
             right: 8,
             top: 8,
-            color: (theme) => theme.palette.grey[500],
+            color: darkMode ? '#9ca3af' : '#6b7280',
           }}
         >
           <CloseIcon />
         </IconButton>
         
-        <DialogContent dividers>
+        <DialogContent 
+          dividers
+          sx={{ backgroundColor: darkMode ? '#1f2937' : '#ffffff' }}>
           {/* Success message */}
           {showSuccess && (
             <div style={{

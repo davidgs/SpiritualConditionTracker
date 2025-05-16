@@ -60517,11 +60517,19 @@ var LogActivityModal = function LogActivityModal(_ref2) {
     open: open,
     onClose: onClose,
     "aria-labelledby": "log-activity-dialog-title",
-    maxWidth: "md"
+    maxWidth: "md",
+    PaperProps: {
+      style: {
+        backgroundColor: darkMode ? '#1f2937' : '#ffffff',
+        color: darkMode ? '#e5e7eb' : '#1f2937'
+      }
+    }
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_DialogTitle__WEBPACK_IMPORTED_MODULE_5__["default"], {
     sx: {
       m: 0,
-      p: 2
+      p: 2,
+      backgroundColor: darkMode ? '#111827' : '#f9fafb',
+      color: darkMode ? '#f3f4f6' : '#111827'
     },
     id: "log-activity-dialog-title"
   }, "Log New Activity"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_IconButton__WEBPACK_IMPORTED_MODULE_6__["default"], {
@@ -60531,12 +60539,13 @@ var LogActivityModal = function LogActivityModal(_ref2) {
       position: 'absolute',
       right: 8,
       top: 8,
-      color: function color(theme) {
-        return theme.palette.grey[500];
-      }
+      color: darkMode ? '#9ca3af' : '#6b7280'
     }
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_icons_material_Close__WEBPACK_IMPORTED_MODULE_7__["default"], null)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_DialogContent__WEBPACK_IMPORTED_MODULE_8__["default"], {
-    dividers: true
+    dividers: true,
+    sx: {
+      backgroundColor: darkMode ? '#1f2937' : '#ffffff'
+    }
   }, showSuccess && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     style: {
       backgroundColor: darkMode ? '#064e3b' : '#d1fae5',
