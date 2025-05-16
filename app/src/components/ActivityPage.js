@@ -298,28 +298,49 @@ export default function ActivityPage({ setCurrentView, onSave, onSaveMeeting, ac
           Activities
         </h1>
         
-        {/* Toggle form visibility button - icon only with tooltip */}
-        <button
-          className="text-gray-600 dark:text-gray-300 hover:text-blue-500 dark:hover:text-blue-400 transition-colors duration-200"
-          onClick={() => setShowForm(!showForm)}
-          title={showForm ? "Hide activity form" : "Log new activity"}
-          aria-label={showForm ? "Hide activity form" : "Log new activity"}
-          style={{ 
-            fontSize: '1.5rem', 
-            background: 'transparent',
-            border: 'none',
-            cursor: 'pointer',
-            padding: '0.5rem'
-          }}
-        >
-          <i className={`fa-solid ${showForm ? 'fa-xmark' : 'fa-scroll'}`}></i>
-        </button>
+        {/* Show the form toggle button only when form is hidden */}
+        {!showForm && (
+          <button
+            className="text-gray-600 dark:text-gray-300 hover:text-blue-500 dark:hover:text-blue-400 transition-colors duration-200"
+            onClick={() => setShowForm(true)}
+            title="Log new activity"
+            aria-label="Log new activity"
+            style={{ 
+              fontSize: '1.5rem', 
+              background: 'transparent',
+              border: 'none',
+              cursor: 'pointer',
+              padding: '0.5rem'
+            }}
+          >
+            <i className="fa-solid fa-scroll"></i>
+          </button>
+        )}
       </div>
       
       {/* Log New Activity Form */}
       {showForm && (
         <div className={`bg-white dark:bg-gray-800 rounded-lg shadow border border-gray-200 dark:border-gray-700 p-4 mb-6 ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>
-          <h2 className="text-xl font-semibold mb-4">Log New Activity</h2>
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-xl font-semibold">Log New Activity</h2>
+            
+            {/* Close button inside card */}
+            <button
+              className="text-gray-500 dark:text-gray-400 hover:text-red-500 dark:hover:text-red-400 transition-colors duration-200"
+              onClick={() => setShowForm(false)}
+              title="Hide activity form"
+              aria-label="Hide activity form"
+              style={{ 
+                fontSize: '1.25rem', 
+                background: 'transparent',
+                border: 'none',
+                cursor: 'pointer',
+                padding: '0.25rem'
+              }}
+            >
+              <i className="fa-solid fa-xmark"></i>
+            </button>
+          </div>
           
           {/* Success message */}
           {showSuccess && (
