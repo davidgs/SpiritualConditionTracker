@@ -36,6 +36,7 @@ function App() {
     try {
       // Import the database operations
       const { initDatabase, setupGlobalDbObject } = await import('./utils/sqliteDatabase');
+      const { hasLocalStorageData, migrateFromLocalStorage } = await import('./utils/databaseMigration');
       
       // Initialize the database
       const success = await initDatabase();
@@ -44,7 +45,13 @@ function App() {
         console.log("SQLite database initialized successfully");
         
         // Setup global db object for compatibility
-        setupGlobalDbObject();
+        const dbObj = setupGlobalDbObject();
+        
+        // Check if we need to migrate data from localStorage
+        if (hasLocalStorageData()) {
+          console.log("Found existing data in localStorage, migrating to SQLite...");
+          await migrateFromLocalStorage(dbObj);
+        }
       } else {
         console.warn("Using localStorage fallback for data storage");
       }
@@ -63,47 +70,111 @@ function App() {
       return;
     }
 
-    // Get user data
-    const userData = window.db.getAll('user');
-    
-    // Initialize messaging keys if they don't exist
-    if (userData && (!userData.messagingKeys || !userData.messagingKeys.publicKey)) {
-      try {
-        console.log('Generating messaging keys for secure communications...');
-        // Generate key pair for secure messaging
-        const keyPair = await generateKeyPair();
+    try {
+      // Get user data - using async version
+      let usersData = await window.db.getAll('users');
+      let userData = null;
+      
+      // Check if we have any users
+      if (usersData && usersData.length > 0) {
+        userData = usersData[0]; // Use the first user
+      }
+      
+      // If no user found, create default user
+      if (!userData) {
+        console.log("No user found, creating default user...");
+        // Create default user
+        const newUser = {
+          id: 'user_' + Date.now(),
+          name: 'David',
+          lastName: '',
+          sobrietyDate: '1986-05-15T00:00:00.000Z',
+          homeGroup: 'Arch to Freedom',
+          homeGroups: ['Arch to Freedom'],
+          phone: '',
+          email: 'davidgs@me.com',
+          privacySettings: {
+            shareLocation: false,
+            shareActivities: false,
+            allowMessages: true,
+            shareLastName: true
+          },
+          preferences: {
+            use24HourFormat: false
+          },
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        };
         
-        // Create fingerprint (simple hash of public key for identification)
-        const fingerprint = await getKeyFingerprint(keyPair.publicKey);
-        
-        // Update user with new keys
-        const updatedUser = window.db.update('user', userData.id, {
-          messagingKeys: {
+        // Generate messaging keys for the new user
+        try {
+          console.log('Generating messaging keys for new user...');
+          const keyPair = await generateKeyPair();
+          const fingerprint = await getKeyFingerprint(keyPair.publicKey);
+          
+          // Add messaging keys to the user
+          newUser.messagingKeys = {
             publicKey: keyPair.publicKey,
             privateKey: keyPair.privateKey,
             fingerprint
-          }
-        });
+          };
+        } catch (error) {
+          console.error('Error generating messaging keys for new user:', error);
+          newUser.messagingKeys = {};
+        }
         
-        setUser(updatedUser);
-      } catch (err) {
-        console.error('Failed to generate messaging keys:', err);
-        setUser(userData);
+        // Save the new user
+        userData = await window.db.add('users', newUser);
+      } 
+      // Initialize messaging keys if they don't exist for existing user
+      else if (!userData.messagingKeys || !userData.messagingKeys.publicKey) {
+        try {
+          console.log('Generating messaging keys for secure communications...');
+          // Generate key pair for secure messaging
+          const keyPair = await generateKeyPair();
+          
+          // Create fingerprint (simple hash of public key for identification)
+          const fingerprint = await getKeyFingerprint(keyPair.publicKey);
+          
+          // Update user with new keys
+          userData = await window.db.update('users', userData.id, {
+            messagingKeys: {
+              publicKey: keyPair.publicKey,
+              privateKey: keyPair.privateKey,
+              fingerprint
+            }
+          });
+        } catch (err) {
+          console.error('Failed to generate messaging keys:', err);
+        }
       }
-    } else {
+      
+      // Set the user data
       setUser(userData);
+
+      // Get activities - using async version
+      const activitiesData = await window.db.getAll('activities');
+      if (activitiesData && activitiesData.length > 0) {
+        setActivities(activitiesData);
+      } else {
+        console.log("No activities found in database");
+        setActivities([]);
+      }
+
+      // Get meetings - using async version
+      const meetingsData = await window.db.getAll('meetings');
+      if (meetingsData && meetingsData.length > 0) {
+        setMeetings(meetingsData);
+      } else {
+        console.log("No meetings found in database");
+        setMeetings([]);
+      }
+
+      // Calculate spiritual fitness
+      calculateSpiritualFitness();
+    } catch (error) {
+      console.error("Error loading data:", error);
     }
-
-    // Get activities
-    const activitiesData = window.db.getAll('activities');
-    setActivities(activitiesData);
-
-    // Get meetings
-    const meetingsData = window.db.getAll('meetings');
-    setMeetings(meetingsData);
-
-    // Calculate spiritual fitness
-    calculateSpiritualFitness();
   }
   
   // Generate a simple fingerprint from the public key
