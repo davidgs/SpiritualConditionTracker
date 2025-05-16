@@ -34,6 +34,9 @@ export default function Profile({ setCurrentView, user, onUpdate }) {
     }
   }, [user]);
 
+  // State for tracking message permission toggle
+  const [allowMessages, setAllowMessages] = useState(user?.privacySettings?.allowMessages !== false);
+  
   // Handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -47,9 +50,6 @@ export default function Profile({ setCurrentView, user, onUpdate }) {
       setErrors(newErrors);
       return;
     }
-    
-    // Get the current state of the messaging toggle
-    const allowMessages = document.getElementById('allowMessages').checked;
     
     // Create updates object with privacy settings
     const updates = {
@@ -183,7 +183,8 @@ export default function Profile({ setCurrentView, user, onUpdate }) {
             <Switch 
               id="allowMessages"
               name="allowMessages"
-              defaultChecked={user?.privacySettings?.allowMessages !== false}
+              checked={allowMessages}
+              onChange={(e) => setAllowMessages(e.target.checked)}
               color="primary"
             />
           }

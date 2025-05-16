@@ -64163,7 +64163,7 @@ function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
 
 
 function Profile(_ref) {
-  var _window$db, _window$db2, _user$privacySettings;
+  var _user$privacySettings, _window$db, _window$db2;
   var setCurrentView = _ref.setCurrentView,
     user = _ref.user,
     onUpdate = _ref.onUpdate;
@@ -64206,6 +64206,12 @@ function Profile(_ref) {
     }
   }, [user]);
 
+  // State for tracking message permission toggle
+  var _useState11 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)((user === null || user === void 0 || (_user$privacySettings = user.privacySettings) === null || _user$privacySettings === void 0 ? void 0 : _user$privacySettings.allowMessages) !== false),
+    _useState12 = _slicedToArray(_useState11, 2),
+    allowMessages = _useState12[0],
+    setAllowMessages = _useState12[1];
+
   // Handle form submission
   var handleSubmit = function handleSubmit(e) {
     e.preventDefault();
@@ -64219,9 +64225,6 @@ function Profile(_ref) {
       setErrors(newErrors);
       return;
     }
-
-    // Get the current state of the messaging toggle
-    var allowMessages = document.getElementById('allowMessages').checked;
 
     // Create updates object with privacy settings
     var updates = {
@@ -64371,7 +64374,10 @@ function Profile(_ref) {
     control: /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_8__["default"], {
       id: "allowMessages",
       name: "allowMessages",
-      defaultChecked: (user === null || user === void 0 || (_user$privacySettings = user.privacySettings) === null || _user$privacySettings === void 0 ? void 0 : _user$privacySettings.allowMessages) !== false,
+      checked: allowMessages,
+      onChange: function onChange(e) {
+        return setAllowMessages(e.target.checked);
+      },
       color: "primary"
     }),
     label: "Allow Messaging",
