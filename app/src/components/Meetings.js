@@ -10,7 +10,14 @@ export default function Meetings({ setCurrentView, meetings = [], onSave, user }
   const darkMode = theme === 'dark';
   
   // Get user preferences
-  const use24HourFormat = user?.preferences?.use24HourFormat || false;
+  const [use24HourFormat, setUse24HourFormat] = useState(false);
+  
+  // Keep user preferences in sync
+  useEffect(() => {
+    if (user && user.preferences) {
+      setUse24HourFormat(user.preferences.use24HourFormat || false);
+    }
+  }, [user]);
   
   // Get user's home groups
   const [userHomeGroups, setUserHomeGroups] = useState([]);

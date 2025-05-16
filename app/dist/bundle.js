@@ -64833,7 +64833,6 @@ function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
 
 
 function Meetings(_ref) {
-  var _user$preferences;
   var setCurrentView = _ref.setCurrentView,
     _ref$meetings = _ref.meetings,
     meetings = _ref$meetings === void 0 ? [] : _ref$meetings,
@@ -64845,13 +64844,23 @@ function Meetings(_ref) {
   var darkMode = theme === 'dark';
 
   // Get user preferences
-  var use24HourFormat = (user === null || user === void 0 || (_user$preferences = user.preferences) === null || _user$preferences === void 0 ? void 0 : _user$preferences.use24HourFormat) || false;
+  var _useState = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false),
+    _useState2 = _slicedToArray(_useState, 2),
+    use24HourFormat = _useState2[0],
+    setUse24HourFormat = _useState2[1];
+
+  // Keep user preferences in sync
+  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(function () {
+    if (user && user.preferences) {
+      setUse24HourFormat(user.preferences.use24HourFormat || false);
+    }
+  }, [user]);
 
   // Get user's home groups
-  var _useState = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)([]),
-    _useState2 = _slicedToArray(_useState, 2),
-    userHomeGroups = _useState2[0],
-    setUserHomeGroups = _useState2[1];
+  var _useState3 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)([]),
+    _useState4 = _slicedToArray(_useState3, 2),
+    userHomeGroups = _useState4[0],
+    setUserHomeGroups = _useState4[1];
 
   // Load user data to get home groups
   (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(function () {
@@ -64862,18 +64871,18 @@ function Meetings(_ref) {
     }
   }, [user, meetings]); // Refresh when user or meetings change
 
-  var _useState3 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false),
-    _useState4 = _slicedToArray(_useState3, 2),
-    showForm = _useState4[0],
-    setShowForm = _useState4[1];
-  var _useState5 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null),
+  var _useState5 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false),
     _useState6 = _slicedToArray(_useState5, 2),
-    currentMeeting = _useState6[0],
-    setCurrentMeeting = _useState6[1];
-  var _useState7 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(''),
+    showForm = _useState6[0],
+    setShowForm = _useState6[1];
+  var _useState7 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null),
     _useState8 = _slicedToArray(_useState7, 2),
-    error = _useState8[0],
-    setError = _useState8[1];
+    currentMeeting = _useState8[0],
+    setCurrentMeeting = _useState8[1];
+  var _useState9 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(''),
+    _useState0 = _slicedToArray(_useState9, 2),
+    error = _useState0[0],
+    setError = _useState0[1];
 
   // Edit an existing meeting
   var handleEdit = function handleEdit(meeting) {
