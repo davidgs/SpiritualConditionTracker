@@ -363,12 +363,12 @@ export default function ActivityPage({ setCurrentView, onSave, onSaveMeeting, ac
           
           <form onSubmit={handleSubmit}>
             {/* Activity Type */}
-            <div style={{ marginBottom: '1rem' }}>
+            <div style={{ marginBottom: '1rem', maxWidth: '100%' }}>
               <label style={labelStyle}>
                 Activity Type
               </label>
               <select
-                style={inputStyle}
+                style={{...inputStyle, maxWidth: '100%', boxSizing: 'border-box'}}
                 value={activityType}
                 onChange={(e) => setActivityType(e.target.value)}
               >
@@ -385,12 +385,12 @@ export default function ActivityPage({ setCurrentView, onSave, onSaveMeeting, ac
             </div>
             
             {/* Duration dropdown */}
-            <div style={{ marginBottom: '1rem' }}>
+            <div style={{ marginBottom: '1rem', maxWidth: '100%' }}>
               <label style={labelStyle}>
                 Duration
               </label>
               <select
-                style={inputStyle}
+                style={{...inputStyle, maxWidth: '100%', boxSizing: 'border-box'}}
                 value={duration}
                 onChange={(e) => setDuration(e.target.value)}
               >
@@ -402,13 +402,13 @@ export default function ActivityPage({ setCurrentView, onSave, onSaveMeeting, ac
             </div>
             
             {/* Date picker */}
-            <div style={{ marginBottom: '1rem' }}>
+            <div style={{ marginBottom: '1rem', maxWidth: '100%' }}>
               <label style={labelStyle}>
                 Date
               </label>
               <input
                 type="date"
-                style={inputStyle}
+                style={{...inputStyle, maxWidth: '100%', boxSizing: 'border-box'}}
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
               />
@@ -419,11 +419,11 @@ export default function ActivityPage({ setCurrentView, onSave, onSaveMeeting, ac
             
             {/* Call Type Options - only for Call activity type */}
             {activityType === 'call' && (
-              <div style={{ marginBottom: '1rem' }}>
+              <div style={{ marginBottom: '1rem', maxWidth: '100%' }}>
                 <label style={{...labelStyle, marginBottom: '0.5rem'}}>
                   Call Type
                 </label>
-                <div style={checkboxStyle}>
+                <div style={{...checkboxStyle, maxWidth: '100%'}}>
                   <input
                     type="checkbox"
                     id="isSponsorCall"
@@ -441,7 +441,7 @@ export default function ActivityPage({ setCurrentView, onSave, onSaveMeeting, ac
                     Sponsor
                   </label>
                 </div>
-                <div style={checkboxStyle}>
+                <div style={{...checkboxStyle, maxWidth: '100%'}}>
                   <input
                     type="checkbox"
                     id="isSponseeCall"
@@ -459,7 +459,7 @@ export default function ActivityPage({ setCurrentView, onSave, onSaveMeeting, ac
                     Sponsee
                   </label>
                 </div>
-                <div style={checkboxStyle}>
+                <div style={{...checkboxStyle, maxWidth: '100%'}}>
                   <input
                     type="checkbox"
                     id="isAAMemberCall"
@@ -485,13 +485,13 @@ export default function ActivityPage({ setCurrentView, onSave, onSaveMeeting, ac
             
             {/* Literature Title - only for Reading Literature */}
             {activityType === 'literature' && (
-              <div style={{ marginBottom: '1rem' }}>
+              <div style={{ marginBottom: '1rem', maxWidth: '100%' }}>
                 <label style={labelStyle}>
                   Literature Title
                 </label>
                 <input
                   type="text"
-                  style={inputStyle}
+                  style={{...inputStyle, maxWidth: '100%', boxSizing: 'border-box'}}
                   placeholder="Enter title of what you were reading"
                   value={literatureTitle}
                   onChange={(e) => setLiteratureTitle(e.target.value)}
@@ -504,13 +504,13 @@ export default function ActivityPage({ setCurrentView, onSave, onSaveMeeting, ac
             
             {/* Meeting Selection - only for AA Meeting */}
             {activityType === 'meeting' && !showMeetingForm && (
-              <div style={{ marginBottom: '1rem' }}>
+              <div style={{ marginBottom: '1rem', maxWidth: '100%' }}>
                 <label style={labelStyle}>
                   Select Meeting
                 </label>
-                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                <div style={{ display: 'flex', gap: '0.5rem', maxWidth: '100%' }}>
                   <select
-                    style={{ ...inputStyle, flex: '1' }}
+                    style={{ ...inputStyle, flex: '1', maxWidth: 'calc(100% - 60px)', boxSizing: 'border-box' }}
                     value={selectedMeetingId}
                     onChange={handleMeetingSelect}
                   >
@@ -531,7 +531,9 @@ export default function ActivityPage({ setCurrentView, onSave, onSaveMeeting, ac
                       border: 'none',
                       borderRadius: '0.375rem',
                       fontSize: '0.875rem',
-                      cursor: 'pointer'
+                      cursor: 'pointer',
+                      width: '50px',
+                      flexShrink: 0
                     }}
                   >
                     New
@@ -571,12 +573,12 @@ export default function ActivityPage({ setCurrentView, onSave, onSaveMeeting, ac
             
             {/* Meeting Details - only for AA Meeting when not adding a new meeting */}
             {activityType === 'meeting' && !showMeetingForm && (
-              <div style={{ marginBottom: '1rem' }}>
+              <div style={{ marginBottom: '1rem', maxWidth: '100%' }}>
                 <label style={labelStyle}>
                   Your Role
                 </label>
-                <div style={{ display: 'flex', flexDirection: 'column' }}>
-                  <div style={checkboxStyle}>
+                <div style={{ display: 'flex', flexDirection: 'column', maxWidth: '100%' }}>
+                  <div style={{...checkboxStyle, maxWidth: '100%'}}>
                     <input
                       type="checkbox"
                       id="wasChair"
@@ -594,7 +596,7 @@ export default function ActivityPage({ setCurrentView, onSave, onSaveMeeting, ac
                       I chaired the meeting
                     </label>
                   </div>
-                  <div style={checkboxStyle}>
+                  <div style={{...checkboxStyle, maxWidth: '100%'}}>
                     <input
                       type="checkbox"
                       id="wasShare"
@@ -612,7 +614,7 @@ export default function ActivityPage({ setCurrentView, onSave, onSaveMeeting, ac
                       I shared during the meeting
                     </label>
                   </div>
-                  <div style={checkboxStyle}>
+                  <div style={{...checkboxStyle, maxWidth: '100%'}}>
                     <input
                       type="checkbox"
                       id="wasSpeaker"
@@ -635,12 +637,19 @@ export default function ActivityPage({ setCurrentView, onSave, onSaveMeeting, ac
             )}
             
             {/* Notes field */}
-            <div style={{ marginBottom: '1.5rem' }}>
+            <div style={{ marginBottom: '1.5rem', maxWidth: '100%' }}>
               <label style={labelStyle}>
                 Notes (optional)
               </label>
               <textarea
-                style={{ ...inputStyle, minHeight: '5rem', resize: 'vertical' }}
+                style={{ 
+                  ...inputStyle, 
+                  minHeight: '5rem', 
+                  resize: 'vertical', 
+                  maxWidth: '100%', 
+                  boxSizing: 'border-box',
+                  overflowX: 'hidden'
+                }}
                 placeholder="Enter any additional details..."
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
