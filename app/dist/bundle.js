@@ -64305,24 +64305,32 @@ function Profile(_ref) {
     sx: {
       mb: 2
     }
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_3__["default"], {
-    sx: {
-      display: 'flex',
-      justifyContent: 'space-between',
-      alignItems: 'center'
-    }
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_4__["default"], {
     variant: "h6",
     sx: {
-      color: darkMode ? '#d1d5db' : '#374151'
+      color: darkMode ? '#d1d5db' : '#374151',
+      mb: 1
     }
-  }, "Sobriety Milestone"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_6__["default"], {
+  }, "Sobriety Milestone"), sobrietyDate && !editingSobriety && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_3__["default"], {
+    sx: {
+      display: 'flex',
+      alignItems: 'center'
+    }
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_4__["default"], {
+    variant: "subtitle1",
+    sx: {
+      color: darkMode ? '#9ca3af' : '#6b7280',
+      fontWeight: 500
+    }
+  }, "Sober since ", formatDateForDisplay(sobrietyDate)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_6__["default"], {
     onClick: function onClick() {
       return setEditingSobriety(!editingSobriety);
     },
     size: "small",
     "aria-label": "Edit sobriety date",
     sx: {
+      ml: 1,
+      p: 0.5,
       color: darkMode ? '#9ca3af' : '#6b7280',
       '&:hover': {
         color: darkMode ? '#60a5fa' : '#3b82f6',
@@ -64330,15 +64338,40 @@ function Profile(_ref) {
       }
     }
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("i", {
-    className: "fas fa-edit"
-  }))), sobrietyDate && !editingSobriety && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_4__["default"], {
-    variant: "subtitle1",
-    sx: {
-      mt: 0.5,
-      color: darkMode ? '#9ca3af' : '#6b7280',
-      fontWeight: 500
+    className: "fas fa-edit",
+    style: {
+      fontSize: '0.85rem'
     }
-  }, "Sober since ", formatDateForDisplay(sobrietyDate))), editingSobriety ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_3__["default"], {
+  }))), !sobrietyDate && !editingSobriety && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_3__["default"], {
+    sx: {
+      display: 'flex',
+      alignItems: 'center'
+    }
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_4__["default"], {
+    sx: {
+      color: darkMode ? '#9ca3af' : '#6b7280'
+    }
+  }, "No sobriety date set"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_6__["default"], {
+    onClick: function onClick() {
+      return setEditingSobriety(true);
+    },
+    size: "small",
+    "aria-label": "Add sobriety date",
+    sx: {
+      ml: 1,
+      p: 0.5,
+      color: darkMode ? '#9ca3af' : '#6b7280',
+      '&:hover': {
+        color: darkMode ? '#60a5fa' : '#3b82f6',
+        backgroundColor: 'transparent'
+      }
+    }
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("i", {
+    className: "fas fa-plus-circle",
+    style: {
+      fontSize: '0.85rem'
+    }
+  })))), editingSobriety ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_3__["default"], {
     sx: {
       mb: 2
     }
@@ -64461,11 +64494,7 @@ function Profile(_ref) {
       fontSize: '1.25rem',
       color: darkMode ? '#60a5fa' : '#3b82f6'
     }
-  }, sobrietyYears.toFixed(2), " years"))) : /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_4__["default"], {
-    sx: {
-      color: darkMode ? '#9ca3af' : '#6b7280'
-    }
-  }, "No sobriety date set. Click the edit button to set your sobriety date.")))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_5__["default"], {
+  }, sobrietyYears.toFixed(2), " years"))) : null, ")}"))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_5__["default"], {
     elevation: 0,
     sx: {
       p: 3,

@@ -119,34 +119,59 @@ export default function Profile({ setCurrentView, user, onUpdate }) {
           border: darkMode ? '1px solid #374151' : '1px solid #e5e7eb'
         }}>
           <Box sx={{ mb: 2 }}>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <Typography variant="h6" sx={{ color: darkMode ? '#d1d5db' : '#374151' }}>
-                Sobriety Milestone
-              </Typography>
-              <IconButton 
-                onClick={() => setEditingSobriety(!editingSobriety)}
-                size="small"
-                aria-label="Edit sobriety date"
-                sx={{ 
-                  color: darkMode ? '#9ca3af' : '#6b7280',
-                  '&:hover': {
-                    color: darkMode ? '#60a5fa' : '#3b82f6',
-                    backgroundColor: 'transparent'
-                  }
-                }}
-              >
-                <i className="fas fa-edit"></i>
-              </IconButton>
-            </Box>
+            <Typography variant="h6" sx={{ color: darkMode ? '#d1d5db' : '#374151', mb: 1 }}>
+              Sobriety Milestone
+            </Typography>
             
             {sobrietyDate && !editingSobriety && (
-              <Typography variant="subtitle1" sx={{ 
-                mt: 0.5, 
-                color: darkMode ? '#9ca3af' : '#6b7280',
-                fontWeight: 500
-              }}>
-                Sober since {formatDateForDisplay(sobrietyDate)}
-              </Typography>
+              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <Typography variant="subtitle1" sx={{ 
+                  color: darkMode ? '#9ca3af' : '#6b7280',
+                  fontWeight: 500
+                }}>
+                  Sober since {formatDateForDisplay(sobrietyDate)}
+                </Typography>
+                <IconButton 
+                  onClick={() => setEditingSobriety(!editingSobriety)}
+                  size="small"
+                  aria-label="Edit sobriety date"
+                  sx={{ 
+                    ml: 1,
+                    p: 0.5,
+                    color: darkMode ? '#9ca3af' : '#6b7280',
+                    '&:hover': {
+                      color: darkMode ? '#60a5fa' : '#3b82f6',
+                      backgroundColor: 'transparent'
+                    }
+                  }}
+                >
+                  <i className="fas fa-edit" style={{ fontSize: '0.85rem' }}></i>
+                </IconButton>
+              </Box>
+            )}
+            
+            {!sobrietyDate && !editingSobriety && (
+              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <Typography sx={{ color: darkMode ? '#9ca3af' : '#6b7280' }}>
+                  No sobriety date set
+                </Typography>
+                <IconButton 
+                  onClick={() => setEditingSobriety(true)}
+                  size="small"
+                  aria-label="Add sobriety date"
+                  sx={{ 
+                    ml: 1,
+                    p: 0.5,
+                    color: darkMode ? '#9ca3af' : '#6b7280',
+                    '&:hover': {
+                      color: darkMode ? '#60a5fa' : '#3b82f6',
+                      backgroundColor: 'transparent'
+                    }
+                  }}
+                >
+                  <i className="fas fa-plus-circle" style={{ fontSize: '0.85rem' }}></i>
+                </IconButton>
+              </Box>
             )}
           </Box>
           
@@ -262,10 +287,7 @@ export default function Profile({ setCurrentView, user, onUpdate }) {
                       </>
                     )}
                   </>
-                ) : (
-                  <Typography sx={{ color: darkMode ? '#9ca3af' : '#6b7280' }}>
-                    No sobriety date set. Click the edit button to set your sobriety date.
-                  </Typography>
+                ) : null}
                 )}
               </Box>
             </>
