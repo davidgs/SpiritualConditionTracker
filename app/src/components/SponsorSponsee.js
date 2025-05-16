@@ -158,28 +158,10 @@ export default function SponsorSponsee({ user, onUpdate }) {
       >
         {sponsor ? (
           <Box>
-            <Box className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4">
+            <Box className="mb-4">
               <Typography variant="h6" sx={{ color: darkMode ? '#f3f4f6' : '#1f2937', fontWeight: 'bold' }}>
                 {sponsor.name} {sponsor.lastName || ''}
               </Typography>
-              
-              <Box className="flex gap-2 mt-2 md:mt-0">
-                <IconButton 
-                  onClick={handleEditSponsor}
-                  size="small"
-                  sx={{ color: darkMode ? '#93c5fd' : '#3b82f6' }}
-                >
-                  <i className="fa-solid fa-pen-to-square"></i>
-                </IconButton>
-                
-                <IconButton 
-                  onClick={handleDeleteSponsor}
-                  size="small"
-                  sx={{ color: darkMode ? '#f87171' : '#ef4444' }}
-                >
-                  <i className="fa-solid fa-trash"></i>
-                </IconButton>
-              </Box>
             </Box>
             
             <Box className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -189,40 +171,29 @@ export default function SponsorSponsee({ user, onUpdate }) {
                   Contact Information
                 </Typography>
                 
-                {sponsor.phone && (
-                  <Box className="flex items-center gap-2 mb-2">
-                    <i className="fa-solid fa-phone text-sm" style={{ color: darkMode ? '#9ca3af' : '#6b7280' }}></i>
-                    <Typography sx={{ color: darkMode ? '#d1d5db' : '#4b5563' }}>
+                <Box className="grid grid-cols-1 gap-2">
+                  {sponsor.phone && (
+                    <Typography sx={{ color: darkMode ? '#d1d5db' : '#4b5563', display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <i className="fa-solid fa-phone text-sm" style={{ color: darkMode ? '#9ca3af' : '#6b7280' }}></i>
                       {sponsor.phone}
                     </Typography>
-                  </Box>
-                )}
-                
-                {sponsor.email && (
-                  <Box className="flex items-center gap-2">
-                    <i className="fa-solid fa-envelope text-sm" style={{ color: darkMode ? '#9ca3af' : '#6b7280' }}></i>
-                    <Typography sx={{ color: darkMode ? '#d1d5db' : '#4b5563' }}>
+                  )}
+                  
+                  {sponsor.email && (
+                    <Typography sx={{ color: darkMode ? '#d1d5db' : '#4b5563', display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <i className="fa-solid fa-envelope text-sm" style={{ color: darkMode ? '#9ca3af' : '#6b7280' }}></i>
                       {sponsor.email}
                     </Typography>
-                  </Box>
-                )}
-              </Box>
-              
-              {/* Sobriety Information */}
-              {sponsor.sobrietyDate && (
-                <Box>
-                  <Typography variant="subtitle2" sx={{ color: darkMode ? '#9ca3af' : '#6b7280', mb: 1 }}>
-                    Sobriety Information
-                  </Typography>
+                  )}
                   
-                  <Box className="flex items-center gap-2">
-                    <i className="fa-solid fa-calendar-check text-sm" style={{ color: darkMode ? '#9ca3af' : '#6b7280' }}></i>
-                    <Typography sx={{ color: darkMode ? '#d1d5db' : '#4b5563' }}>
+                  {sponsor.sobrietyDate && (
+                    <Typography sx={{ color: darkMode ? '#d1d5db' : '#4b5563', display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <i className="fa-solid fa-calendar-check text-sm" style={{ color: darkMode ? '#9ca3af' : '#6b7280' }}></i>
                       {formatDateForDisplay(sponsor.sobrietyDate)}
                     </Typography>
-                  </Box>
+                  )}
                 </Box>
-              )}
+              </Box>
             </Box>
             
             {/* Notes Section */}
@@ -237,6 +208,25 @@ export default function SponsorSponsee({ user, onUpdate }) {
                 </Typography>
               </Box>
             )}
+            
+            {/* Action Buttons */}
+            <Box className="flex justify-end gap-2 mt-4 pt-3 border-t border-gray-200 dark:border-gray-700">
+              <IconButton 
+                onClick={handleEditSponsor}
+                size="small"
+                sx={{ color: darkMode ? '#93c5fd' : '#3b82f6' }}
+              >
+                <i className="fa-solid fa-pen-to-square"></i>
+              </IconButton>
+              
+              <IconButton 
+                onClick={handleDeleteSponsor}
+                size="small"
+                sx={{ color: darkMode ? '#f87171' : '#ef4444' }}
+              >
+                <i className="fa-solid fa-trash"></i>
+              </IconButton>
+            </Box>
           </Box>
         ) : (
           <Box className="text-center py-6">
@@ -295,12 +285,52 @@ export default function SponsorSponsee({ user, onUpdate }) {
               }}
             >
               <CardContent>
-                <Box className="flex justify-between items-start mb-3">
+                <Box className="mb-3">
                   <Typography variant="h6" sx={{ color: darkMode ? '#f3f4f6' : '#1f2937', fontWeight: 'bold' }}>
                     {sponsee.name} {sponsee.lastName || ''}
                   </Typography>
+                </Box>
+                
+                <Box className="grid grid-cols-1 gap-2">
+                  {/* Contact Information */}
+                  <Box className="grid grid-cols-1 gap-2">
+                    {sponsee.phone && (
+                      <Typography sx={{ color: darkMode ? '#d1d5db' : '#4b5563', fontSize: '0.875rem', display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <i className="fa-solid fa-phone text-sm" style={{ color: darkMode ? '#9ca3af' : '#6b7280' }}></i>
+                        {sponsee.phone}
+                      </Typography>
+                    )}
+                    
+                    {sponsee.email && (
+                      <Typography sx={{ color: darkMode ? '#d1d5db' : '#4b5563', fontSize: '0.875rem', display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <i className="fa-solid fa-envelope text-sm" style={{ color: darkMode ? '#9ca3af' : '#6b7280' }}></i>
+                        {sponsee.email}
+                      </Typography>
+                    )}
+                    
+                    {sponsee.sobrietyDate && (
+                      <Typography sx={{ color: darkMode ? '#d1d5db' : '#4b5563', fontSize: '0.875rem', display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <i className="fa-solid fa-calendar-check text-sm" style={{ color: darkMode ? '#9ca3af' : '#6b7280' }}></i>
+                        {formatDateForDisplay(sponsee.sobrietyDate)}
+                      </Typography>
+                    )}
+                  </Box>
                   
-                  <Box className="flex gap-1">
+                  {/* Notes (if present) */}
+                  {sponsee.notes && (
+                    <Box className="mt-2">
+                      <Divider sx={{ my: 1 }} />
+                      <Typography variant="caption" sx={{ color: darkMode ? '#9ca3af' : '#6b7280', display: 'block', mb: 0.5 }}>
+                        Notes
+                      </Typography>
+                      <Typography sx={{ color: darkMode ? '#d1d5db' : '#4b5563', fontSize: '0.875rem', whiteSpace: 'pre-wrap' }}>
+                        {sponsee.notes}
+                      </Typography>
+                    </Box>
+                  )}
+                  
+                  {/* Action Buttons */}
+                  <Box className="flex justify-end gap-2 mt-4 pt-3 border-t border-gray-200 dark:border-gray-700">
                     <IconButton 
                       onClick={() => handleEditSponsee(sponsee.id)}
                       size="small"
@@ -317,51 +347,6 @@ export default function SponsorSponsee({ user, onUpdate }) {
                       <i className="fa-solid fa-trash"></i>
                     </IconButton>
                   </Box>
-                </Box>
-                
-                <Box className="grid grid-cols-1 gap-2">
-                  {/* Contact Information */}
-                  <Box className="flex flex-col">
-                    {sponsee.phone && (
-                      <Box className="flex items-center gap-2 mb-1">
-                        <i className="fa-solid fa-phone text-sm" style={{ color: darkMode ? '#9ca3af' : '#6b7280' }}></i>
-                        <Typography sx={{ color: darkMode ? '#d1d5db' : '#4b5563', fontSize: '0.875rem' }}>
-                          {sponsee.phone}
-                        </Typography>
-                      </Box>
-                    )}
-                    
-                    {sponsee.email && (
-                      <Box className="flex items-center gap-2 mb-1">
-                        <i className="fa-solid fa-envelope text-sm" style={{ color: darkMode ? '#9ca3af' : '#6b7280' }}></i>
-                        <Typography sx={{ color: darkMode ? '#d1d5db' : '#4b5563', fontSize: '0.875rem' }}>
-                          {sponsee.email}
-                        </Typography>
-                      </Box>
-                    )}
-                    
-                    {sponsee.sobrietyDate && (
-                      <Box className="flex items-center gap-2">
-                        <i className="fa-solid fa-calendar-check text-sm" style={{ color: darkMode ? '#9ca3af' : '#6b7280' }}></i>
-                        <Typography sx={{ color: darkMode ? '#d1d5db' : '#4b5563', fontSize: '0.875rem' }}>
-                          {formatDateForDisplay(sponsee.sobrietyDate)}
-                        </Typography>
-                      </Box>
-                    )}
-                  </Box>
-                  
-                  {/* Notes (if present) */}
-                  {sponsee.notes && (
-                    <Box className="mt-2">
-                      <Divider sx={{ my: 1 }} />
-                      <Typography variant="caption" sx={{ color: darkMode ? '#9ca3af' : '#6b7280', display: 'block', mb: 0.5 }}>
-                        Notes
-                      </Typography>
-                      <Typography sx={{ color: darkMode ? '#d1d5db' : '#4b5563', fontSize: '0.875rem', whiteSpace: 'pre-wrap' }}>
-                        {sponsee.notes}
-                      </Typography>
-                    </Box>
-                  )}
                 </Box>
               </CardContent>
             </Card>

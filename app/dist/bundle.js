@@ -68228,15 +68228,74 @@ function SponsorSponsee(_ref) {
       boxShadow: darkMode ? '0 4px 12px rgba(0, 0, 0, 0.25)' : '0 4px 12px rgba(0, 0, 0, 0.1)'
     }
   }, sponsor ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_7__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_7__["default"], {
-    className: "flex flex-col md:flex-row justify-between items-start md:items-center mb-4"
+    className: "mb-4"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_5__["default"], {
     variant: "h6",
     sx: {
       color: darkMode ? '#f3f4f6' : '#1f2937',
       fontWeight: 'bold'
     }
-  }, sponsor.name, " ", sponsor.lastName || ''), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_7__["default"], {
-    className: "flex gap-2 mt-2 md:mt-0"
+  }, sponsor.name, " ", sponsor.lastName || '')), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_7__["default"], {
+    className: "grid grid-cols-1 md:grid-cols-2 gap-4"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_7__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_5__["default"], {
+    variant: "subtitle2",
+    sx: {
+      color: darkMode ? '#9ca3af' : '#6b7280',
+      mb: 1
+    }
+  }, "Contact Information"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_7__["default"], {
+    className: "grid grid-cols-1 gap-2"
+  }, sponsor.phone && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_5__["default"], {
+    sx: {
+      color: darkMode ? '#d1d5db' : '#4b5563',
+      display: 'flex',
+      alignItems: 'center',
+      gap: 1
+    }
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("i", {
+    className: "fa-solid fa-phone text-sm",
+    style: {
+      color: darkMode ? '#9ca3af' : '#6b7280'
+    }
+  }), sponsor.phone), sponsor.email && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_5__["default"], {
+    sx: {
+      color: darkMode ? '#d1d5db' : '#4b5563',
+      display: 'flex',
+      alignItems: 'center',
+      gap: 1
+    }
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("i", {
+    className: "fa-solid fa-envelope text-sm",
+    style: {
+      color: darkMode ? '#9ca3af' : '#6b7280'
+    }
+  }), sponsor.email), sponsor.sobrietyDate && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_5__["default"], {
+    sx: {
+      color: darkMode ? '#d1d5db' : '#4b5563',
+      display: 'flex',
+      alignItems: 'center',
+      gap: 1
+    }
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("i", {
+    className: "fa-solid fa-calendar-check text-sm",
+    style: {
+      color: darkMode ? '#9ca3af' : '#6b7280'
+    }
+  }), (0,_utils_dateUtils__WEBPACK_IMPORTED_MODULE_4__.formatDateForDisplay)(sponsor.sobrietyDate))))), sponsor.notes && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_7__["default"], {
+    className: "mt-4"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_5__["default"], {
+    variant: "subtitle2",
+    sx: {
+      color: darkMode ? '#9ca3af' : '#6b7280',
+      mb: 1
+    }
+  }, "Notes"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_5__["default"], {
+    sx: {
+      color: darkMode ? '#d1d5db' : '#4b5563',
+      whiteSpace: 'pre-wrap'
+    }
+  }, sponsor.notes)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_7__["default"], {
+    className: "flex justify-end gap-2 mt-4 pt-3 border-t border-gray-200 dark:border-gray-700"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_8__["default"], {
     onClick: handleEditSponsor,
     size: "small",
@@ -68253,67 +68312,7 @@ function SponsorSponsee(_ref) {
     }
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("i", {
     className: "fa-solid fa-trash"
-  })))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_7__["default"], {
-    className: "grid grid-cols-1 md:grid-cols-2 gap-4"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_7__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_5__["default"], {
-    variant: "subtitle2",
-    sx: {
-      color: darkMode ? '#9ca3af' : '#6b7280',
-      mb: 1
-    }
-  }, "Contact Information"), sponsor.phone && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_7__["default"], {
-    className: "flex items-center gap-2 mb-2"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("i", {
-    className: "fa-solid fa-phone text-sm",
-    style: {
-      color: darkMode ? '#9ca3af' : '#6b7280'
-    }
-  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_5__["default"], {
-    sx: {
-      color: darkMode ? '#d1d5db' : '#4b5563'
-    }
-  }, sponsor.phone)), sponsor.email && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_7__["default"], {
-    className: "flex items-center gap-2"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("i", {
-    className: "fa-solid fa-envelope text-sm",
-    style: {
-      color: darkMode ? '#9ca3af' : '#6b7280'
-    }
-  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_5__["default"], {
-    sx: {
-      color: darkMode ? '#d1d5db' : '#4b5563'
-    }
-  }, sponsor.email))), sponsor.sobrietyDate && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_7__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_5__["default"], {
-    variant: "subtitle2",
-    sx: {
-      color: darkMode ? '#9ca3af' : '#6b7280',
-      mb: 1
-    }
-  }, "Sobriety Information"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_7__["default"], {
-    className: "flex items-center gap-2"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("i", {
-    className: "fa-solid fa-calendar-check text-sm",
-    style: {
-      color: darkMode ? '#9ca3af' : '#6b7280'
-    }
-  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_5__["default"], {
-    sx: {
-      color: darkMode ? '#d1d5db' : '#4b5563'
-    }
-  }, (0,_utils_dateUtils__WEBPACK_IMPORTED_MODULE_4__.formatDateForDisplay)(sponsor.sobrietyDate))))), sponsor.notes && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_7__["default"], {
-    className: "mt-4"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_5__["default"], {
-    variant: "subtitle2",
-    sx: {
-      color: darkMode ? '#9ca3af' : '#6b7280',
-      mb: 1
-    }
-  }, "Notes"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_5__["default"], {
-    sx: {
-      color: darkMode ? '#d1d5db' : '#4b5563',
-      whiteSpace: 'pre-wrap'
-    }
-  }, sponsor.notes))) : /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_7__["default"], {
+  })))) : /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_7__["default"], {
     className: "text-center py-6"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_5__["default"], {
     variant: "body1",
@@ -68362,15 +68361,77 @@ function SponsorSponsee(_ref) {
         borderRadius: '0.5rem'
       }
     }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_11__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_7__["default"], {
-      className: "flex justify-between items-start mb-3"
+      className: "mb-3"
     }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_5__["default"], {
       variant: "h6",
       sx: {
         color: darkMode ? '#f3f4f6' : '#1f2937',
         fontWeight: 'bold'
       }
-    }, sponsee.name, " ", sponsee.lastName || ''), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_7__["default"], {
-      className: "flex gap-1"
+    }, sponsee.name, " ", sponsee.lastName || '')), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_7__["default"], {
+      className: "grid grid-cols-1 gap-2"
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_7__["default"], {
+      className: "grid grid-cols-1 gap-2"
+    }, sponsee.phone && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_5__["default"], {
+      sx: {
+        color: darkMode ? '#d1d5db' : '#4b5563',
+        fontSize: '0.875rem',
+        display: 'flex',
+        alignItems: 'center',
+        gap: 1
+      }
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("i", {
+      className: "fa-solid fa-phone text-sm",
+      style: {
+        color: darkMode ? '#9ca3af' : '#6b7280'
+      }
+    }), sponsee.phone), sponsee.email && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_5__["default"], {
+      sx: {
+        color: darkMode ? '#d1d5db' : '#4b5563',
+        fontSize: '0.875rem',
+        display: 'flex',
+        alignItems: 'center',
+        gap: 1
+      }
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("i", {
+      className: "fa-solid fa-envelope text-sm",
+      style: {
+        color: darkMode ? '#9ca3af' : '#6b7280'
+      }
+    }), sponsee.email), sponsee.sobrietyDate && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_5__["default"], {
+      sx: {
+        color: darkMode ? '#d1d5db' : '#4b5563',
+        fontSize: '0.875rem',
+        display: 'flex',
+        alignItems: 'center',
+        gap: 1
+      }
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("i", {
+      className: "fa-solid fa-calendar-check text-sm",
+      style: {
+        color: darkMode ? '#9ca3af' : '#6b7280'
+      }
+    }), (0,_utils_dateUtils__WEBPACK_IMPORTED_MODULE_4__.formatDateForDisplay)(sponsee.sobrietyDate))), sponsee.notes && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_7__["default"], {
+      className: "mt-2"
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_12__["default"], {
+      sx: {
+        my: 1
+      }
+    }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_5__["default"], {
+      variant: "caption",
+      sx: {
+        color: darkMode ? '#9ca3af' : '#6b7280',
+        display: 'block',
+        mb: 0.5
+      }
+    }, "Notes"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_5__["default"], {
+      sx: {
+        color: darkMode ? '#d1d5db' : '#4b5563',
+        fontSize: '0.875rem',
+        whiteSpace: 'pre-wrap'
+      }
+    }, sponsee.notes)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_7__["default"], {
+      className: "flex justify-end gap-2 mt-4 pt-3 border-t border-gray-200 dark:border-gray-700"
     }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_8__["default"], {
       onClick: function onClick() {
         return handleEditSponsee(sponsee.id);
@@ -68391,66 +68452,7 @@ function SponsorSponsee(_ref) {
       }
     }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("i", {
       className: "fa-solid fa-trash"
-    })))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_7__["default"], {
-      className: "grid grid-cols-1 gap-2"
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_7__["default"], {
-      className: "flex flex-col"
-    }, sponsee.phone && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_7__["default"], {
-      className: "flex items-center gap-2 mb-1"
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("i", {
-      className: "fa-solid fa-phone text-sm",
-      style: {
-        color: darkMode ? '#9ca3af' : '#6b7280'
-      }
-    }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_5__["default"], {
-      sx: {
-        color: darkMode ? '#d1d5db' : '#4b5563',
-        fontSize: '0.875rem'
-      }
-    }, sponsee.phone)), sponsee.email && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_7__["default"], {
-      className: "flex items-center gap-2 mb-1"
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("i", {
-      className: "fa-solid fa-envelope text-sm",
-      style: {
-        color: darkMode ? '#9ca3af' : '#6b7280'
-      }
-    }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_5__["default"], {
-      sx: {
-        color: darkMode ? '#d1d5db' : '#4b5563',
-        fontSize: '0.875rem'
-      }
-    }, sponsee.email)), sponsee.sobrietyDate && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_7__["default"], {
-      className: "flex items-center gap-2"
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("i", {
-      className: "fa-solid fa-calendar-check text-sm",
-      style: {
-        color: darkMode ? '#9ca3af' : '#6b7280'
-      }
-    }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_5__["default"], {
-      sx: {
-        color: darkMode ? '#d1d5db' : '#4b5563',
-        fontSize: '0.875rem'
-      }
-    }, (0,_utils_dateUtils__WEBPACK_IMPORTED_MODULE_4__.formatDateForDisplay)(sponsee.sobrietyDate)))), sponsee.notes && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_7__["default"], {
-      className: "mt-2"
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_12__["default"], {
-      sx: {
-        my: 1
-      }
-    }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_5__["default"], {
-      variant: "caption",
-      sx: {
-        color: darkMode ? '#9ca3af' : '#6b7280',
-        display: 'block',
-        mb: 0.5
-      }
-    }, "Notes"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_5__["default"], {
-      sx: {
-        color: darkMode ? '#d1d5db' : '#4b5563',
-        fontSize: '0.875rem',
-        whiteSpace: 'pre-wrap'
-      }
-    }, sponsee.notes)))));
+    }))))));
   })) : /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_6__["default"], {
     elevation: 0,
     className: "p-6 rounded-lg text-center",
