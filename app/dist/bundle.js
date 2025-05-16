@@ -67844,6 +67844,8 @@ function formatDateForDisplay(dateString) {
  */
 function formatTimeByPreference(time) {
   var use24HourFormat = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+  console.log("Formatting time: \"".concat(time, "\" with 24-hour format: ").concat(use24HourFormat));
+
   // Handle string input in format "HH:MM" or "H:MM AM/PM"
   if (typeof time === 'string') {
     // Check if time is already in 12-hour format with AM/PM
@@ -67862,8 +67864,11 @@ function formatTimeByPreference(time) {
           minutes = _timePart$split$map2[1];
         if (period === 'PM' && hours < 12) hours += 12;
         if (period === 'AM' && hours === 12) hours = 0;
-        return "".concat(hours.toString().padStart(2, '0'), ":").concat(minutes.toString().padStart(2, '0'));
+        var result = "".concat(hours.toString().padStart(2, '0'), ":").concat(minutes.toString().padStart(2, '0'));
+        console.log("Converted 12-hour to 24-hour: ".concat(time, " -> ").concat(result));
+        return result;
       }
+      console.log("Keeping 12-hour format: ".concat(time));
       return time; // Already in 12-hour format
     }
 
@@ -67879,8 +67884,11 @@ function formatTimeByPreference(time) {
         // Convert 24-hour to 12-hour format
         var _period = _hours >= 12 ? 'PM' : 'AM';
         var hours12 = _hours % 12 || 12;
-        return "".concat(hours12, ":").concat(_minutes.toString().padStart(2, '0'), " ").concat(_period);
+        var _result = "".concat(hours12, ":").concat(_minutes.toString().padStart(2, '0'), " ").concat(_period);
+        console.log("Converted 24-hour to 12-hour: ".concat(time, " -> ").concat(_result));
+        return _result;
       }
+      console.log("Keeping 24-hour format: ".concat(time));
       return time; // Already in 24-hour format
     }
   }
@@ -67888,21 +67896,26 @@ function formatTimeByPreference(time) {
   // Handle Date object
   if (time instanceof Date) {
     if (use24HourFormat) {
-      return time.toLocaleTimeString([], {
+      var _result2 = time.toLocaleTimeString([], {
         hour: '2-digit',
         minute: '2-digit',
         hour12: false
       });
+      console.log("Formatted Date to 24-hour: ".concat(time, " -> ").concat(_result2));
+      return _result2;
     } else {
-      return time.toLocaleTimeString([], {
+      var _result3 = time.toLocaleTimeString([], {
         hour: 'numeric',
         minute: '2-digit',
         hour12: true
       });
+      console.log("Formatted Date to 12-hour: ".concat(time, " -> ").concat(_result3));
+      return _result3;
     }
   }
 
   // Return original value if not in a recognized format
+  console.log("Unrecognized time format, returning original: ".concat(time));
   return time;
 }
 

@@ -48,6 +48,8 @@ export function formatDateForDisplay(dateString) {
  * @returns {string} Formatted time string
  */
 export function formatTimeByPreference(time, use24HourFormat = false) {
+  console.log(`Formatting time: "${time}" with 24-hour format: ${use24HourFormat}`);
+  
   // Handle string input in format "HH:MM" or "H:MM AM/PM"
   if (typeof time === 'string') {
     // Check if time is already in 12-hour format with AM/PM
@@ -60,8 +62,11 @@ export function formatTimeByPreference(time, use24HourFormat = false) {
         if (period === 'PM' && hours < 12) hours += 12;
         if (period === 'AM' && hours === 12) hours = 0;
         
-        return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+        const result = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+        console.log(`Converted 12-hour to 24-hour: ${time} -> ${result}`);
+        return result;
       }
+      console.log(`Keeping 12-hour format: ${time}`);
       return time; // Already in 12-hour format
     }
     
@@ -73,8 +78,11 @@ export function formatTimeByPreference(time, use24HourFormat = false) {
         // Convert 24-hour to 12-hour format
         const period = hours >= 12 ? 'PM' : 'AM';
         const hours12 = hours % 12 || 12;
-        return `${hours12}:${minutes.toString().padStart(2, '0')} ${period}`;
+        const result = `${hours12}:${minutes.toString().padStart(2, '0')} ${period}`;
+        console.log(`Converted 24-hour to 12-hour: ${time} -> ${result}`);
+        return result;
       }
+      console.log(`Keeping 24-hour format: ${time}`);
       return time; // Already in 24-hour format
     }
   }
@@ -82,13 +90,18 @@ export function formatTimeByPreference(time, use24HourFormat = false) {
   // Handle Date object
   if (time instanceof Date) {
     if (use24HourFormat) {
-      return time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
+      const result = time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
+      console.log(`Formatted Date to 24-hour: ${time} -> ${result}`);
+      return result;
     } else {
-      return time.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', hour12: true });
+      const result = time.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', hour12: true });
+      console.log(`Formatted Date to 12-hour: ${time} -> ${result}`);
+      return result;
     }
   }
   
   // Return original value if not in a recognized format
+  console.log(`Unrecognized time format, returning original: ${time}`);
   return time;
 }
 
