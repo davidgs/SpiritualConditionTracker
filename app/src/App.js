@@ -34,15 +34,21 @@ function App() {
   // Initialize the database and load data
   async function initDatabaseAndLoadData() {
     try {
-      // Import the database operations
-      const { initDatabase, setupGlobalDbObject } = await import('./utils/sqliteDatabase');
-      const { hasLocalStorageData, migrateFromLocalStorage } = await import('./utils/databaseMigration');
+      // Import the database operations - use capacitorStorage for better native app support
+      const { 
+        initDatabase, 
+        setupGlobalDbObject,
+        hasLocalStorageData,
+        migrateFromLocalStorage 
+      } = await import('./utils/capacitorStorage');
+      
+      console.log("Initializing database for native app with Capacitor...");
       
       // Initialize the database
       const success = await initDatabase();
       
       if (success) {
-        console.log("SQLite database initialized successfully");
+        console.log("SQLite database initialized successfully for Capacitor");
         
         // Setup global db object for compatibility
         const dbObj = setupGlobalDbObject();
@@ -53,7 +59,7 @@ function App() {
           await migrateFromLocalStorage(dbObj);
         }
       } else {
-        console.warn("Using localStorage fallback for data storage");
+        console.warn("Using fallback storage method - data persistence may be limited");
       }
       
       // Now load the data

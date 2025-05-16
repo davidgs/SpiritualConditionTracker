@@ -1,5 +1,6 @@
 import React, { useContext } from 'react';
 import { ThemeContext } from '../contexts/ThemeContext';
+import SafeAreaHeader from './SafeAreaHeader';
 
 function Header({ title, menuOpen, setMenuOpen, isMobile }) {
   const { theme } = useContext(ThemeContext);
@@ -11,8 +12,8 @@ function Header({ title, menuOpen, setMenuOpen, isMobile }) {
   const headerTextColor = darkMode ? '#f9fafb' : '#1f2937';
   
   return (
-    <header 
-      style={{
+    <SafeAreaHeader
+      sx={{
         position: 'relative', // Not sticky anymore
         zIndex: 20,
         backgroundColor: headerBackgroundColor,
@@ -122,7 +123,7 @@ function Header({ title, menuOpen, setMenuOpen, isMobile }) {
           {menuOpen ? '✕' : '☰'}
         </button>
       )}
-    </header>
+    </SafeAreaHeader>
   );
 }
 

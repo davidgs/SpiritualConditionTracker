@@ -61594,62 +61594,61 @@ function App() {
   } // Load data from the database
   function _initDatabaseAndLoadData() {
     _initDatabaseAndLoadData = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
-      var _yield$import, initDatabase, setupGlobalDbObject, _yield$import2, hasLocalStorageData, migrateFromLocalStorage, success, dbObj;
+      var _yield$import, initDatabase, setupGlobalDbObject, hasLocalStorageData, migrateFromLocalStorage, success, dbObj;
       return _regeneratorRuntime().wrap(function _callee$(_context) {
         while (1) switch (_context.prev = _context.next) {
           case 0:
             _context.prev = 0;
             _context.next = 3;
-            return __webpack_require__.e(/*! import() */ "src_utils_sqliteDatabase_js").then(__webpack_require__.bind(__webpack_require__, /*! ./utils/sqliteDatabase */ "./src/utils/sqliteDatabase.js"));
+            return __webpack_require__.e(/*! import() */ "src_utils_capacitorStorage_js").then(__webpack_require__.bind(__webpack_require__, /*! ./utils/capacitorStorage */ "./src/utils/capacitorStorage.js"));
           case 3:
             _yield$import = _context.sent;
             initDatabase = _yield$import.initDatabase;
             setupGlobalDbObject = _yield$import.setupGlobalDbObject;
-            _context.next = 8;
-            return __webpack_require__.e(/*! import() */ "src_utils_databaseMigration_js").then(__webpack_require__.bind(__webpack_require__, /*! ./utils/databaseMigration */ "./src/utils/databaseMigration.js"));
-          case 8:
-            _yield$import2 = _context.sent;
-            hasLocalStorageData = _yield$import2.hasLocalStorageData;
-            migrateFromLocalStorage = _yield$import2.migrateFromLocalStorage;
-            _context.next = 13;
+            hasLocalStorageData = _yield$import.hasLocalStorageData;
+            migrateFromLocalStorage = _yield$import.migrateFromLocalStorage;
+            console.log("Initializing database for native app with Capacitor...");
+
+            // Initialize the database
+            _context.next = 11;
             return initDatabase();
-          case 13:
+          case 11:
             success = _context.sent;
             if (!success) {
-              _context.next = 23;
+              _context.next = 21;
               break;
             }
-            console.log("SQLite database initialized successfully");
+            console.log("SQLite database initialized successfully for Capacitor");
 
             // Setup global db object for compatibility
             dbObj = setupGlobalDbObject(); // Check if we need to migrate data from localStorage
             if (!hasLocalStorageData()) {
-              _context.next = 21;
+              _context.next = 19;
               break;
             }
             console.log("Found existing data in localStorage, migrating to SQLite...");
-            _context.next = 21;
+            _context.next = 19;
             return migrateFromLocalStorage(dbObj);
+          case 19:
+            _context.next = 22;
+            break;
           case 21:
+            console.warn("Using fallback storage method - data persistence may be limited");
+          case 22:
             _context.next = 24;
-            break;
-          case 23:
-            console.warn("Using localStorage fallback for data storage");
-          case 24:
-            _context.next = 26;
             return loadData();
-          case 26:
-            _context.next = 31;
+          case 24:
+            _context.next = 29;
             break;
-          case 28:
-            _context.prev = 28;
+          case 26:
+            _context.prev = 26;
             _context.t0 = _context["catch"](0);
             console.error("Database initialization error:", _context.t0);
-          case 31:
+          case 29:
           case "end":
             return _context.stop();
         }
-      }, _callee, null, [[0, 28]]);
+      }, _callee, null, [[0, 26]]);
     }));
     return _initDatabaseAndLoadData.apply(this, arguments);
   }
@@ -62947,6 +62946,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _contexts_ThemeContext__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../contexts/ThemeContext */ "./src/contexts/ThemeContext.js");
+/* harmony import */ var _SafeAreaHeader__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./SafeAreaHeader */ "./src/components/SafeAreaHeader.js");
+
 
 
 function Header(_ref) {
@@ -62962,8 +62963,8 @@ function Header(_ref) {
   var headerBackgroundColor = darkMode ? '#1f2937' : '#f3f4f6';
   // Header text color
   var headerTextColor = darkMode ? '#f9fafb' : '#1f2937';
-  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("header", {
-    style: {
+  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_SafeAreaHeader__WEBPACK_IMPORTED_MODULE_2__["default"], {
+    sx: {
       position: 'relative',
       // Not sticky anymore
       zIndex: 20,
@@ -67237,6 +67238,69 @@ function Profile(_ref) {
     }
   }, homeGroups && homeGroups.length > 0 ? homeGroups.join(', ') : "Not set"))))));
 }
+
+/***/ }),
+
+/***/ "./src/components/SafeAreaHeader.js":
+/*!******************************************!*\
+  !*** ./src/components/SafeAreaHeader.js ***!
+  \******************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _mui_material__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @mui/material */ "./node_modules/@mui/material/esm/styles/useTheme.js");
+/* harmony import */ var _mui_material__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @mui/material */ "./node_modules/@mui/material/esm/Box/Box.js");
+Object(function webpackMissingModule() { var e = new Error("Cannot find module '@ionic/react'"); e.code = 'MODULE_NOT_FOUND'; throw e; }());
+function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+var _excluded = ["children"];
+function _extends() { return _extends = Object.assign ? Object.assign.bind() : function (n) { for (var e = 1; e < arguments.length; e++) { var t = arguments[e]; for (var r in t) ({}).hasOwnProperty.call(t, r) && (n[r] = t[r]); } return n; }, _extends.apply(null, arguments); }
+function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
+function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
+function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
+function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+function _objectWithoutProperties(e, t) { if (null == e) return {}; var o, r, i = _objectWithoutPropertiesLoose(e, t); if (Object.getOwnPropertySymbols) { var n = Object.getOwnPropertySymbols(e); for (r = 0; r < n.length; r++) o = n[r], -1 === t.indexOf(o) && {}.propertyIsEnumerable.call(e, o) && (i[o] = e[o]); } return i; }
+function _objectWithoutPropertiesLoose(r, e) { if (null == r) return {}; var t = {}; for (var n in r) if ({}.hasOwnProperty.call(r, n)) { if (-1 !== e.indexOf(n)) continue; t[n] = r[n]; } return t; }
+
+
+
+
+/**
+ * SafeAreaHeader component that adds proper spacing for native iOS and Android devices
+ * to prevent content from being hidden behind notches, status bars, and camera cutouts
+ */
+var SafeAreaHeader = function SafeAreaHeader(_ref) {
+  var children = _ref.children,
+    props = _objectWithoutProperties(_ref, _excluded);
+  var theme = (0,_mui_material__WEBPACK_IMPORTED_MODULE_2__["default"])();
+
+  // Determine if we're on iOS (for different spacing needs)
+  var isIOS = Object(function webpackMissingModule() { var e = new Error("Cannot find module '@ionic/react'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())('ios');
+
+  // Dynamic top padding based on platform
+  // For iOS, we add more top padding (44px) to account for the notch and status bar
+  // For Android, we use a smaller value (24px) for the status bar
+  var topPadding = isIOS ? '44px' : '24px';
+  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_3__["default"], _extends({
+    sx: _objectSpread({
+      width: '100%',
+      position: 'sticky',
+      top: 0,
+      zIndex: theme.zIndex.appBar,
+      paddingTop: topPadding,
+      backgroundColor: theme.palette.background.paper,
+      borderBottom: "1px solid ".concat(theme.palette.divider),
+      transition: 'padding-top 0.3s ease-in-out'
+    }, props.sx)
+  }, props), children);
+};
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (SafeAreaHeader);
 
 /***/ }),
 
