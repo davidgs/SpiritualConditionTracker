@@ -1,5 +1,35 @@
 import React, { useState, useEffect } from 'react';
 
+// Time Picker Component
+const TimePicker = ({ value, hasTime, day, onChange }) => {
+  return (
+    <select
+      className="w-full p-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200"
+      value={value || "none"}
+      onChange={onChange}
+    >
+      <option value="none">{hasTime ? "Remove" : "None"}</option>
+      <option value="06:00">6:00 AM</option>
+      <option value="07:00">7:00 AM</option>
+      <option value="08:00">8:00 AM</option>
+      <option value="09:00">9:00 AM</option>
+      <option value="10:00">10:00 AM</option>
+      <option value="11:00">11:00 AM</option>
+      <option value="12:00">12:00 PM</option>
+      <option value="13:00">1:00 PM</option>
+      <option value="14:00">2:00 PM</option>
+      <option value="15:00">3:00 PM</option>
+      <option value="16:00">4:00 PM</option>
+      <option value="17:00">5:00 PM</option>
+      <option value="18:00">6:00 PM</option>
+      <option value="19:00">7:00 PM</option>
+      <option value="20:00">8:00 PM</option>
+      <option value="21:00">9:00 PM</option>
+      <option value="22:00">10:00 PM</option>
+    </select>
+  );
+};
+
 export default function MeetingForm({ 
   meeting = null, 
   onSave, 
@@ -500,108 +530,71 @@ export default function MeetingForm({
               Meeting Schedule
             </label>
             
-            {/* Vertical day-time list layout */}
-            <div className="mb-4 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
-              {/* Day rows with time selectors */}
-              {[
-                { key: 'sunday', label: 'Sun' },
-                { key: 'monday', label: 'Mon' },
-                { key: 'tuesday', label: 'Tue' },
-                { key: 'wednesday', label: 'Wed' },
-                { key: 'thursday', label: 'Thu' },
-                { key: 'friday', label: 'Fri' },
-                { key: 'saturday', label: 'Sat' }
-              ].map((dayInfo, index) => {
-                // Find meeting items for this day
-                const dayItems = meetingSchedule.filter(item => item.day === dayInfo.key);
-                const hasTime = dayItems.length > 0;
-                
-                // Get the time for display if available
-                const timeValue = hasTime ? dayItems[0].time : '';
-                
-                return (
-                  <div 
-                    key={dayInfo.key}
-                    className={`flex items-center ${
-                      index < 6 ? 'border-b border-gray-200 dark:border-gray-700' : ''
-                    } ${
-                      hasTime 
-                        ? 'bg-blue-50 dark:bg-blue-900/10' 
-                        : 'bg-white dark:bg-gray-800'
-                    }`}
-                  >
-                    {/* Day name */}
-                    <div className="w-20 py-3 px-4 font-medium text-lg text-gray-800 dark:text-gray-200 border-r border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-700 flex justify-center items-center">
-                      {dayInfo.label}
-                    </div>
-                    
-                    {/* Time selector or Add button */}
-                    <div className="flex-grow p-3">
-                      {hasTime ? (
-                        <div className="flex items-center">
-                          <select
-                            className="p-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200"
-                            value={timeValue}
-                            onChange={(e) => {
-                              // Update existing time
-                              if (e.target.value) {
-                                updateScheduleItem(meetingSchedule.findIndex(item => item.day === dayInfo.key), 'time', e.target.value);
-                              } else {
-                                // If user selects empty option, remove this day's time
-                                const itemIndex = meetingSchedule.findIndex(item => item.day === dayInfo.key);
-                                if (itemIndex !== -1) {
-                                  removeScheduleItem(itemIndex);
-                                }
-                              }
-                            }}
-                          >
-                            <option value="06:00">6:00 AM</option>
-                            <option value="07:00">7:00 AM</option>
-                            <option value="08:00">8:00 AM</option>
-                            <option value="09:00">9:00 AM</option>
-                            <option value="10:00">10:00 AM</option>
-                            <option value="11:00">11:00 AM</option>
-                            <option value="12:00">12:00 PM</option>
-                            <option value="13:00">1:00 PM</option>
-                            <option value="14:00">2:00 PM</option>
-                            <option value="15:00">3:00 PM</option>
-                            <option value="16:00">4:00 PM</option>
-                            <option value="17:00">5:00 PM</option>
-                            <option value="18:00">6:00 PM</option>
-                            <option value="19:00">7:00 PM</option>
-                            <option value="20:00">8:00 PM</option>
-                            <option value="21:00">9:00 PM</option>
-                            <option value="22:00">10:00 PM</option>
-                          </select>
-                          
-                          <button
-                            type="button"
-                            className="ml-3 p-2 text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
-                            onClick={() => {
-                              const itemIndex = meetingSchedule.findIndex(item => item.day === dayInfo.key);
-                              if (itemIndex !== -1) {
-                                removeScheduleItem(itemIndex);
-                              }
-                            }}
-                            title="Remove time"
-                          >
-                            <i className="fa-solid fa-times"></i>
-                          </button>
-                        </div>
-                      ) : (
-                        <button 
-                          type="button"
-                          className="flex items-center text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300"
-                          onClick={() => addScheduleItem(dayInfo.key, '18:00')}
-                        >
-                          <i className="fa-solid fa-plus mr-2"></i>
-                          
-                        </button>
-                      )}
-                    </div>
+            {/* Calendar-style layout */}
+            <div className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden shadow-sm">
+              {/* Day headers row */}
+              <div className="grid grid-cols-7 bg-gray-700 dark:bg-gray-800 text-white border-b border-gray-600 dark:border-gray-700">
+                {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
+                  <div key={day} className="py-2 px-1 text-center font-medium">
+                    {day}
                   </div>
-                );
-              })}
+                ))}
+              </div>
+              
+              {/* Day cells with time selectors */}
+              <div className="grid grid-cols-7 bg-white dark:bg-gray-800">
+                {['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'].map((day, index) => {
+                  // Find meeting items for this day
+                  const dayItems = meetingSchedule.filter(item => item.day === day);
+                  const hasTime = dayItems.length > 0;
+                  
+                  // Get the time for display if available
+                  const timeValue = hasTime ? dayItems[0].time : '';
+                  
+                  return (
+                    <div 
+                      key={day}
+                      className={`p-2 ${
+                        index < 6 ? 'border-r' : ''
+                      } ${
+                        hasTime ? 'bg-blue-50 dark:bg-blue-900/10' : ''
+                      } border-gray-200 dark:border-gray-700`}
+                    >
+                      <TimePicker
+                        value={timeValue}
+                        hasTime={hasTime}
+                        day={day}
+                        onChange={(e) => {
+                          if (e.target.value === "none") {
+                            // Remove time for this day
+                            const itemIndex = meetingSchedule.findIndex(item => item.day === day);
+                            if (itemIndex !== -1) {
+                              removeScheduleItem(itemIndex);
+                            }
+                          } else if (hasTime) {
+                            // Update existing time
+                            updateScheduleItem(
+                              meetingSchedule.findIndex(item => item.day === day), 
+                              'time', 
+                              e.target.value
+                            );
+                          } else {
+                            // Add new time
+                            addScheduleItem(day, e.target.value);
+                          }
+                        }}
+                      />
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+            
+            <div className="mt-3 p-3 bg-gray-50 dark:bg-gray-700/30 border border-gray-200 dark:border-gray-700 rounded">
+              <p className="text-gray-700 dark:text-gray-300 text-sm">
+                <i className="fa-solid fa-circle-info text-blue-500 dark:text-blue-400 mr-2"></i>
+                Select meeting times for each day. Choose "None" to remove a time.
+              </p>
             </div>
           </div>
           

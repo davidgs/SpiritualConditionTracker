@@ -1,0 +1,104 @@
+<div class="container">
+  <header>
+    <h4 class="m-1 text-left">Meeting Schedule</h4>
+    <div class="row d-none d-sm-flex p-1 bg-dark text-white text-center">
+      <h5 class="col-sm p-1 text-center">Sun</h5>
+      <h5 class="col-sm p-1 text-center">Mon</h5>
+      <h5 class="col-sm p-1 text-center">Tues</h5>
+      <h5 class="col-sm p-1 text-center">Wed</h5>
+      <h5 class="col-sm p-1 text-center">Thu</h5>
+      <h5 class="col-sm p-1 text-center">Fri</h5>
+      <h5 class="col-sm p-1 text-center">Sat</h5>
+    </div>
+  </header>
+  <div class="row border border-right-0 border-bottom-0">
+    <div class="day col-xs p-2 border border-left-0 border-top-0 text-truncate ">
+      <select
+      className="p-1 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200"
+    >
+      <option value="00:00">None</option>
+      <option value="06:00">6:00 AM</option>
+      <option value="07:00">7:00 AM</option>
+      <option value="08:00">8:00 AM</option>
+      <option value="09:00">9:00 AM</option>
+      <option value="10:00">10:00 AM</option>
+      <option value="11:00">11:00 AM</option>
+      <option value="12:00">12:00 PM</option>
+      <option value="13:00">1:00 PM</option>
+      <option value="14:00">2:00 PM</option>
+      <option value="15:00">3:00 PM</option>
+      <option value="16:00">4:00 PM</option>
+      <option value="17:00">5:00 PM</option>
+      <option value="18:00">6:00 PM</option>
+      <option value="19:00">7:00 PM</option>
+      <option value="20:00">8:00 PM</option>
+      <option value="21:00">9:00 PM</option>
+      <option value="22:00">10:00 PM</option>
+    </select>
+      
+    </div>
+    <div class="day col-sm p-2 border border-left-0 border-top-0 text-truncate ">
+      <h5 class="row align-items-center">
+      </h5>
+      <select
+      className="p-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200"
+      value={timeValue}
+      onChange={(e) => {
+        // Update existing time
+        if (e.target.value) {
+          setTimeValue(e.target.value);
+        }
+      }}
+    >
+      <option value="00:00">None</option>
+      <option value="06:00">6:00 AM</option>
+      <option value="07:00">7:00 AM</option>
+      <option value="08:00">8:00 AM</option>
+      <option value="09:00">9:00 AM</option>
+      <option value="10:00">10:00 AM</option>
+      <option value="11:00">11:00 AM</option>
+      <option value="12:00">12:00 PM</option>
+      <option value="13:00">1:00 PM</option>
+      <option value="14:00">2:00 PM</option>
+      <option value="15:00">3:00 PM</option>
+      <option value="16:00">4:00 PM</option>
+      <option value="17:00">5:00 PM</option>
+      <option value="18:00">6:00 PM</option>
+      <option value="19:00">7:00 PM</option>
+      <option value="20:00">8:00 PM</option>
+      <option value="21:00">9:00 PM</option>
+      <option value="22:00">10:00 PM</option>
+    </select>
+    </div>
+    <div class="day col-sm p-2 border border-left-0 border-top-0 text-truncate ">
+      <h5 class="row align-items-center">
+        <small class="col d-sm-none text-center text-muted">Tuesday</small>
+        <span class="col-1"></span>
+      </h5>
+      </div>
+    <div class="day col-sm p-2 border border-left-0 border-top-0 text-truncate ">
+      <h5 class="row align-items-center">
+        <small class="col d-sm-none text-center text-muted">Wednesday</small>
+        <span class="col-1"></span>
+      </h5>
+      </div>
+    <div class="day col-sm p-2 border border-left-0 border-top-0 text-truncate ">
+      <h5 class="row align-items-center">
+        <small class="col d-sm-none text-center text-muted">Thursday</small>
+        <span class="col-1"></span>
+      </h5>
+</div>
+    <div class="day col-sm p-2 border border-left-0 border-top-0 text-truncate ">
+      <h5 class="row align-items-center">
+        <small class="col d-sm-none text-center text-muted">Friday</small>
+        <span class="col-1"></span>
+      </h5>
+   </div>
+    <div class="day col-sm p-2 border border-left-0 border-top-0 text-truncate ">
+      <h5 class="row align-items-center">
+        <small class="col d-sm-none text-center text-muted">Saturday</small>
+        <span class="col-1"></span>
+      </h5>
+   </div>
+  </div>
+</div>
