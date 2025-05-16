@@ -59614,14 +59614,18 @@ function Dashboard(_ref) {
     _useState6 = _slicedToArray(_useState5, 2),
     activityDaysFilter = _useState6[0],
     setActivityDaysFilter = _useState6[1];
-  var _useState7 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(((_window$db = window.db) === null || _window$db === void 0 ? void 0 : _window$db.getPreference('scoreTimeframe')) || 30),
+  var _useState7 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)('all'),
     _useState8 = _slicedToArray(_useState7, 2),
-    scoreTimeframe = _useState8[0],
-    setScoreTimeframe = _useState8[1];
-  var _useState9 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(spiritualFitness),
+    activityTypeFilter = _useState8[0],
+    setActivityTypeFilter = _useState8[1];
+  var _useState9 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(((_window$db = window.db) === null || _window$db === void 0 ? void 0 : _window$db.getPreference('scoreTimeframe')) || 30),
     _useState0 = _slicedToArray(_useState9, 2),
-    currentScore = _useState0[0],
-    setCurrentScore = _useState0[1];
+    scoreTimeframe = _useState0[0],
+    setScoreTimeframe = _useState0[1];
+  var _useState1 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(spiritualFitness),
+    _useState10 = _slicedToArray(_useState1, 2),
+    currentScore = _useState10[0],
+    setCurrentScore = _useState10[1];
   var modalRef = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)(null);
   var buttonRef = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)(null);
 
@@ -59919,46 +59923,74 @@ function Dashboard(_ref) {
       fontSize: '0.7rem',
       cursor: 'pointer'
     },
+    defaultValue: "all",
+    onChange: function onChange(e) {
+      var filter = e.target.value;
+      setActivityTypeFilter(filter);
+    }
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("option", {
+    value: "all"
+  }, "All types"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("option", {
+    value: "prayer"
+  }, "Prayer"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("option", {
+    value: "meditation"
+  }, "Meditation"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("option", {
+    value: "literature"
+  }, "Reading"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("option", {
+    value: "meeting"
+  }, "Meetings"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("option", {
+    value: "call"
+  }, "Calls"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("option", {
+    value: "service"
+  }, "Service")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("select", {
+    style: {
+      backgroundColor: 'transparent',
+      border: darkMode ? '1px solid #4b5563' : '1px solid #d1d5db',
+      borderRadius: '0.25rem',
+      color: darkMode ? '#d1d5db' : '#374151',
+      padding: '0.15rem 0.5rem',
+      fontSize: '0.7rem',
+      cursor: 'pointer'
+    },
     defaultValue: "7",
     onChange: function onChange(e) {
       var days = parseInt(e.target.value, 10);
-      // Update the maxDaysAgo property in ActivityList
-      // This is a placeholder; we'll add actual implementation
+      setActivityDaysFilter(days);
+      // This will update when we connect the state to ActivityList
     }
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("option", {
     value: "7"
-  }, "Last 7 days"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("option", {
+  }, "7 days"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("option", {
     value: "14"
-  }, "Last 14 days"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("option", {
+  }, "14 days"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("option", {
     value: "30"
-  }, "Last 30 days"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("option", {
+  }, "30 days"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("option", {
     value: "90"
-  }, "Last 90 days"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("option", {
+  }, "90 days"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("option", {
     value: "0"
-  }, "All activities")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("button", {
-    style: {
-      backgroundColor: darkMode ? '#2563eb' : '#3b82f6',
-      color: 'white',
-      padding: '0.25rem 0.5rem',
-      borderRadius: '0.25rem',
-      fontSize: '0.75rem',
-      border: 'none',
-      cursor: 'pointer',
-      display: 'flex',
-      alignItems: 'center',
-      gap: '0.25rem'
-    },
+  }, "All time")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("button", {
+    className: "text-gray-600 dark:text-gray-300 hover:text-blue-500 dark:hover:text-blue-400 transition-colors duration-200",
     onClick: function onClick() {
       return setShowActivityModal(true);
     },
-    title: "Add activity"
+    title: "Log new activity",
+    "aria-label": "Log new activity",
+    style: {
+      fontSize: '1.5rem',
+      background: 'transparent',
+      border: 'none',
+      cursor: 'pointer',
+      padding: '0.5rem',
+      color: darkMode ? '#2563eb' : '#3b82f6'
+    }
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("i", {
-    className: "fas fa-plus"
-  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("span", null, "Add")))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_ActivityList__WEBPACK_IMPORTED_MODULE_3__["default"], {
+    className: "fa-solid fa-scroll"
+  })))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_ActivityList__WEBPACK_IMPORTED_MODULE_3__["default"], {
     activities: activities,
     darkMode: darkMode,
     limit: 15,
-    maxDaysAgo: 7,
+    maxDaysAgo: activityDaysFilter === 0 ? null : activityDaysFilter,
+    filter: activityTypeFilter,
     showDate: true
   })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_SpiritualFitnessModal__WEBPACK_IMPORTED_MODULE_4__["default"], {
     open: showScoreModal,

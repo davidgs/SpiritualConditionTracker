@@ -13,6 +13,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
   const [showScoreModal, setShowScoreModal] = useState(false);
   const [showActivityModal, setShowActivityModal] = useState(false);
   const [activityDaysFilter, setActivityDaysFilter] = useState(7);
+  const [activityTypeFilter, setActivityTypeFilter] = useState('all');
   const [scoreTimeframe, setScoreTimeframe] = useState(
     window.db?.getPreference('scoreTimeframe') || 30
   );
@@ -316,6 +317,32 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
             color: darkMode ? '#d1d5db' : '#374151'
           }}>Activities</h2>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            {/* Activity type filter */}
+            <select 
+              style={{
+                backgroundColor: 'transparent',
+                border: darkMode ? '1px solid #4b5563' : '1px solid #d1d5db',
+                borderRadius: '0.25rem',
+                color: darkMode ? '#d1d5db' : '#374151',
+                padding: '0.15rem 0.5rem',
+                fontSize: '0.7rem',
+                cursor: 'pointer'
+              }}
+              defaultValue="all"
+              onChange={(e) => {
+                const filter = e.target.value;
+                setActivityTypeFilter(filter);
+              }}
+            >
+              <option value="all">All types</option>
+              <option value="prayer">Prayer</option>
+              <option value="meditation">Meditation</option>
+              <option value="literature">Reading</option>
+              <option value="meeting">Meetings</option>
+              <option value="call">Calls</option>
+              <option value="service">Service</option>
+            </select>
+            
             {/* Activity timeframe selector */}
             <select 
               style={{
@@ -330,37 +357,36 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
               defaultValue="7"
               onChange={(e) => {
                 const days = parseInt(e.target.value, 10);
-                // Update the maxDaysAgo property in ActivityList
-                // This is a placeholder; we'll add actual implementation
+                setActivityDaysFilter(days);
+                // This will update when we connect the state to ActivityList
               }}
             >
-              <option value="7">Last 7 days</option>
-              <option value="14">Last 14 days</option>
-              <option value="30">Last 30 days</option>
-              <option value="90">Last 90 days</option>
-              <option value="0">All activities</option>
+              <option value="7">7 days</option>
+              <option value="14">14 days</option>
+              <option value="30">30 days</option>
+              <option value="90">90 days</option>
+              <option value="0">All time</option>
             </select>
             
             {/* Log new activity button */}
+            {/* Button to open activity modal */}
             <button
-              style={{
-                backgroundColor: darkMode ? '#2563eb' : '#3b82f6',
-                color: 'white',
-                padding: '0.25rem 0.5rem',
-                borderRadius: '0.25rem',
-                fontSize: '0.75rem',
+              className="text-gray-600 dark:text-gray-300 hover:text-blue-500 dark:hover:text-blue-400 transition-colors duration-200"
+              onClick={() => setShowActivityModal(true)}
+              title="Log new activity"
+              aria-label="Log new activity"
+              style={{ 
+                fontSize: '1.5rem', 
+                background: 'transparent',
                 border: 'none',
                 cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.25rem'
+                padding: '0.5rem',
+                color: darkMode ? '#2563eb' : '#3b82f6',
               }}
-              onClick={() => setShowActivityModal(true)}
-              title="Add activity"
             >
-              <i className="fas fa-plus"></i>
-              <span>Add</span>
+              <i className="fa-solid fa-scroll"></i>
             </button>
+            
           </div>
         </div>
         
@@ -369,7 +395,8 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
           activities={activities}
           darkMode={darkMode}
           limit={15}
-          maxDaysAgo={7}
+          maxDaysAgo={activityDaysFilter === 0 ? null : activityDaysFilter}
+          filter={activityTypeFilter}
           showDate={true}
         />
       </div>
