@@ -61258,7 +61258,8 @@ function MeetingForm(_ref) {
       padding: '5px',
       cursor: 'pointer',
       outline: 'none',
-      boxShadow: 'none'
+      boxShadow: 'none',
+      color: '#CC0000'
     },
     title: "Cancel"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("i", {
@@ -61319,30 +61320,21 @@ function Meetings(_ref) {
     _ref$meetings = _ref.meetings,
     meetings = _ref$meetings === void 0 ? [] : _ref$meetings,
     onSave = _ref.onSave;
-  var _useState = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(meetings),
+  var _useState = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false),
     _useState2 = _slicedToArray(_useState, 2),
-    localMeetings = _useState2[0],
-    setLocalMeetings = _useState2[1];
-  var _useState3 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false),
+    showForm = _useState2[0],
+    setShowForm = _useState2[1];
+  var _useState3 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null),
     _useState4 = _slicedToArray(_useState3, 2),
-    showForm = _useState4[0],
-    setShowForm = _useState4[1];
-  var _useState5 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null),
+    currentMeeting = _useState4[0],
+    setCurrentMeeting = _useState4[1];
+  var _useState5 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(''),
     _useState6 = _slicedToArray(_useState5, 2),
-    currentMeeting = _useState6[0],
-    setCurrentMeeting = _useState6[1];
-  var _useState7 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(''),
-    _useState8 = _slicedToArray(_useState7, 2),
-    error = _useState8[0],
-    setError = _useState8[1];
+    error = _useState6[0],
+    setError = _useState6[1];
 
   // Dark mode detection
   var darkMode = document.documentElement.classList.contains('dark');
-
-  // Update localMeetings when meetings prop changes
-  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(function () {
-    setLocalMeetings(meetings);
-  }, [meetings]);
 
   // Edit an existing meeting
   var handleEdit = function handleEdit(meeting) {
@@ -61350,18 +61342,13 @@ function Meetings(_ref) {
     setShowForm(true);
   };
 
-  // Delete a meeting
+  // Delete a meeting (now relies on database operations being handled at App.js level)
   var handleDelete = function handleDelete(meetingId) {
     if (window.confirm('Are you sure you want to delete this meeting?')) {
       try {
         if (window.db) {
           window.db.remove('meetings', meetingId);
-          // Update the local meetings list
-          setLocalMeetings(function (prevMeetings) {
-            return prevMeetings.filter(function (meeting) {
-              return meeting.id !== meetingId;
-            });
-          });
+          // State will be updated when parent re-renders with updated meetings list
         } else {
           throw new Error('Database not initialized');
         }
@@ -61437,7 +61424,7 @@ function Meetings(_ref) {
     // Display each schedule item
     meeting.schedule.map(function (item, idx) {
       return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
-        key: idx,
+        key: "".concat(meeting.id, "-schedule-").concat(idx),
         className: "flex items-center gap-2"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("i", {
         className: "fa-solid fa-calendar-days text-gray-500 dark:text-gray-400 mr-3 flex-shrink-0",
@@ -61551,7 +61538,7 @@ function Meetings(_ref) {
       return setShowForm(true);
     },
     "aria-label": "Add new meeting",
-    title: localMeetings.length > 0 ? 'Add New Meeting' : 'Add Your First Meeting',
+    title: meetings.length > 0 ? 'Add New Meeting' : 'Add Your First Meeting',
     className: "text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300 transition-colors duration-200",
     style: {
       background: 'transparent',
@@ -61574,7 +61561,7 @@ function Meetings(_ref) {
     darkMode: darkMode
   }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     className: "mt-4"
-  }, localMeetings.length > 0 ? localMeetings.map(function (meeting) {
+  }, meetings.length > 0 ? meetings.map(function (meeting) {
     return renderMeetingItem(meeting);
   }) : /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     className: "text-center p-8 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm"

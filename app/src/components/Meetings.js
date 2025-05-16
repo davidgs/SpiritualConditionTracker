@@ -3,7 +3,6 @@ import { meetingOperations } from '../utils/database';
 import MeetingForm from './MeetingForm';
 
 export default function Meetings({ setCurrentView, meetings = [], onSave }) {
-  const [localMeetings, setLocalMeetings] = useState(meetings);
   const [showForm, setShowForm] = useState(false);
   const [currentMeeting, setCurrentMeeting] = useState(null);
   const [error, setError] = useState('');
@@ -11,27 +10,19 @@ export default function Meetings({ setCurrentView, meetings = [], onSave }) {
   // Dark mode detection
   const darkMode = document.documentElement.classList.contains('dark');
   
-  // Update localMeetings when meetings prop changes
-  useEffect(() => {
-    setLocalMeetings(meetings);
-  }, [meetings]);
-  
   // Edit an existing meeting
   const handleEdit = (meeting) => {
     setCurrentMeeting(meeting);
     setShowForm(true);
   };
   
-  // Delete a meeting
+  // Delete a meeting (now relies on database operations being handled at App.js level)
   const handleDelete = (meetingId) => {
     if (window.confirm('Are you sure you want to delete this meeting?')) {
       try {
         if (window.db) {
           window.db.remove('meetings', meetingId);
-          // Update the local meetings list
-          setLocalMeetings(prevMeetings => 
-            prevMeetings.filter(meeting => meeting.id !== meetingId)
-          );
+          // State will be updated when parent re-renders with updated meetings list
         } else {
           throw new Error('Database not initialized');
         }
@@ -117,7 +108,7 @@ export default function Meetings({ setCurrentView, meetings = [], onSave }) {
               {meeting.schedule && Array.isArray(meeting.schedule) && meeting.schedule.length > 0 ? (
                 // Display each schedule item
                 meeting.schedule.map((item, idx) => (
-                  <div key={idx} className="flex items-center gap-2">
+                  <div key={`${meeting.id}-schedule-${idx}`} className="flex items-center gap-2">
                     <i className="fa-solid fa-calendar-days text-gray-500 dark:text-gray-400 mr-3 flex-shrink-0" style={{ fontSize: '1rem' }}></i>
                     <span className="text-gray-600 dark:text-gray-300">{formatDay(item.day)}</span>
                     <span className="text-gray-500 dark:text-gray-500 mx-2">•</span>
@@ -207,7 +198,7 @@ export default function Meetings({ setCurrentView, meetings = [], onSave }) {
           <button
             onClick={() => setShowForm(true)}
             aria-label="Add new meeting"
-            title={localMeetings.length > 0 ? 'Add New Meeting' : 'Add Your First Meeting'}
+            title={meetings.length > 0 ? 'Add New Meeting' : 'Add Your First Meeting'}
             className="text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300 transition-colors duration-200"
             style={{ 
               background: 'transparent', 
@@ -239,8 +230,8 @@ export default function Meetings({ setCurrentView, meetings = [], onSave }) {
       
       {/* Meetings List */}
       <div className="mt-4">
-        {localMeetings.length > 0 ? (
-          localMeetings.map(meeting => renderMeetingItem(meeting))
+        {meetings.length > 0 ? (
+          meetings.map(meeting => renderMeetingItem(meeting))
         ) : (
           <div className="text-center p-8 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
             <h3 className="text-lg font-medium text-gray-700 dark:text-gray-300 mb-2">No Meetings Found</h3>

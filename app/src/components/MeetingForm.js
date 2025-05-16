@@ -631,7 +631,8 @@ export default function MeetingForm({
                   padding: '5px',
                   cursor: 'pointer',
                   outline: 'none',
-                  boxShadow: 'none'
+                  boxShadow: 'none',
+                  color: '#CC0000'
                 }}
                 title="Cancel"
               >
