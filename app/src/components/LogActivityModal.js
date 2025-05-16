@@ -357,22 +357,8 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
         onClose={onClose}
         aria-labelledby="log-activity-dialog-title"
         maxWidth="md"
-        PaperProps={{
-          style: {
-            backgroundColor: darkMode ? '#1f2937' : '#ffffff',
-            color: darkMode ? '#e5e7eb' : '#1f2937',
-          },
-        }}
       >
         <DialogTitle 
-          sx={{ 
-            m: 0, 
-            p: 2,
-            backgroundColor: darkMode ? '#111827' : '#f9fafb',
-            color: darkMode ? '#f3f4f6' : '#111827',
-            borderBottom: '1px solid',
-            borderColor: darkMode ? '#374151' : '#e5e7eb',
-          }} 
           id="log-activity-dialog-title"
         >
           Log New Activity
@@ -385,15 +371,13 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
             position: 'absolute',
             right: 8,
             top: 8,
-            color: darkMode ? '#9ca3af' : '#6b7280',
+            color: palette.text.secondary,
           }}
         >
           <CloseIcon />
         </IconButton>
         
-        <DialogContent 
-          dividers
-          sx={{ backgroundColor: darkMode ? '#1f2937' : '#ffffff' }}>
+        <DialogContent dividers>
           {/* Success message */}
           {showSuccess && (
             <div style={{
@@ -706,38 +690,22 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
               </div>
               
               <DialogActions sx={{ 
-                padding: '16px', 
-                borderTop: '1px solid',
-                borderColor: darkMode ? '#374151' : '#e5e7eb',
                 justifyContent: 'flex-end', 
                 gap: '8px'
               }}>
                 <Button 
                   onClick={onClose} 
                   variant="outlined"
-                  sx={{ 
-                    color: darkMode ? '#e5e7eb' : '#4b5563',
-                    borderColor: darkMode ? '#4b5563' : '#d1d5db',
-                    '&:hover': {
-                      backgroundColor: darkMode ? 'rgba(55, 65, 81, 0.1)' : 'rgba(243, 244, 246, 0.7)',
-                      borderColor: darkMode ? '#6b7280' : '#9ca3af',
-                    }
-                  }}
+                  color="inherit"
                 >
                   Cancel
                 </Button>
                 <Button 
                   type="submit" 
                   variant="contained"
-                  sx={{
-                    backgroundColor: darkMode ? '#3b82f6' : '#2563eb',
-                    color: 'white',
-                    '&:hover': {
-                      backgroundColor: darkMode ? '#2563eb' : '#1d4ed8',
-                    }
-                  }}
+                  color="primary"
+                  startIcon={<i className="fas fa-save"></i>}
                 >
-                  <i className="fas fa-save mr-2"></i>
                   Save Activity
                 </Button>
               </DialogActions>

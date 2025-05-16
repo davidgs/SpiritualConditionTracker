@@ -60507,22 +60507,8 @@ var LogActivityModal = function LogActivityModal(_ref2) {
     open: open,
     onClose: onClose,
     "aria-labelledby": "log-activity-dialog-title",
-    maxWidth: "md",
-    PaperProps: {
-      style: {
-        backgroundColor: darkMode ? '#1f2937' : '#ffffff',
-        color: darkMode ? '#e5e7eb' : '#1f2937'
-      }
-    }
+    maxWidth: "md"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_DialogTitle__WEBPACK_IMPORTED_MODULE_5__["default"], {
-    sx: {
-      m: 0,
-      p: 2,
-      backgroundColor: darkMode ? '#111827' : '#f9fafb',
-      color: darkMode ? '#f3f4f6' : '#111827',
-      borderBottom: '1px solid',
-      borderColor: darkMode ? '#374151' : '#e5e7eb'
-    },
     id: "log-activity-dialog-title"
   }, "Log New Activity"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_IconButton__WEBPACK_IMPORTED_MODULE_6__["default"], {
     "aria-label": "close",
@@ -60531,13 +60517,10 @@ var LogActivityModal = function LogActivityModal(_ref2) {
       position: 'absolute',
       right: 8,
       top: 8,
-      color: darkMode ? '#9ca3af' : '#6b7280'
+      color: palette.text.secondary
     }
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_icons_material_Close__WEBPACK_IMPORTED_MODULE_7__["default"], null)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_DialogContent__WEBPACK_IMPORTED_MODULE_8__["default"], {
-    dividers: true,
-    sx: {
-      backgroundColor: darkMode ? '#1f2937' : '#ffffff'
-    }
+    dividers: true
   }, showSuccess && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     style: {
       backgroundColor: darkMode ? '#064e3b' : '#d1fae5',
@@ -60873,36 +60856,21 @@ var LogActivityModal = function LogActivityModal(_ref2) {
     placeholder: "Add any notes about this activity..."
   })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_DialogActions__WEBPACK_IMPORTED_MODULE_9__["default"], {
     sx: {
-      padding: '16px',
-      borderTop: '1px solid',
-      borderColor: darkMode ? '#374151' : '#e5e7eb',
       justifyContent: 'flex-end',
       gap: '8px'
     }
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_Button__WEBPACK_IMPORTED_MODULE_10__["default"], {
     onClick: onClose,
     variant: "outlined",
-    sx: {
-      color: darkMode ? '#e5e7eb' : '#4b5563',
-      borderColor: darkMode ? '#4b5563' : '#d1d5db',
-      '&:hover': {
-        backgroundColor: darkMode ? 'rgba(55, 65, 81, 0.1)' : 'rgba(243, 244, 246, 0.7)',
-        borderColor: darkMode ? '#6b7280' : '#9ca3af'
-      }
-    }
+    color: "inherit"
   }, "Cancel"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_Button__WEBPACK_IMPORTED_MODULE_10__["default"], {
     type: "submit",
     variant: "contained",
-    sx: {
-      backgroundColor: darkMode ? '#3b82f6' : '#2563eb',
-      color: 'white',
-      '&:hover': {
-        backgroundColor: darkMode ? '#2563eb' : '#1d4ed8'
-      }
-    }
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("i", {
-    className: "fas fa-save mr-2"
-  }), "Save Activity"))))));
+    color: "primary",
+    startIcon: /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("i", {
+      className: "fas fa-save"
+    })
+  }, "Save Activity"))))));
 };
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (LogActivityModal);
 
