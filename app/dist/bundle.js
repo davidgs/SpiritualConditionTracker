@@ -26669,46 +26669,199 @@ html.dark .meeting-form-field .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInp
   border-color: #60a5fa;
 }
 
-/* Add essential Tailwind-like color classes */
-.text-red-500 {
-  color: #ef4444;
-}
+/* Standard Tailwind color classes */
 
-.text-red-600 {
-  color: #dc2626;
-}
+/* --- RED --- */
+.text-red-50 { color: #fef2f2; }
+.text-red-100 { color: #fee2e2; }
+.text-red-200 { color: #fecaca; }
+.text-red-300 { color: #fca5a5; }
+.text-red-400 { color: #f87171; }
+.text-red-500 { color: #ef4444; }
+.text-red-600 { color: #dc2626; }
+.text-red-700 { color: #b91c1c; }
+.text-red-800 { color: #991b1b; }
+.text-red-900 { color: #7f1d1d; }
+.text-red-950 { color: #450a0a; }
 
-.text-red-700 {
-  color: #b91c1c;
-}
+.bg-red-50 { background-color: #fef2f2; }
+.bg-red-100 { background-color: #fee2e2; }
+.bg-red-200 { background-color: #fecaca; }
+.bg-red-300 { background-color: #fca5a5; }
+.bg-red-400 { background-color: #f87171; }
+.bg-red-500 { background-color: #ef4444; }
+.bg-red-600 { background-color: #dc2626; }
+.bg-red-700 { background-color: #b91c1c; }
+.bg-red-800 { background-color: #991b1b; }
+.bg-red-900 { background-color: #7f1d1d; }
+.bg-red-950 { background-color: #450a0a; }
 
-html.dark .text-red-500 {
-  color: #f87171;
-}
+.border-red-50 { border-color: #fef2f2; }
+.border-red-100 { border-color: #fee2e2; }
+.border-red-200 { border-color: #fecaca; }
+.border-red-300 { border-color: #fca5a5; }
+.border-red-400 { border-color: #f87171; }
+.border-red-500 { border-color: #ef4444; }
+.border-red-600 { border-color: #dc2626; }
+.border-red-700 { border-color: #b91c1c; }
+.border-red-800 { border-color: #991b1b; }
+.border-red-900 { border-color: #7f1d1d; }
+.border-red-950 { border-color: #450a0a; }
 
-html.dark .text-red-600 {
-  color: #ef4444;
-}
+/* --- BLUE --- */
+.text-blue-50 { color: #eff6ff; }
+.text-blue-100 { color: #dbeafe; }
+.text-blue-200 { color: #bfdbfe; }
+.text-blue-300 { color: #93c5fd; }
+.text-blue-400 { color: #60a5fa; }
+.text-blue-500 { color: #3b82f6; }
+.text-blue-600 { color: #2563eb; }
+.text-blue-700 { color: #1d4ed8; }
+.text-blue-800 { color: #1e40af; }
+.text-blue-900 { color: #1e3a8a; }
+.text-blue-950 { color: #172554; }
 
-html.dark .text-red-700 {
-  color: #dc2626;
-}
+.bg-blue-50 { background-color: #eff6ff; }
+.bg-blue-100 { background-color: #dbeafe; }
+.bg-blue-200 { background-color: #bfdbfe; }
+.bg-blue-300 { background-color: #93c5fd; }
+.bg-blue-400 { background-color: #60a5fa; }
+.bg-blue-500 { background-color: #3b82f6; }
+.bg-blue-600 { background-color: #2563eb; }
+.bg-blue-700 { background-color: #1d4ed8; }
+.bg-blue-800 { background-color: #1e40af; }
+.bg-blue-900 { background-color: #1e3a8a; }
+.bg-blue-950 { background-color: #172554; }
 
-.bg-red-500 {
-  background-color: #ef4444;
-}
+.border-blue-50 { border-color: #eff6ff; }
+.border-blue-100 { border-color: #dbeafe; }
+.border-blue-200 { border-color: #bfdbfe; }
+.border-blue-300 { border-color: #93c5fd; }
+.border-blue-400 { border-color: #60a5fa; }
+.border-blue-500 { border-color: #3b82f6; }
+.border-blue-600 { border-color: #2563eb; }
+.border-blue-700 { border-color: #1d4ed8; }
+.border-blue-800 { border-color: #1e40af; }
+.border-blue-900 { border-color: #1e3a8a; }
+.border-blue-950 { border-color: #172554; }
 
-.bg-red-600 {
-  background-color: #dc2626;
-}
+/* --- GREEN --- */
+.text-green-50 { color: #f0fdf4; }
+.text-green-100 { color: #dcfce7; }
+.text-green-200 { color: #bbf7d0; }
+.text-green-300 { color: #86efac; }
+.text-green-400 { color: #4ade80; }
+.text-green-500 { color: #22c55e; }
+.text-green-600 { color: #16a34a; }
+.text-green-700 { color: #15803d; }
+.text-green-800 { color: #166534; }
+.text-green-900 { color: #14532d; }
+.text-green-950 { color: #052e16; }
 
-.border-red-500 {
-  border-color: #ef4444;
-}
+.bg-green-50 { background-color: #f0fdf4; }
+.bg-green-100 { background-color: #dcfce7; }
+.bg-green-200 { background-color: #bbf7d0; }
+.bg-green-300 { background-color: #86efac; }
+.bg-green-400 { background-color: #4ade80; }
+.bg-green-500 { background-color: #22c55e; }
+.bg-green-600 { background-color: #16a34a; }
+.bg-green-700 { background-color: #15803d; }
+.bg-green-800 { background-color: #166534; }
+.bg-green-900 { background-color: #14532d; }
+.bg-green-950 { background-color: #052e16; }
 
-html.dark .border-red-500 {
-  border-color: #f87171;
-}`, "",{"version":3,"sources":["webpack://./src/styles/main.css"],"names":[],"mappings":"AAAA,4BAA4B;;AAE5B,kDAAkD;AAClD;EACE,SAAS;EACT,UAAU;EACV,YAAY;EACZ,WAAW;EACX,kBAAkB;EAClB,gBAAgB;AAClB;;AAEA;EACE,SAAS;EACT,UAAU;EACV,gBAAgB;EAChB,WAAW;EACX,gBAAgB;EAChB,uDAAuD;EACvD,kBAAkB;EAClB,gBAAgB;AAClB;;AAEA,4BAA4B;AAC5B;EACE,uDAAuD;AACzD;;AAEA,kBAAkB;AAClB;EACE,gBAAgB;EAChB,WAAW;EACX,kBAAkB;EAClB,mBAAmB;AACrB;;AAEA,gFAAgF;;AAEhF,yCAAyC;;AAEzC,6BAA6B;AAC7B;EACE,yBAAyB;AAC3B;;AAEA,6BAA6B;AAC7B;EACE,kBAAkB;EAClB,qBAAqB;EACrB,WAAW;EACX,YAAY;EACZ,mBAAmB;EACnB,yBAAyB;EACzB,sCAAsC;AACxC;;AAEA;EACE,WAAW;EACX,kBAAkB;EAClB,SAAS;EACT,QAAQ;EACR,WAAW;EACX,YAAY;EACZ,kBAAkB;EAClB,uBAAuB;EACvB,wCAAwC;EACxC,+BAA+B;AACjC;;AAEA;EACE,yBAAyB;AAC3B;;AAEA;EACE,2BAA2B;AAC7B;;AAEA,gDAAgD;AAChD;EACE,yBAAyB;AAC3B;;AAEA;EACE,sCAAsC;AACxC;;AAEA;EACE,yBAAyB;AAC3B;;AAEA;EACE,QAAQ;EACR,UAAU;EACV,qBAAqB;EACrB,yBAAyB;AAC3B;;AAEA,qBAAqB;AACrB;EACE,OAAO,UAAU,EAAE;EACnB,KAAK,UAAU,EAAE;AACnB;;AAEA;EACE;IACE,UAAU;IACV,2BAA2B;EAC7B;EACA;IACE,UAAU;IACV,wBAAwB;EAC1B;AACF;;AAEA;EACE;IACE,UAAU;IACV,sBAAsB;EACxB;EACA;IACE,UAAU;IACV,mBAAmB;EACrB;AACF;;AAEA;EACE,yCAAyC;AAC3C;;AAEA,uDAAuD;AACvD;EACE,6BAA6B;EAC7B,8DAA8D;AAChE;;AAEA,uBAAuB;AACvB;EACE,uBAAuB;EACvB,cAAc;AAChB;;AAEA;EACE,qBAAqB;AACvB;;AAEA;EACE,cAAc;AAChB;;AAEA;EACE,qBAAqB;AACvB;;AAEA;EACE,qBAAqB;AACvB;;AAEA,sBAAsB;AACtB;EACE,yBAAyB;EACzB,cAAc;AAChB;;AAEA;EACE,qBAAqB;AACvB;;AAEA;EACE,cAAc;AAChB;;AAEA;EACE,qBAAqB;AACvB;;AAEA;EACE,qBAAqB;AACvB;;AAEA,8CAA8C;AAC9C;EACE,cAAc;AAChB;;AAEA;EACE,cAAc;AAChB;;AAEA;EACE,cAAc;AAChB;;AAEA;EACE,cAAc;AAChB;;AAEA;EACE,cAAc;AAChB;;AAEA;EACE,cAAc;AAChB;;AAEA;EACE,yBAAyB;AAC3B;;AAEA;EACE,yBAAyB;AAC3B;;AAEA;EACE,qBAAqB;AACvB;;AAEA;EACE,qBAAqB;AACvB","sourcesContent":["/* Main application styles */\n\n/* Base styles that won't conflict with Tailwind */\nhtml {\n  margin: 0;\n  padding: 0;\n  height: 100%;\n  width: 100%;\n  overflow-x: hidden;\n  overflow-y: auto;\n}\n\nbody {\n  margin: 0;\n  padding: 0;\n  min-height: 100%;\n  width: 100%;\n  line-height: 1.5;\n  transition: background-color 0.3s ease, color 0.3s ease;\n  overflow-x: hidden;\n  overflow-y: auto;\n}\n\n/* Dark mode toggle basics */\nhtml.dark body {\n  transition: background-color 0.3s ease, color 0.3s ease;\n}\n\n/* App container */\n#app {\n  min-height: 100%;\n  width: 100%;\n  overflow-x: hidden;\n  overflow-y: visible;\n}\n\n/* Removed scrollable content area class - main scrolling handled at App level */\n\n/* No more separate scroll areas needed */\n\n/* Simple transition styles */\n.transition-200 {\n  transition: all 0.2s ease;\n}\n\n/* Dark mode toggle styling */\n.toggle-slider {\n  position: relative;\n  display: inline-block;\n  width: 40px;\n  height: 24px;\n  border-radius: 12px;\n  background-color: #d1d5db;\n  transition: background-color 0.2s ease;\n}\n\n.toggle-slider:after {\n  content: '';\n  position: absolute;\n  left: 2px;\n  top: 2px;\n  width: 20px;\n  height: 20px;\n  border-radius: 50%;\n  background-color: white;\n  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);\n  transition: transform 0.2s ease;\n}\n\nhtml.dark .toggle-slider {\n  background-color: #3b82f6;\n}\n\nhtml.dark .toggle-slider:after {\n  transform: translateX(16px);\n}\n\n/* Custom toggle checkbox styling for settings */\n.toggle-checkbox {\n  transition: all 0.3s ease;\n}\n\n.toggle-label {\n  transition: background-color 0.3s ease;\n}\n\n.toggle-checkbox:checked + .toggle-label {\n  background-color: #4ade80;\n}\n\n.toggle-checkbox:checked {\n  right: 0;\n  left: auto;\n  border-color: #4ade80;\n  background-color: #4ade80;\n}\n\n/* Modal animations */\n@keyframes fadeIn {\n  from { opacity: 0; }\n  to { opacity: 1; }\n}\n\n@keyframes slideUp {\n  from { \n    opacity: 0;\n    transform: translateY(20px);\n  }\n  to { \n    opacity: 1;\n    transform: translateY(0);\n  }\n}\n\n@keyframes scaleIn {\n  from { \n    opacity: 0;\n    transform: scale(0.95);\n  }\n  to { \n    opacity: 1;\n    transform: scale(1);\n  }\n}\n\n.modal-enter {\n  animation: scaleIn 0.2s ease-out forwards;\n}\n\n/* Material UI Form Field styling for light/dark mode */\n.meeting-form-field .MuiOutlinedInput-root {\n  background-color: transparent;\n  transition: background-color 0.3s ease, border-color 0.3s ease;\n}\n\n/* Light mode styling */\n.meeting-form-field .MuiOutlinedInput-root {\n  background-color: white;\n  color: #1f2937;\n}\n\n.meeting-form-field .MuiOutlinedInput-notchedOutline {\n  border-color: #d1d5db;\n}\n\n.meeting-form-field .MuiInputLabel-root {\n  color: #4b5563;\n}\n\n.meeting-form-field .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline {\n  border-color: #9ca3af;\n}\n\n.meeting-form-field .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {\n  border-color: #3b82f6;\n}\n\n/* Dark mode styling */\nhtml.dark .meeting-form-field .MuiOutlinedInput-root {\n  background-color: #374151;\n  color: #f3f4f6;\n}\n\nhtml.dark .meeting-form-field .MuiOutlinedInput-notchedOutline {\n  border-color: #4b5563;\n}\n\nhtml.dark .meeting-form-field .MuiInputLabel-root {\n  color: #9ca3af;\n}\n\nhtml.dark .meeting-form-field .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline {\n  border-color: #6b7280;\n}\n\nhtml.dark .meeting-form-field .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {\n  border-color: #60a5fa;\n}\n\n/* Add essential Tailwind-like color classes */\n.text-red-500 {\n  color: #ef4444;\n}\n\n.text-red-600 {\n  color: #dc2626;\n}\n\n.text-red-700 {\n  color: #b91c1c;\n}\n\nhtml.dark .text-red-500 {\n  color: #f87171;\n}\n\nhtml.dark .text-red-600 {\n  color: #ef4444;\n}\n\nhtml.dark .text-red-700 {\n  color: #dc2626;\n}\n\n.bg-red-500 {\n  background-color: #ef4444;\n}\n\n.bg-red-600 {\n  background-color: #dc2626;\n}\n\n.border-red-500 {\n  border-color: #ef4444;\n}\n\nhtml.dark .border-red-500 {\n  border-color: #f87171;\n}"],"sourceRoot":""}]);
+.border-green-50 { border-color: #f0fdf4; }
+.border-green-100 { border-color: #dcfce7; }
+.border-green-200 { border-color: #bbf7d0; }
+.border-green-300 { border-color: #86efac; }
+.border-green-400 { border-color: #4ade80; }
+.border-green-500 { border-color: #22c55e; }
+.border-green-600 { border-color: #16a34a; }
+.border-green-700 { border-color: #15803d; }
+.border-green-800 { border-color: #166534; }
+.border-green-900 { border-color: #14532d; }
+.border-green-950 { border-color: #052e16; }
+
+/* --- YELLOW --- */
+.text-yellow-50 { color: #fefce8; }
+.text-yellow-100 { color: #fef9c3; }
+.text-yellow-200 { color: #fef08a; }
+.text-yellow-300 { color: #fde047; }
+.text-yellow-400 { color: #facc15; }
+.text-yellow-500 { color: #eab308; }
+.text-yellow-600 { color: #ca8a04; }
+.text-yellow-700 { color: #a16207; }
+.text-yellow-800 { color: #854d0e; }
+.text-yellow-900 { color: #713f12; }
+.text-yellow-950 { color: #422006; }
+
+.bg-yellow-50 { background-color: #fefce8; }
+.bg-yellow-100 { background-color: #fef9c3; }
+.bg-yellow-200 { background-color: #fef08a; }
+.bg-yellow-300 { background-color: #fde047; }
+.bg-yellow-400 { background-color: #facc15; }
+.bg-yellow-500 { background-color: #eab308; }
+.bg-yellow-600 { background-color: #ca8a04; }
+.bg-yellow-700 { background-color: #a16207; }
+.bg-yellow-800 { background-color: #854d0e; }
+.bg-yellow-900 { background-color: #713f12; }
+.bg-yellow-950 { background-color: #422006; }
+
+.border-yellow-50 { border-color: #fefce8; }
+.border-yellow-100 { border-color: #fef9c3; }
+.border-yellow-200 { border-color: #fef08a; }
+.border-yellow-300 { border-color: #fde047; }
+.border-yellow-400 { border-color: #facc15; }
+.border-yellow-500 { border-color: #eab308; }
+.border-yellow-600 { border-color: #ca8a04; }
+.border-yellow-700 { border-color: #a16207; }
+.border-yellow-800 { border-color: #854d0e; }
+.border-yellow-900 { border-color: #713f12; }
+.border-yellow-950 { border-color: #422006; }
+
+/* --- PURPLE --- */
+.text-purple-50 { color: #faf5ff; }
+.text-purple-100 { color: #f3e8ff; }
+.text-purple-200 { color: #e9d5ff; }
+.text-purple-300 { color: #d8b4fe; }
+.text-purple-400 { color: #c084fc; }
+.text-purple-500 { color: #a855f7; }
+.text-purple-600 { color: #9333ea; }
+.text-purple-700 { color: #7e22ce; }
+.text-purple-800 { color: #6b21a8; }
+.text-purple-900 { color: #581c87; }
+.text-purple-950 { color: #3b0764; }
+
+.bg-purple-50 { background-color: #faf5ff; }
+.bg-purple-100 { background-color: #f3e8ff; }
+.bg-purple-200 { background-color: #e9d5ff; }
+.bg-purple-300 { background-color: #d8b4fe; }
+.bg-purple-400 { background-color: #c084fc; }
+.bg-purple-500 { background-color: #a855f7; }
+.bg-purple-600 { background-color: #9333ea; }
+.bg-purple-700 { background-color: #7e22ce; }
+.bg-purple-800 { background-color: #6b21a8; }
+.bg-purple-900 { background-color: #581c87; }
+.bg-purple-950 { background-color: #3b0764; }
+
+.border-purple-50 { border-color: #faf5ff; }
+.border-purple-100 { border-color: #f3e8ff; }
+.border-purple-200 { border-color: #e9d5ff; }
+.border-purple-300 { border-color: #d8b4fe; }
+.border-purple-400 { border-color: #c084fc; }
+.border-purple-500 { border-color: #a855f7; }
+.border-purple-600 { border-color: #9333ea; }
+.border-purple-700 { border-color: #7e22ce; }
+.border-purple-800 { border-color: #6b21a8; }
+.border-purple-900 { border-color: #581c87; }
+.border-purple-950 { border-color: #3b0764; }
+
+/* Dark mode adjustments for better contrast */
+html.dark .text-red-500 { color: #f87171; }
+html.dark .text-blue-500 { color: #60a5fa; }
+html.dark .text-green-500 { color: #4ade80; }
+html.dark .text-yellow-500 { color: #fcd34d; }
+html.dark .text-purple-500 { color: #c084fc; }`, "",{"version":3,"sources":["webpack://./src/styles/main.css"],"names":[],"mappings":"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","sourcesContent":["/* Main application styles */\n\n/* Base styles that won't conflict with Tailwind */\nhtml {\n  margin: 0;\n  padding: 0;\n  height: 100%;\n  width: 100%;\n  overflow-x: hidden;\n  overflow-y: auto;\n}\n\nbody {\n  margin: 0;\n  padding: 0;\n  min-height: 100%;\n  width: 100%;\n  line-height: 1.5;\n  transition: background-color 0.3s ease, color 0.3s ease;\n  overflow-x: hidden;\n  overflow-y: auto;\n}\n\n/* Dark mode toggle basics */\nhtml.dark body {\n  transition: background-color 0.3s ease, color 0.3s ease;\n}\n\n/* App container */\n#app {\n  min-height: 100%;\n  width: 100%;\n  overflow-x: hidden;\n  overflow-y: visible;\n}\n\n/* Removed scrollable content area class - main scrolling handled at App level */\n\n/* No more separate scroll areas needed */\n\n/* Simple transition styles */\n.transition-200 {\n  transition: all 0.2s ease;\n}\n\n/* Dark mode toggle styling */\n.toggle-slider {\n  position: relative;\n  display: inline-block;\n  width: 40px;\n  height: 24px;\n  border-radius: 12px;\n  background-color: #d1d5db;\n  transition: background-color 0.2s ease;\n}\n\n.toggle-slider:after {\n  content: '';\n  position: absolute;\n  left: 2px;\n  top: 2px;\n  width: 20px;\n  height: 20px;\n  border-radius: 50%;\n  background-color: white;\n  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);\n  transition: transform 0.2s ease;\n}\n\nhtml.dark .toggle-slider {\n  background-color: #3b82f6;\n}\n\nhtml.dark .toggle-slider:after {\n  transform: translateX(16px);\n}\n\n/* Custom toggle checkbox styling for settings */\n.toggle-checkbox {\n  transition: all 0.3s ease;\n}\n\n.toggle-label {\n  transition: background-color 0.3s ease;\n}\n\n.toggle-checkbox:checked + .toggle-label {\n  background-color: #4ade80;\n}\n\n.toggle-checkbox:checked {\n  right: 0;\n  left: auto;\n  border-color: #4ade80;\n  background-color: #4ade80;\n}\n\n/* Modal animations */\n@keyframes fadeIn {\n  from { opacity: 0; }\n  to { opacity: 1; }\n}\n\n@keyframes slideUp {\n  from { \n    opacity: 0;\n    transform: translateY(20px);\n  }\n  to { \n    opacity: 1;\n    transform: translateY(0);\n  }\n}\n\n@keyframes scaleIn {\n  from { \n    opacity: 0;\n    transform: scale(0.95);\n  }\n  to { \n    opacity: 1;\n    transform: scale(1);\n  }\n}\n\n.modal-enter {\n  animation: scaleIn 0.2s ease-out forwards;\n}\n\n/* Material UI Form Field styling for light/dark mode */\n.meeting-form-field .MuiOutlinedInput-root {\n  background-color: transparent;\n  transition: background-color 0.3s ease, border-color 0.3s ease;\n}\n\n/* Light mode styling */\n.meeting-form-field .MuiOutlinedInput-root {\n  background-color: white;\n  color: #1f2937;\n}\n\n.meeting-form-field .MuiOutlinedInput-notchedOutline {\n  border-color: #d1d5db;\n}\n\n.meeting-form-field .MuiInputLabel-root {\n  color: #4b5563;\n}\n\n.meeting-form-field .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline {\n  border-color: #9ca3af;\n}\n\n.meeting-form-field .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {\n  border-color: #3b82f6;\n}\n\n/* Dark mode styling */\nhtml.dark .meeting-form-field .MuiOutlinedInput-root {\n  background-color: #374151;\n  color: #f3f4f6;\n}\n\nhtml.dark .meeting-form-field .MuiOutlinedInput-notchedOutline {\n  border-color: #4b5563;\n}\n\nhtml.dark .meeting-form-field .MuiInputLabel-root {\n  color: #9ca3af;\n}\n\nhtml.dark .meeting-form-field .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline {\n  border-color: #6b7280;\n}\n\nhtml.dark .meeting-form-field .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {\n  border-color: #60a5fa;\n}\n\n/* Standard Tailwind color classes */\n\n/* --- RED --- */\n.text-red-50 { color: #fef2f2; }\n.text-red-100 { color: #fee2e2; }\n.text-red-200 { color: #fecaca; }\n.text-red-300 { color: #fca5a5; }\n.text-red-400 { color: #f87171; }\n.text-red-500 { color: #ef4444; }\n.text-red-600 { color: #dc2626; }\n.text-red-700 { color: #b91c1c; }\n.text-red-800 { color: #991b1b; }\n.text-red-900 { color: #7f1d1d; }\n.text-red-950 { color: #450a0a; }\n\n.bg-red-50 { background-color: #fef2f2; }\n.bg-red-100 { background-color: #fee2e2; }\n.bg-red-200 { background-color: #fecaca; }\n.bg-red-300 { background-color: #fca5a5; }\n.bg-red-400 { background-color: #f87171; }\n.bg-red-500 { background-color: #ef4444; }\n.bg-red-600 { background-color: #dc2626; }\n.bg-red-700 { background-color: #b91c1c; }\n.bg-red-800 { background-color: #991b1b; }\n.bg-red-900 { background-color: #7f1d1d; }\n.bg-red-950 { background-color: #450a0a; }\n\n.border-red-50 { border-color: #fef2f2; }\n.border-red-100 { border-color: #fee2e2; }\n.border-red-200 { border-color: #fecaca; }\n.border-red-300 { border-color: #fca5a5; }\n.border-red-400 { border-color: #f87171; }\n.border-red-500 { border-color: #ef4444; }\n.border-red-600 { border-color: #dc2626; }\n.border-red-700 { border-color: #b91c1c; }\n.border-red-800 { border-color: #991b1b; }\n.border-red-900 { border-color: #7f1d1d; }\n.border-red-950 { border-color: #450a0a; }\n\n/* --- BLUE --- */\n.text-blue-50 { color: #eff6ff; }\n.text-blue-100 { color: #dbeafe; }\n.text-blue-200 { color: #bfdbfe; }\n.text-blue-300 { color: #93c5fd; }\n.text-blue-400 { color: #60a5fa; }\n.text-blue-500 { color: #3b82f6; }\n.text-blue-600 { color: #2563eb; }\n.text-blue-700 { color: #1d4ed8; }\n.text-blue-800 { color: #1e40af; }\n.text-blue-900 { color: #1e3a8a; }\n.text-blue-950 { color: #172554; }\n\n.bg-blue-50 { background-color: #eff6ff; }\n.bg-blue-100 { background-color: #dbeafe; }\n.bg-blue-200 { background-color: #bfdbfe; }\n.bg-blue-300 { background-color: #93c5fd; }\n.bg-blue-400 { background-color: #60a5fa; }\n.bg-blue-500 { background-color: #3b82f6; }\n.bg-blue-600 { background-color: #2563eb; }\n.bg-blue-700 { background-color: #1d4ed8; }\n.bg-blue-800 { background-color: #1e40af; }\n.bg-blue-900 { background-color: #1e3a8a; }\n.bg-blue-950 { background-color: #172554; }\n\n.border-blue-50 { border-color: #eff6ff; }\n.border-blue-100 { border-color: #dbeafe; }\n.border-blue-200 { border-color: #bfdbfe; }\n.border-blue-300 { border-color: #93c5fd; }\n.border-blue-400 { border-color: #60a5fa; }\n.border-blue-500 { border-color: #3b82f6; }\n.border-blue-600 { border-color: #2563eb; }\n.border-blue-700 { border-color: #1d4ed8; }\n.border-blue-800 { border-color: #1e40af; }\n.border-blue-900 { border-color: #1e3a8a; }\n.border-blue-950 { border-color: #172554; }\n\n/* --- GREEN --- */\n.text-green-50 { color: #f0fdf4; }\n.text-green-100 { color: #dcfce7; }\n.text-green-200 { color: #bbf7d0; }\n.text-green-300 { color: #86efac; }\n.text-green-400 { color: #4ade80; }\n.text-green-500 { color: #22c55e; }\n.text-green-600 { color: #16a34a; }\n.text-green-700 { color: #15803d; }\n.text-green-800 { color: #166534; }\n.text-green-900 { color: #14532d; }\n.text-green-950 { color: #052e16; }\n\n.bg-green-50 { background-color: #f0fdf4; }\n.bg-green-100 { background-color: #dcfce7; }\n.bg-green-200 { background-color: #bbf7d0; }\n.bg-green-300 { background-color: #86efac; }\n.bg-green-400 { background-color: #4ade80; }\n.bg-green-500 { background-color: #22c55e; }\n.bg-green-600 { background-color: #16a34a; }\n.bg-green-700 { background-color: #15803d; }\n.bg-green-800 { background-color: #166534; }\n.bg-green-900 { background-color: #14532d; }\n.bg-green-950 { background-color: #052e16; }\n\n.border-green-50 { border-color: #f0fdf4; }\n.border-green-100 { border-color: #dcfce7; }\n.border-green-200 { border-color: #bbf7d0; }\n.border-green-300 { border-color: #86efac; }\n.border-green-400 { border-color: #4ade80; }\n.border-green-500 { border-color: #22c55e; }\n.border-green-600 { border-color: #16a34a; }\n.border-green-700 { border-color: #15803d; }\n.border-green-800 { border-color: #166534; }\n.border-green-900 { border-color: #14532d; }\n.border-green-950 { border-color: #052e16; }\n\n/* --- YELLOW --- */\n.text-yellow-50 { color: #fefce8; }\n.text-yellow-100 { color: #fef9c3; }\n.text-yellow-200 { color: #fef08a; }\n.text-yellow-300 { color: #fde047; }\n.text-yellow-400 { color: #facc15; }\n.text-yellow-500 { color: #eab308; }\n.text-yellow-600 { color: #ca8a04; }\n.text-yellow-700 { color: #a16207; }\n.text-yellow-800 { color: #854d0e; }\n.text-yellow-900 { color: #713f12; }\n.text-yellow-950 { color: #422006; }\n\n.bg-yellow-50 { background-color: #fefce8; }\n.bg-yellow-100 { background-color: #fef9c3; }\n.bg-yellow-200 { background-color: #fef08a; }\n.bg-yellow-300 { background-color: #fde047; }\n.bg-yellow-400 { background-color: #facc15; }\n.bg-yellow-500 { background-color: #eab308; }\n.bg-yellow-600 { background-color: #ca8a04; }\n.bg-yellow-700 { background-color: #a16207; }\n.bg-yellow-800 { background-color: #854d0e; }\n.bg-yellow-900 { background-color: #713f12; }\n.bg-yellow-950 { background-color: #422006; }\n\n.border-yellow-50 { border-color: #fefce8; }\n.border-yellow-100 { border-color: #fef9c3; }\n.border-yellow-200 { border-color: #fef08a; }\n.border-yellow-300 { border-color: #fde047; }\n.border-yellow-400 { border-color: #facc15; }\n.border-yellow-500 { border-color: #eab308; }\n.border-yellow-600 { border-color: #ca8a04; }\n.border-yellow-700 { border-color: #a16207; }\n.border-yellow-800 { border-color: #854d0e; }\n.border-yellow-900 { border-color: #713f12; }\n.border-yellow-950 { border-color: #422006; }\n\n/* --- PURPLE --- */\n.text-purple-50 { color: #faf5ff; }\n.text-purple-100 { color: #f3e8ff; }\n.text-purple-200 { color: #e9d5ff; }\n.text-purple-300 { color: #d8b4fe; }\n.text-purple-400 { color: #c084fc; }\n.text-purple-500 { color: #a855f7; }\n.text-purple-600 { color: #9333ea; }\n.text-purple-700 { color: #7e22ce; }\n.text-purple-800 { color: #6b21a8; }\n.text-purple-900 { color: #581c87; }\n.text-purple-950 { color: #3b0764; }\n\n.bg-purple-50 { background-color: #faf5ff; }\n.bg-purple-100 { background-color: #f3e8ff; }\n.bg-purple-200 { background-color: #e9d5ff; }\n.bg-purple-300 { background-color: #d8b4fe; }\n.bg-purple-400 { background-color: #c084fc; }\n.bg-purple-500 { background-color: #a855f7; }\n.bg-purple-600 { background-color: #9333ea; }\n.bg-purple-700 { background-color: #7e22ce; }\n.bg-purple-800 { background-color: #6b21a8; }\n.bg-purple-900 { background-color: #581c87; }\n.bg-purple-950 { background-color: #3b0764; }\n\n.border-purple-50 { border-color: #faf5ff; }\n.border-purple-100 { border-color: #f3e8ff; }\n.border-purple-200 { border-color: #e9d5ff; }\n.border-purple-300 { border-color: #d8b4fe; }\n.border-purple-400 { border-color: #c084fc; }\n.border-purple-500 { border-color: #a855f7; }\n.border-purple-600 { border-color: #9333ea; }\n.border-purple-700 { border-color: #7e22ce; }\n.border-purple-800 { border-color: #6b21a8; }\n.border-purple-900 { border-color: #581c87; }\n.border-purple-950 { border-color: #3b0764; }\n\n/* Dark mode adjustments for better contrast */\nhtml.dark .text-red-500 { color: #f87171; }\nhtml.dark .text-blue-500 { color: #60a5fa; }\nhtml.dark .text-green-500 { color: #4ade80; }\nhtml.dark .text-yellow-500 { color: #fcd34d; }\nhtml.dark .text-purple-500 { color: #c084fc; }"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
