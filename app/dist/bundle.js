@@ -60135,6 +60135,38 @@ var StyledDialog = (0,_mui_material_styles__WEBPACK_IMPORTED_MODULE_3__["default
     },
     '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': {
       borderColor: theme.palette.mode === 'dark' ? '#60a5fa' : '#3b82f6'
+    },
+    '& select': {
+      backgroundColor: theme.palette.mode === 'dark' ? '#1f2937' : '#ffffff',
+      color: theme.palette.mode === 'dark' ? '#e5e7eb' : '#1f2937',
+      border: theme.palette.mode === 'dark' ? '1px solid #4b5563' : '1px solid #d1d5db',
+      padding: '0.5rem 0.75rem',
+      borderRadius: '0.375rem',
+      fontSize: '0.875rem',
+      width: '100%',
+      appearance: 'auto'
+    },
+    '& select:focus': {
+      borderColor: theme.palette.mode === 'dark' ? '#60a5fa' : '#3b82f6',
+      outline: 'none'
+    },
+    '& select option': {
+      backgroundColor: theme.palette.mode === 'dark' ? '#1f2937' : '#ffffff',
+      color: theme.palette.mode === 'dark' ? '#e5e7eb' : '#1f2937'
+    },
+    '& textarea': {
+      backgroundColor: theme.palette.mode === 'dark' ? '#1f2937' : '#ffffff',
+      color: theme.palette.mode === 'dark' ? '#e5e7eb' : '#1f2937',
+      border: theme.palette.mode === 'dark' ? '1px solid #4b5563' : '1px solid #d1d5db',
+      borderRadius: '0.375rem'
+    },
+    '& textarea::placeholder': {
+      color: theme.palette.mode === 'dark' ? '#9ca3af' : '#9ca3af'
+    },
+    '& input[type="date"]': {
+      backgroundColor: theme.palette.mode === 'dark' ? '#1f2937' : '#ffffff',
+      color: theme.palette.mode === 'dark' ? '#e5e7eb' : '#1f2937',
+      border: theme.palette.mode === 'dark' ? '1px solid #4b5563' : '1px solid #d1d5db'
     }
   };
 });
@@ -60462,7 +60494,14 @@ var LogActivityModal = function LogActivityModal(_ref2) {
     backgroundColor: darkMode ? '#1f2937' : '#ffffff',
     color: darkMode ? '#e5e7eb' : '#1f2937',
     border: darkMode ? '1px solid #4b5563' : '1px solid #d1d5db',
-    fontSize: '0.875rem'
+    fontSize: '0.875rem',
+    '&:focus': {
+      borderColor: darkMode ? '#60a5fa' : '#3b82f6',
+      outline: 'none'
+    },
+    '&::placeholder': {
+      color: darkMode ? '#9ca3af' : '#9ca3af'
+    }
   };
   var errorStyle = {
     color: '#ef4444',
