@@ -64196,6 +64196,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _mui_material__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @mui/material */ "./node_modules/@mui/material/esm/Button/Button.js");
 /* harmony import */ var _mui_material__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @mui/material */ "./node_modules/@mui/material/esm/FormControlLabel/FormControlLabel.js");
 /* harmony import */ var _mui_material__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! @mui/material */ "./node_modules/@mui/material/esm/Switch/Switch.js");
+/* harmony import */ var _mui_material__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! @mui/material */ "./node_modules/@mui/material/esm/MenuItem/MenuItem.js");
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
 function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
@@ -64293,10 +64294,10 @@ function Profile(_ref) {
     var updates = {
       name: name,
       lastName: lastName,
+      phoneNumber: phoneNumber,
+      email: email,
       sobrietyDate: sobrietyDate ? new Date(sobrietyDate).toISOString() : '',
       homeGroup: homeGroup,
-      sponsorName: sponsorName,
-      sponsorPhone: sponsorPhone,
       privacySettings: _objectSpread(_objectSpread({}, (user === null || user === void 0 ? void 0 : user.privacySettings) || {}), {}, {
         allowMessages: allowMessages,
         shareLastName: shareLastName
@@ -64728,6 +64729,50 @@ function Profile(_ref) {
       }
     }
   }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_7__["default"], {
+    label: "Phone Number",
+    fullWidth: true,
+    value: phoneNumber,
+    onChange: function onChange(e) {
+      return setPhoneNumber(e.target.value);
+    },
+    placeholder: "Enter your phone number",
+    variant: "outlined",
+    size: "small",
+    type: "tel",
+    InputLabelProps: {
+      style: {
+        color: darkMode ? '#9ca3af' : '#6b7280'
+      }
+    },
+    InputProps: {
+      style: {
+        color: darkMode ? '#d1d5db' : '#374151',
+        backgroundColor: darkMode ? 'rgba(55, 65, 81, 0.3)' : '#ffffff'
+      }
+    }
+  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_7__["default"], {
+    label: "Email Address (Optional)",
+    fullWidth: true,
+    value: email,
+    onChange: function onChange(e) {
+      return setEmail(e.target.value);
+    },
+    placeholder: "Enter your email address",
+    variant: "outlined",
+    size: "small",
+    type: "email",
+    InputLabelProps: {
+      style: {
+        color: darkMode ? '#9ca3af' : '#6b7280'
+      }
+    },
+    InputProps: {
+      style: {
+        color: darkMode ? '#d1d5db' : '#374151',
+        backgroundColor: darkMode ? 'rgba(55, 65, 81, 0.3)' : '#ffffff'
+      }
+    }
+  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_7__["default"], {
     select: true,
     label: "Home Group",
     fullWidth: true,
@@ -64759,17 +64804,17 @@ function Profile(_ref) {
         }
       }
     }
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(MenuItem, {
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_11__["default"], {
     value: ""
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("em", null, "None")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(MenuItem, {
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("em", null, "None")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_11__["default"], {
     value: "Downtown AA"
-  }, "Downtown AA"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(MenuItem, {
+  }, "Downtown AA"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_11__["default"], {
     value: "Serenity Group"
-  }, "Serenity Group"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(MenuItem, {
+  }, "Serenity Group"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_11__["default"], {
     value: "Hope & Recovery"
-  }, "Hope & Recovery"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(MenuItem, {
+  }, "Hope & Recovery"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_11__["default"], {
     value: "New Beginnings"
-  }, "New Beginnings"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(MenuItem, {
+  }, "New Beginnings"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_11__["default"], {
     value: "add_new",
     sx: {
       color: darkMode ? '#60a5fa' : '#3b82f6'
@@ -64780,50 +64825,7 @@ function Profile(_ref) {
       marginRight: '8px',
       fontSize: '0.75rem'
     }
-  }), "Add New Meeting")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_7__["default"], {
-    label: "Sponsor's Name",
-    fullWidth: true,
-    value: sponsorName,
-    onChange: function onChange(e) {
-      return setSponsorName(e.target.value);
-    },
-    placeholder: "Enter your sponsor's name",
-    variant: "outlined",
-    size: "small",
-    InputLabelProps: {
-      style: {
-        color: darkMode ? '#9ca3af' : '#6b7280'
-      }
-    },
-    InputProps: {
-      style: {
-        color: darkMode ? '#d1d5db' : '#374151',
-        backgroundColor: darkMode ? 'rgba(55, 65, 81, 0.3)' : '#ffffff'
-      }
-    }
-  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_7__["default"], {
-    label: "Sponsor's Phone",
-    fullWidth: true,
-    type: "tel",
-    value: sponsorPhone,
-    onChange: function onChange(e) {
-      return setSponsorPhone(e.target.value);
-    },
-    placeholder: "Enter your sponsor's phone number",
-    variant: "outlined",
-    size: "small",
-    InputLabelProps: {
-      style: {
-        color: darkMode ? '#9ca3af' : '#6b7280'
-      }
-    },
-    InputProps: {
-      style: {
-        color: darkMode ? '#d1d5db' : '#374151',
-        backgroundColor: darkMode ? 'rgba(55, 65, 81, 0.3)' : '#ffffff'
-      }
-    }
-  })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_3__["default"], {
+  }), "Add New Meeting"))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_3__["default"], {
     sx: {
       display: 'flex',
       justifyContent: 'flex-end',
@@ -64892,32 +64894,32 @@ function Profile(_ref) {
     sx: {
       color: darkMode ? '#9ca3af' : '#6b7280'
     }
+  }, "Phone Number"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_4__["default"], {
+    sx: {
+      color: darkMode ? '#d1d5db' : '#374151',
+      fontWeight: 500
+    }
+  }, phoneNumber || "Not set")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_3__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_4__["default"], {
+    variant: "caption",
+    sx: {
+      color: darkMode ? '#9ca3af' : '#6b7280'
+    }
+  }, "Email Address"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_4__["default"], {
+    sx: {
+      color: darkMode ? '#d1d5db' : '#374151',
+      fontWeight: 500
+    }
+  }, email || "Not set")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_3__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_4__["default"], {
+    variant: "caption",
+    sx: {
+      color: darkMode ? '#9ca3af' : '#6b7280'
+    }
   }, "Home Group"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_4__["default"], {
     sx: {
       color: darkMode ? '#d1d5db' : '#374151',
       fontWeight: 500
     }
-  }, homeGroup || "Not set")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_3__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_4__["default"], {
-    variant: "caption",
-    sx: {
-      color: darkMode ? '#9ca3af' : '#6b7280'
-    }
-  }, "Sponsor's Name"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_4__["default"], {
-    sx: {
-      color: darkMode ? '#d1d5db' : '#374151',
-      fontWeight: 500
-    }
-  }, sponsorName || "Not set")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_3__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_4__["default"], {
-    variant: "caption",
-    sx: {
-      color: darkMode ? '#9ca3af' : '#6b7280'
-    }
-  }, "Sponsor's Phone"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_4__["default"], {
-    sx: {
-      color: darkMode ? '#d1d5db' : '#374151',
-      fontWeight: 500
-    }
-  }, sponsorPhone || "Not set"))))));
+  }, homeGroup || "Not set"))))));
 }
 
 /***/ }),

@@ -10,7 +10,8 @@ import {
   Typography, 
   Box, 
   Divider,
-  IconButton
+  IconButton,
+  MenuItem
 } from '@mui/material';
 
 export default function Profile({ setCurrentView, user, onUpdate }) {
@@ -60,10 +61,10 @@ export default function Profile({ setCurrentView, user, onUpdate }) {
     const updates = {
       name,
       lastName,
+      phoneNumber,
+      email,
       sobrietyDate: sobrietyDate ? new Date(sobrietyDate).toISOString() : '',
       homeGroup,
-      sponsorName,
-      sponsorPhone,
       privacySettings: {
         ...(user?.privacySettings || {}),
         allowMessages,
@@ -455,6 +456,46 @@ export default function Profile({ setCurrentView, user, onUpdate }) {
               />
               
               <TextField
+                label="Phone Number"
+                fullWidth
+                value={phoneNumber}
+                onChange={(e) => setPhoneNumber(e.target.value)}
+                placeholder="Enter your phone number"
+                variant="outlined"
+                size="small"
+                type="tel"
+                InputLabelProps={{
+                  style: { color: darkMode ? '#9ca3af' : '#6b7280' }
+                }}
+                InputProps={{
+                  style: { 
+                    color: darkMode ? '#d1d5db' : '#374151',
+                    backgroundColor: darkMode ? 'rgba(55, 65, 81, 0.3)' : '#ffffff'
+                  }
+                }}
+              />
+              
+              <TextField
+                label="Email Address (Optional)"
+                fullWidth
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Enter your email address"
+                variant="outlined"
+                size="small"
+                type="email"
+                InputLabelProps={{
+                  style: { color: darkMode ? '#9ca3af' : '#6b7280' }
+                }}
+                InputProps={{
+                  style: { 
+                    color: darkMode ? '#d1d5db' : '#374151',
+                    backgroundColor: darkMode ? 'rgba(55, 65, 81, 0.3)' : '#ffffff'
+                  }
+                }}
+              />
+              
+              <TextField
                 select
                 label="Home Group"
                 fullWidth
@@ -495,45 +536,6 @@ export default function Profile({ setCurrentView, user, onUpdate }) {
                   Add New Meeting
                 </MenuItem>
               </TextField>
-              
-              <TextField
-                label="Sponsor's Name"
-                fullWidth
-                value={sponsorName}
-                onChange={(e) => setSponsorName(e.target.value)}
-                placeholder="Enter your sponsor's name"
-                variant="outlined"
-                size="small"
-                InputLabelProps={{
-                  style: { color: darkMode ? '#9ca3af' : '#6b7280' }
-                }}
-                InputProps={{
-                  style: { 
-                    color: darkMode ? '#d1d5db' : '#374151',
-                    backgroundColor: darkMode ? 'rgba(55, 65, 81, 0.3)' : '#ffffff'
-                  }
-                }}
-              />
-              
-              <TextField
-                label="Sponsor's Phone"
-                fullWidth
-                type="tel"
-                value={sponsorPhone}
-                onChange={(e) => setSponsorPhone(e.target.value)}
-                placeholder="Enter your sponsor's phone number"
-                variant="outlined"
-                size="small"
-                InputLabelProps={{
-                  style: { color: darkMode ? '#9ca3af' : '#6b7280' }
-                }}
-                InputProps={{
-                  style: { 
-                    color: darkMode ? '#d1d5db' : '#374151',
-                    backgroundColor: darkMode ? 'rgba(55, 65, 81, 0.3)' : '#ffffff'
-                  }
-                }}
-              />
             </Box>
             
             <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1 }}>
@@ -592,6 +594,26 @@ export default function Profile({ setCurrentView, user, onUpdate }) {
                 </Typography>
               </Box>
               
+              {/* Phone Number display */}
+              <Box>
+                <Typography variant="caption" sx={{ color: darkMode ? '#9ca3af' : '#6b7280' }}>
+                  Phone Number
+                </Typography>
+                <Typography sx={{ color: darkMode ? '#d1d5db' : '#374151', fontWeight: 500 }}>
+                  {phoneNumber || "Not set"}
+                </Typography>
+              </Box>
+              
+              {/* Email display */}
+              <Box>
+                <Typography variant="caption" sx={{ color: darkMode ? '#9ca3af' : '#6b7280' }}>
+                  Email Address
+                </Typography>
+                <Typography sx={{ color: darkMode ? '#d1d5db' : '#374151', fontWeight: 500 }}>
+                  {email || "Not set"}
+                </Typography>
+              </Box>
+              
               {/* Home Group display */}
               <Box>
                 <Typography variant="caption" sx={{ color: darkMode ? '#9ca3af' : '#6b7280' }}>
@@ -599,26 +621,6 @@ export default function Profile({ setCurrentView, user, onUpdate }) {
                 </Typography>
                 <Typography sx={{ color: darkMode ? '#d1d5db' : '#374151', fontWeight: 500 }}>
                   {homeGroup || "Not set"}
-                </Typography>
-              </Box>
-              
-              {/* Sponsor Name display */}
-              <Box>
-                <Typography variant="caption" sx={{ color: darkMode ? '#9ca3af' : '#6b7280' }}>
-                  Sponsor's Name
-                </Typography>
-                <Typography sx={{ color: darkMode ? '#d1d5db' : '#374151', fontWeight: 500 }}>
-                  {sponsorName || "Not set"}
-                </Typography>
-              </Box>
-              
-              {/* Sponsor Phone display */}
-              <Box>
-                <Typography variant="caption" sx={{ color: darkMode ? '#9ca3af' : '#6b7280' }}>
-                  Sponsor's Phone
-                </Typography>
-                <Typography sx={{ color: darkMode ? '#d1d5db' : '#374151', fontWeight: 500 }}>
-                  {sponsorPhone || "Not set"}
                 </Typography>
               </Box>
             </Box>
