@@ -616,7 +616,7 @@ export default function MeetingForm({
             </div>
             
             {/* Action Buttons - Icon only, no background, with much more space between */}
-            <div className="flex justify-between items-left mt-8" style={{ width: '100%', padding: '0 15%' }}>
+            <div className="flex justify-between items-center mt-8" style={{ width: '90%', margin: '0 auto' }}>
               <button
                 type="button"
                 onClick={onCancel}
@@ -626,14 +626,13 @@ export default function MeetingForm({
                   padding: '5px',
                   cursor: 'pointer',
                   outline: 'none',
-                  boxShadow: 'none',
-                  color: '#CC0000'
+                  boxShadow: 'none'
                 }}
                 title="Cancel"
               >
                 <i className="fa-regular fa-circle-xmark text-red-600 dark:text-red-400" style={{ fontSize: '2.5rem' }}></i>
               </button>
-              &nbsp;
+              
               <button
                 type="submit"
                 style={{ 
