@@ -700,7 +700,7 @@ export default function MeetingForm({
           </div>
           
           {/* Action Buttons */}
-          <div className="flex justify-between mt-8">
+          <div className="flex justify-between items-center mt-8 space-x-8">
             <button
               type="button"
               onClick={onCancel}
@@ -724,26 +724,26 @@ export default function MeetingForm({
             <button
               type="submit"
               title={meeting ? "Save changes" : "Add meeting"}
-              disabled={!name || !time || !days.length || !streetAddress}
+              disabled={!meetingName || meetingSchedule.length === 0 || !streetAddress}
               style={{ 
                 background: 'none', 
                 border: 'none', 
                 padding: 0,
-                cursor: !name || !time || !days.length || !streetAddress ? 'not-allowed' : 'pointer',
+                cursor: !meetingName || meetingSchedule.length === 0 || !streetAddress ? 'not-allowed' : 'pointer',
                 outline: 'none',
                 boxShadow: 'none',
                 transition: 'transform 0.2s',
                 transform: 'scale(1)'
               }}
               onMouseOver={(e) => {
-                if (name && time && days.length && streetAddress) {
+                if (meetingName && meetingSchedule.length > 0 && streetAddress) {
                   e.currentTarget.style.transform = 'scale(1.1)';
                 }
               }}
               onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
             >
               <i className={`fa-regular fa-circle-check ${
-                !name || !time || !days.length || !streetAddress 
+                !meetingName || meetingSchedule.length === 0 || !streetAddress 
                   ? 'text-gray-400 dark:text-gray-600' 
                   : 'text-green-500 dark:text-green-400'
               }`} style={{ fontSize: '2rem' }}></i>
