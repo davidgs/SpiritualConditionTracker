@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import Dashboard from './components/Dashboard';
-import ActivityPage from './components/ActivityPage';
 import NavBar from './components/NavBar';
 // Removed NearbyMembers import as we won't be using Bluetooth
 import Profile from './components/Profile';
@@ -188,17 +187,10 @@ function App() {
             setCurrentView={setCurrentView}
             user={user}
             activities={activities}
-            spiritualFitness={spiritualFitness}
-          />
-        );
-      case 'activity':
-        return (
-          <ActivityPage 
-            setCurrentView={setCurrentView}
+            meetings={meetings}
             onSave={handleSaveActivity}
             onSaveMeeting={handleSaveMeeting}
-            activities={activities}
-            meetings={meetings}
+            spiritualFitness={spiritualFitness}
           />
         );
       case 'meetings':

@@ -14,7 +14,6 @@ function NavBar({ currentView, setCurrentView }) {
   
   const navItems = [
     { id: 'dashboard', name: 'Dashboard', icon: 'fa-solid fa-house' },
-    { id: 'activity', name: 'Activities', icon: 'fa-solid fa-list-check' },
     { id: 'meetings', name: 'Meetings', icon: 'fa-solid fa-map-marker-alt' },
     { id: 'messages', name: 'Messages', icon: 'fa-solid fa-comments' },
     { id: 'profile', name: 'Profile', icon: 'fa-solid fa-user' }

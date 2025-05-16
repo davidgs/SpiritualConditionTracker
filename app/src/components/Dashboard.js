@@ -315,7 +315,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
             fontSize: '1.1rem',
             fontWeight: 600,
             color: darkMode ? '#d1d5db' : '#374151'
-          }}>Activities</h2>
+          }}>Activities</h2>&nbsp;
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             {/* Activity type filter */}
             <select 
