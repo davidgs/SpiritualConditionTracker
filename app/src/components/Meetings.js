@@ -185,7 +185,7 @@ export default function Meetings({ setCurrentView, meetings = [], onSave }) {
   return (
     <div className="p-3">
       <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-3">
-        Meetings
+        <i className="fa-solid fa-calendar text-gray-300 dark:text-gray-600 mb-4" style={{ fontSize: '2.5rem' }}></i>&nbsp;Meetings
       </h1>
       
       {/* Error Message */}
@@ -243,7 +243,6 @@ export default function Meetings({ setCurrentView, meetings = [], onSave }) {
           localMeetings.map(meeting => renderMeetingItem(meeting))
         ) : (
           <div className="text-center p-8 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
-            <i className="fa-solid fa-calendar text-gray-300 dark:text-gray-600 mb-4" style={{ fontSize: '2.5rem' }}></i>
             <h3 className="text-lg font-medium text-gray-700 dark:text-gray-300 mb-2">No Meetings Found</h3>
             <p className="text-gray-600 dark:text-gray-400 mb-3">
               You haven't added any meetings to your schedule yet.
