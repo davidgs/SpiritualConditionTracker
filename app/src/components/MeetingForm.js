@@ -500,11 +500,11 @@ export default function MeetingForm({
           
           <form onSubmit={handleSubmit}>
             {/* Meeting Name - No label, full width */}
-            <div className="mb-6" style={{ width: '100%' }}>
+            <div className="mb-6">
               <input
                 type="text"
-                className="p-3 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
-                style={{ width: '100%' }}
+                className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                style={{ boxSizing: 'border-box' }}
                 value={meetingName}
                 onChange={(e) => setMeetingName(e.target.value)}
                 placeholder="Enter meeting name"
@@ -513,7 +513,7 @@ export default function MeetingForm({
             </div>
             
             {/* Meeting Schedule with tooltip */}
-            <div className="mb-6" style={{ width: '100%' }}>
+            <div className="mb-6">
               <div className="flex items-center mb-2 relative">
                 <span className="text-xl font-medium text-gray-700 dark:text-gray-300">Meeting Schedule</span>
                 <div className="relative ml-2" ref={tooltipRef}>
@@ -539,31 +539,32 @@ export default function MeetingForm({
             </div>
             
             {/* Meeting Address - Split into multiple fields */}
-            <div className="mb-6" style={{ width: '100%' }}>
+            <div className="mb-6">
               <div className="flex items-center mb-2">
                 <span className="text-xl font-medium text-gray-700 dark:text-gray-300">Meeting Location</span>
               </div>
               
               {/* Street Address with Detect button */}
-              <div className="mb-3" style={{ width: '100%' }}>
-                <div className="flex items-left" style={{ width: '100%' }}>
-                  <input
-                    type="text"
-                    className="flex-1 p-3 border border-gray-300 dark:border-gray-600 rounded-l bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 shadow-sm"
-                    style={{ width: 'calc(100% - 50px)' }}
-                    value={streetAddress}
-                    onChange={(e) => setStreetAddress(e.target.value)}
-                    placeholder="Street address"
-                    required
-                  />
+              <div className="mb-3">
+                <div className="flex items-center" style={{ boxSizing: 'border-box' }}>
+                  <div className="flex-grow" style={{ width: 'calc(100% - 40px)' }}>
+                    <input
+                      type="text"
+                      className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 shadow-sm"
+                      value={streetAddress}
+                      onChange={(e) => setStreetAddress(e.target.value)}
+                      placeholder="Street address"
+                      required
+                    />
+                  </div>
                   <button
                     type="button"
                     onClick={detectLocation}
                     disabled={searchingLocation}
                     title="Detect your location"
-                    className="h-12 flex items-center justify-center px-3 text-blue-500 dark:text-blue-400"
+                    className="ml-2 text-blue-500 dark:text-blue-400"
                     style={{
-                      width: '50px',
+                      width: '40px',
                       background: 'transparent',
                       border: 'none',
                       outline: 'none',
@@ -580,12 +581,12 @@ export default function MeetingForm({
               </div>
               
               {/* City, State, and Zip - No labels */}
-              <div className="grid grid-cols-3 gap-3 mb-3" style={{ width: '100%' }}>
+              <div className="grid grid-cols-3 gap-3 mb-3" style={{ boxSizing: 'border-box' }}>
                 <div className="col-span-1">
                   <input
                     type="text"
-                    className="p-3 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 shadow-sm"
-                    style={{ width: '100%' }}
+                    className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 shadow-sm"
+                    style={{ boxSizing: 'border-box' }}
                     value={city}
                     onChange={(e) => setCity(e.target.value)}
                     placeholder="City"
@@ -594,8 +595,8 @@ export default function MeetingForm({
                 <div className="col-span-1">
                   <input
                     type="text"
-                    className="p-3 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 shadow-sm"
-                    style={{ width: '100%' }}
+                    className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 shadow-sm"
+                    style={{ boxSizing: 'border-box' }}
                     value={state}
                     onChange={(e) => setState(e.target.value)}
                     placeholder="State"
@@ -604,8 +605,8 @@ export default function MeetingForm({
                 <div className="col-span-1">
                   <input
                     type="text"
-                    className="p-3 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 shadow-sm"
-                    style={{ width: '100%' }}
+                    className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 shadow-sm"
+                    style={{ boxSizing: 'border-box' }}
                     value={zipCode}
                     onChange={(e) => setZipCode(e.target.value)}
                     placeholder="Zip Code"
@@ -615,7 +616,7 @@ export default function MeetingForm({
             </div>
             
             {/* Action Buttons - Icon only, no background, with much more space between */}
-            <div className="flex justify-between items-center mt-8" style={{ width: '100%', padding: '0 15%' }}>
+            <div className="flex justify-between items-left mt-8" style={{ width: '100%', padding: '0 15%' }}>
               <button
                 type="button"
                 onClick={onCancel}
@@ -625,7 +626,8 @@ export default function MeetingForm({
                   padding: '5px',
                   cursor: 'pointer',
                   outline: 'none',
-                  boxShadow: 'none'
+                  boxShadow: 'none',
+                  color: '#CC0000'
                 }}
                 title="Cancel"
               >
