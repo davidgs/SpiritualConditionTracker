@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import ThemeSelector from './ThemeSelector';
+import MeetingForm from './MeetingForm';
 import { ThemeContext } from '../contexts/ThemeContext';
 import { 
   Switch, 
@@ -26,6 +27,7 @@ export default function Profile({ setCurrentView, user, onUpdate }) {
   const [homeGroup, setHomeGroup] = useState('');
   const [errors, setErrors] = useState({});
   const [editingPersonalInfo, setEditingPersonalInfo] = useState(false);
+  const [showMeetingForm, setShowMeetingForm] = useState(false);
 
   // Load user data when component mounts or user changes
   useEffect(() => {
@@ -43,9 +45,52 @@ export default function Profile({ setCurrentView, user, onUpdate }) {
   const [allowMessages, setAllowMessages] = useState(user?.privacySettings?.allowMessages !== false);
   const [shareLastName, setShareLastName] = useState(user?.privacySettings?.shareLastName !== false);
   
+  // Format phone number as (xxx) xxx-xxxx
+  const formatPhoneNumber = (value) => {
+    if (!value) return value;
+    
+    // Remove all non-numeric characters
+    const phoneNumber = value.replace(/[^\d]/g, '');
+    
+    // Format based on length
+    if (phoneNumber.length < 4) {
+      return phoneNumber;
+    } else if (phoneNumber.length < 7) {
+      return `(${phoneNumber.slice(0, 3)}) ${phoneNumber.slice(3)}`;
+    } else {
+      return `(${phoneNumber.slice(0, 3)}) ${phoneNumber.slice(3, 6)}-${phoneNumber.slice(6, 10)}`;
+    }
+  };
+  
+  // Handle phone number input
+  const handlePhoneChange = (e) => {
+    const formattedNumber = formatPhoneNumber(e.target.value);
+    setPhoneNumber(formattedNumber);
+  };
+  
+  // Handle meeting selection change
+  const handleHomeGroupChange = (e) => {
+    const value = e.target.value;
+    if (value === 'add_new') {
+      setShowMeetingForm(true);
+    } else {
+      setHomeGroup(value);
+    }
+  };
+  
+  // Handle adding a new meeting from meeting form
+  const handleAddMeeting = (meeting) => {
+    setShowMeetingForm(false);
+    if (meeting && meeting.name) {
+      setHomeGroup(meeting.name);
+    }
+  };
+  
   // Handle form submission
   const handleSubmit = (e) => {
-    e.preventDefault();
+    if (e && e.preventDefault) {
+      e.preventDefault();
+    }
     
     // Validate form
     const newErrors = {};
@@ -459,7 +504,7 @@ export default function Profile({ setCurrentView, user, onUpdate }) {
                 label="Phone Number"
                 fullWidth
                 value={phoneNumber}
-                onChange={(e) => setPhoneNumber(e.target.value)}
+                onChange={handlePhoneChange}
                 placeholder="Enter your phone number"
                 variant="outlined"
                 size="small"
@@ -500,7 +545,7 @@ export default function Profile({ setCurrentView, user, onUpdate }) {
                 label="Home Group"
                 fullWidth
                 value={homeGroup}
-                onChange={(e) => setHomeGroup(e.target.value)}
+                onChange={handleHomeGroupChange}
                 placeholder="Select your home group"
                 variant="outlined"
                 size="small"
