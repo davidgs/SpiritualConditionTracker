@@ -24,7 +24,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [email, setEmail] = useState('');
   const [sobrietyDate, setSobrietyDate] = useState('');
-  const [homeGroup, setHomeGroup] = useState('');
+  const [homeGroups, setHomeGroups] = useState([]);
   const [errors, setErrors] = useState({});
   const [editingPersonalInfo, setEditingPersonalInfo] = useState(false);
   const [showMeetingForm, setShowMeetingForm] = useState(false);
@@ -37,7 +37,10 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
       setPhoneNumber(user.phoneNumber || '');
       setEmail(user.email || '');
       setSobrietyDate(user.sobrietyDate ? user.sobrietyDate.split('T')[0] : '');
-      setHomeGroup(user.homeGroup || '');
+      // Convert homeGroup to array if it's a string, or use empty array
+      const homeGroupsData = user.homeGroups ? user.homeGroups : 
+                           (user.homeGroup ? [user.homeGroup] : []);
+      setHomeGroups(homeGroupsData);
     }
   }, [user]);
 
@@ -74,7 +77,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
     if (value === 'add_new') {
       setShowMeetingForm(true);
     } else {
-      setHomeGroup(value);
+      setHomeGroups(value);
     }
   };
   
@@ -82,7 +85,10 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
   const handleAddMeeting = (meeting) => {
     setShowMeetingForm(false);
     if (meeting && meeting.name) {
-      setHomeGroup(meeting.name);
+      // Add the new meeting to homeGroups list if it's not already there
+      if (!homeGroups.includes(meeting.name)) {
+        setHomeGroups([...homeGroups, meeting.name]);
+      }
     }
   };
   
@@ -109,7 +115,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
       phoneNumber,
       email,
       sobrietyDate: sobrietyDate ? new Date(sobrietyDate).toISOString() : '',
-      homeGroup,
+      homeGroups,
       privacySettings: {
         ...(user?.privacySettings || {}),
         allowMessages,
@@ -550,11 +556,11 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
               
               <TextField
                 select
-                label="Home Group"
+                label="Home Groups"
                 fullWidth
-                value={homeGroup}
+                value={homeGroups}
                 onChange={handleHomeGroupChange}
-                placeholder="Select your home group"
+                placeholder="Select your home groups"
                 variant="outlined"
                 size="small"
                 InputLabelProps={{
@@ -567,11 +573,14 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
                   }
                 }}
                 SelectProps={{
+                  multiple: true,
+                  renderValue: (selected) => Array.isArray(selected) ? selected.join(', ') : selected,
                   MenuProps: {
                     PaperProps: {
                       sx: {
                         bgcolor: darkMode ? '#1f2937' : '#ffffff',
                         border: darkMode ? '1px solid #374151' : '1px solid #e5e7eb',
+                        maxHeight: 300
                       }
                     }
                   }
@@ -672,13 +681,15 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
                 </Typography>
               </Box>
               
-              {/* Home Group display */}
+              {/* Home Groups display */}
               <Box>
                 <Typography variant="caption" sx={{ color: darkMode ? '#9ca3af' : '#6b7280' }}>
-                  Home Group
+                  Home Groups
                 </Typography>
                 <Typography sx={{ color: darkMode ? '#d1d5db' : '#374151', fontWeight: 500 }}>
-                  {homeGroup || "Not set"}
+                  {homeGroups && homeGroups.length > 0 
+                    ? homeGroups.join(', ')
+                    : "Not set"}
                 </Typography>
               </Box>
             </Box>

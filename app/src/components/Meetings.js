@@ -3,13 +3,17 @@ import { meetingOperations } from '../utils/database';
 import MeetingForm from './MeetingForm';
 
 export default function Meetings({ setCurrentView, meetings = [], onSave, user }) {
-  // Get user's home group
-  const [userHomeGroup, setUserHomeGroup] = useState('');
+  // Get user's home groups
+  const [userHomeGroups, setUserHomeGroups] = useState([]);
   
-  // Load user data to get home group
+  // Load user data to get home groups
   useEffect(() => {
-    if (user && user.homeGroup) {
-      setUserHomeGroup(user.homeGroup);
+    if (user) {
+      // Handle both the new array format and legacy string format
+      const homeGroups = user.homeGroups 
+        ? user.homeGroups 
+        : (user.homeGroup ? [user.homeGroup] : []);
+      setUserHomeGroups(homeGroups);
     }
   }, [user, meetings]); // Refresh when user or meetings change
   const [showForm, setShowForm] = useState(false);
@@ -108,9 +112,9 @@ export default function Meetings({ setCurrentView, meetings = [], onSave, user }
         <div className="flex flex-col">
           <div className="mb-3">
             <h3 className="text-xl font-bold text-gray-800 dark:text-gray-100 flex items-center">
-              {meeting.name}
+              {meeting.name} &nbsp;
               {meeting.name === userHomeGroup && (
-                <i className="fa-solid fa-house text-blue-500 ml-2" title="Home Group" style={{ fontSize: '0.85rem' }}></i>
+                <i className="fa-solid fa-house text-gray-600 dark:text-gray-300 ml-2" title="Home Group" style={{ fontSize: '0.85rem' }}></i>
               )}
             </h3>
           </div>
@@ -192,7 +196,42 @@ export default function Meetings({ setCurrentView, meetings = [], onSave, user }
   return (
     <div className="p-3">
       <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-3">
-        <i className="fa-solid fa-calendar text-gray-300 dark:text-gray-600 mb-4" style={{ fontSize: '2.5rem' }}></i>&nbsp;Meetings
+        <i className="fa-solid fa-calendar text-gray-300 dark:text-gray-600 mb-4" style={{ fontSize: '2.5rem' }}></i>&nbsp;Meetings &nbsp; 
+        {/* Add Meeting Button - Floating Action Button style */}
+        {!showForm && (
+          <>
+            <button
+              onClick={() => setShowForm(true)}
+              aria-label="Add new meeting"
+              title={meetings.length > 0 ? 'Add New Meeting' : 'Add Your First Meeting'}
+              className="text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300 transition-colors duration-200"
+              style={{ 
+                background: 'transparent', 
+                border: 'none', 
+                cursor: 'pointer',
+                outline: 'none',
+                boxShadow: 'none',
+                fontSize: '2rem',  
+                padding: '0.5rem'
+              }}
+            >
+              <i className="fa-solid fa-calendar-plus"></i>
+            </button>
+          </>
+        )}
+
+        {/* Meeting Form */}
+        {showForm && (
+          <MeetingForm 
+            meeting={currentMeeting}
+            onSave={handleSaveMeeting}
+            onCancel={() => {
+              setCurrentMeeting(null);
+              setShowForm(false);
+            }}
+            darkMode={darkMode}
+          />
+        )}
       </h1>
       
       {/* Error Message */}
@@ -208,41 +247,7 @@ export default function Meetings({ setCurrentView, meetings = [], onSave, user }
         </div>
       )}
       
-      {/* Add Meeting Button - Floating Action Button style */}
-      {!showForm && (
-        <div className="fixed bottom-20 right-6 z-10">
-          <button
-            onClick={() => setShowForm(true)}
-            aria-label="Add new meeting"
-            title={meetings.length > 0 ? 'Add New Meeting' : 'Add Your First Meeting'}
-            className="text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300 transition-colors duration-200"
-            style={{ 
-              background: 'transparent', 
-              border: 'none', 
-              cursor: 'pointer',
-              outline: 'none',
-              boxShadow: 'none',
-              fontSize: '2rem',  
-              padding: '0.5rem'
-            }}
-          >
-            <i className="fa-solid fa-calendar-plus"></i>
-          </button>
-        </div>
-      )}
-      
-      {/* Meeting Form */}
-      {showForm && (
-        <MeetingForm 
-          meeting={currentMeeting}
-          onSave={handleSaveMeeting}
-          onCancel={() => {
-            setCurrentMeeting(null);
-            setShowForm(false);
-          }}
-          darkMode={darkMode}
-        />
-      )}
+     
       
       {/* Meetings List */}
       <div className="mt-4">

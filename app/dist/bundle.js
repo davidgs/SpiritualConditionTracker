@@ -63220,16 +63220,18 @@ function Meetings(_ref) {
     meetings = _ref$meetings === void 0 ? [] : _ref$meetings,
     onSave = _ref.onSave,
     user = _ref.user;
-  // Get user's home group
-  var _useState = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(''),
+  // Get user's home groups
+  var _useState = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)([]),
     _useState2 = _slicedToArray(_useState, 2),
-    userHomeGroup = _useState2[0],
-    setUserHomeGroup = _useState2[1];
+    userHomeGroups = _useState2[0],
+    setUserHomeGroups = _useState2[1];
 
-  // Load user data to get home group
+  // Load user data to get home groups
   (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(function () {
-    if (user && user.homeGroup) {
-      setUserHomeGroup(user.homeGroup);
+    if (user) {
+      // Handle both the new array format and legacy string format
+      var homeGroups = user.homeGroups ? user.homeGroups : user.homeGroup ? [user.homeGroup] : [];
+      setUserHomeGroups(homeGroups);
     }
   }, [user, meetings]); // Refresh when user or meetings change
   var _useState3 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false),
@@ -63333,8 +63335,8 @@ function Meetings(_ref) {
       className: "mb-3"
     }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("h3", {
       className: "text-xl font-bold text-gray-800 dark:text-gray-100 flex items-center"
-    }, meeting.name, meeting.name === userHomeGroup && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("i", {
-      className: "fa-solid fa-house text-blue-500 ml-2",
+    }, meeting.name, " \xA0", meeting.name === userHomeGroup && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("i", {
+      className: "fa-solid fa-house text-gray-600 dark:text-gray-300 ml-2",
       title: "Home Group",
       style: {
         fontSize: '0.85rem'
@@ -63446,16 +63448,7 @@ function Meetings(_ref) {
     style: {
       fontSize: '2.5rem'
     }
-  }), "\xA0Meetings"), error && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
-    className: "mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("p", null, error), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("button", {
-    className: "text-sm text-red-700 underline mt-1",
-    onClick: function onClick() {
-      return setError('');
-    }
-  }, "Dismiss")), !showForm && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
-    className: "fixed bottom-20 right-6 z-10"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("button", {
+  }), "\xA0Meetings \xA0", !showForm && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement((react__WEBPACK_IMPORTED_MODULE_0___default().Fragment), null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("button", {
     onClick: function onClick() {
       return setShowForm(true);
     },
@@ -63481,7 +63474,14 @@ function Meetings(_ref) {
       setShowForm(false);
     },
     darkMode: darkMode
-  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+  })), error && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+    className: "mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("p", null, error), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("button", {
+    className: "text-sm text-red-700 underline mt-1",
+    onClick: function onClick() {
+      return setError('');
+    }
+  }, "Dismiss")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     className: "mt-4"
   }, meetings.length > 0 ? meetings.map(function (meeting) {
     return renderMeetingItem(meeting);
@@ -64224,6 +64224,10 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
 function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
 function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
 function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+function _toConsumableArray(r) { return _arrayWithoutHoles(r) || _iterableToArray(r) || _unsupportedIterableToArray(r) || _nonIterableSpread(); }
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+function _iterableToArray(r) { if ("undefined" != typeof Symbol && null != r[Symbol.iterator] || null != r["@@iterator"]) return Array.from(r); }
+function _arrayWithoutHoles(r) { if (Array.isArray(r)) return _arrayLikeToArray(r); }
 function _slicedToArray(r, e) { return _arrayWithHoles(r) || _iterableToArrayLimit(r, e) || _unsupportedIterableToArray(r, e) || _nonIterableRest(); }
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
@@ -64264,10 +64268,10 @@ function Profile(_ref) {
     _useState0 = _slicedToArray(_useState9, 2),
     sobrietyDate = _useState0[0],
     setSobrietyDate = _useState0[1];
-  var _useState1 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(''),
+  var _useState1 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)([]),
     _useState10 = _slicedToArray(_useState1, 2),
-    homeGroup = _useState10[0],
-    setHomeGroup = _useState10[1];
+    homeGroups = _useState10[0],
+    setHomeGroups = _useState10[1];
   var _useState11 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)({}),
     _useState12 = _slicedToArray(_useState11, 2),
     errors = _useState12[0],
@@ -64289,7 +64293,9 @@ function Profile(_ref) {
       setPhoneNumber(user.phoneNumber || '');
       setEmail(user.email || '');
       setSobrietyDate(user.sobrietyDate ? user.sobrietyDate.split('T')[0] : '');
-      setHomeGroup(user.homeGroup || '');
+      // Convert homeGroup to array if it's a string, or use empty array
+      var homeGroupsData = user.homeGroups ? user.homeGroups : user.homeGroup ? [user.homeGroup] : [];
+      setHomeGroups(homeGroupsData);
     }
   }, [user]);
 
@@ -64332,7 +64338,7 @@ function Profile(_ref) {
     if (value === 'add_new') {
       setShowMeetingForm(true);
     } else {
-      setHomeGroup(value);
+      setHomeGroups(value);
     }
   };
 
@@ -64340,7 +64346,10 @@ function Profile(_ref) {
   var handleAddMeeting = function handleAddMeeting(meeting) {
     setShowMeetingForm(false);
     if (meeting && meeting.name) {
-      setHomeGroup(meeting.name);
+      // Add the new meeting to homeGroups list if it's not already there
+      if (!homeGroups.includes(meeting.name)) {
+        setHomeGroups([].concat(_toConsumableArray(homeGroups), [meeting.name]));
+      }
     }
   };
 
@@ -64367,7 +64376,7 @@ function Profile(_ref) {
       phoneNumber: phoneNumber,
       email: email,
       sobrietyDate: sobrietyDate ? new Date(sobrietyDate).toISOString() : '',
-      homeGroup: homeGroup,
+      homeGroups: homeGroups,
       privacySettings: _objectSpread(_objectSpread({}, (user === null || user === void 0 ? void 0 : user.privacySettings) || {}), {}, {
         allowMessages: allowMessages,
         shareLastName: shareLastName
@@ -64848,11 +64857,11 @@ function Profile(_ref) {
     }
   }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_8__["default"], {
     select: true,
-    label: "Home Group",
+    label: "Home Groups",
     fullWidth: true,
-    value: homeGroup,
+    value: homeGroups,
     onChange: handleHomeGroupChange,
-    placeholder: "Select your home group",
+    placeholder: "Select your home groups",
     variant: "outlined",
     size: "small",
     InputLabelProps: {
@@ -64867,11 +64876,16 @@ function Profile(_ref) {
       }
     },
     SelectProps: {
+      multiple: true,
+      renderValue: function renderValue(selected) {
+        return Array.isArray(selected) ? selected.join(', ') : selected;
+      },
       MenuProps: {
         PaperProps: {
           sx: {
             bgcolor: darkMode ? '#1f2937' : '#ffffff',
-            border: darkMode ? '1px solid #374151' : '1px solid #e5e7eb'
+            border: darkMode ? '1px solid #374151' : '1px solid #e5e7eb',
+            maxHeight: 300
           }
         }
       }
@@ -64989,12 +65003,12 @@ function Profile(_ref) {
     sx: {
       color: darkMode ? '#9ca3af' : '#6b7280'
     }
-  }, "Home Group"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_5__["default"], {
+  }, "Home Groups"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_5__["default"], {
     sx: {
       color: darkMode ? '#d1d5db' : '#374151',
       fontWeight: 500
     }
-  }, homeGroup || "Not set"))))));
+  }, homeGroups && homeGroups.length > 0 ? homeGroups.join(', ') : "Not set"))))));
 }
 
 /***/ }),
