@@ -31,7 +31,6 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
   const [errors, setErrors] = useState({});
   const [editingPersonalInfo, setEditingPersonalInfo] = useState(false);
   const [showMeetingForm, setShowMeetingForm] = useState(false);
-  const [use24HourFormat, setUse24HourFormat] = useState(false);
 
   // Load user data when component mounts or user changes
   useEffect(() => {
@@ -125,6 +124,10 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
         ...(user?.privacySettings || {}),
         allowMessages,
         shareLastName
+      },
+      preferences: {
+        ...(user?.preferences || {}),
+        use24HourFormat
       }
     };
     
@@ -439,6 +442,37 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
                   color: darkMode ? '#9ca3af' : '#6b7280'
                 }}>
                   Show your last name to other members in recovery
+                </Typography>
+              </Box>
+            }
+            sx={{ alignItems: 'flex-start', ml: 0, mt: 1 }}
+          />
+          
+          {/* 24-Hour Time Format Option */}
+          <FormControlLabel
+            control={
+              <Switch 
+                id="use24HourFormat"
+                name="use24HourFormat"
+                checked={use24HourFormat}
+                onChange={(e) => setUse24HourFormat(e.target.checked)}
+                color="primary"
+                size="small"
+              />
+            }
+            label={
+              <Box>
+                <Typography sx={{ 
+                  fontSize: '0.875rem',
+                  color: darkMode ? '#d1d5db' : '#374151'
+                }}>
+                  Use 24-Hour Time Format
+                </Typography>
+                <Typography variant="caption" sx={{ 
+                  display: 'block', 
+                  color: darkMode ? '#9ca3af' : '#6b7280'
+                }}>
+                  Display times in 24-hour format (e.g., 18:00 instead of 6:00 PM)
                 </Typography>
               </Box>
             }
