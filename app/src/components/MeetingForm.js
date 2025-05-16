@@ -421,11 +421,11 @@ export default function MeetingForm({
   };
   
   // Functions for the new day-time schedule management
-  const addScheduleItem = () => {
-    // Create a default schedule item
+  const addScheduleItem = (day, time) => {
+    // Create a schedule item with specified day and time
     setMeetingSchedule(prev => [
       ...prev,
-      { day: 'monday', time: '18:00' }
+      { day, time }
     ]);
   };
   
@@ -500,19 +500,20 @@ export default function MeetingForm({
               Meeting Schedule
             </label>
             
-            {/* Calendar-like weekly grid */}
-            <div className="grid grid-cols-7 gap-2 mb-4">
-              {/* Days of the week headers */}
-              {['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'].map(day => (
-                <div key={day} className="text-center font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  {day.slice(0, 3)}
-                </div>
-              ))}
-              
-              {/* Day cells with time selectors */}
-              {['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'].map(day => {
+            {/* Vertical day-time list layout */}
+            <div className="mb-4 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+              {/* Day rows with time selectors */}
+              {[
+                { key: 'sunday', label: 'Sun' },
+                { key: 'monday', label: 'Mon' },
+                { key: 'tuesday', label: 'Tue' },
+                { key: 'wednesday', label: 'Wed' },
+                { key: 'thursday', label: 'Thu' },
+                { key: 'friday', label: 'Fri' },
+                { key: 'saturday', label: 'Sat' }
+              ].map((dayInfo, index) => {
                 // Find meeting items for this day
-                const dayItems = meetingSchedule.filter(item => item.day === day);
+                const dayItems = meetingSchedule.filter(item => item.day === dayInfo.key);
                 const hasTime = dayItems.length > 0;
                 
                 // Get the time for display if available
@@ -520,84 +521,84 @@ export default function MeetingForm({
                 
                 return (
                   <div 
-                    key={day}
-                    className={`border rounded-lg p-2 transition-all ${
-                      hasTime
-                        ? 'border-blue-500 dark:border-blue-400 bg-blue-50 dark:bg-blue-900/20'
-                        : 'border-gray-300 dark:border-gray-600 hover:border-blue-300 dark:hover:border-blue-700'
+                    key={dayInfo.key}
+                    className={`flex items-center ${
+                      index < 6 ? 'border-b border-gray-200 dark:border-gray-700' : ''
+                    } ${
+                      hasTime 
+                        ? 'bg-blue-50 dark:bg-blue-900/10' 
+                        : 'bg-white dark:bg-gray-800'
                     }`}
                   >
-                    {hasTime ? (
-                      <div className="flex flex-col items-center">
-                        {/* Display time with delete option */}
-                        <select
-                          className="w-full py-1 px-2 text-sm bg-transparent border-0 text-center text-gray-800 dark:text-gray-200 focus:ring-0 focus:outline-none"
-                          value={timeValue}
-                          onChange={(e) => {
-                            // Update existing time
-                            if (e.target.value) {
-                              updateScheduleItem(meetingSchedule.findIndex(item => item.day === day), 'time', e.target.value);
-                            } else {
-                              // If user selects empty option, remove this day's time
-                              const itemIndex = meetingSchedule.findIndex(item => item.day === day);
+                    {/* Day name */}
+                    <div className="w-20 py-3 px-4 font-medium text-lg text-gray-800 dark:text-gray-200 border-r border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-700 flex justify-center items-center">
+                      {dayInfo.label}
+                    </div>
+                    
+                    {/* Time selector or Add button */}
+                    <div className="flex-grow p-3">
+                      {hasTime ? (
+                        <div className="flex items-center">
+                          <select
+                            className="p-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200"
+                            value={timeValue}
+                            onChange={(e) => {
+                              // Update existing time
+                              if (e.target.value) {
+                                updateScheduleItem(meetingSchedule.findIndex(item => item.day === dayInfo.key), 'time', e.target.value);
+                              } else {
+                                // If user selects empty option, remove this day's time
+                                const itemIndex = meetingSchedule.findIndex(item => item.day === dayInfo.key);
+                                if (itemIndex !== -1) {
+                                  removeScheduleItem(itemIndex);
+                                }
+                              }
+                            }}
+                          >
+                            <option value="06:00">6:00 AM</option>
+                            <option value="07:00">7:00 AM</option>
+                            <option value="08:00">8:00 AM</option>
+                            <option value="09:00">9:00 AM</option>
+                            <option value="10:00">10:00 AM</option>
+                            <option value="11:00">11:00 AM</option>
+                            <option value="12:00">12:00 PM</option>
+                            <option value="13:00">1:00 PM</option>
+                            <option value="14:00">2:00 PM</option>
+                            <option value="15:00">3:00 PM</option>
+                            <option value="16:00">4:00 PM</option>
+                            <option value="17:00">5:00 PM</option>
+                            <option value="18:00">6:00 PM</option>
+                            <option value="19:00">7:00 PM</option>
+                            <option value="20:00">8:00 PM</option>
+                            <option value="21:00">9:00 PM</option>
+                            <option value="22:00">10:00 PM</option>
+                          </select>
+                          
+                          <button
+                            type="button"
+                            className="ml-3 p-2 text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
+                            onClick={() => {
+                              const itemIndex = meetingSchedule.findIndex(item => item.day === dayInfo.key);
                               if (itemIndex !== -1) {
                                 removeScheduleItem(itemIndex);
                               }
-                            }
-                          }}
+                            }}
+                            title="Remove time"
+                          >
+                            <i className="fa-solid fa-times"></i>
+                          </button>
+                        </div>
+                      ) : (
+                        <button 
+                          type="button"
+                          className="flex items-center text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300"
+                          onClick={() => addScheduleItem(dayInfo.key, '18:00')}
                         >
-                          <option value="">Remove</option>
-                          <option value="06:00">6:00 AM</option>
-                          <option value="06:30">6:30 AM</option>
-                          <option value="07:00">7:00 AM</option>
-                          <option value="07:30">7:30 AM</option>
-                          <option value="08:00">8:00 AM</option>
-                          <option value="08:30">8:30 AM</option>
-                          <option value="09:00">9:00 AM</option>
-                          <option value="09:30">9:30 AM</option>
-                          <option value="10:00">10:00 AM</option>
-                          <option value="10:30">10:30 AM</option>
-                          <option value="11:00">11:00 AM</option>
-                          <option value="11:30">11:30 AM</option>
-                          <option value="12:00">12:00 PM</option>
-                          <option value="12:30">12:30 PM</option>
-                          <option value="13:00">1:00 PM</option>
-                          <option value="13:30">1:30 PM</option>
-                          <option value="14:00">2:00 PM</option>
-                          <option value="14:30">2:30 PM</option>
-                          <option value="15:00">3:00 PM</option>
-                          <option value="15:30">3:30 PM</option>
-                          <option value="16:00">4:00 PM</option>
-                          <option value="16:30">4:30 PM</option>
-                          <option value="17:00">5:00 PM</option>
-                          <option value="17:30">5:30 PM</option>
-                          <option value="18:00">6:00 PM</option>
-                          <option value="18:30">6:30 PM</option>
-                          <option value="19:00">7:00 PM</option>
-                          <option value="19:30">7:30 PM</option>
-                          <option value="20:00">8:00 PM</option>
-                          <option value="20:30">8:30 PM</option>
-                          <option value="21:00">9:00 PM</option>
-                          <option value="21:30">9:30 PM</option>
-                          <option value="22:00">10:00 PM</option>
-                        </select>
-
-                        <span className="text-xs text-gray-600 dark:text-gray-400">
-                          {new Date(`2000-01-01T${timeValue}`).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
-                        </span>
-                      </div>
-                    ) : (
-                      <div 
-                        className="h-full flex flex-col items-center justify-center cursor-pointer"
-                        onClick={() => {
-                          // Add new time for this day
-                          setMeetingSchedule(prev => [...prev, { day, time: '18:00' }]);
-                        }}
-                      >
-                        <i className="fa-solid fa-plus text-gray-400 dark:text-gray-500 mb-1"></i>
-                        <span className="text-xs text-gray-500 dark:text-gray-400">Add</span>
-                      </div>
-                    )}
+                          <i className="fa-solid fa-plus mr-2"></i>
+                          <span>Add time</span>
+                        </button>
+                      )}
+                    </div>
                   </div>
                 );
               })}
