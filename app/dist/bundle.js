@@ -65859,7 +65859,7 @@ function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
 
 
 function Profile(_ref) {
-  var _user$privacySettings, _user$privacySettings2, _user$preferences, _window$db, _window$db2;
+  var _user$privacySettings3, _user$privacySettings4, _user$preferences2, _window$db, _window$db2;
   var setCurrentView = _ref.setCurrentView,
     user = _ref.user,
     onUpdate = _ref.onUpdate,
@@ -65907,6 +65907,7 @@ function Profile(_ref) {
   // Load user data when component mounts or user changes
   (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(function () {
     if (user) {
+      var _user$privacySettings, _user$privacySettings2, _user$preferences;
       setName(user.name || '');
       setLastName(user.lastName || '');
       setPhoneNumber(user.phoneNumber || '');
@@ -65915,19 +65916,24 @@ function Profile(_ref) {
       // Convert homeGroup to array if it's a string, or use empty array
       var homeGroupsData = user.homeGroups ? user.homeGroups : user.homeGroup ? [user.homeGroup] : [];
       setHomeGroups(homeGroupsData);
+
+      // Load privacy settings and preferences
+      setAllowMessages(((_user$privacySettings = user.privacySettings) === null || _user$privacySettings === void 0 ? void 0 : _user$privacySettings.allowMessages) !== false);
+      setShareLastName(((_user$privacySettings2 = user.privacySettings) === null || _user$privacySettings2 === void 0 ? void 0 : _user$privacySettings2.shareLastName) !== false);
+      setUse24HourFormat(((_user$preferences = user.preferences) === null || _user$preferences === void 0 ? void 0 : _user$preferences.use24HourFormat) || false);
     }
   }, [user]);
 
   // State for tracking privacy settings and preferences
-  var _useState17 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)((user === null || user === void 0 || (_user$privacySettings = user.privacySettings) === null || _user$privacySettings === void 0 ? void 0 : _user$privacySettings.allowMessages) !== false),
+  var _useState17 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)((user === null || user === void 0 || (_user$privacySettings3 = user.privacySettings) === null || _user$privacySettings3 === void 0 ? void 0 : _user$privacySettings3.allowMessages) !== false),
     _useState18 = _slicedToArray(_useState17, 2),
     allowMessages = _useState18[0],
     setAllowMessages = _useState18[1];
-  var _useState19 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)((user === null || user === void 0 || (_user$privacySettings2 = user.privacySettings) === null || _user$privacySettings2 === void 0 ? void 0 : _user$privacySettings2.shareLastName) !== false),
+  var _useState19 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)((user === null || user === void 0 || (_user$privacySettings4 = user.privacySettings) === null || _user$privacySettings4 === void 0 ? void 0 : _user$privacySettings4.shareLastName) !== false),
     _useState20 = _slicedToArray(_useState19, 2),
     shareLastName = _useState20[0],
     setShareLastName = _useState20[1];
-  var _useState21 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)((user === null || user === void 0 || (_user$preferences = user.preferences) === null || _user$preferences === void 0 ? void 0 : _user$preferences.use24HourFormat) || false),
+  var _useState21 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)((user === null || user === void 0 || (_user$preferences2 = user.preferences) === null || _user$preferences2 === void 0 ? void 0 : _user$preferences2.use24HourFormat) || false),
     _useState22 = _slicedToArray(_useState21, 2),
     use24HourFormat = _useState22[0],
     setUse24HourFormat = _useState22[1];
@@ -66354,7 +66360,16 @@ function Profile(_ref) {
       name: "use24HourFormat",
       checked: use24HourFormat,
       onChange: function onChange(e) {
-        return setUse24HourFormat(e.target.checked);
+        var newValue = e.target.checked;
+        setUse24HourFormat(newValue);
+
+        // Save the preference change immediately
+        var updates = _objectSpread(_objectSpread({}, user), {}, {
+          preferences: _objectSpread(_objectSpread({}, (user === null || user === void 0 ? void 0 : user.preferences) || {}), {}, {
+            use24HourFormat: newValue
+          })
+        });
+        onUpdate(updates);
       },
       color: "primary",
       size: "small"

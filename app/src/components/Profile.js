@@ -44,6 +44,11 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
       const homeGroupsData = user.homeGroups ? user.homeGroups : 
                            (user.homeGroup ? [user.homeGroup] : []);
       setHomeGroups(homeGroupsData);
+      
+      // Load privacy settings and preferences
+      setAllowMessages(user.privacySettings?.allowMessages !== false);
+      setShareLastName(user.privacySettings?.shareLastName !== false);
+      setUse24HourFormat(user.preferences?.use24HourFormat || false);
     }
   }, [user]);
 
@@ -455,7 +460,20 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
                 id="use24HourFormat"
                 name="use24HourFormat"
                 checked={use24HourFormat}
-                onChange={(e) => setUse24HourFormat(e.target.checked)}
+                onChange={(e) => {
+                  const newValue = e.target.checked;
+                  setUse24HourFormat(newValue);
+                  
+                  // Save the preference change immediately
+                  const updates = {
+                    ...user,
+                    preferences: {
+                      ...(user?.preferences || {}),
+                      use24HourFormat: newValue
+                    }
+                  };
+                  onUpdate(updates);
+                }}
                 color="primary"
                 size="small"
               />
