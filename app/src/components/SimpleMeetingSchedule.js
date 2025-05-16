@@ -61,23 +61,23 @@ const SimpleMeetingSchedule = ({ schedule, onChange, use24HourFormat = false }) 
                       onChange={(e) => handleTimeChange(day.key, e.target.value)}
                     >
                       <option value="none">{hasTime ? "Remove" : "None"}</option>
-                      <option value="06:00">6:00 AM</option>
-                      <option value="07:00">7:00 AM</option>
-                      <option value="08:00">8:00 AM</option>
-                      <option value="09:00">9:00 AM</option>
-                      <option value="10:00">10:00 AM</option>
-                      <option value="11:00">11:00 AM</option>
-                      <option value="12:00">12:00 PM</option>
-                      <option value="13:00">1:00 PM</option>
-                      <option value="14:00">2:00 PM</option>
-                      <option value="15:00">3:00 PM</option>
-                      <option value="16:00">4:00 PM</option>
-                      <option value="17:00">5:00 PM</option>
-                      <option value="18:00">6:00 PM</option>
-                      <option value="19:00">7:00 PM</option>
-                      <option value="20:00">8:00 PM</option>
-                      <option value="21:00">9:00 PM</option>
-                      <option value="22:00">10:00 PM</option>
+                      <option value="06:00">{use24HourFormat ? "06:00" : "6:00 AM"}</option>
+                      <option value="07:00">{use24HourFormat ? "07:00" : "7:00 AM"}</option>
+                      <option value="08:00">{use24HourFormat ? "08:00" : "8:00 AM"}</option>
+                      <option value="09:00">{use24HourFormat ? "09:00" : "9:00 AM"}</option>
+                      <option value="10:00">{use24HourFormat ? "10:00" : "10:00 AM"}</option>
+                      <option value="11:00">{use24HourFormat ? "11:00" : "11:00 AM"}</option>
+                      <option value="12:00">{use24HourFormat ? "12:00" : "12:00 PM"}</option>
+                      <option value="13:00">{use24HourFormat ? "13:00" : "1:00 PM"}</option>
+                      <option value="14:00">{use24HourFormat ? "14:00" : "2:00 PM"}</option>
+                      <option value="15:00">{use24HourFormat ? "15:00" : "3:00 PM"}</option>
+                      <option value="16:00">{use24HourFormat ? "16:00" : "4:00 PM"}</option>
+                      <option value="17:00">{use24HourFormat ? "17:00" : "5:00 PM"}</option>
+                      <option value="18:00">{use24HourFormat ? "18:00" : "6:00 PM"}</option>
+                      <option value="19:00">{use24HourFormat ? "19:00" : "7:00 PM"}</option>
+                      <option value="20:00">{use24HourFormat ? "20:00" : "8:00 PM"}</option>
+                      <option value="21:00">{use24HourFormat ? "21:00" : "9:00 PM"}</option>
+                      <option value="22:00">{use24HourFormat ? "22:00" : "10:00 PM"}</option>
                     </select>
                   </td>
                 </tr>

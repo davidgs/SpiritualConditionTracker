@@ -64602,7 +64602,8 @@ function MeetingFormDialog(_ref) {
   }, "Meeting Schedule"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_SimpleMeetingSchedule__WEBPACK_IMPORTED_MODULE_1__["default"], {
     schedule: meetingSchedule,
     onChange: setMeetingSchedule,
-    darkMode: darkMode
+    darkMode: darkMode,
+    use24HourFormat: use24HourFormat
   })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_8__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_6__["default"], {
     variant: "subtitle2",
     sx: {
@@ -65090,7 +65091,8 @@ function Meetings(_ref) {
       setCurrentMeeting(null);
       setShowForm(false);
     },
-    isEdit: !!currentMeeting
+    isEdit: !!currentMeeting,
+    use24HourFormat: use24HourFormat
   }), error && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     className: "mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("p", null, error), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("button", {
@@ -66775,39 +66777,39 @@ var SimpleMeetingSchedule = function SimpleMeetingSchedule(_ref) {
       value: "none"
     }, hasTime ? "Remove" : "None"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("option", {
       value: "06:00"
-    }, "6:00 AM"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("option", {
+    }, use24HourFormat ? "06:00" : "6:00 AM"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("option", {
       value: "07:00"
-    }, "7:00 AM"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("option", {
+    }, use24HourFormat ? "07:00" : "7:00 AM"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("option", {
       value: "08:00"
-    }, "8:00 AM"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("option", {
+    }, use24HourFormat ? "08:00" : "8:00 AM"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("option", {
       value: "09:00"
-    }, "9:00 AM"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("option", {
+    }, use24HourFormat ? "09:00" : "9:00 AM"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("option", {
       value: "10:00"
-    }, "10:00 AM"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("option", {
+    }, use24HourFormat ? "10:00" : "10:00 AM"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("option", {
       value: "11:00"
-    }, "11:00 AM"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("option", {
+    }, use24HourFormat ? "11:00" : "11:00 AM"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("option", {
       value: "12:00"
-    }, "12:00 PM"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("option", {
+    }, use24HourFormat ? "12:00" : "12:00 PM"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("option", {
       value: "13:00"
-    }, "1:00 PM"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("option", {
+    }, use24HourFormat ? "13:00" : "1:00 PM"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("option", {
       value: "14:00"
-    }, "2:00 PM"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("option", {
+    }, use24HourFormat ? "14:00" : "2:00 PM"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("option", {
       value: "15:00"
-    }, "3:00 PM"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("option", {
+    }, use24HourFormat ? "15:00" : "3:00 PM"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("option", {
       value: "16:00"
-    }, "4:00 PM"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("option", {
+    }, use24HourFormat ? "16:00" : "4:00 PM"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("option", {
       value: "17:00"
-    }, "5:00 PM"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("option", {
+    }, use24HourFormat ? "17:00" : "5:00 PM"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("option", {
       value: "18:00"
-    }, "6:00 PM"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("option", {
+    }, use24HourFormat ? "18:00" : "6:00 PM"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("option", {
       value: "19:00"
-    }, "7:00 PM"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("option", {
+    }, use24HourFormat ? "19:00" : "7:00 PM"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("option", {
       value: "20:00"
-    }, "8:00 PM"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("option", {
+    }, use24HourFormat ? "20:00" : "8:00 PM"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("option", {
       value: "21:00"
-    }, "9:00 PM"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("option", {
+    }, use24HourFormat ? "21:00" : "9:00 PM"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("option", {
       value: "22:00"
-    }, "10:00 PM"))));
+    }, use24HourFormat ? "22:00" : "10:00 PM"))));
   })))));
 };
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (SimpleMeetingSchedule);

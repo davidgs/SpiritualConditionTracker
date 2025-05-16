@@ -421,6 +421,7 @@ export default function MeetingFormDialog({
               schedule={meetingSchedule} 
               onChange={setMeetingSchedule}
               darkMode={darkMode}
+              use24HourFormat={use24HourFormat}
             />
           </Box>
           

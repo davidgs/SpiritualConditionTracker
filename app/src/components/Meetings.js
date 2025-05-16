@@ -248,6 +248,7 @@ export default function Meetings({ setCurrentView, meetings = [], onSave, user }
           setShowForm(false);
         }}
         isEdit={!!currentMeeting}
+        use24HourFormat={use24HourFormat}
       />
       
       {/* Error Message */}
