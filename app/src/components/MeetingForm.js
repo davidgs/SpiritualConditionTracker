@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import MeetingScheduleForm from './MeetingScheduleForm';
+import SimpleMeetingSchedule from './SimpleMeetingSchedule';
 
 export default function MeetingForm({ 
   meeting = null, 
@@ -496,143 +496,10 @@ export default function MeetingForm({
           </div>
           
           {/* Meeting Schedule */}
-          <div className="mb-6">
-            <label className="block text-gray-700 dark:text-gray-300 mb-3 text-xl font-medium">
-              Meeting Schedule
-            </label>
-            
-            {/* Responsive schedule layout */}
-            <div className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden shadow-sm">
-              {/* For mobile screens: vertical stacked layout */}
-              <div className="md:hidden">
-                {/* List of days with time selectors */}
-                {[
-                  { key: 'sunday', label: 'Sun' },
-                  { key: 'monday', label: 'Mon' },
-                  { key: 'tuesday', label: 'Tue' },
-                  { key: 'wednesday', label: 'Wed' },
-                  { key: 'thursday', label: 'Thu' },
-                  { key: 'friday', label: 'Fri' },
-                  { key: 'saturday', label: 'Sat' }
-                ].map((dayInfo, index) => {
-                  // Find meeting items for this day
-                  const dayItems = meetingSchedule.filter(item => item.day === dayInfo.key);
-                  const hasTime = dayItems.length > 0;
-                  
-                  // Get the time for display if available
-                  const timeValue = hasTime ? dayItems[0].time : '';
-                  
-                  return (
-                    <div 
-                      key={dayInfo.key}
-                      className={`flex items-center ${
-                        index < 6 ? 'border-b border-gray-200 dark:border-gray-700' : ''
-                      } ${
-                        hasTime ? 'bg-blue-50 dark:bg-blue-900/10' : 'bg-white dark:bg-gray-800'
-                      }`}
-                    >
-                      <div className="w-14 py-3 px-2 text-center font-medium bg-gray-700 dark:bg-gray-800 text-white border-r border-gray-600">
-                        {dayInfo.label}
-                      </div>
-                      <div className="flex-grow p-1">
-                        <TimePicker
-                          value={timeValue}
-                          hasTime={hasTime}
-                          day={dayInfo.key}
-                          onChange={(e) => {
-                            if (e.target.value === "none") {
-                              // Remove time
-                              const itemIndex = meetingSchedule.findIndex(item => item.day === dayInfo.key);
-                              if (itemIndex !== -1) {
-                                removeScheduleItem(itemIndex);
-                              }
-                            } else if (hasTime) {
-                              // Update existing time
-                              updateScheduleItem(
-                                meetingSchedule.findIndex(item => item.day === dayInfo.key), 
-                                'time', 
-                                e.target.value
-                              );
-                            } else {
-                              // Add new time
-                              addScheduleItem(dayInfo.key, e.target.value);
-                            }
-                          }}
-                        />
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-              
-              {/* For desktop screens: calendar grid layout */}
-              <div className="hidden md:block">
-                {/* Day headers row */}
-                <div className="grid grid-cols-7 bg-gray-700 dark:bg-gray-800 text-white border-b border-gray-600 dark:border-gray-700">
-                  {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
-                    <div key={day} className="py-2 px-1 text-center font-medium">
-                      {day}
-                    </div>
-                  ))}
-                </div>
-                
-                {/* Day cells with time selectors */}
-                <div className="grid grid-cols-7 bg-white dark:bg-gray-800">
-                  {['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'].map((day, index) => {
-                    // Find meeting items for this day
-                    const dayItems = meetingSchedule.filter(item => item.day === day);
-                    const hasTime = dayItems.length > 0;
-                    
-                    // Get the time for display if available
-                    const timeValue = hasTime ? dayItems[0].time : '';
-                    
-                    return (
-                      <div 
-                        key={day}
-                        className={`p-2 ${
-                          index < 6 ? 'border-r' : ''
-                        } ${
-                          hasTime ? 'bg-blue-50 dark:bg-blue-900/10' : ''
-                        } border-gray-200 dark:border-gray-700`}
-                      >
-                        <TimePicker
-                          value={timeValue}
-                          hasTime={hasTime}
-                          day={day}
-                          onChange={(e) => {
-                            if (e.target.value === "none") {
-                              // Remove time
-                              const itemIndex = meetingSchedule.findIndex(item => item.day === day);
-                              if (itemIndex !== -1) {
-                                removeScheduleItem(itemIndex);
-                              }
-                            } else if (hasTime) {
-                              // Update existing time
-                              updateScheduleItem(
-                                meetingSchedule.findIndex(item => item.day === day), 
-                                'time', 
-                                e.target.value
-                              );
-                            } else {
-                              // Add new time
-                              addScheduleItem(day, e.target.value);
-                            }
-                          }}
-                        />
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            </div>
-            
-            <div className="mt-3 p-3 bg-gray-50 dark:bg-gray-700/30 border border-gray-200 dark:border-gray-700 rounded">
-              <p className="text-gray-700 dark:text-gray-300 text-sm">
-                <i className="fa-solid fa-circle-info text-blue-500 dark:text-blue-400 mr-2"></i>
-                Select meeting times for each day. Choose "None" to remove a time.
-              </p>
-            </div>
-          </div>
+          <SimpleMeetingSchedule 
+            schedule={meetingSchedule} 
+            onChange={setMeetingSchedule} 
+          />
           
           {/* Meeting Address - Split into multiple fields */}
           <div className="mb-6">
