@@ -67,7 +67,8 @@ export default function Meetings({ setCurrentView, meetings = [], onSave }) {
     if (meeting.streetAddress) {
       return (
         <>
-          <div>{meeting.streetAddress}</div>
+          <div>                <i className="fa-solid fa-location-dot text-gray-500 dark:text-gray-400 mr-3 mt-1 flex-shrink-0" style={{ fontSize: '1rem' }}></i>
+&nbsp;{meeting.streetAddress}</div>
           {meeting.city && meeting.state && (
             <div>{meeting.city}, {meeting.state} {meeting.zipCode}</div>
           )}
@@ -109,29 +110,32 @@ export default function Meetings({ setCurrentView, meetings = [], onSave }) {
                 // Display each schedule item
                 meeting.schedule.map((item, idx) => (
                   <div key={`${meeting.id}-schedule-${idx}`} className="flex items-center gap-2">
-                    <i className="fa-solid fa-calendar-days text-gray-500 dark:text-gray-400 mr-3 flex-shrink-0" style={{ fontSize: '1rem' }}></i>
-                    <span className="text-gray-600 dark:text-gray-300">{formatDay(item.day)}</span>
-                    <span className="text-gray-500 dark:text-gray-500 mx-2">•</span>
+                    <i className="fa-solid fa-calendar-days text-gray-500 dark:text-gray-400 mr-3 flex-shrink-0" style={{ fontSize: '1rem' }}></i>&nbsp;
+                    <span className="text-gray-600 dark:text-gray-300">{formatDay(item.day)}</span>&nbsp;
+                    <span className="text-gray-500 dark:text-gray-500 mx-2"><i className="fa-solid fa-at"></i></span>&nbsp;
+                    <span className="text-gray-600 dark:text-gray-300">{new Date(`2000-01-01T${item.time}`).toLocaleTimeString([], {hour: 'numeric', minute:'2-digit'})}</span>&nbsp;
                     <i className="fa-regular fa-clock text-gray-500 dark:text-gray-400 mr-2 flex-shrink-0" style={{ fontSize: '1rem' }}></i>
-                    <span className="text-gray-600 dark:text-gray-300">{new Date(`2000-01-01T${item.time}`).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+
                   </div>
                 ))
               ) : (
                 // Legacy format fallback
                 <div className="flex items-center gap-2">
-                  <i className="fa-solid fa-calendar-days text-gray-500 dark:text-gray-400 mr-3 flex-shrink-0" style={{ fontSize: '1rem' }}></i>
-                  <span className="text-gray-600 dark:text-gray-300">{meeting.days.map(formatDay).join(', ')}</span>
-                  <span className="text-gray-500 dark:text-gray-500 mx-2">•</span>
+                  <i className="fa-solid fa-calendar-days text-gray-500 dark:text-gray-400 mr-3 flex-shrink-0" style={{ fontSize: '1rem' }}></i>&nbsp;
+                  <span className="text-gray-600 dark:text-gray-300">{meeting.days.map(formatDay).join(', ')}</span>&nbsp;
+                  <span className="text-gray-500 dark:text-gray-500 mx-2"><i className="fa-solid fa-at"></i></span>&nbsp;
+                  <span className="text-gray-600 dark:text-gray-300">{new Date(`2000-01-01T${meeting.time}`).toLocaleTimeString([], {hour: 'numeric', minute:'2-digit'})}</span>&nbsp;
                   <i className="fa-regular fa-clock text-gray-500 dark:text-gray-400 mr-2 flex-shrink-0" style={{ fontSize: '1rem' }}></i>
-                  <span className="text-gray-600 dark:text-gray-300">{new Date(`2000-01-01T${meeting.time}`).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+
                 </div>
               )}
             </div>
             
             {/* Address */}
             <div className="flex items-start">
-              <i className="fa-solid fa-location-dot text-gray-500 dark:text-gray-400 mr-3 mt-1 flex-shrink-0" style={{ fontSize: '1rem' }}></i>
-              <div className="text-gray-600 dark:text-gray-300">{formatAddress(meeting)}</div>
+              <div className="text-gray-600 dark:text-gray-300">
+                {formatAddress(meeting)}
+              </div>
             </div>
             
             {/* Action buttons at the bottom */}

@@ -61391,7 +61391,12 @@ function Meetings(_ref) {
   var formatAddress = function formatAddress(meeting) {
     // If we have the individual components, use them
     if (meeting.streetAddress) {
-      return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement((react__WEBPACK_IMPORTED_MODULE_0___default().Fragment), null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", null, meeting.streetAddress), meeting.city && meeting.state && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", null, meeting.city, ", ", meeting.state, " ", meeting.zipCode));
+      return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement((react__WEBPACK_IMPORTED_MODULE_0___default().Fragment), null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", null, "                ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("i", {
+        className: "fa-solid fa-location-dot text-gray-500 dark:text-gray-400 mr-3 mt-1 flex-shrink-0",
+        style: {
+          fontSize: '1rem'
+        }
+      }), "\xA0", meeting.streetAddress), meeting.city && meeting.state && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", null, meeting.city, ", ", meeting.state, " ", meeting.zipCode));
     }
 
     // Otherwise, split the address at commas for better display
@@ -61431,21 +61436,23 @@ function Meetings(_ref) {
         style: {
           fontSize: '1rem'
         }
-      }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("span", {
+      }), "\xA0", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("span", {
         className: "text-gray-600 dark:text-gray-300"
-      }, formatDay(item.day)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("span", {
+      }, formatDay(item.day)), "\xA0", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("span", {
         className: "text-gray-500 dark:text-gray-500 mx-2"
-      }, "\u2022"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("i", {
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("i", {
+        className: "fa-solid fa-at"
+      })), "\xA0", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("span", {
+        className: "text-gray-600 dark:text-gray-300"
+      }, new Date("2000-01-01T".concat(item.time)).toLocaleTimeString([], {
+        hour: 'numeric',
+        minute: '2-digit'
+      })), "\xA0", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("i", {
         className: "fa-regular fa-clock text-gray-500 dark:text-gray-400 mr-2 flex-shrink-0",
         style: {
           fontSize: '1rem'
         }
-      }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("span", {
-        className: "text-gray-600 dark:text-gray-300"
-      }, new Date("2000-01-01T".concat(item.time)).toLocaleTimeString([], {
-        hour: '2-digit',
-        minute: '2-digit'
-      })));
+      }));
     }) :
     /*#__PURE__*/
     // Legacy format fallback
@@ -61456,28 +61463,25 @@ function Meetings(_ref) {
       style: {
         fontSize: '1rem'
       }
-    }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("span", {
+    }), "\xA0", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("span", {
       className: "text-gray-600 dark:text-gray-300"
-    }, meeting.days.map(formatDay).join(', ')), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("span", {
+    }, meeting.days.map(formatDay).join(', ')), "\xA0", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("span", {
       className: "text-gray-500 dark:text-gray-500 mx-2"
-    }, "\u2022"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("i", {
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("i", {
+      className: "fa-solid fa-at"
+    })), "\xA0", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("span", {
+      className: "text-gray-600 dark:text-gray-300"
+    }, new Date("2000-01-01T".concat(meeting.time)).toLocaleTimeString([], {
+      hour: 'numeric',
+      minute: '2-digit'
+    })), "\xA0", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("i", {
       className: "fa-regular fa-clock text-gray-500 dark:text-gray-400 mr-2 flex-shrink-0",
       style: {
         fontSize: '1rem'
       }
-    }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("span", {
-      className: "text-gray-600 dark:text-gray-300"
-    }, new Date("2000-01-01T".concat(meeting.time)).toLocaleTimeString([], {
-      hour: '2-digit',
-      minute: '2-digit'
-    })))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+    }))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
       className: "flex items-start"
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("i", {
-      className: "fa-solid fa-location-dot text-gray-500 dark:text-gray-400 mr-3 mt-1 flex-shrink-0",
-      style: {
-        fontSize: '1rem'
-      }
-    }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
       className: "text-gray-600 dark:text-gray-300"
     }, formatAddress(meeting))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
       className: "flex justify-end space-x-4 mt-4 pt-3 border-t border-gray-200 dark:border-gray-700"
