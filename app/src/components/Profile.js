@@ -15,7 +15,7 @@ import {
   MenuItem
 } from '@mui/material';
 
-export default function Profile({ setCurrentView, user, onUpdate }) {
+export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
   const { theme } = useContext(ThemeContext);
   const darkMode = theme === 'dark';
   
@@ -154,6 +154,14 @@ export default function Profile({ setCurrentView, user, onUpdate }) {
 
   return (
     <Box sx={{ p: 2, maxWidth: 600, mx: 'auto' }}>
+      {/* Meeting Form Dialog */}
+      {showMeetingForm && (
+        <MeetingForm
+          onClose={() => setShowMeetingForm(false)}
+          onSave={handleAddMeeting}
+          isEdit={false}
+        />
+      )}
       <Box sx={{ mb: 3 }}>
         <Typography variant="h4" sx={{ fontWeight: 'bold', color: darkMode ? '#e5e7eb' : '#1f2937' }}>
           Recovery Tracker
@@ -572,10 +580,13 @@ export default function Profile({ setCurrentView, user, onUpdate }) {
                 <MenuItem value="">
                   <em>None</em>
                 </MenuItem>
-                <MenuItem value="Downtown AA">Downtown AA</MenuItem>
-                <MenuItem value="Serenity Group">Serenity Group</MenuItem>
-                <MenuItem value="Hope & Recovery">Hope & Recovery</MenuItem>
-                <MenuItem value="New Beginnings">New Beginnings</MenuItem>
+                {/* Generate menu items from meetings */}
+                {window.db?.meetings?.map(meeting => (
+                  <MenuItem key={meeting.id} value={meeting.name}>{meeting.name}</MenuItem>
+                ))}
+                {window.db?.meetings?.length === 0 && (
+                  <MenuItem value="none" disabled>No saved meetings</MenuItem>
+                )}
                 <MenuItem value="add_new" sx={{ color: darkMode ? '#60a5fa' : '#3b82f6' }}>
                   <i className="fas fa-plus" style={{ marginRight: '8px', fontSize: '0.75rem' }}></i>
                   Add New Meeting
@@ -612,7 +623,7 @@ export default function Profile({ setCurrentView, user, onUpdate }) {
                   }
                 }}
               >
-                Save Changes
+                Save
               </Button>
             </Box>
           </>

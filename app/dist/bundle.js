@@ -64216,10 +64216,11 @@ function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
 
 
 function Profile(_ref) {
-  var _user$privacySettings, _user$privacySettings2, _window$db, _window$db2;
+  var _user$privacySettings, _user$privacySettings2, _window$db, _window$db2, _window$db3, _window$db4;
   var setCurrentView = _ref.setCurrentView,
     user = _ref.user,
-    onUpdate = _ref.onUpdate;
+    onUpdate = _ref.onUpdate,
+    meetings = _ref.meetings;
   var _useContext = (0,react__WEBPACK_IMPORTED_MODULE_0__.useContext)(_contexts_ThemeContext__WEBPACK_IMPORTED_MODULE_3__.ThemeContext),
     theme = _useContext.theme;
   var darkMode = theme === 'dark';
@@ -64391,7 +64392,13 @@ function Profile(_ref) {
       maxWidth: 600,
       mx: 'auto'
     }
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_4__["default"], {
+  }, showMeetingForm && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_MeetingForm__WEBPACK_IMPORTED_MODULE_2__["default"], {
+    onClose: function onClose() {
+      return setShowMeetingForm(false);
+    },
+    onSave: handleAddMeeting,
+    isEdit: false
+  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_4__["default"], {
     sx: {
       mb: 3
     }
@@ -64851,15 +64858,15 @@ function Profile(_ref) {
     }
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_12__["default"], {
     value: ""
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("em", null, "None")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_12__["default"], {
-    value: "Downtown AA"
-  }, "Downtown AA"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_12__["default"], {
-    value: "Serenity Group"
-  }, "Serenity Group"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_12__["default"], {
-    value: "Hope & Recovery"
-  }, "Hope & Recovery"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_12__["default"], {
-    value: "New Beginnings"
-  }, "New Beginnings"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_12__["default"], {
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("em", null, "None")), (_window$db3 = window.db) === null || _window$db3 === void 0 || (_window$db3 = _window$db3.meetings) === null || _window$db3 === void 0 ? void 0 : _window$db3.map(function (meeting) {
+    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_12__["default"], {
+      key: meeting.id,
+      value: meeting.name
+    }, meeting.name);
+  }), ((_window$db4 = window.db) === null || _window$db4 === void 0 || (_window$db4 = _window$db4.meetings) === null || _window$db4 === void 0 ? void 0 : _window$db4.length) === 0 && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_12__["default"], {
+    value: "none",
+    disabled: true
+  }, "No saved meetings"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_12__["default"], {
     value: "add_new",
     sx: {
       color: darkMode ? '#60a5fa' : '#3b82f6'
@@ -64904,7 +64911,7 @@ function Profile(_ref) {
         bgcolor: darkMode ? '#2563eb' : '#1d4ed8'
       }
     }
-  }, "Save Changes"))) : /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement((react__WEBPACK_IMPORTED_MODULE_0___default().Fragment), null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_4__["default"], {
+  }, "Save"))) : /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement((react__WEBPACK_IMPORTED_MODULE_0___default().Fragment), null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_4__["default"], {
     sx: {
       display: 'flex',
       flexDirection: 'column',
