@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import SimpleMeetingSchedule from './SimpleMeetingSchedule';
+import { TextField, InputAdornment, IconButton } from '@mui/material';
 
 export default function MeetingForm({ 
   meeting = null, 
@@ -499,17 +500,15 @@ export default function MeetingForm({
           )}
           
           <form onSubmit={handleSubmit}>
-            {/* Meeting Name - No label, full width */}
+            {/* Meeting Name - Material UI TextField */}
             <div className="mb-6">
-              <input
-                type="text"
-                className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
-                style={{ boxSizing: 'border-box' }}
+              <TextField
+                fullWidth
+                required
+                variant="outlined"
                 value={meetingName}
                 onChange={(e) => setMeetingName(e.target.value)}
                 placeholder="Enter meeting name"
-                required
-                width="100%"
               />
             </div>
             
@@ -545,67 +544,65 @@ export default function MeetingForm({
                 <span className="text-xl font-medium text-gray-700 dark:text-gray-300">Meeting Location</span>
               </div>
               
-              {/* Street Address with Detect button - properly inline */}
+              {/* Street Address with Material UI TextField and adornment */}
               <div className="mb-3">
-                <div className="flex flex-row items-center">
-                  <input
-                    type="text"
-                    className="flex-1 p-3 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 shadow-sm"
-                    value={streetAddress}
-                    onChange={(e) => setStreetAddress(e.target.value)}
-                    placeholder="Street address"
-                    required
-                  />
-                  <button
-                    type="button"
-                    onClick={detectLocation}
-                    disabled={searchingLocation}
-                    title="Detect your location"
-                    className="ml-2 text-blue-500 dark:text-blue-400 flex-shrink-0"
-                    style={{
-                      width: '40px',
-                      background: 'transparent',
-                      border: 'none',
-                      outline: 'none',
-                      boxShadow: 'none'
-                    }}
-                  >
-                    {searchingLocation ? (
-                      <i className="fa-solid fa-spinner fa-spin"></i>
-                    ) : (
-                      <i className="fa-solid fa-location-dot"></i>
-                    )}
-                  </button>
-                </div>
+                <TextField
+                  fullWidth
+                  required
+                  variant="outlined"
+                  value={streetAddress}
+                  onChange={(e) => setStreetAddress(e.target.value)}
+                  placeholder="Street address"
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          onClick={detectLocation}
+                          disabled={searchingLocation}
+                          title="Detect your location"
+                          edge="end"
+                          size="medium"
+                          color="primary"
+                        >
+                          {searchingLocation ? (
+                            <i className="fa-solid fa-spinner fa-spin"></i>
+                          ) : (
+                            <i className="fa-solid fa-location-dot"></i>
+                          )}
+                        </IconButton>
+                      </InputAdornment>
+                    )
+                  }}
+                />
               </div>
               
-              {/* City, State, and Zip - No labels */}
-              <div className="grid grid-cols-3 gap-3 mb-3" style={{ boxSizing: 'border-box' }}>
+              {/* City, State, and Zip with Material UI TextFields */}
+              <div className="grid grid-cols-3 gap-3 mb-3">
                 <div className="col-span-1">
-                  <input
-                    type="text"
-                    className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 shadow-sm"
-                    style={{ boxSizing: 'border-box' }}
+                  <TextField
+                    fullWidth
+                    variant="outlined"
+                    size="small"
                     value={city}
                     onChange={(e) => setCity(e.target.value)}
                     placeholder="City"
                   />
                 </div>
                 <div className="col-span-1">
-                  <input
-                    type="text"
-                    className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 shadow-sm"
-                    style={{ boxSizing: 'border-box' }}
+                  <TextField
+                    fullWidth
+                    variant="outlined"
+                    size="small"
                     value={state}
                     onChange={(e) => setState(e.target.value)}
                     placeholder="State"
                   />
                 </div>
                 <div className="col-span-1">
-                  <input
-                    type="text"
-                    className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 shadow-sm"
-                    style={{ boxSizing: 'border-box' }}
+                  <TextField
+                    fullWidth
+                    variant="outlined"
+                    size="small"
                     value={zipCode}
                     onChange={(e) => setZipCode(e.target.value)}
                     placeholder="Zip Code"
