@@ -496,63 +496,57 @@ export default function MeetingForm({
           
           {/* Meeting Schedule */}
           <div className="mb-6">
-            <label className="block text-gray-700 dark:text-gray-300 mb-2 text-xl font-medium">
+            <label className="block text-gray-700 dark:text-gray-300 mb-3 text-xl font-medium">
               Meeting Schedule
             </label>
             
-            <p className="text-gray-600 dark:text-gray-400 mb-4 ml-1 text-sm">
-              Add each day and time this meeting occurs. Many meetings happen on different days and times.
-            </p>
-            
-            {meetingSchedule.length === 0 ? (
-              <div className="flex justify-center mb-4 p-6 rounded-lg border border-dashed border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800">
-                <p className="text-gray-500 dark:text-gray-400">
-                  No meeting times added yet. Click the button below to add a meeting time.
-                </p>
-              </div>
-            ) : (
-              <div className="space-y-3 mb-4">
-                {meetingSchedule.map((item, index) => (
+            {/* Calendar-like weekly grid */}
+            <div className="grid grid-cols-7 gap-2 mb-4">
+              {/* Days of the week headers */}
+              {['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'].map(day => (
+                <div key={day} className="text-center font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  {day.slice(0, 3)}
+                </div>
+              ))}
+              
+              {/* Day cells with time selectors */}
+              {['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'].map(day => {
+                // Find meeting items for this day
+                const dayItems = meetingSchedule.filter(item => item.day === day);
+                const hasTime = dayItems.length > 0;
+                
+                // Get the time for display if available
+                const timeValue = hasTime ? dayItems[0].time : '';
+                
+                return (
                   <div 
-                    key={index} 
-                    className="flex items-center gap-3 p-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800"
+                    key={day}
+                    className={`border rounded-lg p-2 transition-all ${
+                      hasTime
+                        ? 'border-blue-500 dark:border-blue-400 bg-blue-50 dark:bg-blue-900/20'
+                        : 'border-gray-300 dark:border-gray-600 hover:border-blue-300 dark:hover:border-blue-700'
+                    }`}
                   >
-                    {/* Day selector */}
-                    <div className="flex-1">
-                      <label className="block text-sm text-gray-600 dark:text-gray-400 mb-1">Day</label>
-                      <select
-                        className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200"
-                        value={item.day}
-                        onChange={(e) => updateScheduleItem(index, 'day', e.target.value)}
-                      >
-                        {Object.keys(meetingDays).map(day => (
-                          <option key={day} value={day}>
-                            {formatDay(day)}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                    
-                    {/* Time selector */}
-                    <div className="flex-1">
-                      <label className="block text-sm text-gray-600 dark:text-gray-400 mb-1">Time</label>
-                      <select
-                        className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200"
-                        value={item.time}
-                        onChange={(e) => updateScheduleItem(index, 'time', e.target.value)}
-                      >
-                        <option value="">Select a time</option>
-                        {/* Common evening times for AA meetings first */}
-                        <optgroup label="Evening (Most Common)">
-                          <option value="18:00">6:00 PM</option>
-                          <option value="18:30">6:30 PM</option>
-                          <option value="19:00">7:00 PM</option>
-                          <option value="19:30">7:30 PM</option>
-                          <option value="20:00">8:00 PM</option>
-                          <option value="20:30">8:30 PM</option>
-                        </optgroup>
-                        {/* Morning times */}
-                        <optgroup label="Morning">
+                    {hasTime ? (
+                      <div className="flex flex-col items-center">
+                        {/* Display time with delete option */}
+                        <select
+                          className="w-full py-1 px-2 text-sm bg-transparent border-0 text-center text-gray-800 dark:text-gray-200 focus:ring-0 focus:outline-none"
+                          value={timeValue}
+                          onChange={(e) => {
+                            // Update existing time
+                            if (e.target.value) {
+                              updateScheduleItem(meetingSchedule.findIndex(item => item.day === day), 'time', e.target.value);
+                            } else {
+                              // If user selects empty option, remove this day's time
+                              const itemIndex = meetingSchedule.findIndex(item => item.day === day);
+                              if (itemIndex !== -1) {
+                                removeScheduleItem(itemIndex);
+                              }
+                            }
+                          }}
+                        >
+                          <option value="">Remove</option>
                           <option value="06:00">6:00 AM</option>
                           <option value="06:30">6:30 AM</option>
                           <option value="07:00">7:00 AM</option>
@@ -565,10 +559,7 @@ export default function MeetingForm({
                           <option value="10:30">10:30 AM</option>
                           <option value="11:00">11:00 AM</option>
                           <option value="11:30">11:30 AM</option>
-                          <option value="12:00">12:00 PM (Noon)</option>
-                        </optgroup>
-                        {/* Afternoon times */}
-                        <optgroup label="Afternoon">
+                          <option value="12:00">12:00 PM</option>
                           <option value="12:30">12:30 PM</option>
                           <option value="13:00">1:00 PM</option>
                           <option value="13:30">1:30 PM</option>
@@ -580,40 +571,37 @@ export default function MeetingForm({
                           <option value="16:30">4:30 PM</option>
                           <option value="17:00">5:00 PM</option>
                           <option value="17:30">5:30 PM</option>
-                        </optgroup>
-                        {/* Late evening times */}
-                        <optgroup label="Late Evening">
+                          <option value="18:00">6:00 PM</option>
+                          <option value="18:30">6:30 PM</option>
+                          <option value="19:00">7:00 PM</option>
+                          <option value="19:30">7:30 PM</option>
+                          <option value="20:00">8:00 PM</option>
+                          <option value="20:30">8:30 PM</option>
                           <option value="21:00">9:00 PM</option>
                           <option value="21:30">9:30 PM</option>
                           <option value="22:00">10:00 PM</option>
-                        </optgroup>
-                      </select>
-                    </div>
-                    
-                    {/* Delete button */}
-                    <button
-                      type="button"
-                      className="p-2 text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 mt-6"
-                      onClick={() => removeScheduleItem(index)}
-                      aria-label="Remove this meeting time"
-                      title="Remove this meeting time"
-                    >
-                      <i className="fa-solid fa-trash-can"></i>
-                    </button>
+                        </select>
+
+                        <span className="text-xs text-gray-600 dark:text-gray-400">
+                          {new Date(`2000-01-01T${timeValue}`).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                        </span>
+                      </div>
+                    ) : (
+                      <div 
+                        className="h-full flex flex-col items-center justify-center cursor-pointer"
+                        onClick={() => {
+                          // Add new time for this day
+                          setMeetingSchedule(prev => [...prev, { day, time: '18:00' }]);
+                        }}
+                      >
+                        <i className="fa-solid fa-plus text-gray-400 dark:text-gray-500 mb-1"></i>
+                        <span className="text-xs text-gray-500 dark:text-gray-400">Add</span>
+                      </div>
+                    )}
                   </div>
-                ))}
-              </div>
-            )}
-            
-            {/* Add button */}
-            <button
-              type="button"
-              className="flex items-center justify-center w-full p-3 border border-dashed border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-blue-600 dark:text-blue-400"
-              onClick={addScheduleItem}
-            >
-              <i className="fa-solid fa-plus mr-2"></i>
-              Add Meeting Time
-            </button>
+                );
+              })}
+            </div>
           </div>
           
           {/* Meeting Address - Split into multiple fields */}
@@ -659,8 +647,8 @@ export default function MeetingForm({
             </div>
             
             {/* City and State */}
-            <div className="grid grid-cols-2 gap-4 mb-3">
-              <div>
+            <div className="grid grid-cols-3 gap-3 mb-3">
+              <div className="col-span-1">
                 <label className="block mb-1 font-medium text-gray-700 dark:text-gray-300">City</label>
                 <input
                   type="text"
@@ -670,28 +658,26 @@ export default function MeetingForm({
                   placeholder="City"
                 />
               </div>
-              <div>
-                <label className="block mb-1 font-medium text-gray-700 dark:text-gray-300">State/Province</label>
+              <div className="col-span-1">
+                <label className="block mb-1 font-medium text-gray-700 dark:text-gray-300">State</label>
                 <input
                   type="text"
                   className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 shadow-sm"
                   value={state}
                   onChange={(e) => setState(e.target.value)}
-                  placeholder="State/Province"
+                  placeholder="State"
                 />
               </div>
-            </div>
-            
-            {/* Zip/Postal Code */}
-            <div className="mb-3">
-              <label className="block mb-1 font-medium text-gray-700 dark:text-gray-300">Zip/Postal Code</label>
-              <input
-                type="text"
-                className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 shadow-sm"
-                value={zipCode}
-                onChange={(e) => setZipCode(e.target.value)}
-                placeholder="Zip/Postal Code"
-              />
+              <div className="col-span-1">
+                <label className="block mb-1 font-medium text-gray-700 dark:text-gray-300">Zip Code</label>
+                <input
+                  type="text"
+                  className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 shadow-sm"
+                  value={zipCode}
+                  onChange={(e) => setZipCode(e.target.value)}
+                  placeholder="Zip Code"
+                />
+              </div>
             </div>
             
             <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
@@ -700,7 +686,7 @@ export default function MeetingForm({
           </div>
           
           {/* Action Buttons */}
-          <div className="flex justify-between items-center mt-8 space-x-8">
+          <div className="flex justify-between items-center mt-8 space-x-24">
             <button
               type="button"
               onClick={onCancel}
@@ -719,7 +705,7 @@ export default function MeetingForm({
                 }
               }}
             >
-              <i className="fa-regular fa-circle-xmark text-red-500 dark:text-red-400" style={{ fontSize: '2rem' }}></i>
+              <i className="fa-regular fa-circle-xmark text-red-600 dark:text-red-500" style={{ fontSize: '2rem' }}></i>
             </button>
             <button
               type="submit"
@@ -745,7 +731,7 @@ export default function MeetingForm({
               <i className={`fa-regular fa-circle-check ${
                 !meetingName || meetingSchedule.length === 0 || !streetAddress 
                   ? 'text-gray-400 dark:text-gray-600' 
-                  : 'text-green-500 dark:text-green-400'
+                  : 'text-green-600 dark:text-green-500'
               }`} style={{ fontSize: '2rem' }}></i>
             </button>
           </div>
