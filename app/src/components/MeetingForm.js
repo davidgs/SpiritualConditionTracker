@@ -509,13 +509,14 @@ export default function MeetingForm({
                 onChange={(e) => setMeetingName(e.target.value)}
                 placeholder="Enter meeting name"
                 required
+                width="100%"
               />
             </div>
             
             {/* Meeting Schedule with tooltip */}
             <div className="mb-6">
               <div className="flex items-center mb-2 relative">
-                <span className="text-xl font-medium text-gray-700 dark:text-gray-300">Meeting Schedule</span>
+                <div className="text-xl font-medium text-gray-700 dark:text-gray-300">Meeting Schedule
                 <div className="relative ml-2" ref={tooltipRef}>
                   <i 
                     className="fa-solid fa-circle-info text-blue-500 dark:text-blue-400 cursor-pointer"
@@ -529,7 +530,7 @@ export default function MeetingForm({
                       </p>
                     </div>
                   )}
-                </div>
+                </div></div>
               </div>
               
               <SimpleMeetingSchedule 
