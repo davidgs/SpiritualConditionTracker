@@ -115,19 +115,19 @@ export default function Meetings({ setCurrentView, meetings = [], onSave }) {
             {/* Days & Time in a grid */}
             <div className="grid grid-cols-2 gap-2">
               <div className="flex items-center">
-                <i className="fa-solid fa-calendar-days text-gray-500 dark:text-gray-400 mr-2 flex-shrink-0" style={{ fontSize: '1rem' }}></i>
+                <i className="fa-solid fa-calendar-days text-gray-500 dark:text-gray-400 mr-3 flex-shrink-0" style={{ fontSize: '1rem' }}></i>
                 <span className="text-gray-600 dark:text-gray-300">{meeting.days.map(formatDay).join(', ')}</span>
               </div>
               
               <div className="flex items-center">
-                <i className="fa-regular fa-clock text-gray-500 dark:text-gray-400 mr-2 flex-shrink-0" style={{ fontSize: '1rem' }}></i>
+                <i className="fa-regular fa-clock text-gray-500 dark:text-gray-400 mr-3 flex-shrink-0" style={{ fontSize: '1rem' }}></i>
                 <span className="text-gray-600 dark:text-gray-300">{new Date(`2000-01-01T${meeting.time}`).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
               </div>
             </div>
             
             {/* Address */}
             <div className="flex items-start">
-              <i className="fa-solid fa-location-dot text-gray-500 dark:text-gray-400 mr-2 mt-1 flex-shrink-0" style={{ fontSize: '1rem' }}></i>
+              <i className="fa-solid fa-location-dot text-gray-500 dark:text-gray-400 mr-3 mt-1 flex-shrink-0" style={{ fontSize: '1rem' }}></i>
               <div className="text-gray-600 dark:text-gray-300">{formatAddress(meeting)}</div>
             </div>
             
@@ -146,7 +146,7 @@ export default function Meetings({ setCurrentView, meetings = [], onSave }) {
                   padding: '0.25rem'
                 }}
               >
-                <i className="fa-solid fa-pen-to-square"></i>
+                <i className="fa-solid fa-pen-to-square text-blue-500 dark:text-blue-400"></i>
               </button>
               <button
                 className="text-red-500 hover:text-red-700 dark:text-gray-400 dark:hover:text-gray-300 transition-colors duration-200"
@@ -161,7 +161,7 @@ export default function Meetings({ setCurrentView, meetings = [], onSave }) {
                   padding: '0.25rem'
                 }}
               >
-                <i className="fa-solid fa-trash-can"></i>
+                <i className="fa-solid fa-trash-can text-red-500 dark:text-gray-400"></i>
               </button>
             </div>
           </div>
