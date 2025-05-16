@@ -31,6 +31,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
   const [errors, setErrors] = useState({});
   const [editingPersonalInfo, setEditingPersonalInfo] = useState(false);
   const [showMeetingForm, setShowMeetingForm] = useState(false);
+  const [use24HourFormat, setUse24HourFormat] = useState(false);
 
   // Load user data when component mounts or user changes
   useEffect(() => {
@@ -47,9 +48,10 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
     }
   }, [user]);
 
-  // State for tracking privacy settings
+  // State for tracking privacy settings and preferences
   const [allowMessages, setAllowMessages] = useState(user?.privacySettings?.allowMessages !== false);
   const [shareLastName, setShareLastName] = useState(user?.privacySettings?.shareLastName !== false);
+  const [use24HourFormat, setUse24HourFormat] = useState(user?.preferences?.use24HourFormat || false);
   
   // Format phone number as (xxx) xxx-xxxx
   const formatPhoneNumber = (value) => {
