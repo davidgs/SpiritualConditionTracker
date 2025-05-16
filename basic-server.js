@@ -62,6 +62,21 @@ const server = http.createServer((req, res) => {
     return;
   }
   
+  // Special route for the SQLite test page
+  if (url === '/sqlite-test') {
+    fs.readFile(path.join(__dirname, 'app/build/sqlite-test.html'), (err, data) => {
+      if (err) {
+        res.writeHead(404);
+        res.end('SQLite test page not found.');
+        return;
+      }
+      
+      res.writeHead(200, { 'Content-Type': 'text/html', 'Cache-Control': 'no-cache' });
+      res.end(data);
+    });
+    return;
+  }
+  
   // Serve static files from app/build directory
   if (url.startsWith('/static/')) {
     const filePath = path.join(__dirname, 'app/build', url);
