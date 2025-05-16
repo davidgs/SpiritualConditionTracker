@@ -197,86 +197,173 @@ function App() {
   }
 
   // Calculate spiritual fitness score using the database function
-  function calculateSpiritualFitness() {
+  async function calculateSpiritualFitness() {
     if (!window.db) {
       console.error('Database not initialized');
       return;
     }
     
-    // Use the database function to calculate spiritual fitness
-    const score = window.db.calculateSpiritualFitness();
-    
-    // Set the spiritual fitness score in state
-    setSpiritualFitness(score);
+    try {
+      // Get the spiritual fitness preferences to determine timeframe
+      const timeframePreference = await window.db.getPreference('fitnessTimeframe') || 30;
+      
+      // Calculate score based on activities in the specified timeframe
+      const timeframe = parseInt(timeframePreference, 10);
+      
+      // Start with a base score
+      const baseScore = 20;
+      let score = baseScore;
+      const now = new Date();
+      const cutoffDate = new Date();
+      cutoffDate.setDate(cutoffDate.getDate() - timeframe);
+      
+      // Filter activities to those within the timeframe
+      const recentActivities = activities.filter(activity => 
+        new Date(activity.date) >= cutoffDate && new Date(activity.date) <= now
+      );
+      
+      if (recentActivities.length === 0) {
+        setSpiritualFitness(baseScore); // Base score only if no activities
+        return baseScore;
+      }
+      
+      // Calculate points based on activities
+      const activityPoints = Math.min(40, recentActivities.length * 2); // Cap at 40 points
+      
+      // Calculate consistency points
+      // Group activities by day to check daily activity
+      const activityDayMap = {};
+      recentActivities.forEach(activity => {
+        const day = new Date(activity.date).toISOString().split('T')[0];
+        if (!activityDayMap[day]) {
+          activityDayMap[day] = [];
+        }
+        activityDayMap[day].push(activity);
+      });
+      
+      // Count days with activities
+      const daysWithActivities = Object.keys(activityDayMap).length;
+      
+      // Calculate consistency as a percentage of the timeframe days
+      const consistencyPercentage = daysWithActivities / timeframe;
+      const consistencyPoints = Math.round(consistencyPercentage * 40); // Up to 40 points for consistency
+      
+      // Total score
+      score = baseScore + activityPoints + consistencyPoints;
+      
+      // Ensure score doesn't exceed 100
+      score = Math.min(100, score);
+      
+      // Round to 2 decimal places
+      score = Math.round(score * 100) / 100;
+      
+      // Set the spiritual fitness score in state
+      setSpiritualFitness(score);
+      
+      return score;
+    } catch (error) {
+      console.error('Error calculating spiritual fitness:', error);
+      setSpiritualFitness(20); // Default base score on error
+      return 20;
+    }
   }
 
   // Handle saving a new activity
-  function handleSaveActivity(newActivity) {
+  async function handleSaveActivity(newActivity) {
     if (!window.db) {
       console.error('Database not initialized');
       return;
     }
 
-    // Add activity to database
-    const savedActivity = window.db.add('activities', newActivity);
-    
-    // Update activities state
-    setActivities(prev => [...prev, savedActivity]);
+    try {
+      // Add activity to database - using async version
+      const savedActivity = await window.db.add('activities', newActivity);
+      
+      // Update activities state
+      setActivities(prev => [...prev, savedActivity]);
+      
+      // Calculate spiritual fitness after adding activity
+      calculateSpiritualFitness();
+      
+      return savedActivity;
+    } catch (error) {
+      console.error('Error saving activity:', error);
+      return null;
+    }
     
     // Stay on activity screen to allow logging multiple activities
     // No longer redirecting to dashboard
   }
 
   // Handle saving a new meeting
-  function handleSaveMeeting(newMeeting) {
+  async function handleSaveMeeting(newMeeting) {
     if (!window.db) {
       console.error('Database not initialized');
       return;
     }
 
-    // Check if this is an update or new meeting
-    let savedMeeting;
-    
-    // If the meeting has an ID and exists in our meetings array, update it
-    if (newMeeting.id && meetings.some(m => m.id === newMeeting.id)) {
-      // This is an update to an existing meeting
-      savedMeeting = window.db.update('meetings', newMeeting.id, newMeeting);
+    try {
+      let savedMeeting;
       
-      // Update the meetings state
-      setMeetings(prev => prev.map(m => m.id === savedMeeting.id ? savedMeeting : m));
-    } else {
-      // This is a new meeting
-      savedMeeting = window.db.add('meetings', newMeeting);
+      // If the meeting has an ID and exists in our meetings array, update it
+      if (newMeeting.id && meetings.some(m => m.id === newMeeting.id)) {
+        // This is an update to an existing meeting
+        savedMeeting = await window.db.update('meetings', newMeeting.id, newMeeting);
+        
+        if (!savedMeeting) {
+          console.error('Failed to update meeting - meeting not found');
+          return null;
+        }
+        
+        // Update the meetings state
+        setMeetings(prev => prev.map(m => m.id === savedMeeting.id ? savedMeeting : m));
+      } else {
+        // This is a new meeting
+        savedMeeting = await window.db.add('meetings', newMeeting);
+        
+        // Update meetings state
+        setMeetings(prev => [...prev, savedMeeting]);
+      }
       
-      // Update meetings state
-      setMeetings(prev => [...prev, savedMeeting]);
+      console.log("Meeting saved:", savedMeeting);
+      
+      // Return the saved meeting for the callback chain
+      return savedMeeting;
+    } catch (error) {
+      console.error('Error saving meeting:', error);
+      return null;
     }
-    
-    console.log("Meeting saved:", savedMeeting);
-    
-    // Return the saved meeting for the callback chain
-    return savedMeeting;
   }
 
   // Handle updating user profile
-  function handleUpdateProfile(updates, options = { redirectToDashboard: true }) {
+  async function handleUpdateProfile(updates, options = { redirectToDashboard: true }) {
     if (!window.db) {
       console.error('Database not initialized');
       return;
     }
 
-    // Update user in database
-    const updatedUser = window.db.update('user', user.id, updates);
-    
-    // Update user state
-    setUser(updatedUser);
-    
-    // Set view back to dashboard only if specified (default true)
-    if (options.redirectToDashboard) {
-      setCurrentView('dashboard');
+    try {
+      // Update user in database - using async version
+      const updatedUser = await window.db.update('users', user.id, updates);
+      
+      if (!updatedUser) {
+        console.error('Failed to update user - user not found');
+        return null;
+      }
+      
+      // Update user state
+      setUser(updatedUser);
+      
+      // Set view back to dashboard only if specified (default true)
+      if (options.redirectToDashboard) {
+        setCurrentView('dashboard');
+      }
+      
+      return updatedUser;
+    } catch (error) {
+      console.error('Error updating user profile:', error);
+      return null;
     }
-    
-    return updatedUser;
   }
 
   // Privacy settings function removed - was primarily used for Nearby features
