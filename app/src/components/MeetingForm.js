@@ -546,7 +546,7 @@ export default function MeetingForm({
               
               {/* Street Address with Detect button */}
               <div className="mb-3" style={{ width: '100%' }}>
-                <div className="flex items-center" style={{ width: '100%' }}>
+                <div className="flex items-left" style={{ width: '100%' }}>
                   <input
                     type="text"
                     className="flex-1 p-3 border border-gray-300 dark:border-gray-600 rounded-l bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 shadow-sm"
@@ -622,7 +622,7 @@ export default function MeetingForm({
                 style={{ 
                   background: 'transparent',
                   border: 'none',
-                  padding: 0,
+                  padding: '5px',
                   cursor: 'pointer',
                   outline: 'none',
                   boxShadow: 'none'
@@ -631,17 +631,18 @@ export default function MeetingForm({
               >
                 <i className="fa-regular fa-circle-xmark text-red-600 dark:text-red-400" style={{ fontSize: '2.5rem' }}></i>
               </button>
-              
+              &nbsp;
               <button
                 type="submit"
                 style={{ 
                   background: 'transparent',
                   border: 'none',
-                  padding: 0,
+                  padding: '5px',
                   cursor: !meetingName || meetingSchedule.length === 0 || !streetAddress ? 'not-allowed' : 'pointer',
                   outline: 'none',
                   boxShadow: 'none',
-                  opacity: !meetingName || meetingSchedule.length === 0 || !streetAddress ? 0.5 : 1
+                  opacity: !meetingName || meetingSchedule.length === 0 || !streetAddress ? 0.5 : 1,
+                  color: !meetingName || meetingSchedule.length === 0 || !streetAddress ? '#6CDF7C' : '#00FF2D'
                 }}
                 title={meeting ? "Save changes" : "Add meeting"}
                 disabled={!meetingName || meetingSchedule.length === 0 || !streetAddress}
