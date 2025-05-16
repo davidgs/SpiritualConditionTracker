@@ -32,6 +32,7 @@ export default function Meetings({ setCurrentView, meetings = [], onSave, user }
         ? user.homeGroups 
         : (user.homeGroup ? [user.homeGroup] : []);
       setUserHomeGroups(homeGroups);
+      condole.log('User: ', user);
     }
   }, [user, meetings]); // Refresh when user or meetings change
   

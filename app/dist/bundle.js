@@ -64833,6 +64833,7 @@ function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
 
 
 function Meetings(_ref) {
+  var _user$preferences;
   var setCurrentView = _ref.setCurrentView,
     _ref$meetings = _ref.meetings,
     meetings = _ref$meetings === void 0 ? [] : _ref$meetings,
@@ -64852,9 +64853,11 @@ function Meetings(_ref) {
   // Keep user preferences in sync
   (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(function () {
     if (user && user.preferences) {
-      setUse24HourFormat(user.preferences.use24HourFormat || false);
+      var timeFormat = user.preferences.use24HourFormat || false;
+      console.log('Meetings: Setting time format preference to:', timeFormat);
+      setUse24HourFormat(timeFormat);
     }
-  }, [user]);
+  }, [user, user === null || user === void 0 || (_user$preferences = user.preferences) === null || _user$preferences === void 0 ? void 0 : _user$preferences.use24HourFormat]);
 
   // Get user's home groups
   var _useState3 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)([]),
@@ -64868,6 +64871,7 @@ function Meetings(_ref) {
       // Handle both the new array format and legacy string format
       var homeGroups = user.homeGroups ? user.homeGroups : user.homeGroup ? [user.homeGroup] : [];
       setUserHomeGroups(homeGroups);
+      condole.log('User: ', user);
     }
   }, [user, meetings]); // Refresh when user or meetings change
 
@@ -65029,11 +65033,29 @@ function Meetings(_ref) {
       }
     }), "\xA0", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("span", {
       className: "text-gray-600 dark:text-gray-300"
-    }, use24HourFormat ? meeting.time // Already in 24hr format in the database
-    : meeting.time.split(':').map(function (part, i) {
-      return i === 0 ? parseInt(part) % 12 || 12 : part;
-    }) // Convert first part (hours)
-    .join(':') + (parseInt(meeting.time.split(':')[0]) >= 12 ? ' PM' : ' AM'))))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+    }, function () {
+      console.log('Meeting time to format:', meeting.time, 'Use 24h format:', use24HourFormat);
+
+      // If we're using 24-hour format, no conversion needed
+      if (use24HourFormat) {
+        return meeting.time;
+      }
+
+      // Convert to 12-hour format with AM/PM
+      try {
+        var parts = meeting.time.split(':');
+        var hours = parseInt(parts[0], 10);
+        var minutes = parts[1];
+        var period = hours >= 12 ? 'PM' : 'AM';
+        var hours12 = hours % 12 || 12;
+        var result = "".concat(hours12, ":").concat(minutes, " ").concat(period);
+        console.log('Converted time:', result);
+        return result;
+      } catch (e) {
+        console.error('Error formatting time:', e);
+        return meeting.time;
+      }
+    }())))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
       className: "text-gray-600 dark:text-gray-300 flex items-start"
     }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
       className: "w-full"
@@ -66388,10 +66410,15 @@ function Profile(_ref) {
             use24HourFormat: newValue
           })
         };
-        // Use the onUpdate function with the new option to prevent redirection
+        // Force app reload to apply time format change
         onUpdate(updates, {
           redirectToDashboard: false
         });
+
+        // Force a reload to apply the changes
+        setTimeout(function () {
+          window.location.reload();
+        }, 500);
       },
       color: "primary",
       size: "small"

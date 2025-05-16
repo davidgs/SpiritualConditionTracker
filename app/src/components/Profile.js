@@ -471,8 +471,13 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
                       use24HourFormat: newValue
                     }
                   };
-                  // Use the onUpdate function with the new option to prevent redirection
+                  // Force app reload to apply time format change
                   onUpdate(updates, { redirectToDashboard: false });
+                  
+                  // Force a reload to apply the changes
+                  setTimeout(() => {
+                    window.location.reload();
+                  }, 500);
                 }}
                 color="primary"
                 size="small"
