@@ -223,29 +223,28 @@ export default function Meetings({ setCurrentView, meetings = [], onSave, user }
   
   return (
     <div className="p-3">
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100 flex items-center">
-          <i className="fa-solid fa-calendar text-gray-300 dark:text-gray-600 mr-3" style={{ fontSize: '2.5rem' }}></i>
-          Meetings
-        </h1>
-        
-        <button
-          onClick={() => setShowForm(true)}
-          aria-label="Add new meeting"
-          title={meetings.length > 0 ? 'Add New Meeting' : 'Add Your First Meeting'}
-          className="text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300 transition-colors duration-200"
-          style={{ 
-            background: 'transparent', 
-            border: 'none', 
-            cursor: 'pointer',
-            outline: 'none',
-            boxShadow: 'none',
-            fontSize: '2rem',  
-            padding: '0.5rem'
-          }}
-        >
-          <i className="fa-solid fa-calendar-plus"></i>
-        </button>
+      <div className="flex flex-col items-center justify-between mb-6">
+       <span> <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100 items-center">
+          <i className="fa-solid fa-calendar text-gray-300 dark:text-gray-600 mr-3" style={{ fontSize: '2.5rem' }}></i>&nbsp;
+          Meetings&nbsp; <button
+           onClick={() => setShowForm(true)}
+           aria-label="Add new meeting"
+           title={meetings.length > 0 ? 'Add New Meeting' : 'Add Your First Meeting'}
+           className="text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300 transition-colors duration-200"
+           style={{ 
+             background: 'transparent', 
+             border: 'none', 
+             cursor: 'pointer',
+             outline: 'none',
+             boxShadow: 'none',
+             fontSize: '2rem',  
+             padding: '0.5rem'
+           }}
+         >
+           <i className="fa-solid fa-calendar-plus"></i>
+         </button>
+        </h1></span>
+       
       </div>
 
       {/* Meeting Form Dialog */}

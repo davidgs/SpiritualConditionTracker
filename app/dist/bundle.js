@@ -65072,15 +65072,15 @@ function Meetings(_ref) {
   return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     className: "p-3"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
-    className: "flex items-center justify-between mb-6"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("h1", {
-    className: "text-2xl font-bold text-gray-800 dark:text-gray-100 flex items-center"
+    className: "flex flex-col items-center justify-between mb-6"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("span", null, " ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("h1", {
+    className: "text-2xl font-bold text-gray-800 dark:text-gray-100 items-center"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("i", {
     className: "fa-solid fa-calendar text-gray-300 dark:text-gray-600 mr-3",
     style: {
       fontSize: '2.5rem'
     }
-  }), "Meetings"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("button", {
+  }), "\xA0 Meetings\xA0 ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("button", {
     onClick: function onClick() {
       return setShowForm(true);
     },
@@ -65098,7 +65098,7 @@ function Meetings(_ref) {
     }
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("i", {
     className: "fa-solid fa-calendar-plus"
-  }))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_MeetingFormDialog__WEBPACK_IMPORTED_MODULE_2__["default"], {
+  }))))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_MeetingFormDialog__WEBPACK_IMPORTED_MODULE_2__["default"], {
     open: showForm,
     meeting: currentMeeting,
     onSave: handleSaveMeeting,
