@@ -103,14 +103,36 @@ export default function Meetings({ setCurrentView, meetings = [], onSave }) {
   // Render a single meeting item
   const renderMeetingItem = (meeting) => {
     return (
-      <div key={meeting.id} className="bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 p-6 mb-6 transition-all hover:shadow-lg">
+      <div key={meeting.id} className="bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 p-4 mb-4 transition-all hover:shadow-lg">
         <div className="flex flex-col">
-          <div className="flex justify-between items-center mb-3">
+          <div className="mb-3">
             <h3 className="text-xl font-bold text-gray-800 dark:text-gray-100">
               {meeting.name}
             </h3>
+          </div>
+          
+          <div className="flex flex-col gap-3 text-sm">
+            {/* Days & Time in a grid */}
+            <div className="grid grid-cols-2 gap-2">
+              <div className="flex items-center">
+                <i className="fa-solid fa-calendar-days text-gray-500 dark:text-gray-400 mr-2 flex-shrink-0" style={{ fontSize: '1rem' }}></i>
+                <span className="text-gray-600 dark:text-gray-300">{meeting.days.map(formatDay).join(', ')}</span>
+              </div>
+              
+              <div className="flex items-center">
+                <i className="fa-regular fa-clock text-gray-500 dark:text-gray-400 mr-2 flex-shrink-0" style={{ fontSize: '1rem' }}></i>
+                <span className="text-gray-600 dark:text-gray-300">{new Date(`2000-01-01T${meeting.time}`).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+              </div>
+            </div>
             
-            <div className="flex space-x-4">
+            {/* Address */}
+            <div className="flex items-start">
+              <i className="fa-solid fa-location-dot text-gray-500 dark:text-gray-400 mr-2 mt-1 flex-shrink-0" style={{ fontSize: '1rem' }}></i>
+              <div className="text-gray-600 dark:text-gray-300">{formatAddress(meeting)}</div>
+            </div>
+            
+            {/* Action buttons at the bottom */}
+            <div className="flex justify-end space-x-4 mt-4 pt-3 border-t border-gray-200 dark:border-gray-700">
               <button
                 className="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors duration-200"
                 onClick={() => handleEdit(meeting)}
@@ -120,14 +142,14 @@ export default function Meetings({ setCurrentView, meetings = [], onSave }) {
                   background: 'transparent',
                   border: 'none',
                   cursor: 'pointer',
-                  fontSize: '1.25rem',
+                  fontSize: '1.1rem',
                   padding: '0.25rem'
                 }}
               >
                 <i className="fa-solid fa-pen-to-square"></i>
               </button>
               <button
-                className="text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 transition-colors duration-200"
+                className="text-red-500 hover:text-red-700 dark:text-gray-400 dark:hover:text-gray-300 transition-colors duration-200"
                 onClick={() => handleDelete(meeting.id)}
                 aria-label="Delete meeting"
                 title="Delete meeting"
@@ -135,41 +157,12 @@ export default function Meetings({ setCurrentView, meetings = [], onSave }) {
                   background: 'transparent',
                   border: 'none',
                   cursor: 'pointer',
-                  fontSize: '1.25rem',
+                  fontSize: '1.1rem',
                   padding: '0.25rem'
                 }}
               >
                 <i className="fa-solid fa-trash-can"></i>
               </button>
-            </div>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm mt-3">
-            {/* Days */}
-            <div className="flex items-center">
-              <i className="fa-solid fa-calendar-days text-blue-500 mr-3 flex-shrink-0" style={{ fontSize: '1.1rem' }}></i>
-              <div>
-                <span className="font-semibold text-gray-700 dark:text-gray-100 block mb-1">Days</span>
-                <span className="text-gray-600 dark:text-gray-300">{meeting.days.map(formatDay).join(', ')}</span>
-              </div>
-            </div>
-            
-            {/* Time */}
-            <div className="flex items-center">
-              <i className="fa-regular fa-clock text-blue-500 mr-3 flex-shrink-0" style={{ fontSize: '1.1rem' }}></i>
-              <div>
-                <span className="font-semibold text-gray-700 dark:text-gray-100 block mb-1">Time</span>
-                <span className="text-gray-600 dark:text-gray-300">{new Date(`2000-01-01T${meeting.time}`).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
-              </div>
-            </div>
-            
-            {/* Address - full width */}
-            <div className="flex items-start col-span-1 md:col-span-2 mt-1">
-              <i className="fa-solid fa-location-dot text-blue-500 mr-3 mt-1 flex-shrink-0" style={{ fontSize: '1.1rem' }}></i>
-              <div>
-                <span className="font-semibold text-gray-700 dark:text-gray-100 block mb-1">Address</span>
-                <div className="text-gray-600 dark:text-gray-300">{formatAddress(meeting)}</div>
-              </div>
             </div>
           </div>
         </div>
@@ -178,8 +171,8 @@ export default function Meetings({ setCurrentView, meetings = [], onSave }) {
   };
   
   return (
-    <div className="p-4">
-      <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-6">
+    <div className="p-3">
+      <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-3">
         Meetings
       </h1>
       
