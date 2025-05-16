@@ -582,7 +582,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
                 </MenuItem>
                 {/* Generate menu items from meetings */}
                 {(() => {
-                  const meetings = window.db?.getAllMeetings() || [];
+                  const meetings = window.db?.getAll('meetings') || [];
                   return meetings.length > 0 
                     ? meetings.map(meeting => (
                         <MenuItem key={meeting.id} value={meeting.name}>{meeting.name}</MenuItem>

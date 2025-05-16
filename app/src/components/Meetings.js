@@ -3,6 +3,18 @@ import { meetingOperations } from '../utils/database';
 import MeetingForm from './MeetingForm';
 
 export default function Meetings({ setCurrentView, meetings = [], onSave }) {
+  // Get user's home group
+  const [userHomeGroup, setUserHomeGroup] = useState('');
+  
+  // Load user data to get home group
+  useEffect(() => {
+    if (window.db) {
+      const user = window.db.getUser();
+      if (user && user.homeGroup) {
+        setUserHomeGroup(user.homeGroup);
+      }
+    }
+  }, []);
   const [showForm, setShowForm] = useState(false);
   const [currentMeeting, setCurrentMeeting] = useState(null);
   const [error, setError] = useState('');
@@ -98,8 +110,11 @@ export default function Meetings({ setCurrentView, meetings = [], onSave }) {
       <div key={meeting.id} className="bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 p-4 mb-4 transition-all hover:shadow-lg">
         <div className="flex flex-col">
           <div className="mb-3">
-            <h3 className="text-xl font-bold text-gray-800 dark:text-gray-100">
+            <h3 className="text-xl font-bold text-gray-800 dark:text-gray-100 flex items-center">
               {meeting.name}
+              {meeting.name === userHomeGroup && (
+                <i className="fa-solid fa-house text-blue-500 ml-2" title="Home Group" style={{ fontSize: '0.85rem' }}></i>
+              )}
             </h3>
           </div>
           

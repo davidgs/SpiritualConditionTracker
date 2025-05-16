@@ -63218,18 +63218,33 @@ function Meetings(_ref) {
     _ref$meetings = _ref.meetings,
     meetings = _ref$meetings === void 0 ? [] : _ref$meetings,
     onSave = _ref.onSave;
-  var _useState = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false),
+  // Get user's home group
+  var _useState = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(''),
     _useState2 = _slicedToArray(_useState, 2),
-    showForm = _useState2[0],
-    setShowForm = _useState2[1];
-  var _useState3 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null),
+    userHomeGroup = _useState2[0],
+    setUserHomeGroup = _useState2[1];
+
+  // Load user data to get home group
+  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(function () {
+    if (window.db) {
+      var user = window.db.getUser();
+      if (user && user.homeGroup) {
+        setUserHomeGroup(user.homeGroup);
+      }
+    }
+  }, []);
+  var _useState3 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false),
     _useState4 = _slicedToArray(_useState3, 2),
-    currentMeeting = _useState4[0],
-    setCurrentMeeting = _useState4[1];
-  var _useState5 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(''),
+    showForm = _useState4[0],
+    setShowForm = _useState4[1];
+  var _useState5 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null),
     _useState6 = _slicedToArray(_useState5, 2),
-    error = _useState6[0],
-    setError = _useState6[1];
+    currentMeeting = _useState6[0],
+    setCurrentMeeting = _useState6[1];
+  var _useState7 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(''),
+    _useState8 = _slicedToArray(_useState7, 2),
+    error = _useState8[0],
+    setError = _useState8[1];
 
   // Dark mode detection
   var darkMode = document.documentElement.classList.contains('dark');
@@ -63318,8 +63333,14 @@ function Meetings(_ref) {
     }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
       className: "mb-3"
     }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("h3", {
-      className: "text-xl font-bold text-gray-800 dark:text-gray-100"
-    }, meeting.name)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+      className: "text-xl font-bold text-gray-800 dark:text-gray-100 flex items-center"
+    }, meeting.name, meeting.name === userHomeGroup && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("i", {
+      className: "fa-solid fa-house text-blue-500 ml-2",
+      title: "Home Group",
+      style: {
+        fontSize: '0.85rem'
+      }
+    }))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
       className: "flex flex-col gap-3 text-sm"
     }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
       className: "space-y-2"
@@ -64859,7 +64880,7 @@ function Profile(_ref) {
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_12__["default"], {
     value: ""
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("em", null, "None")), function (_window$db3) {
-    var meetings = ((_window$db3 = window.db) === null || _window$db3 === void 0 ? void 0 : _window$db3.getAllMeetings()) || [];
+    var meetings = ((_window$db3 = window.db) === null || _window$db3 === void 0 ? void 0 : _window$db3.getAll('meetings')) || [];
     return meetings.length > 0 ? meetings.map(function (meeting) {
       return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_12__["default"], {
         key: meeting.id,
