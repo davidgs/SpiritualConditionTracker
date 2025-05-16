@@ -5,6 +5,8 @@ import NavBar from './components/NavBar';
 import Profile from './components/Profile';
 import Meetings from './components/Meetings';
 import Messages from './components/Messages';
+import StepWork from './components/StepWork';
+import SponsorSponsee from './components/SponsorSponsee';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { generateKeyPair } from './utils/encryption';
 
@@ -218,6 +220,19 @@ function App() {
         return (
           <Profile
             setCurrentView={setCurrentView}
+            user={user}
+            onUpdate={handleUpdateProfile}
+          />
+        );
+      case 'stepwork':
+        return (
+          <StepWork
+            setCurrentView={setCurrentView}
+          />
+        );
+      case 'sponsorsponsee':
+        return (
+          <SponsorSponsee
             user={user}
             onUpdate={handleUpdateProfile}
           />
