@@ -63335,8 +63335,8 @@ function Meetings(_ref) {
       className: "mb-3"
     }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("h3", {
       className: "text-xl font-bold text-gray-800 dark:text-gray-100 flex items-center"
-    }, meeting.name, " \xA0", meeting.name === userHomeGroup && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("i", {
-      className: "fa-solid fa-house text-gray-600 dark:text-gray-300 ml-2",
+    }, meeting.name, " \xA0", userHomeGroups.includes(meeting.name) && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("i", {
+      className: "fa-solid fa-house text-blue-500 dark:text-blue-400 ml-2",
       title: "Home Group",
       style: {
         fontSize: '0.85rem'
