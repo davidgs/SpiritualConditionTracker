@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { meetingOperations } from '../utils/database';
 import MeetingFormDialog from './MeetingFormDialog';
 import { ThemeContext } from '../contexts/ThemeContext';
+import { formatTimeByPreference } from '../utils/dateUtils';
 
 export default function Meetings({ setCurrentView, meetings = [], onSave, user }) {
   // Get dark mode from theme context
@@ -158,7 +159,7 @@ export default function Meetings({ setCurrentView, meetings = [], onSave, user }
                   {meeting.time && (
                     <div className="flex items-center">
                       <i className="fa-regular fa-clock text-gray-500 dark:text-gray-400 mr-3" style={{ fontSize: '1rem' }}></i>&nbsp;
-                      <span className="text-gray-600 dark:text-gray-300">{meeting.time}</span>
+                      <span className="text-gray-600 dark:text-gray-300">{formatTimeByPreference(meeting.time, use24HourFormat)}</span>
                     </div>
                   )}
                 </div>

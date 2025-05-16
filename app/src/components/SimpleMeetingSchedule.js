@@ -1,6 +1,7 @@
 import React from 'react';
+import { formatTimeByPreference } from '../utils/dateUtils';
 
-const SimpleMeetingSchedule = ({ schedule, onChange }) => {
+const SimpleMeetingSchedule = ({ schedule, onChange, use24HourFormat = false }) => {
   const days = [
     { key: 'sunday', label: 'Sunday' },
     { key: 'monday', label: 'Monday' },
