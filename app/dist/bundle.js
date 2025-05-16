@@ -63227,9 +63227,13 @@ function Meetings(_ref) {
   // Load user data to get home group
   (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(function () {
     if (window.db) {
-      var user = window.db.getUser();
-      if (user && user.homeGroup) {
-        setUserHomeGroup(user.homeGroup);
+      try {
+        var userData = window.db.getAll('user');
+        if (userData && userData.length > 0 && userData[0].homeGroup) {
+          setUserHomeGroup(userData[0].homeGroup);
+        }
+      } catch (error) {
+        console.error('Error getting user home group:', error);
       }
     }
   }, []);

@@ -9,9 +9,13 @@ export default function Meetings({ setCurrentView, meetings = [], onSave }) {
   // Load user data to get home group
   useEffect(() => {
     if (window.db) {
-      const user = window.db.getUser();
-      if (user && user.homeGroup) {
-        setUserHomeGroup(user.homeGroup);
+      try {
+        const userData = window.db.getAll('user');
+        if (userData && userData.length > 0 && userData[0].homeGroup) {
+          setUserHomeGroup(userData[0].homeGroup);
+        }
+      } catch (error) {
+        console.error('Error getting user home group:', error);
       }
     }
   }, []);
