@@ -1,12 +1,29 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import SimpleMeetingSchedule from './SimpleMeetingSchedule';
 
 export default function MeetingForm({ 
   meeting = null, 
   onSave, 
   onCancel,
-  isOverlay = false
+  isOverlay = true
 }) {
+  // Tooltip state
+  const [showTooltip, setShowTooltip] = useState(false);
+  const tooltipRef = useRef(null);
+  
+  // Close tooltip when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (tooltipRef.current && !tooltipRef.current.contains(event.target)) {
+        setShowTooltip(false);
+      }
+    }
+    
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
   // Form state
   const [meetingName, setMeetingName] = useState('');
   
@@ -455,180 +472,176 @@ export default function MeetingForm({
     ? "bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 max-w-md w-full border border-gray-200 dark:border-gray-700"
     : "";
   
+  // Modal overlay styles
+  const overlayClass = isOverlay 
+    ? "fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-70 z-50 flex items-center justify-center p-4 overflow-y-auto"
+    : "";
+    
   return (
-    <div className={containerClass}>
-      <div className={formClass}>
-        <div className="flex items-center mb-4">
-          <i className="fa-regular fa-calendar-plus mx-auto text-gray-400 dark:text-gray-500 mb-3" style={{ fontSize: '4rem', display: 'block' }}></i>
-
-          {/* <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-blue-600 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-          </svg> */}
-          <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100">
-            {meeting ? 'Edit Meeting' : 'Add New Meeting'}
-          </h2>
-        </div>
-        <p className="text-gray-600 dark:text-gray-400 mb-6 ml-1">
-          Add details for your regular AA meeting. Most meetings occur in the evenings, typically between 6-9 PM.
-        </p>
-        
-        {error && (
-          <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/30 text-red-800 dark:text-red-200 rounded-lg border border-red-200 dark:border-red-800/50 flex items-start">
-            <i className="fa-solid fa-circle-exclamation h-5 w-5 text-red-600 dark:text-red-400 mr-2 mt-0.5 flex-shrink-0"></i>
-            <span>{error}</span>
+    <div className={`${overlayClass} transition-all duration-300 ease-in-out`}>
+      <div className={`max-w-2xl w-full bg-white dark:bg-gray-800 rounded-xl shadow-xl overflow-hidden transition-all duration-300 transform ${isOverlay ? 'scale-100' : 'scale-95'}`}>
+        <div className="p-6">
+          <div className="flex items-center mb-4">
+            <i className="fa-regular fa-calendar-plus mr-3 text-gray-400 dark:text-gray-500" style={{ fontSize: '2.5rem' }}></i>
+            <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100">
+              {meeting ? 'Edit Meeting' : 'Add New Meeting'}
+            </h2>
           </div>
-        )}
-        
-        <form onSubmit={handleSubmit}>
-          {/* Meeting Name */}
-          <div className="mb-6">
-            <label className="block text-gray-700 dark:text-gray-300 mb-2 text-xl font-medium">
-              Meeting Name
-            </label>
-            <input
-              type="text"
-              className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
-              value={meetingName}
-              onChange={(e) => setMeetingName(e.target.value)}
-              placeholder="Enter meeting name"
-              required
-            />
-          </div>
+          <p className="text-gray-600 dark:text-gray-400 mb-6">
+            Add details for your regular AA meeting. Most meetings occur in the evenings, typically between 6-9 PM.
+          </p>
           
-          {/* Meeting Schedule */}
-          <SimpleMeetingSchedule 
-            schedule={meetingSchedule} 
-            onChange={setMeetingSchedule} 
-          />
+          {error && (
+            <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/30 text-red-800 dark:text-red-200 rounded-lg border border-red-200 dark:border-red-800/50 flex items-start">
+              <i className="fa-solid fa-circle-exclamation h-5 w-5 text-red-600 dark:text-red-400 mr-2 mt-0.5 flex-shrink-0"></i>
+              <span>{error}</span>
+            </div>
+          )}
           
-          {/* Meeting Address - Split into multiple fields */}
-          <div className="mb-6">
-            <label className="block text-gray-700 dark:text-gray-300 mb-2 text-xl font-medium">
-              Meeting Location
-            </label>
+          <form onSubmit={handleSubmit}>
+            {/* Meeting Name - No label, full width */}
+            <div className="mb-6">
+              <input
+                type="text"
+                className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                value={meetingName}
+                onChange={(e) => setMeetingName(e.target.value)}
+                placeholder="Enter meeting name"
+                required
+              />
+            </div>
             
-            {/* Street Address with Detect button */}
-            <div className="mb-3">
-              <label className="block mb-1 font-medium text-gray-700 dark:text-gray-300">Street Address</label>
-              <div className="flex items-center w-full">
-                <input
-                  type="text"
-                  className="flex-grow p-3 border border-gray-300 dark:border-gray-600 rounded-l bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 shadow-sm"
-                  value={streetAddress}
-                  onChange={(e) => setStreetAddress(e.target.value)}
-                  placeholder="Street address"
-                  required
-                />
-                <button
-                  type="button"
-                  onClick={detectLocation}
-                  disabled={searchingLocation}
-                  title="Detect your location"
-                  className={`h-12 w-12 flex items-center justify-center rounded-r border border-l-0 ${
-                    searchingLocation 
-                      ? 'bg-gray-100 dark:bg-gray-800 border-gray-300 dark:border-gray-600' 
-                      : 'bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800/30 hover:bg-blue-100 dark:hover:bg-blue-800/30'
-                  }`}
-                >
-                  {searchingLocation ? (
-                    <i className="fa-solid fa-spinner fa-spin text-blue-500 dark:text-blue-400"></i>
-                  ) : (
-                    <i className="fa-solid fa-location-dot text-blue-500 dark:text-blue-400"></i>
+            {/* Meeting Schedule with tooltip */}
+            <div className="mb-6">
+              <div className="flex items-center mb-2 relative">
+                <span className="text-xl font-medium text-gray-700 dark:text-gray-300">Meeting Schedule</span>
+                <div className="relative ml-2" ref={tooltipRef}>
+                  <i 
+                    className="fa-solid fa-circle-info text-blue-500 dark:text-blue-400 cursor-pointer"
+                    onClick={() => setShowTooltip(!showTooltip)}
+                  ></i>
+                  
+                  {showTooltip && (
+                    <div className="absolute z-10 top-full left-0 mt-2 w-64 p-3 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg shadow-lg">
+                      <p className="text-sm text-gray-700 dark:text-gray-300">
+                        Select times for each day this meeting occurs. Most meetings happen at the same time on different days.
+                      </p>
+                    </div>
                   )}
-                </button>
+                </div>
               </div>
+              
+              <SimpleMeetingSchedule 
+                schedule={meetingSchedule} 
+                onChange={setMeetingSchedule} 
+              />
             </div>
             
-            {/* City and State */}
-            <div className="grid grid-cols-3 gap-3 mb-3">
-              <div className="col-span-1">
-                <label className="block mb-1 font-medium text-gray-700 dark:text-gray-300">City</label>
-                <input
-                  type="text"
-                  className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 shadow-sm"
-                  value={city}
-                  onChange={(e) => setCity(e.target.value)}
-                  placeholder="City"
-                />
+            {/* Meeting Address - Split into multiple fields */}
+            <div className="mb-6">
+              <div className="flex items-center mb-2">
+                <span className="text-xl font-medium text-gray-700 dark:text-gray-300">Meeting Location</span>
               </div>
-              <div className="col-span-1">
-                <label className="block mb-1 font-medium text-gray-700 dark:text-gray-300">State</label>
-                <input
-                  type="text"
-                  className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 shadow-sm"
-                  value={state}
-                  onChange={(e) => setState(e.target.value)}
-                  placeholder="State"
-                />
+              
+              {/* Street Address with Detect button */}
+              <div className="mb-3">
+                <div className="flex items-center w-full">
+                  <input
+                    type="text"
+                    className="flex-grow p-3 border border-gray-300 dark:border-gray-600 rounded-l bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 shadow-sm"
+                    value={streetAddress}
+                    onChange={(e) => setStreetAddress(e.target.value)}
+                    placeholder="Street address"
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={detectLocation}
+                    disabled={searchingLocation}
+                    title="Detect your location"
+                    className={`h-12 flex items-center justify-center px-3 rounded-r border ${
+                      searchingLocation 
+                        ? 'text-gray-400 dark:text-gray-500'
+                        : 'text-blue-500 dark:text-blue-400'
+                    }`}
+                    style={{
+                      background: 'transparent',
+                      borderColor: 'var(--border-color, #e2e8f0)', 
+                      borderLeftWidth: 0
+                    }}
+                  >
+                    {searchingLocation ? (
+                      <i className="fa-solid fa-spinner fa-spin"></i>
+                    ) : (
+                      <i className="fa-solid fa-location-dot"></i>
+                    )}
+                    <span className="ml-1">Locate</span>
+                  </button>
+                </div>
               </div>
-              <div className="col-span-1">
-                <label className="block mb-1 font-medium text-gray-700 dark:text-gray-300">Zip Code</label>
-                <input
-                  type="text"
-                  className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 shadow-sm"
-                  value={zipCode}
-                  onChange={(e) => setZipCode(e.target.value)}
-                  placeholder="Zip Code"
-                />
+              
+              {/* City, State, and Zip - No labels */}
+              <div className="grid grid-cols-3 gap-3 mb-3">
+                <div className="col-span-1">
+                  <input
+                    type="text"
+                    className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 shadow-sm"
+                    value={city}
+                    onChange={(e) => setCity(e.target.value)}
+                    placeholder="City"
+                  />
+                </div>
+                <div className="col-span-1">
+                  <input
+                    type="text"
+                    className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 shadow-sm"
+                    value={state}
+                    onChange={(e) => setState(e.target.value)}
+                    placeholder="State"
+                  />
+                </div>
+                <div className="col-span-1">
+                  <input
+                    type="text"
+                    className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 shadow-sm"
+                    value={zipCode}
+                    onChange={(e) => setZipCode(e.target.value)}
+                    placeholder="Zip Code"
+                  />
+                </div>
               </div>
+              
+              <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                Fill in the address details or use the locate button to find your current location
+              </p>
             </div>
             
-            <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
-              Fill in the address details or use the detect button to find your current location
-            </p>
-          </div>
-          
-          {/* Action Buttons */}
-          <div className="flex justify-between items-center mt-8 space-x-24">
-            <button
-              type="button"
-              onClick={onCancel}
-              title="Cancel"
-              style={{ 
-                background: 'none', 
-                border: 'none', 
-                padding: 0,
-                cursor: 'pointer',
-                outline: 'none',
-                boxShadow: 'none',
-                transition: 'transform 0.2s',
-                transform: 'scale(1)',
-                ':hover': {
-                  transform: 'scale(1.1)'
-                }
-              }}
-            >
-              <i className="fa-regular fa-circle-xmark text-red-600 dark:text-red-500" style={{ fontSize: '2rem' }}></i>
-            </button>
-            <button
-              type="submit"
-              title={meeting ? "Save changes" : "Add meeting"}
-              disabled={!meetingName || meetingSchedule.length === 0 || !streetAddress}
-              style={{ 
-                background: 'none', 
-                border: 'none', 
-                padding: 0,
-                cursor: !meetingName || meetingSchedule.length === 0 || !streetAddress ? 'not-allowed' : 'pointer',
-                outline: 'none',
-                boxShadow: 'none',
-                transition: 'transform 0.2s',
-                transform: 'scale(1)'
-              }}
-              onMouseOver={(e) => {
-                if (meetingName && meetingSchedule.length > 0 && streetAddress) {
-                  e.currentTarget.style.transform = 'scale(1.1)';
-                }
-              }}
-              onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
-            >
-              <i className={`fa-regular fa-circle-check ${
-                !meetingName || meetingSchedule.length === 0 || !streetAddress 
-                  ? 'text-gray-400 dark:text-gray-600' 
-                  : 'text-green-600 dark:text-green-500'
-              }`} style={{ fontSize: '2rem' }}></i>
-            </button>
-          </div>
-        </form>
+            {/* Action Buttons - More space between them */}
+            <div className="flex justify-between items-center mt-8">
+              <button
+                type="button"
+                onClick={onCancel}
+                className="bg-transparent hover:bg-red-50 dark:hover:bg-red-900/20 text-red-600 dark:text-red-400 rounded-full p-2 transition-all duration-200"
+                title="Cancel"
+              >
+                <i className="fa-regular fa-circle-xmark" style={{ fontSize: '2rem' }}></i>
+              </button>
+              
+              <button
+                type="submit"
+                className={`bg-transparent ${
+                  !meetingName || meetingSchedule.length === 0 || !streetAddress
+                    ? 'opacity-50 cursor-not-allowed'
+                    : 'hover:bg-green-50 dark:hover:bg-green-900/20'
+                } text-green-600 dark:text-green-400 rounded-full p-2 transition-all duration-200`}
+                title={meeting ? "Save changes" : "Add meeting"}
+                disabled={!meetingName || meetingSchedule.length === 0 || !streetAddress}
+              >
+                <i className="fa-regular fa-circle-check" style={{ fontSize: '2rem' }}></i>
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   );
