@@ -2,44 +2,18 @@ import React, { useState, useEffect } from 'react';
 import { formatDateForDisplay } from '../utils/dateUtils';
 import ActivityList from './ActivityList';
 import MeetingForm from './MeetingForm';
+import LogActivityModal from './LogActivityModal';
 
 /**
  * Combined Activity Page that includes both activity logging form and history
  * with a toggle to show/hide the form.
  */
 export default function ActivityPage({ setCurrentView, onSave, onSaveMeeting, activities, meetings = [] }) {
-  // Dark mode detection
-  const darkMode = document.documentElement.classList.contains('dark');
-  const [isDarkMode, setIsDarkMode] = useState(darkMode);
-  
-  // State for toggling form visibility
-  const [showForm, setShowForm] = useState(true);
+  // State for toggling modal visibility
+  const [showModal, setShowModal] = useState(false);
   
   // State for activity filter
   const [filter, setFilter] = useState('all');
-  
-  // Activity form states
-  const [activityType, setActivityType] = useState('prayer');
-  const [duration, setDuration] = useState('15');
-  const [date, setDate] = useState(getCurrentDateString());
-  const [notes, setNotes] = useState('');
-  const [errors, setErrors] = useState({});
-  const [showSuccess, setShowSuccess] = useState(false);
-  
-  // Additional fields for specific activity types
-  const [literatureTitle, setLiteratureTitle] = useState('');
-  const [meetingName, setMeetingName] = useState('');
-  const [wasChair, setWasChair] = useState(false);
-  const [wasShare, setWasShare] = useState(false);
-  const [wasSpeaker, setWasSpeaker] = useState(false);
-  // Call type checkboxes
-  const [isSponsorCall, setIsSponsorCall] = useState(false);
-  const [isSponseeCall, setIsSponseeCall] = useState(false);
-  const [isAAMemberCall, setIsAAMemberCall] = useState(false);
-  
-  // Meeting selection fields
-  const [selectedMeetingId, setSelectedMeetingId] = useState('');
-  const [showMeetingForm, setShowMeetingForm] = useState(false);
   
   // Watch for dark mode changes
   useEffect(() => {
@@ -277,7 +251,7 @@ export default function ActivityPage({ setCurrentView, onSave, onSaveMeeting, ac
   };
   
   const buttonStyle = {
-    backgroundColor: darkMode ? '#2563eb' : '#3b82f6',
+    // backgroundColor: darkMode ? '#2563eb' : '#3b82f6',
     color: 'white',
     padding: '0.5rem 0.75rem',
     borderRadius: '0.375rem',
@@ -663,7 +637,6 @@ export default function ActivityPage({ setCurrentView, onSave, onSaveMeeting, ac
               style={buttonStyle}
             >
               <i className="fas fa-save mr-1"></i>
-              Save Activity
             </button>
           </form>
         </div>

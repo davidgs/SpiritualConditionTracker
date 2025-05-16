@@ -47,13 +47,13 @@ const SimpleMeetingSchedule = ({ schedule, onChange }) => {
                   className={`${
                     index < days.length - 1 ? 'border-b border-gray-200 dark:border-gray-700' : ''
                   } ${
-                    hasTime ? 'bg-blue-50 dark:bg-blue-900/10' : ''
+                    hasTime ? '' : ''
                   }`}
                 >
                   <td className="py-2 px-4 border-r border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 font-medium w-2/5">
                     {day.label}
                   </td>
-                  <td className="p-2 w-3/5">
+                  <td className="p-2 w-3/5" style={{ paddingTop: '10px'}}>
                     <select
                       className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200"
                       value={timeValue || "none"}

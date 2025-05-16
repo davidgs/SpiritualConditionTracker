@@ -59430,6 +59430,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _utils_dateUtils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../utils/dateUtils */ "./src/utils/dateUtils.js");
 /* harmony import */ var _ActivityList__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./ActivityList */ "./src/components/ActivityList.js");
 /* harmony import */ var _MeetingForm__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./MeetingForm */ "./src/components/MeetingForm.js");
+/* harmony import */ var _LogActivityModal__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./LogActivityModal */ "./src/components/LogActivityModal.js");
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
 function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
@@ -59447,6 +59448,7 @@ function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
 
 
 
+
 /**
  * Combined Activity Page that includes both activity logging form and history
  * with a toggle to show/hide the form.
@@ -59458,95 +59460,17 @@ function ActivityPage(_ref) {
     activities = _ref.activities,
     _ref$meetings = _ref.meetings,
     meetings = _ref$meetings === void 0 ? [] : _ref$meetings;
-  // Dark mode detection
-  var darkMode = document.documentElement.classList.contains('dark');
-  var _useState = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(darkMode),
+  // State for toggling modal visibility
+  var _useState = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false),
     _useState2 = _slicedToArray(_useState, 2),
-    isDarkMode = _useState2[0],
-    setIsDarkMode = _useState2[1];
-
-  // State for toggling form visibility
-  var _useState3 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(true),
-    _useState4 = _slicedToArray(_useState3, 2),
-    showForm = _useState4[0],
-    setShowForm = _useState4[1];
+    showModal = _useState2[0],
+    setShowModal = _useState2[1];
 
   // State for activity filter
-  var _useState5 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)('all'),
-    _useState6 = _slicedToArray(_useState5, 2),
-    filter = _useState6[0],
-    setFilter = _useState6[1];
-
-  // Activity form states
-  var _useState7 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)('prayer'),
-    _useState8 = _slicedToArray(_useState7, 2),
-    activityType = _useState8[0],
-    setActivityType = _useState8[1];
-  var _useState9 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)('15'),
-    _useState0 = _slicedToArray(_useState9, 2),
-    duration = _useState0[0],
-    setDuration = _useState0[1];
-  var _useState1 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(getCurrentDateString()),
-    _useState10 = _slicedToArray(_useState1, 2),
-    date = _useState10[0],
-    setDate = _useState10[1];
-  var _useState11 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(''),
-    _useState12 = _slicedToArray(_useState11, 2),
-    notes = _useState12[0],
-    setNotes = _useState12[1];
-  var _useState13 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)({}),
-    _useState14 = _slicedToArray(_useState13, 2),
-    errors = _useState14[0],
-    setErrors = _useState14[1];
-  var _useState15 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false),
-    _useState16 = _slicedToArray(_useState15, 2),
-    showSuccess = _useState16[0],
-    setShowSuccess = _useState16[1];
-
-  // Additional fields for specific activity types
-  var _useState17 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(''),
-    _useState18 = _slicedToArray(_useState17, 2),
-    literatureTitle = _useState18[0],
-    setLiteratureTitle = _useState18[1];
-  var _useState19 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(''),
-    _useState20 = _slicedToArray(_useState19, 2),
-    meetingName = _useState20[0],
-    setMeetingName = _useState20[1];
-  var _useState21 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false),
-    _useState22 = _slicedToArray(_useState21, 2),
-    wasChair = _useState22[0],
-    setWasChair = _useState22[1];
-  var _useState23 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false),
-    _useState24 = _slicedToArray(_useState23, 2),
-    wasShare = _useState24[0],
-    setWasShare = _useState24[1];
-  var _useState25 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false),
-    _useState26 = _slicedToArray(_useState25, 2),
-    wasSpeaker = _useState26[0],
-    setWasSpeaker = _useState26[1];
-  // Call type checkboxes
-  var _useState27 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false),
-    _useState28 = _slicedToArray(_useState27, 2),
-    isSponsorCall = _useState28[0],
-    setIsSponsorCall = _useState28[1];
-  var _useState29 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false),
-    _useState30 = _slicedToArray(_useState29, 2),
-    isSponseeCall = _useState30[0],
-    setIsSponseeCall = _useState30[1];
-  var _useState31 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false),
-    _useState32 = _slicedToArray(_useState31, 2),
-    isAAMemberCall = _useState32[0],
-    setIsAAMemberCall = _useState32[1];
-
-  // Meeting selection fields
-  var _useState33 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(''),
-    _useState34 = _slicedToArray(_useState33, 2),
-    selectedMeetingId = _useState34[0],
-    setSelectedMeetingId = _useState34[1];
-  var _useState35 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false),
-    _useState36 = _slicedToArray(_useState35, 2),
-    showMeetingForm = _useState36[0],
-    setShowMeetingForm = _useState36[1];
+  var _useState3 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)('all'),
+    _useState4 = _slicedToArray(_useState3, 2),
+    filter = _useState4[0],
+    setFilter = _useState4[1];
 
   // Watch for dark mode changes
   (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(function () {
@@ -59778,7 +59702,7 @@ function ActivityPage(_ref) {
     marginBottom: '0.5rem'
   };
   var buttonStyle = {
-    backgroundColor: darkMode ? '#2563eb' : '#3b82f6',
+    // backgroundColor: darkMode ? '#2563eb' : '#3b82f6',
     color: 'white',
     padding: '0.5rem 0.75rem',
     borderRadius: '0.375rem',
@@ -60194,7 +60118,7 @@ function ActivityPage(_ref) {
     style: buttonStyle
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("i", {
     className: "fas fa-save mr-1"
-  }), "Save Activity"))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+  })))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     className: "bg-white dark:bg-gray-800 rounded-lg shadow border border-gray-200 dark:border-gray-700 p-4"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     className: "flex justify-between items-center mb-4"
@@ -60745,6 +60669,778 @@ function Header(_ref) {
   }, menuOpen ? '✕' : '☰'));
 }
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Header);
+
+/***/ }),
+
+/***/ "./src/components/LogActivityModal.js":
+/*!********************************************!*\
+  !*** ./src/components/LogActivityModal.js ***!
+  \********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _mui_material_styles__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @mui/material/styles */ "./node_modules/@mui/material/esm/styles/styled.js");
+/* harmony import */ var _mui_material_Dialog__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @mui/material/Dialog */ "./node_modules/@mui/material/esm/Dialog/Dialog.js");
+/* harmony import */ var _mui_material_DialogTitle__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @mui/material/DialogTitle */ "./node_modules/@mui/material/esm/DialogTitle/DialogTitle.js");
+/* harmony import */ var _mui_material_DialogContent__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @mui/material/DialogContent */ "./node_modules/@mui/material/esm/DialogContent/DialogContent.js");
+/* harmony import */ var _mui_material_DialogActions__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @mui/material/DialogActions */ "./node_modules/@mui/material/esm/DialogActions/DialogActions.js");
+/* harmony import */ var _mui_material_IconButton__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @mui/material/IconButton */ "./node_modules/@mui/material/esm/IconButton/IconButton.js");
+/* harmony import */ var _mui_icons_material_Close__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @mui/icons-material/Close */ "./node_modules/@mui/icons-material/esm/Close.js");
+/* harmony import */ var _mui_material_Button__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! @mui/material/Button */ "./node_modules/@mui/material/esm/Button/Button.js");
+/* harmony import */ var _contexts_MuiThemeProvider__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../contexts/MuiThemeProvider */ "./src/contexts/MuiThemeProvider.js");
+/* harmony import */ var _MeetingForm__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./MeetingForm */ "./src/components/MeetingForm.js");
+function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
+function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
+function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
+function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+function _slicedToArray(r, e) { return _arrayWithHoles(r) || _iterableToArrayLimit(r, e) || _unsupportedIterableToArray(r, e) || _nonIterableRest(); }
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
+function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
+function _iterableToArrayLimit(r, l) { var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (null != t) { var e, n, i, u, a = [], f = !0, o = !1; try { if (i = (t = t.call(r)).next, 0 === l) { if (Object(t) !== t) return; f = !1; } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0); } catch (r) { o = !0, n = r; } finally { try { if (!f && null != t["return"] && (u = t["return"](), Object(u) !== u)) return; } finally { if (o) throw n; } } return a; } }
+function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Style the Dialog
+var StyledDialog = (0,_mui_material_styles__WEBPACK_IMPORTED_MODULE_3__["default"])(_mui_material_Dialog__WEBPACK_IMPORTED_MODULE_4__["default"])(function (_ref) {
+  var theme = _ref.theme;
+  return {
+    '& .MuiDialogContent-root': {
+      padding: theme.spacing(3)
+    },
+    '& .MuiDialogActions-root': {
+      padding: theme.spacing(1)
+    },
+    '& .MuiPaper-root': {
+      maxWidth: '600px',
+      width: '100%'
+    }
+  };
+});
+
+/**
+ * Material UI Dialog component that displays the activity logging form
+ * 
+ * @param {Object} props - Component props
+ * @param {boolean} props.open - Whether the dialog is open
+ * @param {Function} props.onClose - Function to call when the dialog should close
+ * @param {Function} props.onSave - Function to save the activity
+ * @param {Function} props.onSaveMeeting - Function to save a meeting
+ * @param {Array} props.meetings - List of meetings for selection in the form
+ * @returns {React.ReactElement} The dialog component
+ */
+var LogActivityModal = function LogActivityModal(_ref2) {
+  var open = _ref2.open,
+    onClose = _ref2.onClose,
+    onSave = _ref2.onSave,
+    onSaveMeeting = _ref2.onSaveMeeting,
+    _ref2$meetings = _ref2.meetings,
+    meetings = _ref2$meetings === void 0 ? [] : _ref2$meetings;
+  // Dark mode detection
+  var darkMode = document.documentElement.classList.contains('dark');
+  var _useState = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(darkMode),
+    _useState2 = _slicedToArray(_useState, 2),
+    isDarkMode = _useState2[0],
+    setIsDarkMode = _useState2[1];
+
+  // Activity form states
+  var _useState3 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)('prayer'),
+    _useState4 = _slicedToArray(_useState3, 2),
+    activityType = _useState4[0],
+    setActivityType = _useState4[1];
+  var _useState5 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)('15'),
+    _useState6 = _slicedToArray(_useState5, 2),
+    duration = _useState6[0],
+    setDuration = _useState6[1];
+  var _useState7 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(getCurrentDateString()),
+    _useState8 = _slicedToArray(_useState7, 2),
+    date = _useState8[0],
+    setDate = _useState8[1];
+  var _useState9 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(''),
+    _useState0 = _slicedToArray(_useState9, 2),
+    notes = _useState0[0],
+    setNotes = _useState0[1];
+  var _useState1 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)({}),
+    _useState10 = _slicedToArray(_useState1, 2),
+    errors = _useState10[0],
+    setErrors = _useState10[1];
+  var _useState11 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false),
+    _useState12 = _slicedToArray(_useState11, 2),
+    showSuccess = _useState12[0],
+    setShowSuccess = _useState12[1];
+
+  // Additional fields for specific activity types
+  var _useState13 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(''),
+    _useState14 = _slicedToArray(_useState13, 2),
+    literatureTitle = _useState14[0],
+    setLiteratureTitle = _useState14[1];
+  var _useState15 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(''),
+    _useState16 = _slicedToArray(_useState15, 2),
+    meetingName = _useState16[0],
+    setMeetingName = _useState16[1];
+  var _useState17 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false),
+    _useState18 = _slicedToArray(_useState17, 2),
+    wasChair = _useState18[0],
+    setWasChair = _useState18[1];
+  var _useState19 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false),
+    _useState20 = _slicedToArray(_useState19, 2),
+    wasShare = _useState20[0],
+    setWasShare = _useState20[1];
+  var _useState21 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false),
+    _useState22 = _slicedToArray(_useState21, 2),
+    wasSpeaker = _useState22[0],
+    setWasSpeaker = _useState22[1];
+
+  // Call type checkboxes
+  var _useState23 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false),
+    _useState24 = _slicedToArray(_useState23, 2),
+    isSponsorCall = _useState24[0],
+    setIsSponsorCall = _useState24[1];
+  var _useState25 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false),
+    _useState26 = _slicedToArray(_useState25, 2),
+    isSponseeCall = _useState26[0],
+    setIsSponseeCall = _useState26[1];
+  var _useState27 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false),
+    _useState28 = _slicedToArray(_useState27, 2),
+    isAAMemberCall = _useState28[0],
+    setIsAAMemberCall = _useState28[1];
+
+  // Meeting selection fields
+  var _useState29 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(''),
+    _useState30 = _slicedToArray(_useState29, 2),
+    selectedMeetingId = _useState30[0],
+    setSelectedMeetingId = _useState30[1];
+  var _useState31 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false),
+    _useState32 = _slicedToArray(_useState31, 2),
+    showMeetingForm = _useState32[0],
+    setShowMeetingForm = _useState32[1];
+
+  // Generate current date in YYYY-MM-DD format
+  function getCurrentDateString() {
+    var today = new Date();
+    return "".concat(today.getFullYear(), "-").concat(String(today.getMonth() + 1).padStart(2, '0'), "-").concat(String(today.getDate()).padStart(2, '0'));
+  }
+
+  // Watch for dark mode changes
+  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(function () {
+    var observer = new MutationObserver(function (mutations) {
+      mutations.forEach(function (mutation) {
+        if (mutation.attributeName === 'class') {
+          setIsDarkMode(document.documentElement.classList.contains('dark'));
+        }
+      });
+    });
+    observer.observe(document.documentElement, {
+      attributes: true
+    });
+    return function () {
+      return observer.disconnect();
+    };
+  }, []);
+
+  // Reset form when dialog opens
+  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(function () {
+    if (open) {
+      resetForm();
+    }
+  }, [open]);
+
+  // Reset additional fields when activity type changes
+  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(function () {
+    // Set default duration based on activity type
+    if (activityType === 'meeting') {
+      setDuration('60'); // Default duration for meetings is 60 minutes
+    } else {
+      setDuration('15'); // Default duration for other activities
+    }
+    setLiteratureTitle('');
+    setMeetingName('');
+    setWasChair(false);
+    setWasShare(false);
+    setWasSpeaker(false);
+    setIsSponsorCall(false);
+    setIsSponseeCall(false);
+    setIsAAMemberCall(false);
+    setSelectedMeetingId('');
+    setShowMeetingForm(false);
+  }, [activityType]);
+
+  // Get duration options based on activity type
+  var getDurationOptions = function getDurationOptions() {
+    var options = [];
+    var maxMinutes = 60; // Default max is 1 hour
+    var increment = 15; // Default increment is 15 minutes
+
+    if (activityType === 'meeting') {
+      maxMinutes = 150; // 2.5 hours
+      increment = 30; // 30 minute increments
+    } else if (activityType === 'sponsee' || activityType === 'service') {
+      maxMinutes = 120; // 2 hours
+    }
+    for (var i = increment; i <= maxMinutes; i += increment) {
+      options.push(/*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("option", {
+        key: i,
+        value: i.toString()
+      }, i, " minutes"));
+    }
+    return options;
+  };
+
+  // Reset form fields
+  var resetForm = function resetForm() {
+    setActivityType('prayer');
+    setDuration('15');
+    setDate(getCurrentDateString());
+    setNotes('');
+    setErrors({});
+    setShowSuccess(false);
+    setLiteratureTitle('');
+    setMeetingName('');
+    setWasChair(false);
+    setWasShare(false);
+    setWasSpeaker(false);
+    setIsSponsorCall(false);
+    setIsSponseeCall(false);
+    setIsAAMemberCall(false);
+    setSelectedMeetingId('');
+    setShowMeetingForm(false);
+  };
+
+  // Handle form submission
+  var handleSubmit = function handleSubmit(e) {
+    e.preventDefault();
+
+    // Validate form
+    var newErrors = {};
+    if (!activityType) newErrors.activityType = 'Activity type is required';
+    if (!duration) newErrors.duration = 'Duration is required';
+    if (!date) newErrors.date = 'Date is required';
+
+    // Validate activity-specific fields
+    if (activityType === 'literature' && !literatureTitle.trim()) {
+      newErrors.literatureTitle = 'Literature title is required';
+    }
+    if (activityType === 'meeting' && !showMeetingForm && !meetingName.trim()) {
+      newErrors.meetingName = 'Meeting name is required';
+    }
+    if (activityType === 'call' && !isSponsorCall && !isSponseeCall && !isAAMemberCall) {
+      newErrors.callType = 'At least one call type must be selected';
+    }
+
+    // If there are errors, show them and don't submit
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
+    // Create a unique ID for the activity
+    var activityId = Date.now().toString();
+
+    // Create new activity object with core fields
+    var newActivity = {
+      id: activityId,
+      type: activityType,
+      duration: parseInt(duration, 10),
+      date: date,
+      // Store as-is in YYYY-MM-DD format
+      notes: notes.trim()
+    };
+
+    // Add activity-specific fields
+    if (activityType === 'literature') {
+      newActivity.literatureTitle = literatureTitle.trim();
+    }
+    if (activityType === 'meeting') {
+      newActivity.meetingName = meetingName.trim();
+      newActivity.wasChair = wasChair;
+      newActivity.wasShare = wasShare;
+      newActivity.wasSpeaker = wasSpeaker;
+
+      // Include meeting ID if one was selected
+      if (selectedMeetingId) {
+        newActivity.meetingId = selectedMeetingId;
+      }
+    }
+    if (activityType === 'call') {
+      newActivity.isSponsorCall = isSponsorCall;
+      newActivity.isSponseeCall = isSponseeCall;
+      newActivity.isAAMemberCall = isAAMemberCall;
+
+      // Determine the actual type for filtering/display purposes
+      if (isSponsorCall && !isSponseeCall && !isAAMemberCall) {
+        newActivity.callType = 'sponsor';
+      } else if (!isSponsorCall && isSponseeCall && !isAAMemberCall) {
+        newActivity.callType = 'sponsee';
+      } else if (!isSponsorCall && !isSponseeCall && isAAMemberCall) {
+        newActivity.callType = 'aa_call';
+      } else {
+        newActivity.callType = 'multiple'; // Multiple types selected
+      }
+    }
+
+    // Save the activity
+    onSave(newActivity);
+
+    // Show success message
+    setShowSuccess(true);
+
+    // Hide success message after 2 seconds
+    setTimeout(function () {
+      setShowSuccess(false);
+
+      // Only close the dialog on success if it's not a meeting form
+      if (!showMeetingForm) {
+        resetForm();
+      }
+    }, 2000);
+  };
+
+  // Handle meeting selection
+  function handleMeetingSelect(e) {
+    var meetingId = e.target.value;
+    setSelectedMeetingId(meetingId);
+    if (meetingId) {
+      var meeting = meetings.find(function (m) {
+        return m.id === meetingId;
+      });
+      if (meeting) {
+        setMeetingName(meeting.name);
+      }
+    } else {
+      setMeetingName('');
+    }
+  }
+
+  // Handle saving a meeting from the meeting form
+  function handleSaveMeeting(meeting) {
+    // Call the parent's onSaveMeeting function to persist the meeting
+    if (onSaveMeeting) {
+      var savedMeeting = onSaveMeeting(meeting);
+      if (savedMeeting) {
+        setSelectedMeetingId(savedMeeting.id);
+        setMeetingName(savedMeeting.name);
+      }
+    }
+
+    // Close the form
+    setShowMeetingForm(false);
+  }
+
+  // Common styles for form elements
+  var labelStyle = {
+    display: 'block',
+    fontSize: '0.875rem',
+    fontWeight: '500',
+    marginBottom: '0.25rem',
+    color: darkMode ? '#e5e7eb' : '#4b5563'
+  };
+  var inputStyle = {
+    width: '100%',
+    padding: '0.5rem 0.75rem',
+    borderRadius: '0.375rem',
+    backgroundColor: darkMode ? '#1f2937' : '#ffffff',
+    color: darkMode ? '#e5e7eb' : '#1f2937',
+    border: darkMode ? '1px solid #4b5563' : '1px solid #d1d5db',
+    fontSize: '0.875rem'
+  };
+  var errorStyle = {
+    color: '#ef4444',
+    fontSize: '0.75rem',
+    marginTop: '0.25rem'
+  };
+  var checkboxStyle = {
+    display: 'flex',
+    alignItems: 'center',
+    marginBottom: '0.5rem'
+  };
+  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_contexts_MuiThemeProvider__WEBPACK_IMPORTED_MODULE_1__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(StyledDialog, {
+    open: open,
+    onClose: onClose,
+    "aria-labelledby": "log-activity-dialog-title",
+    maxWidth: "md"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_DialogTitle__WEBPACK_IMPORTED_MODULE_5__["default"], {
+    sx: {
+      m: 0,
+      p: 2
+    },
+    id: "log-activity-dialog-title"
+  }, "Log New Activity"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_IconButton__WEBPACK_IMPORTED_MODULE_6__["default"], {
+    "aria-label": "close",
+    onClick: onClose,
+    sx: {
+      position: 'absolute',
+      right: 8,
+      top: 8,
+      color: function color(theme) {
+        return theme.palette.grey[500];
+      }
+    }
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_icons_material_Close__WEBPACK_IMPORTED_MODULE_7__["default"], null)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_DialogContent__WEBPACK_IMPORTED_MODULE_8__["default"], {
+    dividers: true
+  }, showSuccess && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+    style: {
+      backgroundColor: darkMode ? '#064e3b' : '#d1fae5',
+      color: darkMode ? '#6ee7b7' : '#065f46',
+      padding: '0.75rem',
+      borderRadius: '0.375rem',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginBottom: '1rem',
+      fontWeight: '500',
+      fontSize: '0.875rem'
+    }
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("i", {
+    className: "fas fa-check-circle mr-2"
+  }), "Activity saved successfully!"), activityType === 'meeting' && showMeetingForm ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_MeetingForm__WEBPACK_IMPORTED_MODULE_2__["default"], {
+    onSave: handleSaveMeeting,
+    onCancel: function onCancel() {
+      return setShowMeetingForm(false);
+    },
+    darkMode: isDarkMode,
+    isOverlay: false
+  }) : /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("form", {
+    onSubmit: handleSubmit
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+    style: {
+      marginBottom: '1rem',
+      maxWidth: '100%'
+    }
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("label", {
+    style: labelStyle
+  }, "Activity Type"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("select", {
+    style: _objectSpread(_objectSpread({}, inputStyle), {}, {
+      maxWidth: '100%',
+      boxSizing: 'border-box'
+    }),
+    value: activityType,
+    onChange: function onChange(e) {
+      return setActivityType(e.target.value);
+    }
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("option", {
+    value: "prayer"
+  }, "Prayer"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("option", {
+    value: "meditation"
+  }, "Meditation"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("option", {
+    value: "literature"
+  }, "Reading Literature"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("option", {
+    value: "service"
+  }, "Service Work"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("option", {
+    value: "call"
+  }, "Call"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("option", {
+    value: "meeting"
+  }, "AA Meeting")), errors.activityType && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("p", {
+    style: errorStyle
+  }, errors.activityType)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+    style: {
+      marginBottom: '1rem',
+      maxWidth: '100%'
+    }
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("label", {
+    style: labelStyle
+  }, "Duration"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("select", {
+    style: _objectSpread(_objectSpread({}, inputStyle), {}, {
+      maxWidth: '100%',
+      boxSizing: 'border-box'
+    }),
+    value: duration,
+    onChange: function onChange(e) {
+      return setDuration(e.target.value);
+    }
+  }, getDurationOptions()), errors.duration && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("p", {
+    style: errorStyle
+  }, errors.duration)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+    style: {
+      marginBottom: '1rem',
+      maxWidth: '100%'
+    }
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("label", {
+    style: labelStyle
+  }, "Date"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("input", {
+    type: "date",
+    style: _objectSpread(_objectSpread({}, inputStyle), {}, {
+      maxWidth: '100%',
+      boxSizing: 'border-box'
+    }),
+    value: date,
+    onChange: function onChange(e) {
+      return setDate(e.target.value);
+    }
+  }), errors.date && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("p", {
+    style: errorStyle
+  }, errors.date)), activityType === 'call' && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+    style: {
+      marginBottom: '1rem',
+      maxWidth: '100%'
+    }
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("label", {
+    style: _objectSpread(_objectSpread({}, labelStyle), {}, {
+      marginBottom: '0.5rem'
+    })
+  }, "Call Type"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+    style: _objectSpread(_objectSpread({}, checkboxStyle), {}, {
+      maxWidth: '100%'
+    })
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("input", {
+    type: "checkbox",
+    id: "isSponsorCall",
+    checked: isSponsorCall,
+    onChange: function onChange() {
+      return setIsSponsorCall(!isSponsorCall);
+    },
+    style: {
+      marginRight: '0.5rem'
+    }
+  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("label", {
+    htmlFor: "isSponsorCall",
+    style: {
+      fontSize: '0.875rem',
+      color: darkMode ? '#e5e7eb' : '#4b5563'
+    }
+  }, "Sponsor")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+    style: _objectSpread(_objectSpread({}, checkboxStyle), {}, {
+      maxWidth: '100%'
+    })
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("input", {
+    type: "checkbox",
+    id: "isSponseeCall",
+    checked: isSponseeCall,
+    onChange: function onChange() {
+      return setIsSponseeCall(!isSponseeCall);
+    },
+    style: {
+      marginRight: '0.5rem'
+    }
+  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("label", {
+    htmlFor: "isSponseeCall",
+    style: {
+      fontSize: '0.875rem',
+      color: darkMode ? '#e5e7eb' : '#4b5563'
+    }
+  }, "Sponsee")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+    style: _objectSpread(_objectSpread({}, checkboxStyle), {}, {
+      maxWidth: '100%'
+    })
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("input", {
+    type: "checkbox",
+    id: "isAAMemberCall",
+    checked: isAAMemberCall,
+    onChange: function onChange() {
+      return setIsAAMemberCall(!isAAMemberCall);
+    },
+    style: {
+      marginRight: '0.5rem'
+    }
+  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("label", {
+    htmlFor: "isAAMemberCall",
+    style: {
+      fontSize: '0.875rem',
+      color: darkMode ? '#e5e7eb' : '#4b5563'
+    }
+  }, "AA Member")), errors.callType && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("p", {
+    style: errorStyle
+  }, errors.callType)), activityType === 'literature' && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+    style: {
+      marginBottom: '1rem',
+      maxWidth: '100%'
+    }
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("label", {
+    style: labelStyle
+  }, "Literature Title"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("input", {
+    type: "text",
+    style: _objectSpread(_objectSpread({}, inputStyle), {}, {
+      maxWidth: '100%',
+      boxSizing: 'border-box'
+    }),
+    value: literatureTitle,
+    onChange: function onChange(e) {
+      return setLiteratureTitle(e.target.value);
+    },
+    placeholder: "Enter title of the literature"
+  }), errors.literatureTitle && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("p", {
+    style: errorStyle
+  }, errors.literatureTitle)), activityType === 'meeting' && !showMeetingForm && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+    style: {
+      marginBottom: '1rem',
+      maxWidth: '100%'
+    }
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("label", {
+    style: labelStyle
+  }, "Select Meeting"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+    style: {
+      display: 'flex',
+      gap: '0.5rem',
+      maxWidth: '100%'
+    }
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("select", {
+    style: _objectSpread(_objectSpread({}, inputStyle), {}, {
+      flex: 1,
+      maxWidth: '100%',
+      boxSizing: 'border-box'
+    }),
+    value: selectedMeetingId,
+    onChange: handleMeetingSelect
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("option", {
+    value: ""
+  }, "Select a meeting or add new"), meetings.map(function (meeting) {
+    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("option", {
+      key: meeting.id,
+      value: meeting.id
+    }, meeting.name);
+  })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("button", {
+    type: "button",
+    onClick: function onClick() {
+      return setShowMeetingForm(true);
+    },
+    style: {
+      backgroundColor: darkMode ? '#1f2937' : '#f3f4f6',
+      color: darkMode ? '#60a5fa' : '#2563eb',
+      border: 'none',
+      borderRadius: '0.375rem',
+      padding: '0.5rem',
+      fontSize: '0.875rem',
+      cursor: 'pointer'
+    },
+    title: "Add New Meeting"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("i", {
+    className: "fas fa-plus"
+  })))), activityType === 'meeting' && !showMeetingForm && !selectedMeetingId && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+    style: {
+      marginBottom: '1rem',
+      maxWidth: '100%'
+    }
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("label", {
+    style: labelStyle
+  }, "Meeting Name"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("input", {
+    type: "text",
+    style: _objectSpread(_objectSpread({}, inputStyle), {}, {
+      maxWidth: '100%',
+      boxSizing: 'border-box'
+    }),
+    value: meetingName,
+    onChange: function onChange(e) {
+      return setMeetingName(e.target.value);
+    },
+    placeholder: "Enter meeting name"
+  }), errors.meetingName && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("p", {
+    style: errorStyle
+  }, errors.meetingName)), activityType === 'meeting' && !showMeetingForm && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+    style: {
+      marginBottom: '1rem',
+      maxWidth: '100%'
+    }
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("label", {
+    style: labelStyle
+  }, "Your Role"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+    style: {
+      display: 'flex',
+      flexDirection: 'column',
+      maxWidth: '100%'
+    }
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+    style: checkboxStyle
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("input", {
+    type: "checkbox",
+    id: "wasChair",
+    checked: wasChair,
+    onChange: function onChange() {
+      return setWasChair(!wasChair);
+    },
+    style: {
+      marginRight: '0.5rem'
+    }
+  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("label", {
+    htmlFor: "wasChair",
+    style: {
+      fontSize: '0.875rem',
+      color: darkMode ? '#e5e7eb' : '#4b5563'
+    }
+  }, "Chaired the meeting")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+    style: checkboxStyle
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("input", {
+    type: "checkbox",
+    id: "wasShare",
+    checked: wasShare,
+    onChange: function onChange() {
+      return setWasShare(!wasShare);
+    },
+    style: {
+      marginRight: '0.5rem'
+    }
+  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("label", {
+    htmlFor: "wasShare",
+    style: {
+      fontSize: '0.875rem',
+      color: darkMode ? '#e5e7eb' : '#4b5563'
+    }
+  }, "Shared during the meeting")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+    style: checkboxStyle
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("input", {
+    type: "checkbox",
+    id: "wasSpeaker",
+    checked: wasSpeaker,
+    onChange: function onChange() {
+      return setWasSpeaker(!wasSpeaker);
+    },
+    style: {
+      marginRight: '0.5rem'
+    }
+  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("label", {
+    htmlFor: "wasSpeaker",
+    style: {
+      fontSize: '0.875rem',
+      color: darkMode ? '#e5e7eb' : '#4b5563'
+    }
+  }, "Was the speaker")))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+    style: {
+      marginBottom: '1rem',
+      maxWidth: '100%'
+    }
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("label", {
+    style: labelStyle
+  }, "Notes (Optional)"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("textarea", {
+    style: _objectSpread(_objectSpread({}, inputStyle), {}, {
+      maxWidth: '100%',
+      boxSizing: 'border-box',
+      minHeight: '80px',
+      resize: 'vertical'
+    }),
+    value: notes,
+    onChange: function onChange(e) {
+      return setNotes(e.target.value);
+    },
+    placeholder: "Add any notes about this activity..."
+  })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_DialogActions__WEBPACK_IMPORTED_MODULE_9__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_Button__WEBPACK_IMPORTED_MODULE_10__["default"], {
+    onClick: onClose,
+    color: "inherit"
+  }, "Cancel"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_Button__WEBPACK_IMPORTED_MODULE_10__["default"], {
+    type: "submit",
+    style: {
+      backgroundColor: darkMode ? '#3b82f6' : '#2563eb',
+      color: 'white'
+    }
+  }, "Save Activity"))))));
+};
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (LogActivityModal);
 
 /***/ }),
 
@@ -62868,11 +63564,14 @@ var SimpleMeetingSchedule = function SimpleMeetingSchedule(_ref) {
     var timeValue = existingItem ? existingItem.time : '';
     return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("tr", {
       key: day.key,
-      className: "".concat(index < days.length - 1 ? 'border-b border-gray-200 dark:border-gray-700' : '', " ").concat(hasTime ? 'bg-blue-50 dark:bg-blue-900/10' : '')
+      className: "".concat(index < days.length - 1 ? 'border-b border-gray-200 dark:border-gray-700' : '', " ").concat(hasTime ? '' : '')
     }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("td", {
       className: "py-2 px-4 border-r border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 font-medium w-2/5"
     }, day.label), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("td", {
-      className: "p-2 w-3/5"
+      className: "p-2 w-3/5",
+      style: {
+        paddingTop: '10px'
+      }
     }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("select", {
       className: "w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200",
       value: timeValue || "none",

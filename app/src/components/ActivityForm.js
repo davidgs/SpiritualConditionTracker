@@ -205,12 +205,10 @@ function ActivityForm({ onSuccess }) {
           {isSubmitting ? (
             <>
               <i className="fa-solid fa-spinner fa-spin mr-2"></i>
-              Saving...
             </>
           ) : (
             <>
               <i className="fa-solid fa-check mr-2"></i>
-              Save Activity
             </>
           )}
         </button>
