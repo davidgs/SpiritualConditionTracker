@@ -64226,45 +64226,54 @@ function Profile(_ref) {
     setName = _useState2[1];
   var _useState3 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(''),
     _useState4 = _slicedToArray(_useState3, 2),
-    sobrietyDate = _useState4[0],
-    setSobrietyDate = _useState4[1];
+    lastName = _useState4[0],
+    setLastName = _useState4[1];
   var _useState5 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(''),
     _useState6 = _slicedToArray(_useState5, 2),
-    homeGroup = _useState6[0],
-    setHomeGroup = _useState6[1];
+    phoneNumber = _useState6[0],
+    setPhoneNumber = _useState6[1];
   var _useState7 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(''),
     _useState8 = _slicedToArray(_useState7, 2),
-    sponsorName = _useState8[0],
-    setSponsorName = _useState8[1];
+    email = _useState8[0],
+    setEmail = _useState8[1];
   var _useState9 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(''),
     _useState0 = _slicedToArray(_useState9, 2),
-    sponsorPhone = _useState0[0],
-    setSponsorPhone = _useState0[1];
-  var _useState1 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)({}),
+    sobrietyDate = _useState0[0],
+    setSobrietyDate = _useState0[1];
+  var _useState1 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(''),
     _useState10 = _slicedToArray(_useState1, 2),
-    errors = _useState10[0],
-    setErrors = _useState10[1];
+    homeGroup = _useState10[0],
+    setHomeGroup = _useState10[1];
+  var _useState11 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)({}),
+    _useState12 = _slicedToArray(_useState11, 2),
+    errors = _useState12[0],
+    setErrors = _useState12[1];
+  var _useState13 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false),
+    _useState14 = _slicedToArray(_useState13, 2),
+    editingPersonalInfo = _useState14[0],
+    setEditingPersonalInfo = _useState14[1];
 
   // Load user data when component mounts or user changes
   (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(function () {
     if (user) {
       setName(user.name || '');
+      setLastName(user.lastName || '');
+      setPhoneNumber(user.phoneNumber || '');
+      setEmail(user.email || '');
       setSobrietyDate(user.sobrietyDate ? user.sobrietyDate.split('T')[0] : '');
       setHomeGroup(user.homeGroup || '');
-      setSponsorName(user.sponsorName || '');
-      setSponsorPhone(user.sponsorPhone || '');
     }
   }, [user]);
 
   // State for tracking privacy settings
-  var _useState11 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)((user === null || user === void 0 || (_user$privacySettings = user.privacySettings) === null || _user$privacySettings === void 0 ? void 0 : _user$privacySettings.allowMessages) !== false),
-    _useState12 = _slicedToArray(_useState11, 2),
-    allowMessages = _useState12[0],
-    setAllowMessages = _useState12[1];
-  var _useState13 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)((user === null || user === void 0 || (_user$privacySettings2 = user.privacySettings) === null || _user$privacySettings2 === void 0 ? void 0 : _user$privacySettings2.shareLastName) !== false),
-    _useState14 = _slicedToArray(_useState13, 2),
-    shareLastName = _useState14[0],
-    setShareLastName = _useState14[1];
+  var _useState15 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)((user === null || user === void 0 || (_user$privacySettings = user.privacySettings) === null || _user$privacySettings === void 0 ? void 0 : _user$privacySettings.allowMessages) !== false),
+    _useState16 = _slicedToArray(_useState15, 2),
+    allowMessages = _useState16[0],
+    setAllowMessages = _useState16[1];
+  var _useState17 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)((user === null || user === void 0 || (_user$privacySettings2 = user.privacySettings) === null || _user$privacySettings2 === void 0 ? void 0 : _user$privacySettings2.shareLastName) !== false),
+    _useState18 = _slicedToArray(_useState17, 2),
+    shareLastName = _useState18[0],
+    setShareLastName = _useState18[1];
 
   // Handle form submission
   var handleSubmit = function handleSubmit(e) {
@@ -64283,6 +64292,7 @@ function Profile(_ref) {
     // Create updates object with privacy settings
     var updates = {
       name: name,
+      lastName: lastName,
       sobrietyDate: sobrietyDate ? new Date(sobrietyDate).toISOString() : '',
       homeGroup: homeGroup,
       sponsorName: sponsorName,
@@ -64302,10 +64312,10 @@ function Profile(_ref) {
   var sobrietyYears = sobrietyDate ? ((_window$db2 = window.db) === null || _window$db2 === void 0 ? void 0 : _window$db2.calculateSobrietyYears(sobrietyDate, 2)) || 0 : 0;
 
   // State for editing sobriety date
-  var _useState15 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false),
-    _useState16 = _slicedToArray(_useState15, 2),
-    editingSobriety = _useState16[0],
-    setEditingSobriety = _useState16[1];
+  var _useState19 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false),
+    _useState20 = _slicedToArray(_useState19, 2),
+    editingSobriety = _useState20[0],
+    setEditingSobriety = _useState20[1];
 
   // Determine whether to display years or days prominently
   var showYearsProminent = sobrietyYears >= 1;
@@ -64635,13 +64645,40 @@ function Profile(_ref) {
       borderRadius: 2,
       border: darkMode ? '1px solid #374151' : '1px solid #e5e7eb'
     }
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_3__["default"], {
+    sx: {
+      mb: 2
+    }
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_3__["default"], {
+    sx: {
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center'
+    }
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_4__["default"], {
     variant: "h6",
     sx: {
-      mb: 2,
       color: darkMode ? '#d1d5db' : '#374151'
     }
-  }, "Personal Information"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_3__["default"], {
+  }, "Personal Information"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_6__["default"], {
+    onClick: function onClick() {
+      return setEditingPersonalInfo(!editingPersonalInfo);
+    },
+    size: "small",
+    "aria-label": editingPersonalInfo ? "Cancel editing" : "Edit personal information",
+    sx: {
+      color: darkMode ? '#9ca3af' : '#6b7280',
+      '&:hover': {
+        color: darkMode ? '#60a5fa' : '#3b82f6',
+        backgroundColor: 'transparent'
+      }
+    }
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("i", {
+    className: "fas ".concat(editingPersonalInfo ? "fa-times" : "fa-edit"),
+    style: {
+      fontSize: '0.85rem'
+    }
+  })))), editingPersonalInfo ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement((react__WEBPACK_IMPORTED_MODULE_0___default().Fragment), null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_3__["default"], {
     sx: {
       display: 'flex',
       flexDirection: 'column',
@@ -64649,14 +64686,15 @@ function Profile(_ref) {
       mb: 3
     }
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_7__["default"], {
-    label: "Your Name",
+    label: "First Name",
     fullWidth: true,
     value: name,
     onChange: function onChange(e) {
       return setName(e.target.value);
     },
-    placeholder: "Enter your name",
+    placeholder: "Enter your first name",
     variant: "outlined",
+    size: "small",
     InputLabelProps: {
       style: {
         color: darkMode ? '#9ca3af' : '#6b7280'
@@ -64669,14 +64707,37 @@ function Profile(_ref) {
       }
     }
   }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_7__["default"], {
+    label: "Last Name",
+    fullWidth: true,
+    value: lastName,
+    onChange: function onChange(e) {
+      return setLastName(e.target.value);
+    },
+    placeholder: "Enter your last name",
+    variant: "outlined",
+    size: "small",
+    InputLabelProps: {
+      style: {
+        color: darkMode ? '#9ca3af' : '#6b7280'
+      }
+    },
+    InputProps: {
+      style: {
+        color: darkMode ? '#d1d5db' : '#374151',
+        backgroundColor: darkMode ? 'rgba(55, 65, 81, 0.3)' : '#ffffff'
+      }
+    }
+  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_7__["default"], {
+    select: true,
     label: "Home Group",
     fullWidth: true,
     value: homeGroup,
     onChange: function onChange(e) {
       return setHomeGroup(e.target.value);
     },
-    placeholder: "Enter your home group",
+    placeholder: "Select your home group",
     variant: "outlined",
+    size: "small",
     InputLabelProps: {
       style: {
         color: darkMode ? '#9ca3af' : '#6b7280'
@@ -64687,8 +64748,39 @@ function Profile(_ref) {
         color: darkMode ? '#d1d5db' : '#374151',
         backgroundColor: darkMode ? 'rgba(55, 65, 81, 0.3)' : '#ffffff'
       }
+    },
+    SelectProps: {
+      MenuProps: {
+        PaperProps: {
+          sx: {
+            bgcolor: darkMode ? '#1f2937' : '#ffffff',
+            border: darkMode ? '1px solid #374151' : '1px solid #e5e7eb'
+          }
+        }
+      }
     }
-  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_7__["default"], {
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(MenuItem, {
+    value: ""
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("em", null, "None")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(MenuItem, {
+    value: "Downtown AA"
+  }, "Downtown AA"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(MenuItem, {
+    value: "Serenity Group"
+  }, "Serenity Group"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(MenuItem, {
+    value: "Hope & Recovery"
+  }, "Hope & Recovery"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(MenuItem, {
+    value: "New Beginnings"
+  }, "New Beginnings"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(MenuItem, {
+    value: "add_new",
+    sx: {
+      color: darkMode ? '#60a5fa' : '#3b82f6'
+    }
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("i", {
+    className: "fas fa-plus",
+    style: {
+      marginRight: '8px',
+      fontSize: '0.75rem'
+    }
+  }), "Add New Meeting")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_7__["default"], {
     label: "Sponsor's Name",
     fullWidth: true,
     value: sponsorName,
@@ -64697,6 +64789,7 @@ function Profile(_ref) {
     },
     placeholder: "Enter your sponsor's name",
     variant: "outlined",
+    size: "small",
     InputLabelProps: {
       style: {
         color: darkMode ? '#9ca3af' : '#6b7280'
@@ -64718,6 +64811,7 @@ function Profile(_ref) {
     },
     placeholder: "Enter your sponsor's phone number",
     variant: "outlined",
+    size: "small",
     InputLabelProps: {
       style: {
         color: darkMode ? '#9ca3af' : '#6b7280'
@@ -64729,20 +64823,101 @@ function Profile(_ref) {
         backgroundColor: darkMode ? 'rgba(55, 65, 81, 0.3)' : '#ffffff'
       }
     }
-  })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_8__["default"], {
+  })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_3__["default"], {
+    sx: {
+      display: 'flex',
+      justifyContent: 'flex-end',
+      gap: 1
+    }
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_8__["default"], {
+    size: "small",
+    onClick: function onClick() {
+      return setEditingPersonalInfo(false);
+    },
+    sx: {
+      color: darkMode ? '#d1d5db' : '#374151',
+      '&:hover': {
+        backgroundColor: 'transparent'
+      }
+    }
+  }, "Cancel"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_8__["default"], {
     type: "submit",
     variant: "contained",
     color: "primary",
-    fullWidth: true,
+    size: "small",
+    onClick: function onClick() {
+      handleSubmit({
+        preventDefault: function preventDefault() {}
+      });
+      setEditingPersonalInfo(false);
+    },
     sx: {
-      py: 1.5,
-      mt: 1,
       bgcolor: darkMode ? '#3b82f6' : '#2563eb',
       '&:hover': {
         bgcolor: darkMode ? '#2563eb' : '#1d4ed8'
       }
     }
-  }, "Save Profile")));
+  }, "Save Changes"))) : /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement((react__WEBPACK_IMPORTED_MODULE_0___default().Fragment), null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_3__["default"], {
+    sx: {
+      display: 'flex',
+      flexDirection: 'column',
+      gap: 2
+    }
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_3__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_4__["default"], {
+    variant: "caption",
+    sx: {
+      color: darkMode ? '#9ca3af' : '#6b7280'
+    }
+  }, "First Name"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_4__["default"], {
+    sx: {
+      color: darkMode ? '#d1d5db' : '#374151',
+      fontWeight: 500
+    }
+  }, name || "Not set")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_3__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_4__["default"], {
+    variant: "caption",
+    sx: {
+      color: darkMode ? '#9ca3af' : '#6b7280'
+    }
+  }, "Last Name ", shareLastName && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("span", {
+    style: {
+      fontSize: '0.7rem'
+    }
+  }, "(Shared)")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_4__["default"], {
+    sx: {
+      color: darkMode ? '#d1d5db' : '#374151',
+      fontWeight: 500
+    }
+  }, lastName || "Not set")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_3__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_4__["default"], {
+    variant: "caption",
+    sx: {
+      color: darkMode ? '#9ca3af' : '#6b7280'
+    }
+  }, "Home Group"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_4__["default"], {
+    sx: {
+      color: darkMode ? '#d1d5db' : '#374151',
+      fontWeight: 500
+    }
+  }, homeGroup || "Not set")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_3__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_4__["default"], {
+    variant: "caption",
+    sx: {
+      color: darkMode ? '#9ca3af' : '#6b7280'
+    }
+  }, "Sponsor's Name"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_4__["default"], {
+    sx: {
+      color: darkMode ? '#d1d5db' : '#374151',
+      fontWeight: 500
+    }
+  }, sponsorName || "Not set")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_3__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_4__["default"], {
+    variant: "caption",
+    sx: {
+      color: darkMode ? '#9ca3af' : '#6b7280'
+    }
+  }, "Sponsor's Phone"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_4__["default"], {
+    sx: {
+      color: darkMode ? '#d1d5db' : '#374151',
+      fontWeight: 500
+    }
+  }, sponsorPhone || "Not set"))))));
 }
 
 /***/ }),

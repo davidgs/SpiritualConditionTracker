@@ -18,20 +18,23 @@ export default function Profile({ setCurrentView, user, onUpdate }) {
   const darkMode = theme === 'dark';
   
   const [name, setName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [email, setEmail] = useState('');
   const [sobrietyDate, setSobrietyDate] = useState('');
   const [homeGroup, setHomeGroup] = useState('');
-  const [sponsorName, setSponsorName] = useState('');
-  const [sponsorPhone, setSponsorPhone] = useState('');
   const [errors, setErrors] = useState({});
+  const [editingPersonalInfo, setEditingPersonalInfo] = useState(false);
 
   // Load user data when component mounts or user changes
   useEffect(() => {
     if (user) {
       setName(user.name || '');
+      setLastName(user.lastName || '');
+      setPhoneNumber(user.phoneNumber || '');
+      setEmail(user.email || '');
       setSobrietyDate(user.sobrietyDate ? user.sobrietyDate.split('T')[0] : '');
       setHomeGroup(user.homeGroup || '');
-      setSponsorName(user.sponsorName || '');
-      setSponsorPhone(user.sponsorPhone || '');
     }
   }, [user]);
 
@@ -56,6 +59,7 @@ export default function Profile({ setCurrentView, user, onUpdate }) {
     // Create updates object with privacy settings
     const updates = {
       name,
+      lastName,
       sobrietyDate: sobrietyDate ? new Date(sobrietyDate).toISOString() : '',
       homeGroup,
       sponsorName,
@@ -387,101 +391,239 @@ export default function Profile({ setCurrentView, user, onUpdate }) {
           border: darkMode ? '1px solid #374151' : '1px solid #e5e7eb'
         }}
       >
-        <Typography variant="h6" sx={{ mb: 2, color: darkMode ? '#d1d5db' : '#374151' }}>
-          Personal Information
-        </Typography>
-        
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5, mb: 3 }}>
-          <TextField
-            label="Your Name"
-            fullWidth
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="Enter your name"
-            variant="outlined"
-            InputLabelProps={{
-              style: { color: darkMode ? '#9ca3af' : '#6b7280' }
-            }}
-            InputProps={{
-              style: { 
-                color: darkMode ? '#d1d5db' : '#374151',
-                backgroundColor: darkMode ? 'rgba(55, 65, 81, 0.3)' : '#ffffff'
-              }
-            }}
-          />
-          
-          <TextField
-            label="Home Group"
-            fullWidth
-            value={homeGroup}
-            onChange={(e) => setHomeGroup(e.target.value)}
-            placeholder="Enter your home group"
-            variant="outlined"
-            InputLabelProps={{
-              style: { color: darkMode ? '#9ca3af' : '#6b7280' }
-            }}
-            InputProps={{
-              style: { 
-                color: darkMode ? '#d1d5db' : '#374151',
-                backgroundColor: darkMode ? 'rgba(55, 65, 81, 0.3)' : '#ffffff'
-              }
-            }}
-          />
-          
-          <TextField
-            label="Sponsor's Name"
-            fullWidth
-            value={sponsorName}
-            onChange={(e) => setSponsorName(e.target.value)}
-            placeholder="Enter your sponsor's name"
-            variant="outlined"
-            InputLabelProps={{
-              style: { color: darkMode ? '#9ca3af' : '#6b7280' }
-            }}
-            InputProps={{
-              style: { 
-                color: darkMode ? '#d1d5db' : '#374151',
-                backgroundColor: darkMode ? 'rgba(55, 65, 81, 0.3)' : '#ffffff'
-              }
-            }}
-          />
-          
-          <TextField
-            label="Sponsor's Phone"
-            fullWidth
-            type="tel"
-            value={sponsorPhone}
-            onChange={(e) => setSponsorPhone(e.target.value)}
-            placeholder="Enter your sponsor's phone number"
-            variant="outlined"
-            InputLabelProps={{
-              style: { color: darkMode ? '#9ca3af' : '#6b7280' }
-            }}
-            InputProps={{
-              style: { 
-                color: darkMode ? '#d1d5db' : '#374151',
-                backgroundColor: darkMode ? 'rgba(55, 65, 81, 0.3)' : '#ffffff'
-              }
-            }}
-          />
+        <Box sx={{ mb: 2 }}>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <Typography variant="h6" sx={{ color: darkMode ? '#d1d5db' : '#374151' }}>
+              Personal Information
+            </Typography>
+            <IconButton 
+              onClick={() => setEditingPersonalInfo(!editingPersonalInfo)}
+              size="small"
+              aria-label={editingPersonalInfo ? "Cancel editing" : "Edit personal information"}
+              sx={{ 
+                color: darkMode ? '#9ca3af' : '#6b7280',
+                '&:hover': {
+                  color: darkMode ? '#60a5fa' : '#3b82f6',
+                  backgroundColor: 'transparent'
+                }
+              }}
+            >
+              <i className={`fas ${editingPersonalInfo ? "fa-times" : "fa-edit"}`} style={{ fontSize: '0.85rem' }}></i>
+            </IconButton>
+          </Box>
         </Box>
         
-        <Button
-          type="submit"
-          variant="contained"
-          color="primary"
-          fullWidth
-          sx={{ 
-            py: 1.5,
-            mt: 1,
-            bgcolor: darkMode ? '#3b82f6' : '#2563eb',
-            '&:hover': {
-              bgcolor: darkMode ? '#2563eb' : '#1d4ed8'
-            }
-          }}
-        >
-          Save Profile
-        </Button>
+        {editingPersonalInfo ? (
+          <>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5, mb: 3 }}>
+              <TextField
+                label="First Name"
+                fullWidth
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Enter your first name"
+                variant="outlined"
+                size="small"
+                InputLabelProps={{
+                  style: { color: darkMode ? '#9ca3af' : '#6b7280' }
+                }}
+                InputProps={{
+                  style: { 
+                    color: darkMode ? '#d1d5db' : '#374151',
+                    backgroundColor: darkMode ? 'rgba(55, 65, 81, 0.3)' : '#ffffff'
+                  }
+                }}
+              />
+              
+              <TextField
+                label="Last Name"
+                fullWidth
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+                placeholder="Enter your last name"
+                variant="outlined"
+                size="small"
+                InputLabelProps={{
+                  style: { color: darkMode ? '#9ca3af' : '#6b7280' }
+                }}
+                InputProps={{
+                  style: { 
+                    color: darkMode ? '#d1d5db' : '#374151',
+                    backgroundColor: darkMode ? 'rgba(55, 65, 81, 0.3)' : '#ffffff'
+                  }
+                }}
+              />
+              
+              <TextField
+                select
+                label="Home Group"
+                fullWidth
+                value={homeGroup}
+                onChange={(e) => setHomeGroup(e.target.value)}
+                placeholder="Select your home group"
+                variant="outlined"
+                size="small"
+                InputLabelProps={{
+                  style: { color: darkMode ? '#9ca3af' : '#6b7280' }
+                }}
+                InputProps={{
+                  style: { 
+                    color: darkMode ? '#d1d5db' : '#374151',
+                    backgroundColor: darkMode ? 'rgba(55, 65, 81, 0.3)' : '#ffffff'
+                  }
+                }}
+                SelectProps={{
+                  MenuProps: {
+                    PaperProps: {
+                      sx: {
+                        bgcolor: darkMode ? '#1f2937' : '#ffffff',
+                        border: darkMode ? '1px solid #374151' : '1px solid #e5e7eb',
+                      }
+                    }
+                  }
+                }}
+              >
+                <MenuItem value="">
+                  <em>None</em>
+                </MenuItem>
+                <MenuItem value="Downtown AA">Downtown AA</MenuItem>
+                <MenuItem value="Serenity Group">Serenity Group</MenuItem>
+                <MenuItem value="Hope & Recovery">Hope & Recovery</MenuItem>
+                <MenuItem value="New Beginnings">New Beginnings</MenuItem>
+                <MenuItem value="add_new" sx={{ color: darkMode ? '#60a5fa' : '#3b82f6' }}>
+                  <i className="fas fa-plus" style={{ marginRight: '8px', fontSize: '0.75rem' }}></i>
+                  Add New Meeting
+                </MenuItem>
+              </TextField>
+              
+              <TextField
+                label="Sponsor's Name"
+                fullWidth
+                value={sponsorName}
+                onChange={(e) => setSponsorName(e.target.value)}
+                placeholder="Enter your sponsor's name"
+                variant="outlined"
+                size="small"
+                InputLabelProps={{
+                  style: { color: darkMode ? '#9ca3af' : '#6b7280' }
+                }}
+                InputProps={{
+                  style: { 
+                    color: darkMode ? '#d1d5db' : '#374151',
+                    backgroundColor: darkMode ? 'rgba(55, 65, 81, 0.3)' : '#ffffff'
+                  }
+                }}
+              />
+              
+              <TextField
+                label="Sponsor's Phone"
+                fullWidth
+                type="tel"
+                value={sponsorPhone}
+                onChange={(e) => setSponsorPhone(e.target.value)}
+                placeholder="Enter your sponsor's phone number"
+                variant="outlined"
+                size="small"
+                InputLabelProps={{
+                  style: { color: darkMode ? '#9ca3af' : '#6b7280' }
+                }}
+                InputProps={{
+                  style: { 
+                    color: darkMode ? '#d1d5db' : '#374151',
+                    backgroundColor: darkMode ? 'rgba(55, 65, 81, 0.3)' : '#ffffff'
+                  }
+                }}
+              />
+            </Box>
+            
+            <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1 }}>
+              <Button 
+                size="small"
+                onClick={() => setEditingPersonalInfo(false)}
+                sx={{ 
+                  color: darkMode ? '#d1d5db' : '#374151',
+                  '&:hover': {
+                    backgroundColor: 'transparent'
+                  }
+                }}
+              >
+                Cancel
+              </Button>
+              <Button 
+                type="submit"
+                variant="contained"
+                color="primary"
+                size="small"
+                onClick={() => {
+                  handleSubmit({preventDefault: () => {}});
+                  setEditingPersonalInfo(false);
+                }}
+                sx={{ 
+                  bgcolor: darkMode ? '#3b82f6' : '#2563eb',
+                  '&:hover': {
+                    bgcolor: darkMode ? '#2563eb' : '#1d4ed8'
+                  }
+                }}
+              >
+                Save Changes
+              </Button>
+            </Box>
+          </>
+        ) : (
+          <>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+              {/* Name display */}
+              <Box>
+                <Typography variant="caption" sx={{ color: darkMode ? '#9ca3af' : '#6b7280' }}>
+                  First Name
+                </Typography>
+                <Typography sx={{ color: darkMode ? '#d1d5db' : '#374151', fontWeight: 500 }}>
+                  {name || "Not set"}
+                </Typography>
+              </Box>
+              
+              {/* Last Name display */}
+              <Box>
+                <Typography variant="caption" sx={{ color: darkMode ? '#9ca3af' : '#6b7280' }}>
+                  Last Name {shareLastName && <span style={{ fontSize: '0.7rem' }}>(Shared)</span>}
+                </Typography>
+                <Typography sx={{ color: darkMode ? '#d1d5db' : '#374151', fontWeight: 500 }}>
+                  {lastName || "Not set"}
+                </Typography>
+              </Box>
+              
+              {/* Home Group display */}
+              <Box>
+                <Typography variant="caption" sx={{ color: darkMode ? '#9ca3af' : '#6b7280' }}>
+                  Home Group
+                </Typography>
+                <Typography sx={{ color: darkMode ? '#d1d5db' : '#374151', fontWeight: 500 }}>
+                  {homeGroup || "Not set"}
+                </Typography>
+              </Box>
+              
+              {/* Sponsor Name display */}
+              <Box>
+                <Typography variant="caption" sx={{ color: darkMode ? '#9ca3af' : '#6b7280' }}>
+                  Sponsor's Name
+                </Typography>
+                <Typography sx={{ color: darkMode ? '#d1d5db' : '#374151', fontWeight: 500 }}>
+                  {sponsorName || "Not set"}
+                </Typography>
+              </Box>
+              
+              {/* Sponsor Phone display */}
+              <Box>
+                <Typography variant="caption" sx={{ color: darkMode ? '#9ca3af' : '#6b7280' }}>
+                  Sponsor's Phone
+                </Typography>
+                <Typography sx={{ color: darkMode ? '#d1d5db' : '#374151', fontWeight: 500 }}>
+                  {sponsorPhone || "Not set"}
+                </Typography>
+              </Box>
+            </Box>
+          </>
+        )}
       </Paper>
     </Box>
   );
