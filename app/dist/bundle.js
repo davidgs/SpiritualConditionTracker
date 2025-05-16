@@ -60101,72 +60101,51 @@ function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
 
 
 
-// Style the Dialog for proper light/dark mode styling
+// Use the theme system and only style custom elements that MUI doesn't cover
 var StyledDialog = (0,_mui_material_styles__WEBPACK_IMPORTED_MODULE_3__["default"])(_mui_material_Dialog__WEBPACK_IMPORTED_MODULE_4__["default"])(function (_ref) {
   var theme = _ref.theme;
   return {
-    '& .MuiDialogContent-root': {
-      padding: theme.spacing(3)
-    },
-    '& .MuiDialogActions-root': {
-      padding: theme.spacing(1)
-    },
     '& .MuiPaper-root': {
       maxWidth: '600px',
-      width: '100%',
-      backgroundColor: theme.palette.mode === 'dark' ? '#1f2937' : '#ffffff',
-      color: theme.palette.mode === 'dark' ? '#e5e7eb' : '#1f2937'
+      width: '100%'
     },
-    '& .MuiDialogTitle-root': {
-      backgroundColor: theme.palette.mode === 'dark' ? '#111827' : '#f9fafb',
-      color: theme.palette.mode === 'dark' ? '#f3f4f6' : '#111827'
-    },
-    '& .MuiInputBase-input': {
-      color: theme.palette.mode === 'dark' ? '#e5e7eb' : '#1f2937'
-    },
-    '& .MuiInputLabel-root': {
-      color: theme.palette.mode === 'dark' ? '#9ca3af' : '#4b5563'
-    },
-    '& .MuiOutlinedInput-notchedOutline': {
-      borderColor: theme.palette.mode === 'dark' ? '#4b5563' : '#d1d5db'
-    },
-    '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': {
-      borderColor: theme.palette.mode === 'dark' ? '#6b7280' : '#9ca3af'
-    },
-    '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': {
-      borderColor: theme.palette.mode === 'dark' ? '#60a5fa' : '#3b82f6'
-    },
+    // Style form elements that aren't Material UI components
     '& select': {
-      backgroundColor: theme.palette.mode === 'dark' ? '#1f2937' : '#ffffff',
-      color: theme.palette.mode === 'dark' ? '#e5e7eb' : '#1f2937',
-      border: theme.palette.mode === 'dark' ? '1px solid #4b5563' : '1px solid #d1d5db',
+      backgroundColor: theme.palette.background.paper,
+      color: theme.palette.text.primary,
+      border: "1px solid ".concat(theme.palette.mode === 'dark' ? theme.palette.grey[700] : theme.palette.grey[300]),
       padding: '0.5rem 0.75rem',
-      borderRadius: '0.375rem',
+      borderRadius: theme.shape.borderRadius,
       fontSize: '0.875rem',
       width: '100%',
       appearance: 'auto'
     },
     '& select:focus': {
-      borderColor: theme.palette.mode === 'dark' ? '#60a5fa' : '#3b82f6',
+      borderColor: theme.palette.primary.main,
       outline: 'none'
     },
     '& select option': {
-      backgroundColor: theme.palette.mode === 'dark' ? '#1f2937' : '#ffffff',
-      color: theme.palette.mode === 'dark' ? '#e5e7eb' : '#1f2937'
+      backgroundColor: theme.palette.background.paper,
+      color: theme.palette.text.primary
     },
     '& textarea': {
-      backgroundColor: theme.palette.mode === 'dark' ? '#1f2937' : '#ffffff',
-      color: theme.palette.mode === 'dark' ? '#e5e7eb' : '#1f2937',
-      border: theme.palette.mode === 'dark' ? '1px solid #4b5563' : '1px solid #d1d5db',
-      borderRadius: '0.375rem'
+      backgroundColor: theme.palette.background.paper,
+      color: theme.palette.text.primary,
+      border: "1px solid ".concat(theme.palette.mode === 'dark' ? theme.palette.grey[700] : theme.palette.grey[300]),
+      borderRadius: theme.shape.borderRadius,
+      padding: '0.5rem 0.75rem',
+      fontSize: '0.875rem'
     },
     '& textarea::placeholder': {
-      color: theme.palette.mode === 'dark' ? '#9ca3af' : '#9ca3af'
+      color: theme.palette.text.secondary
     },
     '& input[type="date"]': {
-      backgroundColor: theme.palette.mode === 'dark' ? '#1f2937' : '#ffffff',
-      color: theme.palette.mode === 'dark' ? '#e5e7eb' : '#1f2937',
-      border: theme.palette.mode === 'dark' ? '1px solid #4b5563' : '1px solid #d1d5db'
+      backgroundColor: theme.palette.background.paper,
+      color: theme.palette.text.primary,
+      border: "1px solid ".concat(theme.palette.mode === 'dark' ? theme.palette.grey[700] : theme.palette.grey[300]),
+      padding: '0.5rem 0.75rem',
+      borderRadius: theme.shape.borderRadius,
+      fontSize: '0.875rem'
     }
   };
 });
@@ -60183,6 +60162,7 @@ var StyledDialog = (0,_mui_material_styles__WEBPACK_IMPORTED_MODULE_3__["default
  * @returns {React.ReactElement} The dialog component
  */
 var LogActivityModal = function LogActivityModal(_ref2) {
+  var _palette$error;
   var open = _ref2.open,
     onClose = _ref2.onClose,
     onSave = _ref2.onSave,
@@ -60479,32 +60459,42 @@ var LogActivityModal = function LogActivityModal(_ref2) {
     setShowMeetingForm(false);
   }
 
-  // Common styles for form elements
+  // Common styles for form elements using theme
+  var _ref3 = _contexts_MuiThemeProvider__WEBPACK_IMPORTED_MODULE_1__["default"].useTheme ? _contexts_MuiThemeProvider__WEBPACK_IMPORTED_MODULE_1__["default"].useTheme() : {
+      palette: {
+        mode: darkMode ? 'dark' : 'light',
+        background: {
+          paper: darkMode ? '#1f2937' : '#ffffff'
+        },
+        text: {
+          primary: darkMode ? '#e5e7eb' : '#1f2937',
+          secondary: darkMode ? '#9ca3af' : '#4b5563'
+        },
+        grey: {
+          300: '#d1d5db',
+          700: '#4b5563'
+        }
+      }
+    },
+    palette = _ref3.palette;
   var labelStyle = {
     display: 'block',
     fontSize: '0.875rem',
     fontWeight: '500',
     marginBottom: '0.25rem',
-    color: darkMode ? '#e5e7eb' : '#4b5563'
+    color: palette.text.secondary
   };
   var inputStyle = {
     width: '100%',
     padding: '0.5rem 0.75rem',
     borderRadius: '0.375rem',
-    backgroundColor: darkMode ? '#1f2937' : '#ffffff',
-    color: darkMode ? '#e5e7eb' : '#1f2937',
-    border: darkMode ? '1px solid #4b5563' : '1px solid #d1d5db',
-    fontSize: '0.875rem',
-    '&:focus': {
-      borderColor: darkMode ? '#60a5fa' : '#3b82f6',
-      outline: 'none'
-    },
-    '&::placeholder': {
-      color: darkMode ? '#9ca3af' : '#9ca3af'
-    }
+    backgroundColor: palette.background.paper,
+    color: palette.text.primary,
+    border: "1px solid ".concat(palette.mode === 'dark' ? palette.grey[700] : palette.grey[300]),
+    fontSize: '0.875rem'
   };
   var errorStyle = {
-    color: '#ef4444',
+    color: ((_palette$error = palette.error) === null || _palette$error === void 0 ? void 0 : _palette$error.main) || '#ef4444',
     fontSize: '0.75rem',
     marginTop: '0.25rem'
   };
@@ -63393,7 +63383,64 @@ var MuiThemeProvider = function MuiThemeProvider(_ref) {
         MuiDialog: {
           styleOverrides: {
             paper: {
-              boxShadow: darkMode ? '0 25px 50px -12px rgba(0, 0, 0, 0.5)' : '0 25px 50px -12px rgba(0, 0, 0, 0.25)'
+              boxShadow: darkMode ? '0 25px 50px -12px rgba(0, 0, 0, 0.5)' : '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+              backgroundColor: darkMode ? '#1f2937' : '#ffffff',
+              color: darkMode ? '#e5e7eb' : '#1f2937'
+            },
+            root: {
+              '& .MuiBackdrop-root': {
+                backgroundColor: darkMode ? 'rgba(0, 0, 0, 0.7)' : 'rgba(0, 0, 0, 0.5)'
+              }
+            }
+          }
+        },
+        MuiDialogTitle: {
+          styleOverrides: {
+            root: {
+              backgroundColor: darkMode ? '#111827' : '#f9fafb',
+              color: darkMode ? '#f3f4f6' : '#111827',
+              borderBottom: '1px solid',
+              borderColor: darkMode ? '#374151' : '#e5e7eb'
+            }
+          }
+        },
+        MuiDialogContent: {
+          styleOverrides: {
+            root: {
+              backgroundColor: darkMode ? '#1f2937' : '#ffffff',
+              color: darkMode ? '#e5e7eb' : '#1f2937'
+            }
+          }
+        },
+        MuiDialogActions: {
+          styleOverrides: {
+            root: {
+              backgroundColor: darkMode ? '#1f2937' : '#ffffff',
+              borderTop: '1px solid',
+              borderColor: darkMode ? '#374151' : '#e5e7eb',
+              padding: '16px'
+            }
+          }
+        },
+        MuiInputBase: {
+          styleOverrides: {
+            input: {
+              color: darkMode ? '#e5e7eb' : '#1f2937'
+            }
+          }
+        },
+        MuiOutlinedInput: {
+          styleOverrides: {
+            root: {
+              '& .MuiOutlinedInput-notchedOutline': {
+                borderColor: darkMode ? '#4b5563' : '#d1d5db'
+              },
+              '&:hover .MuiOutlinedInput-notchedOutline': {
+                borderColor: darkMode ? '#6b7280' : '#9ca3af'
+              },
+              '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                borderColor: darkMode ? '#60a5fa' : '#3b82f6'
+              }
             }
           }
         },
@@ -63403,6 +63450,27 @@ var MuiThemeProvider = function MuiThemeProvider(_ref) {
               textTransform: 'none',
               borderRadius: '0.375rem',
               fontWeight: 500
+            },
+            containedPrimary: {
+              backgroundColor: darkMode ? '#3b82f6' : '#2563eb',
+              '&:hover': {
+                backgroundColor: darkMode ? '#2563eb' : '#1d4ed8'
+              }
+            },
+            outlinedPrimary: {
+              color: darkMode ? '#e5e7eb' : '#4b5563',
+              borderColor: darkMode ? '#4b5563' : '#d1d5db',
+              '&:hover': {
+                backgroundColor: darkMode ? 'rgba(55, 65, 81, 0.1)' : 'rgba(243, 244, 246, 0.7)',
+                borderColor: darkMode ? '#6b7280' : '#9ca3af'
+              }
+            }
+          }
+        },
+        MuiInputLabel: {
+          styleOverrides: {
+            root: {
+              color: darkMode ? '#9ca3af' : '#4b5563'
             }
           }
         }

@@ -11,70 +11,49 @@ import Box from '@mui/material/Box';
 import MuiThemeProvider from '../contexts/MuiThemeProvider';
 import MeetingForm from './MeetingForm';
 
-// Style the Dialog for proper light/dark mode styling
+// Use the theme system and only style custom elements that MUI doesn't cover
 const StyledDialog = styled(Dialog)(({ theme }) => ({
-  '& .MuiDialogContent-root': {
-    padding: theme.spacing(3),
-  },
-  '& .MuiDialogActions-root': {
-    padding: theme.spacing(1),
-  },
   '& .MuiPaper-root': {
     maxWidth: '600px',
     width: '100%',
-    backgroundColor: theme.palette.mode === 'dark' ? '#1f2937' : '#ffffff',
-    color: theme.palette.mode === 'dark' ? '#e5e7eb' : '#1f2937',
   },
-  '& .MuiDialogTitle-root': {
-    backgroundColor: theme.palette.mode === 'dark' ? '#111827' : '#f9fafb',
-    color: theme.palette.mode === 'dark' ? '#f3f4f6' : '#111827',
-  },
-  '& .MuiInputBase-input': {
-    color: theme.palette.mode === 'dark' ? '#e5e7eb' : '#1f2937',
-  },
-  '& .MuiInputLabel-root': {
-    color: theme.palette.mode === 'dark' ? '#9ca3af' : '#4b5563',
-  },
-  '& .MuiOutlinedInput-notchedOutline': {
-    borderColor: theme.palette.mode === 'dark' ? '#4b5563' : '#d1d5db',
-  },
-  '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': {
-    borderColor: theme.palette.mode === 'dark' ? '#6b7280' : '#9ca3af',
-  },
-  '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': {
-    borderColor: theme.palette.mode === 'dark' ? '#60a5fa' : '#3b82f6',
-  },
+  // Style form elements that aren't Material UI components
   '& select': {
-    backgroundColor: theme.palette.mode === 'dark' ? '#1f2937' : '#ffffff',
-    color: theme.palette.mode === 'dark' ? '#e5e7eb' : '#1f2937',
-    border: theme.palette.mode === 'dark' ? '1px solid #4b5563' : '1px solid #d1d5db',
+    backgroundColor: theme.palette.background.paper,
+    color: theme.palette.text.primary,
+    border: `1px solid ${theme.palette.mode === 'dark' ? theme.palette.grey[700] : theme.palette.grey[300]}`,
     padding: '0.5rem 0.75rem',
-    borderRadius: '0.375rem',
+    borderRadius: theme.shape.borderRadius,
     fontSize: '0.875rem',
     width: '100%',
     appearance: 'auto',
   },
   '& select:focus': {
-    borderColor: theme.palette.mode === 'dark' ? '#60a5fa' : '#3b82f6',
+    borderColor: theme.palette.primary.main,
     outline: 'none',
   },
   '& select option': {
-    backgroundColor: theme.palette.mode === 'dark' ? '#1f2937' : '#ffffff',
-    color: theme.palette.mode === 'dark' ? '#e5e7eb' : '#1f2937',
+    backgroundColor: theme.palette.background.paper,
+    color: theme.palette.text.primary,
   },
   '& textarea': {
-    backgroundColor: theme.palette.mode === 'dark' ? '#1f2937' : '#ffffff',
-    color: theme.palette.mode === 'dark' ? '#e5e7eb' : '#1f2937',
-    border: theme.palette.mode === 'dark' ? '1px solid #4b5563' : '1px solid #d1d5db',
-    borderRadius: '0.375rem',
+    backgroundColor: theme.palette.background.paper,
+    color: theme.palette.text.primary,
+    border: `1px solid ${theme.palette.mode === 'dark' ? theme.palette.grey[700] : theme.palette.grey[300]}`,
+    borderRadius: theme.shape.borderRadius,
+    padding: '0.5rem 0.75rem',
+    fontSize: '0.875rem',
   },
   '& textarea::placeholder': {
-    color: theme.palette.mode === 'dark' ? '#9ca3af' : '#9ca3af',
+    color: theme.palette.text.secondary,
   },
   '& input[type="date"]': {
-    backgroundColor: theme.palette.mode === 'dark' ? '#1f2937' : '#ffffff',
-    color: theme.palette.mode === 'dark' ? '#e5e7eb' : '#1f2937',
-    border: theme.palette.mode === 'dark' ? '1px solid #4b5563' : '1px solid #d1d5db',
+    backgroundColor: theme.palette.background.paper,
+    color: theme.palette.text.primary,
+    border: `1px solid ${theme.palette.mode === 'dark' ? theme.palette.grey[700] : theme.palette.grey[300]}`,
+    padding: '0.5rem 0.75rem',
+    borderRadius: theme.shape.borderRadius,
+    fontSize: '0.875rem',
   },
 }));
 
@@ -331,34 +310,36 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
     setShowMeetingForm(false);
   }
   
-  // Common styles for form elements
+  // Common styles for form elements using theme
+  const { palette } = MuiThemeProvider.useTheme ? MuiThemeProvider.useTheme() : { 
+    palette: { 
+      mode: darkMode ? 'dark' : 'light',
+      background: { paper: darkMode ? '#1f2937' : '#ffffff' },
+      text: { primary: darkMode ? '#e5e7eb' : '#1f2937', secondary: darkMode ? '#9ca3af' : '#4b5563' },
+      grey: { 300: '#d1d5db', 700: '#4b5563' }
+    } 
+  };
+  
   const labelStyle = {
     display: 'block',
     fontSize: '0.875rem',
     fontWeight: '500',
     marginBottom: '0.25rem',
-    color: darkMode ? '#e5e7eb' : '#4b5563'
+    color: palette.text.secondary
   };
   
   const inputStyle = {
     width: '100%',
     padding: '0.5rem 0.75rem',
     borderRadius: '0.375rem',
-    backgroundColor: darkMode ? '#1f2937' : '#ffffff',
-    color: darkMode ? '#e5e7eb' : '#1f2937',
-    border: darkMode ? '1px solid #4b5563' : '1px solid #d1d5db',
-    fontSize: '0.875rem',
-    '&:focus': {
-      borderColor: darkMode ? '#60a5fa' : '#3b82f6',
-      outline: 'none'
-    },
-    '&::placeholder': {
-      color: darkMode ? '#9ca3af' : '#9ca3af'
-    }
+    backgroundColor: palette.background.paper,
+    color: palette.text.primary,
+    border: `1px solid ${palette.mode === 'dark' ? palette.grey[700] : palette.grey[300]}`,
+    fontSize: '0.875rem'
   };
   
   const errorStyle = { 
-    color: '#ef4444', 
+    color: palette.error?.main || '#ef4444', 
     fontSize: '0.75rem', 
     marginTop: '0.25rem' 
   };
