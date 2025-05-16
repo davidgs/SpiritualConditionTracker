@@ -723,7 +723,11 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
               
               <DialogActions sx={{ 
                 justifyContent: 'flex-end', 
-                gap: '8px'
+                gap: '8px',
+                backgroundColor: darkMode ? '#1f2937' : '#ffffff',
+                borderTop: '1px solid',
+                borderColor: darkMode ? '#374151' : '#e5e7eb',
+                padding: '16px',
               }}>
                 <Button 
                   onClick={onClose} 

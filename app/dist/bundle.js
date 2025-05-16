@@ -60878,7 +60878,11 @@ var LogActivityModal = function LogActivityModal(_ref2) {
   })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_DialogActions__WEBPACK_IMPORTED_MODULE_9__["default"], {
     sx: {
       justifyContent: 'flex-end',
-      gap: '8px'
+      gap: '8px',
+      backgroundColor: darkMode ? '#1f2937' : '#ffffff',
+      borderTop: '1px solid',
+      borderColor: darkMode ? '#374151' : '#e5e7eb',
+      padding: '16px'
     }
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_Button__WEBPACK_IMPORTED_MODULE_10__["default"], {
     onClick: onClose,
