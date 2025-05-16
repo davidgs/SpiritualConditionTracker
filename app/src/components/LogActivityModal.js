@@ -388,7 +388,9 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
             m: 0, 
             p: 2,
             backgroundColor: darkMode ? '#111827' : '#f9fafb',
-            color: darkMode ? '#f3f4f6' : '#111827', 
+            color: darkMode ? '#f3f4f6' : '#111827',
+            borderBottom: '1px solid',
+            borderColor: darkMode ? '#374151' : '#e5e7eb',
           }} 
           id="log-activity-dialog-title"
         >

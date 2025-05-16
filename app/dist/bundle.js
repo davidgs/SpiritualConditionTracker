@@ -60529,7 +60529,9 @@ var LogActivityModal = function LogActivityModal(_ref2) {
       m: 0,
       p: 2,
       backgroundColor: darkMode ? '#111827' : '#f9fafb',
-      color: darkMode ? '#f3f4f6' : '#111827'
+      color: darkMode ? '#f3f4f6' : '#111827',
+      borderBottom: '1px solid',
+      borderColor: darkMode ? '#374151' : '#e5e7eb'
     },
     id: "log-activity-dialog-title"
   }, "Log New Activity"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_IconButton__WEBPACK_IMPORTED_MODULE_6__["default"], {
