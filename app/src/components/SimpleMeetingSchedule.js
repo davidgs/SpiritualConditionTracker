@@ -2,13 +2,13 @@ import React from 'react';
 
 const SimpleMeetingSchedule = ({ schedule, onChange }) => {
   const days = [
-    { key: 'sunday', label: 'Sun' },
-    { key: 'monday', label: 'Mon' },
-    { key: 'tuesday', label: 'Tue' },
-    { key: 'wednesday', label: 'Wed' },
-    { key: 'thursday', label: 'Thu' },
-    { key: 'friday', label: 'Fri' },
-    { key: 'saturday', label: 'Sat' }
+    { key: 'sunday', label: 'Sunday' },
+    { key: 'monday', label: 'Monday' },
+    { key: 'tuesday', label: 'Tuesday' },
+    { key: 'wednesday', label: 'Wednesday' },
+    { key: 'thursday', label: 'Thursday' },
+    { key: 'friday', label: 'Friday' },
+    { key: 'saturday', label: 'Saturday' }
   ];
 
   const handleTimeChange = (day, value) => {
@@ -37,44 +37,57 @@ const SimpleMeetingSchedule = ({ schedule, onChange }) => {
         Meeting Schedule
       </label>
 
-      <div className="space-y-2">
-        {days.map((day) => {
-          const existingItem = schedule.find(item => item.day === day.key);
-          const hasTime = !!existingItem;
-          const timeValue = existingItem ? existingItem.time : '';
-          
-          return (
-            <div key={day.key} className="flex items-center space-x-2">
-              <label className="w-10 font-medium text-gray-700 dark:text-gray-300">
-                {day.label}
-              </label>
-              <select
-                className="flex-grow p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200"
-                value={timeValue || "none"}
-                onChange={(e) => handleTimeChange(day.key, e.target.value)}
-              >
-                <option value="none">{hasTime ? "Remove" : "None"}</option>
-                <option value="06:00">6:00 AM</option>
-                <option value="07:00">7:00 AM</option>
-                <option value="08:00">8:00 AM</option>
-                <option value="09:00">9:00 AM</option>
-                <option value="10:00">10:00 AM</option>
-                <option value="11:00">11:00 AM</option>
-                <option value="12:00">12:00 PM</option>
-                <option value="13:00">1:00 PM</option>
-                <option value="14:00">2:00 PM</option>
-                <option value="15:00">3:00 PM</option>
-                <option value="16:00">4:00 PM</option>
-                <option value="17:00">5:00 PM</option>
-                <option value="18:00">6:00 PM</option>
-                <option value="19:00">7:00 PM</option>
-                <option value="20:00">8:00 PM</option>
-                <option value="21:00">9:00 PM</option>
-                <option value="22:00">10:00 PM</option>
-              </select>
-            </div>
-          );
-        })}
+      <div className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+        <table className="w-full border-collapse">
+          <tbody>
+            {days.map((day, index) => {
+              const existingItem = schedule.find(item => item.day === day.key);
+              const hasTime = !!existingItem;
+              const timeValue = existingItem ? existingItem.time : '';
+              
+              return (
+                <tr 
+                  key={day.key} 
+                  className={`${
+                    index < days.length - 1 ? 'border-b border-gray-200 dark:border-gray-700' : ''
+                  } ${
+                    hasTime ? 'bg-blue-50 dark:bg-blue-900/10' : ''
+                  }`}
+                >
+                  <td className="py-2 px-4 border-r border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 font-medium" style={{ width: '40%' }}>
+                    {day.label}
+                  </td>
+                  <td className="p-2" style={{ width: '60%' }}>
+                    <select
+                      className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200"
+                      value={timeValue || "none"}
+                      onChange={(e) => handleTimeChange(day.key, e.target.value)}
+                    >
+                      <option value="none">{hasTime ? "Remove" : "None"}</option>
+                      <option value="06:00">6:00 AM</option>
+                      <option value="07:00">7:00 AM</option>
+                      <option value="08:00">8:00 AM</option>
+                      <option value="09:00">9:00 AM</option>
+                      <option value="10:00">10:00 AM</option>
+                      <option value="11:00">11:00 AM</option>
+                      <option value="12:00">12:00 PM</option>
+                      <option value="13:00">1:00 PM</option>
+                      <option value="14:00">2:00 PM</option>
+                      <option value="15:00">3:00 PM</option>
+                      <option value="16:00">4:00 PM</option>
+                      <option value="17:00">5:00 PM</option>
+                      <option value="18:00">6:00 PM</option>
+                      <option value="19:00">7:00 PM</option>
+                      <option value="20:00">8:00 PM</option>
+                      <option value="21:00">9:00 PM</option>
+                      <option value="22:00">10:00 PM</option>
+                    </select>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
       </div>
 
       <div className="mt-3 p-3 bg-gray-50 dark:bg-gray-700/30 border border-gray-200 dark:border-gray-700 rounded">
