@@ -22,7 +22,8 @@ export default function MeetingFormDialog({
   onSave, 
   onClose,
   isEdit = false,
-  open = true
+  open = true,
+  use24HourFormat = false
 }) {
   // Get theme context
   const { theme } = useContext(ThemeContext);

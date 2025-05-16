@@ -8,6 +8,9 @@ export default function Meetings({ setCurrentView, meetings = [], onSave, user }
   const { theme } = useContext(ThemeContext);
   const darkMode = theme === 'dark';
   
+  // Get user preferences
+  const use24HourFormat = user?.preferences?.use24HourFormat || false;
+  
   // Get user's home groups
   const [userHomeGroups, setUserHomeGroups] = useState([]);
   

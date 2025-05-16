@@ -64158,7 +64158,9 @@ function MeetingFormDialog(_ref) {
     _ref$isEdit = _ref.isEdit,
     isEdit = _ref$isEdit === void 0 ? false : _ref$isEdit,
     _ref$open = _ref.open,
-    open = _ref$open === void 0 ? true : _ref$open;
+    open = _ref$open === void 0 ? true : _ref$open,
+    _ref$use24HourFormat = _ref.use24HourFormat,
+    use24HourFormat = _ref$use24HourFormat === void 0 ? false : _ref$use24HourFormat;
   // Get theme context
   var _useContext = (0,react__WEBPACK_IMPORTED_MODULE_0__.useContext)(_contexts_ThemeContext__WEBPACK_IMPORTED_MODULE_2__.ThemeContext),
     theme = _useContext.theme;
@@ -64822,6 +64824,7 @@ function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
 
 
 function Meetings(_ref) {
+  var _user$preferences;
   var setCurrentView = _ref.setCurrentView,
     _ref$meetings = _ref.meetings,
     meetings = _ref$meetings === void 0 ? [] : _ref$meetings,
@@ -64831,6 +64834,9 @@ function Meetings(_ref) {
   var _useContext = (0,react__WEBPACK_IMPORTED_MODULE_0__.useContext)(_contexts_ThemeContext__WEBPACK_IMPORTED_MODULE_3__.ThemeContext),
     theme = _useContext.theme;
   var darkMode = theme === 'dark';
+
+  // Get user preferences
+  var use24HourFormat = (user === null || user === void 0 || (_user$preferences = user.preferences) === null || _user$preferences === void 0 ? void 0 : _user$preferences.use24HourFormat) || false;
 
   // Get user's home groups
   var _useState = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)([]),
@@ -67730,7 +67736,8 @@ var messageOperations = {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   compareDatesForSorting: () => (/* binding */ compareDatesForSorting),
-/* harmony export */   formatDateForDisplay: () => (/* binding */ formatDateForDisplay)
+/* harmony export */   formatDateForDisplay: () => (/* binding */ formatDateForDisplay),
+/* harmony export */   formatTimeByPreference: () => (/* binding */ formatTimeByPreference)
 /* harmony export */ });
 function _slicedToArray(r, e) { return _arrayWithHoles(r) || _iterableToArrayLimit(r, e) || _unsupportedIterableToArray(r, e) || _nonIterableRest(); }
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
@@ -67785,6 +67792,77 @@ function formatDateForDisplay(dateString) {
     console.error("Error formatting date:", error);
     return "Error formatting date";
   }
+}
+
+/**
+ * Format time based on user preference (12 or 24 hour format)
+ * 
+ * @param {string|Date} time - Time to format (either Date object or string like "14:30" or "2:30 PM")
+ * @param {boolean} use24HourFormat - Whether to use 24-hour format
+ * @returns {string} Formatted time string
+ */
+function formatTimeByPreference(time) {
+  var use24HourFormat = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+  // Handle string input in format "HH:MM" or "H:MM AM/PM"
+  if (typeof time === 'string') {
+    // Check if time is already in 12-hour format with AM/PM
+    if (time.includes('AM') || time.includes('PM')) {
+      if (use24HourFormat) {
+        // Convert 12-hour to 24-hour format
+        var _time$split = time.split(' '),
+          _time$split2 = _slicedToArray(_time$split, 2),
+          timePart = _time$split2[0],
+          period = _time$split2[1];
+        var _timePart$split$map = timePart.split(':').map(function (num) {
+            return parseInt(num, 10);
+          }),
+          _timePart$split$map2 = _slicedToArray(_timePart$split$map, 2),
+          hours = _timePart$split$map2[0],
+          minutes = _timePart$split$map2[1];
+        if (period === 'PM' && hours < 12) hours += 12;
+        if (period === 'AM' && hours === 12) hours = 0;
+        return "".concat(hours.toString().padStart(2, '0'), ":").concat(minutes.toString().padStart(2, '0'));
+      }
+      return time; // Already in 12-hour format
+    }
+
+    // Handle 24-hour format string like "14:30"
+    if (time.includes(':')) {
+      var _time$split$map = time.split(':').map(function (num) {
+          return parseInt(num, 10);
+        }),
+        _time$split$map2 = _slicedToArray(_time$split$map, 2),
+        _hours = _time$split$map2[0],
+        _minutes = _time$split$map2[1];
+      if (!use24HourFormat) {
+        // Convert 24-hour to 12-hour format
+        var _period = _hours >= 12 ? 'PM' : 'AM';
+        var hours12 = _hours % 12 || 12;
+        return "".concat(hours12, ":").concat(_minutes.toString().padStart(2, '0'), " ").concat(_period);
+      }
+      return time; // Already in 24-hour format
+    }
+  }
+
+  // Handle Date object
+  if (time instanceof Date) {
+    if (use24HourFormat) {
+      return time.toLocaleTimeString([], {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
+      });
+    } else {
+      return time.toLocaleTimeString([], {
+        hour: 'numeric',
+        minute: '2-digit',
+        hour12: true
+      });
+    }
+  }
+
+  // Return original value if not in a recognized format
+  return time;
 }
 
 /**

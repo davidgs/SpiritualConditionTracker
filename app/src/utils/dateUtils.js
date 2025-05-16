@@ -41,6 +41,58 @@ export function formatDateForDisplay(dateString) {
 }
 
 /**
+ * Format time based on user preference (12 or 24 hour format)
+ * 
+ * @param {string|Date} time - Time to format (either Date object or string like "14:30" or "2:30 PM")
+ * @param {boolean} use24HourFormat - Whether to use 24-hour format
+ * @returns {string} Formatted time string
+ */
+export function formatTimeByPreference(time, use24HourFormat = false) {
+  // Handle string input in format "HH:MM" or "H:MM AM/PM"
+  if (typeof time === 'string') {
+    // Check if time is already in 12-hour format with AM/PM
+    if (time.includes('AM') || time.includes('PM')) {
+      if (use24HourFormat) {
+        // Convert 12-hour to 24-hour format
+        const [timePart, period] = time.split(' ');
+        let [hours, minutes] = timePart.split(':').map(num => parseInt(num, 10));
+        
+        if (period === 'PM' && hours < 12) hours += 12;
+        if (period === 'AM' && hours === 12) hours = 0;
+        
+        return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+      }
+      return time; // Already in 12-hour format
+    }
+    
+    // Handle 24-hour format string like "14:30"
+    if (time.includes(':')) {
+      const [hours, minutes] = time.split(':').map(num => parseInt(num, 10));
+      
+      if (!use24HourFormat) {
+        // Convert 24-hour to 12-hour format
+        const period = hours >= 12 ? 'PM' : 'AM';
+        const hours12 = hours % 12 || 12;
+        return `${hours12}:${minutes.toString().padStart(2, '0')} ${period}`;
+      }
+      return time; // Already in 24-hour format
+    }
+  }
+  
+  // Handle Date object
+  if (time instanceof Date) {
+    if (use24HourFormat) {
+      return time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
+    } else {
+      return time.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', hour12: true });
+    }
+  }
+  
+  // Return original value if not in a recognized format
+  return time;
+}
+
+/**
  * Compare dates for sorting (newest first)
  * Works with any date format (YYYY-MM-DD or ISO string)
  * 
