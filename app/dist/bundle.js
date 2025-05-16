@@ -64213,7 +64213,7 @@ function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
 
 
 function Profile(_ref) {
-  var _user$privacySettings, _window$db, _window$db2;
+  var _user$privacySettings, _user$privacySettings2, _window$db, _window$db2;
   var setCurrentView = _ref.setCurrentView,
     user = _ref.user,
     onUpdate = _ref.onUpdate;
@@ -64256,11 +64256,15 @@ function Profile(_ref) {
     }
   }, [user]);
 
-  // State for tracking message permission toggle
+  // State for tracking privacy settings
   var _useState11 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)((user === null || user === void 0 || (_user$privacySettings = user.privacySettings) === null || _user$privacySettings === void 0 ? void 0 : _user$privacySettings.allowMessages) !== false),
     _useState12 = _slicedToArray(_useState11, 2),
     allowMessages = _useState12[0],
     setAllowMessages = _useState12[1];
+  var _useState13 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)((user === null || user === void 0 || (_user$privacySettings2 = user.privacySettings) === null || _user$privacySettings2 === void 0 ? void 0 : _user$privacySettings2.shareLastName) !== false),
+    _useState14 = _slicedToArray(_useState13, 2),
+    shareLastName = _useState14[0],
+    setShareLastName = _useState14[1];
 
   // Handle form submission
   var handleSubmit = function handleSubmit(e) {
@@ -64284,7 +64288,8 @@ function Profile(_ref) {
       sponsorName: sponsorName,
       sponsorPhone: sponsorPhone,
       privacySettings: _objectSpread(_objectSpread({}, (user === null || user === void 0 ? void 0 : user.privacySettings) || {}), {}, {
-        allowMessages: allowMessages
+        allowMessages: allowMessages,
+        shareLastName: shareLastName
       })
     };
 
@@ -64297,10 +64302,10 @@ function Profile(_ref) {
   var sobrietyYears = sobrietyDate ? ((_window$db2 = window.db) === null || _window$db2 === void 0 ? void 0 : _window$db2.calculateSobrietyYears(sobrietyDate, 2)) || 0 : 0;
 
   // State for editing sobriety date
-  var _useState13 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false),
-    _useState14 = _slicedToArray(_useState13, 2),
-    editingSobriety = _useState14[0],
-    setEditingSobriety = _useState14[1];
+  var _useState15 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false),
+    _useState16 = _slicedToArray(_useState15, 2),
+    editingSobriety = _useState16[0],
+    setEditingSobriety = _useState16[1];
 
   // Determine whether to display years or days prominently
   var showYearsProminent = sobrietyYears >= 1;
@@ -64587,6 +64592,34 @@ function Profile(_ref) {
         color: darkMode ? '#9ca3af' : '#6b7280'
       }
     }, "When enabled, connections can send you secure messages")),
+    sx: {
+      alignItems: 'flex-start',
+      ml: 0,
+      mt: 1
+    }
+  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_9__["default"], {
+    control: /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_10__["default"], {
+      id: "shareLastName",
+      name: "shareLastName",
+      checked: shareLastName,
+      onChange: function onChange(e) {
+        return setShareLastName(e.target.checked);
+      },
+      color: "primary",
+      size: "small"
+    }),
+    label: /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_3__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_4__["default"], {
+      sx: {
+        fontSize: '0.875rem',
+        color: darkMode ? '#d1d5db' : '#374151'
+      }
+    }, "Share Last Name"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_4__["default"], {
+      variant: "caption",
+      sx: {
+        display: 'block',
+        color: darkMode ? '#9ca3af' : '#6b7280'
+      }
+    }, "Show your last name to other members in recovery")),
     sx: {
       alignItems: 'flex-start',
       ml: 0,

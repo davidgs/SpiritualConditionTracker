@@ -35,8 +35,9 @@ export default function Profile({ setCurrentView, user, onUpdate }) {
     }
   }, [user]);
 
-  // State for tracking message permission toggle
+  // State for tracking privacy settings
   const [allowMessages, setAllowMessages] = useState(user?.privacySettings?.allowMessages !== false);
+  const [shareLastName, setShareLastName] = useState(user?.privacySettings?.shareLastName !== false);
   
   // Handle form submission
   const handleSubmit = (e) => {
@@ -61,7 +62,8 @@ export default function Profile({ setCurrentView, user, onUpdate }) {
       sponsorPhone,
       privacySettings: {
         ...(user?.privacySettings || {}),
-        allowMessages
+        allowMessages,
+        shareLastName
       }
     };
     
@@ -336,6 +338,37 @@ export default function Profile({ setCurrentView, user, onUpdate }) {
                   color: darkMode ? '#9ca3af' : '#6b7280'
                 }}>
                   When enabled, connections can send you secure messages
+                </Typography>
+              </Box>
+            }
+            sx={{ alignItems: 'flex-start', ml: 0, mt: 1 }}
+          />
+          
+          {/* Share Last Name Option */}
+          <FormControlLabel
+            control={
+              <Switch 
+                id="shareLastName"
+                name="shareLastName"
+                checked={shareLastName}
+                onChange={(e) => setShareLastName(e.target.checked)}
+                color="primary"
+                size="small"
+              />
+            }
+            label={
+              <Box>
+                <Typography sx={{ 
+                  fontSize: '0.875rem',
+                  color: darkMode ? '#d1d5db' : '#374151'
+                }}>
+                  Share Last Name
+                </Typography>
+                <Typography variant="caption" sx={{ 
+                  display: 'block', 
+                  color: darkMode ? '#9ca3af' : '#6b7280'
+                }}>
+                  Show your last name to other members in recovery
                 </Typography>
               </Box>
             }
