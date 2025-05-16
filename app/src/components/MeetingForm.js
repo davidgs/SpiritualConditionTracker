@@ -27,7 +27,7 @@ export default function MeetingForm({
 }) {
   // Get theme context
   const themeContext = useContext(ThemeContext);
-  const darkMode = propDarkMode !== undefined ? propDarkMode : (themeContext?.theme === 'dark');
+  const isDarkMode = propDarkMode !== undefined ? propDarkMode : (themeContext?.theme === 'dark');
   // Form state
   const [meetingName, setMeetingName] = useState('');
   
@@ -61,8 +61,7 @@ export default function MeetingForm({
   const [error, setError] = useState('');
   const [searchingLocation, setSearchingLocation] = useState(false);
   
-  // Dark mode detection
-  const darkMode = document.documentElement.classList.contains('dark');
+  // Dark mode already set above with isDarkMode
   
   // Initialize form with meeting data if provided
   useEffect(() => {
