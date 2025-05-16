@@ -31,9 +31,19 @@ const server = http.createServer((req, res) => {
   // Parse the URL
   let url = req.url;
   
-  // Handle root path
+  // Handle root path - serve landing page
   if (url === '/' || url === '') {
-    url = '/app';
+    fs.readFile(path.join(__dirname, 'app/landing-page.html'), (err, data) => {
+      if (err) {
+        res.writeHead(404);
+        res.end('Landing page not found.');
+        return;
+      }
+      
+      res.writeHead(200, { 'Content-Type': 'text/html', 'Cache-Control': 'no-cache' });
+      res.end(data);
+    });
+    return;
   }
   
   // Route handling
@@ -59,18 +69,10 @@ const server = http.createServer((req, res) => {
     return;
   }
   
-  // Serve the landing page
-  if (url === '/landing') {
-    fs.readFile(path.join(__dirname, 'app/landing-page.html'), (err, data) => {
-      if (err) {
-        res.writeHead(404);
-        res.end('Landing page not found.');
-        return;
-      }
-      
-      res.writeHead(200, { 'Content-Type': 'text/html', 'Cache-Control': 'no-cache' });
-      res.end(data);
-    });
+  // Assets for the landing page 
+  if (url.startsWith('/app/assets/')) {
+    const assetPath = path.join(__dirname, url);
+    serveStaticFile(assetPath, res);
     return;
   }
   
