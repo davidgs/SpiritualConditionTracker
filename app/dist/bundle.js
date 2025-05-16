@@ -63217,7 +63217,8 @@ function Meetings(_ref) {
   var setCurrentView = _ref.setCurrentView,
     _ref$meetings = _ref.meetings,
     meetings = _ref$meetings === void 0 ? [] : _ref$meetings,
-    onSave = _ref.onSave;
+    onSave = _ref.onSave,
+    user = _ref.user;
   // Get user's home group
   var _useState = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(''),
     _useState2 = _slicedToArray(_useState, 2),
@@ -63226,17 +63227,10 @@ function Meetings(_ref) {
 
   // Load user data to get home group
   (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(function () {
-    if (window.db) {
-      try {
-        var userData = window.db.getAll('user');
-        if (userData && userData.length > 0 && userData[0].homeGroup) {
-          setUserHomeGroup(userData[0].homeGroup);
-        }
-      } catch (error) {
-        console.error('Error getting user home group:', error);
-      }
+    if (user && user.homeGroup) {
+      setUserHomeGroup(user.homeGroup);
     }
-  }, []);
+  }, [user, meetings]); // Refresh when user or meetings change
   var _useState3 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false),
     _useState4 = _slicedToArray(_useState3, 2),
     showForm = _useState4[0],

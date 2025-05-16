@@ -2,23 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { meetingOperations } from '../utils/database';
 import MeetingForm from './MeetingForm';
 
-export default function Meetings({ setCurrentView, meetings = [], onSave }) {
+export default function Meetings({ setCurrentView, meetings = [], onSave, user }) {
   // Get user's home group
   const [userHomeGroup, setUserHomeGroup] = useState('');
   
   // Load user data to get home group
   useEffect(() => {
-    if (window.db) {
-      try {
-        const userData = window.db.getAll('user');
-        if (userData && userData.length > 0 && userData[0].homeGroup) {
-          setUserHomeGroup(userData[0].homeGroup);
-        }
-      } catch (error) {
-        console.error('Error getting user home group:', error);
-      }
+    if (user && user.homeGroup) {
+      setUserHomeGroup(user.homeGroup);
     }
-  }, []);
+  }, [user, meetings]); // Refresh when user or meetings change
   const [showForm, setShowForm] = useState(false);
   const [currentMeeting, setCurrentMeeting] = useState(null);
   const [error, setError] = useState('');
