@@ -354,7 +354,10 @@ export default function MeetingFormDialog({
       </DialogTitle>
       
       <DialogContent sx={{ py: 2 }}>
-        <Typography variant="body2" color={darkMode ? "text.secondary" : "text.secondary"} sx={{ mb: 2 }}>
+        <Typography variant="body2" sx={{ 
+          mb: 2,
+          color: darkMode ? '#9ca3af' : '#4b5563'
+        }}>
           Add details for your regular AA meeting. Most meetings occur in the evenings, typically between 6-9 PM.
         </Typography>
         

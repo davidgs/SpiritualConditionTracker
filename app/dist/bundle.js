@@ -64530,9 +64530,9 @@ function MeetingFormDialog(_ref) {
     }
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_6__["default"], {
     variant: "body2",
-    color: darkMode ? "text.secondary" : "text.secondary",
     sx: {
-      mb: 2
+      mb: 2,
+      color: darkMode ? '#9ca3af' : '#4b5563'
     }
   }, "Add details for your regular AA meeting. Most meetings occur in the evenings, typically between 6-9 PM."), error && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_7__["default"], {
     severity: "error",
