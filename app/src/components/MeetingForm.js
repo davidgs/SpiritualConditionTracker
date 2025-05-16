@@ -500,7 +500,7 @@ export default function MeetingForm({
           
           <form onSubmit={handleSubmit}>
             {/* Meeting Name - No label, full width */}
-            <div className="mb-6">
+            <div className="mb-6 w-full">
               <input
                 type="text"
                 className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
@@ -512,7 +512,7 @@ export default function MeetingForm({
             </div>
             
             {/* Meeting Schedule with tooltip */}
-            <div className="mb-6">
+            <div className="mb-6 w-full">
               <div className="flex items-center mb-2 relative">
                 <span className="text-xl font-medium text-gray-700 dark:text-gray-300">Meeting Schedule</span>
                 <div className="relative ml-2" ref={tooltipRef}>
@@ -538,13 +538,13 @@ export default function MeetingForm({
             </div>
             
             {/* Meeting Address - Split into multiple fields */}
-            <div className="mb-6">
+            <div className="mb-6 w-full">
               <div className="flex items-center mb-2">
                 <span className="text-xl font-medium text-gray-700 dark:text-gray-300">Meeting Location</span>
               </div>
               
               {/* Street Address with Detect button */}
-              <div className="mb-3">
+              <div className="mb-3 w-full">
                 <div className="flex items-center w-full">
                   <input
                     type="text"
@@ -559,15 +559,12 @@ export default function MeetingForm({
                     onClick={detectLocation}
                     disabled={searchingLocation}
                     title="Detect your location"
-                    className={`h-12 flex items-center justify-center px-3 rounded-r border ${
-                      searchingLocation 
-                        ? 'text-gray-400 dark:text-gray-500'
-                        : 'text-blue-500 dark:text-blue-400'
-                    }`}
+                    className={`h-12 flex items-center justify-center px-3 text-blue-500 dark:text-blue-400`}
                     style={{
                       background: 'transparent',
-                      borderColor: 'var(--border-color, #e2e8f0)', 
-                      borderLeftWidth: 0
+                      border: 'none',
+                      outline: 'none',
+                      boxShadow: 'none'
                     }}
                   >
                     {searchingLocation ? (
@@ -575,13 +572,12 @@ export default function MeetingForm({
                     ) : (
                       <i className="fa-solid fa-location-dot"></i>
                     )}
-                    <span className="ml-1">Locate</span>
                   </button>
                 </div>
               </div>
               
               {/* City, State, and Zip - No labels */}
-              <div className="grid grid-cols-3 gap-3 mb-3">
+              <div className="grid grid-cols-3 gap-3 mb-3 w-full">
                 <div className="col-span-1">
                   <input
                     type="text"
@@ -610,34 +606,41 @@ export default function MeetingForm({
                   />
                 </div>
               </div>
-              
-              <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
-                Fill in the address details or use the locate button to find your current location
-              </p>
             </div>
             
-            {/* Action Buttons - More space between them */}
-            <div className="flex justify-between items-center mt-8">
+            {/* Action Buttons - Icon only, no background */}
+            <div className="flex justify-between items-center mt-8 px-8">
               <button
                 type="button"
                 onClick={onCancel}
-                className="bg-transparent hover:bg-red-50 dark:hover:bg-red-900/20 text-red-600 dark:text-red-400 rounded-full p-2 transition-all duration-200"
+                style={{ 
+                  background: 'transparent',
+                  border: 'none',
+                  padding: 0,
+                  cursor: 'pointer',
+                  outline: 'none',
+                  boxShadow: 'none'
+                }}
                 title="Cancel"
               >
-                <i className="fa-regular fa-circle-xmark" style={{ fontSize: '2rem' }}></i>
+                <i className="fa-regular fa-circle-xmark text-red-600 dark:text-red-400" style={{ fontSize: '2.5rem' }}></i>
               </button>
               
               <button
                 type="submit"
-                className={`bg-transparent ${
-                  !meetingName || meetingSchedule.length === 0 || !streetAddress
-                    ? 'opacity-50 cursor-not-allowed'
-                    : 'hover:bg-green-50 dark:hover:bg-green-900/20'
-                } text-green-600 dark:text-green-400 rounded-full p-2 transition-all duration-200`}
+                style={{ 
+                  background: 'transparent',
+                  border: 'none',
+                  padding: 0,
+                  cursor: !meetingName || meetingSchedule.length === 0 || !streetAddress ? 'not-allowed' : 'pointer',
+                  outline: 'none',
+                  boxShadow: 'none',
+                  opacity: !meetingName || meetingSchedule.length === 0 || !streetAddress ? 0.5 : 1
+                }}
                 title={meeting ? "Save changes" : "Add meeting"}
                 disabled={!meetingName || meetingSchedule.length === 0 || !streetAddress}
               >
-                <i className="fa-regular fa-circle-check" style={{ fontSize: '2rem' }}></i>
+                <i className="fa-regular fa-circle-check text-green-600 dark:text-green-400" style={{ fontSize: '2.5rem' }}></i>
               </button>
             </div>
           </form>

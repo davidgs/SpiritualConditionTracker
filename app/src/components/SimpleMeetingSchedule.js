@@ -32,12 +32,8 @@ const SimpleMeetingSchedule = ({ schedule, onChange }) => {
   };
 
   return (
-    <div className="mb-6">
-      <label className="block text-gray-700 dark:text-gray-300 mb-2 text-xl font-medium">
-        Meeting Schedule
-      </label>
-
-      <div className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+    <div className="mb-6 w-full">
+      <div className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden w-full">
         <table className="w-full border-collapse">
           <tbody>
             {days.map((day, index) => {
@@ -54,10 +50,10 @@ const SimpleMeetingSchedule = ({ schedule, onChange }) => {
                     hasTime ? 'bg-blue-50 dark:bg-blue-900/10' : ''
                   }`}
                 >
-                  <td className="py-2 px-4 border-r border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 font-medium" style={{ width: '40%' }}>
+                  <td className="py-2 px-4 border-r border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 font-medium w-2/5">
                     {day.label}
                   </td>
-                  <td className="p-2" style={{ width: '60%' }}>
+                  <td className="p-2 w-3/5">
                     <select
                       className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200"
                       value={timeValue || "none"}
@@ -88,13 +84,6 @@ const SimpleMeetingSchedule = ({ schedule, onChange }) => {
             })}
           </tbody>
         </table>
-      </div>
-
-      <div className="mt-3 p-3 bg-gray-50 dark:bg-gray-700/30 border border-gray-200 dark:border-gray-700 rounded">
-        <p className="text-gray-700 dark:text-gray-300 text-sm">
-          <i className="fa-solid fa-circle-info text-blue-500 dark:text-blue-400 mr-2"></i>
-          Select times for each day this meeting occurs.
-        </p>
       </div>
     </div>
   );
