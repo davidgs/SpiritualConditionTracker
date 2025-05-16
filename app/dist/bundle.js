@@ -66386,15 +66386,10 @@ function Profile(_ref) {
             use24HourFormat: newValue
           })
         };
-        // Force app reload to apply time format change
+        // Update the time format preference without reloading the page
         onUpdate(updates, {
           redirectToDashboard: false
         });
-
-        // Force a reload to apply the changes
-        setTimeout(function () {
-          window.location.reload();
-        }, 500);
       },
       color: "primary",
       size: "small"
