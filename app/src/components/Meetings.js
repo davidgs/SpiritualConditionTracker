@@ -115,12 +115,12 @@ export default function Meetings({ setCurrentView, meetings = [], onSave }) {
             {/* Days & Time in a grid */}
             <div className="grid grid-cols-2 gap-2">
               <div className="flex items-center">
-                <i className="fa-solid fa-calendar-days text-gray-500 dark:text-gray-400 mr-3 flex-shrink-0" style={{ fontSize: '1rem' }}></i>
+                <i className="fa-solid fa-calendar-days text-gray-500 dark:text-gray-400 mr-3 flex-shrink-0" style={{ fontSize: '1rem' }}></i>&nbsp;
                 <span className="text-gray-600 dark:text-gray-300">{meeting.days.map(formatDay).join(', ')}</span>
               </div>
               
               <div className="flex items-center">
-                <i className="fa-regular fa-clock text-gray-500 dark:text-gray-400 mr-3 flex-shrink-0" style={{ fontSize: '1rem' }}></i>
+                <i className="fa-regular fa-clock text-gray-500 dark:text-gray-400 mr-3 flex-shrink-0" style={{ fontSize: '1rem' }}></i>&nbsp;
                 <span className="text-gray-600 dark:text-gray-300">{new Date(`2000-01-01T${meeting.time}`).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
               </div>
             </div>

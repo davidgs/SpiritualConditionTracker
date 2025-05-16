@@ -8,6 +8,13 @@ export default function MeetingForm({
 }) {
   // Form state
   const [meetingName, setMeetingName] = useState('');
+  
+  // New structure to store day-time combinations
+  const [meetingSchedule, setMeetingSchedule] = useState([
+    // Each item will be {day: 'monday', time: '18:00'} format
+  ]);
+  
+  // Legacy structure kept for compatibility
   const [meetingDays, setMeetingDays] = useState({
     monday: false,
     tuesday: false,
@@ -40,23 +47,62 @@ export default function MeetingForm({
     if (meeting) {
       setMeetingName(meeting.name);
       
-      // Set days
-      const days = {
-        monday: false,
-        tuesday: false,
-        wednesday: false,
-        thursday: false,
-        friday: false,
-        saturday: false,
-        sunday: false
-      };
-      
-      meeting.days.forEach(day => {
-        days[day] = true;
-      });
-      
-      setMeetingDays(days);
-      setMeetingTime(meeting.time);
+      // Check if this meeting has the new schedule format
+      if (meeting.schedule && Array.isArray(meeting.schedule) && meeting.schedule.length > 0) {
+        // Use the new schedule format
+        setMeetingSchedule(meeting.schedule);
+        
+        // Also update legacy format for compatibility
+        const days = {
+          monday: false,
+          tuesday: false,
+          wednesday: false,
+          thursday: false,
+          friday: false,
+          saturday: false,
+          sunday: false
+        };
+        
+        // Mark all days that appear in the schedule
+        meeting.schedule.forEach(item => {
+          if (item.day) {
+            days[item.day] = true;
+          }
+        });
+        
+        setMeetingDays(days);
+        
+        // Set the time to the first schedule item's time for compatibility
+        if (meeting.schedule[0].time) {
+          setMeetingTime(meeting.schedule[0].time);
+        }
+      } else {
+        // Use the legacy format
+        const days = {
+          monday: false,
+          tuesday: false,
+          wednesday: false,
+          thursday: false,
+          friday: false,
+          saturday: false,
+          sunday: false
+        };
+        
+        meeting.days.forEach(day => {
+          days[day] = true;
+        });
+        
+        setMeetingDays(days);
+        setMeetingTime(meeting.time);
+        
+        // Create schedule items from days and time
+        const newSchedule = meeting.days.map(day => ({
+          day,
+          time: meeting.time
+        }));
+        
+        setMeetingSchedule(newSchedule);
+      }
       
       // Set full address
       setMeetingAddress(meeting.address);
@@ -302,13 +348,8 @@ export default function MeetingForm({
       return;
     }
     
-    if (!Object.values(meetingDays).some(day => day)) {
-      setError('Please select at least one day of the week');
-      return;
-    }
-    
-    if (!meetingTime) {
-      setError('Please select a meeting time');
+    if (meetingSchedule.length === 0) {
+      setError('Please add at least one meeting day and time');
       return;
     }
     
@@ -325,13 +366,20 @@ export default function MeetingForm({
       zipCode.trim()
     ].filter(Boolean).join(', ');
     
+    // Create arrays of unique days for backwards compatibility
+    const uniqueDays = [...new Set(meetingSchedule.map(item => item.day))];
+    
+    // Use the first time in the schedule for backwards compatibility
+    const firstTime = meetingSchedule.length > 0 ? meetingSchedule[0].time : '';
+    
     const meetingData = {
       id: meeting ? meeting.id : Date.now().toString(),
       name: meetingName.trim(),
-      days: Object.entries(meetingDays)
-        .filter(([_, selected]) => selected)
-        .map(([day]) => day),
-      time: meetingTime,
+      // For backward compatibility
+      days: uniqueDays,
+      time: firstTime,
+      // New format
+      schedule: meetingSchedule,
       address: formattedAddress,
       // Store individual address components for better editing
       streetAddress: streetAddress.trim(),
@@ -358,12 +406,33 @@ export default function MeetingForm({
     }
   };
   
-  // Toggle day selection
+  // Toggle day selection (legacy method kept for compatibility)
   const toggleDay = (day) => {
     setMeetingDays(prev => ({
       ...prev,
       [day]: !prev[day]
     }));
+  };
+  
+  // Functions for the new day-time schedule management
+  const addScheduleItem = () => {
+    // Create a default schedule item
+    setMeetingSchedule(prev => [
+      ...prev,
+      { day: 'monday', time: '18:00' }
+    ]);
+  };
+  
+  const removeScheduleItem = (index) => {
+    setMeetingSchedule(prev => prev.filter((_, i) => i !== index));
+  };
+  
+  const updateScheduleItem = (index, field, value) => {
+    setMeetingSchedule(prev => 
+      prev.map((item, i) => 
+        i === index ? { ...item, [field]: value } : item
+      )
+    );
   };
   
   // Format day name
@@ -419,95 +488,126 @@ export default function MeetingForm({
             />
           </div>
           
-          {/* Days of the Week */}
+          {/* Meeting Schedule */}
           <div className="mb-6">
             <label className="block text-gray-700 dark:text-gray-300 mb-2 text-xl font-medium">
-              Days of the Week
+              Meeting Schedule
             </label>
-            <div className="flex flex-wrap gap-2">
-              {Object.keys(meetingDays).map(day => (
-                <label 
-                  key={day} 
-                  className={`flex items-center px-3 py-2 rounded-md cursor-pointer ${
-                    meetingDays[day] 
-                      ? 'bg-blue-600 text-white font-medium' 
-                      : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600'
-                  }`}
-                >
-                  <input
-                    type="checkbox"
-                    className="sr-only"
-                    checked={meetingDays[day]}
-                    onChange={() => toggleDay(day)}
-                  />
-                  {formatDay(day)}
-                </label>
-              ))}
-            </div>
-          </div>
-          
-          {/* Meeting Time */}
-          <div className="mb-6">
-            <label className="block text-gray-700 dark:text-gray-300 mb-2 text-xl font-medium">
-              Meeting Time
-            </label>
-            <div className="relative">
-              <select
-                className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 appearance-none pr-10"
-                value={meetingTime}
-                onChange={(e) => setMeetingTime(e.target.value)}
-              >
-                <option value="">Select a time</option>
-                {/* Common evening times for AA meetings first */}
-                <optgroup label="Evening (Most Common)">
-                  <option value="18:00">6:00 PM</option>
-                  <option value="18:30">6:30 PM</option>
-                  <option value="19:00">7:00 PM</option>
-                  <option value="19:30">7:30 PM</option>
-                  <option value="20:00">8:00 PM</option>
-                  <option value="20:30">8:30 PM</option>
-                </optgroup>
-                {/* Morning times */}
-                <optgroup label="Morning">
-                  <option value="06:00">6:00 AM</option>
-                  <option value="06:30">6:30 AM</option>
-                  <option value="07:00">7:00 AM</option>
-                  <option value="07:30">7:30 AM</option>
-                  <option value="08:00">8:00 AM</option>
-                  <option value="08:30">8:30 AM</option>
-                  <option value="09:00">9:00 AM</option>
-                  <option value="09:30">9:30 AM</option>
-                  <option value="10:00">10:00 AM</option>
-                  <option value="10:30">10:30 AM</option>
-                  <option value="11:00">11:00 AM</option>
-                  <option value="11:30">11:30 AM</option>
-                  <option value="12:00">12:00 PM (Noon)</option>
-                </optgroup>
-                {/* Afternoon times */}
-                <optgroup label="Afternoon">
-                  <option value="12:30">12:30 PM</option>
-                  <option value="13:00">1:00 PM</option>
-                  <option value="13:30">1:30 PM</option>
-                  <option value="14:00">2:00 PM</option>
-                  <option value="14:30">2:30 PM</option>
-                  <option value="15:00">3:00 PM</option>
-                  <option value="15:30">3:30 PM</option>
-                  <option value="16:00">4:00 PM</option>
-                  <option value="16:30">4:30 PM</option>
-                  <option value="17:00">5:00 PM</option>
-                  <option value="17:30">5:30 PM</option>
-                </optgroup>
-                {/* Late evening times */}
-                <optgroup label="Late Evening">
-                  <option value="21:00">9:00 PM</option>
-                  <option value="21:30">9:30 PM</option>
-                  <option value="22:00">10:00 PM</option>
-                </optgroup>
-              </select>
-              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700 dark:text-gray-300">
-                <i className="fa-solid fa-chevron-down h-5 w-5"></i>
+            
+            <p className="text-gray-600 dark:text-gray-400 mb-4 ml-1 text-sm">
+              Add each day and time this meeting occurs. Many meetings happen on different days and times.
+            </p>
+            
+            {meetingSchedule.length === 0 ? (
+              <div className="flex justify-center mb-4 p-6 rounded-lg border border-dashed border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800">
+                <p className="text-gray-500 dark:text-gray-400">
+                  No meeting times added yet. Click the button below to add a meeting time.
+                </p>
               </div>
-            </div>
+            ) : (
+              <div className="space-y-3 mb-4">
+                {meetingSchedule.map((item, index) => (
+                  <div 
+                    key={index} 
+                    className="flex items-center gap-3 p-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800"
+                  >
+                    {/* Day selector */}
+                    <div className="flex-1">
+                      <label className="block text-sm text-gray-600 dark:text-gray-400 mb-1">Day</label>
+                      <select
+                        className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200"
+                        value={item.day}
+                        onChange={(e) => updateScheduleItem(index, 'day', e.target.value)}
+                      >
+                        {Object.keys(meetingDays).map(day => (
+                          <option key={day} value={day}>
+                            {formatDay(day)}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    
+                    {/* Time selector */}
+                    <div className="flex-1">
+                      <label className="block text-sm text-gray-600 dark:text-gray-400 mb-1">Time</label>
+                      <select
+                        className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200"
+                        value={item.time}
+                        onChange={(e) => updateScheduleItem(index, 'time', e.target.value)}
+                      >
+                        <option value="">Select a time</option>
+                        {/* Common evening times for AA meetings first */}
+                        <optgroup label="Evening (Most Common)">
+                          <option value="18:00">6:00 PM</option>
+                          <option value="18:30">6:30 PM</option>
+                          <option value="19:00">7:00 PM</option>
+                          <option value="19:30">7:30 PM</option>
+                          <option value="20:00">8:00 PM</option>
+                          <option value="20:30">8:30 PM</option>
+                        </optgroup>
+                        {/* Morning times */}
+                        <optgroup label="Morning">
+                          <option value="06:00">6:00 AM</option>
+                          <option value="06:30">6:30 AM</option>
+                          <option value="07:00">7:00 AM</option>
+                          <option value="07:30">7:30 AM</option>
+                          <option value="08:00">8:00 AM</option>
+                          <option value="08:30">8:30 AM</option>
+                          <option value="09:00">9:00 AM</option>
+                          <option value="09:30">9:30 AM</option>
+                          <option value="10:00">10:00 AM</option>
+                          <option value="10:30">10:30 AM</option>
+                          <option value="11:00">11:00 AM</option>
+                          <option value="11:30">11:30 AM</option>
+                          <option value="12:00">12:00 PM (Noon)</option>
+                        </optgroup>
+                        {/* Afternoon times */}
+                        <optgroup label="Afternoon">
+                          <option value="12:30">12:30 PM</option>
+                          <option value="13:00">1:00 PM</option>
+                          <option value="13:30">1:30 PM</option>
+                          <option value="14:00">2:00 PM</option>
+                          <option value="14:30">2:30 PM</option>
+                          <option value="15:00">3:00 PM</option>
+                          <option value="15:30">3:30 PM</option>
+                          <option value="16:00">4:00 PM</option>
+                          <option value="16:30">4:30 PM</option>
+                          <option value="17:00">5:00 PM</option>
+                          <option value="17:30">5:30 PM</option>
+                        </optgroup>
+                        {/* Late evening times */}
+                        <optgroup label="Late Evening">
+                          <option value="21:00">9:00 PM</option>
+                          <option value="21:30">9:30 PM</option>
+                          <option value="22:00">10:00 PM</option>
+                        </optgroup>
+                      </select>
+                    </div>
+                    
+                    {/* Delete button */}
+                    <button
+                      type="button"
+                      className="p-2 text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 mt-6"
+                      onClick={() => removeScheduleItem(index)}
+                      aria-label="Remove this meeting time"
+                      title="Remove this meeting time"
+                    >
+                      <i className="fa-solid fa-trash-can"></i>
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+            
+            {/* Add button */}
+            <button
+              type="button"
+              className="flex items-center justify-center w-full p-3 border border-dashed border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-blue-600 dark:text-blue-400"
+              onClick={addScheduleItem}
+            >
+              <i className="fa-solid fa-plus mr-2"></i>
+              Add Meeting Time
+            </button>
           </div>
           
           {/* Meeting Address - Split into multiple fields */}
