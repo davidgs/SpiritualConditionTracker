@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import ThemeSelector from './ThemeSelector';
-import MeetingForm from './MeetingForm';
+import MeetingFormDialog from './MeetingFormDialog';
 import { ThemeContext } from '../contexts/ThemeContext';
 import { 
   Switch, 
@@ -163,33 +163,14 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
 
   return (
     <Box sx={{ p: 2, maxWidth: 600, mx: 'auto' }}>
-      {/* Meeting Form Dialog - Now using Material UI Dialog component */}
+      {/* Meeting Form Dialog - Using our new MeetingFormDialog component */}
       {showMeetingForm && (
-        <Dialog 
-          open={showMeetingForm} 
+        <MeetingFormDialog
+          open={showMeetingForm}
           onClose={() => setShowMeetingForm(false)}
-          maxWidth="md"
-          sx={{
-            '& .MuiDialog-paper': {
-              bgcolor: darkMode ? '#1f2937' : '#ffffff',
-              color: darkMode ? '#d1d5db' : '#374151',
-              borderRadius: 2,
-              p: 2
-            }
-          }}
-        >
-          <DialogTitle sx={{ pb: 1, color: darkMode ? '#d1d5db' : '#374151' }}>
-            Add New Meeting
-          </DialogTitle>
-          <DialogContent>
-            <MeetingForm
-              onClose={() => setShowMeetingForm(false)}
-              onSave={handleAddMeeting}
-              isEdit={false}
-              darkMode={darkMode}
-            />
-          </DialogContent>
-        </Dialog>
+          onSave={handleAddMeeting}
+          isEdit={false}
+        />
       )}
       <Box sx={{ mb: 3 }}>
         <Typography variant="h4" sx={{ fontWeight: 'bold', color: darkMode ? '#e5e7eb' : '#1f2937' }}>

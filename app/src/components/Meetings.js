@@ -1,8 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { meetingOperations } from '../utils/database';
-import MeetingForm from './MeetingForm';
+import MeetingFormDialog from './MeetingFormDialog';
+import { ThemeContext } from '../contexts/ThemeContext';
 
 export default function Meetings({ setCurrentView, meetings = [], onSave, user }) {
+  // Get dark mode from theme context
+  const { theme } = useContext(ThemeContext);
   // Get user's home groups
   const [userHomeGroups, setUserHomeGroups] = useState([]);
   
@@ -221,17 +224,16 @@ export default function Meetings({ setCurrentView, meetings = [], onSave, user }
         )}
 
         {/* Meeting Form */}
-        {showForm && (
-          <MeetingForm 
-            meeting={currentMeeting}
-            onSave={handleSaveMeeting}
-            onCancel={() => {
-              setCurrentMeeting(null);
-              setShowForm(false);
-            }}
-            darkMode={darkMode}
-          />
-        )}
+        <MeetingFormDialog 
+          open={showForm}
+          meeting={currentMeeting}
+          onSave={handleSaveMeeting}
+          onClose={() => {
+            setCurrentMeeting(null);
+            setShowForm(false);
+          }}
+          isEdit={!!currentMeeting}
+        />
       </h1>
       
       {/* Error Message */}
