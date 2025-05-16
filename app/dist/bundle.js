@@ -6441,344 +6441,6 @@ const dialogTitleClasses = (0,_mui_utils_generateUtilityClasses__WEBPACK_IMPORTE
 
 /***/ }),
 
-/***/ "./node_modules/@mui/material/esm/Divider/Divider.js":
-/*!***********************************************************!*\
-  !*** ./node_modules/@mui/material/esm/Divider/Divider.js ***!
-  \***********************************************************/
-/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
-/* harmony import */ var prop_types__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! prop-types */ "./node_modules/prop-types/index.js");
-/* harmony import */ var clsx__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! clsx */ "./node_modules/clsx/dist/clsx.mjs");
-/* harmony import */ var _mui_utils_composeClasses__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @mui/utils/composeClasses */ "./node_modules/@mui/utils/esm/composeClasses/composeClasses.js");
-/* harmony import */ var _mui_system_colorManipulator__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @mui/system/colorManipulator */ "./node_modules/@mui/system/esm/colorManipulator/colorManipulator.js");
-/* harmony import */ var _zero_styled_index_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../zero-styled/index.js */ "./node_modules/@mui/material/esm/styles/styled.js");
-/* harmony import */ var _utils_memoTheme_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../utils/memoTheme.js */ "./node_modules/@mui/material/esm/utils/memoTheme.js");
-/* harmony import */ var _DefaultPropsProvider_index_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../DefaultPropsProvider/index.js */ "./node_modules/@mui/material/esm/DefaultPropsProvider/DefaultPropsProvider.js");
-/* harmony import */ var _dividerClasses_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./dividerClasses.js */ "./node_modules/@mui/material/esm/Divider/dividerClasses.js");
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
-'use client';
-
-
-
-
-
-
-
-
-
-
-
-const useUtilityClasses = ownerState => {
-  const {
-    absolute,
-    children,
-    classes,
-    flexItem,
-    light,
-    orientation,
-    textAlign,
-    variant
-  } = ownerState;
-  const slots = {
-    root: ['root', absolute && 'absolute', variant, light && 'light', orientation === 'vertical' && 'vertical', flexItem && 'flexItem', children && 'withChildren', children && orientation === 'vertical' && 'withChildrenVertical', textAlign === 'right' && orientation !== 'vertical' && 'textAlignRight', textAlign === 'left' && orientation !== 'vertical' && 'textAlignLeft'],
-    wrapper: ['wrapper', orientation === 'vertical' && 'wrapperVertical']
-  };
-  return (0,_mui_utils_composeClasses__WEBPACK_IMPORTED_MODULE_3__["default"])(slots, _dividerClasses_js__WEBPACK_IMPORTED_MODULE_4__.getDividerUtilityClass, classes);
-};
-const DividerRoot = (0,_zero_styled_index_js__WEBPACK_IMPORTED_MODULE_5__["default"])('div', {
-  name: 'MuiDivider',
-  slot: 'Root',
-  overridesResolver: (props, styles) => {
-    const {
-      ownerState
-    } = props;
-    return [styles.root, ownerState.absolute && styles.absolute, styles[ownerState.variant], ownerState.light && styles.light, ownerState.orientation === 'vertical' && styles.vertical, ownerState.flexItem && styles.flexItem, ownerState.children && styles.withChildren, ownerState.children && ownerState.orientation === 'vertical' && styles.withChildrenVertical, ownerState.textAlign === 'right' && ownerState.orientation !== 'vertical' && styles.textAlignRight, ownerState.textAlign === 'left' && ownerState.orientation !== 'vertical' && styles.textAlignLeft];
-  }
-})((0,_utils_memoTheme_js__WEBPACK_IMPORTED_MODULE_6__["default"])(({
-  theme
-}) => ({
-  margin: 0,
-  // Reset browser default style.
-  flexShrink: 0,
-  borderWidth: 0,
-  borderStyle: 'solid',
-  borderColor: (theme.vars || theme).palette.divider,
-  borderBottomWidth: 'thin',
-  variants: [{
-    props: {
-      absolute: true
-    },
-    style: {
-      position: 'absolute',
-      bottom: 0,
-      left: 0,
-      width: '100%'
-    }
-  }, {
-    props: {
-      light: true
-    },
-    style: {
-      borderColor: theme.vars ? `rgba(${theme.vars.palette.dividerChannel} / 0.08)` : (0,_mui_system_colorManipulator__WEBPACK_IMPORTED_MODULE_7__.alpha)(theme.palette.divider, 0.08)
-    }
-  }, {
-    props: {
-      variant: 'inset'
-    },
-    style: {
-      marginLeft: 72
-    }
-  }, {
-    props: {
-      variant: 'middle',
-      orientation: 'horizontal'
-    },
-    style: {
-      marginLeft: theme.spacing(2),
-      marginRight: theme.spacing(2)
-    }
-  }, {
-    props: {
-      variant: 'middle',
-      orientation: 'vertical'
-    },
-    style: {
-      marginTop: theme.spacing(1),
-      marginBottom: theme.spacing(1)
-    }
-  }, {
-    props: {
-      orientation: 'vertical'
-    },
-    style: {
-      height: '100%',
-      borderBottomWidth: 0,
-      borderRightWidth: 'thin'
-    }
-  }, {
-    props: {
-      flexItem: true
-    },
-    style: {
-      alignSelf: 'stretch',
-      height: 'auto'
-    }
-  }, {
-    props: ({
-      ownerState
-    }) => !!ownerState.children,
-    style: {
-      display: 'flex',
-      textAlign: 'center',
-      border: 0,
-      borderTopStyle: 'solid',
-      borderLeftStyle: 'solid',
-      '&::before, &::after': {
-        content: '""',
-        alignSelf: 'center'
-      }
-    }
-  }, {
-    props: ({
-      ownerState
-    }) => ownerState.children && ownerState.orientation !== 'vertical',
-    style: {
-      '&::before, &::after': {
-        width: '100%',
-        borderTop: `thin solid ${(theme.vars || theme).palette.divider}`,
-        borderTopStyle: 'inherit'
-      }
-    }
-  }, {
-    props: ({
-      ownerState
-    }) => ownerState.orientation === 'vertical' && ownerState.children,
-    style: {
-      flexDirection: 'column',
-      '&::before, &::after': {
-        height: '100%',
-        borderLeft: `thin solid ${(theme.vars || theme).palette.divider}`,
-        borderLeftStyle: 'inherit'
-      }
-    }
-  }, {
-    props: ({
-      ownerState
-    }) => ownerState.textAlign === 'right' && ownerState.orientation !== 'vertical',
-    style: {
-      '&::before': {
-        width: '90%'
-      },
-      '&::after': {
-        width: '10%'
-      }
-    }
-  }, {
-    props: ({
-      ownerState
-    }) => ownerState.textAlign === 'left' && ownerState.orientation !== 'vertical',
-    style: {
-      '&::before': {
-        width: '10%'
-      },
-      '&::after': {
-        width: '90%'
-      }
-    }
-  }]
-})));
-const DividerWrapper = (0,_zero_styled_index_js__WEBPACK_IMPORTED_MODULE_5__["default"])('span', {
-  name: 'MuiDivider',
-  slot: 'Wrapper',
-  overridesResolver: (props, styles) => {
-    const {
-      ownerState
-    } = props;
-    return [styles.wrapper, ownerState.orientation === 'vertical' && styles.wrapperVertical];
-  }
-})((0,_utils_memoTheme_js__WEBPACK_IMPORTED_MODULE_6__["default"])(({
-  theme
-}) => ({
-  display: 'inline-block',
-  paddingLeft: `calc(${theme.spacing(1)} * 1.2)`,
-  paddingRight: `calc(${theme.spacing(1)} * 1.2)`,
-  whiteSpace: 'nowrap',
-  variants: [{
-    props: {
-      orientation: 'vertical'
-    },
-    style: {
-      paddingTop: `calc(${theme.spacing(1)} * 1.2)`,
-      paddingBottom: `calc(${theme.spacing(1)} * 1.2)`
-    }
-  }]
-})));
-const Divider = /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.forwardRef(function Divider(inProps, ref) {
-  const props = (0,_DefaultPropsProvider_index_js__WEBPACK_IMPORTED_MODULE_8__.useDefaultProps)({
-    props: inProps,
-    name: 'MuiDivider'
-  });
-  const {
-    absolute = false,
-    children,
-    className,
-    orientation = 'horizontal',
-    component = children || orientation === 'vertical' ? 'div' : 'hr',
-    flexItem = false,
-    light = false,
-    role = component !== 'hr' ? 'separator' : undefined,
-    textAlign = 'center',
-    variant = 'fullWidth',
-    ...other
-  } = props;
-  const ownerState = {
-    ...props,
-    absolute,
-    component,
-    flexItem,
-    light,
-    orientation,
-    role,
-    textAlign,
-    variant
-  };
-  const classes = useUtilityClasses(ownerState);
-  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)(DividerRoot, {
-    as: component,
-    className: (0,clsx__WEBPACK_IMPORTED_MODULE_1__["default"])(classes.root, className),
-    role: role,
-    ref: ref,
-    ownerState: ownerState,
-    "aria-orientation": role === 'separator' && (component !== 'hr' || orientation === 'vertical') ? orientation : undefined,
-    ...other,
-    children: children ? /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)(DividerWrapper, {
-      className: classes.wrapper,
-      ownerState: ownerState,
-      children: children
-    }) : null
-  });
-});
-
-/**
- * The following flag is used to ensure that this component isn't tabbable i.e.
- * does not get highlight/focus inside of MUI List.
- */
-if (Divider) {
-  Divider.muiSkipListHighlight = true;
-}
- true ? Divider.propTypes /* remove-proptypes */ = {
-  // ┌────────────────────────────── Warning ──────────────────────────────┐
-  // │ These PropTypes are generated from the TypeScript type definitions. │
-  // │    To update them, edit the d.ts file and run `pnpm proptypes`.     │
-  // └─────────────────────────────────────────────────────────────────────┘
-  /**
-   * Absolutely position the element.
-   * @default false
-   */
-  absolute: prop_types__WEBPACK_IMPORTED_MODULE_9__.bool,
-  /**
-   * The content of the component.
-   */
-  children: prop_types__WEBPACK_IMPORTED_MODULE_9__.node,
-  /**
-   * Override or extend the styles applied to the component.
-   */
-  classes: prop_types__WEBPACK_IMPORTED_MODULE_9__.object,
-  /**
-   * @ignore
-   */
-  className: prop_types__WEBPACK_IMPORTED_MODULE_9__.string,
-  /**
-   * The component used for the root node.
-   * Either a string to use a HTML element or a component.
-   */
-  component: prop_types__WEBPACK_IMPORTED_MODULE_9__.elementType,
-  /**
-   * If `true`, a vertical divider will have the correct height when used in flex container.
-   * (By default, a vertical divider will have a calculated height of `0px` if it is the child of a flex container.)
-   * @default false
-   */
-  flexItem: prop_types__WEBPACK_IMPORTED_MODULE_9__.bool,
-  /**
-   * If `true`, the divider will have a lighter color.
-   * @default false
-   * @deprecated Use <Divider sx={{ opacity: 0.6 }} /> (or any opacity or color) instead. See [Migrating from deprecated APIs](https://mui.com/material-ui/migration/migrating-from-deprecated-apis/) for more details.
-   */
-  light: prop_types__WEBPACK_IMPORTED_MODULE_9__.bool,
-  /**
-   * The component orientation.
-   * @default 'horizontal'
-   */
-  orientation: prop_types__WEBPACK_IMPORTED_MODULE_9__.oneOf(['horizontal', 'vertical']),
-  /**
-   * @ignore
-   */
-  role: prop_types__WEBPACK_IMPORTED_MODULE_9__.string,
-  /**
-   * The system prop that allows defining system overrides as well as additional CSS styles.
-   */
-  sx: prop_types__WEBPACK_IMPORTED_MODULE_9__.oneOfType([prop_types__WEBPACK_IMPORTED_MODULE_9__.arrayOf(prop_types__WEBPACK_IMPORTED_MODULE_9__.oneOfType([prop_types__WEBPACK_IMPORTED_MODULE_9__.func, prop_types__WEBPACK_IMPORTED_MODULE_9__.object, prop_types__WEBPACK_IMPORTED_MODULE_9__.bool])), prop_types__WEBPACK_IMPORTED_MODULE_9__.func, prop_types__WEBPACK_IMPORTED_MODULE_9__.object]),
-  /**
-   * The text alignment.
-   * @default 'center'
-   */
-  textAlign: prop_types__WEBPACK_IMPORTED_MODULE_9__.oneOf(['center', 'left', 'right']),
-  /**
-   * The variant to use.
-   * @default 'fullWidth'
-   */
-  variant: prop_types__WEBPACK_IMPORTED_MODULE_9__.oneOfType([prop_types__WEBPACK_IMPORTED_MODULE_9__.oneOf(['fullWidth', 'inset', 'middle']), prop_types__WEBPACK_IMPORTED_MODULE_9__.string])
-} : 0;
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Divider);
-
-/***/ }),
-
 /***/ "./node_modules/@mui/material/esm/Divider/dividerClasses.js":
 /*!******************************************************************!*\
   !*** ./node_modules/@mui/material/esm/Divider/dividerClasses.js ***!
@@ -11720,6 +11382,54 @@ const listClasses = (0,_mui_utils_generateUtilityClasses__WEBPACK_IMPORTED_MODUL
 
 /***/ }),
 
+/***/ "./node_modules/@mui/material/esm/ListItemIcon/listItemIconClasses.js":
+/*!****************************************************************************!*\
+  !*** ./node_modules/@mui/material/esm/ListItemIcon/listItemIconClasses.js ***!
+  \****************************************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   getListItemIconUtilityClass: () => (/* binding */ getListItemIconUtilityClass)
+/* harmony export */ });
+/* harmony import */ var _mui_utils_generateUtilityClasses__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @mui/utils/generateUtilityClasses */ "./node_modules/@mui/utils/esm/generateUtilityClasses/generateUtilityClasses.js");
+/* harmony import */ var _mui_utils_generateUtilityClass__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @mui/utils/generateUtilityClass */ "./node_modules/@mui/utils/esm/generateUtilityClass/generateUtilityClass.js");
+
+
+function getListItemIconUtilityClass(slot) {
+  return (0,_mui_utils_generateUtilityClass__WEBPACK_IMPORTED_MODULE_0__["default"])('MuiListItemIcon', slot);
+}
+const listItemIconClasses = (0,_mui_utils_generateUtilityClasses__WEBPACK_IMPORTED_MODULE_1__["default"])('MuiListItemIcon', ['root', 'alignItemsFlexStart']);
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (listItemIconClasses);
+
+/***/ }),
+
+/***/ "./node_modules/@mui/material/esm/ListItemText/listItemTextClasses.js":
+/*!****************************************************************************!*\
+  !*** ./node_modules/@mui/material/esm/ListItemText/listItemTextClasses.js ***!
+  \****************************************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   getListItemTextUtilityClass: () => (/* binding */ getListItemTextUtilityClass)
+/* harmony export */ });
+/* harmony import */ var _mui_utils_generateUtilityClasses__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @mui/utils/generateUtilityClasses */ "./node_modules/@mui/utils/esm/generateUtilityClasses/generateUtilityClasses.js");
+/* harmony import */ var _mui_utils_generateUtilityClass__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @mui/utils/generateUtilityClass */ "./node_modules/@mui/utils/esm/generateUtilityClass/generateUtilityClass.js");
+
+
+function getListItemTextUtilityClass(slot) {
+  return (0,_mui_utils_generateUtilityClass__WEBPACK_IMPORTED_MODULE_0__["default"])('MuiListItemText', slot);
+}
+const listItemTextClasses = (0,_mui_utils_generateUtilityClasses__WEBPACK_IMPORTED_MODULE_1__["default"])('MuiListItemText', ['root', 'multiline', 'dense', 'inset', 'primary', 'secondary']);
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (listItemTextClasses);
+
+/***/ }),
+
 /***/ "./node_modules/@mui/material/esm/Menu/Menu.js":
 /*!*****************************************************!*\
   !*** ./node_modules/@mui/material/esm/Menu/Menu.js ***!
@@ -12110,6 +11820,346 @@ function getMenuUtilityClass(slot) {
 }
 const menuClasses = (0,_mui_utils_generateUtilityClasses__WEBPACK_IMPORTED_MODULE_1__["default"])('MuiMenu', ['root', 'paper', 'list']);
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (menuClasses);
+
+/***/ }),
+
+/***/ "./node_modules/@mui/material/esm/MenuItem/MenuItem.js":
+/*!*************************************************************!*\
+  !*** ./node_modules/@mui/material/esm/MenuItem/MenuItem.js ***!
+  \*************************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   overridesResolver: () => (/* binding */ overridesResolver)
+/* harmony export */ });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var prop_types__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! prop-types */ "./node_modules/prop-types/index.js");
+/* harmony import */ var clsx__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! clsx */ "./node_modules/clsx/dist/clsx.mjs");
+/* harmony import */ var _mui_utils_composeClasses__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @mui/utils/composeClasses */ "./node_modules/@mui/utils/esm/composeClasses/composeClasses.js");
+/* harmony import */ var _mui_system_colorManipulator__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @mui/system/colorManipulator */ "./node_modules/@mui/system/esm/colorManipulator/colorManipulator.js");
+/* harmony import */ var _styles_rootShouldForwardProp_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../styles/rootShouldForwardProp.js */ "./node_modules/@mui/material/esm/styles/rootShouldForwardProp.js");
+/* harmony import */ var _zero_styled_index_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../zero-styled/index.js */ "./node_modules/@mui/material/esm/styles/styled.js");
+/* harmony import */ var _utils_memoTheme_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../utils/memoTheme.js */ "./node_modules/@mui/material/esm/utils/memoTheme.js");
+/* harmony import */ var _DefaultPropsProvider_index_js__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ../DefaultPropsProvider/index.js */ "./node_modules/@mui/material/esm/DefaultPropsProvider/DefaultPropsProvider.js");
+/* harmony import */ var _List_ListContext_js__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ../List/ListContext.js */ "./node_modules/@mui/material/esm/List/ListContext.js");
+/* harmony import */ var _ButtonBase_index_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../ButtonBase/index.js */ "./node_modules/@mui/material/esm/ButtonBase/ButtonBase.js");
+/* harmony import */ var _utils_useEnhancedEffect_js__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ../utils/useEnhancedEffect.js */ "./node_modules/@mui/material/esm/utils/useEnhancedEffect.js");
+/* harmony import */ var _utils_useForkRef_js__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ../utils/useForkRef.js */ "./node_modules/@mui/material/esm/utils/useForkRef.js");
+/* harmony import */ var _Divider_index_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../Divider/index.js */ "./node_modules/@mui/material/esm/Divider/dividerClasses.js");
+/* harmony import */ var _ListItemIcon_index_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../ListItemIcon/index.js */ "./node_modules/@mui/material/esm/ListItemIcon/listItemIconClasses.js");
+/* harmony import */ var _ListItemText_index_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../ListItemText/index.js */ "./node_modules/@mui/material/esm/ListItemText/listItemTextClasses.js");
+/* harmony import */ var _menuItemClasses_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./menuItemClasses.js */ "./node_modules/@mui/material/esm/MenuItem/menuItemClasses.js");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
+'use client';
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+const overridesResolver = (props, styles) => {
+  const {
+    ownerState
+  } = props;
+  return [styles.root, ownerState.dense && styles.dense, ownerState.divider && styles.divider, !ownerState.disableGutters && styles.gutters];
+};
+const useUtilityClasses = ownerState => {
+  const {
+    disabled,
+    dense,
+    divider,
+    disableGutters,
+    selected,
+    classes
+  } = ownerState;
+  const slots = {
+    root: ['root', dense && 'dense', disabled && 'disabled', !disableGutters && 'gutters', divider && 'divider', selected && 'selected']
+  };
+  const composedClasses = (0,_mui_utils_composeClasses__WEBPACK_IMPORTED_MODULE_3__["default"])(slots, _menuItemClasses_js__WEBPACK_IMPORTED_MODULE_4__.getMenuItemUtilityClass, classes);
+  return {
+    ...classes,
+    ...composedClasses
+  };
+};
+const MenuItemRoot = (0,_zero_styled_index_js__WEBPACK_IMPORTED_MODULE_5__["default"])(_ButtonBase_index_js__WEBPACK_IMPORTED_MODULE_6__["default"], {
+  shouldForwardProp: prop => (0,_styles_rootShouldForwardProp_js__WEBPACK_IMPORTED_MODULE_7__["default"])(prop) || prop === 'classes',
+  name: 'MuiMenuItem',
+  slot: 'Root',
+  overridesResolver
+})((0,_utils_memoTheme_js__WEBPACK_IMPORTED_MODULE_8__["default"])(({
+  theme
+}) => ({
+  ...theme.typography.body1,
+  display: 'flex',
+  justifyContent: 'flex-start',
+  alignItems: 'center',
+  position: 'relative',
+  textDecoration: 'none',
+  minHeight: 48,
+  paddingTop: 6,
+  paddingBottom: 6,
+  boxSizing: 'border-box',
+  whiteSpace: 'nowrap',
+  '&:hover': {
+    textDecoration: 'none',
+    backgroundColor: (theme.vars || theme).palette.action.hover,
+    // Reset on touch devices, it doesn't add specificity
+    '@media (hover: none)': {
+      backgroundColor: 'transparent'
+    }
+  },
+  [`&.${_menuItemClasses_js__WEBPACK_IMPORTED_MODULE_4__["default"].selected}`]: {
+    backgroundColor: theme.vars ? `rgba(${theme.vars.palette.primary.mainChannel} / ${theme.vars.palette.action.selectedOpacity})` : (0,_mui_system_colorManipulator__WEBPACK_IMPORTED_MODULE_9__.alpha)(theme.palette.primary.main, theme.palette.action.selectedOpacity),
+    [`&.${_menuItemClasses_js__WEBPACK_IMPORTED_MODULE_4__["default"].focusVisible}`]: {
+      backgroundColor: theme.vars ? `rgba(${theme.vars.palette.primary.mainChannel} / calc(${theme.vars.palette.action.selectedOpacity} + ${theme.vars.palette.action.focusOpacity}))` : (0,_mui_system_colorManipulator__WEBPACK_IMPORTED_MODULE_9__.alpha)(theme.palette.primary.main, theme.palette.action.selectedOpacity + theme.palette.action.focusOpacity)
+    }
+  },
+  [`&.${_menuItemClasses_js__WEBPACK_IMPORTED_MODULE_4__["default"].selected}:hover`]: {
+    backgroundColor: theme.vars ? `rgba(${theme.vars.palette.primary.mainChannel} / calc(${theme.vars.palette.action.selectedOpacity} + ${theme.vars.palette.action.hoverOpacity}))` : (0,_mui_system_colorManipulator__WEBPACK_IMPORTED_MODULE_9__.alpha)(theme.palette.primary.main, theme.palette.action.selectedOpacity + theme.palette.action.hoverOpacity),
+    // Reset on touch devices, it doesn't add specificity
+    '@media (hover: none)': {
+      backgroundColor: theme.vars ? `rgba(${theme.vars.palette.primary.mainChannel} / ${theme.vars.palette.action.selectedOpacity})` : (0,_mui_system_colorManipulator__WEBPACK_IMPORTED_MODULE_9__.alpha)(theme.palette.primary.main, theme.palette.action.selectedOpacity)
+    }
+  },
+  [`&.${_menuItemClasses_js__WEBPACK_IMPORTED_MODULE_4__["default"].focusVisible}`]: {
+    backgroundColor: (theme.vars || theme).palette.action.focus
+  },
+  [`&.${_menuItemClasses_js__WEBPACK_IMPORTED_MODULE_4__["default"].disabled}`]: {
+    opacity: (theme.vars || theme).palette.action.disabledOpacity
+  },
+  [`& + .${_Divider_index_js__WEBPACK_IMPORTED_MODULE_10__["default"].root}`]: {
+    marginTop: theme.spacing(1),
+    marginBottom: theme.spacing(1)
+  },
+  [`& + .${_Divider_index_js__WEBPACK_IMPORTED_MODULE_10__["default"].inset}`]: {
+    marginLeft: 52
+  },
+  [`& .${_ListItemText_index_js__WEBPACK_IMPORTED_MODULE_11__["default"].root}`]: {
+    marginTop: 0,
+    marginBottom: 0
+  },
+  [`& .${_ListItemText_index_js__WEBPACK_IMPORTED_MODULE_11__["default"].inset}`]: {
+    paddingLeft: 36
+  },
+  [`& .${_ListItemIcon_index_js__WEBPACK_IMPORTED_MODULE_12__["default"].root}`]: {
+    minWidth: 36
+  },
+  variants: [{
+    props: ({
+      ownerState
+    }) => !ownerState.disableGutters,
+    style: {
+      paddingLeft: 16,
+      paddingRight: 16
+    }
+  }, {
+    props: ({
+      ownerState
+    }) => ownerState.divider,
+    style: {
+      borderBottom: `1px solid ${(theme.vars || theme).palette.divider}`,
+      backgroundClip: 'padding-box'
+    }
+  }, {
+    props: ({
+      ownerState
+    }) => !ownerState.dense,
+    style: {
+      [theme.breakpoints.up('sm')]: {
+        minHeight: 'auto'
+      }
+    }
+  }, {
+    props: ({
+      ownerState
+    }) => ownerState.dense,
+    style: {
+      minHeight: 32,
+      // https://m2.material.io/components/menus#specs > Dense
+      paddingTop: 4,
+      paddingBottom: 4,
+      ...theme.typography.body2,
+      [`& .${_ListItemIcon_index_js__WEBPACK_IMPORTED_MODULE_12__["default"].root} svg`]: {
+        fontSize: '1.25rem'
+      }
+    }
+  }]
+})));
+const MenuItem = /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.forwardRef(function MenuItem(inProps, ref) {
+  const props = (0,_DefaultPropsProvider_index_js__WEBPACK_IMPORTED_MODULE_13__.useDefaultProps)({
+    props: inProps,
+    name: 'MuiMenuItem'
+  });
+  const {
+    autoFocus = false,
+    component = 'li',
+    dense = false,
+    divider = false,
+    disableGutters = false,
+    focusVisibleClassName,
+    role = 'menuitem',
+    tabIndex: tabIndexProp,
+    className,
+    ...other
+  } = props;
+  const context = react__WEBPACK_IMPORTED_MODULE_0__.useContext(_List_ListContext_js__WEBPACK_IMPORTED_MODULE_14__["default"]);
+  const childContext = react__WEBPACK_IMPORTED_MODULE_0__.useMemo(() => ({
+    dense: dense || context.dense || false,
+    disableGutters
+  }), [context.dense, dense, disableGutters]);
+  const menuItemRef = react__WEBPACK_IMPORTED_MODULE_0__.useRef(null);
+  (0,_utils_useEnhancedEffect_js__WEBPACK_IMPORTED_MODULE_15__["default"])(() => {
+    if (autoFocus) {
+      if (menuItemRef.current) {
+        menuItemRef.current.focus();
+      } else if (true) {
+        console.error('MUI: Unable to set focus to a MenuItem whose component has not been rendered.');
+      }
+    }
+  }, [autoFocus]);
+  const ownerState = {
+    ...props,
+    dense: childContext.dense,
+    divider,
+    disableGutters
+  };
+  const classes = useUtilityClasses(props);
+  const handleRef = (0,_utils_useForkRef_js__WEBPACK_IMPORTED_MODULE_16__["default"])(menuItemRef, ref);
+  let tabIndex;
+  if (!props.disabled) {
+    tabIndex = tabIndexProp !== undefined ? tabIndexProp : -1;
+  }
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)(_List_ListContext_js__WEBPACK_IMPORTED_MODULE_14__["default"].Provider, {
+    value: childContext,
+    children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)(MenuItemRoot, {
+      ref: handleRef,
+      role: role,
+      tabIndex: tabIndex,
+      component: component,
+      focusVisibleClassName: (0,clsx__WEBPACK_IMPORTED_MODULE_1__["default"])(classes.focusVisible, focusVisibleClassName),
+      className: (0,clsx__WEBPACK_IMPORTED_MODULE_1__["default"])(classes.root, className),
+      ...other,
+      ownerState: ownerState,
+      classes: classes
+    })
+  });
+});
+ true ? MenuItem.propTypes /* remove-proptypes */ = {
+  // ┌────────────────────────────── Warning ──────────────────────────────┐
+  // │ These PropTypes are generated from the TypeScript type definitions. │
+  // │    To update them, edit the d.ts file and run `pnpm proptypes`.     │
+  // └─────────────────────────────────────────────────────────────────────┘
+  /**
+   * If `true`, the list item is focused during the first mount.
+   * Focus will also be triggered if the value changes from false to true.
+   * @default false
+   */
+  autoFocus: prop_types__WEBPACK_IMPORTED_MODULE_17__.bool,
+  /**
+   * The content of the component.
+   */
+  children: prop_types__WEBPACK_IMPORTED_MODULE_17__.node,
+  /**
+   * Override or extend the styles applied to the component.
+   */
+  classes: prop_types__WEBPACK_IMPORTED_MODULE_17__.object,
+  /**
+   * @ignore
+   */
+  className: prop_types__WEBPACK_IMPORTED_MODULE_17__.string,
+  /**
+   * The component used for the root node.
+   * Either a string to use a HTML element or a component.
+   */
+  component: prop_types__WEBPACK_IMPORTED_MODULE_17__.elementType,
+  /**
+   * If `true`, compact vertical padding designed for keyboard and mouse input is used.
+   * The prop defaults to the value inherited from the parent Menu component.
+   * @default false
+   */
+  dense: prop_types__WEBPACK_IMPORTED_MODULE_17__.bool,
+  /**
+   * @ignore
+   */
+  disabled: prop_types__WEBPACK_IMPORTED_MODULE_17__.bool,
+  /**
+   * If `true`, the left and right padding is removed.
+   * @default false
+   */
+  disableGutters: prop_types__WEBPACK_IMPORTED_MODULE_17__.bool,
+  /**
+   * If `true`, a 1px light border is added to the bottom of the menu item.
+   * @default false
+   */
+  divider: prop_types__WEBPACK_IMPORTED_MODULE_17__.bool,
+  /**
+   * This prop can help identify which element has keyboard focus.
+   * The class name will be applied when the element gains the focus through keyboard interaction.
+   * It's a polyfill for the [CSS :focus-visible selector](https://drafts.csswg.org/selectors-4/#the-focus-visible-pseudo).
+   * The rationale for using this feature [is explained here](https://github.com/WICG/focus-visible/blob/HEAD/explainer.md).
+   * A [polyfill can be used](https://github.com/WICG/focus-visible) to apply a `focus-visible` class to other components
+   * if needed.
+   */
+  focusVisibleClassName: prop_types__WEBPACK_IMPORTED_MODULE_17__.string,
+  /**
+   * @ignore
+   */
+  role: prop_types__WEBPACK_IMPORTED_MODULE_17__.string,
+  /**
+   * If `true`, the component is selected.
+   * @default false
+   */
+  selected: prop_types__WEBPACK_IMPORTED_MODULE_17__.bool,
+  /**
+   * The system prop that allows defining system overrides as well as additional CSS styles.
+   */
+  sx: prop_types__WEBPACK_IMPORTED_MODULE_17__.oneOfType([prop_types__WEBPACK_IMPORTED_MODULE_17__.arrayOf(prop_types__WEBPACK_IMPORTED_MODULE_17__.oneOfType([prop_types__WEBPACK_IMPORTED_MODULE_17__.func, prop_types__WEBPACK_IMPORTED_MODULE_17__.object, prop_types__WEBPACK_IMPORTED_MODULE_17__.bool])), prop_types__WEBPACK_IMPORTED_MODULE_17__.func, prop_types__WEBPACK_IMPORTED_MODULE_17__.object]),
+  /**
+   * @default 0
+   */
+  tabIndex: prop_types__WEBPACK_IMPORTED_MODULE_17__.number
+} : 0;
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (MenuItem);
+
+/***/ }),
+
+/***/ "./node_modules/@mui/material/esm/MenuItem/menuItemClasses.js":
+/*!********************************************************************!*\
+  !*** ./node_modules/@mui/material/esm/MenuItem/menuItemClasses.js ***!
+  \********************************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   getMenuItemUtilityClass: () => (/* binding */ getMenuItemUtilityClass)
+/* harmony export */ });
+/* harmony import */ var _mui_utils_generateUtilityClasses__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @mui/utils/generateUtilityClasses */ "./node_modules/@mui/utils/esm/generateUtilityClasses/generateUtilityClasses.js");
+/* harmony import */ var _mui_utils_generateUtilityClass__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @mui/utils/generateUtilityClass */ "./node_modules/@mui/utils/esm/generateUtilityClass/generateUtilityClass.js");
+
+
+function getMenuItemUtilityClass(slot) {
+  return (0,_mui_utils_generateUtilityClass__WEBPACK_IMPORTED_MODULE_0__["default"])('MuiMenuItem', slot);
+}
+const menuItemClasses = (0,_mui_utils_generateUtilityClasses__WEBPACK_IMPORTED_MODULE_1__["default"])('MuiMenuItem', ['root', 'focusVisible', 'dense', 'disabled', 'divider', 'gutters', 'selected']);
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (menuItemClasses);
 
 /***/ }),
 
@@ -64136,7 +64186,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _ThemeToggle__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ThemeToggle */ "./src/components/ThemeToggle.js");
+/* harmony import */ var _ThemeSelector__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ThemeSelector */ "./src/components/ThemeSelector.js");
 /* harmony import */ var _contexts_ThemeContext__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../contexts/ThemeContext */ "./src/contexts/ThemeContext.js");
 /* harmony import */ var _mui_material__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @mui/material */ "./node_modules/@mui/material/esm/Box/Box.js");
 /* harmony import */ var _mui_material__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @mui/material */ "./node_modules/@mui/material/esm/Typography/Typography.js");
@@ -64144,9 +64194,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _mui_material__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @mui/material */ "./node_modules/@mui/material/esm/IconButton/IconButton.js");
 /* harmony import */ var _mui_material__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @mui/material */ "./node_modules/@mui/material/esm/TextField/TextField.js");
 /* harmony import */ var _mui_material__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @mui/material */ "./node_modules/@mui/material/esm/Button/Button.js");
-/* harmony import */ var _mui_material__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @mui/material */ "./node_modules/@mui/material/esm/Divider/Divider.js");
-/* harmony import */ var _mui_material__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! @mui/material */ "./node_modules/@mui/material/esm/FormControlLabel/FormControlLabel.js");
-/* harmony import */ var _mui_material__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! @mui/material */ "./node_modules/@mui/material/esm/Switch/Switch.js");
+/* harmony import */ var _mui_material__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @mui/material */ "./node_modules/@mui/material/esm/FormControlLabel/FormControlLabel.js");
+/* harmony import */ var _mui_material__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! @mui/material */ "./node_modules/@mui/material/esm/Switch/Switch.js");
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
 function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
@@ -64511,42 +64560,39 @@ function Profile(_ref) {
     }
   }, "App Settings"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_3__["default"], {
     sx: {
-      mb: 3
+      display: 'flex',
+      flexDirection: 'column',
+      gap: 2
     }
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_ThemeToggle__WEBPACK_IMPORTED_MODULE_1__["default"], null)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_9__["default"], {
-    sx: {
-      mb: 2
-    }
-  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_4__["default"], {
-    variant: "subtitle1",
-    sx: {
-      mb: 1,
-      color: darkMode ? '#d1d5db' : '#374151'
-    }
-  }, "Privacy & Messaging"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_10__["default"], {
-    control: /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_11__["default"], {
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_3__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_ThemeSelector__WEBPACK_IMPORTED_MODULE_1__["default"], null)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_9__["default"], {
+    control: /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_10__["default"], {
       id: "allowMessages",
       name: "allowMessages",
       checked: allowMessages,
       onChange: function onChange(e) {
         return setAllowMessages(e.target.checked);
       },
-      color: "primary"
+      color: "primary",
+      size: "small"
     }),
-    label: "Allow Messaging",
-    sx: {
-      '& .MuiFormControlLabel-label': {
+    label: /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_3__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_4__["default"], {
+      sx: {
+        fontSize: '0.875rem',
         color: darkMode ? '#d1d5db' : '#374151'
       }
-    }
-  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_4__["default"], {
-    variant: "caption",
+    }, "Allow Messaging"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_4__["default"], {
+      variant: "caption",
+      sx: {
+        display: 'block',
+        color: darkMode ? '#9ca3af' : '#6b7280'
+      }
+    }, "When enabled, connections can send you secure messages")),
     sx: {
-      display: 'block',
-      mt: 1,
-      color: darkMode ? '#9ca3af' : '#6b7280'
+      alignItems: 'flex-start',
+      ml: 0,
+      mt: 1
     }
-  }, "When enabled, your connections can send you secure messages.")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_5__["default"], {
+  }))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_5__["default"], {
     elevation: 0,
     component: "form",
     onSubmit: handleSubmit,
@@ -65007,41 +65053,80 @@ var SpiritualFitnessModal = function SpiritualFitnessModal(_ref2) {
 
 /***/ }),
 
-/***/ "./src/components/ThemeToggle.js":
-/*!***************************************!*\
-  !*** ./src/components/ThemeToggle.js ***!
-  \***************************************/
+/***/ "./src/components/ThemeSelector.js":
+/*!*****************************************!*\
+  !*** ./src/components/ThemeSelector.js ***!
+  \*****************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (/* binding */ ThemeToggle)
+/* harmony export */   "default": () => (/* binding */ ThemeSelector)
 /* harmony export */ });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _contexts_ThemeContext__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../contexts/ThemeContext */ "./src/contexts/ThemeContext.js");
+/* harmony import */ var _mui_material__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @mui/material */ "./node_modules/@mui/material/esm/FormControl/FormControl.js");
+/* harmony import */ var _mui_material__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @mui/material */ "./node_modules/@mui/material/esm/InputLabel/InputLabel.js");
+/* harmony import */ var _mui_material__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @mui/material */ "./node_modules/@mui/material/esm/Select/Select.js");
+/* harmony import */ var _mui_material__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @mui/material */ "./node_modules/@mui/material/esm/MenuItem/MenuItem.js");
 
 
-function ThemeToggle() {
+
+function ThemeSelector() {
   var _useTheme = (0,_contexts_ThemeContext__WEBPACK_IMPORTED_MODULE_1__.useTheme)(),
     theme = _useTheme.theme,
-    toggleTheme = _useTheme.toggleTheme;
-  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
-    className: "flex items-center justify-between p-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 mb-4"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("h3", {
-    className: "font-medium text-gray-800 dark:text-gray-200"
-  }, "Dark Mode"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("p", {
-    className: "text-sm text-gray-500 dark:text-gray-400"
-  }, "Switch between light and dark themes")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("button", {
-    onClick: toggleTheme,
-    className: "p-2 rounded-full ".concat(theme === 'dark' ? 'bg-gray-700 text-yellow-300' : 'bg-gray-200 text-gray-700'),
-    "aria-label": "Switch to ".concat(theme === 'light' ? 'dark' : 'light', " mode")
-  }, theme === 'light' ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("i", {
-    className: "fas fa-moon text-xl"
-  }) : /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("i", {
-    className: "fas fa-sun text-xl"
-  })));
+    setTheme = _useTheme.setTheme;
+  var isDarkMode = theme === 'dark';
+
+  // Handle theme change
+  var handleThemeChange = function handleThemeChange(event) {
+    setTheme(event.target.value);
+  };
+  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_2__["default"], {
+    variant: "outlined",
+    size: "small",
+    fullWidth: true,
+    sx: {
+      minWidth: 120,
+      '.MuiOutlinedInput-root': {
+        backgroundColor: isDarkMode ? 'rgba(55, 65, 81, 0.3)' : 'transparent',
+        '&:hover .MuiOutlinedInput-notchedOutline': {
+          borderColor: isDarkMode ? '#4b5563' : '#d1d5db'
+        }
+      },
+      '.MuiOutlinedInput-notchedOutline': {
+        borderColor: isDarkMode ? '#4b5563' : '#d1d5db'
+      },
+      '.MuiSvgIcon-root': {
+        color: isDarkMode ? '#9ca3af' : '#6b7280'
+      }
+    }
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_3__["default"], {
+    id: "theme-selector-label",
+    sx: {
+      color: isDarkMode ? '#9ca3af' : '#6b7280',
+      '&.Mui-focused': {
+        color: isDarkMode ? '#60a5fa' : '#3b82f6'
+      }
+    }
+  }, "Theme"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_4__["default"], {
+    labelId: "theme-selector-label",
+    value: theme,
+    onChange: handleThemeChange,
+    label: "Theme",
+    sx: {
+      color: isDarkMode ? '#d1d5db' : '#374151',
+      '.MuiSelect-select': {
+        paddingY: 1.2
+      }
+    }
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_5__["default"], {
+    value: "light"
+  }, "Light"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_5__["default"], {
+    value: "dark"
+  }, "Dark")));
 }
 
 /***/ }),
@@ -65313,7 +65398,8 @@ function ThemeProvider(_ref) {
   return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(ThemeContext.Provider, {
     value: {
       theme: theme,
-      toggleTheme: toggleTheme
+      toggleTheme: toggleTheme,
+      setTheme: setTheme
     }
   }, children);
 }

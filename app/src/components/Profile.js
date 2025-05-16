@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import ThemeToggle from './ThemeToggle';
+import ThemeSelector from './ThemeSelector';
 import { ThemeContext } from '../contexts/ThemeContext';
 import { 
   Switch, 
@@ -305,37 +305,43 @@ export default function Profile({ setCurrentView, user, onUpdate }) {
           App Settings
         </Typography>
         
-        <Box sx={{ mb: 3 }}>
-          <ThemeToggle />
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+          {/* Theme Selector */}
+          <Box>
+            <ThemeSelector />
+          </Box>
+          
+          {/* Message Privacy Option */}
+          <FormControlLabel
+            control={
+              <Switch 
+                id="allowMessages"
+                name="allowMessages"
+                checked={allowMessages}
+                onChange={(e) => setAllowMessages(e.target.checked)}
+                color="primary"
+                size="small"
+              />
+            }
+            label={
+              <Box>
+                <Typography sx={{ 
+                  fontSize: '0.875rem',
+                  color: darkMode ? '#d1d5db' : '#374151'
+                }}>
+                  Allow Messaging
+                </Typography>
+                <Typography variant="caption" sx={{ 
+                  display: 'block', 
+                  color: darkMode ? '#9ca3af' : '#6b7280'
+                }}>
+                  When enabled, connections can send you secure messages
+                </Typography>
+              </Box>
+            }
+            sx={{ alignItems: 'flex-start', ml: 0, mt: 1 }}
+          />
         </Box>
-        
-        <Divider sx={{ mb: 2 }} />
-        
-        <Typography variant="subtitle1" sx={{ mb: 1, color: darkMode ? '#d1d5db' : '#374151' }}>
-          Privacy & Messaging
-        </Typography>
-        
-        <FormControlLabel
-          control={
-            <Switch 
-              id="allowMessages"
-              name="allowMessages"
-              checked={allowMessages}
-              onChange={(e) => setAllowMessages(e.target.checked)}
-              color="primary"
-            />
-          }
-          label="Allow Messaging"
-          sx={{ 
-            '& .MuiFormControlLabel-label': { 
-              color: darkMode ? '#d1d5db' : '#374151'
-            } 
-          }}
-        />
-        
-        <Typography variant="caption" sx={{ display: 'block', mt: 1, color: darkMode ? '#9ca3af' : '#6b7280' }}>
-          When enabled, your connections can send you secure messages.
-        </Typography>
       </Paper>
       
       <Paper elevation={0} 
