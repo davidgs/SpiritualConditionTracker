@@ -49,6 +49,7 @@ export default function MeetingFormDialog({
   const [meetingTime, setMeetingTime] = useState('');
   
   // Address fields
+  const [locationName, setLocationName] = useState('');
   const [streetAddress, setStreetAddress] = useState('');
   const [city, setCity] = useState('');
   const [state, setState] = useState('');
@@ -133,6 +134,10 @@ export default function MeetingFormDialog({
       setMeetingAddress(meeting.address);
       
       // Try to extract address components if available
+      if (meeting.locationName) {
+        setLocationName(meeting.locationName);
+      }
+      
       if (meeting.streetAddress) {
         setStreetAddress(meeting.streetAddress);
         setCity(meeting.city || '');
@@ -304,6 +309,8 @@ export default function MeetingFormDialog({
       // New format
       schedule: meetingSchedule,
       address: formattedAddress,
+      // Store the location name
+      locationName: locationName.trim(),
       // Store individual address components for better editing
       streetAddress: streetAddress.trim(),
       city: city.trim(),
@@ -418,10 +425,35 @@ export default function MeetingFormDialog({
           
           <Box>
             <Typography variant="subtitle2" sx={{ mb: 1, color: darkMode ? '#d1d5db' : '#374151' }}>
-              Address
+              Location
             </Typography>
             
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+              <TextField
+                fullWidth
+                value={locationName}
+                onChange={(e) => setLocationName(e.target.value)}
+                placeholder="Location name (e.g. Apex United Methodist Church)"
+                size="small"
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    bgcolor: darkMode ? '#374151' : '#f9fafb',
+                    '& fieldset': {
+                      borderColor: darkMode ? '#4b5563' : '#d1d5db',
+                    },
+                    '&:hover fieldset': {
+                      borderColor: darkMode ? '#6b7280' : '#9ca3af',
+                    },
+                    '&.Mui-focused fieldset': {
+                      borderColor: darkMode ? '#60a5fa' : '#3b82f6',
+                    },
+                  },
+                  '& .MuiInputBase-input': {
+                    color: darkMode ? '#d1d5db' : '#374151',
+                  }
+                }}
+              />
+              
               <TextField
                 fullWidth
                 value={streetAddress}

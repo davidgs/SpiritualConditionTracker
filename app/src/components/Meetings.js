@@ -83,6 +83,9 @@ export default function Meetings({ setCurrentView, meetings = [], onSave, user }
     if (meeting.streetAddress) {
       return (
         <>
+          {meeting.locationName && (
+            <div className="font-semibold mb-1">{meeting.locationName}</div>
+          )}
           <div><i className="fa-solid fa-location-dot text-gray-500 dark:text-gray-400 mr-3 mt-1 flex-shrink-0" style={{ fontSize: '1rem' }}></i>
           &nbsp;{meeting.streetAddress}</div>
           {meeting.city && meeting.state && (

@@ -64199,38 +64199,42 @@ function MeetingFormDialog(_ref) {
   // Address fields
   var _useState9 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(''),
     _useState0 = _slicedToArray(_useState9, 2),
-    streetAddress = _useState0[0],
-    setStreetAddress = _useState0[1];
+    locationName = _useState0[0],
+    setLocationName = _useState0[1];
   var _useState1 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(''),
     _useState10 = _slicedToArray(_useState1, 2),
-    city = _useState10[0],
-    setCity = _useState10[1];
+    streetAddress = _useState10[0],
+    setStreetAddress = _useState10[1];
   var _useState11 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(''),
     _useState12 = _slicedToArray(_useState11, 2),
-    state = _useState12[0],
-    setState = _useState12[1];
+    city = _useState12[0],
+    setCity = _useState12[1];
   var _useState13 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(''),
     _useState14 = _slicedToArray(_useState13, 2),
-    zipCode = _useState14[0],
-    setZipCode = _useState14[1];
-
-  // Store full address for backward compatibility
+    state = _useState14[0],
+    setState = _useState14[1];
   var _useState15 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(''),
     _useState16 = _slicedToArray(_useState15, 2),
-    meetingAddress = _useState16[0],
-    setMeetingAddress = _useState16[1];
-  var _useState17 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null),
+    zipCode = _useState16[0],
+    setZipCode = _useState16[1];
+
+  // Store full address for backward compatibility
+  var _useState17 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(''),
     _useState18 = _slicedToArray(_useState17, 2),
-    location = _useState18[0],
-    setLocation = _useState18[1];
-  var _useState19 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(''),
+    meetingAddress = _useState18[0],
+    setMeetingAddress = _useState18[1];
+  var _useState19 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null),
     _useState20 = _slicedToArray(_useState19, 2),
-    error = _useState20[0],
-    setError = _useState20[1];
-  var _useState21 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false),
+    location = _useState20[0],
+    setLocation = _useState20[1];
+  var _useState21 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(''),
     _useState22 = _slicedToArray(_useState21, 2),
-    searchingLocation = _useState22[0],
-    setSearchingLocation = _useState22[1];
+    error = _useState22[0],
+    setError = _useState22[1];
+  var _useState23 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false),
+    _useState24 = _slicedToArray(_useState23, 2),
+    searchingLocation = _useState24[0],
+    setSearchingLocation = _useState24[1];
 
   // Initialize form with meeting data if provided
   (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(function () {
@@ -64304,6 +64308,9 @@ function MeetingFormDialog(_ref) {
       setMeetingAddress(meeting.address);
 
       // Try to extract address components if available
+      if (meeting.locationName) {
+        setLocationName(meeting.locationName);
+      }
       if (meeting.streetAddress) {
         setStreetAddress(meeting.streetAddress);
         setCity(meeting.city || '');
@@ -64480,6 +64487,8 @@ function MeetingFormDialog(_ref) {
       // New format
       schedule: meetingSchedule,
       address: formattedAddress,
+      // Store the location name
+      locationName: locationName.trim(),
       // Store individual address components for better editing
       streetAddress: streetAddress.trim(),
       city: city.trim(),
@@ -64598,13 +64607,38 @@ function MeetingFormDialog(_ref) {
       mb: 1,
       color: darkMode ? '#d1d5db' : '#374151'
     }
-  }, "Address"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_8__["default"], {
+  }, "Location"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_8__["default"], {
     sx: {
       display: 'flex',
       flexDirection: 'column',
       gap: 1
     }
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_9__["default"], {
+    fullWidth: true,
+    value: locationName,
+    onChange: function onChange(e) {
+      return setLocationName(e.target.value);
+    },
+    placeholder: "Location name (e.g. Apex United Methodist Church)",
+    size: "small",
+    sx: {
+      '& .MuiOutlinedInput-root': {
+        bgcolor: darkMode ? '#374151' : '#f9fafb',
+        '& fieldset': {
+          borderColor: darkMode ? '#4b5563' : '#d1d5db'
+        },
+        '&:hover fieldset': {
+          borderColor: darkMode ? '#6b7280' : '#9ca3af'
+        },
+        '&.Mui-focused fieldset': {
+          borderColor: darkMode ? '#60a5fa' : '#3b82f6'
+        }
+      },
+      '& .MuiInputBase-input': {
+        color: darkMode ? '#d1d5db' : '#374151'
+      }
+    }
+  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material__WEBPACK_IMPORTED_MODULE_9__["default"], {
     fullWidth: true,
     value: streetAddress,
     onChange: function onChange(e) {
@@ -64881,7 +64915,9 @@ function Meetings(_ref) {
   var formatAddress = function formatAddress(meeting) {
     // If we have the individual components, use them
     if (meeting.streetAddress) {
-      return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement((react__WEBPACK_IMPORTED_MODULE_0___default().Fragment), null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("i", {
+      return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement((react__WEBPACK_IMPORTED_MODULE_0___default().Fragment), null, meeting.locationName && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+        className: "font-semibold mb-1"
+      }, meeting.locationName), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("i", {
         className: "fa-solid fa-location-dot text-gray-500 dark:text-gray-400 mr-3 mt-1 flex-shrink-0",
         style: {
           fontSize: '1rem'
