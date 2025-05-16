@@ -11,7 +11,7 @@ import Box from '@mui/material/Box';
 import MuiThemeProvider from '../contexts/MuiThemeProvider';
 import MeetingForm from './MeetingForm';
 
-// Style the Dialog
+// Style the Dialog for proper light/dark mode styling
 const StyledDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialogContent-root': {
     padding: theme.spacing(3),
@@ -22,6 +22,27 @@ const StyledDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiPaper-root': {
     maxWidth: '600px',
     width: '100%',
+    backgroundColor: theme.palette.mode === 'dark' ? '#1f2937' : '#ffffff',
+    color: theme.palette.mode === 'dark' ? '#e5e7eb' : '#1f2937',
+  },
+  '& .MuiDialogTitle-root': {
+    backgroundColor: theme.palette.mode === 'dark' ? '#111827' : '#f9fafb',
+    color: theme.palette.mode === 'dark' ? '#f3f4f6' : '#111827',
+  },
+  '& .MuiInputBase-input': {
+    color: theme.palette.mode === 'dark' ? '#e5e7eb' : '#1f2937',
+  },
+  '& .MuiInputLabel-root': {
+    color: theme.palette.mode === 'dark' ? '#9ca3af' : '#4b5563',
+  },
+  '& .MuiOutlinedInput-notchedOutline': {
+    borderColor: theme.palette.mode === 'dark' ? '#4b5563' : '#d1d5db',
+  },
+  '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': {
+    borderColor: theme.palette.mode === 'dark' ? '#6b7280' : '#9ca3af',
+  },
+  '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': {
+    borderColor: theme.palette.mode === 'dark' ? '#60a5fa' : '#3b82f6',
   },
 }));
 
@@ -646,17 +667,39 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
                 ></textarea>
               </div>
               
-              <DialogActions>
-                <Button onClick={onClose} color="inherit">
+              <DialogActions sx={{ 
+                padding: '16px', 
+                borderTop: '1px solid',
+                borderColor: darkMode ? '#374151' : '#e5e7eb',
+                justifyContent: 'flex-end', 
+                gap: '8px'
+              }}>
+                <Button 
+                  onClick={onClose} 
+                  variant="outlined"
+                  sx={{ 
+                    color: darkMode ? '#e5e7eb' : '#4b5563',
+                    borderColor: darkMode ? '#4b5563' : '#d1d5db',
+                    '&:hover': {
+                      backgroundColor: darkMode ? 'rgba(55, 65, 81, 0.1)' : 'rgba(243, 244, 246, 0.7)',
+                      borderColor: darkMode ? '#6b7280' : '#9ca3af',
+                    }
+                  }}
+                >
                   Cancel
                 </Button>
                 <Button 
                   type="submit" 
-                  style={{
+                  variant="contained"
+                  sx={{
                     backgroundColor: darkMode ? '#3b82f6' : '#2563eb',
                     color: 'white',
+                    '&:hover': {
+                      backgroundColor: darkMode ? '#2563eb' : '#1d4ed8',
+                    }
                   }}
                 >
+                  <i className="fas fa-save mr-2"></i>
                   Save Activity
                 </Button>
               </DialogActions>

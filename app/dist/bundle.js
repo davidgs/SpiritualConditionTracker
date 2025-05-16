@@ -60101,7 +60101,7 @@ function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
 
 
 
-// Style the Dialog
+// Style the Dialog for proper light/dark mode styling
 var StyledDialog = (0,_mui_material_styles__WEBPACK_IMPORTED_MODULE_3__["default"])(_mui_material_Dialog__WEBPACK_IMPORTED_MODULE_4__["default"])(function (_ref) {
   var theme = _ref.theme;
   return {
@@ -60113,7 +60113,28 @@ var StyledDialog = (0,_mui_material_styles__WEBPACK_IMPORTED_MODULE_3__["default
     },
     '& .MuiPaper-root': {
       maxWidth: '600px',
-      width: '100%'
+      width: '100%',
+      backgroundColor: theme.palette.mode === 'dark' ? '#1f2937' : '#ffffff',
+      color: theme.palette.mode === 'dark' ? '#e5e7eb' : '#1f2937'
+    },
+    '& .MuiDialogTitle-root': {
+      backgroundColor: theme.palette.mode === 'dark' ? '#111827' : '#f9fafb',
+      color: theme.palette.mode === 'dark' ? '#f3f4f6' : '#111827'
+    },
+    '& .MuiInputBase-input': {
+      color: theme.palette.mode === 'dark' ? '#e5e7eb' : '#1f2937'
+    },
+    '& .MuiInputLabel-root': {
+      color: theme.palette.mode === 'dark' ? '#9ca3af' : '#4b5563'
+    },
+    '& .MuiOutlinedInput-notchedOutline': {
+      borderColor: theme.palette.mode === 'dark' ? '#4b5563' : '#d1d5db'
+    },
+    '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': {
+      borderColor: theme.palette.mode === 'dark' ? '#6b7280' : '#9ca3af'
+    },
+    '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': {
+      borderColor: theme.palette.mode === 'dark' ? '#60a5fa' : '#3b82f6'
     }
   };
 });
@@ -60810,16 +60831,38 @@ var LogActivityModal = function LogActivityModal(_ref2) {
       return setNotes(e.target.value);
     },
     placeholder: "Add any notes about this activity..."
-  })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_DialogActions__WEBPACK_IMPORTED_MODULE_9__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_Button__WEBPACK_IMPORTED_MODULE_10__["default"], {
+  })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_DialogActions__WEBPACK_IMPORTED_MODULE_9__["default"], {
+    sx: {
+      padding: '16px',
+      borderTop: '1px solid',
+      borderColor: darkMode ? '#374151' : '#e5e7eb',
+      justifyContent: 'flex-end',
+      gap: '8px'
+    }
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_Button__WEBPACK_IMPORTED_MODULE_10__["default"], {
     onClick: onClose,
-    color: "inherit"
+    variant: "outlined",
+    sx: {
+      color: darkMode ? '#e5e7eb' : '#4b5563',
+      borderColor: darkMode ? '#4b5563' : '#d1d5db',
+      '&:hover': {
+        backgroundColor: darkMode ? 'rgba(55, 65, 81, 0.1)' : 'rgba(243, 244, 246, 0.7)',
+        borderColor: darkMode ? '#6b7280' : '#9ca3af'
+      }
+    }
   }, "Cancel"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_Button__WEBPACK_IMPORTED_MODULE_10__["default"], {
     type: "submit",
-    style: {
+    variant: "contained",
+    sx: {
       backgroundColor: darkMode ? '#3b82f6' : '#2563eb',
-      color: 'white'
+      color: 'white',
+      '&:hover': {
+        backgroundColor: darkMode ? '#2563eb' : '#1d4ed8'
+      }
     }
-  }, "Save Activity"))))));
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("i", {
+    className: "fas fa-save mr-2"
+  }), "Save Activity"))))));
 };
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (LogActivityModal);
 
