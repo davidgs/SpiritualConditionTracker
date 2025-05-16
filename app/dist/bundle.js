@@ -64796,6 +64796,8 @@ function Meetings(_ref) {
   // Get dark mode from theme context
   var _useContext = (0,react__WEBPACK_IMPORTED_MODULE_0__.useContext)(_contexts_ThemeContext__WEBPACK_IMPORTED_MODULE_3__.ThemeContext),
     theme = _useContext.theme;
+  var darkMode = theme === 'dark';
+
   // Get user's home groups
   var _useState = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)([]),
     _useState2 = _slicedToArray(_useState, 2),
@@ -64810,6 +64812,7 @@ function Meetings(_ref) {
       setUserHomeGroups(homeGroups);
     }
   }, [user, meetings]); // Refresh when user or meetings change
+
   var _useState3 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false),
     _useState4 = _slicedToArray(_useState3, 2),
     showForm = _useState4[0],
@@ -64822,9 +64825,6 @@ function Meetings(_ref) {
     _useState8 = _slicedToArray(_useState7, 2),
     error = _useState8[0],
     setError = _useState8[1];
-
-  // Dark mode detection
-  var darkMode = theme === 'dark';
 
   // Edit an existing meeting
   var handleEdit = function handleEdit(meeting) {
@@ -64881,7 +64881,7 @@ function Meetings(_ref) {
   var formatAddress = function formatAddress(meeting) {
     // If we have the individual components, use them
     if (meeting.streetAddress) {
-      return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement((react__WEBPACK_IMPORTED_MODULE_0___default().Fragment), null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", null, "                ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("i", {
+      return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement((react__WEBPACK_IMPORTED_MODULE_0___default().Fragment), null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("i", {
         className: "fa-solid fa-location-dot text-gray-500 dark:text-gray-400 mr-3 mt-1 flex-shrink-0",
         style: {
           fontSize: '1rem'
@@ -64934,59 +64934,54 @@ function Meetings(_ref) {
         }
       }), "\xA0", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("span", {
         className: "text-gray-600 dark:text-gray-300"
-      }, formatDay(item.day)), "\xA0", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("span", {
-        className: "text-gray-500 dark:text-gray-500 mx-2"
-      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("i", {
-        className: "fa-solid fa-at"
-      })), "\xA0", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("span", {
-        className: "text-gray-600 dark:text-gray-300"
-      }, new Date("2000-01-01T".concat(item.time)).toLocaleTimeString([], {
-        hour: 'numeric',
-        minute: '2-digit'
-      })), "\xA0", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("i", {
-        className: "fa-regular fa-clock text-gray-500 dark:text-gray-400 mr-2 flex-shrink-0",
+      }, formatDay(item.day)), "\xA0", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("i", {
+        className: "fa-regular fa-clock text-gray-500 dark:text-gray-400 mx-1 flex-shrink-0",
         style: {
-          fontSize: '1rem'
+          fontSize: '0.85rem'
         }
-      }));
+      }), "\xA0", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("span", {
+        className: "text-gray-600 dark:text-gray-300"
+      }, item.time));
     }) :
     /*#__PURE__*/
-    // Legacy format fallback
+    // Legacy format
     react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
-      className: "flex items-center gap-2"
+      className: "flex flex-col gap-2"
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+      className: "flex items-center"
     }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("i", {
-      className: "fa-solid fa-calendar-days text-gray-500 dark:text-gray-400 mr-3 flex-shrink-0",
+      className: "fa-solid fa-calendar-days text-gray-500 dark:text-gray-400 mr-3",
       style: {
         fontSize: '1rem'
       }
     }), "\xA0", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("span", {
       className: "text-gray-600 dark:text-gray-300"
-    }, meeting.days.map(formatDay).join(', ')), "\xA0", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("span", {
-      className: "text-gray-500 dark:text-gray-500 mx-2"
+    }, meeting.days && meeting.days.map(function (day, idx) {
+      return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("span", {
+        key: "".concat(meeting.id, "-day-").concat(idx)
+      }, idx > 0 && ', ', formatDay(day));
+    }))), meeting.time && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+      className: "flex items-center"
     }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("i", {
-      className: "fa-solid fa-at"
-    })), "\xA0", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("span", {
-      className: "text-gray-600 dark:text-gray-300"
-    }, new Date("2000-01-01T".concat(meeting.time)).toLocaleTimeString([], {
-      hour: 'numeric',
-      minute: '2-digit'
-    })), "\xA0", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("i", {
-      className: "fa-regular fa-clock text-gray-500 dark:text-gray-400 mr-2 flex-shrink-0",
+      className: "fa-regular fa-clock text-gray-500 dark:text-gray-400 mr-3",
       style: {
         fontSize: '1rem'
       }
-    }))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
-      className: "flex items-start"
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+    }), "\xA0", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("span", {
       className: "text-gray-600 dark:text-gray-300"
-    }, formatAddress(meeting))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
-      className: "flex justify-end space-x-4 mt-4 pt-3 border-t border-gray-200 dark:border-gray-700"
+    }, meeting.time)))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+      className: "text-gray-600 dark:text-gray-300 flex items-start"
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+      className: "w-full"
+    }, formatAddress(meeting)))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+      className: "mt-4 pt-3 flex justify-end border-t border-gray-200 dark:border-gray-700"
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+      className: "flex gap-2"
     }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("button", {
-      className: "text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors duration-200",
       onClick: function onClick() {
         return handleEdit(meeting);
       },
-      "aria-label": "Edit meeting",
+      className: "text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300",
       title: "Edit meeting",
       style: {
         background: 'transparent',
@@ -64996,13 +64991,12 @@ function Meetings(_ref) {
         padding: '0.25rem'
       }
     }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("i", {
-      className: "fa-solid fa-pen-to-square text-blue-500 dark:text-blue-400"
+      className: "fa-solid fa-pen-to-square"
     })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("button", {
-      className: "text-red-500 hover:text-red-700 dark:text-gray-400 dark:hover:text-gray-300 transition-colors duration-200",
       onClick: function onClick() {
         return handleDelete(meeting.id);
       },
-      "aria-label": "Delete meeting",
+      className: "text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300",
       title: "Delete meeting",
       style: {
         background: 'transparent',

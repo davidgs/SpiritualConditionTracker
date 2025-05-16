@@ -6,6 +6,8 @@ import { ThemeContext } from '../contexts/ThemeContext';
 export default function Meetings({ setCurrentView, meetings = [], onSave, user }) {
   // Get dark mode from theme context
   const { theme } = useContext(ThemeContext);
+  const darkMode = theme === 'dark';
+  
   // Get user's home groups
   const [userHomeGroups, setUserHomeGroups] = useState([]);
   
@@ -19,12 +21,10 @@ export default function Meetings({ setCurrentView, meetings = [], onSave, user }
       setUserHomeGroups(homeGroups);
     }
   }, [user, meetings]); // Refresh when user or meetings change
+  
   const [showForm, setShowForm] = useState(false);
   const [currentMeeting, setCurrentMeeting] = useState(null);
   const [error, setError] = useState('');
-  
-  // Dark mode detection
-  const darkMode = theme === 'dark';
   
   // Edit an existing meeting
   const handleEdit = (meeting) => {
@@ -83,8 +83,8 @@ export default function Meetings({ setCurrentView, meetings = [], onSave, user }
     if (meeting.streetAddress) {
       return (
         <>
-          <div>                <i className="fa-solid fa-location-dot text-gray-500 dark:text-gray-400 mr-3 mt-1 flex-shrink-0" style={{ fontSize: '1rem' }}></i>
-&nbsp;{meeting.streetAddress}</div>
+          <div><i className="fa-solid fa-location-dot text-gray-500 dark:text-gray-400 mr-3 mt-1 flex-shrink-0" style={{ fontSize: '1rem' }}></i>
+          &nbsp;{meeting.streetAddress}</div>
           {meeting.city && meeting.state && (
             <div>{meeting.city}, {meeting.state} {meeting.zipCode}</div>
           )}
@@ -131,38 +131,47 @@ export default function Meetings({ setCurrentView, meetings = [], onSave, user }
                   <div key={`${meeting.id}-schedule-${idx}`} className="flex items-center gap-2">
                     <i className="fa-solid fa-calendar-days text-gray-500 dark:text-gray-400 mr-3 flex-shrink-0" style={{ fontSize: '1rem' }}></i>&nbsp;
                     <span className="text-gray-600 dark:text-gray-300">{formatDay(item.day)}</span>&nbsp;
-                    <span className="text-gray-500 dark:text-gray-500 mx-2"><i className="fa-solid fa-at"></i></span>&nbsp;
-                    <span className="text-gray-600 dark:text-gray-300">{new Date(`2000-01-01T${item.time}`).toLocaleTimeString([], {hour: 'numeric', minute:'2-digit'})}</span>&nbsp;
-                    <i className="fa-regular fa-clock text-gray-500 dark:text-gray-400 mr-2 flex-shrink-0" style={{ fontSize: '1rem' }}></i>
-
+                    <i className="fa-regular fa-clock text-gray-500 dark:text-gray-400 mx-1 flex-shrink-0" style={{ fontSize: '0.85rem' }}></i>&nbsp;
+                    <span className="text-gray-600 dark:text-gray-300">{item.time}</span>
                   </div>
                 ))
               ) : (
-                // Legacy format fallback
-                <div className="flex items-center gap-2">
-                  <i className="fa-solid fa-calendar-days text-gray-500 dark:text-gray-400 mr-3 flex-shrink-0" style={{ fontSize: '1rem' }}></i>&nbsp;
-                  <span className="text-gray-600 dark:text-gray-300">{meeting.days.map(formatDay).join(', ')}</span>&nbsp;
-                  <span className="text-gray-500 dark:text-gray-500 mx-2"><i className="fa-solid fa-at"></i></span>&nbsp;
-                  <span className="text-gray-600 dark:text-gray-300">{new Date(`2000-01-01T${meeting.time}`).toLocaleTimeString([], {hour: 'numeric', minute:'2-digit'})}</span>&nbsp;
-                  <i className="fa-regular fa-clock text-gray-500 dark:text-gray-400 mr-2 flex-shrink-0" style={{ fontSize: '1rem' }}></i>
-
+                // Legacy format
+                <div className="flex flex-col gap-2">
+                  <div className="flex items-center">
+                    <i className="fa-solid fa-calendar-days text-gray-500 dark:text-gray-400 mr-3" style={{ fontSize: '1rem' }}></i>&nbsp;
+                    <span className="text-gray-600 dark:text-gray-300">
+                      {meeting.days && meeting.days.map((day, idx) => (
+                        <span key={`${meeting.id}-day-${idx}`}>
+                          {idx > 0 && ', '}
+                          {formatDay(day)}
+                        </span>
+                      ))}
+                    </span>
+                  </div>
+                  {meeting.time && (
+                    <div className="flex items-center">
+                      <i className="fa-regular fa-clock text-gray-500 dark:text-gray-400 mr-3" style={{ fontSize: '1rem' }}></i>&nbsp;
+                      <span className="text-gray-600 dark:text-gray-300">{meeting.time}</span>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
             
             {/* Address */}
-            <div className="flex items-start">
-              <div className="text-gray-600 dark:text-gray-300">
+            <div className="text-gray-600 dark:text-gray-300 flex items-start">
+              <div className="w-full">
                 {formatAddress(meeting)}
               </div>
             </div>
-            
-            {/* Action buttons at the bottom */}
-            <div className="flex justify-end space-x-4 mt-4 pt-3 border-t border-gray-200 dark:border-gray-700">
+          </div>
+          
+          <div className="mt-4 pt-3 flex justify-end border-t border-gray-200 dark:border-gray-700">
+            <div className="flex gap-2">
               <button
-                className="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors duration-200"
                 onClick={() => handleEdit(meeting)}
-                aria-label="Edit meeting"
+                className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
                 title="Edit meeting"
                 style={{ 
                   background: 'transparent',
@@ -172,12 +181,11 @@ export default function Meetings({ setCurrentView, meetings = [], onSave, user }
                   padding: '0.25rem'
                 }}
               >
-                <i className="fa-solid fa-pen-to-square text-blue-500 dark:text-blue-400"></i>
+                <i className="fa-solid fa-pen-to-square"></i>
               </button>
               <button
-                className="text-red-500 hover:text-red-700 dark:text-gray-400 dark:hover:text-gray-300 transition-colors duration-200"
                 onClick={() => handleDelete(meeting.id)}
-                aria-label="Delete meeting"
+                className="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300"
                 title="Delete meeting"
                 style={{ 
                   background: 'transparent',
@@ -247,8 +255,6 @@ export default function Meetings({ setCurrentView, meetings = [], onSave, user }
           </button>
         </div>
       )}
-      
-     
       
       {/* Meetings List */}
       <div className="mt-4">
