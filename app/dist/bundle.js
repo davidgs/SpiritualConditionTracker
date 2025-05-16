@@ -64871,7 +64871,7 @@ function Meetings(_ref) {
       // Handle both the new array format and legacy string format
       var homeGroups = user.homeGroups ? user.homeGroups : user.homeGroup ? [user.homeGroup] : [];
       setUserHomeGroups(homeGroups);
-      condole.log('User: ', user);
+      console.log('User: ', user);
     }
   }, [user, meetings]); // Refresh when user or meetings change
 
@@ -65033,29 +65033,7 @@ function Meetings(_ref) {
       }
     }), "\xA0", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("span", {
       className: "text-gray-600 dark:text-gray-300"
-    }, function () {
-      console.log('Meeting time to format:', meeting.time, 'Use 24h format:', use24HourFormat);
-
-      // If we're using 24-hour format, no conversion needed
-      if (use24HourFormat) {
-        return meeting.time;
-      }
-
-      // Convert to 12-hour format with AM/PM
-      try {
-        var parts = meeting.time.split(':');
-        var hours = parseInt(parts[0], 10);
-        var minutes = parts[1];
-        var period = hours >= 12 ? 'PM' : 'AM';
-        var hours12 = hours % 12 || 12;
-        var result = "".concat(hours12, ":").concat(minutes, " ").concat(period);
-        console.log('Converted time:', result);
-        return result;
-      } catch (e) {
-        console.error('Error formatting time:', e);
-        return meeting.time;
-      }
-    }())))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+    }, (0,_utils_dateUtils__WEBPACK_IMPORTED_MODULE_4__.formatTimeByPreference)(meeting.time, use24HourFormat))))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
       className: "text-gray-600 dark:text-gray-300 flex items-start"
     }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
       className: "w-full"
