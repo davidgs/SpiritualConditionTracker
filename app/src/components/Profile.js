@@ -466,19 +466,13 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
                   
                   // Save the preference change immediately without redirecting
                   const updates = {
-                    ...user,
                     preferences: {
                       ...(user?.preferences || {}),
                       use24HourFormat: newValue
                     }
                   };
-                  // Use a different update method that doesn't trigger navigation
-                  window.db.update('user', user.id, {
-                    preferences: {
-                      ...(user?.preferences || {}),
-                      use24HourFormat: newValue
-                    }
-                  });
+                  // Use the onUpdate function with the new option to prevent redirection
+                  onUpdate(updates, { redirectToDashboard: false });
                 }}
                 color="primary"
                 size="small"

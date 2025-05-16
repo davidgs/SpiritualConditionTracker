@@ -160,7 +160,7 @@ function App() {
   }
 
   // Handle updating user profile
-  function handleUpdateProfile(updates) {
+  function handleUpdateProfile(updates, options = { redirectToDashboard: true }) {
     if (!window.db) {
       console.error('Database not initialized');
       return;
@@ -172,8 +172,12 @@ function App() {
     // Update user state
     setUser(updatedUser);
     
-    // Set view back to dashboard after updating
-    setCurrentView('dashboard');
+    // Set view back to dashboard only if specified (default true)
+    if (options.redirectToDashboard) {
+      setCurrentView('dashboard');
+    }
+    
+    return updatedUser;
   }
 
   // Privacy settings function removed - was primarily used for Nearby features

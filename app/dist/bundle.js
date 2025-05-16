@@ -61506,6 +61506,9 @@ function App() {
 
   // Handle updating user profile
   function handleUpdateProfile(updates) {
+    var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {
+      redirectToDashboard: true
+    };
     if (!window.db) {
       console.error('Database not initialized');
       return;
@@ -61517,8 +61520,11 @@ function App() {
     // Update user state
     setUser(updatedUser);
 
-    // Set view back to dashboard after updating
-    setCurrentView('dashboard');
+    // Set view back to dashboard only if specified (default true)
+    if (options.redirectToDashboard) {
+      setCurrentView('dashboard');
+    }
+    return updatedUser;
   }
 
   // Privacy settings function removed - was primarily used for Nearby features
@@ -66364,16 +66370,14 @@ function Profile(_ref) {
         setUse24HourFormat(newValue);
 
         // Save the preference change immediately without redirecting
-        var updates = _objectSpread(_objectSpread({}, user), {}, {
+        var updates = {
           preferences: _objectSpread(_objectSpread({}, (user === null || user === void 0 ? void 0 : user.preferences) || {}), {}, {
             use24HourFormat: newValue
           })
-        });
-        // Use a different update method that doesn't trigger navigation
-        window.db.update('user', user.id, {
-          preferences: _objectSpread(_objectSpread({}, (user === null || user === void 0 ? void 0 : user.preferences) || {}), {}, {
-            use24HourFormat: newValue
-          })
+        };
+        // Use the onUpdate function with the new option to prevent redirection
+        onUpdate(updates, {
+          redirectToDashboard: false
         });
       },
       color: "primary",
