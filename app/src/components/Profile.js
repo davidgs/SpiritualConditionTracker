@@ -1,6 +1,16 @@
 import React, { useState, useEffect, useContext } from 'react';
 import ThemeToggle from './ThemeToggle';
 import { ThemeContext } from '../contexts/ThemeContext';
+import { 
+  Switch, 
+  FormControlLabel, 
+  TextField, 
+  Button, 
+  Paper, 
+  Typography, 
+  Box, 
+  Divider
+} from '@mui/material';
 
 export default function Profile({ setCurrentView, user, onUpdate }) {
   const { theme } = useContext(ThemeContext);
@@ -76,195 +86,251 @@ export default function Profile({ setCurrentView, user, onUpdate }) {
   };
 
   return (
-    <div className="p-4 max-w-md mx-auto">
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">Recovery Tracker</h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400">Your personal profile</p>
-        </div>
-      </div>
+    <Box sx={{ p: 2, maxWidth: 600, mx: 'auto' }}>
+      <Box sx={{ mb: 3 }}>
+        <Typography variant="h4" sx={{ fontWeight: 'bold', color: darkMode ? '#e5e7eb' : '#1f2937' }}>
+          Recovery Tracker
+        </Typography>
+        <Typography variant="subtitle1" sx={{ color: darkMode ? '#9ca3af' : '#6b7280' }}>
+          Your personal profile
+        </Typography>
+      </Box>
       
       {sobrietyDate && (
-        <div style={{
-          backgroundColor: darkMode ? '#1f2937' : '#ffffff',
-          borderRadius: '0.5rem',
-          padding: '1rem',
-          marginBottom: '1.5rem',
-          border: darkMode ? '1px solid #374151' : '1px solid #e5e7eb',
-          textAlign: 'left'
+        <Paper elevation={0} sx={{ 
+          p: 3,
+          mb: 3,
+          bgcolor: darkMode ? '#1f2937' : '#ffffff',
+          borderRadius: 2,
+          border: darkMode ? '1px solid #374151' : '1px solid #e5e7eb'
         }}>
-          <h3 style={{
-            fontSize: '1.25rem',
-            fontWeight: 600,
-            color: darkMode ? '#d1d5db' : '#374151',
-            marginBottom: '1rem',
-            textAlign: 'left'
-          }}>Sobriety Milestone</h3>
+          <Typography variant="h6" sx={{ mb: 2, color: darkMode ? '#d1d5db' : '#374151' }}>
+            Sobriety Milestone
+          </Typography>
           
-          {showYearsProminent ? (
-            <div style={{ textAlign: 'left' }}>
-              <div style={{ display: 'flex', alignItems: 'baseline', marginBottom: '10px' }}>
-                <span style={{ 
-                  fontSize: '2rem', 
-                  fontWeight: 'bold', 
-                  color: darkMode ? '#60a5fa' : '#3b82f6',
-                  marginRight: '8px'
-                }}>
-                  {sobrietyYears.toFixed(2)}
-                </span>
-                <span style={{ 
+          <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+            {showYearsProminent ? (
+              <>
+                <Box sx={{ display: 'flex', alignItems: 'baseline', mb: 1 }}>
+                  <Typography variant="h3" sx={{ 
+                    fontWeight: 'bold', 
+                    color: darkMode ? '#60a5fa' : '#3b82f6',
+                    mr: 1
+                  }}>
+                    {sobrietyYears.toFixed(2)}
+                  </Typography>
+                  <Typography variant="h6" sx={{ color: darkMode ? '#9ca3af' : '#6b7280' }}>
+                    years
+                  </Typography>
+                </Box>
+                <Typography sx={{ 
                   fontSize: '1.25rem', 
-                  color: darkMode ? '#9ca3af' : '#6b7280'
+                  color: darkMode ? '#60a5fa' : '#3b82f6' 
                 }}>
-                  years
-                </span>
-              </div>
-              <div style={{ 
-                fontSize: '1.25rem', 
-                color: darkMode ? '#60a5fa' : '#3b82f6'
-              }}>
-                {formatNumber(sobrietyDays)} days
-              </div>
-            </div>
-          ) : (
-            <div style={{ textAlign: 'left' }}>
-              <div style={{ display: 'flex', alignItems: 'baseline', marginBottom: '10px' }}>
-                <span style={{ 
-                  fontSize: '2rem', 
-                  fontWeight: 'bold', 
-                  color: darkMode ? '#60a5fa' : '#3b82f6',
-                  marginRight: '8px'
-                }}>
-                  {formatNumber(sobrietyDays)}
-                </span>
-                <span style={{ 
+                  {formatNumber(sobrietyDays)} days
+                </Typography>
+              </>
+            ) : (
+              <>
+                <Box sx={{ display: 'flex', alignItems: 'baseline', mb: 1 }}>
+                  <Typography variant="h3" sx={{ 
+                    fontWeight: 'bold', 
+                    color: darkMode ? '#60a5fa' : '#3b82f6',
+                    mr: 1
+                  }}>
+                    {formatNumber(sobrietyDays)}
+                  </Typography>
+                  <Typography variant="h6" sx={{ color: darkMode ? '#9ca3af' : '#6b7280' }}>
+                    days
+                  </Typography>
+                </Box>
+                <Typography sx={{ 
                   fontSize: '1.25rem', 
-                  color: darkMode ? '#9ca3af' : '#6b7280'
+                  color: darkMode ? '#60a5fa' : '#3b82f6' 
                 }}>
-                  days
-                </span>
-              </div>
-              <div style={{ 
-                fontSize: '1.25rem', 
-                color: darkMode ? '#60a5fa' : '#3b82f6'
-              }}>
-                {sobrietyYears.toFixed(2)} years
-              </div>
-            </div>
-          )}
-        </div>
+                  {sobrietyYears.toFixed(2)} years
+                </Typography>
+              </>
+            )}
+          </Box>
+        </Paper>
       )}
       
       {/* App Settings */}
-      <div className="mb-6">
-        <h2 className="text-lg font-medium text-gray-700 dark:text-gray-300 mb-3">App Settings</h2>
-        <div className="mb-4">
-          <ThemeToggle />
-        </div>
+      <Paper elevation={0} sx={{ 
+        p: 3, 
+        mb: 3, 
+        bgcolor: darkMode ? '#1f2937' : '#ffffff',
+        borderRadius: 2,
+        border: darkMode ? '1px solid #374151' : '1px solid #e5e7eb',
+      }}>
+        <Typography variant="h6" sx={{ mb: 2, color: darkMode ? '#d1d5db' : '#374151' }}>
+          App Settings
+        </Typography>
         
-        <h3 className="text-md font-medium text-gray-700 dark:text-gray-300 mb-2">Privacy & Messaging</h3>
-        <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4 mb-4">
-          <div className="flex items-center justify-between mb-3">
-            <label className="text-gray-700 dark:text-gray-300">
-              Allow Messaging
-            </label>
-            <div className="relative inline-block w-10 mr-2 align-middle select-none">
-              <input 
-                type="checkbox" 
-                name="allowMessages" 
-                id="allowMessages" 
-                className="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer"
-                defaultChecked={user?.privacySettings?.allowMessages !== false}
-                onChange={(e) => {
-                  // This will be handled in the form submit
-                }}
-                style={{
-                  right: user?.privacySettings?.allowMessages !== false ? '0' : 'auto',
-                  left: user?.privacySettings?.allowMessages !== false ? 'auto' : '0',
-                  borderColor: user?.privacySettings?.allowMessages !== false ? '#4ade80' : '#f87171',
-                  backgroundColor: user?.privacySettings?.allowMessages !== false ? '#4ade80' : '#f87171'
-                }}
-              />
-              <label 
-                htmlFor="allowMessages" 
-                className="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 dark:bg-gray-600 cursor-pointer"
-              ></label>
-            </div>
-          </div>
-          <p className="text-xs text-gray-500 dark:text-gray-400">
-            When enabled, your connections can send you secure messages.
-          </p>
-        </div>
-      </div>
+        <Box sx={{ mb: 3 }}>
+          <ThemeToggle />
+        </Box>
+        
+        <Divider sx={{ mb: 2 }} />
+        
+        <Typography variant="subtitle1" sx={{ mb: 1, color: darkMode ? '#d1d5db' : '#374151' }}>
+          Privacy & Messaging
+        </Typography>
+        
+        <FormControlLabel
+          control={
+            <Switch 
+              id="allowMessages"
+              name="allowMessages"
+              defaultChecked={user?.privacySettings?.allowMessages !== false}
+              color="primary"
+            />
+          }
+          label="Allow Messaging"
+          sx={{ 
+            '& .MuiFormControlLabel-label': { 
+              color: darkMode ? '#d1d5db' : '#374151'
+            } 
+          }}
+        />
+        
+        <Typography variant="caption" sx={{ display: 'block', mt: 1, color: darkMode ? '#9ca3af' : '#6b7280' }}>
+          When enabled, your connections can send you secure messages.
+        </Typography>
+      </Paper>
       
-      <form onSubmit={handleSubmit} className="space-y-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4">
-        <div className="space-y-2">
-          <label className="block text-gray-700 dark:text-gray-300 font-medium">Your Name</label>
-          <input
-            type="text"
-            className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200"
-            placeholder="Enter your name"
+      <Paper elevation={0} 
+        component="form" 
+        onSubmit={handleSubmit} 
+        sx={{ 
+          p: 3,
+          bgcolor: darkMode ? '#1f2937' : '#ffffff',
+          borderRadius: 2,
+          border: darkMode ? '1px solid #374151' : '1px solid #e5e7eb'
+        }}
+      >
+        <Typography variant="h6" sx={{ mb: 2, color: darkMode ? '#d1d5db' : '#374151' }}>
+          Personal Information
+        </Typography>
+        
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5, mb: 3 }}>
+          <TextField
+            label="Your Name"
+            fullWidth
             value={name}
             onChange={(e) => setName(e.target.value)}
+            placeholder="Enter your name"
+            variant="outlined"
+            InputLabelProps={{
+              style: { color: darkMode ? '#9ca3af' : '#6b7280' }
+            }}
+            InputProps={{
+              style: { 
+                color: darkMode ? '#d1d5db' : '#374151',
+                backgroundColor: darkMode ? 'rgba(55, 65, 81, 0.3)' : '#ffffff'
+              }
+            }}
           />
-        </div>
-        
-        <div className="space-y-2">
-          <label className="block text-gray-700 dark:text-gray-300 font-medium">Sobriety Date *</label>
-          <input
+          
+          <TextField
+            label="Sobriety Date"
+            required
+            fullWidth
             type="date"
-            className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200"
             value={sobrietyDate}
             onChange={(e) => setSobrietyDate(e.target.value)}
-            max={new Date().toISOString().split('T')[0]}
+            inputProps={{
+              max: new Date().toISOString().split('T')[0]
+            }}
+            variant="outlined"
+            error={!!errors.sobrietyDate}
+            helperText={errors.sobrietyDate}
+            InputLabelProps={{
+              shrink: true,
+              style: { color: darkMode ? '#9ca3af' : '#6b7280' }
+            }}
+            InputProps={{
+              style: { 
+                color: darkMode ? '#d1d5db' : '#374151',
+                backgroundColor: darkMode ? 'rgba(55, 65, 81, 0.3)' : '#ffffff'
+              }
+            }}
           />
-          {errors.sobrietyDate && (
-            <p className="text-red-500 text-sm">{errors.sobrietyDate}</p>
-          )}
-        </div>
-        
-        <div className="space-y-2">
-          <label className="block text-gray-700 dark:text-gray-300 font-medium">Home Group</label>
-          <input
-            type="text"
-            className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200"
-            placeholder="Enter your home group"
+          
+          <TextField
+            label="Home Group"
+            fullWidth
             value={homeGroup}
             onChange={(e) => setHomeGroup(e.target.value)}
+            placeholder="Enter your home group"
+            variant="outlined"
+            InputLabelProps={{
+              style: { color: darkMode ? '#9ca3af' : '#6b7280' }
+            }}
+            InputProps={{
+              style: { 
+                color: darkMode ? '#d1d5db' : '#374151',
+                backgroundColor: darkMode ? 'rgba(55, 65, 81, 0.3)' : '#ffffff'
+              }
+            }}
           />
-        </div>
-        
-        <div className="space-y-2">
-          <label className="block text-gray-700 dark:text-gray-300 font-medium">Sponsor's Name</label>
-          <input
-            type="text"
-            className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200"
-            placeholder="Enter your sponsor's name"
+          
+          <TextField
+            label="Sponsor's Name"
+            fullWidth
             value={sponsorName}
             onChange={(e) => setSponsorName(e.target.value)}
+            placeholder="Enter your sponsor's name"
+            variant="outlined"
+            InputLabelProps={{
+              style: { color: darkMode ? '#9ca3af' : '#6b7280' }
+            }}
+            InputProps={{
+              style: { 
+                color: darkMode ? '#d1d5db' : '#374151',
+                backgroundColor: darkMode ? 'rgba(55, 65, 81, 0.3)' : '#ffffff'
+              }
+            }}
           />
-        </div>
-        
-        <div className="space-y-2">
-          <label className="block text-gray-700 dark:text-gray-300 font-medium">Sponsor's Phone</label>
-          <input
+          
+          <TextField
+            label="Sponsor's Phone"
+            fullWidth
             type="tel"
-            className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200"
-            placeholder="Enter your sponsor's phone number"
             value={sponsorPhone}
             onChange={(e) => setSponsorPhone(e.target.value)}
+            placeholder="Enter your sponsor's phone number"
+            variant="outlined"
+            InputLabelProps={{
+              style: { color: darkMode ? '#9ca3af' : '#6b7280' }
+            }}
+            InputProps={{
+              style: { 
+                color: darkMode ? '#d1d5db' : '#374151',
+                backgroundColor: darkMode ? 'rgba(55, 65, 81, 0.3)' : '#ffffff'
+              }
+            }}
           />
-        </div>
+        </Box>
         
-        <div className="pt-4">
-          <button
-            type="submit"
-            className="w-full bg-blue-500 hover:bg-blue-600 text-white p-3 rounded font-medium transition-colors"
-          >
-            Save Profile
-          </button>
-        </div>
-      </form>
-    </div>
+        <Button
+          type="submit"
+          variant="contained"
+          color="primary"
+          fullWidth
+          sx={{ 
+            py: 1.5,
+            mt: 1,
+            bgcolor: darkMode ? '#3b82f6' : '#2563eb',
+            '&:hover': {
+              bgcolor: darkMode ? '#2563eb' : '#1d4ed8'
+            }
+          }}
+        >
+          Save Profile
+        </Button>
+      </Paper>
+    </Box>
   );
 }
