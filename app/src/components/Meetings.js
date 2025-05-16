@@ -15,9 +15,11 @@ export default function Meetings({ setCurrentView, meetings = [], onSave, user }
   // Keep user preferences in sync
   useEffect(() => {
     if (user && user.preferences) {
-      setUse24HourFormat(user.preferences.use24HourFormat || false);
+      const timeFormat = user.preferences.use24HourFormat || false;
+      console.log('Meetings: Setting time format preference to:', timeFormat);
+      setUse24HourFormat(timeFormat);
     }
-  }, [user]);
+  }, [user, user?.preferences?.use24HourFormat]);
   
   // Get user's home groups
   const [userHomeGroups, setUserHomeGroups] = useState([]);
