@@ -24,7 +24,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   setupGlobalDbObject: () => (/* binding */ setupGlobalDbObject),
 /* harmony export */   update: () => (/* binding */ update)
 /* harmony export */ });
-Object(function webpackMissingModule() { var e = new Error("Cannot find module '@ionic/react'"); e.code = 'MODULE_NOT_FOUND'; throw e; }());
+/* harmony import */ var _ionic_react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @ionic/react */ "./node_modules/@ionic/react/dist/index.js");
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 function _createForOfIteratorHelper(r, e) { var t = "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (!t) { if (Array.isArray(r) || (t = _unsupportedIterableToArray(r)) || e && r && "number" == typeof r.length) { t && (r = t); var _n = 0, F = function F() {}; return { s: F, n: function n() { return _n >= r.length ? { done: !0 } : { done: !1, value: r[_n++] }; }, e: function e(r) { throw r; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var o, a = !0, u = !1; return { s: function s() { t = t.call(r); }, n: function n() { var r = t.next(); return a = r.done, r; }, e: function e(r) { u = !0, o = r; }, f: function f() { try { a || null == t["return"] || t["return"](); } finally { if (u) throw o; } } }; }
 function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
@@ -67,19 +67,19 @@ function _initDatabase() {
         case 0:
           console.log("Initializing SQLite database for Capacitor...");
           _context.prev = 1;
-          if (!(Object(function webpackMissingModule() { var e = new Error("Cannot find module '@ionic/react'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())('capacitor') || Object(function webpackMissingModule() { var e = new Error("Cannot find module '@ionic/react'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())('cordova'))) {
+          if (!((0,_ionic_react__WEBPACK_IMPORTED_MODULE_0__.isPlatform)('capacitor') || (0,_ionic_react__WEBPACK_IMPORTED_MODULE_0__.isPlatform)('cordova'))) {
             _context.next = 18;
             break;
           }
           console.log("Using native SQLite implementation via Capacitor");
 
           // For Capacitor
-          if (!Object(function webpackMissingModule() { var e = new Error("Cannot find module '@ionic/react'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())('capacitor')) {
+          if (!(0,_ionic_react__WEBPACK_IMPORTED_MODULE_0__.isPlatform)('capacitor')) {
             _context.next = 12;
             break;
           }
           _context.next = 7;
-          return Promise.resolve().then(function webpackMissingModule() { var e = new Error("Cannot find module '@capacitor-community/sqlite'"); e.code = 'MODULE_NOT_FOUND'; throw e; });
+          return __webpack_require__.e(/*! import() */ "vendors-node_modules_capacitor-community_sqlite_dist_esm_index_js").then(__webpack_require__.bind(__webpack_require__, /*! @capacitor-community/sqlite */ "./node_modules/@capacitor-community/sqlite/dist/esm/index.js"));
         case 7:
           _yield$import = _context.sent;
           CapacitorSQLite = _yield$import.CapacitorSQLite;
