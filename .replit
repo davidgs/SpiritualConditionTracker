@@ -22,7 +22,7 @@ args = "BasicServer"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "AppServer"
+args = "OriginalServer"
 
 [[workflows.workflow]]
 name = "ExpoApp"
@@ -43,12 +43,12 @@ args = "node basic-server.js"
 waitForPort = 5000
 
 [[workflows.workflow]]
-name = "AppServer"
+name = "OriginalServer"
 author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "cd app && npm run dev"
+args = "node original-server.js"
 waitForPort = 5000
 
 [deployment]
