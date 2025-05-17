@@ -1435,6 +1435,8 @@ function calculateSpiritualFitnessWithTimeframe() {
 }
 function setupGlobalDbObject() {
   console.log('Setting up global db object with all necessary functions');
+
+  // Set up basic database functions
   window.db = {
     getAll: getAll,
     getById: getById,
@@ -1453,8 +1455,252 @@ function setupGlobalDbObject() {
     migrateFromLocalStorage: migrateFromLocalStorage
   };
 
+  // Set up the global Database object that was used in the original app
+  window.Database = {
+    // User operations
+    userOperations: {
+      getAll: function getAll() {
+        return window.db.getAll('users');
+      },
+      getById: function getById(id) {
+        return window.db.getById('users', id);
+      },
+      create: function create(userData) {
+        return window.db.add('users', userData);
+      },
+      update: function update(id, updates) {
+        return window.db.update('users', id, updates);
+      }
+    },
+    // Activity operations
+    activityOperations: {
+      getAll: function getAll() {
+        var filters = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+        if (filters.userId) {
+          return window.db.query('activities', function (activity) {
+            return activity.userId === filters.userId;
+          });
+        }
+        return window.db.getAll('activities');
+      },
+      getById: function getById(id) {
+        return window.db.getById('activities', id);
+      },
+      create: function create(activityData) {
+        return window.db.add('activities', activityData);
+      },
+      update: function update(id, updates) {
+        return window.db.update('activities', id, updates);
+      },
+      "delete": function _delete(id) {
+        return window.db.remove('activities', id);
+      }
+    },
+    // Meeting operations
+    meetingOperations: {
+      getAll: function getAll() {
+        var filters = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+        if (filters.userId) {
+          return window.db.query('meetings', function (meeting) {
+            return meeting.userId === filters.userId;
+          });
+        }
+        return window.db.getAll('meetings');
+      },
+      getById: function getById(id) {
+        return window.db.getById('meetings', id);
+      },
+      create: function create(meetingData) {
+        return window.db.add('meetings', meetingData);
+      },
+      update: function update(id, updates) {
+        return window.db.update('meetings', id, updates);
+      },
+      "delete": function _delete(id) {
+        return window.db.remove('meetings', id);
+      }
+    },
+    // Spiritual fitness operations - the original calculation code
+    spiritualFitnessOperations: {
+      // Main calculation function that adjusts based on timeframe
+      calculateSpiritualFitness: function calculateSpiritualFitness(userId) {
+        var timeframe = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 30;
+        var activities = window.Database.activityOperations.getAll({
+          userId: userId
+        });
+        if (!activities || activities.length === 0) {
+          return {
+            score: 20,
+            breakdown: {},
+            timeframe: timeframe
+          };
+        }
+
+        // Define weights for activity types
+        var weights = {
+          meeting: 10,
+          // Attending a meeting
+          prayer: 8,
+          // Prayer 
+          meditation: 8,
+          // Meditation
+          reading: 6,
+          // Reading AA literature
+          callSponsor: 5,
+          // Calling sponsor
+          callSponsee: 4,
+          // Calling sponsee
+          service: 9,
+          // Service work
+          stepWork: 10 // Working on steps
+        };
+
+        // Get date range for calculation
+        var today = new Date();
+        var cutoffDate = new Date();
+        cutoffDate.setDate(today.getDate() - timeframe);
+
+        // Filter for recent activities
+        var recentActivities = activities.filter(function (activity) {
+          var activityDate = new Date(activity.date);
+          return activityDate >= cutoffDate && activityDate <= today;
+        });
+        if (recentActivities.length === 0) {
+          return {
+            score: 20,
+            breakdown: {},
+            timeframe: timeframe
+          };
+        }
+
+        // Calculate scores
+        var totalPoints = 0;
+        var eligibleActivities = 0;
+        var breakdown = {};
+
+        // Used to track the days with activities for consistency bonus
+        var activityDays = new Set();
+        recentActivities.forEach(function (activity) {
+          // Track unique days with activities
+          if (activity.date) {
+            var day = new Date(activity.date).toISOString().split('T')[0];
+            activityDays.add(day);
+          }
+
+          // Skip activities with unknown types
+          if (!weights[activity.type]) return;
+
+          // Initialize type in breakdown if it doesn't exist
+          if (!breakdown[activity.type]) {
+            breakdown[activity.type] = {
+              count: 0,
+              points: 0
+            };
+          }
+
+          // Update breakdown
+          breakdown[activity.type].count++;
+          breakdown[activity.type].points += weights[activity.type];
+
+          // Update total score
+          totalPoints += weights[activity.type];
+          eligibleActivities++;
+        });
+        var daysWithActivities = activityDays.size;
+        var varietyTypes = Object.keys(breakdown).length;
+        var daysCoveragePercent = daysWithActivities / timeframe * 100;
+
+        // This is the ORIGINAL calculation that worked well
+        // Calculate score based on timeframe
+        var finalScore;
+        if (timeframe <= 30) {
+          // 30-day calculation - 6 days is 20% coverage
+          var basePoints = 20;
+          var activityPoints = Math.min(40, Math.round(totalPoints / 80));
+          var consistencyPoints = Math.min(30, Math.round(daysCoveragePercent * 1.5));
+          var varietyBonus = Math.min(10, varietyTypes * 2);
+          finalScore = basePoints + activityPoints + consistencyPoints + varietyBonus;
+        } else if (timeframe <= 90) {
+          // 60-90 day calculation - 6 days is 10% coverage 
+          var _basePoints4 = 15;
+          var _activityPoints4 = Math.min(35, Math.round(totalPoints / 120));
+          var _consistencyPoints4 = Math.min(25, Math.round(daysCoveragePercent * 2.5));
+          var _varietyBonus4 = Math.min(10, varietyTypes * 2);
+          finalScore = _basePoints4 + _activityPoints4 + _consistencyPoints4 + _varietyBonus4;
+        } else if (timeframe <= 180) {
+          // 180-day calculation - 6 days is 3.3% coverage
+          var _basePoints5 = 10;
+          var _activityPoints5 = Math.min(30, Math.round(totalPoints / 180));
+          var _consistencyPoints5 = Math.min(20, Math.round(daysCoveragePercent * 4));
+          var _varietyBonus5 = Math.min(10, varietyTypes * 2);
+          finalScore = _basePoints5 + _activityPoints5 + _consistencyPoints5 + _varietyBonus5;
+        } else {
+          // 365-day calculation - 6 days is 1.6% coverage
+          var _basePoints6 = 5;
+          var _activityPoints6 = Math.min(25, Math.round(totalPoints / 240));
+          var _consistencyPoints6 = Math.min(15, Math.round(daysCoveragePercent * 6));
+          var _varietyBonus6 = Math.min(10, varietyTypes * 2);
+          finalScore = _basePoints6 + _activityPoints6 + _consistencyPoints6 + _varietyBonus6;
+        }
+
+        // Cap final score at 100 and ensure it's an integer
+        finalScore = Math.min(100, Math.round(finalScore));
+        console.log("Original DB calculation (".concat(timeframe, " days):"), {
+          daysWithActivities: daysWithActivities,
+          daysCoveragePercent: daysCoveragePercent.toFixed(1) + '%',
+          totalPoints: totalPoints,
+          finalScore: finalScore
+        });
+        return {
+          score: finalScore,
+          breakdown: breakdown,
+          timeframe: timeframe,
+          daysWithActivities: daysWithActivities,
+          totalPoints: totalPoints,
+          calculatedAt: new Date().toISOString()
+        };
+      },
+      // Calculate fitness score using the timeframe preference
+      calculate: function calculate(userId) {
+        var timeframePreference = window.db.getPreference('fitnessTimeframe');
+        var timeframe = timeframePreference ? parseInt(timeframePreference.value, 10) : 30;
+        return window.Database.spiritualFitnessOperations.calculateSpiritualFitness(userId, timeframe);
+      },
+      // Calculate and save to database
+      calculateAndSave: function calculateAndSave(userId, activities) {
+        try {
+          var timeframePreference = window.db.getPreference('fitnessTimeframe');
+          var timeframe = timeframePreference ? parseInt(timeframePreference.value, 10) : 30;
+          var result = window.Database.spiritualFitnessOperations.calculateSpiritualFitness(userId, timeframe);
+
+          // Store result in preferences
+          window.db.setPreference('lastFitnessScore', {
+            score: result.score,
+            calculatedAt: new Date().toISOString(),
+            breakdownJson: JSON.stringify(result.breakdown || {})
+          });
+          return result;
+        } catch (error) {
+          console.error('Error in calculateAndSave:', error);
+          return {
+            score: 20,
+            breakdown: {},
+            timeframe: 30
+          };
+        }
+      }
+    },
+    // Utility functions
+    utils: {
+      calculateDistance: window.db.calculateDistance,
+      calculateSobrietyDays: window.db.calculateSobrietyDays,
+      calculateSobrietyYears: window.db.calculateSobrietyYears
+    }
+  };
+
   // Verify the functions are properly attached
   console.log('Global db object created with these functions:', Object.keys(window.db));
+  console.log('Global Database object created with these operations:', Object.keys(window.Database));
   return window.db;
 }
 

@@ -55,25 +55,54 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
   // Effect to recalculate score when timeframe changes
   useEffect(() => {
     console.log('Dashboard useEffect [scoreTimeframe] triggered with timeframe:', scoreTimeframe);
-    if (window.db?.calculateSpiritualFitnessWithTimeframe) {
+    
+    // First, save the selected timeframe to preferences
+    if (window.db?.setPreference && scoreTimeframe) {
+      window.db.setPreference('fitnessTimeframe', scoreTimeframe.toString());
+    }
+    
+    // Always make activities available on window for calculation functions
+    window.activities = activities;
+    
+    // Use the original Database method that worked well before SQLite migration
+    if (window.Database?.spiritualFitnessOperations?.calculateSpiritualFitness) {
+      console.log('Using original Database.spiritualFitnessOperations with timeframe:', scoreTimeframe);
+      
+      try {
+        // Get user ID (use '1' as default if not found)
+        const users = window.Database.userOperations.getAll();
+        const userId = users && users.length > 0 ? users[0].id : '1';
+        
+        // Calculate using the original method
+        const result = window.Database.spiritualFitnessOperations.calculateSpiritualFitness(userId, scoreTimeframe);
+        console.log('Original database calculation result:', result);
+        
+        if (result && typeof result.score === 'number') {
+          setCurrentScore(result.score);
+        } else {
+          // Fallback if result is unexpected
+          calculateScoreFallback(scoreTimeframe);
+        }
+      } catch (error) {
+        console.error('Error using original calculation method:', error);
+        calculateScoreFallback(scoreTimeframe);
+      }
+    } 
+    // Fall back to newer method if original is not available
+    else if (window.db?.calculateSpiritualFitnessWithTimeframe) {
       console.log('Calling calculateSpiritualFitnessWithTimeframe with:', scoreTimeframe);
       try {
-        // Make the activities available on the window object for the calculation function
-        window.activities = activities;
-        
-        // Calculate the score with the current timeframe
         const newScore = window.db.calculateSpiritualFitnessWithTimeframe(scoreTimeframe);
         console.log('New score calculated:', newScore);
         setCurrentScore(newScore);
       } catch (error) {
         console.error('Error calculating spiritual fitness with timeframe:', error);
-        
-        // Fallback calculation if the function fails
         calculateScoreFallback(scoreTimeframe);
       }
-    } else {
-      console.warn('calculateSpiritualFitnessWithTimeframe not available on window.db');
-      // Use fallback calculation
+    } 
+    // Last resort fallback
+    else {
+      console.warn('No spiritual fitness calculation methods available');
       calculateScoreFallback(scoreTimeframe);
     }
   }, [scoreTimeframe, activities]);
