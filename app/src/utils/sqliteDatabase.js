@@ -3,6 +3,9 @@
  * Handles data persistence using SQLite instead of localStorage
  */
 
+// Import calculation utilities
+import { calculateSobrietyDays, calculateSobrietyYears } from './calculations';
+
 // Initialize the SQLite database
 let db = null;
 
