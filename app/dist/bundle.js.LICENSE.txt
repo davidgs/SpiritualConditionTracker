@@ -1,4 +1,10 @@
+/*!
+ * (C) Ionic http://ionicframework.com - MIT License
+ */
+
 /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/babel/babel/blob/main/packages/babel-helpers/LICENSE */
+
+/*!__STENCIL_STATIC_IMPORT_SWITCH__*/
 
 /**
  * @license React
