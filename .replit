@@ -18,11 +18,11 @@ args = "ExpoApp"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "AppServer"
+args = "BasicServer"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "BasicServer"
+args = "AppServer"
 
 [[workflows.workflow]]
 name = "ExpoApp"
@@ -34,21 +34,21 @@ args = "node no-cache-server.js"
 waitForPort = 5000
 
 [[workflows.workflow]]
-name = "AppServer"
-author = "agent"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "node simple-server.js"
-waitForPort = 5000
-
-[[workflows.workflow]]
 name = "BasicServer"
 author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "node basic-server.js"
+waitForPort = 5000
+
+[[workflows.workflow]]
+name = "AppServer"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "node simple-app-server.js"
 waitForPort = 5000
 
 [deployment]
