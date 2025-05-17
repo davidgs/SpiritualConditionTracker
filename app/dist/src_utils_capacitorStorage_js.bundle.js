@@ -14,6 +14,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   calculateSobrietyDays: () => (/* binding */ calculateSobrietyDays),
 /* harmony export */   calculateSobrietyYears: () => (/* binding */ calculateSobrietyYears),
 /* harmony export */   calculateSpiritualFitness: () => (/* binding */ calculateSpiritualFitness),
+/* harmony export */   calculateSpiritualFitnessWithTimeframe: () => (/* binding */ calculateSpiritualFitnessWithTimeframe),
 /* harmony export */   getAll: () => (/* binding */ getAll),
 /* harmony export */   getById: () => (/* binding */ getById),
 /* harmony export */   getPreference: () => (/* binding */ getPreference),
@@ -1200,7 +1201,81 @@ function calculateSobrietyYears(sobrietyDate) {
   // Round to specified decimal places
   return parseFloat(years.toFixed(decimalPlaces));
 }
+
+/**
+ * Calculate spiritual fitness with a custom timeframe
+ * @param {number} timeframe - Number of days to calculate score for (default 30)
+ * @returns {number} - Spiritual fitness score (0-100)
+ */
+function calculateSpiritualFitnessWithTimeframe() {
+  var timeframe = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 30;
+  console.log('calculateSpiritualFitnessWithTimeframe called with timeframe:', timeframe);
+
+  // Start with a base score
+  var baseScore = 20;
+  try {
+    // Check if we have any activities
+    if (!window.db || !window.db.getAll) {
+      console.warn('Database not properly initialized for calculateSpiritualFitnessWithTimeframe');
+      return baseScore;
+    }
+
+    // Get all activities
+    var activities = window.db.getAll('activities');
+    console.log('Activities for fitness calculation:', activities);
+    if (!activities || activities.length === 0) {
+      console.log('No activities found, returning base score');
+      return baseScore;
+    }
+
+    // Get current date and cutoff date
+    var today = new Date();
+    var cutoffDate = new Date();
+    cutoffDate.setDate(today.getDate() - timeframe);
+
+    // Filter recent activities
+    var recentActivities = activities.filter(function (activity) {
+      var activityDate = new Date(activity.date);
+      return activityDate >= cutoffDate && activityDate <= today;
+    });
+    console.log('Recent activities within timeframe:', recentActivities.length);
+    if (recentActivities.length === 0) {
+      return baseScore;
+    }
+
+    // Calculate basic activity points (2 points per activity, max 40)
+    var activityPoints = Math.min(40, recentActivities.length * 2);
+
+    // Calculate consistency (days with activities / timeframe days)
+    var activityDays = new Set();
+    recentActivities.forEach(function (activity) {
+      if (activity.date) {
+        var day = new Date(activity.date).toISOString().split('T')[0];
+        activityDays.add(day);
+      }
+    });
+    var daysWithActivities = activityDays.size;
+    var consistencyPercentage = daysWithActivities / timeframe;
+    var consistencyPoints = Math.round(consistencyPercentage * 40);
+
+    // Final score calculation
+    var totalScore = Math.min(100, baseScore + activityPoints + consistencyPoints);
+    console.log('Spiritual fitness calculation details:', {
+      baseScore: baseScore,
+      activityPoints: activityPoints,
+      consistencyPoints: consistencyPoints,
+      daysWithActivities: daysWithActivities,
+      timeframe: timeframe,
+      totalScore: totalScore
+    });
+    return totalScore;
+  } catch (error) {
+    console.error('Error in calculateSpiritualFitnessWithTimeframe:', error);
+    return baseScore;
+  }
+}
 function setupGlobalDbObject() {
+  console.log('Setting up global db object with all necessary functions');
   window.db = {
     getAll: getAll,
     getById: getById,
@@ -1214,9 +1289,13 @@ function setupGlobalDbObject() {
     getPreference: getPreference,
     setPreference: setPreference,
     calculateSpiritualFitness: calculateSpiritualFitness,
+    calculateSpiritualFitnessWithTimeframe: calculateSpiritualFitnessWithTimeframe,
     hasLocalStorageData: hasLocalStorageData,
     migrateFromLocalStorage: migrateFromLocalStorage
   };
+
+  // Verify the functions are properly attached
+  console.log('Global db object created with these functions:', Object.keys(window.db));
   return window.db;
 }
 

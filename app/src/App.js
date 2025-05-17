@@ -435,6 +435,9 @@ function App() {
     }
   }
 
+  // Log the spiritual fitness value before rendering
+  console.log('App.js - Before rendering, spiritualFitness value:', spiritualFitness);
+  
   return (
     <ThemeProvider>
       <div className="app-container h-full flex flex-col bg-white dark:bg-gray-900 transition-colors duration-200">

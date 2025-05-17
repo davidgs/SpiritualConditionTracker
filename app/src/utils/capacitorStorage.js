@@ -910,7 +910,88 @@ export function calculateSobrietyYears(sobrietyDate, decimalPlaces = 2) {
   return parseFloat(years.toFixed(decimalPlaces));
 }
 
+/**
+ * Calculate spiritual fitness with a custom timeframe
+ * @param {number} timeframe - Number of days to calculate score for (default 30)
+ * @returns {number} - Spiritual fitness score (0-100)
+ */
+export function calculateSpiritualFitnessWithTimeframe(timeframe = 30) {
+  console.log('calculateSpiritualFitnessWithTimeframe called with timeframe:', timeframe);
+  
+  // Start with a base score
+  const baseScore = 20;
+  
+  try {
+    // Check if we have any activities
+    if (!window.db || !window.db.getAll) {
+      console.warn('Database not properly initialized for calculateSpiritualFitnessWithTimeframe');
+      return baseScore;
+    }
+    
+    // Get all activities
+    const activities = window.db.getAll('activities');
+    console.log('Activities for fitness calculation:', activities);
+    
+    if (!activities || activities.length === 0) {
+      console.log('No activities found, returning base score');
+      return baseScore;
+    }
+    
+    // Get current date and cutoff date
+    const today = new Date();
+    const cutoffDate = new Date();
+    cutoffDate.setDate(today.getDate() - timeframe);
+    
+    // Filter recent activities
+    const recentActivities = activities.filter(activity => {
+      const activityDate = new Date(activity.date);
+      return activityDate >= cutoffDate && activityDate <= today;
+    });
+    
+    console.log('Recent activities within timeframe:', recentActivities.length);
+    
+    if (recentActivities.length === 0) {
+      return baseScore;
+    }
+    
+    // Calculate basic activity points (2 points per activity, max 40)
+    const activityPoints = Math.min(40, recentActivities.length * 2);
+    
+    // Calculate consistency (days with activities / timeframe days)
+    const activityDays = new Set();
+    recentActivities.forEach(activity => {
+      if (activity.date) {
+        const day = new Date(activity.date).toISOString().split('T')[0];
+        activityDays.add(day);
+      }
+    });
+    
+    const daysWithActivities = activityDays.size;
+    const consistencyPercentage = daysWithActivities / timeframe;
+    const consistencyPoints = Math.round(consistencyPercentage * 40);
+    
+    // Final score calculation
+    const totalScore = Math.min(100, baseScore + activityPoints + consistencyPoints);
+    
+    console.log('Spiritual fitness calculation details:', {
+      baseScore,
+      activityPoints,
+      consistencyPoints,
+      daysWithActivities,
+      timeframe,
+      totalScore
+    });
+    
+    return totalScore;
+  } catch (error) {
+    console.error('Error in calculateSpiritualFitnessWithTimeframe:', error);
+    return baseScore;
+  }
+}
+
 export function setupGlobalDbObject() {
+  console.log('Setting up global db object with all necessary functions');
+  
   window.db = {
     getAll,
     getById,
@@ -924,9 +1005,13 @@ export function setupGlobalDbObject() {
     getPreference,
     setPreference,
     calculateSpiritualFitness,
+    calculateSpiritualFitnessWithTimeframe,
     hasLocalStorageData,
     migrateFromLocalStorage
   };
+  
+  // Verify the functions are properly attached
+  console.log('Global db object created with these functions:', Object.keys(window.db));
   
   return window.db;
 }

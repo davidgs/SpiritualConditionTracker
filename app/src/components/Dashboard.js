@@ -22,8 +22,16 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
   const modalRef = useRef(null);
   const buttonRef = useRef(null);
   
+  // Log spiritualFitness prop for debugging
+  console.log('Dashboard received spiritualFitness:', spiritualFitness);
+  
+  // Log current score state
+  console.log('Dashboard currentScore state:', currentScore);
+  
   // Format score to 2 decimal places for display
   const formattedScore = currentScore > 0 ? currentScore.toFixed(2) : '0';
+  
+  console.log('Dashboard formattedScore for display:', formattedScore);
   
   // Determine color based on score
   const getScoreColor = (score) => {
@@ -34,12 +42,30 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
   
   // Calculate progress percentage, capped at 100%
   const progressPercent = Math.min(currentScore, 100);
+  console.log('Dashboard progressPercent:', progressPercent);
+  
+  // Effect to initialize and update score when spiritualFitness prop changes
+  useEffect(() => {
+    console.log('Dashboard useEffect [spiritualFitness] triggered with:', spiritualFitness);
+    if (spiritualFitness) {
+      setCurrentScore(spiritualFitness);
+    }
+  }, [spiritualFitness]);
   
   // Effect to recalculate score when timeframe changes
   useEffect(() => {
+    console.log('Dashboard useEffect [scoreTimeframe] triggered with timeframe:', scoreTimeframe);
     if (window.db?.calculateSpiritualFitnessWithTimeframe) {
-      const newScore = window.db.calculateSpiritualFitnessWithTimeframe(scoreTimeframe);
-      setCurrentScore(newScore);
+      console.log('Calling calculateSpiritualFitnessWithTimeframe with:', scoreTimeframe);
+      try {
+        const newScore = window.db.calculateSpiritualFitnessWithTimeframe(scoreTimeframe);
+        console.log('New score calculated:', newScore);
+        setCurrentScore(newScore);
+      } catch (error) {
+        console.error('Error calculating spiritual fitness with timeframe:', error);
+      }
+    } else {
+      console.warn('calculateSpiritualFitnessWithTimeframe not available on window.db');
     }
   }, [scoreTimeframe]);
   
