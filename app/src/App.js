@@ -92,13 +92,13 @@ function App() {
         // Create default user
         const newUser = {
           id: 'user_' + Date.now(),
-          name: 'David',
-          lastName: '',
-          sobrietyDate: '1986-05-15T00:00:00.000Z',
-          homeGroup: 'Arch to Freedom',
-          homeGroups: ['Arch to Freedom'],
+          name: 'John',
+          lastName: 'Doe',
+          sobrietyDate: '2024-01-01T00:00:00.000Z',
+          homeGroup: 'My Home Group',
+          homeGroups: ['My Home Group'],
           phone: '',
-          email: 'davidgs@me.com',
+          email: 'doe@example.com',
           privacySettings: {
             shareLocation: false,
             shareActivities: false,
