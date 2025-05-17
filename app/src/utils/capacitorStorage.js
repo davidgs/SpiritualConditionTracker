@@ -915,26 +915,24 @@ export function calculateSobrietyYears(sobrietyDate, decimalPlaces = 2) {
  * @param {number} timeframe - Number of days to calculate score for (default 30)
  * @returns {number} - Spiritual fitness score (0-100)
  */
-export function calculateSpiritualFitnessWithTimeframe(timeframe = 30) {
+export async function calculateSpiritualFitnessWithTimeframe(timeframe = 30) {
   console.log('calculateSpiritualFitnessWithTimeframe called with timeframe:', timeframe);
   
   try {
     // Get activities from the right source
-    let activities;
+    let activities = [];
     
     // If we have window.activities, use that directly
     if (window.activities && Array.isArray(window.activities)) {
       activities = window.activities;
+      console.log('Using window.activities array with', activities.length, 'items');
     } 
-    // Otherwise get activities from the database
+    // Otherwise get activities from the database - properly handle async for SQLite on iOS
     else {
       try {
-        const result = executeQuery('SELECT * FROM activities');
-        activities = [];
-        
-        for (let i = 0; i < result.rows.length; i++) {
-          activities.push(result.rows.item(i));
-        }
+        // Use the proper async method to get activities from SQLite
+        activities = await getAll('activities');
+        console.log('Retrieved', activities.length, 'activities from SQLite database');
       } catch (dbError) {
         console.error('Database error getting activities:', dbError);
         activities = [];
@@ -943,6 +941,7 @@ export function calculateSpiritualFitnessWithTimeframe(timeframe = 30) {
     
     // Base score with no activities
     if (!activities || activities.length === 0) {
+      console.log('No activities found, returning base score of 20');
       return 20; 
     }
     
