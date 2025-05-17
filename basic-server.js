@@ -48,11 +48,24 @@ const server = http.createServer((req, res) => {
   
   // Route handling
   if (url === '/app' || url.startsWith('/app/')) {
-    // Serve the main app
-    fs.readFile(path.join(__dirname, 'app/build/index.html'), (err, data) => {
+    // Check if the path exists in build directory first
+    const buildPath = path.join(__dirname, 'app/build/index.html');
+    const srcPath = path.join(__dirname, 'app/index.html');
+    
+    // First try to serve from build directory
+    fs.readFile(buildPath, (err, data) => {
       if (err) {
-        res.writeHead(404);
-        res.end('App not found. Make sure to build the app first.');
+        // If not in build, try src directory
+        fs.readFile(srcPath, (err2, data2) => {
+          if (err2) {
+            res.writeHead(404);
+            res.end('App not found in either build or src directories.');
+            return;
+          }
+          
+          res.writeHead(200, { 'Content-Type': 'text/html', 'Cache-Control': 'no-cache' });
+          res.end(data2);
+        });
         return;
       }
       
@@ -77,23 +90,54 @@ const server = http.createServer((req, res) => {
     return;
   }
   
-  // Serve static files from app/build directory
+  // Serve static files from app directories
   if (url.startsWith('/static/')) {
-    const filePath = path.join(__dirname, 'app/build', url);
-    serveStaticFile(filePath, res);
+    // Try build directory first, then src
+    const buildPath = path.join(__dirname, 'app/build', url);
+    const srcPath = path.join(__dirname, 'app/src', url.replace('/static/', '/'));
+    
+    fs.access(buildPath, fs.constants.F_OK, (err) => {
+      if (!err) {
+        serveStaticFile(buildPath, res);
+      } else {
+        serveStaticFile(srcPath, res);
+      }
+    });
     return;
   }
   
-  // Assets for the landing page 
+  // Assets for the landing page and app
   if (url.startsWith('/app/assets/')) {
     const assetPath = path.join(__dirname, url);
     serveStaticFile(assetPath, res);
     return;
   }
+
+  // Handle src directory for js files
+  if (url.startsWith('/app/src/')) {
+    const srcPath = path.join(__dirname, url);
+    serveStaticFile(srcPath, res);
+    return;
+  }
   
-  // For any other path, check if it's a file in app/build
-  const filePath = path.join(__dirname, 'app/build', url);
-  serveStaticFile(filePath, res);
+  // For any other path, check if it's a file in app/build, then app/src, then app
+  const buildPath = path.join(__dirname, 'app/build', url);
+  const srcPath = path.join(__dirname, 'app/src', url.replace('/app/', '/'));
+  const appPath = path.join(__dirname, 'app', url.replace('/app/', '/'));
+  
+  fs.access(buildPath, fs.constants.F_OK, (err) => {
+    if (!err) {
+      serveStaticFile(buildPath, res);
+    } else {
+      fs.access(srcPath, fs.constants.F_OK, (err2) => {
+        if (!err2) {
+          serveStaticFile(srcPath, res);
+        } else {
+          serveStaticFile(appPath, res);
+        }
+      });
+    }
+  });
 });
 
 // Helper function to serve static files

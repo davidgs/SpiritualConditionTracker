@@ -277,14 +277,17 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
               style={{
                 backgroundColor: darkMode ? '#1e40af' : '#dbeafe',
                 color: darkMode ? '#93c5fd' : '#1e40af',
-                padding: '0.25rem 0.5rem',
-                borderRadius: '0.25rem',
-                fontSize: '0.65rem',
-                fontWeight: '500',
-                marginTop: '0.25rem',
+                padding: '0.5rem 0.75rem',  /* Increased padding */
+                borderRadius: '0.375rem',   /* Slightly larger radius */
+                fontSize: '0.85rem',        /* Increased font size by ~30% */
+                fontWeight: '600',          /* Slightly bolder */
+                marginTop: '0.375rem',      /* More top margin */
                 border: darkMode ? '1px solid #3b82f6' : '1px solid #93c5fd',
                 cursor: 'pointer',
-                transition: 'background-color 0.2s'
+                transition: 'background-color 0.2s',
+                width: 'max-content',       /* Make sure it fits content */
+                minWidth: '150px',          /* Minimum width */
+                boxShadow: '0 1px 2px rgba(0,0,0,0.1)' /* Subtle shadow for better visibility */
               }}
               onClick={() => setShowScoreModal(!showScoreModal)}
             >
