@@ -212,20 +212,33 @@ function App() {
     try {
       console.log('Calculating spiritual fitness with activities:', activities);
       
-      // Use the database method to calculate spiritual fitness
-      // This allows us to keep the calculation logic in one place
-      const score = await window.db.calculateSpiritualFitness(activities);
+      // First try the Database.spiritualFitnessOperations method if available
+      if (window.Database && window.Database.spiritualFitnessOperations && 
+          typeof window.Database.spiritualFitnessOperations.calculateSpiritualFitness === 'function') {
+        console.log('Using Database.spiritualFitnessOperations.calculateSpiritualFitness');
+        // Get user ID (use '1' as default if not found)
+        const users = window.Database.userOperations.getAll();
+        const userId = users && users.length > 0 ? users[0].id : '1';
+        const result = window.Database.spiritualFitnessOperations.calculateSpiritualFitness(userId);
+        
+        console.log('Spiritual fitness calculated with original method:', result);
+        setSpiritualFitness(result.score);
+        return result.score;
+      }
       
-      console.log('Spiritual fitness score calculated:', score);
+      // Try the direct db method if available
+      if (typeof window.db.calculateSpiritualFitness === 'function') {
+        console.log('Using window.db.calculateSpiritualFitness');
+        const score = await window.db.calculateSpiritualFitness(activities);
+        console.log('Spiritual fitness score calculated:', score);
+        setSpiritualFitness(score);
+        return score;
+      }
       
-      // Set the spiritual fitness score in state
-      setSpiritualFitness(score);
+      // If we get here, no standard calculation methods are available (iOS warning case)
+      console.warn('⚠️ No standard spiritual fitness calculation methods available - using built-in fallback');
       
-      return score;
-    } catch (error) {
-      console.error('Error calculating spiritual fitness:', error);
       // Create a more detailed fallback calculation
-      
       // Start with a base score
       const baseScore = 20;
       let finalScore = baseScore;
