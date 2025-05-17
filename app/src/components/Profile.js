@@ -118,12 +118,15 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
     }
     
     // Create updates object with privacy settings
+    // Fix for timezone issue - store the date in a timezone-neutral format (YYYY-MM-DD)
+    // This prevents the date from shifting when displayed
     const updates = {
       name,
       lastName,
       phoneNumber,
       email,
-      sobrietyDate: sobrietyDate ? new Date(sobrietyDate).toISOString() : '',
+      // Store the date as-is without converting to Date object to prevent timezone shift
+      sobrietyDate: sobrietyDate || '',
       homeGroups,
       privacySettings: {
         ...(user?.privacySettings || {}),
