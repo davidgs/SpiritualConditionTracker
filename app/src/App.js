@@ -210,9 +210,13 @@ function App() {
     }
     
     try {
+      console.log('Calculating spiritual fitness with activities:', activities);
+      
       // Use the database method to calculate spiritual fitness
       // This allows us to keep the calculation logic in one place
       const score = await window.db.calculateSpiritualFitness(activities);
+      
+      console.log('Spiritual fitness score calculated:', score);
       
       // Set the spiritual fitness score in state
       setSpiritualFitness(score);
@@ -220,8 +224,45 @@ function App() {
       return score;
     } catch (error) {
       console.error('Error calculating spiritual fitness:', error);
-      setSpiritualFitness(20); // Default base score on error
-      return 20;
+      // Create a more detailed fallback calculation
+      
+      // Start with a base score
+      const baseScore = 20;
+      let finalScore = baseScore;
+      
+      // Only calculate if we have activities
+      if (activities && activities.length > 0) {
+        const now = new Date();
+        const thirtyDaysAgo = new Date();
+        thirtyDaysAgo.setDate(now.getDate() - 30);
+        
+        // Filter recent activities
+        const recentActivities = activities.filter(activity => 
+          new Date(activity.date) >= thirtyDaysAgo && new Date(activity.date) <= now
+        );
+        
+        // Add points based on activity count (2 points per activity, max 40)
+        const activityPoints = Math.min(40, recentActivities.length * 2);
+        
+        // Group by days for consistency calculation
+        const activityDays = new Set();
+        recentActivities.forEach(activity => {
+          const day = new Date(activity.date).toISOString().split('T')[0];
+          activityDays.add(day);
+        });
+        
+        // Calculate consistency points (up to 40 points)
+        const daysWithActivities = activityDays.size;
+        const consistencyPercentage = daysWithActivities / 30;
+        const consistencyPoints = Math.round(consistencyPercentage * 40);
+        
+        // Calculate final score
+        finalScore = Math.min(100, baseScore + activityPoints + consistencyPoints);
+      }
+      
+      console.log('Spiritual fitness calculated with fallback:', finalScore);
+      setSpiritualFitness(finalScore);
+      return finalScore;
     }
   }
 
