@@ -120,20 +120,34 @@ const server = http.createServer((req, res) => {
     return;
   }
   
-  // For any other path, check if it's a file in app/build, then app/src, then app
+  // Handle dist directory for bundled js files
+  if (url.startsWith('/app/dist/')) {
+    const distPath = path.join(__dirname, url);
+    serveStaticFile(distPath, res);
+    return;
+  }
+  
+  // For any other path, check if it's a file in app/dist, then app/build, then app/src, then app
+  const distPath = path.join(__dirname, url);
   const buildPath = path.join(__dirname, 'app/build', url);
   const srcPath = path.join(__dirname, 'app/src', url.replace('/app/', '/'));
   const appPath = path.join(__dirname, 'app', url.replace('/app/', '/'));
   
-  fs.access(buildPath, fs.constants.F_OK, (err) => {
+  fs.access(distPath, fs.constants.F_OK, (err) => {
     if (!err) {
-      serveStaticFile(buildPath, res);
+      serveStaticFile(distPath, res);
     } else {
-      fs.access(srcPath, fs.constants.F_OK, (err2) => {
+      fs.access(buildPath, fs.constants.F_OK, (err2) => {
         if (!err2) {
-          serveStaticFile(srcPath, res);
+          serveStaticFile(buildPath, res);
         } else {
-          serveStaticFile(appPath, res);
+          fs.access(srcPath, fs.constants.F_OK, (err3) => {
+            if (!err3) {
+              serveStaticFile(srcPath, res);
+            } else {
+              serveStaticFile(appPath, res);
+            }
+          });
         }
       });
     }
