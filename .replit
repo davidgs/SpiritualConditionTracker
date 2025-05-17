@@ -30,8 +30,8 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "node no-cache-server.js"
-waitForPort = 5000
+args = "node fixed-no-cache-server.js"
+waitForPort = 5001
 
 [[workflows.workflow]]
 name = "DirectAppServer"

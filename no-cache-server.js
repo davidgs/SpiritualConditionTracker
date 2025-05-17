@@ -6,6 +6,7 @@
 const express = require('express');
 const path = require('path');
 const cors = require('cors');
+const { execSync } = require('child_process');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -51,6 +52,15 @@ app.use((req, res) => {
   // For non-API requests, serve the landing page as a fallback
   res.status(200).sendFile(path.join(__dirname, 'app/landing-page.html'));
 });
+
+// Prepare iOS build files
+console.log('Preparing iOS build files...');
+try {
+  execSync('node prepare-ios-build.js', { stdio: 'inherit' });
+  console.log('iOS build preparation completed successfully');
+} catch (error) {
+  console.error('iOS build preparation failed:', error.message);
+}
 
 // Start the server
 app.listen(PORT, '0.0.0.0', () => {
