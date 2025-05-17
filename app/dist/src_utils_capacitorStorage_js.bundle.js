@@ -1210,21 +1210,17 @@ function calculateSobrietyYears(sobrietyDate) {
 function calculateSpiritualFitnessWithTimeframe() {
   var timeframe = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 30;
   console.log('calculateSpiritualFitnessWithTimeframe called with timeframe:', timeframe);
-
-  // Start with a base score
-  var baseScore = 20;
   try {
-    // Get activities from the right source - we'll use async/await pattern
+    // Get activities from the right source
     var activities;
 
     // If we have window.activities, use that directly
     if (window.activities && Array.isArray(window.activities)) {
       activities = window.activities;
     }
-    // Otherwise get activities from the database synchronously
+    // Otherwise get activities from the database
     else {
       try {
-        // Get all activities using executeQuery directly
         var result = executeQuery('SELECT * FROM activities');
         activities = [];
         for (var i = 0; i < result.rows.length; i++) {
@@ -1232,115 +1228,141 @@ function calculateSpiritualFitnessWithTimeframe() {
         }
       } catch (dbError) {
         console.error('Database error getting activities:', dbError);
-        // Fallback to empty array
         activities = [];
       }
     }
-    console.log('Activities for fitness calculation:', activities);
     if (!activities || activities.length === 0) {
-      console.log('No activities found, returning base score');
-      return baseScore;
+      return 20; // Base score if no activities
     }
 
     // Get current date and cutoff date
-    var today = new Date();
+    var now = new Date();
     var cutoffDate = new Date();
-    cutoffDate.setDate(today.getDate() - timeframe);
+    cutoffDate.setDate(now.getDate() - timeframe);
 
     // Filter recent activities
     var recentActivities = activities.filter(function (activity) {
       var activityDate = new Date(activity.date);
-      return activityDate >= cutoffDate && activityDate <= today;
+      return activityDate >= cutoffDate && activityDate <= now;
     });
     console.log('Recent activities within timeframe:', recentActivities.length);
     if (recentActivities.length === 0) {
-      return baseScore;
+      return 20; // Base score
     }
 
-    // Get the date of the earliest activity to find the actual timespan
-    var earliestActivityDate = today;
-    var latestActivityDate = new Date(0); // Jan 1, 1970
+    // Define weights for activity types
+    var weights = {
+      meeting: 10,
+      // Attending a meeting
+      prayer: 8,
+      // Prayer 
+      meditation: 8,
+      // Meditation
+      reading: 6,
+      // Reading AA literature
+      callSponsor: 5,
+      // Calling sponsor
+      callSponsee: 4,
+      // Calling sponsee
+      service: 9,
+      // Service work
+      stepWork: 10 // Working on steps
+    };
 
-    recentActivities.forEach(function (activity) {
-      var activityDate = new Date(activity.date);
-      if (activityDate < earliestActivityDate) {
-        earliestActivityDate = activityDate;
-      }
-      if (activityDate > latestActivityDate) {
-        latestActivityDate = activityDate;
-      }
-    });
+    // Calculate scores
+    var totalPoints = 0;
+    var eligibleActivities = 0;
+    var breakdown = {};
 
-    // Calculate the actual span of days with activities
-    var actualTimespan = Math.max(1, Math.ceil((latestActivityDate - earliestActivityDate) / (1000 * 60 * 60 * 24)) + 1);
-
-    // For long timeframes, if all activities are within a short period, adjust expectations
-    var effectiveTimeframe = timeframe > 30 && actualTimespan < timeframe * 0.3 ? Math.max(30, actualTimespan * 1.5) : timeframe;
-    console.log('Timeframe adjustment:', {
-      timeframe: timeframe,
-      earliestActivityDate: earliestActivityDate.toISOString(),
-      latestActivityDate: latestActivityDate.toISOString(),
-      actualTimespan: actualTimespan,
-      effectiveTimeframe: effectiveTimeframe
-    });
-
-    // Calculate basic activity points (2 points per activity, max 40)
-    var activityPoints = Math.min(40, recentActivities.length * 2);
-
-    // Calculate consistency (days with activities / timeframe days)
+    // Used to track the days with activities for consistency bonus
     var activityDays = new Set();
     recentActivities.forEach(function (activity) {
+      // Track unique days with activities
       if (activity.date) {
         var day = new Date(activity.date).toISOString().split('T')[0];
         activityDays.add(day);
       }
+
+      // Skip activities with unknown types
+      if (!weights[activity.type]) return;
+
+      // Initialize type in breakdown if it doesn't exist
+      if (!breakdown[activity.type]) {
+        breakdown[activity.type] = {
+          count: 0,
+          points: 0
+        };
+      }
+
+      // Update breakdown
+      breakdown[activity.type].count++;
+      breakdown[activity.type].points += weights[activity.type];
+
+      // Update total score
+      totalPoints += weights[activity.type];
+      eligibleActivities++;
     });
+
+    // Calculate consistency points based on timeframe
+    var consistencyPoints = 0;
     var daysWithActivities = activityDays.size;
 
-    // Adjust consistency calculation based on timeframe
-    var consistencyPoints = 0;
-
-    // Use effectiveTimeframe instead of timeframe for calculation
-    if (effectiveTimeframe <= 30) {
-      // For 30 days, aim for higher consistency
-      var consistencyPercentage = daysWithActivities / effectiveTimeframe;
-      consistencyPoints = Math.round(consistencyPercentage * 40);
-    } else if (effectiveTimeframe <= 90) {
-      // For 60-90 days, adjust expectations - can't have activities every day
-      // We'll use a lower target percentage for full points
-      var _consistencyPercentage = daysWithActivities / (effectiveTimeframe * 0.7); // 70% of days is target
-      consistencyPoints = Math.min(40, Math.round(_consistencyPercentage * 40));
-    } else if (effectiveTimeframe <= 180) {
-      // For 180 days, expect activity on ~50% of days for full points
-      var _consistencyPercentage2 = daysWithActivities / (effectiveTimeframe * 0.5);
-      consistencyPoints = Math.min(40, Math.round(_consistencyPercentage2 * 40));
+    // Adjust based on timeframe - this makes the scores different for different timeframes
+    if (timeframe <= 30) {
+      // For 30 days, we want more consistent activity
+      var targetDays = Math.min(timeframe, 20); // Target of 20 days in 30 days
+      consistencyPoints = Math.min(20, Math.round(daysWithActivities / targetDays * 20));
+    } else if (timeframe <= 90) {
+      // For 60-90 days, expect less frequent but regular activity
+      var _targetDays = Math.min(timeframe * 0.5, 40); // Target of 40 days in 90 days
+      consistencyPoints = Math.min(15, Math.round(daysWithActivities / _targetDays * 15));
+    } else if (timeframe <= 180) {
+      // For 180 days, expect somewhat less frequent activity
+      var _targetDays2 = Math.min(timeframe * 0.4, 60); // Target of 60 days in 180 days
+      consistencyPoints = Math.min(12, Math.round(daysWithActivities / _targetDays2 * 12));
     } else {
-      // For 365 days, expect activity on ~35% of days for full points
-      var _consistencyPercentage3 = daysWithActivities / (effectiveTimeframe * 0.35);
-      consistencyPoints = Math.min(40, Math.round(_consistencyPercentage3 * 40));
+      // For 365 days, expect much less frequent but still regular activity
+      var _targetDays3 = Math.min(timeframe * 0.3, 90); // Target of 90 days in 365 days
+      consistencyPoints = Math.min(10, Math.round(daysWithActivities / _targetDays3 * 10));
     }
-    console.log('Consistency calculation details:', {
-      daysWithActivities: daysWithActivities,
-      timeframe: timeframe,
-      effectiveTimeframe: effectiveTimeframe,
-      expectedDaysPercentage: effectiveTimeframe <= 30 ? 1.0 : effectiveTimeframe <= 90 ? 0.7 : effectiveTimeframe <= 180 ? 0.5 : 0.35,
-      consistencyPoints: consistencyPoints
-    });
 
-    // Final score calculation
-    var totalScore = Math.min(100, baseScore + activityPoints + consistencyPoints);
+    // Calculate variety bonus - more types of activities gives higher bonus
+    var varietyTypes = Object.keys(breakdown).length;
+    var varietyBonus = Math.min(10, varietyTypes * 2);
+
+    // Calculate base score from eligible activities
+    var baseScore = 0;
+    if (eligibleActivities > 0) {
+      // Scale based on timeframe - shorter timeframes require less total points for a good score
+      var scaleFactor;
+      if (timeframe <= 30) {
+        scaleFactor = 80; // In 30 days, need 80 points for score of 50
+      } else if (timeframe <= 90) {
+        scaleFactor = 120; // In 90 days, need 120 points for score of 50
+      } else if (timeframe <= 180) {
+        scaleFactor = 180; // In 180 days, need 180 points for score of 50
+      } else {
+        scaleFactor = 240; // In 365 days, need 240 points for score of 50
+      }
+      baseScore = Math.round(totalPoints / scaleFactor * 50);
+    }
+
+    // Final score capped at 100
+    var finalScore = Math.min(100, baseScore + consistencyPoints + varietyBonus);
     console.log('Spiritual fitness calculation details:', {
-      baseScore: baseScore,
-      activityPoints: activityPoints,
-      consistencyPoints: consistencyPoints,
-      daysWithActivities: daysWithActivities,
       timeframe: timeframe,
-      totalScore: totalScore
+      eligibleActivities: eligibleActivities,
+      daysWithActivities: daysWithActivities,
+      totalPoints: totalPoints,
+      baseScore: baseScore,
+      consistencyPoints: consistencyPoints,
+      varietyBonus: varietyBonus,
+      finalScore: finalScore
     });
-    return totalScore;
+    return finalScore;
   } catch (error) {
     console.error('Error in calculateSpiritualFitnessWithTimeframe:', error);
-    return baseScore;
+    return 20; // Base fallback score
   }
 }
 function setupGlobalDbObject() {

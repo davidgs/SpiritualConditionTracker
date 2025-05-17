@@ -110,55 +110,110 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
         return;
       }
       
-      // Calculate points for activities (2 points per activity, max 40)
-      const activityPoints = Math.min(40, recentActivities.length * 2);
+      // Define weights for activity types
+      const weights = {
+        meeting: 10,    // Attending a meeting
+        prayer: 8,      // Prayer 
+        meditation: 8,  // Meditation
+        reading: 6,     // Reading AA literature
+        callSponsor: 5, // Calling sponsor
+        callSponsee: 4, // Calling sponsee
+        service: 9,     // Service work
+        stepWork: 10    // Working on steps
+      };
       
-      // Calculate consistency based on days with activities
+      // Calculate scores
+      let totalPoints = 0;
+      let eligibleActivities = 0;
+      const breakdown = {};
+      
+      // Used to track the days with activities for consistency bonus
       const activityDays = new Set();
+      
       recentActivities.forEach(activity => {
+        // Track unique days with activities
         if (activity.date) {
           const day = new Date(activity.date).toISOString().split('T')[0];
           activityDays.add(day);
         }
+        
+        // Skip activities with unknown types
+        if (!weights[activity.type]) return;
+        
+        // Initialize type in breakdown if it doesn't exist
+        if (!breakdown[activity.type]) {
+          breakdown[activity.type] = { count: 0, points: 0 };
+        }
+        
+        // Update breakdown
+        breakdown[activity.type].count++;
+        breakdown[activity.type].points += weights[activity.type];
+        
+        // Update total score
+        totalPoints += weights[activity.type];
+        eligibleActivities++;
       });
       
+      // Calculate consistency points based on timeframe
+      let consistencyPoints = 0;
       const daysWithActivities = activityDays.size;
       
-      // Adjust consistency calculation based on timeframe
-      let consistencyPoints = 0;
-      
+      // Adjust based on timeframe - this makes the scores different for different timeframes
       if (timeframe <= 30) {
-        // For 30 days, aim for higher consistency
-        const consistencyPercentage = daysWithActivities / timeframe;
-        consistencyPoints = Math.round(consistencyPercentage * 40);
+        // For 30 days, we want more consistent activity
+        const targetDays = Math.min(timeframe, 20); // Target of 20 days in 30 days
+        consistencyPoints = Math.min(20, Math.round(daysWithActivities / targetDays * 20));
       } else if (timeframe <= 90) {
-        // For 60-90 days, adjust expectations - can't have activities every day
-        // We'll use a lower target percentage for full points
-        const consistencyPercentage = daysWithActivities / (timeframe * 0.7); // 70% of days is target
-        consistencyPoints = Math.min(40, Math.round(consistencyPercentage * 40));
+        // For 60-90 days, expect less frequent but regular activity
+        const targetDays = Math.min(timeframe * 0.5, 40); // Target of 40 days in 90 days
+        consistencyPoints = Math.min(15, Math.round(daysWithActivities / targetDays * 15));
       } else if (timeframe <= 180) {
-        // For 180 days, expect activity on ~50% of days for full points
-        const consistencyPercentage = daysWithActivities / (timeframe * 0.5);
-        consistencyPoints = Math.min(40, Math.round(consistencyPercentage * 40));
+        // For 180 days, expect somewhat less frequent activity
+        const targetDays = Math.min(timeframe * 0.4, 60); // Target of 60 days in 180 days
+        consistencyPoints = Math.min(12, Math.round(daysWithActivities / targetDays * 12));
       } else {
-        // For 365 days, expect activity on ~35% of days for full points
-        const consistencyPercentage = daysWithActivities / (timeframe * 0.35);
-        consistencyPoints = Math.min(40, Math.round(consistencyPercentage * 40));
+        // For 365 days, expect much less frequent but still regular activity
+        const targetDays = Math.min(timeframe * 0.3, 90); // Target of 90 days in 365 days
+        consistencyPoints = Math.min(10, Math.round(daysWithActivities / targetDays * 10));
       }
       
-      // Calculate final score
-      const totalScore = Math.min(100, baseScore + activityPoints + consistencyPoints);
+      // Calculate variety bonus - more types of activities gives higher bonus
+      const varietyTypes = Object.keys(breakdown).length;
+      const varietyBonus = Math.min(10, varietyTypes * 2);
+      
+      // Calculate base score from eligible activities
+      let activityBaseScore = 0;
+      if (eligibleActivities > 0) {
+        // Scale based on timeframe - shorter timeframes require less total points for a good score
+        let scaleFactor;
+        if (timeframe <= 30) {
+          scaleFactor = 80; // In 30 days, need 80 points for score of 50
+        } else if (timeframe <= 90) {
+          scaleFactor = 120; // In 90 days, need 120 points for score of 50
+        } else if (timeframe <= 180) {
+          scaleFactor = 180; // In 180 days, need 180 points for score of 50
+        } else {
+          scaleFactor = 240; // In 365 days, need 240 points for score of 50
+        }
+        
+        activityBaseScore = Math.round((totalPoints / scaleFactor) * 50);
+      }
+      
+      // Final score capped at 100
+      const finalScore = Math.min(100, activityBaseScore + consistencyPoints + varietyBonus);
       
       console.log('Fallback calculation results:', {
-        baseScore,
-        activityPoints,
-        consistencyPoints,
-        daysWithActivities,
         timeframe,
-        totalScore
+        eligibleActivities,
+        daysWithActivities,
+        totalPoints,
+        activityBaseScore,
+        consistencyPoints, 
+        varietyBonus,
+        finalScore
       });
       
-      setCurrentScore(totalScore);
+      setCurrentScore(finalScore);
     } catch (error) {
       console.error('Error in fallback calculation:', error);
       setCurrentScore(baseScore);
