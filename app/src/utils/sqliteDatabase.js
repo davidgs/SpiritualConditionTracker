@@ -148,6 +148,9 @@ function initLocalStorageBackup() {
       activities: JSON.parse(localStorage.getItem('activities') || '[]'),
       meetings: JSON.parse(localStorage.getItem('meetings') || '[]'),
       messages: JSON.parse(localStorage.getItem('messages') || '[]'),
+      calculateSobrietyDays: calculateSobrietyDays,
+      calculateSobrietyYears: calculateSobrietyYears,
+      calculateDistance: calculateDistance,
       user: JSON.parse(localStorage.getItem('user') || 'null')
     };
   }
@@ -612,6 +615,45 @@ export async function query(collection, predicate) {
   // In a future version, this could be optimized to use SQL WHERE clauses
   const items = await getAll(collection);
   return items.filter(predicate);
+}
+
+/**
+ * Calculate sobriety days based on sobriety date
+ * @param {string} sobrietyDate - Sobriety date in ISO format
+ * @returns {number} - Number of days sober
+ */
+export function calculateSobrietyDays(sobrietyDate) {
+  if (!sobrietyDate) return 0;
+  
+  const start = new Date(sobrietyDate);
+  const now = new Date();
+  
+  // Calculate the difference in days
+  const diffTime = Math.abs(now - start);
+  const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+  
+  return diffDays;
+}
+
+/**
+ * Calculate sobriety years with decimal precision
+ * @param {string} sobrietyDate - Sobriety date in ISO format
+ * @param {number} decimalPlaces - Number of decimal places
+ * @returns {number} - Years of sobriety with decimal precision
+ */
+export function calculateSobrietyYears(sobrietyDate, decimalPlaces = 2) {
+  if (!sobrietyDate) return 0;
+  
+  const start = new Date(sobrietyDate);
+  const now = new Date();
+  
+  // Calculate exact years including fractional part
+  const diffTime = now - start;
+  const diffDays = diffTime / (1000 * 60 * 60 * 24);
+  const years = diffDays / 365.25; // Account for leap years
+  
+  // Format to specified decimal places
+  return Number(years.toFixed(decimalPlaces));
 }
 
 /**
