@@ -970,6 +970,35 @@ export function calculateSpiritualFitnessWithTimeframe(timeframe = 30) {
       return baseScore;
     }
     
+    // Get the date of the earliest activity to find the actual timespan
+    let earliestActivityDate = today;
+    let latestActivityDate = new Date(0); // Jan 1, 1970
+    
+    recentActivities.forEach(activity => {
+      const activityDate = new Date(activity.date);
+      if (activityDate < earliestActivityDate) {
+        earliestActivityDate = activityDate;
+      }
+      if (activityDate > latestActivityDate) {
+        latestActivityDate = activityDate;
+      }
+    });
+    
+    // Calculate the actual span of days with activities
+    const actualTimespan = Math.max(1, Math.ceil((latestActivityDate - earliestActivityDate) / (1000 * 60 * 60 * 24)) + 1);
+    
+    // For long timeframes, if all activities are within a short period, adjust expectations
+    const effectiveTimeframe = timeframe > 30 && actualTimespan < timeframe * 0.3 ? 
+      Math.max(30, actualTimespan * 1.5) : timeframe;
+    
+    console.log('Timeframe adjustment:', {
+      timeframe,
+      earliestActivityDate: earliestActivityDate.toISOString(),
+      latestActivityDate: latestActivityDate.toISOString(),
+      actualTimespan,
+      effectiveTimeframe
+    });
+    
     // Calculate basic activity points (2 points per activity, max 40)
     const activityPoints = Math.min(40, recentActivities.length * 2);
     
@@ -987,31 +1016,33 @@ export function calculateSpiritualFitnessWithTimeframe(timeframe = 30) {
     // Adjust consistency calculation based on timeframe
     let consistencyPoints = 0;
     
-    if (timeframe <= 30) {
+    // Use effectiveTimeframe instead of timeframe for calculation
+    if (effectiveTimeframe <= 30) {
       // For 30 days, aim for higher consistency
-      const consistencyPercentage = daysWithActivities / timeframe;
+      const consistencyPercentage = daysWithActivities / effectiveTimeframe;
       consistencyPoints = Math.round(consistencyPercentage * 40);
-    } else if (timeframe <= 90) {
+    } else if (effectiveTimeframe <= 90) {
       // For 60-90 days, adjust expectations - can't have activities every day
       // We'll use a lower target percentage for full points
-      const consistencyPercentage = daysWithActivities / (timeframe * 0.7); // 70% of days is target
+      const consistencyPercentage = daysWithActivities / (effectiveTimeframe * 0.7); // 70% of days is target
       consistencyPoints = Math.min(40, Math.round(consistencyPercentage * 40));
-    } else if (timeframe <= 180) {
+    } else if (effectiveTimeframe <= 180) {
       // For 180 days, expect activity on ~50% of days for full points
-      const consistencyPercentage = daysWithActivities / (timeframe * 0.5);
+      const consistencyPercentage = daysWithActivities / (effectiveTimeframe * 0.5);
       consistencyPoints = Math.min(40, Math.round(consistencyPercentage * 40));
     } else {
       // For 365 days, expect activity on ~35% of days for full points
-      const consistencyPercentage = daysWithActivities / (timeframe * 0.35);
+      const consistencyPercentage = daysWithActivities / (effectiveTimeframe * 0.35);
       consistencyPoints = Math.min(40, Math.round(consistencyPercentage * 40));
     }
     
     console.log('Consistency calculation details:', {
       daysWithActivities,
       timeframe,
-      expectedDaysPercentage: timeframe <= 30 ? 1.0 : 
-                             timeframe <= 90 ? 0.7 : 
-                             timeframe <= 180 ? 0.5 : 0.35,
+      effectiveTimeframe,
+      expectedDaysPercentage: effectiveTimeframe <= 30 ? 1.0 : 
+                             effectiveTimeframe <= 90 ? 0.7 : 
+                             effectiveTimeframe <= 180 ? 0.5 : 0.35,
       consistencyPoints
     });
     
