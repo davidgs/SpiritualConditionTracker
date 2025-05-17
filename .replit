@@ -24,6 +24,10 @@ args = "BasicServer"
 task = "workflow.run"
 args = "SimpleServer"
 
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "DirectAppServer"
+
 [[workflows.workflow]]
 name = "ExpoApp"
 author = "agent"
@@ -50,6 +54,15 @@ author = "agent"
 task = "shell.exec"
 args = "node simple-static-server.js"
 waitForPort = 5001
+
+[[workflows.workflow]]
+name = "DirectAppServer"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "node direct-app-server.js"
+waitForPort = 5002
 
 [deployment]
 run = ["sh", "-c", "node deployment-server.js"]
