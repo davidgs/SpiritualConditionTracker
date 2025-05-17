@@ -7,7 +7,7 @@
  * Handles both YYYY-MM-DD format and ISO date strings
  * 
  * @param {string} dateString - Date string to format
- * @returns {string} Formatted date string (e.g., "May 14, 2025")
+ * @returns {string} Formatted date string (e.g., "May 15, 2025")
  */
 export function formatDateForDisplay(dateString) {
   console.log("Formatting date:", dateString);
@@ -18,14 +18,35 @@ export function formatDateForDisplay(dateString) {
   }
   
   try {
-    // YYYY-MM-DD format (from date input)
+    // YYYY-MM-DD format (from date input) - direct format without timezone issues
     if (dateString.length === 10 && dateString.includes('-')) {
       const [year, month, day] = dateString.split('-').map(num => parseInt(num, 10));
       const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
       return `${months[month - 1]} ${day}, ${year}`;
     } 
     
-    // Handle ISO format
+    // Handle ISO format with timezone handling to prevent date shifts
+    if (dateString.includes('T')) {
+      // Extract just the date part from an ISO string to avoid timezone issues
+      const datePart = dateString.split('T')[0];
+      if (datePart && datePart.includes('-')) {
+        const [year, month, day] = datePart.split('-').map(num => parseInt(num, 10));
+        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        return `${months[month - 1]} ${day}, ${year}`;
+      }
+    }
+    
+    // Fallback for other date formats
+    // Create date in UTC to prevent timezone shifts
+    const parts = dateString.split('T')[0].split('-');
+    if (parts.length === 3) {
+      const [year, month, day] = parts.map(part => parseInt(part, 10));
+      const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      return `${months[month - 1]} ${day}, ${year}`;
+    }
+    
+    // Last resort fallback
+    console.warn("Using generic date parsing which may have timezone issues:", dateString);
     const date = new Date(dateString);
     if (isNaN(date.getTime())) {
       console.error("Invalid date:", dateString);
