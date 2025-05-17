@@ -204,79 +204,157 @@ function App() {
 
   // Calculate spiritual fitness score using the database function
   async function calculateSpiritualFitness() {
+    // Default score if no calculation is possible
+    const DEFAULT_SCORE = 20;
+    
+    // Check if database is initialized
     if (!window.db) {
       console.error('Database not initialized');
-      return;
+      setSpiritualFitness(DEFAULT_SCORE);
+      return DEFAULT_SCORE;
     }
     
+    // Log the activities we have
+    console.log('Calculating spiritual fitness with activities:', activities);
+    
     try {
-      console.log('Calculating spiritual fitness with activities:', activities);
+      let score = DEFAULT_SCORE;
+      let calculationMethod = 'none';
       
-      // First try the Database.spiritualFitnessOperations method if available
-      if (window.Database && window.Database.spiritualFitnessOperations && 
+      // Try different calculation methods in order of preference
+      
+      // 1. Try the original Database spiritualFitnessOperations method
+      if (window.Database && 
+          window.Database.spiritualFitnessOperations && 
           typeof window.Database.spiritualFitnessOperations.calculateSpiritualFitness === 'function') {
-        console.log('Using Database.spiritualFitnessOperations.calculateSpiritualFitness');
-        // Get user ID (use '1' as default if not found)
-        const users = window.Database.userOperations.getAll();
-        const userId = users && users.length > 0 ? users[0].id : '1';
-        const result = window.Database.spiritualFitnessOperations.calculateSpiritualFitness(userId);
         
-        console.log('Spiritual fitness calculated with original method:', result);
-        setSpiritualFitness(result.score);
-        return result.score;
+        try {
+          calculationMethod = 'Database.spiritualFitnessOperations';
+          console.log('Using', calculationMethod);
+          
+          // Get user ID (use '1' as default if not found)
+          const users = window.Database.userOperations.getAll();
+          const userId = (users && users.length > 0) ? users[0].id : '1';
+          
+          const result = window.Database.spiritualFitnessOperations.calculateSpiritualFitness(userId);
+          if (result && typeof result.score === 'number') {
+            score = result.score;
+            console.log('Success with', calculationMethod, ':', score);
+            setSpiritualFitness(score);
+            return score;
+          }
+        } catch (methodError) {
+          console.error('Error with', calculationMethod, ':', methodError);
+          // Continue to next method
+        }
       }
       
-      // Try the direct db method if available
+      // 2. Try the direct db calculateSpiritualFitness method
       if (typeof window.db.calculateSpiritualFitness === 'function') {
-        console.log('Using window.db.calculateSpiritualFitness');
-        const score = await window.db.calculateSpiritualFitness(activities);
-        console.log('Spiritual fitness score calculated:', score);
-        setSpiritualFitness(score);
-        return score;
+        try {
+          calculationMethod = 'window.db.calculateSpiritualFitness';
+          console.log('Using', calculationMethod);
+          
+          score = await window.db.calculateSpiritualFitness(activities);
+          if (typeof score === 'number') {
+            console.log('Success with', calculationMethod, ':', score);
+            setSpiritualFitness(score);
+            return score;
+          }
+        } catch (methodError) {
+          console.error('Error with', calculationMethod, ':', methodError);
+          // Continue to next method
+        }
       }
       
-      // If we get here, no standard calculation methods are available (iOS warning case)
-      console.warn('⚠️ No standard spiritual fitness calculation methods available - using built-in fallback');
-      
-      // Create a more detailed fallback calculation
-      // Start with a base score
-      const baseScore = 20;
-      let finalScore = baseScore;
-      
-      // Only calculate if we have activities
-      if (activities && activities.length > 0) {
-        const now = new Date();
-        const thirtyDaysAgo = new Date();
-        thirtyDaysAgo.setDate(now.getDate() - 30);
-        
-        // Filter recent activities
-        const recentActivities = activities.filter(activity => 
-          new Date(activity.date) >= thirtyDaysAgo && new Date(activity.date) <= now
-        );
-        
-        // Add points based on activity count (2 points per activity, max 40)
-        const activityPoints = Math.min(40, recentActivities.length * 2);
-        
-        // Group by days for consistency calculation
-        const activityDays = new Set();
-        recentActivities.forEach(activity => {
-          const day = new Date(activity.date).toISOString().split('T')[0];
-          activityDays.add(day);
-        });
-        
-        // Calculate consistency points (up to 40 points)
-        const daysWithActivities = activityDays.size;
-        const consistencyPercentage = daysWithActivities / 30;
-        const consistencyPoints = Math.round(consistencyPercentage * 40);
-        
-        // Calculate final score
-        finalScore = Math.min(100, baseScore + activityPoints + consistencyPoints);
+      // 3. Try the timeframe method
+      if (typeof window.db.calculateSpiritualFitnessWithTimeframe === 'function') {
+        try {
+          calculationMethod = 'window.db.calculateSpiritualFitnessWithTimeframe';
+          console.log('Using', calculationMethod);
+          
+          score = await window.db.calculateSpiritualFitnessWithTimeframe(30);
+          if (typeof score === 'number') {
+            console.log('Success with', calculationMethod, ':', score);
+            setSpiritualFitness(score);
+            return score;
+          }
+        } catch (methodError) {
+          console.error('Error with', calculationMethod, ':', methodError);
+          // Continue to next method
+        }
       }
       
-      console.log('Spiritual fitness calculated with fallback:', finalScore);
-      setSpiritualFitness(finalScore);
-      return finalScore;
+      // 4. If all methods failed, use the built-in fallback
+      console.warn('⚠️ All spiritual fitness calculation methods failed - using built-in fallback');
+      score = calculateFallbackFitness();
+      setSpiritualFitness(score);
+      return score;
+    } catch (error) {
+      // Handle any unexpected errors in the main function
+      console.error('Unexpected error in calculateSpiritualFitness:', error);
+      const fallbackScore = calculateFallbackFitness();
+      setSpiritualFitness(fallbackScore);
+      return fallbackScore;
     }
+  }
+  
+  // Built-in fallback calculation function
+  function calculateFallbackFitness() {
+    console.log('Using built-in fallback fitness calculation');
+    
+    // Start with a base score
+    const baseScore = 20;
+    let finalScore = baseScore;
+    
+    // Only proceed if we have activities
+    if (activities && activities.length > 0) {
+      // Define time period (30 days)
+      const now = new Date();
+      const thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(now.getDate() - 30);
+      
+      // Filter for recent activities
+      const recentActivities = activities.filter(activity => {
+        const activityDate = new Date(activity.date);
+        return activityDate >= thirtyDaysAgo && activityDate <= now;
+      });
+      
+      console.log('Found', recentActivities.length, 'activities in the last 30 days');
+      
+      // Add points based on activity count (2 points per activity, max 40)
+      const activityPoints = Math.min(40, recentActivities.length * 2);
+      
+      // Track unique days with activities for consistency calculation
+      const activityDays = new Set();
+      recentActivities.forEach(activity => {
+        if (activity.date) {
+          const dayKey = new Date(activity.date).toISOString().split('T')[0];
+          activityDays.add(dayKey);
+        }
+      });
+      
+      const daysWithActivities = activityDays.size;
+      console.log('Activities occurred on', daysWithActivities, 'different days');
+      
+      // Calculate consistency points (up to 40 points)
+      const consistencyPercentage = daysWithActivities / 30;
+      const consistencyPoints = Math.round(consistencyPercentage * 40);
+      
+      // Calculate final score (capped at 100)
+      finalScore = Math.min(100, baseScore + activityPoints + consistencyPoints);
+      
+      console.log('Fallback calculation details:', {
+        baseScore,
+        activityPoints,
+        consistencyPoints,
+        finalScore
+      });
+    } else {
+      console.log('No activities found, using base score:', baseScore);
+    }
+    
+    return finalScore;
   }
 
   // Handle saving a new activity
