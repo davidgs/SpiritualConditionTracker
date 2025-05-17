@@ -983,8 +983,37 @@ export function calculateSpiritualFitnessWithTimeframe(timeframe = 30) {
     });
     
     const daysWithActivities = activityDays.size;
-    const consistencyPercentage = daysWithActivities / timeframe;
-    const consistencyPoints = Math.round(consistencyPercentage * 40);
+    
+    // Adjust consistency calculation based on timeframe
+    let consistencyPoints = 0;
+    
+    if (timeframe <= 30) {
+      // For 30 days, aim for higher consistency
+      const consistencyPercentage = daysWithActivities / timeframe;
+      consistencyPoints = Math.round(consistencyPercentage * 40);
+    } else if (timeframe <= 90) {
+      // For 60-90 days, adjust expectations - can't have activities every day
+      // We'll use a lower target percentage for full points
+      const consistencyPercentage = daysWithActivities / (timeframe * 0.7); // 70% of days is target
+      consistencyPoints = Math.min(40, Math.round(consistencyPercentage * 40));
+    } else if (timeframe <= 180) {
+      // For 180 days, expect activity on ~50% of days for full points
+      const consistencyPercentage = daysWithActivities / (timeframe * 0.5);
+      consistencyPoints = Math.min(40, Math.round(consistencyPercentage * 40));
+    } else {
+      // For 365 days, expect activity on ~35% of days for full points
+      const consistencyPercentage = daysWithActivities / (timeframe * 0.35);
+      consistencyPoints = Math.min(40, Math.round(consistencyPercentage * 40));
+    }
+    
+    console.log('Consistency calculation details:', {
+      daysWithActivities,
+      timeframe,
+      expectedDaysPercentage: timeframe <= 30 ? 1.0 : 
+                             timeframe <= 90 ? 0.7 : 
+                             timeframe <= 180 ? 0.5 : 0.35,
+      consistencyPoints
+    });
     
     // Final score calculation
     const totalScore = Math.min(100, baseScore + activityPoints + consistencyPoints);
