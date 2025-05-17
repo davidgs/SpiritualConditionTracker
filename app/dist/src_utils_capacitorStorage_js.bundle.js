@@ -11,6 +11,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   add: () => (/* binding */ add),
 /* harmony export */   calculateDistance: () => (/* binding */ calculateDistance),
+/* harmony export */   calculateSobrietyDays: () => (/* binding */ calculateSobrietyDays),
+/* harmony export */   calculateSobrietyYears: () => (/* binding */ calculateSobrietyYears),
 /* harmony export */   calculateSpiritualFitness: () => (/* binding */ calculateSpiritualFitness),
 /* harmony export */   getAll: () => (/* binding */ getAll),
 /* harmony export */   getById: () => (/* binding */ getById),
@@ -1028,6 +1030,11 @@ function migrateFromLocalStorage() {
  * Set up global window.db object for backward compatibility
  * @returns {Object} The database interface
  */
+/**
+ * Calculate sobriety days based on sobriety date
+ * @param {string} sobrietyDate - Sobriety date in ISO format
+ * @returns {number} - Number of days sober
+ */
 function _migrateFromLocalStorage() {
   _migrateFromLocalStorage = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee10() {
     var userData, activitiesData, _iterator, _step, activity, meetingsData, _iterator2, _step2, meeting, messagesData, _iterator3, _step3, message;
@@ -1160,6 +1167,39 @@ function _migrateFromLocalStorage() {
   }));
   return _migrateFromLocalStorage.apply(this, arguments);
 }
+function calculateSobrietyDays(sobrietyDate) {
+  if (!sobrietyDate) return 0;
+  var startDate = new Date(sobrietyDate);
+  var today = new Date();
+
+  // Calculate difference in milliseconds
+  var diffMs = today - startDate;
+
+  // Convert to days
+  return Math.floor(diffMs / (1000 * 60 * 60 * 24));
+}
+
+/**
+ * Calculate sobriety years with decimal precision
+ * @param {string} sobrietyDate - Sobriety date in ISO format
+ * @param {number} decimalPlaces - Number of decimal places
+ * @returns {number} - Years of sobriety with decimal precision
+ */
+function calculateSobrietyYears(sobrietyDate) {
+  var decimalPlaces = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 2;
+  if (!sobrietyDate) return 0;
+  var startDate = new Date(sobrietyDate);
+  var today = new Date();
+
+  // Calculate difference in milliseconds
+  var diffMs = today - startDate;
+
+  // Calculate years with decimal precision
+  var years = diffMs / (1000 * 60 * 60 * 24 * 365.25);
+
+  // Round to specified decimal places
+  return parseFloat(years.toFixed(decimalPlaces));
+}
 function setupGlobalDbObject() {
   window.db = {
     getAll: getAll,
@@ -1169,6 +1209,8 @@ function setupGlobalDbObject() {
     remove: remove,
     query: query,
     calculateDistance: calculateDistance,
+    calculateSobrietyDays: calculateSobrietyDays,
+    calculateSobrietyYears: calculateSobrietyYears,
     getPreference: getPreference,
     setPreference: setPreference,
     calculateSpiritualFitness: calculateSpiritualFitness,
