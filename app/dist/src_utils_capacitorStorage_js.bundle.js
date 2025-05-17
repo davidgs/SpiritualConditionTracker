@@ -1214,14 +1214,28 @@ function calculateSpiritualFitnessWithTimeframe() {
   // Start with a base score
   var baseScore = 20;
   try {
-    // Check if we have any activities
-    if (!window.db || !window.db.getAll) {
-      console.warn('Database not properly initialized for calculateSpiritualFitnessWithTimeframe');
-      return baseScore;
-    }
+    // Get activities from the right source - we'll use async/await pattern
+    var activities;
 
-    // Get all activities
-    var activities = window.db.getAll('activities');
+    // If we have window.activities, use that directly
+    if (window.activities && Array.isArray(window.activities)) {
+      activities = window.activities;
+    }
+    // Otherwise get activities from the database synchronously
+    else {
+      try {
+        // Get all activities using executeQuery directly
+        var result = executeQuery('SELECT * FROM activities');
+        activities = [];
+        for (var i = 0; i < result.rows.length; i++) {
+          activities.push(result.rows.item(i));
+        }
+      } catch (dbError) {
+        console.error('Database error getting activities:', dbError);
+        // Fallback to empty array
+        activities = [];
+      }
+    }
     console.log('Activities for fitness calculation:', activities);
     if (!activities || activities.length === 0) {
       console.log('No activities found, returning base score');

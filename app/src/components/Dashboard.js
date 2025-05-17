@@ -58,16 +58,92 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
     if (window.db?.calculateSpiritualFitnessWithTimeframe) {
       console.log('Calling calculateSpiritualFitnessWithTimeframe with:', scoreTimeframe);
       try {
+        // Make the activities available on the window object for the calculation function
+        window.activities = activities;
+        
+        // Calculate the score with the current timeframe
         const newScore = window.db.calculateSpiritualFitnessWithTimeframe(scoreTimeframe);
         console.log('New score calculated:', newScore);
         setCurrentScore(newScore);
       } catch (error) {
         console.error('Error calculating spiritual fitness with timeframe:', error);
+        
+        // Fallback calculation if the function fails
+        calculateScoreFallback(scoreTimeframe);
       }
     } else {
       console.warn('calculateSpiritualFitnessWithTimeframe not available on window.db');
+      // Use fallback calculation
+      calculateScoreFallback(scoreTimeframe);
     }
-  }, [scoreTimeframe]);
+  }, [scoreTimeframe, activities]);
+  
+  // Fallback calculation function for spiritual fitness score
+  const calculateScoreFallback = (timeframe) => {
+    console.log('Using fallback calculation with activities:', activities);
+    
+    // Start with base score
+    const baseScore = 20;
+    
+    if (!activities || activities.length === 0) {
+      console.log('No activities for fallback calculation');
+      setCurrentScore(baseScore);
+      return;
+    }
+    
+    try {
+      // Get date range for calculation
+      const today = new Date();
+      const cutoffDate = new Date();
+      cutoffDate.setDate(today.getDate() - timeframe);
+      
+      // Filter for recent activities
+      const recentActivities = activities.filter(activity => {
+        const activityDate = new Date(activity.date);
+        return activityDate >= cutoffDate && activityDate <= today;
+      });
+      
+      console.log(`Found ${recentActivities.length} activities in the ${timeframe}-day timeframe`);
+      
+      if (recentActivities.length === 0) {
+        setCurrentScore(baseScore);
+        return;
+      }
+      
+      // Calculate points for activities (2 points per activity, max 40)
+      const activityPoints = Math.min(40, recentActivities.length * 2);
+      
+      // Calculate consistency based on days with activities
+      const activityDays = new Set();
+      recentActivities.forEach(activity => {
+        if (activity.date) {
+          const day = new Date(activity.date).toISOString().split('T')[0];
+          activityDays.add(day);
+        }
+      });
+      
+      const daysWithActivities = activityDays.size;
+      const consistencyPercentage = daysWithActivities / timeframe;
+      const consistencyPoints = Math.round(consistencyPercentage * 40);
+      
+      // Calculate final score
+      const totalScore = Math.min(100, baseScore + activityPoints + consistencyPoints);
+      
+      console.log('Fallback calculation results:', {
+        baseScore,
+        activityPoints,
+        consistencyPoints,
+        daysWithActivities,
+        timeframe,
+        totalScore
+      });
+      
+      setCurrentScore(totalScore);
+    } catch (error) {
+      console.error('Error in fallback calculation:', error);
+      setCurrentScore(baseScore);
+    }
+  };
   
   // Close modal when clicking outside
   useEffect(() => {
