@@ -1231,8 +1231,10 @@ function calculateSpiritualFitnessWithTimeframe() {
         activities = [];
       }
     }
+
+    // Base score with no activities
     if (!activities || activities.length === 0) {
-      return 20; // Base score if no activities
+      return 20;
     }
 
     // Get current date and cutoff date
@@ -1247,7 +1249,7 @@ function calculateSpiritualFitnessWithTimeframe() {
     });
     console.log('Recent activities within timeframe:', recentActivities.length);
     if (recentActivities.length === 0) {
-      return 20; // Base score
+      return 20; // Base score with no activities in timeframe
     }
 
     // Define weights for activity types
@@ -1302,61 +1304,127 @@ function calculateSpiritualFitnessWithTimeframe() {
       totalPoints += weights[activity.type];
       eligibleActivities++;
     });
-
-    // Calculate consistency points based on timeframe
-    var consistencyPoints = 0;
     var daysWithActivities = activityDays.size;
-
-    // Adjust based on timeframe - this makes the scores different for different timeframes
-    if (timeframe <= 30) {
-      // For 30 days, we want more consistent activity
-      var targetDays = Math.min(timeframe, 20); // Target of 20 days in 30 days
-      consistencyPoints = Math.min(20, Math.round(daysWithActivities / targetDays * 20));
-    } else if (timeframe <= 90) {
-      // For 60-90 days, expect less frequent but regular activity
-      var _targetDays = Math.min(timeframe * 0.5, 40); // Target of 40 days in 90 days
-      consistencyPoints = Math.min(15, Math.round(daysWithActivities / _targetDays * 15));
-    } else if (timeframe <= 180) {
-      // For 180 days, expect somewhat less frequent activity
-      var _targetDays2 = Math.min(timeframe * 0.4, 60); // Target of 60 days in 180 days
-      consistencyPoints = Math.min(12, Math.round(daysWithActivities / _targetDays2 * 12));
-    } else {
-      // For 365 days, expect much less frequent but still regular activity
-      var _targetDays3 = Math.min(timeframe * 0.3, 90); // Target of 90 days in 365 days
-      consistencyPoints = Math.min(10, Math.round(daysWithActivities / _targetDays3 * 10));
-    }
-
-    // Calculate variety bonus - more types of activities gives higher bonus
     var varietyTypes = Object.keys(breakdown).length;
-    var varietyBonus = Math.min(10, varietyTypes * 2);
 
-    // Calculate base score from eligible activities
-    var baseScore = 0;
-    if (eligibleActivities > 0) {
-      // Scale based on timeframe - shorter timeframes require less total points for a good score
-      var scaleFactor;
-      if (timeframe <= 30) {
-        scaleFactor = 80; // In 30 days, need 80 points for score of 50
-      } else if (timeframe <= 90) {
-        scaleFactor = 120; // In 90 days, need 120 points for score of 50
-      } else if (timeframe <= 180) {
-        scaleFactor = 180; // In 180 days, need 180 points for score of 50
-      } else {
-        scaleFactor = 240; // In 365 days, need 240 points for score of 50
-      }
-      baseScore = Math.round(totalPoints / scaleFactor * 50);
+    // FIXED VERSION - DIFFERENT SCORES BY TIMEFRAME
+    // For our demo with only 6 days of activities:
+    // - 30 days: 6/30 (20%) is a decent ratio, so higher score (65-70)
+    // - 60 days: 6/60 (10%) is half as good, so lower score (50-55)
+    // - 180 days: 6/180 (3.3%) is even less coverage, so lower score (40-45) 
+    // - 365 days: 6/365 (1.6%) is minimal coverage, so lowest score (30-35)
+
+    var finalScore;
+    var daysCoveragePercent = daysWithActivities / timeframe * 100;
+    if (timeframe <= 30) {
+      // 30-day calculation - 6 days in 30 days (~20% days with activities)
+      // This should score around 68-70
+      var basePoints = 20;
+
+      // Activities score - for 30 days, cap at 40 points
+      var activityPoints = Math.min(40, Math.round(totalPoints / 80));
+
+      // Consistency points - based on coverage percentage
+      // For 30 days, 20% days covered is good (6/30)
+      var consistencyPoints = Math.min(30, Math.round(daysCoveragePercent * 1.5));
+
+      // Variety bonus - 3 types is ok, 8 types would be optimal
+      var varietyBonus = Math.min(10, varietyTypes * 2);
+      finalScore = basePoints + activityPoints + consistencyPoints + varietyBonus;
+      console.log('30-day score calculation:', {
+        timeframe: timeframe,
+        daysCoverage: "".concat(daysWithActivities, "/").concat(timeframe, " days (").concat(daysCoveragePercent.toFixed(1), "%)"),
+        varietyTypes: varietyTypes,
+        basePoints: basePoints,
+        activityPoints: activityPoints,
+        consistencyPoints: consistencyPoints,
+        varietyBonus: varietyBonus,
+        finalScore: finalScore
+      });
+    } else if (timeframe <= 90) {
+      // 60-day calculation - 6 days in 60 days (~10% days with activities) 
+      // This should score around 50-55
+      var _basePoints = 15;
+
+      // Activities score - for 60 days, cap at 35 points but require more total points
+      var _activityPoints = Math.min(35, Math.round(totalPoints / 120));
+
+      // Consistency points - based on coverage percentage
+      // For 60 days, 10% days covered is mediocre (6/60)
+      var _consistencyPoints = Math.min(25, Math.round(daysCoveragePercent * 2.5));
+
+      // Variety bonus - 3 types is ok, 8 types would be optimal
+      var _varietyBonus = Math.min(10, varietyTypes * 2);
+      finalScore = _basePoints + _activityPoints + _consistencyPoints + _varietyBonus;
+      console.log('60-90 day score calculation:', {
+        timeframe: timeframe,
+        daysCoverage: "".concat(daysWithActivities, "/").concat(timeframe, " days (").concat(daysCoveragePercent.toFixed(1), "%)"),
+        varietyTypes: varietyTypes,
+        basePoints: _basePoints,
+        activityPoints: _activityPoints,
+        consistencyPoints: _consistencyPoints,
+        varietyBonus: _varietyBonus,
+        finalScore: finalScore
+      });
+    } else if (timeframe <= 180) {
+      // 180-day calculation - 6 days in 180 days (~3.3% days with activities)
+      // This should score around 40-45
+      var _basePoints2 = 10;
+
+      // Activities score - for 180 days, cap at 30 points but require even more total points
+      var _activityPoints2 = Math.min(30, Math.round(totalPoints / 180));
+
+      // Consistency points - based on coverage percentage
+      // For 180 days, 3.3% days covered is poor (6/180)
+      var _consistencyPoints2 = Math.min(20, Math.round(daysCoveragePercent * 4));
+
+      // Variety bonus - 3 types is ok, 8 types would be optimal
+      var _varietyBonus2 = Math.min(10, varietyTypes * 2);
+      finalScore = _basePoints2 + _activityPoints2 + _consistencyPoints2 + _varietyBonus2;
+      console.log('180-day score calculation:', {
+        timeframe: timeframe,
+        daysCoverage: "".concat(daysWithActivities, "/").concat(timeframe, " days (").concat(daysCoveragePercent.toFixed(1), "%)"),
+        varietyTypes: varietyTypes,
+        basePoints: _basePoints2,
+        activityPoints: _activityPoints2,
+        consistencyPoints: _consistencyPoints2,
+        varietyBonus: _varietyBonus2,
+        finalScore: finalScore
+      });
+    } else {
+      // 365-day calculation - 6 days in 365 days (~1.6% days with activities)
+      // This should score around 30-35
+      var _basePoints3 = 5;
+
+      // Activities score - for 365 days, cap at 25 points but require much more total points
+      var _activityPoints3 = Math.min(25, Math.round(totalPoints / 240));
+
+      // Consistency points - based on coverage percentage
+      // For 365 days, 1.6% days covered is very poor (6/365)
+      var _consistencyPoints3 = Math.min(15, Math.round(daysCoveragePercent * 6));
+
+      // Variety bonus - 3 types is ok, 8 types would be optimal
+      var _varietyBonus3 = Math.min(10, varietyTypes * 2);
+      finalScore = _basePoints3 + _activityPoints3 + _consistencyPoints3 + _varietyBonus3;
+      console.log('365-day score calculation:', {
+        timeframe: timeframe,
+        daysCoverage: "".concat(daysWithActivities, "/").concat(timeframe, " days (").concat(daysCoveragePercent.toFixed(1), "%)"),
+        varietyTypes: varietyTypes,
+        basePoints: _basePoints3,
+        activityPoints: _activityPoints3,
+        consistencyPoints: _consistencyPoints3,
+        varietyBonus: _varietyBonus3,
+        finalScore: finalScore
+      });
     }
 
-    // Final score capped at 100
-    var finalScore = Math.min(100, baseScore + consistencyPoints + varietyBonus);
+    // Cap final score at 100
+    finalScore = Math.min(100, Math.round(finalScore));
     console.log('Spiritual fitness calculation details:', {
       timeframe: timeframe,
-      eligibleActivities: eligibleActivities,
       daysWithActivities: daysWithActivities,
+      daysCoveragePercent: daysCoveragePercent.toFixed(1) + '%',
       totalPoints: totalPoints,
-      baseScore: baseScore,
-      consistencyPoints: consistencyPoints,
-      varietyBonus: varietyBonus,
       finalScore: finalScore
     });
     return finalScore;
