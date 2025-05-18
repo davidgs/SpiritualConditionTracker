@@ -24,6 +24,14 @@ args = "DirectAppServer"
 task = "workflow.run"
 args = "AppServer"
 
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "EnhancedIOSServer"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "IOSServer"
+
 [[workflows.workflow]]
 name = "ExpoApp"
 author = "agent"
@@ -49,6 +57,24 @@ author = "agent"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "node app-server.js"
+waitForPort = 5000
+
+[[workflows.workflow]]
+name = "EnhancedIOSServer"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "node enhanced-ios-server.js"
+waitForPort = 5000
+
+[[workflows.workflow]]
+name = "IOSServer"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "node simple-ios-server.js"
 waitForPort = 5000
 
 [deployment]

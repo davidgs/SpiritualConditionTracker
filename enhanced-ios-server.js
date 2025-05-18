@@ -1,32 +1,70 @@
 /**
- * Enhanced server specifically optimized for iOS WebView compatibility
+ * Simple HTTP server optimized for iOS WebView compatibility
  * Addresses common issues with blank screens in iOS simulators
  */
 
-const express = require('express');
+const http = require('http');
 const path = require('path');
 const fs = require('fs');
-const app = express();
+const url = require('url');
 const PORT = process.env.PORT || 5000;
 
-// Special header middleware for iOS compatibility
-app.use((req, res, next) => {
-  // Set headers that work better with iOS WebViews
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
-  res.setHeader('Pragma', 'no-cache');
-  res.setHeader('Expires', '0');
-  res.setHeader('Surrogate-Control', 'no-store');
-  
-  // Log request for debugging
-  console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
-  
-  next();
-});
+// MIME type mapping
+const mimeTypes = {
+  '.html': 'text/html',
+  '.js': 'application/javascript',
+  '.css': 'text/css',
+  '.json': 'application/json',
+  '.png': 'image/png',
+  '.jpg': 'image/jpeg',
+  '.gif': 'image/gif',
+  '.svg': 'image/svg+xml',
+  '.ico': 'image/x-icon',
+  '.woff': 'font/woff',
+  '.woff2': 'font/woff2',
+  '.ttf': 'font/ttf',
+  '.eot': 'application/vnd.ms-fontobject',
+  '.otf': 'font/otf'
+};
 
-// Serve static files with proper MIME types that iOS recognizes
-app.use(express.static('.', {
-  setHeaders: (res, filePath) => {
+// Function to serve a file with the appropriate MIME type
+function serveFile(filePath, res) {
+  // Get file extension and corresponding MIME type
+  const ext = path.extname(filePath);
+  const contentType = mimeTypes[ext] || 'application/octet-stream';
+  
+  // Read and serve the file
+  fs.readFile(filePath, (err, data) => {
+    if (err) {
+      console.error(`Error reading file ${filePath}:`, err);
+      
+      // If file not found, return 404
+      if (err.code === 'ENOENT') {
+        res.writeHead(404);
+        res.end('File not found');
+        return;
+      }
+      
+      // For other errors, return 500
+      res.writeHead(500);
+      res.end('Server error');
+      return;
+    }
+    
+    // Set iOS-friendly headers
+    res.writeHead(200, {
+      'Content-Type': contentType,
+      'Access-Control-Allow-Origin': '*',
+      'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+      'Pragma': 'no-cache',
+      'Expires': '0',
+      'Surrogate-Control': 'no-store'
+    });
+    
+    // Send the file data
+    res.end(data);
+  });
+}
     // Set correct MIME types for different file extensions
     // This is crucial for iOS WebViews to properly interpret files
     const ext = path.extname(filePath).toLowerCase();
