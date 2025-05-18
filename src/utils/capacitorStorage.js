@@ -182,7 +182,6 @@ function getLocalStorageActivities() {
     return [];
   }
 }
-}
 
 /**
  * Create a fallback using localStorage if SQLite is not available
