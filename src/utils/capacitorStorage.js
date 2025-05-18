@@ -1357,7 +1357,7 @@ export function setupGlobalDbObject() {
       calculateSpiritualFitness: (userId, timeframe = 30) => {
         const activities = window.Database.activityOperations.getAll({ userId });
         if (!activities || activities.length === 0) {
-          return { score: 20, breakdown: {}, timeframe };
+          return { score: 5, breakdown: {}, timeframe };
         }
         
         // Define weights for activity types
