@@ -32,6 +32,10 @@ args = "EnhancedIOSServer"
 task = "workflow.run"
 args = "IOSServer"
 
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "IOSNativeServer"
+
 [[workflows.workflow]]
 name = "ExpoApp"
 author = "agent"
@@ -76,6 +80,15 @@ author = "agent"
 task = "shell.exec"
 args = "node simple-ios-server.js"
 waitForPort = 5000
+
+[[workflows.workflow]]
+name = "IOSNativeServer"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "node ios-native-server.js"
+waitForPort = 5002
 
 [deployment]
 run = ["sh", "-c", "node deployment-server.js"]
