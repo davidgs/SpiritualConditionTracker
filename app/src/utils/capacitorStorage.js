@@ -17,27 +17,59 @@ export async function initDatabase() {
   console.log("Initializing SQLite database for Capacitor...");
   
   try {
+    // Detect iOS platform - iOS has special handling
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || 
+                 (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    
     // Import the appropriate SQLite plugin based on platform
     if (isPlatform('capacitor') || isPlatform('cordova')) {
       console.log("Using native SQLite implementation via Capacitor");
       
       // For Capacitor
       if (isPlatform('capacitor')) {
-        const { CapacitorSQLite } = await import('@capacitor-community/sqlite');
-        sqlitePlugin = CapacitorSQLite;
+        try {
+          const { CapacitorSQLite } = await import('@capacitor-community/sqlite');
+          sqlitePlugin = CapacitorSQLite;
+          console.log("CapacitorSQLite loaded successfully");
+        } catch (importError) {
+          console.error("Error importing CapacitorSQLite:", importError);
+          throw importError;
+        }
       } 
       // For Cordova
       else {
         sqlitePlugin = window.sqlitePlugin;
       }
       
-      // Open or create the database
-      db = await sqlitePlugin.openDatabase({
-        name: 'spiritualTracker.db',
-        location: 'default'
-      });
+      if (!sqlitePlugin) {
+        console.error("SQLite plugin not available");
+        throw new Error("SQLite plugin not found");
+      }
+      
+      try {
+        // Open or create the database
+        console.log("Opening database with Capacitor SQLite...");
+        db = await sqlitePlugin.openDatabase({
+          name: 'spiritualTracker.db',
+          location: 'default'
+        });
+        console.log("Database opened successfully:", db);
+      } catch (dbError) {
+        console.error("Error opening database:", dbError);
+        throw dbError;
+      }
     }
-    // Web fallback - if Web SQL is available
+    // iOS WebSQL fallback when Capacitor is not available
+    else if (isIOS && window.openDatabase) {
+      console.log("Using iOS WebSQL fallback");
+      db = window.openDatabase(
+        'spiritualTracker.db',
+        '1.0',
+        'Spiritual Condition Tracker Database',
+        5 * 1024 * 1024 // 5MB
+      );
+    }
+    // Standard Web fallback - if Web SQL is available
     else if (window.openDatabase) {
       console.log("Using WebSQL implementation for browser");
       db = window.openDatabase(
@@ -61,9 +93,95 @@ export async function initDatabase() {
     return true;
   } catch (error) {
     console.error("Error initializing database:", error);
+    console.log("Falling back to localStorage for data persistence");
     setupLocalStorageFallback();
     return false;
   }
+}
+
+/**
+ * Calculate spiritual fitness score using a fallback method
+ * This provides a reliable calculation when SQLite isn't available on iOS
+ * @returns {number} Spiritual fitness score from 0-100
+ */
+export function calculateFallbackSpiritualFitness() {
+  console.log("Using fallback calculation with activities:", getLocalStorageActivities());
+  
+  try {
+    // Get activities from localStorage
+    const activities = getLocalStorageActivities();
+    
+    if (!activities || activities.length === 0) {
+      console.log("No activities for fallback calculation");
+      return 20; // Default starter score so users don't see zero
+    }
+    
+    // Filter for recent activities (last 30 days)
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+    
+    const recentActivities = activities.filter(activity => {
+      if (!activity.date) return false;
+      const activityDate = new Date(activity.date);
+      return activityDate >= thirtyDaysAgo;
+    });
+    
+    if (recentActivities.length === 0) {
+      return 20; // Default starter score if no recent activities
+    }
+    
+    // Calculate score based on activity types and frequency
+    const typeWeights = {
+      'prayer': 5,
+      'meditation': 5,
+      'meeting': 10,
+      'reading': 3,
+      'service': 15,
+      'stepwork': 12,
+      'sponsoring': 10
+    };
+    
+    let totalScore = 0;
+    const typeCounts = {};
+    
+    // Count activities by type and calculate initial score
+    recentActivities.forEach(activity => {
+      const type = activity.type || 'other';
+      typeCounts[type] = (typeCounts[type] || 0) + 1;
+      totalScore += typeWeights[type] || 2;
+    });
+    
+    // Bonus for consistency (multiple activities of same type)
+    let consistencyBonus = 0;
+    Object.entries(typeCounts).forEach(([type, count]) => {
+      if (count >= 5) consistencyBonus += 10;
+      else if (count >= 3) consistencyBonus += 5;
+    });
+    
+    // Bonus for variety (different types of activities)
+    const varietyBonus = Object.keys(typeCounts).length * 5;
+    
+    // Calculate final score (cap at 100)
+    return Math.min(100, totalScore + consistencyBonus + varietyBonus);
+  } catch (error) {
+    console.error("Error in fallback spiritual fitness calculation:", error);
+    return 20; // Return a minimal default score on error
+  }
+}
+
+/**
+ * Helper function to get activities from localStorage
+ * @returns {Array} Activities stored in localStorage
+ */
+function getLocalStorageActivities() {
+  try {
+    const activitiesJson = localStorage.getItem('activities');
+    return activitiesJson ? JSON.parse(activitiesJson) : [];
+  } catch (error) {
+    console.error("Error getting activities from localStorage:", error);
+    return [];
+  }
+}
 }
 
 /**

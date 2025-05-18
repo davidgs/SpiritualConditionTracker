@@ -1,7 +1,6 @@
 /**
  * Capacitor-compatible SQLite storage implementation
  * Optimized for native iOS and Android compiled apps
- * With improved error handling and iOS support
  */
 
 import { isPlatform } from '@ionic/react';
@@ -9,65 +8,68 @@ import { isPlatform } from '@ionic/react';
 // Database connection
 let db = null;
 let sqlitePlugin = null;
-let initializationAttempted = false;
 
 /**
  * Initialize the database connection
  * @returns {Promise<boolean>} Whether initialization was successful
  */
 export async function initDatabase() {
-  // Prevent multiple initialization attempts
-  if (initializationAttempted) {
-    console.log("Database initialization already attempted");
-    return db !== null;
-  }
-  
-  initializationAttempted = true;
   console.log("Initializing SQLite database for Capacitor...");
   
   try {
+    // Detect iOS platform - iOS has special handling
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || 
+                 (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    
     // Import the appropriate SQLite plugin based on platform
-    if (isPlatform('capacitor') || isPlatform('cordova') || isPlatform('ios')) {
-      console.log("Detected native platform, using native SQLite implementation");
+    if (isPlatform('capacitor') || isPlatform('cordova')) {
+      console.log("Using native SQLite implementation via Capacitor");
       
-      // For Capacitor/iOS
-      if (isPlatform('capacitor') || isPlatform('ios')) {
+      // For Capacitor
+      if (isPlatform('capacitor')) {
         try {
-          console.log("Loading Capacitor SQLite implementation...");
-          const capacitorModule = await import('@capacitor-community/sqlite');
-          console.log("Capacitor SQLite module loaded:", capacitorModule);
-          sqlitePlugin = capacitorModule.CapacitorSQLite;
-        } catch (error) {
-          console.error("Error loading Capacitor SQLite module:", error);
-          throw error;
+          const { CapacitorSQLite } = await import('@capacitor-community/sqlite');
+          sqlitePlugin = CapacitorSQLite;
+          console.log("CapacitorSQLite loaded successfully");
+        } catch (importError) {
+          console.error("Error importing CapacitorSQLite:", importError);
+          throw importError;
         }
       } 
       // For Cordova
-      else if (isPlatform('cordova')) {
-        console.log("Using Cordova SQLite implementation");
+      else {
         sqlitePlugin = window.sqlitePlugin;
       }
       
-      // Check if plugin is available
       if (!sqlitePlugin) {
-        console.error("SQLite plugin not available on this platform");
-        throw new Error("SQLite plugin not available");
+        console.error("SQLite plugin not available");
+        throw new Error("SQLite plugin not found");
       }
       
-      console.log("Opening database with SQLite plugin...");
-      // Open or create the database
       try {
+        // Open or create the database
+        console.log("Opening database with Capacitor SQLite...");
         db = await sqlitePlugin.openDatabase({
           name: 'spiritualTracker.db',
           location: 'default'
         });
         console.log("Database opened successfully:", db);
-      } catch (error) {
-        console.error("Error opening database:", error);
-        throw error;
+      } catch (dbError) {
+        console.error("Error opening database:", dbError);
+        throw dbError;
       }
     }
-    // Web fallback - if Web SQL is available
+    // iOS WebSQL fallback when Capacitor is not available
+    else if (isIOS && window.openDatabase) {
+      console.log("Using iOS WebSQL fallback");
+      db = window.openDatabase(
+        'spiritualTracker.db',
+        '1.0',
+        'Spiritual Condition Tracker Database',
+        5 * 1024 * 1024 // 5MB
+      );
+    }
+    // Standard Web fallback - if Web SQL is available
     else if (window.openDatabase) {
       console.log("Using WebSQL implementation for browser");
       db = window.openDatabase(
@@ -85,27 +87,99 @@ export async function initDatabase() {
     }
     
     // Create tables
-    try {
-      await createTables();
-      console.log("SQLite database tables created successfully");
-    } catch (error) {
-      console.error("Error creating database tables:", error);
-      throw error;
-    }
+    await createTables();
     
     console.log("SQLite database initialized successfully");
     return true;
   } catch (error) {
-    console.error("Database initialization error:", error);
-    
-    // Set up localStorage fallback
-    console.log("Setting up localStorage fallback due to initialization error");
+    console.error("Error initializing database:", error);
+    console.log("Falling back to localStorage for data persistence");
     setupLocalStorageFallback();
-    
-    // For debugging: log all available methods on window
-    console.log("Available window methods:", Object.keys(window));
-    
     return false;
+  }
+}
+
+/**
+ * Calculate spiritual fitness score using a fallback method
+ * This provides a reliable calculation when SQLite isn't available on iOS
+ * @returns {number} Spiritual fitness score from 0-100
+ */
+export function calculateFallbackSpiritualFitness() {
+  console.log("Using fallback calculation with activities:", getLocalStorageActivities());
+  
+  try {
+    // Get activities from localStorage
+    const activities = getLocalStorageActivities();
+    
+    if (!activities || activities.length === 0) {
+      console.log("No activities for fallback calculation");
+      return 20; // Default starter score so users don't see zero
+    }
+    
+    // Filter for recent activities (last 30 days)
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+    
+    const recentActivities = activities.filter(activity => {
+      if (!activity.date) return false;
+      const activityDate = new Date(activity.date);
+      return activityDate >= thirtyDaysAgo;
+    });
+    
+    if (recentActivities.length === 0) {
+      return 20; // Default starter score if no recent activities
+    }
+    
+    // Calculate score based on activity types and frequency
+    const typeWeights = {
+      'prayer': 5,
+      'meditation': 5,
+      'meeting': 10,
+      'reading': 3,
+      'service': 15,
+      'stepwork': 12,
+      'sponsoring': 10
+    };
+    
+    let totalScore = 0;
+    const typeCounts = {};
+    
+    // Count activities by type and calculate initial score
+    recentActivities.forEach(activity => {
+      const type = activity.type || 'other';
+      typeCounts[type] = (typeCounts[type] || 0) + 1;
+      totalScore += typeWeights[type] || 2;
+    });
+    
+    // Bonus for consistency (multiple activities of same type)
+    let consistencyBonus = 0;
+    Object.entries(typeCounts).forEach(([type, count]) => {
+      if (count >= 5) consistencyBonus += 10;
+      else if (count >= 3) consistencyBonus += 5;
+    });
+    
+    // Bonus for variety (different types of activities)
+    const varietyBonus = Object.keys(typeCounts).length * 5;
+    
+    // Calculate final score (cap at 100)
+    return Math.min(100, totalScore + consistencyBonus + varietyBonus);
+  } catch (error) {
+    console.error("Error in fallback spiritual fitness calculation:", error);
+    return 20; // Return a minimal default score on error
+  }
+}
+
+/**
+ * Helper function to get activities from localStorage
+ * @returns {Array} Activities stored in localStorage
+ */
+function getLocalStorageActivities() {
+  try {
+    const activitiesJson = localStorage.getItem('activities');
+    return activitiesJson ? JSON.parse(activitiesJson) : [];
+  } catch (error) {
+    console.error("Error getting activities from localStorage:", error);
+    return [];
   }
 }
 
@@ -291,17 +365,13 @@ function setupLocalStorageFallback() {
       item.id = params[0] || existingItem.id || `pref_${Date.now()}`;
       item.value = params[1] || existingItem.value;
     }
-    // Default handling for any table
+    // Add more tables as needed
     else {
+      // Default handling for any table
       item.id = params[0] || existingItem.id || `${tableName}_${Date.now()}`;
-      
-      // Try to assign remaining parameters as fields
-      if (params.length > 1) {
-        item.value = params[1] || existingItem.value;
-      }
-      if (params.length > 2) {
-        item.data = params[2] || existingItem.data;
-      }
+      // Try to map remaining parameters
+      if (params.length > 1) item.value = params[1];
+      if (params.length > 2) item.data = params[2];
     }
     
     return item;
@@ -386,12 +456,13 @@ async function createTables() {
   for (const query of tableQueries) {
     try {
       await executeQuery(query);
-      console.log(`Table creation successful: ${query.substring(0, 40)}...`);
     } catch (error) {
       console.error(`Error creating table: ${query.substring(0, 40)}...`, error);
       throw error;
     }
   }
+  
+  console.log("All database tables created successfully");
 }
 
 /**
@@ -795,13 +866,12 @@ export async function query(collection, predicate) {
 }
 
 /**
- * Calculate spirituality score based on activities and other factors
- * This is implemented with fallbacks to work across all platforms
- * @returns {Promise<number>} Spirituality score from 0-100
+ * Calculate spiritual fitness score based on activities
+ * @returns {Promise<number>} Spiritual fitness score from 0-100
  */
 export async function calculateSpiritualFitness() {
   try {
-    // First try the direct database approach
+    // First try using the database
     let activities = [];
     
     try {
@@ -810,48 +880,26 @@ export async function calculateSpiritualFitness() {
       thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
       const dateThreshold = thirtyDaysAgo.toISOString();
       
+      // Query for recent activities
       activities = await query('activities', item => 
         item.date && item.date >= dateThreshold
       );
       
-      // Log for debugging
-      console.log(`Found ${activities.length} activities in the last 30 days using SQLite`);
+      console.log(`Found ${activities.length} activities in the last 30 days using SQL`);
     } catch (dbError) {
-      console.warn("Error calculating spiritual fitness via SQLite:", dbError);
+      console.warn("Error calculating spiritual fitness via database:", dbError);
       
-      // Try localStorage fallback
-      try {
-        const storedActivities = localStorage.getItem('activities');
-        if (storedActivities) {
-          const allActivities = JSON.parse(storedActivities);
-          
-          // Filter for last 30 days
-          const thirtyDaysAgo = new Date();
-          thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-          const dateThreshold = thirtyDaysAgo.toISOString();
-          
-          activities = allActivities.filter(item => 
-            item.date && item.date >= dateThreshold
-          );
-          
-          console.log(`Found ${activities.length} activities in the last 30 days using localStorage fallback`);
-        }
-      } catch (lsError) {
-        console.error("Error with localStorage fallback:", lsError);
-        
-        // Last resort hardcoded fallback for testing
-        console.warn("Using hardcoded fallback data for spiritual fitness calculation");
-        activities = [
-          { type: 'prayer', duration: 15, date: new Date().toISOString() },
-          { type: 'meditation', duration: 20, date: new Date().toISOString() },
-          { type: 'meeting', duration: 60, date: new Date().toISOString() }
-        ];
-      }
+      // Use the fallback method
+      return calculateFallbackSpiritualFitness();
     }
     
-    // Calculate score (simplified scoring system)
-    // Each activity type contributes differently to the score
+    // If no activities found, use the fallback method
+    if (activities.length === 0) {
+      console.log("No activities found in database, using fallback calculation");
+      return calculateFallbackSpiritualFitness();
+    }
     
+    // Calculate score
     const activityPoints = {
       prayer: 5,
       meditation: 5,
@@ -887,83 +935,11 @@ export async function calculateSpiritualFitness() {
     // Calculate final score (cap at 100)
     const finalScore = Math.min(100, totalPoints + diversityBonus + consistencyBonus);
     
-    console.log("Spiritual fitness score:", finalScore);
-    console.log("- Activity points:", totalPoints);
-    console.log("- Diversity bonus:", diversityBonus);
-    console.log("- Consistency bonus:", consistencyBonus);
-    
+    console.log("Spiritual fitness score calculated via database:", finalScore);
     return finalScore;
   } catch (error) {
-    console.error("Error calculating spiritual fitness score:", error);
-    return 0; // Default to 0 on error
+    console.error("Error calculating spiritual fitness:", error);
+    // Use fallback method in case of error
+    return calculateFallbackSpiritualFitness();
   }
 }
-
-/**
- * If SQLite initialization failed, this provides a way to
- * get spiritual fitness using a fallback implementation
- * @returns {number} Spiritual fitness score from 0-100
- */
-export function getFallbackSpiritualFitness() {
-  try {
-    // Get activities from localStorage
-    const storedActivities = localStorage.getItem('activities');
-    let activities = [];
-    
-    if (storedActivities) {
-      const allActivities = JSON.parse(storedActivities);
-      
-      // Filter for last 30 days
-      const thirtyDaysAgo = new Date();
-      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-      const dateThreshold = thirtyDaysAgo.toISOString();
-      
-      activities = allActivities.filter(item => 
-        item.date && item.date >= dateThreshold
-      );
-    }
-    
-    // If no activities found, return a default value
-    if (activities.length === 0) {
-      return 50; // Default middle value
-    }
-    
-    // Simple scoring: 5 points per activity up to 100
-    return Math.min(100, activities.length * 5);
-  } catch (error) {
-    console.error("Error in fallback spiritual fitness calculation:", error);
-    return 50; // Default to middle value on error
-  }
-}
-
-// Export localStorage-specific functions for platforms that need them
-export const localStorageFunctions = {
-  getItem: (key) => {
-    try {
-      return localStorage.getItem(key);
-    } catch (error) {
-      console.error(`Error getting item ${key} from localStorage:`, error);
-      return null;
-    }
-  },
-  
-  setItem: (key, value) => {
-    try {
-      localStorage.setItem(key, value);
-      return true;
-    } catch (error) {
-      console.error(`Error setting item ${key} in localStorage:`, error);
-      return false;
-    }
-  },
-  
-  removeItem: (key) => {
-    try {
-      localStorage.removeItem(key);
-      return true;
-    } catch (error) {
-      console.error(`Error removing item ${key} from localStorage:`, error);
-      return false;
-    }
-  }
-};
