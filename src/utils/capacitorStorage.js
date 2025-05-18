@@ -1359,9 +1359,10 @@ export function setupGlobalDbObject() {
     spiritualFitnessOperations: {
       // Main calculation function that adjusts based on timeframe
       calculateSpiritualFitness: (userId, timeframe = 30) => {
+        console.log("Using spiritualFitnessOperations.calculateSpiritualFitness with default:", window.DEFAULT_SPIRITUAL_FITNESS_SCORE);
         const activities = window.Database.activityOperations.getAll({ userId });
         if (!activities || activities.length === 0) {
-          return { score: 5, breakdown: {}, timeframe };
+          return { score: window.DEFAULT_SPIRITUAL_FITNESS_SCORE || 5, breakdown: {}, timeframe };
         }
         
         // Define weights for activity types
@@ -1511,7 +1512,7 @@ export function setupGlobalDbObject() {
           return result;
         } catch (error) {
           console.error('Error in calculateAndSave:', error);
-          return { score: 5, breakdown: {}, timeframe: 30 };
+          return { score: window.DEFAULT_SPIRITUAL_FITNESS_SCORE || 5, breakdown: {}, timeframe: 30 };
         }
       }
     },

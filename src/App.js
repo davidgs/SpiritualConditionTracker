@@ -206,6 +206,7 @@ function App() {
   // Calculate spiritual fitness score using the database function
   async function calculateSpiritualFitness() {
     // Use global constant for default score if no calculation is possible
+    console.log('Starting calculateSpiritualFitness with default:', window.DEFAULT_SPIRITUAL_FITNESS_SCORE);
     
     // Check if database is initialized
     if (!window.db) {
