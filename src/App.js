@@ -9,6 +9,7 @@ import StepWork from './components/StepWork';
 import SponsorSponsee from './components/SponsorSponsee';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { generateKeyPair } from './utils/encryption';
+import { DEFAULT_SPIRITUAL_FITNESS_SCORE } from './utils/constants';
 
 // Main App Component
 function App() {
@@ -204,21 +205,20 @@ function App() {
 
   // Calculate spiritual fitness score using the database function
   async function calculateSpiritualFitness() {
-    // Default score if no calculation is possible
-    const DEFAULT_SCORE = 5;
+    // Use global constant for default score if no calculation is possible
     
     // Check if database is initialized
     if (!window.db) {
       console.error('Database not initialized');
-      setSpiritualFitness(DEFAULT_SCORE);
-      return DEFAULT_SCORE;
+      setSpiritualFitness(DEFAULT_SPIRITUAL_FITNESS_SCORE);
+      return DEFAULT_SPIRITUAL_FITNESS_SCORE;
     }
     
     // Log the activities we have
     console.log('Calculating spiritual fitness with activities:', activities);
     
     try {
-      let score = DEFAULT_SCORE;
+      let score = DEFAULT_SPIRITUAL_FITNESS_SCORE;
       let calculationMethod = 'none';
       
       // Try different calculation methods in order of preference
