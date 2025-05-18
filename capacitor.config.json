@@ -1,0 +1,19 @@
+{
+  "appId": "com.spiritualconditiontracker.app",
+  "appName": "Spiritual Condition Tracker",
+  "webDir": ".",
+  "bundledWebRuntime": true,
+  "server": {
+    "url": "http://localhost:5001",
+    "cleartext": true
+  },
+  "ios": {
+    "contentInset": "always",
+    "allowsLinkPreview": false,
+    "scrollEnabled": true,
+    "limitsNavigationsToAppBoundDomains": true
+  },
+  "android": {
+    "useLegacyBridge": true
+  }
+}

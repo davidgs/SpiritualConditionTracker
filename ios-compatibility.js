@@ -64,6 +64,17 @@ function debugLog(message) {
       }
     }
   }
+  
+  // Also try to force the app to render if not already visible
+  setTimeout(() => {
+    const appElement = document.getElementById('app');
+    if (appElement && !appElement.innerHTML.trim()) {
+      debugLog('App container empty, attempting to force render');
+      // Force layout recalculation
+      document.body.style.display = 'none';
+      setTimeout(() => document.body.style.display = '', 10);
+    }
+  }, 500);
 }
 
 // Create debug overlay early
@@ -78,31 +89,55 @@ document.addEventListener('DOMContentLoaded', () => {
   const appRoot = document.getElementById('app');
   if (appRoot) {
     debugLog('App root element found');
+    
+    // Add visibility to make sure it's shown
+    appRoot.style.display = 'block';
+    appRoot.style.visibility = 'visible';
+    appRoot.style.opacity = '1';
+    
+    // Fix for iOS layout issues - force proper positioning
+    if (!appRoot.style.position) {
+      appRoot.style.position = 'relative';
+    }
   } else {
     debugLog('ERROR: App root element NOT found!');
   }
   
-  // Force layout recalculation and repaint
-  setTimeout(() => {
-    // Trigger multiple different ways to force repaint
+  // More aggressive approach to forcing the rendering
+  const forceRender = () => {
+    // Trigger multiple methods to force repaint
     document.body.style.zoom = '0.99';
+    
     setTimeout(() => {
       document.body.style.zoom = '1';
+      document.body.style.transform = 'scale(1)';
       debugLog('Forced repaint applied');
+      
+      // Find React root
+      const reactRoots = document.querySelectorAll('[data-reactroot]');
+      if (reactRoots.length > 0) {
+        debugLog(`Found ${reactRoots.length} React roots`);
+        
+        // Make sure the root is visible
+        reactRoots.forEach(root => {
+          root.style.visibility = 'visible';
+          root.style.display = 'block';
+        });
+      } else {
+        debugLog('No React roots found - may need to wait for React to initialize');
+      }
+      
+      // Force React to re-render by triggering a resize
+      window.dispatchEvent(new Event('resize'));
+      window.dispatchEvent(new Event('orientationchange'));
+      debugLog('Resize events dispatched');
     }, 50);
-    
-    // Find React root
-    const reactRoots = document.querySelectorAll('[data-reactroot]');
-    if (reactRoots.length > 0) {
-      debugLog(`Found ${reactRoots.length} React roots`);
-    } else {
-      debugLog('No React roots found - may need to wait for React to initialize');
-    }
-    
-    // Force React to re-render by triggering a resize
-    window.dispatchEvent(new Event('resize'));
-    debugLog('Resize event dispatched');
-  }, 100);
+  };
+  
+  // Run immediately and then again after a delay
+  forceRender();
+  setTimeout(forceRender, 500);
+  setTimeout(forceRender, 1000);
 });
 
 // Watch for React rendering
