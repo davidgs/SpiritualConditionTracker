@@ -304,7 +304,7 @@ function App() {
     console.log('Using built-in fallback fitness calculation');
     
     // Start with a base score
-    const baseScore = 20;
+    const baseScore = 5;
     let finalScore = baseScore;
     
     // Only proceed if we have activities
