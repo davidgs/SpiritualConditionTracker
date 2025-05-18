@@ -111,8 +111,8 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
   const calculateScoreFallback = (timeframe) => {
     console.log('Using fallback calculation with activities:', activities);
     
-    // Start with base score
-    const baseScore = 5;
+    // Use the global constant for base score
+    const baseScore = window.DEFAULT_SPIRITUAL_FITNESS_SCORE || 5;
     
     if (!activities || activities.length === 0) {
       console.log('No activities for fallback calculation');

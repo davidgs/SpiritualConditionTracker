@@ -4,6 +4,10 @@
  */
 
 import { isPlatform } from '@ionic/react';
+import { DEFAULT_SPIRITUAL_FITNESS_SCORE } from './constants';
+
+// Make the default score available globally
+window.DEFAULT_SPIRITUAL_FITNESS_SCORE = DEFAULT_SPIRITUAL_FITNESS_SCORE;
 
 // Database connection
 let db = null;
@@ -113,7 +117,7 @@ export function calculateFallbackSpiritualFitness() {
     
     if (!activities || activities.length === 0) {
       console.log("No activities for fallback calculation");
-      return 5; // Default starter score so users don't see zero
+      return DEFAULT_SPIRITUAL_FITNESS_SCORE; // Default starter score so users don't see zero
     }
     
     // Filter for recent activities (last 30 days)
@@ -127,7 +131,7 @@ export function calculateFallbackSpiritualFitness() {
     });
     
     if (recentActivities.length === 0) {
-      return 5; // Default starter score if no recent activities
+      return DEFAULT_SPIRITUAL_FITNESS_SCORE; // Default starter score if no recent activities
     }
     
     // Calculate score based on activity types and frequency
@@ -165,7 +169,7 @@ export function calculateFallbackSpiritualFitness() {
     return Math.min(100, totalScore + consistencyBonus + varietyBonus);
   } catch (error) {
     console.error("Error in fallback spiritual fitness calculation:", error);
-    return 5; // Return a minimal default score on error
+    return DEFAULT_SPIRITUAL_FITNESS_SCORE; // Return a minimal default score on error
   }
 }
 
@@ -830,7 +834,7 @@ export async function setPreference(key, value) {
  */
 export async function calculateSpiritualFitness(activities, timeframe = 30) {
   if (!activities || activities.length === 0) {
-    return 5; // Base score if no activities
+    return DEFAULT_SPIRITUAL_FITNESS_SCORE; // Base score if no activities
   }
   
   try {
@@ -839,7 +843,7 @@ export async function calculateSpiritualFitness(activities, timeframe = 30) {
     const calculationTimeframe = storedTimeframe ? parseInt(storedTimeframe, 10) : timeframe;
     
     // Start with a base score
-    const baseScore = 5;
+    const baseScore = DEFAULT_SPIRITUAL_FITNESS_SCORE;
     let score = baseScore;
     const now = new Date();
     const cutoffDate = new Date();
