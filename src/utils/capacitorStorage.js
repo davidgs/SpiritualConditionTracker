@@ -51,13 +51,64 @@ export async function initDatabase() {
       }
       
       try {
-        // Open or create the database
+        // Open or create the database using the correct method for the plugin
         console.log("Opening database with Capacitor SQLite...");
-        db = await sqlitePlugin.openDatabase({
-          name: 'spiritualTracker.db',
-          location: 'default'
-        });
-        console.log("Database opened successfully:", db);
+        
+        // Check which method the plugin supports
+        if (typeof sqlitePlugin.createConnection === 'function') {
+          // This is the method for @capacitor-community/sqlite
+          await sqlitePlugin.createConnection({
+            database: 'spiritualTracker',
+            encrypted: false,
+            mode: 'no-encryption',
+            version: 1
+          });
+          
+          // Open the database
+          await sqlitePlugin.open({ database: 'spiritualTracker' });
+          
+          // Create a custom db interface that matches transaction-based API
+          db = {
+            transaction: (callback) => {
+              const tx = {
+                executeSql: async (statement, params, successCallback, errorCallback) => {
+                  try {
+                    const result = await sqlitePlugin.query({
+                      database: 'spiritualTracker',
+                      statement,
+                      values: params || []
+                    });
+                    
+                    // Format result to match WebSQL structure
+                    const formattedResult = {
+                      rows: {
+                        length: result.values ? result.values.length : 0,
+                        item: (i) => result.values[i],
+                        _array: result.values || []
+                      },
+                      rowsAffected: result.changes?.changes || 0,
+                      insertId: result.changes?.lastId || null
+                    };
+                    
+                    successCallback && successCallback(tx, formattedResult);
+                  } catch (error) {
+                    console.error("SQL execution error:", error);
+                    errorCallback && errorCallback(tx, error);
+                  }
+                }
+              };
+              callback(tx);
+            }
+          };
+        } else {
+          // Legacy method for cordova-sqlite-storage
+          db = await sqlitePlugin.openDatabase({
+            name: 'spiritualTracker.db',
+            location: 'default'
+          });
+        }
+        
+        console.log("Database opened successfully");
       } catch (dbError) {
         console.error("Error opening database:", dbError);
         throw dbError;

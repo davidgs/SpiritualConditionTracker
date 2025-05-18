@@ -1,0 +1,82 @@
+```
+        RuntimeError - [Xcodeproj] Type checking error: got `Array` for attribute: Attribute
+        `shellScript` (type: `simple`, classes: `[String]`, owner class: `PBXShellScriptBuildPhase`)
+        /opt/homebrew/Cellar/cocoapods/1.16.2_1/libexec/gems/xcodeproj-1.27.0/lib/xcodeproj/project/object_attributes.rb:139:in
+        'Xcodeproj::Project::Object::AbstractObjectAttribute#validate_value'
+        /opt/homebrew/Cellar/cocoapods/1.16.2_1/libexec/gems/xcodeproj-1.27.0/lib/xcodeproj/project/object_attributes.rb:316:in
+        'block in Xcodeproj::Project::Object::PBXShellScriptBuildPhase#attribute'
+        /opt/homebrew/Cellar/cocoapods/1.16.2_1/libexec/gems/xcodeproj-1.27.0/lib/xcodeproj/project/object_attributes.rb:104:in
+        'Xcodeproj::Project::Object::AbstractObjectAttribute#set_value'
+        /opt/homebrew/Cellar/cocoapods/1.16.2_1/libexec/gems/xcodeproj-1.27.0/lib/xcodeproj/project/object.rb:283:in
+        'block in Xcodeproj::Project::Object::AbstractObject#configure_with_plist'
+        /opt/homebrew/Cellar/cocoapods/1.16.2_1/libexec/gems/xcodeproj-1.27.0/lib/xcodeproj/project/object.rb:282:in
+        'Array#each'
+        /opt/homebrew/Cellar/cocoapods/1.16.2_1/libexec/gems/xcodeproj-1.27.0/lib/xcodeproj/project/object.rb:282:in
+        'Xcodeproj::Project::Object::AbstractObject#configure_with_plist'
+        /opt/homebrew/Cellar/cocoapods/1.16.2_1/libexec/gems/xcodeproj-1.27.0/lib/xcodeproj/project.rb:272:in
+        'Xcodeproj::Project#new_from_plist'
+        /opt/homebrew/Cellar/cocoapods/1.16.2_1/libexec/gems/xcodeproj-1.27.0/lib/xcodeproj/project/object.rb:350:in
+        'Xcodeproj::Project::Object::AbstractObject#object_with_uuid'
+        /opt/homebrew/Cellar/cocoapods/1.16.2_1/libexec/gems/xcodeproj-1.27.0/lib/xcodeproj/project/object.rb:300:in
+        'block (2 levels) in Xcodeproj::Project::Object::AbstractObject#configure_with_plist'
+        /opt/homebrew/Cellar/cocoapods/1.16.2_1/libexec/gems/xcodeproj-1.27.0/lib/xcodeproj/project/object.rb:299:in
+        'Array#each'
+        /opt/homebrew/Cellar/cocoapods/1.16.2_1/libexec/gems/xcodeproj-1.27.0/lib/xcodeproj/project/object.rb:299:in
+        'block in Xcodeproj::Project::Object::AbstractObject#configure_with_plist'
+        /opt/homebrew/Cellar/cocoapods/1.16.2_1/libexec/gems/xcodeproj-1.27.0/lib/xcodeproj/project/object.rb:296:in
+        'Array#each'
+        /opt/homebrew/Cellar/cocoapods/1.16.2_1/libexec/gems/xcodeproj-1.27.0/lib/xcodeproj/project/object.rb:296:in
+        'Xcodeproj::Project::Object::AbstractObject#configure_with_plist'
+        /opt/homebrew/Cellar/cocoapods/1.16.2_1/libexec/gems/xcodeproj-1.27.0/lib/xcodeproj/project.rb:272:in
+        'Xcodeproj::Project#new_from_plist'
+        /opt/homebrew/Cellar/cocoapods/1.16.2_1/libexec/gems/xcodeproj-1.27.0/lib/xcodeproj/project/object.rb:350:in
+        'Xcodeproj::Project::Object::AbstractObject#object_with_uuid'
+        /opt/homebrew/Cellar/cocoapods/1.16.2_1/libexec/gems/xcodeproj-1.27.0/lib/xcodeproj/project/object.rb:300:in
+        'block (2 levels) in Xcodeproj::Project::Object::AbstractObject#configure_with_plist'
+        /opt/homebrew/Cellar/cocoapods/1.16.2_1/libexec/gems/xcodeproj-1.27.0/lib/xcodeproj/project/object.rb:299:in
+        'Array#each'
+        /opt/homebrew/Cellar/cocoapods/1.16.2_1/libexec/gems/xcodeproj-1.27.0/lib/xcodeproj/project/object.rb:299:in
+        'block in Xcodeproj::Project::Object::AbstractObject#configure_with_plist'
+        /opt/homebrew/Cellar/cocoapods/1.16.2_1/libexec/gems/xcodeproj-1.27.0/lib/xcodeproj/project/object.rb:296:in
+        'Array#each'
+        /opt/homebrew/Cellar/cocoapods/1.16.2_1/libexec/gems/xcodeproj-1.27.0/lib/xcodeproj/project/object.rb:296:in
+        'Xcodeproj::Project::Object::AbstractObject#configure_with_plist'
+        /opt/homebrew/Cellar/cocoapods/1.16.2_1/libexec/gems/xcodeproj-1.27.0/lib/xcodeproj/project.rb:272:in
+        'Xcodeproj::Project#new_from_plist'
+        /opt/homebrew/Cellar/cocoapods/1.16.2_1/libexec/gems/xcodeproj-1.27.0/lib/xcodeproj/project.rb:213:in
+        'Xcodeproj::Project#initialize_from_file'
+        /opt/homebrew/Cellar/cocoapods/1.16.2_1/libexec/gems/xcodeproj-1.27.0/lib/xcodeproj/project.rb:113:in
+        'Xcodeproj::Project.open'
+        /opt/homebrew/Cellar/cocoapods/1.16.2_1/libexec/gems/cocoapods-1.16.2/lib/cocoapods/installer/analyzer.rb:1194:in
+        'block (2 levels) in Pod::Installer::Analyzer#inspect_targets_to_integrate'
+        /opt/homebrew/Cellar/cocoapods/1.16.2_1/libexec/gems/cocoapods-1.16.2/lib/cocoapods/installer/analyzer.rb:1193:in
+        'Hash#each'
+        /opt/homebrew/Cellar/cocoapods/1.16.2_1/libexec/gems/cocoapods-1.16.2/lib/cocoapods/installer/analyzer.rb:1193:in
+        'block in Pod::Installer::Analyzer#inspect_targets_to_integrate'
+        /opt/homebrew/Cellar/cocoapods/1.16.2_1/libexec/gems/cocoapods-1.16.2/lib/cocoapods/user_interface.rb:64:in
+        'Pod::UserInterface.section'
+        /opt/homebrew/Cellar/cocoapods/1.16.2_1/libexec/gems/cocoapods-1.16.2/lib/cocoapods/installer/analyzer.rb:1188:in
+        'Pod::Installer::Analyzer#inspect_targets_to_integrate'
+        /opt/homebrew/Cellar/cocoapods/1.16.2_1/libexec/gems/cocoapods-1.16.2/lib/cocoapods/installer/analyzer.rb:107:in
+        'Pod::Installer::Analyzer#analyze'
+        /opt/homebrew/Cellar/cocoapods/1.16.2_1/libexec/gems/cocoapods-1.16.2/lib/cocoapods/installer.rb:422:in
+        'Pod::Installer#analyze'
+        /opt/homebrew/Cellar/cocoapods/1.16.2_1/libexec/gems/cocoapods-1.16.2/lib/cocoapods/installer.rb:244:in
+        'block in Pod::Installer#resolve_dependencies'
+        /opt/homebrew/Cellar/cocoapods/1.16.2_1/libexec/gems/cocoapods-1.16.2/lib/cocoapods/user_interface.rb:64:in
+        'Pod::UserInterface.section'
+        /opt/homebrew/Cellar/cocoapods/1.16.2_1/libexec/gems/cocoapods-1.16.2/lib/cocoapods/installer.rb:243:in
+        'Pod::Installer#resolve_dependencies'
+        /opt/homebrew/Cellar/cocoapods/1.16.2_1/libexec/gems/cocoapods-1.16.2/lib/cocoapods/installer.rb:162:in
+        'Pod::Installer#install!'
+        /opt/homebrew/Cellar/cocoapods/1.16.2_1/libexec/gems/cocoapods-1.16.2/lib/cocoapods/command/install.rb:52:in
+        'Pod::Command::Install#run'
+        /opt/homebrew/Cellar/cocoapods/1.16.2_1/libexec/gems/claide-1.1.0/lib/claide/command.rb:334:in
+        'CLAide::Command.run'
+        /opt/homebrew/Cellar/cocoapods/1.16.2_1/libexec/gems/cocoapods-1.16.2/lib/cocoapods/command.rb:52:in
+        'Pod::Command.run'
+        /opt/homebrew/Cellar/cocoapods/1.16.2_1/libexec/gems/cocoapods-1.16.2/bin/pod:55:in '<top
+        (required)>'
+        /opt/homebrew/Cellar/cocoapods/1.16.2_1/libexec/bin/pod:25:in 'Kernel#load'
+        /opt/homebrew/Cellar/cocoapods/1.16.2_1/libexec/bin/pod:25:in '<main>'
+        ```
