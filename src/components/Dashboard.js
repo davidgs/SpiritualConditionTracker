@@ -112,7 +112,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
     console.log('Using fallback calculation with activities:', activities);
     
     // Start with base score
-    const baseScore = 20;
+    const baseScore = 5;
     
     if (!activities || activities.length === 0) {
       console.log('No activities for fallback calculation');

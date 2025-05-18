@@ -830,7 +830,7 @@ export async function setPreference(key, value) {
  */
 export async function calculateSpiritualFitness(activities, timeframe = 30) {
   if (!activities || activities.length === 0) {
-    return 20; // Base score if no activities
+    return 5; // Base score if no activities
   }
   
   try {
@@ -839,7 +839,7 @@ export async function calculateSpiritualFitness(activities, timeframe = 30) {
     const calculationTimeframe = storedTimeframe ? parseInt(storedTimeframe, 10) : timeframe;
     
     // Start with a base score
-    const baseScore = 20;
+    const baseScore = 5;
     let score = baseScore;
     const now = new Date();
     const cutoffDate = new Date();

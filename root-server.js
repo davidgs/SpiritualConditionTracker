@@ -80,7 +80,13 @@ const server = http.createServer((req, res) => {
   
   // Handle /app/ paths for backwards compatibility
   if (url.startsWith('/app/')) {
-    url = url.substring(4); // Remove /app prefix
+    // Map /app/dist/ to /dist/ for backwards compatibility
+    if (url.startsWith('/app/dist/')) {
+      url = url.replace('/app/dist/', '/dist/');
+    } else {
+      url = url.substring(4); // Remove /app prefix
+    }
+    console.log(`Remapped /app/ path to: ${url}`);
   }
   
   // Handle direct file access by removing leading slash
