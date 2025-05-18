@@ -1384,7 +1384,7 @@ export function setupGlobalDbObject() {
         });
         
         if (recentActivities.length === 0) {
-          return { score: 20, breakdown: {}, timeframe };
+          return { score: 5, breakdown: {}, timeframe };
         }
         
         // Calculate scores
@@ -1507,7 +1507,7 @@ export function setupGlobalDbObject() {
           return result;
         } catch (error) {
           console.error('Error in calculateAndSave:', error);
-          return { score: 20, breakdown: {}, timeframe: 30 };
+          return { score: 5, breakdown: {}, timeframe: 30 };
         }
       }
     },
