@@ -25,10 +25,36 @@ function initSQLiteDatabase() {
 // Initialize SQLite with Capacitor
 async function initCapacitorSQLite() {
   try {
+    // Make sure we're accessing the plugin correctly
+    if (!window.Capacitor || !window.Capacitor.Plugins || !window.Capacitor.Plugins.CapacitorSQLite) {
+      console.error('CapacitorSQLite plugin not properly available');
+      return initWebSQL();
+    }
+    
     const capacitorSQLite = window.Capacitor.Plugins.CapacitorSQLite;
     
+    // Check the platform
+    const platform = window.Capacitor.getPlatform();
+    console.log(`Running on platform: ${platform}`);
+    
+    try {
+      // Try to see if the plugin is really ready (fixes UNIMPLEMENTED error)
+      const isAvailable = await capacitorSQLite.isAvailable();
+      console.log(`SQLite availability check: ${isAvailable}`);
+      
+      if (!isAvailable) {
+        console.warn('CapacitorSQLite reports not available, falling back to WebSQL');
+        return initWebSQL();
+      }
+    } catch (e) {
+      // If isAvailable itself is UNIMPLEMENTED, continue anyway
+      console.warn(`SQLite availability check error: ${e.message || JSON.stringify(e)}`);
+    }
+    
     // Create a connection to the database
-    const db = await capacitorSQLite.createConnection({
+    console.log('Creating connection to database: defaultDB');
+    
+    await capacitorSQLite.createConnection({
       database: 'defaultDB',
       encrypted: false,
       mode: 'no-encryption',
@@ -36,8 +62,8 @@ async function initCapacitorSQLite() {
     });
     
     // Open the database
-    await capacitorSQLite.open({ database: 'defaultDB' });
     console.log('Opening database: defaultDB');
+    await capacitorSQLite.open({ database: 'defaultDB' });
     
     // Create tables
     await setupTables(capacitorSQLite);
@@ -45,6 +71,7 @@ async function initCapacitorSQLite() {
     // Set up global database object
     setupGlobalDB(capacitorSQLite);
     
+    console.log('Capacitor SQLite setup complete');
     return capacitorSQLite;
   } catch (error) {
     console.error('Error initializing Capacitor SQLite:', error);
