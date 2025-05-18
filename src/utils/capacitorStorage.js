@@ -113,7 +113,7 @@ export function calculateFallbackSpiritualFitness() {
     
     if (!activities || activities.length === 0) {
       console.log("No activities for fallback calculation");
-      return 20; // Default starter score so users don't see zero
+      return 5; // Default starter score so users don't see zero
     }
     
     // Filter for recent activities (last 30 days)
@@ -127,7 +127,7 @@ export function calculateFallbackSpiritualFitness() {
     });
     
     if (recentActivities.length === 0) {
-      return 20; // Default starter score if no recent activities
+      return 5; // Default starter score if no recent activities
     }
     
     // Calculate score based on activity types and frequency
@@ -165,7 +165,7 @@ export function calculateFallbackSpiritualFitness() {
     return Math.min(100, totalScore + consistencyBonus + varietyBonus);
   } catch (error) {
     console.error("Error in fallback spiritual fitness calculation:", error);
-    return 20; // Return a minimal default score on error
+    return 5; // Return a minimal default score on error
   }
 }
 
