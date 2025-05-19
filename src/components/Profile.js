@@ -32,26 +32,49 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
       return;
     }
     
-    console.log('Starting SQLite database reset process');
+    console.log('Starting data reset process');
     
-    // Use the SQLite resetDatabase function
-    resetDatabase()
-      .then(success => {
-        if (success) {
-          console.log('SQLite database reset successfully');
-          // Also clear localStorage for complete cleanup
-          localStorage.clear();
-          alert('All data has been reset. The app will now reload.');
-          setTimeout(() => window.location.reload(), 500);
-        } else {
-          console.error('SQLite database reset failed');
-          alert('Failed to reset database. Please try again.');
+    try {
+      // Clear all data from window.db (which is the main database interface)
+      if (window.db) {
+        console.log('Using window.db to clear data');
+        
+        // Clear each collection in the database
+        const collections = ['activities', 'meetings', 'preferences', 'users'];
+        
+        for (const collection of collections) {
+          try {
+            // Get all items in the collection
+            const items = window.db.getAll(collection) || [];
+            console.log(`Clearing ${items.length} items from ${collection}`);
+            
+            // Remove each item
+            for (const item of items) {
+              if (item && item.id) {
+                window.db.remove(collection, item.id);
+              }
+            }
+            
+            console.log(`Cleared ${collection}`);
+          } catch (e) {
+            console.log(`Error clearing ${collection}:`, e);
+          }
         }
-      })
-      .catch(error => {
-        console.error('Error during database reset:', error);
-        alert('An error occurred while resetting data. Please try again.');
-      });
+        
+        console.log('All collections cleared successfully');
+      }
+      
+      // Also clear localStorage for complete cleanup
+      localStorage.clear();
+      console.log('localStorage cleared');
+      
+      // Show success message
+      alert('All data has been reset. The app will now reload.');
+      setTimeout(() => window.location.reload(), 500);
+    } catch (error) {
+      console.error('Error resetting data:', error);
+      alert('An error occurred while resetting data. Please try again.');
+    }
   };
   const { theme } = useContext(ThemeContext);
   const darkMode = theme === 'dark';
