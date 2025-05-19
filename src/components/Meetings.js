@@ -132,7 +132,7 @@ export default function Meetings({ setCurrentView, meetings = [], onSave, user }
           <div className="mb-3">
             <h3 className="text-xl font-bold text-gray-800 dark:text-gray-100 flex items-center">
               {meeting.isHomeGroup && (
-                <i className="fa-solid fa-house text-blue-500 dark:text-blue-400 mr-2" title="Home Group" style={{ fontSize: '1rem' }}></i>
+                <i className="fa-solid fa-house text-gray-500 dark:text-gray-200 mr-2" title="Home Group" style={{ fontSize: '1rem' }}></i>
               )}
               {meeting.name}
             </h3>
