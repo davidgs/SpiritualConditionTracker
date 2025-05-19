@@ -332,11 +332,11 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
                   sx={{ 
                     display: 'block', 
                     mb: 1, 
-                    color: darkMode ? '#9ca3af' : '#6b7280',
+                    color: darkMode ? '#e5e7eb' : '#6b7280',
                     fontWeight: 500
                   }}
                 >
-                  Please select your sobriety date
+                  Sobriety Date*
                 </Typography>
                 <TextField
                   required
@@ -345,7 +345,8 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
                   value={sobrietyDate}
                   onChange={(e) => setSobrietyDate(e.target.value)}
                   inputProps={{
-                    max: new Date().toISOString().split('T')[0]
+                    max: new Date().toISOString().split('T')[0],
+                    style: { color: darkMode ? '#ffffff' : '#374151' }
                   }}
                   variant="outlined"
                   error={!!errors.sobrietyDate}
@@ -353,17 +354,17 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
                   size="small"
                   InputLabelProps={{
                     shrink: true,
-                    style: { color: darkMode ? '#9ca3af' : '#6b7280' }
+                    style: { color: darkMode ? '#e5e7eb' : '#6b7280' }
                   }}
                   InputProps={{
                     style: { 
-                      color: darkMode ? '#d1d5db' : '#374151',
-                      backgroundColor: darkMode ? 'rgba(55, 65, 81, 0.3)' : '#ffffff'
+                      color: darkMode ? '#ffffff' : '#374151',
+                      backgroundColor: darkMode ? 'rgba(31, 41, 55, 0.5)' : '#ffffff'
                     },
                     sx: {
                       borderRadius: 1,
                       '& .MuiOutlinedInput-notchedOutline': {
-                        borderColor: darkMode ? '#374151' : '#d1d5db',
+                        borderColor: darkMode ? '#4b5563' : '#d1d5db',
                       },
                       '&:hover .MuiOutlinedInput-notchedOutline': {
                         borderColor: darkMode ? '#60a5fa' : '#3b82f6',
@@ -373,6 +374,11 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
                       }
                     }
                   }}
+                  FormHelperTextProps={{
+                    style: {
+                      color: darkMode ? '#d1d5db' : '#6b7280'
+                    }
+                  }}
                   sx={{ mb: 1 }}
                 />
                 <Typography 
@@ -380,7 +386,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
                   sx={{ 
                     display: 'block', 
                     mt: 0.5, 
-                    color: darkMode ? '#9ca3af' : '#6b7280',
+                    color: darkMode ? '#d1d5db' : '#6b7280',
                     fontStyle: 'italic'
                   }}
                 >
