@@ -14,7 +14,9 @@ import {
   CircularProgress,
   Alert,
   Typography,
-  Divider
+  Divider,
+  Checkbox,
+  FormControlLabel
 } from '@mui/material';
 
 export default function MeetingFormDialog({ 
@@ -62,6 +64,7 @@ export default function MeetingFormDialog({
   const [location, setLocation] = useState(null);
   const [error, setError] = useState('');
   const [searchingLocation, setSearchingLocation] = useState(false);
+  const [isHomeGroup, setIsHomeGroup] = useState(false);
   
   // Initialize form with meeting data if provided
   useEffect(() => {
@@ -164,6 +167,9 @@ export default function MeetingFormDialog({
       }
       
       setLocation(meeting.coordinates);
+      
+      // Set isHomeGroup if it exists in the meeting data
+      setIsHomeGroup(meeting.isHomeGroup || false);
     }
   }, [meeting]);
   
@@ -318,6 +324,7 @@ export default function MeetingFormDialog({
       state: state.trim(),
       zipCode: zipCode.trim(),
       coordinates: location,
+      isHomeGroup: isHomeGroup,
       createdAt: meeting ? meeting.createdAt : new Date().toISOString(),
       updatedAt: new Date().toISOString()
     };
@@ -577,6 +584,27 @@ export default function MeetingFormDialog({
               </Box>
             </Box>
           </Box>
+        </Box>
+        
+        {/* Home Group Checkbox */}
+        <Box sx={{ mt: 3, mb: 1, px: 3 }}>
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={isHomeGroup}
+                onChange={(e) => setIsHomeGroup(e.target.checked)}
+                color="primary"
+              />
+            }
+            label={
+              <span style={{ color: darkMode ? "#d1d5db" : "#374151" }}>
+                This is my Home Group
+              </span>
+            }
+          />
+          <Typography variant="body2" sx={{ mt: 0.5, ml: 4 }} color="text.secondary">
+            Your Home Group is your primary AA group where you regularly attend and participate.
+          </Typography>
         </Box>
       </DialogContent>
       

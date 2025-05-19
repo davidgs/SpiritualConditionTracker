@@ -14,7 +14,9 @@ import {
   CircularProgress,
   Alert,
   Typography,
-  Divider
+  Divider,
+  Checkbox,
+  FormControlLabel
 } from '@mui/material';
 
 export default function MeetingForm({ 
@@ -60,6 +62,7 @@ export default function MeetingForm({
   const [location, setLocation] = useState(null);
   const [error, setError] = useState('');
   const [searchingLocation, setSearchingLocation] = useState(false);
+  const [isHomeGroup, setIsHomeGroup] = useState(false);
   
   // Dark mode already set above with isDarkMode
   
@@ -160,6 +163,9 @@ export default function MeetingForm({
       }
       
       setLocation(meeting.coordinates);
+      
+      // Set isHomeGroup if it exists in the meeting data
+      setIsHomeGroup(meeting.isHomeGroup || false);
     }
   }, [meeting]);
   
@@ -414,6 +420,7 @@ export default function MeetingForm({
       state: state.trim(),
       zipCode: zipCode.trim(),
       coordinates: location,
+      isHomeGroup: isHomeGroup,
       createdAt: meeting ? meeting.createdAt : new Date().toISOString(),
       updatedAt: new Date().toISOString()
     };
@@ -619,6 +626,27 @@ export default function MeetingForm({
                     className="meeting-form-field"
                   />
                 </div>
+              </div>
+            </div>
+            
+            {/* Home Group Checkbox */}
+            <div className="mb-5 mt-5">
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={isHomeGroup}
+                    onChange={(e) => setIsHomeGroup(e.target.checked)}
+                    color="primary"
+                  />
+                }
+                label={
+                  <span className="text-gray-700 dark:text-gray-300">
+                    This is my Home Group
+                  </span>
+                }
+              />
+              <div className="text-sm text-gray-500 dark:text-gray-400 mt-1 ml-7">
+                Your Home Group is your primary AA group where you regularly attend and participate.
               </div>
             </div>
             
