@@ -35,7 +35,7 @@ function Header({ title, menuOpen, setMenuOpen, isMobile }) {
             alignItems: 'center'
           }}>
             <img 
-              src="./logo.jpg"
+              src="./assets/logo.jpg"
               alt="App Logo" 
               style={{ 
                 width: '40px',

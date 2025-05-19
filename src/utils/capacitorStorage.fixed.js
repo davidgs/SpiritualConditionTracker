@@ -14,7 +14,7 @@ let sqlitePlugin = null;
  * @returns {Promise<boolean>} Whether initialization was successful
  */
 export async function initDatabase() {
-  console.log("Initializing SQLite database for Capacitor...");
+  console.log("[capacitorStorageFixed.js] Initializing SQLite database for Capacitor...");
   
   try {
     // Detect iOS platform - iOS has special handling
@@ -23,16 +23,16 @@ export async function initDatabase() {
     
     // Import the appropriate SQLite plugin based on platform
     if (isPlatform('capacitor') || isPlatform('cordova')) {
-      console.log("Using native SQLite implementation via Capacitor");
+      console.log("[capacitorStorageFixed.js] Using native SQLite implementation via Capacitor");
       
       // For Capacitor
       if (isPlatform('capacitor')) {
         try {
           const { CapacitorSQLite } = await import('@capacitor-community/sqlite');
           sqlitePlugin = CapacitorSQLite;
-          console.log("CapacitorSQLite loaded successfully");
+          console.log("[capacitorStorageFixed.js] CapacitorSQLite loaded successfully");
         } catch (importError) {
-          console.error("Error importing CapacitorSQLite:", importError);
+          console.error("[capacitorStorageFixed.js] Error importing CapacitorSQLite:", importError);
           throw importError;
         }
       } 
@@ -42,26 +42,26 @@ export async function initDatabase() {
       }
       
       if (!sqlitePlugin) {
-        console.error("SQLite plugin not available");
+        console.error("[capacitorStorageFixed.js] SQLite plugin not available");
         throw new Error("SQLite plugin not found");
       }
       
       try {
         // Open or create the database
-        console.log("Opening database with Capacitor SQLite...");
+        console.log("[capacitorStorageFixed.js] Opening database with Capacitor SQLite...");
         db = await sqlitePlugin.openDatabase({
           name: 'spiritualTracker.db',
           location: 'default'
         });
-        console.log("Database opened successfully:", db);
+        console.log("[capacitorStorageFixed.js] Database opened successfully:", db);
       } catch (dbError) {
-        console.error("Error opening database:", dbError);
+        console.error("[capacitorStorageFixed.js] Error opening database:", dbError);
         throw dbError;
       }
     }
     // iOS WebSQL fallback when Capacitor is not available
     else if (isIOS && window.openDatabase) {
-      console.log("Using iOS WebSQL fallback");
+      console.log("[capacitorStorageFixed.js] Using iOS WebSQL fallback");
       db = window.openDatabase(
         'spiritualTracker.db',
         '1.0',
@@ -71,7 +71,7 @@ export async function initDatabase() {
     }
     // Standard Web fallback - if Web SQL is available
     else if (window.openDatabase) {
-      console.log("Using WebSQL implementation for browser");
+      console.log("[capacitorStorageFixed.js] Using WebSQL implementation for browser");
       db = window.openDatabase(
         'spiritualTracker.db',
         '1.0',
@@ -81,7 +81,7 @@ export async function initDatabase() {
     }
     // No SQL support - use localStorage
     else {
-      console.warn("SQLite not available - using localStorage fallback");
+      console.warn("[capacitorStorageFixed.js] SQLite not available - using localStorage fallback");
       setupLocalStorageFallback();
       return false;
     }
@@ -89,11 +89,11 @@ export async function initDatabase() {
     // Create tables
     await createTables();
     
-    console.log("SQLite database initialized successfully");
+    console.log("[capacitorStorageFixed.js] SQLite database initialized successfully");
     return true;
   } catch (error) {
-    console.error("Error initializing database:", error);
-    console.log("Falling back to localStorage for data persistence");
+    console.error("[capacitorStorageFixed.js] Error initializing database:", error);
+    console.log("[capacitorStorageFixed.js] Falling back to localStorage for data persistence");
     setupLocalStorageFallback();
     return false;
   }
@@ -105,14 +105,14 @@ export async function initDatabase() {
  * @returns {number} Spiritual fitness score from 0-100
  */
 export function calculateFallbackSpiritualFitness() {
-  console.log("Using fallback calculation with activities:", getLocalStorageActivities());
+  console.log("[capacitorStorageFixed.js] Using fallback calculation with activities:", getLocalStorageActivities());
   
   try {
     // Get activities from localStorage
     const activities = getLocalStorageActivities();
     
     if (!activities || activities.length === 0) {
-      console.log("No activities for fallback calculation");
+      console.log("[capacitorStorageFixed.js] No activities for fallback calculation");
       return 20; // Default starter score so users don't see zero
     }
     
@@ -164,7 +164,7 @@ export function calculateFallbackSpiritualFitness() {
     // Calculate final score (cap at 100)
     return Math.min(100, totalScore + consistencyBonus + varietyBonus);
   } catch (error) {
-    console.error("Error in fallback spiritual fitness calculation:", error);
+    console.error("[capacitorStorageFixed.js] Error in fallback spiritual fitness calculation:", error);
     return 20; // Return a minimal default score on error
   }
 }
@@ -178,7 +178,7 @@ function getLocalStorageActivities() {
     const activitiesJson = localStorage.getItem('activities');
     return activitiesJson ? JSON.parse(activitiesJson) : [];
   } catch (error) {
-    console.error("Error getting activities from localStorage:", error);
+    console.error("[capacitorStorageFixed.js] Error getting activities from localStorage:", error);
     return [];
   }
 }
@@ -187,7 +187,7 @@ function getLocalStorageActivities() {
  * Create a fallback using localStorage if SQLite is not available
  */
 function setupLocalStorageFallback() {
-  console.log("Setting up localStorage fallback for data persistence");
+  console.log("[capacitorStorageFixed.js] Setting up localStorage fallback for data persistence");
   
   // Create an object that mimics SQLite interface but uses localStorage
   db = {
@@ -216,11 +216,11 @@ function setupLocalStorageFallback() {
             }
             else {
               // Unknown query
-              console.warn("Unsupported SQL query for localStorage:", query);
+              console.warn("[capacitorStorageFixed.js] Unsupported SQL query for localStorage:", query);
               successCallback({}, { rows: { length: 0 } });
             }
           } catch (error) {
-            console.error("Error in localStorage fallback:", error);
+            console.error("[capacitorStorageFixed.js] Error in localStorage fallback:", error);
             if (errorCallback) errorCallback({}, error);
           }
         }
@@ -383,7 +383,7 @@ function setupLocalStorageFallback() {
  */
 async function createTables() {
   if (!db) {
-    console.error("Cannot create tables - database not initialized");
+    console.error("[capacitorStorageFixed.js] Cannot create tables - database not initialized");
     return;
   }
   
@@ -457,12 +457,12 @@ async function createTables() {
     try {
       await executeQuery(query);
     } catch (error) {
-      console.error(`Error creating table: ${query.substring(0, 40)}...`, error);
+      console.error(`[capacitorStorageFixed.js] Error creating table: ${query.substring(0, 40)}...`, error);
       throw error;
     }
   }
   
-  console.log("All database tables created successfully");
+  console.log("[capacitorStorageFixed.js] All database tables created successfully");
 }
 
 /**
@@ -484,7 +484,7 @@ function executeQuery(query, params = []) {
         params,
         (_, result) => resolve(result),
         (_, error) => {
-          console.error("SQL Error:", error);
+          console.error("[capacitorStorageFixed.js] SQL Error:", error);
           reject(error);
           return false;
         }
@@ -528,7 +528,7 @@ export async function getAll(collection) {
     
     return items;
   } catch (error) {
-    console.error(`Error getting all items from ${collection}:`, error);
+    console.error(`[capacitorStorageFixed.js] Error getting all items from ${collection}:`, error);
     return [];
   }
 }
@@ -570,7 +570,7 @@ export async function getById(collection, id) {
     
     return item;
   } catch (error) {
-    console.error(`Error getting item by ID from ${collection}:`, error);
+    console.error(`[capacitorStorageFixed.js] Error getting item by ID from ${collection}:`, error);
     return null;
   }
 }
@@ -653,7 +653,7 @@ export async function add(collection, item) {
     
     return item;
   } catch (error) {
-    console.error(`Error adding item to ${collection}:`, error);
+    console.error(`[capacitorStorageFixed.js] Error adding item to ${collection}:`, error);
     throw error;
   }
 }
@@ -824,7 +824,7 @@ export async function update(collection, id, updates) {
     
     return updatedItem;
   } catch (error) {
-    console.error(`Error updating item in ${collection}:`, error);
+    console.error(`[capacitorStorageFixed.js] Error updating item in ${collection}:`, error);
     return null;
   }
 }
@@ -844,7 +844,7 @@ export async function remove(collection, id) {
     
     return result.rowsAffected > 0;
   } catch (error) {
-    console.error(`Error removing item from ${collection}:`, error);
+    console.error(`[capacitorStorageFixed.js] Error removing item from ${collection}:`, error);
     return false;
   }
 }
@@ -860,7 +860,7 @@ export async function query(collection, predicate) {
     const items = await getAll(collection);
     return items.filter(predicate);
   } catch (error) {
-    console.error(`Error querying items in ${collection}:`, error);
+    console.error(`[capacitorStorageFixed.js] Error querying items in ${collection}:`, error);
     return [];
   }
 }
@@ -885,9 +885,9 @@ export async function calculateSpiritualFitness() {
         item.date && item.date >= dateThreshold
       );
       
-      console.log(`Found ${activities.length} activities in the last 30 days using SQL`);
+      console.log(`[capacitorStorageFixed.js] Found ${activities.length} activities in the last 30 days using SQL`);
     } catch (dbError) {
-      console.warn("Error calculating spiritual fitness via database:", dbError);
+      console.warn("[capacitorStorageFixed.js] Error calculating spiritual fitness via database:", dbError);
       
       // Use the fallback method
       return calculateFallbackSpiritualFitness();
@@ -895,7 +895,7 @@ export async function calculateSpiritualFitness() {
     
     // If no activities found, use the fallback method
     if (activities.length === 0) {
-      console.log("No activities found in database, using fallback calculation");
+      console.log("[capacitorStorageFixed.js] No activities found in database, using fallback calculation");
       return calculateFallbackSpiritualFitness();
     }
     
@@ -935,10 +935,10 @@ export async function calculateSpiritualFitness() {
     // Calculate final score (cap at 100)
     const finalScore = Math.min(100, totalPoints + diversityBonus + consistencyBonus);
     
-    console.log("Spiritual fitness score calculated via database:", finalScore);
+    console.log("[capacitorStorageFixed.js] Spiritual fitness score calculated via database:", finalScore);
     return finalScore;
   } catch (error) {
-    console.error("Error calculating spiritual fitness:", error);
+    console.error("[capacitorStorageFixed.js] Error calculating spiritual fitness:", error);
     // Use fallback method in case of error
     return calculateFallbackSpiritualFitness();
   }
