@@ -18,7 +18,7 @@ function Header({ title, menuOpen, setMenuOpen, isMobile }) {
         zIndex: 20,
         backgroundColor: headerBackgroundColor,
         borderBottom: darkMode ? '1px solid #374151' : '1px solid #e5e7eb',
-        padding: isMobile ? '0.5rem' : '0.75rem 1rem',
+        padding: isMobile ? '1.75rem' : '0.75rem 1rem',
         display: 'flex',
         alignItems: 'center',
         justifyContent: isMobile ? 'space-between' : 'center',

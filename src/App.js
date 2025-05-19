@@ -433,6 +433,18 @@ function App() {
     }
 
     try {
+      // Process sobriety date to ensure consistent format
+      if (updates.sobrietyDate) {
+        // If it's just a date (YYYY-MM-DD) without time part, add time component to make it a proper ISO string
+        // This ensures consistent date handling across components
+        if (!updates.sobrietyDate.includes('T')) {
+          const dateObj = new Date(updates.sobrietyDate + 'T00:00:00.000Z');
+          if (!isNaN(dateObj.getTime())) {
+            updates.sobrietyDate = dateObj.toISOString();
+          }
+        }
+      }
+      
       // Update user in database - using async version
       const updatedUser = await window.db.update('users', user.id, updates);
       

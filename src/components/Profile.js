@@ -152,6 +152,15 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
     ? window.db?.calculateSobrietyYears(sobrietyDate, 2) || 0
     : 0;
     
+  // Ensure sobriety date is in correct format for display and calculations
+  useEffect(() => {
+    if (sobrietyDate && user?.sobrietyDate !== sobrietyDate && !editingSobriety) {
+      // Format has changed - update in database to ensure consistency
+      const updates = { sobrietyDate };
+      onUpdate(updates, { redirectToDashboard: false });
+    }
+  }, [sobrietyDate, user?.sobrietyDate]);
+    
   // State for editing sobriety date
   const [editingSobriety, setEditingSobriety] = useState(false);
   
@@ -305,6 +314,12 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
                   color="primary"
                   onClick={() => {
                     if (sobrietyDate) {
+                      // Update the sobriety date directly
+                      const updates = {
+                        sobrietyDate: sobrietyDate
+                      };
+                      // Save the sobriety date without redirecting to dashboard
+                      onUpdate(updates, { redirectToDashboard: false });
                       setEditingSobriety(false);
                     } else {
                       setErrors({...errors, sobrietyDate: 'Sobriety date is required'});
