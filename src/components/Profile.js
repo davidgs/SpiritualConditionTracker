@@ -609,9 +609,9 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
               />
               
               <TextField
-                label="Last Name"
+                {/* label="Last Name" */}
                 fullWidth
-                value={lastName}
+                value={lastName != "Not set" ? lastName : "Enter your last name or initials"}
                 onChange={(e) => setLastName(e.target.value)}
                 placeholder="Enter your last name"
                 variant="outlined"
@@ -628,9 +628,9 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
               />
               
               <TextField
-                label="Phone Number"
+                {/* label="Phone Number" */}
                 fullWidth
-                value={phoneNumber}
+                value={phoneNumber != "Not set" ? phoneNumber : "Enter your phone number"}
                 onChange={handlePhoneChange}
                 placeholder="Enter your phone number"
                 variant="outlined"
@@ -648,9 +648,9 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
               />
               
               <TextField
-                label="Email Address (Optional)"
+                {/* label="Email Address (Optional)" */}
                 fullWidth
-                value={email}
+                value={email != "Not set" ? email : "Enter your email address"}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Enter your email address"
                 variant="outlined"
@@ -669,11 +669,11 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
               
               <TextField
                 select
-                label="Home Groups"
+                label="Home Group(s)"
                 fullWidth
-                value={homeGroups}
+                value={homeGroups != "Not set" ? homeGroups : "Select your home group(s)"}
                 onChange={handleHomeGroupChange}
-                placeholder="Select your home groups"
+                placeholder="Select your home group(s)"
                 variant="outlined"
                 size="small"
                 InputLabelProps={{
