@@ -26,7 +26,7 @@ const contentTypes = {
 function serveFile(filePath, res) {
   fs.readFile(filePath, (err, data) => {
     if (err) {
-      console.error(`Error serving file ${filePath}: ${err.message}`);
+      console.error(`[ root-server.js ] Error serving file ${filePath}: ${err.message}`);
       res.writeHead(404);
       res.end(`File not found: ${filePath}`);
       return;
@@ -44,7 +44,7 @@ function serveFile(filePath, res) {
 
 // Create server
 const server = http.createServer((req, res) => {
-  console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
+  console.log(`[ root-server.js ] ${new Date().toISOString()} - ${req.method} ${req.url}`);
   
   // Set CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -86,7 +86,7 @@ const server = http.createServer((req, res) => {
     } else {
       url = url.substring(4); // Remove /app prefix
     }
-    console.log(`Remapped /app/ path to: ${url}`);
+    console.log(`[ root-server.js ] Remapped /app/ path to: ${url}`);
   }
   
   // Handle direct file access by removing leading slash
@@ -117,6 +117,6 @@ const server = http.createServer((req, res) => {
 
 // Start server
 server.listen(PORT, '0.0.0.0', () => {
-  console.log(`Root directory server running on port ${PORT}`);
-  console.log(`App available at http://localhost:${PORT}/`);
+  console.log(`[ root-server.js ] Root directory server running on port ${PORT}`);
+  console.log(`[ root-server.js ] App available at http://localhost:${PORT}/`);
 });
