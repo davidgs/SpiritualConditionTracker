@@ -78,6 +78,8 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
   };
   const { theme } = useContext(ThemeContext);
   const darkMode = theme === 'dark';
+  // Access MUI theme for consistent styling
+  const muiTheme = useTheme();
   
   const [name, setName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -332,7 +334,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
                   sx={{ 
                     display: 'block', 
                     mb: 1, 
-                    color: darkMode ? '#e5e7eb' : '#6b7280',
+                    color: muiTheme.palette.text.primary,
                     fontWeight: 500
                   }}
                 >
@@ -354,29 +356,27 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
                   size="small"
                   InputLabelProps={{
                     shrink: true,
-                    style: { color: darkMode ? '#e5e7eb' : '#6b7280' }
+                    sx: { color: muiTheme.palette.text.primary }
                   }}
                   InputProps={{
-                    style: { 
-                      color: darkMode ? '#ffffff' : '#374151',
-                      backgroundColor: darkMode ? 'rgba(31, 41, 55, 0.5)' : '#ffffff'
-                    },
                     sx: {
                       borderRadius: 1,
+                      color: muiTheme.palette.text.primary,
+                      backgroundColor: darkMode ? 'rgba(31, 41, 55, 0.5)' : '#ffffff',
                       '& .MuiOutlinedInput-notchedOutline': {
-                        borderColor: darkMode ? '#4b5563' : '#d1d5db',
+                        borderColor: muiTheme.palette.divider,
                       },
                       '&:hover .MuiOutlinedInput-notchedOutline': {
-                        borderColor: darkMode ? '#60a5fa' : '#3b82f6',
+                        borderColor: muiTheme.palette.primary.main,
                       },
                       '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                        borderColor: darkMode ? '#60a5fa' : '#3b82f6',
+                        borderColor: muiTheme.palette.primary.main,
                       }
                     }
                   }}
                   FormHelperTextProps={{
-                    style: {
-                      color: darkMode ? '#d1d5db' : '#6b7280'
+                    sx: {
+                      color: muiTheme.palette.text.secondary
                     }
                   }}
                   sx={{ mb: 1 }}
@@ -386,7 +386,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
                   sx={{ 
                     display: 'block', 
                     mt: 0.5, 
-                    color: darkMode ? '#d1d5db' : '#6b7280',
+                    color: muiTheme.palette.text.secondary,
                     fontStyle: 'italic'
                   }}
                 >
