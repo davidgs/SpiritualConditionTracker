@@ -14,24 +14,11 @@ export async function initDatabase() {
   console.log("[ sqliteStorage.js ] Initializing SQLite database...");
   
   try {
-    // For React Native environments
-    if (window.ReactNative) {
-      const SQLite = require('react-native-sqlite-storage');
-      SQLite.enablePromise(true);
-      
-      db = await SQLite.openDatabase({
-        name: 'spiritualTracker.db',
-        location: 'default'
-      });
-      
-      console.log("[ sqliteStorage.js ] SQLite database initialized successfully (React Native)");
-    } 
-    // We don't use Expo in this project - only use Capacitor and web fallbacks
+    // We only use Capacitor in this project - don't need React Native or Expo implementations
+    
     // For web environments, fallback to IndexedDB since WebSQL is deprecated
-    else {
-      console.log("[ sqliteStorage.js ] Web environment detected, using IndexedDB as SQLite alternative");
-      db = await initIndexedDB();
-    }
+    console.log("[ sqliteStorage.js ] Web environment detected, using IndexedDB as SQLite alternative");
+    db = await initIndexedDB();
     
     // Create tables
     await createTables();
