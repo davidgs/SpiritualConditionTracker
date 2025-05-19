@@ -262,7 +262,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
         </Typography>
       </Box>
       
-      <Paper elevation={1} sx={{ 
+      <Paper sx={{ 
           p: 3,
           mb: 3,
           borderRadius: 2
