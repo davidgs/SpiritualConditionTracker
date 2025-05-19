@@ -269,32 +269,69 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
           
           {editingSobriety ? (
             <Box sx={{ mb: 2 }}>
-              <TextField
-                label="Sobriety Date"
-                required
-                fullWidth
-                type="date"
-                value={sobrietyDate}
-                onChange={(e) => setSobrietyDate(e.target.value)}
-                inputProps={{
-                  max: new Date().toISOString().split('T')[0]
-                }}
-                variant="outlined"
-                error={!!errors.sobrietyDate}
-                helperText={errors.sobrietyDate}
-                size="small"
-                InputLabelProps={{
-                  shrink: true,
-                  style: { color: darkMode ? '#9ca3af' : '#6b7280' }
-                }}
-                InputProps={{
-                  style: { 
-                    color: darkMode ? '#d1d5db' : '#374151',
-                    backgroundColor: darkMode ? 'rgba(55, 65, 81, 0.3)' : '#ffffff'
-                  }
-                }}
-                sx={{ mb: 1 }}
-              />
+              <Box sx={{ borderRadius: 1, overflow: 'hidden', mb: 2 }}>
+                <Typography 
+                  variant="caption" 
+                  sx={{ 
+                    display: 'block', 
+                    mb: 1, 
+                    color: darkMode ? '#9ca3af' : '#6b7280',
+                    fontWeight: 500
+                  }}
+                >
+                  Please select your sobriety date
+                </Typography>
+                <TextField
+                  label="Sobriety Date"
+                  required
+                  fullWidth
+                  type="date"
+                  value={sobrietyDate}
+                  onChange={(e) => setSobrietyDate(e.target.value)}
+                  inputProps={{
+                    max: new Date().toISOString().split('T')[0]
+                  }}
+                  variant="outlined"
+                  error={!!errors.sobrietyDate}
+                  helperText={errors.sobrietyDate || "This date represents the beginning of your recovery journey"}
+                  size="small"
+                  InputLabelProps={{
+                    shrink: true,
+                    style: { color: darkMode ? '#9ca3af' : '#6b7280' }
+                  }}
+                  InputProps={{
+                    style: { 
+                      color: darkMode ? '#d1d5db' : '#374151',
+                      backgroundColor: darkMode ? 'rgba(55, 65, 81, 0.3)' : '#ffffff'
+                    },
+                    sx: {
+                      borderRadius: 1,
+                      '& .MuiOutlinedInput-notchedOutline': {
+                        borderColor: darkMode ? '#374151' : '#d1d5db',
+                      },
+                      '&:hover .MuiOutlinedInput-notchedOutline': {
+                        borderColor: darkMode ? '#60a5fa' : '#3b82f6',
+                      },
+                      '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                        borderColor: darkMode ? '#60a5fa' : '#3b82f6',
+                      }
+                    }
+                  }}
+                  sx={{ mb: 1 }}
+                />
+                <Typography 
+                  variant="caption" 
+                  sx={{ 
+                    display: 'block', 
+                    mt: 0.5, 
+                    color: darkMode ? '#9ca3af' : '#6b7280',
+                    fontStyle: 'italic'
+                  }}
+                >
+                  Your sobriety date is confidential and used to calculate your recovery milestones
+                </Typography>
+              </Box>
+              
               <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1 }}>
                 <Button 
                   size="small"
