@@ -36,7 +36,7 @@ function serveFile(filePath, res) {
   // Read and serve the file
   fs.readFile(filePath, (err, data) => {
     if (err) {
-      console.error(`Error reading file ${filePath}:`, err);
+      console.error(`[ enhanced-ios-server.js ] Error reading file ${filePath}:`, err);
       
       // If file not found, return 404
       if (err.code === 'ENOENT') {
@@ -65,74 +65,41 @@ function serveFile(filePath, res) {
     res.end(data);
   });
 }
-    // Set correct MIME types for different file extensions
-    // This is crucial for iOS WebViews to properly interpret files
-    const ext = path.extname(filePath).toLowerCase();
-    switch (ext) {
-      case '.js':
-        res.setHeader('Content-Type', 'application/javascript');
-        break;
-      case '.css':
-        res.setHeader('Content-Type', 'text/css');
-        break;
-      case '.json':
-        res.setHeader('Content-Type', 'application/json');
-        break;
-      case '.png':
-        res.setHeader('Content-Type', 'image/png');
-        break;
-      case '.jpg':
-      case '.jpeg':
-        res.setHeader('Content-Type', 'image/jpeg');
-        break;
-      case '.svg':
-        res.setHeader('Content-Type', 'image/svg+xml');
-        break;
-      case '.html':
-        res.setHeader('Content-Type', 'text/html; charset=utf-8');
-        break;
-    }
-  }
-}));
-
-// Enhanced path handling for iOS capacitor paths
-app.get('/app/*', (req, res) => {
-  // Remove the /app prefix and serve from root
-  const actualPath = req.path.replace(/^\/app\//, '/');
-  console.log(`iOS path remapping: ${req.path} -> ${actualPath}`);
+// Create the HTTP server
+const server = http.createServer((req, res) => {
+  let pathname = url.parse(req.url).pathname;
   
-  // First try to serve from root
-  const filePath = path.join(__dirname, actualPath);
-  if (fs.existsSync(filePath)) {
-    return res.sendFile(filePath);
+  // Default to index.html for root path
+  if (pathname === '/' || pathname === '/index.html') {
+    pathname = '/index.html';
   }
   
-  // Then try to serve from /dist if root fails
-  const distPath = path.join(__dirname, 'dist', actualPath);
-  if (fs.existsSync(distPath)) {
-    return res.sendFile(distPath);
+  // Rewrite paths for iOS compatibility
+  if (pathname.startsWith('/app/')) {
+    pathname = pathname.replace(/^\/app\//, '/');
+    console.log(`iOS path remapping: ${req.url} -> ${pathname}`);
   }
   
-  // Finally fallback to index.html for SPA routing
-  console.log(`File not found, serving index.html instead of ${req.path}`);
-  res.sendFile(path.join(__dirname, 'index.html'));
+  // Determine the file path
+  let filePath = path.join(__dirname, pathname);
+  
+  // Check if file exists, otherwise serve index.html for SPA routing
+  if (!fs.existsSync(filePath)) {
+    console.log(`File not found, serving index.html instead of ${pathname}`);
+    filePath = path.join(__dirname, 'index.html');
+  }
+  
+  // Serve the appropriate file
+  serveFile(filePath, res);
 });
 
-// Special route for capacitor plugins
-app.get('/plugins/*', (req, res) => {
-  console.log(`iOS plugin request: ${req.path}`);
-  // Capacitor plugins are always served from index.html in our setup
-  res.sendFile(path.join(__dirname, 'index.html'));
-});
-
-// Default route handler - serves index.html for SPA
-app.get('*', (req, res) => {
-  console.log(`Serving index.html for path: ${req.path}`);
-  res.sendFile(path.join(__dirname, 'index.html'));
+// Add file identifiers to console logs
+server.on('request', (req, res) => {
+  console.log(`[ enhanced-ios-server.js ] ${req.method} ${req.url}`);
 });
 
 // Start the server
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(`Enhanced iOS server running on port ${PORT}`);
-  console.log(`App available at http://localhost:${PORT}/`);
+server.listen(PORT, '0.0.0.0', () => {
+  console.log(`[ enhanced-ios-server.js ] Enhanced iOS server running on port ${PORT}`);
+  console.log(`[ enhanced-ios-server.js ] App available at http://localhost:${PORT}/`);
 });

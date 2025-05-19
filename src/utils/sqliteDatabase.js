@@ -19,7 +19,7 @@ export async function initDatabase() {
     // Check for browser or native SQLite implementations
     if (window.openDatabase) {
       // Browser implementation (WebSQL)
-      console.log("Using WebSQL implementation for browser");
+      console.log("[ sqliteDatabase.js ] Using WebSQL implementation for browser");
       db = window.openDatabase(
         'spiritualTracker.db',
         '1.0',
@@ -28,14 +28,14 @@ export async function initDatabase() {
       );
     } else if (window.sqlitePlugin && window.sqlitePlugin.openDatabase) {
       // Native SQLite implementation (Cordova/React Native)
-      console.log("Using native SQLite implementation");
+      console.log("[ sqliteDatabase.js ] Using native SQLite implementation");
       db = window.sqlitePlugin.openDatabase({
         name: 'spiritualTracker.db',
         location: 'default'
       });
     } else {
       // No SQLite implementation available
-      console.error("SQLite not available - falling back to localStorage");
+      console.error("[ sqliteDatabase.js ] SQLite not available - falling back to localStorage");
       initLocalStorageBackup();
       return false;
     }
@@ -43,10 +43,10 @@ export async function initDatabase() {
     // Create tables if they don't exist
     await createTables();
     
-    console.log("SQLite database initialized successfully");
+    console.log("[ sqliteDatabase.js ] SQLite database initialized successfully");
     return true;
   } catch (error) {
-    console.error("Error initializing SQLite database:", error);
+    console.error("[ sqliteDatabase.js ] Error initializing SQLite database:", error);
     // Fall back to localStorage if SQLite fails
     initLocalStorageBackup();
     return false;
@@ -127,10 +127,10 @@ async function createTables() {
         )
       `);
     }, error => {
-      console.error("Error creating tables:", error);
+      console.error("[ sqliteDatabase.js ] Error creating tables:", error);
       reject(error);
     }, () => {
-      console.log("Tables created successfully");
+      console.log("[ sqliteDatabase.js ] Tables created successfully");
       resolve();
     });
   });
@@ -140,7 +140,7 @@ async function createTables() {
  * Initialize localStorage as a backup if SQLite is not available
  */
 function initLocalStorageBackup() {
-  console.log("Initializing localStorage backup...");
+  console.log("[ sqliteDatabase.js ] Initializing localStorage backup...");
   
   if (!window.db) {
     window.db = {
@@ -203,7 +203,7 @@ export async function getAll(collection) {
           resolve(items);
         },
         (_, error) => {
-          console.error(`Error getting items from ${collection}:`, error);
+          console.error(`[ sqliteDatabase.js ] Error getting items from ${collection}:`, error);
           reject(error);
         }
       );
@@ -258,7 +258,7 @@ export async function getById(collection, id) {
           resolve(item);
         },
         (_, error) => {
-          console.error(`Error getting item from ${collection}:`, error);
+          console.error(`[ sqliteDatabase.js ] Error getting item from ${collection}:`, error);
           reject(error);
         }
       );
@@ -786,7 +786,7 @@ export function setupGlobalDbObject() {
         
         return score;
       } catch (error) {
-        console.error('Error calculating spiritual fitness:', error);
+        console.error('[ sqliteDatabase.js ] Error calculating spiritual fitness:', error);
         return 20; // Default base score on error
       }
     }

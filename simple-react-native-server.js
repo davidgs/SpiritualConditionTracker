@@ -36,7 +36,7 @@ function serveFile(filePath, res) {
   // Read and serve the file
   fs.readFile(filePath, (err, data) => {
     if (err) {
-      console.error(`Error reading file ${filePath}:`, err);
+      console.error(`[ simple-react-native-server.js ] Error reading file ${filePath}:`, err);
       
       // If file not found, serve index.html for SPA routing
       if (err.code === 'ENOENT') {
@@ -84,12 +84,12 @@ const server = http.createServer((req, res) => {
   let pathname = parsedUrl.pathname;
   
   // Log request for debugging
-  console.log(`${new Date().toISOString()} - ${req.method} ${pathname}`);
+  console.log(`[ simple-react-native-server.js ] ${new Date().toISOString()} - ${req.method} ${pathname}`);
   
   // Fix path issues in different environments
   if (pathname.startsWith('/app/')) {
     pathname = pathname.replace(/^\/app\//, '/');
-    console.log(`Path remapping: ${req.url} -> ${pathname}`);
+    console.log(`[ simple-react-native-server.js ] Path remapping: ${req.url} -> ${pathname}`);
   }
   
   // Default to index.html if root path
@@ -109,7 +109,7 @@ const server = http.createServer((req, res) => {
       fs.stat(distPath, (distErr, distStats) => {
         if (distErr || !distStats.isFile()) {
           // Finally fallback to index.html for SPA routing
-          console.log(`File not found: ${filePath} or ${distPath}, serving index.html`);
+          console.log(`[ simple-react-native-server.js ] File not found: ${filePath} or ${distPath}, serving index.html`);
           return serveFile(path.join(__dirname, 'index.html'), res);
         }
         
@@ -126,6 +126,6 @@ const server = http.createServer((req, res) => {
 
 // Start the server
 server.listen(PORT, '0.0.0.0', () => {
-  console.log(`React Native server running on port ${PORT}`);
-  console.log(`App available at http://localhost:${PORT}/`);
+  console.log(`[ simple-react-native-server.js ] React Native server running on port ${PORT}`);
+  console.log(`[ simple-react-native-server.js ] App available at http://localhost:${PORT}/`);
 });
