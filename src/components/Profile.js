@@ -265,7 +265,8 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
       <Paper sx={{ 
           p: 3,
           mb: 3,
-          borderRadius: 2
+          borderRadius: 2,
+          bgcolor: 'background.paper'
         }}>
           <Box sx={{ mb: 2 }}>
             <Typography variant="h6" sx={{ color: 'text.primary', mb: 1 }}>
@@ -464,10 +465,11 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
         </Paper>
       
       {/* App Settings */}
-      <Paper elevation={1} sx={{ 
+      <Paper sx={{ 
         p: 3, 
         mb: 3, 
-        borderRadius: 2
+        borderRadius: 2,
+        bgcolor: 'background.paper'
       }}>
         <Typography variant="h6" sx={{ mb: 2, color: 'text.primary' }}>
           App Settings
