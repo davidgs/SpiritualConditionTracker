@@ -35,36 +35,264 @@ function App() {
   // Initialize the database and load data
   async function initDatabaseAndLoadData() {
     try {
-      // Import the database operations - use capacitorStorage for better native app support
-      const { 
-        initDatabase, 
-        setupGlobalDbObject,
-        hasLocalStorageData,
-        migrateFromLocalStorage 
-      } = await import('./utils/capacitorStorage');
+      // Use simple localStorage-based database for better reliability
+      console.log("Initializing simple database with localStorage...");
       
-      console.log("Initializing database for native app with Capacitor...");
-      
-      // Initialize the database
-      const success = await initDatabase();
-      
-      if (success) {
-        console.log("SQLite database initialized successfully for Capacitor");
+      // Set up a simplified database interface
+      window.db = {
+        // In-memory data storage
+        _data: {
+          users: [],
+          activities: [],
+          meetings: [],
+          preferences: {}
+        },
         
-        // Setup global db object for compatibility
-        const dbObj = setupGlobalDbObject();
+        // Load data from localStorage
+        _loadFromLocalStorage: function() {
+          try {
+            const users = localStorage.getItem('users');
+            if (users) {
+              this._data.users = JSON.parse(users);
+            }
+            
+            const activities = localStorage.getItem('activities');
+            if (activities) {
+              this._data.activities = JSON.parse(activities);
+            }
+            
+            const meetings = localStorage.getItem('meetings');
+            if (meetings) {
+              this._data.meetings = JSON.parse(meetings);
+            }
+            
+            const preferences = localStorage.getItem('preferences');
+            if (preferences) {
+              this._data.preferences = JSON.parse(preferences);
+            }
+            console.log("Data loaded from localStorage successfully");
+          } catch (error) {
+            console.error("Error loading from localStorage:", error);
+          }
+        },
         
-        // Check if we need to migrate data from localStorage
-        if (hasLocalStorageData()) {
-          console.log("Found existing data in localStorage, migrating to SQLite...");
-          await migrateFromLocalStorage(dbObj);
+        // Save data to localStorage
+        _saveToLocalStorage: function() {
+          try {
+            localStorage.setItem('users', JSON.stringify(this._data.users));
+            localStorage.setItem('activities', JSON.stringify(this._data.activities));
+            localStorage.setItem('meetings', JSON.stringify(this._data.meetings));
+            localStorage.setItem('preferences', JSON.stringify(this._data.preferences));
+          } catch (error) {
+            console.error("Error saving to localStorage:", error);
+          }
+        },
+        
+        // Database interface methods
+        getAll: function(collection) {
+          if (collection === 'users') return this._data.users;
+          if (collection === 'activities') return this._data.activities;
+          if (collection === 'meetings') return this._data.meetings;
+          return [];
+        },
+        
+        getById: function(collection, id) {
+          if (collection === 'users') {
+            return this._data.users.find(item => item.id === id) || null;
+          }
+          if (collection === 'activities') {
+            return this._data.activities.find(item => item.id === id) || null;
+          }
+          if (collection === 'meetings') {
+            return this._data.meetings.find(item => item.id === id) || null;
+          }
+          return null;
+        },
+        
+        add: function(collection, item) {
+          if (!item.id) {
+            item.id = collection.slice(0, -1) + '_' + Date.now();
+          }
+          
+          if (collection === 'users') {
+            this._data.users.push(item);
+          } else if (collection === 'activities') {
+            this._data.activities.push(item);
+          } else if (collection === 'meetings') {
+            this._data.meetings.push(item);
+          }
+          
+          this._saveToLocalStorage();
+          return item;
+        },
+        
+        update: function(collection, id, updates) {
+          let updated = null;
+          
+          if (collection === 'users') {
+            const index = this._data.users.findIndex(item => item.id === id);
+            if (index !== -1) {
+              this._data.users[index] = { ...this._data.users[index], ...updates };
+              updated = this._data.users[index];
+            }
+          } else if (collection === 'activities') {
+            const index = this._data.activities.findIndex(item => item.id === id);
+            if (index !== -1) {
+              this._data.activities[index] = { ...this._data.activities[index], ...updates };
+              updated = this._data.activities[index];
+            }
+          } else if (collection === 'meetings') {
+            const index = this._data.meetings.findIndex(item => item.id === id);
+            if (index !== -1) {
+              this._data.meetings[index] = { ...this._data.meetings[index], ...updates };
+              updated = this._data.meetings[index];
+            }
+          }
+          
+          if (updated) {
+            this._saveToLocalStorage();
+          }
+          
+          return updated;
+        },
+        
+        remove: function(collection, id) {
+          let removed = false;
+          
+          if (collection === 'users') {
+            const initialLength = this._data.users.length;
+            this._data.users = this._data.users.filter(item => item.id !== id);
+            removed = initialLength > this._data.users.length;
+          } else if (collection === 'activities') {
+            const initialLength = this._data.activities.length;
+            this._data.activities = this._data.activities.filter(item => item.id !== id);
+            removed = initialLength > this._data.activities.length;
+          } else if (collection === 'meetings') {
+            const initialLength = this._data.meetings.length;
+            this._data.meetings = this._data.meetings.filter(item => item.id !== id);
+            removed = initialLength > this._data.meetings.length;
+          }
+          
+          if (removed) {
+            this._saveToLocalStorage();
+          }
+          
+          return removed;
+        },
+        
+        query: function(collection, predicate) {
+          if (collection === 'users') {
+            return this._data.users.filter(predicate);
+          } else if (collection === 'activities') {
+            return this._data.activities.filter(predicate);
+          } else if (collection === 'meetings') {
+            return this._data.meetings.filter(predicate);
+          }
+          return [];
+        },
+        
+        getPreference: function(key, defaultValue) {
+          return this._data.preferences[key] !== undefined ? this._data.preferences[key] : defaultValue;
+        },
+        
+        setPreference: function(key, value) {
+          this._data.preferences[key] = value;
+          this._saveToLocalStorage();
+          return true;
+        },
+        
+        // Utility functions
+        calculateSobrietyDays: function(sobrietyDate) {
+          if (!sobrietyDate) return 0;
+          
+          const startDate = new Date(sobrietyDate);
+          const now = new Date();
+          
+          // Calculate difference in milliseconds
+          const diffMs = now - startDate;
+          
+          // Convert to days and return the integer value
+          return Math.floor(diffMs / (1000 * 60 * 60 * 24));
+        },
+        
+        calculateSobrietyYears: function(sobrietyDate, decimalPlaces = 2) {
+          if (!sobrietyDate) return 0;
+          
+          const startDate = new Date(sobrietyDate);
+          const now = new Date();
+          
+          // Calculate difference in milliseconds
+          const diffMs = now - startDate;
+          
+          // Convert to years with decimal precision
+          const years = diffMs / (1000 * 60 * 60 * 24 * 365.25);
+          
+          // Return with specified decimal places
+          return parseFloat(years.toFixed(decimalPlaces));
+        },
+        
+        calculateSpiritualFitness: function() {
+          return this.calculateSpiritualFitnessWithTimeframe(30);
+        },
+        
+        calculateSpiritualFitnessWithTimeframe: function(timeframe = 30) {
+          // Start with a base score
+          const baseScore = 5;
+          let finalScore = baseScore;
+          
+          // Only proceed if we have activities
+          if (this._data.activities && this._data.activities.length > 0) {
+            // Define time period based on timeframe
+            const now = new Date();
+            const startDate = new Date();
+            startDate.setDate(now.getDate() - timeframe);
+            
+            // Filter for recent activities
+            const recentActivities = this._data.activities.filter(activity => {
+              const activityDate = new Date(activity.date);
+              return activityDate >= startDate && activityDate <= now;
+            });
+            
+            console.log("Using fallback calculation with activities:", recentActivities);
+            
+            if (recentActivities.length === 0) {
+              console.log("No activities for fallback calculation");
+              return finalScore;
+            }
+            
+            // Add points based on activity count (2 points per activity, max 40)
+            const activityPoints = Math.min(40, recentActivities.length * 2);
+            
+            // Track unique days with activities for consistency calculation
+            const activityDays = new Set();
+            recentActivities.forEach(activity => {
+              if (activity.date) {
+                const dayKey = new Date(activity.date).toISOString().split('T')[0];
+                activityDays.add(dayKey);
+              }
+            });
+            
+            const daysWithActivities = activityDays.size;
+            
+            // Calculate consistency points (up to 40 points)
+            const consistencyPercentage = daysWithActivities / timeframe;
+            const consistencyPoints = Math.round(consistencyPercentage * 40);
+            
+            // Calculate final score (capped at 100)
+            finalScore = Math.min(100, baseScore + activityPoints + consistencyPoints);
+          }
+          
+          return finalScore;
         }
-      } else {
-        console.warn("Using fallback storage method - data persistence may be limited");
-      }
+      };
       
-      // Now load the data
+      // Load initial data from localStorage
+      window.db._loadFromLocalStorage();
+      
+      // Now load the data for the app state
       await loadData();
+      
+      console.log("Database initialized successfully");
     } catch (error) {
       console.error("Database initialization error:", error);
     }
