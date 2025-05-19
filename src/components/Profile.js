@@ -2,7 +2,6 @@ import React, { useState, useEffect, useContext } from 'react';
 import ThemeSelector from './ThemeSelector';
 import MeetingFormDialog from './MeetingFormDialog';
 import { ThemeContext } from '../contexts/ThemeContext';
-import { resetDatabase } from '../utils/sqliteStorage';
 import { 
   Switch, 
   FormControlLabel, 
@@ -20,7 +19,7 @@ import {
 } from '@mui/material';
 
 export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
-  // Reset all data function
+  // Handle Reset All Data button click
   const handleResetAllData = () => {
     // First confirmation dialog
     if (!window.confirm('Are you sure you want to reset ALL data? This action CANNOT be undone.')) {
@@ -32,42 +31,14 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
       return;
     }
     
-    console.log('Starting database reset process');
-    
-    if (typeof resetDatabase === 'function') {
-      // Use the SQLite direct reset function
-      resetDatabase()
-        .then(success => {
-          if (success) {
-            console.log('Database reset successfully via SQLite resetDatabase');
-            localStorage.clear(); // Also clear localStorage for backup
-            alert('All data has been reset. The app will now reload.');
-            setTimeout(() => window.location.reload(), 500);
-          } else {
-            console.error('SQLite database reset failed');
-            handleFallbackReset();
-          }
-        })
-        .catch(error => {
-          console.error('Error during SQLite database reset:', error);
-          handleFallbackReset();
-        });
-    } else {
-      handleFallbackReset();
-    }
-  };
-  
-  // Fallback reset method using old database API
-  const handleFallbackReset = () => {
-    console.log('Using fallback database reset method');
+    console.log('Starting data reset process');
     
     try {
+      // Clear collections using window.db API
       if (window.db) {
-        // Collections to clear in order (clear dependent data first)
+        // Collections to clear (clear dependent data first)
         const collections = ['activities', 'meetings', 'preferences', 'users'];
-        let clearCount = 0;
         
-        // Clear each collection
         collections.forEach(collection => {
           try {
             const items = window.db.getAll(collection) || [];
@@ -76,7 +47,6 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
             items.forEach(item => {
               if (item && item.id) {
                 window.db.remove(collection, item.id);
-                clearCount++;
               }
             });
             
@@ -85,21 +55,19 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
             console.log(`Error clearing ${collection}:`, e);
           }
         });
-        
-        // Also clear localStorage for complete reset
-        localStorage.clear();
-        console.log(`Reset complete: cleared ${clearCount} items and localStorage`);
-      } else {
-        // Last resort if no database API is available
-        localStorage.clear();
-        console.log('No database API found, cleared localStorage only');
       }
       
-      // Show success message and reload the app
+      // Clear localStorage as well
+      localStorage.clear();
+      console.log('Cleared localStorage');
+      
+      // Show success message
       alert('All data has been reset. The app will now reload.');
+      
+      // Reload the page after a short delay
       setTimeout(() => window.location.reload(), 500);
     } catch (error) {
-      console.error('Error in fallback reset:', error);
+      console.error('Error resetting data:', error);
       alert('An error occurred while resetting data. Please try again.');
     }
   };
