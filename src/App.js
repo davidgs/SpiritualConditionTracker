@@ -43,7 +43,7 @@ function App() {
         migrateFromLocalStorage 
       } = await import('./utils/capacitorStorage');
       
-      console.log("Initializing database for native app with Capacitor...");
+      console.log("[ App.js ] Initializing database for native app with Capacitor...");
       
       // Initialize the database
       const success = await initDatabase();
@@ -66,7 +66,7 @@ function App() {
       // Now load the data
       await loadData();
     } catch (error) {
-      console.error("Database initialization error:", error);
+      console.error("[ App.js ] Database initialization error:", error);
     }
   }
 

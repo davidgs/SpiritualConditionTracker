@@ -186,6 +186,12 @@ async function setupTables(sqlite) {
 // Initialize with WebSQL
 function initWebSQL() {
   try {
+    // Check if openDatabase is available
+    if (typeof openDatabase === 'undefined') {
+      console.error('[ sqliteLoader.js ] WebSQL (openDatabase) not available in this browser');
+      return null;
+    }
+    
     const db = openDatabase(
       'defaultDB',
       '1.0',
@@ -279,7 +285,7 @@ function initWebSQL() {
     setupWebSQLGlobalDB(db);
     return db;
   } catch (error) {
-    console.error('Error initializing WebSQL:', error);
+    console.error('[ sqliteLoader.js ] Error initializing WebSQL:', error);
     return null;
   }
 }

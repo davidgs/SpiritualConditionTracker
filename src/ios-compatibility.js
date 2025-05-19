@@ -4,7 +4,7 @@
  */
 
 // Log that this script has loaded
-console.log("iOS compatibility script loaded");
+console.log("[ ios-compatibility.js ] iOS compatibility script loaded");
 
 // More aggressive checking for iOS environment
 const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || 
@@ -47,7 +47,7 @@ function createDebugOverlay() {
 
 // Function to log to overlay and console
 function debugLog(message) {
-  console.log(`[iOS Debug] ${message}`);
+  console.log(`[ ios-compatibility.js ] [iOS Debug] ${message}`);
   
   // Log to overlay if it exists
   const overlay = document.getElementById('ios-debug-overlay');
