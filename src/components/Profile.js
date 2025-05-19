@@ -418,18 +418,18 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
                         <Box sx={{ display: 'flex', alignItems: 'baseline', mb: 1 }}>
                           <Typography variant="h3" sx={{ 
                             fontWeight: 'bold', 
-                            color: darkMode ? '#60a5fa' : '#3b82f6',
+                            color: 'primary.main',
                             mr: 1
                           }}>
                             {sobrietyYears.toFixed(2)}
                           </Typography>
-                          <Typography variant="h6" sx={{ color: darkMode ? '#9ca3af' : '#6b7280' }}>
+                          <Typography variant="h6" sx={{ color: 'text.secondary' }}>
                             years
                           </Typography>
                         </Box>
                         <Typography sx={{ 
                           fontSize: '1.25rem', 
-                          color: darkMode ? '#60a5fa' : '#3b82f6' 
+                          color: 'primary.main'
                         }}>
                           {formatNumber(sobrietyDays)} days
                         </Typography>
@@ -439,12 +439,12 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
                         <Box sx={{ display: 'flex', alignItems: 'baseline', mb: 1 }}>
                           <Typography variant="h3" sx={{ 
                             fontWeight: 'bold', 
-                            color: darkMode ? '#60a5fa' : '#3b82f6',
+                            color: 'primary.main',
                             mr: 1
                           }}>
                             {formatNumber(sobrietyDays)}
                           </Typography>
-                          <Typography variant="h6" sx={{ color: darkMode ? '#9ca3af' : '#6b7280' }}>
+                          <Typography variant="h6" sx={{ color: 'text.secondary' }}>
                             days
                           </Typography>
                         </Box>
@@ -464,14 +464,12 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
         </Paper>
       
       {/* App Settings */}
-      <Paper elevation={0} sx={{ 
+      <Paper elevation={1} sx={{ 
         p: 3, 
         mb: 3, 
-        bgcolor: darkMode ? '#1f2937' : '#ffffff',
-        borderRadius: 2,
-        border: darkMode ? '1px solid #374151' : '1px solid #e5e7eb',
+        borderRadius: 2
       }}>
-        <Typography variant="h6" sx={{ mb: 2, color: darkMode ? '#d1d5db' : '#374151' }}>
+        <Typography variant="h6" sx={{ mb: 2, color: 'text.primary' }}>
           App Settings
         </Typography>
         
