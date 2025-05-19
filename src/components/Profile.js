@@ -806,6 +806,80 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
           </>
         )}
       </Paper>
+
+      {/* Reset All Data Section */}
+      <Paper elevation={0} sx={{ 
+        p: 3,
+        mb: 3,
+        bgcolor: darkMode ? '#1f2937' : '#ffffff',
+        borderRadius: 2,
+        border: darkMode ? '1px solid #374151' : '1px solid #e5e7eb'
+      }}>
+        <Typography variant="h6" sx={{ 
+          color: darkMode ? '#d1d5db' : '#374151', 
+          mb: 2,
+          display: 'flex',
+          alignItems: 'center',
+          gap: 1
+        }}>
+          <i className="fas fa-exclamation-triangle" style={{ color: '#dc2626' }}></i>
+          Danger Zone
+        </Typography>
+        
+        <Typography variant="body2" sx={{ mb: 2, color: darkMode ? '#9ca3af' : '#6b7280' }}>
+          Resetting all data will permanently delete your profile information, meetings, activities, and all other app data. This action cannot be undone.
+        </Typography>
+        
+        <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+          <Button
+            variant="outlined"
+            color="error"
+            startIcon={<i className="fas fa-trash-alt"></i>}
+            onClick={() => {
+              if (window.confirm('Are you sure you want to reset ALL data? This action CANNOT be undone.')) {
+                if (window.confirm('Please confirm again: This will delete ALL your recovery data including sobriety date, meetings, and activities. Are you absolutely sure?')) {
+                  // Clear all data from all collections
+                  try {
+                    if (window.db) {
+                      // Get collections to clear
+                      const collections = ['users', 'meetings', 'activities', 'preferences'];
+                      
+                      // Attempt to clear each collection
+                      collections.forEach(collection => {
+                        const allItems = window.db.getAll(collection) || [];
+                        allItems.forEach(item => {
+                          window.db.remove(collection, item.id);
+                        });
+                      });
+                      
+                      // Show success message
+                      alert('All data has been reset. The app will now reload.');
+                      
+                      // Reload the page to reset the app state
+                      window.location.reload();
+                    } else {
+                      throw new Error('Database not initialized');
+                    }
+                  } catch (error) {
+                    console.error('Error resetting data:', error);
+                    alert('An error occurred while resetting data. Please try again.');
+                  }
+                }
+              }
+            }}
+            sx={{
+              borderColor: '#dc2626',
+              color: '#dc2626',
+              '&:hover': {
+                backgroundColor: 'rgba(220, 38, 38, 0.04)',
+                borderColor: '#b91c1c'
+              }
+            }}
+          >
+            Reset All Data
+          </Button>
+        </Box>
+      </Paper>
     </Box>
   );
 }
