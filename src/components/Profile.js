@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import ThemeSelector from './ThemeSelector';
 import MeetingFormDialog from './MeetingFormDialog';
 import { ThemeContext } from '../contexts/ThemeContext';
+import { resetDatabase } from '../utils/sqliteStorage';
 import { 
   Switch, 
   FormControlLabel, 
@@ -31,45 +32,26 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
       return;
     }
     
-    console.log('Starting data reset process');
+    console.log('Starting SQLite database reset process');
     
-    try {
-      // Clear collections using window.db API
-      if (window.db) {
-        // Collections to clear (clear dependent data first)
-        const collections = ['activities', 'meetings', 'preferences', 'users'];
-        
-        collections.forEach(collection => {
-          try {
-            const items = window.db.getAll(collection) || [];
-            console.log(`Clearing ${items.length} items from ${collection}`);
-            
-            items.forEach(item => {
-              if (item && item.id) {
-                window.db.remove(collection, item.id);
-              }
-            });
-            
-            console.log(`Cleared ${collection}`);
-          } catch (e) {
-            console.log(`Error clearing ${collection}:`, e);
-          }
-        });
-      }
-      
-      // Clear localStorage as well
-      localStorage.clear();
-      console.log('Cleared localStorage');
-      
-      // Show success message
-      alert('All data has been reset. The app will now reload.');
-      
-      // Reload the page after a short delay
-      setTimeout(() => window.location.reload(), 500);
-    } catch (error) {
-      console.error('Error resetting data:', error);
-      alert('An error occurred while resetting data. Please try again.');
-    }
+    // Use the SQLite resetDatabase function
+    resetDatabase()
+      .then(success => {
+        if (success) {
+          console.log('SQLite database reset successfully');
+          // Also clear localStorage for complete cleanup
+          localStorage.clear();
+          alert('All data has been reset. The app will now reload.');
+          setTimeout(() => window.location.reload(), 500);
+        } else {
+          console.error('SQLite database reset failed');
+          alert('Failed to reset database. Please try again.');
+        }
+      })
+      .catch(error => {
+        console.error('Error during database reset:', error);
+        alert('An error occurred while resetting data. Please try again.');
+      });
   };
   const { theme } = useContext(ThemeContext);
   const darkMode = theme === 'dark';
