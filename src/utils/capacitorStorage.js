@@ -672,12 +672,15 @@ export async function add(collection, item) {
       const schedule = JSON.stringify(item.schedule || []);
       const coordinates = JSON.stringify(item.coordinates || null);
       
-      columns = 'id, name, days, time, schedule, address, locationName, streetAddress, city, state, zipCode, coordinates, createdAt, updatedAt';
-      placeholders = '?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?';
+      // Convert boolean to integer for SQLite storage
+      const isHomeGroup = item.isHomeGroup ? 1 : 0;
+      
+      columns = 'id, name, days, time, schedule, address, locationName, streetAddress, city, state, zipCode, coordinates, isHomeGroup, createdAt, updatedAt';
+      placeholders = '?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?';
       values = [
         item.id, item.name, days, item.time, schedule, item.address, 
         item.locationName, item.streetAddress, item.city, item.state, 
-        item.zipCode, coordinates, item.createdAt, item.updatedAt
+        item.zipCode, coordinates, isHomeGroup, item.createdAt, item.updatedAt
       ];
     } else if (collection === 'messages') {
       columns = 'id, senderId, recipientId, content, encrypted, timestamp, read';
@@ -760,12 +763,14 @@ export async function update(collection, id, updates) {
       const days = JSON.stringify(updatedItem.days || []);
       const schedule = JSON.stringify(updatedItem.schedule || []);
       const coordinates = JSON.stringify(updatedItem.coordinates || null);
+      // Convert boolean to integer for SQLite storage
+      const isHomeGroup = updatedItem.isHomeGroup ? 1 : 0;
       
-      setClauses = 'name = ?, days = ?, time = ?, schedule = ?, address = ?, locationName = ?, streetAddress = ?, city = ?, state = ?, zipCode = ?, coordinates = ?, updatedAt = ?';
+      setClauses = 'name = ?, days = ?, time = ?, schedule = ?, address = ?, locationName = ?, streetAddress = ?, city = ?, state = ?, zipCode = ?, coordinates = ?, isHomeGroup = ?, updatedAt = ?';
       values = [
         updatedItem.name, days, updatedItem.time, schedule, updatedItem.address, 
         updatedItem.locationName, updatedItem.streetAddress, updatedItem.city, 
-        updatedItem.state, updatedItem.zipCode, coordinates, updatedItem.updatedAt, id
+        updatedItem.state, updatedItem.zipCode, coordinates, isHomeGroup, updatedItem.updatedAt, id
       ];
     } else if (collection === 'messages') {
       setClauses = 'content = ?, encrypted = ?, read = ?';
