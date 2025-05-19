@@ -6,7 +6,7 @@
 // Initialize SQLite for Capacitor
 async function initCapacitorSQLite() {
   try {
-    console.log('Initializing Capacitor SQLite...');
+    console.log('[SQLITE-INIT] Initializing Capacitor SQLite...');
     
     // Check if we're running in a Capacitor environment
     const isCapacitor = typeof window !== 'undefined' && 
@@ -14,19 +14,19 @@ async function initCapacitorSQLite() {
                         window.Capacitor.isPluginAvailable !== undefined;
     
     if (!isCapacitor) {
-      console.log('Not running in Capacitor environment, using WebSQL fallback');
+      console.log('[SQLITE-INIT] Not running in Capacitor environment, using WebSQL fallback');
       return setupWebSQLFallback();
     }
     
     // Check if SQLite plugin is available
     if (!window.Capacitor.isPluginAvailable('CapacitorSQLite')) {
-      console.log('CapacitorSQLite plugin not available, using WebSQL fallback');
+      console.log('[SQLITE-INIT] CapacitorSQLite plugin not available, using WebSQL fallback');
       return setupWebSQLFallback();
     }
     
     // Get the SQLite plugin
     const sqlite = window.Capacitor.Plugins.CapacitorSQLite;
-    console.log('Found CapacitorSQLite plugin');
+    console.log('[SQLITE-INIT] Found CapacitorSQLite plugin');
     
     // Set up a connection
     const db = await sqlite.createConnection({ 
@@ -45,18 +45,18 @@ async function initCapacitorSQLite() {
     // Make the connection available globally
     window.sqliteConnection = sqlite;
     
-    console.log('Capacitor SQLite initialized successfully');
+    console.log('[SQLITE-INIT] Capacitor SQLite initialized successfully');
     return true;
   } catch (error) {
-    console.error('Error initializing Capacitor SQLite:', error);
-    console.log('Falling back to WebSQL implementation');
+    console.error('[SQLITE-INIT] Error initializing Capacitor SQLite:', error);
+    console.log('[SQLITE-INIT] Falling back to WebSQL implementation');
     return setupWebSQLFallback();
   }
 }
 
 // Set up WebSQL as a fallback
 function setupWebSQLFallback() {
-  console.log('Setting up WebSQL fallback');
+  console.log('[SQLITE-INIT] Setting up WebSQL fallback');
   
   // Create database
   const db = window.openDatabase(
@@ -145,9 +145,9 @@ function setupWebSQLFallback() {
       )
     `);
   }, function(error) {
-    console.error('Error setting up database schema:', error);
+    console.error('[SQLITE-INIT] Error setting up database schema:', error);
   }, function() {
-    console.log('Database schema setup successfully');
+    console.log('[SQLITE-INIT] Database schema setup successfully');
   });
   
   // Store the database instance globally
@@ -232,7 +232,7 @@ async function setupTables(sqlite) {
     });
   }
   
-  console.log('Tables created successfully');
+  console.log('[SQLITE-INIT] Tables created successfully');
 }
 
 // Initialize on load
