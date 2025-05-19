@@ -301,19 +301,19 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
             
             {!sobrietyDate && !editingSobriety && (
               <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <Typography sx={{ color: darkMode ? '#9ca3af' : '#6b7280' }}>
+                <Typography sx={{ color: 'text.secondary' }}>
                   No sobriety date set
                 </Typography>
                 <IconButton 
                   onClick={() => setEditingSobriety(true)}
                   size="small"
                   aria-label="Add sobriety date"
+                  color="inherit"
                   sx={{ 
                     ml: 1,
                     p: 0.5,
-                    color: darkMode ? '#9ca3af' : '#6b7280',
                     '&:hover': {
-                      color: darkMode ? '#60a5fa' : '#3b82f6',
+                      color: 'primary.main',
                       backgroundColor: 'transparent'
                     }
                   }}
@@ -402,12 +402,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
                       setErrors({...errors, sobrietyDate: 'Sobriety date is required'});
                     }
                   }}
-                  sx={{ 
-                    bgcolor: darkMode ? '#3b82f6' : '#2563eb',
-                    '&:hover': {
-                      bgcolor: darkMode ? '#2563eb' : '#1d4ed8'
-                    }
-                  }}
+                  // Using MUI's built-in color system
                 >
                   Save
                 </Button>
