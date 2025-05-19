@@ -18,7 +18,7 @@ function Header({ title, menuOpen, setMenuOpen, isMobile }) {
         zIndex: 20,
         backgroundColor: headerBackgroundColor,
         borderBottom: darkMode ? '1px solid #374151' : '1px solid #e5e7eb',
-        padding: isMobile ? '1.75rem' : '0.75rem 1rem',
+        padding: isMobile ? '2.5rem .25rem .25rem .25rem' : '0.75rem 1rem',
         display: 'flex',
         alignItems: 'center',
         justifyContent: isMobile ? 'space-between' : 'center',
@@ -38,8 +38,8 @@ function Header({ title, menuOpen, setMenuOpen, isMobile }) {
               src="./assets/logo.jpg"
               alt="App Logo" 
               style={{ 
-                width: '40px',
-                height: '40px',
+                width: '50px',
+                height: '50px',
                 objectFit: 'contain',
                 borderRadius: '8px'
               }}
@@ -54,14 +54,24 @@ function Header({ title, menuOpen, setMenuOpen, isMobile }) {
             flex: 1
           }}>
             <h1 style={{ 
-              fontSize: '1rem', 
+              fontSize: '1.25rem', 
               fontWeight: 'bold', 
               color: darkMode ? '#f3f4f6' : '#1f2937',
               margin: 0,
-              lineHeight: '1.1'
+              lineHeight: '1.2'
             }}>
               Spiritual Condition Tracker
             </h1>
+            <p
+              style={{
+                fontSize: "0.75rem",
+                color: darkMode ? "#9ca3af" : "#6b7280",
+                lineHeight: "1.1",
+                margin: 0,
+              }}
+            >
+              Track your spiritual journey
+            </p>
           </div>
         </>
       ) : (
@@ -76,15 +86,15 @@ function Header({ title, menuOpen, setMenuOpen, isMobile }) {
             src="./logo.jpg"
             alt="App Logo" 
             style={{ 
-              width: '60px',
-              height: '60px',
+              width: '80px',
+              height: '80px',
               objectFit: 'contain',
               borderRadius: '12px',
               marginBottom: '0.5rem'
             }}
           />
           <h1 style={{ 
-            fontSize: '1.25rem', 
+            fontSize: '2rem', 
             fontWeight: 'bold', 
             color: darkMode ? '#f3f4f6' : '#1f2937',
             marginBottom: '0.25rem',
@@ -111,7 +121,7 @@ function Header({ title, menuOpen, setMenuOpen, isMobile }) {
             background: 'none',
             border: '1px',
             color: darkMode ? '#9ca3af' : '#6b7280',
-            fontSize: '1.75rem',
+            fontSize: '2rem',
             cursor: 'pointer',
             padding: '4px',
             display: 'flex',
@@ -120,7 +130,7 @@ function Header({ title, menuOpen, setMenuOpen, isMobile }) {
           }}
           aria-label={menuOpen ? "Close menu" : "Open menu"}
         >
-          {menuOpen ? '✕' : '☰'}
+          {menuOpen ? <i class="fa-solid fa-xmark"></i> : <i class="fa-solid fa-bars"></i>}
         </button>
       )}
     </SafeAreaHeader>
