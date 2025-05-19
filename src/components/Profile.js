@@ -590,7 +590,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
           <>
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5, mb: 3 }}>
               <TextField
-                label="First Name"
+                required
                 fullWidth
                 value={name}
                 onChange={(e) => setName(e.target.value)}
@@ -609,7 +609,6 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
               />
               
               <TextField
-                {/* label="Last Name" */}
                 fullWidth
                 value={lastName != "Not set" ? lastName : "Enter your last name or initials"}
                 onChange={(e) => setLastName(e.target.value)}
@@ -628,7 +627,6 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
               />
               
               <TextField
-                {/* label="Phone Number" */}
                 fullWidth
                 value={phoneNumber != "Not set" ? phoneNumber : "Enter your phone number"}
                 onChange={handlePhoneChange}
@@ -648,7 +646,6 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
               />
               
               <TextField
-                {/* label="Email Address (Optional)" */}
                 fullWidth
                 value={email != "Not set" ? email : "Enter your email address"}
                 onChange={(e) => setEmail(e.target.value)}
