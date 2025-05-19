@@ -143,7 +143,7 @@ export default function MeetingForm({
       } else {
         // Attempt to parse address components from full address
         try {
-          const addressParts = meeting.address.split(',').map(part => part.trim());
+          const addressParts = meeting.address ? meeting.address.split(',').map(part => part.trim()) : [];
           
           if (addressParts.length >= 4) {
             // Assume the format is like: "Street, City, State, Zip"

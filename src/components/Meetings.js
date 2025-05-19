@@ -108,7 +108,8 @@ export default function Meetings({ setCurrentView, meetings = [], onSave, user }
     }
     
     // Otherwise, split the address at commas for better display
-    const parts = meeting.address.split(',');
+    // First check if address exists to prevent "undefined is not an object" error
+    const parts = meeting.address ? meeting.address.split(',') : [];
     if (parts.length > 2) {
       // Show first line, and then city, state, zip together
       return (
