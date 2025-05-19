@@ -1,6 +1,6 @@
 /**
  * SQLite storage implementation for the Spiritual Condition Tracker
- * Works across iOS, Android, and web platforms
+ * Works with Capacitor for native iOS/Android and has IndexedDB fallback for web
  */
 
 // The database connection
@@ -14,13 +14,11 @@ export async function initDatabase() {
   console.log("[ sqliteStorage.js ] Initializing SQLite database...");
   
   try {
-    // We only use Capacitor in this project - don't need React Native or Expo implementations
-    
-    // For web environments, fallback to IndexedDB since WebSQL is deprecated
-    console.log("[ sqliteStorage.js ] Web environment detected, using IndexedDB as SQLite alternative");
+    // For web environments, use IndexedDB as a fallback since WebSQL is deprecated
+    console.log("[ sqliteStorage.js ] Using IndexedDB as SQLite alternative");
     db = await initIndexedDB();
     
-    // Create tables
+    // Create tables after database is initialized
     await createTables();
     
     return true;
