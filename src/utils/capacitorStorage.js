@@ -126,7 +126,7 @@ export async function initDatabase() {
     }
     // Standard Web fallback - if Web SQL is available
     else if (window.openDatabase) {
-      console.log([ capacitorStorage.js ] "Using WebSQL implementation for browser");
+      console.log("[ capacitorStorage.js ] Using WebSQL implementation for browser");
       db = window.openDatabase(
         'spiritualTracker.db',
         '1.0',
