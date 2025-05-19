@@ -1,10 +1,11 @@
 import React from 'react';
+import { useTheme as useMuiTheme } from '@mui/material/styles';
 import { useTheme } from '../contexts/ThemeContext';
 import { Select, MenuItem, FormControl, InputLabel } from '@mui/material';
 
 export default function ThemeSelector() {
   const { theme, setTheme } = useTheme();
-  const isDarkMode = theme === 'dark';
+  const muiTheme = useMuiTheme();
 
   // Handle theme change
   const handleThemeChange = (event) => {
@@ -18,29 +19,9 @@ export default function ThemeSelector() {
       fullWidth
       sx={{ 
         minWidth: 120,
-        '.MuiOutlinedInput-root': {
-          backgroundColor: isDarkMode ? 'rgba(55, 65, 81, 0.3)' : 'transparent',
-          '&:hover .MuiOutlinedInput-notchedOutline': {
-            borderColor: isDarkMode ? '#4b5563' : '#d1d5db',
-          },
-        },
-        '.MuiOutlinedInput-notchedOutline': {
-          borderColor: isDarkMode ? '#4b5563' : '#d1d5db',
-        },
-        '.MuiSvgIcon-root': {
-          color: isDarkMode ? '#9ca3af' : '#6b7280',
-        }
       }}
     >
-      <InputLabel 
-        id="theme-selector-label"
-        sx={{ 
-          color: isDarkMode ? '#9ca3af' : '#6b7280',
-          '&.Mui-focused': {
-            color: isDarkMode ? '#60a5fa' : '#3b82f6'
-          }
-        }}
-      >
+      <InputLabel id="theme-selector-label">
         Theme
       </InputLabel>
       <Select
@@ -49,7 +30,6 @@ export default function ThemeSelector() {
         onChange={handleThemeChange}
         label="Theme"
         sx={{
-          color: isDarkMode ? '#d1d5db' : '#374151',
           '.MuiSelect-select': {
             paddingY: 1.2,
           }
