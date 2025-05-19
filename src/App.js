@@ -49,18 +49,18 @@ function App() {
       const success = await initDatabase();
       
       if (success) {
-        console.log("SQLite database initialized successfully for Capacitor");
+        console.log("[ App.js ] SQLite database initialized successfully for Capacitor");
         
         // Setup global db object for compatibility
         const dbObj = setupGlobalDbObject();
         
         // Check if we need to migrate data from localStorage
         if (hasLocalStorageData()) {
-          console.log("Found existing data in localStorage, migrating to SQLite...");
+          console.log("[ App.js ] Found existing data in localStorage, migrating to SQLite...");
           await migrateFromLocalStorage(dbObj);
         }
       } else {
-        console.warn("Using fallback storage method - data persistence may be limited");
+        console.warn("[ App.js ] Using fallback storage method - data persistence may be limited");
       }
       
       // Now load the data

@@ -153,7 +153,7 @@ export default function MeetingForm({
             setZipCode(addressParts[3]);
           }
         } catch (error) {
-          console.error('Error parsing address:', error);
+          console.error('[ MeetingForm.js ] Error parsing address:', error);
           // Keep full address in first field as fallback
           setStreetAddress(meeting.address);
         }
@@ -175,8 +175,8 @@ export default function MeetingForm({
     
     setMeetingAddress(fullAddress);
     
-    console.log('Setting street address to:', addressData.streetAddress);
-    console.log('Setting city to:', addressData.city);
+    console.log('[ MeetingForm.js ] Setting street address to:', addressData.streetAddress);
+    console.log('[ MeetingForm.js ] Setting city to:', addressData.city);
     
     // Update individual fields
     setStreetAddress(addressData.streetAddress || addressData.street || addressData.road || '');
@@ -204,14 +204,14 @@ export default function MeetingForm({
           
           // Try to get address from coordinates
           // First try GeoJSON format, which provides more structured data
-          console.log('Making request to Nominatim with GeoJSON format');
+          console.log('[ MeetingForm.js ] Making request to Nominatim with GeoJSON format');
           let response = await fetch(
             `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=geojson`
           );
           
           // If GeoJSON fails for some reason, fall back to regular JSON format
           if (!response.ok) {
-            console.log('GeoJSON request failed, falling back to JSON format');
+            console.log('[ MeetingForm.js ] GeoJSON request failed, falling back to JSON format');
             response = await fetch(
               `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`
             );
@@ -219,16 +219,16 @@ export default function MeetingForm({
           
           if (response.ok) {
             const data = await response.json();
-            console.log('Response data:', data);
+            console.log('[ MeetingForm.js ] Response data:', data);
             
             // Determine if we're dealing with GeoJSON or regular JSON format
             const isGeoJson = data.type === 'FeatureCollection' && data.features;
             
             if (isGeoJson && data.features.length > 0) {
               // Process as GeoJSON
-              console.log('Processing as GeoJSON');
+              console.log('[ MeetingForm.js ] Processing as GeoJSON');
               const properties = data.features[0].properties;
-              console.log('GeoJSON properties:', properties);
+              console.log('[ MeetingForm.js ] GeoJSON properties:', properties);
               
               if (properties.address) {
                 // Extract address components from GeoJSON properties
@@ -242,8 +242,8 @@ export default function MeetingForm({
                 
                 // Log whether we found a city or not
                 if (!city) {
-                  console.log('No city/town/village found in the address data');
-                  console.log('Available address fields:', Object.keys(properties.address));
+                  console.log('[ MeetingForm.js ] No city/town/village found in the address data');
+                  console.log('[ MeetingForm.js ] Available address fields:', Object.keys(properties.address));
                 }
                 
                 const addressData = {
@@ -253,18 +253,18 @@ export default function MeetingForm({
                   zipCode: properties.address.postcode || ''
                 };
                 
-                console.log('Extracted address data from GeoJSON:', addressData);
+                console.log('[ MeetingForm.js ] Extracted address data from GeoJSON:', addressData);
                 
                 // Update the form fields
                 updateAddressFields(addressData);
               } else if (properties.display_name) {
                 // Fallback to display_name
-                console.log('Using GeoJSON display_name fallback:', properties.display_name);
+                console.log('[ MeetingForm.js ] Using GeoJSON display_name fallback:', properties.display_name);
                 setMeetingAddress(properties.display_name);
                 
                 // More sophisticated parsing of display_name
                 const parts = properties.display_name.split(',').map(part => part.trim());
-                console.log('GeoJSON display name parts:', parts);
+                console.log('[ MeetingForm.js ] GeoJSON display name parts:', parts);
                 
                 // Try to extract meaningful address components
                 // First part usually contains house number and street
@@ -275,7 +275,7 @@ export default function MeetingForm({
                 // We'll leave city blank in the fallback mode, as we can't reliably determine
                 // if the second part is actually a city or some other location entity
                 // This will prompt the user to manually fill in the city if needed
-                console.log('Leaving city field blank in fallback mode - cannot reliably determine city from display_name');
+                console.log('[ MeetingForm.js ] Leaving city field blank in fallback mode - cannot reliably determine city from display_name');
                 
                 // Third part might be county or state 
                 if (parts.length >= 3) {
@@ -296,8 +296,8 @@ export default function MeetingForm({
               }
             } else if (data.address) {
               // Process as regular JSON
-              console.log('Processing as regular JSON');
-              console.log('JSON address:', data.address);
+              console.log('[ MeetingForm.js ] Processing as regular JSON');
+              console.log('[ MeetingForm.js ] JSON address:', data.address);
               
               // Process street address (always include house number and street when available)
               const streetAddress = (data.address.house_number ? data.address.house_number + ' ' : '') + 

@@ -14,20 +14,20 @@ export function hasLocalStorageData() {
 
 // Migrate data from localStorage to SQLite database
 export async function migrateFromLocalStorage(db) {
-  console.log("Starting migration from localStorage to SQLite...");
+  console.log("[ databaseMigration.js ] Starting migration from localStorage to SQLite...");
   
   try {
     // Migrate user data
     const userData = JSON.parse(localStorage.getItem('user'));
     if (userData) {
-      console.log("Migrating user data...");
+      console.log("[ databaseMigration.js ] Migrating user data...");
       await db.add('users', userData);
     }
     
     // Migrate activities
     const activitiesData = JSON.parse(localStorage.getItem('activities') || '[]');
     if (activitiesData.length > 0) {
-      console.log(`Migrating ${activitiesData.length} activities...`);
+      console.log(`[ databaseMigration.js ] Migrating ${activitiesData.length} activities...`);
       for (const activity of activitiesData) {
         await db.add('activities', activity);
       }

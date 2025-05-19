@@ -55,7 +55,7 @@ function MeetingCheckIn({ onSuccess }) {
         onSuccess();
       }
     } catch (err) {
-      console.error('Error saving meeting check-in:', err);
+      console.error('[ MeetingCheckIn.js ] Error saving meeting check-in:', err);
       setError('Failed to save meeting check-in. Please try again.');
     } finally {
       setIsSubmitting(false);

@@ -97,7 +97,7 @@ export default function ActivityLog({ setCurrentView, onSave, onSaveMeeting, act
   const handleSubmit = (e) => {
     e.preventDefault();
     
-    console.log("Form submission - date value:", date);
+    console.log("[ ActivityLog.js ] Form submission - date value:", date);
     
     // Validate form
     const newErrors = {};
@@ -170,7 +170,7 @@ export default function ActivityLog({ setCurrentView, onSave, onSaveMeeting, act
       }
     }
     
-    console.log("Saving activity:", newActivity);
+    console.log("[ ActivityLog.js ] Saving activity:", newActivity);
     
     // Save the activity
     onSave(newActivity);
@@ -592,7 +592,7 @@ export default function ActivityLog({ setCurrentView, onSave, onSaveMeeting, act
             style={inputStyle}
             value={date}
             onChange={(e) => {
-              console.log("Date changed:", e.target.value);
+              console.log("[ ActivityLog.js ] Date changed:", e.target.value);
               setDate(e.target.value);
             }}
             max={formattedDate}

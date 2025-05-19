@@ -24,7 +24,7 @@ let dbData = {
  * @returns {Promise<boolean>} Whether initialization was successful
  */
 export async function initDatabase() {
-  console.log("Initializing fixed database for app...");
+  console.log("[ capacitorStorage.fixed.js ] Initializing fixed database for app...");
   
   try {
     // For this simplified version, we'll use localStorage for data persistence
@@ -34,10 +34,10 @@ export async function initDatabase() {
     // Load initial data from localStorage
     loadFromLocalStorage();
     
-    console.log("Database initialized successfully (fixed implementation)");
+    console.log("[ capacitorStorage.fixed.js ] Database initialized successfully (fixed implementation)");
     return true;
   } catch (error) {
-    console.error("Error initializing database:", error);
+    console.error("[ capacitorStorage.fixed.js ] Error initializing database:", error);
     setupLocalStorageFallback(); // Fallback in case of error
     return false;
   }
@@ -47,7 +47,7 @@ export async function initDatabase() {
  * Setup localStorage fallback for data persistence
  */
 function setupLocalStorageFallback() {
-  console.log("Setting up localStorage fallback for data persistence");
+  console.log("[ capacitorStorage.fixed.js ] Setting up localStorage fallback for data persistence");
 
   db = {
     transaction: function(callback, errorCallback, successCallback) {
@@ -63,7 +63,7 @@ function setupLocalStorageFallback() {
                 successCallback(tx, result);
               }
             } catch (error) {
-              console.error("Error executing query:", error);
+              console.error("[ capacitorStorage.fixed.js ] Error executing query:", error);
               if (errorCallback) {
                 errorCallback(tx, error);
               }

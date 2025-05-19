@@ -157,7 +157,7 @@ export default function MeetingFormDialog({
             setZipCode(addressParts[3]);
           }
         } catch (error) {
-          console.error('Error parsing address:', error);
+          console.error('[ MeetingFormDialog.js ] Error parsing address:', error);
           // Keep full address in first field as fallback
           setStreetAddress(meeting.address);
         }
@@ -254,13 +254,13 @@ export default function MeetingFormDialog({
             }
           }
         } catch (error) {
-          console.error('Error getting address:', error);
+          console.error('[ MeetingFormDialog.js ] Error getting address:', error);
         } finally {
           setSearchingLocation(false);
         }
       },
       (error) => {
-        console.error('Error getting location:', error);
+        console.error('[ MeetingFormDialog.js ] Error getting location:', error);
         setError('Unable to retrieve your location. Please enter address manually.');
         setSearchingLocation(false);
       }
@@ -329,7 +329,7 @@ export default function MeetingFormDialog({
       // Close the dialog
       onClose();
     } catch (error) {
-      console.error('Error saving meeting:', error);
+      console.error('[ MeetingFormDialog.js ] Error saving meeting:', error);
       setError('An error occurred while saving the meeting. Please try again.');
     }
   };

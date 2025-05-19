@@ -66,7 +66,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
     
     // Use the original Database method that worked well before SQLite migration
     if (window.Database?.spiritualFitnessOperations?.calculateSpiritualFitness) {
-      console.log('Using original Database.spiritualFitnessOperations with timeframe:', scoreTimeframe);
+      console.log('[ Dashboard.js ] Using original Database.spiritualFitnessOperations with timeframe:', scoreTimeframe);
       
       try {
         // Get user ID (use '1' as default if not found)
@@ -75,7 +75,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
         
         // Calculate using the original method
         const result = window.Database.spiritualFitnessOperations.calculateSpiritualFitness(userId, scoreTimeframe);
-        console.log('Original database calculation result:', result);
+        console.log('[ Dashboard.js ] Original database calculation result:', result);
         
         if (result && typeof result.score === 'number') {
           setCurrentScore(result.score);
@@ -84,38 +84,38 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
           calculateScoreFallback(scoreTimeframe);
         }
       } catch (error) {
-        console.error('Error using original calculation method:', error);
+        console.error('[ Dashboard.js ] Error using original calculation method:', error);
         calculateScoreFallback(scoreTimeframe);
       }
     } 
     // Fall back to newer method if original is not available
     else if (window.db?.calculateSpiritualFitnessWithTimeframe) {
-      console.log('Calling calculateSpiritualFitnessWithTimeframe with:', scoreTimeframe);
+      console.log('[ Dashboard.js ] Calling calculateSpiritualFitnessWithTimeframe with:', scoreTimeframe);
       try {
         const newScore = window.db.calculateSpiritualFitnessWithTimeframe(scoreTimeframe);
-        console.log('New score calculated:', newScore);
+        console.log('[ Dashboard.js ] New score calculated:', newScore);
         setCurrentScore(newScore);
       } catch (error) {
-        console.error('Error calculating spiritual fitness with timeframe:', error);
+        console.error('[ Dashboard.js ] Error calculating spiritual fitness with timeframe:', error);
         calculateScoreFallback(scoreTimeframe);
       }
     } 
     // Last resort fallback
     else {
-      console.warn('No spiritual fitness calculation methods available');
+      console.warn('[ Dashboard.js ] No spiritual fitness calculation methods available');
       calculateScoreFallback(scoreTimeframe);
     }
   }, [scoreTimeframe, activities]);
   
   // Fallback calculation function for spiritual fitness score
   const calculateScoreFallback = (timeframe) => {
-    console.log('Using fallback calculation with activities:', activities);
+    console.log('[ Dashboard.js ] Using fallback calculation with activities:', activities);
     
     // Use the global constant for base score
     const baseScore = window.DEFAULT_SPIRITUAL_FITNESS_SCORE || 5;
     
     if (!activities || activities.length === 0) {
-      console.log('No activities for fallback calculation');
+      console.log('[ Dashboard.js ] No activities for fallback calculation');
       setCurrentScore(baseScore);
       return;
     }

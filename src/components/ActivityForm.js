@@ -50,7 +50,7 @@ function ActivityForm({ onSuccess }) {
         onSuccess();
       }
     } catch (err) {
-      console.error('Error saving activity:', err);
+      console.error('[ ActivityForm.js ] Error saving activity:', err);
       setError('Failed to save activity. Please try again.');
     } finally {
       setIsSubmitting(false);

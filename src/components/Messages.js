@@ -56,7 +56,7 @@ export default function Messages({ setCurrentView, user }) {
       
       setLoading(false);
     } catch (err) {
-      console.error('Error loading connections:', err);
+      console.error('[ Messages.js ] Error loading connections:', err);
       setError('Failed to load your connections. Please try again.');
       setLoading(false);
     }
@@ -96,7 +96,7 @@ export default function Messages({ setCurrentView, user }) {
       
       setLoading(false);
     } catch (err) {
-      console.error('Error loading messages:', err);
+      console.error('[ Messages.js ] Error loading messages:', err);
       setError('Failed to load messages. Please try again.');
       setLoading(false);
     }
@@ -116,7 +116,7 @@ export default function Messages({ setCurrentView, user }) {
       // Clear input
       setNewMessage('');
     } catch (err) {
-      console.error('Error sending message:', err);
+      console.error('[ Messages.js ] Error sending message:', err);
       setError('Failed to send your message. Please try again.');
     }
   };
@@ -142,7 +142,7 @@ export default function Messages({ setCurrentView, user }) {
       setShowConnectionForm(false);
       setNewConnectionData({ name: '', contactInfo: '' });
     } catch (err) {
-      console.error('Error creating connection:', err);
+      console.error('[ Messages.js ] Error creating connection:', err);
       setError('Failed to create the connection. Please try again.');
     }
   };

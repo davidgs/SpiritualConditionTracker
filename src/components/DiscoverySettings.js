@@ -55,7 +55,7 @@ const DiscoverySettings = ({ onUpdateDiscoveryOptions }) => {
           });
         }
       } catch (error) {
-        console.error('Error loading discovery settings:', error);
+        console.error('[ DiscoverySettings.js ] Error loading discovery settings:', error);
       }
     };
     
@@ -83,7 +83,7 @@ const DiscoverySettings = ({ onUpdateDiscoveryOptions }) => {
       const wifiConnected = await proximityDiscovery.isWifiConnected();
       setWifiConnected(wifiConnected);
     } catch (error) {
-      console.error('Error checking device capabilities:', error);
+      console.error('[ DiscoverySettings.js ] Error checking device capabilities:', error);
     } finally {
       setLoading(false);
     }
@@ -99,7 +99,7 @@ const DiscoverySettings = ({ onUpdateDiscoveryOptions }) => {
         onUpdateDiscoveryOptions(settings);
       }
     } catch (error) {
-      console.error('Error saving discovery settings:', error);
+      console.error('[ DiscoverySettings.js ] Error saving discovery settings:', error);
     }
   };
   
@@ -193,7 +193,7 @@ const DiscoverySettings = ({ onUpdateDiscoveryOptions }) => {
       
       setBluetoothEnabled(true);
     } catch (error) {
-      console.error('Error initializing Bluetooth:', error);
+      console.error('[ DiscoverySettings.js ] Error initializing Bluetooth:', error);
       Alert.alert('Error', 'Failed to initialize Bluetooth discovery.');
     } finally {
       setLoading(false);

@@ -16,7 +16,7 @@ export default function Meetings({ setCurrentView, meetings = [], onSave, user }
   useEffect(() => {
     if (user && user.preferences) {
       const timeFormat = user.preferences.use24HourFormat || false;
-      console.log('Meetings: Setting time format preference to:', timeFormat);
+      console.log('[ Meetings.js ] Setting time format preference to:', timeFormat);
       setUse24HourFormat(timeFormat);
     }
   }, [user, user?.preferences?.use24HourFormat]);
@@ -32,8 +32,8 @@ export default function Meetings({ setCurrentView, meetings = [], onSave, user }
         ? user.homeGroups 
         : (user.homeGroup ? [user.homeGroup] : []);
       setUserHomeGroups(homeGroups);
-      console.log('User: ', user);
-      console.log('Meetings: ', meetings);
+      console.log('[ Meetings.js ] User: ', user);
+      console.log('[ Meetings.js ] Meetings: ', meetings);
     }
   }, [user, meetings]); // Refresh when user or meetings change
   
@@ -58,7 +58,7 @@ export default function Meetings({ setCurrentView, meetings = [], onSave, user }
           throw new Error('Database not initialized');
         }
       } catch (error) {
-        console.error('Error deleting meeting:', error);
+        console.error('[ Meetings.js ] Error deleting meeting:', error);
         setError('Failed to delete meeting. Please try again.');
       }
     }
@@ -82,7 +82,7 @@ export default function Meetings({ setCurrentView, meetings = [], onSave, user }
       // State will be updated correctly when the meetings prop updates
       // No need to manually update state here
     } catch (error) {
-      console.error('Error saving meeting:', error);
+      console.error('[ Meetings.js ] Error saving meeting:', error);
       setError('Failed to save meeting. Please try again.');
     }
   };

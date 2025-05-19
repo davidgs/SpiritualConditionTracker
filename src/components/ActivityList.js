@@ -82,7 +82,7 @@ export default function ActivityList({
     
     activities.forEach(activity => {
       // Debug log to see what dates we're working with
-      console.log('Grouping activity with date:', activity.date, 'Type:', typeof activity.date);
+      console.log('[ ActivityList.js ] Grouping activity with date:', activity.date, 'Type:', typeof activity.date);
       
       let dateKey;
       
@@ -90,15 +90,15 @@ export default function ActivityList({
       if (activity.date && activity.date.length === 10 && activity.date.includes('-')) {
         // Already in YYYY-MM-DD format, use it directly
         dateKey = activity.date;
-        console.log('Using direct YYYY-MM-DD dateKey:', dateKey);
+        console.log('[ ActivityList.js ] Using direct YYYY-MM-DD dateKey:', dateKey);
       } else {
         // Handle ISO format or any other format
         // Get the date portion only in YYYY-MM-DD format
         const dateObj = new Date(activity.date);
-        console.log('Date object created:', dateObj);
+        console.log('[ ActivityList.js ] Date object created:', dateObj);
         
         if (isNaN(dateObj.getTime())) {
-          console.error('Invalid date object for:', activity.date);
+          console.error('[ ActivityList.js ] Invalid date object for:', activity.date);
           // Skip this activity if date is invalid
           return;
         }
@@ -109,7 +109,7 @@ export default function ActivityList({
         const month = String(dateObj.getMonth() + 1).padStart(2, '0');
         const day = String(dateObj.getDate()).padStart(2, '0');
         dateKey = `${year}-${month}-${day}`;
-        console.log('Generated dateKey from object:', dateKey);
+        console.log('[ ActivityList.js ] Generated dateKey from object:', dateKey);
       }
       
       if (!groups[dateKey]) {

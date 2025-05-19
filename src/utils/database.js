@@ -5,11 +5,11 @@
 
 // Initialize database
 export const initDatabase = async () => {
-  console.log('Initializing database from utils/database.js');
+  console.log('[ database.js ] Initializing database from utils/database.js');
   
   // Check if the database module is loaded
   if (!window.Database) {
-    console.error('Database module not loaded');
+    console.error('[ database.js ] Database module not loaded');
     throw new Error('Database module not loaded');
   }
   
@@ -21,7 +21,7 @@ export const initDatabase = async () => {
     const users = window.Database.userOperations.getAll();
     
     if (!users || users.length === 0) {
-      console.log('Creating default user...');
+      console.log('[ database.js ] Creating default user...');
       // Create a default user
       window.Database.userOperations.create({
         name: 'Test User',
@@ -36,10 +36,10 @@ export const initDatabase = async () => {
       });
     }
     
-    console.log('Database initialization complete');
+    console.log('[ database.js ] Database initialization complete');
     return true;
   } catch (error) {
-    console.error('Error initializing database:', error);
+    console.error('[ database.js ] Error initializing database:', error);
     throw error;
   }
 };
