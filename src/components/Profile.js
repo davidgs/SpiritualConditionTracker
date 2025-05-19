@@ -841,72 +841,113 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
                 // Second confirmation dialog
                 if (window.confirm('Please confirm again: This will delete ALL your recovery data including sobriety date, meetings, and activities. Are you absolutely sure?')) {
                   try {
-                    // Clear localStorage
-                    localStorage.clear();
-                    console.log('Cleared localStorage');
+                    console.log('Starting database reset');
                     
-                    // Clear database
-                    if (window.db) {
-                      // Clear all meetings
+                    // Handle SQLite database reset
+                    if (window.sqliteDB) {
                       try {
-                        const meetings = window.db.getAll('meetings');
-                        if (meetings && meetings.length > 0) {
-                          meetings.forEach(meeting => {
-                            window.db.remove('meetings', meeting.id);
+                        console.log('Using SQLite database');
+                        
+                        // Drop and recreate tables to fully reset the database
+                        const dropTablesQuery = `
+                          DROP TABLE IF EXISTS users;
+                          DROP TABLE IF EXISTS meetings;
+                          DROP TABLE IF EXISTS activities;
+                          DROP TABLE IF EXISTS preferences;
+                        `;
+                        
+                        // Execute the drop tables query
+                        window.sqliteDB.execute(dropTablesQuery, [])
+                          .then(() => {
+                            console.log('Successfully dropped all tables');
+                            
+                            // Recreate tables
+                            window.sqliteDB.createTables()
+                              .then(() => {
+                                console.log('Successfully recreated tables');
+                                
+                                // Success message
+                                alert('All data has been reset. The app will now reload.');
+                                
+                                // Reload the page after a short delay
+                                setTimeout(() => {
+                                  window.location.reload();
+                                }, 500);
+                              })
+                              .catch(error => {
+                                console.error('Error recreating tables:', error);
+                                alert('An error occurred while recreating database tables. Please try again.');
+                              });
+                          })
+                          .catch(error => {
+                            console.error('Error dropping tables:', error);
+                            alert('An error occurred while dropping database tables. Please try again.');
                           });
-                          console.log('Cleared meetings');
-                        }
-                      } catch (e) {
-                        console.log('Error clearing meetings or no meetings to clear');
+                      } catch (error) {
+                        console.error('Error accessing SQLite database:', error);
+                        
+                        // Fallback to legacy method if SQLite specific methods fail
+                        handleLegacyReset();
                       }
+                    } else if (window.db) {
+                      // If window.sqliteDB is not available but window.db is,
+                      // use the old database API to clear collections
+                      handleLegacyReset();
+                    } else {
+                      // No database APIs available, try to clear localStorage as last resort
+                      localStorage.clear();
+                      console.log('Cleared localStorage only');
                       
-                      // Clear all activities
-                      try {
-                        const activities = window.db.getAll('activities');
-                        if (activities && activities.length > 0) {
-                          activities.forEach(activity => {
-                            window.db.remove('activities', activity.id);
-                          });
-                          console.log('Cleared activities');
-                        }
-                      } catch (e) {
-                        console.log('Error clearing activities or no activities to clear');
-                      }
+                      // Success message
+                      alert('Storage cleared. The app will now reload.');
                       
-                      // Clear all preferences
-                      try {
-                        const preferences = window.db.getAll('preferences');
-                        if (preferences && preferences.length > 0) {
-                          preferences.forEach(pref => {
-                            window.db.remove('preferences', pref.id);
-                          });
-                          console.log('Cleared preferences');
-                        }
-                      } catch (e) {
-                        console.log('Error clearing preferences or no preferences to clear');
-                      }
+                      // Reload the page
+                      setTimeout(() => {
+                        window.location.reload();
+                      }, 500);
+                    }
+                    
+                    // Function to handle legacy database reset method
+                    function handleLegacyReset() {
+                      console.log('Using legacy database API');
                       
-                      // Clear all users last
+                      // Clear all collections
                       try {
-                        const users = window.db.getAll('users');
-                        if (users && users.length > 0) {
-                          users.forEach(user => {
-                            window.db.remove('users', user.id);
-                          });
-                          console.log('Cleared users');
-                        }
-                      } catch (e) {
-                        console.log('Error clearing users or no users to clear');
+                        const collections = ['meetings', 'activities', 'preferences', 'users'];
+                        
+                        collections.forEach(collection => {
+                          try {
+                            const items = window.db.getAll(collection) || [];
+                            console.log(`Clearing ${items.length} items from ${collection}`);
+                            
+                            items.forEach(item => {
+                              window.db.remove(collection, item.id);
+                            });
+                            
+                            console.log(`Cleared ${collection}`);
+                          } catch (e) {
+                            console.log(`Error clearing ${collection}:`, e);
+                          }
+                        });
+                        
+                        // Also clear localStorage for backwards compatibility
+                        localStorage.clear();
+                        console.log('Cleared localStorage for backward compatibility');
+                        
+                        // Success message
+                        alert('All data has been reset. The app will now reload.');
+                        
+                        // Reload the page
+                        setTimeout(() => {
+                          window.location.reload();
+                        }, 500);
+                      } catch (error) {
+                        console.error('Error in legacy reset:', error);
+                        alert('An error occurred while resetting data. Please try again.');
                       }
                     }
                     
-                    // Success message
-                    alert('All data has been reset. The app will now reload.');
-                    
-                    // Reload the page after a short delay to ensure all operations complete
-                    setTimeout(() => {
-                      window.location.reload();
-                    }, 500);
+                    // Note: Success messages and page reload are handled in the specific handlers above
                   } catch (error) {
                     console.error('Error resetting data:', error);
                     alert('An error occurred while resetting data. Please try again.');
