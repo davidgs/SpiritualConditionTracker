@@ -339,7 +339,6 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
                   Please select your sobriety date
                 </Typography>
                 <TextField
-                  label="Sobriety Date"
                   required
                   fullWidth
                   type="date"
