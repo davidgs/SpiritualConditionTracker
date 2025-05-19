@@ -4,8 +4,13 @@
  */
 
 // Simple fix to manually override the fitness score shown
+let fixCounter = 0;
 function fixFitnessScore() {
-  console.log("[ fix-scorefix.js ] Running score fix");
+  // Only log every 10th run to reduce console spam
+  fixCounter++;
+  if (fixCounter % 10 === 0) {
+    console.log("[ fix-scorefix.js ] Running score fix");
+  }
   
   // Look for the score display in a span element
   document.querySelectorAll('*').forEach(el => {

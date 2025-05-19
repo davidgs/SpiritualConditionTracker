@@ -73,7 +73,7 @@ const ProximityWizardScreen = ({ navigation }) => {
         [{ text: 'OK', onPress: () => navigation.goBack() }]
       );
     } catch (error) {
-      console.error('Error saving discovered members:', error);
+      console.error('[ ProximityWizardScreen.js ] Error saving discovered members:', error);
       Alert.alert('Error', 'Failed to save nearby members.');
     }
   };

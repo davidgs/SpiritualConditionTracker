@@ -36,7 +36,7 @@ export async function migrateFromLocalStorage(db) {
     // Migrate meetings
     const meetingsData = JSON.parse(localStorage.getItem('meetings') || '[]');
     if (meetingsData.length > 0) {
-      console.log(`Migrating ${meetingsData.length} meetings...`);
+      console.log(`[ databaseMigration.js ] Migrating ${meetingsData.length} meetings...`);
       for (const meeting of meetingsData) {
         await db.add('meetings', meeting);
       }
@@ -45,13 +45,13 @@ export async function migrateFromLocalStorage(db) {
     // Migrate messages
     const messagesData = JSON.parse(localStorage.getItem('messages') || '[]');
     if (messagesData.length > 0) {
-      console.log(`Migrating ${messagesData.length} messages...`);
+      console.log(`[ databaseMigration.js ] Migrating ${messagesData.length} messages...`);
       for (const message of messagesData) {
         await db.add('messages', message);
       }
     }
     
-    console.log("Migration completed successfully!");
+    console.log("[ databaseMigration.js ] Migration completed successfully!");
     
     // Optionally clear localStorage after successful migration
     // (uncomment this if you want to clear after migration)
@@ -59,7 +59,7 @@ export async function migrateFromLocalStorage(db) {
     
     return true;
   } catch (error) {
-    console.error("Error during migration:", error);
+    console.error("[ databaseMigration.js ] Error during migration:", error);
     return false;
   }
 }

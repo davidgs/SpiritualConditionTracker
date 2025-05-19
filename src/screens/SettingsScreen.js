@@ -83,7 +83,7 @@ const SettingsScreen = () => {
         profileSettings: updatedSettings
       });
     } catch (error) {
-      console.error('Error saving settings:', error);
+      console.error('[ SettingsScreen.js ] Error saving settings:', error);
     }
   };
   
@@ -101,7 +101,7 @@ const SettingsScreen = () => {
       
       setShowProfileEditor(false);
     } catch (error) {
-      console.error('Error updating profile:', error);
+      console.error('[ SettingsScreen.js ] Error updating profile:', error);
     }
   };
   

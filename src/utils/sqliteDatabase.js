@@ -13,7 +13,7 @@ let db = null;
  * Initialize all database tables and create database connection
  */
 export async function initDatabase() {
-  console.log("Initializing SQLite database...");
+  console.log("[ sqliteDatabase.js ] Initializing SQLite database...");
   
   try {
     // Check for browser or native SQLite implementations

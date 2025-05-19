@@ -19,7 +19,7 @@ export function ThemeProvider({ children }) {
         return 'dark';
       }
     } catch (error) {
-      console.error('Error accessing localStorage:', error);
+      console.error('[ ThemeContext.js ] Error accessing localStorage:', error);
     }
     
     // Default to light mode
@@ -38,18 +38,18 @@ export function ThemeProvider({ children }) {
         htmlEl.classList.add('dark');
         document.body.style.backgroundColor = '#111827';
         document.body.style.color = '#f3f4f6';
-        console.log('Dark mode activated');
+        console.log('[ ThemeContext.js ] Dark mode activated');
       } else {
         htmlEl.classList.remove('dark');
         document.body.style.backgroundColor = '#f0f2f5';
         document.body.style.color = '#111827';
-        console.log('Light mode activated');
+        console.log('[ ThemeContext.js ] Light mode activated');
       }
       
       // Save theme choice to localStorage
       localStorage.setItem('theme', theme);
     } catch (error) {
-      console.error('Error applying theme:', error);
+      console.error('[ ThemeContext.js ] Error applying theme:', error);
     }
     
     // Clean up function
@@ -59,17 +59,17 @@ export function ThemeProvider({ children }) {
         document.body.style.backgroundColor = '';
         document.body.style.color = '';
       } catch (error) {
-        console.error('Error cleaning up theme:', error);
+        console.error('[ ThemeContext.js ] Error cleaning up theme:', error);
       }
     };
   }, [theme]);
   
   // Toggle between light and dark mode
   const toggleTheme = () => {
-    console.log('Toggling theme from', theme);
+    console.log('[ ThemeContext.js ] Toggling theme from', theme);
     setTheme(prevTheme => {
       const newTheme = prevTheme === 'light' ? 'dark' : 'light';
-      console.log('Theme toggled to:', newTheme);
+      console.log('[ ThemeContext.js ] Theme toggled to:', newTheme);
       return newTheme;
     });
   };

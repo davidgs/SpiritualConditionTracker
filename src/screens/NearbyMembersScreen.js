@@ -31,7 +31,7 @@ const NearbyMembersScreen = ({ navigation }) => {
       const members = await discoveredMembersOperations.getAll();
       setDiscoveredMembers(members);
     } catch (error) {
-      console.error('Error loading discovered members:', error);
+      console.error('[ NearbyMembersScreen.js ] Error loading discovered members:', error);
     } finally {
       setIsLoading(false);
     }

@@ -68,7 +68,7 @@ const MeetingsScreen = () => {
       const allMeetings = await meetingOperations.getAll();
       setMeetings(allMeetings);
     } catch (error) {
-      console.error('Error loading meetings:', error);
+      console.error('[ MeetingsScreen.js ] Error loading meetings:', error);
     } finally {
       setIsLoading(false);
     }
@@ -140,7 +140,7 @@ const MeetingsScreen = () => {
       setModalVisible(false);
       loadMeetings();
     } catch (error) {
-      console.error('Error adding meeting:', error);
+      console.error('[ MeetingsScreen.js ] Error adding meeting:', error);
       alert('Failed to add meeting. Please try again.');
     }
   };
@@ -215,7 +215,7 @@ const MeetingsScreen = () => {
       await meetingOperations.delete(meetingId);
       loadMeetings();
     } catch (error) {
-      console.error('Error deleting meeting:', error);
+      console.error('[ MeetingsScreen.js ] Error deleting meeting:', error);
       alert('Failed to delete meeting. Please try again.');
     }
   };

@@ -11,7 +11,7 @@ let db = null;
  * @returns {Promise<boolean>} Whether initialization was successful
  */
 export async function initDatabase() {
-  console.log("Initializing SQLite database...");
+  console.log("[ sqliteStorage.js ] Initializing SQLite database...");
   
   try {
     // For React Native environments
@@ -24,18 +24,18 @@ export async function initDatabase() {
         location: 'default'
       });
       
-      console.log("SQLite database initialized successfully (React Native)");
+      console.log("[ sqliteStorage.js ] SQLite database initialized successfully (React Native)");
     } 
     // For Expo environments
     else if (window.Expo) {
       const SQLite = require('expo-sqlite');
       db = SQLite.openDatabase('spiritualTracker.db');
       
-      console.log("SQLite database initialized successfully (Expo)");
+      console.log("[ sqliteStorage.js ] SQLite database initialized successfully (Expo)");
     }
     // For web environments, fallback to IndexedDB since WebSQL is deprecated
     else {
-      console.log("Web environment detected, using IndexedDB as SQLite alternative");
+      console.log("[ sqliteStorage.js ] Web environment detected, using IndexedDB as SQLite alternative");
       db = await initIndexedDB();
     }
     
@@ -44,7 +44,7 @@ export async function initDatabase() {
     
     return true;
   } catch (error) {
-    console.error("Error initializing database:", error);
+    console.error("[ sqliteStorage.js ] Error initializing database:", error);
     return false;
   }
 }
@@ -54,7 +54,7 @@ export async function initDatabase() {
  * @returns {Object} A database object with SQLite-like interface
  */
 async function initIndexedDB() {
-  console.log("Initializing IndexedDB as SQLite alternative...");
+  console.log("[ sqliteStorage.js ] Initializing IndexedDB as SQLite alternative...");
   
   const DB_NAME = 'spiritualTrackerDB';
   const DB_VERSION = 1;
@@ -64,7 +64,7 @@ async function initIndexedDB() {
     const request = window.indexedDB.open(DB_NAME, DB_VERSION);
     
     request.onerror = (event) => {
-      console.error("Error opening IndexedDB:", event.target.error);
+      console.error("[ sqliteStorage.js ] Error opening IndexedDB:", event.target.error);
       reject(event.target.error);
     };
     
@@ -110,11 +110,11 @@ async function initIndexedDB() {
                 }
                 else {
                   // Unsupported operation
-                  console.warn("Unsupported SQL operation:", query);
+                  console.warn("[ sqliteStorage.js ] Unsupported SQL operation:", query);
                   successCallback({}, { rows: { length: 0 } });
                 }
               } catch (error) {
-                console.error("Error executing SQL:", error);
+                console.error("[ sqliteStorage.js ] Error executing SQL:", error);
                 if (errorCallback) errorCallback({}, error);
               }
             }
@@ -379,7 +379,7 @@ async function createTables() {
     await executeQuery(query, []);
   }
   
-  console.log("Database tables created successfully");
+  console.log("[ sqliteStorage.js ] Database tables created successfully");
 }
 
 /**
@@ -402,14 +402,14 @@ function executeQuery(query, params = []) {
           params,
           (_, result) => resolve(result),
           (_, error) => {
-            console.error("SQL Error:", error);
+            console.error("[ sqliteStorage.js ] SQL Error:", error);
             reject(error);
             return false;
           }
         );
       });
     } catch (error) {
-      console.error("Transaction Error:", error);
+      console.error("[ sqliteStorage.js ] Transaction Error:", error);
       reject(error);
     }
   });
@@ -450,7 +450,7 @@ export async function getAll(collection) {
     
     return items;
   } catch (error) {
-    console.error(`Error getting all items from ${collection}:`, error);
+    console.error(`[ sqliteStorage.js ] Error getting all items from ${collection}:`, error);
     return [];
   }
 }
@@ -492,7 +492,7 @@ export async function getById(collection, id) {
     
     return item;
   } catch (error) {
-    console.error(`Error getting item by ID from ${collection}:`, error);
+    console.error(`[ sqliteStorage.js ] Error getting item by ID from ${collection}:`, error);
     return null;
   }
 }
@@ -575,10 +575,10 @@ export async function add(collection, item) {
       values
     );
     
-    console.log(`Added item to ${collection} with ID: ${item.id}`);
+    console.log(`[ sqliteStorage.js ] Added item to ${collection} with ID: ${item.id}`);
     return item;
   } catch (error) {
-    console.error(`Error adding item to ${collection}:`, error);
+    console.error(`[ sqliteStorage.js ] Error adding item to ${collection}:`, error);
     throw error;
   }
 }
@@ -599,7 +599,7 @@ export async function update(collection, id, updates) {
     const existingItem = await getById(collection, id);
     
     if (!existingItem) {
-      console.log(`Item with ID ${id} not found in ${collection}`);
+      console.log(`[ sqliteStorage.js ] Item with ID ${id} not found in ${collection}`);
       return null;
     }
     
@@ -661,14 +661,14 @@ export async function update(collection, id, updates) {
     );
     
     if (result.rowsAffected === 0) {
-      console.log(`No rows affected when updating ${collection} with ID: ${id}`);
+      console.log(`[ sqliteStorage.js ] No rows affected when updating ${collection} with ID: ${id}`);
       return null;
     }
     
-    console.log(`Updated item in ${collection} with ID: ${id}`);
+    console.log(`[ sqliteStorage.js ] Updated item in ${collection} with ID: ${id}`);
     return updatedItem;
   } catch (error) {
-    console.error(`Error updating item in ${collection}:`, error);
+    console.error(`[ sqliteStorage.js ] Error updating item in ${collection}:`, error);
     throw error;
   }
 }
@@ -689,14 +689,14 @@ export async function remove(collection, id) {
     const success = result.rowsAffected > 0;
     
     if (success) {
-      console.log(`Removed item from ${collection} with ID: ${id}`);
+      console.log(`[ sqliteStorage.js ] Removed item from ${collection} with ID: ${id}`);
     } else {
-      console.log(`No item found in ${collection} with ID: ${id}`);
+      console.log(`[ sqliteStorage.js ] No item found in ${collection} with ID: ${id}`);
     }
     
     return success;
   } catch (error) {
-    console.error(`Error removing item from ${collection}:`, error);
+    console.error(`[ sqliteStorage.js ] Error removing item from ${collection}:`, error);
     return false;
   }
 }
@@ -712,7 +712,7 @@ export async function query(collection, predicate) {
     const items = await getAll(collection);
     return items.filter(predicate);
   } catch (error) {
-    console.error(`Error querying ${collection}:`, error);
+    console.error(`[ sqliteStorage.js ] Error querying ${collection}:`, error);
     return [];
   }
 }
@@ -727,7 +727,7 @@ export async function getPreference(key) {
     const preference = await getById('preferences', key);
     return preference?.value;
   } catch (error) {
-    console.error(`Error getting preference ${key}:`, error);
+    console.error(`[ sqliteStorage.js ] Error getting preference ${key}:`, error);
     return null;
   }
 }
@@ -759,7 +759,7 @@ export async function setPreference(key, value) {
       await add('preferences', preference);
     }
   } catch (error) {
-    console.error(`Error setting preference ${key}:`, error);
+    console.error(`[ sqliteStorage.js ] Error setting preference ${key}:`, error);
   }
 }
 
@@ -827,7 +827,7 @@ export async function calculateSpiritualFitness(activities, timeframe = 30) {
     
     return score;
   } catch (error) {
-    console.error('Error calculating spiritual fitness:', error);
+    console.error('[ sqliteStorage.js ] Error calculating spiritual fitness:', error);
     return 20; // Default base score on error
   }
 }
@@ -879,20 +879,20 @@ export function hasLocalStorageData() {
  * @returns {Promise<boolean>} Whether migration was successful
  */
 export async function migrateFromLocalStorage() {
-  console.log("Starting migration from localStorage to SQLite...");
+  console.log("[ sqliteStorage.js ] Starting migration from localStorage to SQLite...");
   
   try {
     // Migrate user data
     const userData = JSON.parse(localStorage.getItem('user'));
     if (userData) {
-      console.log("Migrating user data...");
+      console.log("[ sqliteStorage.js ] Migrating user data...");
       await add('users', userData);
     }
     
     // Migrate activities
     const activitiesData = JSON.parse(localStorage.getItem('activities') || '[]');
     if (activitiesData.length > 0) {
-      console.log(`Migrating ${activitiesData.length} activities...`);
+      console.log(`[ sqliteStorage.js ] Migrating ${activitiesData.length} activities...`);
       for (const activity of activitiesData) {
         await add('activities', activity);
       }
@@ -901,7 +901,7 @@ export async function migrateFromLocalStorage() {
     // Migrate meetings
     const meetingsData = JSON.parse(localStorage.getItem('meetings') || '[]');
     if (meetingsData.length > 0) {
-      console.log(`Migrating ${meetingsData.length} meetings...`);
+      console.log(`[ sqliteStorage.js ] Migrating ${meetingsData.length} meetings...`);
       for (const meeting of meetingsData) {
         await add('meetings', meeting);
       }
@@ -910,20 +910,20 @@ export async function migrateFromLocalStorage() {
     // Migrate messages
     const messagesData = JSON.parse(localStorage.getItem('messages') || '[]');
     if (messagesData.length > 0) {
-      console.log(`Migrating ${messagesData.length} messages...`);
+      console.log(`[ sqliteStorage.js ] Migrating ${messagesData.length} messages...`);
       for (const message of messagesData) {
         await add('messages', message);
       }
     }
     
-    console.log("Migration completed successfully!");
+    console.log("[ sqliteStorage.js ] Migration completed successfully!");
     
     // Optionally clear localStorage after successful migration
     // localStorage.clear();
     
     return true;
   } catch (error) {
-    console.error("Error during migration:", error);
+    console.error("[ sqliteStorage.js ] Error during migration:", error);
     return false;
   }
 }

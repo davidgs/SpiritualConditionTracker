@@ -33,7 +33,7 @@ export async function createConnection(user, contactInfo) {
     // Save to database
     return connectionOperations.create(connection);
   } catch (error) {
-    console.error('Error creating connection:', error);
+    console.error('[ messagingUtils.js ] Error creating connection:', error);
     throw new Error('Failed to create connection');
   }
 }
@@ -88,7 +88,7 @@ export async function sendMessage(user, connection, messageContent) {
       decrypted: isEncrypted // Mark as already decrypted
     };
   } catch (error) {
-    console.error('Error sending message:', error);
+    console.error('[ messagingUtils.js ] Error sending message:', error);
     throw new Error('Failed to send message');
   }
 }
@@ -121,7 +121,7 @@ export async function getDecryptedMessages(conversationId, encryptionKey) {
             decrypted: true
           };
         } catch (error) {
-          console.error('Failed to decrypt message:', error);
+          console.error('[ messagingUtils.js ] Failed to decrypt message:', error);
           return {
             ...message,
             content: '[Encrypted message - unable to decrypt]',
@@ -131,7 +131,7 @@ export async function getDecryptedMessages(conversationId, encryptionKey) {
       })
     );
   } catch (error) {
-    console.error('Error getting messages:', error);
+    console.error('[ messagingUtils.js ] Error getting messages:', error);
     throw new Error('Failed to retrieve messages');
   }
 }
@@ -152,7 +152,7 @@ export async function markMessagesAsRead(messageIds) {
     
     return true;
   } catch (error) {
-    console.error('Error marking messages as read:', error);
+    console.error('[ messagingUtils.js ] Error marking messages as read:', error);
     return false;
   }
 }
@@ -175,7 +175,7 @@ export async function deleteConnection(connectionId) {
     // Delete the connection
     return connectionOperations.delete(connectionId);
   } catch (error) {
-    console.error('Error deleting connection:', error);
+    console.error('[ messagingUtils.js ] Error deleting connection:', error);
     return false;
   }
 }

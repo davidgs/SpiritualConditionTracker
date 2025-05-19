@@ -60,7 +60,7 @@ export async function encryptMessage(message, key) {
     // Convert to base64 for storage
     return btoa(String.fromCharCode.apply(null, result));
   } catch (error) {
-    console.error('Encryption error:', error);
+    console.error('[ encryption.js ] Encryption error:', error);
     throw new Error('Failed to encrypt message');
   }
 }
@@ -107,7 +107,7 @@ export async function decryptMessage(encryptedMessage, key) {
     // Decode the decrypted data to a string
     return new TextDecoder().decode(decryptedData);
   } catch (error) {
-    console.error('Decryption error:', error);
+    console.error('[ encryption.js ] Decryption error:', error);
     throw new Error('Failed to decrypt message');
   }
 }
@@ -148,7 +148,7 @@ export async function generateKeyPair() {
     
     return { publicKey, privateKey };
   } catch (error) {
-    console.error('Key pair generation error:', error);
+    console.error('[ encryption.js ] Key pair generation error:', error);
     throw new Error('Failed to generate key pair');
   }
 }
