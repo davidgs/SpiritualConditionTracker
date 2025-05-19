@@ -257,27 +257,25 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
         <Typography variant="h4" sx={{ fontWeight: 'bold', color: 'text.primary' }}>
           Recovery Tracker
         </Typography>
-        <Typography variant="subtitle1" sx={{ color: 'text.secondary' }}
+        <Typography variant="subtitle1" sx={{ color: 'text.secondary' }}>
           Your personal profile
         </Typography>
       </Box>
       
-      <Paper elevation={0} sx={{ 
+      <Paper elevation={1} sx={{ 
           p: 3,
           mb: 3,
-          bgcolor: darkMode ? '#1f2937' : '#ffffff',
-          borderRadius: 2,
-          border: darkMode ? '1px solid #374151' : '1px solid #e5e7eb'
+          borderRadius: 2
         }}>
           <Box sx={{ mb: 2 }}>
-            <Typography variant="h6" sx={{ color: darkMode ? '#d1d5db' : '#374151', mb: 1 }}>
+            <Typography variant="h6" sx={{ color: 'text.primary', mb: 1 }}>
               Sobriety Milestone
             </Typography>
             
             {sobrietyDate && !editingSobriety && (
               <Box sx={{ display: 'flex', alignItems: 'center' }}>
                 <Typography variant="subtitle1" sx={{ 
-                  color: darkMode ? '#9ca3af' : '#6b7280',
+                  color: 'text.secondary',
                   fontWeight: 500
                 }}>
                   Sober since {formatDateForDisplay(sobrietyDate)}
@@ -286,12 +284,12 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
                   onClick={() => setEditingSobriety(!editingSobriety)}
                   size="small"
                   aria-label="Edit sobriety date"
+                  color="inherit"
                   sx={{ 
                     ml: 1,
                     p: 0.5,
-                    color: darkMode ? '#9ca3af' : '#6b7280',
                     '&:hover': {
-                      color: darkMode ? '#60a5fa' : '#3b82f6',
+                      color: 'primary.main',
                       backgroundColor: 'transparent'
                     }
                   }}
