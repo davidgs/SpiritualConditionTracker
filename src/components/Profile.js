@@ -497,13 +497,13 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
               <Box>
                 <Typography sx={{ 
                   fontSize: '0.875rem',
-                  color: darkMode ? '#d1d5db' : '#374151'
+                  color: 'text.primary'
                 }}>
                   Allow Messaging
                 </Typography>
                 <Typography variant="caption" sx={{ 
                   display: 'block', 
-                  color: darkMode ? '#9ca3af' : '#6b7280'
+                  color: 'text.secondary'
                 }}>
                   When enabled, connections can send you secure messages
                 </Typography>
@@ -528,13 +528,13 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
               <Box>
                 <Typography sx={{ 
                   fontSize: '0.875rem',
-                  color: darkMode ? '#d1d5db' : '#374151'
+                  color: 'text.primary'
                 }}>
                   Share Last Name
                 </Typography>
                 <Typography variant="caption" sx={{ 
                   display: 'block', 
-                  color: darkMode ? '#9ca3af' : '#6b7280'
+                  color: 'text.secondary'
                 }}>
                   Show your last name to other members in recovery
                 </Typography>
@@ -572,13 +572,13 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
               <Box>
                 <Typography sx={{ 
                   fontSize: '0.875rem',
-                  color: darkMode ? '#d1d5db' : '#374151'
+                  color: 'text.primary'
                 }}>
                   Use 24-Hour Time Format
                 </Typography>
                 <Typography variant="caption" sx={{ 
                   display: 'block', 
-                  color: darkMode ? '#9ca3af' : '#6b7280'
+                  color: 'text.secondary'
                 }}>
                   Display times in 24-hour format (e.g., 18:00 instead of 6:00 PM)
                 </Typography>
