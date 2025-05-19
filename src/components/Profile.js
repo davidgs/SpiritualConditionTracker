@@ -254,10 +254,10 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
         />
       )}
       <Box sx={{ mb: 3 }}>
-        <Typography variant="h4" sx={{ fontWeight: 'bold', color: darkMode ? '#e5e7eb' : '#1f2937' }}>
+        <Typography variant="h4" sx={{ fontWeight: 'bold', color: 'text.primary' }}>
           Recovery Tracker
         </Typography>
-        <Typography variant="subtitle1" sx={{ color: darkMode ? '#9ca3af' : '#6b7280' }}>
+        <Typography variant="subtitle1" sx={{ color: 'text.secondary' }}
           Your personal profile
         </Typography>
       </Box>
@@ -382,12 +382,8 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
                 <Button 
                   size="small"
                   onClick={() => setEditingSobriety(false)}
-                  sx={{ 
-                    color: darkMode ? '#d1d5db' : '#374151',
-                    '&:hover': {
-                      backgroundColor: 'transparent'
-                    }
-                  }}
+                  variant="outlined"
+                  color="inherit"
                 >
                   Cancel
                 </Button>
