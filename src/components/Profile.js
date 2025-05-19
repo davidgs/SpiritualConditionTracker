@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import ThemeSelector from './ThemeSelector';
 import MeetingFormDialog from './MeetingFormDialog';
 import { ThemeContext } from '../contexts/ThemeContext';
+import { resetDatabase } from '../utils/sqliteStorage';
 import { 
   Switch, 
   FormControlLabel, 
@@ -19,6 +20,89 @@ import {
 } from '@mui/material';
 
 export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
+  // Reset all data function
+  const handleResetAllData = () => {
+    // First confirmation dialog
+    if (!window.confirm('Are you sure you want to reset ALL data? This action CANNOT be undone.')) {
+      return;
+    }
+    
+    // Second confirmation dialog
+    if (!window.confirm('Please confirm again: This will delete ALL your recovery data including sobriety date, meetings, and activities. Are you absolutely sure?')) {
+      return;
+    }
+    
+    console.log('Starting database reset process');
+    
+    if (typeof resetDatabase === 'function') {
+      // Use the SQLite direct reset function
+      resetDatabase()
+        .then(success => {
+          if (success) {
+            console.log('Database reset successfully via SQLite resetDatabase');
+            localStorage.clear(); // Also clear localStorage for backup
+            alert('All data has been reset. The app will now reload.');
+            setTimeout(() => window.location.reload(), 500);
+          } else {
+            console.error('SQLite database reset failed');
+            handleFallbackReset();
+          }
+        })
+        .catch(error => {
+          console.error('Error during SQLite database reset:', error);
+          handleFallbackReset();
+        });
+    } else {
+      handleFallbackReset();
+    }
+  };
+  
+  // Fallback reset method using old database API
+  const handleFallbackReset = () => {
+    console.log('Using fallback database reset method');
+    
+    try {
+      if (window.db) {
+        // Collections to clear in order (clear dependent data first)
+        const collections = ['activities', 'meetings', 'preferences', 'users'];
+        let clearCount = 0;
+        
+        // Clear each collection
+        collections.forEach(collection => {
+          try {
+            const items = window.db.getAll(collection) || [];
+            console.log(`Clearing ${items.length} items from ${collection}`);
+            
+            items.forEach(item => {
+              if (item && item.id) {
+                window.db.remove(collection, item.id);
+                clearCount++;
+              }
+            });
+            
+            console.log(`Cleared ${collection}`);
+          } catch (e) {
+            console.log(`Error clearing ${collection}:`, e);
+          }
+        });
+        
+        // Also clear localStorage for complete reset
+        localStorage.clear();
+        console.log(`Reset complete: cleared ${clearCount} items and localStorage`);
+      } else {
+        // Last resort if no database API is available
+        localStorage.clear();
+        console.log('No database API found, cleared localStorage only');
+      }
+      
+      // Show success message and reload the app
+      alert('All data has been reset. The app will now reload.');
+      setTimeout(() => window.location.reload(), 500);
+    } catch (error) {
+      console.error('Error in fallback reset:', error);
+      alert('An error occurred while resetting data. Please try again.');
+    }
+  };
   const { theme } = useContext(ThemeContext);
   const darkMode = theme === 'dark';
   
@@ -835,126 +919,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
             variant="outlined"
             color="error"
             startIcon={<i className="fas fa-trash-alt"></i>}
-            onClick={() => {
-              // First confirmation dialog
-              if (window.confirm('Are you sure you want to reset ALL data? This action CANNOT be undone.')) {
-                // Second confirmation dialog
-                if (window.confirm('Please confirm again: This will delete ALL your recovery data including sobriety date, meetings, and activities. Are you absolutely sure?')) {
-                  try {
-                    console.log('Starting database reset');
-                    
-                    // Handle SQLite database reset
-                    if (window.sqliteDB) {
-                      try {
-                        console.log('Using SQLite database');
-                        
-                        // Drop and recreate tables to fully reset the database
-                        const dropTablesQuery = `
-                          DROP TABLE IF EXISTS users;
-                          DROP TABLE IF EXISTS meetings;
-                          DROP TABLE IF EXISTS activities;
-                          DROP TABLE IF EXISTS preferences;
-                        `;
-                        
-                        // Execute the drop tables query
-                        window.sqliteDB.execute(dropTablesQuery, [])
-                          .then(() => {
-                            console.log('Successfully dropped all tables');
-                            
-                            // Recreate tables
-                            window.sqliteDB.createTables()
-                              .then(() => {
-                                console.log('Successfully recreated tables');
-                                
-                                // Success message
-                                alert('All data has been reset. The app will now reload.');
-                                
-                                // Reload the page after a short delay
-                                setTimeout(() => {
-                                  window.location.reload();
-                                }, 500);
-                              })
-                              .catch(error => {
-                                console.error('Error recreating tables:', error);
-                                alert('An error occurred while recreating database tables. Please try again.');
-                              });
-                          })
-                          .catch(error => {
-                            console.error('Error dropping tables:', error);
-                            alert('An error occurred while dropping database tables. Please try again.');
-                          });
-                      } catch (error) {
-                        console.error('Error accessing SQLite database:', error);
-                        
-                        // Fallback to legacy method if SQLite specific methods fail
-                        handleLegacyReset();
-                      }
-                    } else if (window.db) {
-                      // If window.sqliteDB is not available but window.db is,
-                      // use the old database API to clear collections
-                      handleLegacyReset();
-                    } else {
-                      // No database APIs available, try to clear localStorage as last resort
-                      localStorage.clear();
-                      console.log('Cleared localStorage only');
-                      
-                      // Success message
-                      alert('Storage cleared. The app will now reload.');
-                      
-                      // Reload the page
-                      setTimeout(() => {
-                        window.location.reload();
-                      }, 500);
-                    }
-                    
-                    // Function to handle legacy database reset method
-                    function handleLegacyReset() {
-                      console.log('Using legacy database API');
-                      
-                      // Clear all collections
-                      try {
-                        const collections = ['meetings', 'activities', 'preferences', 'users'];
-                        
-                        collections.forEach(collection => {
-                          try {
-                            const items = window.db.getAll(collection) || [];
-                            console.log(`Clearing ${items.length} items from ${collection}`);
-                            
-                            items.forEach(item => {
-                              window.db.remove(collection, item.id);
-                            });
-                            
-                            console.log(`Cleared ${collection}`);
-                          } catch (e) {
-                            console.log(`Error clearing ${collection}:`, e);
-                          }
-                        });
-                        
-                        // Also clear localStorage for backwards compatibility
-                        localStorage.clear();
-                        console.log('Cleared localStorage for backward compatibility');
-                        
-                        // Success message
-                        alert('All data has been reset. The app will now reload.');
-                        
-                        // Reload the page
-                        setTimeout(() => {
-                          window.location.reload();
-                        }, 500);
-                      } catch (error) {
-                        console.error('Error in legacy reset:', error);
-                        alert('An error occurred while resetting data. Please try again.');
-                      }
-                    }
-                    
-                    // Note: Success messages and page reload are handled in the specific handlers above
-                  } catch (error) {
-                    console.error('Error resetting data:', error);
-                    alert('An error occurred while resetting data. Please try again.');
-                  }
-                }
-              }
-            }}
+            onClick={handleResetAllData}
             sx={{
               borderColor: '#dc2626',
               color: '#dc2626',

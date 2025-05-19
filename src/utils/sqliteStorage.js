@@ -383,6 +383,45 @@ async function createTables() {
 }
 
 /**
+ * Reset the database by dropping and recreating all tables
+ * @returns {Promise<boolean>} Whether the reset was successful
+ */
+export async function resetDatabase() {
+  console.log("[ sqliteStorage.js ] Resetting database...");
+  
+  if (!db) {
+    console.error("[ sqliteStorage.js ] Database not initialized");
+    return false;
+  }
+  
+  try {
+    // Drop all tables
+    const dropTablesQueries = [
+      "DROP TABLE IF EXISTS users",
+      "DROP TABLE IF EXISTS activities",
+      "DROP TABLE IF EXISTS meetings",
+      "DROP TABLE IF EXISTS messages",
+      "DROP TABLE IF EXISTS preferences"
+    ];
+    
+    for (const query of dropTablesQueries) {
+      await executeQuery(query);
+    }
+    
+    console.log("[ sqliteStorage.js ] Tables dropped successfully");
+    
+    // Recreate tables
+    await createTables();
+    
+    console.log("[ sqliteStorage.js ] Database reset successfully");
+    return true;
+  } catch (error) {
+    console.error("[ sqliteStorage.js ] Error resetting database:", error);
+    return false;
+  }
+}
+
+/**
  * Execute a SQL query
  * @param {string} query - The SQL query to execute
  * @param {Array} params - Query parameters
