@@ -836,30 +836,77 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
             color="error"
             startIcon={<i className="fas fa-trash-alt"></i>}
             onClick={() => {
+              // First confirmation dialog
               if (window.confirm('Are you sure you want to reset ALL data? This action CANNOT be undone.')) {
+                // Second confirmation dialog
                 if (window.confirm('Please confirm again: This will delete ALL your recovery data including sobriety date, meetings, and activities. Are you absolutely sure?')) {
-                  // Clear all data from all collections
                   try {
+                    // Clear localStorage
+                    localStorage.clear();
+                    console.log('Cleared localStorage');
+                    
+                    // Clear database
                     if (window.db) {
-                      // Get collections to clear
-                      const collections = ['users', 'meetings', 'activities', 'preferences'];
+                      // Clear all meetings
+                      try {
+                        const meetings = window.db.getAll('meetings');
+                        if (meetings && meetings.length > 0) {
+                          meetings.forEach(meeting => {
+                            window.db.remove('meetings', meeting.id);
+                          });
+                          console.log('Cleared meetings');
+                        }
+                      } catch (e) {
+                        console.log('Error clearing meetings or no meetings to clear');
+                      }
                       
-                      // Attempt to clear each collection
-                      collections.forEach(collection => {
-                        const allItems = window.db.getAll(collection) || [];
-                        allItems.forEach(item => {
-                          window.db.remove(collection, item.id);
-                        });
-                      });
+                      // Clear all activities
+                      try {
+                        const activities = window.db.getAll('activities');
+                        if (activities && activities.length > 0) {
+                          activities.forEach(activity => {
+                            window.db.remove('activities', activity.id);
+                          });
+                          console.log('Cleared activities');
+                        }
+                      } catch (e) {
+                        console.log('Error clearing activities or no activities to clear');
+                      }
                       
-                      // Show success message
-                      alert('All data has been reset. The app will now reload.');
+                      // Clear all preferences
+                      try {
+                        const preferences = window.db.getAll('preferences');
+                        if (preferences && preferences.length > 0) {
+                          preferences.forEach(pref => {
+                            window.db.remove('preferences', pref.id);
+                          });
+                          console.log('Cleared preferences');
+                        }
+                      } catch (e) {
+                        console.log('Error clearing preferences or no preferences to clear');
+                      }
                       
-                      // Reload the page to reset the app state
-                      window.location.reload();
-                    } else {
-                      throw new Error('Database not initialized');
+                      // Clear all users last
+                      try {
+                        const users = window.db.getAll('users');
+                        if (users && users.length > 0) {
+                          users.forEach(user => {
+                            window.db.remove('users', user.id);
+                          });
+                          console.log('Cleared users');
+                        }
+                      } catch (e) {
+                        console.log('Error clearing users or no users to clear');
+                      }
                     }
+                    
+                    // Success message
+                    alert('All data has been reset. The app will now reload.');
+                    
+                    // Reload the page after a short delay to ensure all operations complete
+                    setTimeout(() => {
+                      window.location.reload();
+                    }, 500);
                   } catch (error) {
                     console.error('Error resetting data:', error);
                     alert('An error occurred while resetting data. Please try again.');
