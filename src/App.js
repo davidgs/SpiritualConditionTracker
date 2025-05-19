@@ -435,13 +435,18 @@ function App() {
     try {
       // Process sobriety date to ensure consistent format
       if (updates.sobrietyDate) {
-        // If it's just a date (YYYY-MM-DD) without time part, add time component to make it a proper ISO string
-        // This ensures consistent date handling across components
-        if (!updates.sobrietyDate.includes('T')) {
-          const dateObj = new Date(updates.sobrietyDate + 'T00:00:00.000Z');
-          if (!isNaN(dateObj.getTime())) {
-            updates.sobrietyDate = dateObj.toISOString();
-          }
+        // Store the sobriety date exactly as it is in YYYY-MM-DD format
+        // This prevents timezone issues and ensures consistent display
+        // We'll strip any time part if it exists
+        if (updates.sobrietyDate.includes('T')) {
+          updates.sobrietyDate = updates.sobrietyDate.split('T')[0];
+        }
+        // Validate that it's a proper date
+        const isValidDate = /^\d{4}-\d{2}-\d{2}$/.test(updates.sobrietyDate);
+        if (!isValidDate) {
+          console.error('Invalid sobriety date format:', updates.sobrietyDate);
+          // Default to empty string if invalid
+          updates.sobrietyDate = '';
         }
       }
       
