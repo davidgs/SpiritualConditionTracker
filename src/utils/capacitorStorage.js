@@ -471,6 +471,7 @@ async function createTables() {
       state TEXT,
       zipCode TEXT,
       coordinates TEXT,
+      isHomeGroup INTEGER DEFAULT 0,
       createdAt TEXT,
       updatedAt TEXT
     )`,
@@ -496,6 +497,16 @@ async function createTables() {
   // Execute each table creation query
   for (const query of tableQueries) {
     await executeQuery(query);
+  }
+  
+  // Apply migrations for existing databases
+  try {
+    // Add isHomeGroup column to meetings table if it doesn't exist
+    await executeQuery(`ALTER TABLE meetings ADD COLUMN isHomeGroup INTEGER DEFAULT 0;`);
+    console.log("[ capacitorStorage.js ] Migration: Added isHomeGroup column to meetings table");
+  } catch (migrationError) {
+    // Ignore errors from migrations (likely column already exists)
+    console.log("[ capacitorStorage.js ] Migration skipped (likely already applied):", migrationError.message);
   }
   
   console.log("[ capacitorStorage.js ] All database tables created successfully");
@@ -555,6 +566,8 @@ export async function getAll(collection) {
         item.days = JSON.parse(item.days || '[]');
         item.schedule = JSON.parse(item.schedule || '[]');
         item.coordinates = JSON.parse(item.coordinates || 'null');
+        // Convert isHomeGroup to boolean
+        item.isHomeGroup = item.isHomeGroup === 1 || item.isHomeGroup === true;
       } else if (collection === 'preferences') {
         item.value = JSON.parse(item.value || 'null');
       }
