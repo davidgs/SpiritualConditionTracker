@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useContext } from 'react';
+import { useTheme } from '@mui/material/styles';
 import ThemeSelector from './ThemeSelector';
 import MeetingFormDialog from './MeetingFormDialog';
 import { ThemeContext } from '../contexts/ThemeContext';
-import { resetDatabase } from '../utils/sqliteStorage';
 import { 
   Switch, 
   FormControlLabel, 
