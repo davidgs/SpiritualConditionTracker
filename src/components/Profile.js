@@ -347,46 +347,30 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
                   value={sobrietyDate}
                   onChange={(e) => setSobrietyDate(e.target.value)}
                   inputProps={{
-                    max: new Date().toISOString().split('T')[0],
-                    style: { color: darkMode ? '#ffffff' : '#374151' }
+                    max: new Date().toISOString().split('T')[0]
                   }}
                   variant="outlined"
                   error={!!errors.sobrietyDate}
                   helperText={errors.sobrietyDate || "This date represents the beginning of your recovery journey"}
                   size="small"
                   InputLabelProps={{
-                    shrink: true,
-                    sx: { color: muiTheme.palette.text.primary }
+                    shrink: true
                   }}
-                  InputProps={{
-                    sx: {
-                      borderRadius: 1,
-                      color: muiTheme.palette.text.primary,
-                      backgroundColor: darkMode ? 'rgba(31, 41, 55, 0.5)' : '#ffffff',
-                      '& .MuiOutlinedInput-notchedOutline': {
-                        borderColor: muiTheme.palette.divider,
-                      },
-                      '&:hover .MuiOutlinedInput-notchedOutline': {
-                        borderColor: muiTheme.palette.primary.main,
-                      },
-                      '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                        borderColor: muiTheme.palette.primary.main,
-                      }
-                    }
-                  }}
-                  FormHelperTextProps={{
-                    sx: {
+                  sx={{ mb: 1, 
+                    '& .MuiOutlinedInput-input': {
+                      color: muiTheme.palette.text.primary
+                    },
+                    '& .MuiFormHelperText-root': {
                       color: muiTheme.palette.text.secondary
                     }
                   }}
-                  sx={{ mb: 1 }}
                 />
                 <Typography 
                   variant="caption" 
                   sx={{ 
                     display: 'block', 
                     mt: 0.5, 
-                    color: muiTheme.palette.text.secondary,
+                    color: 'text.secondary',
                     fontStyle: 'italic'
                   }}
                 >
