@@ -41,6 +41,14 @@ const MuiThemeProvider = ({ children }) => {
           fontFamily: '"Inter", "Helvetica", "Arial", sans-serif',
         },
         components: {
+          MuiPaper: {
+            styleOverrides: {
+              root: {
+                backgroundColor: darkMode ? '#1f2937' : '#ffffff',
+                color: darkMode ? '#e5e7eb' : '#1f2937',
+              },
+            },
+          },
           MuiDialog: {
             styleOverrides: {
               paper: {
