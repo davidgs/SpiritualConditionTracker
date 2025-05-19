@@ -10,14 +10,14 @@ const isCapacitor = typeof window !== 'undefined' &&
 
 // Initialize SQLite database
 function initSQLiteDatabase() {
-  console.log('Initializing SQLite database for Capacitor...');
+  console.log('[ sqliteLoader.js ] Initializing SQLite database for Capacitor...');
   
   // If we're in a Capacitor environment, try to use native SQLite
   if (isCapacitor && window.Capacitor.isPluginAvailable('CapacitorSQLite')) {
-    console.log('Using native SQLite with Capacitor');
+    console.log('[ sqliteLoader.js ] Using native SQLite with Capacitor');
     return initCapacitorSQLite();
   } else {
-    console.log('Using WebSQL implementation for browser');
+    console.log('[ sqliteLoader.js ] Using WebSQL implementation for browser');
     return initWebSQL();
   }
 }
@@ -27,7 +27,7 @@ async function initCapacitorSQLite() {
   try {
     // Make sure we're accessing the plugin correctly
     if (!window.Capacitor || !window.Capacitor.Plugins || !window.Capacitor.Plugins.CapacitorSQLite) {
-      console.error('CapacitorSQLite plugin not properly available');
+      console.error('[ sqliteLoader.js ] CapacitorSQLite plugin not properly available');
       return initWebSQL();
     }
     

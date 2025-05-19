@@ -23,15 +23,15 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
   const buttonRef = useRef(null);
   
   // Log spiritualFitness prop for debugging
-  console.log('Dashboard received spiritualFitness:', spiritualFitness);
+  console.log('[ Dashboard.js ] Dashboard received spiritualFitness:', spiritualFitness);
   
   // Log current score state
-  console.log('Dashboard currentScore state:', currentScore);
+  console.log('[ Dashboard.js ] Dashboard currentScore state:', currentScore);
   
   // Format score to 2 decimal places for display
   const formattedScore = currentScore > 0 ? currentScore.toFixed(2) : '0';
   
-  console.log('Dashboard formattedScore for display:', formattedScore);
+  console.log('[ Dashboard.js ] Dashboard formattedScore for display:', formattedScore);
   
   // Determine color based on score
   const getScoreColor = (score) => {
@@ -42,11 +42,11 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
   
   // Calculate progress percentage, capped at 100%
   const progressPercent = Math.min(currentScore, 100);
-  console.log('Dashboard progressPercent:', progressPercent);
+  console.log('[ Dashboard.js ] Dashboard progressPercent:', progressPercent);
   
   // Effect to initialize and update score when spiritualFitness prop changes
   useEffect(() => {
-    console.log('Dashboard useEffect [spiritualFitness] triggered with:', spiritualFitness);
+    console.log('[ Dashboard.js ] Dashboard useEffect [spiritualFitness] triggered with:', spiritualFitness);
     if (spiritualFitness) {
       setCurrentScore(spiritualFitness);
     }
@@ -54,7 +54,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
   
   // Effect to recalculate score when timeframe changes
   useEffect(() => {
-    console.log('Dashboard useEffect [scoreTimeframe] triggered with timeframe:', scoreTimeframe);
+    console.log('[ Dashboard.js ] Dashboard useEffect [scoreTimeframe] triggered with timeframe:', scoreTimeframe);
     
     // First, save the selected timeframe to preferences
     if (window.db?.setPreference && scoreTimeframe) {
