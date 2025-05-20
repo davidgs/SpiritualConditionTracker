@@ -309,7 +309,9 @@ export default function MeetingFormDialog({
     const firstTime = meetingSchedule.length > 0 ? meetingSchedule[0].time : '';
     
     const meetingData = {
-      id: meeting ? meeting.id : Date.now().toString(),
+      // For editing existing meetings, keep their ID
+      // For new meetings, let the database generate the ID with AUTOINCREMENT
+      ...(meeting ? { id: meeting.id } : {}),
       name: meetingName.trim(),
       // For backward compatibility
       days: uniqueDays,

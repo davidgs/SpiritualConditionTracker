@@ -648,10 +648,28 @@ function setupGlobalDB(sqlite) {
      */
     remove: async function(collection, id) {
       try {
+        // Convert string ID to number if needed (for compatibility with AUTOINCREMENT)
+        let numericId = id;
+        if (typeof id === 'string') {
+          // If the ID starts with a prefix like 'user_', extract the numeric part
+          if (id.includes('_')) {
+            const parts = id.split('_');
+            const potentialNumeric = parts[parts.length - 1];
+            if (!isNaN(potentialNumeric)) {
+              numericId = parseInt(potentialNumeric, 10);
+              console.log(`[ sqliteLoader.js ] Converted string ID ${id} to numeric ID ${numericId} for deletion`);
+            }
+          } else if (!isNaN(id)) {
+            // If it's just a numeric string, convert directly
+            numericId = parseInt(id, 10);
+            console.log(`[ sqliteLoader.js ] Converted numeric string ID ${id} to number ${numericId} for deletion`);
+          }
+        }
+        
         await sqlite.execute({
           database: DB_NAME,
           statements: `DELETE FROM ${collection} WHERE id = ?`,
-          values: [id]
+          values: [numericId]
         });
         return true;
       } catch (error) {
