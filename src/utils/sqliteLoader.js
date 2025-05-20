@@ -314,6 +314,12 @@ function setupGlobalDB(sqlite) {
           item.id = `${collection}_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
         }
         
+        // For activities, ensure type field is set (required by SQLite constraint)
+        if (collection === 'activities' && !item.type) {
+          console.log('Setting default activity type to meeting');
+          item.type = 'meeting';
+        }
+        
         // Add timestamps
         if (!item.createdAt) {
           item.createdAt = new Date().toISOString();

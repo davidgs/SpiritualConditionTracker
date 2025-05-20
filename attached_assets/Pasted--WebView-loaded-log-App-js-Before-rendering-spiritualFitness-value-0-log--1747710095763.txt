@@ -1,0 +1,77 @@
+⚡️  WebView loaded
+⚡️  [log] - App.js - Before rendering, spiritualFitness value: 0
+⚡️  [log] - [ Dashboard.js ] Dashboard received spiritualFitness: 0
+⚡️  [log] - [ Dashboard.js ] Dashboard currentScore state: 0
+⚡️  [log] - [ Dashboard.js ] Dashboard formattedScore for display: 0
+⚡️  [log] - [ Dashboard.js ] Dashboard progressPercent: 0
+⚡️  [log] - Light mode activated
+⚡️  [log] - Light mode activated
+⚡️  [log] - [ Dashboard.js ] Dashboard useEffect [spiritualFitness] triggered with: 0
+⚡️  [log] - [ Dashboard.js ] Dashboard useEffect [scoreTimeframe] triggered with timeframe: 30
+⚡️  [warn] - [ Dashboard.js ] Database not initialized yet - skipping database operations
+⚡️  [log] - Light mode activated
+⚡️  [log] - [ App.js ] Initializing SQLite database for native app with Capacitor...
+⚡️  [log] - [ sqliteLoader.js ] Initializing SQLite database via Capacitor...
+⚡️  [log] - Capacitor platform detected: ios
+⚡️  To Native ->  CapacitorSQLite createConnection ⚡️  [log] - Capacitor plugins available: ["CapacitorHttp","Console","WebView","CapacitorCookies","CapacitorSQLite"]
+64373772
+⚡️  [log] - iOS environment detected - using iOS-specific database setup
+⚡️  [log] - Found CapacitorSQLite plugin: true
+database path /Users/davidgs/Library/Developer/CoreSimulator/Devices/E7B518C7-65A2-4386-A19F-01F0D573877F/data/Containers/Data/Application/2C18E736-89CE-4CF3-A6F5-CEE879A0AA6C/Documents/spiritualTrackerSQLite.db
+⚡️  TO JS undefined
+⚡️  To Native ->  CapacitorSQLite open 64373773
+⚡️  [log] - Database connection created successfully
+⚡️  TO JS undefined
+⚡️  [log] - Database opened successfully
+⚡️  To Native ->  CapacitorSQLite execute 64373774
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 64373775
+⚡️  [log] - Dropped existing preferences table for fresh schema
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 64373776
+⚡️  [log] - Users table created
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 64373777
+⚡️  [log] - Activities table created
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 64373778
+⚡️  [log] - Meetings table created
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 64373779
+⚡️  [log] - Messages table created
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  [log] - Preferences table created
+⚡️  [log] - Database tables created/verified successfully
+⚡️  [log] - Database setup complete, global db interface ready
+⚡️  [log] - [ App.js ] SQLite database initialized successfully
+⚡️  [error] - [ App.js ] Database not initialized or not ready for data operations
+⚡️  [log] - [ App.js ] Starting calculateSpiritualFitness with default: 5
+⚡️  [error] - [ App.js ] Database not initialized or not ready for fitness calculation
+⚡️  [log] - App.js - Before rendering, spiritualFitness value: 5
+⚡️  [log] - [ Dashboard.js ] Dashboard received spiritualFitness: 5
+⚡️  [log] - [ Dashboard.js ] Dashboard currentScore state: 0
+⚡️  [log] - [ Dashboard.js ] Dashboard formattedScore for display: 0
+⚡️  [log] - [ Dashboard.js ] Dashboard progressPercent: 0
+⚡️  [log] - [ Dashboard.js ] Dashboard useEffect [spiritualFitness] triggered with: 5
+⚡️  [log] - [ Dashboard.js ] Dashboard useEffect [scoreTimeframe] triggered with timeframe: 30
+⚡️  To Native ->  CapacitorSQLite query 64373780
+⚡️  To Native ->  CapacitorSQLite query 64373781
+⚡️  TO JS {"values":[]}
+⚡️  [log] - [ Dashboard.js ] Calculating score with SQLite, timeframe: 30
+⚡️  TO JS {"values":[{"ios_columns":["id","type","duration","date","notes","meeting","createdAt","updatedAt"]},{"date":"2025-05-18","updatedAt":"2025-05-18T22:41:57.935Z","createdAt":"2025-05-18T22:41:57.935Z","meeting":null,"notes":"","type":"prayer","id":"17476081
+⚡️  To Native ->  CapacitorSQLite execute 64373782
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  [log] - [ Dashboard.js ] SQLite calculation result: 15
+⚡️  [log] - [ Dashboard.js ] Dashboard received spiritualFitness: 5
+⚡️  [log] - [ Dashboard.js ] Dashboard currentScore state: 15
+⚡️  [log] - [ Dashboard.js ] Dashboard formattedScore for display: 15.00
+⚡️  [log] - [ Dashboard.js ] Dashboard progressPercent: 15
+⚡️  [log] - [ Dashboard.js ] Dashboard received spiritualFitness: 5
+⚡️  [log] - [ Dashboard.js ] Dashboard currentScore state: 15
+⚡️  [log] - [ Dashboard.js ] Dashboard formattedScore for display: 15.00
+⚡️  [log] - [ Dashboard.js ] Dashboard progressPercent: 15
+⚡️  To Native ->  CapacitorSQLite execute 64373783
+ERROR MESSAGE:  {"message":"Execute: Failed in executeSQL :  Error: execute failed rc: 19 message: NOT NULL constraint failed: activities.type","errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 19 message: NOT NULL constraint failed: activities.type"}
+⚡️  [error] - {"message":"Execute: Failed in executeSQL :  Error: execute failed rc: 19 message: NOT NULL constraint failed: activities.type","errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 19 message: NOT NULL constraint failed: activities.type"}
+⚡️  [error] - Error adding item to activities: {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 19 message: NOT NULL constraint failed: activities.type"}
+⚡️  [error] - Error saving activity: {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 19 message: NOT NULL constraint failed: activities.type"}
