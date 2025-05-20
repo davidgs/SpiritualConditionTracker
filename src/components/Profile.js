@@ -65,35 +65,17 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
       
       console.log('SQLite database cleared');
       
-      // Properly reinitialize the database
-      try {
-        if (typeof window.initSQLiteDatabase === 'function') {
-          console.log('Re-initializing SQLite database using global function...');
-          await window.initSQLiteDatabase();
-          console.log('SQLite database reinitialized after reset');
-        } else {
-          console.log('Global init function not found, trying dynamic import...');
-          // Use a dynamic import with proper error handling
-          try {
-            const loader = await import('../sqliteLoader');
-            if (loader && loader.default) {
-              await loader.default();
-              console.log('SQLite database reinitialized after reset using import');
-            } else {
-              console.error('Failed to get SQLite initializer from import');
-            }
-          } catch (importError) {
-            console.error('Failed to import SQLiteLoader:', importError);
-          }
-        }
-      } catch (dbError) {
-        console.error('Failed to reinitialize database after reset:', dbError);
-      }
+      // Since this is primarily running in a development environment,
+      // we'll simplify the reset process by just reloading the page
+      // which will reinitialize everything cleanly
+      
+      console.log('Database cleared. Reloading app to reinitialize everything...');
       
       // Show success message
-      alert('All data has been reset. The app will now reload.');
-      // Use a slightly longer timeout to ensure database initialization completes
-      setTimeout(() => window.location.reload(), 1000);
+      alert('All data has been reset. The app will now reload to complete the process.');
+      
+      // Reload the page to get a fresh instance of everything
+      window.location.reload();
     } catch (error) {
       console.error('Error resetting data:', error);
       alert('An error occurred while resetting data. Please try again.');
