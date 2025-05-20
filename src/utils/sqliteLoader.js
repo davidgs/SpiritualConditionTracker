@@ -309,33 +309,67 @@ function setupGlobalDB(sqlite) {
      */
     add: async function(collection, item) {
       try {
+        // Create a deep copy of the item to avoid modifying the original
+        const itemToSave = JSON.parse(JSON.stringify(item));
+        
         // Ensure item has an ID
-        if (!item.id) {
-          item.id = `${collection}_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+        if (!itemToSave.id) {
+          itemToSave.id = `${collection}_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
         }
         
-        // For activities, ensure type field is set (required by SQLite constraint)
-        if (collection === 'activities' && !item.type) {
-          console.log('Setting default activity type to meeting');
-          item.type = 'meeting';
+        // Special handling for activities to ensure type is always set
+        if (collection === 'activities') {
+          // Double check that type field exists and is not empty
+          if (!itemToSave.type || itemToSave.type === '') {
+            console.warn('Activity missing type field, setting default type to meeting');
+            itemToSave.type = 'meeting';
+          }
+          
+          // Log the activity being saved for debugging
+          console.log(`Saving activity with type: "${itemToSave.type}"`);
         }
         
         // Add timestamps
-        if (!item.createdAt) {
-          item.createdAt = new Date().toISOString();
+        if (!itemToSave.createdAt) {
+          itemToSave.createdAt = new Date().toISOString();
         }
-        item.updatedAt = new Date().toISOString();
+        itemToSave.updatedAt = new Date().toISOString();
         
-        // Build query parts
-        const fields = Object.keys(item);
+        // Build query parts with strong validation
+        const fields = Object.keys(itemToSave);
         const placeholders = fields.map(() => '?').join(', ');
+        
+        // Carefully prepare values ensuring no undefined/null for required fields
         const values = fields.map(field => {
-          const value = item[field];
+          let value = itemToSave[field];
+          
+          // Special handling for activity type field which is NOT NULL
+          if (collection === 'activities' && field === 'type' && (value === undefined || value === null || value === '')) {
+            value = 'meeting'; // Enforce default value for NOT NULL constraint
+          }
+          
+          // Convert objects to JSON strings
           if (typeof value === 'object' && value !== null) {
             return JSON.stringify(value);
           }
+          
           return value;
         });
+        
+        // Validate that we have values for all required fields before executing
+        if (collection === 'activities') {
+          const typeIndex = fields.indexOf('type');
+          if (typeIndex !== -1 && (!values[typeIndex] || values[typeIndex] === '')) {
+            console.error('Activity type is required but is empty or null');
+            values[typeIndex] = 'meeting'; // Final safeguard
+          }
+        }
+        
+        // Debug output for activities
+        if (collection === 'activities') {
+          console.log('SQL fields:', fields);
+          console.log('SQL values:', values);
+        }
         
         // Execute insert
         const sql = `INSERT INTO ${collection} (${fields.join(', ')}) VALUES (${placeholders})`;
@@ -345,7 +379,8 @@ function setupGlobalDB(sqlite) {
           values: values
         });
         
-        return item;
+        // Return the saved item
+        return itemToSave;
       } catch (error) {
         console.error(`Error adding item to ${collection}:`, error);
         throw error;
