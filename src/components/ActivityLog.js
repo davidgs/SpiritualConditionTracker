@@ -151,32 +151,49 @@ export default function ActivityLog({ setCurrentView, onSave, onSaveMeeting, act
     }
     
     if (activityType === 'meeting') {
-      newActivity.meetingName = meetingName.trim();
-      newActivity.wasChair = wasChair;
-      newActivity.wasShare = wasShare;
-      newActivity.wasSpeaker = wasSpeaker;
+      // Store meeting-related info in the 'notes' field as JSON to avoid schema issues
+      const meetingInfo = {
+        meetingName: meetingName.trim(),
+        wasChair: wasChair,
+        wasShare: wasShare,
+        wasSpeaker: wasSpeaker,
+        meetingId: selectedMeetingId || null
+      };
       
-      // Include meeting ID if one was selected
-      if (selectedMeetingId) {
-        newActivity.meetingId = selectedMeetingId;
+      // Append meeting info to notes instead of using separate fields
+      newActivity.notes = JSON.stringify(meetingInfo);
+      
+      // Also include the meeting name in the notes field for display
+      if (meetingName) {
+        newActivity.notes = `Meeting: ${meetingName.trim()}\n${newActivity.notes || ''}`;
       }
     }
     
     if (activityType === 'call') {
-      newActivity.isSponsorCall = isSponsorCall;
-      newActivity.isSponseeCall = isSponseeCall;
-      newActivity.isAAMemberCall = isAAMemberCall;
+      // Store call-related info in notes field as JSON to avoid schema issues
+      const callInfo = {
+        isSponsorCall: isSponsorCall,
+        isSponseeCall: isSponseeCall, 
+        isAAMemberCall: isAAMemberCall
+      };
       
-      // Determine the actual type for filtering/display purposes
+      // Determine the call type label for display
+      let callTypeLabel = 'Phone Call';
       if (isSponsorCall && !isSponseeCall && !isAAMemberCall) {
-        newActivity.callType = 'sponsor';
+        callTypeLabel = 'Call with Sponsor';
       } else if (!isSponsorCall && isSponseeCall && !isAAMemberCall) {
-        newActivity.callType = 'sponsee';
+        callTypeLabel = 'Call with Sponsee';
       } else if (!isSponsorCall && !isSponseeCall && isAAMemberCall) {
-        newActivity.callType = 'aa_call';
-      } else {
-        newActivity.callType = 'multiple'; // Multiple types selected
+        callTypeLabel = 'Call with AA Member';
+      } else if (isSponsorCall || isSponseeCall || isAAMemberCall) {
+        callTypeLabel = 'Multiple Call Types';
       }
+      
+      // Append call info to notes
+      newActivity.notes = `${callTypeLabel}\n${newActivity.notes || ''}`;
+      
+      // Also save the callInfo in notes as JSON for potential future use
+      newActivity.notes += `\n${JSON.stringify(callInfo)}`;
     }
     
     console.log("[ ActivityLog.js ] Saving activity:", newActivity);
