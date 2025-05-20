@@ -94,7 +94,7 @@ async function setupTables(sqlite) {
   // Create users table
   await sqlite.execute({
     database: DB_NAME,
-    statement: `
+    statements: `
       CREATE TABLE IF NOT EXISTS users (
         id TEXT PRIMARY KEY,
         name TEXT,
@@ -118,7 +118,7 @@ async function setupTables(sqlite) {
   // Create activities table
   await sqlite.execute({
     database: DB_NAME,
-    statement: `
+    statements: `
       CREATE TABLE IF NOT EXISTS activities (
         id TEXT PRIMARY KEY,
         type TEXT NOT NULL,
@@ -136,7 +136,7 @@ async function setupTables(sqlite) {
   // Create meetings table
   await sqlite.execute({
     database: DB_NAME,
-    statement: `
+    statements: `
       CREATE TABLE IF NOT EXISTS meetings (
         id TEXT PRIMARY KEY,
         name TEXT NOT NULL,
@@ -161,7 +161,7 @@ async function setupTables(sqlite) {
   // Create messages table
   await sqlite.execute({
     database: DB_NAME,
-    statement: `
+    statements: `
       CREATE TABLE IF NOT EXISTS messages (
         id TEXT PRIMARY KEY,
         sender TEXT,
@@ -179,7 +179,7 @@ async function setupTables(sqlite) {
   // Create preferences table for app settings
   await sqlite.execute({
     database: DB_NAME,
-    statement: `
+    statements: `
       CREATE TABLE IF NOT EXISTS preferences (
         key TEXT PRIMARY KEY,
         value TEXT
@@ -207,7 +207,8 @@ function setupGlobalDB(sqlite) {
       try {
         const result = await sqlite.query({
           database: DB_NAME,
-          statement: `SELECT * FROM ${collection}`
+          statements: `SELECT * FROM ${collection}`,
+          values: []
         });
         
         const rows = result.values || [];
@@ -250,7 +251,7 @@ function setupGlobalDB(sqlite) {
       try {
         const result = await sqlite.query({
           database: DB_NAME,
-          statement: `SELECT * FROM ${collection} WHERE id = ?`,
+          statements: `SELECT * FROM ${collection} WHERE id = ?`,
           values: [id]
         });
         
@@ -320,7 +321,7 @@ function setupGlobalDB(sqlite) {
         const sql = `INSERT INTO ${collection} (${fields.join(', ')}) VALUES (${placeholders})`;
         await sqlite.execute({
           database: DB_NAME,
-          statement: sql,
+          statements: sql,
           values: values
         });
         
@@ -373,7 +374,7 @@ function setupGlobalDB(sqlite) {
         const sql = `UPDATE ${collection} SET ${setClause} WHERE id = ?`;
         await sqlite.execute({
           database: DB_NAME,
-          statement: sql,
+          statements: sql,
           values: values
         });
         
@@ -394,7 +395,7 @@ function setupGlobalDB(sqlite) {
       try {
         await sqlite.execute({
           database: DB_NAME,
-          statement: `DELETE FROM ${collection} WHERE id = ?`,
+          statements: `DELETE FROM ${collection} WHERE id = ?`,
           values: [id]
         });
         return true;
