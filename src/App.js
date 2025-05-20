@@ -41,7 +41,7 @@ function App() {
     
     try {
       // Import the database operations - SQLite for native iOS/Android via Capacitor
-      const initSQLiteDatabase = (await import('./sqliteLoader')).default;
+      const initSQLiteDatabase = (await import('./utils/sqliteLoader')).default;
       
       console.log("[ App.js ] Initializing SQLite database for native app with Capacitor...");
       
