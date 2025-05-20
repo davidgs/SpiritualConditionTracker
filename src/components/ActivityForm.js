@@ -13,19 +13,6 @@ function ActivityForm({ onSuccess }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState(null);
   
-  // Activity type options for the select dropdown
-  const activityTypes = [
-    { value: 'meeting', label: 'Meeting' },
-    { value: 'prayer', label: 'Prayer' },
-    { value: 'meditation', label: 'Meditation' },
-    { value: 'stepwork', label: 'Step Work' },
-    { value: 'service', label: 'Service' },
-    { value: 'call', label: 'Phone Call' },
-    { value: 'reading', label: 'Literature Reading' },
-    { value: 'sponsorship', label: 'Sponsor/Sponsee Work' },
-    { value: 'other', label: 'Other' }
-  ];
-  
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
@@ -102,13 +89,17 @@ function ActivityForm({ onSuccess }) {
     }
   };
   
+  // Enhanced activity types with icons for UI display
   const activityTypes = [
-    { id: 'meeting', label: 'AA Meeting', icon: 'fa-users' },
-    { id: 'meditation', label: 'Meditation', icon: 'fa-brain' },
-    { id: 'reading', label: 'Literature Reading', icon: 'fa-book' },
-    { id: 'sponsor', label: 'Time with Sponsor/Sponsee', icon: 'fa-handshake' },
-    { id: 'service', label: 'Service Work', icon: 'fa-hands-helping' },
-    { id: 'other', label: 'Other Activity', icon: 'fa-star' },
+    { id: 'meeting', value: 'meeting', label: 'AA Meeting', icon: 'fa-users' },
+    { id: 'prayer', value: 'prayer', label: 'Prayer', icon: 'fa-pray' },
+    { id: 'meditation', value: 'meditation', label: 'Meditation', icon: 'fa-brain' },
+    { id: 'reading', value: 'reading', label: 'Literature Reading', icon: 'fa-book' },
+    { id: 'stepwork', value: 'stepwork', label: 'Step Work', icon: 'fa-tasks' },
+    { id: 'sponsor', value: 'sponsorship', label: 'Time with Sponsor/Sponsee', icon: 'fa-handshake' },
+    { id: 'service', value: 'service', label: 'Service Work', icon: 'fa-hands-helping' },
+    { id: 'call', value: 'call', label: 'Phone Call', icon: 'fa-phone' },
+    { id: 'other', value: 'other', label: 'Other Activity', icon: 'fa-star' },
   ];
   
   return (
@@ -139,8 +130,8 @@ function ActivityForm({ onSuccess }) {
               <input 
                 type="radio" 
                 name="type" 
-                value={type.id}
-                checked={formData.type === type.id}
+                value={type.value}
+                checked={formData.type === type.value}
                 onChange={handleChange}
                 className="sr-only"
               />
