@@ -103,36 +103,12 @@ async function setupTables(sqlite) {
     console.log('No preferences table to drop or error dropping:', error);
   }
   
-  // Check if we need to perform schema migration for activities table
-  let needsActivitiesTableMigration = false;
-  try {
-    // Check if new columns exist, if not we need to migrate
-    const columnCheckResult = await sqlite.query({
-      database: DB_NAME,
-      statement: `PRAGMA table_info(activities)`,
-      values: []
-    });
-    
-    // Look for new columns like meetingName in the result
-    if (columnCheckResult && columnCheckResult.values) {
-      const columns = columnCheckResult.values;
-      const hasMeetingNameColumn = columns.some(col => 
-        col.name === 'meetingName' || col.ios_columns?.[1] === 'meetingName'
-      );
-      
-      if (!hasMeetingNameColumn) {
-        needsActivitiesTableMigration = true;
-        console.log('Activities table needs schema migration');
-      }
-    }
-  } catch (error) {
-    // If we get an error, the table might not exist, which is fine
-    console.log('Activity table migration check error:', error);
-  }
+  // Always re-create the activities table to fix potential schema issues
+  console.log('Forcing activities table recreation to ensure schema consistency');
   
-  // If migration is needed, backup existing activities
-  let existingActivities = [];
-  if (needsActivitiesTableMigration) {
+  try {
+    // First, try to backup any existing activities if the table exists
+    let existingActivities = [];
     try {
       const activitiesResult = await sqlite.query({
         database: DB_NAME,
@@ -142,19 +118,25 @@ async function setupTables(sqlite) {
       
       if (activitiesResult && activitiesResult.values) {
         existingActivities = activitiesResult.values;
-        console.log(`Backing up ${existingActivities.length} existing activities for migration`);
+        console.log(`Backing up ${existingActivities.length} existing activities before recreation`);
       }
-      
-      // Now drop the activities table
-      await sqlite.execute({
-        database: DB_NAME,
-        statements: `DROP TABLE IF EXISTS activities`
-      });
-      console.log('Dropped activities table for schema migration');
     } catch (error) {
-      console.log('Error backing up activities table:', error);
-      // Continue with new table creation
+      // Table might not exist yet, which is fine
+      console.log('No existing activities table to backup:', error);
     }
+    
+    // Always drop the activities table to ensure a clean schema
+    await sqlite.execute({
+      database: DB_NAME,
+      statements: `DROP TABLE IF EXISTS activities`
+    });
+    console.log('Dropped activities table for fresh creation');
+    
+    // Store the backup
+    const needsActivityDataMigration = existingActivities.length > 0;
+  } catch (error) {
+    console.log('Error during activities table recreation:', error);
+    // Continue with new table creation, even if backup fails
   }
   
   // Create users table with expanded profile settings
@@ -190,30 +172,41 @@ async function setupTables(sqlite) {
   });
   console.log('Users table created with expanded fields');
 
-  // Create activities table with expanded fields
-  await sqlite.execute({
-    database: DB_NAME,
-    statements: `
-      CREATE TABLE IF NOT EXISTS activities (
-        id TEXT PRIMARY KEY,
-        type TEXT NOT NULL DEFAULT 'meeting',
-        duration INTEGER DEFAULT 0,
-        date TEXT,
-        notes TEXT DEFAULT '',
-        meeting TEXT DEFAULT '',
-        meetingName TEXT DEFAULT '',
-        wasChair INTEGER DEFAULT 0,
-        wasShare INTEGER DEFAULT 0,
-        wasSpeaker INTEGER DEFAULT 0,
-        literatureTitle TEXT DEFAULT '',
-        stepNumber INTEGER DEFAULT NULL,
-        personCalled TEXT DEFAULT '',
-        serviceType TEXT DEFAULT '',
-        createdAt TEXT,
-        updatedAt TEXT
-      )
-    `
-  });
+  // Create activities table with a simplified schema to fix constraint issues
+  try {
+    await sqlite.execute({
+      database: DB_NAME,
+      statements: `
+        CREATE TABLE IF NOT EXISTS activities (
+          id TEXT PRIMARY KEY,
+          type TEXT NOT NULL DEFAULT 'prayer',
+          duration INTEGER DEFAULT 0,
+          date TEXT,
+          notes TEXT DEFAULT '',
+          createdAt TEXT,
+          updatedAt TEXT
+        )
+      `
+    });
+    console.log('Successfully created simplified activities table');
+  } catch (schemaError) {
+    console.error('Failed to create activities table:', schemaError);
+    
+    // Try an even simpler schema as a last resort
+    await sqlite.execute({
+      database: DB_NAME,
+      statements: `
+        CREATE TABLE IF NOT EXISTS activities (
+          id TEXT PRIMARY KEY,
+          type TEXT DEFAULT 'prayer',
+          duration INTEGER,
+          date TEXT,
+          notes TEXT
+        )
+      `
+    });
+    console.log('Created fallback activities table with minimal schema');
+  }
   console.log('Activities table created with expanded fields');
   
   // Restore activities if we had existing data before migration

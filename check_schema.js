@@ -1,0 +1,1 @@
+const sqlite3 = require('sqlite3'); const db = new sqlite3.Database('spiritualTracker.db'); db.all('PRAGMA table_info(activities)', [], (err, rows) => { console.log(JSON.stringify(rows, null, 2)); db.close(); });

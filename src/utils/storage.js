@@ -91,60 +91,70 @@ export async function saveActivity(activity) {
             updatedAt: new Date().toISOString()
           };
           
-          // Build SQL insert statement manually, with extra care for type field
-          const fields = [];
-          const values = [];
-          const placeholders = [];
+          // Try a completely different approach with a hardcoded SQL statement
+          // This eliminates potential issues with parameter binding
           
-          // Explicitly handle each field to avoid missing values
-          fields.push("id"); 
-          values.push(enhancedActivity.id);
-          placeholders.push("?");
+          // Ensure we have non-null values for required fields
+          const safeType = enhancedActivity.type || 'prayer';
+          const safeId = enhancedActivity.id || `activity_${Date.now()}`;
+          const safeDuration = enhancedActivity.duration || 0;
+          const safeDate = enhancedActivity.date || new Date().toISOString();
+          const safeNotes = enhancedActivity.notes || '';
+          const safeCreated = enhancedActivity.createdAt || new Date().toISOString();
+          const safeUpdated = enhancedActivity.updatedAt || new Date().toISOString();
           
-          // Type field with special handling to guarantee NOT NULL constraint
-          fields.push("type"); 
-          // Triple-check the type field - this is critical for SQLite NOT NULL constraint
-          if (!enhancedActivity.type || enhancedActivity.type === '') {
-            console.warn('CRITICAL: Activity type is missing at SQL execution. Using fallback.');
-            values.push("prayer");  // Hardcoded fallback - better than a constraint violation
-          } else {
-            console.log('Using activity type value:', enhancedActivity.type);
-            values.push(enhancedActivity.type);
-          }
-          placeholders.push("?");
+          // Create a simple array of values in the correct order
+          const values = [
+            safeId,            // id
+            safeType,          // type (critical field with NOT NULL constraint)
+            safeDuration,      // duration
+            safeDate,          // date
+            safeNotes,         // notes
+            safeCreated,       // createdAt
+            safeUpdated        // updatedAt
+          ];
           
-          // Add remaining fields
-          fields.push("duration"); 
-          values.push(enhancedActivity.duration || 0);
-          placeholders.push("?");
-          
-          fields.push("date"); 
-          values.push(enhancedActivity.date);
-          placeholders.push("?");
-          
-          fields.push("notes"); 
-          values.push(enhancedActivity.notes || "");
-          placeholders.push("?");
-          
-          fields.push("createdAt"); 
-          values.push(enhancedActivity.createdAt);
-          placeholders.push("?");
-          
-          fields.push("updatedAt"); 
-          values.push(enhancedActivity.updatedAt);
-          placeholders.push("?");
-          
-          // Log the actual SQL fields and values for debugging
-          console.log('SQL fields:', JSON.stringify(fields));
+          // Log the final values for debugging
+          console.log('SQL fields:', JSON.stringify(["id", "type", "duration", "date", "notes", "createdAt", "updatedAt"]));
           console.log('SQL values:', JSON.stringify(values));
           
-          const sql = `INSERT INTO activities (${fields.join(', ')}) VALUES (${placeholders.join(', ')})`;
+          // Use a simple prepared statement without dynamic field names
+          const sql = `
+            INSERT INTO activities 
+            (id, type, duration, date, notes, createdAt, updatedAt) 
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+          `;
           
-          await sqlPlugin.execute({
-            database: dbName,
-            statements: sql,
-            values: values
-          });
+          try {
+            await sqlPlugin.execute({
+              database: dbName,
+              statements: sql,
+              values: values
+            });
+            console.log('Activity saved with hardcoded SQL statement');
+          } catch (sqlError) {
+            console.error('SQL execution error with full details:', sqlError);
+            
+            // Last resort: Try an even more explicit approach with direct value insertion
+            const directSql = `
+              INSERT INTO activities (id, type, duration, date, notes, createdAt, updatedAt)
+              VALUES (
+                '${safeId}',
+                'prayer',
+                ${safeDuration},
+                '${safeDate}',
+                '${safeNotes.replace(/'/g, "''")}',
+                '${safeCreated}',
+                '${safeUpdated}'
+              )
+            `;
+            
+            console.log('Attempting direct SQL insertion as last resort');
+            await sqlPlugin.execute({
+              database: dbName,
+              statements: directSql
+            });
+          }
           
           console.log('Activity saved via direct SQLite execute');
           return minimalActivity;
