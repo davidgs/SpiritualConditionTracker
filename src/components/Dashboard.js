@@ -67,222 +67,34 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
   useEffect(() => {
     console.log('[ Dashboard.js ] Dashboard useEffect [scoreTimeframe] triggered with timeframe:', scoreTimeframe);
     
-    // First, save the selected timeframe to preferences
+    // Save the selected timeframe to SQLite preferences
     if (window.db?.setPreference && scoreTimeframe) {
       window.db.setPreference('fitnessTimeframe', scoreTimeframe.toString());
     }
     
-    // Always make activities available on window for calculation functions
-    window.activities = activities;
-    
-    // Use the original Database method that worked well before SQLite migration
-    if (window.Database?.spiritualFitnessOperations?.calculateSpiritualFitness) {
-      console.log('[ Dashboard.js ] Using original Database.spiritualFitnessOperations with timeframe:', scoreTimeframe);
-      
+    async function calculateScore() {
       try {
-        // Get user ID (use '1' as default if not found)
-        const users = window.Database.userOperations.getAll();
-        const userId = users && users.length > 0 ? users[0].id : '1';
-        
-        // Calculate using the original method
-        const result = window.Database.spiritualFitnessOperations.calculateSpiritualFitness(userId, scoreTimeframe);
-        console.log('[ Dashboard.js ] Original database calculation result:', result);
-        
-        if (result && typeof result.score === 'number') {
-          setCurrentScore(result.score);
+        // Use the SQLite-based calculation method
+        if (window.db?.calculateSpiritualFitnessWithTimeframe) {
+          console.log('[ Dashboard.js ] Calculating score with SQLite, timeframe:', scoreTimeframe);
+          const score = await window.db.calculateSpiritualFitnessWithTimeframe(scoreTimeframe);
+          console.log('[ Dashboard.js ] SQLite calculation result:', score);
+          setCurrentScore(score);
         } else {
-          // Fallback if result is unexpected
-          calculateScoreFallback(scoreTimeframe);
+          console.warn('[ Dashboard.js ] SQLite calculation method not available');
+          setCurrentScore(5); // Default score until SQLite is initialized
         }
       } catch (error) {
-        console.error('[ Dashboard.js ] Error using original calculation method:', error);
-        calculateScoreFallback(scoreTimeframe);
+        console.error('[ Dashboard.js ] Error calculating spiritual fitness:', error);
+        setCurrentScore(5); // Default score if calculation fails
       }
-    } 
-    // Fall back to newer method if original is not available
-    else if (window.db?.calculateSpiritualFitnessWithTimeframe) {
-      console.log('[ Dashboard.js ] Calling calculateSpiritualFitnessWithTimeframe with:', scoreTimeframe);
-      try {
-        const newScore = window.db.calculateSpiritualFitnessWithTimeframe(scoreTimeframe);
-        console.log('[ Dashboard.js ] New score calculated:', newScore);
-        setCurrentScore(newScore);
-      } catch (error) {
-        console.error('[ Dashboard.js ] Error calculating spiritual fitness with timeframe:', error);
-        calculateScoreFallback(scoreTimeframe);
-      }
-    } 
-    // Last resort fallback
-    else {
-      console.warn('[ Dashboard.js ] No spiritual fitness calculation methods available');
-      calculateScoreFallback(scoreTimeframe);
     }
+    
+    calculateScore();
   }, [scoreTimeframe, activities]);
   
-  // Fallback calculation function for spiritual fitness score
-  const calculateScoreFallback = (timeframe) => {
-    console.log('[ Dashboard.js ] Using fallback calculation with activities:', activities);
-    
-    // Use the global constant for base score
-    const baseScore = window.DEFAULT_SPIRITUAL_FITNESS_SCORE || 5;
-    
-    if (!activities || activities.length === 0) {
-      console.log('[ Dashboard.js ] No activities for fallback calculation');
-      setCurrentScore(baseScore);
-      return;
-    }
-    
-    try {
-      // Get date range for calculation
-      const today = new Date();
-      const cutoffDate = new Date();
-      cutoffDate.setDate(today.getDate() - timeframe);
-      
-      // Filter for recent activities
-      const recentActivities = activities.filter(activity => {
-        const activityDate = new Date(activity.date);
-        return activityDate >= cutoffDate && activityDate <= today;
-      });
-      
-      console.log(`Found ${recentActivities.length} activities in the ${timeframe}-day timeframe`);
-      
-      if (recentActivities.length === 0) {
-        setCurrentScore(baseScore);
-        return;
-      }
-      
-      // Define weights for activity types
-      const weights = {
-        meeting: 10,    // Attending a meeting
-        prayer: 8,      // Prayer 
-        meditation: 8,  // Meditation
-        reading: 6,     // Reading AA literature
-        callSponsor: 5, // Calling sponsor
-        callSponsee: 4, // Calling sponsee
-        service: 9,     // Service work
-        stepWork: 10    // Working on steps
-      };
-      
-      // Calculate scores
-      let totalPoints = 0;
-      let eligibleActivities = 0;
-      const breakdown = {};
-      
-      // Used to track the days with activities for consistency bonus
-      const activityDays = new Set();
-      
-      recentActivities.forEach(activity => {
-        // Track unique days with activities
-        if (activity.date) {
-          const day = new Date(activity.date).toISOString().split('T')[0];
-          activityDays.add(day);
-        }
-        
-        // Skip activities with unknown types
-        if (!weights[activity.type]) return;
-        
-        // Initialize type in breakdown if it doesn't exist
-        if (!breakdown[activity.type]) {
-          breakdown[activity.type] = { count: 0, points: 0 };
-        }
-        
-        // Update breakdown
-        breakdown[activity.type].count++;
-        breakdown[activity.type].points += weights[activity.type];
-        
-        // Update total score
-        totalPoints += weights[activity.type];
-        eligibleActivities++;
-      });
-      
-      const daysWithActivities = activityDays.size;
-      const varietyTypes = Object.keys(breakdown).length;
-      let finalScore;
-      
-      // Artificially limit the score based on days of activities - makes a huge difference for different timeframes
-      // For this demo with only 6 days of activities:
-      // - For 30 days: 6/30 is 20% of days covered, which is decent for a month (higher score)
-      // - For 365 days: 6/365 is only 1.6% of days covered, which is poor for a year (lower score)
-      
-      if (timeframe <= 30) {
-        // For 30 days: focus on consistency and recency
-        // Base points limited to make 6 days of activities score around 68
-        const activityBase = Math.min(40, Math.ceil(totalPoints / (timeframe * 2))); 
-        const consistencyPoints = Math.min(30, Math.ceil(daysWithActivities / (timeframe * 0.5) * 30));
-        const varietyBonus = Math.min(10, Math.ceil(varietyTypes / 8 * 10));
-        
-        finalScore = Math.min(100, baseScore + activityBase + consistencyPoints + varietyBonus);
-        
-        console.log('30-day calculation details:', {
-          timeframe,
-          daysWithActivities,
-          daysPercentage: (daysWithActivities / timeframe) * 100,
-          activityBase, 
-          consistencyPoints,
-          varietyBonus,
-          finalScore
-        });
-        
-      } else if (timeframe <= 90) {
-        // For 90 days: lower score since we only have 6 days of activities
-        const activityBase = Math.min(40, Math.ceil(totalPoints / (timeframe * 2)));
-        const consistencyPoints = Math.min(20, Math.ceil(daysWithActivities / (timeframe * 0.33) * 20));
-        const varietyBonus = Math.min(10, Math.ceil(varietyTypes / 8 * 10));
-        
-        finalScore = Math.min(100, baseScore - 5 + activityBase + consistencyPoints + varietyBonus);
-        
-        console.log('90-day calculation details:', {
-          timeframe,
-          daysWithActivities,
-          daysPercentage: (daysWithActivities / timeframe) * 100,
-          activityBase, 
-          consistencyPoints,
-          varietyBonus,
-          finalScore
-        });
-        
-      } else if (timeframe <= 180) {
-        // For 180 days: even lower score for our 6 days of activities
-        const activityBase = Math.min(30, Math.ceil(totalPoints / (timeframe * 2)));
-        const consistencyPoints = Math.min(15, Math.ceil(daysWithActivities / (timeframe * 0.25) * 15));
-        const varietyBonus = Math.min(10, Math.ceil(varietyTypes / 8 * 10));
-        
-        finalScore = Math.min(100, baseScore - 10 + activityBase + consistencyPoints + varietyBonus);
-        
-        console.log('180-day calculation details:', {
-          timeframe,
-          daysWithActivities,
-          daysPercentage: (daysWithActivities / timeframe) * 100,
-          activityBase, 
-          consistencyPoints,
-          varietyBonus,
-          finalScore
-        });
-        
-      } else {
-        // For 365 days: lowest score since 6 days over a year is very minimal
-        const activityBase = Math.min(25, Math.ceil(totalPoints / (timeframe * 2)));
-        const consistencyPoints = Math.min(10, Math.ceil(daysWithActivities / (timeframe * 0.2) * 10));
-        const varietyBonus = Math.min(10, Math.ceil(varietyTypes / 8 * 10));
-        
-        finalScore = Math.min(100, baseScore - 15 + activityBase + consistencyPoints + varietyBonus);
-        
-        console.log('365-day calculation details:', {
-          timeframe,
-          daysWithActivities,
-          daysPercentage: (daysWithActivities / timeframe) * 100,
-          activityBase, 
-          consistencyPoints,
-          varietyBonus,
-          finalScore
-        });
-      }
-      
-      setCurrentScore(finalScore);
-    } catch (error) {
-      console.error('Error in fallback calculation:', error);
-      setCurrentScore(baseScore);
-    }
-  };
+  // Note: We've removed the fallback calculation function since
+  // we're now using SQLite via Capacitor exclusively for data persistence
   
   // Close modal when clicking outside
   useEffect(() => {
