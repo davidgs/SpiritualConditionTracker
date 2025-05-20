@@ -134,6 +134,15 @@ export default function ActivityLog({ setCurrentView, onSave, onSaveMeeting, act
       duration: parseInt(duration, 10),
       date: date, // Store as-is in YYYY-MM-DD format
       notes: notes.trim(),
+      // Initialize all expanded schema fields with defaults
+      meetingName: '',
+      wasChair: false,
+      wasShare: false,
+      wasSpeaker: false,
+      literatureTitle: '',
+      stepNumber: null,
+      personCalled: '',
+      serviceType: '',
     };
     
     // Add activity-specific fields
