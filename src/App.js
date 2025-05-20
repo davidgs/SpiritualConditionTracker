@@ -8,6 +8,7 @@ import Messages from './components/Messages';
 import StepWork from './components/StepWork';
 import SponsorSponsee from './components/SponsorSponsee';
 import { ThemeProvider } from './contexts/ThemeContext';
+import MuiThemeProvider from './contexts/MuiThemeProvider';
 import { generateKeyPair } from './utils/encryption';
 import { DEFAULT_SPIRITUAL_FITNESS_SCORE } from './utils/constants';
 
@@ -549,20 +550,22 @@ function App() {
   
   return (
     <ThemeProvider>
-      <div className="app-container h-full flex flex-col bg-white dark:bg-gray-900 transition-colors duration-200">
-        <NavBar currentView={currentView} setCurrentView={setCurrentView} />
-        <div 
-          className="flex-grow" 
-          style={{ 
-            minHeight: 'calc(100vh - 60px)', // 60px is the header height
-            paddingBottom: '100px', // Significantly increased padding to ensure content is visible
-            paddingTop: '10px', // Space after the header
-            overflowY: 'visible' // Don't add scrollbar to this container
-          }}
-        >
-          {renderCurrentView()}
+      <MuiThemeProvider>
+        <div className="app-container h-full flex flex-col bg-white dark:bg-gray-900 transition-colors duration-200">
+          <NavBar currentView={currentView} setCurrentView={setCurrentView} />
+          <div 
+            className="flex-grow" 
+            style={{ 
+              minHeight: 'calc(100vh - 60px)', // 60px is the header height
+              paddingBottom: '100px', // Significantly increased padding to ensure content is visible
+              paddingTop: '10px', // Space after the header
+              overflowY: 'visible' // Don't add scrollbar to this container
+            }}
+          >
+            {renderCurrentView()}
+          </div>
         </div>
-      </div>
+      </MuiThemeProvider>
     </ThemeProvider>
   );
 }
