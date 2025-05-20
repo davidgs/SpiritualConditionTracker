@@ -1,7 +1,8 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
-import { getPreference, setPreference } from '../utils/sqliteStorage';
+// Use window.db for accessing database functions after proper initialization
+// This prevents initialization conflicts across multiple imports
 
 // Create a context for theme management
 export const AppThemeContext = createContext();
@@ -17,15 +18,18 @@ const MuiThemeProvider = ({ children }) => {
   // Check if user has previously set a theme or use system preference
   const [initialTheme, setInitialTheme] = useState('light');
   
-  // Load theme from SQLite on component mount
+  // Load theme from database on component mount
   useEffect(() => {
     const loadThemeFromDatabase = async () => {
       try {
-        // Check for saved theme in SQLite database
-        const savedTheme = await getPreference('theme');
-        if (savedTheme === 'dark' || savedTheme === 'light') {
-          setInitialTheme(savedTheme);
-          return;
+        // Only access database if it's been properly initialized
+        if (window.db && window.dbInitialized) {
+          // Check for saved theme in database
+          const savedTheme = await window.db.getPreference('theme');
+          if (savedTheme === 'dark' || savedTheme === 'light') {
+            setInitialTheme(savedTheme);
+            return;
+          }
         }
         
         // Check system preference
@@ -63,7 +67,9 @@ const MuiThemeProvider = ({ children }) => {
       }
       
       // Save theme choice to SQLite database
-      setPreference('theme', theme);
+      if (window.db && window.dbInitialized && window.db.setPreference) {
+        window.db.setPreference('theme', theme);
+      }
     } catch (error) {
       console.error('Error applying theme:', error);
     }
