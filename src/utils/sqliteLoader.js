@@ -177,7 +177,7 @@ async function setupTables(sqlite) {
   try {
     const table_struct = `CREATE TABLE IF NOT EXISTS activities (
           id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-          type TEXT NOT NULL DEFAULT 'prayer',
+          type TEXT DEFAULT 'prayer',
           duration INTEGER DEFAULT 0,
           date TEXT,
           notes TEXT DEFAULT '',
