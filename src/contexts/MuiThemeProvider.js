@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useTheme } from './ThemeContext';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -11,10 +11,16 @@ import CssBaseline from '@mui/material/CssBaseline';
  * @returns {React.ReactElement} ThemeProvider component
  */
 const MuiThemeProvider = ({ children }) => {
-  const { darkMode } = useTheme();
+  const { theme } = useTheme();
+  const darkMode = theme === 'dark';
+  
+  // Apply class to root for dark/light mode syncing with Tailwind
+  useEffect(() => {
+    document.documentElement.classList.toggle('dark', darkMode);
+  }, [darkMode]);
   
   // Create a theme based on our app's dark/light mode
-  const theme = React.useMemo(
+  const muiTheme = React.useMemo(
     () =>
       createTheme({
         palette: {
@@ -151,7 +157,7 @@ const MuiThemeProvider = ({ children }) => {
   );
 
   return (
-    <ThemeProvider theme={theme}>
+    <ThemeProvider theme={muiTheme}>
       <CssBaseline />
       {children}
     </ThemeProvider>
