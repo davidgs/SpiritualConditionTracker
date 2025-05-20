@@ -10,9 +10,10 @@ function NavBar({ currentView, setCurrentView }) {
   const [isMobile, setIsMobile] = useState(false);
   const darkMode = muiTheme.palette.mode === 'dark';
   
-  // In dark mode, use a slightly lighter background than the main dark background
-  // In light mode, use a slightly darker background than the main light background
-  const navBackgroundColor = darkMode ? '#1f2937' : '#f3f4f6';
+  // Use MUI theme colors instead of hard-coded values
+  const navBackgroundColor = darkMode 
+    ? muiTheme.palette.background.paper 
+    : muiTheme.palette.grey[100];
   
   const navItems = [
     { id: 'dashboard', name: 'Dashboard', icon: 'fa-solid fa-house' },
@@ -87,7 +88,9 @@ function NavBar({ currentView, setCurrentView }) {
       textAlign: 'center'
     },
     activeItem: {
-      backgroundColor: darkMode ? '#374151' : '#e5e7eb'
+      backgroundColor: darkMode 
+        ? muiTheme.palette.action.selected
+        : muiTheme.palette.action.hover
     },
     overlay: {
       display: menuOpen ? 'block' : 'none',
@@ -96,7 +99,7 @@ function NavBar({ currentView, setCurrentView }) {
       left: 0,
       right: 0,
       bottom: 0,
-      backgroundColor: 'rgba(0, 0, 0, 0.3)',
+      backgroundColor: muiTheme.palette.action.disabledBackground,
       zIndex: 18
     }
   };

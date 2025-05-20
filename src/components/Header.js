@@ -6,10 +6,14 @@ function Header({ title, menuOpen, setMenuOpen, isMobile }) {
   const muiTheme = useTheme();
   const darkMode = muiTheme.palette.mode === 'dark';
   
-  // Header background color
-  const headerBackgroundColor = darkMode ? '#1f2937' : '#f3f4f6';
-  // Header text color
-  const headerTextColor = darkMode ? '#f9fafb' : '#1f2937';
+  // Use MUI theme colors for consistent styling
+  const headerBackgroundColor = darkMode 
+    ? muiTheme.palette.background.paper 
+    : muiTheme.palette.grey[100];
+  // Header text color from MUI theme
+  const headerTextColor = darkMode 
+    ? muiTheme.palette.text.primary 
+    : muiTheme.palette.text.primary;
   
   return (
     <SafeAreaHeader
