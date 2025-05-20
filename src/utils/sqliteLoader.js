@@ -21,13 +21,13 @@ async function initSQLiteDatabase() {
 
     // Detect platform information for specialized handling
     const platform = window.Capacitor.getPlatform?.() || 'unknown';
-    console.log('Capacitor platform detected:', platform);
-    console.log('Capacitor plugins available:', Object.keys(window.Capacitor.Plugins || {}));
+    console.log('[ sqliteLoader.js ] Capacitor platform detected:', platform);
+    console.log('[ sqliteLoader.js ] Capacitor plugins available:', Object.keys(window.Capacitor.Plugins || {}));
     
     // Special handling for iOS which has different plugin structure
     const isIOS = platform === 'ios';
     if (isIOS) {
-      console.log('iOS environment detected - using iOS-specific database setup');
+      console.log('[ sqliteLoader.js ] iOS environment detected - using iOS-specific database setup');
     }
 
     // Get the SQLite plugin
@@ -36,7 +36,7 @@ async function initSQLiteDatabase() {
       throw new Error('CapacitorSQLite plugin not available - ensure the plugin is properly installed');
     }
 
-    console.log('Found CapacitorSQLite plugin:', !!sqlitePlugin);
+    console.log('[ sqliteLoader.js ] Found CapacitorSQLite plugin:', !!sqlitePlugin);
 
     // Step 1: Create connection
     try {
@@ -45,38 +45,38 @@ async function initSQLiteDatabase() {
         encrypted: false,
         mode: 'no-encryption'
       });
-      console.log('Database connection created successfully');
+      console.log('[ sqliteLoader.js ] Database connection created successfully');
     } catch (error) {
-      console.error('Error creating database connection:', error);
+      console.error('[ sqliteLoader.js ] Error creating database connection:', error);
       throw new Error(`Database connection failed: ${error.message || JSON.stringify(error)}`);
     }
 
     // Step 2: Open the database
     try {
       await sqlitePlugin.open({ database: DB_NAME });
-      console.log('Database opened successfully');
+      console.log('[ sqliteLoader.js ] Database opened successfully');
     } catch (error) {
-      console.error('Error opening database:', error);
+      console.error('[ sqliteLoader.js ] Error opening database:', error);
       throw new Error(`Database open failed: ${error.message || JSON.stringify(error)}`);
     }
 
     // Step 3: Create tables
     try {
       await setupTables(sqlitePlugin);
-      console.log('Database tables created/verified successfully');
+      console.log('[ sqliteLoader.js ] Database tables created/verified successfully');
     } catch (error) {
-      console.error('Error setting up database tables:', error);
+      console.error('[ sqliteLoader.js ] Error setting up database tables:', error);
       throw new Error(`Table setup failed: ${error.message || JSON.stringify(error)}`);
     }
 
     // Step 4: Create global database interface
     setupGlobalDB(sqlitePlugin);
-    console.log('Database setup complete, global db interface ready');
+    console.log('[ sqliteLoader.js ] Database setup complete, global db interface ready');
 
     return sqlitePlugin;
   } catch (error) {
-    console.error('Error initializing Capacitor SQLite:', error);
-    console.error('Detailed error info:', JSON.stringify({
+    console.error('[ sqliteLoader.js ] Error initializing Capacitor SQLite:', error);
+    console.error('[ sqliteLoader.js ] Detailed error info:', JSON.stringify({
       message: error.message,
       name: error.name,
       stack: error.stack
@@ -98,13 +98,13 @@ async function setupTables(sqlite) {
       database: DB_NAME,
       statements: `DROP TABLE IF EXISTS preferences`
     });
-    console.log('Dropped existing preferences table for fresh schema');
+    console.log('[ sqliteLoader.js ] Dropped existing preferences table for fresh schema');
   } catch (error) {
-    console.log('No preferences table to drop or error dropping:', error);
+    console.log('[ sqliteLoader.js ] No preferences table to drop or error dropping:', error);
   }
   
   // Always re-create the activities table to fix potential schema issues
-  console.log('Forcing activities table recreation to ensure schema consistency');
+  console.log('[ sqliteLoader.js ] Forcing activities table recreation to ensure schema consistency');
   
   try {
     // First, try to backup any existing activities if the table exists
@@ -118,11 +118,11 @@ async function setupTables(sqlite) {
       
       if (activitiesResult && activitiesResult.values) {
         existingActivities = activitiesResult.values;
-        console.log(`Backing up ${existingActivities.length} existing activities before recreation`);
+        console.log(`[ sqliteLoader.js ] Backing up ${existingActivities.length} existing activities before recreation`);
       }
     } catch (error) {
       // Table might not exist yet, which is fine
-      console.log('No existing activities table to backup:', error);
+      console.log('[ sqliteLoader.js ] No existing activities table to backup:', error);
     }
     
     // Always drop the activities table to ensure a clean schema
@@ -130,12 +130,12 @@ async function setupTables(sqlite) {
       database: DB_NAME,
       statements: `DROP TABLE IF EXISTS activities`
     });
-    console.log('Dropped activities table for fresh creation');
+    console.log('[ sqliteLoader.js ] Dropped activities table for fresh creation');
     
     // Store the backup in a more scoped way
     window.existingActivities = existingActivities;
   } catch (error) {
-    console.log('Error during activities table recreation:', error);
+    console.log('[ sqliteLoader.js ] Error during activities table recreation:', error);
     // Initialize an empty array if backup fails
     window.existingActivities = [];
   }
@@ -171,7 +171,7 @@ async function setupTables(sqlite) {
       )
     `
   });
-  console.log('Users table created with expanded fields');
+  console.log('[ sqliteLoader.js ] Users table created with expanded fields');
 
   // Create activities table with a simplified schema to fix constraint issues
   try {
@@ -185,14 +185,14 @@ async function setupTables(sqlite) {
           updatedAt TEXT
         )
       `;
-    console.log('Creating activities table with schema:', table_struct);
+    console.log('[ sqliteLoader.js ] Creating activities table with schema:', table_struct);
     await sqlite.execute({
       database: DB_NAME,
       statements: table_struct
     });
-    console.log('Successfully created simplified activities table');
+    console.log('[ sqliteLoader.js ] Successfully created simplified activities table');
   } catch (schemaError) {
-    console.error('Failed to create activities table:', schemaError);
+    console.error('[ sqliteLoader.js ] Failed to create activities table:', schemaError);
     
     // Try an even simpler schema as a last resort
     await sqlite.execute({
@@ -207,14 +207,14 @@ async function setupTables(sqlite) {
         )
       `
     });
-    console.log('Created fallback activities table with minimal schema');
+    console.log('[ sqliteLoader.js ] Created fallback activities table with minimal schema');
   }
-  console.log('Activities table created with expanded fields');
+  console.log('[ sqliteLoader.js ] Activities table created with expanded fields');
   
   // Restore activities if we had existing data before migration
   if (window.existingActivities && window.existingActivities.length > 0) {
     try {
-      console.log(`Restoring ${window.existingActivities.length} activities from backup`);
+      console.log(`[ sqliteLoader.js ] Restoring ${window.existingActivities.length} activities from backup`);
       for (const activity of window.existingActivities) {
         // Convert to the new schema (simplified for our new table structure)
         const migratedActivity = {
@@ -240,9 +240,9 @@ async function setupTables(sqlite) {
           values: values
         });
       }
-      console.log(`Restored ${existingActivities.length} activities with new schema`);
+      console.log(`[ sqliteLoader.js ] Restored ${existingActivities.length} activities with new schema`);
     } catch (error) {
-      console.error('Error restoring activities after migration:', error);
+      console.error('[ sqliteLoader.js ] Error restoring activities after migration:', error);
     }
   }
 
@@ -286,7 +286,7 @@ async function setupTables(sqlite) {
       )
     `
   });
-  console.log('Meetings table created with comprehensive fields');
+  console.log('[ sqliteLoader.js ] Meetings table created with comprehensive fields');
 
   // Create messages table with enhanced fields for communication
   await sqlite.execute({
@@ -320,7 +320,7 @@ async function setupTables(sqlite) {
       )
     `
   });
-  console.log('Messages table created with enhanced fields');
+  console.log('[ sqliteLoader.js ] Messages table created with enhanced fields');
 
   // Create sobriety_milestones table to track recovery journey
   await sqlite.execute({
@@ -344,7 +344,7 @@ async function setupTables(sqlite) {
       )
     `
   });
-  console.log('Sobriety milestones table created');
+  console.log('[ sqliteLoader.js ] Sobriety milestones table created');
 
   // Create spiritual_fitness table to track spiritual health
   await sqlite.execute({
@@ -367,7 +367,7 @@ async function setupTables(sqlite) {
       )
     `
   });
-  console.log('Spiritual fitness table created');
+  console.log('[ sqliteLoader.js ] Spiritual fitness table created');
 
   // Create daily_inventory table for step 10 work
   await sqlite.execute({
@@ -390,7 +390,7 @@ async function setupTables(sqlite) {
       )
     `
   });
-  console.log('Daily inventory table created');
+  console.log('[ sqliteLoader.js ] Daily inventory table created');
 
   // Create preferences table for app settings with proper column names
   // We've already dropped the old table if it existed
@@ -403,7 +403,7 @@ async function setupTables(sqlite) {
       )
     `
   });
-  console.log('Preferences table created');
+  console.log('[ sqliteLoader.js ] Preferences table created');
 }
 
 /**
@@ -459,7 +459,7 @@ function setupGlobalDB(sqlite) {
         
         return rows;
       } catch (error) {
-        console.error(`Error getting items from ${collection}:`, error);
+        console.error(`[ sqliteLoader.js ] Error getting items from ${collection}:`, error);
         return [];
       }
     },
@@ -505,7 +505,7 @@ function setupGlobalDB(sqlite) {
         
         return item;
       } catch (error) {
-        console.error(`Error getting item from ${collection} by ID ${id}:`, error);
+        console.error(`[ sqliteLoader.js ] Error getting item from ${collection} by ID ${id}:`, error);
         return null;
       }
     },
@@ -528,14 +528,15 @@ function setupGlobalDB(sqlite) {
         
         // Special handling for activities to ensure type is always set
         if (collection === 'activities') {
+          console.log(`[ sqliteLoader.js ] Saving activity with type: "${itemToSave.type}"`);
           // Double check that type field exists and is not empty
           if (!itemToSave.type || itemToSave.type === '') {
-            console.warn('Activity missing type field, setting default type to meeting');
+            console.warn('[ sqliteLoader.js ] Activity missing type field, setting default type to meeting');
             itemToSave.type = 'meeting';
           }
           
           // Log the activity being saved for debugging
-          console.log(`Saving activity with type: "${itemToSave.type}"`);
+          console.log(`[ sqliteLoader.js ] Saving activity with type: "${itemToSave.type}"`);
         }
         
         // Add timestamps
@@ -569,15 +570,15 @@ function setupGlobalDB(sqlite) {
         if (collection === 'activities') {
           const typeIndex = fields.indexOf('type');
           if (typeIndex !== -1 && (!values[typeIndex] || values[typeIndex] === '')) {
-            console.error('Activity type is required but is empty or null');
+            console.error('[ sqliteLoader.js ] Activity type is required but is empty or null');
             values[typeIndex] = 'meeting'; // Final safeguard
           }
         }
         
         // Debug output for activities
         if (collection === 'activities') {
-          console.log('SQL fields:', fields);
-          console.log('SQL values:', values);
+          console.log('[ sqliteLoader.js ] SQL fields:', fields);
+          console.log('[ sqliteLoader.js ] SQL values:', values);
         }
         
         // Execute insert
@@ -591,7 +592,7 @@ function setupGlobalDB(sqlite) {
         // Return the saved item
         return itemToSave;
       } catch (error) {
-        console.error(`Error adding item to ${collection}:`, error);
+        console.error(`[ sqliteLoader.js ] Error adding item to ${collection}:`, error);
         throw error;
       }
     },
@@ -608,7 +609,7 @@ function setupGlobalDB(sqlite) {
         // Get current item
         const currentItem = await this.getById(collection, id);
         if (!currentItem) {
-          console.error(`Cannot update non-existent item with ID ${id} in ${collection}`);
+          console.error(`[ sqliteLoader.js ] Cannot update non-existent item with ID ${id} in ${collection}`);
           return null;
         }
         
@@ -644,7 +645,7 @@ function setupGlobalDB(sqlite) {
         
         return updatedItem;
       } catch (error) {
-        console.error(`Error updating item ${id} in ${collection}:`, error);
+        console.error(`[ sqliteLoader.js ] Error updating item ${id} in ${collection}:`, error);
         throw error;
       }
     },
@@ -664,7 +665,7 @@ function setupGlobalDB(sqlite) {
         });
         return true;
       } catch (error) {
-        console.error(`Error removing item ${id} from ${collection}:`, error);
+        console.error(`[ sqliteLoader.js ] Error removing item ${id} from ${collection}:`, error);
         return false;
       }
     },
@@ -687,7 +688,7 @@ function setupGlobalDB(sqlite) {
           return true;
         });
       } catch (error) {
-        console.error(`Error querying ${collection}:`, error);
+        console.error(`[ sqliteLoader.js ] Error querying ${collection}:`, error);
         return [];
       }
     },
@@ -725,7 +726,7 @@ function setupGlobalDB(sqlite) {
         
         return value;
       } catch (error) {
-        console.error(`Error getting preference ${key}:`, error);
+        console.error(`[ sqliteLoader.js ] Error getting preference ${key}:`, error);
         return defaultValue;
       }
     },
@@ -765,7 +766,7 @@ function setupGlobalDB(sqlite) {
         
         return true;
       } catch (error) {
-        console.error(`Error setting preference ${key}:`, error);
+        console.error(`[ sqliteLoader.js ] Error setting preference ${key}:`, error);
         return false;
       }
     },
@@ -900,7 +901,7 @@ function setupGlobalDB(sqlite) {
         // Use same scoring logic as default calculation
         return this.calculateSpiritualFitness(filteredActivities);
       } catch (error) {
-        console.error('Error calculating spiritual fitness with timeframe:', error);
+        console.error('[ sqliteLoader.js ] Error calculating spiritual fitness with timeframe:', error);
         return 5; // Default minimum score on error
       }
     }
