@@ -15,30 +15,36 @@ export const AppThemeContext = createContext();
  */
 const MuiThemeProvider = ({ children }) => {
   // Check if user has previously set a theme or use system preference
-  const getInitialTheme = () => {
-    try {
-      // Check for saved theme in localStorage
-      const savedTheme = localStorage.getItem('theme');
-      if (savedTheme === 'dark' || savedTheme === 'light') {
-        return savedTheme;
-      }
-      
-      // Check system preference
-      if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-        return 'dark';
-      }
-    } catch (error) {
-      console.error('Error accessing localStorage:', error);
-    }
-    
-    // Default to light mode
-    return 'light';
-  };
+  const [initialTheme, setInitialTheme] = useState('light');
   
-  const [theme, setTheme] = useState(getInitialTheme);
+  // Load theme from SQLite on component mount
+  useEffect(() => {
+    const loadThemeFromDatabase = async () => {
+      try {
+        // Check for saved theme in SQLite database
+        const savedTheme = await getPreference('theme');
+        if (savedTheme === 'dark' || savedTheme === 'light') {
+          setInitialTheme(savedTheme);
+          return;
+        }
+        
+        // Check system preference
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+          setInitialTheme('dark');
+          return;
+        }
+      } catch (error) {
+        console.error('Error accessing theme preference:', error);
+      }
+    };
+    
+    loadThemeFromDatabase();
+  }, []);
+  
+  const [theme, setTheme] = useState(initialTheme);
   const darkMode = theme === 'dark';
   
-  // Update document class and localStorage when theme changes
+  // Update document class and save theme to SQLite when theme changes
   useEffect(() => {
     try {
       // Apply theme to HTML element for Tailwind
@@ -56,8 +62,8 @@ const MuiThemeProvider = ({ children }) => {
         console.log('Light mode activated');
       }
       
-      // Save theme choice to localStorage
-      localStorage.setItem('theme', theme);
+      // Save theme choice to SQLite database
+      setPreference('theme', theme);
     } catch (error) {
       console.error('Error applying theme:', error);
     }
