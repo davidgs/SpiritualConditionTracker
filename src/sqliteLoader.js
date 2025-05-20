@@ -381,5 +381,8 @@ function setupGlobalDB(sqlite) {
   };
 }
 
+// Make the initialization function available globally for reinitialization
+window.initSQLiteDatabase = initSQLiteDatabase;
+
 // Export initialization function
 export default initSQLiteDatabase;
