@@ -91,7 +91,19 @@ export async function saveActivity(activity) {
           // Build the SQL statement manually
           const fields = Object.keys(enhancedActivity);
           const placeholders = fields.map(() => '?').join(', ');
-          const values = fields.map(f => enhancedActivity[f]);
+          
+          // Make sure all field values are properly formatted for SQLite
+          const values = fields.map(f => {
+            // Special handling for the type field to absolutely ensure it's not null
+            if (f === 'type') {
+              return enhancedActivity[f] || 'prayer'; // Provide fallback value if somehow null
+            }
+            return enhancedActivity[f];
+          });
+          
+          // Log the actual SQL fields and values for debugging
+          console.log('SQL fields:', JSON.stringify(fields));
+          console.log('SQL values:', JSON.stringify(values));
           
           const sql = `INSERT INTO activities (${fields.join(', ')}) VALUES (${placeholders})`;
           
