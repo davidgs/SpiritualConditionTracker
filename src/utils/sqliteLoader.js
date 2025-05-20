@@ -157,7 +157,7 @@ async function setupTables(sqlite) {
     }
   }
   
-  // Create users table
+  // Create users table with expanded profile settings
   await sqlite.execute({
     database: DB_NAME,
     statements: `
@@ -174,12 +174,21 @@ async function setupTables(sqlite) {
         sponsor TEXT,
         sponsees TEXT,
         messagingKeys TEXT,
+        profileImageUri TEXT,
+        language TEXT,
+        dateFormat TEXT,
+        timeFormat TEXT,
+        distanceUnit TEXT,
+        themePreference TEXT,
+        notificationSettings TEXT,
+        locationPermission INTEGER,
+        contactPermission INTEGER,
         createdAt TEXT,
         updatedAt TEXT
       )
     `
   });
-  console.log('Users table created');
+  console.log('Users table created with expanded fields');
 
   // Create activities table with expanded fields
   await sqlite.execute({
@@ -251,7 +260,7 @@ async function setupTables(sqlite) {
     }
   }
 
-  // Create meetings table
+  // Create meetings table with comprehensive fields
   await sqlite.execute({
     database: DB_NAME,
     statements: `
@@ -263,36 +272,139 @@ async function setupTables(sqlite) {
         schedule TEXT,
         address TEXT,
         locationName TEXT,
-        online TEXT,
+        streetAddress TEXT,
+        city TEXT,
+        state TEXT,
+        zipCode TEXT,
+        country TEXT,
+        online INTEGER,
+        onlineUrl TEXT,
         phoneNumber TEXT,
+        meetingCode TEXT,
         notes TEXT,
         latitude REAL,
         longitude REAL,
         types TEXT,
+        format TEXT,
+        accessibility TEXT,
+        languages TEXT,
+        isHomeGroup INTEGER,
+        isTemporarilyClosed INTEGER,
+        contactName TEXT,
+        contactEmail TEXT,
+        contactPhone TEXT,
+        attendance TEXT,
+        lastAttended TEXT,
         createdAt TEXT,
         updatedAt TEXT
       )
     `
   });
-  console.log('Meetings table created');
+  console.log('Meetings table created with comprehensive fields');
 
-  // Create messages table
+  // Create messages table with enhanced fields for communication
   await sqlite.execute({
     database: DB_NAME,
     statements: `
       CREATE TABLE IF NOT EXISTS messages (
         id TEXT PRIMARY KEY,
         sender TEXT,
+        sender_name TEXT,
         recipient TEXT,
+        recipient_name TEXT,
         content TEXT,
+        content_type TEXT,
         encrypted INTEGER,
+        encryption_key TEXT,
         read INTEGER,
+        delivered INTEGER,
         timestamp TEXT,
-        deleted INTEGER
+        sent_timestamp TEXT,
+        received_timestamp TEXT, 
+        thread_id TEXT,
+        reply_to TEXT,
+        attachments TEXT,
+        metadata TEXT,
+        deleted INTEGER,
+        deleted_for_sender INTEGER,
+        deleted_for_recipient INTEGER,
+        priority INTEGER,
+        status TEXT,
+        tags TEXT
       )
     `
   });
-  console.log('Messages table created');
+  console.log('Messages table created with enhanced fields');
+
+  // Create sobriety_milestones table to track recovery journey
+  await sqlite.execute({
+    database: DB_NAME,
+    statements: `
+      CREATE TABLE IF NOT EXISTS sobriety_milestones (
+        id TEXT PRIMARY KEY,
+        user_id TEXT,
+        milestone_type TEXT,
+        days INTEGER,
+        months INTEGER,
+        years INTEGER,
+        date_achieved TEXT,
+        celebrated INTEGER,
+        notes TEXT,
+        shared INTEGER,
+        congratulations_count INTEGER,
+        createdAt TEXT,
+        updatedAt TEXT,
+        FOREIGN KEY (user_id) REFERENCES users (id)
+      )
+    `
+  });
+  console.log('Sobriety milestones table created');
+
+  // Create spiritual_fitness table to track spiritual health
+  await sqlite.execute({
+    database: DB_NAME,
+    statements: `
+      CREATE TABLE IF NOT EXISTS spiritual_fitness (
+        id TEXT PRIMARY KEY,
+        user_id TEXT,
+        score REAL,
+        prayer_score REAL,
+        meditation_score REAL,
+        reading_score REAL,
+        meeting_score REAL,
+        service_score REAL,
+        timeframe INTEGER,
+        calculated_at TEXT,
+        createdAt TEXT,
+        updatedAt TEXT,
+        FOREIGN KEY (user_id) REFERENCES users (id)
+      )
+    `
+  });
+  console.log('Spiritual fitness table created');
+
+  // Create daily_inventory table for step 10 work
+  await sqlite.execute({
+    database: DB_NAME,
+    statements: `
+      CREATE TABLE IF NOT EXISTS daily_inventory (
+        id TEXT PRIMARY KEY,
+        user_id TEXT,
+        date TEXT,
+        grateful_for TEXT,
+        amends_needed TEXT,
+        character_defects TEXT,
+        helped_others TEXT,
+        spiritual_practice TEXT,
+        overall_mood TEXT,
+        notes TEXT,
+        createdAt TEXT,
+        updatedAt TEXT,
+        FOREIGN KEY (user_id) REFERENCES users (id)
+      )
+    `
+  });
+  console.log('Daily inventory table created');
 
   // Create preferences table for app settings with proper column names
   // We've already dropped the old table if it existed
@@ -317,6 +429,11 @@ function setupGlobalDB(sqlite) {
   window.dbInitialized = true;
   
   window.db = {
+    // Advanced database operations for expanded schemas
+    
+    // Store schema version for migration tracking
+    schemaVersion: '2.0.0',
+    
     /**
      * Get all items from a collection
      * @param {string} collection - Collection name
