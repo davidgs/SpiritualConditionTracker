@@ -3,16 +3,28 @@ import { saveActivity } from '../utils/storage';
 
 function ActivityForm({ onSuccess }) {
   const [formData, setFormData] = useState({
-    type: 'meeting',
+    type: 'meeting', // REQUIRED: Default type that will be applied to all activities
     date: new Date().toISOString().split('T')[0],
     time: new Date().toTimeString().slice(0, 5),
     duration: 60,
-    name: '',
     notes: '',
   });
   
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState(null);
+  
+  // Activity type options for the select dropdown
+  const activityTypes = [
+    { value: 'meeting', label: 'Meeting' },
+    { value: 'prayer', label: 'Prayer' },
+    { value: 'meditation', label: 'Meditation' },
+    { value: 'stepwork', label: 'Step Work' },
+    { value: 'service', label: 'Service' },
+    { value: 'call', label: 'Phone Call' },
+    { value: 'reading', label: 'Literature Reading' },
+    { value: 'sponsorship', label: 'Sponsor/Sponsee Work' },
+    { value: 'other', label: 'Other' }
+  ];
   
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -25,20 +37,48 @@ function ActivityForm({ onSuccess }) {
     setError(null);
     
     try {
-      // Create an activity object
+      // CRITICAL: Make sure type is never empty, as required by SQLite constraint
+      const activityType = formData.type || 'meeting';
+      
+      // Create an activity object with guaranteed type field
       const activityData = {
         ...formData,
+        type: activityType, // Explicitly set the type field to prevent SQLite errors
         date: new Date(`${formData.date}T${formData.time}`).toISOString(),
         duration: parseInt(formData.duration, 10) || 0,
-        id: `activity_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        id: `activity_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
       };
       
-      // Ensure the type field is set (required by SQLite)
-      if (!activityData.type) {
-        activityData.type = 'meeting'; // Default value matching the initial form state
+      console.log('Submitting activity with type:', activityData.type);
+      
+      // Try saving directly via the database API first - avoids middleware issues
+      if (window.dbInitialized && window.db) {
+        try {
+          const result = await window.db.add('activities', activityData);
+          console.log('Activity saved directly to database:', result);
+          
+          // Reset form and notify success
+          setFormData({
+            type: 'meeting',
+            date: new Date().toISOString().split('T')[0],
+            time: new Date().toTimeString().slice(0, 5),
+            duration: 60,
+            notes: ''
+          });
+          
+          setIsSubmitting(false);
+          if (typeof onSuccess === 'function') {
+            onSuccess(result);
+          }
+          
+          return; // Exit early after successful save
+        } catch (dbError) {
+          console.error('Error saving directly to database:', dbError);
+          // Continue to saveActivity fallback
+        }
       }
       
-      // Save the activity
+      // Standard approach if direct database access fails
       await saveActivity(activityData);
       
       // Reset form and notify success
