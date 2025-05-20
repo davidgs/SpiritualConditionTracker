@@ -103,6 +103,60 @@ async function setupTables(sqlite) {
     console.log('No preferences table to drop or error dropping:', error);
   }
   
+  // Check if we need to perform schema migration for activities table
+  let needsActivitiesTableMigration = false;
+  try {
+    // Check if new columns exist, if not we need to migrate
+    const columnCheckResult = await sqlite.query({
+      database: DB_NAME,
+      statement: `PRAGMA table_info(activities)`,
+      values: []
+    });
+    
+    // Look for new columns like meetingName in the result
+    if (columnCheckResult && columnCheckResult.values) {
+      const columns = columnCheckResult.values;
+      const hasMeetingNameColumn = columns.some(col => 
+        col.name === 'meetingName' || col.ios_columns?.[1] === 'meetingName'
+      );
+      
+      if (!hasMeetingNameColumn) {
+        needsActivitiesTableMigration = true;
+        console.log('Activities table needs schema migration');
+      }
+    }
+  } catch (error) {
+    // If we get an error, the table might not exist, which is fine
+    console.log('Activity table migration check error:', error);
+  }
+  
+  // If migration is needed, backup existing activities
+  let existingActivities = [];
+  if (needsActivitiesTableMigration) {
+    try {
+      const activitiesResult = await sqlite.query({
+        database: DB_NAME,
+        statement: `SELECT * FROM activities`,
+        values: []
+      });
+      
+      if (activitiesResult && activitiesResult.values) {
+        existingActivities = activitiesResult.values;
+        console.log(`Backing up ${existingActivities.length} existing activities for migration`);
+      }
+      
+      // Now drop the activities table
+      await sqlite.execute({
+        database: DB_NAME,
+        statements: `DROP TABLE IF EXISTS activities`
+      });
+      console.log('Dropped activities table for schema migration');
+    } catch (error) {
+      console.log('Error backing up activities table:', error);
+      // Continue with new table creation
+    }
+  }
+  
   // Create users table
   await sqlite.execute({
     database: DB_NAME,
@@ -127,7 +181,7 @@ async function setupTables(sqlite) {
   });
   console.log('Users table created');
 
-  // Create activities table
+  // Create activities table with expanded fields
   await sqlite.execute({
     database: DB_NAME,
     statements: `
@@ -138,12 +192,64 @@ async function setupTables(sqlite) {
         date TEXT,
         notes TEXT,
         meeting TEXT,
+        meetingName TEXT,
+        wasChair INTEGER,
+        wasShare INTEGER,
+        wasSpeaker INTEGER,
+        literatureTitle TEXT,
+        stepNumber INTEGER,
+        personCalled TEXT,
+        serviceType TEXT,
         createdAt TEXT,
         updatedAt TEXT
       )
     `
   });
-  console.log('Activities table created');
+  console.log('Activities table created with expanded fields');
+  
+  // Restore activities if we had existing data before migration
+  if (existingActivities.length > 0) {
+    try {
+      for (const activity of existingActivities) {
+        // Convert to the new schema
+        const migratedActivity = {
+          id: activity.id,
+          type: activity.type,
+          duration: activity.duration,
+          date: activity.date,
+          notes: activity.notes || '',
+          meeting: activity.meeting || '',
+          // Default values for new fields
+          meetingName: '', 
+          wasChair: 0,
+          wasShare: 0,
+          wasSpeaker: 0,
+          literatureTitle: '',
+          stepNumber: null,
+          personCalled: '',
+          serviceType: '',
+          createdAt: activity.createdAt || new Date().toISOString(),
+          updatedAt: activity.updatedAt || new Date().toISOString()
+        };
+        
+        // Build SQL statement
+        const fields = Object.keys(migratedActivity);
+        const placeholders = fields.map(() => '?').join(', ');
+        const values = fields.map(field => migratedActivity[field]);
+        
+        const sql = `INSERT INTO activities (${fields.join(', ')}) VALUES (${placeholders})`;
+        
+        await sqlite.execute({
+          database: DB_NAME,
+          statements: sql,
+          values: values
+        });
+      }
+      console.log(`Restored ${existingActivities.length} activities with new schema`);
+    } catch (error) {
+      console.error('Error restoring activities after migration:', error);
+    }
+  }
 
   // Create meetings table
   await sqlite.execute({

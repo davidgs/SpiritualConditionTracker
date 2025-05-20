@@ -68,21 +68,30 @@ export async function saveActivity(activity) {
           const sqlPlugin = window.Capacitor.Plugins.CapacitorSQLite;
           const dbName = 'spiritualTracker.db';
           
-          // Make a simpler insert with fewer fields to reduce error chance
-          const minimalActivity = {
+          // Create an enhanced activity model that matches our expanded schema
+          const enhancedActivity = {
             id: activityToSave.id,
             type: activityToSave.type, // Guaranteed to be set above
             date: activityToSave.date,
             duration: activityToSave.duration || 0,
             notes: activityToSave.notes || '',
+            meeting: activityToSave.meeting || '',
+            meetingName: activityToSave.meetingName || '',
+            wasChair: activityToSave.wasChair ? 1 : 0,
+            wasShare: activityToSave.wasShare ? 1 : 0,
+            wasSpeaker: activityToSave.wasSpeaker ? 1 : 0,
+            literatureTitle: activityToSave.literatureTitle || '',
+            stepNumber: activityToSave.stepNumber || null,
+            personCalled: activityToSave.personCalled || '',
+            serviceType: activityToSave.serviceType || '',
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString()
           };
           
           // Build the SQL statement manually
-          const fields = Object.keys(minimalActivity);
+          const fields = Object.keys(enhancedActivity);
           const placeholders = fields.map(() => '?').join(', ');
-          const values = fields.map(f => minimalActivity[f]);
+          const values = fields.map(f => enhancedActivity[f]);
           
           const sql = `INSERT INTO activities (${fields.join(', ')}) VALUES (${placeholders})`;
           
