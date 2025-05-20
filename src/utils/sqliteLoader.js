@@ -145,7 +145,7 @@ async function setupTables(sqlite) {
     database: DB_NAME,
     statements: `
       CREATE TABLE IF NOT EXISTS users (
-        id TEXT PRIMARY KEY,
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT,
         lastName TEXT,
         phoneNumber TEXT,
@@ -176,7 +176,7 @@ async function setupTables(sqlite) {
   // Create activities table with a simplified schema to fix constraint issues
   try {
     const table_struct = `CREATE TABLE IF NOT EXISTS activities (
-          id TEXT PRIMARY KEY,
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
           type TEXT NOT NULL DEFAULT 'prayer',
           duration INTEGER DEFAULT 0,
           date TEXT,
@@ -199,7 +199,7 @@ async function setupTables(sqlite) {
       database: DB_NAME,
       statements: `
         CREATE TABLE IF NOT EXISTS activities (
-          id TEXT PRIMARY KEY,
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
           type TEXT DEFAULT 'prayer',
           duration INTEGER,
           date TEXT,
@@ -251,7 +251,7 @@ async function setupTables(sqlite) {
     database: DB_NAME,
     statements: `
       CREATE TABLE IF NOT EXISTS meetings (
-        id TEXT PRIMARY KEY,
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL,
         days TEXT,
         time TEXT,
@@ -293,7 +293,7 @@ async function setupTables(sqlite) {
     database: DB_NAME,
     statements: `
       CREATE TABLE IF NOT EXISTS messages (
-        id TEXT PRIMARY KEY,
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
         sender TEXT,
         sender_name TEXT,
         recipient TEXT,
@@ -327,7 +327,7 @@ async function setupTables(sqlite) {
     database: DB_NAME,
     statements: `
       CREATE TABLE IF NOT EXISTS sobriety_milestones (
-        id TEXT PRIMARY KEY,
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
         user_id TEXT,
         milestone_type TEXT,
         days INTEGER,
@@ -351,7 +351,7 @@ async function setupTables(sqlite) {
     database: DB_NAME,
     statements: `
       CREATE TABLE IF NOT EXISTS spiritual_fitness (
-        id TEXT PRIMARY KEY,
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
         user_id TEXT,
         score REAL,
         prayer_score REAL,
@@ -374,7 +374,7 @@ async function setupTables(sqlite) {
     database: DB_NAME,
     statements: `
       CREATE TABLE IF NOT EXISTS daily_inventory (
-        id TEXT PRIMARY KEY,
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
         user_id TEXT,
         date TEXT,
         grateful_for TEXT,
@@ -398,7 +398,7 @@ async function setupTables(sqlite) {
     database: DB_NAME,
     statements: `
       CREATE TABLE IF NOT EXISTS preferences (
-        pref_id TEXT PRIMARY KEY,
+        pref_id INTEGET PRIMARY KEY AUTOINCREMENT,
         pref_value TEXT
       )
     `
@@ -467,7 +467,7 @@ function setupGlobalDB(sqlite) {
     /**
      * Get item by ID
      * @param {string} collection - Collection name
-     * @param {string} id - Item ID
+     * @param {integer} id - Item ID
      * @returns {Promise<Object|null>} Found item or null
      */
     getById: async function(collection, id) {
@@ -523,7 +523,7 @@ function setupGlobalDB(sqlite) {
         
         // Ensure item has an ID
         if (!itemToSave.id) {
-          itemToSave.id = `${collection}_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+          itemToSave.id = 0; //`${collection}_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
         }
         
         // Special handling for activities to ensure type is always set
@@ -653,7 +653,7 @@ function setupGlobalDB(sqlite) {
     /**
      * Remove item from collection
      * @param {string} collection - Collection name
-     * @param {string} id - Item ID
+     * @param {integer} id - Item ID
      * @returns {Promise<boolean>} Success indicator
      */
     remove: async function(collection, id) {
@@ -695,7 +695,7 @@ function setupGlobalDB(sqlite) {
     
     /**
      * Get preference value
-     * @param {string} key - Preference key
+     * @param {integer} key - Preference key
      * @param {any} defaultValue - Default value if not found
      * @returns {Promise<any>} Preference value
      */
@@ -733,7 +733,7 @@ function setupGlobalDB(sqlite) {
     
     /**
      * Set preference value
-     * @param {string} key - Preference key
+     * @param {integer} key - Preference key
      * @param {any} value - Value to set
      * @returns {Promise<boolean>} Success indicator
      */

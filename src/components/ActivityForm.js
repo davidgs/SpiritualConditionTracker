@@ -33,7 +33,7 @@ function ActivityForm({ onSuccess }) {
         type: activityType, // Explicitly set the type field to prevent SQLite errors
         date: new Date(`${formData.date}T${formData.time}`).toISOString(),
         duration: parseInt(formData.duration, 10) || 0,
-        id: `activity_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
+        id: 0, //`activity_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
       };
       
       console.log('Submitting activity with type:', activityData.type);
