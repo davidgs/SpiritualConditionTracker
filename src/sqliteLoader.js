@@ -1,6 +1,6 @@
 /**
  * SQLite Database Loader
- * This initializes SQLite for use in the browser with WebSQL fallback
+ * This initializes SQLite for use via Capacitor with a minimal alternative for development
  */
 
 // Check if we're running in a Capacitor environment
@@ -10,15 +10,16 @@ const isCapacitor = typeof window !== 'undefined' &&
 
 // Initialize SQLite database
 function initSQLiteDatabase() {
-  console.log('[ sqliteLoader.js ] Initializing SQLite database for Capacitor...');
+  console.log('[ sqliteLoader.js ] Initializing SQLite database...');
   
-  // If we're in a Capacitor environment, try to use native SQLite
+  // If we're in a Capacitor environment, use native SQLite
   if (isCapacitor && window.Capacitor.isPluginAvailable('CapacitorSQLite')) {
     console.log('[ sqliteLoader.js ] Using native SQLite with Capacitor');
     return initCapacitorSQLite();
   } else {
-    console.log('[ sqliteLoader.js ] Using WebSQL implementation for browser');
-    return initWebSQL();
+    // For browser development only
+    console.log('[ sqliteLoader.js ] Using development storage for browser testing');
+    return initDevelopmentStorage();
   }
 }
 
@@ -75,8 +76,8 @@ async function initCapacitorSQLite() {
     return capacitorSQLite;
   } catch (error) {
     console.error('Error initializing Capacitor SQLite:', error);
-    console.log('Falling back to WebSQL');
-    return initWebSQL();
+    console.log('Falling back to development storage');
+    return initDevelopmentStorage();
   }
 }
 

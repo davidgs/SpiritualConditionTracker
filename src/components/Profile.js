@@ -63,9 +63,8 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
         console.log('All collections cleared successfully');
       }
       
-      // Also clear localStorage for complete cleanup
-      localStorage.clear();
-      console.log('localStorage cleared');
+      // No need to clear localStorage as we're using SQLite storage
+      console.log('SQLite database cleared');
       
       // Show success message
       alert('All data has been reset. The app will now reload.');
