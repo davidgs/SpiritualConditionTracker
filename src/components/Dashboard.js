@@ -14,9 +14,20 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
   const [showActivityModal, setShowActivityModal] = useState(false);
   const [activityDaysFilter, setActivityDaysFilter] = useState(7);
   const [activityTypeFilter, setActivityTypeFilter] = useState('all');
-  const [scoreTimeframe, setScoreTimeframe] = useState(
-    window.db?.getPreference('scoreTimeframe') || 30
-  );
+  const [scoreTimeframe, setScoreTimeframe] = useState(30);
+  
+  // Load user preference for score timeframe on component mount
+  useEffect(() => {
+    async function loadScoreTimeframe() {
+      if (window.db?.getPreference) {
+        const savedTimeframe = await window.db.getPreference('scoreTimeframe');
+        if (savedTimeframe) {
+          setScoreTimeframe(parseInt(savedTimeframe, 10));
+        }
+      }
+    }
+    loadScoreTimeframe();
+  }, []);
   const [currentScore, setCurrentScore] = useState(spiritualFitness);
   
   const modalRef = useRef(null);

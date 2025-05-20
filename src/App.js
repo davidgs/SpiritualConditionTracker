@@ -35,32 +35,18 @@ function App() {
   // Initialize the database and load data
   async function initDatabaseAndLoadData() {
     try {
-      // Import the database operations - use capacitorStorage for better native app support
-      const { 
-        initDatabase, 
-        setupGlobalDbObject,
-        hasLocalStorageData,
-        migrateFromLocalStorage 
-      } = await import('./utils/capacitorStorage');
+      // Import the database operations - SQLite for native iOS/Android via Capacitor
+      const initSQLiteDatabase = (await import('./sqliteLoader')).default;
       
-      console.log("[ App.js ] Initializing database for native app with Capacitor...");
+      console.log("[ App.js ] Initializing SQLite database for native app with Capacitor...");
       
-      // Initialize the database
-      const success = await initDatabase();
-      
-      if (success) {
-        console.log("[ App.js ] SQLite database initialized successfully for Capacitor");
-        
-        // Setup global db object for compatibility
-        const dbObj = setupGlobalDbObject();
-        
-        // Check if we need to migrate data from localStorage
-        if (hasLocalStorageData()) {
-          console.log("[ App.js ] Found existing data in localStorage, migrating to SQLite...");
-          await migrateFromLocalStorage(dbObj);
-        }
-      } else {
-        console.warn("[ App.js ] Using fallback storage method - data persistence may be limited");
+      // Initialize the SQLite database
+      try {
+        await initSQLiteDatabase();
+        console.log("[ App.js ] SQLite database initialized successfully");
+      } catch (error) {
+        console.error("[ App.js ] SQLite initialization error:", error);
+        throw new Error("Failed to initialize SQLite database. The app requires native SQLite support.");
       }
       
       // Now load the data
