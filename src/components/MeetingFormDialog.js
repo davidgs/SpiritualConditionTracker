@@ -355,7 +355,8 @@ export default function MeetingFormDialog({
           color: darkMode ? '#d1d5db' : '#374151',
           borderRadius: 2,
           width: '100%',
-          maxWidth: '500px'
+          maxWidth: '500px',
+          overflowX: 'hidden' // Prevent horizontal scrolling
         }
       }}
     >
