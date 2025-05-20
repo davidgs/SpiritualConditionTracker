@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Dialog, 
   DialogTitle, 
@@ -9,11 +9,11 @@ import {
   IconButton,
   Box
 } from '@mui/material';
-import { ThemeContext } from '../contexts/ThemeContext';
+import { useTheme } from '@mui/material/styles';
 
 export default function SponsorFormDialog({ open, onClose, onSubmit, initialData }) {
-  const { theme } = useContext(ThemeContext);
-  const darkMode = theme === 'dark';
+  const theme = useTheme();
+  const darkMode = theme.palette.mode === 'dark';
   
   // Form state
   const [name, setName] = useState('');

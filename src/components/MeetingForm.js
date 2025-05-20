@@ -28,8 +28,8 @@ export default function MeetingForm({
   darkMode: propDarkMode
 }) {
   // Get theme context
-  const themeContext = useContext(ThemeContext);
-  const isDarkMode = propDarkMode !== undefined ? propDarkMode : (themeContext?.theme === 'dark');
+  const muiTheme = useTheme();
+  const isDarkMode = propDarkMode !== undefined ? propDarkMode : (muiTheme.palette.mode === 'dark');
   // Form state
   const [meetingName, setMeetingName] = useState('');
   

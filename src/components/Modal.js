@@ -1,6 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { useTheme } from '../contexts/ThemeContext';
+import { useTheme } from '@mui/material/styles';
 
 /**
  * Material Design inspired Modal component
