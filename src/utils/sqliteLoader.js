@@ -91,6 +91,18 @@ async function initSQLiteDatabase() {
  * @param {Object} sqlite - SQLite plugin instance
  */
 async function setupTables(sqlite) {
+  // First, try to drop the preferences table if it exists
+  // This is a safe migration approach since we're in development
+  try {
+    await sqlite.execute({
+      database: DB_NAME,
+      statements: `DROP TABLE IF EXISTS preferences`
+    });
+    console.log('Dropped existing preferences table for fresh schema');
+  } catch (error) {
+    console.log('No preferences table to drop or error dropping:', error);
+  }
+  
   // Create users table
   await sqlite.execute({
     database: DB_NAME,
@@ -176,14 +188,14 @@ async function setupTables(sqlite) {
   });
   console.log('Messages table created');
 
-  // Create preferences table for app settings 
-  // Note: 'key' is a reserved word in some SQLite implementations
+  // Create preferences table for app settings with proper column names
+  // We've already dropped the old table if it existed
   await sqlite.execute({
     database: DB_NAME,
     statements: `
       CREATE TABLE IF NOT EXISTS preferences (
-        pref_key TEXT PRIMARY KEY,
-        value TEXT
+        pref_id TEXT PRIMARY KEY,
+        pref_value TEXT
       )
     `
   });
@@ -440,7 +452,7 @@ function setupGlobalDB(sqlite) {
       try {
         const result = await sqlite.query({
           database: DB_NAME,
-          statement: 'SELECT value FROM preferences WHERE pref_key = ?',
+          statement: 'SELECT pref_value FROM preferences WHERE pref_id = ?',
           values: [key]
         });
         
@@ -448,7 +460,7 @@ function setupGlobalDB(sqlite) {
           return defaultValue;
         }
         
-        const value = result.values[0].value;
+        const value = result.values[0].pref_value;
         
         // Try to parse as JSON if it looks like JSON
         if (value && (value.startsWith('{') || value.startsWith('[') || 
@@ -489,14 +501,14 @@ function setupGlobalDB(sqlite) {
           // Insert new preference
           await sqlite.execute({
             database: DB_NAME,
-            statements: 'INSERT INTO preferences (pref_key, value) VALUES (?, ?)',
+            statements: 'INSERT INTO preferences (pref_id, pref_value) VALUES (?, ?)',
             values: [key, storedValue]
           });
         } else {
           // Update existing preference
           await sqlite.execute({
             database: DB_NAME,
-            statements: 'UPDATE preferences SET value = ? WHERE pref_key = ?',
+            statements: 'UPDATE preferences SET pref_value = ? WHERE pref_id = ?',
             values: [storedValue, key]
           });
         }

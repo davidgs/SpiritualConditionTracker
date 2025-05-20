@@ -1,0 +1,65 @@
+⚡️  [log] - [ Dashboard.js ] Dashboard useEffect [spiritualFitness] triggered with: 0
+⚡️  [log] - [ Dashboard.js ] Dashboard useEffect [scoreTimeframe] triggered with timeframe: 30
+⚡️  [warn] - [ Dashboard.js ] Database not initialized yet - skipping database operations
+⚡️  [log] - Light mode activated
+⚡️  [log] - [ App.js ] Initializing SQLite database for native app with Capacitor...
+⚡️  [log] - [ sqliteLoader.js ] Initializing SQLite database via Capacitor...
+⚡️  To Native ->  CapacitorSQLite createConnection 9376758
+⚡️  [log] - Capacitor platform detected: ios
+⚡️  [log] - Capacitor plugins available: ["CapacitorHttp","Console","WebView","CapacitorCookies","CapacitorSQLite"]
+⚡️  [log] - iOS environment detected - using iOS-specific database setup
+⚡️  [log] - Found CapacitorSQLite plugin: true
+database path /Users/davidgs/Library/Developer/CoreSimulator/Devices/E7B518C7-65A2-4386-A19F-01F0D573877F/data/Containers/Data/Application/86A70C8E-81CD-455A-AD19-A571EB60870A/Documents/spiritualTrackerSQLite.db
+⚡️  TO JS undefined
+⚡️  To Native ->  CapacitorSQLite open 9376759
+⚡️  [log] - Database connection created successfully
+⚡️  TO JS undefined
+⚡️  [log] - Database opened successfully
+⚡️  To Native ->  CapacitorSQLite execute 9376760
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 9376761
+⚡️  [log] - Users table created
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  ⚡️  [log] - Activities table created
+CapacitorSQLite execute 9376762
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 9376763
+⚡️  [log] - Meetings table created
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 9376764
+⚡️  [log] - Messages table created
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  [log] - Preferences table created
+⚡️  [log] - Database tables created/verified successfully
+⚡️  [log] - Database setup complete, global db interface ready
+⚡️  [log] - [ App.js ] SQLite database initialized successfully
+⚡️  [error] - [ App.js ] Database not initialized or not ready for data operations
+⚡️  [log] - [ App.js ] Starting calculateSpiritualFitness with default: 5
+⚡️  [error] - [ App.js ] Database not initialized or not ready for fitness calculation
+⚡️  [log] - App.js - Before rendering, spiritualFitness value: 5
+⚡️  [log] - [ Dashboard.js ] Dashboard received spiritualFitness: 5
+⚡️  [log] - [ Dashboard.js ] Dashboard currentScore state: 0
+⚡️  [log] - [ Dashboard.js ] Dashboard formattedScore for display: 0
+⚡️  [log] - [ Dashboard.js ] Dashboard progressPercent: 0
+⚡️  [log] - [ Dashboard.js ] Dashboard useEffect [spiritualFitness] triggered with: 5
+⚡️  [log] - [ Dashboard.js ] Dashboard useEffect [scoreTimeframe] triggered with timeframe: 30
+⚡️  To Native ->  CapacitorSQLite query 9376765
+⚡️  To Native ->  CapacitorSQLite query 9376766
+⚡️  [log] - [ Dashboard.js ] Calculating score with SQLite, timeframe: 30
+ERROR MESSAGE:  {"errorMessage":"Query: Failed in selectSQL : Error: querySQL prepare failed rc: 1 message: no such column: pref_key","message":"Query: Failed in selectSQL : Error: querySQL prepare failed rc: 1 message: no such column: pref_key"}
+⚡️  To Native ->  CapacitorSQLite execute 9376767
+⚡️  TO JS {"values":[{"ios_columns":["id","type","duration","date","notes","meeting","createdAt","updatedAt"]},{"type":"prayer","notes":"","duration":15,"meeting":null,"date":"2025-05-18","createdAt":"2025-05-18T22:41:57.935Z","id":"1747608117935","updatedAt":"2025-
+⚡️  [log] - [ Dashboard.js ] Dashboard received spiritualFitness: 5
+⚡️  [log] - [ Dashboard.js ] Dashboard currentScore state: 5
+⚡️  [log] - [ Dashboard.js ] Dashboard formattedScore for display: 5.00
+⚡️  [log] - [ Dashboard.js ] Dashboard progressPercent: 5
+⚡️  [error] - {"errorMessage":"Query: Failed in selectSQL : Error: querySQL prepare failed rc: 1 message: no such column: pref_key","message":"Query: Failed in selectSQL : Error: querySQL prepare failed rc: 1 message: no such column: pref_key"}
+⚡️  [error] - Error getting preference fitnessTimeframe: {"errorMessage":"Query: Failed in selectSQL : Error: querySQL prepare failed rc: 1 message: no such column: pref_key"}
+ERROR MESSAGE:  ⚡️  [log] - [ Dashboard.js ] SQLite calculation result: 15
+{"message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: no such column: pref_key","errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: no such column: pref_key"}
+⚡️  [log] - [ Dashboard.js ] Dashboard received spiritualFitness: 5
+⚡️  [log] - [ Dashboard.js ] Dashboard currentScore state: 15
+⚡️  [log] - [ Dashboard.js ] Dashboard formattedScore for display: 15.00
+⚡️  [log] - [ Dashboard.js ] Dashboard progressPercent: 15
+⚡️  [error] - {"message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: no such column: pref_key","errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: no such column: pref_key"}
+⚡️  [error] - Error setting preference fitnessTimeframe: {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: no such column: pref_key"}
