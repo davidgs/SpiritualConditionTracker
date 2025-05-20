@@ -174,10 +174,7 @@ async function setupTables(sqlite) {
 
   // Create activities table with a simplified schema to fix constraint issues
   try {
-    await sqlite.execute({
-      database: DB_NAME,
-      statements: `
-        CREATE TABLE IF NOT EXISTS activities (
+    const table_struct = `CREATE TABLE IF NOT EXISTS activities (
           id TEXT PRIMARY KEY,
           type TEXT NOT NULL DEFAULT 'prayer',
           duration INTEGER DEFAULT 0,
@@ -186,7 +183,11 @@ async function setupTables(sqlite) {
           createdAt TEXT,
           updatedAt TEXT
         )
-      `
+      `;
+    console.log('Creating activities table with schema:', table_struct);
+    await sqlite.execute({
+      database: DB_NAME,
+      statements: table_struct
     });
     console.log('Successfully created simplified activities table');
   } catch (schemaError) {
