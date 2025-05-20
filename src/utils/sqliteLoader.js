@@ -132,11 +132,12 @@ async function setupTables(sqlite) {
     });
     console.log('Dropped activities table for fresh creation');
     
-    // Store the backup
-    const needsActivityDataMigration = existingActivities.length > 0;
+    // Store the backup in a more scoped way
+    window.existingActivities = existingActivities;
   } catch (error) {
     console.log('Error during activities table recreation:', error);
-    // Continue with new table creation, even if backup fails
+    // Initialize an empty array if backup fails
+    window.existingActivities = [];
   }
   
   // Create users table with expanded profile settings
@@ -211,26 +212,17 @@ async function setupTables(sqlite) {
   console.log('Activities table created with expanded fields');
   
   // Restore activities if we had existing data before migration
-  if (existingActivities.length > 0) {
+  if (window.existingActivities && window.existingActivities.length > 0) {
     try {
-      for (const activity of existingActivities) {
-        // Convert to the new schema
+      console.log(`Restoring ${window.existingActivities.length} activities from backup`);
+      for (const activity of window.existingActivities) {
+        // Convert to the new schema (simplified for our new table structure)
         const migratedActivity = {
           id: activity.id,
-          type: activity.type,
-          duration: activity.duration,
-          date: activity.date,
+          type: activity.type || 'prayer',  // Ensure we have a default type
+          duration: activity.duration || 0,
+          date: activity.date || new Date().toISOString().split('T')[0],
           notes: activity.notes || '',
-          meeting: activity.meeting || '',
-          // Default values for new fields
-          meetingName: '', 
-          wasChair: 0,
-          wasShare: 0,
-          wasSpeaker: 0,
-          literatureTitle: '',
-          stepNumber: null,
-          personCalled: '',
-          serviceType: '',
           createdAt: activity.createdAt || new Date().toISOString(),
           updatedAt: activity.updatedAt || new Date().toISOString()
         };

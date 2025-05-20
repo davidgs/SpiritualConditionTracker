@@ -1,0 +1,76 @@
+⚡️  [log] - Users table created with expanded fields
+⚡️  [log] - Creating activities table with schema: CREATE TABLE IF NOT EXISTS activities (
+          id TEXT PRIMARY KEY,
+          type TEXT NOT NULL DEFAULT 'prayer',
+          duration INTEGER DEFAULT 0,
+          date TEXT,
+          notes TEXT DEFAULT '',
+          createdAt TEXT,
+          updatedAt TEXT
+        )
+      
+⚡️  To Native ->  CapacitorSQLite execute 14888277
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  [log] - Successfully created simplified activities table
+⚡️  [log] - Activities table created with expanded fields
+⚡️  [error] - Error setting up database tables: {}
+⚡️  [error] - Error initializing Capacitor SQLite: {}
+⚡️  [error] - Detailed error info: {
+  "message": "Table setup failed: Can't find variable: existingActivities",
+  "name": "Error",
+  "stack": "@capacitor://localhost/337.bundle.js:2:10950\nf@capacitor://localhost/337.bundle.js:2:3145\n@capacitor://localhost/337.bundle.js:2:2915\nf@capacitor://localhost/337.bundle.js:2:8829\ns@capacitor://localhost/337.bundle.js:2:9069"
+}
+⚡️  [error] - [ App.js ] SQLite initialization error: {}
+⚡️  [error] - [ App.js ] Error details: {
+  "message": "Table setup failed: Can't find variable: existingActivities",
+  "name": "Error",
+  "stack": "@capacitor://localhost/337.bundle.js:2:10950\nf@capacitor://localhost/337.bundle.js:2:3145\n@capacitor://localhost/337.bundle.js:2:2915\nf@capacitor://localhost/337.bundle.js:2:8829\ns@capacitor://localhost/337.bundle.js:2:9069"
+}
+⚡️  [warn] - [ App.js ] Using localStorage fallback due to SQLite initialization failure
+⚡️  [error] - [ App.js ] Database not initialized or not ready for data operations
+⚡️  [log] - App.js - Before rendering, spiritualFitness value: 5
+⚡️  [log] - [ Dashboard.js ] Dashboard received spiritualFitness: 5
+⚡️  [log] - [ Dashboard.js ] Dashboard currentScore state: 0
+⚡️  [log] - [ Dashboard.js ] Dashboard formattedScore for display: 0
+⚡️  [log] - [ Dashboard.js ] Dashboard progressPercent: 0
+⚡️  [log] - [ Dashboard.js ] Dashboard useEffect [spiritualFitness] triggered with: 5
+⚡️  [log] - [ Dashboard.js ] Dashboard useEffect [scoreTimeframe] triggered with timeframe: 30
+⚡️  [log] - [ Dashboard.js ] Calculating score with SQLite, timeframe: 30
+⚡️  [log] - [ Dashboard.js ] SQLite calculation result: 5
+⚡️  [log] - [ Dashboard.js ] Dashboard received spiritualFitness: 5
+⚡️  [log] - [ Dashboard.js ] Dashboard currentScore state: 5
+⚡️  [log] - [ Dashboard.js ] Dashboard formattedScore for display: 5.00
+⚡️  [log] - [ Dashboard.js ] Dashboard progressPercent: 5
+⚡️  [log] - [ Dashboard.js ] Dashboard received spiritualFitness: 5
+⚡️  [log] - [ Dashboard.js ] Dashboard currentScore state: 5
+⚡️  [log] - [ Dashboard.js ] Dashboard formattedScore for display: 5.00
+⚡️  [log] - [ Dashboard.js ] Dashboard progressPercent: 5
+⚡️  [log] - [ App.js ] Starting calculateSpiritualFitness with default: 5
+⚡️  [log] - [ App.js ] Calculating spiritual fitness with initialized database
+⚡️  [log] - Calculating spiritual fitness with activities: []
+⚡️  [log] - Using window.db.calculateSpiritualFitness
+⚡️  [log] - App.js - Before rendering, spiritualFitness value: 5
+⚡️  [log] - [ Dashboard.js ] Dashboard received spiritualFitness: 5
+⚡️  [log] - [ Dashboard.js ] Dashboard currentScore state: 5
+⚡️  [log] - [ Dashboard.js ] Dashboard formattedScore for display: 5.00
+⚡️  [log] - [ Dashboard.js ] Dashboard progressPercent: 5
+⚡️  [log] - [ ActivityList.js ] Grouping activity with date: 2025-05-19 Type: string
+⚡️  [log] - [ ActivityList.js ] Using direct YYYY-MM-DD dateKey: 2025-05-19
+⚡️  [log] - Formatting date: 2025-05-19
+⚡️  [log] - Formatting date: 2025-05-19
+⚡️  [log] - [ Dashboard.js ] Dashboard useEffect [scoreTimeframe] triggered with timeframe: 30
+⚡️  [log] - [ Dashboard.js ] Calculating score with SQLite, timeframe: 30
+⚡️  [log] - [ App.js ] Starting calculateSpiritualFitness with default: 5
+⚡️  [log] - [ App.js ] Calculating spiritual fitness with initialized database
+⚡️  [log] - Calculating spiritual fitness with activities: [{"id":"1747712791923","type":"prayer","duration":15,"date":"2025-05-19","notes":""}]
+⚡️  [log] - Using window.db.calculateSpiritualFitness
+⚡️  [log] - Success with window.db.calculateSpiritualFitness : 5
+⚡️  [log] - [ Dashboard.js ] SQLite calculation result: 5
+⚡️  [log] - Success with window.db.calculateSpiritualFitness : 5
+⚡️  [log] - App.js - Before rendering, spiritualFitness value: 5
+⚡️  [log] - [ Dashboard.js ] Dashboard received spiritualFitness: 5
+⚡️  [log] - [ Dashboard.js ] Dashboard currentScore state: 5
+⚡️  [log] - [ Dashboard.js ] Dashboard formattedScore for display: 5.00
+⚡️  [log] - [ Dashboard.js ] Dashboard progressPercent: 5
+⚡️  [log] - [ ActivityList.js ] Grouping activity with date: 2025-05-19 Type: string
+⚡️  [log] - [ ActivityList.js ] Using direct YYYY-MM-DD dateKey: 2025-05-19
