@@ -176,12 +176,13 @@ async function setupTables(sqlite) {
   });
   console.log('Messages table created');
 
-  // Create preferences table for app settings
+  // Create preferences table for app settings 
+  // Note: 'key' is a reserved word in some SQLite implementations
   await sqlite.execute({
     database: DB_NAME,
     statements: `
       CREATE TABLE IF NOT EXISTS preferences (
-        key TEXT PRIMARY KEY,
+        pref_key TEXT PRIMARY KEY,
         value TEXT
       )
     `
@@ -205,9 +206,10 @@ function setupGlobalDB(sqlite) {
      */
     getAll: async function(collection) {
       try {
+        // iOS has specific format requirements
         const result = await sqlite.query({
           database: DB_NAME,
-          statements: `SELECT * FROM ${collection}`,
+          statement: `SELECT * FROM ${collection}`,
           values: []
         });
         
@@ -251,7 +253,7 @@ function setupGlobalDB(sqlite) {
       try {
         const result = await sqlite.query({
           database: DB_NAME,
-          statements: `SELECT * FROM ${collection} WHERE id = ?`,
+          statement: `SELECT * FROM ${collection} WHERE id = ?`,
           values: [id]
         });
         
@@ -438,7 +440,7 @@ function setupGlobalDB(sqlite) {
       try {
         const result = await sqlite.query({
           database: DB_NAME,
-          statements: 'SELECT value FROM preferences WHERE key = ?',
+          statement: 'SELECT value FROM preferences WHERE pref_key = ?',
           values: [key]
         });
         
@@ -487,14 +489,14 @@ function setupGlobalDB(sqlite) {
           // Insert new preference
           await sqlite.execute({
             database: DB_NAME,
-            statements: 'INSERT INTO preferences (key, value) VALUES (?, ?)',
+            statements: 'INSERT INTO preferences (pref_key, value) VALUES (?, ?)',
             values: [key, storedValue]
           });
         } else {
           // Update existing preference
           await sqlite.execute({
             database: DB_NAME,
-            statements: 'UPDATE preferences SET value = ? WHERE key = ?',
+            statements: 'UPDATE preferences SET value = ? WHERE pref_key = ?',
             values: [storedValue, key]
           });
         }
