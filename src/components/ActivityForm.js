@@ -33,6 +33,11 @@ function ActivityForm({ onSuccess }) {
         id: `activity_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
       };
       
+      // Ensure the type field is set (required by SQLite)
+      if (!activityData.type) {
+        activityData.type = 'meeting'; // Default value matching the initial form state
+      }
+      
       // Save the activity
       await saveActivity(activityData);
       
