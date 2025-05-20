@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { useTheme } from '../contexts/ThemeContext';
+import { useTheme } from '@mui/material/styles';
 
 /**
  * A Material Design inspired Dialog component
