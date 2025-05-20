@@ -1,8 +1,7 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTheme } from '@mui/material/styles';
 import ThemeSelector from './ThemeSelector';
 import MeetingFormDialog from './MeetingFormDialog';
-import { ThemeContext } from '../contexts/ThemeContext';
 import { 
   Switch, 
   FormControlLabel, 
@@ -76,10 +75,9 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
       alert('An error occurred while resetting data. Please try again.');
     }
   };
-  const { theme } = useContext(ThemeContext);
-  const darkMode = theme === 'dark';
   // Access MUI theme for consistent styling
   const muiTheme = useTheme();
+  const darkMode = muiTheme.palette.mode === 'dark';
   
   const [name, setName] = useState('');
   const [lastName, setLastName] = useState('');
