@@ -62,34 +62,81 @@ async function initCapacitorSQLite() {
       throw new Error('CapacitorSQLite plugin not available on this device - please ensure the plugin is properly installed');
     }
     
-    // Create connection and initialize default database
-    const sqlite = new SQLiteConnection(CapacitorSQLite);
-    const defaultDB = { database: 'defaultDB' };
+    // Create connection and initialize default database - improved for iOS compatibility
+    let sqlite = null;
     
-    await sqlite.createConnection(defaultDB);
-    await sqlite.open(defaultDB);
+    try {
+      sqlite = new SQLiteConnection(CapacitorSQLite);
+      console.log('Successfully created SQLiteConnection instance');
+    } catch (connectionError) {
+      console.error('Error creating SQLiteConnection:', connectionError);
+      throw new Error(`Failed to create SQLiteConnection: ${connectionError.message}`);
+    }
+
+    // Use consistent database name with clear options for iOS
+    const defaultDB = { 
+      database: 'spiritualTracker.db',
+      encrypted: false,
+      mode: 'no-encryption'
+    };
+    
+    console.log('Creating database connection with:', defaultDB);
+    
+    try {
+      await sqlite.createConnection(defaultDB);
+      console.log('Database connection created successfully');
+    } catch (connectionError) {
+      console.error('Error creating database connection:', connectionError);
+      throw new Error(`Failed to create database connection: ${connectionError.message}`);
+    }
+    
+    try {
+      await sqlite.open({ database: defaultDB.database });
+      console.log('Database opened successfully');
+    } catch (openError) {
+      console.error('Error opening database:', openError);
+      throw new Error(`Failed to open database: ${openError.message}`);
+    }
     
     // Set up database schema
-    await setupTables(sqlite);
+    try {
+      await setupTables(sqlite, defaultDB.database);
+      console.log('Database tables created/verified successfully');
+    } catch (tableError) {
+      console.error('Error setting up database tables:', tableError);
+      throw new Error(`Failed to set up database tables: ${tableError.message}`);
+    }
     
     // Create a global database object for convenient access
-    setupGlobalDB(sqlite);
+    try {
+      setupGlobalDB(sqlite);
+      console.log('Global database reference created successfully');
+    } catch (globalDBError) {
+      console.error('Error setting up global database reference:', globalDBError);
+      throw new Error(`Failed to set up global database reference: ${globalDBError.message}`);
+    }
     
     console.log('Capacitor SQLite setup complete');
     return sqlite;
   } catch (error) {
     console.error('Error initializing Capacitor SQLite:', error);
+    // Include detailed error info for better iOS debugging
+    console.error('Error details:', JSON.stringify({
+      message: error.message,
+      name: error.name,
+      stack: error.stack
+    }, null, 2));
     throw new Error('Failed to initialize SQLite database: ' + error.message);
   }
 }
 
 // Set up tables for SQLite
-async function setupTables(sqlite) {
+async function setupTables(sqlite, dbName = 'spiritualTracker.db') {
   try {
     // Create users table
-    console.log('Creating users table...');
+    console.log('Creating users table in database:', dbName);
     await sqlite.execute({
-      database: 'defaultDB',
+      database: dbName,
       statement: `CREATE TABLE IF NOT EXISTS users (
         id TEXT PRIMARY KEY,
         name TEXT,
@@ -111,7 +158,7 @@ async function setupTables(sqlite) {
     // Create activities table
     console.log('Creating activities table...');
     await sqlite.execute({
-      database: 'defaultDB',
+      database: dbName,
       statement: `CREATE TABLE IF NOT EXISTS activities (
         id TEXT PRIMARY KEY,
         type TEXT,
@@ -128,7 +175,7 @@ async function setupTables(sqlite) {
     // Create meetings table
     console.log('Creating meetings table...');
     await sqlite.execute({
-      database: 'defaultDB',
+      database: dbName,
       statement: `CREATE TABLE IF NOT EXISTS meetings (
         id TEXT PRIMARY KEY,
         name TEXT,
@@ -149,7 +196,7 @@ async function setupTables(sqlite) {
     // Create messages table
     console.log('Creating messages table...');
     await sqlite.execute({
-      database: 'defaultDB',
+      database: dbName,
       statement: `CREATE TABLE IF NOT EXISTS messages (
         id TEXT PRIMARY KEY,
         senderId TEXT,
@@ -164,7 +211,7 @@ async function setupTables(sqlite) {
     // Create preferences table
     console.log('Creating preferences table...');
     await sqlite.execute({
-      database: 'defaultDB',
+      database: dbName,
       statement: `CREATE TABLE IF NOT EXISTS preferences (
         key TEXT PRIMARY KEY,
         value TEXT
@@ -191,7 +238,7 @@ function setupGlobalDB(sqlite) {
     getAll: async function(collection) {
       try {
         const queryResult = await sqlite.query({
-          database: 'defaultDB',
+          database: dbName,
           statement: `SELECT * FROM ${collection}`
         });
         
@@ -218,7 +265,7 @@ function setupGlobalDB(sqlite) {
     getById: async function(collection, id) {
       try {
         const queryResult = await sqlite.query({
-          database: 'defaultDB',
+          database: dbName,
           statement: `SELECT * FROM ${collection} WHERE id = ?`,
           values: [id]
         });
@@ -271,7 +318,7 @@ function setupGlobalDB(sqlite) {
         const values = columns.map(key => itemToSave[key]);
         
         await sqlite.run({
-          database: 'defaultDB',
+          database: dbName,
           statement: `INSERT INTO ${collection} (${columns.join(', ')}) VALUES (${placeholders})`,
           values: values
         });
@@ -316,7 +363,7 @@ function setupGlobalDB(sqlite) {
         values.push(id);
         
         await sqlite.run({
-          database: 'defaultDB',
+          database: dbName,
           statement: `UPDATE ${collection} SET ${setClause} WHERE id = ?`,
           values: values
         });
@@ -332,7 +379,7 @@ function setupGlobalDB(sqlite) {
     remove: async function(collection, id) {
       try {
         await sqlite.run({
-          database: 'defaultDB',
+          database: dbName,
           statement: `DELETE FROM ${collection} WHERE id = ?`,
           values: [id]
         });
@@ -377,7 +424,7 @@ function setupGlobalDB(sqlite) {
     getPreference: async function(key) {
       try {
         const queryResult = await sqlite.query({
-          database: 'defaultDB',
+          database: dbName,
           statement: 'SELECT value FROM preferences WHERE key = ?',
           values: [key]
         });
@@ -402,14 +449,14 @@ function setupGlobalDB(sqlite) {
         if (existingPref !== null) {
           // Update existing preference
           await sqlite.run({
-            database: 'defaultDB',
+            database: dbName,
             statement: 'UPDATE preferences SET value = ? WHERE key = ?',
             values: [value, key]
           });
         } else {
           // Add new preference
           await sqlite.run({
-            database: 'defaultDB',
+            database: dbName,
             statement: 'INSERT INTO preferences (key, value) VALUES (?, ?)',
             values: [key, value]
           });
