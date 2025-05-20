@@ -29,8 +29,8 @@ export default function MeetingFormDialog({
   use24HourFormat = false
 }) {
   // Get theme context
-  const { theme } = useContext(ThemeContext);
-  const darkMode = theme === 'dark';
+  const muiTheme = useTheme();
+  const darkMode = muiTheme.palette.mode === 'dark';
   
   // Form state
   const [meetingName, setMeetingName] = useState('');

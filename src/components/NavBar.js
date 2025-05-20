@@ -1,12 +1,14 @@
-import React, { useContext, useState, useEffect } from 'react';
-import { ThemeContext } from '../contexts/ThemeContext';
+import React, { useState, useEffect } from 'react';
+import { useTheme } from '@mui/material/styles';
+import { useAppTheme } from '../contexts/MuiThemeProvider';
 import Header from './Header';
 
 function NavBar({ currentView, setCurrentView }) {
-  const { theme } = useContext(ThemeContext);
+  const muiTheme = useTheme();
+  const { theme } = useAppTheme();
   const [menuOpen, setMenuOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  const darkMode = theme === 'dark';
+  const darkMode = muiTheme.palette.mode === 'dark';
   
   // In dark mode, use a slightly lighter background than the main dark background
   // In light mode, use a slightly darker background than the main light background

@@ -1,10 +1,10 @@
-import React, { useContext } from 'react';
-import { ThemeContext } from '../contexts/ThemeContext';
+import React from 'react';
+import { useTheme } from '@mui/material/styles';
 import SafeAreaHeader from './SafeAreaHeader';
 
 function Header({ title, menuOpen, setMenuOpen, isMobile }) {
-  const { theme } = useContext(ThemeContext);
-  const darkMode = theme === 'dark';
+  const muiTheme = useTheme();
+  const darkMode = muiTheme.palette.mode === 'dark';
   
   // Header background color
   const headerBackgroundColor = darkMode ? '#1f2937' : '#f3f4f6';
