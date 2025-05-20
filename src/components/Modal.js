@@ -29,8 +29,12 @@ const Modal = ({ isOpen, onClose, children, title, size = 'md' }) => {
     
     if (isOpen) {
       document.addEventListener('keydown', handleEscKey);
-      // Prevent body scrolling when modal is open
+      
+      // Prevent scrolling with better iOS compatibility
       document.body.style.overflow = 'hidden';
+      document.body.style.position = 'fixed';
+      document.body.style.width = '100%';
+      document.body.style.height = '100%';
       
       // Add entrance animation class
       if (contentRef.current) {
@@ -45,8 +49,12 @@ const Modal = ({ isOpen, onClose, children, title, size = 'md' }) => {
     
     return () => {
       document.removeEventListener('keydown', handleEscKey);
-      // Restore body scrolling when modal is closed
+      
+      // Restore scrolling when modal is closed
       document.body.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.width = '';
+      document.body.style.height = '';
     };
   }, [isOpen, onClose]);
   
@@ -74,7 +82,7 @@ const Modal = ({ isOpen, onClose, children, title, size = 'md' }) => {
   // Create portal to render modal at the body level
   return createPortal(
     <div 
-      className="fixed inset-0 z-50 overflow-y-auto"
+      className="fixed inset-0 z-50 overflow-y-auto overflow-x-hidden"
       aria-modal="true"
       role="dialog"
       aria-labelledby={title ? 'modal-title' : undefined}
