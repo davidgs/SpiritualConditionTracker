@@ -7,7 +7,6 @@ import Meetings from './components/Meetings';
 import Messages from './components/Messages';
 import StepWork from './components/StepWork';
 import SponsorSponsee from './components/SponsorSponsee';
-import { ThemeProvider } from './contexts/ThemeContext';
 import MuiThemeProvider from './contexts/MuiThemeProvider';
 import { generateKeyPair } from './utils/encryption';
 import { DEFAULT_SPIRITUAL_FITNESS_SCORE } from './utils/constants';

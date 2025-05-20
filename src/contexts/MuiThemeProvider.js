@@ -1,23 +1,71 @@
-import React, { useEffect } from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { useTheme } from './ThemeContext';
 import CssBaseline from '@mui/material/CssBaseline';
 
+// Create a context for theme management
+export const AppThemeContext = createContext();
+
 /**
- * Material UI Theme Provider that adapts to the app's dark/light mode
+ * Material UI Theme Provider that handles all app theming functionality
  * 
  * @param {Object} props - Component props
  * @param {React.ReactNode} props.children - Child components
  * @returns {React.ReactElement} ThemeProvider component
  */
 const MuiThemeProvider = ({ children }) => {
-  const { theme } = useTheme();
+  // Check if user has previously set a theme or use system preference
+  const getInitialTheme = () => {
+    try {
+      // Check for saved theme in localStorage
+      const savedTheme = localStorage.getItem('theme');
+      if (savedTheme === 'dark' || savedTheme === 'light') {
+        return savedTheme;
+      }
+      
+      // Check system preference
+      if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        return 'dark';
+      }
+    } catch (error) {
+      console.error('Error accessing localStorage:', error);
+    }
+    
+    // Default to light mode
+    return 'light';
+  };
+  
+  const [theme, setTheme] = useState(getInitialTheme);
   const darkMode = theme === 'dark';
   
-  // Apply class to root for dark/light mode syncing with Tailwind
+  // Update document class and localStorage when theme changes
   useEffect(() => {
-    document.documentElement.classList.toggle('dark', darkMode);
-  }, [darkMode]);
+    try {
+      // Apply theme to HTML element for Tailwind
+      const htmlEl = document.documentElement;
+      
+      if (darkMode) {
+        htmlEl.classList.add('dark');
+        document.body.style.backgroundColor = '#121212';
+        document.body.style.color = '#fff';
+        console.log('Dark mode activated');
+      } else {
+        htmlEl.classList.remove('dark');
+        document.body.style.backgroundColor = '#f0f2f5';
+        document.body.style.color = '#111827';
+        console.log('Light mode activated');
+      }
+      
+      // Save theme choice to localStorage
+      localStorage.setItem('theme', theme);
+    } catch (error) {
+      console.error('Error applying theme:', error);
+    }
+  }, [theme, darkMode]);
+  
+  // Toggle between light and dark mode
+  const toggleTheme = () => {
+    setTheme(prevTheme => prevTheme === 'light' ? 'dark' : 'light');
+  };
   
   // Create a theme based on our app's dark/light mode
   const muiTheme = React.useMemo(
@@ -156,12 +204,31 @@ const MuiThemeProvider = ({ children }) => {
     [darkMode]
   );
 
+  // Create context value that will be provided to components
+  const themeContextValue = {
+    theme,
+    setTheme,
+    toggleTheme,
+    mode: darkMode ? 'dark' : 'light'
+  };
+
   return (
-    <ThemeProvider theme={muiTheme}>
-      <CssBaseline />
-      {children}
-    </ThemeProvider>
+    <AppThemeContext.Provider value={themeContextValue}>
+      <ThemeProvider theme={muiTheme}>
+        <CssBaseline />
+        {children}
+      </ThemeProvider>
+    </AppThemeContext.Provider>
   );
+};
+
+// Custom hook to use the theme context
+export const useAppTheme = () => {
+  const context = useContext(AppThemeContext);
+  if (context === undefined) {
+    throw new Error('useAppTheme must be used within a MuiThemeProvider');
+  }
+  return context;
 };
 
 export default MuiThemeProvider;
