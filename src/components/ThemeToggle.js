@@ -1,8 +1,11 @@
 import React from 'react';
-import { useTheme } from '../contexts/ThemeContext';
+import { useTheme } from '@mui/material/styles';
+import { useAppTheme } from '../contexts/MuiThemeProvider';
+import { IconButton } from '@mui/material';
 
 export default function ThemeToggle() {
-  const { theme, toggleTheme } = useTheme();
+  const muiTheme = useTheme();
+  const { theme, toggleTheme } = useAppTheme();
 
   return (
     <div className="flex items-center justify-between p-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 mb-4">

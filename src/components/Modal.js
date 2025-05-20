@@ -14,7 +14,8 @@ import { useTheme } from '@mui/material/styles';
  * @returns {React.ReactPortal|null} The modal portal or null if closed
  */
 const Modal = ({ isOpen, onClose, children, title, size = 'md' }) => {
-  const { darkMode } = useTheme();
+  const theme = useTheme();
+  const darkMode = theme.palette.mode === 'dark';
   const modalRef = useRef(null);
   const contentRef = useRef(null);
   
