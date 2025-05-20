@@ -176,7 +176,7 @@ async function setupTables(sqlite) {
   // Create activities table with a simplified schema to fix constraint issues
   try {
     const table_struct = `CREATE TABLE IF NOT EXISTS activities (
-          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
           type TEXT NOT NULL DEFAULT 'prayer',
           duration INTEGER DEFAULT 0,
           date TEXT,
@@ -199,7 +199,7 @@ async function setupTables(sqlite) {
       database: DB_NAME,
       statements: `
         CREATE TABLE IF NOT EXISTS activities (
-          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
           type TEXT DEFAULT 'prayer',
           duration INTEGER,
           date TEXT,
@@ -251,7 +251,7 @@ async function setupTables(sqlite) {
     database: DB_NAME,
     statements: `
       CREATE TABLE IF NOT EXISTS meetings (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL,
         days TEXT,
         time TEXT,
@@ -293,7 +293,7 @@ async function setupTables(sqlite) {
     database: DB_NAME,
     statements: `
       CREATE TABLE IF NOT EXISTS messages (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
         sender TEXT,
         sender_name TEXT,
         recipient TEXT,
@@ -327,7 +327,7 @@ async function setupTables(sqlite) {
     database: DB_NAME,
     statements: `
       CREATE TABLE IF NOT EXISTS sobriety_milestones (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
         user_id TEXT,
         milestone_type TEXT,
         days INTEGER,
@@ -351,7 +351,7 @@ async function setupTables(sqlite) {
     database: DB_NAME,
     statements: `
       CREATE TABLE IF NOT EXISTS spiritual_fitness (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
         user_id TEXT,
         score REAL,
         prayer_score REAL,
@@ -374,7 +374,7 @@ async function setupTables(sqlite) {
     database: DB_NAME,
     statements: `
       CREATE TABLE IF NOT EXISTS daily_inventory (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
         user_id TEXT,
         date TEXT,
         grateful_for TEXT,
@@ -398,7 +398,7 @@ async function setupTables(sqlite) {
     database: DB_NAME,
     statements: `
       CREATE TABLE IF NOT EXISTS preferences (
-        pref_id INTEGET PRIMARY KEY AUTOINCREMENT,
+        pref_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
         pref_value TEXT
       )
     `
