@@ -548,24 +548,22 @@ function App() {
   console.log('App.js - Before rendering, spiritualFitness value:', spiritualFitness);
   
   return (
-    <ThemeProvider>
-      <MuiThemeProvider>
-        <div className="app-container h-full flex flex-col bg-white dark:bg-gray-900 transition-colors duration-200">
-          <NavBar currentView={currentView} setCurrentView={setCurrentView} />
-          <div 
-            className="flex-grow" 
-            style={{ 
-              minHeight: 'calc(100vh - 60px)', // 60px is the header height
-              paddingBottom: '100px', // Significantly increased padding to ensure content is visible
-              paddingTop: '10px', // Space after the header
-              overflowY: 'visible' // Don't add scrollbar to this container
-            }}
-          >
-            {renderCurrentView()}
-          </div>
+    <MuiThemeProvider>
+      <div className="app-container h-full flex flex-col bg-white dark:bg-gray-900 transition-colors duration-200">
+        <NavBar currentView={currentView} setCurrentView={setCurrentView} />
+        <div 
+          className="flex-grow" 
+          style={{ 
+            minHeight: 'calc(100vh - 60px)', // 60px is the header height
+            paddingBottom: '100px', // Significantly increased padding to ensure content is visible
+            paddingTop: '10px', // Space after the header
+            overflowY: 'visible' // Don't add scrollbar to this container
+          }}
+        >
+          {renderCurrentView()}
         </div>
-      </MuiThemeProvider>
-    </ThemeProvider>
+      </div>
+    </MuiThemeProvider>
   );
 }
 

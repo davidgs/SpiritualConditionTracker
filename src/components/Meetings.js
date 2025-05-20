@@ -1,13 +1,15 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import { meetingOperations } from '../utils/database';
 import MeetingFormDialog from './MeetingFormDialog';
-import { ThemeContext } from '../contexts/ThemeContext';
+import { useTheme } from '@mui/material/styles';
+import { useAppTheme } from '../contexts/MuiThemeProvider';
 import { formatDay, formatTimeByPreference } from '../utils/dateUtils';
 
 export default function Meetings({ setCurrentView, meetings = [], onSave, user }) {
   // Get dark mode from theme context
-  const { theme } = useContext(ThemeContext);
-  const darkMode = theme === 'dark';
+  const muiTheme = useTheme();
+  const { theme } = useAppTheme();
+  const darkMode = muiTheme.palette.mode === 'dark';
   
   // Get user preferences
   const [use24HourFormat, setUse24HourFormat] = useState(false);

@@ -1,6 +1,7 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import SimpleMeetingSchedule from './SimpleMeetingSchedule';
-import { ThemeContext } from '../contexts/ThemeContext';
+import { useTheme } from '@mui/material/styles';
+import { useAppTheme } from '../contexts/MuiThemeProvider';
 import { 
   TextField, 
   InputAdornment, 

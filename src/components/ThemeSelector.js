@@ -1,10 +1,10 @@
 import React from 'react';
 import { useTheme as useMuiTheme } from '@mui/material/styles';
-import { useTheme } from '../contexts/ThemeContext';
+import { useAppTheme } from '../contexts/MuiThemeProvider';
 import { Select, MenuItem, FormControl, InputLabel } from '@mui/material';
 
 export default function ThemeSelector() {
-  const { theme, setTheme } = useTheme();
+  const { theme, setTheme } = useAppTheme();
   const muiTheme = useMuiTheme();
 
   // Handle theme change
