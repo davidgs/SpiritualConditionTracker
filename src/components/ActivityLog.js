@@ -128,9 +128,12 @@ export default function ActivityLog({ setCurrentView, onSave, onSaveMeeting, act
     const activityId = Date.now().toString();
     
     // Create new activity object with core fields - store the date string directly
+    // Ensure we have a valid type (critical for SQLite NOT NULL constraint)
+    console.log('Saving activity with type:', activityType);
+    
     const newActivity = {
       id: activityId,
-      type: activityType,
+      type: activityType || 'prayer', // Failsafe default if somehow null
       duration: parseInt(duration, 10),
       date: date, // Store as-is in YYYY-MM-DD format
       notes: notes.trim(),

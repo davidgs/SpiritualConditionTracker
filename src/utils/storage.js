@@ -15,6 +15,9 @@ export async function saveActivity(activity) {
     // Create a deep copy to avoid modifying the original
     const activityToSave = JSON.parse(JSON.stringify(activity));
     
+    // Add activity type validation logging
+    console.log('Activity type before processing:', activityToSave.type);
+    
     // CRITICAL: Apply multiple safeguards for the required type field
     if (!activityToSave.type || activityToSave.type === '') {
       console.warn('Activity missing type, setting to default: meeting');
@@ -88,24 +91,54 @@ export async function saveActivity(activity) {
             updatedAt: new Date().toISOString()
           };
           
-          // Build the SQL statement manually
-          const fields = Object.keys(enhancedActivity);
-          const placeholders = fields.map(() => '?').join(', ');
+          // Build SQL insert statement manually, with extra care for type field
+          const fields = [];
+          const values = [];
+          const placeholders = [];
           
-          // Make sure all field values are properly formatted for SQLite
-          const values = fields.map(f => {
-            // Special handling for the type field to absolutely ensure it's not null
-            if (f === 'type') {
-              return enhancedActivity[f] || 'prayer'; // Provide fallback value if somehow null
-            }
-            return enhancedActivity[f];
-          });
+          // Explicitly handle each field to avoid missing values
+          fields.push("id"); 
+          values.push(enhancedActivity.id);
+          placeholders.push("?");
+          
+          // Type field with special handling to guarantee NOT NULL constraint
+          fields.push("type"); 
+          // Triple-check the type field - this is critical for SQLite NOT NULL constraint
+          if (!enhancedActivity.type || enhancedActivity.type === '') {
+            console.warn('CRITICAL: Activity type is missing at SQL execution. Using fallback.');
+            values.push("prayer");  // Hardcoded fallback - better than a constraint violation
+          } else {
+            console.log('Using activity type value:', enhancedActivity.type);
+            values.push(enhancedActivity.type);
+          }
+          placeholders.push("?");
+          
+          // Add remaining fields
+          fields.push("duration"); 
+          values.push(enhancedActivity.duration || 0);
+          placeholders.push("?");
+          
+          fields.push("date"); 
+          values.push(enhancedActivity.date);
+          placeholders.push("?");
+          
+          fields.push("notes"); 
+          values.push(enhancedActivity.notes || "");
+          placeholders.push("?");
+          
+          fields.push("createdAt"); 
+          values.push(enhancedActivity.createdAt);
+          placeholders.push("?");
+          
+          fields.push("updatedAt"); 
+          values.push(enhancedActivity.updatedAt);
+          placeholders.push("?");
           
           // Log the actual SQL fields and values for debugging
           console.log('SQL fields:', JSON.stringify(fields));
           console.log('SQL values:', JSON.stringify(values));
           
-          const sql = `INSERT INTO activities (${fields.join(', ')}) VALUES (${placeholders})`;
+          const sql = `INSERT INTO activities (${fields.join(', ')}) VALUES (${placeholders.join(', ')})`;
           
           await sqlPlugin.execute({
             database: dbName,
