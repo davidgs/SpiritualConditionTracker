@@ -1,0 +1,23 @@
+⚡️  [log] - [ Dashboard.js ] Dashboard useEffect [scoreTimeframe] triggered with timeframe: 30
+⚡️  [warn] - [ Dashboard.js ] Database not initialized yet - skipping database operations
+⚡️  [log] - Light mode activated
+⚡️  [log] - [ App.js ] Initializing SQLite database for native app with Capacitor...
+⚡️  [log] - [ sqliteLoader.js ] Initializing SQLite database via Capacitor...
+⚡️  [log] - Capacitor platform detected: ios
+⚡️  [log] - Capacitor plugins available: ["CapacitorHttp","Console","WebView","CapacitorCookies","CapacitorSQLite"]
+⚡️  [log] - iOS environment detected - using iOS-specific initialization
+⚡️  [log] - Found SQLite plugin via standard access
+⚡️  [log] - SQLite plugin detection result: {"CapacitorSQLite":true,"SQLiteConnection":false,"platform":"ios"}
+⚡️  [error] - Error creating SQLiteConnection: {}
+⚡️  [error] - Error initializing Capacitor SQLite: {}
+⚡️  [error] - Error details: {
+  "message": "Failed to create SQLiteConnection: undefined is not a constructor (evaluating 'new c(s)')",
+  "name": "Error",
+  "stack": "@capacitor://localhost/337.bundle.js:2:10214\nf@capacitor://localhost/337.bundle.js:2:3505\n@capacitor://localhost/337.bundle.js:2:3275\nl@capacitor://localhost/337.bundle.js:2:8173\ni@capacitor://localhost/337.bundle.js:2:8377\n@capacitor://localhost/337.bundle.js:2:8436\nPromise@[native code]\n@capacitor://localhost/337.bundle.js:2:8327\nu@capacitor://localhost/bundle.js:102:370262\n@capacitor://localhost/bundle.js:102:370032\nOh@capacitor://localhost/bundle.js:102:374937\ni@capacitor://localhost/bundle.js:102:375143"
+}
+⚡️  [error] - [ App.js ] SQLite initialization error: {}
+⚡️  [error] - [ App.js ] Error details: {
+  "message": "Failed to initialize SQLite database: Failed to create SQLiteConnection: undefined is not a constructor (evaluating 'new c(s)')",
+  "name": "Error",
+  "stack": "@capacitor://localhost/337.bundle.js:2:11875\nf@capacitor://localhost/337.bundle.js:2:3505\n@capacitor://localhost/337.bundle.js:2:3275\nl@capacitor://localhost/337.bundle.js:2:8173\ni@capacitor://localhost/337.bundle.js:2:8377\n@capacitor://localhost/337.bundle.js:2:8436\nPromise@[native code]\n@capacitor://localhost/337.bundle.js:2:8327\nu@capacitor://localhost/bundle.js:102:370262\n@capacitor://localhost/bundle.js:102:370032\nOh@capacitor://localhost/bundle.js:102:374937\ni@capacitor://localhost/bundle.js:102:375143"
+}

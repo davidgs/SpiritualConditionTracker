@@ -1,143 +1,101 @@
 /**
- * SQLite Database Loader
- * This initializes SQLite via Capacitor for native mobile platforms (iOS/Android)
+ * SQLite database loader optimized for Capacitor
+ * Provides cross-platform SQLite access with special handling for iOS
  */
 
-// Initialize SQLite database
-function initSQLiteDatabase() {
-  console.log('[ sqliteLoader.js ] Initializing SQLite database via Capacitor...');
-  return initCapacitorSQLite();
-}
+// Default database name for consistency
+const DB_NAME = 'spiritualTracker.db';
 
-// Initialize SQLite with Capacitor
-async function initCapacitorSQLite() {
+/**
+ * Initialize SQLite database
+ * @returns {Promise<object>} Database connection object
+ */
+async function initSQLiteDatabase() {
+  console.log('[ sqliteLoader.js ] Initializing SQLite database via Capacitor...');
+
   try {
-    // For native iOS, we need to ensure proper plugin detection
+    // First, check if Capacitor is available
     if (!window.Capacitor) {
       throw new Error('Capacitor is not available in this environment');
     }
-    
-    // Detailed environment logging to diagnose iOS issues
+
+    // Detect platform information for specialized handling
     const platform = window.Capacitor.getPlatform?.() || 'unknown';
     console.log('Capacitor platform detected:', platform);
     console.log('Capacitor plugins available:', Object.keys(window.Capacitor.Plugins || {}));
     
-    // Check if we're on iOS - iOS requires special handling
+    // Special handling for iOS which has different plugin structure
     const isIOS = platform === 'ios';
     if (isIOS) {
-      console.log('iOS environment detected - using iOS-specific initialization');
-    }
-    
-    // On iOS, plugins might be in a different location or need explicit initialization
-    // Try multiple access patterns to find the plugin
-    let CapacitorSQLite = null;
-    let SQLiteConnection = null;
-    
-    // Approach 1: Standard plugin access
-    if (window.Capacitor?.Plugins?.CapacitorSQLite) {
-      console.log('Found SQLite plugin via standard access');
-      CapacitorSQLite = window.Capacitor.Plugins.CapacitorSQLite;
-      SQLiteConnection = window.Capacitor.Plugins.SQLiteConnection;
-    } 
-    // Approach 2: iOS-specific access (sometimes plugins are accessed differently)
-    else if (isIOS && window.CapacitorSQLite) {
-      console.log('Found SQLite plugin via iOS-specific global access');
-      CapacitorSQLite = window.CapacitorSQLite;
-      SQLiteConnection = window.SQLiteConnection;
-    }
-    // Approach 3: Try direct access without Plugins namespace
-    else if (window.Capacitor?.CapacitorSQLite) {
-      console.log('Found SQLite plugin via direct Capacitor access');
-      CapacitorSQLite = window.Capacitor.CapacitorSQLite;
-      SQLiteConnection = window.Capacitor.SQLiteConnection;
-    }
-    
-    console.log('SQLite plugin detection result:', {
-      CapacitorSQLite: !!CapacitorSQLite,
-      SQLiteConnection: !!SQLiteConnection,
-      platform
-    });
-    
-    if (!CapacitorSQLite) {
-      throw new Error('CapacitorSQLite plugin not available on this device - please ensure the plugin is properly installed');
-    }
-    
-    // Create connection and initialize default database - improved for iOS compatibility
-    let sqlite = null;
-    
-    try {
-      sqlite = new SQLiteConnection(CapacitorSQLite);
-      console.log('Successfully created SQLiteConnection instance');
-    } catch (connectionError) {
-      console.error('Error creating SQLiteConnection:', connectionError);
-      throw new Error(`Failed to create SQLiteConnection: ${connectionError.message}`);
+      console.log('iOS environment detected - using iOS-specific database setup');
     }
 
-    // Use consistent database name with clear options for iOS
-    const defaultDB = { 
-      database: 'spiritualTracker.db',
-      encrypted: false,
-      mode: 'no-encryption'
-    };
-    
-    console.log('Creating database connection with:', defaultDB);
-    
+    // Get the SQLite plugin
+    const sqlitePlugin = window.Capacitor?.Plugins?.CapacitorSQLite;
+    if (!sqlitePlugin) {
+      throw new Error('CapacitorSQLite plugin not available - ensure the plugin is properly installed');
+    }
+
+    console.log('Found CapacitorSQLite plugin:', !!sqlitePlugin);
+
+    // Step 1: Create connection
     try {
-      await sqlite.createConnection(defaultDB);
+      await sqlitePlugin.createConnection({
+        database: DB_NAME,
+        encrypted: false,
+        mode: 'no-encryption'
+      });
       console.log('Database connection created successfully');
-    } catch (connectionError) {
-      console.error('Error creating database connection:', connectionError);
-      throw new Error(`Failed to create database connection: ${connectionError.message}`);
+    } catch (error) {
+      console.error('Error creating database connection:', error);
+      throw new Error(`Database connection failed: ${error.message || JSON.stringify(error)}`);
     }
-    
+
+    // Step 2: Open the database
     try {
-      await sqlite.open({ database: defaultDB.database });
+      await sqlitePlugin.open({ database: DB_NAME });
       console.log('Database opened successfully');
-    } catch (openError) {
-      console.error('Error opening database:', openError);
-      throw new Error(`Failed to open database: ${openError.message}`);
+    } catch (error) {
+      console.error('Error opening database:', error);
+      throw new Error(`Database open failed: ${error.message || JSON.stringify(error)}`);
     }
-    
-    // Set up database schema
+
+    // Step 3: Create tables
     try {
-      await setupTables(sqlite, defaultDB.database);
+      await setupTables(sqlitePlugin);
       console.log('Database tables created/verified successfully');
-    } catch (tableError) {
-      console.error('Error setting up database tables:', tableError);
-      throw new Error(`Failed to set up database tables: ${tableError.message}`);
+    } catch (error) {
+      console.error('Error setting up database tables:', error);
+      throw new Error(`Table setup failed: ${error.message || JSON.stringify(error)}`);
     }
-    
-    // Create a global database object for convenient access
-    try {
-      setupGlobalDB(sqlite);
-      console.log('Global database reference created successfully');
-    } catch (globalDBError) {
-      console.error('Error setting up global database reference:', globalDBError);
-      throw new Error(`Failed to set up global database reference: ${globalDBError.message}`);
-    }
-    
-    console.log('Capacitor SQLite setup complete');
-    return sqlite;
+
+    // Step 4: Create global database interface
+    setupGlobalDB(sqlitePlugin);
+    console.log('Database setup complete, global db interface ready');
+
+    return sqlitePlugin;
   } catch (error) {
     console.error('Error initializing Capacitor SQLite:', error);
-    // Include detailed error info for better iOS debugging
-    console.error('Error details:', JSON.stringify({
+    console.error('Detailed error info:', JSON.stringify({
       message: error.message,
       name: error.name,
       stack: error.stack
     }, null, 2));
-    throw new Error('Failed to initialize SQLite database: ' + error.message);
+    
+    throw error;
   }
 }
 
-// Set up tables for SQLite
-async function setupTables(sqlite, dbName = 'spiritualTracker.db') {
-  try {
-    // Create users table
-    console.log('Creating users table in database:', dbName);
-    await sqlite.execute({
-      database: dbName,
-      statement: `CREATE TABLE IF NOT EXISTS users (
+/**
+ * Create database tables
+ * @param {Object} sqlite - SQLite plugin instance
+ */
+async function setupTables(sqlite) {
+  // Create users table
+  await sqlite.execute({
+    database: DB_NAME,
+    statement: `
+      CREATE TABLE IF NOT EXISTS users (
         id TEXT PRIMARY KEY,
         name TEXT,
         lastName TEXT,
@@ -152,105 +110,126 @@ async function setupTables(sqlite, dbName = 'spiritualTracker.db') {
         messagingKeys TEXT,
         createdAt TEXT,
         updatedAt TEXT
-      )`
-    });
-    
-    // Create activities table
-    console.log('Creating activities table...');
-    await sqlite.execute({
-      database: dbName,
-      statement: `CREATE TABLE IF NOT EXISTS activities (
+      )
+    `
+  });
+  console.log('Users table created');
+
+  // Create activities table
+  await sqlite.execute({
+    database: DB_NAME,
+    statement: `
+      CREATE TABLE IF NOT EXISTS activities (
         id TEXT PRIMARY KEY,
-        type TEXT,
+        type TEXT NOT NULL,
+        duration INTEGER,
         date TEXT,
         notes TEXT,
-        duration INTEGER,
-        userId TEXT,
-        metadata TEXT,
+        meeting TEXT,
         createdAt TEXT,
         updatedAt TEXT
-      )`
-    });
-    
-    // Create meetings table
-    console.log('Creating meetings table...');
-    await sqlite.execute({
-      database: dbName,
-      statement: `CREATE TABLE IF NOT EXISTS meetings (
+      )
+    `
+  });
+  console.log('Activities table created');
+
+  // Create meetings table
+  await sqlite.execute({
+    database: DB_NAME,
+    statement: `
+      CREATE TABLE IF NOT EXISTS meetings (
         id TEXT PRIMARY KEY,
-        name TEXT,
-        day INTEGER,
+        name TEXT NOT NULL,
+        days TEXT,
         time TEXT,
-        format TEXT,
-        notes TEXT,
+        schedule TEXT,
         address TEXT,
-        isHomeGroup INTEGER,
+        locationName TEXT,
+        online TEXT,
+        phoneNumber TEXT,
+        notes TEXT,
         latitude REAL,
         longitude REAL,
-        userId TEXT,
+        types TEXT,
         createdAt TEXT,
         updatedAt TEXT
-      )`
-    });
-    
-    // Create messages table
-    console.log('Creating messages table...');
-    await sqlite.execute({
-      database: dbName,
-      statement: `CREATE TABLE IF NOT EXISTS messages (
+      )
+    `
+  });
+  console.log('Meetings table created');
+
+  // Create messages table
+  await sqlite.execute({
+    database: DB_NAME,
+    statement: `
+      CREATE TABLE IF NOT EXISTS messages (
         id TEXT PRIMARY KEY,
-        senderId TEXT,
-        recipientId TEXT,
+        sender TEXT,
+        recipient TEXT,
         content TEXT,
+        encrypted INTEGER,
+        read INTEGER,
         timestamp TEXT,
-        isRead INTEGER,
-        createdAt TEXT
-      )`
-    });
-    
-    // Create preferences table
-    console.log('Creating preferences table...');
-    await sqlite.execute({
-      database: dbName,
-      statement: `CREATE TABLE IF NOT EXISTS preferences (
+        deleted INTEGER
+      )
+    `
+  });
+  console.log('Messages table created');
+
+  // Create preferences table for app settings
+  await sqlite.execute({
+    database: DB_NAME,
+    statement: `
+      CREATE TABLE IF NOT EXISTS preferences (
         key TEXT PRIMARY KEY,
         value TEXT
-      )`
-    });
-    
-    console.log('All tables created successfully');
-    return true;
-  } catch (error) {
-    console.error('Error creating tables:', error);
-    return false;
-  }
+      )
+    `
+  });
+  console.log('Preferences table created');
 }
 
-// Set up global DB object with convenient methods
+/**
+ * Set up global database object
+ * @param {Object} sqlite - SQLite plugin instance 
+ */
 function setupGlobalDB(sqlite) {
+  // Set the global initialization flag to indicate database is ready
+  window.dbInitialized = true;
+  
   window.db = {
-    // Database initialization
-    initDatabase: async function() {
-      return true;
-    },
-    
-    // Get all items from a collection
+    /**
+     * Get all items from a collection
+     * @param {string} collection - Collection name
+     * @returns {Promise<Array>} Collection items
+     */
     getAll: async function(collection) {
       try {
-        const queryResult = await sqlite.query({
-          database: dbName,
+        const result = await sqlite.query({
+          database: DB_NAME,
           statement: `SELECT * FROM ${collection}`
         });
         
-        const rows = queryResult.values || [];
+        const rows = result.values || [];
         
-        // Parse JSON fields as needed
+        // Parse JSON fields
         if (collection === 'users') {
           for (const row of rows) {
-            if (row.privacySettings) row.privacySettings = JSON.parse(row.privacySettings);
-            if (row.preferences) row.preferences = JSON.parse(row.preferences);
-            if (row.homeGroups) row.homeGroups = JSON.parse(row.homeGroups);
-            if (row.sponsees) row.sponsees = JSON.parse(row.sponsees);
+            if (row.privacySettings && typeof row.privacySettings === 'string') {
+              try { row.privacySettings = JSON.parse(row.privacySettings); } catch (e) {}
+            }
+            if (row.preferences && typeof row.preferences === 'string') {
+              try { row.preferences = JSON.parse(row.preferences); } catch (e) {}
+            }
+            if (row.homeGroups && typeof row.homeGroups === 'string') {
+              try { row.homeGroups = JSON.parse(row.homeGroups); } catch (e) {}
+            }
+            if (row.sponsees && typeof row.sponsees === 'string') {
+              try { row.sponsees = JSON.parse(row.sponsees); } catch (e) {}
+            }
+            if (row.messagingKeys && typeof row.messagingKeys === 'string') {
+              try { row.messagingKeys = JSON.parse(row.messagingKeys); } catch (e) {}
+            }
           }
         }
         
@@ -261,65 +240,87 @@ function setupGlobalDB(sqlite) {
       }
     },
     
-    // Get an item by ID
+    /**
+     * Get item by ID
+     * @param {string} collection - Collection name
+     * @param {string} id - Item ID
+     * @returns {Promise<Object|null>} Found item or null
+     */
     getById: async function(collection, id) {
       try {
-        const queryResult = await sqlite.query({
-          database: dbName,
+        const result = await sqlite.query({
+          database: DB_NAME,
           statement: `SELECT * FROM ${collection} WHERE id = ?`,
           values: [id]
         });
         
-        if (queryResult.values && queryResult.values.length > 0) {
-          const item = queryResult.values[0];
-          
-          // Parse JSON fields as needed
-          if (collection === 'users') {
-            if (item.privacySettings) item.privacySettings = JSON.parse(item.privacySettings);
-            if (item.preferences) item.preferences = JSON.parse(item.preferences);
-            if (item.homeGroups) item.homeGroups = JSON.parse(item.homeGroups);
-            if (item.sponsees) item.sponsees = JSON.parse(item.sponsees);
-          }
-          
-          return item;
+        if (!result.values || result.values.length === 0) {
+          return null;
         }
         
-        return null;
+        const item = result.values[0];
+        
+        // Parse JSON fields
+        if (collection === 'users') {
+          if (item.privacySettings && typeof item.privacySettings === 'string') {
+            try { item.privacySettings = JSON.parse(item.privacySettings); } catch (e) {}
+          }
+          if (item.preferences && typeof item.preferences === 'string') {
+            try { item.preferences = JSON.parse(item.preferences); } catch (e) {}
+          }
+          if (item.homeGroups && typeof item.homeGroups === 'string') {
+            try { item.homeGroups = JSON.parse(item.homeGroups); } catch (e) {}
+          }
+          if (item.sponsees && typeof item.sponsees === 'string') {
+            try { item.sponsees = JSON.parse(item.sponsees); } catch (e) {}
+          }
+          if (item.messagingKeys && typeof item.messagingKeys === 'string') {
+            try { item.messagingKeys = JSON.parse(item.messagingKeys); } catch (e) {}
+          }
+        }
+        
+        return item;
       } catch (error) {
-        console.error(`Error getting item from ${collection}:`, error);
+        console.error(`Error getting item from ${collection} by ID ${id}:`, error);
         return null;
       }
     },
     
-    // Add an item to a collection
+    /**
+     * Add item to collection
+     * @param {string} collection - Collection name
+     * @param {Object} item - Item to add
+     * @returns {Promise<Object>} Added item
+     */
     add: async function(collection, item) {
       try {
         // Ensure item has an ID
         if (!item.id) {
-          item.id = `${collection}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+          item.id = `${collection}_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
         }
         
         // Add timestamps
-        item.createdAt = new Date().toISOString();
+        if (!item.createdAt) {
+          item.createdAt = new Date().toISOString();
+        }
         item.updatedAt = new Date().toISOString();
         
-        // Prepare for SQLite - convert objects to JSON strings
-        const itemToSave = { ...item };
-        if (collection === 'users') {
-          if (itemToSave.privacySettings) itemToSave.privacySettings = JSON.stringify(itemToSave.privacySettings);
-          if (itemToSave.preferences) itemToSave.preferences = JSON.stringify(itemToSave.preferences);
-          if (itemToSave.homeGroups) itemToSave.homeGroups = JSON.stringify(itemToSave.homeGroups);
-          if (itemToSave.sponsees) itemToSave.sponsees = JSON.stringify(itemToSave.sponsees);
-        }
+        // Build query parts
+        const fields = Object.keys(item);
+        const placeholders = fields.map(() => '?').join(', ');
+        const values = fields.map(field => {
+          const value = item[field];
+          if (typeof value === 'object' && value !== null) {
+            return JSON.stringify(value);
+          }
+          return value;
+        });
         
-        // Build SQL
-        const columns = Object.keys(itemToSave);
-        const placeholders = columns.map(() => '?').join(', ');
-        const values = columns.map(key => itemToSave[key]);
-        
-        await sqlite.run({
-          database: dbName,
-          statement: `INSERT INTO ${collection} (${columns.join(', ')}) VALUES (${placeholders})`,
+        // Execute insert
+        const sql = `INSERT INTO ${collection} (${fields.join(', ')}) VALUES (${placeholders})`;
+        await sqlite.execute({
+          database: DB_NAME,
+          statement: sql,
           values: values
         });
         
@@ -330,149 +331,316 @@ function setupGlobalDB(sqlite) {
       }
     },
     
-    // Update an item in a collection
+    /**
+     * Update item in collection
+     * @param {string} collection - Collection name
+     * @param {string} id - Item ID
+     * @param {Object} updates - Updates to apply
+     * @returns {Promise<Object|null>} Updated item or null
+     */
     update: async function(collection, id, updates) {
       try {
-        // First get the current item
+        // Get current item
         const currentItem = await this.getById(collection, id);
         if (!currentItem) {
-          throw new Error(`Item with ID ${id} not found in ${collection}`);
+          console.error(`Cannot update non-existent item with ID ${id} in ${collection}`);
+          return null;
         }
         
         // Add updated timestamp
         updates.updatedAt = new Date().toISOString();
         
-        // Merge with current item
+        // Build updated item
         const updatedItem = { ...currentItem, ...updates };
         
-        // Prepare for SQLite - convert objects to JSON strings
-        const itemToSave = { ...updatedItem };
-        if (collection === 'users') {
-          if (itemToSave.privacySettings) itemToSave.privacySettings = JSON.stringify(itemToSave.privacySettings);
-          if (itemToSave.preferences) itemToSave.preferences = JSON.stringify(itemToSave.preferences);
-          if (itemToSave.homeGroups) itemToSave.homeGroups = JSON.stringify(itemToSave.homeGroups);
-          if (itemToSave.sponsees) itemToSave.sponsees = JSON.stringify(itemToSave.sponsees);
-        }
+        // Build query parts
+        const setClause = Object.keys(updates)
+          .map(field => `${field} = ?`)
+          .join(', ');
         
-        // Build SQL
-        const columns = Object.keys(itemToSave);
-        const setClause = columns.map(key => `${key} = ?`).join(', ');
-        const values = columns.map(key => itemToSave[key]);
+        const values = Object.keys(updates).map(field => {
+          const value = updates[field];
+          if (typeof value === 'object' && value !== null) {
+            return JSON.stringify(value);
+          }
+          return value;
+        });
         
-        // Add ID for WHERE clause
+        // Add ID to values
         values.push(id);
         
-        await sqlite.run({
-          database: dbName,
-          statement: `UPDATE ${collection} SET ${setClause} WHERE id = ?`,
+        // Execute update
+        const sql = `UPDATE ${collection} SET ${setClause} WHERE id = ?`;
+        await sqlite.execute({
+          database: DB_NAME,
+          statement: sql,
           values: values
         });
         
         return updatedItem;
       } catch (error) {
-        console.error(`Error updating item in ${collection}:`, error);
+        console.error(`Error updating item ${id} in ${collection}:`, error);
         throw error;
       }
     },
     
-    // Remove an item from a collection
+    /**
+     * Remove item from collection
+     * @param {string} collection - Collection name
+     * @param {string} id - Item ID
+     * @returns {Promise<boolean>} Success indicator
+     */
     remove: async function(collection, id) {
       try {
-        await sqlite.run({
-          database: dbName,
+        await sqlite.execute({
+          database: DB_NAME,
           statement: `DELETE FROM ${collection} WHERE id = ?`,
           values: [id]
         });
-        
         return true;
       } catch (error) {
-        console.error(`Error removing item from ${collection}:`, error);
-        throw error;
+        console.error(`Error removing item ${id} from ${collection}:`, error);
+        return false;
       }
     },
     
-    // Query items in a collection
-    query: async function(collection, predicate) {
+    /**
+     * Query collection with filters
+     * @param {string} collection - Collection name
+     * @param {Object} filters - Filter criteria
+     * @returns {Promise<Array>} Filtered items
+     */
+    query: async function(collection, filters) {
       try {
-        const items = await this.getAll(collection);
-        
-        if (typeof predicate === 'function') {
-          return items.filter(predicate);
-        }
-        
-        return items;
+        const allItems = await this.getAll(collection);
+        return allItems.filter(item => {
+          for (const [key, value] of Object.entries(filters)) {
+            if (item[key] !== value) {
+              return false;
+            }
+          }
+          return true;
+        });
       } catch (error) {
-        console.error(`Error querying items from ${collection}:`, error);
-        throw error;
+        console.error(`Error querying ${collection}:`, error);
+        return [];
       }
     },
     
-    // Calculate distance between points
-    calculateDistance: function(lat1, lon1, lat2, lon2) {
-      const R = 3958.8; // Radius of the Earth in miles
-      const dLat = (lat2 - lat1) * Math.PI / 180;
-      const dLon = (lon2 - lon1) * Math.PI / 180;
-      const a = 
-        Math.sin(dLat/2) * Math.sin(dLat/2) +
-        Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
-        Math.sin(dLon/2) * Math.sin(dLon/2);
-      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-      return R * c;
-    },
-    
-    // Get preference
-    getPreference: async function(key) {
+    /**
+     * Get preference value
+     * @param {string} key - Preference key
+     * @param {any} defaultValue - Default value if not found
+     * @returns {Promise<any>} Preference value
+     */
+    getPreference: async function(key, defaultValue = null) {
       try {
-        const queryResult = await sqlite.query({
-          database: dbName,
+        const result = await sqlite.query({
+          database: DB_NAME,
           statement: 'SELECT value FROM preferences WHERE key = ?',
           values: [key]
         });
         
-        if (queryResult.values && queryResult.values.length > 0) {
-          return queryResult.values[0].value;
+        if (!result.values || result.values.length === 0) {
+          return defaultValue;
         }
         
-        return null;
+        const value = result.values[0].value;
+        
+        // Try to parse as JSON if it looks like JSON
+        if (value && (value.startsWith('{') || value.startsWith('[') || 
+            value === 'true' || value === 'false' || !isNaN(value))) {
+          try {
+            return JSON.parse(value);
+          } catch (e) {
+            // Not valid JSON, return as is
+            return value;
+          }
+        }
+        
+        return value;
       } catch (error) {
         console.error(`Error getting preference ${key}:`, error);
-        return null;
+        return defaultValue;
       }
     },
     
-    // Set preference
+    /**
+     * Set preference value
+     * @param {string} key - Preference key
+     * @param {any} value - Value to set
+     * @returns {Promise<boolean>} Success indicator
+     */
     setPreference: async function(key, value) {
       try {
-        // Check if preference exists
-        const existingPref = await this.getPreference(key);
+        // Convert non-string values to JSON
+        let storedValue = value;
+        if (typeof value !== 'string' && value !== null) {
+          storedValue = JSON.stringify(value);
+        }
         
-        if (existingPref !== null) {
-          // Update existing preference
-          await sqlite.run({
-            database: dbName,
-            statement: 'UPDATE preferences SET value = ? WHERE key = ?',
-            values: [value, key]
+        // Check if preference exists
+        const existing = await this.getPreference(key, undefined);
+        
+        if (existing === undefined) {
+          // Insert new preference
+          await sqlite.execute({
+            database: DB_NAME,
+            statement: 'INSERT INTO preferences (key, value) VALUES (?, ?)',
+            values: [key, storedValue]
           });
         } else {
-          // Add new preference
-          await sqlite.run({
-            database: dbName,
-            statement: 'INSERT INTO preferences (key, value) VALUES (?, ?)',
-            values: [key, value]
+          // Update existing preference
+          await sqlite.execute({
+            database: DB_NAME,
+            statement: 'UPDATE preferences SET value = ? WHERE key = ?',
+            values: [storedValue, key]
           });
         }
         
-        return { key, value };
+        return true;
       } catch (error) {
         console.error(`Error setting preference ${key}:`, error);
-        throw error;
+        return false;
+      }
+    },
+    
+    /**
+     * Calculate sobriety days based on sobriety date
+     * @param {string} sobrietyDate - ISO date string
+     * @returns {number} Days sober
+     */
+    calculateSobrietyDays: function(sobrietyDate) {
+      if (!sobrietyDate) return 0;
+      
+      const now = new Date();
+      const sobrietyDateObj = new Date(sobrietyDate);
+      
+      // Calculate difference in milliseconds
+      const diffMs = now - sobrietyDateObj;
+      
+      // Convert to days and round down
+      return Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    },
+    
+    /**
+     * Calculate sobriety years with decimal precision
+     * @param {string} sobrietyDate - ISO date string
+     * @param {number} decimalPlaces - Decimal places for result
+     * @returns {number} Years sober
+     */
+    calculateSobrietyYears: function(sobrietyDate, decimalPlaces = 2) {
+      if (!sobrietyDate) return 0;
+      
+      const days = this.calculateSobrietyDays(sobrietyDate);
+      const years = days / 365.25; // Account for leap years
+      
+      return parseFloat(years.toFixed(decimalPlaces));
+    },
+    
+    /**
+     * Calculate spiritual fitness score based on recent activities
+     * @param {Array} activities - Activity data
+     * @returns {number} Fitness score (0-100)
+     */
+    calculateSpiritualFitness: function(activities) {
+      if (!activities || activities.length === 0) {
+        return 5; // Default minimum score
+      }
+      
+      // Define time period (30 days by default)
+      const now = new Date();
+      const thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(now.getDate() - 30);
+      
+      // Filter for recent activities
+      const recentActivities = activities.filter(activity => {
+        if (!activity.date) return false;
+        const activityDate = new Date(activity.date);
+        return activityDate >= thirtyDaysAgo && activityDate <= now;
+      });
+      
+      if (recentActivities.length === 0) {
+        return 5; // Default minimum score if no recent activities
+      }
+      
+      // Activity type weights
+      const typeWeights = {
+        'prayer': 5,
+        'meditation': 5,
+        'meeting': 10,
+        'reading': 3,
+        'call': 3,
+        'service': 15,
+        'stepwork': 12,
+        'sponsorship': 10,
+        'other': 2
+      };
+      
+      // Calculate score based on activity types and frequency
+      let totalScore = 5; // Start with base score
+      const typeCounts = {};
+      
+      // Count activities by type
+      recentActivities.forEach(activity => {
+        const type = activity.type || 'other';
+        typeCounts[type] = (typeCounts[type] || 0) + 1;
+        totalScore += typeWeights[type] || 2;
+      });
+      
+      // Bonus for consistency (multiple activities of same type)
+      let consistencyBonus = 0;
+      Object.entries(typeCounts).forEach(([type, count]) => {
+        if (count >= 5) consistencyBonus += 10;
+        else if (count >= 3) consistencyBonus += 5;
+      });
+      
+      // Bonus for variety (different types of activities)
+      const varietyBonus = Object.keys(typeCounts).length * 5;
+      
+      // Calculate final score (cap at 100)
+      const finalScore = Math.min(100, totalScore + consistencyBonus + varietyBonus);
+      
+      return finalScore;
+    },
+    
+    /**
+     * Calculate spiritual fitness with custom timeframe
+     * @param {number} timeframe - Days to include
+     * @returns {Promise<number>} Fitness score
+     */
+    calculateSpiritualFitnessWithTimeframe: async function(timeframe = 30) {
+      try {
+        const activities = await this.getAll('activities');
+        if (!activities || activities.length === 0) {
+          return 5; // Default minimum score
+        }
+        
+        // Define custom time period
+        const now = new Date();
+        const startDate = new Date();
+        startDate.setDate(now.getDate() - timeframe);
+        
+        // Filter for activities in timeframe
+        const filteredActivities = activities.filter(activity => {
+          if (!activity.date) return false;
+          const activityDate = new Date(activity.date);
+          return activityDate >= startDate && activityDate <= now;
+        });
+        
+        if (filteredActivities.length === 0) {
+          return 5; // Default minimum score if no matching activities
+        }
+        
+        // Use same scoring logic as default calculation
+        return this.calculateSpiritualFitness(filteredActivities);
+      } catch (error) {
+        console.error('Error calculating spiritual fitness with timeframe:', error);
+        return 5; // Default minimum score on error
       }
     }
   };
 }
 
-// Make the initialization function available globally for reinitialization
-window.initSQLiteDatabase = initSQLiteDatabase;
-
-// Export initialization function
+// Export default function
 export default initSQLiteDatabase;
