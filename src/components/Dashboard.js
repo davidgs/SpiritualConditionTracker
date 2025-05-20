@@ -67,9 +67,20 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
   useEffect(() => {
     console.log('[ Dashboard.js ] Dashboard useEffect [scoreTimeframe] triggered with timeframe:', scoreTimeframe);
     
-    // Save the selected timeframe to SQLite preferences
-    if (window.db?.setPreference && scoreTimeframe) {
-      window.db.setPreference('fitnessTimeframe', scoreTimeframe.toString());
+    // Check if window.db exists and is fully initialized before attempting to use it
+    if (!window.db || !window.dbInitialized) {
+      console.warn('[ Dashboard.js ] Database not initialized yet - skipping database operations');
+      return; // Skip database operations until initialization is complete
+    }
+    
+    // Save the selected timeframe to SQLite preferences - only if database is ready
+    try {
+      if (window.db?.setPreference && scoreTimeframe) {
+        window.db.setPreference('fitnessTimeframe', scoreTimeframe.toString())
+          .catch(err => console.error('[ Dashboard.js ] Error saving timeframe preference:', err));
+      }
+    } catch (err) {
+      console.error('[ Dashboard.js ] Error accessing database for preferences:', err);
     }
     
     async function calculateScore() {
@@ -82,16 +93,18 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
           setCurrentScore(score);
         } else {
           console.warn('[ Dashboard.js ] SQLite calculation method not available');
-          setCurrentScore(5); // Default score until SQLite is initialized
+          // Use the prop value directly instead of hardcoded 5
+          setCurrentScore(spiritualFitness || 5); 
         }
       } catch (error) {
         console.error('[ Dashboard.js ] Error calculating spiritual fitness:', error);
-        setCurrentScore(5); // Default score if calculation fails
+        // Use the prop value directly instead of hardcoded 5
+        setCurrentScore(spiritualFitness || 5);
       }
     }
     
     calculateScore();
-  }, [scoreTimeframe, activities]);
+  }, [scoreTimeframe, activities, spiritualFitness]);
   
   // Note: We've removed the fallback calculation function since
   // we're now using SQLite via Capacitor exclusively for data persistence

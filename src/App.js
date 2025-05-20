@@ -18,6 +18,9 @@ function App() {
   const [activities, setActivities] = useState([]);
   const [meetings, setMeetings] = useState([]);
   const [spiritualFitness, setSpiritualFitness] = useState(0);
+  const [dbInitialized, setDbInitialized] = useState(false);
+  const [dbInitError, setDbInitError] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   // Load data when component mounts
   useEffect(() => {
@@ -25,15 +28,17 @@ function App() {
     initDatabaseAndLoadData();
   }, []);
 
-  // Calculate spiritual fitness score when activities change
+  // Calculate spiritual fitness score when activities change AND database is initialized
   useEffect(() => {
-    if (activities.length > 0) {
+    if (dbInitialized && activities.length > 0) {
       calculateSpiritualFitness();
     }
-  }, [activities]);
+  }, [activities, dbInitialized]);
   
   // Initialize the database and load data
   async function initDatabaseAndLoadData() {
+    setIsLoading(true);
+    
     try {
       // Import the database operations - SQLite for native iOS/Android via Capacitor
       const initSQLiteDatabase = (await import('./sqliteLoader')).default;
@@ -42,8 +47,21 @@ function App() {
       
       // Initialize the SQLite database with detailed error reporting
       try {
+        // Only proceed with data loading after SQLite is fully initialized
         await initSQLiteDatabase();
         console.log("[ App.js ] SQLite database initialized successfully");
+        
+        // Mark database as initialized to prevent premature data access
+        setDbInitialized(true);
+        
+        // Share initialization status globally so other components can check it
+        window.dbInitialized = true;
+        
+        // Now load the data
+        await loadData();
+        
+        // Calculate spiritual fitness after database is ready and data is loaded
+        await calculateSpiritualFitness();
       } catch (error) {
         // Detailed error logging for iOS-specific diagnosis
         console.error("[ App.js ] SQLite initialization error:", error);
@@ -61,26 +79,26 @@ function App() {
           code: error.code
         }, null, 2));
         
+        setDbInitError("Failed to initialize database. Please restart the app.");
         throw new Error("Failed to initialize SQLite database. The app requires native SQLite support.");
       }
-      
-      // Calculate spiritual fitness after database is ready
-      await calculateSpiritualFitness();
-      
-      // Now load the data
-      await loadData();
     } catch (error) {
       console.error("[ App.js ] Database initialization error:", error);
-      alert("Database initialization failed. Please make sure the app has proper permissions and try restarting.");
+      setDbInitError("Database initialization failed. Please make sure the app has proper permissions and try restarting.");
+    } finally {
+      setIsLoading(false);
     }
   }
 
   // Load data from the database
   async function loadData() {
-    if (!window.db) {
-      console.error('Database not initialized');
+    // Only proceed if database is properly initialized
+    if (!dbInitialized || !window.db) {
+      console.error('[ App.js ] Database not initialized or not ready for data operations');
       return;
     }
+    
+    console.log('[ App.js ] Loading data from initialized database');
 
     try {
       // Get user data - using async version
@@ -211,14 +229,16 @@ function App() {
   // Calculate spiritual fitness score using the database function
   async function calculateSpiritualFitness() {
     // Use global constant for default score if no calculation is possible
-    console.log('Starting calculateSpiritualFitness with default:', window.DEFAULT_SPIRITUAL_FITNESS_SCORE);
+    console.log('[ App.js ] Starting calculateSpiritualFitness with default:', DEFAULT_SPIRITUAL_FITNESS_SCORE);
     
-    // Check if database is initialized
-    if (!window.db) {
-      console.error('Database not initialized');
+    // Check if database is properly initialized
+    if (!dbInitialized || !window.db) {
+      console.error('[ App.js ] Database not initialized or not ready for fitness calculation');
       setSpiritualFitness(DEFAULT_SPIRITUAL_FITNESS_SCORE);
       return DEFAULT_SPIRITUAL_FITNESS_SCORE;
     }
+    
+    console.log('[ App.js ] Calculating spiritual fitness with initialized database');
     
     // Log the activities we have
     console.log('Calculating spiritual fitness with activities:', activities);
