@@ -91,54 +91,8 @@ async function initSQLiteDatabase() {
  * @param {Object} sqlite - SQLite plugin instance
  */
 async function setupTables(sqlite) {
-  // First, try to drop the preferences table if it exists
-  // This is a safe migration approach since we're in development
-  try {
-    await sqlite.execute({
-      database: DB_NAME,
-      statements: `DROP TABLE IF EXISTS preferences`
-    });
-    console.log('[ sqliteLoader.js ] Dropped existing preferences table for fresh schema');
-  } catch (error) {
-    console.log('[ sqliteLoader.js ] No preferences table to drop or error dropping:', error);
-  }
-  
-  // Always re-create the activities table to fix potential schema issues
-  console.log('[ sqliteLoader.js ] Forcing activities table recreation to ensure schema consistency');
-  
-  try {
-    // First, try to backup any existing activities if the table exists
-    let existingActivities = [];
-    try {
-      const activitiesResult = await sqlite.query({
-        database: DB_NAME,
-        statement: `SELECT * FROM activities`,
-        values: []
-      });
-      
-      if (activitiesResult && activitiesResult.values) {
-        existingActivities = activitiesResult.values;
-        console.log(`[ sqliteLoader.js ] Backing up ${existingActivities.length} existing activities before recreation`);
-      }
-    } catch (error) {
-      // Table might not exist yet, which is fine
-      console.log('[ sqliteLoader.js ] No existing activities table to backup:', error);
-    }
-    
-    // Always drop the activities table to ensure a clean schema
-    await sqlite.execute({
-      database: DB_NAME,
-      statements: `DROP TABLE IF EXISTS activities`
-    });
-    console.log('[ sqliteLoader.js ] Dropped activities table for fresh creation');
-    
-    // Store the backup in a more scoped way
-    window.existingActivities = existingActivities;
-  } catch (error) {
-    console.log('[ sqliteLoader.js ] Error during activities table recreation:', error);
-    // Initialize an empty array if backup fails
-    window.existingActivities = [];
-  }
+  // Create tables only if they don't exist
+  console.log('[ sqliteLoader.js ] Setting up database tables (if not already created)');
   
   // Create users table with expanded profile settings
   await sqlite.execute({
@@ -472,10 +426,26 @@ function setupGlobalDB(sqlite) {
      */
     getById: async function(collection, id) {
       try {
+        // Convert string ID to number if needed (for compatibility with AUTOINCREMENT)
+        let numericId = id;
+        if (typeof id === 'string') {
+          // If the ID starts with a prefix like 'user_', extract the numeric part
+          if (id.includes('_')) {
+            const parts = id.split('_');
+            const potentialNumeric = parts[parts.length - 1];
+            if (!isNaN(potentialNumeric)) {
+              numericId = parseInt(potentialNumeric, 10);
+            }
+          } else if (!isNaN(id)) {
+            // If it's just a numeric string, convert directly
+            numericId = parseInt(id, 10);
+          }
+        }
+        
         const result = await sqlite.query({
           database: DB_NAME,
           statement: `SELECT * FROM ${collection} WHERE id = ?`,
-          values: [id]
+          values: [numericId]
         });
         
         if (!result.values || result.values.length === 0) {
@@ -606,10 +576,30 @@ function setupGlobalDB(sqlite) {
      */
     update: async function(collection, id, updates) {
       try {
+        console.log(`[ sqliteLoader.js ] Updating ${collection} item with ID:`, id);
+        
+        // Convert string ID to number if it's a numeric string (for compatibility with AUTOINCREMENT)
+        let numericId = id;
+        if (typeof id === 'string') {
+          // If the ID starts with a prefix like 'user_', extract the numeric part
+          if (id.includes('_')) {
+            const parts = id.split('_');
+            const potentialNumeric = parts[parts.length - 1];
+            if (!isNaN(potentialNumeric)) {
+              numericId = parseInt(potentialNumeric, 10);
+              console.log(`[ sqliteLoader.js ] Converted string ID ${id} to numeric ID ${numericId}`);
+            }
+          } else if (!isNaN(id)) {
+            // If it's just a numeric string, convert directly
+            numericId = parseInt(id, 10);
+            console.log(`[ sqliteLoader.js ] Converted numeric string ID ${id} to number ${numericId}`);
+          }
+        }
+        
         // Get current item
-        const currentItem = await this.getById(collection, id);
+        const currentItem = await this.getById(collection, numericId);
         if (!currentItem) {
-          console.error(`[ sqliteLoader.js ] Cannot update non-existent item with ID ${id} in ${collection}`);
+          console.error(`[ sqliteLoader.js ] Cannot update non-existent item with ID ${numericId} in ${collection}`);
           return null;
         }
         
@@ -633,7 +623,7 @@ function setupGlobalDB(sqlite) {
         });
         
         // Add ID to values
-        values.push(id);
+        values.push(numericId);
         
         // Execute update
         const sql = `UPDATE ${collection} SET ${setClause} WHERE id = ?`;
