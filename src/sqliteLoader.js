@@ -12,11 +12,54 @@ function initSQLiteDatabase() {
 // Initialize SQLite with Capacitor
 async function initCapacitorSQLite() {
   try {
-    // Get the Capacitor SQLite plugin
-    const { CapacitorSQLite, SQLiteConnection } = window.Capacitor.Plugins;
+    // For native iOS, we need to ensure proper plugin detection
+    if (!window.Capacitor) {
+      throw new Error('Capacitor is not available in this environment');
+    }
+    
+    // Detailed environment logging to diagnose iOS issues
+    const platform = window.Capacitor.getPlatform?.() || 'unknown';
+    console.log('Capacitor platform detected:', platform);
+    console.log('Capacitor plugins available:', Object.keys(window.Capacitor.Plugins || {}));
+    
+    // Check if we're on iOS - iOS requires special handling
+    const isIOS = platform === 'ios';
+    if (isIOS) {
+      console.log('iOS environment detected - using iOS-specific initialization');
+    }
+    
+    // On iOS, plugins might be in a different location or need explicit initialization
+    // Try multiple access patterns to find the plugin
+    let CapacitorSQLite = null;
+    let SQLiteConnection = null;
+    
+    // Approach 1: Standard plugin access
+    if (window.Capacitor?.Plugins?.CapacitorSQLite) {
+      console.log('Found SQLite plugin via standard access');
+      CapacitorSQLite = window.Capacitor.Plugins.CapacitorSQLite;
+      SQLiteConnection = window.Capacitor.Plugins.SQLiteConnection;
+    } 
+    // Approach 2: iOS-specific access (sometimes plugins are accessed differently)
+    else if (isIOS && window.CapacitorSQLite) {
+      console.log('Found SQLite plugin via iOS-specific global access');
+      CapacitorSQLite = window.CapacitorSQLite;
+      SQLiteConnection = window.SQLiteConnection;
+    }
+    // Approach 3: Try direct access without Plugins namespace
+    else if (window.Capacitor?.CapacitorSQLite) {
+      console.log('Found SQLite plugin via direct Capacitor access');
+      CapacitorSQLite = window.Capacitor.CapacitorSQLite;
+      SQLiteConnection = window.Capacitor.SQLiteConnection;
+    }
+    
+    console.log('SQLite plugin detection result:', {
+      CapacitorSQLite: !!CapacitorSQLite,
+      SQLiteConnection: !!SQLiteConnection,
+      platform
+    });
     
     if (!CapacitorSQLite) {
-      throw new Error('CapacitorSQLite plugin not available');
+      throw new Error('CapacitorSQLite plugin not available on this device - please ensure the plugin is properly installed');
     }
     
     // Create connection and initialize default database

@@ -40,19 +40,38 @@ function App() {
       
       console.log("[ App.js ] Initializing SQLite database for native app with Capacitor...");
       
-      // Initialize the SQLite database
+      // Initialize the SQLite database with detailed error reporting
       try {
         await initSQLiteDatabase();
         console.log("[ App.js ] SQLite database initialized successfully");
       } catch (error) {
+        // Detailed error logging for iOS-specific diagnosis
         console.error("[ App.js ] SQLite initialization error:", error);
+        
+        // Check for common iOS-specific issues
+        if (error.message && error.message.includes('plugin not available')) {
+          console.error("[ App.js ] Capacitor SQLite plugin appears to be missing or not properly installed");
+        }
+        
+        // Log error details to help with debugging
+        console.error("[ App.js ] Error details:", JSON.stringify({
+          message: error.message,
+          name: error.name,
+          stack: error.stack,
+          code: error.code
+        }, null, 2));
+        
         throw new Error("Failed to initialize SQLite database. The app requires native SQLite support.");
       }
+      
+      // Calculate spiritual fitness after database is ready
+      await calculateSpiritualFitness();
       
       // Now load the data
       await loadData();
     } catch (error) {
       console.error("[ App.js ] Database initialization error:", error);
+      alert("Database initialization failed. Please make sure the app has proper permissions and try restarting.");
     }
   }
 
