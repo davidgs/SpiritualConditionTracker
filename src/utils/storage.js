@@ -71,42 +71,30 @@ export async function saveActivity(activity) {
           const sqlPlugin = window.Capacitor.Plugins.CapacitorSQLite;
           const dbName = 'spiritualTracker.db';
           
-          // Create an enhanced activity model that matches our expanded schema
+          // Create an enhanced activity model that matches our simplified schema
+          // Notice we're omitting the 'id' field since it's now AUTOINCREMENT
           const enhancedActivity = {
-            id: activityToSave.id,
             type: activityToSave.type, // Guaranteed to be set above
             date: activityToSave.date,
             duration: activityToSave.duration || 0,
             notes: activityToSave.notes || '',
-            meeting: activityToSave.meeting || '',
-            meetingName: activityToSave.meetingName || '',
-            wasChair: activityToSave.wasChair ? 1 : 0,
-            wasShare: activityToSave.wasShare ? 1 : 0,
-            wasSpeaker: activityToSave.wasSpeaker ? 1 : 0,
-            literatureTitle: activityToSave.literatureTitle || '',
-            stepNumber: activityToSave.stepNumber || null,
-            personCalled: activityToSave.personCalled || '',
-            serviceType: activityToSave.serviceType || '',
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString()
           };
           
-          // Try a completely different approach with a hardcoded SQL statement
-          // This eliminates potential issues with parameter binding
+          // Use a new approach for the AUTOINCREMENT schema
           
-          // Ensure we have non-null values for required fields
+          // Ensure we have non-null values for required fields 
           const safeType = enhancedActivity.type || 'prayer';
-          const safeId = enhancedActivity.id || `activity_${Date.now()}`;
           const safeDuration = enhancedActivity.duration || 0;
           const safeDate = enhancedActivity.date || new Date().toISOString();
           const safeNotes = enhancedActivity.notes || '';
           const safeCreated = enhancedActivity.createdAt || new Date().toISOString();
           const safeUpdated = enhancedActivity.updatedAt || new Date().toISOString();
           
-          // Create a simple array of values in the correct order
+          // Create a simple array of values in the correct order - omit ID for AUTOINCREMENT
           const values = [
-            safeId,            // id
-            safeType,          // type (critical field with NOT NULL constraint)
+            safeType,          // type
             safeDuration,      // duration
             safeDate,          // date
             safeNotes,         // notes
@@ -115,14 +103,14 @@ export async function saveActivity(activity) {
           ];
           
           // Log the final values for debugging
-          console.log('SQL fields:', JSON.stringify(["id", "type", "duration", "date", "notes", "createdAt", "updatedAt"]));
+          console.log('SQL fields:', JSON.stringify(["type", "duration", "date", "notes", "createdAt", "updatedAt"]));
           console.log('SQL values:', JSON.stringify(values));
           
-          // Use a simple prepared statement without dynamic field names
+          // Use a simple prepared statement without the ID field (AUTOINCREMENT handles it)
           const sql = `
             INSERT INTO activities 
-            (id, type, duration, date, notes, createdAt, updatedAt) 
-            VALUES (?, ?, ?, ?, ?, ?, ?)
+            (type, duration, date, notes, createdAt, updatedAt) 
+            VALUES (?, ?, ?, ?, ?, ?)
           `;
           
           try {
@@ -136,10 +124,10 @@ export async function saveActivity(activity) {
             console.error('SQL execution error with full details:', sqlError);
             
             // Last resort: Try an even more explicit approach with direct value insertion
+            // Note we omit ID field since it's AUTOINCREMENT
             const directSql = `
-              INSERT INTO activities (id, type, duration, date, notes, createdAt, updatedAt)
+              INSERT INTO activities (type, duration, date, notes, createdAt, updatedAt)
               VALUES (
-                '${safeId}',
                 'prayer',
                 ${safeDuration},
                 '${safeDate}',
