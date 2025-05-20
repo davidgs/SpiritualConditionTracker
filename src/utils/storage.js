@@ -12,31 +12,96 @@ export async function saveActivity(activity) {
   try {
     console.log('Saving activity:', activity);
     
-    // Ensure required fields are present
-    if (!activity.type) {
-      activity.type = 'other'; // Default type is 'other'
+    // Create a deep copy to avoid modifying the original
+    const activityToSave = JSON.parse(JSON.stringify(activity));
+    
+    // CRITICAL: Apply multiple safeguards for the required type field
+    if (!activityToSave.type || activityToSave.type === '') {
+      console.warn('Activity missing type, setting to default: meeting');
+      activityToSave.type = 'meeting';
+    }
+    
+    // Double check the type field again (belt and suspenders approach)
+    if (typeof activityToSave.type !== 'string' || activityToSave.type.trim() === '') {
+      console.warn('Activity type is invalid or empty after first check, enforcing default');
+      activityToSave.type = 'meeting';
     }
     
     // Add timestamp if missing
-    if (!activity.date) {
-      activity.date = new Date().toISOString();
+    if (!activityToSave.date) {
+      activityToSave.date = new Date().toISOString();
     }
+    
+    // Add ID if missing
+    if (!activityToSave.id) {
+      activityToSave.id = `activity_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+    }
+    
+    console.log('Processed activity ready to save:', {
+      id: activityToSave.id,
+      type: activityToSave.type,
+      date: activityToSave.date
+    });
     
     // Check for database initialization
     if (!window.dbInitialized || !window.db) {
       console.warn('Database not initialized yet - using localStorage fallback');
-      return saveActivityToLocalStorage(activity);
+      return saveActivityToLocalStorage(activityToSave);
     }
     
     try {
-      // Use the SQLite database
-      const result = await window.db.add('activities', activity);
-      console.log('Activity saved to SQLite:', result);
-      return result;
+      // Preferably use the direct database API to bypass middleware
+      if (window.db.add) {
+        // Use the SQLite database
+        const result = await window.db.add('activities', activityToSave);
+        console.log('Activity saved to SQLite:', result);
+        return result;
+      } else {
+        throw new Error('Database add method not available');
+      }
     } catch (sqliteError) {
       console.error('Error saving activity to SQLite:', sqliteError);
-      // Fallback to localStorage
-      return saveActivityToLocalStorage(activity);
+      
+      // If we have direct access to Capacitor SQLite plugin, try a more direct approach
+      if (window.Capacitor?.Plugins?.CapacitorSQLite) {
+        try {
+          const sqlPlugin = window.Capacitor.Plugins.CapacitorSQLite;
+          const dbName = 'spiritualTracker.db';
+          
+          // Make a simpler insert with fewer fields to reduce error chance
+          const minimalActivity = {
+            id: activityToSave.id,
+            type: activityToSave.type, // Guaranteed to be set above
+            date: activityToSave.date,
+            duration: activityToSave.duration || 0,
+            notes: activityToSave.notes || '',
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString()
+          };
+          
+          // Build the SQL statement manually
+          const fields = Object.keys(minimalActivity);
+          const placeholders = fields.map(() => '?').join(', ');
+          const values = fields.map(f => minimalActivity[f]);
+          
+          const sql = `INSERT INTO activities (${fields.join(', ')}) VALUES (${placeholders})`;
+          
+          await sqlPlugin.execute({
+            database: dbName,
+            statements: sql,
+            values: values
+          });
+          
+          console.log('Activity saved via direct SQLite execute');
+          return minimalActivity;
+        } catch (directSqlError) {
+          console.error('Direct SQL insert also failed:', directSqlError);
+          // Fall through to localStorage
+        }
+      }
+      
+      // Fallback to localStorage as last resort
+      return saveActivityToLocalStorage(activityToSave);
     }
   } catch (error) {
     console.error('Error saving activity:', error);
