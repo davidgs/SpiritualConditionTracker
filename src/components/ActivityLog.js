@@ -201,6 +201,20 @@ export default function ActivityLog({ setCurrentView, onSave, onSaveMeeting, act
     
     console.log("[ ActivityLog.js ] Saving activity:", newActivity);
     
+    // Debug: Log the final activity object before saving
+    console.log('Final activity object before saving:', {
+      id: newActivity.id,
+      type: newActivity.type,
+      duration: newActivity.duration,
+      date: newActivity.date
+    });
+    
+    // Final safeguard to ensure type is set
+    if (!newActivity.type || newActivity.type === '') {
+      console.warn('Critical: Type field missing just before save. Setting fallback value.');
+      newActivity.type = 'prayer';
+    }
+    
     // Save the activity
     onSave(newActivity);
     
