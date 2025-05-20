@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Paper, 
   Typography, 
@@ -11,14 +11,14 @@ import {
   Card,
   CardContent 
 } from '@mui/material';
-import { ThemeContext } from '../contexts/ThemeContext';
+import { useTheme } from '@mui/material/styles';
 import SponsorFormDialog from './SponsorFormDialog';
 import SponseeFormDialog from './SponseeFormDialog';
 import { formatDateForDisplay } from '../utils/dateUtils';
 
 export default function SponsorSponsee({ user, onUpdate }) {
-  const { theme } = useContext(ThemeContext);
-  const darkMode = theme === 'dark';
+  const theme = useTheme();
+  const darkMode = theme.palette.mode === 'dark';
   
   // State for sponsor and sponsees
   const [sponsor, setSponsor] = useState(null);

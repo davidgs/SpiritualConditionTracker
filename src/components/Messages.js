@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useRef, useContext } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { connectionOperations, messageOperations } from '../utils/database';
-import { ThemeContext } from '../contexts/ThemeContext';
+import { useTheme } from '@mui/material/styles';
 import { createConnection, sendMessage, getDecryptedMessages, markMessagesAsRead } from '../utils/messagingUtils';
 
 export default function Messages({ setCurrentView, user }) {
-  const { theme } = useContext(ThemeContext);
-  const darkMode = theme === 'dark';
+  const theme = useTheme();
+  const darkMode = theme.palette.mode === 'dark';
   
   const [connections, setConnections] = useState([]);
   const [activeConnectionId, setActiveConnectionId] = useState(null);
