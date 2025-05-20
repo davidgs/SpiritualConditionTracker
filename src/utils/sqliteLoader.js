@@ -438,7 +438,7 @@ function setupGlobalDB(sqlite) {
       try {
         const result = await sqlite.query({
           database: DB_NAME,
-          statement: 'SELECT value FROM preferences WHERE key = ?',
+          statements: 'SELECT value FROM preferences WHERE key = ?',
           values: [key]
         });
         
@@ -487,14 +487,14 @@ function setupGlobalDB(sqlite) {
           // Insert new preference
           await sqlite.execute({
             database: DB_NAME,
-            statement: 'INSERT INTO preferences (key, value) VALUES (?, ?)',
+            statements: 'INSERT INTO preferences (key, value) VALUES (?, ?)',
             values: [key, storedValue]
           });
         } else {
           // Update existing preference
           await sqlite.execute({
             database: DB_NAME,
-            statement: 'UPDATE preferences SET value = ? WHERE key = ?',
+            statements: 'UPDATE preferences SET value = ? WHERE key = ?',
             values: [storedValue, key]
           });
         }
