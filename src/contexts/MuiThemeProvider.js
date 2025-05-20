@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
+import { getPreference, setPreference } from '../utils/sqliteStorage';
 
 // Create a context for theme management
 export const AppThemeContext = createContext();
