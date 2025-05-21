@@ -328,14 +328,8 @@ export function getCompleteTheme(colorName, mode) {
     shape: {
       borderRadius: 8,
     },
-    shadows: mode === 'dark' 
-      ? [
-          'none',
-          '0px 2px 1px -1px rgba(0,0,0,0.5),0px 1px 1px 0px rgba(0,0,0,0.4),0px 1px 3px 0px rgba(0,0,0,0.3)',
-          '0px 3px 1px -2px rgba(0,0,0,0.5),0px 2px 2px 0px rgba(0,0,0,0.4),0px 1px 5px 0px rgba(0,0,0,0.3)',
-          // ...add more shadow definitions for dark mode
-        ]
-      : undefined, // use default shadows for light mode
+    // Omit custom shadows to prevent crashes
+    // shadows: undefined,
     components: {
       MuiButton: {
         styleOverrides: {
