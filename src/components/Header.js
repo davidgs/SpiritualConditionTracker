@@ -50,8 +50,7 @@ function Header({ title, menuOpen, setMenuOpen, isMobile }) {
                 width: '50px',
                 height: '50px',
                 objectFit: 'contain',
-                borderRadius: '8px',
-                border: `2px solid ${accentColor}`
+                borderRadius: '8px'
               }}
             />
           </Box>
@@ -145,9 +144,7 @@ function Header({ title, menuOpen, setMenuOpen, isMobile }) {
             padding: '8px',
             fontSize: '1.75rem',
             border: 'none',
-            transition: 'all 0.2s ease',
-            
-            }
+            transition: 'all 0.2s ease'
           }}
         >
           {menuOpen ? 
