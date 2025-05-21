@@ -2,10 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { useTheme } from '@mui/material/styles';
 import { useAppTheme } from '../contexts/MuiThemeProvider';
 import Header from './Header';
+import { Box } from '@mui/material';
 
 function NavBar({ currentView, setCurrentView }) {
   const muiTheme = useTheme();
-  const { theme } = useAppTheme();
+  const { theme, primaryColor } = useAppTheme();
   const [menuOpen, setMenuOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const darkMode = muiTheme.palette.mode === 'dark';
@@ -126,7 +127,7 @@ function NavBar({ currentView, setCurrentView }) {
                 style={{
                   ...mobileMenuStyles.menuItem,
                   ...(currentView === item.id ? mobileMenuStyles.activeItem : {}),
-                  color: currentView === item.id ? '#3b82f6' : (darkMode ? '#9ca3af' : '#6b7280'),
+                  color: currentView === item.id ? muiTheme.palette.primary.main : (darkMode ? '#9ca3af' : '#6b7280'),
                 }}
               >
                 <i className={`${item.icon}`} style={mobileMenuStyles.menuIcon}></i>
@@ -160,10 +161,11 @@ function NavBar({ currentView, setCurrentView }) {
           paddingBottom: '5px' // Add some bottom padding for devices with home indicators
         }}>
           {navItems.map((item) => (
-            <button 
+            <Box
               key={item.id}
               onClick={() => handleNavClick(item.id)}
-              style={{
+              component="button"
+              sx={{
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
@@ -171,13 +173,24 @@ function NavBar({ currentView, setCurrentView }) {
                 flex: 1,
                 backgroundColor: 'transparent',
                 border: 'none',
-                color: currentView === item.id ? '#3b82f6' : (darkMode ? '#9ca3af' : '#6b7280'),
-                cursor: 'pointer'
+                color: currentView === item.id ? muiTheme.palette.primary.main : (darkMode ? '#9ca3af' : '#6b7280'),
+                cursor: 'pointer',
+                position: 'relative',
+                '&::after': currentView === item.id ? {
+                  content: '""',
+                  position: 'absolute',
+                  bottom: '-1px',
+                  left: '20%',
+                  width: '60%',
+                  height: '3px', 
+                  backgroundColor: muiTheme.palette.primary.main,
+                  borderRadius: '3px 3px 0 0'
+                } : {}
               }}
             >
               <i className={`${item.icon}`} style={{ fontSize: '1.25rem' }}></i>
               <span style={{ fontSize: '0.75rem', marginTop: '4px' }}>{item.name}</span>
-            </button>
+            </Box>
           ))}
         </div>
       )}
