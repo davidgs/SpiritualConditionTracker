@@ -32,52 +32,96 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
       }
     }
     loadScoreTimeframe();
-    
-    // Debug logging
-    console.log('Dashboard useEffect [spiritualFitness] triggered with:', spiritualFitness);
-  }, [spiritualFitness]);
+  }, []);
+  const [currentScore, setCurrentScore] = useState(spiritualFitness);
   
-  // Re-calculate spiritual fitness when timeframe changes
-  useEffect(() => {
-    console.log('Dashboard useEffect [scoreTimeframe] triggered with timeframe:', scoreTimeframe);
-  }, [scoreTimeframe]);
-  
-  // Modal reference for click outside handling
   const modalRef = useRef(null);
   const buttonRef = useRef(null);
   
-  // State for the spiritual fitness score display
-  const [currentScore, setCurrentScore] = useState(spiritualFitness || 0);
+  // Log spiritualFitness prop for debugging
+  console.log('[ Dashboard.js ] Dashboard received spiritualFitness:', spiritualFitness);
   
-  // Update score when the spiritualFitness prop changes
+  // Log current score state
+  console.log('[ Dashboard.js ] Dashboard currentScore state:', currentScore);
+  
+  // Format score to 2 decimal places for display
+  const formattedScore = currentScore > 0 ? currentScore.toFixed(2) : '0';
+  
+  console.log('[ Dashboard.js ] Dashboard formattedScore for display:', formattedScore);
+  
+  // Use MUI theme for colors
+  const muiTheme = useTheme();
+  
+  // Determine color based on score using theme palette
+  const getScoreColor = (score) => {
+    if (score < 30) return muiTheme.palette.error.main; // Red
+    if (score < 75) return muiTheme.palette.warning.main; // Yellow/Amber
+    return muiTheme.palette.success.main; // Green
+  };
+  
+  // Calculate progress percentage, capped at 100%
+  const progressPercent = Math.min(currentScore, 100);
+  console.log('[ Dashboard.js ] Dashboard progressPercent:', progressPercent);
+  
+  // Effect to initialize and update score when spiritualFitness prop changes
   useEffect(() => {
-    if (spiritualFitness !== undefined) {
+    console.log('[ Dashboard.js ] Dashboard useEffect [spiritualFitness] triggered with:', spiritualFitness);
+    if (spiritualFitness) {
       setCurrentScore(spiritualFitness);
-    } else {
-      setCurrentScore(0);
     }
   }, [spiritualFitness]);
   
-  // Format the score for display with 2 decimal places
-  const formattedScore = Number(currentScore).toFixed(2);
+  // Effect to recalculate score when timeframe changes
+  useEffect(() => {
+    console.log('[ Dashboard.js ] Dashboard useEffect [scoreTimeframe] triggered with timeframe:', scoreTimeframe);
+    
+    // Check if window.db exists and is fully initialized before attempting to use it
+    if (!window.db || !window.dbInitialized) {
+      console.warn('[ Dashboard.js ] Database not initialized yet - skipping database operations');
+      return; // Skip database operations until initialization is complete
+    }
+    
+    // Save the selected timeframe to SQLite preferences - only if database is ready
+    try {
+      if (window.db?.setPreference && scoreTimeframe) {
+        window.db.setPreference('fitnessTimeframe', scoreTimeframe.toString())
+          .catch(err => console.error('[ Dashboard.js ] Error saving timeframe preference:', err));
+      }
+    } catch (err) {
+      console.error('[ Dashboard.js ] Error accessing database for preferences:', err);
+    }
+    
+    async function calculateScore() {
+      try {
+        // Use the SQLite-based calculation method
+        if (window.db?.calculateSpiritualFitnessWithTimeframe) {
+          console.log('[ Dashboard.js ] Calculating score with SQLite, timeframe:', scoreTimeframe);
+          const score = await window.db.calculateSpiritualFitnessWithTimeframe(scoreTimeframe);
+          console.log('[ Dashboard.js ] SQLite calculation result:', score);
+          setCurrentScore(score);
+        } else {
+          console.warn('[ Dashboard.js ] SQLite calculation method not available');
+          // Use the prop value directly instead of hardcoded 5
+          setCurrentScore(spiritualFitness || 5); 
+        }
+      } catch (error) {
+        console.error('[ Dashboard.js ] Error calculating spiritual fitness:', error);
+        // Use the prop value directly instead of hardcoded 5
+        setCurrentScore(spiritualFitness || 5);
+      }
+    }
+    
+    calculateScore();
+  }, [scoreTimeframe, activities, spiritualFitness]);
   
-  // Calculate the progress percentage for the bar (clamp between 0-100)
-  const progressPercent = Math.max(0, Math.min(100, currentScore));
+  // Note: We've removed the fallback calculation function since
+  // we're now using SQLite via Capacitor exclusively for data persistence
   
-  // Function to get color based on score value
-  const getScoreColor = (score) => {
-    if (score < 30) return 'var(--theme-error-main)';
-    if (score < 60) return 'var(--theme-warning-main)';
-    return 'var(--theme-success-main)';
-  };
-  
-  // Click outside handler for modal
+  // Close modal when clicking outside
   useEffect(() => {
     function handleClickOutside(event) {
-      if (modalRef.current && 
-          !modalRef.current.contains(event.target) && 
-          buttonRef.current && 
-          !buttonRef.current.contains(event.target)) {
+      if (modalRef.current && !modalRef.current.contains(event.target) && 
+          buttonRef.current && !buttonRef.current.contains(event.target)) {
         setShowScoreModal(false);
       }
     }
@@ -127,33 +171,43 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
   const showYearsProminent = sobrietyYears >= 1;
   
   return (
-    <div style={{ padding: '1.5rem', maxWidth: '48rem', margin: '0 auto' }}>
+    <Box sx={{ p: 3, maxWidth: 'md', mx: 'auto' }}>
       {/* Sobriety & Spiritual Fitness Stats - Fixed height section */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '0.5rem', marginBottom: '0.75rem' }}>
-        <div style={{
-          backgroundColor: 'var(--theme-bg-paper)',
-          borderRadius: '0.5rem',
-          padding: '0.5rem',
+      <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 2, mb: 3 }}>
+        <Paper sx={{
+          borderRadius: 2,
+          p: 1,
           textAlign: 'center',
-          border: '1px solid var(--theme-divider)'
+          border: 1,
+          borderColor: 'divider',
+          bgcolor: 'background.paper'
         }}>
-          <h3 style={{
-            fontSize: '1.1rem',
-            fontWeight: 600,
-            color: 'var(--theme-text-primary)',
-            marginBottom: '0.5rem'
-          }}>Sobriety</h3>
+          <Typography 
+            variant="h6" 
+            sx={{
+              fontSize: '1.1rem',
+              fontWeight: 600,
+              mb: 1,
+              textAlign: 'center',
+              color: 'text.primary'
+            }}
+          >
+            Sobriety
+          </Typography>
           
           {/* Add sobriety date display */}
           {user?.sobrietyDate && (
-            <div style={{ 
-              fontSize: '0.85rem', 
-              color: 'var(--theme-text-secondary)',
-              marginBottom: '0.5rem',
-              textAlign: 'center'
-            }}>
+            <Typography 
+              variant="body2"
+              sx={{ 
+                fontSize: '0.85rem', 
+                color: 'text.secondary',
+                mb: 0.5,
+                textAlign: 'center'
+              }}
+            >
               Since {formatDate(user.sobrietyDate)}
-            </div>
+            </Typography>
           )}
           
           {showYearsProminent ? (
@@ -230,37 +284,17 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
             marginBottom: '0.5rem'
           }}>Spiritual Fitness</h3>
           
-          {/* Score display with dynamic color and question mark button */}
-          <div style={{ 
-            fontSize: '1.6rem', 
-            fontWeight: 'bold',
-            marginBottom: '0.5rem',
-            color: getScoreColor(currentScore),
-            lineHeight: '1.1',
-            display: 'flex',
-            alignItems: 'flex-start',
-            justifyContent: 'center'
-          }}>
+          {/* Score display with dynamic color */}
+          <div 
+            style={{ 
+              fontSize: '1.6rem', 
+              fontWeight: 'bold',
+              marginBottom: '0.5rem',
+              color: getScoreColor(currentScore),
+              lineHeight: '1.1'
+            }}
+          >
             {formattedScore}
-            <button 
-              ref={buttonRef}
-              style={{
-                backgroundColor: 'transparent',
-                color: 'var(--theme-primary-main)',
-                padding: '0',
-                border: 'none',
-                cursor: 'pointer',
-                fontSize: '0.8rem',
-                position: 'relative',
-                top: '-0.5rem',
-                marginLeft: '0.2rem'
-              }}
-              onClick={() => setShowScoreModal(!showScoreModal)}
-              aria-label="How is this calculated?"
-              title="How is this calculated?"
-            >
-              <i className="fa-solid fa-question"></i>
-            </button>
           </div>
           
           {/* Gradient progress bar with mask - thicker version with no markers */}
@@ -284,45 +318,67 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
           }}>
             <div style={{
               borderRadius: '0 8px 8px 0',
+              backgroundColor: 'var(--theme-bg-default)',
               position: 'absolute',
               right: 0,
-              top: 0,
               bottom: 0,
-              width: `${100 - progressPercent}%`,
-              backgroundColor: 'var(--theme-bg-elevation1)',
-              zIndex: 1,
-              opacity: 0.8
+              top: 0,
+              width: `${100 - progressPercent}%`
             }}></div>
           </div>
           
-          {/* Timeframe selector */}
           <div style={{ 
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
+            gap: '0.5rem',
             fontSize: '0.85rem',
-            color: 'var(--theme-text-secondary)',
-            marginBottom: '0.5rem'
+            color: 'var(--theme-text-secondary)'
           }}>
-            <span style={{ marginRight: '0.5rem' }}>
-              {scoreTimeframe} day average
-            </span>
+            <span>{scoreTimeframe}-day score</span>
             <button 
-              style={{ 
-                background: 'transparent',
+              onClick={cycleTimeframe}
+              style={{
+                backgroundColor: 'transparent',
                 border: 'none',
                 cursor: 'pointer',
-                padding: '0',
+                color: 'var(--theme-primary-main)',
+                padding: '2px',
+                borderRadius: '4px',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center'
               }}
               title="Change timeframe"
-              onClick={cycleTimeframe}
             >
               <i className="fa-solid fa-shuffle"></i>
             </button>
           </div>
+          <div className="inline-block">
+            <button 
+              ref={buttonRef}
+              style={{
+                backgroundColor: 'var(--theme-primary-light)',
+                color: 'var(--theme-primary-dark)',
+                padding: '0.5rem 0.75rem',  /* Increased padding */
+                borderRadius: '0.375rem',   /* Slightly larger radius */
+                fontSize: '0.85rem',        /* Increased font size by ~30% */
+                fontWeight: '600',          /* Slightly bolder */
+                marginTop: '0.375rem',      /* More top margin */
+                border: '1px solid var(--theme-primary-main)',
+                cursor: 'pointer',
+                transition: 'background-color 0.2s',
+                width: 'max-content',       /* Make sure it fits content */
+                minWidth: '150px',          /* Minimum width */
+                boxShadow: '0 1px 2px rgba(0,0,0,0.1)' /* Subtle shadow for better visibility */
+              }}
+              onClick={() => setShowScoreModal(!showScoreModal)}
+            >
+              How is this calculated?
+            </button>
+          </div>
+          
+          {/* Render modal at the end of the Dashboard component body to avoid positioning issues */}
         </div>
       </div>
       
@@ -364,10 +420,10 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
                 setActivityTypeFilter(filter);
               }}
             >
-              <option value="all">All Types</option>
+              <option value="all">All types</option>
               <option value="prayer">Prayer</option>
               <option value="meditation">Meditation</option>
-              <option value="reading">Reading</option>
+              <option value="literature">Reading</option>
               <option value="meeting">Meetings</option>
               <option value="call">Calls</option>
               <option value="service">Service</option>
@@ -398,7 +454,8 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
               <option value="0">All time</option>
             </select>
             
-            {/* Add activity button - Using font awesome icon */}
+            {/* Log new activity button */}
+            {/* Button to open activity modal */}
             <button
               className="text-gray-600 dark:text-gray-300 hover:text-blue-500 dark:hover:text-blue-400 transition-colors duration-200"
               onClick={() => setShowActivityModal(true)}
@@ -436,8 +493,8 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
         onClose={() => setShowScoreModal(false)}
       />
       
-      {/* Log Activity Modal */}
-      <LogActivityModal
+      {/* Activity Log Modal */}
+      <LogActivityModal 
         open={showActivityModal}
         onClose={() => setShowActivityModal(false)}
         onSave={onSave}
