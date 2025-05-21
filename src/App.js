@@ -8,6 +8,7 @@ import Messages from './components/Messages';
 import StepWork from './components/StepWork';
 import SponsorSponsee from './components/SponsorSponsee';
 import MuiThemeProvider, { useAppTheme } from './contexts/MuiThemeProvider';
+import ThemeBackground from './components/ThemeBackground';
 import { generateKeyPair } from './utils/encryption';
 import { DEFAULT_SPIRITUAL_FITNESS_SCORE } from './utils/constants';
 import { Box, Paper } from '@mui/material';
