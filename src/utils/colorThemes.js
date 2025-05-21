@@ -43,25 +43,52 @@ const baseColors = {
   },
 };
 
-// Light mode background definitions
-const lightModeBackground = {
-  default: '#f0f2f5',
-  paper: '#ffffff',
-  card: '#ffffff',
-  appBar: '#ffffff',
-  dialog: '#ffffff',
-  sidebar: '#ffffff',
-};
-
-// Dark mode background definitions
-const darkModeBackground = {
-  default: '#111827',
-  paper: '#1f2937',
-  card: '#1f2937',
-  appBar: '#111827',
-  dialog: '#1f2937',
-  sidebar: '#0f172a',
-};
+/**
+ * Generate color-tinted background based on the selected primary color
+ * This ensures the background colors change with the theme color selection
+ * 
+ * @param {string} colorName - Name of the primary color
+ * @param {boolean} isDarkMode - Whether dark mode is enabled
+ * @returns {Object} Background color definitions
+ */
+function getBackgroundColors(colorName, isDarkMode) {
+  // Get the color information to tint backgrounds
+  const colorInfo = baseColors[colorName] || baseColors.blue;
+  
+  if (isDarkMode) {
+    // Dark mode with color tinting
+    return {
+      // Default background with color tint for dark mode
+      default: `#111827`,
+      // Paper with color influence
+      paper: `linear-gradient(145deg, #1f2937 0%, #1f2937 85%, ${colorInfo.dark}40 100%)`,
+      // Card with stronger color influence 
+      card: `linear-gradient(145deg, ${colorInfo.dark}80 0%, #1f2937 100%)`,
+      // App bar with a color-influenced background
+      appBar: `linear-gradient(90deg, #0f172a, ${colorInfo.dark}70)`,
+      // Dialog with subtle color influence
+      dialog: `#1f2937`,
+      // Sidebar with stronger color influence
+      sidebar: `#0f172a`
+    };
+  } else {
+    // Light mode with color tinting
+    return {
+      // Default background with very subtle color tint
+      default: `linear-gradient(145deg, #f5f7fa 0%, #f8f9fa 85%, ${colorInfo.light}20 100%)`,
+      // Paper with subtle color influence
+      paper: '#ffffff',
+      // Card backgrounds with color influence
+      card: `linear-gradient(145deg, #ffffff 0%, #ffffff 85%, ${colorInfo.light}50 100%)`,
+      // App bar with color influence
+      appBar: `linear-gradient(90deg, #ffffff, ${colorInfo.light}20)`,
+      // Dialog with subtle color influence
+      dialog: '#ffffff',
+      // Sidebar with subtle color influence
+      sidebar: '#ffffff'
+    };
+  }
+}
 
 // Light mode text colors
 const lightModeText = {
@@ -79,6 +106,7 @@ const darkModeText = {
 
 /**
  * Generate a full palette theme object for a given color in a specific mode
+ * This applies the selected color to all aspects of the theme including backgrounds
  * 
  * @param {string} colorName - Name of the primary color
  * @param {string} mode - 'light' or 'dark'
@@ -87,6 +115,9 @@ const darkModeText = {
 export function generateThemePalette(colorName, mode) {
   const isDarkMode = mode === 'dark';
   const selectedColor = baseColors[colorName] || baseColors.blue;
+  
+  // Get background colors that are tinted with the selected color
+  const backgroundColors = getBackgroundColors(colorName, isDarkMode);
   
   return {
     mode: isDarkMode ? 'dark' : 'light',
@@ -126,7 +157,7 @@ export function generateThemePalette(colorName, mode) {
       contrastText: '#ffffff',
     },
     text: isDarkMode ? darkModeText : lightModeText,
-    background: isDarkMode ? darkModeBackground : lightModeBackground,
+    background: backgroundColors, // Use our color-tinted backgrounds
     divider: isDarkMode ? 'rgba(255, 255, 255, 0.12)' : 'rgba(0, 0, 0, 0.12)',
   };
 }

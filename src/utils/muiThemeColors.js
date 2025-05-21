@@ -265,6 +265,11 @@ export function getCompleteTheme(colorName, mode) {
   const palette = generateCompletePalette(colorName, mode);
   const primaryColor = primaryColors[colorName] || primaryColors.blue;
   
+  // Get colors for UI tinting
+  const bgColor = isDark ? palette.background.default : palette.background.default;
+  const paperColor = palette.background.paper;
+  const cardColor = palette.background.card;
+  
   return {
     palette,
     typography: {
@@ -336,8 +341,12 @@ export function getCompleteTheme(colorName, mode) {
       MuiCssBaseline: {
         styleOverrides: (theme) => ({
           body: {
-            backgroundColor: isDark ? '#111827' : '#f0f2f5',
-            transition: 'background-color 0.2s ease',
+            backgroundColor: bgColor,
+            backgroundImage: isDark 
+              ? `linear-gradient(160deg, ${bgColor} 0%, ${bgColor} 90%, ${palette.primary.dark}20 100%)`
+              : `linear-gradient(160deg, ${bgColor} 0%, ${bgColor} 90%, ${palette.primary.light}20 100%)`,
+            transition: 'background-color 0.3s ease, background-image 0.3s ease',
+            minHeight: '100vh',
           },
           // Apply color to scrollbar for browsers that support it
           '*::-webkit-scrollbar': {
@@ -345,7 +354,7 @@ export function getCompleteTheme(colorName, mode) {
             height: '8px',
           },
           '*::-webkit-scrollbar-thumb': {
-            backgroundColor: isDark ? '#374151' : '#d1d5db',
+            backgroundColor: isDark ? '#374151' : palette.primary.light,
             borderRadius: '4px',
           },
           '*::-webkit-scrollbar-track': {
