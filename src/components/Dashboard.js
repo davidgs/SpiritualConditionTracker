@@ -269,8 +269,8 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
               </div>
             </div>
           )}
-        </div>
-        <div style={{
+        </Paper>
+        <Paper sx={{
           backgroundColor: 'var(--theme-bg-paper)',
           borderRadius: '0.5rem',
           padding: '0.5rem',
@@ -379,8 +379,8 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
           {/* "How is this calculated" button removed - now using the question mark icon */}
           
           {/* Render modal at the end of the Dashboard component body to avoid positioning issues */}
-        </div>
-      </div>
+        </Paper>
+      </Box>
       
       {/* Recent Activities Section */}
       <div style={{
