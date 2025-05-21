@@ -703,13 +703,14 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
                 placeholder="Enter your first name"
                 variant="outlined"
                 size="small"
+                sx={{ mb: 2 }}
                 InputLabelProps={{
-                  style: { color: darkMode ? '#9ca3af' : '#6b7280' }
+                  sx: { color: 'text.secondary' }
                 }}
                 InputProps={{
-                  style: { 
-                    color: darkMode ? '#d1d5db' : '#374151',
-                    backgroundColor: darkMode ? 'rgba(55, 65, 81, 0.3)' : '#ffffff'
+                  sx: { 
+                    color: 'text.primary',
+                    bgcolor: 'background.paper'
                   }
                 }}
               />
@@ -721,13 +722,14 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
                 placeholder="Enter your last name"
                 variant="outlined"
                 size="small"
+                sx={{ mb: 2 }}
                 InputLabelProps={{
-                  style: { color: darkMode ? '#9ca3af' : '#6b7280' }
+                  sx: { color: 'text.secondary' }
                 }}
                 InputProps={{
-                  style: { 
-                    color: darkMode ? '#d1d5db' : '#374151',
-                    backgroundColor: darkMode ? 'rgba(55, 65, 81, 0.3)' : '#ffffff'
+                  sx: { 
+                    color: 'text.primary',
+                    bgcolor: 'background.paper'
                   }
                 }}
               />
@@ -740,13 +742,14 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
                 variant="outlined"
                 size="small"
                 type="tel"
+                sx={{ mb: 2 }}
                 InputLabelProps={{
-                  style: { color: darkMode ? '#9ca3af' : '#6b7280' }
+                  sx: { color: 'text.secondary' }
                 }}
                 InputProps={{
-                  style: { 
-                    color: darkMode ? '#d1d5db' : '#374151',
-                    backgroundColor: darkMode ? 'rgba(55, 65, 81, 0.3)' : '#ffffff'
+                  sx: { 
+                    color: 'text.primary',
+                    bgcolor: 'background.paper'
                   }
                 }}
               />
@@ -759,13 +762,14 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
                 variant="outlined"
                 size="small"
                 type="email"
+                sx={{ mb: 2 }}
                 InputLabelProps={{
-                  style: { color: darkMode ? '#9ca3af' : '#6b7280' }
+                  sx: { color: 'text.secondary' }
                 }}
                 InputProps={{
-                  style: { 
-                    color: darkMode ? '#d1d5db' : '#374151',
-                    backgroundColor: darkMode ? 'rgba(55, 65, 81, 0.3)' : '#ffffff'
+                  sx: { 
+                    color: 'text.primary',
+                    bgcolor: 'background.paper'
                   }
                 }}
               />
@@ -779,13 +783,14 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
                 placeholder="Select your home group(s)"
                 variant="outlined"
                 size="small"
+                sx={{ mb: 2 }}
                 InputLabelProps={{
-                  style: { color: darkMode ? '#9ca3af' : '#6b7280' }
+                  sx: { color: 'text.secondary' }
                 }}
                 InputProps={{
-                  style: { 
-                    color: darkMode ? '#d1d5db' : '#374151',
-                    backgroundColor: darkMode ? 'rgba(55, 65, 81, 0.3)' : '#ffffff'
+                  sx: { 
+                    color: 'text.primary',
+                    bgcolor: 'background.paper'
                   }
                 }}
                 SelectProps={{
