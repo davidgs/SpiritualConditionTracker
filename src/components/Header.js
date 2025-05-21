@@ -144,7 +144,7 @@ function Header({ title, menuOpen, setMenuOpen, isMobile }) {
           sx={{
             padding: '8px',
             fontSize: '1.75rem',
-            border: menuOpen ? `1px solid ${accentColor}` : 'none',
+            border: 'none',
             transition: 'all 0.2s ease',
             '&:hover': {
               backgroundColor: `${accentColor}22`,
