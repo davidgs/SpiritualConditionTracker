@@ -146,8 +146,7 @@ function Header({ title, menuOpen, setMenuOpen, isMobile }) {
             fontSize: '1.75rem',
             border: 'none',
             transition: 'all 0.2s ease',
-            '&:hover': {
-              backgroundColor: `${accentColor}22`,
+            
             }
           }}
         >
