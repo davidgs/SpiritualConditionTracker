@@ -64,11 +64,11 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
   // Calculate the progress percentage for the bar (clamp between 0-100)
   const progressPercent = Math.max(0, Math.min(100, currentScore));
   
-  // Function to get color based on score value
+  // Function to get color based on score value using MUI theme colors
   const getScoreColor = (score) => {
-    if (score < 30) return 'var(--theme-error-main)';
-    if (score < 60) return 'var(--theme-warning-main)';
-    return 'var(--theme-success-main)';
+    if (score < 30) return theme.palette.error.main;
+    if (score < 60) return theme.palette.warning.main;
+    return theme.palette.success.main;
   };
   
   // Click outside handler for modal
@@ -173,7 +173,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
                   sx={{ 
                     fontSize: '1.6rem', 
                     fontWeight: 'bold', 
-                    color: 'var(--theme-primary-main)',
+                    color: 'primary.main',
                     mr: 0.5,
                     lineHeight: 1.1
                   }}
@@ -183,7 +183,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
                 <Typography 
                   sx={{ 
                     fontSize: '1rem', 
-                    color: 'var(--theme-text-secondary)',
+                    color: 'text.secondary',
                     lineHeight: 1.1
                   }}
                 >
@@ -193,7 +193,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
               <Typography 
                 sx={{ 
                   fontSize: '1rem', 
-                  color: 'var(--theme-primary-main)',
+                  color: 'primary.main',
                   lineHeight: 1.1,
                   textAlign: 'center'
                 }}
@@ -208,7 +208,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
                   sx={{ 
                     fontSize: '1.6rem', 
                     fontWeight: 'bold', 
-                    color: 'var(--theme-primary-main)',
+                    color: 'primary.main',
                     mr: 0.5,
                     lineHeight: 1.1
                   }}
@@ -218,7 +218,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
                 <Typography 
                   sx={{ 
                     fontSize: '1rem', 
-                    color: 'var(--theme-text-secondary)',
+                    color: 'text.secondary',
                     lineHeight: 1.1
                   }}
                 >
@@ -228,7 +228,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
               <Typography 
                 sx={{ 
                   fontSize: '1rem', 
-                  color: 'var(--theme-primary-main)',
+                  color: 'primary.main',
                   lineHeight: 1.1,
                   textAlign: 'center'
                 }}
@@ -243,9 +243,9 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
           borderRadius: 1,
           p: 1,
           textAlign: 'center',
-          border: '1px solid',
+          border: 1,
           borderColor: 'divider',
-          bgcolor: 'var(--theme-bg-paper)'
+          bgcolor: 'background.paper'
         }}>
           <Typography 
             variant="h6" 
@@ -253,7 +253,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
               fontSize: '1.1rem',
               fontWeight: 600,
               mb: 1,
-              color: 'var(--theme-text-primary)'
+              color: 'text.primary'
             }}
           >
             Spiritual Fitness
@@ -281,12 +281,14 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
               sx={{
                 p: 0,
                 minWidth: 'auto',
-                backgroundColor: 'transparent',
-                color: 'var(--theme-primary-main)',
+                color: 'primary.main',
                 fontSize: '0.8rem',
                 position: 'relative',
                 top: '-0.5rem',
-                ml: 0.2
+                ml: 0.2,
+                '&:hover': {
+                  backgroundColor: 'transparent'
+                }
               }}
             >
               <i className="fa-solid fa-question"></i>
@@ -301,14 +303,15 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
             borderRadius: '8px',
             background: `linear-gradient(
               90deg,
-              var(--theme-error-main) 0%,
-              var(--theme-warning-light) 25%,
-              var(--theme-warning-main) 50%, 
-              var(--theme-success-light) 75%,
-              var(--theme-success-main) 100%
+              ${theme.palette.error.main} 0%,
+              ${theme.palette.warning.light} 25%,
+              ${theme.palette.warning.main} 50%, 
+              ${theme.palette.success.light} 75%,
+              ${theme.palette.success.main} 100%
             )`,
             mb: 0.75,
-            border: '1px solid var(--theme-divider)',
+            border: '1px solid',
+            borderColor: 'divider',
             overflow: 'hidden',
             boxShadow: '0 1px 2px rgba(0,0,0,0.15) inset'
           }}>
@@ -319,7 +322,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
               top: 0,
               bottom: 0,
               width: `${100 - progressPercent}%`,
-              backgroundColor: 'var(--theme-bg-elevation1)',
+              backgroundColor: theme.palette.background.paper,
               zIndex: 1,
               opacity: 0.8
             }}></Box>
@@ -331,7 +334,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
             alignItems: 'center',
             justifyContent: 'center',
             fontSize: '0.85rem',
-            color: 'var(--theme-text-secondary)',
+            color: 'text.secondary',
             mb: 0.5
           }}>
             <Typography sx={{ mr: 0.5 }}>
@@ -343,8 +346,10 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
               sx={{ 
                 p: 0,
                 minWidth: 'auto',
-                backgroundColor: 'transparent',
-                border: 'none'
+                color: 'primary.main',
+                '&:hover': {
+                  backgroundColor: 'transparent'
+                }
               }}
             >
               <i className="fa-solid fa-shuffle"></i>
@@ -360,7 +365,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
         border: '1px solid',
         borderColor: 'divider',
         mb: 2,
-        bgcolor: 'var(--theme-bg-paper)'
+        bgcolor: 'background.paper'
       }}>
         <Box sx={{
           display: 'flex',
@@ -373,7 +378,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
             sx={{
               fontSize: '1.1rem',
               fontWeight: 600,
-              color: 'var(--theme-text-primary)'
+              color: 'text.primary'
             }}
           >
             Activities
@@ -383,9 +388,9 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
             <select 
               style={{
                 backgroundColor: 'transparent',
-                border: '1px solid var(--theme-divider)',
+                border: `1px solid ${theme.palette.divider}`,
                 borderRadius: '0.25rem',
-                color: 'var(--theme-text-primary)',
+                color: theme.palette.text.primary,
                 padding: '0.15rem 0.5rem',
                 fontSize: '0.7rem',
                 cursor: 'pointer'
@@ -409,9 +414,9 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
             <select 
               style={{
                 backgroundColor: 'transparent',
-                border: '1px solid var(--theme-divider)',
+                border: `1px solid ${theme.palette.divider}`,
                 borderRadius: '0.25rem',
-                color: 'var(--theme-text-primary)',
+                color: theme.palette.text.primary,
                 padding: '0.15rem 0.5rem',
                 fontSize: '0.7rem',
                 cursor: 'pointer'
@@ -438,8 +443,10 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
                 p: 0.5,
                 minWidth: 'auto',
                 fontSize: '1.5rem', 
-                backgroundColor: 'transparent',
-                color: 'var(--theme-primary-main)'
+                color: 'primary.main',
+                '&:hover': {
+                  backgroundColor: 'transparent'
+                }
               }}
             >
               <i className="fa-solid fa-scroll"></i>
