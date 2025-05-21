@@ -639,18 +639,17 @@ function App() {
   // Log the spiritual fitness value before rendering
   console.log('App.js - Before rendering, spiritualFitness value:', spiritualFitness);
   
-  // Get dark mode state
   return (
     <MuiThemeProvider>
-      <Box 
-        className="app-container h-full flex flex-col transition-colors duration-200"
-        sx={{ 
-          width: '100%',
-          height: '100%',
-          bgcolor: 'background.default', // This directly uses the theme's background color
-          color: 'text.primary'          // This directly uses the theme's text color
-        }}
-      >
+      <ThemeBackground>
+        <Box 
+          className="app-container h-full flex flex-col transition-all duration-300"
+          sx={{ 
+            width: '100%',
+            height: '100%',
+            color: 'text.primary'
+          }}
+        >
         <NavBar currentView={currentView} setCurrentView={setCurrentView} />
         <Box 
           className="flex-grow" 
@@ -665,6 +664,7 @@ function App() {
           {renderCurrentView()}
         </Box>
       </Box>
+      </ThemeBackground>
     </MuiThemeProvider>
   );
 }

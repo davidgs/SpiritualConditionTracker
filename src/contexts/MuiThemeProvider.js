@@ -89,6 +89,20 @@ const MuiThemeProvider = ({ children }) => {
       // Apply theme changes directly to DOM elements for immediate visual feedback
       applyThemeDirectly(primaryColor, theme);
       
+      // Update root-level background for immediate color feedback
+      const primaryColorObj = defaultThemeColors[primaryColor] || defaultThemeColors.blue;
+      const colorValue = darkMode ? primaryColorObj.dark : primaryColorObj.light;
+      
+      // Apply theme colors directly to background elements
+      document.body.style.backgroundImage = darkMode
+        ? `linear-gradient(160deg, #111827 0%, #111827 90%, ${colorValue}30 100%)`
+        : `linear-gradient(160deg, #f0f2f5 0%, #f9f9f9 85%, ${colorValue}40 100%)`;
+      
+      // Apply theme colors to cards via CSS variables
+      document.documentElement.style.setProperty('--card-bg-color', darkMode
+        ? `linear-gradient(145deg, #1f2937 0%, #1f2937 85%, ${colorValue}40 100%)`
+        : `linear-gradient(145deg, #ffffff 0%, #ffffff 85%, ${colorValue}30 100%)`);
+      
       // Save theme choices to SQLite database
       if (window.db && window.dbInitialized && window.db.setPreference) {
         window.db.setPreference('theme', theme);
