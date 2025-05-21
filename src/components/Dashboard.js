@@ -284,17 +284,39 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
             marginBottom: '0.5rem'
           }}>Spiritual Fitness</h3>
           
-          {/* Score display with dynamic color */}
+          {/* Score display with dynamic color and question mark button */}
           <div 
             style={{ 
               fontSize: '1.6rem', 
               fontWeight: 'bold',
               marginBottom: '0.5rem',
               color: getScoreColor(currentScore),
-              lineHeight: '1.1'
+              lineHeight: '1.1',
+              display: 'flex',
+              alignItems: 'flex-start',
+              justifyContent: 'center'
             }}
           >
             {formattedScore}
+            <button 
+              ref={buttonRef}
+              style={{
+                backgroundColor: 'transparent',
+                color: 'var(--theme-primary-main)',
+                padding: '0',
+                border: 'none',
+                cursor: 'pointer',
+                fontSize: '0.8rem',
+                position: 'relative',
+                top: '-0.5rem',
+                marginLeft: '0.2rem'
+              }}
+              onClick={() => setShowScoreModal(!showScoreModal)}
+              aria-label="How is this calculated?"
+              title="How is this calculated?"
+            >
+              <i className="fa-solid fa-question"></i>
+            </button>
           </div>
           
           {/* Gradient progress bar with mask - thicker version with no markers */}
@@ -354,29 +376,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
               <i className="fa-solid fa-shuffle"></i>
             </button>
           </div>
-          <div className="inline-block">
-            <button 
-              ref={buttonRef}
-              style={{
-                backgroundColor: 'var(--theme-primary-light)',
-                color: 'var(--theme-primary-dark)',
-                padding: '0.5rem 0.75rem',  /* Increased padding */
-                borderRadius: '0.375rem',   /* Slightly larger radius */
-                fontSize: '0.85rem',        /* Increased font size by ~30% */
-                fontWeight: '600',          /* Slightly bolder */
-                marginTop: '0.375rem',      /* More top margin */
-                border: '1px solid var(--theme-primary-main)',
-                cursor: 'pointer',
-                transition: 'background-color 0.2s',
-                width: 'max-content',       /* Make sure it fits content */
-                minWidth: '150px',          /* Minimum width */
-                boxShadow: '0 1px 2px rgba(0,0,0,0.1)' /* Subtle shadow for better visibility */
-              }}
-              onClick={() => setShowScoreModal(!showScoreModal)}
-            >
-              How is this calculated?
-            </button>
-          </div>
+          {/* "How is this calculated" button removed - now using the question mark icon */}
           
           {/* Render modal at the end of the Dashboard component body to avoid positioning issues */}
         </div>
