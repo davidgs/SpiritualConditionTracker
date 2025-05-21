@@ -5,6 +5,7 @@ import { Capacitor } from '@capacitor/core';
 import { applyNativeTheme, applyNativeCssVariables, defaultThemeColors, getSystemColorScheme } from '../utils/nativeTheme';
 import { getCompleteTheme } from '../utils/muiThemeColors';
 import applyThemeDirectly from '../utils/applyThemeDirectly';
+import applyMuiThemeToIOS from '../utils/iOSThemeAdapter';
 
 // Create a context for theme management
 export const AppThemeContext = createContext();
@@ -109,16 +110,24 @@ const MuiThemeProvider = ({ children }) => {
     [primaryColor, theme]
   );
   
-  // Also apply native theme settings for iOS and Android when applicable
+  // Apply MUI theme to native iOS components for consistent styling 
+  // This directly integrates with iOS native components
   useEffect(() => {
     if (Capacitor.isNativePlatform()) {
-      // Apply theme to native elements 
+      // Apply basic theme to native elements
       applyNativeTheme(primaryColor, darkMode);
       
       // Apply CSS variables for native compatibility
       applyNativeCssVariables(primaryColor, darkMode);
+      
+      // Apply MUI theme to iOS components - this ensures iOS-specific styling
+      // using the proper MUI theme objects
+      if (muiTheme && Capacitor.getPlatform() === 'ios') {
+        applyMuiThemeToIOS(muiTheme);
+        console.log('Applied MUI theme to iOS native components:', primaryColor);
+      }
     }
-  }, [primaryColor, darkMode]);
+  }, [primaryColor, darkMode, muiTheme]);
   
   return (
     <AppThemeContext.Provider
