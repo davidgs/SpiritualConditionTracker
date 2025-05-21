@@ -6,6 +6,7 @@ import ActivityList from './ActivityList';
 import SpiritualFitnessModal from './SpiritualFitnessModal';
 import LogActivityModal from './LogActivityModal';
 import { useAppTheme } from '../contexts/MuiThemeProvider';
+import { Paper, Box, Typography } from '@mui/material';
 
 export default function Dashboard({ setCurrentView, user, activities, meetings = [], onSave, onSaveMeeting, spiritualFitness }) {
   // Get theme from MUI theme provider
