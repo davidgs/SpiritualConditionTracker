@@ -6,12 +6,13 @@ import ActivityList from './ActivityList';
 import SpiritualFitnessModal from './SpiritualFitnessModal';
 import LogActivityModal from './LogActivityModal';
 import { useAppTheme } from '../contexts/MuiThemeProvider';
-import { Paper, Box, Typography } from '@mui/material';
+import { Paper, Box, Typography, Button, Card, CardContent, LinearProgress } from '@mui/material';
 
 export default function Dashboard({ setCurrentView, user, activities, meetings = [], onSave, onSaveMeeting, spiritualFitness }) {
   // Get theme from MUI theme provider
   const { mode } = useAppTheme();
   const darkMode = mode === 'dark';
+  const theme = useTheme();
   
   // State for controlling modal visibility and score timeframe
   const [showScoreModal, setShowScoreModal] = useState(false);
@@ -169,35 +170,47 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
   // Determine whether to show years or days more prominently
   const showYearsProminent = sobrietyYears >= 1;
 
+  // Get MUI theme for proper styling
+  const muiTheme = useTheme();
+  
   return (
-    <div className="p-3 max-w-md mx-auto">
+    <Box sx={{ p: 3, maxWidth: 'md', mx: 'auto' }}>
       {/* Sobriety & Spiritual Fitness Stats - Fixed height section */}
-      <div className="grid grid-cols-2 gap-2 mb-3">
-        <div style={{
-          backgroundColor: darkMode ? '#1f2937' : '#ffffff',
-          borderRadius: '0.5rem',
-          padding: '0.5rem',
+      <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 2, mb: 3 }}>
+        <Paper sx={{
+          borderRadius: 2,
+          p: 1,
           textAlign: 'center',
-          border: darkMode ? '1px solid #374151' : '1px solid #e5e7eb'
+          border: 1,
+          borderColor: 'divider',
+          bgcolor: 'background.paper'
         }}>
-          <h3 style={{
-            fontSize: '1.1rem',
-            fontWeight: 600,
-            color: darkMode ? '#d1d5db' : '#374151',
-            marginBottom: '0.5rem',
-            textAlign: 'center'
-          }}>Sobriety</h3>
+          <Typography 
+            variant="h6" 
+            sx={{
+              fontSize: '1.1rem',
+              fontWeight: 600,
+              mb: 1,
+              textAlign: 'center',
+              color: 'text.primary'
+            }}
+          >
+            Sobriety
+          </Typography>
           
           {/* Add sobriety date display */}
           {user?.sobrietyDate && (
-            <div style={{ 
-              fontSize: '0.85rem', 
-              color: darkMode ? '#9ca3af' : '#6b7280',
-              marginBottom: '0.5rem',
-              textAlign: 'center'
-            }}>
+            <Typography 
+              variant="body2"
+              sx={{ 
+                fontSize: '0.85rem', 
+                color: 'text.secondary',
+                mb: 0.5,
+                textAlign: 'center'
+              }}
+            >
               Since {formatDate(user.sobrietyDate)}
-            </div>
+            </Typography>
           )}
           
           {showYearsProminent ? (
