@@ -4,6 +4,7 @@ import ThemeSelector from './ThemeSelector';
 import MeetingFormDialog from './MeetingFormDialog';
 import ColorThemePicker from './ColorThemePicker';
 import { useAppTheme } from '../contexts/MuiThemeProvider';
+import { Capacitor } from '@capacitor/core';
 import { 
   Switch, 
   FormControlLabel, 

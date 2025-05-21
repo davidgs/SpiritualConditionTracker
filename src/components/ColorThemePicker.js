@@ -1,6 +1,8 @@
-import React from 'react';
-import { Box, Typography, Radio, RadioGroup, FormControlLabel, Paper } from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import { Box, Typography, Radio, RadioGroup, FormControlLabel, Paper, Button } from '@mui/material';
 import { useAppTheme } from '../contexts/MuiThemeProvider';
+import { Capacitor } from '@capacitor/core';
+import { defaultThemeColors } from '../utils/nativeTheme';
 
 /**
  * A component that allows users to select a color theme for the app
@@ -11,25 +13,39 @@ const ColorThemePicker = () => {
   const { primaryColor, setPrimaryColor, availableColors, mode } = useAppTheme();
   const darkMode = mode === 'dark';
   
-  // Color preview circles with labels
-  const colorOptions = {
-    blue: { label: 'Blue', color: '#3b82f6', darkColor: '#60a5fa' },
-    purple: { label: 'Purple', color: '#8b5cf6', darkColor: '#a78bfa' },
-    green: { label: 'Green', color: '#10b981', darkColor: '#34d399' },
-    red: { label: 'Red', color: '#ef4444', darkColor: '#f87171' },
-    orange: { label: 'Orange', color: '#f97316', darkColor: '#fb923c' },
-    teal: { label: 'Teal', color: '#14b8a6', darkColor: '#2dd4bf' }
-  };
+  // Track if we're in a native environment for enhanced styling
+  const [isNative, setIsNative] = useState(false);
+  
+  // Check if we're running in a native environment on component mount
+  useEffect(() => {
+    setIsNative(Capacitor.isNativePlatform());
+  }, []);
+  
+  // Color preview circles with labels, using the same values from our theme system
+  const colorOptions = Object.keys(defaultThemeColors).reduce((acc, colorName) => {
+    const colorValue = defaultThemeColors[colorName];
+    acc[colorName] = { 
+      label: colorName.charAt(0).toUpperCase() + colorName.slice(1),
+      color: colorValue,
+      darkColor: colorValue // We'll calculate this dynamically based on the mode
+    };
+    return acc;
+  }, {});
 
   return (
     <Paper 
-      elevation={0}
+      elevation={isNative ? 1 : 0} // Add elevation for native platforms
       sx={(theme) => ({
         p: 3,
-        borderRadius: 2,
+        borderRadius: isNative ? 3 : 2, // Larger border radius on native
         bgcolor: theme.palette.background.paper,
         border: `1px solid ${theme.palette.divider}`,
-        mb: 2
+        mb: 2,
+        ...(isNative && { // Add iOS-friendly shadow when in native app
+          boxShadow: darkMode ? 
+            '0 2px 10px rgba(0,0,0,0.2)' : 
+            '0 2px 10px rgba(0,0,0,0.1)'
+        })
       })}
     >
       <Typography 
@@ -52,50 +68,106 @@ const ColorThemePicker = () => {
         Choose your preferred color theme for a more personalized experience.
       </Typography>
       
-      <RadioGroup
-        value={primaryColor}
-        onChange={(e) => setPrimaryColor(e.target.value)}
-        name="color-theme-group"
-        sx={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', gap: 1 }}
-      >
-        {availableColors && availableColors.map((colorName) => {
-          const option = colorOptions[colorName];
-          if (!option) return null;
-          
-          return (
-            <FormControlLabel
-              key={colorName}
-              value={colorName}
-              control={
-                <Radio 
+      {/* Enhanced color picker UI for native environments */}
+      {isNative ? (
+        // Native-optimized color selector with larger touch targets
+        <Box sx={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', gap: 2 }}>
+          {availableColors && availableColors.map((colorName) => {
+            const option = colorOptions[colorName];
+            if (!option) return null;
+            
+            const isSelected = primaryColor === colorName;
+            
+            return (
+              <Button
+                key={colorName}
+                variant={isSelected ? "contained" : "outlined"}
+                onClick={() => setPrimaryColor(colorName)}
+                sx={{
+                  minWidth: '90px',
+                  height: '60px',
+                  borderRadius: '12px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  borderWidth: '2px',
+                  borderColor: option.color,
+                  transition: 'all 0.2s ease',
+                  backgroundColor: isSelected ? option.color : 'transparent',
+                  color: isSelected ? '#fff' : option.color,
+                  '&:hover': {
+                    backgroundColor: isSelected ? option.color : `${option.color}22`,
+                    transform: 'translateY(-2px)'
+                  },
+                  mb: 1
+                }}
+              >
+                <Box 
                   sx={{
-                    color: darkMode ? option.darkColor : option.color,
-                    '&.Mui-checked': {
-                      color: darkMode ? option.darkColor : option.color,
-                    }
+                    width: 24,
+                    height: 24,
+                    borderRadius: '50%',
+                    bgcolor: option.color,
+                    mb: 0.5,
+                    border: '2px solid',
+                    borderColor: isSelected ? 'white' : option.color
                   }}
                 />
-              }
-              label={
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <Box 
+                <Typography variant="body2" sx={{ fontWeight: isSelected ? 'bold' : 'normal' }}>
+                  {option.label}
+                </Typography>
+              </Button>
+            );
+          })}
+        </Box>
+      ) : (
+        // Standard web RadioGroup for non-native environments
+        <RadioGroup
+          value={primaryColor}
+          onChange={(e) => setPrimaryColor(e.target.value)}
+          name="color-theme-group"
+          sx={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', gap: 1 }}
+        >
+          {availableColors && availableColors.map((colorName) => {
+            const option = colorOptions[colorName];
+            if (!option) return null;
+            
+            return (
+              <FormControlLabel
+                key={colorName}
+                value={colorName}
+                control={
+                  <Radio 
                     sx={{
-                      width: 20,
-                      height: 20,
-                      borderRadius: '50%',
-                      bgcolor: darkMode ? option.darkColor : option.color,
-                      border: '1px solid',
-                      borderColor: 'divider'
+                      color: darkMode ? option.color : option.color,
+                      '&.Mui-checked': {
+                        color: darkMode ? option.color : option.color,
+                      }
                     }}
                   />
-                  <Typography variant="body2">{option.label}</Typography>
-                </Box>
-              }
-              sx={{ minWidth: '100px' }}
-            />
-          );
-        })}
-      </RadioGroup>
+                }
+                label={
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Box 
+                      sx={{
+                        width: 20,
+                        height: 20,
+                        borderRadius: '50%',
+                        bgcolor: option.color,
+                        border: '1px solid',
+                        borderColor: 'divider'
+                      }}
+                    />
+                    <Typography variant="body2">{option.label}</Typography>
+                  </Box>
+                }
+                sx={{ minWidth: '100px' }}
+              />
+            );
+          })}
+        </RadioGroup>
+      )}
     </Paper>
   );
 };
