@@ -491,9 +491,10 @@ function setupGlobalDB(sqlite) {
         // Create a deep copy of the item to avoid modifying the original
         const itemToSave = JSON.parse(JSON.stringify(item));
         
-        // Ensure item has an ID
+        // For tables with AUTOINCREMENT, don't set an ID for new records
+        // SQLite will auto-assign the ID when we insert
         if (!itemToSave.id) {
-          itemToSave.id = 0; //`${collection}_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+          delete itemToSave.id; // Don't set ID for new records with autoincrement
         }
         
         // Special handling for activities to ensure type is always set
