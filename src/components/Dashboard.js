@@ -260,52 +260,64 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
             </div>
           )}
         </div>
-        <div style={{
-          backgroundColor: darkMode ? '#1f2937' : '#ffffff',
-          borderRadius: '0.5rem',
-          padding: '0.5rem',
-          textAlign: 'center',
-          border: darkMode ? '1px solid #374151' : '1px solid #e5e7eb'
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '0.5rem' }}>
-            <h3 style={{
-              fontSize: '1.1rem',
-              fontWeight: 600,
-              color: darkMode ? '#d1d5db' : '#374151',
-              margin: 0,
-            }}>
+        <Paper 
+          elevation={1}
+          sx={{
+            p: 2,
+            textAlign: 'center',
+            borderRadius: 2,
+            bgcolor: 'background.paper',
+            border: 1,
+            borderColor: 'divider',
+          }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 1 }}>
+            <Typography
+              variant="h6"
+              sx={{
+                fontSize: '1.1rem',
+                fontWeight: 600,
+                m: 0,
+                display: 'flex',
+                alignItems: 'center'
+              }}
+            >
               Spiritual Fitness
-              <button
+              <Box
+                component="button"
                 onClick={() => setShowScoreModal(!showScoreModal)}
-                style={{
+                sx={{
                   background: 'none',
                   border: 'none',
                   cursor: 'pointer',
                   fontSize: '0.75em',
-                  padding: '0 0 0 4px',
+                  p: '0 0 0 4px',
                   position: 'relative',
                   top: '-5px',
-                  color: darkMode ? '#9ca3af' : '#6b7280'
+                  color: 'text.secondary',
+                  '&:hover': {
+                    color: 'primary.main'
+                  }
                 }}
                 aria-label="Show how spiritual fitness is calculated"
               >
                 <i className="fa-solid fa-question"></i>
-              </button>
-            </h3>
-          </div>
+              </Box>
+            </Typography>
+          </Box>
           
           {/* Score display with dynamic color */}
-          <div 
-            style={{ 
+          <Typography
+            variant="h4"
+            sx={{ 
               fontSize: '1.6rem', 
               fontWeight: 'bold',
-              marginBottom: '0.5rem',
+              mb: 0.5,
               color: getScoreColor(currentScore),
-              lineHeight: '1.1'
+              lineHeight: 1.1
             }}
           >
             {formattedScore}
-          </div>
+          </Typography>
           
           {/* Gradient progress bar with mask - thicker version with no markers */}
           <div style={{ 
@@ -367,7 +379,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
           {/* "How is this calculated" button removed - now using the icon in the header */}
           
           {/* Render modal at the end of the Dashboard component body to avoid positioning issues */}
-        </div>
+        </Paper>
       </div>
       
       {/* Recent Activities Section */}
