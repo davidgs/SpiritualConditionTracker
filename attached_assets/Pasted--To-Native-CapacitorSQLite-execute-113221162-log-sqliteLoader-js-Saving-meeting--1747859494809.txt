@@ -1,0 +1,33 @@
+⚡️  To Native ->  CapacitorSQLite execute 113221162
+⚡️  [log] - [ sqliteLoader.js ] Saving meeting: {
+  "name": "Arch to Freedom",
+  "days": [
+    "monday"
+  ],
+  "time": "18:00",
+  "schedule": [
+    {
+      "day": "monday",
+      "time": "18:00"
+    }
+  ],
+  "address": "100 Hughes Street, Apex, NC, 27539",
+  "locationName": "Apex United Methodist Church",
+  "streetAddress": "100 Hughes Street",
+  "city": "Apex",
+  "state": "NC",
+  "zipCode": "27539",
+  "coordinates": null,
+  "isHomeGroup": true,
+  "createdAt": "2025-05-21T20:31:04.896Z",
+  "updatedAt": "2025-05-21T20:31:04.896Z"
+}
+⚡️  [log] - [ sqliteLoader.js ] Meeting name after validation: "Arch to Freedom"
+⚡️  [log] - [ sqliteLoader.js ] Meeting name in SQL values: "Arch to Freedom"
+⚡️  [log] - [ sqliteLoader.js ] SQL for meetings: {"fields":["name","days","time","schedule","address","locationName","streetAddress","city","state","zipCode","coordinates","isHomeGroup","createdAt","updatedAt"],"values":["Arch to Freedom","[\"monday\"]","18:00","[{\"day\":\"monday\",\"time\":\"18:00\"}]","100 Hughes Street, Apex, NC, 27539","Apex United Methodist Church","100 Hughes Street","Apex","NC","27539",null,true,"2025-05-21T20:31:04.896Z","2025-05-21T20:31:04.898Z"],"collection":"meetings"}
+⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO meetings (name, days, time, schedule, address, locationName, streetAddress, city, state, zipCode, coordinates, isHomeGroup, createdAt, updatedAt) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+⚡️  [log] - [ sqliteLoader.js ] With values: ["Arch to Freedom","[\"monday\"]","18:00","[{\"day\":\"monday\",\"time\":\"18:00\"}]","100 Hughes Street, Apex, NC, 27539","Apex United Methodist Church","100 Hughes Street","Apex","NC","27539",null,true,"2025-05-21T20:31:04.896Z","2025-05-21T20:31:04.898Z"]
+ERROR MESSAGE:  {"message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: table meetings has no column named coordinates","errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: table meetings has no column named coordinates"}
+⚡️  [error] - {"message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: table meetings has no column named coordinates","errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: table meetings has no column named coordinates"}
+⚡️  [error] - [ sqliteLoader.js ] Error adding item to meetings: {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: table meetings has no column named coordinates"}
+⚡️  [error] - Error saving meeting: {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: table meetings has no column named coordinates"}

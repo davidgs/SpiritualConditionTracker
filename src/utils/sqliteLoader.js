@@ -335,7 +335,8 @@ async function setupTables(sqlite) {
         attendance TEXT,
         lastAttended TEXT,
         createdAt TEXT,
-        updatedAt TEXT
+        updatedAt TEXT,
+        coordinates TEXT
       )
     `
   });
