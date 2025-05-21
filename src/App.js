@@ -640,14 +640,13 @@ function App() {
   console.log('App.js - Before rendering, spiritualFitness value:', spiritualFitness);
   
   return (
-    <MuiThemeProvider>
-      <ThemeBackground>
-        <Box 
-          className="app-container h-full flex flex-col transition-all duration-300"
+    <Box 
+          className="app-container h-full flex flex-col"
           sx={{ 
             width: '100%',
             height: '100%',
-            color: 'text.primary'
+            backgroundColor: '#f5f7fa',
+            color: '#111827'
           }}
         >
         <NavBar currentView={currentView} setCurrentView={setCurrentView} />
@@ -664,9 +663,7 @@ function App() {
           {renderCurrentView()}
         </Box>
       </Box>
-      </ThemeBackground>
-    </MuiThemeProvider>
-  );
+    );
 }
 
 export default App;
