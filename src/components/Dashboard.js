@@ -169,9 +169,6 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
 
   // Determine whether to show years or days more prominently
   const showYearsProminent = sobrietyYears >= 1;
-
-  // Get MUI theme for proper styling
-  const muiTheme = useTheme();
   
   return (
     <Box sx={{ p: 3, maxWidth: 'md', mx: 'auto' }}>
@@ -219,7 +216,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
                 <span style={{ 
                   fontSize: '1.6rem', 
                   fontWeight: 'bold', 
-                  color: darkMode ? '#60a5fa' : '#3b82f6',
+                  color: 'var(--theme-primary-main)',
                   marginRight: '4px',
                   lineHeight: '1.1'
                 }}>
@@ -227,7 +224,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
                 </span>
                 <span style={{ 
                   fontSize: '1rem', 
-                  color: darkMode ? '#9ca3af' : '#6b7280',
+                  color: 'var(--theme-text-secondary)',
                   lineHeight: '1.1'
                 }}>
                   years
@@ -235,7 +232,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
               </div>
               <div style={{ 
                 fontSize: '1rem', 
-                color: darkMode ? '#60a5fa' : '#3b82f6',
+                color: 'var(--theme-primary-main)',
                 lineHeight: '1.1',
                 textAlign: 'center'
               }}>
@@ -248,7 +245,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
                 <span style={{ 
                   fontSize: '1.6rem', 
                   fontWeight: 'bold', 
-                  color: darkMode ? '#60a5fa' : '#3b82f6',
+                  color: 'var(--theme-primary-main)',
                   marginRight: '4px',
                   lineHeight: '1.1'
                 }}>
@@ -256,7 +253,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
                 </span>
                 <span style={{ 
                   fontSize: '1rem', 
-                  color: darkMode ? '#9ca3af' : '#6b7280',
+                  color: 'var(--theme-text-secondary)',
                   lineHeight: '1.1'
                 }}>
                   days
@@ -264,7 +261,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
               </div>
               <div style={{ 
                 fontSize: '1rem', 
-                color: darkMode ? '#60a5fa' : '#3b82f6',
+                color: 'var(--theme-primary-main)',
                 lineHeight: '1.1',
                 textAlign: 'center'
               }}>
