@@ -3,6 +3,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { Capacitor } from '@capacitor/core';
 import { applyNativeTheme, applyNativeCssVariables, defaultThemeColors, getSystemColorScheme } from '../utils/nativeTheme';
+import { generateThemePalette } from '../utils/colorThemes';
 
 // Helper function to lighten colors for dark mode
 const lightenColor = (hex, percent) => {
@@ -138,55 +139,10 @@ const MuiThemeProvider = ({ children }) => {
   
   // Create a theme based on our app's dark/light mode and custom primary color
   const muiTheme = React.useMemo(
-    () =>
+    () => 
       createTheme({
-        palette: {
-          mode: darkMode ? 'dark' : 'light',
-          primary: {
-            light: darkMode ? lightenColor(primaryColorValue, 25) : lightenColor(primaryColorValue, 15),
-            main: darkMode ? lightenColor(primaryColorValue, 15) : primaryColorValue,
-            dark: darkMode ? primaryColorValue : darkenColor(primaryColorValue, 15),
-            contrastText: '#ffffff',
-          },
-          secondary: {
-            light: darkMode ? '#a78bfa' : '#9333ea',
-            main: darkMode ? '#8b5cf6' : '#7c3aed',
-            dark: darkMode ? '#6d28d9' : '#5b21b6',
-            contrastText: '#ffffff',
-          },
-          error: {
-            light: darkMode ? '#f87171' : '#ef4444',
-            main: darkMode ? '#ef4444' : '#dc2626',
-            dark: darkMode ? '#b91c1c' : '#991b1b',
-            contrastText: '#ffffff',
-          },
-          warning: {
-            light: darkMode ? '#fcd34d' : '#fbbf24',
-            main: darkMode ? '#f59e0b' : '#d97706',
-            dark: darkMode ? '#b45309' : '#92400e',
-            contrastText: '#ffffff',
-          },
-          info: {
-            light: darkMode ? '#93c5fd' : '#60a5fa',
-            main: darkMode ? '#3b82f6' : '#2563eb',
-            dark: darkMode ? '#1d4ed8' : '#1e40af',
-            contrastText: '#ffffff',
-          },
-          success: {
-            light: darkMode ? '#86efac' : '#4ade80',
-            main: darkMode ? '#22c55e' : '#16a34a',
-            dark: darkMode ? '#15803d' : '#166534',
-            contrastText: '#ffffff',
-          },
-          background: {
-            default: darkMode ? '#111827' : '#ffffff',
-            paper: darkMode ? '#1f2937' : '#ffffff',
-          },
-          text: {
-            primary: darkMode ? '#f3f4f6' : '#1f2937',
-            secondary: darkMode ? '#9ca3af' : '#4b5563',
-          },
-        },
+        // Use the comprehensive theme palette generator
+        palette: generateThemePalette(primaryColor, theme),
         typography: {
           fontFamily: '"Inter", "Helvetica", "Arial", sans-serif',
         },

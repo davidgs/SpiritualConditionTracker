@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Typography, Radio, RadioGroup, FormControlLabel, Paper, Button } from '@mui/material';
+import { Box, Typography, Radio, RadioGroup, FormControlLabel, Paper, Button, useTheme } from '@mui/material';
 import { useAppTheme } from '../contexts/MuiThemeProvider';
 import { Capacitor } from '@capacitor/core';
 import { defaultThemeColors } from '../utils/nativeTheme';
+import baseColors from '../utils/colorThemes';
 
 /**
  * A component that allows users to select a color theme for the app

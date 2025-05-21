@@ -26,7 +26,7 @@ function Header({ title, menuOpen, setMenuOpen, isMobile }) {
         backgroundColor: headerBackgroundColor,
         borderBottom: `1px solid ${muiTheme.palette.divider}`,
         borderLeft: `4px solid ${accentColor}`,
-        padding: isMobile ? '2.5rem .25rem .25rem .25rem' : '0.75rem 1rem',
+        padding: isMobile ? '2.75rem .25rem .25rem .25rem' : '0.75rem 1rem',
         display: 'flex',
         alignItems: 'center',
         justifyContent: isMobile ? 'space-between' : 'center',
@@ -44,7 +44,7 @@ function Header({ title, menuOpen, setMenuOpen, isMobile }) {
           }}>
             <Box
               component="img" 
-              src="./logo.jpg"
+              src="./assets/logo.jpg"
               alt="App Logo" 
               sx={{ 
                 width: '50px',
