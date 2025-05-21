@@ -383,7 +383,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
       </Box>
       
       {/* Recent Activities Section */}
-      <div style={{
+      <Box sx={{
         backgroundColor: 'var(--theme-bg-paper)',
         borderRadius: '0.5rem',
         padding: '0.5rem',
@@ -391,7 +391,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
         marginBottom: '0.75rem',
         // No fixed height or overflow here - the entire page scrolls
       }}>
-        <div style={{
+        <Box sx={{
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
@@ -474,7 +474,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
             </button>
             
           </div>
-        </div>
+        </Box>
         
         {/* Use the reusable ActivityList component */}
         <ActivityList 
@@ -485,7 +485,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
           filter={activityTypeFilter}
           showDate={true}
         />
-      </div>
+      </Box>
       
       {/* Material UI Dialog for Spiritual Fitness */}
       <SpiritualFitnessModal 
@@ -501,6 +501,6 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
         onSaveMeeting={onSaveMeeting}
         meetings={meetings}
       />
-    </div>
+    </Box>
   );
 }
