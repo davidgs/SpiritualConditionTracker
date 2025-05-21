@@ -799,8 +799,9 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
                   MenuProps: {
                     PaperProps: {
                       sx: {
-                        bgcolor: darkMode ? '#1f2937' : '#ffffff',
-                        border: darkMode ? '1px solid #374151' : '1px solid #e5e7eb',
+                        bgcolor: 'background.paper',
+                        border: '1px solid',
+                        borderColor: 'divider',
                         maxHeight: 300
                       }
                     }
