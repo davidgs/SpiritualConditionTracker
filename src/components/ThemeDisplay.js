@@ -1,6 +1,7 @@
 import React from 'react';
 import { Box, Typography, Paper } from '@mui/material';
 import { useAppTheme } from '../contexts/MuiThemeProvider';
+import { defaultThemeColors } from '../utils/nativeTheme';
 
 /**
  * A component that shows visual examples of the current theme
@@ -8,6 +9,9 @@ import { useAppTheme } from '../contexts/MuiThemeProvider';
 const ThemeDisplay = () => {
   const { primaryColor, theme } = useAppTheme();
   const darkMode = theme === 'dark';
+  
+  // Get the actual hex color value from our color mapping
+  const actualColorValue = defaultThemeColors[primaryColor];
   
   return (
     <Box sx={{ mt: 2, mb: 2 }}>
@@ -28,7 +32,7 @@ const ThemeDisplay = () => {
           sx={(theme) => ({
             width: '100%',
             p: 2,
-            borderLeft: `8px solid ${theme.palette.primary.main}`,
+            borderLeft: `8px solid ${actualColorValue}`,
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
@@ -41,8 +45,8 @@ const ThemeDisplay = () => {
           
           {/* Sample button */}
           <Box 
-            sx={(theme) => ({ 
-              bgcolor: theme.palette.primary.main,
+            sx={{ 
+              bgcolor: actualColorValue,
               color: '#fff',
               p: 1,
               borderRadius: 1,
@@ -51,21 +55,21 @@ const ThemeDisplay = () => {
               mb: 1,
               fontWeight: 'bold',
               fontSize: '0.875rem'
-            })}
+            }}
           >
             Button Example
           </Box>
           
           {/* Sample card */}
           <Box 
-            sx={(theme) => ({ 
-              border: `2px solid ${theme.palette.primary.main}`,
+            sx={{ 
+              border: `2px solid ${actualColorValue}`,
               borderRadius: 1,
               p: 1,
               width: '80%',
               textAlign: 'center',
               fontSize: '0.875rem'
-            })}
+            }}
           >
             Card Border
           </Box>
@@ -73,11 +77,11 @@ const ThemeDisplay = () => {
           {/* Sample text */}
           <Typography 
             variant="body2" 
-            sx={(theme) => ({ 
-              color: theme.palette.primary.main,
+            sx={{ 
+              color: actualColorValue,
               fontWeight: 'bold',
               mt: 1
-            })}
+            }}
           >
             Text in theme color
           </Typography>
