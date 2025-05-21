@@ -172,7 +172,12 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
   return (
     <div className="p-3 max-w-md mx-auto">
       {/* Sobriety & Spiritual Fitness Stats - Fixed height section */}
-      <div className="grid grid-cols-2 gap-2 mb-3">
+      <Box sx={{ 
+        display: 'grid', 
+        gridTemplateColumns: 'repeat(2, 1fr)', 
+        gap: 2, 
+        mb: 3 
+      }}>
         <Paper 
           elevation={1}
           sx={{
@@ -200,76 +205,97 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
           
           {/* Add sobriety date display */}
           {user?.sobrietyDate && (
-            <div style={{ 
-              fontSize: '0.85rem', 
-              color: darkMode ? '#9ca3af' : '#6b7280',
-              marginBottom: '0.5rem',
-              textAlign: 'center'
-            }}>
+            <Typography
+              variant="body2" 
+              sx={{ 
+                fontSize: '0.85rem', 
+                color: 'text.secondary',
+                mb: 0.5,
+                textAlign: 'center'
+              }}
+            >
               Since {formatDate(user.sobrietyDate)}
-            </div>
+            </Typography>
           )}
           
           {showYearsProminent ? (
-            <div style={{ textAlign: 'center' }}>
-              <div style={{ display: 'flex', alignItems: 'baseline', marginBottom: '5px', justifyContent: 'center' }}>
-                <span style={{ 
-                  fontSize: '1.6rem', 
-                  fontWeight: 'bold', 
-                  color: darkMode ? '#60a5fa' : '#3b82f6',
-                  marginRight: '4px',
-                  lineHeight: '1.1'
-                }}>
+            <Box sx={{ textAlign: 'center' }}>
+              <Box sx={{ display: 'flex', alignItems: 'baseline', mb: 0.5, justifyContent: 'center' }}>
+                <Typography 
+                  variant="h4"
+                  sx={{ 
+                    fontSize: '1.6rem', 
+                    fontWeight: 'bold', 
+                    color: 'primary.main',
+                    mr: 0.5,
+                    lineHeight: 1.1
+                  }}
+                >
                   {sobrietyYears.toFixed(2)}
-                </span>
-                <span style={{ 
-                  fontSize: '1rem', 
-                  color: darkMode ? '#9ca3af' : '#6b7280',
-                  lineHeight: '1.1'
-                }}>
+                </Typography>
+                <Typography 
+                  variant="body1" 
+                  sx={{ 
+                    fontSize: '1rem', 
+                    color: 'text.secondary',
+                    lineHeight: 1.1
+                  }}
+                >
                   years
-                </span>
-              </div>
-              <div style={{ 
-                fontSize: '1rem', 
-                color: darkMode ? '#60a5fa' : '#3b82f6',
-                lineHeight: '1.1',
-                textAlign: 'center'
-              }}>
-                {formatNumber(sobrietyDays)} days
-              </div>
-            </div>
-          ) : (
-            <div style={{ textAlign: 'center' }}>
-              <div style={{ display: 'flex', alignItems: 'baseline', marginBottom: '5px', justifyContent: 'center' }}>
-                <span style={{ 
-                  fontSize: '1.6rem', 
-                  fontWeight: 'bold', 
-                  color: darkMode ? '#60a5fa' : '#3b82f6',
-                  marginRight: '4px',
-                  lineHeight: '1.1'
-                }}>
-                  {formatNumber(sobrietyDays)}
-                </span>
-                <span style={{ 
+                </Typography>
+              </Box>
+              <Typography 
+                variant="body1" 
+                sx={{ 
                   fontSize: '1rem', 
-                  color: darkMode ? '#9ca3af' : '#6b7280',
-                  lineHeight: '1.1'
-                }}>
+                  color: 'primary.main',
+                  lineHeight: 1.1,
+                  textAlign: 'center'
+                }}
+              >
+                {formatNumber(sobrietyDays)} days
+              </Typography>
+            </Box>
+          ) : (
+            <Box sx={{ textAlign: 'center' }}>
+              <Box sx={{ display: 'flex', alignItems: 'baseline', mb: 0.5, justifyContent: 'center' }}>
+                <Typography 
+                  variant="h4"
+                  sx={{ 
+                    fontSize: '1.6rem', 
+                    fontWeight: 'bold', 
+                    color: 'primary.main',
+                    mr: 0.5,
+                    lineHeight: 1.1
+                  }}
+                >
+                  {formatNumber(sobrietyDays)}
+                </Typography>
+                <Typography 
+                  variant="body1" 
+                  sx={{ 
+                    fontSize: '1rem', 
+                    color: 'text.secondary',
+                    lineHeight: 1.1
+                  }}
+                >
                   days
-                </span>
-              </div>
-              <div style={{ 
-                fontSize: '1rem', 
-                color: darkMode ? '#60a5fa' : '#3b82f6',
-                lineHeight: '1.1',
-                textAlign: 'center'
-              }}>
+                </Typography>
+              </Box>
+              <Typography 
+                variant="body1" 
+                sx={{ 
+                  fontSize: '1rem', 
+                  color: 'primary.main',
+                  lineHeight: 1.1,
+                  textAlign: 'center'
+                }}
+              >
                 {sobrietyYears.toFixed(2)} years
-              </div>
-            </div>
+              </Typography>
+            </Box>
           )}
-        </div>
+        </Paper>
         <Paper 
           elevation={1}
           sx={{
