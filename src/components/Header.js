@@ -1,9 +1,12 @@
 import React from 'react';
 import { useTheme } from '@mui/material/styles';
+import { Typography, Box, IconButton } from '@mui/material';
+import { useAppTheme } from '../contexts/MuiThemeProvider';
 import SafeAreaHeader from './SafeAreaHeader';
 
 function Header({ title, menuOpen, setMenuOpen, isMobile }) {
   const muiTheme = useTheme();
+  const { primaryColor } = useAppTheme();
   const darkMode = muiTheme.palette.mode === 'dark';
   
   // Use MUI theme colors for consistent styling
@@ -11,9 +14,9 @@ function Header({ title, menuOpen, setMenuOpen, isMobile }) {
     ? muiTheme.palette.background.paper 
     : muiTheme.palette.grey[100];
   // Header text color from MUI theme
-  const headerTextColor = darkMode 
-    ? muiTheme.palette.text.primary 
-    : muiTheme.palette.text.primary;
+  const headerTextColor = muiTheme.palette.text.primary;
+  // Add a primary color accent from the user's selected theme
+  const accentColor = muiTheme.palette.primary.main;
   
   return (
     <SafeAreaHeader
@@ -21,7 +24,8 @@ function Header({ title, menuOpen, setMenuOpen, isMobile }) {
         position: 'relative', // Not sticky anymore
         zIndex: 20,
         backgroundColor: headerBackgroundColor,
-        borderBottom: darkMode ? '1px solid #374151' : '1px solid #e5e7eb',
+        borderBottom: `1px solid ${muiTheme.palette.divider}`,
+        borderLeft: `4px solid ${accentColor}`,
         padding: isMobile ? '2.5rem .25rem .25rem .25rem' : '0.75rem 1rem',
         display: 'flex',
         alignItems: 'center',
@@ -34,108 +38,124 @@ function Header({ title, menuOpen, setMenuOpen, isMobile }) {
       {isMobile ? (
         // Mobile layout: Logo on left, text in center, hamburger on right
         <>
-          <div style={{ 
+          <Box sx={{ 
             display: 'flex',
             alignItems: 'center'
           }}>
-            <img 
-              src="./assets/logo.jpg"
+            <Box
+              component="img" 
+              src="./logo.jpg"
               alt="App Logo" 
-              style={{ 
+              sx={{ 
                 width: '50px',
                 height: '50px',
                 objectFit: 'contain',
-                borderRadius: '8px'
+                borderRadius: '8px',
+                border: `2px solid ${accentColor}`
               }}
             />
-          </div>
+          </Box>
           
-          <div style={{
+          <Box sx={{
             textAlign: 'center',
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
             flex: 1
           }}>
-            <h1 style={{ 
-              fontSize: '1.25rem', 
-              fontWeight: 'bold', 
-              color: darkMode ? '#f3f4f6' : '#1f2937',
-              margin: 0,
-              lineHeight: '1.2'
-            }}>
-              Spiritual Condition Tracker
-            </h1>
-            <p
-              style={{
-                fontSize: "0.75rem",
-                color: darkMode ? "#9ca3af" : "#6b7280",
-                lineHeight: "1.1",
+            <Typography 
+              variant="h6" 
+              sx={{ 
+                fontWeight: 'bold',
+                color: headerTextColor,
                 margin: 0,
+                lineHeight: 1.2
+              }}
+            >
+              Spiritual Condition Tracker
+            </Typography>
+            <Typography
+              variant="caption"
+              sx={{
+                color: 'text.secondary',
+                lineHeight: 1.1,
+                margin: 0,
+                borderBottom: `2px solid ${accentColor}`,
+                paddingBottom: '2px'
               }}
             >
               Track your spiritual journey
-            </p>
-          </div>
+            </Typography>
+          </Box>
         </>
       ) : (
         // Desktop layout: Logo and text centered vertically
-        <div style={{ 
+        <Box sx={{ 
           textAlign: 'center',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center'
         }}>
-          <img 
+          <Box 
+            component="img"
             src="./logo.jpg"
             alt="App Logo" 
-            style={{ 
+            sx={{ 
               width: '80px',
               height: '80px',
               objectFit: 'contain',
               borderRadius: '12px',
-              marginBottom: '0.5rem'
+              marginBottom: '0.5rem',
+              border: `2px solid ${accentColor}`
             }}
           />
-          <h1 style={{ 
-            fontSize: '2rem', 
-            fontWeight: 'bold', 
-            color: darkMode ? '#f3f4f6' : '#1f2937',
-            marginBottom: '0.25rem',
-            lineHeight: '1.1'
-          }}>
+          <Typography
+            variant="h4"
+            sx={{ 
+              fontWeight: 'bold', 
+              color: headerTextColor,
+              marginBottom: '0.25rem',
+              lineHeight: 1.1
+            }}
+          >
             Spiritual Condition Tracker
-          </h1>
-          <p style={{ 
-            fontSize: '0.75rem', 
-            color: darkMode ? '#9ca3af' : '#6b7280',
-            lineHeight: '1.1',
-            margin: 0
-          }}>
+          </Typography>
+          <Typography 
+            variant="caption"
+            sx={{ 
+              color: 'text.secondary',
+              lineHeight: 1.1,
+              margin: 0,
+              borderBottom: `2px solid ${accentColor}`,
+              paddingBottom: '2px'
+            }}
+          >
             Track your spiritual journey
-          </p>
-        </div>
+          </Typography>
+        </Box>
       )}
       
       {/* Mobile Hamburger Menu Button */}
       {isMobile && (
-        <button
+        <IconButton
           onClick={() => setMenuOpen(!menuOpen)}
-          style={{
-            background: 'none',
-            border: '1px',
-            color: darkMode ? '#9ca3af' : '#6b7280',
-            fontSize: '2rem',
-            cursor: 'pointer',
-            padding: '4px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center'
-          }}
+          color="primary"
           aria-label={menuOpen ? "Close menu" : "Open menu"}
+          sx={{
+            padding: '8px',
+            fontSize: '1.75rem',
+            border: menuOpen ? `1px solid ${accentColor}` : 'none',
+            transition: 'all 0.2s ease',
+            '&:hover': {
+              backgroundColor: `${accentColor}22`,
+            }
+          }}
         >
-          {menuOpen ? <i class="fa-solid fa-xmark"></i> : <i class="fa-solid fa-bars"></i>}
-        </button>
+          {menuOpen ? 
+            <i className="fa-solid fa-xmark"></i> : 
+            <i className="fa-solid fa-bars"></i>
+          }
+        </IconButton>
       )}
     </SafeAreaHeader>
   );
