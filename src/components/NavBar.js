@@ -100,7 +100,7 @@ function NavBar({ currentView, setCurrentView }) {
       left: 0,
       right: 0,
       bottom: 0,
-      backgroundColor: muiTheme.palette.action.disabledBackground,
+      backgroundColor: 'rgba(0,0,0,0.5)',
       zIndex: 18
     }
   };
@@ -127,7 +127,7 @@ function NavBar({ currentView, setCurrentView }) {
                 style={{
                   ...mobileMenuStyles.menuItem,
                   ...(currentView === item.id ? mobileMenuStyles.activeItem : {}),
-                  color: currentView === item.id ? muiTheme.palette.primary.main : (darkMode ? '#9ca3af' : '#6b7280'),
+                  color: currentView === item.id ? muiTheme.palette.primary.main : muiTheme.palette.text.secondary,
                 }}
               >
                 <i className={`${item.icon}`} style={mobileMenuStyles.menuIcon}></i>
@@ -157,7 +157,7 @@ function NavBar({ currentView, setCurrentView }) {
           display: 'flex',
           justifyContent: 'space-around',
           backgroundColor: navBackgroundColor,
-          borderTop: darkMode ? '1px solid #374151' : '1px solid #e5e7eb',
+          borderTop: `1px solid ${muiTheme.palette.divider}`,
           paddingBottom: '5px' // Add some bottom padding for devices with home indicators
         }}>
           {navItems.map((item) => (
@@ -173,7 +173,7 @@ function NavBar({ currentView, setCurrentView }) {
                 flex: 1,
                 backgroundColor: 'transparent',
                 border: 'none',
-                color: currentView === item.id ? muiTheme.palette.primary.main : (darkMode ? '#9ca3af' : '#6b7280'),
+                color: currentView === item.id ? muiTheme.palette.primary.main : muiTheme.palette.text.secondary,
                 cursor: 'pointer',
                 position: 'relative',
                 '&::after': currentView === item.id ? {
