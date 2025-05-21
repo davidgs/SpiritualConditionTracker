@@ -656,26 +656,26 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
       <Paper elevation={0} 
         component="form" 
         onSubmit={handleSubmit} 
-        sx={{ 
+        sx={(theme) => ({ 
           p: 3,
-          bgcolor: darkMode ? '#1f2937' : '#ffffff',
+          bgcolor: theme.palette.background.paper,
           borderRadius: 2,
-          border: darkMode ? '1px solid #374151' : '1px solid #e5e7eb'
-        }}
+          border: `1px solid ${theme.palette.divider}`
+        })}
       >
         <Box sx={{ mb: 2 }}>
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <Typography variant="h6" sx={{ color: darkMode ? '#d1d5db' : '#374151' }}>
+            <Typography variant="h6" sx={{ color: 'text.primary' }}>
               Personal Information
             </Typography>
             <IconButton 
               onClick={() => setEditingPersonalInfo(!editingPersonalInfo)}
               size="small"
               aria-label={editingPersonalInfo ? "Cancel editing" : "Edit personal information"}
-              sx={{ 
-                color: darkMode ? '#9ca3af' : '#6b7280',
+              sx={(theme) => ({ 
+                color: theme.palette.text.secondary,
                 '&:hover': {
-                  color: darkMode ? '#60a5fa' : '#3b82f6',
+                  color: theme.palette.primary.main,
                   backgroundColor: 'transparent'
                 }
               }}

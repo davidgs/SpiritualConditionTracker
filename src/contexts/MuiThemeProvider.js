@@ -1,8 +1,34 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
+
+// Helper function to lighten colors for dark mode
+const lightenColor = (hex, percent) => {
+  // Convert hex to RGB
+  let r = parseInt(hex.slice(1, 3), 16);
+  let g = parseInt(hex.slice(3, 5), 16);
+  let b = parseInt(hex.slice(5, 7), 16);
+
+  // Increase brightness by percentage
+  r = Math.min(255, Math.floor(r * (1 + percent / 100)));
+  g = Math.min(255, Math.floor(g * (1 + percent / 100)));
+  b = Math.min(255, Math.floor(b * (1 + percent / 100)));
+
+  // Convert back to hex
+  return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
+};
 // Use window.db for accessing database functions after proper initialization
 // This prevents initialization conflicts across multiple imports
+
+// Default theme options
+const defaultThemeColors = {
+  blue: '#3b82f6',
+  purple: '#8b5cf6',
+  green: '#10b981',
+  red: '#ef4444',
+  orange: '#f97316',
+  teal: '#14b8a6'
+};
 
 // Create a context for theme management
 export const AppThemeContext = createContext();
@@ -17,38 +43,49 @@ export const AppThemeContext = createContext();
 const MuiThemeProvider = ({ children }) => {
   // Check if user has previously set a theme or use system preference
   const [initialTheme, setInitialTheme] = useState('light');
+  // Add state for primary color theme (default to blue)
+  const [primaryColor, setPrimaryColor] = useState('blue');
   
-  // Load theme from database on component mount
+  // Load theme preferences from database on component mount
   useEffect(() => {
-    const loadThemeFromDatabase = async () => {
+    const loadPreferencesFromDatabase = async () => {
       try {
         // Only access database if it's been properly initialized
         if (window.db && window.dbInitialized) {
-          // Check for saved theme in database
+          // Check for saved theme mode in database
           const savedTheme = await window.db.getPreference('theme');
           if (savedTheme === 'dark' || savedTheme === 'light') {
             setInitialTheme(savedTheme);
-            return;
           }
-        }
-        
-        // Check system preference
-        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-          setInitialTheme('dark');
+          
+          // Check for saved primary color preference
+          const savedColor = await window.db.getPreference('primaryColor');
+          if (savedColor && defaultThemeColors[savedColor]) {
+            setPrimaryColor(savedColor);
+          }
+          
           return;
         }
+        
+        // Check system preference if database not available
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+          setInitialTheme('dark');
+        }
       } catch (error) {
-        console.error('Error accessing theme preference:', error);
+        console.error('Error accessing theme preferences:', error);
       }
     };
     
-    loadThemeFromDatabase();
+    loadPreferencesFromDatabase();
   }, []);
   
   const [theme, setTheme] = useState(initialTheme);
   const darkMode = theme === 'dark';
   
-  // Update document class and save theme to SQLite when theme changes
+  // Get actual color value from the color name
+  const primaryColorValue = defaultThemeColors[primaryColor] || defaultThemeColors.blue;
+  
+  // Update document class and save theme preferences to SQLite when changes occur
   useEffect(() => {
     try {
       // Apply theme to HTML element for Tailwind
@@ -66,28 +103,32 @@ const MuiThemeProvider = ({ children }) => {
         console.log('Light mode activated');
       }
       
-      // Save theme choice to SQLite database
+      // Apply custom primary color as CSS variable
+      htmlEl.style.setProperty('--primary-color', primaryColorValue);
+      
+      // Save theme choices to SQLite database
       if (window.db && window.dbInitialized && window.db.setPreference) {
         window.db.setPreference('theme', theme);
+        window.db.setPreference('primaryColor', primaryColor);
       }
     } catch (error) {
       console.error('Error applying theme:', error);
     }
-  }, [theme, darkMode]);
+  }, [theme, darkMode, primaryColor, primaryColorValue]);
   
   // Toggle between light and dark mode
   const toggleTheme = () => {
     setTheme(prevTheme => prevTheme === 'light' ? 'dark' : 'light');
   };
   
-  // Create a theme based on our app's dark/light mode
+  // Create a theme based on our app's dark/light mode and custom primary color
   const muiTheme = React.useMemo(
     () =>
       createTheme({
         palette: {
           mode: darkMode ? 'dark' : 'light',
           primary: {
-            main: darkMode ? '#60a5fa' : '#3b82f6', // blue
+            main: darkMode ? lightenColor(primaryColorValue, 15) : primaryColorValue,
           },
           secondary: {
             main: darkMode ? '#8b5cf6' : '#7c3aed', // purple
@@ -222,7 +263,10 @@ const MuiThemeProvider = ({ children }) => {
     theme,
     setTheme,
     toggleTheme,
-    mode: darkMode ? 'dark' : 'light'
+    mode: darkMode ? 'dark' : 'light',
+    primaryColor,
+    setPrimaryColor,
+    availableColors: Object.keys(defaultThemeColors)
   };
 
   return (
