@@ -408,14 +408,16 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
               color: 'text.primary'
             }}
           >Activities</Typography>&nbsp;
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
             {/* Activity type filter */}
-            <select 
-              style={{
-                backgroundColor: 'transparent',
-                border: darkMode ? '1px solid #4b5563' : '1px solid #d1d5db',
-                borderRadius: '0.25rem',
-                color: darkMode ? '#d1d5db' : '#374151',
+            <Box 
+              component="select" 
+              sx={{
+                bgcolor: 'transparent',
+                border: 1,
+                borderColor: 'divider',
+                borderRadius: 0.25,
+                color: 'text.primary',
                 padding: '0.15rem 0.5rem',
                 fontSize: '0.7rem',
                 cursor: 'pointer'
@@ -433,15 +435,17 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
               <option value="meeting">Meetings</option>
               <option value="call">Calls</option>
               <option value="service">Service</option>
-            </select>
+            </Box>
             
             {/* Activity timeframe selector */}
-            <select 
-              style={{
-                backgroundColor: 'transparent',
-                border: darkMode ? '1px solid #4b5563' : '1px solid #d1d5db',
-                borderRadius: '0.25rem',
-                color: darkMode ? '#d1d5db' : '#374151',
+            <Box 
+              component="select"
+              sx={{
+                bgcolor: 'transparent',
+                border: 1,
+                borderColor: 'divider',
+                borderRadius: 0.25,
+                color: 'text.primary',
                 padding: '0.15rem 0.5rem',
                 fontSize: '0.7rem',
                 cursor: 'pointer'
