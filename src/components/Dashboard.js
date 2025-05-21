@@ -322,9 +322,9 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
           {/* Gradient progress bar with mask - thicker version with no markers */}
           <Box sx={{ 
             position: 'relative',
-            height: '16px',
+            height: '32px',
             width: '100%',
-            borderRadius: '8px',
+            borderRadius: '12px',
             background: (theme) => `linear-gradient(
               90deg,
               ${theme.palette.error.main} 0%,
