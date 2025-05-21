@@ -381,11 +381,14 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
         open={open}
         onClose={onClose}
         aria-labelledby="log-activity-dialog-title"
-        maxWidth="md"
+        maxWidth="sm"
+        fullWidth
         PaperProps={{
           style: {
             backgroundColor: darkMode ? '#1f2937' : '#ffffff',
             color: darkMode ? '#e5e7eb' : '#1f2937',
+            overflowX: 'hidden',
+            maxWidth: '100%',
           },
         }}
       >
@@ -419,6 +422,10 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
           sx={{
             backgroundColor: darkMode ? '#1f2937' : '#ffffff',
             color: darkMode ? '#e5e7eb' : '#1f2937',
+            padding: '16px',
+            overflowX: 'hidden',
+            maxWidth: '100%',
+            boxSizing: 'border-box',
           }}
         >
           {/* Success message */}
