@@ -3,6 +3,7 @@ import { useTheme } from '@mui/material/styles';
 import ThemeSelector from './ThemeSelector';
 import MeetingFormDialog from './MeetingFormDialog';
 import ColorThemePicker from './ColorThemePicker';
+import ThemeDisplay from './ThemeDisplay';
 import { useAppTheme } from '../contexts/MuiThemeProvider';
 import { Capacitor } from '@capacitor/core';
 import { 
@@ -551,6 +552,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
           {/* Color Theme Picker */}
           <Box>
             <ColorThemePicker />
+            <ThemeDisplay />
           </Box>
           
           {/* Message Privacy Option */}

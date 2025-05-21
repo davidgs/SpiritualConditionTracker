@@ -105,13 +105,14 @@ const ColorThemePicker = () => {
               >
                 <Box 
                   sx={{
-                    width: 24,
-                    height: 24,
+                    width: 32,
+                    height: 32,
                     borderRadius: '50%',
                     bgcolor: option.color,
                     mb: 0.5,
-                    border: '2px solid',
-                    borderColor: isSelected ? 'white' : option.color
+                    border: '4px solid',
+                    borderColor: isSelected ? 'white' : option.color,
+                    boxShadow: isSelected ? '0 0 10px 2px rgba(255,255,255,0.3)' : 'none'
                   }}
                 />
                 <Typography variant="body2" sx={{ fontWeight: isSelected ? 'bold' : 'normal' }}>
