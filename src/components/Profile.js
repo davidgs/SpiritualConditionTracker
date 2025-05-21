@@ -3,7 +3,7 @@ import { useTheme } from '@mui/material/styles';
 import ThemeSelector from './ThemeSelector';
 import MeetingFormDialog from './MeetingFormDialog';
 import PopoverColorPicker from './PopoverColorPicker';
-import ThemeDisplay from './ThemeDisplay';
+import PopoverThemeDisplay from './PopoverThemeDisplay';
 import { useAppTheme } from '../contexts/MuiThemeProvider';
 import { Capacitor } from '@capacitor/core';
 import { 
@@ -554,9 +554,9 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
             <PopoverColorPicker />
           </Box>
           
-          {/* Display current theme information */}
+          {/* Display theme details in a popover */}
           <Box sx={{ mb: 2 }}>
-            <ThemeDisplay />
+            <PopoverThemeDisplay />
           </Box>
           
           {/* Message Privacy Option */}
