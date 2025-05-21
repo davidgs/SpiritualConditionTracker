@@ -6,13 +6,12 @@ import ActivityList from './ActivityList';
 import SpiritualFitnessModal from './SpiritualFitnessModal';
 import LogActivityModal from './LogActivityModal';
 import { useAppTheme } from '../contexts/MuiThemeProvider';
-import { Paper, Box, Typography, Button, Card, CardContent, LinearProgress } from '@mui/material';
+import { Paper, Box, Typography } from '@mui/material';
 
 export default function Dashboard({ setCurrentView, user, activities, meetings = [], onSave, onSaveMeeting, spiritualFitness }) {
   // Get theme from MUI theme provider
   const { mode } = useAppTheme();
   const darkMode = mode === 'dark';
-  const theme = useTheme();
   
   // State for controlling modal visibility and score timeframe
   const [showScoreModal, setShowScoreModal] = useState(false);
@@ -169,45 +168,36 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
 
   // Determine whether to show years or days more prominently
   const showYearsProminent = sobrietyYears >= 1;
-  
+
   return (
-    <Box sx={{ p: 3, maxWidth: 'md', mx: 'auto' }}>
+    <div className="p-3 max-w-md mx-auto">
       {/* Sobriety & Spiritual Fitness Stats - Fixed height section */}
-      <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 2, mb: 3 }}>
-        <Paper sx={{
-          borderRadius: 2,
-          p: 1,
+      <div className="grid grid-cols-2 gap-2 mb-3">
+        <div style={{
+          backgroundColor: darkMode ? '#1f2937' : '#ffffff',
+          borderRadius: '0.5rem',
+          padding: '0.5rem',
           textAlign: 'center',
-          border: 1,
-          borderColor: 'divider',
-          bgcolor: 'background.paper'
+          border: darkMode ? '1px solid #374151' : '1px solid #e5e7eb'
         }}>
-          <Typography 
-            variant="h6" 
-            sx={{
-              fontSize: '1.1rem',
-              fontWeight: 600,
-              mb: 1,
-              textAlign: 'center',
-              color: 'text.primary'
-            }}
-          >
-            Sobriety
-          </Typography>
+          <h3 style={{
+            fontSize: '1.1rem',
+            fontWeight: 600,
+            color: darkMode ? '#d1d5db' : '#374151',
+            marginBottom: '0.5rem',
+            textAlign: 'center'
+          }}>Sobriety</h3>
           
           {/* Add sobriety date display */}
           {user?.sobrietyDate && (
-            <Typography 
-              variant="body2"
-              sx={{ 
-                fontSize: '0.85rem', 
-                color: 'text.secondary',
-                mb: 0.5,
-                textAlign: 'center'
-              }}
-            >
+            <div style={{ 
+              fontSize: '0.85rem', 
+              color: darkMode ? '#9ca3af' : '#6b7280',
+              marginBottom: '0.5rem',
+              textAlign: 'center'
+            }}>
               Since {formatDate(user.sobrietyDate)}
-            </Typography>
+            </div>
           )}
           
           {showYearsProminent ? (
@@ -216,7 +206,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
                 <span style={{ 
                   fontSize: '1.6rem', 
                   fontWeight: 'bold', 
-                  color: 'var(--theme-primary-main)',
+                  color: darkMode ? '#60a5fa' : '#3b82f6',
                   marginRight: '4px',
                   lineHeight: '1.1'
                 }}>
@@ -224,7 +214,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
                 </span>
                 <span style={{ 
                   fontSize: '1rem', 
-                  color: 'var(--theme-text-secondary)',
+                  color: darkMode ? '#9ca3af' : '#6b7280',
                   lineHeight: '1.1'
                 }}>
                   years
@@ -232,7 +222,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
               </div>
               <div style={{ 
                 fontSize: '1rem', 
-                color: 'var(--theme-primary-main)',
+                color: darkMode ? '#60a5fa' : '#3b82f6',
                 lineHeight: '1.1',
                 textAlign: 'center'
               }}>
@@ -245,7 +235,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
                 <span style={{ 
                   fontSize: '1.6rem', 
                   fontWeight: 'bold', 
-                  color: 'var(--theme-primary-main)',
+                  color: darkMode ? '#60a5fa' : '#3b82f6',
                   marginRight: '4px',
                   lineHeight: '1.1'
                 }}>
@@ -253,7 +243,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
                 </span>
                 <span style={{ 
                   fontSize: '1rem', 
-                  color: 'var(--theme-text-secondary)',
+                  color: darkMode ? '#9ca3af' : '#6b7280',
                   lineHeight: '1.1'
                 }}>
                   days
@@ -261,7 +251,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
               </div>
               <div style={{ 
                 fontSize: '1rem', 
-                color: 'var(--theme-primary-main)',
+                color: darkMode ? '#60a5fa' : '#3b82f6',
                 lineHeight: '1.1',
                 textAlign: 'center'
               }}>
@@ -271,16 +261,16 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
           )}
         </div>
         <div style={{
-          backgroundColor: 'var(--theme-bg-paper)',
+          backgroundColor: darkMode ? '#1f2937' : '#ffffff',
           borderRadius: '0.5rem',
           padding: '0.5rem',
           textAlign: 'center',
-          border: '1px solid var(--theme-divider)'
+          border: darkMode ? '1px solid #374151' : '1px solid #e5e7eb'
         }}>
           <h3 style={{
             fontSize: '1.1rem',
             fontWeight: 600,
-            color: 'var(--theme-text-primary)',
+            color: darkMode ? '#d1d5db' : '#374151',
             marginBottom: '0.5rem'
           }}>Spiritual Fitness</h3>
           
@@ -305,20 +295,20 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
             borderRadius: '8px',
             background: `linear-gradient(
               90deg,
-              var(--theme-error-main) 0%,
-              var(--theme-warning-light) 25%,
-              var(--theme-warning-main) 50%, 
-              var(--theme-success-light) 75%,
-              var(--theme-success-main) 100%
+              ${darkMode ? '#DC2626' : '#EF4444'} 0%,
+              ${darkMode ? '#E76B6B' : '#F87171'} 25%,
+              ${darkMode ? '#D97706' : '#F59E0B'} 50%,
+              ${darkMode ? '#65A30D' : '#84CC16'} 75%,
+              ${darkMode ? '#16A34A' : '#22C55E'} 100%
             )`,
             marginBottom: '6px',
-            border: '1px solid var(--theme-divider)',
+            border: darkMode ? '1px solid #4B5563' : '1px solid #D1D5DB',
             overflow: 'hidden',
-            boxShadow: '0 1px 2px rgba(0,0,0,0.15) inset'
+            boxShadow: darkMode ? '0 1px 2px rgba(0,0,0,0.2) inset' : '0 1px 2px rgba(0,0,0,0.1) inset'
           }}>
             <div style={{
               borderRadius: '0 8px 8px 0',
-              backgroundColor: 'var(--theme-bg-default)',
+              backgroundColor: darkMode ? '#374151' : '#F3F4F6',
               position: 'absolute',
               right: 0,
               bottom: 0,
@@ -333,7 +323,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
             justifyContent: 'center',
             gap: '0.5rem',
             fontSize: '0.85rem',
-            color: 'var(--theme-text-secondary)'
+            color: darkMode ? '#9ca3af' : '#6b7280'
           }}>
             <span>{scoreTimeframe}-day score</span>
             <button 
@@ -342,7 +332,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
                 backgroundColor: 'transparent',
                 border: 'none',
                 cursor: 'pointer',
-                color: 'var(--theme-primary-main)',
+                color: darkMode ? '#60a5fa' : '#3b82f6',
                 padding: '2px',
                 borderRadius: '4px',
                 display: 'flex',
@@ -358,14 +348,14 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
             <button 
               ref={buttonRef}
               style={{
-                backgroundColor: 'var(--theme-primary-light)',
-                color: 'var(--theme-primary-dark)',
+                backgroundColor: darkMode ? '#1e40af' : '#dbeafe',
+                color: darkMode ? '#93c5fd' : '#1e40af',
                 padding: '0.5rem 0.75rem',  /* Increased padding */
                 borderRadius: '0.375rem',   /* Slightly larger radius */
                 fontSize: '0.85rem',        /* Increased font size by ~30% */
                 fontWeight: '600',          /* Slightly bolder */
                 marginTop: '0.375rem',      /* More top margin */
-                border: '1px solid var(--theme-primary-main)',
+                border: darkMode ? '1px solid #3b82f6' : '1px solid #93c5fd',
                 cursor: 'pointer',
                 transition: 'background-color 0.2s',
                 width: 'max-content',       /* Make sure it fits content */
@@ -384,10 +374,10 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
       
       {/* Recent Activities Section */}
       <div style={{
-        backgroundColor: 'var(--theme-bg-paper)',
+        backgroundColor: darkMode ? '#1f2937' : '#ffffff',
         borderRadius: '0.5rem',
         padding: '0.5rem',
-        border: '1px solid var(--theme-divider)',
+        border: darkMode ? '1px solid #374151' : '1px solid #e5e7eb',
         marginBottom: '0.75rem',
         // No fixed height or overflow here - the entire page scrolls
       }}>
@@ -400,16 +390,16 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
           <h2 style={{
             fontSize: '1.1rem',
             fontWeight: 600,
-            color: 'var(--theme-text-primary)'
+            color: darkMode ? '#d1d5db' : '#374151'
           }}>Activities</h2>&nbsp;
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             {/* Activity type filter */}
             <select 
               style={{
                 backgroundColor: 'transparent',
-                border: '1px solid var(--theme-divider)',
+                border: darkMode ? '1px solid #4b5563' : '1px solid #d1d5db',
                 borderRadius: '0.25rem',
-                color: 'var(--theme-text-primary)',
+                color: darkMode ? '#d1d5db' : '#374151',
                 padding: '0.15rem 0.5rem',
                 fontSize: '0.7rem',
                 cursor: 'pointer'
@@ -433,9 +423,9 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
             <select 
               style={{
                 backgroundColor: 'transparent',
-                border: '1px solid var(--theme-divider)',
+                border: darkMode ? '1px solid #4b5563' : '1px solid #d1d5db',
                 borderRadius: '0.25rem',
-                color: 'var(--theme-text-primary)',
+                color: darkMode ? '#d1d5db' : '#374151',
                 padding: '0.15rem 0.5rem',
                 fontSize: '0.7rem',
                 cursor: 'pointer'
@@ -467,7 +457,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
                 border: 'none',
                 cursor: 'pointer',
                 padding: '0.5rem',
-                color: 'var(--theme-primary-main)',
+                color: darkMode ? '#2563eb' : '#3b82f6',
               }}
             >
               <i className="fa-solid fa-scroll"></i>
