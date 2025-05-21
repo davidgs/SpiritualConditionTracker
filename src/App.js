@@ -613,9 +613,17 @@ function App() {
   // Log the spiritual fitness value before rendering
   console.log('App.js - Before rendering, spiritualFitness value:', spiritualFitness);
   
+  // Get dark mode state
+  const darkMode = document.documentElement.classList.contains('dark');
+  
   return (
     <MuiThemeProvider>
-      <div className="app-container h-full flex flex-col bg-white dark:bg-gray-900 transition-colors duration-200">
+      <div 
+        className="app-container h-full flex flex-col transition-colors duration-200"
+        style={{ 
+          backgroundColor: darkMode ? '#111827' : '#f0f2f5'
+        }}
+      >
         <NavBar currentView={currentView} setCurrentView={setCurrentView} />
         <div 
           className="flex-grow" 
@@ -623,7 +631,8 @@ function App() {
             minHeight: 'calc(100vh - 60px)', // 60px is the header height
             paddingBottom: '100px', // Significantly increased padding to ensure content is visible
             paddingTop: '10px', // Space after the header
-            overflowY: 'visible' // Don't add scrollbar to this container
+            overflowY: 'visible', // Don't add scrollbar to this container
+            backgroundColor: darkMode ? '#111827' : '#f0f2f5'
           }}
         >
           {renderCurrentView()}
