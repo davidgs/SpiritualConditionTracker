@@ -6,7 +6,7 @@ import ActivityList from './ActivityList';
 import SpiritualFitnessModal from './SpiritualFitnessModal';
 import LogActivityModal from './LogActivityModal';
 import { useAppTheme } from '../contexts/MuiThemeProvider';
-import { Paper, Box, Typography } from '@mui/material';
+import { Paper, Box, Typography, IconButton, Button } from '@mui/material';
 
 export default function Dashboard({ setCurrentView, user, activities, meetings = [], onSave, onSaveMeeting, spiritualFitness }) {
   // Get theme from MUI theme provider
@@ -352,24 +352,21 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
             }}></Box>
           </Box>
           
-          <div style={{ 
+          <Box sx={{ 
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            gap: '0.5rem',
+            gap: 0.5,
             fontSize: '0.85rem',
-            color: darkMode ? '#9ca3af' : '#6b7280'
+            color: 'text.secondary'
           }}>
-            <span>{scoreTimeframe}-day score</span>
-            <button 
+            <Typography variant="body2" sx={{ fontSize: 'inherit' }}>{scoreTimeframe}-day score</Typography>
+            <IconButton 
               onClick={cycleTimeframe}
-              style={{
-                backgroundColor: 'transparent',
-                border: 'none',
-                cursor: 'pointer',
-                color: darkMode ? '#60a5fa' : '#3b82f6',
+              size="small"
+              sx={{
                 padding: '2px',
-                borderRadius: '4px',
+                color: 'primary.main',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center'
@@ -377,8 +374,8 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
               title="Change timeframe"
             >
               <i className="fa-solid fa-shuffle"></i>
-            </button>
-          </div>
+            </IconButton>
+          </Box>
           {/* "How is this calculated" button removed - now using the icon in the header */}
           
           {/* Render modal at the end of the Dashboard component body to avoid positioning issues */}
@@ -386,25 +383,31 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
       </div>
       
       {/* Recent Activities Section */}
-      <div style={{
-        backgroundColor: darkMode ? '#1f2937' : '#ffffff',
-        borderRadius: '0.5rem',
-        padding: '0.5rem',
-        border: darkMode ? '1px solid #374151' : '1px solid #e5e7eb',
-        marginBottom: '0.75rem',
-        // No fixed height or overflow here - the entire page scrolls
-      }}>
-        <div style={{
+      <Paper 
+        elevation={1}
+        sx={{
+          bgcolor: 'background.paper',
+          borderRadius: 1,
+          p: 0.5,
+          border: 1,
+          borderColor: 'divider',
+          mb: 0.75,
+          // No fixed height or overflow here - the entire page scrolls
+        }}>
+        <Box sx={{
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          marginBottom: '0.5rem'
+          mb: 0.5
         }}>
-          <h2 style={{
-            fontSize: '1.1rem',
-            fontWeight: 600,
-            color: darkMode ? '#d1d5db' : '#374151'
-          }}>Activities</h2>&nbsp;
+          <Typography 
+            variant="h6" 
+            sx={{
+              fontSize: '1.1rem',
+              fontWeight: 600,
+              color: 'text.primary'
+            }}
+          >Activities</Typography>&nbsp;
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             {/* Activity type filter */}
             <select 
