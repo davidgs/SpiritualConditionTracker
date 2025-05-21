@@ -1,6 +1,8 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
+import { Capacitor } from '@capacitor/core';
+import { applyNativeTheme, applyNativeCssVariables, defaultThemeColors, getSystemColorScheme } from '../utils/nativeTheme';
 
 // Helper function to lighten colors for dark mode
 const lightenColor = (hex, percent) => {
@@ -36,15 +38,7 @@ const shadeColor = (hex, percent) => {
 // Use window.db for accessing database functions after proper initialization
 // This prevents initialization conflicts across multiple imports
 
-// Default theme options
-const defaultThemeColors = {
-  blue: '#3b82f6',
-  purple: '#8b5cf6',
-  green: '#10b981',
-  red: '#ef4444',
-  orange: '#f97316',
-  teal: '#14b8a6'
-};
+// Using imported defaultThemeColors from nativeTheme.js
 
 // Create a context for theme management
 export const AppThemeContext = createContext();
@@ -287,18 +281,22 @@ const MuiThemeProvider = ({ children }) => {
 
   // Apply CSS variables for custom theming
   useEffect(() => {
-    // Set background color variables
+    // Apply native theme settings for iOS
+    if (Capacitor.isNativePlatform()) {
+      // Apply theme to native elements (status bar, etc.)
+      applyNativeTheme(primaryColor, darkMode);
+    }
+    
+    // Apply CSS variables for consistent styling
+    applyNativeCssVariables(primaryColor, darkMode, document.documentElement);
+    
+    // Set additional background color variables
     document.documentElement.style.setProperty(
       '--background-color', 
       darkMode ? muiTheme.palette.background.default : muiTheme.palette.background.paper
     );
     
     // Set primary color variables for easier usage in CSS
-    document.documentElement.style.setProperty(
-      '--primary-color', 
-      primaryColorValue
-    );
-    
     document.documentElement.style.setProperty(
       '--primary-color-light', 
       lightenColor(primaryColorValue, 15)
@@ -308,7 +306,18 @@ const MuiThemeProvider = ({ children }) => {
     const navElement = document.querySelector('.app-container nav');
     if (navElement) {
       navElement.style.borderBottom = `2px solid ${primaryColorValue}`;
+      
+      // Add extra visual indicator for iOS
+      if (Capacitor.isNativePlatform()) {
+        navElement.style.boxShadow = `0 2px 4px rgba(0,0,0,0.1)`;
+      }
     }
+    
+    // Apply colors to buttons for more visible theme changes
+    const buttons = document.querySelectorAll('button.MuiButton-containedPrimary');
+    buttons.forEach(button => {
+      button.style.backgroundColor = primaryColorValue;
+    });
     
     console.log(`Theme updated: ${darkMode ? 'dark' : 'light'} mode with ${primaryColor} color (${primaryColorValue})`);
   }, [darkMode, muiTheme, primaryColor, primaryColorValue]);
