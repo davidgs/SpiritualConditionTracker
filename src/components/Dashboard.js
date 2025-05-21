@@ -173,20 +173,30 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
     <div className="p-3 max-w-md mx-auto">
       {/* Sobriety & Spiritual Fitness Stats - Fixed height section */}
       <div className="grid grid-cols-2 gap-2 mb-3">
-        <div style={{
-          backgroundColor: darkMode ? '#1f2937' : '#ffffff',
-          borderRadius: '0.5rem',
-          padding: '0.5rem',
-          textAlign: 'center',
-          border: darkMode ? '1px solid #374151' : '1px solid #e5e7eb'
-        }}>
-          <h3 style={{
-            fontSize: '1.1rem',
-            fontWeight: 600,
-            color: darkMode ? '#d1d5db' : '#374151',
-            marginBottom: '0.5rem',
-            textAlign: 'center'
-          }}>Sobriety</h3>
+        <Paper 
+          elevation={1}
+          sx={{
+            bgcolor: 'background.paper',
+            borderRadius: 2,
+            p: 2,
+            textAlign: 'center',
+            border: 1,
+            borderColor: 'divider',
+            borderLeft: 4,
+            borderLeftColor: 'success.main',
+          }}>
+          <Typography
+            variant="h6"
+            sx={{
+              fontSize: '1.1rem',
+              fontWeight: 600,
+              color: 'text.primary',
+              mb: 0.5,
+              textAlign: 'center'
+            }}
+          >
+            Sobriety
+          </Typography>
           
           {/* Add sobriety date display */}
           {user?.sobrietyDate && (
@@ -269,6 +279,9 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
             bgcolor: 'background.paper',
             border: 1,
             borderColor: 'divider',
+            borderLeft: 4,
+            borderLeftColor: 'primary.main',
+            mb: 2,
           }}>
           <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 1 }}>
             <Typography
@@ -387,11 +400,13 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
         elevation={1}
         sx={{
           bgcolor: 'background.paper',
-          borderRadius: 1,
-          p: 0.5,
+          borderRadius: 2,
+          p: 1.5,
           border: 1,
           borderColor: 'divider',
-          mb: 0.75,
+          borderLeft: 4,
+          borderLeftColor: 'info.main',
+          mb: 2,
           // No fixed height or overflow here - the entire page scrolls
         }}>
         <Box sx={{
