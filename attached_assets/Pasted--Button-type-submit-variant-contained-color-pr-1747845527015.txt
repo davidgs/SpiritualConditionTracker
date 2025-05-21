@@ -1,0 +1,124 @@
+<Button 
+                type="submit"
+                variant="contained"
+                color="primary"
+                size="small"
+                onClick={() => {
+                  handleSubmit({preventDefault: () => {}});
+                  setEditingPersonalInfo(false);
+                }}
+                sx={{ 
+                  bgcolor: darkMode ? '#3b82f6' : '#2563eb',
+                  '&:hover': {
+                    bgcolor: darkMode ? '#2563eb' : '#1d4ed8'
+                  }
+                }}
+              >
+                Save
+              </Button>
+            </Box>
+          </>
+        ) : (
+          <>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+              {/* Name display */}
+              <Box>
+                <Typography variant="caption" sx={{ color: darkMode ? '#9ca3af' : '#6b7280' }}>
+                  First Name
+                </Typography>
+                <Typography sx={{ color: darkMode ? '#d1d5db' : '#374151', fontWeight: 500 }}>
+                  {name || "Not set"}
+                </Typography>
+              </Box>
+              
+              {/* Last Name display */}
+              <Box>
+                <Typography variant="caption" sx={{ color: darkMode ? '#9ca3af' : '#6b7280' }}>
+                  Last Name {shareLastName && <span style={{ fontSize: '0.7rem' }}>(Shared)</span>}
+                </Typography>
+                <Typography sx={{ color: darkMode ? '#d1d5db' : '#374151', fontWeight: 500 }}>
+                  {lastName || "Not set"}
+                </Typography>
+              </Box>
+              
+              {/* Phone Number display */}
+              <Box>
+                <Typography variant="caption" sx={{ color: darkMode ? '#9ca3af' : '#6b7280' }}>
+                  Phone Number
+                </Typography>
+                <Typography sx={{ color: darkMode ? '#d1d5db' : '#374151', fontWeight: 500 }}>
+                  {phoneNumber || "Not set"}
+                </Typography>
+              </Box>
+              
+              {/* Email display */}
+              <Box>
+                <Typography variant="caption" sx={{ color: darkMode ? '#9ca3af' : '#6b7280' }}>
+                  Email Address
+                </Typography>
+                <Typography sx={{ color: darkMode ? '#d1d5db' : '#374151', fontWeight: 500 }}>
+                  {email || "Not set"}
+                </Typography>
+              </Box>
+              
+              {/* Home Groups display */}
+              <Box>
+                <Typography variant="caption" sx={{ color: darkMode ? '#9ca3af' : '#6b7280' }}>
+                  Home Groups
+                </Typography>
+                <Typography sx={{ color: darkMode ? '#d1d5db' : '#374151', fontWeight: 500 }}>
+                  {homeGroups && homeGroups.length > 0 
+                    ? homeGroups.join(', ')
+                    : "Not set"}
+                </Typography>
+              </Box>
+            </Box>
+          </>
+        )}
+      </Paper>
+
+      {/* Reset All Data Section */}
+      <Paper elevation={0} sx={{ 
+        p: 3,
+        mb: 3,
+        bgcolor: darkMode ? '#1f2937' : '#ffffff',
+        borderRadius: 2,
+        border: darkMode ? '1px solid #374151' : '1px solid #e5e7eb'
+      }}>
+        <Typography variant="h6" sx={{ 
+          color: darkMode ? '#d1d5db' : '#374151', 
+          mb: 2,
+          display: 'flex',
+          alignItems: 'center',
+          gap: 1
+        }}>
+          <i className="fas fa-exclamation-triangle" style={{ color: '#dc2626' }}></i>
+          Danger Zone
+        </Typography>
+        
+        <Typography variant="body2" sx={{ mb: 2, color: darkMode ? '#9ca3af' : '#6b7280' }}>
+          Resetting all data will permanently delete your profile information, meetings, activities, and all other app data. This action cannot be undone.
+        </Typography>
+        
+        <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+          <Button
+            variant="outlined"
+            color="error"
+            startIcon={<i className="fas fa-trash-alt"></i>}
+            onClick={handleResetAllData}
+            sx={{
+              borderColor: '#dc2626',
+              color: '#dc2626',
+              '&:hover': {
+                backgroundColor: 'rgba(220, 38, 38, 0.04)',
+                borderColor: '#b91c1c'
+              }
+            }}
+          >
+            Reset All Data
+          </Button>
+        </Box>
+      </Paper>
+    </Box>
+  );
+}

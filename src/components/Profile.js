@@ -850,12 +850,6 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
                   handleSubmit({preventDefault: () => {}});
                   setEditingPersonalInfo(false);
                 }}
-                sx={{ 
-                  bgcolor: darkMode ? '#3b82f6' : '#2563eb',
-                  '&:hover': {
-                    bgcolor: darkMode ? '#2563eb' : '#1d4ed8'
-                  }
-                }}
               >
                 Save
               </Button>
@@ -866,50 +860,50 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
               {/* Name display */}
               <Box>
-                <Typography variant="caption" sx={{ color: darkMode ? '#9ca3af' : '#6b7280' }}>
+                <Typography variant="caption" sx={{ color: 'text.secondary' }}>
                   First Name
                 </Typography>
-                <Typography sx={{ color: darkMode ? '#d1d5db' : '#374151', fontWeight: 500 }}>
+                <Typography sx={{ color: 'text.primary', fontWeight: 500 }}>
                   {name || "Not set"}
                 </Typography>
               </Box>
               
               {/* Last Name display */}
               <Box>
-                <Typography variant="caption" sx={{ color: darkMode ? '#9ca3af' : '#6b7280' }}>
+                <Typography variant="caption" sx={{ color: 'text.secondary' }}>
                   Last Name {shareLastName && <span style={{ fontSize: '0.7rem' }}>(Shared)</span>}
                 </Typography>
-                <Typography sx={{ color: darkMode ? '#d1d5db' : '#374151', fontWeight: 500 }}>
+                <Typography sx={{ color: 'text.primary', fontWeight: 500 }}>
                   {lastName || "Not set"}
                 </Typography>
               </Box>
               
               {/* Phone Number display */}
               <Box>
-                <Typography variant="caption" sx={{ color: darkMode ? '#9ca3af' : '#6b7280' }}>
+                <Typography variant="caption" sx={{ color: 'text.secondary' }}>
                   Phone Number
                 </Typography>
-                <Typography sx={{ color: darkMode ? '#d1d5db' : '#374151', fontWeight: 500 }}>
+                <Typography sx={{ color: 'text.primary', fontWeight: 500 }}>
                   {phoneNumber || "Not set"}
                 </Typography>
               </Box>
               
               {/* Email display */}
               <Box>
-                <Typography variant="caption" sx={{ color: darkMode ? '#9ca3af' : '#6b7280' }}>
+                <Typography variant="caption" sx={{ color: 'text.secondary' }}>
                   Email Address
                 </Typography>
-                <Typography sx={{ color: darkMode ? '#d1d5db' : '#374151', fontWeight: 500 }}>
+                <Typography sx={{ color: 'text.primary', fontWeight: 500 }}>
                   {email || "Not set"}
                 </Typography>
               </Box>
               
               {/* Home Groups display */}
               <Box>
-                <Typography variant="caption" sx={{ color: darkMode ? '#9ca3af' : '#6b7280' }}>
+                <Typography variant="caption" sx={{ color: 'text.secondary' }}>
                   Home Groups
                 </Typography>
-                <Typography sx={{ color: darkMode ? '#d1d5db' : '#374151', fontWeight: 500 }}>
+                <Typography sx={{ color: 'text.primary', fontWeight: 500 }}>
                   {homeGroups && homeGroups.length > 0 
                     ? homeGroups.join(', ')
                     : "Not set"}
@@ -924,12 +918,13 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
       <Paper elevation={0} sx={{ 
         p: 3,
         mb: 3,
-        bgcolor: darkMode ? '#1f2937' : '#ffffff',
+        bgcolor: 'background.paper',
         borderRadius: 2,
-        border: darkMode ? '1px solid #374151' : '1px solid #e5e7eb'
+        border: '1px solid',
+        borderColor: 'divider'
       }}>
         <Typography variant="h6" sx={{ 
-          color: darkMode ? '#d1d5db' : '#374151', 
+          color: 'text.primary', 
           mb: 2,
           display: 'flex',
           alignItems: 'center',
@@ -939,7 +934,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
           Danger Zone
         </Typography>
         
-        <Typography variant="body2" sx={{ mb: 2, color: darkMode ? '#9ca3af' : '#6b7280' }}>
+        <Typography variant="body2" sx={{ mb: 2, color: 'text.secondary' }}>
           Resetting all data will permanently delete your profile information, meetings, activities, and all other app data. This action cannot be undone.
         </Typography>
         
@@ -949,14 +944,6 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
             color="error"
             startIcon={<i className="fas fa-trash-alt"></i>}
             onClick={handleResetAllData}
-            sx={{
-              borderColor: '#dc2626',
-              color: '#dc2626',
-              '&:hover': {
-                backgroundColor: 'rgba(220, 38, 38, 0.04)',
-                borderColor: '#b91c1c'
-              }
-            }}
           >
             Reset All Data
           </Button>
