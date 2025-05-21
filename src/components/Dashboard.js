@@ -171,257 +171,250 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
 
   return (
     <Box sx={{ p: 3, maxWidth: 'md', mx: 'auto' }}>
-      {/* Sobriety & Spiritual Fitness Stats - Fixed height section */}
-      <Box sx={{ 
-        display: 'grid', 
-        gridTemplateColumns: 'repeat(2, 1fr)', 
-        gap: 2, 
-        mb: 3 
-      }}>
-        <Paper 
-          elevation={1}
+      {/* Sobriety Section - Full Width */}
+      <Paper 
+        elevation={1}
+        sx={{
+          bgcolor: 'background.paper',
+          borderRadius: 2,
+          p: 2,
+          textAlign: 'center',
+          border: 1,
+          borderColor: 'divider',
+          borderLeft: 4,
+          borderLeftColor: 'success.main',
+          mb: 2
+        }}>
+        <Typography
+          variant="h6"
           sx={{
-            bgcolor: 'background.paper',
-            borderRadius: 2,
-            p: 2,
-            textAlign: 'center',
-            border: 1,
-            borderColor: 'divider',
-            borderLeft: 4,
-            borderLeftColor: 'success.main',
-          }}>
+            fontSize: '1.1rem',
+            fontWeight: 600,
+            color: 'text.primary',
+            mb: 0.5,
+            textAlign: 'center'
+          }}
+        >
+          Sobriety
+        </Typography>
+        
+        {/* Add sobriety date display */}
+        {user?.sobrietyDate && (
+          <Typography
+            variant="body2" 
+            sx={{ 
+              fontSize: '0.85rem', 
+              color: 'text.secondary',
+              mb: 0.5,
+              textAlign: 'center'
+            }}
+          >
+            Since {formatDate(user.sobrietyDate)}
+          </Typography>
+        )}
+        
+        {showYearsProminent ? (
+          <Box sx={{ textAlign: 'center' }}>
+            <Box sx={{ display: 'flex', alignItems: 'baseline', mb: 0.5, justifyContent: 'center' }}>
+              <Typography 
+                variant="h4"
+                sx={{ 
+                  fontSize: '1.6rem', 
+                  fontWeight: 'bold', 
+                  color: 'primary.main',
+                  mr: 0.5,
+                  lineHeight: 1.1
+                }}
+              >
+                {sobrietyYears.toFixed(2)}
+              </Typography>
+              <Typography 
+                variant="body1" 
+                sx={{ 
+                  fontSize: '1rem', 
+                  color: 'text.secondary',
+                  lineHeight: 1.1
+                }}
+              >
+                years
+              </Typography>
+            </Box>
+            <Typography 
+              variant="body1" 
+              sx={{ 
+                fontSize: '1rem', 
+                color: 'primary.main',
+                lineHeight: 1.1,
+                textAlign: 'center'
+              }}
+            >
+              {formatNumber(sobrietyDays)} days
+            </Typography>
+          </Box>
+        ) : (
+          <Box sx={{ textAlign: 'center' }}>
+            <Box sx={{ display: 'flex', alignItems: 'baseline', mb: 0.5, justifyContent: 'center' }}>
+              <Typography 
+                variant="h4"
+                sx={{ 
+                  fontSize: '1.6rem', 
+                  fontWeight: 'bold', 
+                  color: 'primary.main',
+                  mr: 0.5,
+                  lineHeight: 1.1
+                }}
+              >
+                {formatNumber(sobrietyDays)}
+              </Typography>
+              <Typography 
+                variant="body1" 
+                sx={{ 
+                  fontSize: '1rem', 
+                  color: 'text.secondary',
+                  lineHeight: 1.1
+                }}
+              >
+                days
+              </Typography>
+            </Box>
+            <Typography 
+              variant="body1" 
+              sx={{ 
+                fontSize: '1rem', 
+                color: 'primary.main',
+                lineHeight: 1.1,
+                textAlign: 'center'
+              }}
+            >
+              {sobrietyYears.toFixed(2)} years
+            </Typography>
+          </Box>
+        )}
+      </Paper>
+
+      {/* Spiritual Fitness Section - Full Width */}
+      <Paper 
+        elevation={1}
+        sx={{
+          p: 2,
+          textAlign: 'center',
+          borderRadius: 2,
+          bgcolor: 'background.paper',
+          border: 1,
+          borderColor: 'divider',
+          borderLeft: 4,
+          borderLeftColor: 'primary.main',
+          mb: 2,
+        }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 1 }}>
           <Typography
             variant="h6"
             sx={{
               fontSize: '1.1rem',
               fontWeight: 600,
-              color: 'text.primary',
-              mb: 0.5,
-              textAlign: 'center'
+              m: 0,
+              display: 'flex',
+              alignItems: 'center'
             }}
           >
-            Sobriety
-          </Typography>
-          
-          {/* Add sobriety date display */}
-          {user?.sobrietyDate && (
-            <Typography
-              variant="body2" 
-              sx={{ 
-                fontSize: '0.85rem', 
+            Spiritual Fitness
+            <Box
+              component="button"
+              onClick={() => setShowScoreModal(!showScoreModal)}
+              sx={{
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                fontSize: '0.75em',
+                p: '0 0 0 4px',
+                position: 'relative',
+                top: '-5px',
                 color: 'text.secondary',
-                mb: 0.5,
-                textAlign: 'center'
+                '&:hover': {
+                  color: 'primary.main'
+                }
               }}
+              aria-label="Show how spiritual fitness is calculated"
             >
-              Since {formatDate(user.sobrietyDate)}
-            </Typography>
-          )}
-          
-          {showYearsProminent ? (
-            <Box sx={{ textAlign: 'center' }}>
-              <Box sx={{ display: 'flex', alignItems: 'baseline', mb: 0.5, justifyContent: 'center' }}>
-                <Typography 
-                  variant="h4"
-                  sx={{ 
-                    fontSize: '1.6rem', 
-                    fontWeight: 'bold', 
-                    color: 'primary.main',
-                    mr: 0.5,
-                    lineHeight: 1.1
-                  }}
-                >
-                  {sobrietyYears.toFixed(2)}
-                </Typography>
-                <Typography 
-                  variant="body1" 
-                  sx={{ 
-                    fontSize: '1rem', 
-                    color: 'text.secondary',
-                    lineHeight: 1.1
-                  }}
-                >
-                  years
-                </Typography>
-              </Box>
-              <Typography 
-                variant="body1" 
-                sx={{ 
-                  fontSize: '1rem', 
-                  color: 'primary.main',
-                  lineHeight: 1.1,
-                  textAlign: 'center'
-                }}
-              >
-                {formatNumber(sobrietyDays)} days
-              </Typography>
+              <i className="fa-solid fa-question"></i>
             </Box>
-          ) : (
-            <Box sx={{ textAlign: 'center' }}>
-              <Box sx={{ display: 'flex', alignItems: 'baseline', mb: 0.5, justifyContent: 'center' }}>
-                <Typography 
-                  variant="h4"
-                  sx={{ 
-                    fontSize: '1.6rem', 
-                    fontWeight: 'bold', 
-                    color: 'primary.main',
-                    mr: 0.5,
-                    lineHeight: 1.1
-                  }}
-                >
-                  {formatNumber(sobrietyDays)}
-                </Typography>
-                <Typography 
-                  variant="body1" 
-                  sx={{ 
-                    fontSize: '1rem', 
-                    color: 'text.secondary',
-                    lineHeight: 1.1
-                  }}
-                >
-                  days
-                </Typography>
-              </Box>
-              <Typography 
-                variant="body1" 
-                sx={{ 
-                  fontSize: '1rem', 
-                  color: 'primary.main',
-                  lineHeight: 1.1,
-                  textAlign: 'center'
-                }}
-              >
-                {sobrietyYears.toFixed(2)} years
-              </Typography>
-            </Box>
-          )}
-        </Paper>
-        <Paper 
-          elevation={1}
-          sx={{
-            p: 2,
-            textAlign: 'center',
-            borderRadius: 2,
-            bgcolor: 'background.paper',
-            border: 1,
-            borderColor: 'divider',
-            borderLeft: 4,
-            borderLeftColor: 'primary.main',
-            mb: 2,
-          }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 1 }}>
-            <Typography
-              variant="h6"
-              sx={{
-                fontSize: '1.1rem',
-                fontWeight: 600,
-                m: 0,
-                display: 'flex',
-                alignItems: 'center'
-              }}
-            >
-              Spiritual Fitness
-              <Box
-                component="button"
-                onClick={() => setShowScoreModal(!showScoreModal)}
-                sx={{
-                  background: 'none',
-                  border: 'none',
-                  cursor: 'pointer',
-                  fontSize: '0.75em',
-                  p: '0 0 0 4px',
-                  position: 'relative',
-                  top: '-5px',
-                  color: 'text.secondary',
-                  '&:hover': {
-                    color: 'primary.main'
-                  }
-                }}
-                aria-label="Show how spiritual fitness is calculated"
-              >
-                <i className="fa-solid fa-question"></i>
-              </Box>
-            </Typography>
-          </Box>
-          
-          {/* Score display with dynamic color */}
-          <Typography
-            variant="h4"
-            sx={{ 
-              fontSize: '1.6rem', 
-              fontWeight: 'bold',
-              mb: 0.5,
-              color: getScoreColor(currentScore),
-              lineHeight: 1.1
-            }}
-          >
-            {formattedScore}
           </Typography>
-          
-          {/* Gradient progress bar with mask - thicker version with no markers */}
-          <Box sx={{ 
-            position: 'relative',
-            height: '32px',
-            width: '100%',
-            borderRadius: '12px',
-            background: (theme) => `linear-gradient(
-              90deg,
-              ${theme.palette.error.main} 0%,
-              ${theme.palette.error.light} 25%,
-              ${theme.palette.warning.main} 50%,
-              ${theme.palette.success.light} 75%,
-              ${theme.palette.success.main} 100%
-            )`,
-            mb: '6px',
-            border: 1,
-            borderColor: 'divider',
-            overflow: 'hidden',
-            boxShadow: (theme) => theme.palette.mode === 'dark' 
-              ? 'inset 0 1px 2px rgba(0,0,0,0.2)' 
-              : 'inset 0 1px 2px rgba(0,0,0,0.1)'
-          }}>
-            <Box sx={{
-              borderRadius: '0 8px 8px 0',
-              bgcolor: (theme) => theme.palette.mode === 'dark' ? '#374151' : '#F3F4F6',
-              position: 'absolute',
-              right: 0,
-              bottom: 0,
-              top: 0,
-              width: `${100 - progressPercent}%`
-            }}></Box>
-          </Box>
-          
-          <Box sx={{ 
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: 0.5,
-            fontSize: '0.85rem',
-            color: 'text.secondary'
-          }}>
-            <Typography variant="body2" sx={{ fontSize: 'inherit' }}>{scoreTimeframe}-day score</Typography>
-            <IconButton 
-              onClick={cycleTimeframe}
-              size="small"
-              sx={{
-                padding: '2px',
-                color: 'primary.main',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center'
-              }}
-              title="Change timeframe"
-            >
-              <i className="fa-solid fa-shuffle"></i>
-            </IconButton>
-          </Box>
-          {/* "How is this calculated" button removed - now using the icon in the header */}
-          
-          {/* Render modal at the end of the Dashboard component body to avoid positioning issues */}
-        </Paper>
-      </Box>
+        </Box>
+        
+        {/* Score display with dynamic color */}
+        <Typography
+          variant="h4"
+          sx={{ 
+            fontSize: '1.6rem', 
+            fontWeight: 'bold',
+            mb: 0.5,
+            color: getScoreColor(currentScore),
+            lineHeight: 1.1
+          }}
+        >
+          {formattedScore}
+        </Typography>
+        
+        {/* Gradient progress bar with mask - thicker version with no markers */}
+        <Box sx={{ 
+          position: 'relative',
+          height: '32px',
+          width: '100%',
+          borderRadius: '12px',
+          background: (theme) => `linear-gradient(
+            90deg,
+            ${theme.palette.error.main} 0%,
+            ${theme.palette.error.light} 25%,
+            ${theme.palette.warning.main} 50%,
+            ${theme.palette.success.light} 75%,
+            ${theme.palette.success.main} 100%
+          )`,
+          mb: '6px',
+          border: 1,
+          borderColor: 'divider',
+          overflow: 'hidden',
+          boxShadow: (theme) => theme.palette.mode === 'dark' 
+            ? 'inset 0 1px 2px rgba(0,0,0,0.2)' 
+            : 'inset 0 1px 2px rgba(0,0,0,0.1)'
+        }}>
+          <Box sx={{
+            borderRadius: '0 8px 8px 0',
+            bgcolor: (theme) => theme.palette.mode === 'dark' ? '#374151' : '#F3F4F6',
+            position: 'absolute',
+            right: 0,
+            bottom: 0,
+            top: 0,
+            width: `${100 - progressPercent}%`
+          }}></Box>
+        </Box>
+        
+        <Box sx={{ 
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: 0.5,
+          fontSize: '0.85rem',
+          color: 'text.secondary'
+        }}>
+          <Typography variant="body2" sx={{ fontSize: 'inherit' }}>{scoreTimeframe}-day score</Typography>
+          <IconButton 
+            onClick={cycleTimeframe}
+            size="small"
+            sx={{
+              padding: '2px',
+              color: 'primary.main',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}
+            title="Change timeframe"
+          >
+            <i className="fa-solid fa-shuffle"></i>
+          </IconButton>
+        </Box>
+      </Paper>
       
-      {/* Recent Activities Section */}
+      {/* Recent Activities Section - Full Width */}
       <Paper 
         elevation={1}
         sx={{
