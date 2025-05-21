@@ -170,7 +170,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
   const showYearsProminent = sobrietyYears >= 1;
 
   return (
-    <div className="p-3 max-w-md mx-auto">
+    <Box sx={{ p: 3, maxWidth: 'md', mx: 'auto' }}>
       {/* Sobriety & Spiritual Fitness Stats - Fixed height section */}
       <Box sx={{ 
         display: 'grid', 
