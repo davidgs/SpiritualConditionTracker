@@ -544,20 +544,20 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
         </Typography>
         
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-          {/* Theme Selector */}
+          {/* Theme settings temporarily removed */}
+          {/*
           <Box>
             <ThemeSelector />
           </Box>
           
-          {/* Color Theme Picker with popover interface */}
           <Box sx={{ mb: 2 }}>
             <PopoverColorPicker />
           </Box>
           
-          {/* Display theme details in a popover */}
           <Box sx={{ mb: 2 }}>
             <PopoverThemeDisplay />
           </Box>
+          */}
           
           {/* Message Privacy Option */}
           <FormControlLabel
