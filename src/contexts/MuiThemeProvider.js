@@ -269,6 +269,14 @@ const MuiThemeProvider = ({ children }) => {
     availableColors: Object.keys(defaultThemeColors)
   };
 
+  // Apply CSS variables for custom theming
+  useEffect(() => {
+    document.documentElement.style.setProperty(
+      '--background-color', 
+      darkMode ? muiTheme.palette.background.default : muiTheme.palette.background.paper
+    );
+  }, [darkMode, muiTheme, primaryColor]);
+
   return (
     <AppThemeContext.Provider value={themeContextValue}>
       <ThemeProvider theme={muiTheme}>
