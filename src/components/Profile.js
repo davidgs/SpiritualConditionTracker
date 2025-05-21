@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useTheme } from '@mui/material/styles';
 import ThemeSelector from './ThemeSelector';
 import MeetingFormDialog from './MeetingFormDialog';
+import ColorThemePicker from './ColorThemePicker';
+import { useAppTheme } from '../contexts/MuiThemeProvider';
 import { 
   Switch, 
   FormControlLabel, 
@@ -672,10 +674,10 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
               onClick={() => setEditingPersonalInfo(!editingPersonalInfo)}
               size="small"
               aria-label={editingPersonalInfo ? "Cancel editing" : "Edit personal information"}
-              sx={(theme) => ({ 
-                color: theme.palette.text.secondary,
+              sx={{ 
+                color: 'text.secondary',
                 '&:hover': {
-                  color: theme.palette.primary.main,
+                  color: 'primary.main',
                   backgroundColor: 'transparent'
                 }
               }}
