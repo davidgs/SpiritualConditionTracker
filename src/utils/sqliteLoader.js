@@ -261,13 +261,51 @@ async function setupTables(sqlite) {
     }
   }
 
-  // Create meetings table with comprehensive fields
+  // Check if meetings table exists first
+  const meetingsTableExists = await sqlite.query({
+    database: DB_NAME,
+    statement: "SELECT name FROM sqlite_master WHERE type='table' AND name='meetings'",
+    values: []
+  });
+  
+  // If the table exists, drop it and recreate it to fix the NOT NULL constraint issue
+  if (meetingsTableExists.values && meetingsTableExists.values.length > 0) {
+    console.log('[ sqliteLoader.js ] Meetings table already exists, but may have constraint issues. Recreating it...');
+    
+    try {
+      // For existing instances, we need to drop and recreate the table
+      // First, backup any existing data
+      const existingMeetings = await sqlite.query({
+        database: DB_NAME,
+        statement: "SELECT * FROM meetings",
+        values: []
+      });
+      
+      // Store the existing meetings for later restoration
+      if (existingMeetings.values && existingMeetings.values.length > 0) {
+        console.log(`[ sqliteLoader.js ] Found ${existingMeetings.values.length} existing meetings to preserve`);
+        window.existingMeetings = existingMeetings.values;
+      }
+      
+      // Drop the meetings table
+      await sqlite.execute({
+        database: DB_NAME,
+        statements: "DROP TABLE IF EXISTS meetings"
+      });
+      
+      console.log('[ sqliteLoader.js ] Dropped existing meetings table with constraint issues');
+    } catch (error) {
+      console.error('[ sqliteLoader.js ] Error migrating meetings table:', error);
+    }
+  }
+  
+  // Create meetings table with more flexible fields (no NOT NULL constraints except for ID)
   await sqlite.execute({
     database: DB_NAME,
     statements: `
       CREATE TABLE IF NOT EXISTS meetings (
-        id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-        name TEXT NOT NULL,
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT DEFAULT 'Unnamed Meeting',
         days TEXT,
         time TEXT,
         schedule TEXT,
@@ -301,7 +339,29 @@ async function setupTables(sqlite) {
       )
     `
   });
-  console.log('[ sqliteLoader.js ] Meetings table created with comprehensive fields');
+  console.log('[ sqliteLoader.js ] Meetings table created with flexible fields and default values');
+  
+  // Restore any meetings we backed up
+  if (window.existingMeetings && window.existingMeetings.length > 0) {
+    try {
+      console.log(`[ sqliteLoader.js ] Restoring ${window.existingMeetings.length} meetings from backup`);
+      
+      for (const meeting of window.existingMeetings) {
+        // Create a new meeting object without the id field
+        const { id, ...meetingData } = meeting;
+        
+        // Add the meeting back to the database
+        await dataStore.add('meetings', meetingData);
+      }
+      
+      console.log('[ sqliteLoader.js ] Successfully restored meetings after table recreation');
+      
+      // Clean up the backup
+      delete window.existingMeetings;
+    } catch (error) {
+      console.error('[ sqliteLoader.js ] Error restoring meetings after migration:', error);
+    }
+  }
 
   // Create messages table with enhanced fields for communication
   await sqlite.execute({
