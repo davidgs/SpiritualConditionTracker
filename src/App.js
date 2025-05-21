@@ -642,28 +642,29 @@ function App() {
   // Get dark mode state
   return (
     <MuiThemeProvider>
-      <ThemeBackground>
+      <Box 
+        className="app-container h-full flex flex-col transition-colors duration-200"
+        sx={{ 
+          width: '100%',
+          height: '100%',
+          bgcolor: 'background.default', // This directly uses the theme's background color
+          color: 'text.primary'          // This directly uses the theme's text color
+        }}
+      >
+        <NavBar currentView={currentView} setCurrentView={setCurrentView} />
         <Box 
-          className="app-container h-full flex flex-col transition-colors duration-200"
+          className="flex-grow" 
           sx={{ 
-            width: '100%',
-            height: '100%'
+            bgcolor: 'background.default', // Ensure background color is applied here too
+            minHeight: 'calc(100vh - 60px)', // 60px is the header height
+            paddingBottom: '100px', // Significantly increased padding to ensure content is visible
+            paddingTop: '10px', // Space after the header
+            overflowY: 'visible' // Don't add scrollbar to this container
           }}
         >
-          <NavBar currentView={currentView} setCurrentView={setCurrentView} />
-          <Box 
-            className="flex-grow" 
-            sx={{ 
-              minHeight: 'calc(100vh - 60px)', // 60px is the header height
-              paddingBottom: '100px', // Significantly increased padding to ensure content is visible
-              paddingTop: '10px', // Space after the header
-              overflowY: 'visible' // Don't add scrollbar to this container
-            }}
-          >
-            {renderCurrentView()}
-          </Box>
+          {renderCurrentView()}
         </Box>
-      </ThemeBackground>
+      </Box>
     </MuiThemeProvider>
   );
 }
