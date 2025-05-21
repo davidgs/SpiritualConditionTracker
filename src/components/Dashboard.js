@@ -32,96 +32,52 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
       }
     }
     loadScoreTimeframe();
-  }, []);
-  const [currentScore, setCurrentScore] = useState(spiritualFitness);
+    
+    // Debug logging
+    console.log('Dashboard useEffect [spiritualFitness] triggered with:', spiritualFitness);
+  }, [spiritualFitness]);
   
+  // Re-calculate spiritual fitness when timeframe changes
+  useEffect(() => {
+    console.log('Dashboard useEffect [scoreTimeframe] triggered with timeframe:', scoreTimeframe);
+  }, [scoreTimeframe]);
+  
+  // Modal reference for click outside handling
   const modalRef = useRef(null);
   const buttonRef = useRef(null);
   
-  // Log spiritualFitness prop for debugging
-  console.log('[ Dashboard.js ] Dashboard received spiritualFitness:', spiritualFitness);
+  // State for the spiritual fitness score display
+  const [currentScore, setCurrentScore] = useState(spiritualFitness || 0);
   
-  // Log current score state
-  console.log('[ Dashboard.js ] Dashboard currentScore state:', currentScore);
-  
-  // Format score to 2 decimal places for display
-  const formattedScore = currentScore > 0 ? currentScore.toFixed(2) : '0';
-  
-  console.log('[ Dashboard.js ] Dashboard formattedScore for display:', formattedScore);
-  
-  // Use MUI theme for colors
-  const muiTheme = useTheme();
-  
-  // Determine color based on score using theme palette
-  const getScoreColor = (score) => {
-    if (score < 30) return muiTheme.palette.error.main; // Red
-    if (score < 75) return muiTheme.palette.warning.main; // Yellow/Amber
-    return muiTheme.palette.success.main; // Green
-  };
-  
-  // Calculate progress percentage, capped at 100%
-  const progressPercent = Math.min(currentScore, 100);
-  console.log('[ Dashboard.js ] Dashboard progressPercent:', progressPercent);
-  
-  // Effect to initialize and update score when spiritualFitness prop changes
+  // Update score when the spiritualFitness prop changes
   useEffect(() => {
-    console.log('[ Dashboard.js ] Dashboard useEffect [spiritualFitness] triggered with:', spiritualFitness);
-    if (spiritualFitness) {
+    if (spiritualFitness !== undefined) {
       setCurrentScore(spiritualFitness);
+    } else {
+      setCurrentScore(0);
     }
   }, [spiritualFitness]);
   
-  // Effect to recalculate score when timeframe changes
-  useEffect(() => {
-    console.log('[ Dashboard.js ] Dashboard useEffect [scoreTimeframe] triggered with timeframe:', scoreTimeframe);
-    
-    // Check if window.db exists and is fully initialized before attempting to use it
-    if (!window.db || !window.dbInitialized) {
-      console.warn('[ Dashboard.js ] Database not initialized yet - skipping database operations');
-      return; // Skip database operations until initialization is complete
-    }
-    
-    // Save the selected timeframe to SQLite preferences - only if database is ready
-    try {
-      if (window.db?.setPreference && scoreTimeframe) {
-        window.db.setPreference('fitnessTimeframe', scoreTimeframe.toString())
-          .catch(err => console.error('[ Dashboard.js ] Error saving timeframe preference:', err));
-      }
-    } catch (err) {
-      console.error('[ Dashboard.js ] Error accessing database for preferences:', err);
-    }
-    
-    async function calculateScore() {
-      try {
-        // Use the SQLite-based calculation method
-        if (window.db?.calculateSpiritualFitnessWithTimeframe) {
-          console.log('[ Dashboard.js ] Calculating score with SQLite, timeframe:', scoreTimeframe);
-          const score = await window.db.calculateSpiritualFitnessWithTimeframe(scoreTimeframe);
-          console.log('[ Dashboard.js ] SQLite calculation result:', score);
-          setCurrentScore(score);
-        } else {
-          console.warn('[ Dashboard.js ] SQLite calculation method not available');
-          // Use the prop value directly instead of hardcoded 5
-          setCurrentScore(spiritualFitness || 5); 
-        }
-      } catch (error) {
-        console.error('[ Dashboard.js ] Error calculating spiritual fitness:', error);
-        // Use the prop value directly instead of hardcoded 5
-        setCurrentScore(spiritualFitness || 5);
-      }
-    }
-    
-    calculateScore();
-  }, [scoreTimeframe, activities, spiritualFitness]);
+  // Format the score for display with 2 decimal places
+  const formattedScore = Number(currentScore).toFixed(2);
   
-  // Note: We've removed the fallback calculation function since
-  // we're now using SQLite via Capacitor exclusively for data persistence
+  // Calculate the progress percentage for the bar (clamp between 0-100)
+  const progressPercent = Math.max(0, Math.min(100, currentScore));
   
-  // Close modal when clicking outside
+  // Function to get color based on score value
+  const getScoreColor = (score) => {
+    if (score < 30) return 'var(--theme-error-main)';
+    if (score < 60) return 'var(--theme-warning-main)';
+    return 'var(--theme-success-main)';
+  };
+  
+  // Click outside handler for modal
   useEffect(() => {
     function handleClickOutside(event) {
-      if (modalRef.current && !modalRef.current.contains(event.target) && 
-          buttonRef.current && !buttonRef.current.contains(event.target)) {
+      if (modalRef.current && 
+          !modalRef.current.contains(event.target) && 
+          buttonRef.current && 
+          !buttonRef.current.contains(event.target)) {
         setShowScoreModal(false);
       }
     }
@@ -211,116 +167,134 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
           )}
           
           {showYearsProminent ? (
-            <div style={{ textAlign: 'center' }}>
-              <div style={{ display: 'flex', alignItems: 'baseline', marginBottom: '5px', justifyContent: 'center' }}>
-                <span style={{ 
-                  fontSize: '1.6rem', 
-                  fontWeight: 'bold', 
-                  color: 'var(--theme-primary-main)',
-                  marginRight: '4px',
-                  lineHeight: '1.1'
-                }}>
+            <Box sx={{ textAlign: 'center' }}>
+              <Box sx={{ display: 'flex', alignItems: 'baseline', mb: 0.5, justifyContent: 'center' }}>
+                <Typography 
+                  sx={{ 
+                    fontSize: '1.6rem', 
+                    fontWeight: 'bold', 
+                    color: 'var(--theme-primary-main)',
+                    mr: 0.5,
+                    lineHeight: 1.1
+                  }}
+                >
                   {sobrietyYears.toFixed(2)}
-                </span>
-                <span style={{ 
-                  fontSize: '1rem', 
-                  color: 'var(--theme-text-secondary)',
-                  lineHeight: '1.1'
-                }}>
+                </Typography>
+                <Typography 
+                  sx={{ 
+                    fontSize: '1rem', 
+                    color: 'var(--theme-text-secondary)',
+                    lineHeight: 1.1
+                  }}
+                >
                   years
-                </span>
-              </div>
-              <div style={{ 
-                fontSize: '1rem', 
-                color: 'var(--theme-primary-main)',
-                lineHeight: '1.1',
-                textAlign: 'center'
-              }}>
-                {formatNumber(sobrietyDays)} days
-              </div>
-            </div>
-          ) : (
-            <div style={{ textAlign: 'center' }}>
-              <div style={{ display: 'flex', alignItems: 'baseline', marginBottom: '5px', justifyContent: 'center' }}>
-                <span style={{ 
-                  fontSize: '1.6rem', 
-                  fontWeight: 'bold', 
-                  color: 'var(--theme-primary-main)',
-                  marginRight: '4px',
-                  lineHeight: '1.1'
-                }}>
-                  {formatNumber(sobrietyDays)}
-                </span>
-                <span style={{ 
+                </Typography>
+              </Box>
+              <Typography 
+                sx={{ 
                   fontSize: '1rem', 
-                  color: 'var(--theme-text-secondary)',
-                  lineHeight: '1.1'
-                }}>
+                  color: 'var(--theme-primary-main)',
+                  lineHeight: 1.1,
+                  textAlign: 'center'
+                }}
+              >
+                {formatNumber(sobrietyDays)} days
+              </Typography>
+            </Box>
+          ) : (
+            <Box sx={{ textAlign: 'center' }}>
+              <Box sx={{ display: 'flex', alignItems: 'baseline', mb: 0.5, justifyContent: 'center' }}>
+                <Typography 
+                  sx={{ 
+                    fontSize: '1.6rem', 
+                    fontWeight: 'bold', 
+                    color: 'var(--theme-primary-main)',
+                    mr: 0.5,
+                    lineHeight: 1.1
+                  }}
+                >
+                  {formatNumber(sobrietyDays)}
+                </Typography>
+                <Typography 
+                  sx={{ 
+                    fontSize: '1rem', 
+                    color: 'var(--theme-text-secondary)',
+                    lineHeight: 1.1
+                  }}
+                >
                   days
-                </span>
-              </div>
-              <div style={{ 
-                fontSize: '1rem', 
-                color: 'var(--theme-primary-main)',
-                lineHeight: '1.1',
-                textAlign: 'center'
-              }}>
+                </Typography>
+              </Box>
+              <Typography 
+                sx={{ 
+                  fontSize: '1rem', 
+                  color: 'var(--theme-primary-main)',
+                  lineHeight: 1.1,
+                  textAlign: 'center'
+                }}
+              >
                 {sobrietyYears.toFixed(2)} years
-              </div>
-            </div>
+              </Typography>
+            </Box>
           )}
         </Paper>
+        
         <Paper sx={{
-          backgroundColor: 'var(--theme-bg-paper)',
-          borderRadius: '0.5rem',
-          padding: '0.5rem',
+          borderRadius: 1,
+          p: 1,
           textAlign: 'center',
-          border: '1px solid var(--theme-divider)'
+          border: '1px solid',
+          borderColor: 'divider',
+          bgcolor: 'var(--theme-bg-paper)'
         }}>
-          <h3 style={{
-            fontSize: '1.1rem',
-            fontWeight: 600,
-            color: 'var(--theme-text-primary)',
-            marginBottom: '0.5rem'
-          }}>Spiritual Fitness</h3>
+          <Typography 
+            variant="h6" 
+            sx={{
+              fontSize: '1.1rem',
+              fontWeight: 600,
+              mb: 1,
+              color: 'var(--theme-text-primary)'
+            }}
+          >
+            Spiritual Fitness
+          </Typography>
           
           {/* Score display with dynamic color and question mark button */}
-          <div 
-            style={{ 
+          <Box 
+            sx={{ 
               fontSize: '1.6rem', 
               fontWeight: 'bold',
-              marginBottom: '0.5rem',
+              mb: 1,
               color: getScoreColor(currentScore),
-              lineHeight: '1.1',
+              lineHeight: 1.1,
               display: 'flex',
               alignItems: 'flex-start',
               justifyContent: 'center'
             }}
           >
             {formattedScore}
-            <button 
+            <Button 
               ref={buttonRef}
-              style={{
-                backgroundColor: 'transparent',
-                color: 'var(--theme-primary-main)',
-                padding: '0',
-                border: 'none',
-                cursor: 'pointer',
-                fontSize: '0.8rem',
-                position: 'relative',
-                top: '-0.5rem',
-                marginLeft: '0.2rem'
-              }}
               onClick={() => setShowScoreModal(!showScoreModal)}
               aria-label="How is this calculated?"
               title="How is this calculated?"
+              sx={{
+                p: 0,
+                minWidth: 'auto',
+                backgroundColor: 'transparent',
+                color: 'var(--theme-primary-main)',
+                fontSize: '0.8rem',
+                position: 'relative',
+                top: '-0.5rem',
+                ml: 0.2
+              }}
             >
               <i className="fa-solid fa-question"></i>
-            </button>
-          </div>
+            </Button>
+          </Box>
           
-          {/* Gradient progress bar with mask - thicker version with no markers */}
-          <div style={{ 
+          {/* Gradient progress bar with mask */}
+          <Box sx={{ 
             position: 'relative',
             height: '16px',
             width: '100%',
@@ -333,76 +307,78 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
               var(--theme-success-light) 75%,
               var(--theme-success-main) 100%
             )`,
-            marginBottom: '6px',
+            mb: 0.75,
             border: '1px solid var(--theme-divider)',
             overflow: 'hidden',
             boxShadow: '0 1px 2px rgba(0,0,0,0.15) inset'
           }}>
-            <div style={{
+            <Box sx={{
               borderRadius: '0 8px 8px 0',
-              backgroundColor: 'var(--theme-bg-default)',
               position: 'absolute',
               right: 0,
-              bottom: 0,
               top: 0,
-              width: `${100 - progressPercent}%`
-            }}></div>
-          </div>
+              bottom: 0,
+              width: `${100 - progressPercent}%`,
+              backgroundColor: 'var(--theme-bg-elevation1)',
+              zIndex: 1,
+              opacity: 0.8
+            }}></Box>
+          </Box>
           
-          <div style={{ 
+          {/* Timeframe selector */}
+          <Box sx={{ 
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            gap: '0.5rem',
             fontSize: '0.85rem',
-            color: 'var(--theme-text-secondary)'
+            color: 'var(--theme-text-secondary)',
+            mb: 0.5
           }}>
-            <span>{scoreTimeframe}-day score</span>
-            <button 
+            <Typography sx={{ mr: 0.5 }}>
+              {scoreTimeframe} day average
+            </Typography>
+            <Button 
               onClick={cycleTimeframe}
-              style={{
-                backgroundColor: 'transparent',
-                border: 'none',
-                cursor: 'pointer',
-                color: 'var(--theme-primary-main)',
-                padding: '2px',
-                borderRadius: '4px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center'
-              }}
               title="Change timeframe"
+              sx={{ 
+                p: 0,
+                minWidth: 'auto',
+                backgroundColor: 'transparent',
+                border: 'none'
+              }}
             >
               <i className="fa-solid fa-shuffle"></i>
-            </button>
-          </div>
-          {/* "How is this calculated" button removed - now using the question mark icon */}
-          
-          {/* Render modal at the end of the Dashboard component body to avoid positioning issues */}
+            </Button>
+          </Box>
         </Paper>
       </Box>
       
       {/* Recent Activities Section */}
-      <Box sx={{
-        backgroundColor: 'var(--theme-bg-paper)',
-        borderRadius: '0.5rem',
-        padding: '0.5rem',
-        border: '1px solid var(--theme-divider)',
-        marginBottom: '0.75rem',
-        // No fixed height or overflow here - the entire page scrolls
+      <Paper sx={{
+        borderRadius: 1,
+        p: 1, 
+        border: '1px solid',
+        borderColor: 'divider',
+        mb: 2,
+        bgcolor: 'var(--theme-bg-paper)'
       }}>
         <Box sx={{
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          marginBottom: '0.5rem'
+          mb: 1
         }}>
-          <h2 style={{
-            fontSize: '1.1rem',
-            fontWeight: 600,
-            color: 'var(--theme-text-primary)'
-          }}>Activities</h2>&nbsp;
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <Typography 
+            variant="h6"
+            sx={{
+              fontSize: '1.1rem',
+              fontWeight: 600,
+              color: 'var(--theme-text-primary)'
+            }}
+          >
+            Activities
+          </Typography>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
             {/* Activity type filter */}
             <select 
               style={{
@@ -420,10 +396,10 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
                 setActivityTypeFilter(filter);
               }}
             >
-              <option value="all">All types</option>
+              <option value="all">All Types</option>
               <option value="prayer">Prayer</option>
               <option value="meditation">Meditation</option>
-              <option value="literature">Reading</option>
+              <option value="reading">Reading</option>
               <option value="meeting">Meetings</option>
               <option value="call">Calls</option>
               <option value="service">Service</option>
@@ -444,7 +420,6 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
               onChange={(e) => {
                 const days = parseInt(e.target.value, 10);
                 setActivityDaysFilter(days);
-                // This will update when we connect the state to ActivityList
               }}
             >
               <option value="7">7 days</option>
@@ -454,29 +429,25 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
               <option value="0">All time</option>
             </select>
             
-            {/* Log new activity button */}
-            {/* Button to open activity modal */}
-            <button
-              className="text-gray-600 dark:text-gray-300 hover:text-blue-500 dark:hover:text-blue-400 transition-colors duration-200"
+            {/* Add activity button */}
+            <Button
               onClick={() => setShowActivityModal(true)}
               title="Log new activity"
               aria-label="Log new activity"
-              style={{ 
+              sx={{ 
+                p: 0.5,
+                minWidth: 'auto',
                 fontSize: '1.5rem', 
-                background: 'transparent',
-                border: 'none',
-                cursor: 'pointer',
-                padding: '0.5rem',
-                color: 'var(--theme-primary-main)',
+                backgroundColor: 'transparent',
+                color: 'var(--theme-primary-main)'
               }}
             >
               <i className="fa-solid fa-scroll"></i>
-            </button>
-            
-          </div>
+            </Button>
+          </Box>
         </Box>
         
-        {/* Use the reusable ActivityList component */}
+        {/* ActivityList component */}
         <ActivityList 
           activities={activities}
           darkMode={darkMode}
@@ -485,16 +456,15 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
           filter={activityTypeFilter}
           showDate={true}
         />
-      </Box>
+      </Paper>
       
-      {/* Material UI Dialog for Spiritual Fitness */}
+      {/* Modals */}
       <SpiritualFitnessModal 
         open={showScoreModal} 
         onClose={() => setShowScoreModal(false)}
       />
       
-      {/* Activity Log Modal */}
-      <LogActivityModal 
+      <LogActivityModal
         open={showActivityModal}
         onClose={() => setShowActivityModal(false)}
         onSave={onSave}
