@@ -462,29 +462,29 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
               <option value="30">30 days</option>
               <option value="90">90 days</option>
               <option value="0">All time</option>
-            </select>
+            </Box>
             
             {/* Log new activity button */}
             {/* Button to open activity modal */}
-            <button
-              className="text-gray-600 dark:text-gray-300 hover:text-blue-500 dark:hover:text-blue-400 transition-colors duration-200"
+            <IconButton
               onClick={() => setShowActivityModal(true)}
               title="Log new activity"
               aria-label="Log new activity"
-              style={{ 
+              size="medium"
+              sx={{ 
                 fontSize: '1.5rem', 
-                background: 'transparent',
-                border: 'none',
-                cursor: 'pointer',
-                padding: '0.5rem',
-                color: darkMode ? '#2563eb' : '#3b82f6',
+                p: 0.5,
+                color: 'primary.main',
+                '&:hover': {
+                  color: 'primary.dark'
+                }
               }}
             >
               <i className="fa-solid fa-scroll"></i>
-            </button>
+            </IconButton>
             
-          </div>
-        </div>
+          </Box>
+        </Box>
         
         {/* Use the reusable ActivityList component */}
         <ActivityList 
