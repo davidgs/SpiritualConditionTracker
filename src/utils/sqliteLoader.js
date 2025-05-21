@@ -127,41 +127,102 @@ async function setupTables(sqlite) {
   });
   console.log('[ sqliteLoader.js ] Users table created with expanded fields');
 
-  // Create activities table with a simplified schema to fix constraint issues
+  // Create activities table with comprehensive schema to support all activity types
   try {
-    const table_struct = `CREATE TABLE IF NOT EXISTS activities (
+    // First, check if activities table exists
+    const tableExists = await sqlite.query({
+      database: DB_NAME,
+      statement: "SELECT name FROM sqlite_master WHERE type='table' AND name='activities'",
+      values: []
+    });
+    
+    // If table exists, we need to alter it or recreate it
+    if (tableExists.values && tableExists.values.length > 0) {
+      console.log('[ sqliteLoader.js ] Activities table already exists, checking for needed columns');
+      
+      // Try to add any missing columns one by one - this way we can handle existing tables
+      try {
+        // Add literatureTitle column if it doesn't exist
+        await sqlite.execute({
+          database: DB_NAME,
+          statements: "ALTER TABLE activities ADD COLUMN literatureTitle TEXT DEFAULT ''"
+        });
+        console.log('[ sqliteLoader.js ] Added literatureTitle column to activities table');
+      } catch (e) {
+        // Column might already exist, that's ok
+        console.log('[ sqliteLoader.js ] literatureTitle column likely exists already:', e.message);
+      }
+      
+      // Add other potential fields
+      const additionalColumns = [
+        "meetingName", "literatureType", "callPerson", "servicePerson", "location",
+        "mood", "gratitude", "steps", "sponsor", "attendees"
+      ];
+      
+      for (const column of additionalColumns) {
+        try {
+          await sqlite.execute({
+            database: DB_NAME,
+            statements: `ALTER TABLE activities ADD COLUMN ${column} TEXT DEFAULT ''`
+          });
+          console.log(`[ sqliteLoader.js ] Added ${column} column to activities table`);
+        } catch (e) {
+          // Column might already exist, that's ok
+          console.log(`[ sqliteLoader.js ] ${column} column likely exists already:`, e.message);
+        }
+      }
+    } else {
+      // Create a new comprehensive table if it doesn't exist
+      const table_struct = `CREATE TABLE IF NOT EXISTS activities (
           id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
           type TEXT DEFAULT 'prayer',
           duration INTEGER DEFAULT 0,
           date TEXT,
           notes TEXT DEFAULT '',
+          literatureTitle TEXT DEFAULT '',
+          literatureType TEXT DEFAULT '',
+          meetingName TEXT DEFAULT '',
+          callPerson TEXT DEFAULT '',
+          servicePerson TEXT DEFAULT '',
+          location TEXT DEFAULT '',
+          mood TEXT DEFAULT '',
+          gratitude TEXT DEFAULT '',
+          steps TEXT DEFAULT '',
+          sponsor TEXT DEFAULT '',
+          attendees TEXT DEFAULT '',
           createdAt TEXT,
           updatedAt TEXT
         )
       `;
-    console.log('[ sqliteLoader.js ] Creating activities table with schema:', table_struct);
-    await sqlite.execute({
-      database: DB_NAME,
-      statements: table_struct
-    });
-    console.log('[ sqliteLoader.js ] Successfully created simplified activities table');
+      console.log('[ sqliteLoader.js ] Creating activities table with comprehensive schema:', table_struct);
+      await sqlite.execute({
+        database: DB_NAME,
+        statements: table_struct
+      });
+      console.log('[ sqliteLoader.js ] Successfully created comprehensive activities table');
+    }
   } catch (schemaError) {
-    console.error('[ sqliteLoader.js ] Failed to create activities table:', schemaError);
+    console.error('[ sqliteLoader.js ] Error with activities table schema:', schemaError);
     
-    // Try an even simpler schema as a last resort
-    await sqlite.execute({
-      database: DB_NAME,
-      statements: `
-        CREATE TABLE IF NOT EXISTS activities (
-          id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-          type TEXT DEFAULT 'prayer',
-          duration INTEGER,
-          date TEXT,
-          notes TEXT
-        )
-      `
-    });
-    console.log('[ sqliteLoader.js ] Created fallback activities table with minimal schema');
+    // If all else fails, try a basic schema
+    try {
+      await sqlite.execute({
+        database: DB_NAME,
+        statements: `
+          CREATE TABLE IF NOT EXISTS activities (
+            id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+            type TEXT DEFAULT 'prayer',
+            duration INTEGER,
+            date TEXT,
+            notes TEXT,
+            literatureTitle TEXT
+          )
+        `
+      });
+      console.log('[ sqliteLoader.js ] Created simplified activities table with basic fields');
+    } catch (e) {
+      console.error('[ sqliteLoader.js ] Failed to create even basic activities table:', e);
+    }
   }
   console.log('[ sqliteLoader.js ] Activities table created with expanded fields');
   
@@ -527,8 +588,16 @@ function setupGlobalDB(sqlite) {
             itemToSave.type = 'meeting';
           }
           
+          // Make sure we preserve any literature-specific data
+          if (itemToSave.type === 'literature' && itemToSave.title && !itemToSave.literatureTitle) {
+            console.log(`[ sqliteLoader.js ] Converting title to literatureTitle for literature activity`);
+            itemToSave.literatureTitle = itemToSave.title;
+            delete itemToSave.title; // Remove the old field to avoid confusion
+          }
+          
           // Log the activity being saved for debugging
-          console.log(`[ sqliteLoader.js ] Saving activity with type: "${itemToSave.type}"`);
+          console.log(`[ sqliteLoader.js ] Saving activity with type: "${itemToSave.type}" and fields:`, Object.keys(itemToSave));
+          console.log(`[ sqliteLoader.js ] SQL values:`, Object.values(itemToSave));
         }
         
         // Add timestamps
