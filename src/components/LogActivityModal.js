@@ -14,10 +14,19 @@ import MeetingForm from './MeetingForm';
 // Use the theme system and only style custom elements that MUI doesn't cover
 const StyledDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiPaper-root': {
-    maxWidth: '450px',
-    width: 'auto',
+    maxWidth: '100%',
+    width: 'calc(100% - 32px)',
     margin: '16px',
     overflowX: 'hidden',
+  },
+  '& .MuiDialogContent-root': {
+    padding: '16px',
+    overflowX: 'hidden',
+    maxWidth: '100%',
+    boxSizing: 'border-box',
+  },
+  '& .MuiDialogActions-root': {
+    padding: '8px 16px',
   },
   // Style form elements that aren't Material UI components
   '& select': {
