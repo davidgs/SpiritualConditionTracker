@@ -7,9 +7,10 @@ import Meetings from './components/Meetings';
 import Messages from './components/Messages';
 import StepWork from './components/StepWork';
 import SponsorSponsee from './components/SponsorSponsee';
-import MuiThemeProvider from './contexts/MuiThemeProvider';
+import MuiThemeProvider, { useAppTheme } from './contexts/MuiThemeProvider';
 import { generateKeyPair } from './utils/encryption';
 import { DEFAULT_SPIRITUAL_FITNESS_SCORE } from './utils/constants';
+import { Box, Paper } from '@mui/material';
 
 // Main App Component
 function App() {
@@ -614,21 +615,21 @@ function App() {
   console.log('App.js - Before rendering, spiritualFitness value:', spiritualFitness);
   
   // Get dark mode state
-  const darkMode = document.documentElement.classList.contains('dark');
-  
   return (
     <MuiThemeProvider>
-      <div 
+      <Box 
         className="app-container h-full flex flex-col transition-colors duration-200"
-        style={{ 
-          backgroundColor: 'var(--background-color)'
+        sx={{ 
+          bgcolor: 'background.default',
+          width: '100%',
+          height: '100%'
         }}
       >
         <NavBar currentView={currentView} setCurrentView={setCurrentView} />
-        <div 
+        <Box 
           className="flex-grow" 
-          style={{ 
-            backgroundColor: 'var(--background-color)',
+          sx={{ 
+            bgcolor: 'background.default',
             minHeight: 'calc(100vh - 60px)', // 60px is the header height
             paddingBottom: '100px', // Significantly increased padding to ensure content is visible
             paddingTop: '10px', // Space after the header
@@ -636,8 +637,8 @@ function App() {
           }}
         >
           {renderCurrentView()}
-        </div>
-      </div>
+        </Box>
+      </Box>
     </MuiThemeProvider>
   );
 }
