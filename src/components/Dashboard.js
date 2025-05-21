@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import logoImg from '../assets/logo-small.png';
 import { formatDateForDisplay } from '../utils/dateUtils';
+import { useTheme } from '@mui/material/styles';
 import ActivityList from './ActivityList';
 import SpiritualFitnessModal from './SpiritualFitnessModal';
 import LogActivityModal from './LogActivityModal';
@@ -46,11 +47,14 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
   
   console.log('[ Dashboard.js ] Dashboard formattedScore for display:', formattedScore);
   
-  // Determine color based on score
+  // Use MUI theme for colors
+  const muiTheme = useTheme();
+  
+  // Determine color based on score using theme palette
   const getScoreColor = (score) => {
-    if (score < 30) return darkMode ? '#ef4444' : '#dc2626'; // Red
-    if (score < 75) return darkMode ? '#f59e0b' : '#d97706'; // Yellow/Amber
-    return darkMode ? '#22c55e' : '#16a34a'; // Green
+    if (score < 30) return muiTheme.palette.error.main; // Red
+    if (score < 75) return muiTheme.palette.warning.main; // Yellow/Amber
+    return muiTheme.palette.success.main; // Green
   };
   
   // Calculate progress percentage, capped at 100%

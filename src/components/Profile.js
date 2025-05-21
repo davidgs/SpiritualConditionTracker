@@ -515,7 +515,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
                         </Box>
                         <Typography sx={{ 
                           fontSize: '1.25rem', 
-                          color: darkMode ? '#60a5fa' : '#3b82f6' 
+                          color: (theme) => theme.palette.primary.main
                         }}>
                           {sobrietyYears.toFixed(2)} years
                         </Typography>
