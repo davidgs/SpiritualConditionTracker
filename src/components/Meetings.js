@@ -143,28 +143,66 @@ export default function Meetings({ setCurrentView, meetings = [], onSave, user }
           <div className="flex flex-col gap-3 text-sm">
             {/* Use schedule if available, otherwise use days/time */}
             <div className="space-y-2">
-              {meeting.schedule && Array.isArray(meeting.schedule) && meeting.schedule.length > 0 ? (
-                // Display each schedule item
-                meeting.schedule.map((item, idx) => (
-                  <div key={`${meeting.id}-schedule-${idx}`} className="flex items-center gap-2">
-                    <i className="fa-solid fa-calendar-days text-gray-500 dark:text-gray-400 mr-3 flex-shrink-0" style={{ fontSize: '1rem' }}></i>&nbsp;
-                    <span className="text-gray-600 dark:text-gray-300">{formatDay(item.day)}</span>&nbsp;
-                    <i className="fa-regular fa-clock text-gray-500 dark:text-gray-400 mx-1 flex-shrink-0" style={{ fontSize: '0.85rem' }}></i>&nbsp;
-                    <span className="text-gray-600 dark:text-gray-300">{formatTimeByPreference(item.time, use24HourFormat)}</span>
-                  </div>
-                ))
-              ) : (
+              {meeting.schedule && (() => {
+                // Parse schedule if it's a string (from SQLite JSON storage)
+                let scheduleArray = meeting.schedule;
+                if (typeof meeting.schedule === 'string') {
+                  try {
+                    scheduleArray = JSON.parse(meeting.schedule);
+                  } catch (e) {
+                    console.error('Failed to parse schedule JSON:', e);
+                    return (
+                      <div className="flex items-center gap-2">
+                        <i className="fa-solid fa-calendar-days text-gray-500 dark:text-gray-400 mr-3 flex-shrink-0" style={{ fontSize: '1rem' }}></i>&nbsp;
+                        <span className="text-gray-600 dark:text-gray-300">Meeting schedule not available</span>
+                      </div>
+                    );
+                  }
+                }
+                
+                // Ensure it's an array before mapping
+                if (Array.isArray(scheduleArray) && scheduleArray.length > 0) {
+                  return scheduleArray.map((item, idx) => (
+                    <div key={`${meeting.id}-schedule-${idx}`} className="flex items-center gap-2">
+                      <i className="fa-solid fa-calendar-days text-gray-500 dark:text-gray-400 mr-3 flex-shrink-0" style={{ fontSize: '1rem' }}></i>&nbsp;
+                      <span className="text-gray-600 dark:text-gray-300">{formatDay(item.day)}</span>&nbsp;
+                      <i className="fa-regular fa-clock text-gray-500 dark:text-gray-400 mx-1 flex-shrink-0" style={{ fontSize: '0.85rem' }}></i>&nbsp;
+                      <span className="text-gray-600 dark:text-gray-300">{formatTimeByPreference(item.time, use24HourFormat)}</span>
+                    </div>
+                  ));
+                } else {
+                  return null; // If no valid schedule, fall back to legacy format
+                }
+              })() : (
                 // Legacy format
                 <div className="flex flex-col gap-2">
                   <div className="flex items-center">
                     <i className="fa-solid fa-calendar-days text-gray-500 dark:text-gray-400 mr-3" style={{ fontSize: '1rem' }}></i>&nbsp;
                     <span className="text-gray-600 dark:text-gray-300">
-                      {meeting.days && meeting.days.map((day, idx) => (
-                        <span key={`${meeting.id}-day-${idx}`}>
-                          {idx > 0 && ', '}
-                          {formatDay(day)}
-                        </span>
-                      ))}
+                      {meeting.days && (() => {
+                        // Parse days if it's a string (from SQLite JSON storage)
+                        let daysArray = meeting.days;
+                        if (typeof meeting.days === 'string') {
+                          try {
+                            daysArray = JSON.parse(meeting.days);
+                          } catch (e) {
+                            console.error('Failed to parse days JSON:', e);
+                            return 'Meeting days not available';
+                          }
+                        }
+                        
+                        // Ensure it's an array before mapping
+                        if (Array.isArray(daysArray) && daysArray.length > 0) {
+                          return daysArray.map((day, idx) => (
+                            <span key={`${meeting.id}-day-${idx}`}>
+                              {idx > 0 && ', '}
+                              {formatDay(day)}
+                            </span>
+                          ));
+                        } else {
+                          return 'Days not specified';
+                        }
+                      })()}
                     </span>
                   </div>
                   {meeting.time && (
