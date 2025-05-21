@@ -333,7 +333,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
             justifyContent: 'center',
             gap: '0.5rem',
             fontSize: '0.85rem',
-            color: darkMode ? '#9ca3af' : '#6b7280'
+            color: 'var(--theme-text-secondary)'
           }}>
             <span>{scoreTimeframe}-day score</span>
             <button 
@@ -342,7 +342,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
                 backgroundColor: 'transparent',
                 border: 'none',
                 cursor: 'pointer',
-                color: darkMode ? '#60a5fa' : '#3b82f6',
+                color: 'var(--theme-primary-main)',
                 padding: '2px',
                 borderRadius: '4px',
                 display: 'flex',
@@ -358,14 +358,14 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
             <button 
               ref={buttonRef}
               style={{
-                backgroundColor: darkMode ? '#1e40af' : '#dbeafe',
-                color: darkMode ? '#93c5fd' : '#1e40af',
+                backgroundColor: 'var(--theme-primary-light)',
+                color: 'var(--theme-primary-dark)',
                 padding: '0.5rem 0.75rem',  /* Increased padding */
                 borderRadius: '0.375rem',   /* Slightly larger radius */
                 fontSize: '0.85rem',        /* Increased font size by ~30% */
                 fontWeight: '600',          /* Slightly bolder */
                 marginTop: '0.375rem',      /* More top margin */
-                border: darkMode ? '1px solid #3b82f6' : '1px solid #93c5fd',
+                border: '1px solid var(--theme-primary-main)',
                 cursor: 'pointer',
                 transition: 'background-color 0.2s',
                 width: 'max-content',       /* Make sure it fits content */
@@ -384,10 +384,10 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
       
       {/* Recent Activities Section */}
       <div style={{
-        backgroundColor: darkMode ? '#1f2937' : '#ffffff',
+        backgroundColor: 'var(--theme-bg-paper)',
         borderRadius: '0.5rem',
         padding: '0.5rem',
-        border: darkMode ? '1px solid #374151' : '1px solid #e5e7eb',
+        border: '1px solid var(--theme-divider)',
         marginBottom: '0.75rem',
         // No fixed height or overflow here - the entire page scrolls
       }}>
