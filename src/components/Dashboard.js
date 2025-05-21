@@ -127,131 +127,108 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
   const showYearsProminent = sobrietyYears >= 1;
   
   return (
-    <Box sx={{ p: 3, maxWidth: 'md', mx: 'auto' }}>
+    <div style={{ padding: '1.5rem', maxWidth: '48rem', margin: '0 auto' }}>
       {/* Sobriety & Spiritual Fitness Stats - Fixed height section */}
-      <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 2, mb: 3 }}>
-        <Paper sx={{
-          borderRadius: 2,
-          p: 1,
-          textAlign: 'center',
-          border: 1,
-          borderColor: 'divider',
-          bgcolor: 'background.paper'
-        }}>
-          <Typography 
-            variant="h6" 
-            sx={{
-              fontSize: '1.1rem',
-              fontWeight: 600,
-              mb: 1,
-              textAlign: 'center',
-              color: 'text.primary'
-            }}
-          >
-            Sobriety
-          </Typography>
-          
-          {/* Add sobriety date display */}
-          {user?.sobrietyDate && (
-            <Typography 
-              variant="body2"
-              sx={{ 
-                fontSize: '0.85rem', 
-                color: 'text.secondary',
-                mb: 0.5,
-                textAlign: 'center'
-              }}
-            >
-              Since {formatDate(user.sobrietyDate)}
-            </Typography>
-          )}
-          
-          {showYearsProminent ? (
-            <Box sx={{ textAlign: 'center' }}>
-              <Box sx={{ display: 'flex', alignItems: 'baseline', mb: 0.5, justifyContent: 'center' }}>
-                <Typography 
-                  sx={{ 
-                    fontSize: '1.6rem', 
-                    fontWeight: 'bold', 
-                    color: 'var(--theme-primary-main)',
-                    mr: 0.5,
-                    lineHeight: 1.1
-                  }}
-                >
-                  {sobrietyYears.toFixed(2)}
-                </Typography>
-                <Typography 
-                  sx={{ 
-                    fontSize: '1rem', 
-                    color: 'var(--theme-text-secondary)',
-                    lineHeight: 1.1
-                  }}
-                >
-                  years
-                </Typography>
-              </Box>
-              <Typography 
-                sx={{ 
-                  fontSize: '1rem', 
-                  color: 'var(--theme-primary-main)',
-                  lineHeight: 1.1,
-                  textAlign: 'center'
-                }}
-              >
-                {formatNumber(sobrietyDays)} days
-              </Typography>
-            </Box>
-          ) : (
-            <Box sx={{ textAlign: 'center' }}>
-              <Box sx={{ display: 'flex', alignItems: 'baseline', mb: 0.5, justifyContent: 'center' }}>
-                <Typography 
-                  sx={{ 
-                    fontSize: '1.6rem', 
-                    fontWeight: 'bold', 
-                    color: 'var(--theme-primary-main)',
-                    mr: 0.5,
-                    lineHeight: 1.1
-                  }}
-                >
-                  {formatNumber(sobrietyDays)}
-                </Typography>
-                <Typography 
-                  sx={{ 
-                    fontSize: '1rem', 
-                    color: 'var(--theme-text-secondary)',
-                    lineHeight: 1.1
-                  }}
-                >
-                  days
-                </Typography>
-              </Box>
-              <Typography 
-                sx={{ 
-                  fontSize: '1rem', 
-                  color: 'var(--theme-primary-main)',
-                  lineHeight: 1.1,
-                  textAlign: 'center'
-                }}
-              >
-                {sobrietyYears.toFixed(2)} years
-              </Typography>
-            </Box>
-          )}
-        </Paper>
-        
-        <Paper sx={{
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '0.5rem', marginBottom: '0.75rem' }}>
+        <div style={{
+          backgroundColor: 'var(--theme-bg-paper)',
           borderRadius: '0.5rem',
           padding: '0.5rem',
           textAlign: 'center',
-          border: '1px solid var(--theme-divider)',
-          bgcolor: 'var(--theme-bg-paper)'
+          border: '1px solid var(--theme-divider)'
         }}>
-          <Typography variant="h6" sx={{
+          <h3 style={{
             fontSize: '1.1rem',
             fontWeight: 600,
             color: 'var(--theme-text-primary)',
             marginBottom: '0.5rem'
-          }}>Spiritual Fitness</Typography>
+          }}>Sobriety</h3>
+          
+          {/* Add sobriety date display */}
+          {user?.sobrietyDate && (
+            <div style={{ 
+              fontSize: '0.85rem', 
+              color: 'var(--theme-text-secondary)',
+              marginBottom: '0.5rem',
+              textAlign: 'center'
+            }}>
+              Since {formatDate(user.sobrietyDate)}
+            </div>
+          )}
+          
+          {showYearsProminent ? (
+            <div style={{ textAlign: 'center' }}>
+              <div style={{ display: 'flex', alignItems: 'baseline', marginBottom: '5px', justifyContent: 'center' }}>
+                <span style={{ 
+                  fontSize: '1.6rem', 
+                  fontWeight: 'bold', 
+                  color: 'var(--theme-primary-main)',
+                  marginRight: '4px',
+                  lineHeight: '1.1'
+                }}>
+                  {sobrietyYears.toFixed(2)}
+                </span>
+                <span style={{ 
+                  fontSize: '1rem', 
+                  color: 'var(--theme-text-secondary)',
+                  lineHeight: '1.1'
+                }}>
+                  years
+                </span>
+              </div>
+              <div style={{ 
+                fontSize: '1rem', 
+                color: 'var(--theme-primary-main)',
+                lineHeight: '1.1',
+                textAlign: 'center'
+              }}>
+                {formatNumber(sobrietyDays)} days
+              </div>
+            </div>
+          ) : (
+            <div style={{ textAlign: 'center' }}>
+              <div style={{ display: 'flex', alignItems: 'baseline', marginBottom: '5px', justifyContent: 'center' }}>
+                <span style={{ 
+                  fontSize: '1.6rem', 
+                  fontWeight: 'bold', 
+                  color: 'var(--theme-primary-main)',
+                  marginRight: '4px',
+                  lineHeight: '1.1'
+                }}>
+                  {formatNumber(sobrietyDays)}
+                </span>
+                <span style={{ 
+                  fontSize: '1rem', 
+                  color: 'var(--theme-text-secondary)',
+                  lineHeight: '1.1'
+                }}>
+                  days
+                </span>
+              </div>
+              <div style={{ 
+                fontSize: '1rem', 
+                color: 'var(--theme-primary-main)',
+                lineHeight: '1.1',
+                textAlign: 'center'
+              }}>
+                {sobrietyYears.toFixed(2)} years
+              </div>
+            </div>
+          )}
+        </div>
+        <div style={{
+          backgroundColor: 'var(--theme-bg-paper)',
+          borderRadius: '0.5rem',
+          padding: '0.5rem',
+          textAlign: 'center',
+          border: '1px solid var(--theme-divider)'
+        }}>
+          <h3 style={{
+            fontSize: '1.1rem',
+            fontWeight: 600,
+            color: 'var(--theme-text-primary)',
+            marginBottom: '0.5rem'
+          }}>Spiritual Fitness</h3>
           
           {/* Score display with dynamic color and question mark button */}
           <div style={{ 
@@ -346,19 +323,19 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
               <i className="fa-solid fa-shuffle"></i>
             </button>
           </div>
-          {/* "How is this calculated" button removed - now using the question mark icon above */}
-        </Paper>
-      </Box>
+        </div>
+      </div>
       
       {/* Recent Activities Section */}
-      <Box sx={{
+      <div style={{
         backgroundColor: 'var(--theme-bg-paper)',
         borderRadius: '0.5rem',
         padding: '0.5rem',
         border: '1px solid var(--theme-divider)',
         marginBottom: '0.75rem',
+        // No fixed height or overflow here - the entire page scrolls
       }}>
-        <Box sx={{
+        <div style={{
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
@@ -440,7 +417,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
             </button>
             
           </div>
-        </Box>
+        </div>
         
         {/* Use the reusable ActivityList component */}
         <ActivityList 
@@ -451,7 +428,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
           filter={activityTypeFilter}
           showDate={true}
         />
-      </Box>
+      </div>
       
       {/* Material UI Dialog for Spiritual Fitness */}
       <SpiritualFitnessModal 
@@ -467,6 +444,6 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
         onSaveMeeting={onSaveMeeting}
         meetings={meetings}
       />
-    </Box>
+    </div>
   );
 }
