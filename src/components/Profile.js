@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useTheme } from '@mui/material/styles';
 import ThemeSelector from './ThemeSelector';
 import MeetingFormDialog from './MeetingFormDialog';
-import ColorThemePicker from './ColorThemePicker';
+import PopoverColorPicker from './PopoverColorPicker';
 import ThemeDisplay from './ThemeDisplay';
 import { useAppTheme } from '../contexts/MuiThemeProvider';
 import { Capacitor } from '@capacitor/core';
@@ -549,9 +549,9 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
             <ThemeSelector />
           </Box>
           
-          {/* Color Theme Picker - Now in a popover */}
+          {/* Color Theme Picker with popover interface */}
           <Box sx={{ mb: 2 }}>
-            <ColorThemePicker />
+            <PopoverColorPicker />
           </Box>
           
           {/* Display current theme information */}
