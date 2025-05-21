@@ -647,15 +647,41 @@ function setupGlobalDB(sqlite) {
             values[typeIndex] = 'meeting'; // Final safeguard
           }
         }
-        
-        // Debug output for activities
-        if (collection === 'activities') {
-          console.log('[ sqliteLoader.js ] SQL fields:', fields);
-          console.log('[ sqliteLoader.js ] SQL values:', values);
+
+        // Special validation for meetings name field which is required
+        if (collection === 'meetings') {
+          const nameIndex = fields.indexOf('name');
+          if (nameIndex !== -1) {
+            if (!values[nameIndex] || values[nameIndex] === '') {
+              console.error('[ sqliteLoader.js ] Meeting name is required but is empty or null - fixing');
+              values[nameIndex] = 'Unnamed Meeting'; // Final safeguard
+            }
+            console.log(`[ sqliteLoader.js ] Meeting name in SQL values: "${values[nameIndex]}"`);
+          } else {
+            console.error('[ sqliteLoader.js ] Name field missing from fields list for meetings!');
+            // Add name field if it's missing
+            fields.push('name');
+            values.push('Unnamed Meeting');
+            console.log('[ sqliteLoader.js ] Added missing name field with default value');
+          }
         }
         
-        // Execute insert
-        const sql = `INSERT INTO ${collection} (${fields.join(', ')}) VALUES (${placeholders})`;
+        // Debug output for SQL commands
+        console.log(`[ sqliteLoader.js ] SQL for ${collection}:`, {
+          fields: fields,
+          values: values,
+          collection: collection
+        });
+        
+        // After validation, regenerate placeholders to match the number of fields
+        // This is important if we've added fields after initial placeholder creation
+        const updatedPlaceholders = fields.map(() => '?').join(', ');
+        
+        // Execute insert with corrected SQL
+        const sql = `INSERT INTO ${collection} (${fields.join(', ')}) VALUES (${updatedPlaceholders})`;
+        console.log(`[ sqliteLoader.js ] Executing SQL: ${sql}`);
+        console.log(`[ sqliteLoader.js ] With values:`, values);
+        
         await sqlite.execute({
           database: DB_NAME,
           statements: sql,
