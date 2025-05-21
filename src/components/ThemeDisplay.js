@@ -1,17 +1,15 @@
 import React from 'react';
-import { Box, Typography, Paper } from '@mui/material';
+import { Box, Typography, Paper, Button, useTheme } from '@mui/material';
 import { useAppTheme } from '../contexts/MuiThemeProvider';
-import { defaultThemeColors } from '../utils/nativeTheme';
 
 /**
  * A component that shows visual examples of the current theme
+ * Uses the MUI theme system for consistent styling
  */
 const ThemeDisplay = () => {
   const { primaryColor, theme } = useAppTheme();
   const darkMode = theme === 'dark';
-  
-  // Get the actual hex color value from our color mapping
-  const actualColorValue = defaultThemeColors[primaryColor];
+  const muiTheme = useTheme(); // Use the MUI theme for proper styling
   
   return (
     <Box sx={{ mt: 2, mb: 2 }}>
@@ -28,57 +26,56 @@ const ThemeDisplay = () => {
       }}>
         {/* Show examples of the theme color in various UI elements */}
         <Paper 
-          elevation={3} 
-          sx={(theme) => ({
+          elevation={2}
+          sx={{
             width: '100%',
             p: 2,
-            borderLeft: `8px solid ${actualColorValue}`,
+            borderLeft: '8px solid',
+            borderColor: 'primary.main',
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
             gap: 1
-          })}
+          }}
         >
           <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
             Theme Preview
           </Typography>
           
           {/* Sample button */}
-          <Box 
+          <Button 
+            variant="contained"
+            fullWidth
             sx={{ 
-              bgcolor: actualColorValue,
-              color: '#fff',
-              p: 1,
-              borderRadius: 1,
-              textAlign: 'center',
-              width: '80%',
               mb: 1,
+              width: '80%',
               fontWeight: 'bold',
               fontSize: '0.875rem'
             }}
           >
             Button Example
-          </Box>
+          </Button>
           
           {/* Sample card */}
-          <Box 
+          <Paper
+            variant="outlined"
             sx={{ 
-              border: `2px solid ${actualColorValue}`,
-              borderRadius: 1,
               p: 1,
               width: '80%',
               textAlign: 'center',
-              fontSize: '0.875rem'
+              fontSize: '0.875rem',
+              borderColor: 'primary.main',
+              borderWidth: 2
             }}
           >
             Card Border
-          </Box>
+          </Paper>
           
           {/* Sample text */}
           <Typography 
             variant="body2" 
             sx={{ 
-              color: actualColorValue,
+              color: 'primary.main',
               fontWeight: 'bold',
               mt: 1
             }}
