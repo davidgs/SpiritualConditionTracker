@@ -271,16 +271,16 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
           )}
         </div>
         <div style={{
-          backgroundColor: darkMode ? '#1f2937' : '#ffffff',
+          backgroundColor: 'var(--theme-bg-paper)',
           borderRadius: '0.5rem',
           padding: '0.5rem',
           textAlign: 'center',
-          border: darkMode ? '1px solid #374151' : '1px solid #e5e7eb'
+          border: '1px solid var(--theme-divider)'
         }}>
           <h3 style={{
             fontSize: '1.1rem',
             fontWeight: 600,
-            color: darkMode ? '#d1d5db' : '#374151',
+            color: 'var(--theme-text-primary)',
             marginBottom: '0.5rem'
           }}>Spiritual Fitness</h3>
           
@@ -305,20 +305,20 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
             borderRadius: '8px',
             background: `linear-gradient(
               90deg,
-              ${darkMode ? '#DC2626' : '#EF4444'} 0%,
-              ${darkMode ? '#E76B6B' : '#F87171'} 25%,
-              ${darkMode ? '#D97706' : '#F59E0B'} 50%,
-              ${darkMode ? '#65A30D' : '#84CC16'} 75%,
-              ${darkMode ? '#16A34A' : '#22C55E'} 100%
+              var(--theme-error-main) 0%,
+              var(--theme-warning-light) 25%,
+              var(--theme-warning-main) 50%, 
+              var(--theme-success-light) 75%,
+              var(--theme-success-main) 100%
             )`,
             marginBottom: '6px',
-            border: darkMode ? '1px solid #4B5563' : '1px solid #D1D5DB',
+            border: '1px solid var(--theme-divider)',
             overflow: 'hidden',
-            boxShadow: darkMode ? '0 1px 2px rgba(0,0,0,0.2) inset' : '0 1px 2px rgba(0,0,0,0.1) inset'
+            boxShadow: '0 1px 2px rgba(0,0,0,0.15) inset'
           }}>
             <div style={{
               borderRadius: '0 8px 8px 0',
-              backgroundColor: darkMode ? '#374151' : '#F3F4F6',
+              backgroundColor: 'var(--theme-bg-default)',
               position: 'absolute',
               right: 0,
               bottom: 0,
