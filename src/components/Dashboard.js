@@ -1,17 +1,17 @@
 import React, { useState, useRef, useEffect } from 'react';
 import logoImg from '../assets/logo-small.png';
 import { formatDateForDisplay } from '../utils/dateUtils';
-import { useTheme } from '@mui/material/styles';
+// Theme-related imports removed to simplify the app
+// import { useTheme } from '@mui/material/styles';
 import ActivityList from './ActivityList';
 import SpiritualFitnessModal from './SpiritualFitnessModal';
 import LogActivityModal from './LogActivityModal';
-import { useAppTheme } from '../contexts/MuiThemeProvider';
+// import { useAppTheme } from '../contexts/MuiThemeProvider';
 import { Paper, Box, Typography } from '@mui/material';
 
 export default function Dashboard({ setCurrentView, user, activities, meetings = [], onSave, onSaveMeeting, spiritualFitness }) {
-  // Get theme from MUI theme provider
-  const { mode } = useAppTheme();
-  const darkMode = mode === 'dark';
+  // Simple dark mode setting instead of using the theme system
+  const darkMode = false; // Use light mode by default
   
   // State for controlling modal visibility and score timeframe
   const [showScoreModal, setShowScoreModal] = useState(false);
