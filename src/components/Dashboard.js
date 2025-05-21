@@ -320,34 +320,37 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
           </Typography>
           
           {/* Gradient progress bar with mask - thicker version with no markers */}
-          <div style={{ 
+          <Box sx={{ 
             position: 'relative',
             height: '16px',
             width: '100%',
             borderRadius: '8px',
-            background: `linear-gradient(
+            background: (theme) => `linear-gradient(
               90deg,
-              ${darkMode ? '#DC2626' : '#EF4444'} 0%,
-              ${darkMode ? '#E76B6B' : '#F87171'} 25%,
-              ${darkMode ? '#D97706' : '#F59E0B'} 50%,
-              ${darkMode ? '#65A30D' : '#84CC16'} 75%,
-              ${darkMode ? '#16A34A' : '#22C55E'} 100%
+              ${theme.palette.error.main} 0%,
+              ${theme.palette.error.light} 25%,
+              ${theme.palette.warning.main} 50%,
+              ${theme.palette.success.light} 75%,
+              ${theme.palette.success.main} 100%
             )`,
-            marginBottom: '6px',
-            border: darkMode ? '1px solid #4B5563' : '1px solid #D1D5DB',
+            mb: '6px',
+            border: 1,
+            borderColor: 'divider',
             overflow: 'hidden',
-            boxShadow: darkMode ? '0 1px 2px rgba(0,0,0,0.2) inset' : '0 1px 2px rgba(0,0,0,0.1) inset'
+            boxShadow: (theme) => theme.palette.mode === 'dark' 
+              ? 'inset 0 1px 2px rgba(0,0,0,0.2)' 
+              : 'inset 0 1px 2px rgba(0,0,0,0.1)'
           }}>
-            <div style={{
+            <Box sx={{
               borderRadius: '0 8px 8px 0',
-              backgroundColor: darkMode ? '#374151' : '#F3F4F6',
+              bgcolor: (theme) => theme.palette.mode === 'dark' ? '#374151' : '#F3F4F6',
               position: 'absolute',
               right: 0,
               bottom: 0,
               top: 0,
               width: `${100 - progressPercent}%`
-            }}></div>
-          </div>
+            }}></Box>
+          </Box>
           
           <div style={{ 
             display: 'flex',
