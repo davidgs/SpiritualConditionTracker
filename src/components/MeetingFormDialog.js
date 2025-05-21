@@ -348,15 +348,15 @@ export default function MeetingFormDialog({
     <Dialog 
       open={open} 
       onClose={onClose}
-      maxWidth="md"
+      maxWidth="xs"
+      fullWidth
       PaperProps={{
         sx: {
           bgcolor: darkMode ? '#1f2937' : 'white',
           color: darkMode ? '#d1d5db' : '#374151',
           borderRadius: 2,
-          width: '100%',
-          maxWidth: '500px',
-          overflowX: 'hidden' // Prevent horizontal scrolling
+          overflowX: 'hidden', // Prevent horizontal scrolling
+          m: 1 // Add margin to prevent the dialog from touching the screen edges
         }
       }}
     >
