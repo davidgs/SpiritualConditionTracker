@@ -400,16 +400,16 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
           <h2 style={{
             fontSize: '1.1rem',
             fontWeight: 600,
-            color: darkMode ? '#d1d5db' : '#374151'
+            color: 'var(--theme-text-primary)'
           }}>Activities</h2>&nbsp;
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             {/* Activity type filter */}
             <select 
               style={{
                 backgroundColor: 'transparent',
-                border: darkMode ? '1px solid #4b5563' : '1px solid #d1d5db',
+                border: '1px solid var(--theme-divider)',
                 borderRadius: '0.25rem',
-                color: darkMode ? '#d1d5db' : '#374151',
+                color: 'var(--theme-text-primary)',
                 padding: '0.15rem 0.5rem',
                 fontSize: '0.7rem',
                 cursor: 'pointer'
@@ -433,9 +433,9 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
             <select 
               style={{
                 backgroundColor: 'transparent',
-                border: darkMode ? '1px solid #4b5563' : '1px solid #d1d5db',
+                border: '1px solid var(--theme-divider)',
                 borderRadius: '0.25rem',
-                color: darkMode ? '#d1d5db' : '#374151',
+                color: 'var(--theme-text-primary)',
                 padding: '0.15rem 0.5rem',
                 fontSize: '0.7rem',
                 cursor: 'pointer'
@@ -467,7 +467,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
                 border: 'none',
                 cursor: 'pointer',
                 padding: '0.5rem',
-                color: darkMode ? '#2563eb' : '#3b82f6',
+                color: 'var(--theme-primary-main)',
               }}
             >
               <i className="fa-solid fa-scroll"></i>
