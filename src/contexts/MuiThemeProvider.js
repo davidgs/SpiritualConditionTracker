@@ -35,6 +35,11 @@ const shadeColor = (hex, percent) => {
   // Convert back to hex
   return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
 };
+
+// Helper function for darkening colors (alias to shadeColor for clarity)
+const darkenColor = (hex, percent) => {
+  return shadeColor(hex, percent);
+};
 // Use window.db for accessing database functions after proper initialization
 // This prevents initialization conflicts across multiple imports
 
@@ -138,13 +143,40 @@ const MuiThemeProvider = ({ children }) => {
         palette: {
           mode: darkMode ? 'dark' : 'light',
           primary: {
+            light: darkMode ? lightenColor(primaryColorValue, 25) : lightenColor(primaryColorValue, 15),
             main: darkMode ? lightenColor(primaryColorValue, 15) : primaryColorValue,
+            dark: darkMode ? primaryColorValue : darkenColor(primaryColorValue, 15),
+            contrastText: '#ffffff',
           },
           secondary: {
-            main: darkMode ? '#8b5cf6' : '#7c3aed', // purple
+            light: darkMode ? '#a78bfa' : '#9333ea',
+            main: darkMode ? '#8b5cf6' : '#7c3aed',
+            dark: darkMode ? '#6d28d9' : '#5b21b6',
+            contrastText: '#ffffff',
           },
           error: {
-            main: darkMode ? '#ef4444' : '#dc2626', // red
+            light: darkMode ? '#f87171' : '#ef4444',
+            main: darkMode ? '#ef4444' : '#dc2626',
+            dark: darkMode ? '#b91c1c' : '#991b1b',
+            contrastText: '#ffffff',
+          },
+          warning: {
+            light: darkMode ? '#fcd34d' : '#fbbf24',
+            main: darkMode ? '#f59e0b' : '#d97706',
+            dark: darkMode ? '#b45309' : '#92400e',
+            contrastText: '#ffffff',
+          },
+          info: {
+            light: darkMode ? '#93c5fd' : '#60a5fa',
+            main: darkMode ? '#3b82f6' : '#2563eb',
+            dark: darkMode ? '#1d4ed8' : '#1e40af',
+            contrastText: '#ffffff',
+          },
+          success: {
+            light: darkMode ? '#86efac' : '#4ade80',
+            main: darkMode ? '#22c55e' : '#16a34a',
+            dark: darkMode ? '#15803d' : '#166534',
+            contrastText: '#ffffff',
           },
           background: {
             default: darkMode ? '#111827' : '#ffffff',
