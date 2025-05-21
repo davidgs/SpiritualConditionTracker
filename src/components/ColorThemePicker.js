@@ -22,13 +22,17 @@ const ColorThemePicker = () => {
     setIsNative(Capacitor.isNativePlatform());
   }, []);
   
-  // Color preview circles with labels, using the same values from our theme system
-  const colorOptions = Object.keys(defaultThemeColors).reduce((acc, colorName) => {
-    const colorValue = defaultThemeColors[colorName];
+  // Get the current MUI theme
+  const muiTheme = useTheme();
+  
+  // Color preview with complete theme information, using our full theme objects
+  const colorOptions = Object.keys(baseColors).reduce((acc, colorName) => {
+    const themeColor = baseColors[colorName];
     acc[colorName] = { 
       label: colorName.charAt(0).toUpperCase() + colorName.slice(1),
-      color: colorValue,
-      darkColor: colorValue // We'll calculate this dynamically based on the mode
+      color: themeColor.main,
+      light: themeColor.light,
+      dark: themeColor.dark,
     };
     return acc;
   }, {});
