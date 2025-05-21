@@ -560,13 +560,19 @@ function setupGlobalDB(sqlite) {
         
         // Special handling for meetings to ensure meeting name is always set (NOT NULL constraint)
         if (collection === 'meetings') {
-          console.log(`[ sqliteLoader.js ] Saving meeting with name: "${itemToSave.name}"`);
+          // Always log the meeting data for debugging
+          console.log(`[ sqliteLoader.js ] Saving meeting:`, JSON.stringify(itemToSave, null, 2));
           
           // Make sure name is never empty (required by NOT NULL constraint)
-          if (!itemToSave.name || itemToSave.name.trim() === '') {
-            console.warn('[ sqliteLoader.js ] Meeting missing name field, setting default name');
+          if (!itemToSave.name || typeof itemToSave.name !== 'string' || itemToSave.name.trim() === '') {
+            console.warn('[ sqliteLoader.js ] Meeting missing or empty name field, setting default name');
             itemToSave.name = 'Unnamed Meeting';
+          } else {
+            // Make sure name is properly trimmed
+            itemToSave.name = itemToSave.name.trim();
           }
+          
+          console.log(`[ sqliteLoader.js ] Meeting name after validation: "${itemToSave.name}"`);
           
           // Make sure schedule is stringified JSON
           if (itemToSave.schedule && typeof itemToSave.schedule === 'object') {
@@ -617,6 +623,12 @@ function setupGlobalDB(sqlite) {
           // Special handling for activity type field which is NOT NULL
           if (collection === 'activities' && field === 'type' && (value === undefined || value === null || value === '')) {
             value = 'meeting'; // Enforce default value for NOT NULL constraint
+          }
+          
+          // Special handling for meeting name field which is NOT NULL
+          if (collection === 'meetings' && field === 'name' && (value === undefined || value === null || value === '')) {
+            console.warn('[ sqliteLoader.js ] Meeting name is NULL or empty when executing SQL - setting default name');
+            value = 'Unnamed Meeting'; // Enforce default value for NOT NULL constraint
           }
           
           // Convert objects to JSON strings
