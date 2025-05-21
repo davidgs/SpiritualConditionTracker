@@ -7,9 +7,8 @@ import Meetings from './components/Meetings';
 import Messages from './components/Messages';
 import StepWork from './components/StepWork';
 import SponsorSponsee from './components/SponsorSponsee';
-// Theme components removed to simplify the app
-// import MuiThemeProvider, { useAppTheme } from './contexts/MuiThemeProvider';
-// import ThemeBackground from './components/ThemeBackground';
+import MuiThemeProvider, { useAppTheme } from './contexts/MuiThemeProvider';
+import ThemeBackground from './components/ThemeBackground';
 import { generateKeyPair } from './utils/encryption';
 import { DEFAULT_SPIRITUAL_FITNESS_SCORE } from './utils/constants';
 import { Box, Paper } from '@mui/material';
@@ -641,13 +640,14 @@ function App() {
   console.log('App.js - Before rendering, spiritualFitness value:', spiritualFitness);
   
   return (
-    <Box 
-          className="app-container h-full flex flex-col"
+    <MuiThemeProvider>
+      <ThemeBackground>
+        <Box 
+          className="app-container h-full flex flex-col transition-all duration-300"
           sx={{ 
             width: '100%',
             height: '100%',
-            backgroundColor: '#f5f7fa',
-            color: '#111827'
+            color: 'text.primary'
           }}
         >
         <NavBar currentView={currentView} setCurrentView={setCurrentView} />
@@ -664,7 +664,9 @@ function App() {
           {renderCurrentView()}
         </Box>
       </Box>
-    );
+      </ThemeBackground>
+    </MuiThemeProvider>
+  );
 }
 
 export default App;
