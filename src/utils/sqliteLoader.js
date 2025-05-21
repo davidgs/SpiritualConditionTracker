@@ -497,6 +497,27 @@ function setupGlobalDB(sqlite) {
           delete itemToSave.id; // Don't set ID for new records with autoincrement
         }
         
+        // Special handling for meetings to ensure meeting name is always set (NOT NULL constraint)
+        if (collection === 'meetings') {
+          console.log(`[ sqliteLoader.js ] Saving meeting with name: "${itemToSave.name}"`);
+          
+          // Make sure name is never empty (required by NOT NULL constraint)
+          if (!itemToSave.name || itemToSave.name.trim() === '') {
+            console.warn('[ sqliteLoader.js ] Meeting missing name field, setting default name');
+            itemToSave.name = 'Unnamed Meeting';
+          }
+          
+          // Make sure schedule is stringified JSON
+          if (itemToSave.schedule && typeof itemToSave.schedule === 'object') {
+            itemToSave.schedule = JSON.stringify(itemToSave.schedule);
+          }
+          
+          // Make sure days is stringified JSON if it's an array
+          if (itemToSave.days && Array.isArray(itemToSave.days)) {
+            itemToSave.days = JSON.stringify(itemToSave.days);
+          }
+        }
+        
         // Special handling for activities to ensure type is always set
         if (collection === 'activities') {
           console.log(`[ sqliteLoader.js ] Saving activity with type: "${itemToSave.type}"`);
