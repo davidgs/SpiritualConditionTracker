@@ -491,7 +491,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
           filter={activityTypeFilter}
           showDate={true}
         />
-      </div>
+      </Paper>
       
       {/* Material UI Dialog for Spiritual Fitness */}
       <SpiritualFitnessModal 
