@@ -267,12 +267,32 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
           textAlign: 'center',
           border: darkMode ? '1px solid #374151' : '1px solid #e5e7eb'
         }}>
-          <h3 style={{
-            fontSize: '1.1rem',
-            fontWeight: 600,
-            color: darkMode ? '#d1d5db' : '#374151',
-            marginBottom: '0.5rem'
-          }}>Spiritual Fitness</h3>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '0.5rem' }}>
+            <h3 style={{
+              fontSize: '1.1rem',
+              fontWeight: 600,
+              color: darkMode ? '#d1d5db' : '#374151',
+              margin: 0,
+            }}>
+              Spiritual Fitness
+              <button
+                onClick={() => setShowScoreModal(!showScoreModal)}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  fontSize: '0.75em',
+                  padding: '0 0 0 4px',
+                  position: 'relative',
+                  top: '-5px',
+                  color: darkMode ? '#9ca3af' : '#6b7280'
+                }}
+                aria-label="Show how spiritual fitness is calculated"
+              >
+                <i className="fa-solid fa-question"></i>
+              </button>
+            </h3>
+          </div>
           
           {/* Score display with dynamic color */}
           <div 
@@ -344,29 +364,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
               <i className="fa-solid fa-shuffle"></i>
             </button>
           </div>
-          <div className="inline-block">
-            <button 
-              ref={buttonRef}
-              style={{
-                backgroundColor: darkMode ? '#1e40af' : '#dbeafe',
-                color: darkMode ? '#93c5fd' : '#1e40af',
-                padding: '0.5rem 0.75rem',  /* Increased padding */
-                borderRadius: '0.375rem',   /* Slightly larger radius */
-                fontSize: '0.85rem',        /* Increased font size by ~30% */
-                fontWeight: '600',          /* Slightly bolder */
-                marginTop: '0.375rem',      /* More top margin */
-                border: darkMode ? '1px solid #3b82f6' : '1px solid #93c5fd',
-                cursor: 'pointer',
-                transition: 'background-color 0.2s',
-                width: 'max-content',       /* Make sure it fits content */
-                minWidth: '150px',          /* Minimum width */
-                boxShadow: '0 1px 2px rgba(0,0,0,0.1)' /* Subtle shadow for better visibility */
-              }}
-              onClick={() => setShowScoreModal(!showScoreModal)}
-            >
-              How is this calculated?
-            </button>
-          </div>
+          {/* "How is this calculated" button removed - now using the icon in the header */}
           
           {/* Render modal at the end of the Dashboard component body to avoid positioning issues */}
         </div>
