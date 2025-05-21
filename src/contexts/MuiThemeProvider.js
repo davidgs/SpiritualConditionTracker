@@ -4,6 +4,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 import { Capacitor } from '@capacitor/core';
 import { applyNativeTheme, applyNativeCssVariables, defaultThemeColors, getSystemColorScheme } from '../utils/nativeTheme';
 import { getCompleteTheme } from '../utils/muiThemeColors';
+import applyThemeDirectly from '../utils/applyThemeDirectly';
 
 // Create a context for theme management
 export const AppThemeContext = createContext();
@@ -71,7 +72,7 @@ const MuiThemeProvider = ({ children }) => {
       
       if (darkMode) {
         htmlEl.classList.add('dark');
-        document.body.style.backgroundColor = '#121212';
+        document.body.style.backgroundColor = '#111827';
         document.body.style.color = '#fff';
         console.log('Dark mode activated');
       } else {
@@ -83,6 +84,9 @@ const MuiThemeProvider = ({ children }) => {
       
       // Apply custom primary color as CSS variable
       htmlEl.style.setProperty('--primary-color', primaryColorValue);
+      
+      // Apply theme changes directly to DOM elements for immediate visual feedback
+      applyThemeDirectly(primaryColor, theme);
       
       // Save theme choices to SQLite database
       if (window.db && window.dbInitialized && window.db.setPreference) {
