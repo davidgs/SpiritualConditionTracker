@@ -17,6 +17,22 @@ const lightenColor = (hex, percent) => {
   // Convert back to hex
   return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
 };
+
+// Helper function to darken colors
+const shadeColor = (hex, percent) => {
+  // Convert hex to RGB
+  let r = parseInt(hex.slice(1, 3), 16);
+  let g = parseInt(hex.slice(3, 5), 16);
+  let b = parseInt(hex.slice(5, 7), 16);
+
+  // Decrease brightness by percentage
+  r = Math.max(0, Math.floor(r * (1 - percent / 100)));
+  g = Math.max(0, Math.floor(g * (1 - percent / 100)));
+  b = Math.max(0, Math.floor(b * (1 - percent / 100)));
+
+  // Convert back to hex
+  return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
+};
 // Use window.db for accessing database functions after proper initialization
 // This prevents initialization conflicts across multiple imports
 
@@ -231,9 +247,9 @@ const MuiThemeProvider = ({ children }) => {
                 fontWeight: 500,
               },
               containedPrimary: {
-                backgroundColor: darkMode ? '#3b82f6' : '#2563eb',
+                backgroundColor: darkMode ? lightenColor(actualColor, 5) : actualColor,
                 '&:hover': {
-                  backgroundColor: darkMode ? '#2563eb' : '#1d4ed8',
+                  backgroundColor: darkMode ? actualColor : shadeColor(actualColor, 15),
                 },
               },
               outlinedPrimary: {
