@@ -247,9 +247,9 @@ const MuiThemeProvider = ({ children }) => {
                 fontWeight: 500,
               },
               containedPrimary: {
-                backgroundColor: darkMode ? lightenColor(actualColor, 5) : actualColor,
+                backgroundColor: darkMode ? lightenColor(primaryColorValue, 5) : primaryColorValue,
                 '&:hover': {
-                  backgroundColor: darkMode ? actualColor : shadeColor(actualColor, 15),
+                  backgroundColor: darkMode ? primaryColorValue : shadeColor(primaryColorValue, 15),
                 },
               },
               outlinedPrimary: {
@@ -287,11 +287,31 @@ const MuiThemeProvider = ({ children }) => {
 
   // Apply CSS variables for custom theming
   useEffect(() => {
+    // Set background color variables
     document.documentElement.style.setProperty(
       '--background-color', 
       darkMode ? muiTheme.palette.background.default : muiTheme.palette.background.paper
     );
-  }, [darkMode, muiTheme, primaryColor]);
+    
+    // Set primary color variables for easier usage in CSS
+    document.documentElement.style.setProperty(
+      '--primary-color', 
+      primaryColorValue
+    );
+    
+    document.documentElement.style.setProperty(
+      '--primary-color-light', 
+      lightenColor(primaryColorValue, 15)
+    );
+    
+    // Apply a subtle color to the nav elements to make color change more visible
+    const navElement = document.querySelector('.app-container nav');
+    if (navElement) {
+      navElement.style.borderBottom = `2px solid ${primaryColorValue}`;
+    }
+    
+    console.log(`Theme updated: ${darkMode ? 'dark' : 'light'} mode with ${primaryColor} color (${primaryColorValue})`);
+  }, [darkMode, muiTheme, primaryColor, primaryColorValue]);
 
   return (
     <AppThemeContext.Provider value={themeContextValue}>
