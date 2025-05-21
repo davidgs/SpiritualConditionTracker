@@ -3,48 +3,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { Capacitor } from '@capacitor/core';
 import { applyNativeTheme, applyNativeCssVariables, defaultThemeColors, getSystemColorScheme } from '../utils/nativeTheme';
-import { generateThemePalette } from '../utils/colorThemes';
-
-// Helper function to lighten colors for dark mode
-const lightenColor = (hex, percent) => {
-  // Convert hex to RGB
-  let r = parseInt(hex.slice(1, 3), 16);
-  let g = parseInt(hex.slice(3, 5), 16);
-  let b = parseInt(hex.slice(5, 7), 16);
-
-  // Increase brightness by percentage
-  r = Math.min(255, Math.floor(r * (1 + percent / 100)));
-  g = Math.min(255, Math.floor(g * (1 + percent / 100)));
-  b = Math.min(255, Math.floor(b * (1 + percent / 100)));
-
-  // Convert back to hex
-  return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
-};
-
-// Helper function to darken colors
-const shadeColor = (hex, percent) => {
-  // Convert hex to RGB
-  let r = parseInt(hex.slice(1, 3), 16);
-  let g = parseInt(hex.slice(3, 5), 16);
-  let b = parseInt(hex.slice(5, 7), 16);
-
-  // Decrease brightness by percentage
-  r = Math.max(0, Math.floor(r * (1 - percent / 100)));
-  g = Math.max(0, Math.floor(g * (1 - percent / 100)));
-  b = Math.max(0, Math.floor(b * (1 - percent / 100)));
-
-  // Convert back to hex
-  return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
-};
-
-// Helper function for darkening colors (alias to shadeColor for clarity)
-const darkenColor = (hex, percent) => {
-  return shadeColor(hex, percent);
-};
-// Use window.db for accessing database functions after proper initialization
-// This prevents initialization conflicts across multiple imports
-
-// Using imported defaultThemeColors from nativeTheme.js
+import { getCompleteTheme } from '../utils/muiThemeColors';
 
 // Create a context for theme management
 export const AppThemeContext = createContext();
@@ -61,6 +20,9 @@ const MuiThemeProvider = ({ children }) => {
   const [initialTheme, setInitialTheme] = useState('light');
   // Add state for primary color theme (default to blue)
   const [primaryColor, setPrimaryColor] = useState('blue');
+  
+  // Available color options for the theme picker
+  const availableColors = Object.keys(defaultThemeColors);
   
   // Load theme preferences from database on component mount
   useEffect(() => {
@@ -139,179 +101,33 @@ const MuiThemeProvider = ({ children }) => {
   
   // Create a theme based on our app's dark/light mode and custom primary color
   const muiTheme = React.useMemo(
-    () => 
-      createTheme({
-        // Use the comprehensive theme palette generator
-        palette: generateThemePalette(primaryColor, theme),
-        typography: {
-          fontFamily: '"Inter", "Helvetica", "Arial", sans-serif',
-        },
-        components: {
-          MuiPaper: {
-            styleOverrides: {
-              root: {
-                backgroundColor: darkMode ? '#1f2937' : '#ffffff',
-                color: darkMode ? '#e5e7eb' : '#1f2937',
-              },
-            },
-          },
-          MuiDialog: {
-            styleOverrides: {
-              paper: {
-                boxShadow: darkMode
-                  ? '0 25px 50px -12px rgba(0, 0, 0, 0.5)'
-                  : '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
-                backgroundColor: darkMode ? '#1f2937' : '#ffffff',
-                color: darkMode ? '#e5e7eb' : '#1f2937',
-              },
-              root: {
-                '& .MuiBackdrop-root': {
-                  backgroundColor: darkMode ? 'rgba(0, 0, 0, 0.7)' : 'rgba(0, 0, 0, 0.5)',
-                },
-              },
-            },
-          },
-          MuiDialogTitle: {
-            styleOverrides: {
-              root: {
-                backgroundColor: darkMode ? '#111827' : '#f9fafb',
-                color: darkMode ? '#f3f4f6' : '#111827',
-                borderBottom: '1px solid',
-                borderColor: darkMode ? '#374151' : '#e5e7eb',
-              },
-            },
-          },
-          MuiDialogContent: {
-            styleOverrides: {
-              root: {
-                backgroundColor: darkMode ? '#1f2937' : '#ffffff',
-                color: darkMode ? '#e5e7eb' : '#1f2937',
-              },
-            },
-          },
-          MuiDialogActions: {
-            styleOverrides: {
-              root: {
-                backgroundColor: darkMode ? '#1f2937' : '#ffffff',
-                borderTop: '1px solid',
-                borderColor: darkMode ? '#374151' : '#e5e7eb',
-                padding: '16px',
-              },
-            },
-          },
-          MuiInputBase: {
-            styleOverrides: {
-              input: {
-                color: darkMode ? '#e5e7eb' : '#1f2937',
-              },
-            },
-          },
-          MuiOutlinedInput: {
-            styleOverrides: {
-              root: {
-                '& .MuiOutlinedInput-notchedOutline': {
-                  borderColor: darkMode ? '#4b5563' : '#d1d5db',
-                },
-                '&:hover .MuiOutlinedInput-notchedOutline': {
-                  borderColor: darkMode ? '#6b7280' : '#9ca3af',
-                },
-                '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                  borderColor: darkMode ? '#60a5fa' : '#3b82f6',
-                },
-              },
-            },
-          },
-          MuiButton: {
-            styleOverrides: {
-              root: {
-                textTransform: 'none',
-                borderRadius: '0.375rem',
-                fontWeight: 500,
-              },
-              containedPrimary: {
-                backgroundColor: darkMode ? lightenColor(primaryColorValue, 5) : primaryColorValue,
-                '&:hover': {
-                  backgroundColor: darkMode ? primaryColorValue : shadeColor(primaryColorValue, 15),
-                },
-              },
-              outlinedPrimary: {
-                color: darkMode ? '#e5e7eb' : '#4b5563',
-                borderColor: darkMode ? '#4b5563' : '#d1d5db',
-                '&:hover': {
-                  backgroundColor: darkMode ? 'rgba(55, 65, 81, 0.1)' : 'rgba(243, 244, 246, 0.7)',
-                  borderColor: darkMode ? '#6b7280' : '#9ca3af',
-                },
-              },
-            },
-          },
-          MuiInputLabel: {
-            styleOverrides: {
-              root: {
-                color: darkMode ? '#9ca3af' : '#4b5563',
-              },
-            },
-          },
-        },
-      }),
-    [darkMode]
+    () => createTheme(getCompleteTheme(primaryColor, theme)),
+    [primaryColor, theme]
   );
-
-  // Create context value that will be provided to components
-  const themeContextValue = {
-    theme,
-    setTheme,
-    toggleTheme,
-    mode: darkMode ? 'dark' : 'light',
-    primaryColor,
-    setPrimaryColor,
-    availableColors: Object.keys(defaultThemeColors)
-  };
-
-  // Apply CSS variables for custom theming
+  
+  // Also apply native theme settings for iOS and Android when applicable
   useEffect(() => {
-    // Apply native theme settings for iOS
     if (Capacitor.isNativePlatform()) {
-      // Apply theme to native elements (status bar, etc.)
+      // Apply theme to native elements 
       applyNativeTheme(primaryColor, darkMode);
-    }
-    
-    // Apply CSS variables for consistent styling
-    applyNativeCssVariables(primaryColor, darkMode, document.documentElement);
-    
-    // Set additional background color variables
-    document.documentElement.style.setProperty(
-      '--background-color', 
-      darkMode ? muiTheme.palette.background.default : muiTheme.palette.background.paper
-    );
-    
-    // Set primary color variables for easier usage in CSS
-    document.documentElement.style.setProperty(
-      '--primary-color-light', 
-      lightenColor(primaryColorValue, 15)
-    );
-    
-    // Apply a subtle color to the nav elements to make color change more visible
-    const navElement = document.querySelector('.app-container nav');
-    if (navElement) {
-      navElement.style.borderBottom = `2px solid ${primaryColorValue}`;
       
-      // Add extra visual indicator for iOS
-      if (Capacitor.isNativePlatform()) {
-        navElement.style.boxShadow = `0 2px 4px rgba(0,0,0,0.1)`;
-      }
+      // Apply CSS variables for native compatibility
+      applyNativeCssVariables(primaryColor, darkMode);
     }
-    
-    // Apply colors to buttons for more visible theme changes
-    const buttons = document.querySelectorAll('button.MuiButton-containedPrimary');
-    buttons.forEach(button => {
-      button.style.backgroundColor = primaryColorValue;
-    });
-    
-    console.log(`Theme updated: ${darkMode ? 'dark' : 'light'} mode with ${primaryColor} color (${primaryColorValue})`);
-  }, [darkMode, muiTheme, primaryColor, primaryColorValue]);
-
+  }, [primaryColor, darkMode]);
+  
   return (
-    <AppThemeContext.Provider value={themeContextValue}>
+    <AppThemeContext.Provider
+      value={{
+        theme,
+        setTheme,
+        toggleTheme,
+        primaryColor,
+        setPrimaryColor,
+        availableColors,
+        mode: theme, // For backward compatibility
+      }}
+    >
       <ThemeProvider theme={muiTheme}>
         <CssBaseline />
         {children}
@@ -320,13 +136,10 @@ const MuiThemeProvider = ({ children }) => {
   );
 };
 
-// Custom hook to use the theme context
-export const useAppTheme = () => {
-  const context = useContext(AppThemeContext);
-  if (context === undefined) {
-    throw new Error('useAppTheme must be used within a MuiThemeProvider');
-  }
-  return context;
-};
+/**
+ * Custom hook to access the theme context
+ * @returns {Object} Theme context values
+ */
+export const useAppTheme = () => useContext(AppThemeContext);
 
 export default MuiThemeProvider;
