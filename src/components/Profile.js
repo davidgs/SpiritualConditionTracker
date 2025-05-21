@@ -547,6 +547,11 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
             <ThemeSelector />
           </Box>
           
+          {/* Color Theme Picker */}
+          <Box>
+            <ColorThemePicker />
+          </Box>
+          
           {/* Message Privacy Option */}
           <FormControlLabel
             control={
@@ -809,7 +814,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
                       ))
                     : <MenuItem value="none" disabled>No saved meetings</MenuItem>;
                 })()}
-                <MenuItem value="add_new" sx={{ color: darkMode ? '#60a5fa' : '#3b82f6' }}>
+                <MenuItem value="add_new" sx={{ color: 'primary.main' }}>
                   <i className="fas fa-plus" style={{ marginRight: '8px', fontSize: '0.75rem' }}></i>
                   Add New Meeting
                 </MenuItem>
@@ -821,9 +826,10 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
                 size="small"
                 onClick={() => setEditingPersonalInfo(false)}
                 sx={{ 
-                  color: darkMode ? '#d1d5db' : '#374151',
+                  color: 'text.primary',
                   '&:hover': {
-                    backgroundColor: 'transparent'
+                    backgroundColor: 'transparent',
+                    color: 'primary.main'
                   }
                 }}
               >
