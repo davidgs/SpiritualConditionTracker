@@ -549,9 +549,13 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
             <ThemeSelector />
           </Box>
           
-          {/* Color Theme Picker */}
-          <Box>
+          {/* Color Theme Picker - Now in a popover */}
+          <Box sx={{ mb: 2 }}>
             <ColorThemePicker />
+          </Box>
+          
+          {/* Display current theme information */}
+          <Box sx={{ mb: 2 }}>
             <ThemeDisplay />
           </Box>
           
