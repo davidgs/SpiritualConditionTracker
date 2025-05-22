@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { styled } from '@mui/material/styles';
-import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
@@ -8,65 +6,9 @@ import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
+import StyledDialog from './StyledDialog';
 import MuiThemeProvider from '../contexts/MuiThemeProvider';
 import MeetingForm from './MeetingForm';
-
-// Use the theme system and only style custom elements that MUI doesn't cover
-const StyledDialog = styled(Dialog)(({ theme }) => ({
-  '& .MuiPaper-root': {
-    maxWidth: '100%',
-    width: 'calc(100% - 32px)',
-    margin: '16px',
-    overflowX: 'hidden',
-  },
-  '& .MuiDialogContent-root': {
-    padding: '16px',
-    overflowX: 'hidden',
-    maxWidth: '100%',
-    boxSizing: 'border-box',
-  },
-  '& .MuiDialogActions-root': {
-    padding: '8px 16px',
-  },
-  // Style form elements that aren't Material UI components
-  '& select': {
-    backgroundColor: theme.palette.background.paper,
-    color: theme.palette.text.primary,
-    border: `1px solid ${theme.palette.mode === 'dark' ? theme.palette.grey[700] : theme.palette.grey[300]}`,
-    padding: '0.5rem 0.75rem',
-    borderRadius: theme.shape.borderRadius,
-    fontSize: '0.875rem',
-    width: '100%',
-    appearance: 'auto',
-  },
-  '& select:focus': {
-    borderColor: theme.palette.primary.main,
-    outline: 'none',
-  },
-  '& select option': {
-    backgroundColor: theme.palette.background.paper,
-    color: theme.palette.text.primary,
-  },
-  '& textarea': {
-    backgroundColor: theme.palette.background.paper,
-    color: theme.palette.text.primary,
-    border: `1px solid ${theme.palette.mode === 'dark' ? theme.palette.grey[700] : theme.palette.grey[300]}`,
-    borderRadius: theme.shape.borderRadius,
-    padding: '0.5rem 0.75rem',
-    fontSize: '0.875rem',
-  },
-  '& textarea::placeholder': {
-    color: theme.palette.text.secondary,
-  },
-  '& input[type="date"]': {
-    backgroundColor: theme.palette.background.paper,
-    color: theme.palette.text.primary,
-    border: `1px solid ${theme.palette.mode === 'dark' ? theme.palette.grey[700] : theme.palette.grey[300]}`,
-    padding: '0.5rem 0.75rem',
-    borderRadius: theme.shape.borderRadius,
-    fontSize: '0.875rem',
-  },
-}));
 
 /**
  * Material UI Dialog component that displays the activity logging form
@@ -321,59 +263,18 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
     setShowMeetingForm(false);
   }
   
-  // Common styles for form elements using the current dark/light mode
-  // Don't use complex theme for now, just direct color mapping
-  const palette = {
-    mode: darkMode ? 'dark' : 'light',
-    background: { 
-      paper: darkMode ? '#1f2937' : '#ffffff',
-      default: darkMode ? '#111827' : '#f9fafb'
-    },
-    text: { 
-      primary: darkMode ? '#e5e7eb' : '#1f2937', 
-      secondary: darkMode ? '#9ca3af' : '#4b5563' 
-    },
-    grey: { 
-      300: darkMode ? '#4b5563' : '#d1d5db', 
-      700: darkMode ? '#1f2937' : '#374151' 
-    },
-    primary: {
-      main: darkMode ? '#60a5fa' : '#3b82f6'
-    },
-    error: {
-      main: darkMode ? '#ef4444' : '#dc2626'
-    }
-  };
-  
-  const labelStyle = {
-    display: 'block',
-    fontSize: '0.875rem',
-    fontWeight: '500',
-    marginBottom: '0.25rem',
-    color: palette.text.secondary
-  };
-  
-  const inputStyle = {
+  // Get common text field styles for consistency
+  const getTextFieldStyle = (theme) => ({
     width: '100%',
+    maxWidth: '100%',
     padding: '0.5rem 0.75rem',
     borderRadius: '0.375rem',
-    backgroundColor: palette.background.paper,
-    color: palette.text.primary,
-    border: `1px solid ${palette.mode === 'dark' ? palette.grey[700] : palette.grey[300]}`,
-    fontSize: '0.875rem'
-  };
-  
-  const errorStyle = { 
-    color: palette.error?.main || '#ef4444', 
-    fontSize: '0.75rem', 
-    marginTop: '0.25rem' 
-  };
-  
-  const checkboxStyle = {
-    display: 'flex',
-    alignItems: 'center',
-    marginBottom: '0.5rem'
-  };
+    backgroundColor: theme.palette.background.paper,
+    color: theme.palette.text.primary,
+    border: `1px solid ${theme.palette.mode === 'dark' ? theme.palette.grey[700] : theme.palette.grey[300]}`,
+    fontSize: '0.875rem',
+    boxSizing: 'border-box'
+  });
   
   return (
     <MuiThemeProvider>
@@ -383,23 +284,15 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
         aria-labelledby="log-activity-dialog-title"
         maxWidth="sm"
         fullWidth
-        PaperProps={{
-          style: {
-            backgroundColor: darkMode ? '#1f2937' : '#ffffff',
-            color: darkMode ? '#e5e7eb' : '#1f2937',
-            overflowX: 'hidden',
-            maxWidth: '100%',
-          },
-        }}
       >
         <DialogTitle 
           id="log-activity-dialog-title"
-          sx={{
-            backgroundColor: darkMode ? '#111827' : '#f9fafb',
-            color: darkMode ? '#f3f4f6' : '#111827',
+          sx={(theme) => ({
+            backgroundColor: theme.palette.background.default,
+            color: theme.palette.text.primary,
             borderBottom: '1px solid',
-            borderColor: darkMode ? '#374151' : '#e5e7eb',
-          }}
+            borderColor: theme.palette.divider,
+          })}
         >
           Log New Activity
         </DialogTitle>
@@ -407,44 +300,35 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
         <IconButton
           aria-label="close"
           onClick={onClose}
-          sx={{
+          sx={(theme) => ({
             position: 'absolute',
             right: 8,
             top: 8,
-            color: palette.text.secondary,
-          }}
+            color: theme.palette.text.secondary,
+          })}
         >
           <CloseIcon />
         </IconButton>
         
-        <DialogContent 
-          dividers
-          sx={{
-            backgroundColor: darkMode ? '#1f2937' : '#ffffff',
-            color: darkMode ? '#e5e7eb' : '#1f2937',
-            padding: '16px',
-            overflowX: 'hidden',
-            maxWidth: '100%',
-            boxSizing: 'border-box',
-          }}
-        >
+        <DialogContent dividers>
           {/* Success message */}
           {showSuccess && (
-            <div style={{
-              backgroundColor: darkMode ? '#064e3b' : '#d1fae5',
-              color: darkMode ? '#6ee7b7' : '#065f46',
-              padding: '0.75rem',
-              borderRadius: '0.375rem',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              marginBottom: '1rem',
-              fontWeight: '500',
-              fontSize: '0.875rem'
-            }}>
-              <i className="fas fa-check-circle mr-2"></i>
+            <Box
+              sx={(theme) => ({
+                backgroundColor: theme.palette.mode === 'dark' ? 'rgba(6, 78, 59, 0.8)' : 'rgba(209, 250, 229, 0.8)',
+                color: theme.palette.mode === 'dark' ? '#6ee7b7' : '#065f46',
+                padding: '0.75rem',
+                borderRadius: '0.375rem',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                marginBottom: '1rem',
+                fontWeight: '500',
+                fontSize: '0.875rem'
+              })}
+            >
               Activity saved successfully!
-            </div>
+            </Box>
           )}
           
           {/* Display the meeting form inside the modal when needed */}
@@ -458,14 +342,24 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
           ) : (
             <form onSubmit={handleSubmit}>
               {/* Activity Type */}
-              <div style={{ marginBottom: '1rem', maxWidth: '100%' }}>
-                <label style={labelStyle}>
+              <Box sx={{ marginBottom: '1rem', maxWidth: '100%' }}>
+                <Box 
+                  component="label"
+                  sx={(theme) => ({
+                    display: 'block',
+                    fontSize: '0.875rem',
+                    fontWeight: '500',
+                    marginBottom: '0.25rem',
+                    color: theme.palette.text.secondary
+                  })}
+                >
                   Activity Type
-                </label>
-                <select
-                  style={{...inputStyle, maxWidth: '100%', boxSizing: 'border-box'}}
+                </Box>
+                <Box 
+                  component="select"
                   value={activityType}
                   onChange={(e) => setActivityType(e.target.value)}
+                  sx={(theme) => getTextFieldStyle(theme)}
                 >
                   <option value="prayer">Prayer</option>
                   <option value="meditation">Meditation</option>
@@ -473,294 +367,427 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
                   <option value="service">Service Work</option>
                   <option value="call">Call</option>
                   <option value="meeting">AA Meeting</option>
-                </select>
+                </Box>
                 {errors.activityType && (
-                  <p style={errorStyle}>{errors.activityType}</p>
+                  <Box 
+                    component="p" 
+                    sx={(theme) => ({
+                      color: theme.palette.error.main,
+                      fontSize: '0.75rem',
+                      marginTop: '0.25rem'
+                    })}
+                  >
+                    {errors.activityType}
+                  </Box>
                 )}
-              </div>
+              </Box>
               
               {/* Duration dropdown */}
-              <div style={{ marginBottom: '1rem', maxWidth: '100%' }}>
-                <label style={labelStyle}>
+              <Box sx={{ marginBottom: '1rem', maxWidth: '100%' }}>
+                <Box 
+                  component="label"
+                  sx={(theme) => ({
+                    display: 'block',
+                    fontSize: '0.875rem',
+                    fontWeight: '500',
+                    marginBottom: '0.25rem',
+                    color: theme.palette.text.secondary
+                  })}
+                >
                   Duration
-                </label>
-                <select
-                  style={{...inputStyle, maxWidth: '100%', boxSizing: 'border-box'}}
+                </Box>
+                <Box 
+                  component="select"
                   value={duration}
                   onChange={(e) => setDuration(e.target.value)}
+                  sx={(theme) => getTextFieldStyle(theme)}
                 >
                   {getDurationOptions()}
-                </select>
+                </Box>
                 {errors.duration && (
-                  <p style={errorStyle}>{errors.duration}</p>
+                  <Box 
+                    component="p" 
+                    sx={(theme) => ({
+                      color: theme.palette.error.main,
+                      fontSize: '0.75rem',
+                      marginTop: '0.25rem'
+                    })}
+                  >
+                    {errors.duration}
+                  </Box>
                 )}
-              </div>
+              </Box>
               
               {/* Date picker */}
-              <div style={{ marginBottom: '1rem', maxWidth: '100%' }}>
-                <label style={labelStyle}>
+              <Box sx={{ marginBottom: '1rem', maxWidth: '100%' }}>
+                <Box 
+                  component="label"
+                  sx={(theme) => ({
+                    display: 'block',
+                    fontSize: '0.875rem',
+                    fontWeight: '500',
+                    marginBottom: '0.25rem',
+                    color: theme.palette.text.secondary
+                  })}
+                >
                   Date
-                </label>
-                <input
+                </Box>
+                <Box 
+                  component="input"
                   type="date"
-                  style={{...inputStyle, maxWidth: '100%', boxSizing: 'border-box'}}
                   value={date}
                   onChange={(e) => setDate(e.target.value)}
+                  sx={(theme) => getTextFieldStyle(theme)}
                 />
                 {errors.date && (
-                  <p style={errorStyle}>{errors.date}</p>
+                  <Box 
+                    component="p" 
+                    sx={(theme) => ({
+                      color: theme.palette.error.main,
+                      fontSize: '0.75rem',
+                      marginTop: '0.25rem'
+                    })}
+                  >
+                    {errors.date}
+                  </Box>
                 )}
-              </div>
+              </Box>
               
-              {/* Call Type Options - only for Call activity type */}
-              {activityType === 'call' && (
-                <div style={{ marginBottom: '1rem', maxWidth: '100%' }}>
-                  <label style={{...labelStyle, marginBottom: '0.5rem'}}>
-                    Call Type
-                  </label>
-                  <div style={{...checkboxStyle, maxWidth: '100%'}}>
-                    <input
-                      type="checkbox"
-                      id="isSponsorCall"
-                      checked={isSponsorCall}
-                      onChange={() => setIsSponsorCall(!isSponsorCall)}
-                      style={{ marginRight: '0.5rem' }}
-                    />
-                    <label 
-                      htmlFor="isSponsorCall"
-                      style={{
-                        fontSize: '0.875rem',
-                        color: darkMode ? '#e5e7eb' : '#4b5563'
-                      }}
-                    >
-                      Sponsor
-                    </label>
-                  </div>
-                  <div style={{...checkboxStyle, maxWidth: '100%'}}>
-                    <input
-                      type="checkbox"
-                      id="isSponseeCall"
-                      checked={isSponseeCall}
-                      onChange={() => setIsSponseeCall(!isSponseeCall)}
-                      style={{ marginRight: '0.5rem' }}
-                    />
-                    <label 
-                      htmlFor="isSponseeCall"
-                      style={{
-                        fontSize: '0.875rem',
-                        color: darkMode ? '#e5e7eb' : '#4b5563'
-                      }}
-                    >
-                      Sponsee
-                    </label>
-                  </div>
-                  <div style={{...checkboxStyle, maxWidth: '100%'}}>
-                    <input
-                      type="checkbox"
-                      id="isAAMemberCall"
-                      checked={isAAMemberCall}
-                      onChange={() => setIsAAMemberCall(!isAAMemberCall)}
-                      style={{ marginRight: '0.5rem' }}
-                    />
-                    <label 
-                      htmlFor="isAAMemberCall"
-                      style={{
-                        fontSize: '0.875rem',
-                        color: darkMode ? '#e5e7eb' : '#4b5563'
-                      }}
-                    >
-                      AA Member
-                    </label>
-                  </div>
-                  {errors.callType && (
-                    <p style={errorStyle}>{errors.callType}</p>
-                  )}
-                </div>
-              )}
-              
-              {/* Literature Title - only for Literature activity type */}
+              {/* Literature-specific fields */}
               {activityType === 'literature' && (
-                <div style={{ marginBottom: '1rem', maxWidth: '100%' }}>
-                  <label style={labelStyle}>
+                <Box sx={{ marginBottom: '1rem', maxWidth: '100%' }}>
+                  <Box 
+                    component="label"
+                    sx={(theme) => ({
+                      display: 'block',
+                      fontSize: '0.875rem',
+                      fontWeight: '500',
+                      marginBottom: '0.25rem',
+                      color: theme.palette.text.secondary
+                    })}
+                  >
                     Literature Title
-                  </label>
-                  <input
+                  </Box>
+                  <Box 
+                    component="input"
                     type="text"
-                    style={{...inputStyle, maxWidth: '100%', boxSizing: 'border-box'}}
                     value={literatureTitle}
                     onChange={(e) => setLiteratureTitle(e.target.value)}
-                    placeholder="Enter title of the literature"
+                    placeholder="e.g., Big Book, 12x12, Daily Reflections"
+                    sx={(theme) => getTextFieldStyle(theme)}
                   />
                   {errors.literatureTitle && (
-                    <p style={errorStyle}>{errors.literatureTitle}</p>
+                    <Box 
+                      component="p" 
+                      sx={(theme) => ({
+                        color: theme.palette.error.main,
+                        fontSize: '0.75rem',
+                        marginTop: '0.25rem'
+                      })}
+                    >
+                      {errors.literatureTitle}
+                    </Box>
                   )}
-                </div>
+                </Box>
               )}
               
-              {/* Meeting Selection - only for Meeting activity type and not showing meeting form */}
+              {/* Meeting-specific fields */}
               {activityType === 'meeting' && !showMeetingForm && (
-                <div style={{ marginBottom: '1rem', maxWidth: '100%' }}>
-                  <label style={labelStyle}>
-                    Select Meeting
-                  </label>
-                  <div style={{ display: 'flex', gap: '0.5rem', maxWidth: '100%' }}>
-                    <select
-                      style={{...inputStyle, flex: 1, maxWidth: '100%', boxSizing: 'border-box'}}
+                <>
+                  <Box sx={{ marginBottom: '1rem', maxWidth: '100%' }}>
+                    <Box 
+                      component="label"
+                      sx={(theme) => ({
+                        display: 'block',
+                        fontSize: '0.875rem',
+                        fontWeight: '500',
+                        marginBottom: '0.25rem',
+                        color: theme.palette.text.secondary
+                      })}
+                    >
+                      Select Meeting
+                    </Box>
+                    <Box 
+                      component="select"
                       value={selectedMeetingId}
                       onChange={handleMeetingSelect}
+                      sx={(theme) => getTextFieldStyle(theme)}
                     >
-                      <option value="">Select a meeting or add new</option>
+                      <option value="">-- Select a saved meeting --</option>
                       {meetings.map(meeting => (
                         <option key={meeting.id} value={meeting.id}>
                           {meeting.name}
                         </option>
                       ))}
-                    </select>
-                    <button
-                      type="button"
-                      onClick={() => setShowMeetingForm(true)}
-                      style={{
-                        backgroundColor: darkMode ? '#1f2937' : '#f3f4f6',
-                        color: darkMode ? '#60a5fa' : '#2563eb',
-                        border: 'none',
-                        borderRadius: '0.375rem',
-                        padding: '0.5rem',
-                        fontSize: '0.875rem',
-                        cursor: 'pointer'
+                    </Box>
+                    
+                    <Box 
+                      sx={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        marginTop: '0.5rem'
                       }}
-                      title="Add New Meeting"
                     >
-                      <i className="fas fa-plus"></i>
-                    </button>
-                  </div>
-                </div>
+                      <Button 
+                        variant="text" 
+                        onClick={() => setShowMeetingForm(true)}
+                        sx={(theme) => ({
+                          fontSize: '0.75rem',
+                          color: theme.palette.primary.main
+                        })}
+                      >
+                        + Add New Meeting
+                      </Button>
+                    </Box>
+                  </Box>
+                  
+                  <Box sx={{ marginBottom: '1rem', maxWidth: '100%' }}>
+                    <Box 
+                      component="label"
+                      sx={(theme) => ({
+                        display: 'block',
+                        fontSize: '0.875rem',
+                        fontWeight: '500',
+                        marginBottom: '0.25rem',
+                        color: theme.palette.text.secondary
+                      })}
+                    >
+                      Meeting Name
+                    </Box>
+                    <Box 
+                      component="input"
+                      type="text"
+                      value={meetingName}
+                      onChange={(e) => setMeetingName(e.target.value)}
+                      placeholder="Enter meeting name"
+                      sx={(theme) => getTextFieldStyle(theme)}
+                    />
+                    {errors.meetingName && (
+                      <Box 
+                        component="p" 
+                        sx={(theme) => ({
+                          color: theme.palette.error.main,
+                          fontSize: '0.75rem',
+                          marginTop: '0.25rem'
+                        })}
+                      >
+                        {errors.meetingName}
+                      </Box>
+                    )}
+                  </Box>
+                  
+                  {/* Meeting participation checkboxes */}
+                  <Box sx={{ marginBottom: '1rem' }}>
+                    <Box 
+                      component="p"
+                      sx={(theme) => ({
+                        fontSize: '0.875rem',
+                        fontWeight: '500',
+                        marginBottom: '0.5rem',
+                        color: theme.palette.text.secondary
+                      })}
+                    >
+                      Participation (optional)
+                    </Box>
+                    
+                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                        <Box 
+                          component="input"
+                          type="checkbox"
+                          id="was-chair"
+                          checked={wasChair}
+                          onChange={(e) => setWasChair(e.target.checked)}
+                        />
+                        <Box 
+                          component="label"
+                          htmlFor="was-chair"
+                          sx={(theme) => ({
+                            marginLeft: '0.5rem',
+                            fontSize: '0.875rem',
+                            color: theme.palette.text.primary
+                          })}
+                        >
+                          I chaired the meeting
+                        </Box>
+                      </Box>
+                      
+                      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                        <Box 
+                          component="input"
+                          type="checkbox"
+                          id="was-share"
+                          checked={wasShare}
+                          onChange={(e) => setWasShare(e.target.checked)}
+                        />
+                        <Box 
+                          component="label"
+                          htmlFor="was-share"
+                          sx={(theme) => ({
+                            marginLeft: '0.5rem',
+                            fontSize: '0.875rem',
+                            color: theme.palette.text.primary
+                          })}
+                        >
+                          I shared during the meeting
+                        </Box>
+                      </Box>
+                      
+                      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                        <Box 
+                          component="input"
+                          type="checkbox"
+                          id="was-speaker"
+                          checked={wasSpeaker}
+                          onChange={(e) => setWasSpeaker(e.target.checked)}
+                        />
+                        <Box 
+                          component="label"
+                          htmlFor="was-speaker"
+                          sx={(theme) => ({
+                            marginLeft: '0.5rem',
+                            fontSize: '0.875rem',
+                            color: theme.palette.text.primary
+                          })}
+                        >
+                          I was the speaker
+                        </Box>
+                      </Box>
+                    </Box>
+                  </Box>
+                </>
               )}
               
-              {/* Meeting Name - only for Meeting activity type and when no meeting is selected */}
-              {activityType === 'meeting' && !showMeetingForm && !selectedMeetingId && (
-                <div style={{ marginBottom: '1rem', maxWidth: '100%' }}>
-                  <label style={labelStyle}>
-                    Meeting Name
-                  </label>
-                  <input
-                    type="text"
-                    style={{...inputStyle, maxWidth: '100%', boxSizing: 'border-box'}}
-                    value={meetingName}
-                    onChange={(e) => setMeetingName(e.target.value)}
-                    placeholder="Enter meeting name"
-                  />
-                  {errors.meetingName && (
-                    <p style={errorStyle}>{errors.meetingName}</p>
+              {/* Call-specific fields */}
+              {activityType === 'call' && (
+                <Box sx={{ marginBottom: '1rem' }}>
+                  <Box 
+                    component="p"
+                    sx={(theme) => ({
+                      fontSize: '0.875rem',
+                      fontWeight: '500',
+                      marginBottom: '0.5rem',
+                      color: theme.palette.text.secondary
+                    })}
+                  >
+                    Call Type
+                  </Box>
+                  
+                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                      <Box 
+                        component="input"
+                        type="checkbox"
+                        id="sponsor-call"
+                        checked={isSponsorCall}
+                        onChange={(e) => setIsSponsorCall(e.target.checked)}
+                      />
+                      <Box 
+                        component="label"
+                        htmlFor="sponsor-call"
+                        sx={(theme) => ({
+                          marginLeft: '0.5rem',
+                          fontSize: '0.875rem',
+                          color: theme.palette.text.primary
+                        })}
+                      >
+                        Call with my sponsor
+                      </Box>
+                    </Box>
+                    
+                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                      <Box 
+                        component="input"
+                        type="checkbox"
+                        id="sponsee-call"
+                        checked={isSponseeCall}
+                        onChange={(e) => setIsSponseeCall(e.target.checked)}
+                      />
+                      <Box 
+                        component="label"
+                        htmlFor="sponsee-call"
+                        sx={(theme) => ({
+                          marginLeft: '0.5rem',
+                          fontSize: '0.875rem',
+                          color: theme.palette.text.primary
+                        })}
+                      >
+                        Call with my sponsee
+                      </Box>
+                    </Box>
+                    
+                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                      <Box 
+                        component="input"
+                        type="checkbox"
+                        id="aa-member-call"
+                        checked={isAAMemberCall}
+                        onChange={(e) => setIsAAMemberCall(e.target.checked)}
+                      />
+                      <Box 
+                        component="label"
+                        htmlFor="aa-member-call"
+                        sx={(theme) => ({
+                          marginLeft: '0.5rem',
+                          fontSize: '0.875rem',
+                          color: theme.palette.text.primary
+                        })}
+                      >
+                        Call with another AA member
+                      </Box>
+                    </Box>
+                  </Box>
+                  
+                  {errors.callType && (
+                    <Box 
+                      component="p" 
+                      sx={(theme) => ({
+                        color: theme.palette.error.main,
+                        fontSize: '0.75rem',
+                        marginTop: '0.5rem'
+                      })}
+                    >
+                      {errors.callType}
+                    </Box>
                   )}
-                </div>
+                </Box>
               )}
               
-              {/* Meeting Role Checkboxes - only for Meeting activity type and when not showing meeting form */}
-              {activityType === 'meeting' && !showMeetingForm && (
-                <div style={{ marginBottom: '1rem', maxWidth: '100%' }}>
-                  <label style={labelStyle}>
-                    Your Role
-                  </label>
-                  <div style={{ display: 'flex', flexDirection: 'column', maxWidth: '100%' }}>
-                    <div style={checkboxStyle}>
-                      <input
-                        type="checkbox"
-                        id="wasChair"
-                        checked={wasChair}
-                        onChange={() => setWasChair(!wasChair)}
-                        style={{ marginRight: '0.5rem' }}
-                      />
-                      <label 
-                        htmlFor="wasChair"
-                        style={{
-                          fontSize: '0.875rem',
-                          color: darkMode ? '#e5e7eb' : '#4b5563'
-                        }}
-                      >
-                        Chaired the meeting
-                      </label>
-                    </div>
-                    <div style={checkboxStyle}>
-                      <input
-                        type="checkbox"
-                        id="wasShare"
-                        checked={wasShare}
-                        onChange={() => setWasShare(!wasShare)}
-                        style={{ marginRight: '0.5rem' }}
-                      />
-                      <label 
-                        htmlFor="wasShare"
-                        style={{
-                          fontSize: '0.875rem',
-                          color: darkMode ? '#e5e7eb' : '#4b5563'
-                        }}
-                      >
-                        Shared during the meeting
-                      </label>
-                    </div>
-                    <div style={checkboxStyle}>
-                      <input
-                        type="checkbox"
-                        id="wasSpeaker"
-                        checked={wasSpeaker}
-                        onChange={() => setWasSpeaker(!wasSpeaker)}
-                        style={{ marginRight: '0.5rem' }}
-                      />
-                      <label 
-                        htmlFor="wasSpeaker"
-                        style={{
-                          fontSize: '0.875rem',
-                          color: darkMode ? '#e5e7eb' : '#4b5563'
-                        }}
-                      >
-                        Was the speaker
-                      </label>
-                    </div>
-                  </div>
-                </div>
-              )}
-              
-              {/* Notes - for all activity types */}
-              <div style={{ marginBottom: '1rem', maxWidth: '100%' }}>
-                <label style={labelStyle}>
-                  Notes (Optional)
-                </label>
-                <textarea
-                  style={{
-                    ...inputStyle,
-                    maxWidth: '100%',
-                    boxSizing: 'border-box',
-                    minHeight: '80px',
-                    resize: 'vertical'
-                  }}
+              {/* Notes field */}
+              <Box sx={{ marginBottom: '1rem', maxWidth: '100%' }}>
+                <Box 
+                  component="label"
+                  sx={(theme) => ({
+                    display: 'block',
+                    fontSize: '0.875rem',
+                    fontWeight: '500',
+                    marginBottom: '0.25rem',
+                    color: theme.palette.text.secondary
+                  })}
+                >
+                  Notes (optional)
+                </Box>
+                <Box 
+                  component="textarea"
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
-                  placeholder="Add any notes about this activity..."
-                ></textarea>
-              </div>
+                  placeholder="Enter any notes about this activity..."
+                  rows={3}
+                  sx={(theme) => ({
+                    ...getTextFieldStyle(theme),
+                    resize: 'vertical',
+                    minHeight: '5rem'
+                  })}
+                />
+              </Box>
               
-              <DialogActions sx={{ 
-                justifyContent: 'flex-end', 
-                gap: '8px',
-                backgroundColor: darkMode ? '#1f2937' : '#ffffff',
-                borderTop: '1px solid',
-                borderColor: darkMode ? '#374151' : '#e5e7eb',
-                padding: '16px',
-              }}>
-                <Button 
-                  onClick={onClose} 
-                  variant="outlined"
-                  color="inherit"
-                >
+              <DialogActions sx={{ justifyContent: 'flex-end', padding: '8px 0' }}>
+                <Button onClick={onClose} color="inherit">
                   Cancel
                 </Button>
-                <Button 
-                  type="submit" 
-                  variant="contained"
-                  color="primary"
-                  startIcon={<i className="fas fa-save"></i>}
-                >
-                  Save
+                <Button type="submit" variant="contained" color="primary">
+                  Save Activity
                 </Button>
               </DialogActions>
             </form>

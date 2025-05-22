@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import SimpleMeetingSchedule from './SimpleMeetingSchedule';
-import { useTheme, styled } from '@mui/material/styles';
+import { useTheme } from '@mui/material/styles';
 import { useAppTheme } from '../contexts/MuiThemeProvider';
+import StyledDialog from './StyledDialog';
 import { 
   TextField, 
   InputAdornment, 
   IconButton, 
   Button,
-  Dialog,
   DialogTitle,
   DialogContent,
   DialogActions,
@@ -19,50 +19,6 @@ import {
   Checkbox,
   FormControlLabel
 } from '@mui/material';
-
-// Create a styled Dialog component to prevent horizontal scrolling
-const StyledDialog = styled(Dialog)(({ theme }) => ({
-  '& .MuiDialog-container': {
-    alignItems: 'flex-start',
-    paddingTop: '2.5rem',
-  },
-  '& .MuiDialog-paper': {
-    width: '100%',
-    maxWidth: '500px',
-    margin: '0 auto',
-    overflowX: 'hidden',
-    backgroundColor: theme.palette.background.paper,
-    color: theme.palette.text.primary,
-  },
-  '& .MuiDialogContent-root': {
-    padding: '16px',
-    overflowX: 'hidden',
-    width: '100%',
-  },
-  '& table': {
-    tableLayout: 'fixed',
-    width: '100%',
-  },
-  '& .MuiDialogActions-root': {
-    padding: '8px 16px',
-  },
-  // Ensure form inputs are properly themed
-  '& .MuiInputBase-root': {
-    maxWidth: '100%',
-    '& fieldset': {
-      borderColor: theme.palette.divider,
-    },
-    '&:hover fieldset': {
-      borderColor: theme.palette.action.hover,
-    },
-    '&.Mui-focused fieldset': {
-      borderColor: theme.palette.primary.main,
-    },
-  },
-  '& .MuiFormLabel-root': {
-    color: theme.palette.text.secondary,
-  }
-}));
 
 // Common TextField style to ensure consistent theming
 const getTextFieldStyle = (theme) => ({
