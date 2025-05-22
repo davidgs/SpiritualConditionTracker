@@ -555,7 +555,7 @@ export default function MeetingFormDialog({
                 }}
                 sx={(theme) => ({
                   ...getTextFieldStyle(theme)
-                }}
+                })}
               />
               
               <TextField
@@ -564,23 +564,9 @@ export default function MeetingFormDialog({
                 onChange={(e) => setCity(e.target.value)}
                 placeholder="City"
                 size="small"
-                sx={{
-                  '& .MuiOutlinedInput-root': {
-                    bgcolor: darkMode ? '#374151' : '#f9fafb',
-                    '& fieldset': {
-                      borderColor: darkMode ? '#4b5563' : '#d1d5db',
-                    },
-                    '&:hover fieldset': {
-                      borderColor: darkMode ? '#6b7280' : '#9ca3af',
-                    },
-                    '&.Mui-focused fieldset': {
-                      borderColor: darkMode ? '#60a5fa' : '#3b82f6',
-                    },
-                  },
-                  '& .MuiInputBase-input': {
-                    color: darkMode ? '#d1d5db' : '#374151',
-                  }
-                }}
+                sx={(theme) => ({
+                  ...getTextFieldStyle(theme)
+                })}
               />
               
               <Box sx={{ display: 'flex', gap: 1 }}>
@@ -589,24 +575,10 @@ export default function MeetingFormDialog({
                   onChange={(e) => setState(e.target.value)}
                   placeholder="State"
                   size="small"
-                  sx={{
+                  sx={(theme) => ({
                     width: '50%',
-                    '& .MuiOutlinedInput-root': {
-                      bgcolor: darkMode ? '#374151' : '#f9fafb',
-                      '& fieldset': {
-                        borderColor: darkMode ? '#4b5563' : '#d1d5db',
-                      },
-                      '&:hover fieldset': {
-                        borderColor: darkMode ? '#6b7280' : '#9ca3af',
-                      },
-                      '&.Mui-focused fieldset': {
-                        borderColor: darkMode ? '#60a5fa' : '#3b82f6',
-                      },
-                    },
-                    '& .MuiInputBase-input': {
-                      color: darkMode ? '#d1d5db' : '#374151',
-                    }
-                  }}
+                    ...getTextFieldStyle(theme)
+                  })}
                 />
                 
                 <TextField
@@ -614,24 +586,10 @@ export default function MeetingFormDialog({
                   onChange={(e) => setZipCode(e.target.value)}
                   placeholder="Zip code"
                   size="small"
-                  sx={{
+                  sx={(theme) => ({
                     width: '50%',
-                    '& .MuiOutlinedInput-root': {
-                      bgcolor: darkMode ? '#374151' : '#f9fafb',
-                      '& fieldset': {
-                        borderColor: darkMode ? '#4b5563' : '#d1d5db',
-                      },
-                      '&:hover fieldset': {
-                        borderColor: darkMode ? '#6b7280' : '#9ca3af',
-                      },
-                      '&.Mui-focused fieldset': {
-                        borderColor: darkMode ? '#60a5fa' : '#3b82f6',
-                      },
-                    },
-                    '& .MuiInputBase-input': {
-                      color: darkMode ? '#d1d5db' : '#374151',
-                    }
-                  }}
+                    ...getTextFieldStyle(theme)
+                  })}
                 />
               </Box>
             </Box>
@@ -649,9 +607,9 @@ export default function MeetingFormDialog({
               />
             }
             label={
-              <span style={{ color: darkMode ? "#d1d5db" : "#374151" }}>
+              <Typography component="span" sx={(theme) => ({ color: theme.palette.text.primary })}>
                 This is my Home Group
-              </span>
+              </Typography>
             }
           />
           <Typography variant="body2" sx={{ mt: 0.5, ml: 4 }} color="text.secondary">
@@ -660,19 +618,13 @@ export default function MeetingFormDialog({
         </Box>
       </DialogContent>
       
-      <Divider sx={{ borderColor: darkMode ? '#374151' : '#e5e7eb' }} />
+      <Divider sx={(theme) => ({ borderColor: theme.palette.divider })} />
       
       <DialogActions sx={{ px: 3, py: 2 }}>
         <Button
           variant="contained"
           onClick={onClose}
-          sx={{ 
-            bgcolor: darkMode ? '#7f1d1d' : '#dc2626',
-            color: '#ffffff',
-            '&:hover': {
-              bgcolor: darkMode ? '#991b1b' : '#b91c1c',
-            }
-          }}
+          color="error"
         >
           Cancel
         </Button>
@@ -681,13 +633,7 @@ export default function MeetingFormDialog({
           variant="contained"
           type="submit"
           form="meeting-form"
-          sx={{ 
-            bgcolor: darkMode ? '#166534' : '#16a34a',
-            color: '#ffffff',
-            '&:hover': {
-              bgcolor: darkMode ? '#15803d' : '#22c55e',
-            }
-          }}
+          color="success"
         >
           Save
         </Button>
