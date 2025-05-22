@@ -15,7 +15,6 @@ import { formatDateForDisplay } from '../utils/dateUtils';
 
 export default function Sponsee({ user, onUpdate }) {
   const theme = useTheme();
-  const darkMode = theme.palette.mode === 'dark';
   
   // State for sponsees
   const [sponsees, setSponsees] = useState([]);
@@ -91,14 +90,14 @@ export default function Sponsee({ user, onUpdate }) {
   };
   
   return (
-    <div className="p-4 md:p-6">
+    <Box sx={{ p: { xs: 2, md: 3 } }}>
       {/* Sponsees Section */}
-      <Box className="flex items-center mb-4">
+      <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
         <Typography 
           variant="h5" 
           component="h2"
           sx={{ 
-            color: darkMode ? '#f3f4f6' : '#1f2937', 
+            color: theme.palette.text.primary, 
             fontWeight: 'bold',
             display: 'inline-flex',
             alignItems: 'center'
@@ -114,7 +113,7 @@ export default function Sponsee({ user, onUpdate }) {
             sx={{ 
               color: theme.palette.primary.main, 
               '&:hover': { 
-                backgroundColor: 'transparent' 
+                backgroundColor: theme.palette.background.transparent || 'transparent' 
               },
               ml: 0.5,
               p: 0.5,
@@ -127,43 +126,86 @@ export default function Sponsee({ user, onUpdate }) {
       </Box>
       
       {sponsees.length > 0 ? (
-        <Box className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <Box sx={{ 
+          display: 'grid',
+          gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' },
+          gap: 2
+        }}>
           {sponsees.map(sponsee => (
             <Card 
               key={sponsee.id}
               sx={{ 
-                backgroundColor: darkMode ? 'rgba(30, 41, 59, 0.8)' : 'rgba(255, 255, 255, 0.8)',
-                boxShadow: darkMode ? '0 4px 12px rgba(0, 0, 0, 0.25)' : '0 4px 12px rgba(0, 0, 0, 0.1)',
-                borderRadius: '0.5rem'
+                bgcolor: theme.palette.background.paper,
+                boxShadow: theme.shadows[1],
+                borderRadius: 2
               }}
             >
               <CardContent>
-                <Box className="mb-3">
-                  <Typography variant="h6" sx={{ color: darkMode ? '#f3f4f6' : '#1f2937', fontWeight: 'bold' }}>
+                <Box sx={{ mb: 2 }}>
+                  <Typography 
+                    variant="h6" 
+                    sx={{ 
+                      color: theme.palette.text.primary, 
+                      fontWeight: 'bold' 
+                    }}
+                  >
                     {sponsee.name} {sponsee.lastName || ''}
                   </Typography>
                 </Box>
                 
-                <Box className="grid grid-cols-1 gap-2">
+                <Box sx={{ display: 'grid', gridTemplateColumns: '1fr', gap: 1 }}>
                   {/* Contact Information */}
-                  <Box className="grid grid-cols-1 gap-2">
+                  <Box sx={{ display: 'grid', gridTemplateColumns: '1fr', gap: 1 }}>
                     {sponsee.phone && (
-                      <Typography sx={{ color: darkMode ? '#d1d5db' : '#4b5563', fontSize: '0.875rem', display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <i className="fa-solid fa-phone text-sm" style={{ color: darkMode ? '#9ca3af' : '#6b7280' }}></i>
+                      <Typography 
+                        sx={{ 
+                          color: theme.palette.text.secondary, 
+                          fontSize: '0.875rem', 
+                          display: 'flex', 
+                          alignItems: 'center', 
+                          gap: 1 
+                        }}
+                      >
+                        <i 
+                          className="fa-solid fa-phone text-sm" 
+                          style={{ color: theme.palette.text.secondary }}
+                        ></i>
                         {sponsee.phone}
                       </Typography>
                     )}
                     
                     {sponsee.email && (
-                      <Typography sx={{ color: darkMode ? '#d1d5db' : '#4b5563', fontSize: '0.875rem', display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <i className="fa-solid fa-envelope text-sm" style={{ color: darkMode ? '#9ca3af' : '#6b7280' }}></i>
+                      <Typography 
+                        sx={{ 
+                          color: theme.palette.text.secondary, 
+                          fontSize: '0.875rem', 
+                          display: 'flex', 
+                          alignItems: 'center', 
+                          gap: 1 
+                        }}
+                      >
+                        <i 
+                          className="fa-solid fa-envelope text-sm" 
+                          style={{ color: theme.palette.text.secondary }}
+                        ></i>
                         {sponsee.email}
                       </Typography>
                     )}
                     
                     {sponsee.sobrietyDate && (
-                      <Typography sx={{ color: darkMode ? '#d1d5db' : '#4b5563', fontSize: '0.875rem', display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <i className="fa-solid fa-calendar-check text-sm" style={{ color: darkMode ? '#9ca3af' : '#6b7280' }}></i>
+                      <Typography 
+                        sx={{ 
+                          color: theme.palette.text.secondary, 
+                          fontSize: '0.875rem', 
+                          display: 'flex', 
+                          alignItems: 'center', 
+                          gap: 1 
+                        }}
+                      >
+                        <i 
+                          className="fa-solid fa-calendar-check text-sm" 
+                          style={{ color: theme.palette.text.secondary }}
+                        ></i>
                         {formatDateForDisplay(sponsee.sobrietyDate)}
                       </Typography>
                     )}
@@ -171,23 +213,43 @@ export default function Sponsee({ user, onUpdate }) {
                   
                   {/* Notes (if present) */}
                   {sponsee.notes && (
-                    <Box className="mt-2">
+                    <Box sx={{ mt: 2 }}>
                       <Divider sx={{ my: 1 }} />
-                      <Typography variant="caption" sx={{ color: darkMode ? '#9ca3af' : '#6b7280', display: 'block', mb: 0.5 }}>
+                      <Typography 
+                        variant="caption" 
+                        sx={{ 
+                          color: theme.palette.text.secondary, 
+                          display: 'block', 
+                          mb: 0.5 
+                        }}
+                      >
                         Notes
                       </Typography>
-                      <Typography sx={{ color: darkMode ? '#d1d5db' : '#4b5563', fontSize: '0.875rem', whiteSpace: 'pre-wrap' }}>
+                      <Typography 
+                        sx={{ 
+                          color: theme.palette.text.secondary, 
+                          fontSize: '0.875rem', 
+                          whiteSpace: 'pre-wrap' 
+                        }}
+                      >
                         {sponsee.notes}
                       </Typography>
                     </Box>
                   )}
                   
                   {/* Action Buttons */}
-                  <Box className="flex justify-end gap-2 mt-4 pt-3 border-t border-gray-200 dark:border-gray-700">
+                  <Box sx={{ 
+                    display: 'flex', 
+                    justifyContent: 'flex-end', 
+                    gap: 1, 
+                    mt: 2, 
+                    pt: 1.5,
+                    borderTop: `1px solid ${theme.palette.divider}`
+                  }}>
                     <IconButton 
                       onClick={() => handleEditSponsee(sponsee.id)}
                       size="small"
-                      sx={{ color: darkMode ? '#93c5fd' : '#3b82f6' }}
+                      sx={{ color: theme.palette.primary.main }}
                     >
                       <i className="fa-solid fa-pen-to-square"></i>
                     </IconButton>
@@ -195,7 +257,7 @@ export default function Sponsee({ user, onUpdate }) {
                     <IconButton 
                       onClick={() => handleDeleteSponsee(sponsee.id)}
                       size="small"
-                      sx={{ color: darkMode ? '#f87171' : '#ef4444' }}
+                      sx={{ color: theme.palette.error.main }}
                     >
                       <i className="fa-solid fa-trash"></i>
                     </IconButton>
@@ -208,13 +270,18 @@ export default function Sponsee({ user, onUpdate }) {
       ) : (
         <Paper 
           elevation={0}
-          className="p-6 rounded-lg text-center"
           sx={{ 
-            backgroundColor: darkMode ? 'rgba(30, 41, 59, 0.8)' : 'rgba(255, 255, 255, 0.8)',
-            boxShadow: darkMode ? '0 4px 12px rgba(0, 0, 0, 0.25)' : '0 4px 12px rgba(0, 0, 0, 0.1)'
+            p: 3, 
+            borderRadius: 2, 
+            textAlign: 'center',
+            bgcolor: theme.palette.background.paper,
+            boxShadow: theme.shadows[1]
           }}
         >
-          <Typography variant="body1" sx={{ color: darkMode ? '#d1d5db' : '#4b5563' }}>
+          <Typography 
+            variant="body1" 
+            sx={{ color: theme.palette.text.secondary }}
+          >
             You haven't added any sponsees yet.
           </Typography>
         </Paper>
@@ -230,6 +297,6 @@ export default function Sponsee({ user, onUpdate }) {
         onSubmit={handleSponseeSubmit}
         initialData={editingSponseeId ? sponsees.find(s => s.id === editingSponseeId) : null}
       />
-    </div>
+    </Box>
   );
 }

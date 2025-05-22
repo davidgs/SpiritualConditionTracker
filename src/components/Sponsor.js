@@ -110,7 +110,7 @@ export default function Sponsor({ user, onUpdate }) {
             sx={{ 
               color: theme.palette.primary.main, 
               '&:hover': { 
-                backgroundColor: 'transparent' 
+                backgroundColor: theme.palette.background.transparent || 'transparent' 
               },
               ml: 0.5,
               p: 0.5,
