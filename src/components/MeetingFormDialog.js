@@ -63,6 +63,25 @@ const StyledDialog = styled(Dialog)(({ theme }) => ({
   }
 }));
 
+// Common TextField style to ensure consistent theming
+const getTextFieldStyle = (theme) => ({
+  '& .MuiOutlinedInput-root': {
+    bgcolor: theme.palette.mode === 'dark' ? theme.palette.background.default : theme.palette.grey[50],
+    '& fieldset': {
+      borderColor: theme.palette.divider,
+    },
+    '&:hover fieldset': {
+      borderColor: theme.palette.action.hover,
+    },
+    '&.Mui-focused fieldset': {
+      borderColor: theme.palette.primary.main,
+    },
+  },
+  '& .MuiInputBase-input': {
+    color: theme.palette.text.primary,
+  }
+});
+
 export default function MeetingFormDialog({ 
   meeting = null, 
   onSave, 
@@ -505,23 +524,9 @@ export default function MeetingFormDialog({
                 onChange={(e) => setLocationName(e.target.value)}
                 placeholder="Location name (e.g. Apex United Methodist Church)"
                 size="small"
-                sx={{
-                  '& .MuiOutlinedInput-root': {
-                    bgcolor: darkMode ? '#374151' : '#f9fafb',
-                    '& fieldset': {
-                      borderColor: darkMode ? '#4b5563' : '#d1d5db',
-                    },
-                    '&:hover fieldset': {
-                      borderColor: darkMode ? '#6b7280' : '#9ca3af',
-                    },
-                    '&.Mui-focused fieldset': {
-                      borderColor: darkMode ? '#60a5fa' : '#3b82f6',
-                    },
-                  },
-                  '& .MuiInputBase-input': {
-                    color: darkMode ? '#d1d5db' : '#374151',
-                  }
-                }}
+                sx={(theme) => ({
+                  ...getTextFieldStyle(theme)
+                })}
               />
               
               <TextField
@@ -537,7 +542,7 @@ export default function MeetingFormDialog({
                         onClick={detectLocation}
                         disabled={searchingLocation}
                         size="small"
-                        sx={{ color: darkMode ? '#9ca3af' : '#6b7280' }}
+                        sx={(theme) => ({ color: theme.palette.text.secondary })}
                       >
                         {searchingLocation ? (
                           <CircularProgress size={16} color="inherit" />
@@ -548,22 +553,8 @@ export default function MeetingFormDialog({
                     </InputAdornment>
                   )
                 }}
-                sx={{
-                  '& .MuiOutlinedInput-root': {
-                    bgcolor: darkMode ? '#374151' : '#f9fafb',
-                    '& fieldset': {
-                      borderColor: darkMode ? '#4b5563' : '#d1d5db',
-                    },
-                    '&:hover fieldset': {
-                      borderColor: darkMode ? '#6b7280' : '#9ca3af',
-                    },
-                    '&.Mui-focused fieldset': {
-                      borderColor: darkMode ? '#60a5fa' : '#3b82f6',
-                    },
-                  },
-                  '& .MuiInputBase-input': {
-                    color: darkMode ? '#d1d5db' : '#374151',
-                  }
+                sx={(theme) => ({
+                  ...getTextFieldStyle(theme)
                 }}
               />
               
