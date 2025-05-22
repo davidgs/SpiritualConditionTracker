@@ -14,10 +14,7 @@ import {
   List,
   ListItem,
   Fab,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions
+  Alert
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { formatDateForDisplay } from '../utils/dateUtils';
@@ -33,7 +30,7 @@ export default function SponsorContactDetailsPage({
 }) {
   const theme = useTheme();
   const [contactDetails, setContactDetails] = useState(details);
-  const [showAddActionDialog, setShowAddActionDialog] = useState(false);
+  const [showAddActionForm, setShowAddActionForm] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   
   // Form state for new action item
@@ -72,14 +69,14 @@ export default function SponsorContactDetailsPage({
     setContactDetails(updatedDetails);
     onSaveDetails(actionToAdd);
     
-    // Reset form and close dialog
+    // Reset form and hide it
     setNewAction({
       actionItem: '',
       notes: '',
       dueDate: '',
       completed: false
     });
-    setShowAddActionDialog(false);
+    setShowAddActionForm(false);
   };
   
   // Toggle action item completion
