@@ -432,15 +432,17 @@ export default function MeetingFormDialog({
           overflow: 'hidden'
         }}>
           <Box>
-            <Typography variant="subtitle2" sx={(theme) => ({ mb: 1, color: theme.palette.text.primary })}>
+            {/* <Typography variant="subtitle2" sx={(theme) => ({ mb: 1, color: theme.palette.text.primary })}>
               Meeting Name
-            </Typography>
+            </Typography> */}
             <TextField
               fullWidth
               value={meetingName}
               onChange={(e) => setMeetingName(e.target.value)}
               placeholder="Enter meeting name"
-              size="small"
+              size="small",
+              label="Meeting Name",
+              required,
               sx={(theme) => getTextFieldStyle(theme)}
             />
           </Box>
