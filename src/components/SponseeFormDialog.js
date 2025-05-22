@@ -7,13 +7,13 @@ import {
   TextField, 
   Button,
   IconButton,
-  Box
+  Box,
+  Grid
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 
 export default function SponseeFormDialog({ open, onClose, onSubmit, initialData }) {
   const theme = useTheme();
-  const darkMode = theme.palette.mode === 'dark';
   
   // Form state
   const [name, setName] = useState('');
@@ -120,10 +120,10 @@ export default function SponseeFormDialog({ open, onClose, onSubmit, initialData
       maxWidth="sm"
       fullWidth
       PaperProps={{
-        style: {
-          backgroundColor: darkMode ? '#1e293b' : '#ffffff',
-          color: darkMode ? '#f3f4f6' : '#1f2937',
-          boxShadow: darkMode ? '0 4px 20px rgba(0, 0, 0, 0.5)' : '0 4px 20px rgba(0, 0, 0, 0.15)'
+        sx: {
+          bgcolor: theme.palette.background.paper,
+          color: theme.palette.text.primary,
+          boxShadow: theme.shadows[5]
         }
       }}
     >
@@ -131,121 +131,98 @@ export default function SponseeFormDialog({ open, onClose, onSubmit, initialData
         display: 'flex', 
         justifyContent: 'space-between', 
         alignItems: 'center',
-        borderBottom: darkMode ? '1px solid #374151' : '1px solid #e5e7eb',
+        borderBottom: `1px solid ${theme.palette.divider}`,
         pb: 1
       }}>
         {initialData ? 'Edit Sponsee' : 'Add Sponsee'}
-        <IconButton onClick={onClose} size="small" sx={{ color: darkMode ? '#9ca3af' : '#6b7280' }}>
+        <IconButton 
+          onClick={onClose} 
+          size="small" 
+          sx={{ color: theme.palette.text.secondary }}
+          aria-label="close"
+        >
           <i className="fa-solid fa-times"></i>
         </IconButton>
       </DialogTitle>
       
       <form onSubmit={handleSubmit}>
         <DialogContent sx={{ py: 3 }}>
-          <Box className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <Grid container spacing={2}>
             {/* First Name */}
-            <TextField
-              label="First Name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              fullWidth
-              margin="normal"
-              required
-              error={!!errors.name}
-              helperText={errors.name}
-              autoFocus
-              size="small"
-              InputLabelProps={{
-                style: { color: darkMode ? '#9ca3af' : '#6b7280' }
-              }}
-              InputProps={{
-                style: { 
-                  color: darkMode ? '#d1d5db' : '#374151',
-                  backgroundColor: darkMode ? 'rgba(55, 65, 81, 0.3)' : '#ffffff'
-                }
-              }}
-            />
+            <Grid item xs={12} md={6}>
+              <TextField
+                label="First Name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                fullWidth
+                margin="normal"
+                required
+                error={!!errors.name}
+                helperText={errors.name}
+                autoFocus
+                size="small"
+                color="primary"
+              />
+            </Grid>
             
             {/* Last Name */}
-            <TextField
-              label="Last Name"
-              value={lastName}
-              onChange={(e) => setLastName(e.target.value)}
-              fullWidth
-              margin="normal"
-              size="small"
-              InputLabelProps={{
-                style: { color: darkMode ? '#9ca3af' : '#6b7280' }
-              }}
-              InputProps={{
-                style: { 
-                  color: darkMode ? '#d1d5db' : '#374151',
-                  backgroundColor: darkMode ? 'rgba(55, 65, 81, 0.3)' : '#ffffff'
-                }
-              }}
-            />
+            <Grid item xs={12} md={6}>
+              <TextField
+                label="Last Name"
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+                fullWidth
+                margin="normal"
+                size="small"
+                color="primary"
+              />
+            </Grid>
             
             {/* Phone Number */}
-            <TextField
-              label="Phone Number"
-              value={phone}
-              onChange={handlePhoneChange}
-              fullWidth
-              margin="normal"
-              placeholder="(123) 456-7890"
-              size="small"
-              InputLabelProps={{
-                style: { color: darkMode ? '#9ca3af' : '#6b7280' }
-              }}
-              InputProps={{
-                style: { 
-                  color: darkMode ? '#d1d5db' : '#374151',
-                  backgroundColor: darkMode ? 'rgba(55, 65, 81, 0.3)' : '#ffffff'
-                }
-              }}
-            />
+            <Grid item xs={12} md={6}>
+              <TextField
+                label="Phone Number"
+                value={phone}
+                onChange={handlePhoneChange}
+                fullWidth
+                margin="normal"
+                placeholder="(123) 456-7890"
+                size="small"
+                color="primary"
+              />
+            </Grid>
             
             {/* Email */}
-            <TextField
-              label="Email Address"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              fullWidth
-              margin="normal"
-              type="email"
-              size="small"
-              InputLabelProps={{
-                style: { color: darkMode ? '#9ca3af' : '#6b7280' }
-              }}
-              InputProps={{
-                style: { 
-                  color: darkMode ? '#d1d5db' : '#374151',
-                  backgroundColor: darkMode ? 'rgba(55, 65, 81, 0.3)' : '#ffffff'
-                }
-              }}
-            />
+            <Grid item xs={12} md={6}>
+              <TextField
+                label="Email Address"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                fullWidth
+                margin="normal"
+                type="email"
+                size="small"
+                color="primary"
+              />
+            </Grid>
             
             {/* Sobriety Date */}
-            <TextField
-              label="Sobriety Date"
-              value={sobrietyDate}
-              onChange={(e) => setSobrietyDate(e.target.value)}
-              fullWidth
-              margin="normal"
-              type="date"
-              InputLabelProps={{
-                shrink: true,
-                style: { color: darkMode ? '#9ca3af' : '#6b7280' }
-              }}
-              InputProps={{
-                style: { 
-                  color: darkMode ? '#d1d5db' : '#374151',
-                  backgroundColor: darkMode ? 'rgba(55, 65, 81, 0.3)' : '#ffffff'
-                }
-              }}
-              size="small"
-            />
-          </Box>
+            <Grid item xs={12} md={6}>
+              <TextField
+                label="Sobriety Date"
+                value={sobrietyDate}
+                onChange={(e) => setSobrietyDate(e.target.value)}
+                fullWidth
+                margin="normal"
+                type="date"
+                InputLabelProps={{
+                  shrink: true
+                }}
+                size="small"
+                color="primary"
+              />
+            </Grid>
+          </Grid>
           
           {/* Notes */}
           <TextField
@@ -258,30 +235,22 @@ export default function SponseeFormDialog({ open, onClose, onSubmit, initialData
             rows={4}
             placeholder="Enter any notes about this sponsee"
             sx={{ mt: 2 }}
-            InputLabelProps={{
-              style: { color: darkMode ? '#9ca3af' : '#6b7280' }
-            }}
-            InputProps={{
-              style: { 
-                color: darkMode ? '#d1d5db' : '#374151',
-                backgroundColor: darkMode ? 'rgba(55, 65, 81, 0.3)' : '#ffffff'
-              }
-            }}
+            color="primary"
           />
         </DialogContent>
         
         <DialogActions sx={{ 
           px: 3, 
           pb: 2, 
-          borderTop: darkMode ? '1px solid #374151' : '1px solid #e5e7eb',
+          borderTop: `1px solid ${theme.palette.divider}`,
           pt: 2
         }}>
           <Button 
             onClick={handleCancel} 
             sx={{ 
-              color: darkMode ? '#f87171' : '#ef4444',
+              color: theme.palette.error.main,
               '&:hover': {
-                backgroundColor: darkMode ? 'rgba(248, 113, 113, 0.1)' : 'rgba(239, 68, 68, 0.1)'
+                backgroundColor: theme.palette.error.main + '1A' // Adding 10% opacity
               }
             }}
           >
