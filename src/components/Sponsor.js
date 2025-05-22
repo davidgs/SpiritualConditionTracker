@@ -68,43 +68,15 @@ export default function Sponsor({ user, onUpdate }) {
   
   return (
     <div className="p-4 md:p-6">
-      {/* Sponsor Section with inline add button */}
-      <Box className="flex justify-between items-center mb-4">
-        <Typography 
-          variant="h5" 
-          component="h2"
-          sx={{ color: darkMode ? '#f3f4f6' : '#1f2937', fontWeight: 'bold' }}
-        >
-          My Sponsor
-        </Typography>
-        
-        {!sponsor && (
-          <IconButton 
-            onClick={() => {
-              setEditingSponsor(false);
-              setShowSponsorForm(true);
-            }}
-            size="small"
-            sx={{ 
-              color: theme.palette.primary.main, 
-              '&:hover': { 
-                backgroundColor: 'transparent' 
-              } 
-            }}
-          >
-            <i className="fa-solid fa-plus"></i>
-          </IconButton>
-        )}
-      </Box>
-      
-      {/* Alert icon when no sponsor is added */}
+      {/* Alert icon when no sponsor is added - at the very top */}
       {!sponsor && (
         <Box 
           sx={{ 
             display: 'flex', 
             justifyContent: 'center', 
             alignItems: 'center',
-            mb: 3
+            mb: 3,
+            mt: -2 // Negative margin to move it closer to the top/header
           }}
         >
           <i 
@@ -116,6 +88,35 @@ export default function Sponsor({ user, onUpdate }) {
           ></i>
         </Box>
       )}
+      
+      {/* Sponsor Section with inline add button */}
+      <Box className="flex items-center mb-4">
+        <Typography 
+          variant="h5" 
+          component="h2"
+          sx={{ color: darkMode ? '#f3f4f6' : '#1f2937', fontWeight: 'bold' }}
+        >
+          My Sponsor
+        </Typography>
+        
+        <IconButton 
+          onClick={() => {
+            setEditingSponsor(false);
+            setShowSponsorForm(true);
+          }}
+          size="small"
+          sx={{ 
+            color: theme.palette.primary.main, 
+            '&:hover': { 
+              backgroundColor: 'transparent' 
+            },
+            ml: 1, // Add margin to separate from the title
+            p: 0.5  // Smaller padding to bring it closer to the title
+          }}
+        >
+          <i className="fa-solid fa-plus"></i>
+        </IconButton>
+      </Box>
 
       <Paper 
         elevation={0}

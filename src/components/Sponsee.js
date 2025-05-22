@@ -93,7 +93,7 @@ export default function Sponsee({ user, onUpdate }) {
   return (
     <div className="p-4 md:p-6">
       {/* Sponsees Section */}
-      <Box className="flex justify-between items-center mb-4">
+      <Box className="flex items-center mb-4">
         <Typography 
           variant="h5" 
           component="h2"
@@ -112,7 +112,9 @@ export default function Sponsee({ user, onUpdate }) {
             color: theme.palette.primary.main, 
             '&:hover': { 
               backgroundColor: 'transparent' 
-            } 
+            },
+            ml: 1, // Add margin to separate from the title
+            p: 0.5  // Smaller padding to bring it closer to the title
           }}
         >
           <i className="fa-solid fa-plus"></i>
