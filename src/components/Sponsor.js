@@ -274,7 +274,7 @@ export default function Sponsor({ user, onUpdate }) {
               variant="body1" 
               sx={{ color: theme.palette.text.secondary }}
             >
-              You haven't added your sponsor yet. An AA Sponsor is a trusted AA member who helps you stay sober and grow in recovery. It is very important that you have a sponsor and that you maintian regular contact with your sponsor.
+              You haven't added your sponsor yet. An AA Sponsor is a trusted AA member who helps you stay sober and grow in recovery. It is very important that you have a sponsor and that you maintain regular contact with your sponsor.
             </Typography>
           </Box>
         )}

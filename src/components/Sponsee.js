@@ -282,7 +282,7 @@ export default function Sponsee({ user, onUpdate }) {
             variant="body1" 
             sx={{ color: theme.palette.text.secondary }}
           >
-            You haven't added any sponsees yet.
+            You haven't added any sponsees yet. Sponsoring other members is a great way to give back to the AA community and help others stay sober, but it is also extremely important for your own sobriety. Please consider adding a sponsee to your list.
           </Typography>
         </Paper>
       )}
