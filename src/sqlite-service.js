@@ -71,6 +71,23 @@ export class SQLiteService {
       `CREATE TABLE IF NOT EXISTS preferences (
         key TEXT PRIMARY KEY,
         value TEXT NOT NULL
+      )`,
+      `CREATE TABLE IF NOT EXISTS sponsor_contacts (
+        id TEXT PRIMARY KEY,
+        date TEXT NOT NULL,
+        type TEXT NOT NULL,
+        note TEXT,
+        userId TEXT,
+        FOREIGN KEY (userId) REFERENCES users(id)
+      )`,
+      `CREATE TABLE IF NOT EXISTS sponsor_contact_details (
+        id TEXT PRIMARY KEY,
+        contactId TEXT NOT NULL,
+        actionItem TEXT,
+        completed INTEGER DEFAULT 0,
+        notes TEXT,
+        dueDate TEXT,
+        FOREIGN KEY (contactId) REFERENCES sponsor_contacts(id)
       )`
     ];
     
