@@ -68,15 +68,34 @@ export default function Sponsor({ user, onUpdate }) {
   
   return (
     <div className="p-4 md:p-6">
-      {/* Sponsor Section */}
-      <Typography 
-        variant="h5" 
-        component="h2" 
-        className="mb-4"
-        sx={{ color: darkMode ? '#f3f4f6' : '#1f2937', fontWeight: 'bold' }}
-      >
-        My Sponsor
-      </Typography>
+      {/* Sponsor Section with inline add button */}
+      <Box className="flex justify-between items-center mb-4">
+        <Typography 
+          variant="h5" 
+          component="h2"
+          sx={{ color: darkMode ? '#f3f4f6' : '#1f2937', fontWeight: 'bold' }}
+        >
+          My Sponsor
+        </Typography>
+        
+        {!sponsor && (
+          <IconButton 
+            onClick={() => {
+              setEditingSponsor(false);
+              setShowSponsorForm(true);
+            }}
+            size="small"
+            sx={{ 
+              color: theme.palette.primary.main, 
+              '&:hover': { 
+                backgroundColor: 'transparent' 
+              } 
+            }}
+          >
+            <i className="fa-solid fa-plus"></i>
+          </IconButton>
+        )}
+      </Box>
       
       <Paper 
         elevation={0}
@@ -160,21 +179,9 @@ export default function Sponsor({ user, onUpdate }) {
           </Box>
         ) : (
           <Box className="text-center py-6">
-            <Typography variant="body1" sx={{ color: darkMode ? '#d1d5db' : '#4b5563', mb: 3 }}>
+            <Typography variant="body1" sx={{ color: darkMode ? '#d1d5db' : '#4b5563' }}>
               You haven't added your sponsor yet.
             </Typography>
-            
-            <Button 
-              variant="contained" 
-              color="primary"
-              onClick={() => {
-                setEditingSponsor(false);
-                setShowSponsorForm(true);
-              }}
-              startIcon={<i className="fa-solid fa-plus"></i>}
-            >
-              Add Sponsor
-            </Button>
           </Box>
         )}
       </Paper>

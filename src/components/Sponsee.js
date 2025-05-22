@@ -102,18 +102,21 @@ export default function Sponsee({ user, onUpdate }) {
           My Sponsees
         </Typography>
         
-        <Button 
-          variant="contained" 
-          color="primary"
+        <IconButton 
           onClick={() => {
             setEditingSponseeId(null);
             setShowSponseeForm(true);
           }}
-          startIcon={<i className="fa-solid fa-plus"></i>}
           size="small"
+          sx={{ 
+            color: theme.palette.primary.main, 
+            '&:hover': { 
+              backgroundColor: 'transparent' 
+            } 
+          }}
         >
-          Add Sponsee
-        </Button>
+          <i className="fa-solid fa-plus"></i>
+        </IconButton>
       </Box>
       
       {sponsees.length > 0 ? (
