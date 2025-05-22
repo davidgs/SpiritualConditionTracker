@@ -775,9 +775,16 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
                   placeholder="Enter any notes about this activity..."
                   rows={3}
                   sx={(theme) => ({
-                    ...getTextFieldStyle(theme),
+                    width: '98%', // Slightly smaller to prevent focus border from causing overflow
+                    padding: '0.75rem',
+                    borderRadius: '0.375rem',
+                    backgroundColor: theme.palette.background.paper,
+                    color: theme.palette.text.primary,
+                    border: `1px solid ${theme.palette.mode === 'dark' ? theme.palette.grey[700] : theme.palette.grey[300]}`,
+                    fontSize: '0.875rem',
                     resize: 'vertical',
-                    minHeight: '5rem'
+                    minHeight: '5rem',
+                    boxSizing: 'border-box'
                   })}
                 />
               </Box>
