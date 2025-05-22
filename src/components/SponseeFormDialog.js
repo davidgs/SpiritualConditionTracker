@@ -4,7 +4,6 @@ import {
   DialogTitle, 
   DialogContent, 
   DialogActions, 
-  TextField, 
   Button,
   IconButton,
   Stack
@@ -128,22 +127,22 @@ export default function SponseeFormDialog({ open, onClose, onSubmit, initialData
     onClose();
   };
 
-  // Common input field styles to maintain consistency
+  // Common native input field styles (iOS-like)
   const inputSx = {
     width: '100%',
-    maxWidth: '100%',
-    my: 1,
-    '& .MuiInputBase-root': {
-      maxWidth: '100%',
-      fontSize: '1rem',
-    },
-    '& .MuiInputBase-input': {
-      maxWidth: '100%',
-      boxSizing: 'border-box',
-      fontSize: '1rem',
-    },
-    '& .MuiInputLabel-root': {
-      fontSize: '0.9rem',
+    padding: '10px',
+    borderRadius: '8px',
+    border: `1px solid ${theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.1)'}`,
+    backgroundColor: theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.05)' : 'rgba(255, 255, 255, 0.8)',
+    fontSize: '16px',
+    color: theme.palette.text.primary,
+    marginBottom: '12px',
+    boxSizing: 'border-box',
+    '-webkit-appearance': 'none',
+    '&:focus': {
+      outline: 'none',
+      borderColor: theme.palette.primary.main,
+      boxShadow: `0 0 0 1px ${theme.palette.primary.main}`,
     }
   };
   
@@ -201,79 +200,89 @@ export default function SponseeFormDialog({ open, onClose, onSubmit, initialData
           <ResponsiveContainer>
             <Stack spacing={0} sx={{ width: '100%' }}>
               {/* First Name */}
-              <TextField
-                label="First Name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                required
-                error={!!errors.name}
-                helperText={errors.name}
-                autoFocus
-                size="small"
-                color="primary"
-                sx={inputSx}
-              />
+              <div>
+                <div style={{ fontSize: '14px', color: theme.palette.primary.main, marginBottom: '4px' }}>
+                  First Name*
+                </div>
+                <input
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  required
+                  autoFocus
+                  placeholder="First Name"
+                  style={{
+                    ...inputSx,
+                    borderColor: errors.name ? theme.palette.error.main : inputSx.border.split(' ')[2]
+                  }}
+                />
+                {errors.name && (
+                  <div style={{ color: theme.palette.error.main, fontSize: '12px', marginTop: '-8px', marginBottom: '8px' }}>
+                    {errors.name}
+                  </div>
+                )}
+              </div>
               
               {/* Last Name */}
-              <TextField
-                label="Last Name"
-                value={lastName}
-                onChange={(e) => setLastName(e.target.value)}
-                size="small"
-                color="primary"
-                sx={inputSx}
-              />
+              <div>
+                <input
+                  type="text"
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                  placeholder="Last Name"
+                  style={inputSx}
+                />
+              </div>
               
               {/* Phone Number */}
-              <TextField
-                label="Phone Number"
-                value={phone}
-                onChange={handlePhoneChange}
-                placeholder="(123) 456-7890"
-                size="small"
-                color="primary"
-                sx={inputSx}
-              />
+              <div>
+                <input
+                  type="tel"
+                  value={phone}
+                  onChange={handlePhoneChange}
+                  placeholder="Phone Number"
+                  style={inputSx}
+                />
+              </div>
               
               {/* Email */}
-              <TextField
-                label="Email Address"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                type="email"
-                size="small"
-                color="primary"
-                sx={inputSx}
-              />
+              <div>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Email Address"
+                  style={inputSx}
+                />
+              </div>
               
               {/* Sobriety Date */}
-              <TextField
-                label="Sobriety Date"
-                value={sobrietyDate}
-                onChange={(e) => setSobrietyDate(e.target.value)}
-                type="date"
-                InputLabelProps={{
-                  shrink: true
-                }}
-                size="small"
-                color="primary"
-                sx={inputSx}
-              />
+              <div>
+                <div style={{ fontSize: '14px', color: theme.palette.text.secondary, marginBottom: '4px' }}>
+                  Sobriety Date
+                </div>
+                <input
+                  type="date"
+                  value={sobrietyDate}
+                  onChange={(e) => setSobrietyDate(e.target.value)}
+                  style={inputSx}
+                />
+              </div>
               
               {/* Notes */}
-              <TextField
-                label="Notes"
-                value={notes}
-                onChange={(e) => setNotes(e.target.value)}
-                multiline
-                rows={4}
-                placeholder="Enter any notes about this sponsee"
-                color="primary"
-                sx={{
-                  ...inputSx,
-                  mt: 2
-                }}
-              />
+              <div>
+                <textarea
+                  value={notes}
+                  onChange={(e) => setNotes(e.target.value)}
+                  placeholder="Notes"
+                  rows={4}
+                  style={{
+                    ...inputSx,
+                    resize: 'none',
+                    minHeight: '100px'
+                  }}
+                />
+              </div>
             </Stack>
           </ResponsiveContainer>
         </DialogContent>
