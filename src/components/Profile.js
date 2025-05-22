@@ -702,7 +702,10 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
         
         {editingPersonalInfo ? (
           <>
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5, mb: 3 }}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', mb: 3 }}>
+              <Box sx={{ color: muiTheme.palette.primary.main, fontSize: '14px', mb: '4px' }}>
+                First Name*
+              </Box>
               <TextField
                 required
                 fullWidth
@@ -710,95 +713,104 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
                 onChange={(e) => setName(e.target.value)}
                 placeholder="Enter your first name"
                 variant="outlined"
-                size="small"
-                sx={{ mb: 2 }}
-                InputLabelProps={{
-                  sx: { color: 'text.secondary' }
-                }}
-                InputProps={{
-                  sx: { 
-                    color: 'text.primary',
-                    bgcolor: 'background.paper'
+                size="medium"
+                margin="none"
+                sx={{ 
+                  mb: 2,
+                  '& .MuiOutlinedInput-root': { 
+                    height: 56,
+                    borderRadius: 2
+                  },
+                  '& .MuiOutlinedInput-input': {
+                    fontSize: 16,
+                    padding: '15px 14px'
                   }
                 }}
               />
               
               <TextField
                 fullWidth
-                value={lastName != "Not set" ? lastName : "Enter your last name or initials"}
+                value={lastName != "Not set" ? lastName : ""}
                 onChange={(e) => setLastName(e.target.value)}
                 placeholder="Enter your last name"
                 variant="outlined"
-                size="small"
-                sx={{ mb: 2 }}
-                InputLabelProps={{
-                  sx: { color: 'text.secondary' }
-                }}
-                InputProps={{
-                  sx: { 
-                    color: 'text.primary',
-                    bgcolor: 'background.paper'
+                size="medium"
+                margin="none"
+                sx={{ 
+                  mb: 2,
+                  '& .MuiOutlinedInput-root': { 
+                    height: 56,
+                    borderRadius: 2
+                  },
+                  '& .MuiOutlinedInput-input': {
+                    fontSize: 16,
+                    padding: '15px 14px'
                   }
                 }}
               />
               
               <TextField
                 fullWidth
-                value={phoneNumber != "Not set" ? phoneNumber : "Enter your phone number"}
+                value={phoneNumber != "Not set" ? phoneNumber : ""}
                 onChange={handlePhoneChange}
                 placeholder="Enter your phone number"
                 variant="outlined"
-                size="small"
                 type="tel"
-                sx={{ mb: 2 }}
-                InputLabelProps={{
-                  sx: { color: 'text.secondary' }
-                }}
-                InputProps={{
-                  sx: { 
-                    color: 'text.primary',
-                    bgcolor: 'background.paper'
+                size="medium"
+                margin="none"
+                sx={{ 
+                  mb: 2,
+                  '& .MuiOutlinedInput-root': { 
+                    height: 56,
+                    borderRadius: 2
+                  },
+                  '& .MuiOutlinedInput-input': {
+                    fontSize: 16,
+                    padding: '15px 14px'
                   }
                 }}
               />
               
               <TextField
                 fullWidth
-                value={email != "Not set" ? email : "Enter your email address"}
+                value={email != "Not set" ? email : ""}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Enter your email address"
                 variant="outlined"
-                size="small"
                 type="email"
-                sx={{ mb: 2 }}
-                InputLabelProps={{
-                  sx: { color: 'text.secondary' }
-                }}
-                InputProps={{
-                  sx: { 
-                    color: 'text.primary',
-                    bgcolor: 'background.paper'
+                size="medium"
+                margin="none"
+                sx={{ 
+                  mb: 2,
+                  '& .MuiOutlinedInput-root': { 
+                    height: 56,
+                    borderRadius: 2
+                  },
+                  '& .MuiOutlinedInput-input': {
+                    fontSize: 16,
+                    padding: '15px 14px'
                   }
                 }}
               />
               
+              <Box sx={{ color: muiTheme.palette.text.secondary, fontSize: '14px', mb: '4px' }}>
+                Home Group(s)
+              </Box>
               <TextField
                 select
-                label="Home Group(s)"
                 fullWidth
-                value={homeGroups != "Not set" ? homeGroups : "Select your home group(s)"}
+                value={homeGroups != "Not set" ? homeGroups : []}
                 onChange={handleHomeGroupChange}
-                placeholder="Select your home group(s)"
                 variant="outlined"
-                size="small"
-                sx={{ mb: 2 }}
-                InputLabelProps={{
-                  sx: { color: 'text.secondary' }
-                }}
-                InputProps={{
-                  sx: { 
-                    color: 'text.primary',
-                    bgcolor: 'background.paper'
+                size="medium"
+                margin="none"
+                sx={{ 
+                  mb: 2,
+                  '& .MuiOutlinedInput-root': { 
+                    borderRadius: 2
+                  },
+                  '& .MuiSelect-select': {
+                    padding: '15px 14px'
                   }
                 }}
                 SelectProps={{
