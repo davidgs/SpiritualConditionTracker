@@ -183,6 +183,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
             borderColor: 'divider',
             borderLeft: 4,
             borderLeftColor: 'success.main',
+            mb: 1.5,
           }}>
           <Typography
             variant="h6"
@@ -303,7 +304,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
             borderColor: 'divider',
             borderLeft: 4,
             borderLeftColor: 'primary.main',
-            mb: 2,
+            mb: 1.5,
           }}>
           <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 1 }}>
             <Typography
@@ -424,7 +425,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
           borderColor: 'divider',
           borderLeft: 4,
           borderLeftColor: 'info.main',
-          mb: 2,
+          mb: 1.5,
           // No fixed height or overflow here - the entire page scrolls
         }}>
         <Box sx={{
