@@ -4,12 +4,14 @@ import {
   Typography, 
   Box,  
   IconButton,
-  Divider
+  Divider,
+  Button
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import SponsorFormDialog from './SponsorFormDialog';
 import SponsorContactList from './SponsorContactList';
 import SponsorContactDetailsPage from './SponsorContactDetailsPage';
+import SponsorContactFormPage from './SponsorContactFormPage';
 import { formatDateForDisplay } from '../utils/dateUtils';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -24,7 +26,7 @@ export default function Sponsor({ user, onUpdate }) {
   const [contactDetails, setContactDetails] = useState({});
   
   // View states
-  const [showContactDetails, setShowContactDetails] = useState(false);
+  const [currentView, setCurrentView] = useState('main'); // 'main', 'details', 'add-contact'
   const [selectedContact, setSelectedContact] = useState(null);
   
   // Dialog states
@@ -128,12 +130,18 @@ export default function Sponsor({ user, onUpdate }) {
   // View contact details
   const handleViewContactDetails = (contact) => {
     setSelectedContact(contact);
-    setShowContactDetails(true);
+    setCurrentView('details');
   };
   
-  // Go back to contacts list
-  const handleBackToContacts = () => {
-    setShowContactDetails(false);
+  // Add new contact
+  const handleAddNewContact = () => {
+    setSelectedContact(null);
+    setCurrentView('add-contact');
+  };
+  
+  // Go back to main view
+  const handleBackToMain = () => {
+    setCurrentView('main');
     setSelectedContact(null);
   };
   
@@ -192,15 +200,22 @@ export default function Sponsor({ user, onUpdate }) {
   
   return (
     <Box sx={{ p: { xs: 2, md: 3 } }}>
-      {/* Show contact details page if a contact is selected */}
-      {showContactDetails && selectedContact ? (
+      {/* Show contact details page if in details view */}
+      {currentView === 'details' && selectedContact ? (
         <SponsorContactDetailsPage
           contact={selectedContact}
           details={contactDetails[selectedContact.id] || []}
-          onBack={handleBackToContacts}
+          onBack={handleBackToMain}
           onSaveDetails={handleSaveContactDetail}
           onUpdateContact={() => {}}
           onDeleteContact={handleDeleteContact}
+        />
+      ) : currentView === 'add-contact' ? (
+        <SponsorContactFormPage
+          userId={user ? user.id : ''}
+          onSave={handleAddContact}
+          onCancel={handleBackToMain}
+          initialData={null}
         />
       ) : (
         // Otherwise show the main sponsor page with contact list

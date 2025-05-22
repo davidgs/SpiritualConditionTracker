@@ -17,7 +17,6 @@ import { v4 as uuidv4 } from 'uuid';
 
 export default function SponsorContactList({ userId, contacts = [], onContactAdded, onViewDetails }) {
   const theme = useTheme();
-  const [showContactForm, setShowContactForm] = useState(false);
   const [selectedContact, setSelectedContact] = useState(null);
   
   // Handle adding a new contact
