@@ -8,10 +8,11 @@ import {
   Button
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
-// SponsorFormDialog removed, using page-based navigation
+// Using page-based navigation components
 import SponsorContactList from './SponsorContactList';
 import SponsorContactDetailsPage from './SponsorContactDetailsPage';
 import SponsorContactFormPage from './SponsorContactFormPage';
+import SponsorFormPage from './SponsorFormPage';
 import { formatDateForDisplay } from '../utils/dateUtils';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -26,7 +27,7 @@ export default function Sponsor({ user, onUpdate }) {
   const [contactDetails, setContactDetails] = useState({});
   
   // View states
-  const [currentView, setCurrentView] = useState('main'); // 'main', 'details', 'add-contact'
+  const [currentView, setCurrentView] = useState('main'); // 'main', 'details', 'add-contact', 'add-sponsor', 'edit-sponsor'
   const [selectedContact, setSelectedContact] = useState(null);
   
   // Removed dialog states in favor of page-based navigation
@@ -89,10 +90,14 @@ export default function Sponsor({ user, onUpdate }) {
     setSponsor(sponsorData);
   };
   
-  // Open sponsor form for editing - using a page approach instead
+  // Open sponsor form for editing - using page approach
   const handleEditSponsor = () => {
-    // Will implement page-based sponsor editing later
-    console.log('Edit sponsor - to be implemented');
+    setCurrentView('edit-sponsor');
+  };
+  
+  // Open sponsor form for adding new sponsor
+  const handleAddSponsor = () => {
+    setCurrentView('add-sponsor');
   };
   
   // Delete sponsor
@@ -214,6 +219,18 @@ export default function Sponsor({ user, onUpdate }) {
           onCancel={handleBackToMain}
           initialData={null}
         />
+      ) : currentView === 'add-sponsor' ? (
+        <SponsorFormPage
+          onSave={handleSponsorSubmit}
+          onCancel={handleBackToMain}
+          initialData={null}
+        />
+      ) : currentView === 'edit-sponsor' ? (
+        <SponsorFormPage
+          onSave={handleSponsorSubmit}
+          onCancel={handleBackToMain}
+          initialData={sponsor}
+        />
       ) : (
         // Otherwise show the main sponsor page with contact list
         <>
@@ -252,10 +269,7 @@ export default function Sponsor({ user, onUpdate }) {
             >
               My Sponsor
               <IconButton 
-                onClick={() => {
-                  // Open page to add sponsor - this will be implemented later
-                  console.log('Add sponsor - to be implemented');
-                }}
+                onClick={handleAddSponsor}
                 size="small"
                 sx={{ 
                   color: theme.palette.primary.main, 
