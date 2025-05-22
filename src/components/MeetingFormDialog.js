@@ -439,10 +439,10 @@ export default function MeetingFormDialog({
               fullWidth
               value={meetingName}
               onChange={(e) => setMeetingName(e.target.value)}
-              placeholder="Enter meeting name",
-              size="small",
-              label="Meeting Name",
-              required,
+              placeholder="Enter meeting name"
+              size="small"
+              label="Meeting Name"
+              required
               sx={(theme) => getTextFieldStyle(theme)}
             />
           </Box>
