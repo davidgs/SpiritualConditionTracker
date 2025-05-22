@@ -8,26 +8,36 @@ import { Dialog, styled } from '@mui/material';
  * and behavior, particularly on mobile devices.
  */
 const StyledDialog = styled(Dialog)(({ theme }) => ({
-  // Position dialog from top with padding
+  // Dialog container takes full width with small padding from top
   '& .MuiDialog-container': {
     alignItems: 'flex-start',
     paddingTop: '2.5rem',
+    width: '100%',
   },
-  // Overall dialog paper styling
+  // Dialog paper with fixed margins to prevent horizontal shifts
   '& .MuiDialog-paper': {
-    width: 'calc(100% - 32px)',
+    // Add a 4px buffer to account for focus states
+    width: 'calc(100% - 36px)', 
     maxWidth: '500px',
-    margin: '0 16px',
+    margin: '0 18px',
     backgroundColor: theme.palette.background.paper,
     color: theme.palette.text.primary,
     position: 'relative',
   },
-  // Content area styling
+  // Dialog content
   '& .MuiDialogContent-root': {
     padding: '16px',
-    overflowX: 'auto', // Allow horizontal scroll if needed rather than breaking layout
+    // Prevent horizontal scrolling entirely
+    overflowX: 'hidden',
   },
-  // Actions area styling
+  // Handle input focusing - account for the focus ring width
+  '& .MuiOutlinedInput-root': {
+    // Give a small margin to account for focus state
+    marginLeft: '1px',
+    marginRight: '1px',
+    width: 'calc(100% - 2px)',
+  },
+  // Dialog actions
   '& .MuiDialogActions-root': {
     padding: '8px 16px',
   }
