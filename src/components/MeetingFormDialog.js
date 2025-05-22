@@ -27,8 +27,8 @@ const StyledDialog = styled(Dialog)(({ theme }) => ({
     paddingTop: '2.5rem',
   },
   '& .MuiPaper-root': {
-    maxWidth: '95%',
-    width: 'calc(100% - 32px)',
+    maxWidth: '90%',
+    width: 'calc(100% - 48px)',
     margin: '0 auto',
     overflowX: 'hidden',
     backgroundColor: theme.palette.background.paper,
@@ -37,8 +37,13 @@ const StyledDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialogContent-root': {
     padding: '16px',
     overflowX: 'hidden',
+    overflowY: 'auto',
     maxWidth: '100%',
     boxSizing: 'border-box',
+    '& input': {
+      width: '100%',
+      boxSizing: 'border-box',
+    },
   },
   '& table': {
     tableLayout: 'fixed',
@@ -462,9 +467,10 @@ export default function MeetingFormDialog({
           flexDirection: 'column', 
           gap: 2, 
           mt: 1,
-          width: '100%',
+          width: '100%', 
           maxWidth: '100%',
-          boxSizing: 'border-box'
+          boxSizing: 'border-box',
+          overflow: 'hidden'
         }}>
           <Box>
             <Typography variant="subtitle2" sx={(theme) => ({ mb: 1, color: theme.palette.text.primary })}>
@@ -476,16 +482,16 @@ export default function MeetingFormDialog({
               onChange={(e) => setMeetingName(e.target.value)}
               placeholder="Enter meeting name"
               size="small"
+              inputProps={{
+                style: { width: '100%' }
+              }}
               sx={(theme) => ({
                 width: '100%',
-                maxWidth: '100%',
+                overflow: 'hidden',
                 '& .MuiOutlinedInput-root': {
-                  width: '100%',
-                  maxWidth: '100%',
                   bgcolor: theme.palette.mode === 'dark' ? theme.palette.background.default : theme.palette.grey[50],
                   '& fieldset': {
                     borderColor: theme.palette.divider,
-                    width: '100%',
                   },
                   '&:hover fieldset': {
                     borderColor: theme.palette.action.hover,
