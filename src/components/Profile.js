@@ -395,18 +395,10 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
           
           {editingSobriety ? (
             <Box sx={{ mb: 2 }}>
-              <Box sx={{ borderRadius: 1, overflow: 'hidden', mb: 2 }}>
-                <Typography 
-                  variant="caption" 
-                  sx={{ 
-                    display: 'block', 
-                    mb: 1, 
-                    color: muiTheme.palette.text.primary,
-                    fontWeight: 500
-                  }}
-                >
+              <Box sx={{ mb: 2 }}>
+                <Box sx={{ color: muiTheme.palette.primary.main, fontSize: '14px', mb: '4px' }}>
                   Sobriety Date*
-                </Typography>
+                </Box>
                 <TextField
                   required
                   fullWidth
@@ -418,17 +410,25 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
                   }}
                   variant="outlined"
                   error={!!errors.sobrietyDate}
-                  helperText={errors.sobrietyDate || "This date represents the beginning of your recovery journey"}
-                  size="small"
+                  helperText={errors.sobrietyDate}
+                  size="medium"
+                  margin="none"
                   InputLabelProps={{
                     shrink: true
                   }}
-                  sx={{ mb: 1, 
+                  sx={{ 
+                    '& .MuiOutlinedInput-root': { 
+                      height: 56,
+                      borderRadius: 2
+                    },
                     '& .MuiOutlinedInput-input': {
+                      fontSize: 16,
+                      padding: '15px 14px',
                       color: muiTheme.palette.text.primary
                     },
                     '& .MuiFormHelperText-root': {
-                      color: muiTheme.palette.text.secondary
+                      color: errors.sobrietyDate ? muiTheme.palette.error.main : muiTheme.palette.text.secondary,
+                      marginLeft: 0
                     }
                   }}
                 />
