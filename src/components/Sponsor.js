@@ -97,6 +97,26 @@ export default function Sponsor({ user, onUpdate }) {
         )}
       </Box>
       
+      {/* Alert icon when no sponsor is added */}
+      {!sponsor && (
+        <Box 
+          sx={{ 
+            display: 'flex', 
+            justifyContent: 'center', 
+            alignItems: 'center',
+            mb: 3
+          }}
+        >
+          <i 
+            className="fa-solid fa-triangle-exclamation" 
+            style={{ 
+              fontSize: '3rem', 
+              color: theme.palette.error.main
+            }}
+          ></i>
+        </Box>
+      )}
+
       <Paper 
         elevation={0}
         className="p-5 mb-8 rounded-lg"
