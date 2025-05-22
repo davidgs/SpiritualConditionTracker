@@ -26,9 +26,9 @@ const StyledDialog = styled(Dialog)(({ theme }) => ({
     alignItems: 'flex-start',
     paddingTop: '2.5rem',
   },
-  '& .MuiPaper-root': {
-    maxWidth: '90%',
-    width: 'calc(100% - 48px)',
+  '& .MuiDialog-paper': {
+    width: '100%',
+    maxWidth: '500px',
     margin: '0 auto',
     overflowX: 'hidden',
     backgroundColor: theme.palette.background.paper,
@@ -37,13 +37,7 @@ const StyledDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialogContent-root': {
     padding: '16px',
     overflowX: 'hidden',
-    overflowY: 'auto',
-    maxWidth: '100%',
-    boxSizing: 'border-box',
-    '& input': {
-      width: '100%',
-      boxSizing: 'border-box',
-    },
+    width: '100%',
   },
   '& table': {
     tableLayout: 'fixed',
@@ -482,12 +476,7 @@ export default function MeetingFormDialog({
               onChange={(e) => setMeetingName(e.target.value)}
               placeholder="Enter meeting name"
               size="small"
-              inputProps={{
-                style: { width: '100%' }
-              }}
               sx={(theme) => ({
-                width: '100%',
-                overflow: 'hidden',
                 '& .MuiOutlinedInput-root': {
                   bgcolor: theme.palette.mode === 'dark' ? theme.palette.background.default : theme.palette.grey[50],
                   '& fieldset': {
