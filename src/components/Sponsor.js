@@ -87,13 +87,12 @@ export default function Sponsor({ user, onUpdate }) {
     
     // Update local state
     setSponsor(sponsorData);
-    setShowSponsorForm(false);
   };
   
-  // Open sponsor form for editing
+  // Open sponsor form for editing - using a page approach instead
   const handleEditSponsor = () => {
-    setEditingSponsor(true);
-    setShowSponsorForm(true);
+    // Will implement page-based sponsor editing later
+    console.log('Edit sponsor - to be implemented');
   };
   
   // Delete sponsor
@@ -254,8 +253,8 @@ export default function Sponsor({ user, onUpdate }) {
               My Sponsor
               <IconButton 
                 onClick={() => {
-                  setEditingSponsor(false);
-                  setShowSponsorForm(true);
+                  // Open page to add sponsor - this will be implemented later
+                  console.log('Add sponsor - to be implemented');
                 }}
                 size="small"
                 sx={{ 
