@@ -439,7 +439,7 @@ export default function MeetingFormDialog({
               fullWidth
               value={meetingName}
               onChange={(e) => setMeetingName(e.target.value)}
-              placeholder="Enter meeting name"
+              placeholder="Enter meeting name",
               size="small",
               label="Meeting Name",
               required,
