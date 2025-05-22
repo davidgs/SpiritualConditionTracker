@@ -22,13 +22,15 @@ import {
 
 // Create a styled Dialog component to prevent horizontal scrolling
 const StyledDialog = styled(Dialog)(({ theme }) => ({
+  '& .MuiDialog-container': {
+    alignItems: 'flex-start',
+    paddingTop: '2.5rem',
+  },
   '& .MuiPaper-root': {
-    maxWidth: '100%',
+    maxWidth: '95%',
     width: 'calc(100% - 32px)',
-    margin: '16px',
+    margin: '0 auto',
     overflowX: 'hidden',
-    position: 'relative',
-    top: '2.5rem',
     backgroundColor: theme.palette.background.paper,
     color: theme.palette.text.primary,
   },
@@ -38,12 +40,12 @@ const StyledDialog = styled(Dialog)(({ theme }) => ({
     maxWidth: '100%',
     boxSizing: 'border-box',
   },
+  '& table': {
+    tableLayout: 'fixed',
+    width: '100%',
+  },
   '& .MuiDialogActions-root': {
     padding: '8px 16px',
-  },
-  '& .MuiDialog-container': {
-    alignItems: 'flex-start',
-    paddingTop: '2.5rem',
   },
   // Ensure form inputs are properly themed
   '& .MuiInputBase-root': {

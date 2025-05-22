@@ -51,7 +51,7 @@ const SimpleMeetingSchedule = ({ schedule, onChange, use24HourFormat = false }) 
         overflow: 'hidden',
         width: '100%'
       })}>
-        <Table sx={{ width: '100%', borderCollapse: 'collapse' }}>
+        <Table sx={{ width: '100%', borderCollapse: 'collapse', tableLayout: 'fixed' }}>
           <TableBody>
             {days.map((day, index) => {
               const existingItem = schedule.find(item => item.day === day.key);
@@ -70,7 +70,7 @@ const SimpleMeetingSchedule = ({ schedule, onChange, use24HourFormat = false }) 
                       py: 1.5, 
                       px: 2, 
                       borderRight: `1px solid ${theme.palette.divider}`,
-                      bgcolor: theme.palette.mode === 'dark' ? theme.palette.grey[800] : theme.palette.grey[100],
+                      
                       color: theme.palette.text.primary,
                       fontWeight: 500,
                       width: '40%'
