@@ -20,11 +20,14 @@ import {
   FormControlLabel
 } from '@mui/material';
 
-// Common TextField style to ensure consistent theming
+// Common TextField style to ensure consistent iOS-native styling
 const getTextFieldStyle = (theme) => ({
   width: '100%',
   maxWidth: '100%',
-  '& .MuiOutlinedInput-root': {
+  mb: 2,
+  '& .MuiOutlinedInput-root': { 
+    height: 56,
+    borderRadius: 2,
     width: '100%',
     maxWidth: '100%',
     bgcolor: theme.palette.mode === 'dark' ? theme.palette.background.default : theme.palette.grey[50],
@@ -36,12 +39,12 @@ const getTextFieldStyle = (theme) => ({
     },
     '&.Mui-focused fieldset': {
       borderColor: theme.palette.primary.main,
-    },
+    }
   },
-  '& .MuiInputBase-input': {
-    color: theme.palette.text.primary,
-    width: '95%',
-    maxWidth: '98%',
+  '& .MuiOutlinedInput-input': {
+    fontSize: 16,
+    padding: '15px 14px',
+    color: theme.palette.text.primary
   }
 });
 
@@ -429,24 +432,24 @@ export default function MeetingFormDialog({
           overflow: 'hidden'
         }}>
           <Box>
-            {/* <Typography variant="subtitle2" sx={(theme) => ({ mb: 1, color: theme.palette.text.primary })}>
-              Meeting Name
-            </Typography> */}
+            <Box sx={{ color: muiTheme.palette.primary.main, fontSize: '14px', mb: '4px' }}>
+              Meeting Name*
+            </Box>
             <TextField
               value={meetingName}
               onChange={(e) => setMeetingName(e.target.value)}
               placeholder="Enter meeting name"
-              size="small"
-              label="Meeting Name"
+              size="medium"
+              margin="none"
               required
               sx={(theme) => getTextFieldStyle(theme)}
             />
           </Box>
           
           <Box>
-            <Typography variant="subtitle2" sx={(theme) => ({ mb: 1, color: theme.palette.text.primary })}>
+            <Box sx={{ color: muiTheme.palette.text.secondary, fontSize: '14px', mb: '4px' }}>
               Meeting Schedule
-            </Typography>
+            </Box>
             <SimpleMeetingSchedule 
               schedule={meetingSchedule} 
               onChange={setMeetingSchedule}
@@ -456,17 +459,18 @@ export default function MeetingFormDialog({
           </Box>
           
           <Box>
-            <Typography variant="subtitle2" sx={(theme) => ({ mb: 1, color: theme.palette.text.primary })}>
+            <Box sx={{ color: muiTheme.palette.text.secondary, fontSize: '14px', mb: '4px' }}>
               Location
-            </Typography>
+            </Box>
             
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
               <TextField
                 fullWidth
                 value={locationName}
                 onChange={(e) => setLocationName(e.target.value)}
                 placeholder="Location name (e.g. Apex United Methodist Church)"
-                size="small"
+                size="medium"
+                margin="none"
                 sx={(theme) => ({
                   ...getTextFieldStyle(theme)
                 })}
@@ -477,7 +481,8 @@ export default function MeetingFormDialog({
                 value={streetAddress}
                 onChange={(e) => setStreetAddress(e.target.value)}
                 placeholder="Street address"
-                size="small"
+                size="medium"
+                margin="none"
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end">
@@ -506,18 +511,20 @@ export default function MeetingFormDialog({
                 value={city}
                 onChange={(e) => setCity(e.target.value)}
                 placeholder="City"
-                size="small"
+                size="medium"
+                margin="none"
                 sx={(theme) => ({
                   ...getTextFieldStyle(theme)
                 })}
               />
               
-              <Box sx={{ display: 'flex', gap: 1 }}>
+              <Box sx={{ display: 'flex', gap: 2 }}>
                 <TextField
                   value={state}
                   onChange={(e) => setState(e.target.value)}
                   placeholder="State"
-                  size="small"
+                  size="medium"
+                  margin="none"
                   sx={(theme) => ({
                     width: '50%',
                     ...getTextFieldStyle(theme)
@@ -528,7 +535,8 @@ export default function MeetingFormDialog({
                   value={zipCode}
                   onChange={(e) => setZipCode(e.target.value)}
                   placeholder="Zip code"
-                  size="small"
+                  size="medium"
+                  margin="none"
                   sx={(theme) => ({
                     width: '50%',
                     ...getTextFieldStyle(theme)
