@@ -87,14 +87,13 @@ async function initSQLiteDatabase() {
 }
 
 /**
- * Create database tables
+ * Create database tables if they don't exist
  * @param {Object} sqlite - SQLite plugin instance
  */
 async function setupTables(sqlite) {
-  // Create tables only if they don't exist
-  console.log('[ sqliteLoader.js ] Setting up database tables (if not already created)');
+  console.log('[ sqliteLoader.js ] Setting up database tables if they don\'t exist');
   
-  // Create users table with expanded profile settings
+  // Create users table with all required fields
   await sqlite.execute({
     database: DB_NAME,
     statements: `
@@ -125,211 +124,37 @@ async function setupTables(sqlite) {
       )
     `
   });
-  console.log('[ sqliteLoader.js ] Users table created with expanded fields');
+  console.log('[ sqliteLoader.js ] Users table created successfully');
 
-  // Create activities table with comprehensive schema to support all activity types
-  try {
-    // First, check if activities table exists
-    const tableExists = await sqlite.query({
-      database: DB_NAME,
-      statement: "SELECT name FROM sqlite_master WHERE type='table' AND name='activities'",
-      values: []
-    });
-    
-    // If table exists, we need to alter it or recreate it
-    if (tableExists.values && tableExists.values.length > 0) {
-      console.log('[ sqliteLoader.js ] Activities table already exists, checking for needed columns');
-      
-      // Try to add any missing columns one by one - this way we can handle existing tables
-      try {
-        // First check if literatureTitle column already exists to avoid the duplicate column error
-        const columnInfo = await sqlite.query({
-          database: DB_NAME,
-          statement: "PRAGMA table_info(activities)",
-          values: []
-        });
-        
-        // Check if literatureTitle column exists in the results
-        const hasLiteratureTitle = columnInfo.values.some(col => col[1] === 'literatureTitle');
-        
-        if (!hasLiteratureTitle) {
-          // Only add the column if it doesn't already exist
-          await sqlite.execute({
-            database: DB_NAME,
-            statements: "ALTER TABLE activities ADD COLUMN literatureTitle TEXT DEFAULT ''"
-          });
-          console.log('[ sqliteLoader.js ] Added literatureTitle column to activities table');
-        } else {
-          console.log('[ sqliteLoader.js ] literatureTitle column already exists, skipping');
-        }
-      } catch (e) {
-        // Log any errors that occur during the process
-        console.log('[ sqliteLoader.js ] Error checking or adding literatureTitle column:', e.message);
-      }
-      
-      // Add other potential fields
-      const additionalColumns = [
-        "meetingName", "literatureType", "callPerson", "servicePerson", "location",
-        "mood", "gratitude", "steps", "sponsor", "attendees"
-      ];
-      
-      // Get the current column info for the activities table
-      const columnInfo = await sqlite.query({
-        database: DB_NAME,
-        statement: "PRAGMA table_info(activities)",
-        values: []
-      });
-      
-      // Extract column names from the result
-      const existingColumns = columnInfo.values.map(col => col[1]);
-      console.log('[ sqliteLoader.js ] Existing columns in activities table:', existingColumns.join(', '));
-      
-      for (const column of additionalColumns) {
-        // Only add column if it doesn't already exist
-        if (!existingColumns.includes(column)) {
-          try {
-            await sqlite.execute({
-              database: DB_NAME,
-              statements: `ALTER TABLE activities ADD COLUMN ${column} TEXT DEFAULT ''`
-            });
-            console.log(`[ sqliteLoader.js ] Added ${column} column to activities table`);
-          } catch (e) {
-            // Log any errors
-            console.log(`[ sqliteLoader.js ] Error adding ${column} column:`, e.message);
-          }
-        } else {
-          console.log(`[ sqliteLoader.js ] Column ${column} already exists, skipping`);
-        }
-      }
-    } else {
-      // Create a new comprehensive table if it doesn't exist
-      const table_struct = `CREATE TABLE IF NOT EXISTS activities (
-          id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-          type TEXT DEFAULT 'prayer',
-          duration INTEGER DEFAULT 0,
-          date TEXT,
-          notes TEXT DEFAULT '',
-          literatureTitle TEXT DEFAULT '',
-          literatureType TEXT DEFAULT '',
-          meetingName TEXT DEFAULT '',
-          callPerson TEXT DEFAULT '',
-          servicePerson TEXT DEFAULT '',
-          location TEXT DEFAULT '',
-          mood TEXT DEFAULT '',
-          gratitude TEXT DEFAULT '',
-          steps TEXT DEFAULT '',
-          sponsor TEXT DEFAULT '',
-          attendees TEXT DEFAULT '',
-          createdAt TEXT,
-          updatedAt TEXT
-        )
-      `;
-      console.log('[ sqliteLoader.js ] Creating activities table with comprehensive schema:', table_struct);
-      await sqlite.execute({
-        database: DB_NAME,
-        statements: table_struct
-      });
-      console.log('[ sqliteLoader.js ] Successfully created comprehensive activities table');
-    }
-  } catch (schemaError) {
-    console.error('[ sqliteLoader.js ] Error with activities table schema:', schemaError);
-    
-    // If all else fails, try a basic schema
-    try {
-      await sqlite.execute({
-        database: DB_NAME,
-        statements: `
-          CREATE TABLE IF NOT EXISTS activities (
-            id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-            type TEXT DEFAULT 'prayer',
-            duration INTEGER,
-            date TEXT,
-            notes TEXT,
-            literatureTitle TEXT
-          )
-        `
-      });
-      console.log('[ sqliteLoader.js ] Created simplified activities table with basic fields');
-    } catch (e) {
-      console.error('[ sqliteLoader.js ] Failed to create even basic activities table:', e);
-    }
-  }
-  console.log('[ sqliteLoader.js ] Activities table created with expanded fields');
-  
-  // Restore activities if we had existing data before migration
-  if (window.existingActivities && window.existingActivities.length > 0) {
-    try {
-      console.log(`[ sqliteLoader.js ] Restoring ${window.existingActivities.length} activities from backup`);
-      for (const activity of window.existingActivities) {
-        // Convert to the new schema (simplified for our new table structure)
-        const migratedActivity = {
-          id: activity.id,
-          type: activity.type || 'prayer',  // Ensure we have a default type
-          duration: activity.duration || 0,
-          date: activity.date || new Date().toISOString().split('T')[0],
-          notes: activity.notes || '',
-          createdAt: activity.createdAt || new Date().toISOString(),
-          updatedAt: activity.updatedAt || new Date().toISOString()
-        };
-        
-        // Build SQL statement
-        const fields = Object.keys(migratedActivity);
-        const placeholders = fields.map(() => '?').join(', ');
-        const values = fields.map(field => migratedActivity[field]);
-        
-        const sql = `INSERT INTO activities (${fields.join(', ')}) VALUES (${placeholders})`;
-        
-        await sqlite.execute({
-          database: DB_NAME,
-          statements: sql,
-          values: values
-        });
-      }
-      console.log(`[ sqliteLoader.js ] Restored ${existingActivities.length} activities with new schema`);
-    } catch (error) {
-      console.error('[ sqliteLoader.js ] Error restoring activities after migration:', error);
-    }
-  }
-
-  // Check if meetings table exists first
-  const meetingsTableExists = await sqlite.query({
+  // Create activities table with all required fields
+  await sqlite.execute({
     database: DB_NAME,
-    statement: "SELECT name FROM sqlite_master WHERE type='table' AND name='meetings'",
-    values: []
+    statements: `
+      CREATE TABLE IF NOT EXISTS activities (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        type TEXT DEFAULT 'prayer',
+        duration INTEGER DEFAULT 0,
+        date TEXT,
+        notes TEXT DEFAULT '',
+        literatureTitle TEXT DEFAULT '',
+        literatureType TEXT DEFAULT '',
+        meetingName TEXT DEFAULT '',
+        callPerson TEXT DEFAULT '',
+        servicePerson TEXT DEFAULT '',
+        location TEXT DEFAULT '',
+        mood TEXT DEFAULT '',
+        gratitude TEXT DEFAULT '',
+        steps TEXT DEFAULT '',
+        sponsor TEXT DEFAULT '',
+        attendees TEXT DEFAULT '',
+        createdAt TEXT,
+        updatedAt TEXT
+      )
+    `
   });
+  console.log('[ sqliteLoader.js ] Activities table created successfully');
   
-  // If the table exists, drop it and recreate it to fix the NOT NULL constraint issue
-  if (meetingsTableExists.values && meetingsTableExists.values.length > 0) {
-    console.log('[ sqliteLoader.js ] Meetings table already exists, but may have constraint issues. Recreating it...');
-    
-    try {
-      // For existing instances, we need to drop and recreate the table
-      // First, backup any existing data
-      const existingMeetings = await sqlite.query({
-        database: DB_NAME,
-        statement: "SELECT * FROM meetings",
-        values: []
-      });
-      
-      // Store the existing meetings for later restoration
-      if (existingMeetings.values && existingMeetings.values.length > 0) {
-        console.log(`[ sqliteLoader.js ] Found ${existingMeetings.values.length} existing meetings to preserve`);
-        window.existingMeetings = existingMeetings.values;
-      }
-      
-      // Drop the meetings table
-      await sqlite.execute({
-        database: DB_NAME,
-        statements: "DROP TABLE IF EXISTS meetings"
-      });
-      
-      console.log('[ sqliteLoader.js ] Dropped existing meetings table with constraint issues');
-    } catch (error) {
-      console.error('[ sqliteLoader.js ] Error migrating meetings table:', error);
-    }
-  }
-  
-  // Create meetings table with more flexible fields (no NOT NULL constraints except for ID)
+  // Create meetings table with all required fields
   await sqlite.execute({
     database: DB_NAME,
     statements: `
@@ -370,36 +195,14 @@ async function setupTables(sqlite) {
       )
     `
   });
-  console.log('[ sqliteLoader.js ] Meetings table created with flexible fields and default values');
-  
-  // Restore any meetings we backed up
-  if (window.existingMeetings && window.existingMeetings.length > 0) {
-    try {
-      console.log(`[ sqliteLoader.js ] Restoring ${window.existingMeetings.length} meetings from backup`);
-      
-      for (const meeting of window.existingMeetings) {
-        // Create a new meeting object without the id field
-        const { id, ...meetingData } = meeting;
-        
-        // Add the meeting back to the database
-        await dataStore.add('meetings', meetingData);
-      }
-      
-      console.log('[ sqliteLoader.js ] Successfully restored meetings after table recreation');
-      
-      // Clean up the backup
-      delete window.existingMeetings;
-    } catch (error) {
-      console.error('[ sqliteLoader.js ] Error restoring meetings after migration:', error);
-    }
-  }
+  console.log('[ sqliteLoader.js ] Meetings table created successfully');
 
-  // Create messages table with enhanced fields for communication
+  // Create messages table with all required fields
   await sqlite.execute({
     database: DB_NAME,
     statements: `
       CREATE TABLE IF NOT EXISTS messages (
-        id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
         sender TEXT,
         sender_name TEXT,
         recipient TEXT,
@@ -426,14 +229,14 @@ async function setupTables(sqlite) {
       )
     `
   });
-  console.log('[ sqliteLoader.js ] Messages table created with enhanced fields');
+  console.log('[ sqliteLoader.js ] Messages table created successfully');
 
-  // Create sobriety_milestones table to track recovery journey
+  // Create sobriety_milestones table with all required fields
   await sqlite.execute({
     database: DB_NAME,
     statements: `
       CREATE TABLE IF NOT EXISTS sobriety_milestones (
-        id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
         user_id TEXT,
         milestone_type TEXT,
         days INTEGER,
@@ -450,14 +253,14 @@ async function setupTables(sqlite) {
       )
     `
   });
-  console.log('[ sqliteLoader.js ] Sobriety milestones table created');
+  console.log('[ sqliteLoader.js ] Sobriety milestones table created successfully');
 
-  // Create spiritual_fitness table to track spiritual health
+  // Create spiritual_fitness table with all required fields
   await sqlite.execute({
     database: DB_NAME,
     statements: `
       CREATE TABLE IF NOT EXISTS spiritual_fitness (
-        id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
         user_id TEXT,
         score REAL,
         prayer_score REAL,
@@ -473,7 +276,7 @@ async function setupTables(sqlite) {
       )
     `
   });
-  console.log('[ sqliteLoader.js ] Spiritual fitness table created');
+  console.log('[ sqliteLoader.js ] Spiritual fitness table created successfully');
 
   // Create daily_inventory table for step 10 work
   await sqlite.execute({
