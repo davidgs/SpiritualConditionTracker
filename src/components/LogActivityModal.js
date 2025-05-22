@@ -265,7 +265,7 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
   
   // Get common text field styles for consistency
   const getTextFieldStyle = (theme) => ({
-    width: '98%', // Slightly smaller to prevent focus border overflow
+    width: '95%', // Slightly smaller to prevent focus border overflow
     padding: '0.5rem 0.75rem',
     borderRadius: '0.375rem',
     backgroundColor: theme.palette.background.paper,

@@ -20,7 +20,8 @@ function NavBar({ currentView, setCurrentView }) {
     { id: 'dashboard', name: 'Dashboard', icon: 'fa-solid fa-house' },
     { id: 'meetings', name: 'Meetings', icon: 'fa-solid fa-map-marker-alt' },
     { id: 'stepwork', name: 'Step Work', icon: 'fa-solid fa-book-open' },
-    { id: 'sponsorsponsee', name: 'Sponsor/Sponsee', icon: 'fa-solid fa-users' },
+    { id: 'sponsor', name: 'Sponsor', icon: 'fa-solid fa-user-plus' },
+    { id: 'sponsee', name: 'Sponsees', icon: 'fa-solid fa-users' },
     { id: 'profile', name: 'Profile', icon: 'fa-solid fa-user' }
   ];
   

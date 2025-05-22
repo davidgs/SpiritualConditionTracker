@@ -5,7 +5,8 @@ import NavBar from './components/NavBar';
 import Profile from './components/Profile';
 import Meetings from './components/Meetings';
 import StepWork from './components/StepWork';
-import SponsorSponsee from './components/SponsorSponsee';
+import Sponsor from './components/Sponsor';
+import Sponsee from './components/Sponsee';
 import MuiThemeProvider, { useAppTheme } from './contexts/MuiThemeProvider';
 import ThemeBackground from './components/ThemeBackground';
 import { DEFAULT_SPIRITUAL_FITNESS_SCORE } from './utils/constants';
@@ -550,9 +551,16 @@ function App() {
             setCurrentView={setCurrentView}
           />
         );
-      case 'sponsorsponsee':
+      case 'sponsor':
         return (
-          <SponsorSponsee
+          <Sponsor
+            user={user}
+            onUpdate={handleUpdateProfile}
+          />
+        );
+      case 'sponsee':
+        return (
+          <Sponsee
             user={user}
             onUpdate={handleUpdateProfile}
           />
