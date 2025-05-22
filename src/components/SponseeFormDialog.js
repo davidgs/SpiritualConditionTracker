@@ -7,12 +7,9 @@ import {
   TextField,
   Button,
   IconButton,
-  Stack,
-  Typography,
-  alpha
+  Box
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
-import ResponsiveContainer from './ResponsiveContainer';
 
 export default function SponseeFormDialog({ open, onClose, onSubmit, initialData }) {
   const theme = useTheme();
@@ -130,50 +127,18 @@ export default function SponseeFormDialog({ open, onClose, onSubmit, initialData
     onClose();
   };
 
-  // Common TextField styling for all form inputs
-  const textFieldSx = {
-    mb: 1.5,
-    '.MuiInputBase-root': {
-      overflow: 'hidden',
-      borderRadius: 1.5,
-      backgroundColor: theme.palette.mode === 'dark' 
-        ? alpha(theme.palette.background.default, 0.1)
-        : alpha(theme.palette.background.paper, 0.9),
-      transition: theme.transitions.create([
-        'border-color',
-        'background-color',
-        'box-shadow'
-      ]),
-      '&.Mui-focused': {
-        boxShadow: `${alpha(theme.palette.primary.main, 0.25)} 0 0 0 2px`
-      }
-    },
-    '.MuiInputBase-input': {
-      fontSize: '1rem',
-      padding: '10px 12px'
-    }
-  };
-  
   return (
     <Dialog 
       open={open} 
       onClose={onClose}
-      maxWidth="sm"
       fullWidth
       PaperProps={{
         sx: {
           bgcolor: theme.palette.background.paper,
           color: theme.palette.text.primary,
-          boxShadow: theme.shadows[5],
-          maxWidth: Math.min(viewportWidth * 0.9, 400), // Reduced from 600 to 400 max width
-          overflowX: 'hidden', // Prevent horizontal scroll
-          margin: '0 auto', // Center dialog
-          width: '90%'
-        }
-      }}
-      BackdropProps={{
-        sx: {
-          backgroundColor: alpha(theme.palette.common.black, 0.5)
+          maxWidth: "95%",
+          width: "95%",
+          margin: "auto"
         }
       }}
     >
@@ -182,13 +147,9 @@ export default function SponseeFormDialog({ open, onClose, onSubmit, initialData
         justifyContent: 'space-between', 
         alignItems: 'center',
         borderBottom: `1px solid ${theme.palette.divider}`,
-        pb: 1,
-        paddingRight: 1, // Ensure space for close button
-        overflowX: 'hidden'
+        padding: '16px'
       }}>
-        <Typography variant="h6" component="div">
-          {initialData ? 'Edit Sponsee' : 'Add Sponsee'}
-        </Typography>
+        {initialData ? 'Edit Sponsee' : 'Add Sponsee'}
         <IconButton 
           onClick={onClose} 
           size="small" 
@@ -200,125 +161,101 @@ export default function SponseeFormDialog({ open, onClose, onSubmit, initialData
       </DialogTitle>
       
       <form onSubmit={handleSubmit}>
-        <DialogContent sx={{ 
-          py: 2, 
-          overflowX: 'hidden',
-          width: '100%',
-          boxSizing: 'border-box'
-        }}>
-          <ResponsiveContainer>
-            <Stack spacing={0} sx={{ width: '100%' }}>
-              {/* First Name */}
-              <Typography 
-                variant="caption" 
-                color="primary" 
-                sx={{ mb: 0.5, fontWeight: 'medium' }}
-              >
-                First Name*
-              </Typography>
-              <TextField
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                required
-                autoFocus
-                placeholder="First Name"
-                error={!!errors.name}
-                helperText={errors.name}
-                variant="outlined"
-                fullWidth
-                size="small"
-                sx={textFieldSx}
-              />
-              
-              {/* Last Name */}
-              <TextField
-                value={lastName}
-                onChange={(e) => setLastName(e.target.value)}
-                placeholder="Last Name"
-                variant="outlined"
-                fullWidth
-                size="small"
-                sx={textFieldSx}
-              />
-              
-              {/* Phone Number */}
-              <TextField
-                value={phone}
-                onChange={handlePhoneChange}
-                placeholder="Phone Number"
-                variant="outlined"
-                fullWidth
-                size="small"
-                sx={textFieldSx}
-              />
-              
-              {/* Email */}
-              <TextField
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Email Address"
-                type="email"
-                variant="outlined"
-                fullWidth
-                size="small"
-                sx={textFieldSx}
-              />
-              
-              {/* Sobriety Date */}
-              <Typography 
-                variant="caption" 
-                color="text.secondary" 
-                sx={{ mb: 0.5, fontWeight: 'medium', mt: 1 }}
-              >
-                Sobriety Date
-              </Typography>
-              <TextField
-                type="date"
-                value={sobrietyDate}
-                onChange={(e) => setSobrietyDate(e.target.value)}
-                variant="outlined"
-                fullWidth
-                size="small"
-                InputLabelProps={{
-                  shrink: true
-                }}
-                sx={textFieldSx}
-              />
-              
-              {/* Notes */}
-              <TextField
-                multiline
-                rows={4}
-                value={notes}
-                onChange={(e) => setNotes(e.target.value)}
-                placeholder="Notes"
-                variant="outlined"
-                fullWidth
-                sx={{
-                  ...textFieldSx,
-                  mt: 1
-                }}
-              />
-            </Stack>
-          </ResponsiveContainer>
+        <DialogContent sx={{ padding: '16px' }}>
+          {/* First Name */}
+          <Box sx={{ color: theme.palette.primary.main, fontSize: '14px', mb: '4px' }}>
+            First Name*
+          </Box>
+          <TextField
+            fullWidth
+            variant="outlined"
+            placeholder="First Name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            required
+            autoFocus
+            error={!!errors.name}
+            helperText={errors.name}
+            size="small"
+            margin="dense"
+            sx={{ mb: 2 }}
+          />
+          
+          {/* Last Name */}
+          <TextField
+            fullWidth
+            variant="outlined"
+            placeholder="Last Name"
+            value={lastName}
+            onChange={(e) => setLastName(e.target.value)}
+            size="small"
+            margin="dense"
+            sx={{ mb: 2 }}
+          />
+          
+          {/* Phone Number */}
+          <TextField
+            fullWidth
+            variant="outlined"
+            placeholder="Phone Number"
+            value={phone}
+            onChange={handlePhoneChange}
+            size="small"
+            margin="dense"
+            sx={{ mb: 2 }}
+          />
+          
+          {/* Email */}
+          <TextField
+            fullWidth
+            variant="outlined"
+            placeholder="Email Address"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            size="small"
+            margin="dense"
+            sx={{ mb: 2 }}
+          />
+          
+          {/* Sobriety Date */}
+          <Box sx={{ color: theme.palette.text.secondary, fontSize: '14px', mb: '4px' }}>
+            Sobriety Date
+          </Box>
+          <TextField
+            fullWidth
+            variant="outlined"
+            type="date"
+            value={sobrietyDate}
+            onChange={(e) => setSobrietyDate(e.target.value)}
+            size="small"
+            margin="dense"
+            sx={{ mb: 2 }}
+          />
+          
+          {/* Notes */}
+          <TextField
+            fullWidth
+            variant="outlined"
+            placeholder="Notes"
+            multiline
+            rows={4}
+            value={notes}
+            onChange={(e) => setNotes(e.target.value)}
+            margin="dense"
+            sx={{ mb: 1 }}
+          />
         </DialogContent>
         
         <DialogActions sx={{ 
-          px: 3, 
-          pb: 2, 
+          padding: '8px 16px 16px',
           borderTop: `1px solid ${theme.palette.divider}`,
-          pt: 2,
-          overflowX: 'hidden',
           display: 'flex',
-          justifyContent: 'space-between',
-          width: '100%',
-          boxSizing: 'border-box'
+          justifyContent: 'space-between'
         }}>
           <Button 
             onClick={handleCancel} 
-            sx={{ 
-              color: theme.palette.error.main
-            }}
+            sx={{ color: theme.palette.error.main }}
           >
             Cancel
           </Button>
