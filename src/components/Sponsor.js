@@ -200,6 +200,30 @@ export default function Sponsor({ user, onUpdate }) {
     }
   };
   
+  // Delete a specific contact detail (for todos and action items)
+  const handleDeleteContactDetail = async (detailId, contactId) => {
+    try {
+      if (window.db && window.dbInitialized) {
+        // Delete the detail from database
+        await window.db.execute(
+          'DELETE FROM sponsor_contact_details WHERE id = ?',
+          [detailId]
+        );
+        
+        // Update state to remove the detail
+        const existingDetails = contactDetails[contactId] || [];
+        const updatedDetails = existingDetails.filter(detail => detail.id !== detailId);
+        
+        setContactDetails(prev => ({
+          ...prev,
+          [contactId]: updatedDetails
+        }));
+      }
+    } catch (error) {
+      console.error('Error deleting contact detail:', error);
+    }
+  };
+  
   return (
     <Box sx={{ p: { xs: 2, md: 3 } }}>
       {/* Show contact details page if in details view */}
@@ -209,6 +233,7 @@ export default function Sponsor({ user, onUpdate }) {
           details={contactDetails[selectedContact.id] || []}
           onBack={handleBackToMain}
           onSaveDetails={handleSaveContactDetail}
+          onDeleteDetail={(detailId) => handleDeleteContactDetail(detailId, selectedContact.id)}
           onUpdateContact={() => {}}
           onDeleteContact={handleDeleteContact}
         />

@@ -14,11 +14,16 @@ import {
   List,
   ListItem,
   Fab,
-  Alert
+  Alert,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { formatDateForDisplay } from '../utils/dateUtils';
 import { v4 as uuidv4 } from 'uuid';
+import SponsorContactTodo from './SponsorContactTodo';
 
 export default function SponsorContactDetailsPage({ 
   contact, 
@@ -26,12 +31,14 @@ export default function SponsorContactDetailsPage({
   onBack, 
   onSaveDetails, 
   onUpdateContact,
-  onDeleteContact
+  onDeleteContact,
+  onDeleteDetail
 }) {
   const theme = useTheme();
   const [contactDetails, setContactDetails] = useState(details);
   const [showAddActionForm, setShowAddActionForm] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [showAddActionDialog, setShowAddActionDialog] = useState(false);
   
   // Form state for new action item
   const [newAction, setNewAction] = useState({
@@ -41,9 +48,18 @@ export default function SponsorContactDetailsPage({
     completed: false
   });
   
+  // State for todo items
+  const [todos, setTodos] = useState([]);
+  
   // Load details when they change
   useEffect(() => {
     setContactDetails(details);
+    
+    // Filter out any todos from the details
+    const todoItems = details.filter(item => item.type === 'todo');
+    if (todoItems.length > 0) {
+      setTodos(todoItems);
+    }
   }, [details]);
   
   // Handle form changes for new action item
@@ -95,6 +111,58 @@ export default function SponsorContactDetailsPage({
     });
     
     setContactDetails(updatedDetails);
+  };
+  
+  // Add new todo item
+  const handleAddTodo = (todoItem) => {
+    const newTodo = {
+      ...todoItem,
+      contactId: contact.id,
+      type: 'todo',
+      completed: todoItem.completed ? 1 : 0  // Convert boolean to integer for SQLite
+    };
+    
+    // Add to state
+    setTodos(prev => [...prev, newTodo]);
+    
+    // Save to database
+    onSaveDetails(newTodo);
+  };
+  
+  // Toggle todo completion
+  const handleToggleTodo = (todoId) => {
+    const updatedTodos = todos.map(todo => {
+      if (todo.id === todoId) {
+        const updatedTodo = {
+          ...todo,
+          completed: todo.completed ? 0 : 1  // Toggle between 0 and 1
+        };
+        
+        // Save change to database
+        onSaveDetails(updatedTodo);
+        
+        return updatedTodo;
+      }
+      return todo;
+    });
+    
+    setTodos(updatedTodos);
+  };
+  
+  // Delete todo item
+  const handleDeleteTodo = (todoId) => {
+    // Filter out the deleted todo
+    const updatedTodos = todos.filter(todo => todo.id !== todoId);
+    
+    // Update state
+    setTodos(updatedTodos);
+    
+    // Delete from database using the provided function
+    if (onDeleteDetail) {
+      onDeleteDetail(todoId);
+    } else {
+      console.warn('No delete function provided for todos');
+    }
   };
   
   // Get contact type label for display
@@ -256,6 +324,14 @@ export default function SponsorContactDetailsPage({
           </Box>
         </Box>
       </Paper>
+      
+      {/* Todo Items Section - New feature */}
+      <SponsorContactTodo 
+        todos={todos} 
+        onAddTodo={handleAddTodo}
+        onToggleTodo={handleToggleTodo}
+        onDeleteTodo={handleDeleteTodo}
+      />
       
       {/* Action Items Section */}
       <Box sx={{ mb: 2 }}>
