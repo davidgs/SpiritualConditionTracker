@@ -8,7 +8,7 @@ import {
   Button
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
-import SponsorFormDialog from './SponsorFormDialog';
+// SponsorFormDialog removed, using page-based navigation
 import SponsorContactList from './SponsorContactList';
 import SponsorContactDetailsPage from './SponsorContactDetailsPage';
 import SponsorContactFormPage from './SponsorContactFormPage';
@@ -29,9 +29,7 @@ export default function Sponsor({ user, onUpdate }) {
   const [currentView, setCurrentView] = useState('main'); // 'main', 'details', 'add-contact'
   const [selectedContact, setSelectedContact] = useState(null);
   
-  // Dialog states
-  const [showSponsorForm, setShowSponsorForm] = useState(false);
-  const [editingSponsor, setEditingSponsor] = useState(false);
+  // Removed dialog states in favor of page-based navigation
   
   // Load sponsor data from user
   useEffect(() => {
@@ -438,21 +436,12 @@ export default function Sponsor({ user, onUpdate }) {
             <SponsorContactList
               userId={user ? user.id : ''}
               contacts={contacts}
-              onContactAdded={handleAddContact}
+              onContactAdded={handleAddNewContact}
               onViewDetails={handleViewContactDetails}
             />
           )}
           
-          {/* Sponsor Form Dialog */}
-          <SponsorFormDialog 
-            open={showSponsorForm} 
-            onClose={() => {
-              setShowSponsorForm(false);
-              setEditingSponsor(false);
-            }}
-            onSubmit={handleSponsorSubmit}
-            initialData={editingSponsor ? sponsor : null}
-          />
+          {/* Removed Sponsor Form Dialog in favor of page-based navigation */}
         </>
       )}
     </Box>

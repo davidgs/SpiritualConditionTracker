@@ -12,7 +12,6 @@ import {
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { formatDateForDisplay } from '../utils/dateUtils';
-import SponsorContactFormDialog from './SponsorContactFormDialog';
 import { v4 as uuidv4 } from 'uuid';
 
 export default function SponsorContactList({ userId, contacts = [], onContactAdded, onViewDetails }) {
@@ -87,8 +86,8 @@ export default function SponsorContactList({ userId, contacts = [], onContactAdd
           Contact History
           <IconButton 
             onClick={() => {
-              setSelectedContact(null);
-              setShowContactForm(true);
+              // Open Add Contact page through parent component
+              onContactAdded();
             }}
             size="small"
             sx={{ 
@@ -209,7 +208,7 @@ export default function SponsorContactList({ userId, contacts = [], onContactAdd
             <Button
               variant="outlined"
               startIcon={<i className="fa-solid fa-plus"></i>}
-              onClick={() => setShowContactForm(true)}
+              onClick={() => onContactAdded()}
               sx={{ mt: 1 }}
             >
               Add Contact
@@ -217,14 +216,7 @@ export default function SponsorContactList({ userId, contacts = [], onContactAdd
           </Box>
         )}
       </Paper>
-      
-      {/* Contact Form Dialog */}
-      <SponsorContactFormDialog
-        open={showContactForm}
-        onClose={() => setShowContactForm(false)}
-        onSubmit={handleAddContact}
-        initialData={selectedContact}
-      />
+      {/* Removed SponsorContactFormDialog - Using page-based navigation instead */}
     </Box>
   );
 }
