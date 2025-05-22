@@ -357,7 +357,15 @@ export default function MeetingFormDialog({
           borderRadius: 2,
           overflowX: 'hidden', // Prevent horizontal scrolling
           m: 1, // Add margin to prevent the dialog from touching the screen edges
-          maxWidth: { xs: 'calc(100% - 16px)', sm: 'auto' } // Ensure proper mobile sizing
+          maxWidth: { xs: 'calc(100% - 16px)', sm: 'auto' }, // Ensure proper mobile sizing
+          position: { xs: 'relative', sm: 'static' },
+          top: { xs: '2.5rem', sm: 'auto' } // Keep dialog at least 2.5rem from top on mobile
+        }
+      }}
+      sx={{
+        '& .MuiDialog-container': {
+          alignItems: { xs: 'flex-start', sm: 'center' },
+          pt: { xs: '2.5rem', sm: 0 } // Add padding at the top on mobile
         }
       }}
     >
@@ -401,7 +409,15 @@ export default function MeetingFormDialog({
           </Alert>
         )}
         
-        <Box component="form" id="meeting-form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 1 }}>
+        <Box component="form" id="meeting-form" onSubmit={handleSubmit} sx={{ 
+          display: 'flex', 
+          flexDirection: 'column', 
+          gap: 2, 
+          mt: 1,
+          width: '100%',
+          maxWidth: '100%',
+          boxSizing: 'border-box'
+        }}>
           <Box>
             <Typography variant="subtitle2" sx={{ mb: 1, color: darkMode ? '#d1d5db' : '#374151' }}>
               Meeting Name
@@ -413,10 +429,15 @@ export default function MeetingFormDialog({
               placeholder="Enter meeting name"
               size="small"
               sx={{
+                width: '100%',
+                maxWidth: '100%',
                 '& .MuiOutlinedInput-root': {
+                  width: '100%',
+                  maxWidth: '100%',
                   bgcolor: darkMode ? '#374151' : '#f9fafb',
                   '& fieldset': {
                     borderColor: darkMode ? '#4b5563' : '#d1d5db',
+                    width: '100%',
                   },
                   '&:hover fieldset': {
                     borderColor: darkMode ? '#6b7280' : '#9ca3af',
@@ -427,6 +448,7 @@ export default function MeetingFormDialog({
                 },
                 '& .MuiInputBase-input': {
                   color: darkMode ? '#d1d5db' : '#374151',
+                  width: '100%',
                 }
               }}
             />
