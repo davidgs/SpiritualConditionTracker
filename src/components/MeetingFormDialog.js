@@ -49,10 +49,10 @@ const StyledDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiInputBase-root': {
     maxWidth: '100%',
     '& fieldset': {
-      borderColor: theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.23)' : 'rgba(0, 0, 0, 0.23)',
+      borderColor: theme.palette.divider,
     },
     '&:hover fieldset': {
-      borderColor: theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.4)' : 'rgba(0, 0, 0, 0.4)',
+      borderColor: theme.palette.action.hover,
     },
     '&.Mui-focused fieldset': {
       borderColor: theme.palette.primary.main,
@@ -446,7 +446,7 @@ export default function MeetingFormDialog({
           boxSizing: 'border-box'
         }}>
           <Box>
-            <Typography variant="subtitle2" sx={{ mb: 1, color: darkMode ? '#d1d5db' : '#374151' }}>
+            <Typography variant="subtitle2" sx={(theme) => ({ mb: 1, color: theme.palette.text.primary })}>
               Meeting Name
             </Typography>
             <TextField
@@ -455,34 +455,34 @@ export default function MeetingFormDialog({
               onChange={(e) => setMeetingName(e.target.value)}
               placeholder="Enter meeting name"
               size="small"
-              sx={{
+              sx={(theme) => ({
                 width: '100%',
                 maxWidth: '100%',
                 '& .MuiOutlinedInput-root': {
                   width: '100%',
                   maxWidth: '100%',
-                  bgcolor: darkMode ? '#374151' : '#f9fafb',
+                  bgcolor: theme.palette.mode === 'dark' ? theme.palette.background.default : theme.palette.grey[50],
                   '& fieldset': {
-                    borderColor: darkMode ? '#4b5563' : '#d1d5db',
+                    borderColor: theme.palette.divider,
                     width: '100%',
                   },
                   '&:hover fieldset': {
-                    borderColor: darkMode ? '#6b7280' : '#9ca3af',
+                    borderColor: theme.palette.action.hover,
                   },
                   '&.Mui-focused fieldset': {
-                    borderColor: darkMode ? '#60a5fa' : '#3b82f6',
+                    borderColor: theme.palette.primary.main,
                   },
                 },
                 '& .MuiInputBase-input': {
-                  color: darkMode ? '#d1d5db' : '#374151',
+                  color: theme.palette.text.primary,
                   width: '100%',
                 }
-              }}
+              })}
             />
           </Box>
           
           <Box>
-            <Typography variant="subtitle2" sx={{ mb: 1, color: darkMode ? '#d1d5db' : '#374151' }}>
+            <Typography variant="subtitle2" sx={(theme) => ({ mb: 1, color: theme.palette.text.primary })}>
               Meeting Schedule
             </Typography>
             <SimpleMeetingSchedule 
@@ -494,7 +494,7 @@ export default function MeetingFormDialog({
           </Box>
           
           <Box>
-            <Typography variant="subtitle2" sx={{ mb: 1, color: darkMode ? '#d1d5db' : '#374151' }}>
+            <Typography variant="subtitle2" sx={(theme) => ({ mb: 1, color: theme.palette.text.primary })}>
               Location
             </Typography>
             
