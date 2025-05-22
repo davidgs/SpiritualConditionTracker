@@ -1,31 +1,35 @@
-import { Dialog, styled } from '@mui/material';
+import React from 'react';
+import { Dialog } from '@mui/material';
 
 /**
  * A styled Dialog component that prevents horizontal scrolling issues
  * when text fields are focused or interacted with.
  * 
- * Designed to be reused across the app for consistent dialog styling
- * and behavior, particularly on mobile devices.
+ * This component wraps the standard Material UI Dialog with specific
+ * props that prevent horizontal scrolling issues on mobile devices.
  */
-const StyledDialog = styled(Dialog)(({ theme }) => ({
-  '& .MuiDialog-container': {
-    alignItems: 'flex-start',
-    paddingTop: '2.5rem',
-  },
-  '& .MuiDialog-paper': {
-    width: 'calc(100% - 32px)',
-    maxWidth: '500px',
-    margin: '0 16px',
-    backgroundColor: theme.palette.background.paper,
-    color: theme.palette.text.primary,
-  },
-  '& .MuiDialogContent-root': {
-    padding: '16px',
-    overflow: 'hidden',
-  },
-  '& .MuiDialogActions-root': {
-    padding: '8px 16px',
-  }
-}));
+const StyledDialog = (props) => {
+  return (
+    <Dialog
+      {...props}
+      PaperProps={{
+        ...props.PaperProps,
+        style: {
+          ...props.PaperProps?.style,
+          overflowX: 'hidden',
+          position: 'relative',
+          margin: '0 16px',
+          width: 'calc(100% - 32px)', 
+          maxWidth: '500px',
+        }
+      }}
+      // Use scroll=body to prevent dialog content from scrolling
+      // This moves scrolling responsibility to the browser itself
+      scroll="body"
+    >
+      {props.children}
+    </Dialog>
+  );
+};
 
 export default StyledDialog;
