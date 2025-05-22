@@ -4,9 +4,12 @@ import {
   DialogTitle, 
   DialogContent, 
   DialogActions, 
+  TextField,
   Button,
   IconButton,
-  Stack
+  Stack,
+  Typography,
+  alpha
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import ResponsiveContainer from './ResponsiveContainer';
@@ -127,22 +130,27 @@ export default function SponseeFormDialog({ open, onClose, onSubmit, initialData
     onClose();
   };
 
-  // Common native input field styles (iOS-like)
-  const inputSx = {
-    width: '100%',
-    padding: '10px',
-    borderRadius: '8px',
-    border: `1px solid ${theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.1)'}`,
-    backgroundColor: theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.05)' : 'rgba(255, 255, 255, 0.8)',
-    fontSize: '16px',
-    color: theme.palette.text.primary,
-    marginBottom: '12px',
-    boxSizing: 'border-box',
-    '-webkit-appearance': 'none',
-    '&:focus': {
-      outline: 'none',
-      borderColor: theme.palette.primary.main,
-      boxShadow: `0 0 0 1px ${theme.palette.primary.main}`,
+  // Common TextField styling for all form inputs
+  const textFieldSx = {
+    mb: 1.5,
+    '.MuiInputBase-root': {
+      overflow: 'hidden',
+      borderRadius: 1.5,
+      backgroundColor: theme.palette.mode === 'dark' 
+        ? alpha(theme.palette.background.default, 0.1)
+        : alpha(theme.palette.background.paper, 0.9),
+      transition: theme.transitions.create([
+        'border-color',
+        'background-color',
+        'box-shadow'
+      ]),
+      '&.Mui-focused': {
+        boxShadow: `${alpha(theme.palette.primary.main, 0.25)} 0 0 0 2px`
+      }
+    },
+    '.MuiInputBase-input': {
+      fontSize: '1rem',
+      padding: '10px 12px'
     }
   };
   
@@ -163,10 +171,9 @@ export default function SponseeFormDialog({ open, onClose, onSubmit, initialData
           width: '90%'
         }
       }}
-      // Prevent scrolling of background content when dialog is open
-      sx={{
-        '& .MuiBackdrop-root': {
-          backgroundColor: 'rgba(0, 0, 0, 0.5)'
+      BackdropProps={{
+        sx: {
+          backgroundColor: alpha(theme.palette.common.black, 0.5)
         }
       }}
     >
@@ -179,7 +186,9 @@ export default function SponseeFormDialog({ open, onClose, onSubmit, initialData
         paddingRight: 1, // Ensure space for close button
         overflowX: 'hidden'
       }}>
-        {initialData ? 'Edit Sponsee' : 'Add Sponsee'}
+        <Typography variant="h6" component="div">
+          {initialData ? 'Edit Sponsee' : 'Add Sponsee'}
+        </Typography>
         <IconButton 
           onClick={onClose} 
           size="small" 
@@ -200,89 +209,96 @@ export default function SponseeFormDialog({ open, onClose, onSubmit, initialData
           <ResponsiveContainer>
             <Stack spacing={0} sx={{ width: '100%' }}>
               {/* First Name */}
-              <div>
-                <div style={{ fontSize: '14px', color: theme.palette.primary.main, marginBottom: '4px' }}>
-                  First Name*
-                </div>
-                <input
-                  type="text"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  required
-                  autoFocus
-                  placeholder="First Name"
-                  style={{
-                    ...inputSx,
-                    borderColor: errors.name ? theme.palette.error.main : inputSx.border.split(' ')[2]
-                  }}
-                />
-                {errors.name && (
-                  <div style={{ color: theme.palette.error.main, fontSize: '12px', marginTop: '-8px', marginBottom: '8px' }}>
-                    {errors.name}
-                  </div>
-                )}
-              </div>
+              <Typography 
+                variant="caption" 
+                color="primary" 
+                sx={{ mb: 0.5, fontWeight: 'medium' }}
+              >
+                First Name*
+              </Typography>
+              <TextField
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+                autoFocus
+                placeholder="First Name"
+                error={!!errors.name}
+                helperText={errors.name}
+                variant="outlined"
+                fullWidth
+                size="small"
+                sx={textFieldSx}
+              />
               
               {/* Last Name */}
-              <div>
-                <input
-                  type="text"
-                  value={lastName}
-                  onChange={(e) => setLastName(e.target.value)}
-                  placeholder="Last Name"
-                  style={inputSx}
-                />
-              </div>
+              <TextField
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+                placeholder="Last Name"
+                variant="outlined"
+                fullWidth
+                size="small"
+                sx={textFieldSx}
+              />
               
               {/* Phone Number */}
-              <div>
-                <input
-                  type="tel"
-                  value={phone}
-                  onChange={handlePhoneChange}
-                  placeholder="Phone Number"
-                  style={inputSx}
-                />
-              </div>
+              <TextField
+                value={phone}
+                onChange={handlePhoneChange}
+                placeholder="Phone Number"
+                variant="outlined"
+                fullWidth
+                size="small"
+                sx={textFieldSx}
+              />
               
               {/* Email */}
-              <div>
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Email Address"
-                  style={inputSx}
-                />
-              </div>
+              <TextField
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Email Address"
+                type="email"
+                variant="outlined"
+                fullWidth
+                size="small"
+                sx={textFieldSx}
+              />
               
               {/* Sobriety Date */}
-              <div>
-                <div style={{ fontSize: '14px', color: theme.palette.text.secondary, marginBottom: '4px' }}>
-                  Sobriety Date
-                </div>
-                <input
-                  type="date"
-                  value={sobrietyDate}
-                  onChange={(e) => setSobrietyDate(e.target.value)}
-                  style={inputSx}
-                />
-              </div>
+              <Typography 
+                variant="caption" 
+                color="text.secondary" 
+                sx={{ mb: 0.5, fontWeight: 'medium', mt: 1 }}
+              >
+                Sobriety Date
+              </Typography>
+              <TextField
+                type="date"
+                value={sobrietyDate}
+                onChange={(e) => setSobrietyDate(e.target.value)}
+                variant="outlined"
+                fullWidth
+                size="small"
+                InputLabelProps={{
+                  shrink: true
+                }}
+                sx={textFieldSx}
+              />
               
               {/* Notes */}
-              <div>
-                <textarea
-                  value={notes}
-                  onChange={(e) => setNotes(e.target.value)}
-                  placeholder="Notes"
-                  rows={4}
-                  style={{
-                    ...inputSx,
-                    resize: 'none',
-                    minHeight: '100px'
-                  }}
-                />
-              </div>
+              <TextField
+                multiline
+                rows={4}
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                placeholder="Notes"
+                variant="outlined"
+                fullWidth
+                sx={{
+                  ...textFieldSx,
+                  mt: 1
+                }}
+              />
             </Stack>
           </ResponsiveContainer>
         </DialogContent>
@@ -301,10 +317,7 @@ export default function SponseeFormDialog({ open, onClose, onSubmit, initialData
           <Button 
             onClick={handleCancel} 
             sx={{ 
-              color: theme.palette.error.main,
-              '&:hover': {
-                backgroundColor: theme.palette.error.main + '1A' // Adding 10% opacity
-              }
+              color: theme.palette.error.main
             }}
           >
             Cancel
