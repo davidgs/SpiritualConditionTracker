@@ -22,7 +22,13 @@ import {
 
 // Common TextField style to ensure consistent theming
 const getTextFieldStyle = (theme) => ({
+  width: '100%',
+  maxWidth: '100%',
+  boxSizing: 'border-box',
   '& .MuiOutlinedInput-root': {
+    width: '100%',
+    maxWidth: '100%',
+    boxSizing: 'border-box',
     bgcolor: theme.palette.mode === 'dark' ? theme.palette.background.default : theme.palette.grey[50],
     '& fieldset': {
       borderColor: theme.palette.divider,
@@ -36,6 +42,9 @@ const getTextFieldStyle = (theme) => ({
   },
   '& .MuiInputBase-input': {
     color: theme.palette.text.primary,
+    width: '100%',
+    maxWidth: '100%',
+    boxSizing: 'border-box',
   }
 });
 
@@ -432,24 +441,7 @@ export default function MeetingFormDialog({
               onChange={(e) => setMeetingName(e.target.value)}
               placeholder="Enter meeting name"
               size="small"
-              sx={(theme) => ({
-                '& .MuiOutlinedInput-root': {
-                  bgcolor: theme.palette.mode === 'dark' ? theme.palette.background.default : theme.palette.grey[50],
-                  '& fieldset': {
-                    borderColor: theme.palette.divider,
-                  },
-                  '&:hover fieldset': {
-                    borderColor: theme.palette.action.hover,
-                  },
-                  '&.Mui-focused fieldset': {
-                    borderColor: theme.palette.primary.main,
-                  },
-                },
-                '& .MuiInputBase-input': {
-                  color: theme.palette.text.primary,
-                  width: '100%',
-                }
-              })}
+              sx={(theme) => getTextFieldStyle(theme)}
             />
           </Box>
           

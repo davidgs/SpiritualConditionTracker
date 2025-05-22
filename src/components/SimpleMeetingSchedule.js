@@ -44,14 +44,28 @@ const SimpleMeetingSchedule = ({ schedule, onChange, use24HourFormat = false }) 
   };
 
   return (
-    <Box sx={{ mb: 3, width: '100%' }}>
+    <Box sx={{ 
+      mb: 2, 
+      width: '100%', 
+      maxWidth: '100%',
+      boxSizing: 'border-box',
+      overflowX: 'hidden' 
+    }}>
       <Box sx={(theme) => ({
         border: `1px solid ${theme.palette.divider}`,
         borderRadius: 1,
         overflow: 'hidden',
-        width: '100%'
+        width: '100%',
+        maxWidth: '100%',
+        boxSizing: 'border-box'
       })}>
-        <Table sx={{ width: '100%', borderCollapse: 'collapse', tableLayout: 'fixed' }}>
+        <Table sx={{ 
+          width: '100%', 
+          borderCollapse: 'collapse', 
+          tableLayout: 'fixed',
+          maxWidth: '100%',
+          boxSizing: 'border-box'
+        }}>
           <TableBody>
             {days.map((day, index) => {
               const existingItem = schedule.find(item => item.day === day.key);
@@ -62,7 +76,10 @@ const SimpleMeetingSchedule = ({ schedule, onChange, use24HourFormat = false }) 
                 <TableRow 
                   key={day.key} 
                   sx={(theme) => ({
-                    borderBottom: index < days.length - 1 ? `1px solid ${theme.palette.divider}` : 'none'
+                    borderBottom: index < days.length - 1 ? `1px solid ${theme.palette.divider}` : 'none',
+                    width: '100%',
+                    maxWidth: '100%',
+                    boxSizing: 'border-box'
                   })}
                 >
                   <TableCell 
@@ -70,15 +87,21 @@ const SimpleMeetingSchedule = ({ schedule, onChange, use24HourFormat = false }) 
                       py: 1.5, 
                       px: 2, 
                       borderRight: `1px solid ${theme.palette.divider}`,
-                      
                       color: theme.palette.text.primary,
                       fontWeight: 500,
-                      width: '40%'
+                      width: '40%',
+                      boxSizing: 'border-box'
                     })}
                   >
                     {day.label}
                   </TableCell>
-                  <TableCell sx={{ p: 1, pt: 1.25, width: '60%' }}>
+                  <TableCell sx={{ 
+                    p: 1, 
+                    pt: 1.25, 
+                    width: '60%',
+                    maxWidth: '60%',
+                    boxSizing: 'border-box'
+                  }}>
                     <Select
                       fullWidth
                       variant="outlined"
@@ -86,11 +109,31 @@ const SimpleMeetingSchedule = ({ schedule, onChange, use24HourFormat = false }) 
                       value={timeValue || "none"}
                       onChange={(e) => handleTimeChange(day.key, e.target.value)}
                       sx={(theme) => ({
+                        width: '100%',
+                        maxWidth: '100%',
+                        boxSizing: 'border-box',
                         bgcolor: theme.palette.mode === 'dark' ? theme.palette.background.default : theme.palette.background.paper,
                         '& .MuiOutlinedInput-notchedOutline': {
                           borderColor: theme.palette.divider
+                        },
+                        '& .MuiSelect-select': {
+                          width: '100%',
+                          maxWidth: '100%',
+                          boxSizing: 'border-box',
+                        },
+                        '& .MuiInputBase-root': {
+                          width: '100%',
+                          maxWidth: '100%',
+                          boxSizing: 'border-box'
                         }
                       })}
+                      MenuProps={{
+                        PaperProps: {
+                          style: {
+                            maxHeight: 300
+                          }
+                        }
+                      }}
                     >
                       <MenuItem value="none">{hasTime ? "Remove" : "None"}</MenuItem>
                       <MenuItem value="06:00">{use24HourFormat ? "06:00" : "6:00 AM"}</MenuItem>
