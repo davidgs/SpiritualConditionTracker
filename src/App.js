@@ -4,12 +4,10 @@ import NavBar from './components/NavBar';
 // Removed NearbyMembers import as we won't be using Bluetooth
 import Profile from './components/Profile';
 import Meetings from './components/Meetings';
-import Messages from './components/Messages';
 import StepWork from './components/StepWork';
 import SponsorSponsee from './components/SponsorSponsee';
 import MuiThemeProvider, { useAppTheme } from './contexts/MuiThemeProvider';
 import ThemeBackground from './components/ThemeBackground';
-import { generateKeyPair } from './utils/encryption';
 import { DEFAULT_SPIRITUAL_FITNESS_SCORE } from './utils/constants';
 import { Box, Paper } from '@mui/material';
 
@@ -169,7 +167,6 @@ function App() {
           privacySettings: {
             shareLocation: false,
             shareActivities: false,
-            allowMessages: true,
             shareLastName: true
           },
           preferences: {
@@ -179,47 +176,10 @@ function App() {
           updatedAt: new Date().toISOString()
         };
         
-        // Generate messaging keys for the new user
-        try {
-          console.log('Generating messaging keys for new user...');
-          const keyPair = await generateKeyPair();
-          const fingerprint = await getKeyFingerprint(keyPair.publicKey);
-          
-          // Add messaging keys to the user
-          newUser.messagingKeys = {
-            publicKey: keyPair.publicKey,
-            privateKey: keyPair.privateKey,
-            fingerprint
-          };
-        } catch (error) {
-          console.error('Error generating messaging keys for new user:', error);
-          newUser.messagingKeys = {};
-        }
+        // Messaging functionality has been removed
         
         // Save the new user
         userData = await window.db.add('users', newUser);
-      } 
-      // Initialize messaging keys if they don't exist for existing user
-      else if (!userData.messagingKeys || !userData.messagingKeys.publicKey) {
-        try {
-          console.log('Generating messaging keys for secure communications...');
-          // Generate key pair for secure messaging
-          const keyPair = await generateKeyPair();
-          
-          // Create fingerprint (simple hash of public key for identification)
-          const fingerprint = await getKeyFingerprint(keyPair.publicKey);
-          
-          // Update user with new keys
-          userData = await window.db.update('users', userData.id, {
-            messagingKeys: {
-              publicKey: keyPair.publicKey,
-              privateKey: keyPair.privateKey,
-              fingerprint
-            }
-          });
-        } catch (err) {
-          console.error('Failed to generate messaging keys:', err);
-        }
       }
       
       // Set the user data
@@ -250,24 +210,7 @@ function App() {
     }
   }
   
-  // Generate a simple fingerprint from the public key
-  async function getKeyFingerprint(publicKey) {
-    try {
-      // Create a hash of the public key
-      const msgBuffer = new TextEncoder().encode(publicKey);
-      const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
-      const hashArray = Array.from(new Uint8Array(hashBuffer));
-      
-      // Take the first 8 bytes and format as hex with colons
-      return hashArray
-        .slice(0, 8)
-        .map(b => b.toString(16).padStart(2, '0'))
-        .join(':');
-    } catch (err) {
-      console.error('Error generating key fingerprint:', err);
-      return 'unknown-fingerprint';
-    }
-  }
+  // Messaging-related functionality has been removed
 
   // Calculate spiritual fitness score using the database function
   async function calculateSpiritualFitness() {
@@ -591,13 +534,7 @@ function App() {
             user={user}
           />
         );
-      case 'messages':
-        return (
-          <Messages
-            setCurrentView={setCurrentView}
-            user={user}
-          />
-        );
+      // Messages feature removed as requested
       // Nearby feature removed as it requires Bluetooth which isn't available in web apps
       case 'profile':
         return (
