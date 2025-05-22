@@ -7,9 +7,7 @@ import {
   TextField, 
   Button,
   IconButton,
-  Box,
-  Paper,
-  Grid
+  Stack
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import ResponsiveContainer from './ResponsiveContainer';
@@ -124,6 +122,25 @@ export default function SponsorFormDialog({ open, onClose, onSubmit, initialData
     resetForm();
     onClose();
   };
+
+  // Common input field styles to maintain consistency
+  const inputSx = {
+    width: '100%',
+    maxWidth: '100%',
+    my: 1,
+    '& .MuiInputBase-root': {
+      maxWidth: '100%',
+      fontSize: '1rem',
+    },
+    '& .MuiInputBase-input': {
+      maxWidth: '100%',
+      boxSizing: 'border-box',
+      fontSize: '1rem',
+    },
+    '& .MuiInputLabel-root': {
+      fontSize: '0.9rem',
+    }
+  };
   
   return (
     <Dialog 
@@ -136,9 +153,10 @@ export default function SponsorFormDialog({ open, onClose, onSubmit, initialData
           bgcolor: theme.palette.background.paper,
           color: theme.palette.text.primary,
           boxShadow: theme.shadows[5],
-          maxWidth: Math.min(viewportWidth * 0.95, 600), // Constrain width to 95% of viewport
+          maxWidth: Math.min(viewportWidth * 0.9, 400), // Reduced from 600 to 400 max width
           overflowX: 'hidden', // Prevent horizontal scroll
-          margin: '0 auto' // Center dialog
+          margin: '0 auto', // Center dialog
+          width: '90%'
         }
       }}
       // Prevent scrolling of background content when dialog is open
@@ -170,138 +188,88 @@ export default function SponsorFormDialog({ open, onClose, onSubmit, initialData
       
       <form onSubmit={handleSubmit}>
         <DialogContent sx={{ 
-          py: 3, 
+          py: 2, 
           overflowX: 'hidden',
           width: '100%',
           boxSizing: 'border-box'
         }}>
           <ResponsiveContainer>
-            <Grid container spacing={2}>
+            <Stack spacing={0} sx={{ width: '100%' }}>
               {/* First Name */}
-              <Grid item xs={12} md={6}>
-                <TextField
-                  label="First Name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  fullWidth
-                  margin="normal"
-                  required
-                  error={!!errors.name}
-                  helperText={errors.name}
-                  autoFocus
-                  size="small"
-                  color="primary"
-                  InputProps={{
-                    sx: {
-                      maxWidth: '100%',
-                      boxSizing: 'border-box'
-                    }
-                  }}
-                />
-              </Grid>
+              <TextField
+                label="First Name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+                error={!!errors.name}
+                helperText={errors.name}
+                autoFocus
+                size="small"
+                color="primary"
+                sx={inputSx}
+              />
               
               {/* Last Name */}
-              <Grid item xs={12} md={6}>
-                <TextField
-                  label="Last Name"
-                  value={lastName}
-                  onChange={(e) => setLastName(e.target.value)}
-                  fullWidth
-                  margin="normal"
-                  size="small"
-                  color="primary"
-                  InputProps={{
-                    sx: {
-                      maxWidth: '100%',
-                      boxSizing: 'border-box'
-                    }
-                  }}
-                />
-              </Grid>
+              <TextField
+                label="Last Name"
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+                size="small"
+                color="primary"
+                sx={inputSx}
+              />
               
               {/* Phone Number */}
-              <Grid item xs={12} md={6}>
-                <TextField
-                  label="Phone Number"
-                  value={phone}
-                  onChange={handlePhoneChange}
-                  fullWidth
-                  margin="normal"
-                  placeholder="(123) 456-7890"
-                  size="small"
-                  color="primary"
-                  InputProps={{
-                    sx: {
-                      maxWidth: '100%',
-                      boxSizing: 'border-box'
-                    }
-                  }}
-                />
-              </Grid>
+              <TextField
+                label="Phone Number"
+                value={phone}
+                onChange={handlePhoneChange}
+                placeholder="(123) 456-7890"
+                size="small"
+                color="primary"
+                sx={inputSx}
+              />
               
               {/* Email */}
-              <Grid item xs={12} md={6}>
-                <TextField
-                  label="Email Address"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  fullWidth
-                  margin="normal"
-                  type="email"
-                  size="small"
-                  color="primary"
-                  InputProps={{
-                    sx: {
-                      maxWidth: '100%',
-                      boxSizing: 'border-box'
-                    }
-                  }}
-                />
-              </Grid>
+              <TextField
+                label="Email Address"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                type="email"
+                size="small"
+                color="primary"
+                sx={inputSx}
+              />
               
               {/* Sobriety Date */}
-              <Grid item xs={12} md={6}>
-                <TextField
-                  label="Sobriety Date"
-                  value={sobrietyDate}
-                  onChange={(e) => setSobrietyDate(e.target.value)}
-                  fullWidth
-                  margin="normal"
-                  type="date"
-                  InputLabelProps={{
-                    shrink: true
-                  }}
-                  size="small"
-                  color="primary"
-                  InputProps={{
-                    sx: {
-                      maxWidth: '100%',
-                      boxSizing: 'border-box'
-                    }
-                  }}
-                />
-              </Grid>
-            </Grid>
-            
-            {/* Notes */}
-            <TextField
-              label="Notes"
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-              fullWidth
-              margin="normal"
-              multiline
-              rows={4}
-              placeholder="Enter any notes about your sponsor"
-              sx={{ mt: 2 }}
-              color="primary"
-              InputProps={{
-                sx: {
-                  maxWidth: '100%',
-                  boxSizing: 'border-box'
-                }
-              }}
-            />
+              <TextField
+                label="Sobriety Date"
+                value={sobrietyDate}
+                onChange={(e) => setSobrietyDate(e.target.value)}
+                type="date"
+                InputLabelProps={{
+                  shrink: true
+                }}
+                size="small"
+                color="primary"
+                sx={inputSx}
+              />
+              
+              {/* Notes */}
+              <TextField
+                label="Notes"
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                multiline
+                rows={4}
+                placeholder="Enter any notes about your sponsor"
+                color="primary"
+                sx={{
+                  ...inputSx,
+                  mt: 2
+                }}
+              />
+            </Stack>
           </ResponsiveContainer>
         </DialogContent>
         
@@ -312,7 +280,7 @@ export default function SponsorFormDialog({ open, onClose, onSubmit, initialData
           pt: 2,
           overflowX: 'hidden',
           display: 'flex',
-          justifyContent: 'flex-end',
+          justifyContent: 'space-between',
           width: '100%',
           boxSizing: 'border-box'
         }}>
