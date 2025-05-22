@@ -142,15 +142,29 @@ async function setupTables(sqlite) {
       
       // Try to add any missing columns one by one - this way we can handle existing tables
       try {
-        // Add literatureTitle column if it doesn't exist
-        await sqlite.execute({
+        // First check if literatureTitle column already exists to avoid the duplicate column error
+        const columnInfo = await sqlite.query({
           database: DB_NAME,
-          statements: "ALTER TABLE activities ADD COLUMN literatureTitle TEXT DEFAULT ''"
+          statement: "PRAGMA table_info(activities)",
+          values: []
         });
-        console.log('[ sqliteLoader.js ] Added literatureTitle column to activities table');
+        
+        // Check if literatureTitle column exists in the results
+        const hasLiteratureTitle = columnInfo.values.some(col => col[1] === 'literatureTitle');
+        
+        if (!hasLiteratureTitle) {
+          // Only add the column if it doesn't already exist
+          await sqlite.execute({
+            database: DB_NAME,
+            statements: "ALTER TABLE activities ADD COLUMN literatureTitle TEXT DEFAULT ''"
+          });
+          console.log('[ sqliteLoader.js ] Added literatureTitle column to activities table');
+        } else {
+          console.log('[ sqliteLoader.js ] literatureTitle column already exists, skipping');
+        }
       } catch (e) {
-        // Column might already exist, that's ok
-        console.log('[ sqliteLoader.js ] literatureTitle column likely exists already:', e.message);
+        // Log any errors that occur during the process
+        console.log('[ sqliteLoader.js ] Error checking or adding literatureTitle column:', e.message);
       }
       
       // Add other potential fields
@@ -159,16 +173,32 @@ async function setupTables(sqlite) {
         "mood", "gratitude", "steps", "sponsor", "attendees"
       ];
       
+      // Get the current column info for the activities table
+      const columnInfo = await sqlite.query({
+        database: DB_NAME,
+        statement: "PRAGMA table_info(activities)",
+        values: []
+      });
+      
+      // Extract column names from the result
+      const existingColumns = columnInfo.values.map(col => col[1]);
+      console.log('[ sqliteLoader.js ] Existing columns in activities table:', existingColumns.join(', '));
+      
       for (const column of additionalColumns) {
-        try {
-          await sqlite.execute({
-            database: DB_NAME,
-            statements: `ALTER TABLE activities ADD COLUMN ${column} TEXT DEFAULT ''`
-          });
-          console.log(`[ sqliteLoader.js ] Added ${column} column to activities table`);
-        } catch (e) {
-          // Column might already exist, that's ok
-          console.log(`[ sqliteLoader.js ] ${column} column likely exists already:`, e.message);
+        // Only add column if it doesn't already exist
+        if (!existingColumns.includes(column)) {
+          try {
+            await sqlite.execute({
+              database: DB_NAME,
+              statements: `ALTER TABLE activities ADD COLUMN ${column} TEXT DEFAULT ''`
+            });
+            console.log(`[ sqliteLoader.js ] Added ${column} column to activities table`);
+          } catch (e) {
+            // Log any errors
+            console.log(`[ sqliteLoader.js ] Error adding ${column} column:`, e.message);
+          }
+        } else {
+          console.log(`[ sqliteLoader.js ] Column ${column} already exists, skipping`);
         }
       }
     } else {
