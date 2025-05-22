@@ -282,6 +282,13 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
         onClose={onClose}
         aria-labelledby="log-activity-dialog-title"
         maxWidth="sm"
+        PaperProps={{
+          style: { 
+            overflowX: 'hidden',
+            width: '90%',
+            maxWidth: '450px'
+          }
+        }}
       >
         <DialogTitle 
           id="log-activity-dialog-title"
