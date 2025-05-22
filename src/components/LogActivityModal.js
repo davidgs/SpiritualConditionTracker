@@ -265,8 +265,7 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
   
   // Get common text field styles for consistency
   const getTextFieldStyle = (theme) => ({
-    width: '100%',
-    maxWidth: '100%',
+    width: '98%', // Slightly smaller to prevent focus border overflow
     padding: '0.5rem 0.75rem',
     borderRadius: '0.375rem',
     backgroundColor: theme.palette.background.paper,
@@ -283,7 +282,6 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
         onClose={onClose}
         aria-labelledby="log-activity-dialog-title"
         maxWidth="sm"
-        fullWidth
       >
         <DialogTitle 
           id="log-activity-dialog-title"
