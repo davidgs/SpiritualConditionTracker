@@ -19,7 +19,9 @@ export const AppThemeContext = createContext();
  */
 const MuiThemeProvider = ({ children }) => {
   // Check if user has previously set a theme or use system preference
-  const [initialTheme, setInitialTheme] = useState('light');
+  // Try to detect system preference immediately for a better initial value
+  const systemPrefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const [initialTheme, setInitialTheme] = useState(systemPrefersDark ? 'dark' : 'light');
   // Add state for primary color theme (default to blue)
   const [primaryColor, setPrimaryColor] = useState('blue');
   
