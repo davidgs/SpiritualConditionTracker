@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import SimpleMeetingSchedule from './SimpleMeetingSchedule';
-import { useTheme } from '@mui/material/styles';
+import { useTheme, styled } from '@mui/material/styles';
 import { useAppTheme } from '../contexts/MuiThemeProvider';
 import { 
   TextField, 
@@ -19,6 +19,31 @@ import {
   Checkbox,
   FormControlLabel
 } from '@mui/material';
+
+// Create a styled Dialog component to prevent horizontal scrolling
+const StyledDialog = styled(Dialog)(({ theme }) => ({
+  '& .MuiPaper-root': {
+    maxWidth: '100%',
+    width: 'calc(100% - 32px)',
+    margin: '16px',
+    overflowX: 'hidden',
+    position: 'relative',
+    top: '2.5rem',
+  },
+  '& .MuiDialogContent-root': {
+    padding: '16px',
+    overflowX: 'hidden',
+    maxWidth: '100%',
+    boxSizing: 'border-box',
+  },
+  '& .MuiDialogActions-root': {
+    padding: '8px 16px',
+  },
+  '& .MuiDialog-container': {
+    alignItems: 'flex-start',
+    paddingTop: '2.5rem',
+  }
+}));
 
 export default function MeetingFormDialog({ 
   meeting = null, 
@@ -345,29 +370,11 @@ export default function MeetingFormDialog({
   };
   
   return (
-    <Dialog 
+    <StyledDialog
       open={open} 
       onClose={onClose}
-      maxWidth="sm" // Increase from xs to sm for more width
       fullWidth
-      PaperProps={{
-        sx: {
-          bgcolor: darkMode ? '#1f2937' : 'white',
-          color: darkMode ? '#d1d5db' : '#374151',
-          borderRadius: 2,
-          overflowX: 'hidden', // Prevent horizontal scrolling
-          m: 1, // Add margin to prevent the dialog from touching the screen edges
-          maxWidth: { xs: 'calc(100% - 16px)', sm: 'auto' }, // Ensure proper mobile sizing
-          position: { xs: 'relative', sm: 'static' },
-          top: { xs: '2.5rem', sm: 'auto' } // Keep dialog at least 2.5rem from top on mobile
-        }
-      }}
-      sx={{
-        '& .MuiDialog-container': {
-          alignItems: { xs: 'flex-start', sm: 'center' },
-          pt: { xs: '2.5rem', sm: 0 } // Add padding at the top on mobile
-        }
-      }}
+      maxWidth="sm"
     >
       <DialogTitle sx={{ 
         color: darkMode ? '#d1d5db' : '#374151',
