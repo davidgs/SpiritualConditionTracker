@@ -544,12 +544,13 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
         </Typography>
         
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-          {/* Theme settings temporarily removed */}
-          {/*
+          {/* Theme Selector - Light/Dark Mode */}
           <Box>
             <ThemeSelector />
           </Box>
           
+          {/* Advanced theme customization temporarily disabled */}
+          {/*
           <Box sx={{ mb: 2 }}>
             <PopoverColorPicker />
           </Box>
