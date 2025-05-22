@@ -24,11 +24,9 @@ import {
 const getTextFieldStyle = (theme) => ({
   width: '100%',
   maxWidth: '100%',
-  boxSizing: 'border-box',
   '& .MuiOutlinedInput-root': {
     width: '100%',
     maxWidth: '100%',
-    boxSizing: 'border-box',
     bgcolor: theme.palette.mode === 'dark' ? theme.palette.background.default : theme.palette.grey[50],
     '& fieldset': {
       borderColor: theme.palette.divider,
@@ -42,9 +40,8 @@ const getTextFieldStyle = (theme) => ({
   },
   '& .MuiInputBase-input': {
     color: theme.palette.text.primary,
-    width: '100%',
-    maxWidth: '100%',
-    boxSizing: 'border-box',
+    width: '95%',
+    maxWidth: '98%',
   }
 });
 
@@ -436,7 +433,6 @@ export default function MeetingFormDialog({
               Meeting Name
             </Typography> */}
             <TextField
-              fullWidth
               value={meetingName}
               onChange={(e) => setMeetingName(e.target.value)}
               placeholder="Enter meeting name"
