@@ -97,28 +97,33 @@ export default function Sponsee({ user, onUpdate }) {
         <Typography 
           variant="h5" 
           component="h2"
-          sx={{ color: darkMode ? '#f3f4f6' : '#1f2937', fontWeight: 'bold' }}
+          sx={{ 
+            color: darkMode ? '#f3f4f6' : '#1f2937', 
+            fontWeight: 'bold',
+            display: 'inline-flex',
+            alignItems: 'center'
+          }}
         >
           My Sponsees
+          <IconButton 
+            onClick={() => {
+              setEditingSponseeId(null);
+              setShowSponseeForm(true);
+            }}
+            size="small"
+            sx={{ 
+              color: theme.palette.primary.main, 
+              '&:hover': { 
+                backgroundColor: 'transparent' 
+              },
+              ml: 0.5,
+              p: 0.5,
+              minWidth: 'auto'
+            }}
+          >
+            <i className="fa-solid fa-plus"></i>
+          </IconButton>
         </Typography>
-        
-        <IconButton 
-          onClick={() => {
-            setEditingSponseeId(null);
-            setShowSponseeForm(true);
-          }}
-          size="small"
-          sx={{ 
-            color: theme.palette.primary.main, 
-            '&:hover': { 
-              backgroundColor: 'transparent' 
-            },
-            ml: 1, // Add margin to separate from the title
-            p: 0.5  // Smaller padding to bring it closer to the title
-          }}
-        >
-          <i className="fa-solid fa-plus"></i>
-        </IconButton>
       </Box>
       
       {sponsees.length > 0 ? (
