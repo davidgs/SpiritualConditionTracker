@@ -291,7 +291,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
               </Typography>
             </Box>
           )}
-        </Paper>
+      </Paper>
         <Paper 
           elevation={1}
           sx={{
