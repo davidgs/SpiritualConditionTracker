@@ -412,7 +412,6 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
           
           {/* Render modal at the end of the Dashboard component body to avoid positioning issues */}
         </Paper>
-      </Box>
       
       {/* Recent Activities Section */}
       <Paper 
