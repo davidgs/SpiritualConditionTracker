@@ -11,9 +11,11 @@ import {
   Grid
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
+import ResponsiveContainer from './ResponsiveContainer';
 
 export default function SponseeFormDialog({ open, onClose, onSubmit, initialData }) {
   const theme = useTheme();
+  const [viewportWidth, setViewportWidth] = useState(window.innerWidth);
   
   // Form state
   const [name, setName] = useState('');
@@ -23,6 +25,20 @@ export default function SponseeFormDialog({ open, onClose, onSubmit, initialData
   const [sobrietyDate, setSobrietyDate] = useState('');
   const [notes, setNotes] = useState('');
   const [errors, setErrors] = useState({});
+  
+  // Track viewport changes for responsive adjustments
+  useEffect(() => {
+    const handleResize = () => {
+      setViewportWidth(window.innerWidth);
+    };
+    
+    window.addEventListener('resize', handleResize);
+    
+    // Clean up
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
   
   // Load initial data if editing
   useEffect(() => {
@@ -123,7 +139,16 @@ export default function SponseeFormDialog({ open, onClose, onSubmit, initialData
         sx: {
           bgcolor: theme.palette.background.paper,
           color: theme.palette.text.primary,
-          boxShadow: theme.shadows[5]
+          boxShadow: theme.shadows[5],
+          maxWidth: Math.min(viewportWidth * 0.95, 600), // Constrain width to 95% of viewport
+          overflowX: 'hidden', // Prevent horizontal scroll
+          margin: '0 auto' // Center dialog
+        }
+      }}
+      // Prevent scrolling of background content when dialog is open
+      sx={{
+        '& .MuiBackdrop-root': {
+          backgroundColor: 'rgba(0, 0, 0, 0.5)'
         }
       }}
     >
@@ -132,7 +157,9 @@ export default function SponseeFormDialog({ open, onClose, onSubmit, initialData
         justifyContent: 'space-between', 
         alignItems: 'center',
         borderBottom: `1px solid ${theme.palette.divider}`,
-        pb: 1
+        pb: 1,
+        paddingRight: 1, // Ensure space for close button
+        overflowX: 'hidden'
       }}>
         {initialData ? 'Edit Sponsee' : 'Add Sponsee'}
         <IconButton 
@@ -146,104 +173,152 @@ export default function SponseeFormDialog({ open, onClose, onSubmit, initialData
       </DialogTitle>
       
       <form onSubmit={handleSubmit}>
-        <DialogContent sx={{ py: 3 }}>
-          <Grid container spacing={2}>
-            {/* First Name */}
-            <Grid item xs={12} md={6}>
-              <TextField
-                label="First Name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                fullWidth
-                margin="normal"
-                required
-                error={!!errors.name}
-                helperText={errors.name}
-                autoFocus
-                size="small"
-                color="primary"
-              />
+        <DialogContent sx={{ 
+          py: 3, 
+          overflowX: 'hidden',
+          width: '100%',
+          boxSizing: 'border-box'
+        }}>
+          <ResponsiveContainer>
+            <Grid container spacing={2}>
+              {/* First Name */}
+              <Grid item xs={12} md={6}>
+                <TextField
+                  label="First Name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  fullWidth
+                  margin="normal"
+                  required
+                  error={!!errors.name}
+                  helperText={errors.name}
+                  autoFocus
+                  size="small"
+                  color="primary"
+                  InputProps={{
+                    sx: {
+                      maxWidth: '100%',
+                      boxSizing: 'border-box'
+                    }
+                  }}
+                />
+              </Grid>
+              
+              {/* Last Name */}
+              <Grid item xs={12} md={6}>
+                <TextField
+                  label="Last Name"
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                  fullWidth
+                  margin="normal"
+                  size="small"
+                  color="primary"
+                  InputProps={{
+                    sx: {
+                      maxWidth: '100%',
+                      boxSizing: 'border-box'
+                    }
+                  }}
+                />
+              </Grid>
+              
+              {/* Phone Number */}
+              <Grid item xs={12} md={6}>
+                <TextField
+                  label="Phone Number"
+                  value={phone}
+                  onChange={handlePhoneChange}
+                  fullWidth
+                  margin="normal"
+                  placeholder="(123) 456-7890"
+                  size="small"
+                  color="primary"
+                  InputProps={{
+                    sx: {
+                      maxWidth: '100%',
+                      boxSizing: 'border-box'
+                    }
+                  }}
+                />
+              </Grid>
+              
+              {/* Email */}
+              <Grid item xs={12} md={6}>
+                <TextField
+                  label="Email Address"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  fullWidth
+                  margin="normal"
+                  type="email"
+                  size="small"
+                  color="primary"
+                  InputProps={{
+                    sx: {
+                      maxWidth: '100%',
+                      boxSizing: 'border-box'
+                    }
+                  }}
+                />
+              </Grid>
+              
+              {/* Sobriety Date */}
+              <Grid item xs={12} md={6}>
+                <TextField
+                  label="Sobriety Date"
+                  value={sobrietyDate}
+                  onChange={(e) => setSobrietyDate(e.target.value)}
+                  fullWidth
+                  margin="normal"
+                  type="date"
+                  InputLabelProps={{
+                    shrink: true
+                  }}
+                  size="small"
+                  color="primary"
+                  InputProps={{
+                    sx: {
+                      maxWidth: '100%',
+                      boxSizing: 'border-box'
+                    }
+                  }}
+                />
+              </Grid>
             </Grid>
             
-            {/* Last Name */}
-            <Grid item xs={12} md={6}>
-              <TextField
-                label="Last Name"
-                value={lastName}
-                onChange={(e) => setLastName(e.target.value)}
-                fullWidth
-                margin="normal"
-                size="small"
-                color="primary"
-              />
-            </Grid>
-            
-            {/* Phone Number */}
-            <Grid item xs={12} md={6}>
-              <TextField
-                label="Phone Number"
-                value={phone}
-                onChange={handlePhoneChange}
-                fullWidth
-                margin="normal"
-                placeholder="(123) 456-7890"
-                size="small"
-                color="primary"
-              />
-            </Grid>
-            
-            {/* Email */}
-            <Grid item xs={12} md={6}>
-              <TextField
-                label="Email Address"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                fullWidth
-                margin="normal"
-                type="email"
-                size="small"
-                color="primary"
-              />
-            </Grid>
-            
-            {/* Sobriety Date */}
-            <Grid item xs={12} md={6}>
-              <TextField
-                label="Sobriety Date"
-                value={sobrietyDate}
-                onChange={(e) => setSobrietyDate(e.target.value)}
-                fullWidth
-                margin="normal"
-                type="date"
-                InputLabelProps={{
-                  shrink: true
-                }}
-                size="small"
-                color="primary"
-              />
-            </Grid>
-          </Grid>
-          
-          {/* Notes */}
-          <TextField
-            label="Notes"
-            value={notes}
-            onChange={(e) => setNotes(e.target.value)}
-            fullWidth
-            margin="normal"
-            multiline
-            rows={4}
-            placeholder="Enter any notes about this sponsee"
-            sx={{ mt: 2 }}
-            color="primary"
-          />
+            {/* Notes */}
+            <TextField
+              label="Notes"
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+              fullWidth
+              margin="normal"
+              multiline
+              rows={4}
+              placeholder="Enter any notes about this sponsee"
+              sx={{ mt: 2 }}
+              color="primary"
+              InputProps={{
+                sx: {
+                  maxWidth: '100%',
+                  boxSizing: 'border-box'
+                }
+              }}
+            />
+          </ResponsiveContainer>
         </DialogContent>
         
         <DialogActions sx={{ 
           px: 3, 
           pb: 2, 
           borderTop: `1px solid ${theme.palette.divider}`,
-          pt: 2
+          pt: 2,
+          overflowX: 'hidden',
+          display: 'flex',
+          justifyContent: 'flex-end',
+          width: '100%',
+          boxSizing: 'border-box'
         }}>
           <Button 
             onClick={handleCancel} 
