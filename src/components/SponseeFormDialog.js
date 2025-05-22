@@ -176,9 +176,19 @@ export default function SponseeFormDialog({ open, onClose, onSubmit, initialData
             autoFocus
             error={!!errors.name}
             helperText={errors.name}
-            size="small"
-            margin="dense"
-            sx={{ mb: 2 }}
+            size="medium"
+            margin="none"
+            sx={{ 
+              mb: 2,
+              '& .MuiOutlinedInput-root': { 
+                height: 56,
+                borderRadius: 2
+              },
+              '& .MuiOutlinedInput-input': {
+                fontSize: 16,
+                padding: '15px 14px'
+              }
+            }}
           />
           
           {/* Last Name */}
@@ -188,9 +198,19 @@ export default function SponseeFormDialog({ open, onClose, onSubmit, initialData
             placeholder="Last Name"
             value={lastName}
             onChange={(e) => setLastName(e.target.value)}
-            size="small"
-            margin="dense"
-            sx={{ mb: 2 }}
+            size="medium"
+            margin="none"
+            sx={{ 
+              mb: 2,
+              '& .MuiOutlinedInput-root': { 
+                height: 56,
+                borderRadius: 2
+              },
+              '& .MuiOutlinedInput-input': {
+                fontSize: 16,
+                padding: '15px 14px'
+              }
+            }}
           />
           
           {/* Phone Number */}
@@ -200,9 +220,19 @@ export default function SponseeFormDialog({ open, onClose, onSubmit, initialData
             placeholder="Phone Number"
             value={phone}
             onChange={handlePhoneChange}
-            size="small"
-            margin="dense"
-            sx={{ mb: 2 }}
+            size="medium"
+            margin="none"
+            sx={{ 
+              mb: 2,
+              '& .MuiOutlinedInput-root': { 
+                height: 56,
+                borderRadius: 2
+              },
+              '& .MuiOutlinedInput-input': {
+                fontSize: 16,
+                padding: '15px 14px'
+              }
+            }}
           />
           
           {/* Email */}
@@ -213,9 +243,19 @@ export default function SponseeFormDialog({ open, onClose, onSubmit, initialData
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            size="small"
-            margin="dense"
-            sx={{ mb: 2 }}
+            size="medium"
+            margin="none"
+            sx={{ 
+              mb: 2,
+              '& .MuiOutlinedInput-root': { 
+                height: 56,
+                borderRadius: 2
+              },
+              '& .MuiOutlinedInput-input': {
+                fontSize: 16,
+                padding: '15px 14px'
+              }
+            }}
           />
           
           {/* Sobriety Date */}
@@ -228,9 +268,19 @@ export default function SponseeFormDialog({ open, onClose, onSubmit, initialData
             type="date"
             value={sobrietyDate}
             onChange={(e) => setSobrietyDate(e.target.value)}
-            size="small"
-            margin="dense"
-            sx={{ mb: 2 }}
+            size="medium"
+            margin="none"
+            sx={{ 
+              mb: 2,
+              '& .MuiOutlinedInput-root': { 
+                height: 56,
+                borderRadius: 2
+              },
+              '& .MuiOutlinedInput-input': {
+                fontSize: 16,
+                padding: '15px 14px'
+              }
+            }}
           />
           
           {/* Notes */}
