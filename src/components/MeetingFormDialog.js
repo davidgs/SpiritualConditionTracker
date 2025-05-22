@@ -348,7 +348,7 @@ export default function MeetingFormDialog({
     <Dialog 
       open={open} 
       onClose={onClose}
-      maxWidth="xs"
+      maxWidth="sm" // Increase from xs to sm for more width
       fullWidth
       PaperProps={{
         sx: {
@@ -356,7 +356,8 @@ export default function MeetingFormDialog({
           color: darkMode ? '#d1d5db' : '#374151',
           borderRadius: 2,
           overflowX: 'hidden', // Prevent horizontal scrolling
-          m: 1 // Add margin to prevent the dialog from touching the screen edges
+          m: 1, // Add margin to prevent the dialog from touching the screen edges
+          maxWidth: { xs: 'calc(100% - 16px)', sm: 'auto' } // Ensure proper mobile sizing
         }
       }}
     >
@@ -372,7 +373,14 @@ export default function MeetingFormDialog({
         {isEdit ? 'Edit Meeting' : 'Add New Meeting'}
       </DialogTitle>
       
-      <DialogContent sx={{ py: 2 }}>
+      <DialogContent sx={{ 
+        py: 2,
+        overflowX: 'hidden', // Prevent horizontal scroll within content area
+        maxWidth: '100%', // Ensure content doesn't exceed dialog width
+        '& .MuiFormControl-root': {
+          maxWidth: '100%' // Ensure form controls don't exceed available width
+        }
+      }}>
         <Typography variant="body2" sx={{ 
           mb: 2,
           color: darkMode ? '#9ca3af' : '#4b5563'
