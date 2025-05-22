@@ -29,6 +29,8 @@ const StyledDialog = styled(Dialog)(({ theme }) => ({
     overflowX: 'hidden',
     position: 'relative',
     top: '2.5rem',
+    backgroundColor: theme.palette.background.paper,
+    color: theme.palette.text.primary,
   },
   '& .MuiDialogContent-root': {
     padding: '16px',
@@ -42,6 +44,22 @@ const StyledDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialog-container': {
     alignItems: 'flex-start',
     paddingTop: '2.5rem',
+  },
+  // Ensure form inputs are properly themed
+  '& .MuiInputBase-root': {
+    maxWidth: '100%',
+    '& fieldset': {
+      borderColor: theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.23)' : 'rgba(0, 0, 0, 0.23)',
+    },
+    '&:hover fieldset': {
+      borderColor: theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.4)' : 'rgba(0, 0, 0, 0.4)',
+    },
+    '&.Mui-focused fieldset': {
+      borderColor: theme.palette.primary.main,
+    },
+  },
+  '& .MuiFormLabel-root': {
+    color: theme.palette.text.secondary,
   }
 }));
 
@@ -376,41 +394,43 @@ export default function MeetingFormDialog({
       fullWidth
       maxWidth="sm"
     >
-      <DialogTitle sx={{ 
-        color: darkMode ? '#d1d5db' : '#374151',
-        borderBottom: `1px solid ${darkMode ? '#374151' : '#e5e7eb'}`,
+      <DialogTitle sx={(theme) => ({ 
+        color: theme.palette.text.primary,
+        borderBottom: `1px solid ${theme.palette.divider}`,
         pb: 1,
         display: 'flex',
         alignItems: 'center',
         gap: 1
-      }}>
+      })}>
         <i className="fa-regular fa-calendar-plus mr-2 text-gray-400 dark:text-gray-500"></i>
         {isEdit ? 'Edit Meeting' : 'Add New Meeting'}
       </DialogTitle>
       
-      <DialogContent sx={{ 
+      <DialogContent sx={(theme) => ({ 
         py: 2,
         overflowX: 'hidden', // Prevent horizontal scroll within content area
         maxWidth: '100%', // Ensure content doesn't exceed dialog width
+        backgroundColor: theme.palette.background.paper,
+        color: theme.palette.text.primary,
         '& .MuiFormControl-root': {
           maxWidth: '100%' // Ensure form controls don't exceed available width
         }
-      }}>
-        <Typography variant="body2" sx={{ 
+      })}>
+        <Typography variant="body2" sx={(theme) => ({ 
           mb: 2,
-          color: darkMode ? '#9ca3af' : '#4b5563'
-        }}>
+          color: theme.palette.text.secondary
+        })}>
           Add details for your regular AA meeting. Most meetings occur in the evenings, typically between 6-9 PM.
         </Typography>
         
         {error && (
           <Alert 
             severity="error" 
-            sx={{ 
+            sx={(theme) => ({ 
               mb: 2, 
-              bgcolor: darkMode ? 'rgba(220, 38, 38, 0.1)' : 'rgba(239, 68, 68, 0.1)',
-              color: darkMode ? '#fca5a5' : '#b91c1c'
-            }}
+              bgcolor: theme.palette.mode === 'dark' ? 'rgba(220, 38, 38, 0.1)' : 'rgba(239, 68, 68, 0.1)',
+              color: theme.palette.error.main
+            })}
           >
             {error}
           </Alert>
@@ -681,6 +701,6 @@ export default function MeetingFormDialog({
           Save
         </Button>
       </DialogActions>
-    </Dialog>
+    </StyledDialog>
   );
 }
