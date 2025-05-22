@@ -1,7 +1,18 @@
 import React from 'react';
 import { formatTimeByPreference } from '../utils/dateUtils';
+import { 
+  Box, 
+  Table, 
+  TableBody, 
+  TableCell, 
+  TableRow, 
+  Select, 
+  MenuItem,
+  useTheme
+} from '@mui/material';
 
 const SimpleMeetingSchedule = ({ schedule, onChange, use24HourFormat = false }) => {
+  const theme = useTheme();
   const days = [
     { key: 'sunday', label: 'Sunday' },
     { key: 'monday', label: 'Monday' },
@@ -33,60 +44,81 @@ const SimpleMeetingSchedule = ({ schedule, onChange, use24HourFormat = false }) 
   };
 
   return (
-    <div className="mb-6 w-full">
-      <div className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden w-full">
-        <table className="w-full border-collapse">
-          <tbody>
+    <Box sx={{ mb: 3, width: '100%' }}>
+      <Box sx={(theme) => ({
+        border: `1px solid ${theme.palette.divider}`,
+        borderRadius: 1,
+        overflow: 'hidden',
+        width: '100%'
+      })}>
+        <Table sx={{ width: '100%', borderCollapse: 'collapse' }}>
+          <TableBody>
             {days.map((day, index) => {
               const existingItem = schedule.find(item => item.day === day.key);
               const hasTime = !!existingItem;
               const timeValue = existingItem ? existingItem.time : '';
               
               return (
-                <tr 
+                <TableRow 
                   key={day.key} 
-                  className={`${
-                    index < days.length - 1 ? 'border-b border-gray-200 dark:border-gray-700' : ''
-                  } ${
-                    hasTime ? '' : ''
-                  }`}
+                  sx={(theme) => ({
+                    borderBottom: index < days.length - 1 ? `1px solid ${theme.palette.divider}` : 'none'
+                  })}
                 >
-                  <td className="py-2 px-4 border-r border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 font-medium w-2/5">
+                  <TableCell 
+                    sx={(theme) => ({
+                      py: 1.5, 
+                      px: 2, 
+                      borderRight: `1px solid ${theme.palette.divider}`,
+                      bgcolor: theme.palette.mode === 'dark' ? theme.palette.grey[800] : theme.palette.grey[100],
+                      color: theme.palette.text.primary,
+                      fontWeight: 500,
+                      width: '40%'
+                    })}
+                  >
                     {day.label}
-                  </td>
-                  <td className="p-2 w-3/5" style={{ paddingTop: '10px'}}>
-                    <select
-                      className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200"
+                  </TableCell>
+                  <TableCell sx={{ p: 1, pt: 1.25, width: '60%' }}>
+                    <Select
+                      fullWidth
+                      variant="outlined"
+                      size="small"
                       value={timeValue || "none"}
                       onChange={(e) => handleTimeChange(day.key, e.target.value)}
+                      sx={(theme) => ({
+                        bgcolor: theme.palette.mode === 'dark' ? theme.palette.background.default : theme.palette.background.paper,
+                        '& .MuiOutlinedInput-notchedOutline': {
+                          borderColor: theme.palette.divider
+                        }
+                      })}
                     >
-                      <option value="none">{hasTime ? "Remove" : "None"}</option>
-                      <option value="06:00">{use24HourFormat ? "06:00" : "6:00 AM"}</option>
-                      <option value="07:00">{use24HourFormat ? "07:00" : "7:00 AM"}</option>
-                      <option value="08:00">{use24HourFormat ? "08:00" : "8:00 AM"}</option>
-                      <option value="09:00">{use24HourFormat ? "09:00" : "9:00 AM"}</option>
-                      <option value="10:00">{use24HourFormat ? "10:00" : "10:00 AM"}</option>
-                      <option value="11:00">{use24HourFormat ? "11:00" : "11:00 AM"}</option>
-                      <option value="12:00">{use24HourFormat ? "12:00" : "12:00 PM"}</option>
-                      <option value="13:00">{use24HourFormat ? "13:00" : "1:00 PM"}</option>
-                      <option value="14:00">{use24HourFormat ? "14:00" : "2:00 PM"}</option>
-                      <option value="15:00">{use24HourFormat ? "15:00" : "3:00 PM"}</option>
-                      <option value="16:00">{use24HourFormat ? "16:00" : "4:00 PM"}</option>
-                      <option value="17:00">{use24HourFormat ? "17:00" : "5:00 PM"}</option>
-                      <option value="18:00">{use24HourFormat ? "18:00" : "6:00 PM"}</option>
-                      <option value="19:00">{use24HourFormat ? "19:00" : "7:00 PM"}</option>
-                      <option value="20:00">{use24HourFormat ? "20:00" : "8:00 PM"}</option>
-                      <option value="21:00">{use24HourFormat ? "21:00" : "9:00 PM"}</option>
-                      <option value="22:00">{use24HourFormat ? "22:00" : "10:00 PM"}</option>
-                    </select>
-                  </td>
-                </tr>
+                      <MenuItem value="none">{hasTime ? "Remove" : "None"}</MenuItem>
+                      <MenuItem value="06:00">{use24HourFormat ? "06:00" : "6:00 AM"}</MenuItem>
+                      <MenuItem value="07:00">{use24HourFormat ? "07:00" : "7:00 AM"}</MenuItem>
+                      <MenuItem value="08:00">{use24HourFormat ? "08:00" : "8:00 AM"}</MenuItem>
+                      <MenuItem value="09:00">{use24HourFormat ? "09:00" : "9:00 AM"}</MenuItem>
+                      <MenuItem value="10:00">{use24HourFormat ? "10:00" : "10:00 AM"}</MenuItem>
+                      <MenuItem value="11:00">{use24HourFormat ? "11:00" : "11:00 AM"}</MenuItem>
+                      <MenuItem value="12:00">{use24HourFormat ? "12:00" : "12:00 PM"}</MenuItem>
+                      <MenuItem value="13:00">{use24HourFormat ? "13:00" : "1:00 PM"}</MenuItem>
+                      <MenuItem value="14:00">{use24HourFormat ? "14:00" : "2:00 PM"}</MenuItem>
+                      <MenuItem value="15:00">{use24HourFormat ? "15:00" : "3:00 PM"}</MenuItem>
+                      <MenuItem value="16:00">{use24HourFormat ? "16:00" : "4:00 PM"}</MenuItem>
+                      <MenuItem value="17:00">{use24HourFormat ? "17:00" : "5:00 PM"}</MenuItem>
+                      <MenuItem value="18:00">{use24HourFormat ? "18:00" : "6:00 PM"}</MenuItem>
+                      <MenuItem value="19:00">{use24HourFormat ? "19:00" : "7:00 PM"}</MenuItem>
+                      <MenuItem value="20:00">{use24HourFormat ? "20:00" : "8:00 PM"}</MenuItem>
+                      <MenuItem value="21:00">{use24HourFormat ? "21:00" : "9:00 PM"}</MenuItem>
+                      <MenuItem value="22:00">{use24HourFormat ? "22:00" : "10:00 PM"}</MenuItem>
+                    </Select>
+                  </TableCell>
+                </TableRow>
               );
             })}
-          </tbody>
-        </table>
-      </div>
-    </div>
+          </TableBody>
+        </Table>
+      </Box>
+    </Box>
   );
 };
 
