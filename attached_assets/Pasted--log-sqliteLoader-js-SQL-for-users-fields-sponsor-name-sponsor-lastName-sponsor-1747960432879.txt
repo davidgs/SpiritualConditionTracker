@@ -1,0 +1,13 @@
+⚡️  [log] - [ sqliteLoader.js ] SQL for users: {"fields":["sponsor_name","sponsor_lastName","sponsor_phone","sponsor_email","sponsor_sobrietyDate","sponsor_notes","id","createdAt","updatedAt"],"values":["Joe","Flynn","","","","","user_default","2025-05-23T00:32:32.888Z","2025-05-23T00:32:32.889Z"],"collection":"users"}
+⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO users (sponsor_name, sponsor_lastName, sponsor_phone, sponsor_email, sponsor_sobrietyDate, sponsor_notes, id, createdAt, updatedAt) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+⚡️  [log] - [ sqliteLoader.js ] With values: ["Joe","Flynn","","","","","user_default","2025-05-23T00:32:32.888Z","2025-05-23T00:32:32.889Z"]
+⚡️  To Native ->  CapacitorSQLite execute 26036007
+ERROR MESSAGE:  {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: table users has no column named sponsor_name","message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: table users has no column named sponsor_name"}
+⚡️  [error] - {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: table users has no column named sponsor_name","message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: table users has no column named sponsor_name"}
+⚡️  [error] - [ sqliteLoader.js ] Error adding item to users: {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: table users has no column named sponsor_name"}
+⚡️  [error] - Database error updating user: {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: table users has no column named sponsor_name"}
+⚡️  [log] - App.js - Before rendering, spiritualFitness value: 5
+⚡️  To Native ->  CapacitorSQLite query 26036008
+ERROR MESSAGE:  {"errorMessage":"Query: Failed in selectSQL : Error: querySQL prepare failed rc: 1 message: near \"SELECT\": syntax error","message":"Query: Failed in selectSQL : Error: querySQL prepare failed rc: 1 message: near \"SELECT\": syntax error"}
+⚡️  [error] - {"errorMessage":"Query: Failed in selectSQL : Error: querySQL prepare failed rc: 1 message: near \"SELECT\": syntax error","message":"Query: Failed in selectSQL : Error: querySQL prepare failed rc: 1 message: near \"SELECT\": syntax error"}
+⚡️  [error] - [ sqliteLoader.js ] Error getting items from SELECT * FROM sponsor_contacts WHERE userId = ? ORDER BY date DESC: {"errorMessage":"Query: Failed in selectSQL : Error: querySQL prepare failed rc: 1 message: near \"SELECT\": syntax error"}

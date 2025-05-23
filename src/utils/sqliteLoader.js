@@ -93,12 +93,23 @@ async function initSQLiteDatabase() {
 async function setupTables(sqlite) {
   console.log('[ sqliteLoader.js ] Setting up database tables if they don\'t exist');
   
+  // Drop and recreate users table to ensure it has all required fields for testing
+  try {
+    await sqlite.execute({
+      database: DB_NAME,
+      statements: `DROP TABLE IF EXISTS users;`
+    });
+    console.log('[ sqliteLoader.js ] Dropped users table for fresh setup');
+  } catch (error) {
+    console.error('[ sqliteLoader.js ] Error dropping users table:', error);
+  }
+  
   // Create users table with all required fields
   await sqlite.execute({
     database: DB_NAME,
     statements: `
       CREATE TABLE IF NOT EXISTS users (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        id TEXT PRIMARY KEY,
         name TEXT,
         lastName TEXT,
         phoneNumber TEXT,
