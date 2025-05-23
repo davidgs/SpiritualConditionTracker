@@ -12,6 +12,7 @@ import {
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { formatDateForDisplay } from '../utils/dateUtils';
+import { formatPhoneNumberForInput } from '../utils/phoneUtils';
 
 export default function SponsorFormPage({ initialData, onSave, onCancel }) {
   const theme = useTheme();
@@ -41,10 +42,22 @@ export default function SponsorFormPage({ initialData, onSave, onCancel }) {
   // Handle form changes
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    
+    // Special handling for phone numbers
+    if (name === 'phone') {
+      // Format the phone number as the user types
+      const formattedPhone = formatPhoneNumberForInput(value);
+      setFormData(prev => ({
+        ...prev,
+        [name]: formattedPhone
+      }));
+    } else {
+      // Standard handling for other fields
+      setFormData(prev => ({
+        ...prev,
+        [name]: value
+      }));
+    }
   };
 
   // Handle form submission
