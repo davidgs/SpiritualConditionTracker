@@ -68,31 +68,44 @@ export async function addSponsorContact(contact) {
   try {
     const sqlite = getSQLite();
     
-    // Generate ID if not provided
-    if (!contact.id) {
-      contact.id = `contact_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    // Remove id field since it's auto-incremented by SQLite
+    const contactData = {...contact};
+    delete contactData.id;
+    
+    // Ensure date field is never null (use current date as fallback)
+    if (!contactData.date || contactData.date.trim() === '') {
+      contactData.date = new Date().toISOString();
     }
     
     // Add timestamps
-    if (!contact.createdAt) {
-      contact.createdAt = new Date().toISOString();
+    if (!contactData.createdAt) {
+      contactData.createdAt = new Date().toISOString();
     }
-    if (!contact.updatedAt) {
-      contact.updatedAt = new Date().toISOString();
+    if (!contactData.updatedAt) {
+      contactData.updatedAt = new Date().toISOString();
     }
     
-    // Build SQL statement
-    const keys = Object.keys(contact);
+    console.log('Inserting contact into database:', contactData);
+    
+    // Build SQL statement without the id field
+    const keys = Object.keys(contactData);
     const placeholders = keys.map(() => '?').join(', ');
-    const values = keys.map(key => contact[key]);
+    const values = keys.map(key => contactData[key]);
     
-    await sqlite.execute({
+    // Execute INSERT and get the last inserted ID
+    const result = await sqlite.execute({
       database: DB_NAME,
-      statements: `INSERT INTO sponsor_contacts (${keys.join(', ')}) VALUES (${placeholders})`,
+      statements: `INSERT INTO sponsor_contacts (${keys.join(', ')}) VALUES (${placeholders}); SELECT last_insert_rowid() as id;`,
       values: values
     });
     
-    return contact;
+    // Get the inserted ID from SQLite and add it to the return object
+    const insertedId = result?.changes?.lastId || null;
+    if (insertedId) {
+      contactData.id = insertedId;
+    }
+    
+    return contactData;
   } catch (error) {
     console.error('Error adding sponsor contact:', error);
     throw error;
@@ -108,28 +121,34 @@ export async function addContactDetail(detail) {
   try {
     const sqlite = getSQLite();
     
-    // Generate ID if not provided
-    if (!detail.id) {
-      detail.id = `detail_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-    }
+    // Remove id field since it's auto-incremented by SQLite
+    const detailData = {...detail};
+    delete detailData.id;
     
     // Add timestamp
-    if (!detail.createdAt) {
-      detail.createdAt = new Date().toISOString();
+    if (!detailData.createdAt) {
+      detailData.createdAt = new Date().toISOString();
     }
     
-    // Build SQL statement
-    const keys = Object.keys(detail);
+    // Build SQL statement without the id field
+    const keys = Object.keys(detailData);
     const placeholders = keys.map(() => '?').join(', ');
-    const values = keys.map(key => detail[key]);
+    const values = keys.map(key => detailData[key]);
     
-    await sqlite.execute({
+    // Execute INSERT and get the last inserted ID
+    const result = await sqlite.execute({
       database: DB_NAME,
-      statements: `INSERT INTO sponsor_contact_details (${keys.join(', ')}) VALUES (${placeholders})`,
+      statements: `INSERT INTO sponsor_contact_details (${keys.join(', ')}) VALUES (${placeholders}); SELECT last_insert_rowid() as id;`,
       values: values
     });
     
-    return detail;
+    // Get the inserted ID from SQLite and add it to the return object
+    const insertedId = result?.changes?.lastId || null;
+    if (insertedId) {
+      detailData.id = insertedId;
+    }
+    
+    return detailData;
   } catch (error) {
     console.error('Error adding contact detail:', error);
     throw error;

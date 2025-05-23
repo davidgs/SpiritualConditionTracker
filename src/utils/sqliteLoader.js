@@ -347,13 +347,13 @@ async function setupTables(sqlite) {
     console.error('[ sqliteLoader.js ] Error dropping sponsor_contacts table:', error);
   }
   
-  // Create sponsor_contacts table with INTEGER ID - removed NOT NULL constraints
+  // Create sponsor_contacts table with INTEGER ID - without NOT NULL constraints
   await sqlite.execute({
     database: DB_NAME,
     statements: `
       CREATE TABLE IF NOT EXISTS sponsor_contacts (
-        id TEXT PRIMARY KEY,
-        userId TEXT,
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        userId INTEGER,
         date TEXT,
         type TEXT,
         note TEXT,
@@ -375,20 +375,21 @@ async function setupTables(sqlite) {
     console.error('[ sqliteLoader.js ] Error dropping sponsor_contact_details table:', error);
   }
   
-  // Create sponsor_contact_details table with TEXT ID - removed NOT NULL constraints
+  // Create sponsor_contact_details table with INTEGER ID - without NOT NULL constraints
   await sqlite.execute({
     database: DB_NAME,
     statements: `
       CREATE TABLE IF NOT EXISTS sponsor_contact_details (
-        id TEXT PRIMARY KEY,
-        contactId TEXT,
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        contactId INTEGER,
         actionItem TEXT,
         completed INTEGER DEFAULT 0,
         notes TEXT,
         dueDate TEXT,
         type TEXT,
         text TEXT,
-        createdAt TEXT
+        createdAt TEXT,
+        FOREIGN KEY (contactId) REFERENCES sponsor_contacts (id)
       )
     `
   });
