@@ -59,23 +59,39 @@ export default function Sponsor({ user, onUpdate }) {
     try {
       if (window.db && window.dbInitialized) {
         // Query all sponsor contacts for current user
-        const contactsResult = await window.db.query(
-          'SELECT * FROM sponsor_contacts WHERE userId = ? ORDER BY date DESC',
-          [user.id]
-        );
+        // Log attempt with exact userId for debugging
+        console.log('Attempting to load sponsor contacts for userId:', user.id);
         
-        setContacts(contactsResult || []);
+        // Use direct sqlite plugin call to avoid our custom wrapper
+        const sqlite = window.Capacitor.Plugins.CapacitorSQLite;
+        const contactsResult = await sqlite.query({
+          database: 'spiritualTracker.db',
+          statement: 'SELECT * FROM sponsor_contacts WHERE userId = ? ORDER BY date DESC',
+          values: [user.id]
+        });
+        
+        // Handle the direct result format
+        const results = contactsResult.values || [];
+        console.log('Got sponsor contacts results:', results);
+        
+        setContacts(results);
         
         // Load details for each contact
         const detailsMap = {};
         
-        for (const contact of contactsResult) {
-          const details = await window.db.query(
-            'SELECT * FROM sponsor_contact_details WHERE contactId = ?',
-            [contact.id]
-          );
+        for (const contact of results) {
+          console.log('Loading details for contact:', contact);
           
-          detailsMap[contact.id] = details || [];
+          const detailsResult = await sqlite.query({
+            database: 'spiritualTracker.db',
+            statement: 'SELECT * FROM sponsor_contact_details WHERE contactId = ?',
+            values: [contact.id]
+          });
+          
+          const contactDetails = detailsResult.values || [];
+          console.log('Got contact details:', contactDetails);
+          
+          detailsMap[contact.id] = contactDetails;
         }
         
         setContactDetails(detailsMap);
