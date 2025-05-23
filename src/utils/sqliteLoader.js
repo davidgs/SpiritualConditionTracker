@@ -93,9 +93,6 @@ async function initSQLiteDatabase() {
 async function setupTables(sqlite) {
   console.log('[ sqliteLoader.js ] Setting up database tables if they don\'t exist');
   
-  // First run migrations for existing tables
-  await runMigrations(sqlite);
-  
   // Create users table with all required fields
   await sqlite.execute({
     database: DB_NAME,
@@ -362,41 +359,7 @@ async function setupTables(sqlite) {
   console.log('[ sqliteLoader.js ] Sponsor contact details table created');
 }
 
-/**
- * Run migrations to update database structure for existing installations
- * @param {Object} sqlite - SQLite plugin instance
- */
-async function runMigrations(sqlite) {
-  console.log('[ sqliteLoader.js ] Running database migrations if needed');
-  
-  try {
-    // Add sponsor fields to users table if they don't exist
-    // SQLite doesn't have a direct way to check if columns exist, so we need to use a workaround
-    // We'll attempt to add each column, and catch the error if the column already exists
-    
-    const sponsorColumns = [
-      "sponsor_name", "sponsor_lastName", "sponsor_phone", 
-      "sponsor_email", "sponsor_sobrietyDate", "sponsor_notes"
-    ];
-    
-    for (const column of sponsorColumns) {
-      try {
-        await sqlite.execute({
-          database: DB_NAME,
-          statements: `ALTER TABLE users ADD COLUMN ${column} TEXT;`
-        });
-        console.log(`[ sqliteLoader.js ] Added column ${column} to users table`);
-      } catch (error) {
-        // Column may already exist, that's okay
-        console.log(`[ sqliteLoader.js ] Column ${column} may already exist in users table`);
-      }
-    }
-    
-    console.log('[ sqliteLoader.js ] Database migrations completed successfully');
-  } catch (error) {
-    console.error('[ sqliteLoader.js ] Error running migrations:', error);
-  }
-}
+// No migrations in testing phase
 
 /**
  * Set up global database object
