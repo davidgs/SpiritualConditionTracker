@@ -149,6 +149,8 @@ export default function SponsorFormPage({ initialData, onSave, onCancel }) {
               value={formData.phone || ''}
               onChange={handlePhoneChange}
               defaultCountry="US"
+              forceCallingCode
+              continents={['EU', 'OC', 'NA']}
               fullWidth
               sx={{ 
                 '& .MuiInputBase-root': { 
