@@ -23,13 +23,11 @@ export default function SponsorContactTodo({ todos = [], onAddTodo, onToggleTodo
   const [showInput, setShowInput] = useState(false);
   const [internalTodos, setInternalTodos] = useState([]);
   
-  // Keep internal state in sync with incoming props
+  // Initialize internal state only once on mount
   useEffect(() => {
-    console.log('SponsorContactTodo received todos:', todos);
-    if (todos && todos.length > 0) {
-      setInternalTodos([...todos]);
-    }
-  }, [todos]);
+    setInternalTodos([...todos]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleAddTodo = () => {
     if (newTodo.trim()) {
