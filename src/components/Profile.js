@@ -6,6 +6,7 @@ import PopoverColorPicker from './PopoverColorPicker';
 import PopoverThemeDisplay from './PopoverThemeDisplay';
 import { useAppTheme } from '../contexts/MuiThemeProvider';
 import { Capacitor } from '@capacitor/core';
+import { formatPhoneNumber, formatPhoneNumberForInput } from '../utils/phoneUtils';
 import { 
   Switch, 
   FormControlLabel, 
@@ -184,26 +185,9 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
   const [shareLastName, setShareLastName] = useState(user?.privacySettings?.shareLastName !== false);
   const [use24HourFormat, setUse24HourFormat] = useState(user?.preferences?.use24HourFormat || false);
   
-  // Format phone number as (xxx) xxx-xxxx
-  const formatPhoneNumber = (value) => {
-    if (!value) return value;
-    
-    // Remove all non-numeric characters
-    const phoneNumber = value.replace(/[^\d]/g, '');
-    
-    // Format based on length
-    if (phoneNumber.length < 4) {
-      return phoneNumber;
-    } else if (phoneNumber.length < 7) {
-      return `(${phoneNumber.slice(0, 3)}) ${phoneNumber.slice(3)}`;
-    } else {
-      return `(${phoneNumber.slice(0, 3)}) ${phoneNumber.slice(3, 6)}-${phoneNumber.slice(6, 10)}`;
-    }
-  };
-  
   // Handle phone number input
   const handlePhoneChange = (e) => {
-    const formattedNumber = formatPhoneNumber(e.target.value);
+    const formattedNumber = formatPhoneNumberForInput(e.target.value);
     setPhoneNumber(formattedNumber);
   };
   

@@ -5,7 +5,8 @@ import {
   Box,  
   IconButton,
   Divider,
-  Button
+  Button,
+  Link
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 // Using page-based navigation components
@@ -14,6 +15,7 @@ import SponsorContactDetailsPage from './SponsorContactDetailsPage';
 import SponsorContactFormPage from './SponsorContactFormPage';
 import SponsorFormPage from './SponsorFormPage';
 import { formatDateForDisplay } from '../utils/dateUtils';
+import { formatPhoneNumber, createPhoneUrl } from '../utils/phoneUtils';
 import { v4 as uuidv4 } from 'uuid';
 // Import specialized sponsor database functions
 import sponsorDB from '../utils/sponsor-database';
@@ -388,7 +390,18 @@ export default function Sponsor({ user, onUpdate }) {
                             className="fa-solid fa-phone text-sm" 
                             style={{ color: theme.palette.text.secondary }}
                           ></i>
-                          {sponsor.phone}
+                          <Link 
+                            href={createPhoneUrl(sponsor.phone)}
+                            sx={{ 
+                              color: theme.palette.primary.main,
+                              textDecoration: 'none',
+                              '&:hover': {
+                                textDecoration: 'underline'
+                              }
+                            }}
+                          >
+                            {formatPhoneNumber(sponsor.phone)}
+                          </Link>
                         </Typography>
                       )}
                       
@@ -405,7 +418,18 @@ export default function Sponsor({ user, onUpdate }) {
                             className="fa-solid fa-envelope text-sm" 
                             style={{ color: theme.palette.text.secondary }}
                           ></i>
-                          {sponsor.email}
+                          <Link 
+                            href={`mailto:${sponsor.email}`}
+                            sx={{ 
+                              color: theme.palette.primary.main,
+                              textDecoration: 'none',
+                              '&:hover': {
+                                textDecoration: 'underline'
+                              }
+                            }}
+                          >
+                            {sponsor.email}
+                          </Link>
                         </Typography>
                       )}
                       

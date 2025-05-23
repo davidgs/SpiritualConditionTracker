@@ -10,6 +10,7 @@ import {
   Box
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
+import { formatPhoneNumberForInput } from '../utils/phoneUtils';
 
 export default function SponseeFormDialog({ open, onClose, onSubmit, initialData }) {
   const theme = useTheme();
@@ -82,7 +83,7 @@ export default function SponseeFormDialog({ open, onClose, onSubmit, initialData
   
   // Handle phone number input
   const handlePhoneChange = (e) => {
-    const formattedNumber = formatPhoneNumber(e.target.value);
+    const formattedNumber = formatPhoneNumberForInput(e.target.value);
     setPhone(formattedNumber);
   };
   
