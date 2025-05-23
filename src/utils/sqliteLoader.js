@@ -796,13 +796,27 @@ function setupGlobalDB(sqlite) {
         console.log(`[ sqliteLoader.js ] Executing custom SQL: ${sql}`);
         console.log(`[ sqliteLoader.js ] With values:`, values);
         
-        const result = await sqlite.query({
-          database: DB_NAME,
-          statement: sql,
-          values: values
-        });
-        
-        return result.values || [];
+        // Check if this is a SELECT query or a modification query
+        const trimmedSql = sql.trim().toUpperCase();
+        if (trimmedSql.startsWith('SELECT')) {
+          // For SELECT statements, use query
+          const result = await sqlite.query({
+            database: DB_NAME,
+            statement: sql,
+            values: values
+          });
+          
+          return result.values || [];
+        } else {
+          // For INSERT, UPDATE, DELETE statements, use execute
+          const result = await sqlite.execute({
+            database: DB_NAME,
+            statements: sql,
+            values: values
+          });
+          
+          return result;
+        }
       } catch (error) {
         console.error(`[ sqliteLoader.js ] Error executing SQL ${sql}:`, error);
         return [];
