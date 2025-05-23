@@ -109,7 +109,7 @@ async function setupTables(sqlite) {
     database: DB_NAME,
     statements: `
       CREATE TABLE IF NOT EXISTS users (
-        id TEXT PRIMARY KEY,
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT,
         lastName TEXT,
         phoneNumber TEXT,
@@ -348,7 +348,7 @@ async function setupTables(sqlite) {
     statements: `
       CREATE TABLE IF NOT EXISTS sponsor_contacts (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        userId TEXT,
+        userId INTEGER,
         date TEXT NOT NULL,
         type TEXT NOT NULL,
         note TEXT,
