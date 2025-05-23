@@ -116,24 +116,24 @@ class CapacitorSQLiteDB {
       )
     `);
     
-    // Sponsor contacts table
+    // Sponsor contacts table - without NOT NULL constraints
     await this.execute(`
       CREATE TABLE IF NOT EXISTS sponsor_contacts (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        userId TEXT NOT NULL,
-        date TEXT NOT NULL,
-        type TEXT NOT NULL,
+        userId TEXT,
+        date TEXT,
+        type TEXT,
         note TEXT,
         createdAt TEXT,
         updatedAt TEXT
       )
     `);
     
-    // Sponsor contact details table
+    // Sponsor contact details table - without NOT NULL constraints
     await this.execute(`
       CREATE TABLE IF NOT EXISTS sponsor_contact_details (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        contactId INTEGER NOT NULL,
+        contactId INTEGER,
         actionItem TEXT,
         completed INTEGER DEFAULT 0,
         notes TEXT,

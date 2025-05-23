@@ -105,24 +105,24 @@ async function createTables() {
     )
   `);
   
-  // Create sponsor_contacts table
+  // Create sponsor_contacts table - without NOT NULL constraints
   await execute(`
     CREATE TABLE IF NOT EXISTS sponsor_contacts (
-      id TEXT PRIMARY KEY,
-      userId TEXT NOT NULL,
-      date TEXT NOT NULL,
-      type TEXT NOT NULL,
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      userId TEXT,
+      date TEXT,
+      type TEXT,
       note TEXT,
       createdAt TEXT,
       updatedAt TEXT
     )
   `);
   
-  // Create sponsor_contact_details table
+  // Create sponsor_contact_details table - without NOT NULL constraints
   await execute(`
     CREATE TABLE IF NOT EXISTS sponsor_contact_details (
-      id TEXT PRIMARY KEY,
-      contactId TEXT NOT NULL,
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      contactId INTEGER,
       actionItem TEXT,
       completed INTEGER DEFAULT 0,
       notes TEXT,

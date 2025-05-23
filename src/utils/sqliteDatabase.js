@@ -80,11 +80,11 @@ async function createTables() {
         )
       `);
       
-      // Activities table
+      // Activities table - without NOT NULL constraints
       tx.executeSql(`
         CREATE TABLE IF NOT EXISTS activities (
           id TEXT PRIMARY KEY,
-          type TEXT NOT NULL,
+          type TEXT,
           duration INTEGER,
           date TEXT,
           notes TEXT,
@@ -94,11 +94,11 @@ async function createTables() {
         )
       `);
       
-      // Meetings table
+      // Meetings table - without NOT NULL constraints
       tx.executeSql(`
         CREATE TABLE IF NOT EXISTS meetings (
           id TEXT PRIMARY KEY,
-          name TEXT NOT NULL,
+          name TEXT,
           days TEXT,
           time TEXT,
           schedule TEXT,
