@@ -136,8 +136,8 @@ export default function Sponsor({ user, onUpdate }) {
     setSponsor(null);
   };
   
-  // Add a new sponsor contact
-  const handleAddContact = async (contactData) => {
+  // Add a new sponsor contact with optional Todo items
+  const handleAddContact = async (contactData, todoItems = []) => {
     try {
       console.log('Adding new contact with data:', contactData);
       
@@ -153,8 +153,24 @@ export default function Sponsor({ user, onUpdate }) {
       console.log('Inserting contact into database:', contact);
       await sponsorDB.addSponsorContact(contact);
       
+      // Add any associated Todo items
+      if (todoItems && todoItems.length > 0) {
+        console.log('Adding Todo items:', todoItems);
+        for (const todoItem of todoItems) {
+          const todoDetail = {
+            ...todoItem,
+            contactId: contact.id,
+            createdAt: new Date().toISOString()
+          };
+          await sponsorDB.addContactDetail(todoDetail);
+        }
+      }
+      
       // Refresh contacts from database
       await loadSponsorContacts();
+      
+      // Return to main view after adding
+      handleBackToMain();
     } catch (error) {
       console.error('Error adding sponsor contact:', error);
     }

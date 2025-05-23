@@ -9,12 +9,14 @@ import {
   Select,
   MenuItem,
   IconButton,
-  Paper
+  Paper,
+  Divider
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { v4 as uuidv4 } from 'uuid';
+import SponsorContactTodo from './SponsorContactTodo';
 
-export default function SponsorContactFormPage({ userId, onSave, onCancel, initialData }) {
+export default function SponsorContactFormPage({ userId, onSave, onCancel, initialData, details = [] }) {
   const theme = useTheme();
   
   // Form state
@@ -23,6 +25,9 @@ export default function SponsorContactFormPage({ userId, onSave, onCancel, initi
     date: new Date().toISOString().split('T')[0], // Default to today's date
     note: ''
   });
+  
+  // State for todo items
+  const [todos, setTodos] = useState([]);
   
   // Update form state when initial data changes
   useEffect(() => {
@@ -35,6 +40,12 @@ export default function SponsorContactFormPage({ userId, onSave, onCancel, initi
           new Date().toISOString().split('T')[0]
       };
       setContactData(formattedData);
+      
+      // Load associated todo items if any
+      const todoItems = details.filter(item => item.type === 'todo');
+      if (todoItems.length > 0) {
+        setTodos(todoItems);
+      }
     } else {
       // Reset to defaults
       setContactData({
@@ -42,8 +53,9 @@ export default function SponsorContactFormPage({ userId, onSave, onCancel, initi
         date: new Date().toISOString().split('T')[0],
         note: ''
       });
+      setTodos([]);
     }
-  }, [initialData]);
+  }, [initialData, details]);
   
   // Handle field changes
   const handleChange = (e) => {
@@ -54,6 +66,42 @@ export default function SponsorContactFormPage({ userId, onSave, onCancel, initi
     }));
   };
   
+  // Todo handling functions
+  // Add new todo item
+  const handleAddTodo = (todoItem) => {
+    const newTodo = {
+      ...todoItem,
+      contactId: initialData?.id || 'temp-' + uuidv4(),
+      type: 'todo',
+      completed: todoItem.completed ? 1 : 0  // Convert boolean to integer for SQLite
+    };
+    
+    // Add to state
+    setTodos(prev => [...prev, newTodo]);
+  };
+  
+  // Toggle todo completion
+  const handleToggleTodo = (todoId) => {
+    const updatedTodos = todos.map(todo => {
+      if (todo.id === todoId) {
+        return {
+          ...todo,
+          completed: todo.completed ? 0 : 1  // Toggle between 0 and 1
+        };
+      }
+      return todo;
+    });
+    
+    setTodos(updatedTodos);
+  };
+  
+  // Delete todo item
+  const handleDeleteTodo = (todoId) => {
+    // Filter out the deleted todo
+    const updatedTodos = todos.filter(todo => todo.id !== todoId);
+    setTodos(updatedTodos);
+  };
+  
   // Handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -62,16 +110,25 @@ export default function SponsorContactFormPage({ userId, onSave, onCancel, initi
     const date = new Date(contactData.date);
     const isoDate = date.toISOString();
     
+    // Generate contact ID if this is a new contact
+    const contactId = initialData?.id || uuidv4();
+    
     // Create new contact data with ID and userId
     const newContact = {
       ...contactData,
-      id: initialData?.id || uuidv4(),
+      id: contactId,
       userId: userId,
       date: isoDate
     };
     
-    // Submit with proper date format
-    onSave(newContact);
+    // Update todo items with the correct contactId
+    const updatedTodos = todos.map(todo => ({
+      ...todo,
+      contactId: contactId
+    }));
+    
+    // Submit with proper date format and todos
+    onSave(newContact, updatedTodos);
   };
   
   return (
@@ -178,12 +235,22 @@ export default function SponsorContactFormPage({ userId, onSave, onCancel, initi
               }}
             />
             
+            {/* Todo Items Section */}
+            <Box sx={{ mt: 3, mb: 3 }}>
+              <SponsorContactTodo 
+                todos={todos} 
+                onAddTodo={handleAddTodo}
+                onToggleTodo={handleToggleTodo}
+                onDeleteTodo={handleDeleteTodo}
+              />
+            </Box>
+            
             {/* Form Actions */}
             <Box sx={{ 
               display: 'flex', 
               justifyContent: 'flex-end',
               gap: 2,
-              mt: 1
+              mt: 3
             }}>
               <Button 
                 onClick={onCancel}
