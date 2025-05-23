@@ -68,41 +68,41 @@ export async function addSponsorContact(contact) {
   try {
     const sqlite = getSQLite();
     
-    // Remove id field since it's auto-incremented by SQLite
-    const contactData = {...contact};
-    delete contactData.id;
-    
-    // Ensure date field is never null (use current date as fallback)
-    if (!contactData.date || contactData.date.trim() === '') {
-      contactData.date = new Date().toISOString();
-    }
-    
-    // Add timestamps
-    if (!contactData.createdAt) {
-      contactData.createdAt = new Date().toISOString();
-    }
-    if (!contactData.updatedAt) {
-      contactData.updatedAt = new Date().toISOString();
-    }
+    // Create a clean object with valid fields
+    const contactData = {
+      userId: contact.userId || 'user_default',
+      type: contact.type || 'general',
+      note: contact.note || '',
+      // Always ensure date is a valid value (critical for database operations)
+      date: contact.date ? new Date(contact.date).toISOString() : new Date().toISOString(),
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
     
     console.log('Inserting contact into database:', contactData);
     
-    // Build SQL statement without the id field
+    // Build SQL statement with pre-defined fields to avoid accidentally including the ID
     const keys = Object.keys(contactData);
     const placeholders = keys.map(() => '?').join(', ');
     const values = keys.map(key => contactData[key]);
     
-    // Execute INSERT and get the last inserted ID
-    const result = await sqlite.execute({
+    // Execute a simple INSERT without trying to get the last ID in the same statement
+    await sqlite.execute({
       database: DB_NAME,
-      statements: `INSERT INTO sponsor_contacts (${keys.join(', ')}) VALUES (${placeholders}); SELECT last_insert_rowid() as id;`,
+      statements: `INSERT INTO sponsor_contacts (${keys.join(', ')}) VALUES (${placeholders})`,
       values: values
     });
     
-    // Get the inserted ID from SQLite and add it to the return object
-    const insertedId = result?.changes?.lastId || null;
-    if (insertedId) {
-      contactData.id = insertedId;
+    // Get the ID in a separate query for compatibility
+    const lastIdResult = await sqlite.query({
+      database: DB_NAME,
+      statement: 'SELECT last_insert_rowid() as id',
+      values: []
+    });
+    
+    // Apply the ID if available
+    if (lastIdResult?.values?.length > 0) {
+      contactData.id = lastIdResult.values[0].id;
     }
     
     return contactData;
@@ -121,31 +121,40 @@ export async function addContactDetail(detail) {
   try {
     const sqlite = getSQLite();
     
-    // Remove id field since it's auto-incremented by SQLite
-    const detailData = {...detail};
-    delete detailData.id;
+    // Create a clean object with valid fields
+    const detailData = {
+      contactId: detail.contactId,
+      actionItem: detail.actionItem || '',
+      completed: detail.completed || 0,
+      notes: detail.notes || '',
+      dueDate: detail.dueDate || null,
+      type: detail.type || 'todo',
+      text: detail.text || '',
+      createdAt: new Date().toISOString()
+    };
     
-    // Add timestamp
-    if (!detailData.createdAt) {
-      detailData.createdAt = new Date().toISOString();
-    }
-    
-    // Build SQL statement without the id field
+    // Build SQL statement with pre-defined fields only
     const keys = Object.keys(detailData);
     const placeholders = keys.map(() => '?').join(', ');
     const values = keys.map(key => detailData[key]);
     
-    // Execute INSERT and get the last inserted ID
-    const result = await sqlite.execute({
+    // Execute a simple INSERT
+    await sqlite.execute({
       database: DB_NAME,
-      statements: `INSERT INTO sponsor_contact_details (${keys.join(', ')}) VALUES (${placeholders}); SELECT last_insert_rowid() as id;`,
+      statements: `INSERT INTO sponsor_contact_details (${keys.join(', ')}) VALUES (${placeholders})`,
       values: values
     });
     
-    // Get the inserted ID from SQLite and add it to the return object
-    const insertedId = result?.changes?.lastId || null;
-    if (insertedId) {
-      detailData.id = insertedId;
+    // Get the ID in a separate query for compatibility
+    const lastIdResult = await sqlite.query({
+      database: DB_NAME,
+      statement: 'SELECT last_insert_rowid() as id',
+      values: []
+    });
+    
+    // Apply the ID if available
+    if (lastIdResult?.values?.length > 0) {
+      detailData.id = lastIdResult.values[0].id;
     }
     
     return detailData;
