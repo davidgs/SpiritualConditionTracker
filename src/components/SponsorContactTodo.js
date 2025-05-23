@@ -53,19 +53,27 @@ export default function SponsorContactTodo({ todos = [], onAddTodo, onToggleTodo
         borderColor: 'divider'
       }}
     >
-      <Typography 
-        variant="h6" 
-        gutterBottom
+      <Box 
         sx={{ 
-          fontWeight: 'bold',
-          color: theme.palette.text.primary,
-          display: 'flex',
-          alignItems: 'center'
+          display: 'flex', 
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          mb: 1
         }}
       >
-        <i className="fa-solid fa-list-check" style={{ marginRight: '10px' }}></i>
-        Action Items
-      </Typography>
+        <Typography 
+          variant="h6" 
+          sx={{ 
+            fontWeight: 'bold',
+            color: theme.palette.text.primary,
+            display: 'flex',
+            alignItems: 'center'
+          }}
+        >
+          <i className="fa-solid fa-list-check" style={{ marginRight: '10px' }}></i>
+          Todo Items
+        </Typography>
+      </Box>
 
       <Divider sx={{ mb: 2 }} />
 
