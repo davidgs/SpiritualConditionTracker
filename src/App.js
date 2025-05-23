@@ -11,6 +11,8 @@ import MuiThemeProvider, { useAppTheme } from './contexts/MuiThemeProvider';
 import ThemeBackground from './components/ThemeBackground';
 import { DEFAULT_SPIRITUAL_FITNESS_SCORE } from './utils/constants';
 import { Box, Paper } from '@mui/material';
+// Import fixed SQLite implementation
+import fixedSQLite from './utils/fixed-sqlite';
 
 // Main App Component
 function App() {
@@ -41,28 +43,30 @@ function App() {
     setIsLoading(true);
     
     try {
-      // Import the database operations - SQLite for native iOS/Android via Capacitor
-      const initSQLiteDatabase = (await import('./utils/sqliteLoader')).default;
-      
-      console.log("[ App.js ] Initializing SQLite database for native app with Capacitor...");
+      console.log("Initializing database with fixed SQLite implementation...");
       
       // Initialize the SQLite database with detailed error reporting
       try {
-        // Only proceed with data loading after SQLite is fully initialized
-        await initSQLiteDatabase();
-        console.log("[ App.js ] SQLite database initialized successfully");
+        // Initialize using our fixed SQLite implementation
+        const success = await fixedSQLite.initDatabase();
         
-        // Mark database as initialized to prevent premature data access
-        setDbInitialized(true);
-        
-        // Share initialization status globally so other components can check it
-        window.dbInitialized = true;
-        
-        // Now load the data
-        await loadData();
-        
-        // Calculate spiritual fitness after database is ready and data is loaded
-        await calculateSpiritualFitness();
+        if (success) {
+          console.log("SQLite database initialized successfully");
+          
+          // Mark database as initialized to prevent premature data access
+          setDbInitialized(true);
+          
+          // Share initialization status globally so other components can check it
+          window.dbInitialized = true;
+          
+          // Now load the data
+          await loadData();
+          
+          // Calculate spiritual fitness after database is ready and data is loaded
+          await calculateSpiritualFitness();
+        } else {
+          throw new Error("Database initialization failed");
+        }
       } catch (error) {
         // Detailed error logging for iOS-specific diagnosis
         console.error("[ App.js ] SQLite initialization error:", error);

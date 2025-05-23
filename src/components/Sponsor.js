@@ -15,6 +15,8 @@ import SponsorContactFormPage from './SponsorContactFormPage';
 import SponsorFormPage from './SponsorFormPage';
 import { formatDateForDisplay } from '../utils/dateUtils';
 import { v4 as uuidv4 } from 'uuid';
+// Import specialized sponsor database functions
+import sponsorDB from '../utils/sponsor-database';
 
 export default function Sponsor({ user, onUpdate }) {
   const theme = useTheme();
@@ -57,45 +59,26 @@ export default function Sponsor({ user, onUpdate }) {
   // Load sponsor contacts from database
   const loadSponsorContacts = async () => {
     try {
-      if (window.db && window.dbInitialized) {
-        // Query all sponsor contacts for current user
-        // Log attempt with exact userId for debugging
-        console.log('Attempting to load sponsor contacts for userId:', user.id);
+      console.log('Loading sponsor contacts for userId:', user.id);
+      
+      // Use our specialized sponsor database module
+      const contacts = await sponsorDB.getSponsorContacts(user.id);
+      console.log('Found sponsor contacts:', contacts);
+      setContacts(contacts);
+      
+      // Load details for each contact
+      const detailsMap = {};
+      
+      for (const contact of contacts) {
+        console.log('Loading details for contact ID:', contact.id);
         
-        // Use direct sqlite plugin call to avoid our custom wrapper
-        const sqlite = window.Capacitor.Plugins.CapacitorSQLite;
-        const contactsResult = await sqlite.query({
-          database: 'spiritualTracker.db',
-          statement: 'SELECT * FROM sponsor_contacts WHERE userId = ? ORDER BY date DESC',
-          values: [user.id]
-        });
-        
-        // Handle the direct result format
-        const results = contactsResult.values || [];
-        console.log('Got sponsor contacts results:', results);
-        
-        setContacts(results);
-        
-        // Load details for each contact
-        const detailsMap = {};
-        
-        for (const contact of results) {
-          console.log('Loading details for contact:', contact);
-          
-          const detailsResult = await sqlite.query({
-            database: 'spiritualTracker.db',
-            statement: 'SELECT * FROM sponsor_contact_details WHERE contactId = ?',
-            values: [contact.id]
-          });
-          
-          const contactDetails = detailsResult.values || [];
-          console.log('Got contact details:', contactDetails);
-          
-          detailsMap[contact.id] = contactDetails;
-        }
-        
-        setContactDetails(detailsMap);
+        const details = await sponsorDB.getContactDetails(contact.id);
+        console.log('Found contact details:', details);
+        detailsMap[contact.id] = details;
       }
+      
+      setContactDetails(detailsMap);
+      
     } catch (error) {
       console.error('Error loading sponsor contacts:', error);
     }
@@ -154,13 +137,22 @@ export default function Sponsor({ user, onUpdate }) {
   // Add a new sponsor contact
   const handleAddContact = async (contactData) => {
     try {
-      if (window.db && window.dbInitialized) {
-        // Insert contact into database
-        await window.db.insert('sponsor_contacts', contactData);
-        
-        // Refresh contacts from database
-        await loadSponsorContacts();
-      }
+      console.log('Adding new contact with data:', contactData);
+      
+      // Prepare data for insertion
+      const contact = {
+        ...contactData,
+        userId: user.id,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
+      
+      // Insert using our specialized sponsor database module
+      console.log('Inserting contact into database:', contact);
+      await sponsorDB.addSponsorContact(contact);
+      
+      // Refresh contacts from database
+      await loadSponsorContacts();
     } catch (error) {
       console.error('Error adding sponsor contact:', error);
     }
@@ -187,24 +179,27 @@ export default function Sponsor({ user, onUpdate }) {
   // Save contact detail (action item)
   const handleSaveContactDetail = async (detail) => {
     try {
-      if (window.db && window.dbInitialized) {
-        // Check if detail already exists
-        const existingDetails = await window.db.query(
-          'SELECT * FROM sponsor_contact_details WHERE id = ?',
-          [detail.id]
-        );
+      console.log('Saving contact detail:', detail);
+      
+      // We need the detail ID for existing records
+      if (detail.id) {
+        // Update existing detail
+        console.log('Updating existing detail');
+        await sponsorDB.updateContactDetail(detail);
+      } else {
+        // Generate data for new detail
+        const newDetail = {
+          ...detail,
+          contactId: detail.contactId,
+          createdAt: new Date().toISOString()
+        };
         
-        if (existingDetails && existingDetails.length > 0) {
-          // Update existing detail
-          await window.db.update('sponsor_contact_details', detail.id, detail);
-        } else {
-          // Insert new detail
-          await window.db.insert('sponsor_contact_details', detail);
-        }
-        
-        // Refresh details from database
-        await loadSponsorContacts();
+        console.log('Inserting new detail:', newDetail);
+        await sponsorDB.addContactDetail(newDetail);
       }
+      
+      // Refresh details from database
+      await loadSponsorContacts();
     } catch (error) {
       console.error('Error saving contact detail:', error);
     }
@@ -213,25 +208,16 @@ export default function Sponsor({ user, onUpdate }) {
   // Delete contact and its details
   const handleDeleteContact = async (contactId) => {
     try {
-      if (window.db && window.dbInitialized) {
-        // Delete contact details first (foreign key constraint)
-        await window.db.execute(
-          'DELETE FROM sponsor_contact_details WHERE contactId = ?',
-          [contactId]
-        );
-        
-        // Delete contact
-        await window.db.execute(
-          'DELETE FROM sponsor_contacts WHERE id = ?',
-          [contactId]
-        );
-        
-        // Go back to contacts list
-        handleBackToContacts();
-        
-        // Refresh contacts from database
-        await loadSponsorContacts();
-      }
+      console.log('Deleting contact with ID:', contactId);
+      
+      // Use our specialized database module
+      await sponsorDB.deleteSponsorContact(contactId);
+      
+      // Go back to main view
+      handleBackToMain();
+      
+      // Refresh contacts from database
+      await loadSponsorContacts();
     } catch (error) {
       console.error('Error deleting contact:', error);
     }
@@ -240,22 +226,21 @@ export default function Sponsor({ user, onUpdate }) {
   // Delete a specific contact detail (for todos and action items)
   const handleDeleteContactDetail = async (detailId, contactId) => {
     try {
-      if (window.db && window.dbInitialized) {
-        // Delete the detail from database
-        await window.db.execute(
-          'DELETE FROM sponsor_contact_details WHERE id = ?',
-          [detailId]
-        );
-        
-        // Update state to remove the detail
-        const existingDetails = contactDetails[contactId] || [];
-        const updatedDetails = existingDetails.filter(detail => detail.id !== detailId);
-        
-        setContactDetails(prev => ({
-          ...prev,
-          [contactId]: updatedDetails
-        }));
-      }
+      console.log('Deleting contact detail with ID:', detailId);
+      
+      // Use specialized sponsor database module
+      await sponsorDB.deleteContactDetail(detailId);
+      
+      // Update state to remove the detail
+      const existingDetails = contactDetails[contactId] || [];
+      const updatedDetails = existingDetails.filter(detail => detail.id !== detailId);
+      
+      setContactDetails(prev => ({
+        ...prev,
+        [contactId]: updatedDetails
+      }));
+      
+      console.log('Contact detail deleted successfully');
     } catch (error) {
       console.error('Error deleting contact detail:', error);
     }
