@@ -21,12 +21,10 @@ export default function SponsorContactTodo({ todos = [], onAddTodo, onToggleTodo
   const theme = useTheme();
   const [newTodo, setNewTodo] = useState('');
   const [showInput, setShowInput] = useState(false);
-  // Local state for immediate feedback before database operations complete
-  const [localTodos, setLocalTodos] = useState([...todos]);
   
-  // Update localTodos when props todos change
+  // Debugging - log incoming todos
   useEffect(() => {
-    setLocalTodos([...todos]);
+    console.log('SponsorContactTodo received todos:', todos);
   }, [todos]);
 
   const handleAddTodo = () => {
@@ -39,11 +37,15 @@ export default function SponsorContactTodo({ todos = [], onAddTodo, onToggleTodo
         createdAt: new Date().toISOString(),
       };
       
+      // Pass to parent component - this should update parent state
       onAddTodo(todoItem);
-      setNewTodo(''); // Clear input after adding
       
-      // For immediate feedback, add the item to the local todo list
-      setLocalTodos(prev => [...prev, todoItem]);
+      // Clear input after adding
+      setNewTodo('');
+      // Automatically close input after adding (optional)
+      // setShowInput(false);
+      
+      console.log('Added todo item:', todoItem);
     }
   };
 
@@ -158,9 +160,9 @@ export default function SponsorContactTodo({ todos = [], onAddTodo, onToggleTodo
       </Collapse>
 
       {/* To-do list */}
-      {localTodos.length > 0 ? (
+      {todos && todos.length > 0 ? (
         <List sx={{ width: '100%' }}>
-          {localTodos.map((todo) => (
+          {todos.map((todo) => (
             <ListItem
               key={todo.id}
               disableGutters
@@ -168,11 +170,7 @@ export default function SponsorContactTodo({ todos = [], onAddTodo, onToggleTodo
                 <IconButton 
                   edge="end" 
                   aria-label="delete" 
-                  onClick={() => {
-                    onDeleteTodo(todo.id);
-                    // Remove from local state for immediate UI update
-                    setLocalTodos(prev => prev.filter(t => t.id !== todo.id));
-                  }}
+                  onClick={() => onDeleteTodo(todo.id)}
                   sx={{ color: theme.palette.text.secondary }}
                 >
                   <i className="fa-solid fa-trash-can"></i>
@@ -188,13 +186,7 @@ export default function SponsorContactTodo({ todos = [], onAddTodo, onToggleTodo
                 <Checkbox
                   edge="start"
                   checked={todo.completed === 1}
-                  onChange={() => {
-                    onToggleTodo(todo.id);
-                    // Toggle in local state for immediate UI update
-                    setLocalTodos(prev => prev.map(t => 
-                      t.id === todo.id ? {...t, completed: t.completed === 1 ? 0 : 1} : t
-                    ));
-                  }}
+                  onChange={() => onToggleTodo(todo.id)}
                   sx={{ 
                     color: theme.palette.primary.main,
                     '&.Mui-checked': {

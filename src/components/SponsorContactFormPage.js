@@ -69,6 +69,8 @@ export default function SponsorContactFormPage({ userId, onSave, onCancel, initi
   // Todo handling functions
   // Add new todo item
   const handleAddTodo = (todoItem) => {
+    console.log('Parent received todo item:', todoItem);
+    
     const newTodo = {
       ...todoItem,
       contactId: initialData?.id || 'temp-' + uuidv4(),
@@ -77,8 +79,12 @@ export default function SponsorContactFormPage({ userId, onSave, onCancel, initi
       completed: typeof todoItem.completed === 'number' ? todoItem.completed : 0
     };
     
-    // Add to state
-    setTodos(prev => [...prev, newTodo]);
+    // Add to state with a fresh state update to ensure re-render
+    setTodos(currentTodos => {
+      const updatedTodos = [...currentTodos, newTodo];
+      console.log('Updated todos array:', updatedTodos);
+      return updatedTodos;
+    });
   };
   
   // Toggle todo completion
