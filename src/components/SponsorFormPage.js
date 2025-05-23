@@ -61,10 +61,26 @@ export default function SponsorFormPage({ initialData, onSave, onCancel }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     
-    // Format sobriety date as ISO string if provided
+    // Safely format sobriety date as ISO string if provided
     let dataToSave = { ...formData };
-    if (dataToSave.sobrietyDate) {
-      dataToSave.sobrietyDate = new Date(dataToSave.sobrietyDate).toISOString();
+    
+    // Handle sobriety date properly to avoid database constraints
+    try {
+      if (dataToSave.sobrietyDate && dataToSave.sobrietyDate.trim() !== '') {
+        const date = new Date(dataToSave.sobrietyDate);
+        if (!isNaN(date.getTime())) {
+          dataToSave.sobrietyDate = date.toISOString();
+        } else {
+          // If invalid date, set to null (this field is optional)
+          dataToSave.sobrietyDate = null;
+        }
+      } else {
+        // If no date provided, set to null (this field is optional)
+        dataToSave.sobrietyDate = null;
+      }
+    } catch (error) {
+      console.log('Error parsing sobriety date:', error);
+      dataToSave.sobrietyDate = null;
     }
     
     onSave(dataToSave);

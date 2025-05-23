@@ -118,14 +118,26 @@ export default function SponsorContactFormPage({ userId, onSave, onCancel, initi
   const handleSubmit = (e) => {
     e.preventDefault();
     
-    // Ensure we have a valid date
+    // Ensure we have a valid date - critical for database constraint
+    // Always use current date as fallback to avoid NOT NULL constraint errors
     let isoDate;
-    if (contactData.date) {
-      // Create full date from the date input
-      const date = new Date(contactData.date);
-      isoDate = date.toISOString();
-    } else {
-      // Default to current date if none provided
+    try {
+      if (contactData.date && contactData.date.trim() !== '') {
+        // Create full date from the date input
+        const date = new Date(contactData.date);
+        if (!isNaN(date.getTime())) {
+          isoDate = date.toISOString();
+        } else {
+          // Invalid date format, use current date
+          isoDate = new Date().toISOString();
+        }
+      } else {
+        // No date provided, use current date
+        isoDate = new Date().toISOString();
+      }
+    } catch (error) {
+      // Any error in date parsing, use current date
+      console.log('Error parsing date, using current date:', error);
       isoDate = new Date().toISOString();
     }
     
