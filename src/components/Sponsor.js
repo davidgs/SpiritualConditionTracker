@@ -105,6 +105,9 @@ export default function Sponsor({ user, onUpdate }) {
     
     // Update local state
     setSponsor(sponsorData);
+    
+    // Navigate back to the main view
+    handleBackToMain();
   };
   
   // Open sponsor form for editing - using page approach
