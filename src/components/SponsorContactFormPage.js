@@ -106,9 +106,16 @@ export default function SponsorContactFormPage({ userId, onSave, onCancel, initi
   const handleSubmit = (e) => {
     e.preventDefault();
     
-    // Create full date from the date input
-    const date = new Date(contactData.date);
-    const isoDate = date.toISOString();
+    // Ensure we have a valid date
+    let isoDate;
+    if (contactData.date) {
+      // Create full date from the date input
+      const date = new Date(contactData.date);
+      isoDate = date.toISOString();
+    } else {
+      // Default to current date if none provided
+      isoDate = new Date().toISOString();
+    }
     
     // Generate contact ID if this is a new contact
     const contactId = initialData?.id || uuidv4();
@@ -118,7 +125,7 @@ export default function SponsorContactFormPage({ userId, onSave, onCancel, initi
       ...contactData,
       id: contactId,
       userId: userId,
-      date: isoDate
+      date: isoDate // Make sure date is never null
     };
     
     // Update todo items with the correct contactId

@@ -78,18 +78,24 @@ export default function SponsorContactTodo({ todos = [], onAddTodo, onToggleTodo
       <Divider sx={{ mb: 2 }} />
 
       {/* To-do input */}
-      <Box sx={{ display: 'flex', mb: 2 }}>
+      <Box sx={{ display: 'flex', mb: 3, alignItems: 'flex-start' }}>
         <TextField
           fullWidth
           placeholder="Add new action item..."
           value={newTodo}
           onChange={(e) => setNewTodo(e.target.value)}
           onKeyPress={handleKeyPress}
-          size="small"
+          multiline
+          rows={2}
           sx={{ 
             mr: 1,
             '& .MuiInputBase-root': { 
               borderRadius: '8px',
+              minHeight: '56px'
+            },
+            '& .MuiOutlinedInput-input': {
+              fontSize: 16,
+              padding: '15px 14px'
             }
           }}
         />
@@ -100,6 +106,8 @@ export default function SponsorContactTodo({ todos = [], onAddTodo, onToggleTodo
           disabled={!newTodo.trim()}
           sx={{ 
             borderRadius: '8px',
+            height: '56px',
+            minWidth: '80px'
           }}
         >
           Add
