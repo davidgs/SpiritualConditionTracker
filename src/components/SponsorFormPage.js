@@ -232,9 +232,10 @@ export default function SponsorFormPage({ initialData, onSave, onCancel }) {
                 sx={{ 
                   height: '36px',
                   borderRadius: '8px',
+                  textTransform: 'none'
                 }}
               >
-                {initialData ? 'Update Sponsor' : 'Add Sponsor'}
+                Save
               </Button>
             </Box>
           </Box>
