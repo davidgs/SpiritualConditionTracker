@@ -21,10 +21,14 @@ export default function SponsorContactTodo({ todos = [], onAddTodo, onToggleTodo
   const theme = useTheme();
   const [newTodo, setNewTodo] = useState('');
   const [showInput, setShowInput] = useState(false);
+  const [internalTodos, setInternalTodos] = useState([]);
   
-  // Debugging - log incoming todos
+  // Keep internal state in sync with incoming props
   useEffect(() => {
     console.log('SponsorContactTodo received todos:', todos);
+    if (todos && todos.length > 0) {
+      setInternalTodos([...todos]);
+    }
   }, [todos]);
 
   const handleAddTodo = () => {
@@ -37,13 +41,14 @@ export default function SponsorContactTodo({ todos = [], onAddTodo, onToggleTodo
         createdAt: new Date().toISOString(),
       };
       
-      // Pass to parent component - this should update parent state
+      // Add to internal state immediately for UI feedback
+      setInternalTodos(prev => [...prev, todoItem]);
+      
+      // Pass to parent component
       onAddTodo(todoItem);
       
       // Clear input after adding
       setNewTodo('');
-      // Automatically close input after adding (optional)
-      // setShowInput(false);
       
       console.log('Added todo item:', todoItem);
     }
@@ -160,9 +165,9 @@ export default function SponsorContactTodo({ todos = [], onAddTodo, onToggleTodo
       </Collapse>
 
       {/* To-do list */}
-      {todos && todos.length > 0 ? (
+      {internalTodos && internalTodos.length > 0 ? (
         <List sx={{ width: '100%' }}>
-          {todos.map((todo) => (
+          {internalTodos.map((todo) => (
             <ListItem
               key={todo.id}
               disableGutters
@@ -170,7 +175,12 @@ export default function SponsorContactTodo({ todos = [], onAddTodo, onToggleTodo
                 <IconButton 
                   edge="end" 
                   aria-label="delete" 
-                  onClick={() => onDeleteTodo(todo.id)}
+                  onClick={() => {
+                    // Update internal state immediately for UI feedback
+                    setInternalTodos(prev => prev.filter(t => t.id !== todo.id));
+                    // Notify parent component
+                    onDeleteTodo(todo.id);
+                  }}
                   sx={{ color: theme.palette.text.secondary }}
                 >
                   <i className="fa-solid fa-trash-can"></i>
@@ -186,7 +196,14 @@ export default function SponsorContactTodo({ todos = [], onAddTodo, onToggleTodo
                 <Checkbox
                   edge="start"
                   checked={todo.completed === 1}
-                  onChange={() => onToggleTodo(todo.id)}
+                  onChange={() => {
+                    // Update internal state immediately for UI feedback
+                    setInternalTodos(prev => prev.map(t => 
+                      t.id === todo.id ? {...t, completed: t.completed === 1 ? 0 : 1} : t
+                    ));
+                    // Notify parent component
+                    onToggleTodo(todo.id);
+                  }}
                   sx={{ 
                     color: theme.palette.primary.main,
                     '&.Mui-checked': {

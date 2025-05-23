@@ -79,12 +79,17 @@ export default function SponsorContactFormPage({ userId, onSave, onCancel, initi
       completed: typeof todoItem.completed === 'number' ? todoItem.completed : 0
     };
     
-    // Add to state with a fresh state update to ensure re-render
-    setTodos(currentTodos => {
-      const updatedTodos = [...currentTodos, newTodo];
-      console.log('Updated todos array:', updatedTodos);
-      return updatedTodos;
-    });
+    // Create brand new array for setState to force re-render
+    const newTodos = [...todos, newTodo];
+    console.log('Setting todos to:', newTodos);
+    
+    // Direct state assignment for immediate update
+    setTodos(newTodos);
+    
+    // Force a re-render with an empty state update
+    setTimeout(() => {
+      setContactData(prev => ({...prev}));
+    }, 50);
   };
   
   // Toggle todo completion
