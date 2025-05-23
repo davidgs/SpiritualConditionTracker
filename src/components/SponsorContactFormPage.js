@@ -141,24 +141,27 @@ export default function SponsorContactFormPage({ userId, onSave, onCancel, initi
       isoDate = new Date().toISOString();
     }
     
-    // Generate contact ID if this is a new contact
-    const contactId = initialData?.id || uuidv4();
-    
-    // Create new contact data with ID and userId
+    // Create new contact data with userId and date
+    // If initialData has an id, keep it for updates, otherwise let SQLite generate one
     const newContact = {
       ...contactData,
-      id: contactId,
+      // Only include id if it's an existing contact
+      ...(initialData?.id ? { id: initialData.id } : {}),
       userId: userId,
       date: isoDate // Make sure date is never null
     };
     
-    // Update todo items with the correct contactId
+    // For new contacts, assign a temporary ID to todos that will be replaced 
+    // with the real database ID after the contact is saved
+    const tempId = 'temp-' + uuidv4();
+    
+    // Update todos with either the existing contactId or a temporary one
     const updatedTodos = todos.map(todo => ({
       ...todo,
-      contactId: contactId
+      contactId: initialData?.id || tempId
     }));
     
-    // Submit with proper date format and todos
+    // Pass the contact, todos, and a flag indicating if this is a new contact
     onSave(newContact, updatedTodos);
     
     // Explicitly navigate back to main view after save

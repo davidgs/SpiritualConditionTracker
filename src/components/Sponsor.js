@@ -145,8 +145,11 @@ export default function Sponsor({ user, onUpdate }) {
       console.log('Adding new contact with data:', contactData);
       
       // Prepare data for insertion
+      // Remove any existing ID - we'll let SQLite generate one with autoincrement
+      const { id, ...contactWithoutId } = contactData;
+      
       const contact = {
-        ...contactData,
+        ...contactWithoutId,
         userId: user.id,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
@@ -154,7 +157,9 @@ export default function Sponsor({ user, onUpdate }) {
       
       // Insert using our specialized sponsor database module
       console.log('Inserting contact into database:', contact);
-      await sponsorDB.addSponsorContact(contact);
+      const savedContact = await sponsorDB.addSponsorContact(contact);
+      
+      console.log('Contact saved with ID:', savedContact.id);
       
       // Add any associated Todo items
       if (todoItems && todoItems.length > 0) {
@@ -162,7 +167,7 @@ export default function Sponsor({ user, onUpdate }) {
         for (const todoItem of todoItems) {
           const todoDetail = {
             ...todoItem,
-            contactId: contact.id,
+            contactId: savedContact.id, // Use the ID returned from the database
             createdAt: new Date().toISOString()
           };
           await sponsorDB.addContactDetail(todoDetail);
