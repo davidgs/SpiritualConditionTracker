@@ -87,6 +87,9 @@ export class SQLiteService {
         completed INTEGER DEFAULT 0,
         notes TEXT,
         dueDate TEXT,
+        type TEXT,
+        text TEXT,
+        createdAt TEXT,
         FOREIGN KEY (contactId) REFERENCES sponsor_contacts(id)
       )`
     ];

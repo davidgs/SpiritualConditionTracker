@@ -35,9 +35,18 @@ export default function Sponsor({ user, onUpdate }) {
   // Load sponsor data from user
   useEffect(() => {
     if (user) {
-      // Load sponsor data if available
-      if (user.sponsor) {
-        setSponsor(user.sponsor);
+      // Load sponsor data from flattened fields
+      if (user.sponsor_name) {
+        // Reconstruct sponsor object from flattened fields
+        const sponsorData = {
+          name: user.sponsor_name || '',
+          lastName: user.sponsor_lastName || '',
+          phone: user.sponsor_phone || '',
+          email: user.sponsor_email || '',
+          sobrietyDate: user.sponsor_sobrietyDate || '',
+          notes: user.sponsor_notes || ''
+        };
+        setSponsor(sponsorData);
       }
       
       // Load sponsor contacts
@@ -79,8 +88,15 @@ export default function Sponsor({ user, onUpdate }) {
   // Handle sponsor form submission
   const handleSponsorSubmit = (sponsorData) => {
     // Create a copy of the current user data
+    // Instead of storing as a nested object which can cause SQL issues,
+    // flatten the structure with sponsor_ prefix
     const userUpdate = {
-      sponsor: sponsorData
+      sponsor_name: sponsorData.name || '',
+      sponsor_lastName: sponsorData.lastName || '',
+      sponsor_phone: sponsorData.phone || '',
+      sponsor_email: sponsorData.email || '',
+      sponsor_sobrietyDate: sponsorData.sobrietyDate || '',
+      sponsor_notes: sponsorData.notes || '',
     };
     
     // Update user in database through parent component
@@ -102,9 +118,14 @@ export default function Sponsor({ user, onUpdate }) {
   
   // Delete sponsor
   const handleDeleteSponsor = () => {
-    // Create update to remove sponsor
+    // Create update to remove sponsor fields
     const userUpdate = {
-      sponsor: null
+      sponsor_name: '',
+      sponsor_lastName: '',
+      sponsor_phone: '',
+      sponsor_email: '',
+      sponsor_sobrietyDate: '',
+      sponsor_notes: ''
     };
     
     // Update user in database
