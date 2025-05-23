@@ -83,7 +83,9 @@ export default function SponsorFormPage({ initialData, onSave, onCancel }) {
       dataToSave.sobrietyDate = null;
     }
     
+    // Call onSave and then explicitly call onCancel to navigate back
     onSave(dataToSave);
+    setTimeout(() => onCancel(), 100); // Delay slightly to ensure onSave completes first
   };
 
   return (

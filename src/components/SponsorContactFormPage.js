@@ -160,6 +160,9 @@ export default function SponsorContactFormPage({ userId, onSave, onCancel, initi
     
     // Submit with proper date format and todos
     onSave(newContact, updatedTodos);
+    
+    // Explicitly navigate back to main view after save
+    setTimeout(() => onCancel(), 100); // Small delay to ensure save completes first
   };
   
   return (
