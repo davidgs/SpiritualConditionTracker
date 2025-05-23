@@ -11,6 +11,7 @@ import {
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { formatPhoneNumberForInput } from '../utils/phoneUtils';
+import { MuiTelInput } from 'mui-tel-input';
 
 export default function SponseeFormDialog({ open, onClose, onSubmit, initialData }) {
   const theme = useTheme();
@@ -81,10 +82,9 @@ export default function SponseeFormDialog({ open, onClose, onSubmit, initialData
     return `(${phoneNumber.slice(0, 3)}) ${phoneNumber.slice(3, 6)}-${phoneNumber.slice(6, 10)}`;
   };
   
-  // Handle phone number input
-  const handlePhoneChange = (e) => {
-    const formattedNumber = formatPhoneNumberForInput(e.target.value);
-    setPhone(formattedNumber);
+  // Handle phone number input using MuiTelInput
+  const handlePhoneChange = (value) => {
+    setPhone(value);
   };
   
   // Handle form submission
@@ -215,14 +215,13 @@ export default function SponseeFormDialog({ open, onClose, onSubmit, initialData
           />
           
           {/* Phone Number */}
-          <TextField
+          <MuiTelInput
             fullWidth
-            variant="outlined"
-            placeholder="Phone Number"
+            label="Phone Number"
             value={phone}
             onChange={handlePhoneChange}
+            defaultCountry="US"
             size="medium"
-            margin="none"
             sx={{ 
               mb: 2,
               '& .MuiOutlinedInput-root': { 

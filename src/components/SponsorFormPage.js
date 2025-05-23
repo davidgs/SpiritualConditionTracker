@@ -13,6 +13,7 @@ import {
 import { useTheme } from '@mui/material/styles';
 import { formatDateForDisplay } from '../utils/dateUtils';
 import { formatPhoneNumberForInput } from '../utils/phoneUtils';
+import { MuiTelInput } from 'mui-tel-input';
 
 export default function SponsorFormPage({ initialData, onSave, onCancel }) {
   const theme = useTheme();
@@ -42,22 +43,18 @@ export default function SponsorFormPage({ initialData, onSave, onCancel }) {
   // Handle form changes
   const handleChange = (e) => {
     const { name, value } = e.target;
-    
-    // Special handling for phone numbers
-    if (name === 'phone') {
-      // Format the phone number as the user types
-      const formattedPhone = formatPhoneNumberForInput(value);
-      setFormData(prev => ({
-        ...prev,
-        [name]: formattedPhone
-      }));
-    } else {
-      // Standard handling for other fields
-      setFormData(prev => ({
-        ...prev,
-        [name]: value
-      }));
-    }
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+  
+  // Handle phone number changes
+  const handlePhoneChange = (value) => {
+    setFormData(prev => ({
+      ...prev,
+      phone: value
+    }));
   };
 
   // Handle form submission
@@ -147,11 +144,11 @@ export default function SponsorFormPage({ initialData, onSave, onCancel }) {
             />
             
             {/* Phone Number */}
-            <TextField
-              name="phone"
+            <MuiTelInput
               label="Phone Number"
               value={formData.phone || ''}
-              onChange={handleChange}
+              onChange={handlePhoneChange}
+              defaultCountry="US"
               fullWidth
               sx={{ 
                 '& .MuiInputBase-root': { 
