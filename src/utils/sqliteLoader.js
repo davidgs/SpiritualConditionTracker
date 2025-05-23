@@ -104,7 +104,7 @@ async function setupTables(sqlite) {
     console.error('[ sqliteLoader.js ] Error dropping users table:', error);
   }
   
-  // Create users table with all required fields
+  // Create users table with all required fields - better structured
   await sqlite.execute({
     database: DB_NAME,
     statements: `
@@ -118,14 +118,19 @@ async function setupTables(sqlite) {
         homeGroups TEXT,
         privacySettings TEXT,
         preferences TEXT,
-        sponsor TEXT,
+        
+        /* Sponsor info properly structured */
         sponsor_name TEXT,
         sponsor_lastName TEXT,
         sponsor_phone TEXT,
         sponsor_email TEXT,
         sponsor_sobrietyDate TEXT,
         sponsor_notes TEXT,
-        sponsees TEXT,
+        
+        /* Removed redundant fields */
+        /* removed: sponsor TEXT - unclear purpose */
+        /* removed: sponsees TEXT - use sponsor_contacts table instead */
+        
         messagingKeys TEXT,
         profileImageUri TEXT,
         language TEXT,
