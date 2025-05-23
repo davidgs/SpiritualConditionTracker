@@ -205,14 +205,7 @@ export default function SponsorContactList({ userId, contacts = [], onContactAdd
             >
               No sponsor contacts recorded yet. Regular contact with your sponsor is a vital part of recovery.
             </Typography>
-            <Button
-              variant="outlined"
-              startIcon={<i className="fa-solid fa-plus"></i>}
-              onClick={() => onContactAdded()}
-              sx={{ mt: 1 }}
-            >
-              Add Contact
-            </Button>
+           
           </Box>
         )}
       </Paper>

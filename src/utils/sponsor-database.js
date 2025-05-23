@@ -74,7 +74,27 @@ export async function addSponsorContact(contact) {
       type: contact.type || 'general',
       note: contact.note || '',
       // Always ensure date is a valid value (critical for database operations)
-      date: contact.date ? new Date(contact.date).toISOString() : new Date().toISOString(),
+      // Try to parse the date and fall back to current date if any issues
+      date: (() => {
+        try {
+          // Check if we have a date value
+          if (!contact.date) return new Date().toISOString();
+          
+          // Try to create a valid date
+          const dateObj = new Date(contact.date);
+          
+          // Check if the date is valid
+          if (isNaN(dateObj.getTime())) {
+            console.log('Invalid date format, using current date instead');
+            return new Date().toISOString();
+          }
+          
+          return dateObj.toISOString();
+        } catch (e) {
+          console.log('Error parsing date, using current date instead:', e);
+          return new Date().toISOString();
+        }
+      })(),
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
     };
@@ -125,7 +145,7 @@ export async function addContactDetail(detail) {
     const detailData = {
       contactId: detail.contactId,
       actionItem: detail.actionItem || '',
-      completed: detail.completed || 0,
+      completed: typeof detail.completed === 'number' ? detail.completed : 0,
       notes: detail.notes || '',
       dueDate: detail.dueDate || null,
       type: detail.type || 'todo',

@@ -148,9 +148,13 @@ export default function Sponsor({ user, onUpdate }) {
       // Remove any existing ID - we'll let SQLite generate one with autoincrement
       const { id, ...contactWithoutId } = contactData;
       
+      // Ensure we have a valid userId to avoid constraint errors
+      // If user.id is undefined/null, use a default value
+      const userId = user && user.id ? user.id : 'default_user';
+      
       const contact = {
         ...contactWithoutId,
-        userId: user.id,
+        userId: userId,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
       };
