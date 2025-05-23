@@ -156,15 +156,19 @@ export default function SponsorContactFormPage({ userId, onSave, onCancel, initi
       date: isoDate // Make sure date is never null
     };
     
-    // For new contacts, assign a temporary ID to todos that will be replaced 
-    // with the real database ID after the contact is saved
-    const tempId = 'temp-' + uuidv4();
+    // For new todos, we don't need to assign a contactId at all when it's a new contact
+    // SQLite will handle the relationship after both records are created
     
-    // Update todos with either the existing contactId or a temporary one
-    const updatedTodos = todos.map(todo => ({
-      ...todo,
-      contactId: initialData?.id || tempId
-    }));
+    // Only include contactId for existing contacts
+    const updatedTodos = todos.map(todo => {
+      // Start with the todo item without contactId
+      const { contactId, ...todoWithoutContactId } = todo;
+      
+      // Only include contactId if this is an existing contact
+      return initialData?.id
+        ? { ...todoWithoutContactId, contactId: initialData.id }
+        : todoWithoutContactId;
+    });
     
     // Pass the contact, todos, and a flag indicating if this is a new contact
     onSave(newContact, updatedTodos);

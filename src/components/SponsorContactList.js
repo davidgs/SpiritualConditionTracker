@@ -20,10 +20,10 @@ export default function SponsorContactList({ userId, contacts = [], onContactAdd
   
   // Handle adding a new contact
   const handleAddContact = async (contactData) => {
-    // Generate an ID for the new contact
+    // Don't generate an ID - let SQLite do it with AUTOINCREMENT
     const newContact = {
       ...contactData,
-      id: uuidv4(),
+      // No ID field - SQLite will generate it
       userId: userId,
       date: contactData.date || new Date().toISOString()
     };

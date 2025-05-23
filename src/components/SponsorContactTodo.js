@@ -15,7 +15,7 @@ import {
   Collapse
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
-import { v4 as uuidv4 } from 'uuid';
+// No longer using uuids for database ids
 
 export default function SponsorContactTodo({ todos = [], onAddTodo, onToggleTodo, onDeleteTodo }) {
   const theme = useTheme();
@@ -31,14 +31,14 @@ export default function SponsorContactTodo({ todos = [], onAddTodo, onToggleTodo
 
   const handleAddTodo = () => {
     if (newTodo.trim()) {
-      // Generate a temporary ID for local state management
-      // Use 'tmp_' prefix to distinguish from SQLite auto-increment IDs
-      const tmpId = 'tmp_' + Date.now();
+      // For UI state, we need a temporary ID that won't conflict with database IDs
+      // Use negative numbers which SQLite auto-increment will never generate
+      const tempUIId = -Math.floor(Math.random() * 10000) - 1;
       
       const todoItem = {
-        // Don't include ID field at all - let SQLite create it 
-        // For UI state only, we'll use a temporary ID
-        id: tmpId,
+        // For UI state only, we'll use a temporary negative ID
+        // SQLite auto-increment will always use positive integers
+        id: tempUIId,
         text: newTodo.trim(),
         completed: 0,  // Using 0 for SQLite compatibility
         type: 'todo',  // Important for filtering in the parent component
@@ -48,11 +48,11 @@ export default function SponsorContactTodo({ todos = [], onAddTodo, onToggleTodo
       // Add to internal state immediately for UI feedback
       setInternalTodos(prev => [...prev, todoItem]);
       
-      // Pass to parent component without an ID field
-      // Use destructuring to create a new object without the id property
-      const { id, ...todoWithoutId } = todoItem;
-      console.log('Adding todo item (without ID):', todoWithoutId);
-      onAddTodo(todoWithoutId);
+      // Pass to parent component without the temporary ID
+      // For database insertion, we should exclude the ID field completely
+      const { id, ...todoDataForDatabase } = todoItem;
+      console.log('Adding todo item (for database):', todoDataForDatabase);
+      onAddTodo(todoDataForDatabase);
       
       // Clear input after adding
       setNewTodo('');
