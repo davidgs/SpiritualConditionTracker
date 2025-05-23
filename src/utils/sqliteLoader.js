@@ -781,13 +781,45 @@ function setupGlobalDB(sqlite) {
     },
     
     /**
+     * Execute custom SQL query
+     * @param {string} sql - SQL query with placeholders
+     * @param {Array} values - Values for placeholders
+     * @returns {Promise<Array>} Query results
+     */
+    execute: async function(sql, values = []) {
+      try {
+        console.log(`[ sqliteLoader.js ] Executing custom SQL: ${sql}`);
+        console.log(`[ sqliteLoader.js ] With values:`, values);
+        
+        const result = await sqlite.query({
+          database: DB_NAME,
+          statement: sql,
+          values: values
+        });
+        
+        return result.values || [];
+      } catch (error) {
+        console.error(`[ sqliteLoader.js ] Error executing SQL ${sql}:`, error);
+        return [];
+      }
+    },
+    
+    /**
      * Query collection with filters
      * @param {string} collection - Collection name
-     * @param {Object} filters - Filter criteria
+     * @param {Object|string} filters - Filter criteria or SQL string
+     * @param {Array} values - Values for SQL placeholders (if first param is SQL)
      * @returns {Promise<Array>} Filtered items
      */
-    query: async function(collection, filters) {
+    query: async function(collection, filters, values = []) {
       try {
+        // Check if this is a direct SQL query (string) or a filter object
+        if (typeof filters === 'string') {
+          // This is a SQL string, use the execute function
+          return this.execute(filters, values);
+        }
+        
+        // Otherwise use the original filter approach
         const allItems = await this.getAll(collection);
         return allItems.filter(item => {
           for (const [key, value] of Object.entries(filters)) {
