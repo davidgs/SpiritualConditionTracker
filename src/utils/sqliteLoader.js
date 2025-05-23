@@ -313,6 +313,44 @@ async function setupTables(sqlite) {
     `
   });
   console.log('[ sqliteLoader.js ] Preferences table created');
+
+  // Create sponsor_contacts table
+  await sqlite.execute({
+    database: DB_NAME,
+    statements: `
+      CREATE TABLE IF NOT EXISTS sponsor_contacts (
+        id TEXT PRIMARY KEY,
+        userId TEXT,
+        date TEXT NOT NULL,
+        type TEXT NOT NULL,
+        note TEXT,
+        createdAt TEXT,
+        updatedAt TEXT,
+        FOREIGN KEY (userId) REFERENCES users (id)
+      )
+    `
+  });
+  console.log('[ sqliteLoader.js ] Sponsor contacts table created');
+
+  // Create sponsor_contact_details table
+  await sqlite.execute({
+    database: DB_NAME,
+    statements: `
+      CREATE TABLE IF NOT EXISTS sponsor_contact_details (
+        id TEXT PRIMARY KEY,
+        contactId TEXT NOT NULL,
+        actionItem TEXT,
+        completed INTEGER DEFAULT 0,
+        notes TEXT,
+        dueDate TEXT,
+        type TEXT,
+        text TEXT,
+        createdAt TEXT,
+        FOREIGN KEY (contactId) REFERENCES sponsor_contacts (id)
+      )
+    `
+  });
+  console.log('[ sqliteLoader.js ] Sponsor contact details table created');
 }
 
 /**
