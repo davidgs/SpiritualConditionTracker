@@ -71,9 +71,14 @@ export default function SponsorContactFormPage({ userId, onSave, onCancel, initi
   const handleAddTodo = (todoItem) => {
     console.log('Parent received todo item:', todoItem);
     
+    // Use a simple numeric temporary tag - no UUID
+    // This is just for UI state until the database assigns a real ID
+    const tempContactId = 'temp_' + Date.now();
+    
     const newTodo = {
       ...todoItem,
-      contactId: initialData?.id || 'temp-' + uuidv4(),
+      // Use either the existing contact ID or a simple temporary placeholder
+      contactId: initialData?.id || tempContactId,
       type: 'todo',
       // Make sure we're using numbers for SQLite compatibility
       completed: typeof todoItem.completed === 'number' ? todoItem.completed : 0

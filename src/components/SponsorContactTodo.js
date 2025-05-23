@@ -31,8 +31,14 @@ export default function SponsorContactTodo({ todos = [], onAddTodo, onToggleTodo
 
   const handleAddTodo = () => {
     if (newTodo.trim()) {
+      // Generate a temporary ID for local state management
+      // Use 'tmp_' prefix to distinguish from SQLite auto-increment IDs
+      const tmpId = 'tmp_' + Date.now();
+      
       const todoItem = {
-        id: uuidv4(),
+        // Don't include ID field at all - let SQLite create it 
+        // For UI state only, we'll use a temporary ID
+        id: tmpId,
         text: newTodo.trim(),
         completed: 0,  // Using 0 for SQLite compatibility
         type: 'todo',  // Important for filtering in the parent component
@@ -42,13 +48,14 @@ export default function SponsorContactTodo({ todos = [], onAddTodo, onToggleTodo
       // Add to internal state immediately for UI feedback
       setInternalTodos(prev => [...prev, todoItem]);
       
-      // Pass to parent component
-      onAddTodo(todoItem);
+      // Pass to parent component without an ID field
+      // Use destructuring to create a new object without the id property
+      const { id, ...todoWithoutId } = todoItem;
+      console.log('Adding todo item (without ID):', todoWithoutId);
+      onAddTodo(todoWithoutId);
       
       // Clear input after adding
       setNewTodo('');
-      
-      console.log('Added todo item:', todoItem);
     }
   };
 
