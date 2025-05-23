@@ -331,12 +331,23 @@ async function setupTables(sqlite) {
   });
   console.log('[ sqliteLoader.js ] Preferences table created');
 
-  // Create sponsor_contacts table
+  // Drop and recreate sponsor_contacts table
+  try {
+    await sqlite.execute({
+      database: DB_NAME,
+      statements: `DROP TABLE IF EXISTS sponsor_contacts;`
+    });
+    console.log('[ sqliteLoader.js ] Dropped sponsor_contacts table for fresh setup');
+  } catch (error) {
+    console.error('[ sqliteLoader.js ] Error dropping sponsor_contacts table:', error);
+  }
+  
+  // Create sponsor_contacts table with INTEGER ID
   await sqlite.execute({
     database: DB_NAME,
     statements: `
       CREATE TABLE IF NOT EXISTS sponsor_contacts (
-        id TEXT PRIMARY KEY,
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
         userId TEXT,
         date TEXT NOT NULL,
         type TEXT NOT NULL,
@@ -349,13 +360,24 @@ async function setupTables(sqlite) {
   });
   console.log('[ sqliteLoader.js ] Sponsor contacts table created');
 
-  // Create sponsor_contact_details table
+  // Drop and recreate sponsor_contact_details table
+  try {
+    await sqlite.execute({
+      database: DB_NAME,
+      statements: `DROP TABLE IF EXISTS sponsor_contact_details;`
+    });
+    console.log('[ sqliteLoader.js ] Dropped sponsor_contact_details table for fresh setup');
+  } catch (error) {
+    console.error('[ sqliteLoader.js ] Error dropping sponsor_contact_details table:', error);
+  }
+  
+  // Create sponsor_contact_details table with INTEGER ID
   await sqlite.execute({
     database: DB_NAME,
     statements: `
       CREATE TABLE IF NOT EXISTS sponsor_contact_details (
-        id TEXT PRIMARY KEY,
-        contactId TEXT NOT NULL,
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        contactId INTEGER NOT NULL,
         actionItem TEXT,
         completed INTEGER DEFAULT 0,
         notes TEXT,
