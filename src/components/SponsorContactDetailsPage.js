@@ -22,7 +22,7 @@ import {
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { formatDateForDisplay } from '../utils/dateUtils';
-import { v4 as uuidv4 } from 'uuid';
+// Not using UUIDs for database IDs
 import SponsorContactTodo from './SponsorContactTodo';
 
 export default function SponsorContactDetailsPage({ 
@@ -73,17 +73,30 @@ export default function SponsorContactDetailsPage({
   
   // Add new action item
   const handleAddAction = () => {
-    const actionToAdd = {
+    // In SQLite, the ID will be generated automatically with AUTOINCREMENT
+    // We'll use a temporary negative ID for the UI state only
+    const tempId = -Math.floor(Math.random() * 10000) - 1;
+    
+    // For UI state we need an ID, but for database we exclude it
+    const actionForUI = {
       ...newAction,
-      id: uuidv4(),
+      id: tempId, // Temporary negative ID for UI only
       contactId: contact.id,
       completed: newAction.completed ? 1 : 0 // Convert boolean to integer for SQLite
     };
     
-    // Add to state and call parent handler
-    const updatedDetails = [...contactDetails, actionToAdd];
+    // For database: remove the temporary ID field completely
+    const { id, ...actionForDatabase } = actionForUI;
+    
+    // Add to state (with temporary ID for UI)
+    const updatedDetails = [...contactDetails, actionForUI];
     setContactDetails(updatedDetails);
-    onSaveDetails(actionToAdd);
+    
+    // Save to database (without ID field)
+    onSaveDetails({
+      ...actionForDatabase,
+      contactId: contact.id
+    });
     
     // Reset form and hide it
     setNewAction({

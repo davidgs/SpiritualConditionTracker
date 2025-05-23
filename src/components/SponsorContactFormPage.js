@@ -13,7 +13,7 @@ import {
   Divider
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
-import { v4 as uuidv4 } from 'uuid';
+// Not using UUIDs for database IDs
 import SponsorContactTodo from './SponsorContactTodo';
 
 export default function SponsorContactFormPage({ userId, onSave, onCancel, initialData, details = [] }) {
@@ -71,14 +71,15 @@ export default function SponsorContactFormPage({ userId, onSave, onCancel, initi
   const handleAddTodo = (todoItem) => {
     console.log('Parent received todo item:', todoItem);
     
-    // Use a simple numeric temporary tag - no UUID
-    // This is just for UI state until the database assigns a real ID
-    const tempContactId = 'temp_' + Date.now();
+    // In SQLite, the ID will be generated automatically with AUTOINCREMENT
+    // We'll use a temporary negative ID for the UI state only
+    const tempId = -Math.floor(Math.random() * 10000) - 1;
     
     const newTodo = {
       ...todoItem,
-      // Use either the existing contact ID or a simple temporary placeholder
-      contactId: initialData?.id || tempContactId,
+      id: tempId, // Temporary negative ID for UI only
+      // Use either the existing contact ID or null (SQLite will handle this after both records are created)
+      contactId: initialData?.id || null,
       type: 'todo',
       // Make sure we're using numbers for SQLite compatibility
       completed: typeof todoItem.completed === 'number' ? todoItem.completed : 0

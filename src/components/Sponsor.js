@@ -16,7 +16,7 @@ import SponsorContactFormPage from './SponsorContactFormPage';
 import SponsorFormPage from './SponsorFormPage';
 import { formatDateForDisplay } from '../utils/dateUtils';
 import { formatPhoneNumber, createPhoneUrl } from '../utils/phoneUtils';
-import { v4 as uuidv4 } from 'uuid';
+// Not using UUIDs for database IDs
 // Import specialized sponsor database functions
 import sponsorDB from '../utils/sponsor-database';
 

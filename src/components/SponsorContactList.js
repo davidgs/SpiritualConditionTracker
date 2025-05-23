@@ -12,7 +12,7 @@ import {
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { formatDateForDisplay } from '../utils/dateUtils';
-import { v4 as uuidv4 } from 'uuid';
+// Not using UUIDs for database IDs
 
 export default function SponsorContactList({ userId, contacts = [], onContactAdded, onViewDetails }) {
   const theme = useTheme();
