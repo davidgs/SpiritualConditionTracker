@@ -11,7 +11,8 @@ import {
   ListItemText,
   IconButton,
   Paper,
-  Divider
+  Divider,
+  Collapse
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { v4 as uuidv4 } from 'uuid';
@@ -19,6 +20,7 @@ import { v4 as uuidv4 } from 'uuid';
 export default function SponsorContactTodo({ todos = [], onAddTodo, onToggleTodo, onDeleteTodo }) {
   const theme = useTheme();
   const [newTodo, setNewTodo] = useState('');
+  const [showInput, setShowInput] = useState(false);
 
   const handleAddTodo = () => {
     if (newTodo.trim()) {
@@ -73,46 +75,69 @@ export default function SponsorContactTodo({ todos = [], onAddTodo, onToggleTodo
           <i className="fa-solid fa-list-check" style={{ marginRight: '10px' }}></i>
           Todo Items
         </Typography>
+        <IconButton
+          color="primary"
+          onClick={() => {
+            setShowInput(!showInput);
+          }}
+          sx={{ 
+            backgroundColor: theme.palette.primary.main,
+            color: theme.palette.primary.contrastText,
+            width: 32,
+            height: 32,
+            '&:hover': {
+              backgroundColor: theme.palette.primary.dark,
+            }
+          }}
+        >
+          <i className="fa-solid fa-plus"></i>
+        </IconButton>
       </Box>
 
       <Divider sx={{ mb: 2 }} />
 
-      {/* To-do input */}
-      <Box sx={{ display: 'flex', mb: 3, alignItems: 'flex-start' }}>
-        <TextField
-          fullWidth
-          placeholder="Add new action item..."
-          value={newTodo}
-          onChange={(e) => setNewTodo(e.target.value)}
-          onKeyPress={handleKeyPress}
-          multiline
-          rows={2}
-          sx={{ 
-            mr: 1,
-            '& .MuiInputBase-root': { 
+      {/* Collapsible To-do input */}
+      <Collapse in={showInput} timeout="auto" unmountOnExit>
+        <Box sx={{ display: 'flex', mb: 3, alignItems: 'flex-start' }}>
+          <TextField
+            fullWidth
+            placeholder="Add new action item..."
+            value={newTodo}
+            onChange={(e) => setNewTodo(e.target.value)}
+            onKeyPress={handleKeyPress}
+            autoFocus
+            multiline
+            rows={2}
+            sx={{ 
+              mr: 1,
+              '& .MuiInputBase-root': { 
+                borderRadius: '8px',
+                minHeight: '56px'
+              },
+              '& .MuiOutlinedInput-input': {
+                fontSize: 16,
+                padding: '15px 14px'
+              }
+            }}
+          />
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => {
+              handleAddTodo();
+              // Don't hide the input after adding
+            }}
+            disabled={!newTodo.trim()}
+            sx={{ 
               borderRadius: '8px',
-              minHeight: '56px'
-            },
-            '& .MuiOutlinedInput-input': {
-              fontSize: 16,
-              padding: '15px 14px'
-            }
-          }}
-        />
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={handleAddTodo}
-          disabled={!newTodo.trim()}
-          sx={{ 
-            borderRadius: '8px',
-            height: '56px',
-            minWidth: '80px'
-          }}
-        >
-          Add
-        </Button>
-      </Box>
+              height: '56px',
+              minWidth: '80px'
+            }}
+          >
+            Add
+          </Button>
+        </Box>
+      </Collapse>
 
       {/* To-do list */}
       {todos.length > 0 ? (
