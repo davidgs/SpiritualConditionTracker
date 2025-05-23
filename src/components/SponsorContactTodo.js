@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Typography,
@@ -21,18 +21,29 @@ export default function SponsorContactTodo({ todos = [], onAddTodo, onToggleTodo
   const theme = useTheme();
   const [newTodo, setNewTodo] = useState('');
   const [showInput, setShowInput] = useState(false);
+  // Local state for immediate feedback before database operations complete
+  const [localTodos, setLocalTodos] = useState([...todos]);
+  
+  // Update localTodos when props todos change
+  useEffect(() => {
+    setLocalTodos([...todos]);
+  }, [todos]);
 
   const handleAddTodo = () => {
     if (newTodo.trim()) {
       const todoItem = {
         id: uuidv4(),
         text: newTodo.trim(),
-        completed: false,
+        completed: 0,  // Using 0 for SQLite compatibility
+        type: 'todo',  // Important for filtering in the parent component
         createdAt: new Date().toISOString(),
       };
       
       onAddTodo(todoItem);
       setNewTodo(''); // Clear input after adding
+      
+      // For immediate feedback, add the item to the local todo list
+      setLocalTodos(prev => [...prev, todoItem]);
     }
   };
 
@@ -120,8 +131,7 @@ export default function SponsorContactTodo({ todos = [], onAddTodo, onToggleTodo
               }
             }}
           />
-          <Button
-            variant="contained"
+          <IconButton
             color="primary"
             onClick={() => {
               handleAddTodo();
@@ -129,20 +139,29 @@ export default function SponsorContactTodo({ todos = [], onAddTodo, onToggleTodo
             }}
             disabled={!newTodo.trim()}
             sx={{ 
+              backgroundColor: theme.palette.primary.main,
+              color: theme.palette.primary.contrastText,
               borderRadius: '8px',
               height: '56px',
-              minWidth: '80px'
+              width: '56px',
+              '&:hover': {
+                backgroundColor: theme.palette.primary.dark,
+              },
+              '&.Mui-disabled': {
+                backgroundColor: theme.palette.action.disabledBackground,
+                color: theme.palette.action.disabled
+              }
             }}
           >
-            Add
-          </Button>
+            <i className="fa-solid fa-check"></i>
+          </IconButton>
         </Box>
       </Collapse>
 
       {/* To-do list */}
-      {todos.length > 0 ? (
+      {localTodos.length > 0 ? (
         <List sx={{ width: '100%' }}>
-          {todos.map((todo) => (
+          {localTodos.map((todo) => (
             <ListItem
               key={todo.id}
               disableGutters
@@ -150,14 +169,18 @@ export default function SponsorContactTodo({ todos = [], onAddTodo, onToggleTodo
                 <IconButton 
                   edge="end" 
                   aria-label="delete" 
-                  onClick={() => onDeleteTodo(todo.id)}
+                  onClick={() => {
+                    onDeleteTodo(todo.id);
+                    // Remove from local state for immediate UI update
+                    setLocalTodos(prev => prev.filter(t => t.id !== todo.id));
+                  }}
                   sx={{ color: theme.palette.text.secondary }}
                 >
                   <i className="fa-solid fa-trash-can"></i>
                 </IconButton>
               }
               sx={{
-                bgcolor: todo.completed ? 'rgba(0, 0, 0, 0.04)' : 'transparent',
+                bgcolor: todo.completed === 1 ? 'rgba(0, 0, 0, 0.04)' : 'transparent',
                 borderRadius: '8px',
                 mb: 1
               }}
@@ -165,8 +188,14 @@ export default function SponsorContactTodo({ todos = [], onAddTodo, onToggleTodo
               <ListItemIcon sx={{ minWidth: '40px' }}>
                 <Checkbox
                   edge="start"
-                  checked={todo.completed}
-                  onChange={() => onToggleTodo(todo.id)}
+                  checked={todo.completed === 1}
+                  onChange={() => {
+                    onToggleTodo(todo.id);
+                    // Toggle in local state for immediate UI update
+                    setLocalTodos(prev => prev.map(t => 
+                      t.id === todo.id ? {...t, completed: t.completed === 1 ? 0 : 1} : t
+                    ));
+                  }}
                   sx={{ 
                     color: theme.palette.primary.main,
                     '&.Mui-checked': {
@@ -178,8 +207,8 @@ export default function SponsorContactTodo({ todos = [], onAddTodo, onToggleTodo
               <ListItemText
                 primary={todo.text}
                 sx={{
-                  textDecoration: todo.completed ? 'line-through' : 'none',
-                  color: todo.completed ? theme.palette.text.secondary : theme.palette.text.primary
+                  textDecoration: todo.completed === 1 ? 'line-through' : 'none',
+                  color: todo.completed === 1 ? theme.palette.text.secondary : theme.palette.text.primary
                 }}
               />
             </ListItem>
