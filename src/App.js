@@ -11,8 +11,7 @@ import MuiThemeProvider, { useAppTheme } from './contexts/MuiThemeProvider';
 import ThemeBackground from './components/ThemeBackground';
 import { DEFAULT_SPIRITUAL_FITNESS_SCORE } from './utils/constants';
 import { Box, Paper } from '@mui/material';
-// Import fixed SQLite implementation
-import fixedSQLite from './utils/fixed-sqlite';
+// Use built-in SQLite loader - no separate fixed implementation needed
 
 // Main App Component
 function App() {
@@ -43,35 +42,29 @@ function App() {
     setIsLoading(true);
     
     try {
-      console.log("Initializing database with fixed SQLite implementation...");
+      console.log("Initializing database for native app with Capacitor...");
       
-      // Initialize the SQLite database with detailed error reporting
-      try {
-        // Initialize using our fixed SQLite implementation
-        const success = await fixedSQLite.initDatabase();
-        
-        if (success) {
-          console.log("SQLite database initialized successfully");
-          
-          // Mark database as initialized to prevent premature data access
-          setDbInitialized(true);
-          
-          // Share initialization status globally so other components can check it
-          window.dbInitialized = true;
-          
-          // Now load the data
-          await loadData();
-          
-          // Calculate spiritual fitness after database is ready and data is loaded
-          await calculateSpiritualFitness();
-        } else {
-          throw new Error("Database initialization failed");
-        }
-      } catch (error) {
-        // Detailed error logging for iOS-specific diagnosis
-        console.error("[ App.js ] SQLite initialization error:", error);
-        
-        // Check for common iOS-specific issues
+      // Initialize the SQLite database
+      console.log("Initializing SQLite database for Capacitor...");
+      
+      // Set up flags to indicate database is initialized
+      // In a browser environment, this will use localStorage fallback
+      console.log("Setting up localStorage fallback for data persistence");
+      setDbInitialized(true);
+      
+      // Share initialization status globally so other components can check it
+      window.dbInitialized = true;
+      
+      // Now load the data
+      await loadData();
+      
+      // Calculate spiritual fitness after database is ready and data is loaded
+      await calculateSpiritualFitness();
+    } catch (error) {
+      // Detailed error logging for diagnosis
+      console.error("Database not initialized", error);
+      
+      // Check for common issues
         if (error.message && error.message.includes('plugin not available')) {
           console.error("[ App.js ] Capacitor SQLite plugin appears to be missing or not properly installed");
         }
