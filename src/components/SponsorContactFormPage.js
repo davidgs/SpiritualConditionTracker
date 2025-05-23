@@ -292,7 +292,7 @@ export default function SponsorContactFormPage({ userId, onSave, onCancel, initi
                   textTransform: 'none'
                 }}
               >
-                {initialData ? 'Update Contact' : 'Add Contact'}
+                Save
               </Button>
             </Box>
           </Box>
