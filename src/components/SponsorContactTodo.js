@@ -139,16 +139,15 @@ export default function SponsorContactTodo({ todos = [], onAddTodo, onToggleTodo
             }}
             disabled={!newTodo.trim()}
             sx={{ 
-              backgroundColor: theme.palette.primary.main,
-              color: theme.palette.primary.contrastText,
-              borderRadius: '8px',
+              backgroundColor: 'transparent',
+              color: theme.palette.primary.main,
               height: '56px',
-              width: '56px',
+              width: '42px',
               '&:hover': {
-                backgroundColor: theme.palette.primary.dark,
+                backgroundColor: 'transparent',
               },
               '&.Mui-disabled': {
-                backgroundColor: theme.palette.action.disabledBackground,
+                backgroundColor: 'transparent',
                 color: theme.palette.action.disabled
               }
             }}

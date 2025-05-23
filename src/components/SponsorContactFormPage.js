@@ -73,7 +73,8 @@ export default function SponsorContactFormPage({ userId, onSave, onCancel, initi
       ...todoItem,
       contactId: initialData?.id || 'temp-' + uuidv4(),
       type: 'todo',
-      completed: todoItem.completed ? 1 : 0  // Convert boolean to integer for SQLite
+      // Make sure we're using numbers for SQLite compatibility
+      completed: typeof todoItem.completed === 'number' ? todoItem.completed : 0
     };
     
     // Add to state
