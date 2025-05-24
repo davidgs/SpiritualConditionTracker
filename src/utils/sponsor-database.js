@@ -37,6 +37,29 @@ export async function getSponsorContacts(userId) {
       values: [userId]
     });
     
+    console.log('Raw sponsor contacts query result:', JSON.stringify(result));
+    
+    // Handle iOS-specific format
+    if (result.values && result.values.length > 0) {
+      // Check if first item contains column information (iOS format)
+      if (result.values[0].ios_columns) {
+        // Extract column names
+        const columns = result.values[0].ios_columns;
+        // Skip the first item (column info) and process the rest
+        const processedValues = [];
+        
+        for (let i = 1; i < result.values.length; i++) {
+          const item = result.values[i];
+          // Log each item to debug
+          console.log('Processing contact item:', item);
+          processedValues.push(item);
+        }
+        
+        return processedValues;
+      }
+    }
+    
+    // Standard format or empty result
     return result.values || [];
   } catch (error) {
     console.error('Error getting sponsor contacts:', error);
@@ -58,6 +81,25 @@ export async function getContactDetails(contactId) {
       statement: 'SELECT * FROM sponsor_contact_details WHERE contactId = ?',
       values: [contactId]
     });
+    
+    console.log('Raw contact details query result:', JSON.stringify(result));
+    
+    // Handle iOS-specific format
+    if (result.values && result.values.length > 0) {
+      // Check if first item contains column information (iOS format)
+      if (result.values[0].ios_columns) {
+        // Skip the first item (column info) and process the rest
+        const processedValues = [];
+        
+        for (let i = 1; i < result.values.length; i++) {
+          const item = result.values[i];
+          console.log('Processing detail item:', item);
+          processedValues.push(item);
+        }
+        
+        return processedValues;
+      }
+    }
     
     return result.values || [];
   } catch (error) {
