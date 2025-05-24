@@ -11,7 +11,8 @@ import MuiThemeProvider, { useAppTheme } from './contexts/MuiThemeProvider';
 import ThemeBackground from './components/ThemeBackground';
 import { DEFAULT_SPIRITUAL_FITNESS_SCORE } from './utils/constants';
 import { Box, Paper } from '@mui/material';
-// Use built-in SQLite loader - no separate fixed implementation needed
+// Import SQLite initialization function
+import initSQLiteDatabase from './utils/sqliteLoader';
 
 // Main App Component
 function App() {
@@ -44,12 +45,11 @@ function App() {
     try {
       console.log("Initializing database for native app with Capacitor...");
       
-      // Initialize the SQLite database
-      console.log("Initializing SQLite database for Capacitor...");
+      // Initialize the SQLite database with the imported function
+      const sqliteDb = await initSQLiteDatabase();
+      console.log("SQLite database initialized successfully");
       
-      // Set up flags to indicate database is initialized
-      // In a browser environment, this will use localStorage fallback
-      console.log("Setting up localStorage fallback for data persistence");
+      // Set flags to indicate database is initialized
       setDbInitialized(true);
       
       // Share initialization status globally so other components can check it
@@ -67,6 +67,7 @@ function App() {
       // Check for common issues
       if (error.message && error.message.includes('plugin not available')) {
         console.error("[ App.js ] Capacitor SQLite plugin appears to be missing or not properly installed");
+        console.log("Setting up localStorage fallback for data persistence");
       }
       
       // Log error details to help with debugging

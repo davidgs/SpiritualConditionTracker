@@ -93,17 +93,6 @@ async function initSQLiteDatabase() {
 async function setupTables(sqlite) {
   console.log('[ sqliteLoader.js ] Setting up database tables if they don\'t exist');
   
-  // Drop and recreate users table to ensure it has all required fields for testing
-  try {
-    await sqlite.execute({
-      database: DB_NAME,
-      statements: `DROP TABLE IF EXISTS users;`
-    });
-    console.log('[ sqliteLoader.js ] Dropped users table for fresh setup');
-  } catch (error) {
-    console.error('[ sqliteLoader.js ] Error dropping users table:', error);
-  }
-  
   // Create users table with all required fields - better structured
   await sqlite.execute({
     database: DB_NAME,
@@ -219,141 +208,13 @@ async function setupTables(sqlite) {
   });
   console.log('[ sqliteLoader.js ] Meetings table created successfully');
 
-  // Create messages table with all required fields
-  await sqlite.execute({
-    database: DB_NAME,
-    statements: `
-      CREATE TABLE IF NOT EXISTS messages (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        sender TEXT,
-        sender_name TEXT,
-        recipient TEXT,
-        recipient_name TEXT,
-        content TEXT,
-        content_type TEXT,
-        encrypted INTEGER,
-        encryption_key TEXT,
-        read INTEGER,
-        delivered INTEGER,
-        timestamp TEXT,
-        sent_timestamp TEXT,
-        received_timestamp TEXT, 
-        thread_id TEXT,
-        reply_to TEXT,
-        attachments TEXT,
-        metadata TEXT,
-        deleted INTEGER,
-        deleted_for_sender INTEGER,
-        deleted_for_recipient INTEGER,
-        priority INTEGER,
-        status TEXT,
-        tags TEXT
-      )
-    `
-  });
-  console.log('[ sqliteLoader.js ] Messages table created successfully');
-
-  // Create sobriety_milestones table with all required fields
-  await sqlite.execute({
-    database: DB_NAME,
-    statements: `
-      CREATE TABLE IF NOT EXISTS sobriety_milestones (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        user_id TEXT,
-        milestone_type TEXT,
-        days INTEGER,
-        months INTEGER,
-        years INTEGER,
-        date_achieved TEXT,
-        celebrated INTEGER,
-        notes TEXT,
-        shared INTEGER,
-        congratulations_count INTEGER,
-        createdAt TEXT,
-        updatedAt TEXT,
-        FOREIGN KEY (user_id) REFERENCES users (id)
-      )
-    `
-  });
-  console.log('[ sqliteLoader.js ] Sobriety milestones table created successfully');
-
-  // Create spiritual_fitness table with all required fields
-  await sqlite.execute({
-    database: DB_NAME,
-    statements: `
-      CREATE TABLE IF NOT EXISTS spiritual_fitness (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        user_id TEXT,
-        score REAL,
-        prayer_score REAL,
-        meditation_score REAL,
-        reading_score REAL,
-        meeting_score REAL,
-        service_score REAL,
-        timeframe INTEGER,
-        calculated_at TEXT,
-        createdAt TEXT,
-        updatedAt TEXT,
-        FOREIGN KEY (user_id) REFERENCES users (id)
-      )
-    `
-  });
-  console.log('[ sqliteLoader.js ] Spiritual fitness table created successfully');
-
-  // Create daily_inventory table for step 10 work
-  await sqlite.execute({
-    database: DB_NAME,
-    statements: `
-      CREATE TABLE IF NOT EXISTS daily_inventory (
-        id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-        user_id TEXT,
-        date TEXT,
-        grateful_for TEXT,
-        amends_needed TEXT,
-        character_defects TEXT,
-        helped_others TEXT,
-        spiritual_practice TEXT,
-        overall_mood TEXT,
-        notes TEXT,
-        createdAt TEXT,
-        updatedAt TEXT,
-        FOREIGN KEY (user_id) REFERENCES users (id)
-      )
-    `
-  });
-  console.log('[ sqliteLoader.js ] Daily inventory table created');
-
-  // Create preferences table for app settings with proper column names
-  // We've already dropped the old table if it existed
-  await sqlite.execute({
-    database: DB_NAME,
-    statements: `
-      CREATE TABLE IF NOT EXISTS preferences (
-        pref_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-        pref_value TEXT
-      )
-    `
-  });
-  console.log('[ sqliteLoader.js ] Preferences table created');
-
-  // Drop and recreate sponsor_contacts table
-  try {
-    await sqlite.execute({
-      database: DB_NAME,
-      statements: `DROP TABLE IF EXISTS sponsor_contacts;`
-    });
-    console.log('[ sqliteLoader.js ] Dropped sponsor_contacts table for fresh setup');
-  } catch (error) {
-    console.error('[ sqliteLoader.js ] Error dropping sponsor_contacts table:', error);
-  }
-  
   // Create sponsor_contacts table with INTEGER ID - without NOT NULL constraints
   await sqlite.execute({
     database: DB_NAME,
     statements: `
       CREATE TABLE IF NOT EXISTS sponsor_contacts (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        userId INTEGER,
+        userId TEXT,
         date TEXT,
         type TEXT,
         note TEXT,
@@ -364,17 +225,6 @@ async function setupTables(sqlite) {
   });
   console.log('[ sqliteLoader.js ] Sponsor contacts table created with flexible constraints');
 
-  // Drop and recreate sponsor_contact_details table
-  try {
-    await sqlite.execute({
-      database: DB_NAME,
-      statements: `DROP TABLE IF EXISTS sponsor_contact_details;`
-    });
-    console.log('[ sqliteLoader.js ] Dropped sponsor_contact_details table for fresh setup');
-  } catch (error) {
-    console.error('[ sqliteLoader.js ] Error dropping sponsor_contact_details table:', error);
-  }
-  
   // Create sponsor_contact_details table with INTEGER ID - without NOT NULL constraints
   await sqlite.execute({
     database: DB_NAME,
@@ -396,8 +246,6 @@ async function setupTables(sqlite) {
   console.log('[ sqliteLoader.js ] Sponsor contact details table created with flexible constraints');
 }
 
-// No migrations in testing phase
-
 /**
  * Set up global database object
  * @param {Object} sqlite - SQLite plugin instance 
@@ -407,8 +255,6 @@ function setupGlobalDB(sqlite) {
   window.dbInitialized = true;
   
   window.db = {
-    // Advanced database operations for expanded schemas
-    
     // Store schema version for migration tracking
     schemaVersion: '2.0.0',
     
@@ -426,30 +272,7 @@ function setupGlobalDB(sqlite) {
           values: []
         });
         
-        const rows = result.values || [];
-        
-        // Parse JSON fields
-        if (collection === 'users') {
-          for (const row of rows) {
-            if (row.privacySettings && typeof row.privacySettings === 'string') {
-              try { row.privacySettings = JSON.parse(row.privacySettings); } catch (e) {}
-            }
-            if (row.preferences && typeof row.preferences === 'string') {
-              try { row.preferences = JSON.parse(row.preferences); } catch (e) {}
-            }
-            if (row.homeGroups && typeof row.homeGroups === 'string') {
-              try { row.homeGroups = JSON.parse(row.homeGroups); } catch (e) {}
-            }
-            if (row.sponsees && typeof row.sponsees === 'string') {
-              try { row.sponsees = JSON.parse(row.sponsees); } catch (e) {}
-            }
-            if (row.messagingKeys && typeof row.messagingKeys === 'string') {
-              try { row.messagingKeys = JSON.parse(row.messagingKeys); } catch (e) {}
-            }
-          }
-        }
-        
-        return rows;
+        return result.values || [];
       } catch (error) {
         console.error(`[ sqliteLoader.js ] Error getting items from ${collection}:`, error);
         return [];
@@ -490,183 +313,57 @@ function setupGlobalDB(sqlite) {
           return null;
         }
         
-        const item = result.values[0];
-        
-        // Parse JSON fields
-        if (collection === 'users') {
-          if (item.privacySettings && typeof item.privacySettings === 'string') {
-            try { item.privacySettings = JSON.parse(item.privacySettings); } catch (e) {}
-          }
-          if (item.preferences && typeof item.preferences === 'string') {
-            try { item.preferences = JSON.parse(item.preferences); } catch (e) {}
-          }
-          if (item.homeGroups && typeof item.homeGroups === 'string') {
-            try { item.homeGroups = JSON.parse(item.homeGroups); } catch (e) {}
-          }
-          if (item.sponsees && typeof item.sponsees === 'string') {
-            try { item.sponsees = JSON.parse(item.sponsees); } catch (e) {}
-          }
-          if (item.messagingKeys && typeof item.messagingKeys === 'string') {
-            try { item.messagingKeys = JSON.parse(item.messagingKeys); } catch (e) {}
-          }
-        }
-        
-        return item;
+        return result.values[0];
       } catch (error) {
-        console.error(`[ sqliteLoader.js ] Error getting item from ${collection} by ID ${id}:`, error);
+        console.error(`[ sqliteLoader.js ] Error getting item by ID from ${collection}:`, error);
         return null;
       }
     },
     
     /**
-     * Add item to collection
+     * Add an item to a collection
      * @param {string} collection - Collection name
      * @param {Object} item - Item to add
-     * @returns {Promise<Object>} Added item
+     * @returns {Promise<Object>} Added item with ID
      */
     add: async function(collection, item) {
       try {
-        // Create a deep copy of the item to avoid modifying the original
-        const itemToSave = JSON.parse(JSON.stringify(item));
+        // Don't include ID field - let SQLite generate it with AUTOINCREMENT
+        const { id, ...itemWithoutId } = item;
         
-        // For tables with AUTOINCREMENT, don't set an ID for new records
-        // SQLite will auto-assign the ID when we insert
-        if (!itemToSave.id) {
-          delete itemToSave.id; // Don't set ID for new records with autoincrement
-        }
+        // Always include timestamps
+        const now = new Date().toISOString();
+        const itemWithTimestamps = {
+          ...itemWithoutId,
+          createdAt: now,
+          updatedAt: now
+        };
         
-        // Special handling for meetings to ensure meeting name is always set (NOT NULL constraint)
-        if (collection === 'meetings') {
-          // Always log the meeting data for debugging
-          console.log(`[ sqliteLoader.js ] Saving meeting:`, JSON.stringify(itemToSave, null, 2));
-          
-          // Make sure name is never empty (required by NOT NULL constraint)
-          if (!itemToSave.name || typeof itemToSave.name !== 'string' || itemToSave.name.trim() === '') {
-            console.warn('[ sqliteLoader.js ] Meeting missing or empty name field, setting default name');
-            itemToSave.name = 'Unnamed Meeting';
-          } else {
-            // Make sure name is properly trimmed
-            itemToSave.name = itemToSave.name.trim();
-          }
-          
-          console.log(`[ sqliteLoader.js ] Meeting name after validation: "${itemToSave.name}"`);
-          
-          // Make sure schedule is stringified JSON
-          if (itemToSave.schedule && typeof itemToSave.schedule === 'object') {
-            itemToSave.schedule = JSON.stringify(itemToSave.schedule);
-          }
-          
-          // Make sure days is stringified JSON if it's an array
-          if (itemToSave.days && Array.isArray(itemToSave.days)) {
-            itemToSave.days = JSON.stringify(itemToSave.days);
-          }
-        }
+        // Build the SQL statement
+        const keys = Object.keys(itemWithTimestamps);
+        const placeholders = keys.map(() => '?').join(', ');
+        const values = keys.map(key => itemWithTimestamps[key]);
         
-        // Special handling for activities to ensure type is always set
-        if (collection === 'activities') {
-          console.log(`[ sqliteLoader.js ] Saving activity with type: "${itemToSave.type}"`);
-          // Double check that type field exists and is not empty
-          if (!itemToSave.type || itemToSave.type === '') {
-            console.warn('[ sqliteLoader.js ] Activity missing type field, setting default type to meeting');
-            itemToSave.type = 'meeting';
-          }
-          
-          // Make sure we preserve any literature-specific data
-          if (itemToSave.type === 'literature' && itemToSave.title && !itemToSave.literatureTitle) {
-            console.log(`[ sqliteLoader.js ] Converting title to literatureTitle for literature activity`);
-            itemToSave.literatureTitle = itemToSave.title;
-            delete itemToSave.title; // Remove the old field to avoid confusion
-          }
-          
-          // Log the activity being saved for debugging
-          console.log(`[ sqliteLoader.js ] Saving activity with type: "${itemToSave.type}" and fields:`, Object.keys(itemToSave));
-          console.log(`[ sqliteLoader.js ] SQL values:`, Object.values(itemToSave));
-        }
-        
-        // Add timestamps
-        if (!itemToSave.createdAt) {
-          itemToSave.createdAt = new Date().toISOString();
-        }
-        itemToSave.updatedAt = new Date().toISOString();
-        
-        // Build query parts with strong validation
-        const fields = Object.keys(itemToSave);
-        const placeholders = fields.map(() => '?').join(', ');
-        
-        // Carefully prepare values ensuring no undefined/null for required fields
-        const values = fields.map(field => {
-          let value = itemToSave[field];
-          
-          // Special handling for activity type field which is NOT NULL
-          if (collection === 'activities' && field === 'type' && (value === undefined || value === null || value === '')) {
-            value = 'meeting'; // Enforce default value for NOT NULL constraint
-          }
-          
-          // Special handling for meeting name field which is NOT NULL
-          if (collection === 'meetings' && field === 'name' && (value === undefined || value === null || value === '')) {
-            console.warn('[ sqliteLoader.js ] Meeting name is NULL or empty when executing SQL - setting default name');
-            value = 'Unnamed Meeting'; // Enforce default value for NOT NULL constraint
-          }
-          
-          // Convert objects to JSON strings
-          if (typeof value === 'object' && value !== null) {
-            return JSON.stringify(value);
-          }
-          
-          return value;
-        });
-        
-        // Validate that we have values for all required fields before executing
-        if (collection === 'activities') {
-          const typeIndex = fields.indexOf('type');
-          if (typeIndex !== -1 && (!values[typeIndex] || values[typeIndex] === '')) {
-            console.error('[ sqliteLoader.js ] Activity type is required but is empty or null');
-            values[typeIndex] = 'meeting'; // Final safeguard
-          }
-        }
-
-        // Special validation for meetings name field which is required
-        if (collection === 'meetings') {
-          const nameIndex = fields.indexOf('name');
-          if (nameIndex !== -1) {
-            if (!values[nameIndex] || values[nameIndex] === '') {
-              console.error('[ sqliteLoader.js ] Meeting name is required but is empty or null - fixing');
-              values[nameIndex] = 'Unnamed Meeting'; // Final safeguard
-            }
-            console.log(`[ sqliteLoader.js ] Meeting name in SQL values: "${values[nameIndex]}"`);
-          } else {
-            console.error('[ sqliteLoader.js ] Name field missing from fields list for meetings!');
-            // Add name field if it's missing
-            fields.push('name');
-            values.push('Unnamed Meeting');
-            console.log('[ sqliteLoader.js ] Added missing name field with default value');
-          }
-        }
-        
-        // Debug output for SQL commands
-        console.log(`[ sqliteLoader.js ] SQL for ${collection}:`, {
-          fields: fields,
-          values: values,
-          collection: collection
-        });
-        
-        // After validation, regenerate placeholders to match the number of fields
-        // This is important if we've added fields after initial placeholder creation
-        const updatedPlaceholders = fields.map(() => '?').join(', ');
-        
-        // Execute insert with corrected SQL
-        const sql = `INSERT INTO ${collection} (${fields.join(', ')}) VALUES (${updatedPlaceholders})`;
-        console.log(`[ sqliteLoader.js ] Executing SQL: ${sql}`);
-        console.log(`[ sqliteLoader.js ] With values:`, values);
-        
+        // Execute the SQL insert
         await sqlite.execute({
           database: DB_NAME,
-          statements: sql,
+          statements: `INSERT INTO ${collection} (${keys.join(', ')}) VALUES (${placeholders})`,
           values: values
         });
         
-        // Return the saved item
-        return itemToSave;
+        // Get the last inserted ID
+        const result = await sqlite.query({
+          database: DB_NAME,
+          statement: 'SELECT last_insert_rowid() as id',
+          values: []
+        });
+        
+        // Return the complete item with ID
+        if (result.values && result.values.length > 0) {
+          return { ...itemWithTimestamps, id: result.values[0].id };
+        }
+        
+        return itemWithTimestamps;
       } catch (error) {
         console.error(`[ sqliteLoader.js ] Error adding item to ${collection}:`, error);
         throw error;
@@ -674,102 +371,64 @@ function setupGlobalDB(sqlite) {
     },
     
     /**
-     * Update item in collection
+     * Update an item in a collection
      * @param {string} collection - Collection name
-     * @param {string} id - Item ID
+     * @param {string|number} id - Item ID
      * @param {Object} updates - Updates to apply
-     * @returns {Promise<Object|null>} Updated item or null
+     * @returns {Promise<Object|null>} Updated item
      */
     update: async function(collection, id, updates) {
       try {
-        console.log(`[ sqliteLoader.js ] Updating ${collection} item with ID:`, id);
-        
-        // Convert string ID to number if it's a numeric string (for compatibility with AUTOINCREMENT)
+        // Ensure ID is in numeric format
         let numericId = id;
-        if (typeof id === 'string') {
-          // If the ID starts with a prefix like 'user_', extract the numeric part
-          if (id.includes('_')) {
-            const parts = id.split('_');
-            const potentialNumeric = parts[parts.length - 1];
-            if (!isNaN(potentialNumeric)) {
-              numericId = parseInt(potentialNumeric, 10);
-              console.log(`[ sqliteLoader.js ] Converted string ID ${id} to numeric ID ${numericId}`);
-            }
-          } else if (!isNaN(id)) {
-            // If it's just a numeric string, convert directly
-            numericId = parseInt(id, 10);
-            console.log(`[ sqliteLoader.js ] Converted numeric string ID ${id} to number ${numericId}`);
-          }
+        if (typeof id === 'string' && !isNaN(id)) {
+          numericId = parseInt(id, 10);
         }
         
-        // Get current item
-        const currentItem = await this.getById(collection, numericId);
-        if (!currentItem) {
-          console.error(`[ sqliteLoader.js ] Cannot update non-existent item with ID ${numericId} in ${collection}`);
-          return null;
-        }
+        // Always update timestamp
+        const updatesWithTimestamp = {
+          ...updates,
+          updatedAt: new Date().toISOString()
+        };
         
-        // Add updated timestamp
-        updates.updatedAt = new Date().toISOString();
-        
-        // Build updated item
-        const updatedItem = { ...currentItem, ...updates };
-        
-        // Build query parts
-        const setClause = Object.keys(updates)
-          .map(field => `${field} = ?`)
+        // Build SET clause
+        const setClause = Object.keys(updatesWithTimestamp)
+          .map(key => `${key} = ?`)
           .join(', ');
         
-        const values = Object.keys(updates).map(field => {
-          const value = updates[field];
-          if (typeof value === 'object' && value !== null) {
-            return JSON.stringify(value);
-          }
-          return value;
-        });
-        
-        // Add ID to values
-        values.push(numericId);
+        // Prepare values array (all update values + ID for WHERE clause)
+        const values = [
+          ...Object.values(updatesWithTimestamp),
+          numericId
+        ];
         
         // Execute update
-        const sql = `UPDATE ${collection} SET ${setClause} WHERE id = ?`;
         await sqlite.execute({
           database: DB_NAME,
-          statements: sql,
+          statements: `UPDATE ${collection} SET ${setClause} WHERE id = ?`,
           values: values
         });
         
-        return updatedItem;
+        // Return updated item
+        return this.getById(collection, numericId);
       } catch (error) {
-        console.error(`[ sqliteLoader.js ] Error updating item ${id} in ${collection}:`, error);
-        throw error;
+        console.error(`[ sqliteLoader.js ] Error updating item in ${collection}:`, error);
+        return null;
       }
     },
     
     /**
-     * Remove item from collection
+     * Remove an item from a collection
      * @param {string} collection - Collection name
-     * @param {integer} id - Item ID
+     * @param {string|number} id - Item ID
      * @returns {Promise<boolean>} Success indicator
      */
     remove: async function(collection, id) {
       try {
-        // Convert string ID to number if needed (for compatibility with AUTOINCREMENT)
+        // Ensure ID is in numeric format
         let numericId = id;
-        if (typeof id === 'string') {
-          // If the ID starts with a prefix like 'user_', extract the numeric part
-          if (id.includes('_')) {
-            const parts = id.split('_');
-            const potentialNumeric = parts[parts.length - 1];
-            if (!isNaN(potentialNumeric)) {
-              numericId = parseInt(potentialNumeric, 10);
-              console.log(`[ sqliteLoader.js ] Converted string ID ${id} to numeric ID ${numericId} for deletion`);
-            }
-          } else if (!isNaN(id)) {
-            // If it's just a numeric string, convert directly
-            numericId = parseInt(id, 10);
-            console.log(`[ sqliteLoader.js ] Converted numeric string ID ${id} to number ${numericId} for deletion`);
-          }
+        if (typeof id === 'string' && !isNaN(id)) {
+          numericId = parseInt(id, 10);
         }
         
         await sqlite.execute({
@@ -777,76 +436,39 @@ function setupGlobalDB(sqlite) {
           statements: `DELETE FROM ${collection} WHERE id = ?`,
           values: [numericId]
         });
+        
         return true;
       } catch (error) {
-        console.error(`[ sqliteLoader.js ] Error removing item ${id} from ${collection}:`, error);
+        console.error(`[ sqliteLoader.js ] Error removing item from ${collection}:`, error);
         return false;
       }
     },
     
     /**
-     * Execute custom SQL query
-     * @param {string} sql - SQL query with placeholders
-     * @param {Array} values - Values for placeholders
-     * @returns {Promise<Array>} Query results
-     */
-    execute: async function(sql, values = []) {
-      try {
-        console.log(`[ sqliteLoader.js ] Executing custom SQL: ${sql}`);
-        console.log(`[ sqliteLoader.js ] With values:`, values);
-        
-        // Check if this is a SELECT query or a modification query
-        const trimmedSql = sql.trim().toUpperCase();
-        if (trimmedSql.startsWith('SELECT')) {
-          // For SELECT statements, use query
-          const result = await sqlite.query({
-            database: DB_NAME,
-            statement: sql,
-            values: values
-          });
-          
-          return result.values || [];
-        } else {
-          // For INSERT, UPDATE, DELETE statements, use execute
-          const result = await sqlite.execute({
-            database: DB_NAME,
-            statements: sql,
-            values: values
-          });
-          
-          return result;
-        }
-      } catch (error) {
-        console.error(`[ sqliteLoader.js ] Error executing SQL ${sql}:`, error);
-        return [];
-      }
-    },
-    
-    /**
-     * Query collection with filters
+     * Query items in a collection
      * @param {string} collection - Collection name
-     * @param {Object|string} filters - Filter criteria or SQL string
-     * @param {Array} values - Values for SQL placeholders (if first param is SQL)
-     * @returns {Promise<Array>} Filtered items
+     * @param {Object} criteria - Query criteria
+     * @returns {Promise<Array>} Matching items
      */
-    query: async function(collection, filters, values = []) {
+    query: async function(collection, criteria = {}) {
       try {
-        // Check if this is a direct SQL query (string) or a filter object
-        if (typeof filters === 'string') {
-          // This is a SQL string, use the execute function
-          return this.execute(filters, values);
-        }
+        // Build WHERE clause
+        const whereConditions = Object.keys(criteria).map(key => `${key} = ?`);
+        const whereClause = whereConditions.length > 0 
+          ? `WHERE ${whereConditions.join(' AND ')}` 
+          : '';
         
-        // Otherwise use the original filter approach
-        const allItems = await this.getAll(collection);
-        return allItems.filter(item => {
-          for (const [key, value] of Object.entries(filters)) {
-            if (item[key] !== value) {
-              return false;
-            }
-          }
-          return true;
+        // Prepare values
+        const values = Object.values(criteria);
+        
+        // Execute query
+        const result = await sqlite.query({
+          database: DB_NAME,
+          statement: `SELECT * FROM ${collection} ${whereClause}`,
+          values: values
         });
+        
+        return result.values || [];
       } catch (error) {
         console.error(`[ sqliteLoader.js ] Error querying ${collection}:`, error);
         return [];
@@ -854,180 +476,74 @@ function setupGlobalDB(sqlite) {
     },
     
     /**
-     * Get preference value
-     * @param {integer} key - Preference key
-     * @param {any} defaultValue - Default value if not found
-     * @returns {Promise<any>} Preference value
-     */
-    getPreference: async function(key, defaultValue = null) {
-      try {
-        const result = await sqlite.query({
-          database: DB_NAME,
-          statement: 'SELECT pref_value FROM preferences WHERE pref_id = ?',
-          values: [key]
-        });
-        
-        if (!result.values || result.values.length === 0) {
-          return defaultValue;
-        }
-        
-        const value = result.values[0].pref_value;
-        
-        // Try to parse as JSON if it looks like JSON
-        if (value && (value.startsWith('{') || value.startsWith('[') || 
-            value === 'true' || value === 'false' || !isNaN(value))) {
-          try {
-            return JSON.parse(value);
-          } catch (e) {
-            // Not valid JSON, return as is
-            return value;
-          }
-        }
-        
-        return value;
-      } catch (error) {
-        console.error(`[ sqliteLoader.js ] Error getting preference ${key}:`, error);
-        return defaultValue;
-      }
-    },
-    
-    /**
-     * Set preference value
-     * @param {integer} key - Preference key
-     * @param {any} value - Value to set
-     * @returns {Promise<boolean>} Success indicator
-     */
-    setPreference: async function(key, value) {
-      try {
-        // Convert non-string values to JSON
-        let storedValue = value;
-        if (typeof value !== 'string' && value !== null) {
-          storedValue = JSON.stringify(value);
-        }
-        
-        // Check if preference exists
-        const existing = await this.getPreference(key, undefined);
-        
-        if (existing === undefined) {
-          // Insert new preference
-          await sqlite.execute({
-            database: DB_NAME,
-            statements: 'INSERT INTO preferences (pref_id, pref_value) VALUES (?, ?)',
-            values: [key, storedValue]
-          });
-        } else {
-          // Update existing preference
-          await sqlite.execute({
-            database: DB_NAME,
-            statements: 'UPDATE preferences SET pref_value = ? WHERE pref_id = ?',
-            values: [storedValue, key]
-          });
-        }
-        
-        return true;
-      } catch (error) {
-        console.error(`[ sqliteLoader.js ] Error setting preference ${key}:`, error);
-        return false;
-      }
-    },
-    
-    /**
-     * Calculate sobriety days based on sobriety date
-     * @param {string} sobrietyDate - ISO date string
-     * @returns {number} Days sober
-     */
-    calculateSobrietyDays: function(sobrietyDate) {
-      if (!sobrietyDate) return 0;
-      
-      const now = new Date();
-      const sobrietyDateObj = new Date(sobrietyDate);
-      
-      // Calculate difference in milliseconds
-      const diffMs = now - sobrietyDateObj;
-      
-      // Convert to days and round down
-      return Math.floor(diffMs / (1000 * 60 * 60 * 24));
-    },
-    
-    /**
-     * Calculate sobriety years with decimal precision
-     * @param {string} sobrietyDate - ISO date string
-     * @param {number} decimalPlaces - Decimal places for result
-     * @returns {number} Years sober
-     */
-    calculateSobrietyYears: function(sobrietyDate, decimalPlaces = 2) {
-      if (!sobrietyDate) return 0;
-      
-      const days = this.calculateSobrietyDays(sobrietyDate);
-      const years = days / 365.25; // Account for leap years
-      
-      return parseFloat(years.toFixed(decimalPlaces));
-    },
-    
-    /**
-     * Calculate spiritual fitness score based on recent activities
-     * @param {Array} activities - Activity data
+     * Calculate spiritual fitness score
+     * @param {Array} [activities] - Optional activities array (if not provided, will fetch from DB)
      * @returns {number} Fitness score (0-100)
      */
-    calculateSpiritualFitness: function(activities) {
-      if (!activities || activities.length === 0) {
-        return 5; // Default minimum score
+    calculateSpiritualFitness: async function(activities) {
+      try {
+        // If activities not provided, fetch from database
+        let recentActivities = activities;
+        if (!recentActivities) {
+          const allActivities = await this.getAll('activities');
+          
+          // Define time period (last 30 days)
+          const now = new Date();
+          const thirtyDaysAgo = new Date();
+          thirtyDaysAgo.setDate(now.getDate() - 30);
+          
+          // Filter for activities in the last 30 days
+          recentActivities = allActivities.filter(activity => {
+            const activityDate = new Date(activity.date);
+            return activityDate >= thirtyDaysAgo && activityDate <= now;
+          });
+        }
+        
+        if (!recentActivities || recentActivities.length === 0) {
+          return 5; // Default minimum score
+        }
+        
+        // Weight different types of spiritual activities
+        const typeWeights = {
+          'prayer': 10,
+          'meditation': 10,
+          'reading': 8,
+          'meeting': 15,
+          'service': 15,
+          'stepwork': 12,
+          'sponsorship': 10,
+          'other': 2
+        };
+        
+        // Calculate score based on activity types and frequency
+        let totalScore = 5; // Start with base score
+        const typeCounts = {};
+        
+        // Count activities by type
+        recentActivities.forEach(activity => {
+          const type = activity.type || 'other';
+          typeCounts[type] = (typeCounts[type] || 0) + 1;
+          totalScore += typeWeights[type] || 2;
+        });
+        
+        // Bonus for consistency (multiple activities of same type)
+        let consistencyBonus = 0;
+        Object.entries(typeCounts).forEach(([type, count]) => {
+          if (count >= 5) consistencyBonus += 10;
+          else if (count >= 3) consistencyBonus += 5;
+        });
+        
+        // Bonus for variety (different types of activities)
+        const varietyBonus = Object.keys(typeCounts).length * 5;
+        
+        // Calculate final score (cap at 100)
+        const finalScore = Math.min(100, totalScore + consistencyBonus + varietyBonus);
+        
+        return finalScore;
+      } catch (error) {
+        console.error('[ sqliteLoader.js ] Error calculating spiritual fitness:', error);
+        return 5; // Default minimum score on error
       }
-      
-      // Define time period (30 days by default)
-      const now = new Date();
-      const thirtyDaysAgo = new Date();
-      thirtyDaysAgo.setDate(now.getDate() - 30);
-      
-      // Filter for recent activities
-      const recentActivities = activities.filter(activity => {
-        if (!activity.date) return false;
-        const activityDate = new Date(activity.date);
-        return activityDate >= thirtyDaysAgo && activityDate <= now;
-      });
-      
-      if (recentActivities.length === 0) {
-        return 5; // Default minimum score if no recent activities
-      }
-      
-      // Activity type weights
-      const typeWeights = {
-        'prayer': 5,
-        'meditation': 5,
-        'meeting': 10,
-        'reading': 3,
-        'call': 3,
-        'service': 15,
-        'stepwork': 12,
-        'sponsorship': 10,
-        'other': 2
-      };
-      
-      // Calculate score based on activity types and frequency
-      let totalScore = 5; // Start with base score
-      const typeCounts = {};
-      
-      // Count activities by type
-      recentActivities.forEach(activity => {
-        const type = activity.type || 'other';
-        typeCounts[type] = (typeCounts[type] || 0) + 1;
-        totalScore += typeWeights[type] || 2;
-      });
-      
-      // Bonus for consistency (multiple activities of same type)
-      let consistencyBonus = 0;
-      Object.entries(typeCounts).forEach(([type, count]) => {
-        if (count >= 5) consistencyBonus += 10;
-        else if (count >= 3) consistencyBonus += 5;
-      });
-      
-      // Bonus for variety (different types of activities)
-      const varietyBonus = Object.keys(typeCounts).length * 5;
-      
-      // Calculate final score (cap at 100)
-      const finalScore = Math.min(100, totalScore + consistencyBonus + varietyBonus);
-      
-      return finalScore;
     },
     
     /**
@@ -1049,7 +565,6 @@ function setupGlobalDB(sqlite) {
         
         // Filter for activities in timeframe
         const filteredActivities = activities.filter(activity => {
-          if (!activity.date) return false;
           const activityDate = new Date(activity.date);
           return activityDate >= startDate && activityDate <= now;
         });
