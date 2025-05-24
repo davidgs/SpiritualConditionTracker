@@ -17,7 +17,14 @@ import {
 import { useTheme } from '@mui/material/styles';
 // No longer using uuids for database ids
 
-export default function SponsorContactTodo({ todos = [], onAddTodo, onToggleTodo, onDeleteTodo }) {
+export default function SponsorContactTodo({ 
+  todos = [], 
+  onAddTodo, 
+  onToggleTodo, 
+  onDeleteTodo,
+  actionItemLabel = "Todo Item",
+  emptyMessage = "No items added yet"
+}) {
   const theme = useTheme();
   const [newTodo, setNewTodo] = useState('');
   const [showInput, setShowInput] = useState(false);
@@ -96,7 +103,7 @@ export default function SponsorContactTodo({ todos = [], onAddTodo, onToggleTodo
           }}
         >
           <i className="fa-solid fa-list-check" style={{ marginRight: '10px' }}></i>
-          Todo Items
+          {actionItemLabel}
         </Typography>
         <IconButton
           onClick={() => {
@@ -234,7 +241,7 @@ export default function SponsorContactTodo({ todos = [], onAddTodo, onToggleTodo
           color: theme.palette.text.secondary
         }}>
           <Typography variant="body2">
-            No action items added yet
+            {emptyMessage}
           </Typography>
         </Box>
       )}

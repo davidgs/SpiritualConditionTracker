@@ -320,30 +320,10 @@ export default function SponsorContactFormPage({ userId, onSave, onCancel, initi
               }}
             />
             
-            {/* Todo Items Section */}
-            <Box sx={{ mt: 3, mb: 3 }}>
-              <Typography 
-                variant="subtitle1" 
-                component="h3" 
-                sx={{ 
-                  fontWeight: 'bold',
-                  mb: 2
-                }}
-              >
-                To-Do Items
-              </Typography>
-              <SponsorContactTodo 
-                todos={todos} 
-                onAddTodo={handleAddTodo}
-                onToggleTodo={handleToggleTodo}
-                onDeleteTodo={handleDeleteTodo}
-              />
-            </Box>
-            
             {/* Action Items Section */}
             <Box sx={{ mt: 3, mb: 3 }}>
               <Typography 
-                variant="subtitle1" 
+                variant="h6" 
                 component="h3" 
                 sx={{ 
                   fontWeight: 'bold',
@@ -353,11 +333,22 @@ export default function SponsorContactFormPage({ userId, onSave, onCancel, initi
                 Action Items
               </Typography>
               
+              {/* Todo Items Component (renamed to Action Items in UI) */}
+              <SponsorContactTodo 
+                todos={todos.filter(t => t.type === 'todo')} 
+                onAddTodo={handleAddTodo}
+                onToggleTodo={handleToggleTodo}
+                onDeleteTodo={handleDeleteTodo}
+                actionItemLabel="Action Item"
+                emptyMessage="No action items added yet"
+              />
+              
+              {/* Additional Action Item Form */}
               <Paper
                 elevation={0}
                 sx={{ 
                   p: 2, 
-                  mb: 2, 
+                  mt: 3,
                   bgcolor: theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.02)',
                   border: '1px solid',
                   borderColor: theme.palette.divider,
@@ -371,9 +362,13 @@ export default function SponsorContactFormPage({ userId, onSave, onCancel, initi
                   <TextField 
                     label="Action Item"
                     fullWidth
+                    placeholder="Add a detailed action item here"
                     value={actionItem?.actionItem || ''}
                     onChange={(e) => setActionItem({...actionItem, actionItem: e.target.value})}
                     sx={{ mb: 2 }}
+                    InputLabelProps={{ 
+                      shrink: true 
+                    }}
                   />
                   
                   <TextField 
@@ -381,9 +376,13 @@ export default function SponsorContactFormPage({ userId, onSave, onCancel, initi
                     fullWidth
                     multiline
                     rows={2}
+                    placeholder="Add any notes or context"
                     value={actionItem?.notes || ''}
                     onChange={(e) => setActionItem({...actionItem, notes: e.target.value})}
                     sx={{ mb: 2 }}
+                    InputLabelProps={{ 
+                      shrink: true 
+                    }}
                   />
                   
                   <TextField 
@@ -410,43 +409,6 @@ export default function SponsorContactFormPage({ userId, onSave, onCancel, initi
                   </Button>
                 </Box>
               </Paper>
-              
-              {/* List of added action items */}
-              {todos.filter(todo => todo.type === 'action').length > 0 && (
-                <Box sx={{ mt: 2 }}>
-                  <Typography variant="subtitle2" sx={{ mb: 1 }}>Added Action Items:</Typography>
-                  <Paper variant="outlined" sx={{ p: 1 }}>
-                    {todos.filter(todo => todo.type === 'action').map((item, index) => (
-                      <Box key={item.id || index} sx={{ 
-                        p: 1, 
-                        borderBottom: index < todos.filter(t => t.type === 'action').length - 1 ? '1px solid' : 'none',
-                        borderColor: 'divider',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between'
-                      }}>
-                        <Box>
-                          <Typography variant="body2" sx={{ fontWeight: 'medium' }}>
-                            {item.text || item.actionItem}
-                          </Typography>
-                          {item.notes && (
-                            <Typography variant="caption" color="text.secondary">
-                              {item.notes}
-                            </Typography>
-                          )}
-                        </Box>
-                        <IconButton 
-                          size="small" 
-                          onClick={() => handleDeleteTodo(item.id)}
-                          sx={{ color: 'error.main' }}
-                        >
-                          <i className="fa-solid fa-trash-can"></i>
-                        </IconButton>
-                      </Box>
-                    ))}
-                  </Paper>
-                </Box>
-              )}
             </Box>
             
             {/* Form Actions */}
