@@ -33,23 +33,60 @@ export async function getSponsorContacts(userId) {
     // Log query parameters for debugging
     console.log('Querying sponsor contacts with userId:', userId);
     
-    // Check if table exists with detailed debug
-    const tableCheck = await sqlite.query({
-      database: DB_NAME,
-      statement: "SELECT name FROM sqlite_master WHERE type='table' AND name='sponsor_contacts'",
-      values: []
-    });
-    console.log('Table check result:', JSON.stringify(tableCheck));
+    // First, check if the database has been initialized
+    try {
+      // List all tables for debugging
+      const tables = await sqlite.query({
+        database: DB_NAME,
+        statement: "SELECT name FROM sqlite_master WHERE type='table'",
+        values: []
+      });
+      console.log('Available tables in database:', JSON.stringify(tables));
+      
+      // Verify sponsor_contacts table exists
+      const tableExists = tables.values && 
+        ((tables.values[0]?.ios_columns && tables.values.slice(1).some(t => t.name === 'sponsor_contacts')) || 
+         tables.values.some(t => t.name === 'sponsor_contacts'));
+      
+      if (!tableExists) {
+        console.log('sponsor_contacts table does not exist, creating it now');
+        
+        // Create the table if it doesn't exist
+        await sqlite.execute({
+          database: DB_NAME,
+          statements: `
+            CREATE TABLE IF NOT EXISTS sponsor_contacts (
+              id INTEGER PRIMARY KEY AUTOINCREMENT,
+              userId TEXT DEFAULT 'default_user',
+              date TEXT DEFAULT NULL,
+              type TEXT DEFAULT 'general',
+              note TEXT DEFAULT '',
+              createdAt TEXT,
+              updatedAt TEXT
+            )
+          `
+        });
+        
+        console.log('sponsor_contacts table created');
+        return []; // No contacts yet since we just created the table
+      }
+    } catch (err) {
+      console.error('Error checking tables:', err);
+    }
     
     // List all contacts regardless of userId for debugging
-    const allContacts = await sqlite.query({
-      database: DB_NAME,
-      statement: 'SELECT * FROM sponsor_contacts',
-      values: []
-    });
-    console.log('All contacts in database:', JSON.stringify(allContacts));
+    try {
+      const allContacts = await sqlite.query({
+        database: DB_NAME,
+        statement: 'SELECT * FROM sponsor_contacts',
+        values: []
+      });
+      console.log('All contacts in database:', JSON.stringify(allContacts));
+    } catch (err) {
+      console.error('Error querying all contacts:', err);
+    }
     
-    // Use the raw query with object parameters
+    // Use the raw query with object parameters to get user-specific contacts
     const result = await sqlite.query({
       database: DB_NAME,
       statement: 'SELECT * FROM sponsor_contacts WHERE userId = ?',
@@ -96,6 +133,46 @@ export async function getSponsorContacts(userId) {
 export async function getContactDetails(contactId) {
   try {
     const sqlite = getSQLite();
+    
+    // First check if table exists
+    try {
+      const tables = await sqlite.query({
+        database: DB_NAME,
+        statement: "SELECT name FROM sqlite_master WHERE type='table' AND name='sponsor_contact_details'",
+        values: []
+      });
+      
+      // Create table if it doesn't exist
+      const tableExists = tables.values && 
+        ((tables.values[0]?.ios_columns && tables.values.slice(1).some(t => t.name === 'sponsor_contact_details')) || 
+         tables.values.some(t => t.name === 'sponsor_contact_details'));
+      
+      if (!tableExists) {
+        console.log('Creating sponsor_contact_details table');
+        await sqlite.execute({
+          database: DB_NAME,
+          statements: `
+            CREATE TABLE IF NOT EXISTS sponsor_contact_details (
+              id INTEGER PRIMARY KEY AUTOINCREMENT,
+              contactId INTEGER,
+              actionItem TEXT DEFAULT '',
+              completed INTEGER DEFAULT 0,
+              notes TEXT DEFAULT '',
+              dueDate TEXT DEFAULT NULL,
+              type TEXT DEFAULT 'general',
+              text TEXT DEFAULT '',
+              createdAt TEXT,
+              FOREIGN KEY (contactId) REFERENCES sponsor_contacts (id)
+            )
+          `
+        });
+        return []; // No details yet since we just created the table
+      }
+    } catch (err) {
+      console.error('Error checking tables:', err);
+    }
+    
+    console.log('Querying contact details for contactId:', contactId);
     
     const result = await sqlite.query({
       database: DB_NAME,
@@ -261,7 +338,18 @@ export async function addContactDetail(detail) {
     
     // Apply the ID if available
     if (lastIdResult?.values?.length > 0) {
-      detailData.id = lastIdResult.values[0].id;
+      // Log the entire result to see what structure we're getting
+      console.log('Last ID result for detail:', JSON.stringify(lastIdResult));
+      
+      // Handle iOS-specific format where the first item contains column info
+      if (lastIdResult.values[0].ios_columns && lastIdResult.values[1]) {
+        detailData.id = lastIdResult.values[1].id;
+        console.log('Extracted ID from iOS format for detail:', detailData.id);
+      } else {
+        // Standard format
+        detailData.id = lastIdResult.values[0].id;
+        console.log('Extracted ID from standard format for detail:', detailData.id);
+      }
     }
     
     return detailData;
