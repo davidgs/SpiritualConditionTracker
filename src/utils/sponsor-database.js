@@ -378,27 +378,20 @@ export async function addContactDetail(detail) {
     
     console.log('Saving contact detail with data:', detailData);
     
-    // Use a direct prepared statement approach for better debugging
+    // Use the same direct SQL approach that worked for contacts
     const insertSQL = `
-      INSERT INTO sponsor_contact_details (
-        contactId, actionItem, completed, notes, dueDate, type, text, createdAt
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+      INSERT INTO sponsor_contact_details 
+      (contactId, actionItem, completed, notes, dueDate, type, text, createdAt) 
+      VALUES 
+      (${detailData.contactId}, '${detailData.actionItem}', ${detailData.completed}, '${detailData.notes || ""}', '${detailData.dueDate || ""}', '${detailData.type}', '${detailData.text || ""}', '${detailData.createdAt}')
     `;
     
-    // Execute with direct value mapping to ensure proper column alignment
+    console.log('Detail SQL statement:', insertSQL);
+    
+    // Execute the raw SQL
     await sqlite.execute({
       database: DB_NAME,
-      statements: insertSQL,
-      values: [
-        detailData.contactId,
-        detailData.actionItem,
-        detailData.completed,
-        detailData.notes,
-        detailData.dueDate,
-        detailData.type,
-        detailData.text,
-        detailData.createdAt
-      ]
+      statements: insertSQL
     });
     
     // Get the ID in a separate query for compatibility
