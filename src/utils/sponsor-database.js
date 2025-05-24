@@ -75,33 +75,39 @@ export async function addSponsorContact(contact) {
   try {
     const sqlite = getSQLite();
     
-    // Create a clean object with valid fields
+    // Create a clean object with valid fields, handling all database constraints
     const contactData = {
-      userId: contact.userId || 'user_default',
+      userId: contact.userId || 'default_user',
       type: contact.type || 'general',
       note: contact.note || '',
-      // Always ensure date is a valid value (critical for database operations)
-      // Try to parse the date and fall back to current date if any issues
+      
+      // Handle the date field properly to avoid constraints
       date: (() => {
         try {
-          // Check if we have a date value
-          if (!contact.date) return new Date().toISOString();
+          // If date is missing or empty, use null (now allowed by our schema)
+          if (!contact.date || contact.date === '') {
+            console.log('No date provided, using null value');
+            return null;
+          }
           
           // Try to create a valid date
           const dateObj = new Date(contact.date);
           
           // Check if the date is valid
           if (isNaN(dateObj.getTime())) {
-            console.log('Invalid date format, using current date instead');
-            return new Date().toISOString();
+            console.log('Invalid date format, using null instead');
+            return null;
           }
           
+          // Format date as ISO string
+          console.log('Formatting date:', dateObj.toISOString());
           return dateObj.toISOString();
         } catch (e) {
-          console.log('Error parsing date, using current date instead:', e);
-          return new Date().toISOString();
+          console.log('Error parsing date, using null instead:', e);
+          return null;
         }
       })(),
+      
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
     };

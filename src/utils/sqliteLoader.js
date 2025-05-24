@@ -209,15 +209,27 @@ async function setupTables(sqlite) {
   console.log('[ sqliteLoader.js ] Meetings table created successfully');
 
   // Create sponsor_contacts table with INTEGER ID - without NOT NULL constraints
+  // First drop the existing table to recreate it with correct constraints
+  try {
+    await sqlite.execute({
+      database: DB_NAME,
+      statements: `DROP TABLE IF EXISTS sponsor_contacts;`
+    });
+    console.log('[ sqliteLoader.js ] Dropped sponsor_contacts table for schema update');
+  } catch (error) {
+    console.warn('[ sqliteLoader.js ] Could not drop sponsor_contacts table:', error);
+  }
+  
+  // Recreate with explicit NULL allowed for date field
   await sqlite.execute({
     database: DB_NAME,
     statements: `
       CREATE TABLE IF NOT EXISTS sponsor_contacts (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        userId TEXT,
-        date TEXT,
-        type TEXT,
-        note TEXT,
+        userId TEXT DEFAULT 'default_user',
+        date TEXT DEFAULT NULL,
+        type TEXT DEFAULT 'general',
+        note TEXT DEFAULT '',
         createdAt TEXT,
         updatedAt TEXT
       )
