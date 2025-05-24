@@ -147,7 +147,7 @@ export default function SponsorContactFormDialog({ open, onClose, onSubmit, init
               multiline
               rows={4}
               value={contactData.note || ''}
-              onChange={handleChange}
+              onBlur={handleChange}
               fullWidth
               placeholder="Brief description of the contact"
               sx={{ 

@@ -272,7 +272,7 @@ export default function SponsorContactFormPage({ userId, onSave, onCancel, initi
               multiline
               rows={4}
               value={contactData.note || ''}
-              onChange={handleChange}
+              onBlur={handleChange}
               fullWidth
               placeholder="Brief description of the contact"
               sx={{ 

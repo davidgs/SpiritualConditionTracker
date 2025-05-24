@@ -99,20 +99,20 @@ export default function SponsorContactTodo({ todos = [], onAddTodo, onToggleTodo
           Todo Items
         </Typography>
         <IconButton
-          color="primary"
           onClick={() => {
             setShowInput(!showInput);
           }}
-          sx={{ 
-            backgroundColor: theme.palette.primary.main,
-            color: theme.palette.primary.contrastText,
-            width: 32,
-            height: 32,
-            '&:hover': {
-              backgroundColor: theme.palette.primary.dark,
-            }
-          }}
-        >
+            size="small"
+            sx={{ 
+              color: theme.palette.primary.main, 
+              '&:hover': { 
+                backgroundColor: theme.palette.background.transparent || 'transparent' 
+              },
+              ml: 0.5,
+              p: 0.5,
+              minWidth: 'auto'
+            }}
+          >
           <i className="fa-solid fa-plus"></i>
         </IconButton>
       </Box>
