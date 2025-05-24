@@ -36,14 +36,16 @@ export async function getSponsorContacts(userId) {
     // Check if table exists with detailed debug
     const tableCheck = await sqlite.query({
       database: DB_NAME,
-      statement: "SELECT name FROM sqlite_master WHERE type='table' AND name='sponsor_contacts'"
+      statement: "SELECT name FROM sqlite_master WHERE type='table' AND name='sponsor_contacts'",
+      values: []
     });
     console.log('Table check result:', JSON.stringify(tableCheck));
     
     // List all contacts regardless of userId for debugging
     const allContacts = await sqlite.query({
       database: DB_NAME,
-      statement: 'SELECT * FROM sponsor_contacts'
+      statement: 'SELECT * FROM sponsor_contacts',
+      values: []
     });
     console.log('All contacts in database:', JSON.stringify(allContacts));
     
