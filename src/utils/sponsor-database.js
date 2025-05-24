@@ -8,9 +8,16 @@ const DB_NAME = 'spiritualTracker.db';
 
 // Get Capacitor SQLite plugin
 function getSQLite() {
+  // First check if database has been initialized
+  if (!window.dbInitialized) {
+    throw new Error('Database not initialized yet - please wait for initialization to complete');
+  }
+  
+  // Then check if Capacitor SQLite plugin is available
   if (!window.Capacitor?.Plugins?.CapacitorSQLite) {
     throw new Error('CapacitorSQLite plugin not available');
   }
+  
   return window.Capacitor.Plugins.CapacitorSQLite;
 }
 

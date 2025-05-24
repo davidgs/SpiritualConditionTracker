@@ -49,11 +49,12 @@ function App() {
       const sqliteDb = await initSQLiteDatabase();
       console.log("SQLite database initialized successfully");
       
-      // Set flags to indicate database is initialized
+      // Set both local state and global flag to indicate database is initialized
       setDbInitialized(true);
-      
-      // Share initialization status globally so other components can check it
       window.dbInitialized = true;
+      
+      // Log successful initialization to help with debugging
+      console.log('Database successfully initialized and ready for use');
       
       // Now load the data
       await loadData();
