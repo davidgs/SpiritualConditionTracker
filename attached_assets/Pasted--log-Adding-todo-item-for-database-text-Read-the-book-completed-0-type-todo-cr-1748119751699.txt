@@ -1,0 +1,26 @@
+⚡️  [log] - Adding todo item (for database): {"text":"Read the book","completed":0,"type":"todo","createdAt":"2025-05-24T20:40:15.218Z"}
+⚡️  [log] - Parent received todo item: {"text":"Read the book","completed":0,"type":"todo","createdAt":"2025-05-24T20:40:15.218Z"}
+⚡️  [log] - Setting todos to: [{"text":"Read the book","completed":0,"type":"todo","createdAt":"2025-05-24T20:40:15.218Z","id":-1194,"contactId":null}]
+⚡️  [log] - Adding new contact with data: {"type":"phone","date":"2025-05-24T00:00:00.000Z","note":""}
+⚡️  [log] - Inserting contact into database: {"type":"phone","date":"2025-05-24T00:00:00.000Z","note":"","userId":"default_user","createdAt":"2025-05-24T20:40:20.816Z","updatedAt":"2025-05-24T20:40:20.816Z"}
+⚡️  [log] - Formatting date: 2025-05-24T00:00:00.000Z
+⚡️  [log] - Inserting contact into database: {"userId":"default_user","type":"phone","note":"","date":"2025-05-24T00:00:00.000Z","createdAt":"2025-05-24T20:40:20.817Z","updatedAt":"2025-05-24T20:40:20.817Z"}
+⚡️  To Native ->  CapacitorSQLite execute 120604911
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  To Native ->  CapacitorSQLite query 120604912
+⚡️  TO JS {"values":[{"ios_columns":["id"]},{"id":1}]}
+⚡️  [log] - Last ID result from database: {"values":[{"ios_columns":["id"]},{"id":1}]}
+⚡️  [log] - Extracted ID from iOS format: 1
+⚡️  [log] - Contact saved with ID: 1
+⚡️  [log] - Loading sponsor contacts for userId: default_user
+⚡️  [log] - Querying sponsor contacts with userId: default_user
+⚡️  To Native ->  CapacitorSQLite query 120604913
+⚡️  TO JS {"values":[{"ios_columns":["name"]},{"name":"messages"},{"name":"sobriety_milestones"},{"name":"spiritual_fitness"},{"name":"daily_inventory"},{"name":"sqlite_sequence"},{"name":"activities"},{"name":"preferences"},{"name":"meetings"},{"name":"users"},{"na
+⚡️  To Native ->  CapacitorSQLite query 120604914
+⚡️  [log] - Available tables in database: {"values":[{"ios_columns":["name"]},{"name":"messages"},{"name":"sobriety_milestones"},{"name":"spiritual_fitness"},{"name":"daily_inventory"},{"name":"sqlite_sequence"},{"name":"activities"},{"name":"preferences"},{"name":"meetings"},{"name":"users"},{"name":"sponsor_contact_details"},{"name":"sponsor_contacts"}]}
+⚡️  TO JS {"values":[{"ios_columns":["id","userId","date","type","note","createdAt","updatedAt"]},{"userId":null,"date":null,"type":null,"updatedAt":null,"id":1,"createdAt":null,"note":null}]}
+⚡️  To Native ->  CapacitorSQLite query 120604915
+⚡️  [log] - All contacts in database: {"values":[{"ios_columns":["id","userId","date","type","note","createdAt","updatedAt"]},{"userId":null,"date":null,"type":null,"updatedAt":null,"id":1,"createdAt":null,"note":null}]}
+⚡️  TO JS {"values":[]}
+⚡️  [log] - Raw sponsor contacts query result: {"values":[]}
+⚡️  [log] - Found sponsor contacts: []

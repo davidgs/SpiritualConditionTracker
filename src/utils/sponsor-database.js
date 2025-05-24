@@ -33,45 +33,26 @@ export async function getSponsorContacts(userId) {
     // Log query parameters for debugging
     console.log('Querying sponsor contacts with userId:', userId);
     
-    // First, check if the database has been initialized
+    // Check if there are any contacts available in the database
     try {
-      // List all tables for debugging
-      const tables = await sqlite.query({
+      // First just check what's in the database
+      const checkContacts = await sqlite.query({
         database: DB_NAME,
-        statement: "SELECT name FROM sqlite_master WHERE type='table'",
+        statement: "SELECT * FROM sponsor_contacts",
         values: []
       });
-      console.log('Available tables in database:', JSON.stringify(tables));
       
-      // Verify sponsor_contacts table exists
-      const tableExists = tables.values && 
-        ((tables.values[0]?.ios_columns && tables.values.slice(1).some(t => t.name === 'sponsor_contacts')) || 
-         tables.values.some(t => t.name === 'sponsor_contacts'));
+      // Log raw results for debugging
+      console.log('Raw contacts in database:', JSON.stringify(checkContacts));
       
-      if (!tableExists) {
-        console.log('sponsor_contacts table does not exist, creating it now');
-        
-        // Create the table if it doesn't exist
-        await sqlite.execute({
-          database: DB_NAME,
-          statements: `
-            CREATE TABLE IF NOT EXISTS sponsor_contacts (
-              id INTEGER PRIMARY KEY AUTOINCREMENT,
-              userId TEXT DEFAULT 'default_user',
-              date TEXT DEFAULT NULL,
-              type TEXT DEFAULT 'general',
-              note TEXT DEFAULT '',
-              createdAt TEXT,
-              updatedAt TEXT
-            )
-          `
-        });
-        
-        console.log('sponsor_contacts table created');
-        return []; // No contacts yet since we just created the table
-      }
+      // Check if there are actual entries with non-null values
+      const hasValidContacts = checkContacts.values && 
+          (checkContacts.values.length > 1 || 
+           (checkContacts.values.length === 1 && !checkContacts.values[0].ios_columns));
+           
+      console.log('Has valid contacts:', hasValidContacts);
     } catch (err) {
-      console.error('Error checking tables:', err);
+      console.error('Error checking contacts:', err);
     }
     
     // List all contacts regardless of userId for debugging
@@ -259,11 +240,28 @@ export async function addSponsorContact(contact) {
     const placeholders = keys.map(() => '?').join(', ');
     const values = keys.map(key => contactData[key]);
     
-    // Execute a simple INSERT without trying to get the last ID in the same statement
+    // Insert the contact data explicitly with prepared statement
+    console.log('Insert SQL: keys =', keys.join(', '), 'values =', values);
+    
+    // Use a direct prepared statement approach for better debugging
+    const insertSQL = `
+      INSERT INTO sponsor_contacts (
+        userId, type, note, date, createdAt, updatedAt
+      ) VALUES (?, ?, ?, ?, ?, ?)
+    `;
+    
+    // Execute with direct value mapping to ensure proper column alignment
     await sqlite.execute({
       database: DB_NAME,
-      statements: `INSERT INTO sponsor_contacts (${keys.join(', ')}) VALUES (${placeholders})`,
-      values: values
+      statements: insertSQL,
+      values: [
+        contactData.userId,
+        contactData.type,
+        contactData.note,
+        contactData.date,
+        contactData.createdAt,
+        contactData.updatedAt
+      ]
     });
     
     // Get the ID in a separate query for compatibility
@@ -317,16 +315,29 @@ export async function addContactDetail(detail) {
       createdAt: new Date().toISOString()
     };
     
-    // Build SQL statement with pre-defined fields only
-    const keys = Object.keys(detailData);
-    const placeholders = keys.map(() => '?').join(', ');
-    const values = keys.map(key => detailData[key]);
+    console.log('Saving contact detail with data:', detailData);
     
-    // Execute a simple INSERT
+    // Use a direct prepared statement approach for better debugging
+    const insertSQL = `
+      INSERT INTO sponsor_contact_details (
+        contactId, actionItem, completed, notes, dueDate, type, text, createdAt
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    `;
+    
+    // Execute with direct value mapping to ensure proper column alignment
     await sqlite.execute({
       database: DB_NAME,
-      statements: `INSERT INTO sponsor_contact_details (${keys.join(', ')}) VALUES (${placeholders})`,
-      values: values
+      statements: insertSQL,
+      values: [
+        detailData.contactId,
+        detailData.actionItem,
+        detailData.completed,
+        detailData.notes,
+        detailData.dueDate,
+        detailData.type,
+        detailData.text,
+        detailData.createdAt
+      ]
     });
     
     // Get the ID in a separate query for compatibility
