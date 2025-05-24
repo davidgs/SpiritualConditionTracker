@@ -135,7 +135,18 @@ export async function addSponsorContact(contact) {
     
     // Apply the ID if available
     if (lastIdResult?.values?.length > 0) {
-      contactData.id = lastIdResult.values[0].id;
+      // Log the entire result to see what structure we're getting
+      console.log('Last ID result from database:', JSON.stringify(lastIdResult));
+      
+      // Handle iOS-specific format where the first item contains column info
+      if (lastIdResult.values[0].ios_columns && lastIdResult.values[1]) {
+        contactData.id = lastIdResult.values[1].id;
+        console.log('Extracted ID from iOS format:', contactData.id);
+      } else {
+        // Standard format
+        contactData.id = lastIdResult.values[0].id;
+        console.log('Extracted ID from standard format:', contactData.id);
+      }
     }
     
     return contactData;

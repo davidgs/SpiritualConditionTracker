@@ -167,14 +167,36 @@ export default function Sponsor({ user, onUpdate }) {
       
       // Add any associated Todo items
       if (todoItems && todoItems.length > 0) {
-        console.log('Adding Todo items:', todoItems);
-        for (const todoItem of todoItems) {
-          const todoDetail = {
-            ...todoItem,
-            contactId: savedContact.id, // Use the ID returned from the database
-            createdAt: new Date().toISOString()
-          };
-          await sponsorDB.addContactDetail(todoDetail);
+        console.log('Adding Todo items with contact ID:', savedContact.id);
+        
+        // Ensure we have a valid contactId before proceeding
+        if (!savedContact.id) {
+          console.error('Cannot add todo items - missing contact ID');
+        } else {
+          for (const todoItem of todoItems) {
+            // Prepare the todo item data
+            const todoDetail = {
+              // If the item has a text field, use it for actionItem
+              actionItem: todoItem.text || todoItem.actionItem || '',
+              // Use either completed field or default to 0
+              completed: typeof todoItem.completed === 'number' ? todoItem.completed : 0,
+              // Ensure contactId is set
+              contactId: savedContact.id,
+              // Set type
+              type: todoItem.type || 'todo',
+              // Set creation timestamp
+              createdAt: new Date().toISOString()
+            };
+            
+            console.log('Saving todo detail:', todoDetail);
+            
+            try {
+              const savedTodo = await sponsorDB.addContactDetail(todoDetail);
+              console.log('Todo item saved with ID:', savedTodo.id);
+            } catch (todoError) {
+              console.error('Failed to save todo item:', todoError);
+            }
+          }
         }
       }
       
