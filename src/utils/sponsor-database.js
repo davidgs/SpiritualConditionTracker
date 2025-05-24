@@ -67,7 +67,73 @@ export async function getSponsorContacts(userId) {
       console.error('Error querying all contacts:', err);
     }
     
-    // Use the raw query with object parameters to get user-specific contacts
+    // First drop and recreate the table if needed
+    try {
+      console.log('Checking if we need to recreate the sponsor_contacts table...');
+      
+      // Get a test contact
+      const testContact = await sqlite.query({
+        database: DB_NAME,
+        statement: 'SELECT * FROM sponsor_contacts LIMIT 1',
+        values: []
+      });
+      
+      console.log('Test contact result:', JSON.stringify(testContact));
+      
+      // Check if we have all NULL values
+      if (testContact.values && testContact.values.length > 0) {
+        let hasAllNulls = true;
+        
+        // Skip the column definition for iOS
+        const startIdx = testContact.values[0].ios_columns ? 1 : 0;
+        
+        if (startIdx < testContact.values.length) {
+          const contact = testContact.values[startIdx];
+          // Check if all values are null
+          for (const key in contact) {
+            if (contact[key] !== null) {
+              hasAllNulls = false;
+              break;
+            }
+          }
+          
+          if (hasAllNulls) {
+            console.log('Found contact with all NULL values, recreating table...');
+            
+            // Drop the table and recreate it
+            await sqlite.execute({
+              database: DB_NAME,
+              statements: 'DROP TABLE IF EXISTS sponsor_contacts'
+            });
+            
+            // Create the table with proper constraints
+            await sqlite.execute({
+              database: DB_NAME,
+              statements: `
+                CREATE TABLE IF NOT EXISTS sponsor_contacts (
+                  id INTEGER PRIMARY KEY AUTOINCREMENT,
+                  userId TEXT DEFAULT 'default_user',
+                  date TEXT DEFAULT NULL,
+                  type TEXT DEFAULT 'general',
+                  note TEXT DEFAULT '',
+                  createdAt TEXT,
+                  updatedAt TEXT
+                )
+              `
+            });
+            
+            console.log('Recreated sponsor_contacts table');
+            
+            // Since we just recreated the table, there are no contacts yet
+            return [];
+          }
+        }
+      }
+    } catch (err) {
+      console.error('Error checking/recreating table:', err);
+    }
+    
+    // Now query for contacts with the specified userId
     const result = await sqlite.query({
       database: DB_NAME,
       statement: 'SELECT * FROM sponsor_contacts WHERE userId = ?',
