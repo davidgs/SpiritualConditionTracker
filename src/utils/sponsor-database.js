@@ -30,6 +30,23 @@ export async function getSponsorContacts(userId) {
   try {
     const sqlite = getSQLite();
     
+    // Log query parameters for debugging
+    console.log('Querying sponsor contacts with userId:', userId);
+    
+    // Check if table exists with detailed debug
+    const tableCheck = await sqlite.query({
+      database: DB_NAME,
+      statement: "SELECT name FROM sqlite_master WHERE type='table' AND name='sponsor_contacts'"
+    });
+    console.log('Table check result:', JSON.stringify(tableCheck));
+    
+    // List all contacts regardless of userId for debugging
+    const allContacts = await sqlite.query({
+      database: DB_NAME,
+      statement: 'SELECT * FROM sponsor_contacts'
+    });
+    console.log('All contacts in database:', JSON.stringify(allContacts));
+    
     // Use the raw query with object parameters
     const result = await sqlite.query({
       database: DB_NAME,
@@ -45,6 +62,8 @@ export async function getSponsorContacts(userId) {
       if (result.values[0].ios_columns) {
         // Extract column names
         const columns = result.values[0].ios_columns;
+        console.log('iOS columns format detected:', columns);
+        
         // Skip the first item (column info) and process the rest
         const processedValues = [];
         
