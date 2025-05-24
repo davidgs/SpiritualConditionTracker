@@ -29,6 +29,14 @@ export default function SponsorContactFormPage({ userId, onSave, onCancel, initi
   // State for todo items
   const [todos, setTodos] = useState([]);
   
+  // State for action item form
+  const [actionItem, setActionItem] = useState({
+    actionItem: '',
+    notes: '',
+    dueDate: '',
+    completed: false
+  });
+  
   // Update form state when initial data changes
   useEffect(() => {
     if (initialData) {
@@ -118,6 +126,36 @@ export default function SponsorContactFormPage({ userId, onSave, onCancel, initi
     // Filter out the deleted todo
     const updatedTodos = todos.filter(todo => todo.id !== todoId);
     setTodos(updatedTodos);
+  };
+  
+  // Add action item
+  const handleAddAction = () => {
+    if (!actionItem.actionItem.trim()) return;
+    
+    // Create a new action item (similar to todo but with type='action')
+    const newAction = {
+      // Use text field to store the action item content (compatible with todo structure)
+      text: actionItem.actionItem,
+      // Store additional fields
+      notes: actionItem.notes || '',
+      dueDate: actionItem.dueDate || '',
+      completed: actionItem.completed ? 1 : 0,
+      type: 'action',
+      // Generate temporary ID for UI (will be replaced by SQLite)
+      id: -Math.floor(Math.random() * 10000),
+      createdAt: new Date().toISOString()
+    };
+    
+    // Add to todos array (we use same array for both todos and actions)
+    setTodos([...todos, newAction]);
+    
+    // Reset form
+    setActionItem({
+      actionItem: '',
+      notes: '',
+      dueDate: '',
+      completed: false
+    });
   };
   
   // Handle form submission
@@ -284,12 +322,131 @@ export default function SponsorContactFormPage({ userId, onSave, onCancel, initi
             
             {/* Todo Items Section */}
             <Box sx={{ mt: 3, mb: 3 }}>
+              <Typography 
+                variant="subtitle1" 
+                component="h3" 
+                sx={{ 
+                  fontWeight: 'bold',
+                  mb: 2
+                }}
+              >
+                To-Do Items
+              </Typography>
               <SponsorContactTodo 
                 todos={todos} 
                 onAddTodo={handleAddTodo}
                 onToggleTodo={handleToggleTodo}
                 onDeleteTodo={handleDeleteTodo}
               />
+            </Box>
+            
+            {/* Action Items Section */}
+            <Box sx={{ mt: 3, mb: 3 }}>
+              <Typography 
+                variant="subtitle1" 
+                component="h3" 
+                sx={{ 
+                  fontWeight: 'bold',
+                  mb: 2
+                }}
+              >
+                Action Items
+              </Typography>
+              
+              <Paper
+                elevation={0}
+                sx={{ 
+                  p: 2, 
+                  mb: 2, 
+                  bgcolor: theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.02)',
+                  border: '1px solid',
+                  borderColor: theme.palette.divider,
+                  borderRadius: 1
+                }}
+              >
+                <Box component="form" onSubmit={(e) => {
+                  e.preventDefault();
+                  handleAddAction();
+                }}>
+                  <TextField 
+                    label="Action Item"
+                    fullWidth
+                    value={actionItem?.actionItem || ''}
+                    onChange={(e) => setActionItem({...actionItem, actionItem: e.target.value})}
+                    sx={{ mb: 2 }}
+                  />
+                  
+                  <TextField 
+                    label="Notes (optional)"
+                    fullWidth
+                    multiline
+                    rows={2}
+                    value={actionItem?.notes || ''}
+                    onChange={(e) => setActionItem({...actionItem, notes: e.target.value})}
+                    sx={{ mb: 2 }}
+                  />
+                  
+                  <TextField 
+                    label="Due Date (optional)"
+                    type="date"
+                    InputLabelProps={{ shrink: true }}
+                    fullWidth
+                    value={actionItem?.dueDate || ''}
+                    onChange={(e) => setActionItem({...actionItem, dueDate: e.target.value})}
+                    sx={{ mb: 2 }}
+                  />
+                  
+                  <Button 
+                    type="submit"
+                    variant="contained" 
+                    color="primary"
+                    disabled={!actionItem?.actionItem?.trim()}
+                    sx={{ 
+                      mt: 1,
+                      textTransform: 'none'
+                    }}
+                  >
+                    Add Action Item
+                  </Button>
+                </Box>
+              </Paper>
+              
+              {/* List of added action items */}
+              {todos.filter(todo => todo.type === 'action').length > 0 && (
+                <Box sx={{ mt: 2 }}>
+                  <Typography variant="subtitle2" sx={{ mb: 1 }}>Added Action Items:</Typography>
+                  <Paper variant="outlined" sx={{ p: 1 }}>
+                    {todos.filter(todo => todo.type === 'action').map((item, index) => (
+                      <Box key={item.id || index} sx={{ 
+                        p: 1, 
+                        borderBottom: index < todos.filter(t => t.type === 'action').length - 1 ? '1px solid' : 'none',
+                        borderColor: 'divider',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between'
+                      }}>
+                        <Box>
+                          <Typography variant="body2" sx={{ fontWeight: 'medium' }}>
+                            {item.text || item.actionItem}
+                          </Typography>
+                          {item.notes && (
+                            <Typography variant="caption" color="text.secondary">
+                              {item.notes}
+                            </Typography>
+                          )}
+                        </Box>
+                        <IconButton 
+                          size="small" 
+                          onClick={() => handleDeleteTodo(item.id)}
+                          sx={{ color: 'error.main' }}
+                        >
+                          <i className="fa-solid fa-trash-can"></i>
+                        </IconButton>
+                      </Box>
+                    ))}
+                  </Paper>
+                </Box>
+              )}
             </Box>
             
             {/* Form Actions */}
