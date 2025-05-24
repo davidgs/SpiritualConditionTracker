@@ -306,28 +306,23 @@ export async function addSponsorContact(contact) {
     const placeholders = keys.map(() => '?').join(', ');
     const values = keys.map(key => contactData[key]);
     
-    // Insert the contact data explicitly with prepared statement
-    console.log('Insert SQL: keys =', keys.join(', '), 'values =', values);
+    // Insert using a simpler approach
+    console.log('Inserting contact with simplified approach');
     
-    // Use a direct prepared statement approach for better debugging
+    // First try a direct value insertion with a simpler query
     const insertSQL = `
-      INSERT INTO sponsor_contacts (
-        userId, type, note, date, createdAt, updatedAt
-      ) VALUES (?, ?, ?, ?, ?, ?)
+      INSERT INTO sponsor_contacts 
+      (userId, type, note, date, createdAt, updatedAt) 
+      VALUES 
+      ('${contactData.userId}', '${contactData.type}', '${contactData.note}', '${contactData.date || "NULL"}', '${contactData.createdAt}', '${contactData.updatedAt}')
     `;
     
-    // Execute with direct value mapping to ensure proper column alignment
+    console.log('Raw SQL statement:', insertSQL);
+    
+    // Execute the raw SQL
     await sqlite.execute({
       database: DB_NAME,
-      statements: insertSQL,
-      values: [
-        contactData.userId,
-        contactData.type,
-        contactData.note,
-        contactData.date,
-        contactData.createdAt,
-        contactData.updatedAt
-      ]
+      statements: insertSQL
     });
     
     // Get the ID in a separate query for compatibility
