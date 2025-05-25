@@ -37,47 +37,34 @@ export default function SponsorContactTodo({
   });
   const [internalTodos, setInternalTodos] = useState([]);
   
-  // Update internal todos when props change, but only if todos have actual content
+  // Initialize internal state once
   useEffect(() => {
-    // Add more detailed logging to help debug
-    console.log('SponsorContactTodo received todos array:', todos);
-    
-    // Always update internal state with the latest todos
+    // Only set internal todos on initial mount to avoid loops
     if (todos && Array.isArray(todos)) {
       setInternalTodos([...todos]);
-      console.log('Setting internal todos to:', [...todos]);
-    } else {
-      console.log('Todos prop is not a valid array');
     }
-  }, [todos]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleAddTodo = () => {
     if (todoForm.title.trim()) {
-      // For UI state, we need a temporary ID that won't conflict with database IDs
-      // Use negative numbers which SQLite auto-increment will never generate
-      const tempUIId = -Math.floor(Math.random() * 10000) - 1;
-      
+      // Create a simple todo item
       const todoItem = {
-        // For UI state only, we'll use a temporary negative ID
-        // SQLite auto-increment will always use positive integers
-        id: tempUIId,
         title: todoForm.title.trim(),
-        text: todoForm.text.trim() || todoForm.title.trim(), // Use title as text if text is empty
+        text: todoForm.text.trim() || todoForm.title.trim(),
         notes: todoForm.notes || '',
         dueDate: todoForm.dueDate || null,
-        completed: 0,  // Using 0 for SQLite compatibility
-        type: 'todo',  // Important for filtering in the parent component
-        createdAt: new Date().toISOString(),
+        completed: 0,
+        type: 'todo'
       };
       
-      // Add to internal state immediately for UI feedback
-      setInternalTodos(prev => [...prev, todoItem]);
+      // Pass to parent component for handling
+      onAddTodo(todoItem);
       
-      // Pass to parent component without the temporary ID
-      // For database insertion, we should exclude the ID field completely
-      const { id, ...todoDataForDatabase } = todoItem;
-      console.log('Adding todo item (for database):', todoDataForDatabase);
-      onAddTodo(todoDataForDatabase);
+      // Update internal state immediately for a responsive UI
+      const tempId = -Math.floor(Math.random() * 10000) - 1;
+      const newTodoWithId = { ...todoItem, id: tempId };
+      setInternalTodos(prev => [...prev, newTodoWithId]);
       
       // Clear form and hide it
       resetForm();

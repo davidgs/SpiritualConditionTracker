@@ -48,36 +48,28 @@ export default function SponsorContactDetailsPage({
     completed: false
   });
   
-  // State for action items
+  // State for action items - using a ref to avoid infinite loops
   const [actionItems, setActionItems] = useState([]);
+  const actionItemsRef = React.useRef([]);
   
-  // Load details and action items when they change - once when component mounts or when details/contact change
+  // Load details and action items ONCE when component mounts
   useEffect(() => {
     // Set contact details from props
     setContactDetails(details);
     
     // Filter any todo items from the details array for immediate display
-    // This ensures we show something even if database access isn't working
     const todoItems = details.filter(item => item.type === 'todo');
     if (todoItems.length > 0) {
       console.log('Found todo items in details:', todoItems.length);
-      // Important: We're setting the initial state once to prevent infinite loops
-      setActionItems(todoItems);
-    } else {
-      console.log('No todo items found in details');
       
-      // If no items in details, initialize with empty array to prevent undefined
-      if (actionItems.length === 0) {
-        setActionItems([]);
-      }
+      // Set both state and ref to prevent infinite loops
+      setActionItems(todoItems);
+      actionItemsRef.current = todoItems;
     }
     
-    // We're not attempting to load from database here to avoid loops
-    // The action items will be loaded via the proper SQLite interfaces
-    // when running in the native app environment
-    
+    // ONLY RUN ONCE - Don't include details or contact in dependencies
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [details, contact]);
+  }, []);
   
   // Handle form changes for new action item
   const handleActionChange = (e) => {
@@ -158,35 +150,26 @@ export default function SponsorContactDetailsPage({
     setContactDetails(updatedDetails);
   };
   
-  // Add a new action item from todo component
-  const handleAddActionItem = async (todoItem) => {
-    console.log('Parent received todo item:', todoItem);
-    
-    // In SQLite, the ID will be generated automatically with AUTOINCREMENT
-    // We'll use a temporary negative ID for the UI state only
+  // Direct implementation to add a new action item
+  const handleAddActionItem = (todoItem) => {
+    // Generate a simple temp ID for the demo
     const tempId = -Math.floor(Math.random() * 10000) - 1;
     
-    // Format the action item for our new action_items table
-    const actionItem = {
+    // Create a simplified action item object
+    const newItem = {
+      id: tempId,
       title: todoItem.title || todoItem.text || '',
       text: todoItem.text || todoItem.title || '',
       notes: todoItem.notes || '',
       dueDate: todoItem.dueDate || null,
-      completed: todoItem.completed ? 1 : 0,
-      type: 'todo',
-      id: tempId, // Temporary ID for UI state
-      contactId: contact?.id || null
+      completed: 0,
+      type: 'todo'
     };
     
-    // Important: Update the UI immediately for better user experience
-    console.log('Setting todos to:', [actionItem, ...actionItems]);
-    setActionItems(prev => [actionItem, ...prev]);
-    
-    // In a native environment, we would save to SQLite database
-    // For the web environment demo, we'll just keep it in memory
-    
-    // We're intentionally not making the database call in this demo environment
-    // since SQLite won't be available, but the code would work in native iOS
+    // Add directly to both state and ref to keep them in sync
+    const updatedItems = [newItem, ...actionItemsRef.current];
+    actionItemsRef.current = updatedItems;
+    setActionItems(updatedItems);
   };
   
   // Toggle action item completion
