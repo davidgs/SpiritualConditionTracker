@@ -22,12 +22,12 @@ export default function SponsorContactTodo({
   onAddTodo, 
   onToggleTodo, 
   onDeleteTodo,
-  actionItemLabel = "Todo Item",
-  emptyMessage = "No items added yet"
+  actionItemLabel = "New Action Item",
+  emptyMessage = "No items added yet",
+  showInput = false
 }) {
   const theme = useTheme();
   const [newTodo, setNewTodo] = useState('');
-  const [showInput, setShowInput] = useState(false);
   const [internalTodos, setInternalTodos] = useState([]);
   
   // Initialize internal state only once on mount
@@ -102,26 +102,9 @@ export default function SponsorContactTodo({
             alignItems: 'center'
           }}
         >
-          <i className="fa-solid fa-list-check" style={{ marginRight: '10px' }}></i>
           {actionItemLabel}
         </Typography>
-        <IconButton
-          onClick={() => {
-            setShowInput(!showInput);
-          }}
-            size="small"
-            sx={{ 
-              color: theme.palette.primary.main, 
-              '&:hover': { 
-                backgroundColor: theme.palette.background.transparent || 'transparent' 
-              },
-              ml: 0.5,
-              p: 0.5,
-              minWidth: 'auto'
-            }}
-          >
-          <i className="fa-solid fa-plus"></i>
-        </IconButton>
+        
       </Box>
 
       <Divider sx={{ mb: 2 }} />

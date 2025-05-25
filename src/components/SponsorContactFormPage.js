@@ -28,7 +28,8 @@ export default function SponsorContactFormPage({ userId, onSave, onCancel, initi
   
   // State for todo items
   const [todos, setTodos] = useState([]);
-  
+  const [showInput, setShowInput] = useState(false);
+
   // State for action item form
   const [actionItem, setActionItem] = useState({
     actionItem: '',
@@ -324,14 +325,33 @@ export default function SponsorContactFormPage({ userId, onSave, onCancel, initi
             <Box sx={{ mt: 3, mb: 3 }}>
               <Typography 
                 variant="h6" 
-                component="h3" 
                 sx={{ 
                   fontWeight: 'bold',
-                  mb: 2
+                  color: theme.palette.text.primary,
+                  display: 'flex',
+                  alignItems: 'center'
                 }}
               >
+                <i className="fa-solid fa-list-check" style={{ marginRight: '10px' }}></i>
                 Action Items
               </Typography>
+              <IconButton
+                onClick={() => {
+                  setShowInput(!showInput);
+                }}
+                  size="small"
+                  sx={{ 
+                    color: theme.palette.primary.main, 
+                    '&:hover': { 
+                      backgroundColor: theme.palette.background.transparent || 'transparent' 
+                    },
+                    ml: 0.5,
+                    p: 0.5,
+                    minWidth: 'auto'
+                  }}
+                >
+                <i className="fa-solid fa-plus"></i>
+              </IconButton>
               
               {/* Todo Items Component (renamed to Action Items in UI) */}
               <SponsorContactTodo 
@@ -339,8 +359,9 @@ export default function SponsorContactFormPage({ userId, onSave, onCancel, initi
                 onAddTodo={handleAddTodo}
                 onToggleTodo={handleToggleTodo}
                 onDeleteTodo={handleDeleteTodo}
-                actionItemLabel="Action Item"
+                actionItemLabel="New Action Item"
                 emptyMessage="No action items added yet"
+                showInput={showInput}
               />
               
               {/* Additional Action Item Form */}
