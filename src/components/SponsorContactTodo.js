@@ -115,20 +115,33 @@ export default function SponsorContactTodo({
             borderColor: 'divider',
           }}
         >
+          {/* Action Item Title */}
+          <Typography 
+            variant="h4" 
+            sx={{ 
+              fontWeight: 'bold',
+              color: theme.palette.text.primary,
+              display: 'flex',
+              alignItems: 'center'
+            }}
+          >
+            {todoForm.title}
+          </Typography>
           {/* Title Field */}
           <TextField
             fullWidth
+            required
+            InputLabelProps={{ shrink: true }}
+            sx={{ 
+              '& .MuiInputBase-root': { 
+                height: '56px', 
+                borderRadius: '8px',
+              }
+            }}
             label="Title"
             placeholder="Enter action item title"
             value={todoForm.title}
             onChange={(e) => setTodoForm({...todoForm, title: e.target.value})}
-            InputLabelProps={{ shrink: true }}
-            sx={{ 
-              mb: 3,
-              '& .MuiInputBase-root': { 
-                borderRadius: 1.5
-              }
-            }}
             autoFocus
           />
           

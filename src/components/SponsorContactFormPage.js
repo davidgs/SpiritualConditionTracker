@@ -310,17 +310,18 @@ export default function SponsorContactFormPage({ userId, onSave, onCancel, initi
                 
                 <Button
                   onClick={() => setShowInput(!showInput)}
-                  color="primary"
-                  startIcon={<i className="fa-solid fa-plus"></i>}
-                  variant="outlined"
                   size="small"
-                  sx={{ 
-                    textTransform: 'none',
-                    borderRadius: '8px',
-                    px: 2
-                  }}
-                >
-                  Add Item
+                    sx={{ 
+                      color: theme.palette.primary.main, 
+                      '&:hover': { 
+                        backgroundColor: theme.palette.background.transparent || 'transparent' 
+                      },
+                      ml: 0.5,
+                      p: 0.5,
+                      minWidth: 'auto'
+                    }}
+                  >
+                    <i className="fa-solid fa-plus"></i>
                 </Button>
               </Box>
               
