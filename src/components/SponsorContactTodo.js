@@ -22,12 +22,20 @@ export default function SponsorContactTodo({
   onAddTodo, 
   onToggleTodo, 
   onDeleteTodo,
-  actionItemLabel = "New Action Item",
-  emptyMessage = "No items added yet",
-  showInput = false
+  actionItemLabel = "Action Items",
+  emptyMessage = "No action items added yet",
+  showInput = true
 }) {
   const theme = useTheme();
-  const [newTodo, setNewTodo] = useState('');
+  const [showForm, setShowForm] = useState(showInput);
+  const [todoForm, setTodoForm] = useState({
+    title: '',
+    text: '',
+    dueDate: '',
+    notes: '',
+    completed: 0,
+    type: 'todo'
+  });
   const [internalTodos, setInternalTodos] = useState([]);
   
   // Initialize internal state only once on mount
@@ -37,7 +45,7 @@ export default function SponsorContactTodo({
   }, []);
 
   const handleAddTodo = () => {
-    if (newTodo.trim()) {
+    if (todoForm.title.trim()) {
       // For UI state, we need a temporary ID that won't conflict with database IDs
       // Use negative numbers which SQLite auto-increment will never generate
       const tempUIId = -Math.floor(Math.random() * 10000) - 1;
@@ -46,11 +54,13 @@ export default function SponsorContactTodo({
         // For UI state only, we'll use a temporary negative ID
         // SQLite auto-increment will always use positive integers
         id: tempUIId,
-        text: newTodo.trim(),
+        title: todoForm.title.trim(),
+        text: todoForm.text.trim() || todoForm.title.trim(), // Use title as text if text is empty
+        notes: todoForm.notes || '',
+        dueDate: todoForm.dueDate || null,
         completed: 0,  // Using 0 for SQLite compatibility
         type: 'todo',  // Important for filtering in the parent component
         createdAt: new Date().toISOString(),
-        dueDate: null,  // Optional field for future use
       };
       
       // Add to internal state immediately for UI feedback
@@ -62,13 +72,30 @@ export default function SponsorContactTodo({
       console.log('Adding todo item (for database):', todoDataForDatabase);
       onAddTodo(todoDataForDatabase);
       
-      // Clear input after adding
-      setNewTodo('');
+      // Clear form and hide it
+      resetForm();
+      setShowForm(false);
     }
+  };
+  
+  const resetForm = () => {
+    setTodoForm({
+      title: '',
+      text: '',
+      dueDate: '',
+      notes: '',
+      completed: 0,
+      type: 'todo'
+    });
+  };
+
+  const handleCancel = () => {
+    resetForm();
+    setShowForm(false);
   };
 
   const handleKeyPress = (e) => {
-    if (e.key === 'Enter') {
+    if (e.key === 'Enter' && e.ctrlKey) {
       e.preventDefault();
       handleAddTodo();
     }
@@ -103,60 +130,125 @@ export default function SponsorContactTodo({
             alignItems: 'center'
           }}
         >
+          <i className="fa-solid fa-list-check" style={{ marginRight: '10px' }}></i>
           {actionItemLabel}
         </Typography>
         
+        {!showForm && (
+          <Button
+            onClick={() => setShowForm(true)}
+            color="primary"
+            startIcon={<i className="fa-solid fa-plus"></i>}
+            variant="outlined"
+            size="small"
+            sx={{ 
+              textTransform: 'none',
+              borderRadius: '8px',
+              px: 2
+            }}
+          >
+            Add Item
+          </Button>
+        )}
       </Box>
 
       <Divider sx={{ mb: 2 }} />
 
-      {/* Collapsible To-do input */}
-      <Collapse in={showInput} timeout="auto" unmountOnExit>
-        <Box sx={{ display: 'flex', mb: 3, alignItems: 'flex-start' }}>
+      {/* Collapsible Action Item Form */}
+      <Collapse in={showForm} timeout="auto" unmountOnExit>
+        <Box 
+          component="form" 
+          sx={{ 
+            mb: 3, 
+            p: 2, 
+            border: '1px solid',
+            borderColor: theme.palette.divider,
+            borderRadius: '8px',
+            bgcolor: theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.02)'
+          }}
+        >
+          {/* Title Field */}
           <TextField
             fullWidth
-            placeholder="Add new action item..."
-            value={newTodo}
-            onChange={(e) => setNewTodo(e.target.value)}
-            onKeyPress={handleKeyPress}
-            autoFocus
-            multiline
-            rows={2}
+            label="Title"
+            placeholder="Enter action item title"
+            value={todoForm.title}
+            onChange={(e) => setTodoForm({...todoForm, title: e.target.value})}
+            InputLabelProps={{ shrink: true }}
             sx={{ 
-              mr: 1,
+              mb: 2,
               '& .MuiInputBase-root': { 
-                borderRadius: '8px',
-                minHeight: '56px'
-              },
-              '& .MuiOutlinedInput-input': {
-                fontSize: 16,
-                padding: '15px 14px'
+                borderRadius: '8px'
+              }
+            }}
+            autoFocus
+          />
+          
+          {/* Due Date Field */}
+          <TextField
+            fullWidth
+            label="Due Date"
+            type="date"
+            value={todoForm.dueDate}
+            onChange={(e) => setTodoForm({...todoForm, dueDate: e.target.value})}
+            InputLabelProps={{ shrink: true }}
+            sx={{ 
+              mb: 2,
+              '& .MuiInputBase-root': { 
+                borderRadius: '8px'
               }
             }}
           />
-          <IconButton
-            color="primary"
-            onClick={() => {
-              handleAddTodo();
-              // Don't hide the input after adding
-            }}
-            disabled={!newTodo.trim()}
+          
+          {/* Notes Field */}
+          <TextField
+            fullWidth
+            label="Notes"
+            placeholder="Add details or context (optional)"
+            value={todoForm.notes}
+            onChange={(e) => setTodoForm({...todoForm, notes: e.target.value})}
+            onKeyPress={handleKeyPress}
+            multiline
+            rows={3}
+            InputLabelProps={{ shrink: true }}
             sx={{ 
-              backgroundColor: 'transparent',
-              color: theme.palette.primary.main,
-              height: '56px',
-              width: '42px',
-              '&:hover': {
-                backgroundColor: 'transparent',
-              },
-              '&.Mui-disabled': {
-                backgroundColor: 'transparent',
-                color: theme.palette.action.disabled
+              mb: 2,
+              '& .MuiInputBase-root': { 
+                borderRadius: '8px'
               }
             }}
-          >
-            <i className="fa-solid fa-check"></i>
-          </IconButton>
+          />
+          
+          {/* Form Buttons */}
+          <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 1 }}>
+            <Button
+              variant="text"
+              color="inherit"
+              onClick={handleCancel}
+              startIcon={<i className="fa-solid fa-xmark"></i>}
+              sx={{ 
+                mr: 1,
+                textTransform: 'none',
+                borderRadius: '8px'
+              }}
+            >
+              Cancel
+            </Button>
+            
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleAddTodo}
+              disabled={!todoForm.title.trim()}
+              startIcon={<i className="fa-solid fa-check"></i>}
+              sx={{ 
+                textTransform: 'none',
+                borderRadius: '8px'
+              }}
+            >
+              Save
+            </Button>
+          </Box>
         </Box>
       </Collapse>
 
@@ -209,7 +301,17 @@ export default function SponsorContactTodo({
                 />
               </ListItemIcon>
               <ListItemText
-                primary={todo.text}
+                primary={todo.title || todo.text}
+                secondary={todo.notes && (
+                  <Typography variant="body2" component="span" color="text.secondary">
+                    {todo.notes}
+                    {todo.dueDate && (
+                      <Typography component="span" variant="caption" sx={{ ml: 1, fontWeight: 'medium' }}>
+                        Due: {new Date(todo.dueDate).toLocaleDateString()}
+                      </Typography>
+                    )}
+                  </Typography>
+                )}
                 sx={{
                   textDecoration: todo.completed === 1 ? 'line-through' : 'none',
                   color: todo.completed === 1 ? theme.palette.text.secondary : theme.palette.text.primary

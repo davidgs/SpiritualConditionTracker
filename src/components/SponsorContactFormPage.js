@@ -26,17 +26,8 @@ export default function SponsorContactFormPage({ userId, onSave, onCancel, initi
     note: ''
   });
   
-  // State for todo items
+  // State for todo items and UI controls
   const [todos, setTodos] = useState([]);
-  const [showInput, setShowInput] = useState(false);
-
-  // State for action item form
-  const [actionItem, setActionItem] = useState({
-    actionItem: '',
-    notes: '',
-    dueDate: '',
-    completed: false
-  });
   
   // Update form state when initial data changes
   useEffect(() => {
@@ -129,35 +120,7 @@ export default function SponsorContactFormPage({ userId, onSave, onCancel, initi
     setTodos(updatedTodos);
   };
   
-  // Add action item
-  const handleAddAction = () => {
-    if (!actionItem.actionItem.trim()) return;
-    
-    // Create a new action item (similar to todo but with type='action')
-    const newAction = {
-      // Use text field to store the action item content (compatible with todo structure)
-      text: actionItem.actionItem,
-      // Store additional fields
-      notes: actionItem.notes || '',
-      dueDate: actionItem.dueDate || '',
-      completed: actionItem.completed ? 1 : 0,
-      type: 'action',
-      // Generate temporary ID for UI (will be replaced by SQLite)
-      id: -Math.floor(Math.random() * 10000),
-      createdAt: new Date().toISOString()
-    };
-    
-    // Add to todos array (we use same array for both todos and actions)
-    setTodos([...todos, newAction]);
-    
-    // Reset form
-    setActionItem({
-      actionItem: '',
-      notes: '',
-      dueDate: '',
-      completed: false
-    });
-  };
+  // Note: handleAddAction is no longer needed as the SponsorContactTodo component now handles this internally
   
   // Handle form submission
   const handleSubmit = (e) => {
@@ -323,115 +286,15 @@ export default function SponsorContactFormPage({ userId, onSave, onCancel, initi
             
             {/* Action Items Section */}
             <Box sx={{ mt: 3, mb: 3 }}>
-              <Typography 
-                variant="h6" 
-                sx={{ 
-                  fontWeight: 'bold',
-                  color: theme.palette.text.primary,
-                  display: 'flex',
-                  alignItems: 'center'
-                }}
-              >
-                <i className="fa-solid fa-list-check" style={{ marginRight: '10px' }}></i>
-                Action Items
-                <IconButton
-                  onClick={() => {
-                    setShowInput(!showInput);
-                  }}
-                    size="small"
-                    sx={{ 
-                      color: theme.palette.primary.main, 
-                      '&:hover': { 
-                        backgroundColor: theme.palette.background.transparent || 'transparent' 
-                      },
-                      ml: 0.5,
-                      p: 0.5,
-                      minWidth: 'auto'
-                    }}
-                  >
-                  <i className="fa-solid fa-plus"></i>
-                </IconButton>
-              </Typography>
-              
-              
-              {/* Todo Items Component (renamed to Action Items in UI) */}
-              {showInput &&
+              {/* Enhanced Action Item Component with built-in form */}
               <SponsorContactTodo 
-                todos={todos.filter(t => t.type === 'todo')} 
+                todos={todos} 
                 onAddTodo={handleAddTodo}
                 onToggleTodo={handleToggleTodo}
                 onDeleteTodo={handleDeleteTodo}
-                actionItemLabel="New Action Item"
+                actionItemLabel="Action Items"
                 emptyMessage="No action items added yet"
-                showInput={showInput}
               />
-              }
-              {/* Additional Action Item Form */}
-              <Paper
-                elevation={0}
-                sx={{ 
-                  p: 2, 
-                  mt: 3,
-                  bgcolor: theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.02)',
-                  border: '1px solid',
-                  borderColor: theme.palette.divider,
-                  borderRadius: 1
-                }}
-              >
-                <Box component="form" onSubmit={(e) => {
-                  e.preventDefault();
-                  handleAddAction();
-                }}>
-                  <TextField 
-                    label="Action Item"
-                    fullWidth
-                    placeholder="Add a detailed action item here"
-                    value={actionItem?.actionItem || ''}
-                    onChange={(e) => setActionItem({...actionItem, actionItem: e.target.value})}
-                    sx={{ mb: 2 }}
-                    InputLabelProps={{ 
-                      shrink: true 
-                    }}
-                  />
-                  
-                  <TextField 
-                    label="Notes (optional)"
-                    fullWidth
-                    multiline
-                    rows={2}
-                    placeholder="Add any notes or context"
-                    value={actionItem?.notes || ''}
-                    onChange={(e) => setActionItem({...actionItem, notes: e.target.value})}
-                    sx={{ mb: 2 }}
-                    InputLabelProps={{ 
-                      shrink: true 
-                    }}
-                  />
-                  
-                  <TextField 
-                    label="Due Date (optional)"
-                    type="date"
-                    InputLabelProps={{ shrink: true }}
-                    fullWidth
-                    value={actionItem?.dueDate || ''}
-                    onChange={(e) => setActionItem({...actionItem, dueDate: e.target.value})}
-                    sx={{ mb: 2 }}
-                  />
-                  
-                  <Button 
-                    type="submit"
-                    variant="contained" 
-                    color="primary"
-                    disabled={!actionItem?.actionItem?.trim()}
-                    sx={{ 
-                      mt: 1,
-                      textTransform: 'none'
-                    }}
-                  >
-                    Add Action Item
-                  </Button>
-                </Box>
-              </Paper>
             </Box>
             
             {/* Form Actions */}
