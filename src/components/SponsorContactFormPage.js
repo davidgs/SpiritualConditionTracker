@@ -334,26 +334,28 @@ export default function SponsorContactFormPage({ userId, onSave, onCancel, initi
               >
                 <i className="fa-solid fa-list-check" style={{ marginRight: '10px' }}></i>
                 Action Items
-              </Typography>
-              <IconButton
-                onClick={() => {
-                  setShowInput(!showInput);
-                }}
-                  size="small"
-                  sx={{ 
-                    color: theme.palette.primary.main, 
-                    '&:hover': { 
-                      backgroundColor: theme.palette.background.transparent || 'transparent' 
-                    },
-                    ml: 0.5,
-                    p: 0.5,
-                    minWidth: 'auto'
+                <IconButton
+                  onClick={() => {
+                    setShowInput(!showInput);
                   }}
-                >
-                <i className="fa-solid fa-plus"></i>
-              </IconButton>
+                    size="small"
+                    sx={{ 
+                      color: theme.palette.primary.main, 
+                      '&:hover': { 
+                        backgroundColor: theme.palette.background.transparent || 'transparent' 
+                      },
+                      ml: 0.5,
+                      p: 0.5,
+                      minWidth: 'auto'
+                    }}
+                  >
+                  <i className="fa-solid fa-plus"></i>
+                </IconButton>
+              </Typography>
+              
               
               {/* Todo Items Component (renamed to Action Items in UI) */}
+              {showInput &&
               <SponsorContactTodo 
                 todos={todos.filter(t => t.type === 'todo')} 
                 onAddTodo={handleAddTodo}
@@ -363,7 +365,7 @@ export default function SponsorContactFormPage({ userId, onSave, onCancel, initi
                 emptyMessage="No action items added yet"
                 showInput={showInput}
               />
-              
+              }
               {/* Additional Action Item Form */}
               <Paper
                 elevation={0}

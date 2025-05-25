@@ -50,6 +50,7 @@ export default function SponsorContactTodo({
         completed: 0,  // Using 0 for SQLite compatibility
         type: 'todo',  // Important for filtering in the parent component
         createdAt: new Date().toISOString(),
+        dueDate: null,  // Optional field for future use
       };
       
       // Add to internal state immediately for UI feedback
