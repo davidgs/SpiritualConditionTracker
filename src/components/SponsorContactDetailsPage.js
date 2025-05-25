@@ -52,24 +52,51 @@ export default function SponsorContactDetailsPage({
   const [actionItems, setActionItems] = useState([]);
   const actionItemsRef = React.useRef([]);
   
-  // Load details and action items ONCE when component mounts
+  // Native iOS - Load action items when contact changes
   useEffect(() => {
+    if (!contact || !contact.id) return;
+    
     // Set contact details from props
     setContactDetails(details);
     
-    // Filter any todo items from the details array for immediate display
-    const todoItems = details.filter(item => item.type === 'todo');
-    if (todoItems.length > 0) {
-      console.log('Found todo items in details:', todoItems.length);
-      
-      // Set both state and ref to prevent infinite loops
-      setActionItems(todoItems);
-      actionItemsRef.current = todoItems;
+    // For native iOS environment - use SQLite via Capacitor
+    // This will load action items directly from the database
+    async function loadActionItemsFromDatabase() {
+      try {
+        // Import native database operations
+        const { getActionItemsForContact } = await import('../utils/action-items');
+        
+        // Get action items for this contact from SQLite
+        console.log(`[SponsorContactDetailsPage - useEffect: 64] Loading action items for contact ID: ${contact.id}`);
+        const items = await getActionItemsForContact(contact.id);
+        
+        if (items && items.length > 0) {
+          console.log(`[SponsorContactDetailsPage - useEffect: 68] Loaded ${items.length} action items from database`);
+          setActionItems(items);
+          actionItemsRef.current = items;
+        } else {
+          console.log(`[SponsorContactDetailsPage - useEffect: 72] No action items found in database for contact: ${contact.id}`);
+          // Still show any todo items from contact details for backward compatibility
+          const todoItems = details.filter(item => item.type === 'todo');
+          if (todoItems.length > 0) {
+            console.log(`[SponsorContactDetailsPage - useEffect: 76] Found ${todoItems.length} legacy todo items`);
+            setActionItems(todoItems);
+            actionItemsRef.current = todoItems;
+          } else {
+            // Initialize with empty array
+            setActionItems([]);
+            actionItemsRef.current = [];
+          }
+        }
+      } catch (error) {
+        console.error('[SponsorContactDetailsPage - useEffect: 85] Error loading action items:', error);
+      }
     }
     
-    // ONLY RUN ONCE - Don't include details or contact in dependencies
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    // Execute the function to load action items
+    loadActionItemsFromDatabase();
+    
+  }, [contact, details]);
   
   // Handle form changes for new action item
   const handleActionChange = (e) => {
@@ -150,14 +177,12 @@ export default function SponsorContactDetailsPage({
     setContactDetails(updatedDetails);
   };
   
-  // Dual-mode implementation for adding action items (web vs native)
+  // Native iOS implementation for adding action items
   const handleAddActionItem = async (todoItem) => {
-    console.log('[SponsorContactDetailsPage.js - handleAddActionItem: 154] Adding new action item:', todoItem);
-    
-    // Generate a simple temp ID for the demo
+    // Generate a temporary ID for immediate UI update
     const tempId = -Math.floor(Math.random() * 10000) - 1;
     
-    // Create a simplified action item object
+    // Prepare the action item object for SQLite storage
     const newItem = {
       id: tempId,
       title: todoItem.title || todoItem.text || '',
@@ -165,92 +190,114 @@ export default function SponsorContactDetailsPage({
       notes: todoItem.notes || '',
       dueDate: todoItem.dueDate || null,
       completed: 0,
-      type: 'todo'
+      type: 'todo',
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
     };
     
-    console.log('[SponsorContactDetailsPage.js - handleAddActionItem: 168] Created new item:', newItem);
+    console.log(`[SponsorContactDetailsPage - handleAddActionItem] Adding action item for contact ID: ${contact?.id}`);
     
-    // First update UI immediately for responsiveness
+    // Update UI immediately for responsiveness
     const updatedItems = [newItem, ...actionItemsRef.current];
     actionItemsRef.current = updatedItems;
     setActionItems(updatedItems);
     
-    // Try to save to SQLite if we're in native environment
-    try {
-      // Import utilities for database operations
-      const actionItemsModule = await import('../utils/action-items');
-      const sponsorDB = await import('../utils/sponsor-database');
-      
-      console.log('[SponsorContactDetailsPage.js - handleAddActionItem: 180] Attempting to save to database');
-      
-      // First check if SQLite is available
-      if (window.Capacitor?.Plugins?.CapacitorSQLite) {
-        console.log('[SponsorContactDetailsPage.js - handleAddActionItem: 184] SQLite is available, saving to database');
+    if (contact?.id) {
+      try {
+        // Import the action-items module for database operations
+        const { addActionItem } = await import('../utils/action-items');
         
-        // Save to database using proper functions
-        if (contact && contact.id) {
-          console.log(`[SponsorContactDetailsPage.js - handleAddActionItem: 188] Saving for contact ID: ${contact.id}`);
-          const savedItem = await sponsorDB.addActionItem(newItem, contact.id);
-          console.log('[SponsorContactDetailsPage.js - handleAddActionItem: 190] Database save result:', savedItem);
+        // Save to action_items table
+        console.log(`[SponsorContactDetailsPage - handleAddActionItem] Saving action item to database`);
+        const savedItem = await addActionItem(newItem);
+        
+        if (savedItem && savedItem.id) {
+          console.log(`[SponsorContactDetailsPage - handleAddActionItem] Action item saved with ID: ${savedItem.id}`);
           
-          // Update with real database ID if successful
-          if (savedItem && savedItem.id) {
-            const itemsWithRealId = actionItems.map(item => 
-              item.id === tempId ? { ...item, id: savedItem.id } : item
-            );
-            setActionItems(itemsWithRealId);
-            actionItemsRef.current = itemsWithRealId;
-          }
+          // Import utility for creating the association
+          const { associateActionItemWithContact } = await import('../utils/action-items');
+          
+          // Create association in join table
+          const success = await associateActionItemWithContact(contact.id, savedItem.id);
+          console.log(`[SponsorContactDetailsPage - handleAddActionItem] Association created: ${success}`);
+          
+          // Update local state with real database ID
+          const itemsWithRealId = actionItems.map(item => 
+            item.id === tempId ? { ...savedItem } : item
+          );
+          setActionItems(itemsWithRealId);
+          actionItemsRef.current = itemsWithRealId;
+          
+          // Retrieve all items to verify the addition worked
+          const { getActionItemsForContact } = await import('../utils/action-items');
+          const refreshedItems = await getActionItemsForContact(contact.id);
+          console.log(`[SponsorContactDetailsPage - handleAddActionItem] Contact now has ${refreshedItems.length} action items`);
         }
-      } else {
-        console.log('[SponsorContactDetailsPage.js - handleAddActionItem: 200] SQLite not available, using in-memory storage only');
+      } catch (error) {
+        console.error(`[SponsorContactDetailsPage - handleAddActionItem] Error saving to SQLite:`, error);
       }
-    } catch (error) {
-      console.error('[SponsorContactDetailsPage.js - handleAddActionItem: 203] Error saving to database:', error);
-      // Continue with in-memory version even if database save fails
     }
   };
   
-  // Toggle action item completion
+  // Toggle action item completion - Native iOS implementation
   const handleToggleActionItem = async (actionItemId) => {
+    // Update UI immediately for responsiveness
+    setActionItems(prev => prev.map(item => 
+      item.id === actionItemId 
+        ? {...item, completed: item.completed === 1 ? 0 : 1}
+        : item
+    ));
+    
+    // Also update the ref to keep state consistent
+    actionItemsRef.current = actionItemsRef.current.map(item => 
+      item.id === actionItemId 
+        ? {...item, completed: item.completed === 1 ? 0 : 1}
+        : item
+    );
+    
+    // Update in SQLite database
     try {
-      // Import the action-items module
-      const actionItemsModule = await import('../utils/action-items');
+      console.log(`[SponsorContactDetailsPage - handleToggleActionItem] Toggling action item ${actionItemId} in database`);
+      const { toggleActionItemCompletion } = await import('../utils/action-items');
       
-      // Toggle in the database first
-      const updatedItem = await actionItemsModule.toggleActionItemCompletion(actionItemId);
-      console.log('Toggled action item:', updatedItem);
+      // Update in database
+      const updatedItem = await toggleActionItemCompletion(actionItemId);
+      console.log(`[SponsorContactDetailsPage - handleToggleActionItem] Database update result:`, JSON.stringify(updatedItem));
       
-      // Update local state to reflect the change
-      setActionItems(prev => prev.map(item => 
-        item.id === actionItemId 
-          ? {...item, completed: item.completed === 1 ? 0 : 1}
-          : item
-      ));
+      if (contact?.id) {
+        // Verify with database state
+        const { getActionItemsForContact } = await import('../utils/action-items');
+        const refreshedItems = await getActionItemsForContact(contact.id);
+        console.log(`[SponsorContactDetailsPage - handleToggleActionItem] Refreshed items from database:`, refreshedItems.length);
+      }
     } catch (error) {
-      console.error('Error toggling action item completion:', error);
+      console.error(`[SponsorContactDetailsPage - handleToggleActionItem] Error updating in database:`, error);
     }
   };
   
-  // Delete action item
+  // Delete action item - Native iOS implementation
   const handleDeleteActionItem = async (actionItemId) => {
+    // Update UI immediately for responsiveness
+    setActionItems(prev => prev.filter(item => item.id !== actionItemId));
+    actionItemsRef.current = actionItemsRef.current.filter(item => item.id !== actionItemId);
+    
+    // Delete from SQLite database
     try {
-      // Import the action-items module
-      const actionItemsModule = await import('../utils/action-items');
+      console.log(`[SponsorContactDetailsPage - handleDeleteActionItem] Deleting action item ${actionItemId} from database`);
+      const { deleteActionItem } = await import('../utils/action-items');
       
-      // Delete from database
-      const success = await actionItemsModule.deleteActionItem(actionItemId);
+      // First delete the association, then the action item
+      const success = await deleteActionItem(actionItemId);
+      console.log(`[SponsorContactDetailsPage - handleDeleteActionItem] Database delete result: ${success}`);
       
-      if (success) {
-        console.log('Action item deleted successfully:', actionItemId);
-        
-        // Remove from local state
-        setActionItems(prev => prev.filter(item => item.id !== actionItemId));
-      } else {
-        console.error('Failed to delete action item:', actionItemId);
+      if (contact?.id) {
+        // Verify current state from database
+        const { getActionItemsForContact } = await import('../utils/action-items');
+        const remainingItems = await getActionItemsForContact(contact.id);
+        console.log(`[SponsorContactDetailsPage - handleDeleteActionItem] Remaining items in database: ${remainingItems.length}`);
       }
     } catch (error) {
-      console.error('Error deleting action item:', error);
+      console.error(`[SponsorContactDetailsPage - handleDeleteActionItem] Error deleting from database:`, error);
     }
   };
   

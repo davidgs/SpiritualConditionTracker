@@ -425,13 +425,14 @@ export async function addContactDetail(detail) {
 }
 
 /**
- * Add action item and associate it with a contact
+ * Add action item and associate it with a contact - Native iOS implementation
  * @param {Object} actionItem - Action item data
  * @param {number} contactId - Contact ID to associate with
  * @returns {Promise<Object>} - Added action item
  */
 export async function addActionItem(actionItem, contactId) {
   try {
+    console.log(`[sponsor-database.js - addActionItem: 433] Adding action item for contact ID: ${contactId}`);
     const sqlite = getSQLite();
     
     // Create a clean object with valid fields
@@ -447,7 +448,32 @@ export async function addActionItem(actionItem, contactId) {
       updatedAt: now
     };
     
-    console.log('Saving action item for contact', contactId, 'with data:', actionItemData);
+    console.log(`[sponsor-database.js - addActionItem: 448] SQL for action items table:
+      CREATE TABLE IF NOT EXISTS action_items (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        title TEXT DEFAULT '',
+        text TEXT DEFAULT '',
+        notes TEXT DEFAULT '',
+        dueDate TEXT DEFAULT NULL,
+        completed INTEGER DEFAULT 0,
+        type TEXT DEFAULT 'todo',
+        createdAt TEXT,
+        updatedAt TEXT
+      )
+    `);
+    
+    console.log(`[sponsor-database.js - addActionItem: 460] SQL for join table:
+      CREATE TABLE IF NOT EXISTS sponsor_contact_action_items (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        contactId INTEGER,
+        actionItemId INTEGER,
+        createdAt TEXT,
+        FOREIGN KEY (contactId) REFERENCES sponsor_contacts(id),
+        FOREIGN KEY (actionItemId) REFERENCES action_items(id)
+      )
+    `);
+    
+    console.log(`[sponsor-database.js - addActionItem: 470] Saving action item with data:`, JSON.stringify(actionItemData));
     
     // Use parameterized query with direct SQL insertion
     const insertSQL = `
