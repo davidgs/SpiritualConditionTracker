@@ -280,8 +280,27 @@ export async function getActionItemsForContact(contactId) {
  */
 export async function addActionItem(actionItem) {
   try {
-    console.log('[action-items.js - addActionItem: 92] Starting to add action item');
+    console.log('[action-items.js - addActionItem: 281] Starting to add action item:', JSON.stringify(actionItem));
     const sqlite = getSQLite();
+    
+    // First ensure the table exists
+    console.log('[action-items.js - addActionItem: 285] Creating action_items table if not exists');
+    await sqlite.execute({
+      database: DB_NAME,
+      statements: `
+        CREATE TABLE IF NOT EXISTS action_items (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          title TEXT DEFAULT '',
+          text TEXT DEFAULT '',
+          notes TEXT DEFAULT '',
+          dueDate TEXT DEFAULT NULL,
+          completed INTEGER DEFAULT 0,
+          type TEXT DEFAULT 'todo',
+          createdAt TEXT,
+          updatedAt TEXT
+        )
+      `
+    });
     
     // Create a clean object with valid fields
     const now = new Date().toISOString();
@@ -296,31 +315,30 @@ export async function addActionItem(actionItem) {
       updatedAt: now
     };
     
-    console.log('[action-items.js - addActionItem: 108] Saving action item with data:', JSON.stringify(actionItemData));
+    console.log('[action-items.js - addActionItem: 310] Saving action item with data:', JSON.stringify(actionItemData));
     
-    // Build SQL statement with pre-defined fields
-    const keys = Object.keys(actionItemData);
-    const placeholders = keys.map(() => '?').join(', ');
-    const values = keys.map(key => actionItemData[key]);
-    
-    // Construct full SQL statement for logging
-    const fullSqlStatement = `
+    // Use direct SQL insertion with string values for iOS compatibility
+    const insertSQL = `
       INSERT INTO action_items 
-      (${keys.join(', ')}) 
-      VALUES (${placeholders})
+      (title, text, notes, dueDate, completed, type, createdAt, updatedAt) 
+      VALUES 
+      ('${actionItemData.title}', '${actionItemData.text}', '${actionItemData.notes}', 
+       ${actionItemData.dueDate ? `'${actionItemData.dueDate}'` : 'NULL'}, 
+       ${actionItemData.completed}, 
+       '${actionItemData.type}',
+       '${actionItemData.createdAt}',
+       '${actionItemData.updatedAt}')
     `;
     
-    console.log('[action-items.js - addActionItem: 122] Full SQL statement:', fullSqlStatement);
-    console.log('[action-items.js - addActionItem: 123] Values:', JSON.stringify(values));
+    console.log('[action-items.js - addActionItem: 325] Raw SQL statement:', insertSQL);
     
-    // Insert using parameterized query
+    // Execute the SQL directly
     const insertResult = await sqlite.execute({
       database: DB_NAME,
-      statements: fullSqlStatement,
-      values: values
+      statements: insertSQL
     });
     
-    console.log('[action-items.js - addActionItem: 131] Insert result:', JSON.stringify(insertResult));
+    console.log('[action-items.js - addActionItem: 332] Insert result:', JSON.stringify(insertResult));
     
     // Get the ID in a separate query for compatibility
     const lastIdResult = await sqlite.query({
@@ -329,31 +347,49 @@ export async function addActionItem(actionItem) {
       values: []
     });
     
-    console.log('[action-items.js - addActionItem: 139] Last ID result:', JSON.stringify(lastIdResult));
+    console.log('[action-items.js - addActionItem: 340] Last ID result:', JSON.stringify(lastIdResult));
+    
+    let newId = null;
     
     // Apply the ID if available
     if (lastIdResult?.values?.length > 0) {
       // Handle iOS-specific format where the first item contains column info
       if (lastIdResult.values[0].ios_columns && lastIdResult.values[1]) {
-        actionItemData.id = lastIdResult.values[1].id;
-        console.log('[action-items.js - addActionItem: 146] Using iOS format ID:', lastIdResult.values[1].id);
+        newId = lastIdResult.values[1].id;
+        console.log('[action-items.js - addActionItem: 349] Using iOS format ID:', newId);
       } else {
         // Standard format
-        actionItemData.id = lastIdResult.values[0].id;
-        console.log('[action-items.js - addActionItem: 150] Using standard format ID:', lastIdResult.values[0].id);
+        newId = lastIdResult.values[0].id;
+        console.log('[action-items.js - addActionItem: 353] Using standard format ID:', newId);
       }
     }
     
+    // Add the ID to the item
+    actionItemData.id = newId;
+    
+    // Verify the item was inserted by querying for it
+    if (newId) {
+      console.log('[action-items.js - addActionItem: 361] Verifying item was inserted with ID:', newId);
+      const verifyResult = await sqlite.query({
+        database: DB_NAME,
+        statement: `SELECT * FROM action_items WHERE id = ?`,
+        values: [newId]
+      });
+      
+      console.log('[action-items.js - addActionItem: 367] Verification result:', JSON.stringify(verifyResult));
+    }
+    
     // Log the final action item data with ID
-    console.log('[action-items.js - addActionItem: 155] Final action item data:', JSON.stringify(actionItemData));
+    console.log('[action-items.js - addActionItem: 371] Final action item data:', JSON.stringify(actionItemData));
     
     // Query all action items to verify storage
     await getAllActionItemsDebug();
     
     return actionItemData;
   } catch (error) {
-    console.error('Error adding action item:', error);
-    throw error;
+    console.error('[action-items.js - addActionItem: 378] Error adding action item:', error);
+    // Return the original item with its temporary ID
+    return actionItem;
   }
 }
 

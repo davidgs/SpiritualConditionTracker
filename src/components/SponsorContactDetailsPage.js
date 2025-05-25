@@ -221,21 +221,29 @@ export default function SponsorContactDetailsPage({
     if (contact?.id) {
       try {
         // Import the action-items module for database operations
-        const { addActionItem } = await import('../utils/action-items');
+        const { addActionItem, associateActionItemWithContact, getAllActionItemsDebug } = await import('../utils/action-items');
         
-        // Save to action_items table
-        console.log(`[SponsorContactDetailsPage - handleAddActionItem] Saving action item to database`);
+        // For debugging - check all existing action items
+        console.log(`[SponsorContactDetailsPage.js - handleAddActionItem: 227] Checking existing action items before saving`);
+        await getAllActionItemsDebug();
+        
+        // Save to action_items table with explicit database code
+        console.log(`[SponsorContactDetailsPage.js - handleAddActionItem: 231] Saving action item to database`, JSON.stringify(newItem));
         const savedItem = await addActionItem(newItem);
         
+        console.log(`[SponsorContactDetailsPage.js - handleAddActionItem: 234] Save result:`, JSON.stringify(savedItem));
+        
         if (savedItem && savedItem.id) {
-          console.log(`[SponsorContactDetailsPage - handleAddActionItem] Action item saved with ID: ${savedItem.id}`);
+          console.log(`[SponsorContactDetailsPage.js - handleAddActionItem: 237] Action item saved with ID: ${savedItem.id}`);
           
-          // Import utility for creating the association
-          const { associateActionItemWithContact } = await import('../utils/action-items');
+          // Debug - check all action items after saving
+          console.log(`[SponsorContactDetailsPage.js - handleAddActionItem: 240] Verifying action item was saved`);
+          await getAllActionItemsDebug();
           
           // Create association in join table
+          console.log(`[SponsorContactDetailsPage.js - handleAddActionItem: 244] Creating association between contact ${contact.id} and action item ${savedItem.id}`);
           const success = await associateActionItemWithContact(contact.id, savedItem.id);
-          console.log(`[SponsorContactDetailsPage - handleAddActionItem] Association created: ${success}`);
+          console.log(`[SponsorContactDetailsPage.js - handleAddActionItem: 246] Association created: ${success}`);
           
           // Update local state with real database ID
           const itemsWithRealId = actionItems.map(item => 
