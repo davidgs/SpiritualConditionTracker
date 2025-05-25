@@ -256,6 +256,43 @@ async function setupTables(sqlite) {
     `
   });
   console.log('[ sqliteLoader.js ] Sponsor contact details table created with flexible constraints');
+  
+  // Create action_items table for tracking all action items
+  await sqlite.execute({
+    database: DB_NAME,
+    statements: `
+      CREATE TABLE IF NOT EXISTS action_items (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        title TEXT NOT NULL,
+        text TEXT,
+        notes TEXT,
+        dueDate TEXT,
+        completed INTEGER DEFAULT 0,
+        type TEXT DEFAULT 'todo',
+        createdAt TEXT,
+        updatedAt TEXT
+      )
+    `
+  });
+  console.log('[ sqliteLoader.js ] Action items table created');
+  
+  // Create join table for linking action items to sponsor contacts
+  await sqlite.execute({
+    database: DB_NAME,
+    statements: `
+      CREATE TABLE IF NOT EXISTS sponsor_contact_action_items (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        contactId INTEGER NOT NULL,
+        actionItemId INTEGER NOT NULL,
+        detailId INTEGER,
+        createdAt TEXT,
+        FOREIGN KEY (contactId) REFERENCES sponsor_contacts (id),
+        FOREIGN KEY (actionItemId) REFERENCES action_items (id),
+        FOREIGN KEY (detailId) REFERENCES sponsor_contact_details (id)
+      )
+    `
+  });
+  console.log('[ sqliteLoader.js ] Sponsor contact action items join table created');
 }
 
 /**

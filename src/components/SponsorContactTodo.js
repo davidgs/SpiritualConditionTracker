@@ -37,11 +37,12 @@ export default function SponsorContactTodo({
   });
   const [internalTodos, setInternalTodos] = useState([]);
   
-  // Initialize internal state only once on mount
+  // Update internal todos when props change
   useEffect(() => {
-    setInternalTodos([...todos]);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    if (todos && todos.length > 0) {
+      setInternalTodos([...todos]);
+    }
+  }, [todos]);
 
   const handleAddTodo = () => {
     if (todoForm.title.trim()) {

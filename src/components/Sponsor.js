@@ -141,8 +141,8 @@ export default function Sponsor({ user, onUpdate }) {
     setSponsor(null);
   };
   
-  // Add a new sponsor contact with optional Todo items
-  const handleAddContact = async (contactData, todoItems = []) => {
+  // Add a new sponsor contact with optional Action Items
+  const handleAddContact = async (contactData, actionItems = []) => {
     try {
       console.log('Adding new contact with data:', contactData);
       
@@ -167,36 +167,23 @@ export default function Sponsor({ user, onUpdate }) {
       
       console.log('Contact saved with ID:', savedContact.id);
       
-      // Add any associated Todo items
-      if (todoItems && todoItems.length > 0) {
-        console.log('Adding Todo items with contact ID:', savedContact.id);
+      // Add any associated Action Items
+      if (actionItems && actionItems.length > 0) {
+        console.log('Adding Action Items with contact ID:', savedContact.id);
         
         // Ensure we have a valid contactId before proceeding
         if (!savedContact.id) {
-          console.error('Cannot add todo items - missing contact ID');
+          console.error('Cannot add action items - missing contact ID');
         } else {
-          for (const todoItem of todoItems) {
-            // Prepare the todo item data
-            const todoDetail = {
-              // If the item has a text field, use it for actionItem
-              actionItem: todoItem.text || todoItem.actionItem || '',
-              // Use either completed field or default to 0
-              completed: typeof todoItem.completed === 'number' ? todoItem.completed : 0,
-              // Ensure contactId is set
-              contactId: savedContact.id,
-              // Set type
-              type: todoItem.type || 'todo',
-              // Set creation timestamp
-              createdAt: new Date().toISOString()
-            };
-            
-            console.log('Saving todo detail:', todoDetail);
+          for (const item of actionItems) {
+            console.log('Processing action item:', item);
             
             try {
-              const savedTodo = await sponsorDB.addContactDetail(todoDetail);
-              console.log('Todo item saved with ID:', savedTodo.id);
-            } catch (todoError) {
-              console.error('Failed to save todo item:', todoError);
+              // Use the new addActionItem function
+              const savedActionItem = await sponsorDB.addActionItem(item, savedContact.id);
+              console.log('Action item saved with ID:', savedActionItem.id);
+            } catch (actionItemError) {
+              console.error('Failed to save action item:', actionItemError);
             }
           }
         }

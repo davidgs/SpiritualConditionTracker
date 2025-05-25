@@ -160,22 +160,23 @@ export default function SponsorContactFormPage({ userId, onSave, onCancel, initi
       date: isoDate // Make sure date is never null
     };
     
-    // For new todos, we don't need to assign a contactId at all when it's a new contact
-    // SQLite will handle the relationship after both records are created
-    
-    // Only include contactId for existing contacts
-    const updatedTodos = todos.map(todo => {
-      // Start with the todo item without contactId
-      const { contactId, ...todoWithoutContactId } = todo;
-      
-      // Only include contactId if this is an existing contact
-      return initialData?.id
-        ? { ...todoWithoutContactId, contactId: initialData.id }
-        : todoWithoutContactId;
+    // Convert action items to the proper format
+    // For new todos, we need to preserve all the fields for the new action items table
+    const actionItems = todos.map(todo => {
+      // Extract all fields needed for action items
+      return {
+        title: todo.title || todo.text || '',
+        text: todo.text || todo.title || '',
+        notes: todo.notes || '',
+        dueDate: todo.dueDate || null,
+        completed: todo.completed || 0,
+        type: todo.type || 'todo',
+        id: todo.id // Keep temporary ID for tracking in the UI
+      };
     });
     
-    // Pass the contact, todos, and a flag indicating if this is a new contact
-    onSave(newContact, updatedTodos);
+    // Pass the contact, action items, and a flag indicating if this is a new contact
+    onSave(newContact, actionItems);
     
     // Explicitly navigate back to main view after save
     setTimeout(() => onCancel(), 100); // Small delay to ensure save completes first

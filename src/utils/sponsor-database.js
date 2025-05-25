@@ -356,7 +356,7 @@ export async function addSponsorContact(contact) {
 }
 
 /**
- * Add contact detail
+ * Add contact detail (legacy method - now mostly used for text notes)
  * @param {Object} detail - Detail data
  * @returns {Promise<Object>} - Added detail
  */
@@ -421,6 +421,134 @@ export async function addContactDetail(detail) {
   } catch (error) {
     console.error('Error adding contact detail:', error);
     throw error;
+  }
+}
+
+/**
+ * Add action item and associate it with a contact
+ * @param {Object} actionItem - Action item data
+ * @param {number} contactId - Contact ID to associate with
+ * @returns {Promise<Object>} - Added action item
+ */
+export async function addActionItem(actionItem, contactId) {
+  try {
+    const sqlite = getSQLite();
+    
+    // Create a clean object with valid fields
+    const now = new Date().toISOString();
+    const actionItemData = {
+      title: actionItem.title || actionItem.text || '',
+      text: actionItem.text || actionItem.title || '',
+      notes: actionItem.notes || '',
+      dueDate: actionItem.dueDate || null,
+      completed: typeof actionItem.completed === 'number' ? actionItem.completed : 0,
+      type: actionItem.type || 'todo',
+      createdAt: now,
+      updatedAt: now
+    };
+    
+    console.log('Saving action item for contact', contactId, 'with data:', actionItemData);
+    
+    // Use parameterized query with direct SQL insertion
+    const insertSQL = `
+      INSERT INTO action_items 
+      (title, text, notes, dueDate, completed, type, createdAt, updatedAt) 
+      VALUES 
+      ('${actionItemData.title}', '${actionItemData.text}', '${actionItemData.notes}', '${actionItemData.dueDate || ""}', ${actionItemData.completed}, '${actionItemData.type}', '${actionItemData.createdAt}', '${actionItemData.updatedAt}')
+    `;
+    
+    console.log('Action Item SQL statement:', insertSQL);
+    
+    // Execute the raw SQL
+    await sqlite.execute({
+      database: DB_NAME,
+      statements: insertSQL
+    });
+    
+    // Get the ID of the newly created action item
+    const lastIdResult = await sqlite.query({
+      database: DB_NAME,
+      statement: 'SELECT last_insert_rowid() as id',
+      values: []
+    });
+    
+    let actionItemId = null;
+    
+    // Apply the ID if available
+    if (lastIdResult?.values?.length > 0) {
+      // Handle iOS-specific format where the first item contains column info
+      if (lastIdResult.values[0].ios_columns && lastIdResult.values[1]) {
+        actionItemId = lastIdResult.values[1].id;
+      } else {
+        // Standard format
+        actionItemId = lastIdResult.values[0].id;
+      }
+      
+      actionItemData.id = actionItemId;
+      console.log('Created action item with ID:', actionItemId);
+      
+      // Now associate the action item with the contact
+      if (actionItemId && contactId) {
+        const joinSQL = `
+          INSERT INTO sponsor_contact_action_items 
+          (contactId, actionItemId, createdAt) 
+          VALUES 
+          (${contactId}, ${actionItemId}, '${now}')
+        `;
+        
+        console.log('Join table SQL statement:', joinSQL);
+        
+        await sqlite.execute({
+          database: DB_NAME,
+          statements: joinSQL
+        });
+        
+        console.log('Associated action item', actionItemId, 'with contact', contactId);
+      }
+    }
+    
+    return actionItemData;
+  } catch (error) {
+    console.error('Error adding action item:', error);
+    throw error;
+  }
+}
+
+/**
+ * Get action items for a contact
+ * @param {number} contactId - Contact ID
+ * @returns {Promise<Array>} - Action items for the contact
+ */
+export async function getActionItemsForContact(contactId) {
+  try {
+    const sqlite = getSQLite();
+    
+    console.log('Getting action items for contact:', contactId);
+    
+    // Query action items via join table
+    const result = await sqlite.query({
+      database: DB_NAME,
+      statement: `
+        SELECT ai.* 
+        FROM action_items ai
+        JOIN sponsor_contact_action_items scai ON ai.id = scai.actionItemId
+        WHERE scai.contactId = ?
+        ORDER BY ai.createdAt DESC
+      `,
+      values: [contactId]
+    });
+    
+    console.log('Action items query result:', JSON.stringify(result));
+    
+    if (!result.values || result.values.length === 0) {
+      console.log('No action items found for contact', contactId);
+      return [];
+    }
+    
+    return result.values;
+  } catch (error) {
+    console.error(`Error getting action items for contact ${contactId}:`, error);
+    return [];
   }
 }
 

@@ -48,19 +48,43 @@ export default function SponsorContactDetailsPage({
     completed: false
   });
   
-  // State for todo items
-  const [todos, setTodos] = useState([]);
+  // State for action items
+  const [actionItems, setActionItems] = useState([]);
   
-  // Load details when they change
+  // Load details and action items when they change
   useEffect(() => {
     setContactDetails(details);
     
-    // Filter out any todos from the details
+    // Load action items from the database
+    async function loadActionItems() {
+      try {
+        // Import is done inside to avoid circular dependencies
+        const sponsorDB = await import('../utils/sponsor-database');
+        
+        if (contact && contact.id) {
+          console.log('Loading action items for contact ID:', contact.id);
+          const items = await sponsorDB.getActionItemsForContact(contact.id);
+          console.log('Action items loaded:', items);
+          
+          if (items && items.length > 0) {
+            setActionItems(items);
+          }
+        }
+      } catch (error) {
+        console.error('Error loading action items:', error);
+      }
+    }
+    
+    // Run the async function
+    loadActionItems();
+    
+    // For backward compatibility, also load old todo items from details
     const todoItems = details.filter(item => item.type === 'todo');
     if (todoItems.length > 0) {
-      setTodos(todoItems);
+      // We'll merge these with action items later if needed
+      console.log('Found legacy todo items in details:', todoItems);
     }
-  }, [details]);
+  }, [details, contact]);
   
   // Handle form changes for new action item
   const handleActionChange = (e) => {
@@ -71,32 +95,46 @@ export default function SponsorContactDetailsPage({
     }));
   };
   
-  // Add new action item
-  const handleAddAction = () => {
+  // Add new action directly from the form
+  const handleAddActionFromForm = () => {
     // In SQLite, the ID will be generated automatically with AUTOINCREMENT
     // We'll use a temporary negative ID for the UI state only
     const tempId = -Math.floor(Math.random() * 10000) - 1;
     
-    // For UI state we need an ID, but for database we exclude it
-    const actionForUI = {
-      ...newAction,
-      id: tempId, // Temporary negative ID for UI only
-      contactId: contact.id,
-      completed: newAction.completed ? 1 : 0 // Convert boolean to integer for SQLite
+    // Format the action item for our new action_items table
+    const actionItem = {
+      title: newAction.actionItem,
+      text: newAction.actionItem,
+      notes: newAction.notes || '',
+      dueDate: newAction.dueDate || null,
+      completed: newAction.completed ? 1 : 0,
+      type: 'todo',
+      id: tempId // Temporary ID for UI state
     };
     
-    // For database: remove the temporary ID field completely
-    const { id, ...actionForDatabase } = actionForUI;
+    // Add to local state for immediate UI update
+    setActionItems(prev => [actionItem, ...prev]);
     
-    // Add to state (with temporary ID for UI)
-    const updatedDetails = [...contactDetails, actionForUI];
-    setContactDetails(updatedDetails);
-    
-    // Save to database (without ID field)
-    onSaveDetails({
-      ...actionForDatabase,
-      contactId: contact.id
-    });
+    // Use async IIFE to handle the database operation
+    (async () => {
+      try {
+        // Import is done inside to avoid circular dependencies
+        const sponsorDB = await import('../utils/sponsor-database');
+        
+        // Save to database using the new addActionItem function
+        const savedItem = await sponsorDB.addActionItem(actionItem, contact.id);
+        console.log('Action item saved with ID:', savedItem.id);
+        
+        // Update the local state with the real ID
+        setActionItems(prev => 
+          prev.map(item => 
+            item.id === tempId ? { ...item, id: savedItem.id } : item
+          )
+        );
+      } catch (error) {
+        console.error('Error saving action item:', error);
+      }
+    })();
     
     // Reset form and hide it
     setNewAction({
@@ -106,6 +144,7 @@ export default function SponsorContactDetailsPage({
       completed: false
     });
     setShowAddActionForm(false);
+    setShowAddActionDialog(false);
   };
   
   // Toggle action item completion
@@ -126,55 +165,85 @@ export default function SponsorContactDetailsPage({
     setContactDetails(updatedDetails);
   };
   
-  // Add new todo item
-  const handleAddTodo = (todoItem) => {
-    const newTodo = {
-      ...todoItem,
-      contactId: contact.id,
+  // Add a new action item from todo component
+  const handleAddActionItem = async (todoItem) => {
+    // In SQLite, the ID will be generated automatically with AUTOINCREMENT
+    // We'll use a temporary negative ID for the UI state only
+    const tempId = -Math.floor(Math.random() * 10000) - 1;
+    
+    // Format the action item for our new action_items table
+    const actionItem = {
+      title: todoItem.text || '',
+      text: todoItem.text || '',
+      notes: todoItem.notes || '',
+      dueDate: todoItem.dueDate || null,
+      completed: todoItem.completed ? 1 : 0,
       type: 'todo',
-      completed: todoItem.completed ? 1 : 0  // Convert boolean to integer for SQLite
+      id: tempId // Temporary ID for UI state
     };
     
-    // Add to state
-    setTodos(prev => [...prev, newTodo]);
+    // Add to local state for immediate UI update
+    setActionItems(prev => [actionItem, ...prev]);
     
-    // Save to database
-    onSaveDetails(newTodo);
+    try {
+      // Import is done inside to avoid circular dependencies
+      const sponsorDB = await import('../utils/sponsor-database');
+      
+      // Save to database using the new addActionItem function
+      const savedItem = await sponsorDB.addActionItem(actionItem, contact.id);
+      console.log('Action item saved with ID:', savedItem.id);
+      
+      // Update the local state with the real ID
+      setActionItems(prev => 
+        prev.map(item => 
+          item.id === tempId ? { ...item, id: savedItem.id } : item
+        )
+      );
+    } catch (error) {
+      console.error('Error saving action item:', error);
+    }
   };
   
-  // Toggle todo completion
-  const handleToggleTodo = (todoId) => {
-    const updatedTodos = todos.map(todo => {
-      if (todo.id === todoId) {
-        const updatedTodo = {
-          ...todo,
-          completed: todo.completed ? 0 : 1  // Toggle between 0 and 1
-        };
+  // Toggle action item completion
+  const handleToggleActionItem = async (actionItemId) => {
+    try {
+      // Import the action-items module
+      const actionItemsModule = await import('../utils/action-items');
+      
+      // Toggle in the database first
+      const updatedItem = await actionItemsModule.toggleActionItemCompletion(actionItemId);
+      console.log('Toggled action item:', updatedItem);
+      
+      // Update local state to reflect the change
+      setActionItems(prev => prev.map(item => 
+        item.id === actionItemId 
+          ? {...item, completed: item.completed === 1 ? 0 : 1}
+          : item
+      ));
+    } catch (error) {
+      console.error('Error toggling action item completion:', error);
+    }
+  };
+  
+  // Delete action item
+  const handleDeleteActionItem = async (actionItemId) => {
+    try {
+      // Import the action-items module
+      const actionItemsModule = await import('../utils/action-items');
+      
+      // Delete from database
+      const success = await actionItemsModule.deleteActionItem(actionItemId);
+      
+      if (success) {
+        console.log('Action item deleted successfully:', actionItemId);
         
-        // Save change to database
-        onSaveDetails(updatedTodo);
-        
-        return updatedTodo;
+        // Remove from local state
+        setActionItems(prev => prev.filter(item => item.id !== actionItemId));
+      } else {
+        console.error('Failed to delete action item:', actionItemId);
       }
-      return todo;
-    });
-    
-    setTodos(updatedTodos);
-  };
-  
-  // Delete todo item
-  const handleDeleteTodo = (todoId) => {
-    // Filter out the deleted todo
-    const updatedTodos = todos.filter(todo => todo.id !== todoId);
-    
-    // Update state
-    setTodos(updatedTodos);
-    
-    // Delete from database using the provided function
-    if (onDeleteDetail) {
-      onDeleteDetail(todoId);
-    } else {
-      console.warn('No delete function provided for todos');
+    } catch (error) {
+      console.error('Error deleting action item:', error);
     }
   };
   
@@ -338,12 +407,12 @@ export default function SponsorContactDetailsPage({
         </Box>
       </Paper>
       
-      {/* Todo Items Section - New feature */}
+      {/* Action Items Section - Using new SQLite structure */}
       <SponsorContactTodo 
-        todos={todos} 
-        onAddTodo={handleAddTodo}
-        onToggleTodo={handleToggleTodo}
-        onDeleteTodo={handleDeleteTodo}
+        todos={actionItems} 
+        onAddTodo={handleAddActionItem}
+        onToggleTodo={handleToggleActionItem}
+        onDeleteTodo={handleDeleteActionItem}
       />
       
       {/* Action Items Section */}
@@ -548,7 +617,7 @@ export default function SponsorContactDetailsPage({
             Cancel
           </Button>
           <Button 
-            onClick={handleAddAction}
+            onClick={handleAddActionFromForm}
             variant="contained" 
             disabled={!newAction.actionItem}
           >
