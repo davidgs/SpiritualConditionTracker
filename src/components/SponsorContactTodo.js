@@ -22,12 +22,11 @@ export default function SponsorContactTodo({
   onAddTodo, 
   onToggleTodo, 
   onDeleteTodo,
-  actionItemLabel = "Action Items",
   emptyMessage = "No action items added yet",
-  showInput = true
+  showForm = false,
+  onFormClose = () => {}
 }) {
   const theme = useTheme();
-  const [showForm, setShowForm] = useState(showInput);
   const [todoForm, setTodoForm] = useState({
     title: '',
     text: '',
@@ -74,7 +73,7 @@ export default function SponsorContactTodo({
       
       // Clear form and hide it
       resetForm();
-      setShowForm(false);
+      onFormClose();
     }
   };
   
@@ -91,7 +90,7 @@ export default function SponsorContactTodo({
 
   const handleCancel = () => {
     resetForm();
-    setShowForm(false);
+    onFormClose();
   };
 
   const handleKeyPress = (e) => {
@@ -102,69 +101,18 @@ export default function SponsorContactTodo({
   };
 
   return (
-    <Paper
-      elevation={1}
-      sx={{ 
-        p: 2.5, 
-        mb: 3, 
-        borderRadius: 2,
-        bgcolor: theme.palette.background.paper,
-        border: 1,
-        borderColor: 'divider'
-      }}
-    >
-      <Box 
-        sx={{ 
-          display: 'flex', 
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          mb: 1
-        }}
-      >
-        <Typography 
-          variant="h6" 
-          sx={{ 
-            fontWeight: 'bold',
-            color: theme.palette.text.primary,
-            display: 'flex',
-            alignItems: 'center'
-          }}
-        >
-          <i className="fa-solid fa-list-check" style={{ marginRight: '10px' }}></i>
-          {actionItemLabel}
-        </Typography>
-        
-        {!showForm && (
-          <Button
-            onClick={() => setShowForm(true)}
-            color="primary"
-            startIcon={<i className="fa-solid fa-plus"></i>}
-            variant="outlined"
-            size="small"
-            sx={{ 
-              textTransform: 'none',
-              borderRadius: '8px',
-              px: 2
-            }}
-          >
-            Add Item
-          </Button>
-        )}
-      </Box>
-
-      <Divider sx={{ mb: 2 }} />
-
+    <Box>
       {/* Collapsible Action Item Form */}
       <Collapse in={showForm} timeout="auto" unmountOnExit>
-        <Box 
-          component="form" 
+        <Paper
+          elevation={1}
           sx={{ 
+            p: 3, 
             mb: 3, 
-            p: 2, 
+            borderRadius: 2,
+            bgcolor: theme.palette.background.paper,
             border: '1px solid',
-            borderColor: theme.palette.divider,
-            borderRadius: '8px',
-            bgcolor: theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.02)'
+            borderColor: 'divider',
           }}
         >
           {/* Title Field */}
@@ -176,9 +124,9 @@ export default function SponsorContactTodo({
             onChange={(e) => setTodoForm({...todoForm, title: e.target.value})}
             InputLabelProps={{ shrink: true }}
             sx={{ 
-              mb: 2,
+              mb: 3,
               '& .MuiInputBase-root': { 
-                borderRadius: '8px'
+                borderRadius: 1.5
               }
             }}
             autoFocus
@@ -193,9 +141,9 @@ export default function SponsorContactTodo({
             onChange={(e) => setTodoForm({...todoForm, dueDate: e.target.value})}
             InputLabelProps={{ shrink: true }}
             sx={{ 
-              mb: 2,
+              mb: 3,
               '& .MuiInputBase-root': { 
-                borderRadius: '8px'
+                borderRadius: 1.5
               }
             }}
           />
@@ -209,47 +157,47 @@ export default function SponsorContactTodo({
             onChange={(e) => setTodoForm({...todoForm, notes: e.target.value})}
             onKeyPress={handleKeyPress}
             multiline
-            rows={3}
+            rows={4}
             InputLabelProps={{ shrink: true }}
             sx={{ 
-              mb: 2,
+              mb: 3,
               '& .MuiInputBase-root': { 
-                borderRadius: '8px'
+                borderRadius: 1.5
               }
             }}
           />
           
           {/* Form Buttons */}
-          <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 1 }}>
-            <Button
-              variant="text"
-              color="inherit"
+          <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
+            <IconButton
+              color="default"
               onClick={handleCancel}
-              startIcon={<i className="fa-solid fa-xmark"></i>}
               sx={{ 
-                mr: 1,
-                textTransform: 'none',
-                borderRadius: '8px'
+                mr: 2,
+                fontSize: '1.2rem'
               }}
+              aria-label="Cancel"
             >
-              
-            </Button>
+              <i className="fa-solid fa-xmark"></i>
+            </IconButton>
             
             <Button
               variant="contained"
               color="primary"
               onClick={handleAddTodo}
               disabled={!todoForm.title.trim()}
-              startIcon={<i className="fa-solid fa-check"></i>}
               sx={{ 
                 textTransform: 'none',
-                borderRadius: '8px'
+                borderRadius: 1.5,
+                px: 3,
+                minWidth: 100
               }}
             >
-              
+              <i className="fa-solid fa-check" style={{ marginRight: '8px' }}></i>
+              Save
             </Button>
           </Box>
-        </Box>
+        </Paper>
       </Collapse>
 
       {/* To-do list */}
@@ -331,6 +279,6 @@ export default function SponsorContactTodo({
           </Typography>
         </Box>
       )}
-    </Paper>
+    </Box>
   );
 }

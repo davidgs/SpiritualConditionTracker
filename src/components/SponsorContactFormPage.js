@@ -28,6 +28,7 @@ export default function SponsorContactFormPage({ userId, onSave, onCancel, initi
   
   // State for todo items and UI controls
   const [todos, setTodos] = useState([]);
+  const [showInput, setShowInput] = useState(false);
   
   // Update form state when initial data changes
   useEffect(() => {
@@ -286,13 +287,53 @@ export default function SponsorContactFormPage({ userId, onSave, onCancel, initi
             
             {/* Action Items Section */}
             <Box sx={{ mt: 3, mb: 3 }}>
-              {/* Enhanced Action Item Component with built-in form */}
+              <Box 
+                sx={{ 
+                  display: 'flex', 
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  mb: 1
+                }}
+              >
+                <Typography 
+                  variant="h6" 
+                  sx={{ 
+                    fontWeight: 'bold',
+                    color: theme.palette.text.primary,
+                    display: 'flex',
+                    alignItems: 'center'
+                  }}
+                >
+                  <i className="fa-solid fa-list-check" style={{ marginRight: '10px' }}></i>
+                  Action Items
+                </Typography>
+                
+                <Button
+                  onClick={() => setShowInput(!showInput)}
+                  color="primary"
+                  startIcon={<i className="fa-solid fa-plus"></i>}
+                  variant="outlined"
+                  size="small"
+                  sx={{ 
+                    textTransform: 'none',
+                    borderRadius: '8px',
+                    px: 2
+                  }}
+                >
+                  Add Item
+                </Button>
+              </Box>
+              
+              <Divider sx={{ mb: 2 }} />
+              
+              {/* Enhanced Action Item Component */}
               <SponsorContactTodo 
                 todos={todos} 
                 onAddTodo={handleAddTodo}
                 onToggleTodo={handleToggleTodo}
                 onDeleteTodo={handleDeleteTodo}
-                actionItemLabel="Action Items"
+                showForm={showInput}
+                onFormClose={() => setShowInput(false)}
                 emptyMessage="No action items added yet"
               />
             </Box>
