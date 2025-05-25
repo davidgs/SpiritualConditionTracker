@@ -60,49 +60,145 @@ export default function SponsorContactDetailsPage({
     setContactDetails(details);
     
     // For native iOS environment - use SQLite via Capacitor
-    // This will load action items directly from the database
+    // This will load action items directly from the database using a direct SQL approach
     async function loadActionItemsFromDatabase() {
       try {
-        // Import native database operations
-        const { getActionItemsForContact } = await import('../utils/action-items');
+        console.log(`[SponsorContactDetailsPage.js - loadActionItemsFromDatabase: 64] Loading action items for contact ID: ${contact.id}`);
         
-        // Get action items for this contact from SQLite
-        console.log(`[SponsorContactDetailsPage.js - useEffect: 64] Loading action items for contact ID: ${contact.id}`);
-        const items = await getActionItemsForContact(contact.id);
+        // Use direct SQLite access to avoid any wrapper issues
+        const getSQLite = () => {
+          if (!window.Capacitor?.Plugins?.CapacitorSQLite) {
+            throw new Error('CapacitorSQLite plugin not available');
+          }
+          return window.Capacitor.Plugins.CapacitorSQLite;
+        };
         
-        if (items && items.length > 0) {
-          console.log(`[SponsorContactDetailsPage.js - useEffect: 68] Loaded ${items.length} action items from database`);
+        const sqlite = getSQLite();
+        const DB_NAME = 'spiritualTracker.db';
+        
+        // Ensure tables exist
+        console.log(`[SponsorContactDetailsPage.js - loadActionItemsFromDatabase: 76] Ensuring tables exist`);
+        await sqlite.execute({
+          database: DB_NAME,
+          statements: `
+            CREATE TABLE IF NOT EXISTS action_items (
+              id INTEGER PRIMARY KEY AUTOINCREMENT,
+              title TEXT DEFAULT '',
+              text TEXT DEFAULT '',
+              notes TEXT DEFAULT '',
+              dueDate TEXT DEFAULT NULL,
+              completed INTEGER DEFAULT 0,
+              type TEXT DEFAULT 'todo',
+              createdAt TEXT,
+              updatedAt TEXT
+            )
+          `
+        });
+        
+        await sqlite.execute({
+          database: DB_NAME,
+          statements: `
+            CREATE TABLE IF NOT EXISTS sponsor_contact_action_items (
+              id INTEGER PRIMARY KEY AUTOINCREMENT,
+              contactId INTEGER,
+              actionItemId INTEGER,
+              createdAt TEXT,
+              FOREIGN KEY (contactId) REFERENCES sponsor_contacts(id),
+              FOREIGN KEY (actionItemId) REFERENCES action_items(id)
+            )
+          `
+        });
+        
+        // Direct SQL query to get action items
+        console.log(`[SponsorContactDetailsPage.js - loadActionItemsFromDatabase: 103] Executing SQL query for contact's action items`);
+        const sqlQuery = `
+          SELECT ai.* 
+          FROM action_items ai
+          JOIN sponsor_contact_action_items scai ON ai.id = scai.actionItemId
+          WHERE scai.contactId = ${contact.id}
+          ORDER BY ai.createdAt DESC
+        `;
+        
+        console.log(`[SponsorContactDetailsPage.js - loadActionItemsFromDatabase: 111] SQL: ${sqlQuery}`);
+        
+        const result = await sqlite.query({
+          database: DB_NAME,
+          statement: sqlQuery,
+          values: []
+        });
+        
+        console.log(`[SponsorContactDetailsPage.js - loadActionItemsFromDatabase: 118] Query result:`, JSON.stringify(result));
+        
+        let actionItemsFound = [];
+        
+        // Process the result based on the format
+        if (result.values && result.values.length > 0) {
+          if (result.values[0].ios_columns) {
+            // iOS format - skip the first item with column info
+            if (result.values.length > 1) {
+              actionItemsFound = result.values.slice(1);
+              console.log(`[SponsorContactDetailsPage.js - loadActionItemsFromDatabase: 128] Found ${actionItemsFound.length} action items (iOS format)`);
+              
+              // Log each item
+              actionItemsFound.forEach((item, index) => {
+                console.log(`[SponsorContactDetailsPage.js - loadActionItemsFromDatabase: 132] Item ${index}: ID=${item.id}, Title=${item.title}, Completed=${item.completed}`);
+              });
+            } else {
+              console.log(`[SponsorContactDetailsPage.js - loadActionItemsFromDatabase: 135] No action items found (iOS format with only column info)`);
+            }
+          } else {
+            // Standard format
+            actionItemsFound = result.values;
+            console.log(`[SponsorContactDetailsPage.js - loadActionItemsFromDatabase: 140] Found ${actionItemsFound.length} action items (standard format)`);
+            
+            // Log each item
+            actionItemsFound.forEach((item, index) => {
+              console.log(`[SponsorContactDetailsPage.js - loadActionItemsFromDatabase: 144] Item ${index}: ID=${item.id}, Title=${item.title}, Completed=${item.completed}`);
+            });
+          }
           
-          // Log each item for debugging
-          items.forEach((item, index) => {
-            console.log(`[SponsorContactDetailsPage.js - useEffect: 71] Item ${index}: ID=${item.id}, Title=${item.title}, Completed=${item.completed}`);
+          // Set the found items to state
+          setActionItems(actionItemsFound);
+          actionItemsRef.current = actionItemsFound;
+        } else {
+          console.log(`[SponsorContactDetailsPage.js - loadActionItemsFromDatabase: 152] No action items found in database for contact: ${contact.id}`);
+          
+          // Check the join table directly to debug
+          console.log(`[SponsorContactDetailsPage.js - loadActionItemsFromDatabase: 155] Checking join table entries`);
+          const joinQuery = `
+            SELECT * FROM sponsor_contact_action_items 
+            WHERE contactId = ${contact.id}
+          `;
+          
+          const joinResult = await sqlite.query({
+            database: DB_NAME,
+            statement: joinQuery,
+            values: []
           });
           
-          setActionItems(items);
-          actionItemsRef.current = items;
-        } else {
-          console.log(`[SponsorContactDetailsPage.js - useEffect: 77] No action items found in database for contact: ${contact.id}`);
+          console.log(`[SponsorContactDetailsPage.js - loadActionItemsFromDatabase: 165] Join table result:`, JSON.stringify(joinResult));
+          
           // Still show any todo items from contact details for backward compatibility
           const todoItems = details.filter(item => item.type === 'todo');
           if (todoItems.length > 0) {
-            console.log(`[SponsorContactDetailsPage.js - useEffect: 81] Found ${todoItems.length} legacy todo items`);
+            console.log(`[SponsorContactDetailsPage.js - loadActionItemsFromDatabase: 170] Found ${todoItems.length} legacy todo items`);
             
             // Log each legacy item for debugging
             todoItems.forEach((item, index) => {
-              console.log(`[SponsorContactDetailsPage.js - useEffect: 85] Legacy item ${index}: ID=${item.id}, Text=${item.text || item.actionItem}, Completed=${item.completed}`);
+              console.log(`[SponsorContactDetailsPage.js - loadActionItemsFromDatabase: 174] Legacy item ${index}: ID=${item.id}, Text=${item.text || item.actionItem}, Completed=${item.completed}`);
             });
             
             setActionItems(todoItems);
             actionItemsRef.current = todoItems;
           } else {
             // Initialize with empty array
-            console.log(`[SponsorContactDetailsPage.js - useEffect: 92] No legacy items found, initializing with empty array`);
+            console.log(`[SponsorContactDetailsPage.js - loadActionItemsFromDatabase: 181] No legacy items found, initializing with empty array`);
             setActionItems([]);
             actionItemsRef.current = [];
           }
         }
       } catch (error) {
-        console.error('[SponsorContactDetailsPage.js - useEffect: 98] Error loading action items:', error);
+        console.error('[SponsorContactDetailsPage.js - loadActionItemsFromDatabase: 186] Error loading action items:', error);
       }
     }
     
@@ -220,30 +316,127 @@ export default function SponsorContactDetailsPage({
     
     if (contact?.id) {
       try {
-        // Import the action-items module for database operations
-        const { addActionItem, associateActionItemWithContact, getAllActionItemsDebug } = await import('../utils/action-items');
+        // Use a direct import of the SQLite instance to ensure we bypass any wrapper issues
+        const getSQLite = () => {
+          if (!window.Capacitor?.Plugins?.CapacitorSQLite) {
+            throw new Error('CapacitorSQLite plugin not available');
+          }
+          return window.Capacitor.Plugins.CapacitorSQLite;
+        };
         
-        // For debugging - check all existing action items
-        console.log(`[SponsorContactDetailsPage.js - handleAddActionItem: 227] Checking existing action items before saving`);
-        await getAllActionItemsDebug();
+        // First, make sure the table exists
+        console.log(`[SponsorContactDetailsPage.js - handleAddActionItem: 227] Ensuring action_items table exists`);
+        const sqlite = getSQLite();
         
-        // Save to action_items table with explicit database code
-        console.log(`[SponsorContactDetailsPage.js - handleAddActionItem: 231] Saving action item to database`, JSON.stringify(newItem));
-        const savedItem = await addActionItem(newItem);
+        // Database name must match what's used elsewhere
+        const DB_NAME = 'spiritualTracker.db';
         
-        console.log(`[SponsorContactDetailsPage.js - handleAddActionItem: 234] Save result:`, JSON.stringify(savedItem));
+        // Create the table if it doesn't exist
+        await sqlite.execute({
+          database: DB_NAME,
+          statements: `
+            CREATE TABLE IF NOT EXISTS action_items (
+              id INTEGER PRIMARY KEY AUTOINCREMENT,
+              title TEXT DEFAULT '',
+              text TEXT DEFAULT '',
+              notes TEXT DEFAULT '',
+              dueDate TEXT DEFAULT NULL,
+              completed INTEGER DEFAULT 0,
+              type TEXT DEFAULT 'todo',
+              createdAt TEXT,
+              updatedAt TEXT
+            )
+          `
+        });
         
-        if (savedItem && savedItem.id) {
-          console.log(`[SponsorContactDetailsPage.js - handleAddActionItem: 237] Action item saved with ID: ${savedItem.id}`);
+        console.log(`[SponsorContactDetailsPage.js - handleAddActionItem: 247] Creating join table if not exists`);
+        await sqlite.execute({
+          database: DB_NAME,
+          statements: `
+            CREATE TABLE IF NOT EXISTS sponsor_contact_action_items (
+              id INTEGER PRIMARY KEY AUTOINCREMENT,
+              contactId INTEGER,
+              actionItemId INTEGER,
+              createdAt TEXT,
+              FOREIGN KEY (contactId) REFERENCES sponsor_contacts(id),
+              FOREIGN KEY (actionItemId) REFERENCES action_items(id)
+            )
+          `
+        });
+        
+        // Directly insert the action item using SQL
+        console.log(`[SponsorContactDetailsPage.js - handleAddActionItem: 261] DIRECTLY inserting action item with SQL`);
+        const insertSQL = `
+          INSERT INTO action_items 
+          (title, text, notes, dueDate, completed, type, createdAt, updatedAt) 
+          VALUES 
+          ('${newItem.title.replace(/'/g, "''")}', 
+           '${newItem.text.replace(/'/g, "''")}', 
+           '${newItem.notes.replace(/'/g, "''")}', 
+           ${newItem.dueDate ? `'${newItem.dueDate}'` : 'NULL'}, 
+           ${newItem.completed}, 
+           '${newItem.type}',
+           '${newItem.createdAt}',
+           '${newItem.updatedAt}')
+        `;
+        
+        console.log(`[SponsorContactDetailsPage.js - handleAddActionItem: 276] SQL: ${insertSQL}`);
+        
+        // Execute the direct SQL insertion
+        const insertResult = await sqlite.execute({
+          database: DB_NAME,
+          statements: insertSQL
+        });
+        
+        console.log(`[SponsorContactDetailsPage.js - handleAddActionItem: 283] Insert result:`, JSON.stringify(insertResult));
+        
+        // Get the ID of the inserted record
+        const idResult = await sqlite.query({
+          database: DB_NAME,
+          statement: 'SELECT last_insert_rowid() as id',
+          values: []
+        });
+        
+        console.log(`[SponsorContactDetailsPage.js - handleAddActionItem: 291] ID query result:`, JSON.stringify(idResult));
+        
+        let newId = null;
+        if (idResult.values && idResult.values.length > 0) {
+          if (idResult.values[0].ios_columns) {
+            // iOS format
+            newId = idResult.values[1]?.id;
+          } else {
+            // Standard format
+            newId = idResult.values[0]?.id;
+          }
+        }
+        
+        console.log(`[SponsorContactDetailsPage.js - handleAddActionItem: 303] Extracted ID: ${newId}`);
+        
+        // Create a savedItem object with the new ID
+        const savedItem = { ...newItem, id: newId };
+        
+        if (newId) {
+          console.log(`[SponsorContactDetailsPage.js - handleAddActionItem: 309] Action item saved with ID: ${newId}`);
           
-          // Debug - check all action items after saving
-          console.log(`[SponsorContactDetailsPage.js - handleAddActionItem: 240] Verifying action item was saved`);
-          await getAllActionItemsDebug();
+          // Create the association directly in the join table
+          console.log(`[SponsorContactDetailsPage.js - handleAddActionItem: 312] Creating join table entry for contact ${contact.id} and action item ${newId}`);
           
-          // Create association in join table
-          console.log(`[SponsorContactDetailsPage.js - handleAddActionItem: 244] Creating association between contact ${contact.id} and action item ${savedItem.id}`);
-          const success = await associateActionItemWithContact(contact.id, savedItem.id);
-          console.log(`[SponsorContactDetailsPage.js - handleAddActionItem: 246] Association created: ${success}`);
+          const now = new Date().toISOString();
+          const joinSQL = `
+            INSERT INTO sponsor_contact_action_items
+            (contactId, actionItemId, createdAt)
+            VALUES
+            (${contact.id}, ${newId}, '${now}')
+          `;
+          
+          console.log(`[SponsorContactDetailsPage.js - handleAddActionItem: 321] Join SQL: ${joinSQL}`);
+          
+          const joinResult = await sqlite.execute({
+            database: DB_NAME,
+            statements: joinSQL
+          });
+          
+          console.log(`[SponsorContactDetailsPage.js - handleAddActionItem: 327] Join result:`, JSON.stringify(joinResult));
           
           // Update local state with real database ID
           const itemsWithRealId = actionItems.map(item => 
@@ -252,10 +445,41 @@ export default function SponsorContactDetailsPage({
           setActionItems(itemsWithRealId);
           actionItemsRef.current = itemsWithRealId;
           
-          // Retrieve all items to verify the addition worked
-          const { getActionItemsForContact } = await import('../utils/action-items');
-          const refreshedItems = await getActionItemsForContact(contact.id);
-          console.log(`[SponsorContactDetailsPage - handleAddActionItem] Contact now has ${refreshedItems.length} action items`);
+          // Verify the items are now associated with the contact
+          console.log(`[SponsorContactDetailsPage.js - handleAddActionItem: 335] Verifying items are associated with contact`);
+          const verifySQL = `
+            SELECT ai.*
+            FROM action_items ai
+            JOIN sponsor_contact_action_items scai ON ai.id = scai.actionItemId
+            WHERE scai.contactId = ${contact.id}
+          `;
+          
+          const verifyResult = await sqlite.query({
+            database: DB_NAME,
+            statement: verifySQL,
+            values: []
+          });
+          
+          console.log(`[SponsorContactDetailsPage.js - handleAddActionItem: 347] Verification result:`, JSON.stringify(verifyResult));
+          
+          // Log each found item
+          if (verifyResult.values && verifyResult.values.length > 0) {
+            if (verifyResult.values[0].ios_columns) {
+              // iOS format
+              console.log(`[SponsorContactDetailsPage.js - handleAddActionItem: 353] Found ${verifyResult.values.length - 1} action items for contact ${contact.id}`);
+              for (let i = 1; i < verifyResult.values.length; i++) {
+                console.log(`[SponsorContactDetailsPage.js - handleAddActionItem: 355] Item ${i}: ID=${verifyResult.values[i].id}, Title=${verifyResult.values[i].title}`);
+              }
+            } else {
+              // Standard format
+              console.log(`[SponsorContactDetailsPage.js - handleAddActionItem: 359] Found ${verifyResult.values.length} action items for contact ${contact.id}`);
+              verifyResult.values.forEach((item, index) => {
+                console.log(`[SponsorContactDetailsPage.js - handleAddActionItem: 361] Item ${index}: ID=${item.id}, Title=${item.title}`);
+              });
+            }
+          } else {
+            console.log(`[SponsorContactDetailsPage.js - handleAddActionItem: 365] No action items found for contact ${contact.id} after saving`);
+          }
         }
       } catch (error) {
         console.error(`[SponsorContactDetailsPage - handleAddActionItem] Error saving to SQLite:`, error);

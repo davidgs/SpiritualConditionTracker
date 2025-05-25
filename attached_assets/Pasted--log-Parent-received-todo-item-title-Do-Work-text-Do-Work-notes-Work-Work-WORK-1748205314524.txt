@@ -1,0 +1,48 @@
+⚡️  [log] - Parent received todo item: {"title":"Do Work","text":"Do Work","notes":"Work, Work, WORK!","dueDate":"2025-05-27","completed":0,"type":"todo"}
+⚡️  [log] - Setting todos to: [{"title":"Do Work","text":"Do Work","notes":"Work, Work, WORK!","dueDate":"2025-05-27","completed":0,"type":"todo","id":-872,"contactId":null}]
+⚡️  [log] - Adding new contact with data: {"type":"phone","date":"2025-05-25T00:00:00.000Z","note":""}
+⚡️  To Native ->  CapacitorSQLite execute 52697323
+⚡️  [log] - Inserting contact into database: {"type":"phone","date":"2025-05-25T00:00:00.000Z","note":"","userId":"default_user","createdAt":"2025-05-25T20:31:00.717Z","updatedAt":"2025-05-25T20:31:00.717Z"}
+⚡️  [log] - Formatting date: 2025-05-25T00:00:00.000Z
+⚡️  [log] - Inserting contact into database: {"userId":"default_user","type":"phone","note":"","date":"2025-05-25T00:00:00.000Z","createdAt":"2025-05-25T20:31:00.717Z","updatedAt":"2025-05-25T20:31:00.717Z"}
+⚡️  [log] - Inserting contact with simplified approach
+⚡️  [log] - Raw SQL statement: 
+      INSERT INTO sponsor_contacts 
+      (userId, type, note, date, createdAt, updatedAt) 
+      VALUES 
+      ('default_user', 'phone', '', '2025-05-25T00:00:00.000Z', '2025-05-25T20:31:00.717Z', '2025-05-25T20:31:00.717Z')
+    
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  To Native ->  CapacitorSQLite query 52697324
+⚡️  TO JS {"values":[{"ios_columns":["id"]},{"id":1}]}
+⚡️  [log] - Last ID result from database: {"values":[{"ios_columns":["id"]},{"id":1}]}
+⚡️  [log] - Extracted ID from iOS format: 1
+⚡️  [log] - Contact saved with ID: 1
+⚡️  [log] - Loading sponsor contacts for userId: default_user
+⚡️  To Native ->  CapacitorSQLite query 52697325
+⚡️  [log] - Querying sponsor contacts with userId: default_user
+⚡️  TO JS {"values":[{"ios_columns":["id","userId","date","type","note","createdAt","updatedAt"]},{"note":"","userId":"default_user","updatedAt":"2025-05-25T20:31:00.717Z","createdAt":"2025-05-25T20:31:00.717Z","date":"2025-05-25T00:00:00.000Z","type":"phone","id":1
+⚡️  [log] - Raw contacts in database: {"values":[{"ios_columns":["id","userId","date","type","note","createdAt","updatedAt"]},{"note":"","userId":"default_user","updatedAt":"2025-05-25T20:31:00.717Z","createdAt":"2025-05-25T20:31:00.717Z","date":"2025-05-25T00:00:00.000Z","type":"phone","id":1}]}
+⚡️  [log] - Has valid contacts: true
+⚡️  To Native ->  CapacitorSQLite query 52697326
+⚡️  TO JS {"values":[{"ios_columns":["id","userId","date","type","note","createdAt","updatedAt"]},{"updatedAt":"2025-05-25T20:31:00.717Z","note":"","type":"phone","date":"2025-05-25T00:00:00.000Z","userId":"default_user","id":1,"createdAt":"2025-05-25T20:31:00.717Z"
+⚡️  [log] - All contacts in database: {"values":[{"ios_columns":["id","userId","date","type","note","createdAt","updatedAt"]},{"updatedAt":"2025-05-25T20:31:00.717Z","note":"","type":"phone","date":"2025-05-25T00:00:00.000Z","userId":"default_user","id":1,"createdAt":"2025-05-25T20:31:00.717Z"}]}
+⚡️  To Native ->  CapacitorSQLite query 52697327
+⚡️  [log] - Checking if we need to recreate the sponsor_contacts table...
+⚡️  TO JS {"values":[{"ios_columns":["id","userId","date","type","note","createdAt","updatedAt"]},{"id":1,"userId":"default_user","date":"2025-05-25T00:00:00.000Z","updatedAt":"2025-05-25T20:31:00.717Z","note":"","createdAt":"2025-05-25T20:31:00.717Z","type":"phone"
+⚡️  [log] - Test contact result: {"values":[{"ios_columns":["id","userId","date","type","note","createdAt","updatedAt"]},{"id":1,"userId":"default_user","date":"2025-05-25T00:00:00.000Z","updatedAt":"2025-05-25T20:31:00.717Z","note":"","createdAt":"2025-05-25T20:31:00.717Z","type":"phone"}]}
+⚡️  To Native ->  CapacitorSQLite query 52697328
+⚡️  TO JS {"values":[{"ios_columns":["id","userId","date","type","note","createdAt","updatedAt"]},{"note":"","userId":"default_user","updatedAt":"2025-05-25T20:31:00.717Z","createdAt":"2025-05-25T20:31:00.717Z","date":"2025-05-25T00:00:00.000Z","type":"phone","id":1
+⚡️  [log] - Raw sponsor contacts query result: {"values":[{"ios_columns":["id","userId","date","type","note","createdAt","updatedAt"]},{"note":"","userId":"default_user","updatedAt":"2025-05-25T20:31:00.717Z","createdAt":"2025-05-25T20:31:00.717Z","date":"2025-05-25T00:00:00.000Z","type":"phone","id":1}]}
+⚡️  [log] - iOS columns format detected: ["id","userId","date","type","note","createdAt","updatedAt"]
+⚡️  [log] - Processing contact item: {"note":"","userId":"default_user","updatedAt":"2025-05-25T20:31:00.717Z","createdAt":"2025-05-25T20:31:00.717Z","date":"2025-05-25T00:00:00.000Z","type":"phone","id":1}
+⚡️  [log] - Found sponsor contacts: [{"note":"","userId":"default_user","updatedAt":"2025-05-25T20:31:00.717Z","createdAt":"2025-05-25T20:31:00.717Z","date":"2025-05-25T00:00:00.000Z","type":"phone","id":1}]
+⚡️  [log] - Loading details for contact ID: 1
+⚡️  To Native ->  CapacitorSQLite query 52697329
+⚡️  TO JS {"values":[{"ios_columns":["name"]},{"name":"sponsor_contact_details"}]}
+⚡️  To Native ->  CapacitorSQLite query 52697330
+⚡️  [log] - Querying contact details for contactId: 1
+⚡️  TO JS {"values":[]}
+⚡️  [log] - Raw contact details query result: {"values":[]}
+⚡️  [log] - Found contact details: []
+⚡️  [log] - Formatting date: 2025-05-25T00:00:00.000Z
