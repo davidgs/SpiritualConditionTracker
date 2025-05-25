@@ -27,18 +27,59 @@ function getSQLite() {
  */
 export async function getAllActionItems() {
   try {
+    console.log('[action-items.js - getAllActionItems: 29] Getting all action items');
     const sqlite = getSQLite();
+    
+    const sqlStatement = "SELECT * FROM action_items ORDER BY createdAt DESC";
+    console.log('[action-items.js - getAllActionItems: 33] SQL query:', sqlStatement);
     
     const result = await sqlite.query({
       database: DB_NAME,
-      statement: "SELECT * FROM action_items ORDER BY createdAt DESC",
+      statement: sqlStatement,
       values: []
     });
     
+    console.log('[action-items.js - getAllActionItems: 40] Query result:', JSON.stringify(result));
+    
     return result.values || [];
   } catch (error) {
-    console.error('Error getting action items:', error);
+    console.error('[action-items.js - getAllActionItems: 44] Error getting action items:', error);
     return [];
+  }
+}
+
+/**
+ * Debug function to get all action items and log them
+ * @returns {Promise<void>}
+ */
+export async function getAllActionItemsDebug() {
+  try {
+    console.log('[action-items.js - getAllActionItemsDebug: 54] DEBUG: Retrieving all action items');
+    const sqlite = getSQLite();
+    
+    // Query to get all action items
+    const sqlStatement = "SELECT * FROM action_items ORDER BY createdAt DESC";
+    console.log('[action-items.js - getAllActionItemsDebug: 59] DEBUG: SQL query:', sqlStatement);
+    
+    const result = await sqlite.query({
+      database: DB_NAME,
+      statement: sqlStatement,
+      values: []
+    });
+    
+    console.log('[action-items.js - getAllActionItemsDebug: 66] DEBUG: All action items result:', JSON.stringify(result));
+    
+    // Log the number of items found
+    if (result?.values) {
+      const itemCount = result.values.length > 0 && result.values[0].ios_columns ? 
+        result.values.length - 1 : result.values.length;
+      
+      console.log(`[action-items.js - getAllActionItemsDebug: 72] DEBUG: Found ${itemCount} action items in database`);
+    } else {
+      console.log('[action-items.js - getAllActionItemsDebug: 74] DEBUG: No action items found or result structure invalid');
+    }
+  } catch (error) {
+    console.error('[action-items.js - getAllActionItemsDebug: 77] DEBUG: Error retrieving all action items:', error);
   }
 }
 
@@ -49,36 +90,69 @@ export async function getAllActionItems() {
  */
 export async function getActionItemsForContact(contactId) {
   try {
+    console.log(`[action-items.js - getActionItemsForContact: 87] Getting action items for contact ID: ${contactId}`);
     const sqlite = getSQLite();
+    
+    // Construct the SQL query with join
+    const sqlStatement = `
+      SELECT ai.* 
+      FROM action_items ai
+      JOIN sponsor_contact_action_items scai ON ai.id = scai.actionItemId
+      WHERE scai.contactId = ?
+      ORDER BY ai.createdAt DESC
+    `;
+    
+    console.log(`[action-items.js - getActionItemsForContact: 99] SQL query for contact ${contactId}:`, sqlStatement);
     
     // Query action items via join table
     const result = await sqlite.query({
       database: DB_NAME,
-      statement: `
-        SELECT ai.* 
-        FROM action_items ai
-        JOIN sponsor_contact_action_items scai ON ai.id = scai.actionItemId
-        WHERE scai.contactId = ?
-        ORDER BY ai.createdAt DESC
-      `,
+      statement: sqlStatement,
       values: [contactId]
     });
     
-    console.log('Raw action items result for contact', contactId, ':', JSON.stringify(result));
+    console.log(`[action-items.js - getActionItemsForContact: 107] Raw action items result for contact ${contactId}:`, JSON.stringify(result));
     
     // Handle iOS-specific format where first item contains column information
     if (result.values && result.values.length > 0) {
+      console.log(`[action-items.js - getActionItemsForContact: 111] Found ${result.values.length} results in query`);
+      
       // Check if first item contains column information (iOS format)
       if (result.values[0].ios_columns) {
-        console.log('iOS format detected for action items, processing values');
+        console.log('[action-items.js - getActionItemsForContact: 115] iOS format detected for action items, processing values');
         // Skip the first item (column info) and process the rest
-        return result.values.slice(1);
+        const processedValues = result.values.slice(1);
+        console.log(`[action-items.js - getActionItemsForContact: 118] Processed ${processedValues.length} action items for iOS format`);
+        return processedValues;
+      } else {
+        console.log(`[action-items.js - getActionItemsForContact: 121] Standard format with ${result.values.length} action items`);
       }
+    } else {
+      console.log(`[action-items.js - getActionItemsForContact: 124] No action items found for contact ${contactId}`);
+    }
+    
+    // Query the join table directly to see what associations exist
+    try {
+      const joinTableQuery = `
+        SELECT * FROM sponsor_contact_action_items 
+        WHERE contactId = ?
+      `;
+      console.log(`[action-items.js - getActionItemsForContact: 132] Querying join table:`, joinTableQuery);
+      
+      const joinResult = await sqlite.query({
+        database: DB_NAME,
+        statement: joinTableQuery,
+        values: [contactId]
+      });
+      
+      console.log(`[action-items.js - getActionItemsForContact: 139] Join table result:`, JSON.stringify(joinResult));
+    } catch (joinError) {
+      console.error(`[action-items.js - getActionItemsForContact: 142] Error querying join table:`, joinError);
     }
     
     return result.values || [];
   } catch (error) {
-    console.error(`Error getting action items for contact ${contactId}:`, error);
+    console.error(`[action-items.js - getActionItemsForContact: 147] Error getting action items for contact ${contactId}:`, error);
     return [];
   }
 }
@@ -90,6 +164,7 @@ export async function getActionItemsForContact(contactId) {
  */
 export async function addActionItem(actionItem) {
   try {
+    console.log('[action-items.js - addActionItem: 92] Starting to add action item');
     const sqlite = getSQLite();
     
     // Create a clean object with valid fields
@@ -105,23 +180,31 @@ export async function addActionItem(actionItem) {
       updatedAt: now
     };
     
-    console.log('Saving action item with data:', actionItemData);
+    console.log('[action-items.js - addActionItem: 108] Saving action item with data:', JSON.stringify(actionItemData));
     
     // Build SQL statement with pre-defined fields
     const keys = Object.keys(actionItemData);
     const placeholders = keys.map(() => '?').join(', ');
     const values = keys.map(key => actionItemData[key]);
     
+    // Construct full SQL statement for logging
+    const fullSqlStatement = `
+      INSERT INTO action_items 
+      (${keys.join(', ')}) 
+      VALUES (${placeholders})
+    `;
+    
+    console.log('[action-items.js - addActionItem: 122] Full SQL statement:', fullSqlStatement);
+    console.log('[action-items.js - addActionItem: 123] Values:', JSON.stringify(values));
+    
     // Insert using parameterized query
-    await sqlite.execute({
+    const insertResult = await sqlite.execute({
       database: DB_NAME,
-      statements: `
-        INSERT INTO action_items 
-        (${keys.join(', ')}) 
-        VALUES (${placeholders})
-      `,
+      statements: fullSqlStatement,
       values: values
     });
+    
+    console.log('[action-items.js - addActionItem: 131] Insert result:', JSON.stringify(insertResult));
     
     // Get the ID in a separate query for compatibility
     const lastIdResult = await sqlite.query({
@@ -130,16 +213,26 @@ export async function addActionItem(actionItem) {
       values: []
     });
     
+    console.log('[action-items.js - addActionItem: 139] Last ID result:', JSON.stringify(lastIdResult));
+    
     // Apply the ID if available
     if (lastIdResult?.values?.length > 0) {
       // Handle iOS-specific format where the first item contains column info
       if (lastIdResult.values[0].ios_columns && lastIdResult.values[1]) {
         actionItemData.id = lastIdResult.values[1].id;
+        console.log('[action-items.js - addActionItem: 146] Using iOS format ID:', lastIdResult.values[1].id);
       } else {
         // Standard format
         actionItemData.id = lastIdResult.values[0].id;
+        console.log('[action-items.js - addActionItem: 150] Using standard format ID:', lastIdResult.values[0].id);
       }
     }
+    
+    // Log the final action item data with ID
+    console.log('[action-items.js - addActionItem: 155] Final action item data:', JSON.stringify(actionItemData));
+    
+    // Query all action items to verify storage
+    await getAllActionItemsDebug();
     
     return actionItemData;
   } catch (error) {

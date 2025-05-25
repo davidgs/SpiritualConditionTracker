@@ -150,8 +150,10 @@ export default function SponsorContactDetailsPage({
     setContactDetails(updatedDetails);
   };
   
-  // Direct implementation to add a new action item
-  const handleAddActionItem = (todoItem) => {
+  // Dual-mode implementation for adding action items (web vs native)
+  const handleAddActionItem = async (todoItem) => {
+    console.log('[SponsorContactDetailsPage.js - handleAddActionItem: 154] Adding new action item:', todoItem);
+    
     // Generate a simple temp ID for the demo
     const tempId = -Math.floor(Math.random() * 10000) - 1;
     
@@ -166,10 +168,47 @@ export default function SponsorContactDetailsPage({
       type: 'todo'
     };
     
-    // Add directly to both state and ref to keep them in sync
+    console.log('[SponsorContactDetailsPage.js - handleAddActionItem: 168] Created new item:', newItem);
+    
+    // First update UI immediately for responsiveness
     const updatedItems = [newItem, ...actionItemsRef.current];
     actionItemsRef.current = updatedItems;
     setActionItems(updatedItems);
+    
+    // Try to save to SQLite if we're in native environment
+    try {
+      // Import utilities for database operations
+      const actionItemsModule = await import('../utils/action-items');
+      const sponsorDB = await import('../utils/sponsor-database');
+      
+      console.log('[SponsorContactDetailsPage.js - handleAddActionItem: 180] Attempting to save to database');
+      
+      // First check if SQLite is available
+      if (window.Capacitor?.Plugins?.CapacitorSQLite) {
+        console.log('[SponsorContactDetailsPage.js - handleAddActionItem: 184] SQLite is available, saving to database');
+        
+        // Save to database using proper functions
+        if (contact && contact.id) {
+          console.log(`[SponsorContactDetailsPage.js - handleAddActionItem: 188] Saving for contact ID: ${contact.id}`);
+          const savedItem = await sponsorDB.addActionItem(newItem, contact.id);
+          console.log('[SponsorContactDetailsPage.js - handleAddActionItem: 190] Database save result:', savedItem);
+          
+          // Update with real database ID if successful
+          if (savedItem && savedItem.id) {
+            const itemsWithRealId = actionItems.map(item => 
+              item.id === tempId ? { ...item, id: savedItem.id } : item
+            );
+            setActionItems(itemsWithRealId);
+            actionItemsRef.current = itemsWithRealId;
+          }
+        }
+      } else {
+        console.log('[SponsorContactDetailsPage.js - handleAddActionItem: 200] SQLite not available, using in-memory storage only');
+      }
+    } catch (error) {
+      console.error('[SponsorContactDetailsPage.js - handleAddActionItem: 203] Error saving to database:', error);
+      // Continue with in-memory version even if database save fails
+    }
   };
   
   // Toggle action item completion
