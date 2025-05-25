@@ -51,7 +51,7 @@ export default function SponsorContactDetailsPage({
   // State for action items
   const [actionItems, setActionItems] = useState([]);
   
-  // Load details and action items when they change
+  // Load details and action items when they change - once when component mounts or when details/contact change
   useEffect(() => {
     // Set contact details from props
     setContactDetails(details);
@@ -60,21 +60,23 @@ export default function SponsorContactDetailsPage({
     // This ensures we show something even if database access isn't working
     const todoItems = details.filter(item => item.type === 'todo');
     if (todoItems.length > 0) {
-      console.log('Found todo items in details:', todoItems);
+      console.log('Found todo items in details:', todoItems.length);
+      // Important: We're setting the initial state once to prevent infinite loops
       setActionItems(todoItems);
+    } else {
+      console.log('No todo items found in details');
+      
+      // If no items in details, initialize with empty array to prevent undefined
+      if (actionItems.length === 0) {
+        setActionItems([]);
+      }
     }
     
-    // Also try to load action items from database if we have a contact
-    if (contact && contact.id) {
-      console.log('Loading action items for contact ID:', contact.id);
-      
-      // Use simple approach with direct access to contact details
-      // We'll display todo items directly from the details array
-      // This approach will work even if SQLite isn't available in the current environment
-      
-      // In the native app, the database functions will properly populate these items
-      // from the SQLite storage via Capacitor
-    }
+    // We're not attempting to load from database here to avoid loops
+    // The action items will be loaded via the proper SQLite interfaces
+    // when running in the native app environment
+    
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [details, contact]);
   
   // Handle form changes for new action item

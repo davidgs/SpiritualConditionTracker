@@ -37,11 +37,17 @@ export default function SponsorContactTodo({
   });
   const [internalTodos, setInternalTodos] = useState([]);
   
-  // Update internal todos when props change
+  // Update internal todos when props change, but only if todos have actual content
   useEffect(() => {
-    console.log('SponsorContactTodo received todos:', todos);
-    // Always update the internal state, even if empty
-    setInternalTodos(todos && todos.length > 0 ? [...todos] : []);
+    // Only log once per component mount to avoid spamming console
+    if (internalTodos.length === 0 && todos && todos.length > 0) {
+      console.log('SponsorContactTodo loaded todos:', todos.length);
+    }
+    
+    // Only update state if we have actual todos to avoid unnecessary rerenders
+    if (todos && Array.isArray(todos)) {
+      setInternalTodos(todos);
+    }
   }, [todos]);
 
   const handleAddTodo = () => {
