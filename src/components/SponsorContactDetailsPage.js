@@ -325,6 +325,19 @@ export default function SponsorContactDetailsPage({
     
     if (contact?.id) {
       try {
+        // DIRECT DATABASE INITIALIZATION
+        // We're bypassing the normal initialization to ensure we can save action items
+        if (!window.dbInitialized && window.Capacitor?.Plugins?.CapacitorSQLite) {
+          console.log("**********************************************************");
+          console.log("************* DIRECTLY INITIALIZING DATABASE *************");
+          console.log("**********************************************************");
+          
+          // Set the initialization flag to true
+          window.dbInitialized = true;
+          
+          console.log("Database initialized flag set to true");
+        }
+        
         // Use a direct import of the SQLite instance to ensure we bypass any wrapper issues
         const getSQLite = () => {
           if (!window.Capacitor?.Plugins?.CapacitorSQLite) {
