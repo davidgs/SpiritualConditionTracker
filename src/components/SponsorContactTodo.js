@@ -48,6 +48,10 @@ export default function SponsorContactTodo({
 
   const handleAddTodo = () => {
     if (todoForm.title.trim()) {
+      console.log("**********************************************************");
+      console.log("************* SPONSOR CONTACT TODO - ADD ITEM *************");
+      console.log("**********************************************************");
+      
       // Create a simple todo item
       const todoItem = {
         title: todoForm.title.trim(),
@@ -58,7 +62,17 @@ export default function SponsorContactTodo({
         type: 'todo'
       };
       
+      console.log("Todo item created:", todoItem);
+      
+      // Check if Capacitor SQLite is available
+      if (window.Capacitor?.Plugins?.CapacitorSQLite) {
+        console.log("Capacitor SQLite IS available - database storage should work");
+      } else {
+        console.log("Capacitor SQLite is NOT available - using in-memory only");
+      }
+      
       // Pass to parent component for handling
+      console.log("Sending to parent via onAddTodo");
       onAddTodo(todoItem);
       
       // Update internal state immediately for a responsive UI

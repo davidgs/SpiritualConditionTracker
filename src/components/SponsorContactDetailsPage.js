@@ -291,6 +291,14 @@ export default function SponsorContactDetailsPage({
   
   // Native iOS implementation for adding action items
   const handleAddActionItem = async (todoItem) => {
+    console.log("**********************************************************");
+    console.log("***** SPONSOR CONTACT DETAILS - HANDLE ADD ACTION ITEM ****");
+    console.log("**********************************************************");
+    console.log("todoItem received:", todoItem);
+    console.log("contact:", contact);
+    console.log("Capacitor SQLite available:", !!window.Capacitor?.Plugins?.CapacitorSQLite);
+    console.log("Database initialized:", !!window.dbInitialized);
+    
     // Generate a temporary ID for immediate UI update
     const tempId = -Math.floor(Math.random() * 10000) - 1;
     
@@ -308,6 +316,7 @@ export default function SponsorContactDetailsPage({
     };
     
     console.log(`[SponsorContactDetailsPage - handleAddActionItem] Adding action item for contact ID: ${contact?.id}`);
+    console.log("New item object:", newItem);
     
     // Update UI immediately for responsiveness
     const updatedItems = [newItem, ...actionItemsRef.current];
