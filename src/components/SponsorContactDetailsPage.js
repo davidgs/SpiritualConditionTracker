@@ -386,6 +386,86 @@ export default function SponsorContactDetailsPage({
           `
         });
         
+        // Initialize database (needed for the simulator)
+        try {
+          // iOS simulator needs explicit database connection
+          console.log(`**********************************************************`);
+          console.log(`*********** INITIALIZING DATABASE CONNECTION *************`);
+          console.log(`**********************************************************`);
+
+          // Explicitly connect to the database
+          await sqlite.createConnection({
+            database: DB_NAME,
+            encrypted: false
+          });
+          console.log("Database connection created successfully");
+          
+          await sqlite.open({
+            database: DB_NAME
+          });
+          console.log("Database opened successfully");
+        } catch (dbError) {
+          console.error("Error initializing database:", dbError);
+        }
+        
+        // Create tables explicitly 
+        console.log(`**********************************************************`);
+        console.log(`************** CREATING DATABASE TABLES ******************`);
+        console.log(`**********************************************************`);
+        
+        // Try to create action_items table
+        try {
+          const createActionItemsTable = `
+            CREATE TABLE IF NOT EXISTS action_items (
+              id INTEGER PRIMARY KEY AUTOINCREMENT,
+              title TEXT DEFAULT '',
+              text TEXT DEFAULT '',
+              notes TEXT DEFAULT '',
+              dueDate TEXT DEFAULT NULL,
+              completed INTEGER DEFAULT 0,
+              type TEXT DEFAULT 'todo',
+              createdAt TEXT,
+              updatedAt TEXT
+            )
+          `;
+          
+          console.log("Creating action_items table with SQL:", createActionItemsTable);
+          
+          await sqlite.execute({
+            database: DB_NAME,
+            statements: createActionItemsTable
+          });
+          
+          console.log("Action items table created successfully");
+        } catch (tableError) {
+          console.error("Error creating action_items table:", tableError);
+        }
+        
+        // Try to create join table
+        try {
+          const createJoinTable = `
+            CREATE TABLE IF NOT EXISTS sponsor_contact_action_items (
+              id INTEGER PRIMARY KEY AUTOINCREMENT,
+              contactId INTEGER,
+              actionItemId INTEGER,
+              createdAt TEXT,
+              FOREIGN KEY (contactId) REFERENCES sponsor_contacts(id),
+              FOREIGN KEY (actionItemId) REFERENCES action_items(id)
+            )
+          `;
+          
+          console.log("Creating join table with SQL:", createJoinTable);
+          
+          await sqlite.execute({
+            database: DB_NAME,
+            statements: createJoinTable
+          });
+          
+          console.log("Join table created successfully");
+        } catch (joinTableError) {
+          console.error("Error creating join table:", joinTableError);
+        }
+        
         // Directly insert the action item using SQL
         console.log(`**********************************************************`);
         console.log(`************* INSERTING INTO ACTION_ITEMS TABLE ***********`);
@@ -405,18 +485,22 @@ export default function SponsorContactDetailsPage({
            '${newItem.updatedAt}')
         `;
         
-        console.log(`[SponsorContactDetailsPage.js - handleAddActionItem: 276] EXECUTING SQL: ${insertSQL}`);
+        console.log(`ABOUT TO EXECUTE SQL: ${insertSQL}`);
         
-        // Execute the direct SQL insertion
-        const insertResult = await sqlite.execute({
-          database: DB_NAME,
-          statements: insertSQL
-        });
-        
-        console.log(`**********************************************************`);
-        console.log(`************* ACTION ITEM SAVED SUCCESSFULLY *************`);
-        console.log(`**********************************************************`);
-        console.log(`[SponsorContactDetailsPage.js - handleAddActionItem: 283] INSERT RESULT:`, JSON.stringify(insertResult));
+        // Execute the direct SQL insertion with try/catch
+        try {
+          const insertResult = await sqlite.execute({
+            database: DB_NAME,
+            statements: insertSQL
+          });
+          
+          console.log(`**********************************************************`);
+          console.log(`************* ACTION ITEM SAVED SUCCESSFULLY *************`);
+          console.log(`**********************************************************`);
+          console.log(`INSERT RESULT:`, JSON.stringify(insertResult));
+        } catch (insertError) {
+          console.error("ERROR INSERTING ACTION ITEM:", insertError);
+        }
         
         // Get the ID of the inserted record
         const idResult = await sqlite.query({
@@ -447,7 +531,10 @@ export default function SponsorContactDetailsPage({
           console.log(`[SponsorContactDetailsPage.js - handleAddActionItem: 309] Action item saved with ID: ${newId}`);
           
           // Create the association directly in the join table
-          console.log(`[SponsorContactDetailsPage.js - handleAddActionItem: 312] Creating join table entry for contact ${contact.id} and action item ${newId}`);
+          console.log(`**********************************************************`);
+          console.log(`************* CREATING JOIN TABLE ENTRY *******************`);
+          console.log(`**********************************************************`);
+          console.log(`Contact ID: ${contact.id}, Action Item ID: ${newId}`);
           
           const now = new Date().toISOString();
           const joinSQL = `
@@ -457,14 +544,35 @@ export default function SponsorContactDetailsPage({
             (${contact.id}, ${newId}, '${now}')
           `;
           
-          console.log(`[SponsorContactDetailsPage.js - handleAddActionItem: 321] Join SQL: ${joinSQL}`);
+          console.log(`JOIN SQL: ${joinSQL}`);
           
-          const joinResult = await sqlite.execute({
-            database: DB_NAME,
-            statements: joinSQL
-          });
-          
-          console.log(`[SponsorContactDetailsPage.js - handleAddActionItem: 327] Join result:`, JSON.stringify(joinResult));
+          try {
+            const joinResult = await sqlite.execute({
+              database: DB_NAME,
+              statements: joinSQL
+            });
+            
+            console.log(`**********************************************************`);
+            console.log(`************* JOIN ENTRY CREATED SUCCESSFULLY *************`);
+            console.log(`**********************************************************`);
+            console.log(`Join result:`, JSON.stringify(joinResult));
+            
+            // Verify the join table entry was created
+            const verifyJoinSQL = `
+              SELECT * FROM sponsor_contact_action_items 
+              WHERE contactId = ${contact.id} AND actionItemId = ${newId}
+            `;
+            
+            const verifyResult = await sqlite.query({
+              database: DB_NAME,
+              statement: verifyJoinSQL,
+              values: []
+            });
+            
+            console.log(`Join verification result:`, JSON.stringify(verifyResult));
+          } catch (joinError) {
+            console.error(`ERROR CREATING JOIN TABLE ENTRY:`, joinError);
+          }
           
           // Update local state with real database ID
           const itemsWithRealId = actionItems.map(item => 
