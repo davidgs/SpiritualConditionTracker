@@ -346,29 +346,28 @@ export default function SponsorContactFormPage({ userId, onSave, onCancel, initi
               gap: 2,
               mt: 3
             }}>
-              <Button 
+              <IconButton 
+                color="default"
                 onClick={onCancel}
                 sx={{ 
-                  color: theme.palette.text.secondary,
-                  '&:hover': {
-                    backgroundColor: theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.04)'
-                  }
+                  mr: 2,
+                  fontSize: '1.2rem'
                 }}
-              >
-                Cancel
-              </Button>
-              <Button 
+                aria-label="Cancel"
+                >
+                <i className="fa-solid fa-xmark"></i>
+              </IconButton>
+              <IconButton 
                 type="submit"
-                variant="contained" 
                 color="primary"
-                sx={{ 
-                  height: '36px',
-                  borderRadius: '8px',
-                  textTransform: 'none'
-                }}
-              >
-                Save
-              </Button>
+                aria-label="Save Item"
+                  sx={{ 
+                    mr: 2,
+                    fontSize: '1.2rem'
+                  }}
+                >
+                  <i className="fa-solid fa-check" style={{ marginRight: '8px' }}></i>
+              </IconButton>
             </Box>
           </Box>
         </form>

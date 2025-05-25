@@ -154,9 +154,9 @@ export default function SponsorContactTodo({
             onChange={(e) => setTodoForm({...todoForm, dueDate: e.target.value})}
             InputLabelProps={{ shrink: true }}
             sx={{ 
-              mb: 3,
               '& .MuiInputBase-root': { 
-                borderRadius: 1.5
+                height: '56px', 
+                borderRadius: '8px',
               }
             }}
           />
@@ -194,21 +194,18 @@ export default function SponsorContactTodo({
               <i className="fa-solid fa-xmark"></i>
             </IconButton>
             
-            <Button
-              variant="contained"
+            <IconButton
               color="primary"
               onClick={handleAddTodo}
+              aria-label="Save Item"
               disabled={!todoForm.title.trim()}
               sx={{ 
-                textTransform: 'none',
-                borderRadius: 1.5,
-                px: 3,
-                minWidth: 100
+                mr: 2,
+                fontSize: '1.2rem'
               }}
             >
               <i className="fa-solid fa-check" style={{ marginRight: '8px' }}></i>
-              Save
-            </Button>
+            </IconButton>
           </Box>
         </Paper>
       </Collapse>
