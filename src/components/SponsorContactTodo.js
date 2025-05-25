@@ -39,14 +39,15 @@ export default function SponsorContactTodo({
   
   // Update internal todos when props change, but only if todos have actual content
   useEffect(() => {
-    // Only log once per component mount to avoid spamming console
-    if (internalTodos.length === 0 && todos && todos.length > 0) {
-      console.log('SponsorContactTodo loaded todos:', todos.length);
-    }
+    // Add more detailed logging to help debug
+    console.log('SponsorContactTodo received todos array:', todos);
     
-    // Only update state if we have actual todos to avoid unnecessary rerenders
+    // Always update internal state with the latest todos
     if (todos && Array.isArray(todos)) {
-      setInternalTodos(todos);
+      setInternalTodos([...todos]);
+      console.log('Setting internal todos to:', [...todos]);
+    } else {
+      console.log('Todos prop is not a valid array');
     }
   }, [todos]);
 
@@ -134,6 +135,7 @@ export default function SponsorContactTodo({
           >
             {todoForm.title}
           </Typography>
+          &nbsp;
           {/* Title Field */}
           <TextField
             fullWidth
@@ -151,7 +153,7 @@ export default function SponsorContactTodo({
             onChange={(e) => setTodoForm({...todoForm, title: e.target.value})}
             autoFocus
           />
-          
+          &nbsp;
           {/* Due Date Field */}
           <TextField
             fullWidth
@@ -167,7 +169,7 @@ export default function SponsorContactTodo({
               }
             }}
           />
-          
+          &nbsp;
           {/* Notes Field */}
           <TextField
             fullWidth
