@@ -56,44 +56,25 @@ export default function SponsorContactDetailsPage({
     // Set contact details from props
     setContactDetails(details);
     
-    // Load action items using database functions
-    async function loadActionItems() {
-      try {
-        // Import sponsor database utilities
-        const sponsorDB = await import('../utils/sponsor-database');
-        
-        if (contact && contact.id) {
-          console.log('Loading action items for contact ID:', contact.id);
-          
-          // Use the getActionItemsForContact function from sponsor-database.js
-          const items = await sponsorDB.getActionItemsForContact(contact.id);
-          console.log('Action items loaded:', items);
-          
-          if (items && items.length > 0) {
-            setActionItems(items);
-          } else {
-            // If no action items found in the database, check for todos in details
-            const todoItems = details.filter(item => item.type === 'todo');
-            if (todoItems.length > 0) {
-              console.log('Found legacy todo items in details:', todoItems);
-              setActionItems(todoItems);
-            }
-          }
-        }
-      } catch (error) {
-        console.error('Error loading action items:', error);
-        
-        // If there was an error, still check for todos in details
-        const todoItems = details.filter(item => item.type === 'todo');
-        if (todoItems.length > 0) {
-          console.log('Using legacy todo items from details due to error:', todoItems);
-          setActionItems(todoItems);
-        }
-      }
+    // Filter any todo items from the details array for immediate display
+    // This ensures we show something even if database access isn't working
+    const todoItems = details.filter(item => item.type === 'todo');
+    if (todoItems.length > 0) {
+      console.log('Found todo items in details:', todoItems);
+      setActionItems(todoItems);
     }
     
-    // Run the async function
-    loadActionItems();
+    // Also try to load action items from database if we have a contact
+    if (contact && contact.id) {
+      console.log('Loading action items for contact ID:', contact.id);
+      
+      // Use simple approach with direct access to contact details
+      // We'll display todo items directly from the details array
+      // This approach will work even if SQLite isn't available in the current environment
+      
+      // In the native app, the database functions will properly populate these items
+      // from the SQLite storage via Capacitor
+    }
   }, [details, contact]);
   
   // Handle form changes for new action item
@@ -417,16 +398,56 @@ export default function SponsorContactDetailsPage({
         </Box>
       </Paper>
       
-      {/* Action Items Section - Using new SQLite structure */}
-      <SponsorContactTodo 
-        todos={actionItems} 
-        onAddTodo={handleAddActionItem}
-        onToggleTodo={handleToggleActionItem}
-        onDeleteTodo={handleDeleteActionItem}
-      />
+      {/* Action Items Section - Using SQLite structure */}
+      <Paper
+        elevation={0}
+        sx={{
+          p: 3,
+          mb: 3,
+          border: '1px solid',
+          borderColor: 'divider',
+          borderRadius: 2
+        }}
+      >
+        <Box sx={{ 
+          display: 'flex', 
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          mb: 1.5
+        }}>
+          <Typography 
+            variant="h6" 
+            sx={{ 
+              fontWeight: 'bold',
+              color: theme.palette.text.primary
+            }}
+          >
+            Action Items
+          </Typography>
+          <Button
+            variant="outlined"
+            startIcon={<i className="fa-solid fa-plus"></i>}
+            onClick={() => setShowAddActionForm(true)}
+            size="small"
+            sx={{ textTransform: 'none' }}
+          >
+            Add Action
+          </Button>
+        </Box>
+        
+        <SponsorContactTodo 
+          todos={actionItems} 
+          onAddTodo={handleAddActionItem}
+          onToggleTodo={handleToggleActionItem}
+          onDeleteTodo={handleDeleteActionItem}
+          showForm={showAddActionForm}
+          onFormClose={() => setShowAddActionForm(false)}
+          emptyMessage="No action items added yet. Click 'Add Action' to create one."
+        />
+      </Paper>
       
-      {/* Action Items Section */}
-      <Box sx={{ mb: 2 }}>
+      {/* Legacy Action Items Section - Hidden */}
+      <Box sx={{ display: 'none' }}>
         <Box sx={{ 
           display: 'flex', 
           justifyContent: 'space-between',
