@@ -53,70 +53,46 @@ export default function SponsorContactDetailsPage({
   
   // Load details and action items when they change
   useEffect(() => {
+    // Set contact details from props
     setContactDetails(details);
     
-    // First, get any todo items from the details array for backward compatibility
-    const todoItems = details.filter(item => item.type === 'todo');
-    if (todoItems.length > 0) {
-      console.log('Found legacy todo items in details:', todoItems);
-      setActionItems(todoItems);
-    }
-    
-    // Then try to load action items from the database when contact changes
+    // Load action items using database functions
     async function loadActionItems() {
       try {
-        // If database is not initialized, we'll just use the legacy todo items
-        if (!window.dbInitialized) {
-          console.log('Database not initialized, using legacy todo items');
-          return;
-        }
-        
-        // Import is done inside to avoid circular dependencies
+        // Import sponsor database utilities
         const sponsorDB = await import('../utils/sponsor-database');
-        const actionItemsModule = await import('../utils/action-items');
         
         if (contact && contact.id) {
           console.log('Loading action items for contact ID:', contact.id);
           
-          // Try to get action items using the new function first
-          let items = [];
-          try {
-            items = await actionItemsModule.getActionItemsForContact(contact.id);
-          } catch (err) {
-            console.log('Error loading from action-items module, trying sponsor-database:', err);
-          }
-          
-          // If no items found, try the sponsor database function as fallback
-          if (!items || items.length === 0) {
-            try {
-              items = await sponsorDB.getActionItemsForContact(contact.id);
-            } catch (err) {
-              console.log('Error loading from sponsor-database module:', err);
-            }
-          }
-          
+          // Use the getActionItemsForContact function from sponsor-database.js
+          const items = await sponsorDB.getActionItemsForContact(contact.id);
           console.log('Action items loaded:', items);
           
           if (items && items.length > 0) {
-            // Combine with any legacy todo items
-            setActionItems(prev => {
-              // Create a new array with unique items by ID
-              const uniqueItems = [...prev];
-              items.forEach(item => {
-                if (!uniqueItems.some(existing => existing.id === item.id)) {
-                  uniqueItems.push(item);
-                }
-              });
-              return uniqueItems;
-            });
+            setActionItems(items);
+          } else {
+            // If no action items found in the database, check for todos in details
+            const todoItems = details.filter(item => item.type === 'todo');
+            if (todoItems.length > 0) {
+              console.log('Found legacy todo items in details:', todoItems);
+              setActionItems(todoItems);
+            }
           }
         }
       } catch (error) {
         console.error('Error loading action items:', error);
+        
+        // If there was an error, still check for todos in details
+        const todoItems = details.filter(item => item.type === 'todo');
+        if (todoItems.length > 0) {
+          console.log('Using legacy todo items from details due to error:', todoItems);
+          setActionItems(todoItems);
+        }
       }
     }
     
-    // Run the async function right away
+    // Run the async function
     loadActionItems();
   }, [details, contact]);
   

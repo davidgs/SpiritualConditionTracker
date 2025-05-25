@@ -260,17 +260,21 @@ export default function SponsorContactTodo({
                 />
               </ListItemIcon>
               <ListItemText
-                primary={todo.title || todo.text}
-                secondary={todo.notes && (
-                  <Typography variant="body2" component="span" color="text.secondary">
-                    {todo.notes}
-                    {todo.dueDate && (
-                      <Typography component="span" variant="caption" sx={{ ml: 1, fontWeight: 'medium' }}>
-                        Due: {new Date(todo.dueDate).toLocaleDateString()}
+                primary={todo.title || todo.text || todo.actionItem || ''}
+                secondary={
+                  <React.Fragment>
+                    {(todo.notes || todo.dueDate) && (
+                      <Typography variant="body2" component="span" color="text.secondary">
+                        {todo.notes || ''}
+                        {todo.dueDate && (
+                          <Typography component="span" variant="caption" sx={{ ml: 1, fontWeight: 'medium' }}>
+                            Due: {new Date(todo.dueDate).toLocaleDateString()}
+                          </Typography>
+                        )}
                       </Typography>
                     )}
-                  </Typography>
-                )}
+                  </React.Fragment>
+                }
                 sx={{
                   textDecoration: todo.completed === 1 ? 'line-through' : 'none',
                   color: todo.completed === 1 ? theme.palette.text.secondary : theme.palette.text.primary
