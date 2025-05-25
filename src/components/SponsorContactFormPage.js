@@ -21,10 +21,12 @@ export default function SponsorContactFormPage({ userId, onSave, onCancel, initi
   
   // Form state
   const [contactData, setContactData] = useState({
-    type: 'phone',
+    type: initialData?.type || 'phone',
     date: new Date().toISOString().split('T')[0], // Default to today's date
     note: ''
   });
+  
+  console.log("FORM INITIALIZED WITH TYPE:", initialData?.type || 'phone');
   
   // State for todo items and UI controls
   const [todos, setTodos] = useState([]);

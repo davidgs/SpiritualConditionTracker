@@ -40,6 +40,10 @@ export default function SponsorContactDetailsPage({
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [showAddActionDialog, setShowAddActionDialog] = useState(false);
   
+  // State for edited contact - allows changes without modifying original
+  const [editedContact, setEditedContact] = useState(contact);
+  const [isEditing, setIsEditing] = useState(false);
+  
   // Form state for new action item
   const [newAction, setNewAction] = useState({
     actionItem: '',
@@ -51,6 +55,12 @@ export default function SponsorContactDetailsPage({
   // State for action items - using a ref to avoid infinite loops
   const [actionItems, setActionItems] = useState([]);
   const actionItemsRef = React.useRef([]);
+  
+  // Update local state when the contact prop changes
+  useEffect(() => {
+    if (!contact) return;
+    setEditedContact(contact);
+  }, [contact]);
   
   // Native iOS - Load action items when contact changes
   useEffect(() => {
@@ -807,7 +817,28 @@ export default function SponsorContactDetailsPage({
               </Box>
               
               {/* Action buttons */}
-              <Box>
+              <Box sx={{ display: 'flex', gap: 1 }}>
+                <IconButton 
+                  size="small"
+                  onClick={() => {
+                    // Add the missing handleSaveContact function implementation
+                    console.log("**********************************************************");
+                    console.log("**************** SAVING CONTACT CHANGES ******************");
+                    console.log("**********************************************************");
+                    console.log("Contact data being saved:", contact);
+                    
+                    // Call the parent component's update handler
+                    if (typeof onUpdateContact === 'function') {
+                      onUpdateContact(contact);
+                      alert("Contact saved successfully!");
+                    } else {
+                      console.error("onUpdateContact function not provided to SponsorContactDetailsPage");
+                    }
+                  }}
+                  sx={{ color: theme.palette.primary.main }}
+                >
+                  <i className="fa-solid fa-check"></i>
+                </IconButton>
                 <IconButton 
                   size="small"
                   onClick={() => setShowDeleteConfirm(true)}
