@@ -365,7 +365,10 @@ export default function SponsorContactDetailsPage({
         });
         
         // Directly insert the action item using SQL
-        console.log(`[SponsorContactDetailsPage.js - handleAddActionItem: 261] DIRECTLY inserting action item with SQL`);
+        console.log(`**********************************************************`);
+        console.log(`************* INSERTING INTO ACTION_ITEMS TABLE ***********`);
+        console.log(`**********************************************************`);
+        
         const insertSQL = `
           INSERT INTO action_items 
           (title, text, notes, dueDate, completed, type, createdAt, updatedAt) 
@@ -380,7 +383,7 @@ export default function SponsorContactDetailsPage({
            '${newItem.updatedAt}')
         `;
         
-        console.log(`[SponsorContactDetailsPage.js - handleAddActionItem: 276] SQL: ${insertSQL}`);
+        console.log(`[SponsorContactDetailsPage.js - handleAddActionItem: 276] EXECUTING SQL: ${insertSQL}`);
         
         // Execute the direct SQL insertion
         const insertResult = await sqlite.execute({
@@ -388,7 +391,10 @@ export default function SponsorContactDetailsPage({
           statements: insertSQL
         });
         
-        console.log(`[SponsorContactDetailsPage.js - handleAddActionItem: 283] Insert result:`, JSON.stringify(insertResult));
+        console.log(`**********************************************************`);
+        console.log(`************* ACTION ITEM SAVED SUCCESSFULLY *************`);
+        console.log(`**********************************************************`);
+        console.log(`[SponsorContactDetailsPage.js - handleAddActionItem: 283] INSERT RESULT:`, JSON.stringify(insertResult));
         
         // Get the ID of the inserted record
         const idResult = await sqlite.query({
