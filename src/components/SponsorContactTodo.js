@@ -232,7 +232,7 @@ export default function SponsorContactTodo({
                 borderRadius: '8px'
               }}
             >
-              Cancel
+              
             </Button>
             
             <Button
@@ -246,7 +246,7 @@ export default function SponsorContactTodo({
                 borderRadius: '8px'
               }}
             >
-              Save
+              
             </Button>
           </Box>
         </Box>
