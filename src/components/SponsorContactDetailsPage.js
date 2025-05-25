@@ -55,19 +55,60 @@ export default function SponsorContactDetailsPage({
   useEffect(() => {
     setContactDetails(details);
     
-    // Load action items from the database
+    // First, get any todo items from the details array for backward compatibility
+    const todoItems = details.filter(item => item.type === 'todo');
+    if (todoItems.length > 0) {
+      console.log('Found legacy todo items in details:', todoItems);
+      setActionItems(todoItems);
+    }
+    
+    // Then try to load action items from the database when contact changes
     async function loadActionItems() {
       try {
+        // If database is not initialized, we'll just use the legacy todo items
+        if (!window.dbInitialized) {
+          console.log('Database not initialized, using legacy todo items');
+          return;
+        }
+        
         // Import is done inside to avoid circular dependencies
         const sponsorDB = await import('../utils/sponsor-database');
+        const actionItemsModule = await import('../utils/action-items');
         
         if (contact && contact.id) {
           console.log('Loading action items for contact ID:', contact.id);
-          const items = await sponsorDB.getActionItemsForContact(contact.id);
+          
+          // Try to get action items using the new function first
+          let items = [];
+          try {
+            items = await actionItemsModule.getActionItemsForContact(contact.id);
+          } catch (err) {
+            console.log('Error loading from action-items module, trying sponsor-database:', err);
+          }
+          
+          // If no items found, try the sponsor database function as fallback
+          if (!items || items.length === 0) {
+            try {
+              items = await sponsorDB.getActionItemsForContact(contact.id);
+            } catch (err) {
+              console.log('Error loading from sponsor-database module:', err);
+            }
+          }
+          
           console.log('Action items loaded:', items);
           
           if (items && items.length > 0) {
-            setActionItems(items);
+            // Combine with any legacy todo items
+            setActionItems(prev => {
+              // Create a new array with unique items by ID
+              const uniqueItems = [...prev];
+              items.forEach(item => {
+                if (!uniqueItems.some(existing => existing.id === item.id)) {
+                  uniqueItems.push(item);
+                }
+              });
+              return uniqueItems;
+            });
           }
         }
       } catch (error) {
@@ -75,15 +116,8 @@ export default function SponsorContactDetailsPage({
       }
     }
     
-    // Run the async function
+    // Run the async function right away
     loadActionItems();
-    
-    // For backward compatibility, also load old todo items from details
-    const todoItems = details.filter(item => item.type === 'todo');
-    if (todoItems.length > 0) {
-      // We'll merge these with action items later if needed
-      console.log('Found legacy todo items in details:', todoItems);
-    }
   }, [details, contact]);
   
   // Handle form changes for new action item

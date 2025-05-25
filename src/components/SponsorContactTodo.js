@@ -39,9 +39,9 @@ export default function SponsorContactTodo({
   
   // Update internal todos when props change
   useEffect(() => {
-    if (todos && todos.length > 0) {
-      setInternalTodos([...todos]);
-    }
+    console.log('SponsorContactTodo received todos:', todos);
+    // Always update the internal state, even if empty
+    setInternalTodos(todos && todos.length > 0 ? [...todos] : []);
   }, [todos]);
 
   const handleAddTodo = () => {

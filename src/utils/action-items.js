@@ -64,6 +64,18 @@ export async function getActionItemsForContact(contactId) {
       values: [contactId]
     });
     
+    console.log('Raw action items result for contact', contactId, ':', JSON.stringify(result));
+    
+    // Handle iOS-specific format where first item contains column information
+    if (result.values && result.values.length > 0) {
+      // Check if first item contains column information (iOS format)
+      if (result.values[0].ios_columns) {
+        console.log('iOS format detected for action items, processing values');
+        // Skip the first item (column info) and process the rest
+        return result.values.slice(1);
+      }
+    }
+    
     return result.values || [];
   } catch (error) {
     console.error(`Error getting action items for contact ${contactId}:`, error);
