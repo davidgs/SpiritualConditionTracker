@@ -67,34 +67,50 @@ export default function SponsorContactDetailsPage({
         const { getActionItemsForContact } = await import('../utils/action-items');
         
         // Get action items for this contact from SQLite
-        console.log(`[SponsorContactDetailsPage - useEffect: 64] Loading action items for contact ID: ${contact.id}`);
+        console.log(`[SponsorContactDetailsPage.js - useEffect: 64] Loading action items for contact ID: ${contact.id}`);
         const items = await getActionItemsForContact(contact.id);
         
         if (items && items.length > 0) {
-          console.log(`[SponsorContactDetailsPage - useEffect: 68] Loaded ${items.length} action items from database`);
+          console.log(`[SponsorContactDetailsPage.js - useEffect: 68] Loaded ${items.length} action items from database`);
+          
+          // Log each item for debugging
+          items.forEach((item, index) => {
+            console.log(`[SponsorContactDetailsPage.js - useEffect: 71] Item ${index}: ID=${item.id}, Title=${item.title}, Completed=${item.completed}`);
+          });
+          
           setActionItems(items);
           actionItemsRef.current = items;
         } else {
-          console.log(`[SponsorContactDetailsPage - useEffect: 72] No action items found in database for contact: ${contact.id}`);
+          console.log(`[SponsorContactDetailsPage.js - useEffect: 77] No action items found in database for contact: ${contact.id}`);
           // Still show any todo items from contact details for backward compatibility
           const todoItems = details.filter(item => item.type === 'todo');
           if (todoItems.length > 0) {
-            console.log(`[SponsorContactDetailsPage - useEffect: 76] Found ${todoItems.length} legacy todo items`);
+            console.log(`[SponsorContactDetailsPage.js - useEffect: 81] Found ${todoItems.length} legacy todo items`);
+            
+            // Log each legacy item for debugging
+            todoItems.forEach((item, index) => {
+              console.log(`[SponsorContactDetailsPage.js - useEffect: 85] Legacy item ${index}: ID=${item.id}, Text=${item.text || item.actionItem}, Completed=${item.completed}`);
+            });
+            
             setActionItems(todoItems);
             actionItemsRef.current = todoItems;
           } else {
             // Initialize with empty array
+            console.log(`[SponsorContactDetailsPage.js - useEffect: 92] No legacy items found, initializing with empty array`);
             setActionItems([]);
             actionItemsRef.current = [];
           }
         }
       } catch (error) {
-        console.error('[SponsorContactDetailsPage - useEffect: 85] Error loading action items:', error);
+        console.error('[SponsorContactDetailsPage.js - useEffect: 98] Error loading action items:', error);
       }
     }
     
     // Execute the function to load action items
     loadActionItemsFromDatabase();
+    
+    // Add a debug message when this effect runs
+    console.log(`[SponsorContactDetailsPage.js - useEffect: 105] Action items loading effect triggered for contact ID: ${contact.id}`);
     
   }, [contact, details]);
   

@@ -90,8 +90,49 @@ export async function getAllActionItemsDebug() {
  */
 export async function getActionItemsForContact(contactId) {
   try {
-    console.log(`[action-items.js - getActionItemsForContact: 87] Getting action items for contact ID: ${contactId}`);
+    console.log(`[action-items.js - getActionItemsForContact: 91] CONTACT_ID: ${contactId} - Starting to fetch action items`);
     const sqlite = getSQLite();
+    
+    // First verify that tables exist
+    console.log(`[action-items.js - getActionItemsForContact: 95] CONTACT_ID: ${contactId} - Verifying tables exist`);
+    try {
+      // Ensure the action_items table exists
+      await sqlite.execute({
+        database: DB_NAME,
+        statements: `
+          CREATE TABLE IF NOT EXISTS action_items (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            title TEXT DEFAULT '',
+            text TEXT DEFAULT '',
+            notes TEXT DEFAULT '',
+            dueDate TEXT DEFAULT NULL,
+            completed INTEGER DEFAULT 0,
+            type TEXT DEFAULT 'todo',
+            createdAt TEXT,
+            updatedAt TEXT
+          )
+        `
+      });
+      
+      // Ensure the join table exists
+      await sqlite.execute({
+        database: DB_NAME,
+        statements: `
+          CREATE TABLE IF NOT EXISTS sponsor_contact_action_items (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            contactId INTEGER,
+            actionItemId INTEGER,
+            createdAt TEXT,
+            FOREIGN KEY (contactId) REFERENCES sponsor_contacts(id),
+            FOREIGN KEY (actionItemId) REFERENCES action_items(id)
+          )
+        `
+      });
+      
+      console.log(`[action-items.js - getActionItemsForContact: 122] CONTACT_ID: ${contactId} - Tables verified`);
+    } catch (tableError) {
+      console.error(`[action-items.js - getActionItemsForContact: 124] CONTACT_ID: ${contactId} - Error verifying tables:`, tableError);
+    }
     
     // Construct the SQL query with join
     const sqlStatement = `
@@ -102,7 +143,7 @@ export async function getActionItemsForContact(contactId) {
       ORDER BY ai.createdAt DESC
     `;
     
-    console.log(`[action-items.js - getActionItemsForContact: 99] SQL query for contact ${contactId}:`, sqlStatement);
+    console.log(`[action-items.js - getActionItemsForContact: 135] CONTACT_ID: ${contactId} - Full SQL query: ${sqlStatement}`);
     
     // Query action items via join table
     const result = await sqlite.query({
@@ -111,24 +152,35 @@ export async function getActionItemsForContact(contactId) {
       values: [contactId]
     });
     
-    console.log(`[action-items.js - getActionItemsForContact: 107] Raw action items result for contact ${contactId}:`, JSON.stringify(result));
+    console.log(`[action-items.js - getActionItemsForContact: 143] CONTACT_ID: ${contactId} - Raw query result:`, JSON.stringify(result));
     
     // Handle iOS-specific format where first item contains column information
     if (result.values && result.values.length > 0) {
-      console.log(`[action-items.js - getActionItemsForContact: 111] Found ${result.values.length} results in query`);
+      console.log(`[action-items.js - getActionItemsForContact: 147] CONTACT_ID: ${contactId} - Found ${result.values.length} results in query`);
       
       // Check if first item contains column information (iOS format)
       if (result.values[0].ios_columns) {
-        console.log('[action-items.js - getActionItemsForContact: 115] iOS format detected for action items, processing values');
+        console.log(`[action-items.js - getActionItemsForContact: 151] CONTACT_ID: ${contactId} - iOS format detected for action items, processing values`);
         // Skip the first item (column info) and process the rest
         const processedValues = result.values.slice(1);
-        console.log(`[action-items.js - getActionItemsForContact: 118] Processed ${processedValues.length} action items for iOS format`);
+        console.log(`[action-items.js - getActionItemsForContact: 154] CONTACT_ID: ${contactId} - Processed ${processedValues.length} action items for iOS format`);
+        
+        // Log each item for debugging
+        processedValues.forEach((item, index) => {
+          console.log(`[action-items.js - getActionItemsForContact: 158] CONTACT_ID: ${contactId} - Item ${index}: ID=${item.id}, Title=${item.title}, Completed=${item.completed}`);
+        });
+        
         return processedValues;
       } else {
-        console.log(`[action-items.js - getActionItemsForContact: 121] Standard format with ${result.values.length} action items`);
+        console.log(`[action-items.js - getActionItemsForContact: 163] CONTACT_ID: ${contactId} - Standard format with ${result.values.length} action items`);
+        
+        // Log each item for debugging
+        result.values.forEach((item, index) => {
+          console.log(`[action-items.js - getActionItemsForContact: 167] CONTACT_ID: ${contactId} - Item ${index}: ID=${item.id}, Title=${item.title}, Completed=${item.completed}`);
+        });
       }
     } else {
-      console.log(`[action-items.js - getActionItemsForContact: 124] No action items found for contact ${contactId}`);
+      console.log(`[action-items.js - getActionItemsForContact: 171] CONTACT_ID: ${contactId} - No action items found in main query`);
     }
     
     // Query the join table directly to see what associations exist
@@ -137,7 +189,7 @@ export async function getActionItemsForContact(contactId) {
         SELECT * FROM sponsor_contact_action_items 
         WHERE contactId = ?
       `;
-      console.log(`[action-items.js - getActionItemsForContact: 132] Querying join table:`, joinTableQuery);
+      console.log(`[action-items.js - getActionItemsForContact: 179] CONTACT_ID: ${contactId} - Querying join table: ${joinTableQuery}`);
       
       const joinResult = await sqlite.query({
         database: DB_NAME,
@@ -145,14 +197,78 @@ export async function getActionItemsForContact(contactId) {
         values: [contactId]
       });
       
-      console.log(`[action-items.js - getActionItemsForContact: 139] Join table result:`, JSON.stringify(joinResult));
+      console.log(`[action-items.js - getActionItemsForContact: 186] CONTACT_ID: ${contactId} - Join table result:`, JSON.stringify(joinResult));
+      
+      if (joinResult.values && joinResult.values.length > 0) {
+        console.log(`[action-items.js - getActionItemsForContact: 189] CONTACT_ID: ${contactId} - Found ${joinResult.values.length > 0 && joinResult.values[0].ios_columns ? joinResult.values.length - 1 : joinResult.values.length} associations in join table`);
+        
+        // If we have associations but no items, query each action item individually
+        if (!result.values || result.values.length === 0 || (result.values.length === 1 && result.values[0].ios_columns)) {
+          console.log(`[action-items.js - getActionItemsForContact: 193] CONTACT_ID: ${contactId} - Join table has entries but main query returned no items - querying individual action items`);
+          
+          // Extract actionItemIds from join table
+          let actionItemIds = [];
+          if (joinResult.values[0].ios_columns) {
+            // iOS format
+            actionItemIds = joinResult.values.slice(1).map(item => item.actionItemId);
+          } else {
+            // Standard format
+            actionItemIds = joinResult.values.map(item => item.actionItemId);
+          }
+          
+          console.log(`[action-items.js - getActionItemsForContact: 204] CONTACT_ID: ${contactId} - Found action item IDs:`, JSON.stringify(actionItemIds));
+          
+          if (actionItemIds.length > 0) {
+            // Query each action item individually
+            const actionItems = [];
+            for (const itemId of actionItemIds) {
+              try {
+                const itemQuery = `SELECT * FROM action_items WHERE id = ?`;
+                const itemResult = await sqlite.query({
+                  database: DB_NAME,
+                  statement: itemQuery,
+                  values: [itemId]
+                });
+                
+                console.log(`[action-items.js - getActionItemsForContact: 216] CONTACT_ID: ${contactId} - Action item query for ID ${itemId} result:`, JSON.stringify(itemResult));
+                
+                if (itemResult.values && itemResult.values.length > 0) {
+                  if (itemResult.values[0].ios_columns) {
+                    // iOS format
+                    if (itemResult.values.length > 1) {
+                      actionItems.push(itemResult.values[1]);
+                      console.log(`[action-items.js - getActionItemsForContact: 223] CONTACT_ID: ${contactId} - Added item from iOS format:`, JSON.stringify(itemResult.values[1]));
+                    }
+                  } else {
+                    // Standard format
+                    actionItems.push(itemResult.values[0]);
+                    console.log(`[action-items.js - getActionItemsForContact: 228] CONTACT_ID: ${contactId} - Added item from standard format:`, JSON.stringify(itemResult.values[0]));
+                  }
+                }
+              } catch (itemError) {
+                console.error(`[action-items.js - getActionItemsForContact: 232] CONTACT_ID: ${contactId} - Error querying action item ${itemId}:`, itemError);
+              }
+            }
+            
+            console.log(`[action-items.js - getActionItemsForContact: 236] CONTACT_ID: ${contactId} - Retrieved ${actionItems.length} individual action items`);
+            
+            if (actionItems.length > 0) {
+              return actionItems;
+            }
+          }
+        }
+      } else {
+        console.log(`[action-items.js - getActionItemsForContact: 243] CONTACT_ID: ${contactId} - No associations found in join table`);
+      }
     } catch (joinError) {
-      console.error(`[action-items.js - getActionItemsForContact: 142] Error querying join table:`, joinError);
+      console.error(`[action-items.js - getActionItemsForContact: 246] CONTACT_ID: ${contactId} - Error querying join table:`, joinError);
     }
     
-    return result.values || [];
+    // Return whatever we found in the original query
+    return result.values && result.values.length > 0 && result.values[0].ios_columns ? 
+      result.values.slice(1) : result.values || [];
   } catch (error) {
-    console.error(`[action-items.js - getActionItemsForContact: 147] Error getting action items for contact ${contactId}:`, error);
+    console.error(`[action-items.js - getActionItemsForContact: 252] CONTACT_ID: ${contactId} - Error getting action items:`, error);
     return [];
   }
 }
@@ -249,12 +365,67 @@ export async function addActionItem(actionItem) {
  */
 export async function associateActionItemWithContact(contactId, actionItemId) {
   try {
+    console.log(`[action-items.js - associateActionItemWithContact: 157] Starting to associate action item ID ${actionItemId} with contact ID ${contactId}`);
     const sqlite = getSQLite();
+    
+    // Ensure the join table exists
+    await sqlite.execute({
+      database: DB_NAME,
+      statements: `
+        CREATE TABLE IF NOT EXISTS sponsor_contact_action_items (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          contactId INTEGER,
+          actionItemId INTEGER,
+          createdAt TEXT,
+          FOREIGN KEY (contactId) REFERENCES sponsor_contacts(id),
+          FOREIGN KEY (actionItemId) REFERENCES action_items(id)
+        )
+      `
+    });
+    
+    console.log(`[action-items.js - associateActionItemWithContact: 172] Join table verified`);
+    
+    // Check if association already exists to avoid duplicates
+    const checkResult = await sqlite.query({
+      database: DB_NAME,
+      statement: `
+        SELECT * FROM sponsor_contact_action_items 
+        WHERE contactId = ? AND actionItemId = ?
+      `,
+      values: [contactId, actionItemId]
+    });
+    
+    console.log(`[action-items.js - associateActionItemWithContact: 183] Check for existing association result:`, JSON.stringify(checkResult));
+    
+    // Process the result based on format
+    let exists = false;
+    if (checkResult?.values) {
+      if (checkResult.values.length > 0) {
+        if (checkResult.values[0].ios_columns) {
+          // iOS format
+          exists = checkResult.values.length > 1;
+        } else {
+          // Standard format
+          exists = checkResult.values.length > 0;
+        }
+      }
+    }
+    
+    if (exists) {
+      console.log(`[action-items.js - associateActionItemWithContact: 198] Association already exists, skipping insert`);
+      return true;
+    }
     
     // Create the association in the join table
     const now = new Date().toISOString();
     
-    await sqlite.execute({
+    console.log(`[action-items.js - associateActionItemWithContact: 204] Creating association with SQL:
+      INSERT INTO sponsor_contact_action_items 
+      (contactId, actionItemId, createdAt) 
+      VALUES (${contactId}, ${actionItemId}, '${now}')
+    `);
+    
+    const result = await sqlite.execute({
       database: DB_NAME,
       statements: `
         INSERT INTO sponsor_contact_action_items 
@@ -264,9 +435,20 @@ export async function associateActionItemWithContact(contactId, actionItemId) {
       values: [contactId, actionItemId, now]
     });
     
+    console.log(`[action-items.js - associateActionItemWithContact: 217] Insert result:`, JSON.stringify(result));
+    
+    // Verify the association was created
+    const verifyResult = await sqlite.query({
+      database: DB_NAME,
+      statement: `SELECT * FROM sponsor_contact_action_items WHERE contactId = ? AND actionItemId = ?`,
+      values: [contactId, actionItemId]
+    });
+    
+    console.log(`[action-items.js - associateActionItemWithContact: 225] Verification result:`, JSON.stringify(verifyResult));
+    
     return true;
   } catch (error) {
-    console.error(`Error associating action item ${actionItemId} with contact ${contactId}:`, error);
+    console.error(`[action-items.js - associateActionItemWithContact: 229] Error associating action item ${actionItemId} with contact ${contactId}:`, error);
     return false;
   }
 }
