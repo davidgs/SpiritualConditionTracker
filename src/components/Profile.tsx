@@ -307,7 +307,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
       )}
       <Box sx={{ mb: 3 }}>
         <Typography variant="h4" sx={{ fontWeight: 'bold', color: 'text.primary' }}>
-          Recovery Tracker
+          Spiritual Condition Tracker
         </Typography>
         <Typography variant="subtitle1" sx={{ color: 'text.secondary' }}>
           Your personal profile
@@ -515,7 +515,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
             </>
           )}
         </Paper>
-      
+      &nbsp;
       {/* App Settings */}
       <Paper sx={{ 
         p: 3, 
@@ -545,7 +545,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
           */}
           
           {/* Message Privacy Option */}
-          <FormControlLabel
+          {/* <FormControlLabel
             control={
               <Switch 
                 id="allowMessages"
@@ -573,7 +573,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
               </Box>
             }
             sx={{ alignItems: 'flex-start', ml: 0, mt: 1 }}
-          />
+          /> */}
           
           {/* Share Last Name Option */}
           <FormControlLabel

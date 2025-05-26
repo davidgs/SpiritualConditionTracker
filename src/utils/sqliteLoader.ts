@@ -209,13 +209,24 @@ async function setupTables(sqlite) {
   console.log('[ sqliteLoader.js ] Meetings table created successfully');
 
   // Create sponsor_contacts table with INTEGER ID - without NOT NULL constraints
-  // First drop the existing table to recreate it with correct constraints
+  // First disable foreign key constraints to allow table drops
   try {
+    await sqlite.execute({
+      database: DB_NAME,
+      statements: `PRAGMA foreign_keys = OFF;`
+    });
+    
     await sqlite.execute({
       database: DB_NAME,
       statements: `DROP TABLE IF EXISTS sponsor_contacts;`
     });
     console.log('[ sqliteLoader.js ] Dropped sponsor_contacts table for schema update');
+    
+    // Re-enable foreign key constraints
+    await sqlite.execute({
+      database: DB_NAME,
+      statements: `PRAGMA foreign_keys = ON;`
+    });
   } catch (error) {
     console.warn('[ sqliteLoader.js ] Could not drop sponsor_contacts table:', error);
   }
