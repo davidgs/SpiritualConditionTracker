@@ -16,20 +16,21 @@ interface DashboardProps {
   meetings: Meeting[];
   onSave: (activity: Omit<Activity, 'id' | 'createdAt' | 'updatedAt'>) => void;
   onSaveMeeting: (meeting: Omit<Meeting, 'id' | 'createdAt' | 'updatedAt'>) => void;
-  spiritualFitness: number;
+  ;
 }
 
-export default function Dashboard({ setCurrentView, user, activities, meetings = [], onSave, onSaveMeeting, spiritualFitness }: DashboardProps) {
+export default function Dashboard({ setCurrentView, user, activities, meetings = [], onSave, onSaveMeeting }: DashboardProps) {
   // Get theme from MUI theme provider
   const { mode } = useAppTheme();
   const darkMode = mode === 'dark';
   
   // State for controlling modal visibility and score timeframe
-  const [showScoreModal, setShowScoreModal] = useState(false);
-  const [showActivityModal, setShowActivityModal] = useState(false);
-  const [activityDaysFilter, setActivityDaysFilter] = useState(7);
-  const [activityTypeFilter, setActivityTypeFilter] = useState('all');
-  const [scoreTimeframe, setScoreTimeframe] = useState(30);
+  const [showScoreModal, setShowScoreModal] = useState<boolean>(false);
+  const [showActivityModal, setShowActivityModal] = useState<boolean>(false);
+  const [activityDaysFilter, setActivityDaysFilter] = useState<number>(7);
+  const [activityTypeFilter, setActivityTypeFilter] = useState<string>('all');
+  const [scoreTimeframe, setScoreTimeframe] = useState<number>(30);
+  const [spritualFitness, setSpiritualFitness] = useState<number>(5.00);
   
   // Load user preference for score timeframe on component mount
   useEffect(() => {
@@ -43,19 +44,19 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
     }
     loadScoreTimeframe();
   }, []);
-  const [currentScore, setCurrentScore] = useState(0);
+  const [currentScore, setCurrentScore] = useState<number>(0);
   
   const modalRef = useRef(null);
   const buttonRef = useRef(null);
   
   // Log spiritualFitness prop for debugging
-  console.log('[ Dashboard.js ] Dashboard received spiritualFitness:', spiritualFitness);
+  console.log('[ Dashboard.js ] Dashboard initial spiritualFitness:', spiritualFitness);
   
   // Log current score state
   console.log('[ Dashboard.js ] Dashboard currentScore state:', currentScore);
   
   // Format score to 2 decimal places for display
-  const formattedScore = currentScore > 0 ? currentScore.toFixed(2) : '0';
+  const formattedScore: number = currentScore > 0 ? currentScore.toFixed(2) : '0';
   
   console.log('[ Dashboard.js ] Dashboard formattedScore for display:', formattedScore);
   
@@ -63,7 +64,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
   const muiTheme = useTheme();
   
   // Determine color based on score using theme palette
-  const getScoreColor = (score) => {
+  const getScoreColor = (score: number): string => {
     if (score < 30) return muiTheme.palette.error.main; // Red
     if (score < 75) return muiTheme.palette.warning.main; // Yellow/Amber
     return muiTheme.palette.success.main; // Green
@@ -93,15 +94,18 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
         console.log('[ Dashboard.js ] Calculating score with SQLite, timeframe:', scoreTimeframe);
         const score = await window.db.calculateSpiritualFitnessWithTimeframe(scoreTimeframe);
         console.log('[ Dashboard.js ] SQLite calculation result:', score);
+        setSpiritualFitness(score);
         setCurrentScore(score);
       } else {
         console.warn('[ Dashboard.js ] SQLite calculation method not available - using fallback');
         const fallbackScore = calculateFallbackFitness();
+        setSpiritualFitness(fallbackScore);
         setCurrentScore(fallbackScore); 
       }
     } catch (error) {
       console.error('[ Dashboard.js ] Error calculating spiritual fitness:', error);
       const fallbackScore = calculateFallbackFitness();
+      setSpiritualFitness(fallbackScore);
       setCurrentScore(fallbackScore);
     }
   }

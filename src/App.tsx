@@ -384,7 +384,6 @@ function App(): JSX.Element {
             meetings={meetings}
             onSave={handleSaveActivity}
             onSaveMeeting={handleSaveMeeting}
-            spiritualFitness={spiritualFitness}
           />
         );
       case 'meetings':
