@@ -923,7 +923,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
         borderRadius: 2,
         border: '1px solid',
         borderColor: 'divider',
-        paddingTop: 4px,
+        paddingTop: '4px',
       }}>
         <Typography variant="h6" sx={{ 
           color: 'text.primary', 
