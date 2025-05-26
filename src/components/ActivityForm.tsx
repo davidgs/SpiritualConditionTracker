@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
+import { Button, Box } from '@mui/material';
 import { saveActivity } from '../utils/storage';
 import { Activity } from '../types/database';
 
 interface ActivityFormProps {
   onSuccess: (activity: Activity) => void;
+  onCancel?: () => void;
 }
 
-function ActivityForm({ onSuccess }: ActivityFormProps) {
+function ActivityForm({ onSuccess, onCancel }: ActivityFormProps) {
   const [formData, setFormData] = useState({
     type: 'meeting', // REQUIRED: Default type that will be applied to all activities
     date: new Date().toISOString().split('T')[0],
@@ -236,24 +238,34 @@ function ActivityForm({ onSuccess }: ActivityFormProps) {
         ></textarea>
       </div>
       
-      {/* Submit Button */}
-      <div className="flex justify-end">
-        <button
+      {/* Form Actions */}
+      <Box sx={{ 
+        display: 'flex', 
+        justifyContent: 'flex-end',
+        gap: 2,
+        mt: 3,
+        px: 3, 
+        py: 2
+      }}>
+        {onCancel && (
+          <Button
+            variant="contained"
+            onClick={onCancel}
+            color="error"
+          >
+            Cancel
+          </Button>
+        )}
+        
+        <Button
+          variant="contained"
           type="submit"
+          color="success"
           disabled={isSubmitting}
-          className={`bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded transition-colors ${isSubmitting ? 'opacity-70 cursor-not-allowed' : ''}`}
         >
-          {isSubmitting ? (
-            <>
-              <i className="fa-solid fa-spinner fa-spin mr-2"></i>
-            </>
-          ) : (
-            <>
-              <i className="fa-solid fa-check mr-2"></i>
-            </>
-          )}
-        </button>
-      </div>
+          {isSubmitting ? 'Saving...' : 'Save'}
+        </Button>
+      </Box>
     </form>
   );
 }
