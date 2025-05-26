@@ -16,7 +16,6 @@ interface DashboardProps {
   meetings: Meeting[];
   onSave: (activity: Omit<Activity, 'id' | 'createdAt' | 'updatedAt'>) => void;
   onSaveMeeting: (meeting: Omit<Meeting, 'id' | 'createdAt' | 'updatedAt'>) => void;
-  ;
 }
 
 export default function Dashboard({ setCurrentView, user, activities, meetings = [], onSave, onSaveMeeting }: DashboardProps) {
