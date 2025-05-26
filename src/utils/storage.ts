@@ -3,12 +3,12 @@
  * Provides a consistent API for storing data, handling both SQLite and localStorage
  */
 
+import { Activity, BaseEntity } from '../types/database';
+
 /**
  * Save an activity to storage
- * @param {Object} activity - Activity data to save
- * @returns {Promise<Object>} Saved activity data
  */
-export async function saveActivity(activity) {
+export async function saveActivity(activity: Omit<Activity, 'id' | 'createdAt' | 'updatedAt'>): Promise<Activity & BaseEntity> {
   try {
     console.log('Saving activity:', activity);
     

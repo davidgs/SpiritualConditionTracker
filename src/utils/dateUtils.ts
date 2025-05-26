@@ -5,11 +5,8 @@
 /**
  * Format a date string for display without timezone issues
  * Handles both YYYY-MM-DD format and ISO date strings
- * 
- * @param {string} dateString - Date string to format
- * @returns {string} Formatted date string (e.g., "May 15, 2025")
  */
-export function formatDateForDisplay(dateString) {
+export function formatDateForDisplay(dateString: string): string {
   console.log("Formatting date:", dateString);
   
   if (!dateString) {

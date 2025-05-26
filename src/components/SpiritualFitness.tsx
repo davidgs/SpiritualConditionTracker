@@ -1,7 +1,30 @@
 // SpiritualFitness component for displaying fitness score and details
 import React from 'react';
 
-export default function SpiritualFitness({ setCurrentView, spiritualFitness }) {
+interface SpiritualFitnessData {
+  score: number;
+  components: {
+    meetings?: number;
+    prayer?: number;
+    reading?: number;
+    service?: number;
+    sponsorship?: number;
+  };
+  activityCounts: {
+    meetings?: number;
+    prayer?: number;
+    reading?: number;
+    service?: number;
+    sponsorship?: number;
+  };
+}
+
+interface SpiritualFitnessProps {
+  setCurrentView: (view: string) => void;
+  spiritualFitness: SpiritualFitnessData | null;
+}
+
+export default function SpiritualFitness({ setCurrentView, spiritualFitness }: SpiritualFitnessProps) {
   const components = spiritualFitness?.components || {};
   const activityCounts = spiritualFitness?.activityCounts || {};
   

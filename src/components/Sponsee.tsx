@@ -12,8 +12,14 @@ import {
 import { useTheme } from '@mui/material/styles';
 import SponseeFormDialog from './SponseeFormDialog';
 import { formatDateForDisplay } from '../utils/dateUtils';
+import { User } from '../types/database';
 
-export default function Sponsee({ user, onUpdate }) {
+interface SponseeProps {
+  user: User | null;
+  onUpdate: (updates: Partial<User>) => Promise<User | null>;
+}
+
+export default function Sponsee({ user, onUpdate }: SponseeProps) {
   const theme = useTheme();
   
   // State for sponsees

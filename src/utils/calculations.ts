@@ -4,10 +4,8 @@
 
 /**
  * Calculate sobriety days
- * @param {string} sobrietyDate - Sobriety date in ISO format
- * @returns {number} Days of sobriety
  */
-export const calculateSobrietyDays = (sobrietyDate) => {
+export const calculateSobrietyDays = (sobrietyDate: string): number => {
   if (!sobrietyDate) return 0;
   
   const start = new Date(sobrietyDate);

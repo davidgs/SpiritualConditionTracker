@@ -2,7 +2,11 @@ import React from 'react';
 import { Paper, Typography, Box } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 
-export default function StepWork({ setCurrentView }) {
+interface StepWorkProps {
+  setCurrentView: (view: string) => void;
+}
+
+export default function StepWork({ setCurrentView }: StepWorkProps) {
   const theme = useTheme();
   const darkMode = theme.palette.mode === 'dark';
   
