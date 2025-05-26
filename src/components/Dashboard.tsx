@@ -119,7 +119,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
     
     if (!activities || activities.length === 0) {
       console.log('[ Dashboard.js ] No activities for fallback calculation');
-      return 20;
+      return 5;
     }
     
     // Define weights for activity types (matching the working calculation)
@@ -150,7 +150,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
     console.log('[ Dashboard.js ] Sample activity types:', recentActivities.slice(0, 3).map(a => a.type));
     
     if (recentActivities.length === 0) {
-      return 20;
+      return 5;
     }
     
     // Calculate total points and track activity days
