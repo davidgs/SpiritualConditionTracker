@@ -7,8 +7,19 @@ import SpiritualFitnessModal from './SpiritualFitnessModal';
 import LogActivityModal from './LogActivityModal';
 import { useAppTheme } from '../contexts/MuiThemeProvider';
 import { Paper, Box, Typography, IconButton, Button } from '@mui/material';
+import { User, Activity, Meeting } from '../types/database';
 
-export default function Dashboard({ setCurrentView, user, activities, meetings = [], onSave, onSaveMeeting, spiritualFitness }) {
+interface DashboardProps {
+  setCurrentView: (view: string) => void;
+  user: User | null;
+  activities: Activity[];
+  meetings: Meeting[];
+  onSave: (activity: Omit<Activity, 'id' | 'createdAt' | 'updatedAt'>) => void;
+  onSaveMeeting: (meeting: Omit<Meeting, 'id' | 'createdAt' | 'updatedAt'>) => void;
+  spiritualFitness: number;
+}
+
+export default function Dashboard({ setCurrentView, user, activities, meetings = [], onSave, onSaveMeeting, spiritualFitness }: DashboardProps) {
   // Get theme from MUI theme provider
   const { mode } = useAppTheme();
   const darkMode = mode === 'dark';
