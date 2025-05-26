@@ -178,9 +178,12 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
       id: activityId,
       type: activityType,
       duration: parseInt(duration, 10),
-      date: date, // Store as-is in YYYY-MM-DD format
+      date: new Date(`${date}T12:00:00`).toISOString(), // Convert to full ISO format
       notes: notes.trim(),
     };
+    
+    console.log('[ LogActivityModal.tsx:179 handleSubmit ] Created activity with ISO date:', newActivity.date);
+    console.log('[ LogActivityModal.tsx:180 handleSubmit ] Original date input:', date);
     
     // Add activity-specific fields
     if (activityType === 'literature') {
