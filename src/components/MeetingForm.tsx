@@ -650,43 +650,32 @@ export default function MeetingForm({
               </div>
             </div>
             
-            {/* Action Buttons - Icon only, no background, with much more space between */}
-            <div className="flex justify-between items-center mt-8" style={{ width: '90%', margin: '0 auto' }}>
-              <button
-                type="button"
+            {/* Action Buttons */}
+            <Box sx={{ 
+              display: 'flex', 
+              justifyContent: 'flex-end',
+              gap: 2,
+              mt: 3,
+              px: 3, 
+              py: 2
+            }}>
+              <Button
+                variant="contained"
                 onClick={onCancel}
-                style={{ 
-                  background: 'transparent',
-                  border: 'none',
-                  padding: '5px',
-                  cursor: 'pointer',
-                  outline: 'none',
-                  boxShadow: 'none',
-                  color: '#CC0000'
-                }}
-                title="Cancel"
+                color="error"
               >
-                <i className="fa-regular fa-circle-xmark text-red-600 dark:text-red-400" style={{ fontSize: '2.5rem' }}></i>
-              </button>
+                Cancel
+              </Button>
               
-              <button
+              <Button
+                variant="contained"
                 type="submit"
-                style={{ 
-                  background: 'transparent',
-                  border: 'none',
-                  padding: '5px',
-                  cursor: !meetingName || meetingSchedule.length === 0 || !streetAddress ? 'not-allowed' : 'pointer',
-                  outline: 'none',
-                  boxShadow: 'none',
-                  opacity: !meetingName || meetingSchedule.length === 0 || !streetAddress ? 0.5 : 1,
-                  color: !meetingName || meetingSchedule.length === 0 || !streetAddress ? '#6CDF7C' : '#00FF2D'
-                }}
-                title={meeting ? "Save changes" : "Add meeting"}
+                color="success"
                 disabled={!meetingName || meetingSchedule.length === 0 || !streetAddress}
               >
-                <i className="fa-regular fa-circle-check text-green-600 dark:text-green-400" style={{ fontSize: '2.5rem' }}></i>
-              </button>
-            </div>
+                Save
+              </Button>
+            </Box>
           </form>
         </div>
       </div>

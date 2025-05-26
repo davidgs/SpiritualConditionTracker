@@ -233,25 +233,22 @@ export default function SponsorFormPage({ initialData, onSave, onCancel }) {
               display: 'flex', 
               justifyContent: 'flex-end',
               gap: 2,
-              mt: 1
+              mt: 1,
+              px: 3, 
+              py: 2
             }}>
-              <Button 
+              <Button
+                variant="contained"
                 onClick={onCancel}
-                sx={{ 
-                  color: theme.palette.text.secondary,
-                }}
+                color="error"
               >
                 Cancel
               </Button>
-              <Button 
+              
+              <Button
+                variant="contained"
                 type="submit"
-                variant="contained" 
-                color="primary"
-                sx={{ 
-                  height: '36px',
-                  borderRadius: '8px',
-                  textTransform: 'none'
-                }}
+                color="success"
               >
                 Save
               </Button>

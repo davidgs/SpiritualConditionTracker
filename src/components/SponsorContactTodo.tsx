@@ -129,19 +129,21 @@ export default function SponsorContactTodo({ onSave, onCancel }: SponsorContactT
           }}
         />
         
-        <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-end', mt: 2 }}>
+        <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-end', mt: 2, px: 3, py: 2 }}>
           <Button
-            variant="outlined"
+            variant="contained"
             onClick={onCancel}
+            color="error"
           >
             Cancel
           </Button>
+          
           <Button
-            type="submit"
             variant="contained"
-            color="primary"
+            type="submit"
+            color="success"
           >
-            Add Action Item
+            Save
           </Button>
         </Box>
       </Box>
