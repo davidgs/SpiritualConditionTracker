@@ -238,6 +238,7 @@ export default function SponsorFormPage({ initialData, onSave, onCancel }) {
               py: 2
             }}>
               <Button
+                size="small"
                 variant="contained"
                 onClick={onCancel}
                 color="error"
@@ -246,6 +247,7 @@ export default function SponsorFormPage({ initialData, onSave, onCancel }) {
               </Button>
               
               <Button
+                size="small"
                 variant="contained"
                 type="submit"
                 color="success"

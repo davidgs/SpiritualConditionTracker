@@ -299,15 +299,18 @@ export default function SponsorFormDialog({ open, onClose, onSubmit, initialData
           justifyContent: 'space-between'
         }}>
           <Button 
+            size="small"
+            variant="contained"
             onClick={handleCancel} 
             sx={{ color: theme.palette.error.main }}
           >
             Cancel
           </Button>
           <Button 
+            size="small"
             type="submit" 
             variant="contained" 
-            color="primary"
+            color="success"
           >
             {initialData ? 'Update' : 'Save'}
           </Button>

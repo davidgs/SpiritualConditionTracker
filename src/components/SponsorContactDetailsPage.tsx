@@ -1122,15 +1122,20 @@ export default function SponsorContactDetailsPage({
           </Box>
         </DialogContent>
         <DialogActions sx={{ px: 3, pb: 2, borderTop: `1px solid ${theme.palette.divider}` }}>
-          <Button onClick={() => setShowAddActionDialog(false)}>
+          <Button onClick={() => setShowAddActionDialog(false)}
+            size="small"
+            variant="contained"
+            color="error">
             Cancel
           </Button>
           <Button 
             onClick={handleAddActionFromForm}
-            variant="contained" 
+            size="small"
+            variant="contained"
+            color="success"
             disabled={!newAction.actionItem}
           >
-            Add Action
+            Save
           </Button>
         </DialogActions>
       </Dialog>

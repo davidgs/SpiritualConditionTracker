@@ -297,17 +297,20 @@ export default function SponsorContactFormPage({ userId, onSave, onCancel, initi
 
         <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-end' }}>
           <Button
-            variant="outlined"
+            size="small"
+            variant="contained"
+            color="error"
             onClick={onCancel}
           >
             Cancel
           </Button>
           <Button
             type="submit"
+            size="small"
             variant="contained"
-            color="primary"
+            color="success"
           >
-            Save Contact
+            Save
           </Button>
         </Box>
       </Box>

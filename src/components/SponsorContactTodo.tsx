@@ -131,6 +131,7 @@ export default function SponsorContactTodo({ onSave, onCancel }: SponsorContactT
         
         <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-end', mt: 2, px: 3, py: 2 }}>
           <Button
+            size="small"
             variant="contained"
             onClick={onCancel}
             color="error"
@@ -139,6 +140,7 @@ export default function SponsorContactTodo({ onSave, onCancel }: SponsorContactT
           </Button>
           
           <Button
+            size="small"
             variant="contained"
             type="submit"
             color="success"
