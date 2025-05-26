@@ -16,6 +16,16 @@ export interface BaseEntity {
   updatedAt?: string;
 }
 
+// Sponsor interface for the sponsor entity
+export interface SponsorData {
+  name: string;
+  lastName: string;
+  phone: string;
+  email: string;
+  sobrietyDate: string;
+  notes: string;
+}
+
 // User interface
 export interface User extends BaseEntity {
   name: string;
@@ -31,6 +41,13 @@ export interface User extends BaseEntity {
   preferences: {
     use24HourFormat: boolean;
   };
+  // Sponsor fields (optional)
+  sponsor_name?: string;
+  sponsor_lastName?: string;
+  sponsor_phone?: string;
+  sponsor_email?: string;
+  sponsor_sobrietyDate?: string;
+  sponsor_notes?: string;
 }
 
 // Sponsor Contact interface

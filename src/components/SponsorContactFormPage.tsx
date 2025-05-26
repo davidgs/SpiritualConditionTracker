@@ -128,8 +128,12 @@ export default function SponsorContactFormPage({ userId, onSave, onCancel, initi
       return;
     }
     
-    // Submit the contact and todos
-    onSave(contactData, todos);
+    // Submit the contact and todos with userId
+    const contactWithUserId = {
+      ...contactData,
+      userId: userId
+    };
+    onSave(contactWithUserId, todos);
   };
 
   // Contact type options

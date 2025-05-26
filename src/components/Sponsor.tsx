@@ -16,23 +16,28 @@ import SponsorContactFormPage from './SponsorContactFormPage';
 import SponsorFormPage from './SponsorFormPage';
 import { formatDateForDisplay } from '../utils/dateUtils';
 import { formatPhoneNumber, createPhoneUrl } from '../utils/phoneUtils';
-// Not using UUIDs for database IDs
 // Import specialized sponsor database functions
 import sponsorDB from '../utils/sponsor-database';
+import { User, SponsorContact, ContactDetail, ActionItemFormData, SponsorData } from '../types/database';
 
-export default function Sponsor({ user, onUpdate }) {
+interface SponsorProps {
+  user: User;
+  onUpdate: (updates: Partial<User>) => void;
+}
+
+export default function Sponsor({ user, onUpdate }: SponsorProps) {
   const theme = useTheme();
   
-  // State for sponsor
-  const [sponsor, setSponsor] = useState(null);
+  // State for sponsor with proper typing
+  const [sponsor, setSponsor] = useState<SponsorData | null>(null);
   
-  // State for sponsor contacts
-  const [contacts, setContacts] = useState([]);
-  const [contactDetails, setContactDetails] = useState({});
+  // State for sponsor contacts with proper typing
+  const [contacts, setContacts] = useState<SponsorContact[]>([]);
+  const [contactDetails, setContactDetails] = useState<{[key: number]: ContactDetail[]}>({});
   
-  // View states
-  const [currentView, setCurrentView] = useState('main'); // 'main', 'details', 'add-contact', 'add-sponsor', 'edit-sponsor'
-  const [selectedContact, setSelectedContact] = useState(null);
+  // View states with strict typing
+  const [currentView, setCurrentView] = useState<'main' | 'details' | 'add-contact' | 'add-sponsor' | 'edit-sponsor'>('main');
+  const [selectedContact, setSelectedContact] = useState<SponsorContact | null>(null);
   
   // Removed dialog states in favor of page-based navigation
   
