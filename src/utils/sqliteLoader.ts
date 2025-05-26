@@ -651,8 +651,10 @@ function setupGlobalDB(sqlite) {
         // Count activities by type
         recentActivities.forEach(activity => {
           const type = activity.type || 'other';
+          console.log(`[ sqliteLoader.js ] Activity type: ${type}`);
           typeCounts[type] = (typeCounts[type] || 0) + 1;
           totalScore += typeWeights[type] || 2;
+          console.log(`[ sqliteLoader.js ] Added ${typeWeights[type] || 2} points for ${type}`);
         });
         
         // Bonus for consistency (multiple activities of same type)
@@ -661,12 +663,15 @@ function setupGlobalDB(sqlite) {
           if (count >= 5) consistencyBonus += 10;
           else if (count >= 3) consistencyBonus += 5;
         });
+        console.log(`[ sqliteLoader.js ] Consistency bonus: ${consistencyBonus}`);
         
         // Bonus for variety (different types of activities)
         const varietyBonus = Object.keys(typeCounts).length * 5;
+        console.log(`[ sqliteLoader.js ] Variety bonus: ${varietyBonus}`);
         
         // Calculate final score (cap at 100)
         const finalScore = Math.min(100, totalScore + consistencyBonus + varietyBonus);
+        console.log(`[ sqliteLoader.js ] Final spiritual fitness score: ${finalScore}`)
         
         return finalScore;
       } catch (error) {
