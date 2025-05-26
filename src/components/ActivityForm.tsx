@@ -43,7 +43,9 @@ function ActivityForm({ onSuccess, onCancel }: ActivityFormProps) {
         id: 0, //`activity_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
       };
       
-      console.log('Submitting activity with type:', activityData.type);
+      console.log('[ ActivityForm.tsx ] Complete activity data being saved:', JSON.stringify(activityData, null, 2));
+      console.log('[ ActivityForm.tsx ] Activity type:', activityData.type);
+      console.log('[ ActivityForm.tsx ] Activity date:', activityData.date);
       
       // Try saving directly via the database API first - avoids middleware issues
       if (window.dbInitialized && window.db) {

@@ -693,7 +693,18 @@ function setupGlobalDB(sqlite) {
         
         // Filter for activities in timeframe
         const filteredActivities = activities.filter(activity => {
+          // Skip activities with null dates
+          if (!activity.date || activity.date === null) {
+            console.log('[ sqliteLoader.js ] Activity has null date, skipping:', { date: activity.date, type: activity.type });
+            return false;
+          }
+          
           const activityDate = new Date(activity.date);
+          if (isNaN(activityDate.getTime())) {
+            console.log('[ sqliteLoader.js ] Activity has invalid date, skipping:', { date: activity.date, type: activity.type });
+            return false;
+          }
+          
           const isInRange = activityDate >= startDate && activityDate <= now;
           if (!isInRange) {
             console.log('[ sqliteLoader.js ] Activity outside range:', { date: activity.date, type: activity.type });
