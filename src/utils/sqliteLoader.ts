@@ -733,6 +733,18 @@ function setupGlobalDB(sqlite) {
         // Log first few activities to see their structure
         console.log('[ sqliteLoader.js ] Sample activities:', activities.slice(0, 3).map(a => ({ type: a.type, date: a.date })));
         
+        // Let's also log ALL activities to see what's really in the database
+        console.log('[ sqliteLoader.js ] ALL activities in database:');
+        activities.forEach((activity, index) => {
+          console.log(`[ sqliteLoader.js ] Activity ${index}:`, { 
+            id: activity.id, 
+            type: activity.type, 
+            date: activity.date,
+            duration: activity.duration,
+            createdAt: activity.createdAt
+          });
+        });
+        
         // Define custom time period
         const now = new Date();
         const startDate = new Date();
