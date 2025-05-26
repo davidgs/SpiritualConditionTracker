@@ -215,161 +215,9 @@ function App(): JSX.Element {
   
   // Messaging-related functionality has been removed
 
-  // Calculate spiritual fitness score using the database function
+  // Dashboard handles spiritual fitness calculation - keeping this for interface compatibility
   async function calculateSpiritualFitness() {
-    // Use global constant for default score if no calculation is possible
-    console.log('[ App.js ] Starting calculateSpiritualFitness with default:', DEFAULT_SPIRITUAL_FITNESS_SCORE);
-    
-    // Check if database is properly initialized
-    if (!dbInitialized || !window.db) {
-      console.error('[ App.js ] Database not initialized or not ready for fitness calculation');
-      setSpiritualFitness(DEFAULT_SPIRITUAL_FITNESS_SCORE);
-      return DEFAULT_SPIRITUAL_FITNESS_SCORE;
-    }
-    
-    console.log('[ App.js ] Calculating spiritual fitness with initialized database');
-    
-    // Log the activities we have
-    console.log('Calculating spiritual fitness with activities:', activities);
-    
-    try {
-      let score = DEFAULT_SPIRITUAL_FITNESS_SCORE;
-      let calculationMethod = 'none';
-      
-      // Try different calculation methods in order of preference
-      
-      // 1. Try the original Database spiritualFitnessOperations method
-      if (window.Database && 
-          window.Database.spiritualFitnessOperations && 
-          typeof window.Database.spiritualFitnessOperations.calculateSpiritualFitness === 'function') {
-        
-        try {
-          calculationMethod = 'Database.spiritualFitnessOperations';
-          console.log('Using', calculationMethod);
-          
-          // Get user ID (use '1' as default if not found)
-          const users = window.Database.userOperations.getAll();
-          const userId = (users && users.length > 0) ? users[0].id : '1';
-          
-          const result = window.Database.spiritualFitnessOperations.calculateSpiritualFitness(userId);
-          if (result && typeof result.score === 'number') {
-            score = result.score;
-            console.log('Success with', calculationMethod, ':', score);
-            setSpiritualFitness(score);
-            return score;
-          }
-        } catch (methodError) {
-          console.error('Error with', calculationMethod, ':', methodError);
-          // Continue to next method
-        }
-      }
-      
-      // 2. Try the direct db calculateSpiritualFitness method
-      if (typeof window.db.calculateSpiritualFitness === 'function') {
-        try {
-          calculationMethod = 'window.db.calculateSpiritualFitness';
-          console.log('Using', calculationMethod);
-          
-          score = await window.db.calculateSpiritualFitness(activities);
-          if (typeof score === 'number') {
-            console.log('Success with', calculationMethod, ':', score);
-            setSpiritualFitness(score);
-            return score;
-          }
-        } catch (methodError) {
-          console.error('Error with', calculationMethod, ':', methodError);
-          // Continue to next method
-        }
-      }
-      
-      // 3. Try the timeframe method
-      if (typeof window.db.calculateSpiritualFitnessWithTimeframe === 'function') {
-        try {
-          calculationMethod = 'window.db.calculateSpiritualFitnessWithTimeframe';
-          console.log('Using', calculationMethod);
-          
-          score = await window.db.calculateSpiritualFitnessWithTimeframe(30);
-          if (typeof score === 'number') {
-            console.log('Success with', calculationMethod, ':', score);
-            setSpiritualFitness(score);
-            return score;
-          }
-        } catch (methodError) {
-          console.error('Error with', calculationMethod, ':', methodError);
-          // Continue to next method
-        }
-      }
-      
-      // 4. If all methods failed, use the built-in fallback
-      console.warn('⚠️ All spiritual fitness calculation methods failed - using built-in fallback');
-      score = calculateFallbackFitness();
-      setSpiritualFitness(score);
-      return score;
-    } catch (error) {
-      // Handle any unexpected errors in the main function
-      console.error('Unexpected error in calculateSpiritualFitness:', error);
-      const fallbackScore = calculateFallbackFitness();
-      setSpiritualFitness(fallbackScore);
-      return fallbackScore;
-    }
-  }
-  
-  // Built-in fallback calculation function
-  function calculateFallbackFitness() {
-    console.log('Using built-in fallback fitness calculation');
-    
-    // Start with a base score
-    const baseScore = 5;
-    let finalScore = baseScore;
-    
-    // Only proceed if we have activities
-    if (activities && activities.length > 0) {
-      // Define time period (30 days)
-      const now = new Date();
-      const thirtyDaysAgo = new Date();
-      thirtyDaysAgo.setDate(now.getDate() - 30);
-      
-      // Filter for recent activities
-      const recentActivities = activities.filter(activity => {
-        const activityDate = new Date(activity.date);
-        return activityDate >= thirtyDaysAgo && activityDate <= now;
-      });
-      
-      console.log('Found', recentActivities.length, 'activities in the last 30 days');
-      
-      // Add points based on activity count (2 points per activity, max 40)
-      const activityPoints = Math.min(40, recentActivities.length * 2);
-      
-      // Track unique days with activities for consistency calculation
-      const activityDays = new Set();
-      recentActivities.forEach(activity => {
-        if (activity.date) {
-          const dayKey = new Date(activity.date).toISOString().split('T')[0];
-          activityDays.add(dayKey);
-        }
-      });
-      
-      const daysWithActivities = activityDays.size;
-      console.log('Activities occurred on', daysWithActivities, 'different days');
-      
-      // Calculate consistency points (up to 40 points)
-      const consistencyPercentage = daysWithActivities / 30;
-      const consistencyPoints = Math.round(consistencyPercentage * 40);
-      
-      // Calculate final score (capped at 100)
-      finalScore = Math.min(100, baseScore + activityPoints + consistencyPoints);
-      
-      console.log('Fallback calculation details:', {
-        baseScore,
-        activityPoints,
-        consistencyPoints,
-        finalScore
-      });
-    } else {
-      console.log('No activities found, using base score:', baseScore);
-    }
-    
-    return finalScore;
+    return 0; // Dashboard calculates the actual value
   }
 
   // Handle saving a new activity
@@ -386,8 +234,7 @@ function App(): JSX.Element {
       // Update activities state
       setActivities(prev => [...prev, savedActivity]);
       
-      // Calculate spiritual fitness after adding activity
-      calculateSpiritualFitness();
+      // Dashboard will recalculate spiritual fitness when activities update
       
       return savedActivity;
     } catch (error) {

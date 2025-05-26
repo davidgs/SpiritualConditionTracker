@@ -43,7 +43,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
     }
     loadScoreTimeframe();
   }, []);
-  const [currentScore, setCurrentScore] = useState(spiritualFitness);
+  const [currentScore, setCurrentScore] = useState(0);
   
   const modalRef = useRef(null);
   const buttonRef = useRef(null);
@@ -73,13 +73,11 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
   const progressPercent = Math.min(currentScore, 100);
   console.log('[ Dashboard.js ] Dashboard progressPercent:', progressPercent);
   
-  // Effect to initialize and update score when spiritualFitness prop changes
+  // Effect to calculate spiritual fitness when activities change
   useEffect(() => {
-    console.log('[ Dashboard.js ] Dashboard useEffect [spiritualFitness] triggered with:', spiritualFitness);
-    if (spiritualFitness) {
-      setCurrentScore(spiritualFitness);
-    }
-  }, [spiritualFitness]);
+    console.log('[ Dashboard.js ] Dashboard useEffect [activities] triggered - calculating spiritual fitness');
+    calculateSpiritualFitnessScore();
+  }, [activities]);
   
   // Effect to recalculate score when timeframe changes
   useEffect(() => {
@@ -110,22 +108,88 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
           console.log('[ Dashboard.js ] SQLite calculation result:', score);
           setCurrentScore(score);
         } else {
-          console.warn('[ Dashboard.js ] SQLite calculation method not available');
-          // Use the prop value directly
-          setCurrentScore(spiritualFitness || 0); 
+          console.warn('[ Dashboard.js ] SQLite calculation method not available - using fallback');
+          // Use fallback calculation with activities
+          const fallbackScore = calculateFallbackFitness();
+          setCurrentScore(fallbackScore); 
         }
       } catch (error) {
         console.error('[ Dashboard.js ] Error calculating spiritual fitness:', error);
-        // Use the prop value directly
-        setCurrentScore(spiritualFitness || 0);
+        // Use fallback calculation with activities
+        const fallbackScore = calculateFallbackFitness();
+        setCurrentScore(fallbackScore);
       }
     }
     
     calculateScore();
   }, [scoreTimeframe, activities, spiritualFitness]);
   
-  // Note: We've removed the fallback calculation function since
-  // we're now using SQLite via Capacitor exclusively for data persistence
+  // Function to calculate spiritual fitness score independently
+  async function calculateSpiritualFitnessScore() {
+    try {
+      // Use the SQLite-based calculation method
+      if (window.db?.calculateSpiritualFitnessWithTimeframe) {
+        console.log('[ Dashboard.js ] Calculating score with SQLite, timeframe:', scoreTimeframe);
+        const score = await window.db.calculateSpiritualFitnessWithTimeframe(scoreTimeframe);
+        console.log('[ Dashboard.js ] SQLite calculation result:', score);
+        setCurrentScore(score);
+      } else {
+        console.warn('[ Dashboard.js ] SQLite calculation method not available - using fallback');
+        const fallbackScore = calculateFallbackFitness();
+        setCurrentScore(fallbackScore); 
+      }
+    } catch (error) {
+      console.error('[ Dashboard.js ] Error calculating spiritual fitness:', error);
+      const fallbackScore = calculateFallbackFitness();
+      setCurrentScore(fallbackScore);
+    }
+  }
+  
+  // Fallback calculation function using activities data
+  function calculateFallbackFitness() {
+    console.log('[ Dashboard.js ] Using fallback fitness calculation');
+    
+    const baseScore = 5;
+    let finalScore = baseScore;
+    
+    if (activities && activities.length > 0) {
+      const now = new Date();
+      const daysAgo = new Date();
+      daysAgo.setDate(now.getDate() - scoreTimeframe);
+      
+      const recentActivities = activities.filter(activity => {
+        const activityDate = new Date(activity.date);
+        return activityDate >= daysAgo && activityDate <= now;
+      });
+      
+      console.log('[ Dashboard.js ] Found', recentActivities.length, 'activities in the last', scoreTimeframe, 'days');
+      
+      const activityPoints = Math.min(40, recentActivities.length * 2);
+      
+      const activityDays = new Set();
+      recentActivities.forEach(activity => {
+        if (activity.date) {
+          const dayKey = new Date(activity.date).toISOString().split('T')[0];
+          activityDays.add(dayKey);
+        }
+      });
+      
+      const daysWithActivities = activityDays.size;
+      const consistencyPercentage = daysWithActivities / scoreTimeframe;
+      const consistencyPoints = Math.round(consistencyPercentage * 40);
+      
+      finalScore = Math.min(100, baseScore + activityPoints + consistencyPoints);
+      
+      console.log('[ Dashboard.js ] Fallback calculation details:', {
+        baseScore,
+        activityPoints, 
+        consistencyPoints,
+        finalScore
+      });
+    }
+    
+    return finalScore;
+  }
   
   // Close modal when clicking outside
   useEffect(() => {
