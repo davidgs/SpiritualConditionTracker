@@ -150,7 +150,15 @@ async function setupTables(sqlite) {
         literatureTitle TEXT DEFAULT '',
         literatureType TEXT DEFAULT '',
         meetingName TEXT DEFAULT '',
+        wasChair INTEGER DEFAULT 0,
+        wasShare INTEGER DEFAULT 0,
+        wasSpeaker INTEGER DEFAULT 0,
+        meetingId INTEGER,
         callPerson TEXT DEFAULT '',
+        isSponsorCall INTEGER DEFAULT 0,
+        isSponseeCall INTEGER DEFAULT 0,
+        isAAMemberCall INTEGER DEFAULT 0,
+        callType TEXT DEFAULT '',
         servicePerson TEXT DEFAULT '',
         location TEXT DEFAULT '',
         mood TEXT DEFAULT '',
@@ -164,6 +172,27 @@ async function setupTables(sqlite) {
     `
   });
   console.log('[ sqliteLoader.js ] Activities table created successfully');
+  
+  // Add missing columns for call activities if they don't exist
+  try {
+    await sqlite.execute({
+      database: DB_NAME,
+      statements: `
+        ALTER TABLE activities ADD COLUMN wasChair INTEGER DEFAULT 0;
+        ALTER TABLE activities ADD COLUMN wasShare INTEGER DEFAULT 0;
+        ALTER TABLE activities ADD COLUMN wasSpeaker INTEGER DEFAULT 0;
+        ALTER TABLE activities ADD COLUMN meetingId INTEGER;
+        ALTER TABLE activities ADD COLUMN isSponsorCall INTEGER DEFAULT 0;
+        ALTER TABLE activities ADD COLUMN isSponseeCall INTEGER DEFAULT 0;
+        ALTER TABLE activities ADD COLUMN isAAMemberCall INTEGER DEFAULT 0;
+        ALTER TABLE activities ADD COLUMN callType TEXT DEFAULT '';
+      `
+    });
+    console.log('[ sqliteLoader.js ] Added missing activity columns');
+  } catch (error) {
+    // Columns might already exist, which is fine
+    console.log('[ sqliteLoader.js ] Activity columns already exist or migration completed');
+  }
   
   // Create meetings table with all required fields
   await sqlite.execute({
