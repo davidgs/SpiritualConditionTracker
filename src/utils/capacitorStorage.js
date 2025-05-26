@@ -33,11 +33,53 @@ export function calculateFallbackSpiritualFitness() {
 }
 
 /**
+ * Calculate sobriety days based on sobriety date
+ * @param {string} sobrietyDate - Sobriety date in ISO format
+ * @returns {number} - Number of days sober
+ */
+export function calculateSobrietyDays(sobrietyDate) {
+  if (!sobrietyDate) return 0;
+  
+  const startDate = new Date(sobrietyDate);
+  const today = new Date();
+  
+  // Calculate difference in milliseconds
+  const diffMs = today - startDate;
+  
+  // Convert to days
+  return Math.floor(diffMs / (1000 * 60 * 60 * 24));
+}
+
+/**
+ * Calculate sobriety years with decimal precision
+ * @param {string} sobrietyDate - Sobriety date in ISO format
+ * @param {number} decimalPlaces - Number of decimal places
+ * @returns {number} - Years of sobriety with decimal precision
+ */
+export function calculateSobrietyYears(sobrietyDate, decimalPlaces = 2) {
+  if (!sobrietyDate) return 0;
+  
+  const startDate = new Date(sobrietyDate);
+  const today = new Date();
+  
+  // Calculate difference in milliseconds
+  const diffMs = today - startDate;
+  
+  // Calculate years with decimal precision
+  const years = diffMs / (1000 * 60 * 60 * 24 * 365.25);
+  
+  // Round to specified decimal places
+  return parseFloat(years.toFixed(decimalPlaces));
+}
+
+/**
  * DEPRECATED: For compatibility only
  */
 export default {
   initDatabase,
   calculateFallbackSpiritualFitness,
+  calculateSobrietyDays,
+  calculateSobrietyYears,
   // Add any other exports needed for compatibility
   getAll: () => Promise.resolve([]),
   getById: () => Promise.resolve(null),

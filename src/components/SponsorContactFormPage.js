@@ -21,12 +21,10 @@ export default function SponsorContactFormPage({ userId, onSave, onCancel, initi
   
   // Form state
   const [contactData, setContactData] = useState({
-    type: initialData?.type || 'phone',
+    type: 'phone',
     date: new Date().toISOString().split('T')[0], // Default to today's date
     note: ''
   });
-  
-  console.log("FORM INITIALIZED WITH TYPE:", initialData?.type || 'phone');
   
   // State for todo items and UI controls
   const [todos, setTodos] = useState([]);
@@ -63,6 +61,7 @@ export default function SponsorContactFormPage({ userId, onSave, onCancel, initi
   // Handle field changes
   const handleChange = (e) => {
     const { name, value } = e.target;
+    console.log(`Contact form field changed: ${name} = ${value}`);
     setContactData(prev => ({
       ...prev,
       [name]: value
