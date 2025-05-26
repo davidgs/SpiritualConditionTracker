@@ -30,7 +30,7 @@ export default function SponsorContactFormPage({ userId, onSave, onCancel, initi
   const [todos, setTodos] = useState([]);
   const [showInput, setShowInput] = useState(false);
   
-  // Update form state when initial data changes
+  // Update form state when initial data changes - but only run once on mount
   useEffect(() => {
     if (initialData) {
       // Format date for input
@@ -47,16 +47,10 @@ export default function SponsorContactFormPage({ userId, onSave, onCancel, initi
       if (todoItems.length > 0) {
         setTodos(todoItems);
       }
-    } else {
-      // Reset to defaults
-      setContactData({
-        type: 'phone',
-        date: new Date().toISOString().split('T')[0],
-        note: ''
-      });
-      setTodos([]);
     }
-  }, [initialData, details]);
+    // Only reset to defaults on initial mount when there's no initialData
+    // Don't reset every time initialData changes to undefined
+  }, []);
   
   // Handle field changes
   const handleChange = (e) => {
