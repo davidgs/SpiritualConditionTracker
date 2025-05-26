@@ -6,8 +6,10 @@
 // Database name
 const DB_NAME = 'spiritualTracker.db';
 
+import { SponsorContact, ActionItem } from '../types/database';
+
 // Get Capacitor SQLite plugin
-function getSQLite() {
+function getSQLite(): any {
   // First check if database has been initialized
   if (!window.dbInitialized) {
     throw new Error('Database not initialized yet - please wait for initialization to complete');

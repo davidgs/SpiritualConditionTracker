@@ -8,6 +8,10 @@ const DB_NAME = 'spiritualTracker.db';
 
 // Class for database operations
 class CapacitorSQLiteDB {
+  private isInitialized: boolean;
+  private plugin: any;
+  private connection: any;
+
   constructor() {
     this.isInitialized = false;
     this.plugin = null;
