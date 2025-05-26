@@ -227,11 +227,24 @@ function App(): JSX.Element {
     }
 
     try {
+      console.log('[ App.tsx ] Saving activity to database:', newActivity);
+      
       // Add activity to database - using async version
       const savedActivity = await window.db.add('activities', newActivity);
       
+      console.log('[ App.tsx ] Activity saved, returned from database:', savedActivity);
+      console.log('[ App.tsx ] Saved activity ID:', savedActivity?.id);
+      
+      // Verify the activity has a valid ID before adding to state
+      if (!savedActivity || savedActivity.id === undefined || savedActivity.id === null) {
+        console.error('[ App.tsx ] Database returned activity without valid ID:', savedActivity);
+        return null;
+      }
+      
       // Update activities state
       setActivities(prev => [...prev, savedActivity]);
+      
+      console.log('[ App.tsx ] Activity successfully added to state');
       
       // Dashboard will recalculate spiritual fitness when activities update
       

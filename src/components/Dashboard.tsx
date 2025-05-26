@@ -475,9 +475,10 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
             sx={{
               fontSize: '1.1rem',
               fontWeight: 600,
-              color: 'text.primary'
+              color: 'text.primary',
+              paddingRight: '0.15rem'
             }}
-          >Activities</Typography>&nbsp;
+          >Activities</Typography>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
             {/* Activity type filter */}
             <Box 
