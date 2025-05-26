@@ -252,6 +252,13 @@ function ActivityForm({ onSuccess, onCancel }: ActivityFormProps) {
             variant="contained"
             onClick={onCancel}
             color="error"
+            sx={{
+              borderRadius: '12px',
+              textTransform: 'none',
+              fontWeight: 500,
+              px: 3,
+              py: 1.5
+            }}
           >
             Cancel
           </Button>
@@ -262,6 +269,13 @@ function ActivityForm({ onSuccess, onCancel }: ActivityFormProps) {
           type="submit"
           color="success"
           disabled={isSubmitting}
+          sx={{
+            borderRadius: '12px',
+            textTransform: 'none',
+            fontWeight: 500,
+            px: 3,
+            py: 1.5
+          }}
         >
           {isSubmitting ? 'Saving...' : 'Save'}
         </Button>
