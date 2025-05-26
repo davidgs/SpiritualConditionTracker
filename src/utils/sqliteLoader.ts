@@ -623,7 +623,11 @@ function setupGlobalDB(sqlite) {
           });
         }
         
+        console.log('[ sqliteLoader.js ] calculateSpiritualFitness - Recent activities count:', recentActivities ? recentActivities.length : 0);
+        console.log('[ sqliteLoader.js ] Sample recent activities:', recentActivities ? recentActivities.slice(0, 3).map(a => ({type: a.type, date: a.date})) : []);
+        
         if (!recentActivities || recentActivities.length === 0) {
+          console.log('[ sqliteLoader.js ] No recent activities found, returning base score 5');
           return 5; // Default minimum score
         }
         
