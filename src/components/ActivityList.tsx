@@ -32,15 +32,29 @@ export default function ActivityList({
   
   // Filter activities
   const today = new Date();
+  
+  console.log('[ ActivityList.js ] Total activities received:', activities?.length || 0);
+  console.log('[ ActivityList.js ] Filter params - limit:', limit, 'filter:', filter, 'maxDaysAgo:', maxDaysAgo);
+  
   // Create a new copy of the activities array to avoid mutation issues
   const filteredActivities = activities
     ? [...activities]
         // Filter to make sure we don't have duplicate IDs
-        .filter((activity, index, self) => 
-          index === self.findIndex(a => (a.id === activity.id))
-        )
+        .filter((activity, index, self) => {
+          const isDuplicate = index !== self.findIndex(a => (a.id === activity.id));
+          if (isDuplicate) {
+            console.log('[ ActivityList.js ] Removing duplicate activity with ID:', activity.id);
+          }
+          return !isDuplicate;
+        })
         // Filter by activity type if a filter is specified
-        .filter(activity => filter === 'all' || activity.type === filter)
+        .filter(activity => {
+          const typeMatch = filter === 'all' || activity.type === filter;
+          if (!typeMatch) {
+            console.log('[ ActivityList.js ] Filtering out activity type:', activity.type, 'filter:', filter);
+          }
+          return typeMatch;
+        })
         // Filter by maximum days ago if specified
         .filter(activity => {
           if (!maxDaysAgo) return true;
@@ -48,7 +62,13 @@ export default function ActivityList({
           const activityDate = new Date(activity.date);
           const diffTime = Math.abs(today - activityDate);
           const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-          return diffDays <= maxDaysAgo;
+          const withinTimeframe = diffDays <= maxDaysAgo;
+          
+          if (!withinTimeframe) {
+            console.log('[ ActivityList.js ] Filtering out activity outside timeframe - days ago:', diffDays, 'max:', maxDaysAgo);
+          }
+          
+          return withinTimeframe;
         })
         // Sort by date (newest first)
         .sort((a, b) => {
@@ -61,6 +81,8 @@ export default function ActivityList({
         // Limit the number of activities if specified
         .slice(0, limit || activities.length)
     : [];
+    
+  console.log('[ ActivityList.js ] Final filtered activities count:', filteredActivities.length);
     
   if (filteredActivities.length === 0) {
     return (

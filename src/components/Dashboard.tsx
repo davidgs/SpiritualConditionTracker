@@ -82,47 +82,8 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
   // Effect to recalculate score when timeframe changes
   useEffect(() => {
     console.log('[ Dashboard.js ] Dashboard useEffect [scoreTimeframe] triggered with timeframe:', scoreTimeframe);
-    
-    // Check if window.db exists and is fully initialized before attempting to use it
-    if (!window.db || !window.dbInitialized) {
-      console.warn('[ Dashboard.js ] Database not initialized yet - skipping database operations');
-      return; // Skip database operations until initialization is complete
-    }
-    
-    // Save the selected timeframe to SQLite preferences - only if database is ready
-    try {
-      if (window.db?.setPreference && scoreTimeframe) {
-        window.db.setPreference('fitnessTimeframe', scoreTimeframe.toString())
-          .catch(err => console.error('[ Dashboard.js ] Error saving timeframe preference:', err));
-      }
-    } catch (err) {
-      console.error('[ Dashboard.js ] Error accessing database for preferences:', err);
-    }
-    
-    async function calculateScore() {
-      try {
-        // Use the SQLite-based calculation method
-        if (window.db?.calculateSpiritualFitnessWithTimeframe) {
-          console.log('[ Dashboard.js ] Calculating score with SQLite, timeframe:', scoreTimeframe);
-          const score = await window.db.calculateSpiritualFitnessWithTimeframe(scoreTimeframe);
-          console.log('[ Dashboard.js ] SQLite calculation result:', score);
-          setCurrentScore(score);
-        } else {
-          console.warn('[ Dashboard.js ] SQLite calculation method not available - using fallback');
-          // Use fallback calculation with activities
-          const fallbackScore = calculateFallbackFitness();
-          setCurrentScore(fallbackScore); 
-        }
-      } catch (error) {
-        console.error('[ Dashboard.js ] Error calculating spiritual fitness:', error);
-        // Use fallback calculation with activities
-        const fallbackScore = calculateFallbackFitness();
-        setCurrentScore(fallbackScore);
-      }
-    }
-    
-    calculateScore();
-  }, [scoreTimeframe, activities, spiritualFitness]);
+    calculateSpiritualFitnessScore();
+  }, [scoreTimeframe]);
   
   // Function to calculate spiritual fitness score independently
   async function calculateSpiritualFitnessScore() {
