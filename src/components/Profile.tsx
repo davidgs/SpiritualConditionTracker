@@ -435,14 +435,14 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
                   size="small"
                   onClick={() => setEditingSobriety(false)}
                   variant="outlined"
-                  color="inherit"
+                  color="error"
                 >
                   Cancel
                 </Button>
                 <Button 
                   size="small"
                   variant="contained"
-                  color="primary"
+                  color="success"
                   onClick={() => {
                     if (sobrietyDate) {
                       // Update the sobriety date directly
