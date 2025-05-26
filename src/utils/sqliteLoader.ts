@@ -209,26 +209,32 @@ async function setupTables(sqlite) {
   console.log('[ sqliteLoader.js ] Meetings table created successfully');
 
   // Create sponsor_contacts table with INTEGER ID - without NOT NULL constraints
-  // First disable foreign key constraints to allow table drops
+  // First disable foreign key constraints globally for safe table operations
   try {
     await sqlite.execute({
       database: DB_NAME,
       statements: `PRAGMA foreign_keys = OFF;`
     });
     
+    // Drop dependent tables first in correct order
+    await sqlite.execute({
+      database: DB_NAME,
+      statements: `DROP TABLE IF EXISTS sponsor_contact_action_items;`
+    });
+    
+    await sqlite.execute({
+      database: DB_NAME,
+      statements: `DROP TABLE IF EXISTS sponsor_contact_details;`
+    });
+    
     await sqlite.execute({
       database: DB_NAME,
       statements: `DROP TABLE IF EXISTS sponsor_contacts;`
     });
-    console.log('[ sqliteLoader.js ] Dropped sponsor_contacts table for schema update');
     
-    // Re-enable foreign key constraints
-    await sqlite.execute({
-      database: DB_NAME,
-      statements: `PRAGMA foreign_keys = ON;`
-    });
+    console.log('[ sqliteLoader.js ] Dropped sponsor-related tables for schema update');
   } catch (error) {
-    console.warn('[ sqliteLoader.js ] Could not drop sponsor_contacts table:', error);
+    console.warn('[ sqliteLoader.js ] Could not drop sponsor tables:', error);
   }
   
   // Recreate with explicit NULL allowed for date field
@@ -304,6 +310,17 @@ async function setupTables(sqlite) {
     `
   });
   console.log('[ sqliteLoader.js ] Sponsor contact action items join table created');
+  
+  // Re-enable foreign key constraints after all table operations
+  try {
+    await sqlite.execute({
+      database: DB_NAME,
+      statements: `PRAGMA foreign_keys = ON;`
+    });
+    console.log('[ sqliteLoader.js ] Foreign key constraints re-enabled');
+  } catch (error) {
+    console.warn('[ sqliteLoader.js ] Could not re-enable foreign keys:', error);
+  }
 }
 
 /**
