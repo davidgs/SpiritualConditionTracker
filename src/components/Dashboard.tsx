@@ -117,44 +117,108 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
   function calculateFallbackFitness() {
     console.log('[ Dashboard.js ] Using fallback fitness calculation');
     
-    const baseScore = 5;
-    let finalScore = baseScore;
-    
-    if (activities && activities.length > 0) {
-      const now = new Date();
-      const daysAgo = new Date();
-      daysAgo.setDate(now.getDate() - scoreTimeframe);
-      
-      const recentActivities = activities.filter(activity => {
-        const activityDate = new Date(activity.date);
-        return activityDate >= daysAgo && activityDate <= now;
-      });
-      
-      console.log('[ Dashboard.js ] Found', recentActivities.length, 'activities in the last', scoreTimeframe, 'days');
-      
-      const activityPoints = Math.min(40, recentActivities.length * 2);
-      
-      const activityDays = new Set();
-      recentActivities.forEach(activity => {
-        if (activity.date) {
-          const dayKey = new Date(activity.date).toISOString().split('T')[0];
-          activityDays.add(dayKey);
-        }
-      });
-      
-      const daysWithActivities = activityDays.size;
-      const consistencyPercentage = daysWithActivities / scoreTimeframe;
-      const consistencyPoints = Math.round(consistencyPercentage * 40);
-      
-      finalScore = Math.min(100, baseScore + activityPoints + consistencyPoints);
-      
-      console.log('[ Dashboard.js ] Fallback calculation details:', {
-        baseScore,
-        activityPoints, 
-        consistencyPoints,
-        finalScore
-      });
+    if (!activities || activities.length === 0) {
+      console.log('[ Dashboard.js ] No activities for fallback calculation');
+      return 20;
     }
+    
+    // Define weights for activity types (matching the working calculation)
+    const weights = {
+      meeting: 10,
+      prayer: 8,
+      meditation: 8,
+      reading: 6,
+      literature: 6,
+      callSponsor: 5,
+      callSponsee: 4,
+      call: 5,
+      service: 9,
+      stepWork: 10,
+      stepwork: 10
+    };
+    
+    const now = new Date();
+    const daysAgo = new Date();
+    daysAgo.setDate(now.getDate() - scoreTimeframe);
+    
+    const recentActivities = activities.filter(activity => {
+      const activityDate = new Date(activity.date);
+      return activityDate >= daysAgo && activityDate <= now;
+    });
+    
+    console.log('[ Dashboard.js ] Found', recentActivities.length, 'activities in the last', scoreTimeframe, 'days');
+    console.log('[ Dashboard.js ] Sample activity types:', recentActivities.slice(0, 3).map(a => a.type));
+    
+    if (recentActivities.length === 0) {
+      return 20;
+    }
+    
+    // Calculate total points and track activity days
+    let totalPoints = 0;
+    const activityDays = new Set();
+    const breakdown = {};
+    
+    recentActivities.forEach(activity => {
+      // Track unique days
+      if (activity.date) {
+        const dayKey = new Date(activity.date).toISOString().split('T')[0];
+        activityDays.add(dayKey);
+      }
+      
+      // Add points for activity type
+      const points = weights[activity.type] || 2;
+      totalPoints += points;
+      
+      // Track breakdown
+      if (!breakdown[activity.type]) {
+        breakdown[activity.type] = { count: 0, points: 0 };
+      }
+      breakdown[activity.type].count++;
+      breakdown[activity.type].points += points;
+    });
+    
+    const daysWithActivities = activityDays.size;
+    const varietyTypes = Object.keys(breakdown).length;
+    const daysCoveragePercent = (daysWithActivities / scoreTimeframe) * 100;
+    
+    // Calculate score based on timeframe (matching the working algorithm)
+    let finalScore;
+    if (scoreTimeframe <= 30) {
+      const basePoints = 20;
+      const activityPoints = Math.min(40, Math.round(totalPoints / 8));
+      const consistencyPoints = Math.min(30, Math.round(daysCoveragePercent * 1.5));
+      const varietyBonus = Math.min(10, varietyTypes * 2);
+      finalScore = basePoints + activityPoints + consistencyPoints + varietyBonus;
+    } else if (scoreTimeframe <= 90) {
+      const basePoints = 15;
+      const activityPoints = Math.min(35, Math.round(totalPoints / 12));
+      const consistencyPoints = Math.min(25, Math.round(daysCoveragePercent * 2.5));
+      const varietyBonus = Math.min(10, varietyTypes * 2);
+      finalScore = basePoints + activityPoints + consistencyPoints + varietyBonus;
+    } else if (scoreTimeframe <= 180) {
+      const basePoints = 10;
+      const activityPoints = Math.min(30, Math.round(totalPoints / 18));
+      const consistencyPoints = Math.min(20, Math.round(daysCoveragePercent * 4));
+      const varietyBonus = Math.min(10, varietyTypes * 2);
+      finalScore = basePoints + activityPoints + consistencyPoints + varietyBonus;
+    } else {
+      const basePoints = 5;
+      const activityPoints = Math.min(25, Math.round(totalPoints / 24));
+      const consistencyPoints = Math.min(15, Math.round(daysCoveragePercent * 6));
+      const varietyBonus = Math.min(10, varietyTypes * 2);
+      finalScore = basePoints + activityPoints + consistencyPoints + varietyBonus;
+    }
+    
+    finalScore = Math.min(100, Math.round(finalScore));
+    
+    console.log('[ Dashboard.js ] Fallback calculation details:', {
+      totalPoints,
+      daysWithActivities,
+      daysCoveragePercent: daysCoveragePercent.toFixed(1) + '%',
+      varietyTypes,
+      finalScore,
+      breakdown
+    });
     
     return finalScore;
   }
