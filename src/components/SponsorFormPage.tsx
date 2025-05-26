@@ -241,13 +241,6 @@ export default function SponsorFormPage({ initialData, onSave, onCancel }) {
                 variant="contained"
                 onClick={onCancel}
                 color="error"
-                sx={{
-                  borderRadius: '12px',
-                  textTransform: 'none',
-                  fontWeight: 500,
-                  px: 3,
-                  py: 1.5
-                }}
               >
                 Cancel
               </Button>
@@ -256,13 +249,6 @@ export default function SponsorFormPage({ initialData, onSave, onCancel }) {
                 variant="contained"
                 type="submit"
                 color="success"
-                sx={{
-                  borderRadius: '12px',
-                  textTransform: 'none',
-                  fontWeight: 500,
-                  px: 3,
-                  py: 1.5
-                }}
               >
                 Save
               </Button>
