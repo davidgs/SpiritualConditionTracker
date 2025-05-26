@@ -600,6 +600,15 @@ function setupGlobalDB(sqlite) {
           
           // Filter for activities in the last 30 days
           recentActivities = allActivities.filter(activity => {
+            // Debug: Log each activity being processed
+            console.log('[ sqliteLoader.js ] Processing activity:', {
+              id: activity.id,
+              type: activity.type, 
+              date: activity.date,
+              hasDate: !!activity.date,
+              hasType: !!activity.type
+            });
+            
             // Handle both date formats: "2025-05-26" and "2025-05-26T18:04:42.737Z"
             if (!activity.date || !activity.type) {
               console.log('[ sqliteLoader.js ] Activity has null date or type, skipping:', {date: activity.date, type: activity.type});
@@ -607,12 +616,27 @@ function setupGlobalDB(sqlite) {
             }
             
             const activityDate = new Date(activity.date);
+            console.log('[ sqliteLoader.js ] Parsed date:', {
+              original: activity.date,
+              parsed: activityDate,
+              isValid: !isNaN(activityDate.getTime()),
+              time: activityDate.getTime()
+            });
+            
             if (isNaN(activityDate.getTime())) {
               console.log('[ sqliteLoader.js ] Invalid date format, skipping:', activity.date);
               return false;
             }
             
-            return activityDate >= thirtyDaysAgo && activityDate <= now;
+            const inRange = activityDate >= thirtyDaysAgo && activityDate <= now;
+            console.log('[ sqliteLoader.js ] Date range check:', {
+              activityDate: activityDate.toISOString(),
+              thirtyDaysAgo: thirtyDaysAgo.toISOString(),
+              now: now.toISOString(),
+              inRange: inRange
+            });
+            
+            return inRange;
           });
         }
         
@@ -806,13 +830,12 @@ async function cleanupBrokenActivities() {
     console.log('[ sqliteLoader.js ] Found broken activities to clean:', brokenCount);
 
     if (brokenCount > 0) {
-      // Delete broken activities
+      // Delete broken activities using raw SQL
       const deleteResult = await sqlitePlugin.execute({
         database: DB_NAME,
-        statements: [{
-          statement: 'DELETE FROM activities WHERE date IS NULL OR type IS NULL',
-          values: []
-        }]
+        statements: [
+          'DELETE FROM activities WHERE date IS NULL OR type IS NULL;'
+        ]
       });
       
       console.log('[ sqliteLoader.js ] Cleanup complete. Deleted activities:', deleteResult.changes?.changes || 0);
