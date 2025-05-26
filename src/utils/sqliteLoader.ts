@@ -435,9 +435,27 @@ function setupGlobalDB(sqlite) {
           values: []
         });
         
-        // Return the complete item with ID
+        console.log('[ sqliteLoader.js ] Last insert ID result:', result);
+        
+        // Return the complete item with ID - handle iOS format
         if (result.values && result.values.length > 0) {
-          return { ...itemWithTimestamps, id: result.values[0].id };
+          // iOS returns format: [{"ios_columns":["id"]},{"id":41}]
+          // Standard format: [{"id": 41}]
+          let insertedId;
+          
+          if (result.values.length > 1 && result.values[1] && result.values[1].id) {
+            // iOS format - ID is in the second element
+            insertedId = result.values[1].id;
+          } else if (result.values[0] && result.values[0].id) {
+            // Standard format - ID is in the first element
+            insertedId = result.values[0].id;
+          }
+          
+          console.log('[ sqliteLoader.js ] Extracted ID:', insertedId);
+          
+          if (insertedId) {
+            return { ...itemWithTimestamps, id: insertedId };
+          }
         }
         
         return itemWithTimestamps;
