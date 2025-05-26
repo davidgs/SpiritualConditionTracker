@@ -238,13 +238,15 @@ function App(): JSX.Element {
     }
 
     try {
-      console.log('[ App.tsx ] Saving activity to database:', newActivity);
+      console.log('[ App.tsx:241 handleSaveActivity ] Saving activity to database:', newActivity);
+      console.log('[ App.tsx:242 handleSaveActivity ] Activity date before save:', newActivity.date);
       
       // Add activity to database - using async version
       const savedActivity = await window.db.add('activities', newActivity);
       
-      console.log('[ App.tsx ] Activity saved, returned from database:', savedActivity);
-      console.log('[ App.tsx ] Saved activity ID:', savedActivity?.id);
+      console.log('[ App.tsx:246 handleSaveActivity ] Activity saved, returned from database:', savedActivity);
+      console.log('[ App.tsx:247 handleSaveActivity ] Saved activity ID:', savedActivity?.id);
+      console.log('[ App.tsx:248 handleSaveActivity ] Saved activity date:', savedActivity?.date);
       
       // Verify the activity has a valid ID before adding to state
       if (!savedActivity || savedActivity.id === undefined || savedActivity.id === null) {

@@ -45,9 +45,11 @@ function ActivityForm({ onSuccess, onCancel }: ActivityFormProps) {
         id: 0, //`activity_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
       };
       
-      console.log('[ ActivityForm.tsx ] Complete activity data being saved:', JSON.stringify(activityData, null, 2));
-      console.log('[ ActivityForm.tsx ] Activity type:', activityData.type);
-      console.log('[ ActivityForm.tsx ] Activity date:', activityData.date);
+      console.log('[ ActivityForm.tsx:48 handleSubmit ] Complete activity data being saved:', JSON.stringify(activityData, null, 2));
+      console.log('[ ActivityForm.tsx:49 handleSubmit ] Activity type:', activityData.type);
+      console.log('[ ActivityForm.tsx:50 handleSubmit ] Activity date:', activityData.date);
+      console.log('[ ActivityForm.tsx:51 handleSubmit ] ISO date created:', isoDate);
+      console.log('[ ActivityForm.tsx:52 handleSubmit ] FormData date:', formData.date);
       
       // Try saving directly via the database API first - avoids middleware issues
       if (window.dbInitialized && window.db) {
