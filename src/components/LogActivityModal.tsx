@@ -144,7 +144,7 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
   // Handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
-    
+    console.log('[LogActivityModal:147] Submitting activity form...')
     // Validate form
     const newErrors = {};
     if (!activityType) newErrors.activityType = 'Activity type is required';
