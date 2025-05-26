@@ -432,11 +432,16 @@ function setupGlobalDB(sqlite) {
         };
         
         console.log('[ sqliteLoader.js ] Final item for database:', JSON.stringify(itemWithTimestamps, null, 2));
+        console.log('[ sqliteLoader.js ] Date field specifically:', itemWithTimestamps.date);
+        console.log('[ sqliteLoader.js ] Date field type:', typeof itemWithTimestamps.date);
         
         // Build the SQL statement
         const keys = Object.keys(itemWithTimestamps);
         const placeholders = keys.map(() => '?').join(', ');
         const values = keys.map(key => itemWithTimestamps[key]);
+        
+        console.log('[ sqliteLoader.js ] SQL keys:', keys);
+        console.log('[ sqliteLoader.js ] SQL values:', values);
         
         // Execute the SQL insert
         await sqlite.execute({
