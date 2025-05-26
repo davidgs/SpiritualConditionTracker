@@ -23,6 +23,7 @@ import {
   DialogTitle,
   DialogContent
 } from '@mui/material';
+import { resetDatabase } from '../utils/reset-database'
 
 export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
   // Handle Reset All Data button click
@@ -40,100 +41,101 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
     console.log('Starting data reset process');
     
     try {
+      await resetDatabase();
       // Clear all data via structured transaction approach
-      if (window.db) {
-        console.log('Using window.db to clear data');
+      // if (window.db) {
+      //   console.log('Using window.db to clear data');
         
         // Instead of looping through items and removing them one by one (which can cause issues),
         // we'll use direct DELETE statements to clear collections
         
         // Define collections to clear - order matters (due to potential foreign key constraints)
-        const collections = ['activities', 'meetings', 'preferences', 'users'];
+        // const collections = ['activities', 'meetings', 'preferences', 'users'];
         
         // Verify database access first
-        try {
-          const activitiesCount = await window.db.getAll('activities');
-          console.log(`Found ${activitiesCount.length} activities before reset`);
-        } catch (testError) {
-          console.warn('Database test read failed, may need to initialize DB first:', testError);
-        }
+        // try {
+        //   const activitiesCount = await window.db.getAll('activities');
+        //   console.log(`Found ${activitiesCount.length} activities before reset`);
+        // } catch (testError) {
+        //   console.warn('Database test read failed, may need to initialize DB first:', testError);
+        // }
         
         // Create a safe version of clearing with multiple approaches
-        for (const collection of collections) {
-          try {
-            // Approach 1: Try to use the Capacitor SQLite direct execute method if available
-            if (window.Capacitor?.Plugins?.CapacitorSQLite) {
-              try {
-                const sqlPlugin = window.Capacitor.Plugins.CapacitorSQLite;
-                const dbName = 'spiritualTracker.db'; // Match name used in sqliteLoader.js
+      //   for (const collection of collections) {
+      //     try {
+      //       // Approach 1: Try to use the Capacitor SQLite direct execute method if available
+      //       if (window.Capacitor?.Plugins?.CapacitorSQLite) {
+      //         try {
+      //           const sqlPlugin = window.Capacitor.Plugins.CapacitorSQLite;
+      //           const dbName = 'spiritualTracker.db'; // Match name used in sqliteLoader.js
                 
-                await sqlPlugin.execute({
-                  database: dbName,
-                  statements: `DELETE FROM ${collection}`, 
-                  values: []
-                });
-                console.log(`Cleared ${collection} via direct SQL execute`);
-                continue; // Skip to next collection if this worked
-              } catch (directSqlError) {
-                console.log(`Direct SQL clear of ${collection} failed:`, directSqlError);
-                // Fall through to next approach
-              }
-            }
+      //           await sqlPlugin.execute({
+      //             database: dbName,
+      //             statements: `DELETE FROM ${collection}`, 
+      //             values: []
+      //           });
+      //           console.log(`Cleared ${collection} via direct SQL execute`);
+      //           continue; // Skip to next collection if this worked
+      //         } catch (directSqlError) {
+      //           console.log(`Direct SQL clear of ${collection} failed:`, directSqlError);
+      //           // Fall through to next approach
+      //         }
+      //       }
             
-            // Approach 2: Use the safer window.db interface if available
-            const items = await window.db.getAll(collection) || [];
-            console.log(`Clearing ${items.length} items from ${collection}`);
+      //       // Approach 2: Use the safer window.db interface if available
+      //       const items = await window.db.getAll(collection) || [];
+      //       console.log(`Clearing ${items.length} items from ${collection}`);
             
-            // Clear each item with proper error handling for each
-            for (const item of items) {
-              try {
-                if (item && item.id) {
-                  await window.db.remove(collection, item.id);
-                }
-              } catch (itemError) {
-                console.log(`Error removing item ${item.id} from ${collection}:`, itemError);
-                // Continue with other items
-              }
-            }
+      //       // Clear each item with proper error handling for each
+      //       for (const item of items) {
+      //         try {
+      //           if (item && item.id) {
+      //             await window.db.remove(collection, item.id);
+      //           }
+      //         } catch (itemError) {
+      //           console.log(`Error removing item ${item.id} from ${collection}:`, itemError);
+      //           // Continue with other items
+      //         }
+      //       }
             
-            console.log(`Cleared ${collection}`);
-          } catch (collectionError) {
-            console.log(`Error clearing ${collection}:`, collectionError);
-            // Continue with next collection despite errors
-          }
-        }
+      //       console.log(`Cleared ${collection}`);
+      //     } catch (collectionError) {
+      //       console.log(`Error clearing ${collection}:`, collectionError);
+      //       // Continue with next collection despite errors
+      //     }
+      //   }
         
-        console.log('All collections cleared successfully');
-      }
+      //   console.log('All collections cleared successfully');
+      // }
       
-      // Clear any localStorage backup data
-      try {
-        localStorage.removeItem('activities');
-        localStorage.removeItem('meetings');
-        localStorage.removeItem('user');
-        localStorage.removeItem('preferences');
-        console.log('localStorage data cleared');
-      } catch (localStorageError) {
-        console.log('Error clearing localStorage:', localStorageError);
-      }
+      // // Clear any localStorage backup data
+      // try {
+      //   localStorage.removeItem('activities');
+      //   localStorage.removeItem('meetings');
+      //   localStorage.removeItem('user');
+      //   localStorage.removeItem('preferences');
+      //   console.log('localStorage data cleared');
+      // } catch (localStorageError) {
+      //   console.log('Error clearing localStorage:', localStorageError);
+      // }
       
-      console.log('All data cleared');
+      // console.log('All data cleared');
       
-      // Set initial default data to ensure app works after reset
-      if (window.db) {
-        try {
-          // Add default user record
-          await window.db.add('users', {
-            id: 'user_default',
-            name: 'Anonymous',
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString()
-          });
-          console.log('Created default user after reset');
-        } catch (defaultDataError) {
-          console.log('Error creating default data:', defaultDataError);
-        }
-      }
+      // // Set initial default data to ensure app works after reset
+      // if (window.db) {
+      //   try {
+      //     // Add default user record
+      //     await window.db.add('users', {
+      //       id: 'user_default',
+      //       name: 'Anonymous',
+      //       createdAt: new Date().toISOString(),
+      //       updatedAt: new Date().toISOString()
+      //     });
+      //     console.log('Created default user after reset');
+      //   } catch (defaultDataError) {
+      //     console.log('Error creating default data:', defaultDataError);
+      //   }
+      // }
       
       console.log('Data reset complete - navigating to dashboard');
       

@@ -8,7 +8,7 @@ const DB_NAME = 'spiritualTracker.db';
 /**
  * Reset the database by dropping all tables and recreating them
  */
-async function resetDatabase() {
+export async function resetDatabase() {
   console.log('[ reset-database.js: 12 ] Attempting to reset database...');
 
   if (!window.Capacitor || !window.Capacitor.Plugins?.CapacitorSQLite) {
