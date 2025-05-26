@@ -416,8 +416,12 @@ function setupGlobalDB(sqlite) {
      */
     add: async function(collection, item) {
       try {
+        console.log('[ sqliteLoader.js ] Original item received for save:', JSON.stringify(item, null, 2));
+        
         // Don't include ID field - let SQLite generate it with AUTOINCREMENT
         const { id, ...itemWithoutId } = item;
+        
+        console.log('[ sqliteLoader.js ] Item without ID:', JSON.stringify(itemWithoutId, null, 2));
         
         // Always include timestamps
         const now = new Date().toISOString();
@@ -426,6 +430,8 @@ function setupGlobalDB(sqlite) {
           createdAt: now,
           updatedAt: now
         };
+        
+        console.log('[ sqliteLoader.js ] Final item for database:', JSON.stringify(itemWithTimestamps, null, 2));
         
         // Build the SQL statement
         const keys = Object.keys(itemWithTimestamps);
@@ -615,15 +621,8 @@ function setupGlobalDB(sqlite) {
               return false;
             }
             
-            // Handle simple date format by creating date in local timezone
-            let activityDate;
-            if (activity.date.includes('T')) {
-              // Full ISO format: "2025-05-26T18:21:36.544Z"
-              activityDate = new Date(activity.date);
-            } else {
-              // Simple date format: "2025-05-26" - create at local time
-              activityDate = new Date(activity.date + 'T12:00:00');
-            }
+            // All dates should be full ISO format
+            const activityDate = new Date(activity.date);
             
             console.log('[ sqliteLoader.js ] Parsed date:', {
               original: activity.date,
