@@ -9,10 +9,10 @@ const DB_NAME = 'spiritualTracker.db';
  * Reset the database by dropping all tables and recreating them
  */
 async function resetDatabase() {
-  console.log('[ reset-database.js ] Attempting to reset database...');
+  console.log('[ reset-database.js: 12 ] Attempting to reset database...');
 
   if (!window.Capacitor || !window.Capacitor.Plugins?.CapacitorSQLite) {
-    console.error('[ reset-database.js ] CapacitorSQLite plugin not available');
+    console.error('[ reset-database.js: 15 ] CapacitorSQLite plugin not available');
     return false;
   }
 
@@ -26,18 +26,18 @@ async function resetDatabase() {
         encrypted: false,
         mode: 'no-encryption'
       });
-      console.log('[ reset-database.js ] Database connection created');
+      console.log('[ reset-database.js: 29 ] Database connection created');
     } catch (error) {
       // Connection might already exist, try to continue
-      console.log('[ reset-database.js ] Connection may already exist:', error.message);
+      console.log('[ reset-database.js: 32 ] Connection may already exist:', error.message);
     }
     
     // Open the database
     try {
       await sqlitePlugin.open({ database: DB_NAME });
-      console.log('[ reset-database.js ] Database opened successfully');
+      console.log('[ reset-database.js: 38 ] Database opened successfully');
     } catch (error) {
-      console.error('[ reset-database.js ] Error opening database:', error);
+      console.error('[ reset-database.js: 40 ] Error opening database:', error);
       return false;
     }
     
@@ -48,16 +48,16 @@ async function resetDatabase() {
       'preferences', 'sponsor_contacts', 'sponsor_contact_details'
     ];
     
-    console.log('[ reset-database.js ] Dropping all existing tables...');
+    console.log('[ reset-database.js: 51 ] Dropping all existing tables...');
     for (const table of tables) {
       try {
         await sqlitePlugin.execute({
           database: DB_NAME,
           statements: `DROP TABLE IF EXISTS ${table};`
         });
-        console.log(`[ reset-database.js ] Dropped table: ${table}`);
+        console.log(`[ reset-database.js: 58 ] Dropped table: ${table}`);
       } catch (error) {
-        console.error(`[ reset-database.js ] Error dropping table ${table}:`, error);
+        console.error(`[ reset-database.js: 60 ] Error dropping table ${table}:`, error);
       }
     }
     
@@ -67,12 +67,12 @@ async function resetDatabase() {
     // Release the connection
     await sqlitePlugin.closeConnection({ database: DB_NAME });
     
-    console.log('[ reset-database.js ] Database reset completed successfully');
-    console.log('[ reset-database.js ] Please refresh the page to recreate tables');
+    console.log('[ reset-database.js: 70 ] Database reset completed successfully');
+    console.log('[ reset-database.js: 71 ] Please refresh the page to recreate tables');
     
     return true;
   } catch (error) {
-    console.error('[ reset-database.js ] Error resetting database:', error);
+    console.error('[ reset-database.js: 75 ] Error resetting database:', error);
     return false;
   }
 }
@@ -82,10 +82,10 @@ window.resetDatabase = resetDatabase;
 
 // Automatically execute if the script contains a specific query parameter
 if (window.location.search.includes('reset_db=true')) {
-  console.log('[ reset-database.js ] Auto-executing database reset...');
+  console.log('[ reset-database.js: 85 ] Auto-executing database reset...');
   resetDatabase().then(success => {
     if (success) {
-      console.log('[ reset-database.js ] Database reset successful, refreshing page...');
+      console.log('[ reset-database.js: 88 ] Database reset successful, refreshing page...');
       // Add a small delay to ensure logs are visible
       setTimeout(() => {
         window.location.href = window.location.pathname; // Refresh without the query parameter
