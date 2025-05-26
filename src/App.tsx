@@ -13,17 +13,21 @@ import { DEFAULT_SPIRITUAL_FITNESS_SCORE } from './utils/constants';
 import { Box, Paper } from '@mui/material';
 // Import SQLite initialization function
 import initSQLiteDatabase from './utils/sqliteLoader';
+import { User, Activity, Meeting } from './types/database';
+
+// Define valid view types
+type ViewType = 'dashboard' | 'profile' | 'meetings' | 'stepwork' | 'sponsor' | 'sponsee';
 
 // Main App Component
-function App() {
-  const [currentView, setCurrentView] = useState('dashboard');
-  const [user, setUser] = useState(null);
-  const [activities, setActivities] = useState([]);
-  const [meetings, setMeetings] = useState([]);
-  const [spiritualFitness, setSpiritualFitness] = useState(0);
-  const [dbInitialized, setDbInitialized] = useState(false);
-  const [dbInitError, setDbInitError] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
+function App(): JSX.Element {
+  const [currentView, setCurrentView] = useState<ViewType>('dashboard');
+  const [user, setUser] = useState<User | null>(null);
+  const [activities, setActivities] = useState<Activity[]>([]);
+  const [meetings, setMeetings] = useState<Meeting[]>([]);
+  const [spiritualFitness, setSpiritualFitness] = useState<number>(0);
+  const [dbInitialized, setDbInitialized] = useState<boolean>(false);
+  const [dbInitError, setDbInitError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   // Load data when component mounts
   useEffect(() => {
@@ -369,7 +373,7 @@ function App() {
   }
 
   // Handle saving a new activity
-  async function handleSaveActivity(newActivity) {
+  async function handleSaveActivity(newActivity: Omit<Activity, 'id' | 'createdAt' | 'updatedAt'>): Promise<Activity | null> {
     if (!window.db) {
       console.error('Database not initialized');
       return;
@@ -436,7 +440,7 @@ function App() {
   }
 
   // Handle updating user profile
-  async function handleUpdateProfile(updates, options = { redirectToDashboard: true }) {
+  async function handleUpdateProfile(updates: Partial<User>, options: { redirectToDashboard: boolean } = { redirectToDashboard: true }): Promise<User | null> {
     if (!window.db) {
       console.error('Database not initialized');
       return;
