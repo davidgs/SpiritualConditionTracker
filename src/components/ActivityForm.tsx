@@ -35,10 +35,12 @@ function ActivityForm({ onSuccess, onCancel }: ActivityFormProps) {
       const activityType = formData.type || 'meeting';
       
       // Create an activity object with guaranteed type field
+      // IMPORTANT: Create ISO date first, then spread formData, then override date to ensure ISO format
+      const isoDate = new Date(`${formData.date}T${formData.time}`).toISOString();
       const activityData = {
         ...formData,
         type: activityType, // Explicitly set the type field to prevent SQLite errors
-        date: new Date(`${formData.date}T${formData.time}`).toISOString(),
+        date: isoDate, // Ensure this overrides any simple date from formData
         duration: parseInt(formData.duration, 10) || 0,
         id: 0, //`activity_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
       };
