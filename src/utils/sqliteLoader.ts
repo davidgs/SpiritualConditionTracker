@@ -615,7 +615,16 @@ function setupGlobalDB(sqlite) {
               return false;
             }
             
-            const activityDate = new Date(activity.date);
+            // Handle simple date format by creating date in local timezone
+            let activityDate;
+            if (activity.date.includes('T')) {
+              // Full ISO format: "2025-05-26T18:21:36.544Z"
+              activityDate = new Date(activity.date);
+            } else {
+              // Simple date format: "2025-05-26" - create at local time
+              activityDate = new Date(activity.date + 'T12:00:00');
+            }
+            
             console.log('[ sqliteLoader.js ] Parsed date:', {
               original: activity.date,
               parsed: activityDate,
