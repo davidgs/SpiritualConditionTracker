@@ -1,7 +1,12 @@
 import React, { useState } from 'react';
 import { saveActivity } from '../utils/storage';
+import { Activity } from '../types/database';
 
-function ActivityForm({ onSuccess }) {
+interface ActivityFormProps {
+  onSuccess: (activity: Activity) => void;
+}
+
+function ActivityForm({ onSuccess }: ActivityFormProps) {
   const [formData, setFormData] = useState({
     type: 'meeting', // REQUIRED: Default type that will be applied to all activities
     date: new Date().toISOString().split('T')[0],
