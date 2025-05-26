@@ -59,6 +59,14 @@ function App(): JSX.Element {
       // Log successful initialization to help with debugging
       console.log('Database successfully initialized and ready for use');
       
+      // Wait a moment to ensure database is fully ready
+      await new Promise(resolve => setTimeout(resolve, 100));
+      
+      // Verify database is accessible before loading data
+      if (!window.db || !window.db.getAll) {
+        throw new Error("Database interface not properly initialized");
+      }
+      
       // Now load the data
       await loadData();
       
