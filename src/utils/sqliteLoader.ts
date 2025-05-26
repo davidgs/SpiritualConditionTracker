@@ -687,28 +687,45 @@ function setupGlobalDB(sqlite) {
      */
     calculateSpiritualFitnessWithTimeframe: async function(timeframe = 30) {
       try {
+        console.log('[ sqliteLoader.js ] calculateSpiritualFitnessWithTimeframe called with timeframe:', timeframe);
         const activities = await this.getAll('activities');
+        console.log('[ sqliteLoader.js ] Retrieved activities from database:', activities.length);
+        
         if (!activities || activities.length === 0) {
+          console.log('[ sqliteLoader.js ] No activities found, returning base score 5');
           return 5; // Default minimum score
         }
+        
+        // Log first few activities to see their structure
+        console.log('[ sqliteLoader.js ] Sample activities:', activities.slice(0, 3).map(a => ({ type: a.type, date: a.date })));
         
         // Define custom time period
         const now = new Date();
         const startDate = new Date();
         startDate.setDate(now.getDate() - timeframe);
+        console.log('[ sqliteLoader.js ] Date range:', { startDate: startDate.toISOString(), now: now.toISOString() });
         
         // Filter for activities in timeframe
         const filteredActivities = activities.filter(activity => {
           const activityDate = new Date(activity.date);
-          return activityDate >= startDate && activityDate <= now;
+          const isInRange = activityDate >= startDate && activityDate <= now;
+          if (!isInRange) {
+            console.log('[ sqliteLoader.js ] Activity outside range:', { date: activity.date, type: activity.type });
+          }
+          return isInRange;
         });
         
+        console.log('[ sqliteLoader.js ] Filtered activities in timeframe:', filteredActivities.length);
+        
         if (filteredActivities.length === 0) {
+          console.log('[ sqliteLoader.js ] No activities in timeframe, returning base score 5');
           return 5; // Default minimum score if no matching activities
         }
         
         // Use same scoring logic as default calculation
-        return this.calculateSpiritualFitness(filteredActivities);
+        const score = await this.calculateSpiritualFitness(filteredActivities);
+        console.log('[ sqliteLoader.js ] Final calculated score:', score);
+        return score;
       } catch (error) {
         console.error('[ sqliteLoader.js ] Error calculating spiritual fitness with timeframe:', error);
         return 5; // Default minimum score on error
