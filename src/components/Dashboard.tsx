@@ -111,13 +111,13 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
           setCurrentScore(score);
         } else {
           console.warn('[ Dashboard.js ] SQLite calculation method not available');
-          // Use the prop value directly instead of hardcoded 5
-          setCurrentScore(spiritualFitness || 5); 
+          // Use the prop value directly
+          setCurrentScore(spiritualFitness || 0); 
         }
       } catch (error) {
         console.error('[ Dashboard.js ] Error calculating spiritual fitness:', error);
-        // Use the prop value directly instead of hardcoded 5
-        setCurrentScore(spiritualFitness || 5);
+        // Use the prop value directly
+        setCurrentScore(spiritualFitness || 0);
       }
     }
     
