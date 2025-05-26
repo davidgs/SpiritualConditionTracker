@@ -36,11 +36,11 @@ function App(): JSX.Element {
   }, []);
 
   // Calculate spiritual fitness score when activities change AND database is initialized
-  useEffect(() => {
-    if (dbInitialized && activities.length > 0) {
-      calculateSpiritualFitness();
-    }
-  }, [activities, dbInitialized]);
+  // useEffect(() => {
+  //   if (dbInitialized && activities.length > 0) {
+  //     calculateSpiritualFitness();
+  //   }
+  // }, [activities, dbInitialized]);
   
   // Initialize the database and load data
   async function initDatabaseAndLoadData() {
@@ -64,7 +64,6 @@ function App(): JSX.Element {
       await loadData();
       
       // Calculate spiritual fitness after database is ready and data is loaded
-      await calculateSpiritualFitness();
     } catch (error) {
       // Detailed error logging for diagnosis
       console.error("Database not initialized", error);
