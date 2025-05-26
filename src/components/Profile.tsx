@@ -434,7 +434,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
                 <Button 
                   size="small"
                   onClick={() => setEditingSobriety(false)}
-                  variant="outlined"
+                  variant="contained"
                   color="error"
                 >
                   Cancel
@@ -830,9 +830,10 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
             <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1 }}>
               <Button 
                 size="small"
+                variant="contained"
                 onClick={() => setEditingPersonalInfo(false)}
                 sx={{ 
-                  color: 'text.primary',
+                  color: 'error',
                   '&:hover': {
                     backgroundColor: 'transparent',
                     color: 'primary.main'
@@ -844,7 +845,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
               <Button 
                 type="submit"
                 variant="contained"
-                color="primary"
+                color="success"
                 size="small"
                 onClick={() => {
                   handleSubmit({preventDefault: () => {}});
@@ -921,7 +922,8 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
         bgcolor: 'background.paper',
         borderRadius: 2,
         border: '1px solid',
-        borderColor: 'divider'
+        borderColor: 'divider',
+        paddingTop: 4px,
       }}>
         <Typography variant="h6" sx={{ 
           color: 'text.primary', 
