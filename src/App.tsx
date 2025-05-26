@@ -24,7 +24,6 @@ function App(): JSX.Element {
   const [user, setUser] = useState<User | null>(null);
   const [activities, setActivities] = useState<Activity[]>([]);
   const [meetings, setMeetings] = useState<Meeting[]>([]);
-  const [spiritualFitness, setSpiritualFitness] = useState<number>(0);
   const [dbInitialized, setDbInitialized] = useState<boolean>(false);
   const [dbInitError, setDbInitError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);

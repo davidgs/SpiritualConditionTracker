@@ -29,7 +29,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
   const [activityDaysFilter, setActivityDaysFilter] = useState<number>(7);
   const [activityTypeFilter, setActivityTypeFilter] = useState<string>('all');
   const [scoreTimeframe, setScoreTimeframe] = useState<number>(30);
-  const [spritualFitness, setSpiritualFitness] = useState<number>(5.00);
+  const [spiritualFitness, setSpiritualFitness] = useState<number>(5.00);
   
   // Load user preference for score timeframe on component mount
   useEffect(() => {
