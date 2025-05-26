@@ -7,6 +7,7 @@ import PopoverThemeDisplay from './PopoverThemeDisplay';
 import { useAppTheme } from '../contexts/MuiThemeProvider';
 import { Capacitor } from '@capacitor/core';
 import { formatPhoneNumber, formatPhoneNumberForInput } from '../utils/phoneUtils';
+import { MuiTelInput } from 'mui-tel-input';
 import { 
   Switch, 
   FormControlLabel, 
@@ -733,24 +734,19 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
                 }}
               />
               
-              <TextField
-                fullWidth
+              <MuiTelInput
+                label="Phone Number"
                 value={phoneNumber != "Not set" ? phoneNumber : ""}
-                onChange={handlePhoneChange}
-                placeholder="Enter your phone number"
-                variant="outlined"
-                type="tel"
-                size="medium"
-                margin="none"
+                onChange={(value) => setPhoneNumber(value)}
+                defaultCountry="US"
+                forceCallingCode
+                continents={['EU', 'OC', 'NA']}
+                fullWidth
                 sx={{ 
                   mb: 2,
-                  '& .MuiOutlinedInput-root': { 
-                    height: 56,
-                    borderRadius: 2
-                  },
-                  '& .MuiOutlinedInput-input': {
-                    fontSize: 16,
-                    padding: '15px 14px'
+                  '& .MuiInputBase-root': { 
+                    height: '56px', 
+                    borderRadius: '8px',
                   }
                 }}
               />
