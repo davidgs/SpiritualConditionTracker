@@ -259,7 +259,7 @@ function App(): JSX.Element {
   }
 
   // Handle saving a new meeting
-  async function handleSaveMeeting(newMeeting) {
+  async function handleSaveMeeting(newMeeting: Omit<Meeting, 'id' | 'createdAt' | 'updatedAt'>): Promise<Meeting | null> {
     if (!window.db) {
       console.error('Database not initialized');
       return;
