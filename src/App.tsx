@@ -12,7 +12,7 @@ import ThemeBackground from './components/ThemeBackground';
 import { DEFAULT_SPIRITUAL_FITNESS_SCORE } from './utils/constants';
 import { Box, Paper } from '@mui/material';
 // Import SQLite initialization function
-import initSQLiteDatabase from './utils/sqliteLoader';
+import initSQLiteDatabase, { cleanupBrokenActivities } from './utils/sqliteLoader';
 import { User, Activity, Meeting } from './types/database';
 
 // Define valid view types
@@ -66,6 +66,10 @@ function App(): JSX.Element {
       if (!window.db || !window.db.getAll) {
         throw new Error("Database interface not properly initialized");
       }
+      
+      // Clean up broken activities before loading data
+      console.log('[ App.tsx ] Running database cleanup...');
+      await cleanupBrokenActivities();
       
       // Now load the data
       await loadData();

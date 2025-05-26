@@ -771,5 +771,52 @@ function setupGlobalDB(sqlite) {
   };
 }
 
-// Export default function
+/**
+ * Clean up activities with null date or type values
+ * This removes broken activities that can't be used in calculations
+ */
+async function cleanupBrokenActivities() {
+  console.log('[ sqliteLoader.js ] Starting cleanup of broken activities...');
+  
+  try {
+    const sqlitePlugin = window.Capacitor?.Plugins?.CapacitorSQLite;
+    if (!sqlitePlugin) {
+      throw new Error('SQLite plugin not available');
+    }
+
+    // Count broken activities first
+    const countResult = await sqlitePlugin.query({
+      database: DB_NAME,
+      statement: 'SELECT COUNT(*) as count FROM activities WHERE date IS NULL OR type IS NULL',
+      values: []
+    });
+    
+    const brokenCount = countResult.values[1]?.count || 0;
+    console.log('[ sqliteLoader.js ] Found broken activities to clean:', brokenCount);
+
+    if (brokenCount > 0) {
+      // Delete broken activities
+      const deleteResult = await sqlitePlugin.execute({
+        database: DB_NAME,
+        statements: [{
+          statement: 'DELETE FROM activities WHERE date IS NULL OR type IS NULL',
+          values: []
+        }]
+      });
+      
+      console.log('[ sqliteLoader.js ] Cleanup complete. Deleted activities:', deleteResult.changes?.changes || 0);
+      return deleteResult.changes?.changes || 0;
+    } else {
+      console.log('[ sqliteLoader.js ] No broken activities found to clean');
+      return 0;
+    }
+    
+  } catch (error) {
+    console.error('[ sqliteLoader.js ] Error during cleanup:', error);
+    return 0;
+  }
+}
+
+// Export functions
+export { cleanupBrokenActivities };
 export default initSQLiteDatabase;
