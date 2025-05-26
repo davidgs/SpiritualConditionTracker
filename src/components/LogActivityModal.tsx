@@ -802,7 +802,7 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
                   Cancel
                 </Button>
                 <Button type="submit" variant="contained" size="small" color="success">
-                  Save Activity
+                  Save
                 </Button>
               </DialogActions>
             </form>

@@ -632,6 +632,7 @@ export default function ActivityLog({ setCurrentView, onSave, onSaveMeeting, act
           </label>
           <input
             type="date"
+            fullWidth
             style={inputStyle}
             value={date}
             onChange={(e) => {
