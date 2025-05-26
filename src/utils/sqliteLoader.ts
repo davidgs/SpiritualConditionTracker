@@ -600,7 +600,18 @@ function setupGlobalDB(sqlite) {
           
           // Filter for activities in the last 30 days
           recentActivities = allActivities.filter(activity => {
+            // Handle both date formats: "2025-05-26" and "2025-05-26T18:04:42.737Z"
+            if (!activity.date || !activity.type) {
+              console.log('[ sqliteLoader.js ] Activity has null date or type, skipping:', {date: activity.date, type: activity.type});
+              return false;
+            }
+            
             const activityDate = new Date(activity.date);
+            if (isNaN(activityDate.getTime())) {
+              console.log('[ sqliteLoader.js ] Invalid date format, skipping:', activity.date);
+              return false;
+            }
+            
             return activityDate >= thirtyDaysAgo && activityDate <= now;
           });
         }
