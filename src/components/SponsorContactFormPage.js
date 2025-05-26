@@ -161,6 +161,13 @@ export default function SponsorContactFormPage({ userId, onSave, onCancel, initi
       date: isoDate // Make sure date is never null
     };
     
+    console.log("**********************************************************");
+    console.log("************* CONTACT TYPE DEBUG - FORM SUBMIT ***********");
+    console.log("**********************************************************");
+    console.log("contactData.type:", contactData.type);
+    console.log("newContact.type:", newContact.type);
+    console.log("Full newContact object:", newContact);
+    
     // Convert action items to the proper format
     // For new todos, we need to preserve all the fields for the new action items table
     const actionItems = todos.map(todo => {
@@ -277,7 +284,7 @@ export default function SponsorContactFormPage({ userId, onSave, onCancel, initi
               multiline
               rows={4}
               value={contactData.note || ''}
-              onBlur={handleChange}
+              onChange={handleChange}
               fullWidth
               placeholder="Brief description of the contact"
               sx={{ 
