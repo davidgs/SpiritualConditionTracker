@@ -722,6 +722,15 @@ function setupGlobalDB(sqlite) {
     calculateSpiritualFitnessWithTimeframe: async function(timeframe = 30) {
       try {
         console.log('[ sqliteLoader.js ] calculateSpiritualFitnessWithTimeframe called with timeframe:', timeframe);
+        
+        // Let's also try a direct SQL query to see what's really in the database
+        const directQuery = await sqlite.query({
+          database: DB_NAME,
+          statement: 'SELECT id, type, date, duration, notes, createdAt FROM activities ORDER BY createdAt DESC LIMIT 10',
+          values: []
+        });
+        console.log('[ sqliteLoader.js ] Direct SQL query result:', JSON.stringify(directQuery, null, 2));
+        
         const activities = await this.getAll('activities');
         console.log('[ sqliteLoader.js ] Retrieved activities from database:', activities.length);
         
