@@ -41,11 +41,15 @@ export async function resetDatabase() {
       return false;
     }
     
-    // Drop all tables
+    // Drop all tables - updated list from current sqliteLoader
     const tables = [
-      'users', 'activities', 'meetings', 'messages', 
-      'sobriety_milestones', 'spiritual_fitness', 'daily_inventory', 
-      'preferences', 'sponsor_contacts', 'sponsor_contact_details'
+      'sponsor_contact_action_items', // Drop this first due to foreign keys
+      'sponsor_contact_details',      // Drop this second due to foreign keys
+      'action_items',
+      'sponsor_contacts', 
+      'meetings',
+      'activities',
+      'users'
     ];
     
     console.log('[ reset-database.js: 51 ] Dropping all existing tables...');
@@ -61,14 +65,23 @@ export async function resetDatabase() {
       }
     }
     
+    // Recreate all tables using the current schema from sqliteLoader
+    console.log('[ reset-database.js: 63 ] Recreating tables with current schema...');
+    
+    // Import and call the table setup function
+    const { setupTables } = await import('./sqliteLoader.js');
+    await setupTables(sqlitePlugin);
+    
+    console.log('[ reset-database.js: 68 ] All tables recreated successfully');
+    
     // Close the connection to ensure all changes are saved
     await sqlitePlugin.close({ database: DB_NAME });
     
     // Release the connection
     await sqlitePlugin.closeConnection({ database: DB_NAME });
     
-    console.log('[ reset-database.js: 70 ] Database reset completed successfully');
-    console.log('[ reset-database.js: 71 ] Please refresh the page to recreate tables');
+    console.log('[ reset-database.js: 75 ] Database reset completed successfully');
+    console.log('[ reset-database.js: 76 ] Database is ready to use');
     
     return true;
   } catch (error) {

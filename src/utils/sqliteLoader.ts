@@ -90,7 +90,7 @@ async function initSQLiteDatabase() {
  * Create database tables if they don't exist
  * @param {Object} sqlite - SQLite plugin instance
  */
-async function setupTables(sqlite) {
+export async function setupTables(sqlite) {
   console.log('[ sqliteLoader.js ] Setting up database tables if they don\'t exist');
   
   // Create users table with all required fields - better structured
