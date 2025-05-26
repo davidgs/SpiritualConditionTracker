@@ -725,7 +725,15 @@ function setupGlobalDB(sqlite) {
         const activities = await this.getAll('activities');
         console.log('[ sqliteLoader.js ] Retrieved activities from database:', activities.length);
         
-        if (!activities || activities.length === 0) {
+        // First, run cleanup to remove broken activities
+        const cleanedCount = await cleanupBrokenActivities();
+        console.log('[ sqliteLoader.js ] Cleaned up activities:', cleanedCount);
+        
+        // Re-fetch activities after cleanup
+        const cleanActivities = await this.getAll('activities');
+        console.log('[ sqliteLoader.js ] Activities after cleanup:', cleanActivities.length);
+        
+        if (!cleanActivities || cleanActivities.length === 0) {
           console.log('[ sqliteLoader.js ] No activities found, returning base score 5');
           return 5; // Default minimum score
         }
