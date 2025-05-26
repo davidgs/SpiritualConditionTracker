@@ -841,9 +841,7 @@ async function cleanupBrokenActivities() {
       // Delete broken activities using raw SQL
       const deleteResult = await sqlitePlugin.execute({
         database: DB_NAME,
-        statements: [
-          'DELETE FROM activities WHERE date IS NULL OR type IS NULL;'
-        ]
+        statements: 'DELETE FROM activities WHERE date IS NULL OR type IS NULL;'
       });
       
       console.log('[ sqliteLoader.js ] Cleanup complete. Deleted activities:', deleteResult.changes?.changes || 0);
