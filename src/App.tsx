@@ -440,8 +440,6 @@ function App(): JSX.Element {
     }
   }
 
-  // Log the spiritual fitness value before rendering
-  console.log('App.js - Before rendering, spiritualFitness value:', spiritualFitness);
   
   return (
     <MuiThemeProvider>
