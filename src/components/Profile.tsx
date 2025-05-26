@@ -516,13 +516,13 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
             </>
           )}
         </Paper>
-      &nbsp;
       {/* App Settings */}
       <Paper sx={{ 
         p: 3, 
         mb: 3, 
         borderRadius: 2,
-        bgcolor: 'background.paper'
+        bgcolor: 'background.paper',
+        paddingTop: '4px'
       }}>
         <Typography variant="h6" sx={{ mb: 2, color: 'text.primary' }}>
           App Settings
@@ -660,7 +660,8 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
           p: 3,
           bgcolor: theme.palette.background.paper,
           borderRadius: 2,
-          border: `1px solid ${theme.palette.divider}`
+          border: `1px solid ${theme.palette.divider}`,
+          paddingTop: '4px'
         })}
       >
         <Box sx={{ mb: 2 }}>

@@ -795,10 +795,13 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
               </Box>
               
               <DialogActions sx={{ justifyContent: 'flex-end', padding: '8px 0' }}>
-                <Button onClick={onClose} color="inherit">
+                <Button onClick={onClose} 
+                  size="small"
+                  variant="contained"
+                  color="error">
                   Cancel
                 </Button>
-                <Button type="submit" variant="contained" color="primary">
+                <Button type="submit" variant="contained" size="small" color="success">
                   Save Activity
                 </Button>
               </DialogActions>
