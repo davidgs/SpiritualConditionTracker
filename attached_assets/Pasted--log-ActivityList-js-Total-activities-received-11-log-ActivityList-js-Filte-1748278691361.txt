@@ -1,0 +1,45 @@
+⚡️  [log] - [ ActivityList.js ] Total activities received: 11
+⚡️  [log] - [ ActivityList.js ] Filter params - limit: 15 filter: all maxDaysAgo: 7
+⚡️  [log] - [ ActivityList.js ] Final filtered activities count: 11
+⚡️  [log] - [ ActivityList.js ] Grouping activity with date: 2025-05-26 Type: string
+⚡️  [log] - [ ActivityList.js ] Using direct YYYY-MM-DD dateKey: 2025-05-26
+⚡️  [log] - [ ActivityList.js ] Grouping activity with date: 2025-05-26 Type: string
+⚡️  [log] - [ ActivityList.js ] Using direct YYYY-MM-DD dateKey: 2025-05-26
+⚡️  [log] - [ ActivityList.js ] Grouping activity with date: 2025-05-26 Type: string
+⚡️  [log] - [ ActivityList.js ] Using direct YYYY-MM-DD dateKey: 2025-05-26
+⚡️  [log] - [ ActivityList.js ] Grouping activity with date: 2025-05-26 Type: string
+⚡️  [log] - [ ActivityList.js ] Using direct YYYY-MM-DD dateKey: 2025-05-26
+⚡️  [log] - [ ActivityList.js ] Grouping activity with date: 2025-05-25 Type: string
+⚡️  [log] - [ ActivityList.js ] Using direct YYYY-MM-DD dateKey: 2025-05-25
+⚡️  [log] - [ ActivityList.js ] Grouping activity with date: 2025-05-25 Type: string
+⚡️  [log] - [ ActivityList.js ] Using direct YYYY-MM-DD dateKey: 2025-05-25
+⚡️  [log] - [ ActivityList.js ] Grouping activity with date: 2025-05-24 Type: string
+⚡️  [log] - [ ActivityList.js ] Using direct YYYY-MM-DD dateKey: 2025-05-24
+⚡️  [log] - [ ActivityList.js ] Grouping activity with date: 2025-05-23 Type: string
+⚡️  [log] - [ ActivityList.js ] Using direct YYYY-MM-DD dateKey: 2025-05-23
+⚡️  [log] - [ ActivityList.js ] Grouping activity with date: 2025-05-23 Type: string
+⚡️  [log] - [ ActivityList.js ] Using direct YYYY-MM-DD dateKey: 2025-05-23
+⚡️  [log] - [ ActivityList.js ] Grouping activity with date: 2025-05-22 Type: string
+⚡️  [log] - [ ActivityList.js ] Using direct YYYY-MM-DD dateKey: 2025-05-22
+⚡️  [log] - [ ActivityList.js ] Grouping activity with date: 2025-05-22 Type: string
+⚡️  [log] - [ ActivityList.js ] Using direct YYYY-MM-DD dateKey: 2025-05-22
+⚡️  [log] - Formatting date: 2025-05-26
+⚡️  [log] - Formatting date: 2025-05-26
+⚡️  [log] - Formatting date: 2025-05-26
+⚡️  [log] - Formatting date: 2025-05-26
+⚡️  [log] - Formatting date: 2025-05-26
+⚡️  [log] - Formatting date: 2025-05-25
+⚡️  [log] - Formatting date: 2025-05-25
+⚡️  [log] - Formatting date: 2025-05-25
+⚡️  [log] - Formatting date: 2025-05-24
+⚡️  [log] - Formatting date: 2025-05-24
+⚡️  [log] - Formatting date: 2025-05-23
+⚡️  [log] - Formatting date: 2025-05-23
+⚡️  [log] - Formatting date: 2025-05-23
+⚡️  [log] - Formatting date: 2025-05-22
+⚡️  [log] - Formatting date: 2025-05-22
+⚡️  [log] - Formatting date: 2025-05-22
+⚡️  [log] - [ Dashboard.js ] Dashboard initial spiritualFitness: 5
+⚡️  [log] - [ Dashboard.js ] Dashboard currentScore state: 5
+⚡️  [log] - [ Dashboard.js ] Dashboard formattedScore for display: 5.00
+⚡️  [log] - [ Dashboard.js ] Dashboard progressPercent: 5

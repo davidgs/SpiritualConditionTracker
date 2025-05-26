@@ -88,6 +88,9 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
   // Function to calculate spiritual fitness score independently
   async function calculateSpiritualFitnessScore() {
     try {
+      console.log('[ Dashboard.js ] calculateSpiritualFitnessScore called - activities available:', activities.length);
+      console.log('[ Dashboard.js ] Current scoreTimeframe:', scoreTimeframe);
+      
       // Use the SQLite-based calculation method
       if (window.db?.calculateSpiritualFitnessWithTimeframe) {
         console.log('[ Dashboard.js ] Calculating score with SQLite, timeframe:', scoreTimeframe);
@@ -97,6 +100,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
         setCurrentScore(score);
       } else {
         console.warn('[ Dashboard.js ] SQLite calculation method not available - using fallback');
+        console.log('[ Dashboard.js ] Activities passed to fallback:', activities.length);
         const fallbackScore = calculateFallbackFitness();
         setSpiritualFitness(fallbackScore);
         setCurrentScore(fallbackScore); 
@@ -174,11 +178,12 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
   const cycleTimeframe = () => {
     let newTimeframe;
     switch(scoreTimeframe) {
+      case 7: newTimeframe = 30; break;
       case 30: newTimeframe = 60; break;
       case 60: newTimeframe = 90; break;
       case 90: newTimeframe = 180; break;
       case 180: newTimeframe = 365; break;
-      default: newTimeframe = 30;
+      default: newTimeframe = 7;
     }
     
     // Save preference to database
