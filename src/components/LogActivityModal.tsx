@@ -222,7 +222,7 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
     // Show success message
     setShowSuccess(true);
     
-    // Hide success message after 1.5 seconds
+    // Hide success message after 2 seconds
     setTimeout(() => {
       setShowSuccess(false);
       
@@ -230,7 +230,7 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
       if (!showMeetingForm) {
         resetForm();
       }
-    }, 1500);
+    }, 2000);
   };
   
   // Handle meeting selection

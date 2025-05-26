@@ -629,13 +629,18 @@ function setupGlobalDB(sqlite) {
         
         // Weight different types of spiritual activities
         const typeWeights = {
-          'prayer': 10,
-          'meditation': 10,
-          'reading': 8,
-          'meeting': 15,
-          'service': 15,
-          'stepwork': 12,
-          'sponsorship': 10,
+          'prayer': 8,
+          'meditation': 8,
+          'literature': 6,
+          'reading': 6,
+          'meeting': 10,
+          'service': 9,
+          'stepwork': 10,
+          'stepWork': 10,
+          'call': 5,
+          'callSponsor': 5,
+          'callSponsee': 4,
+          'sponsorship': 8,
           'other': 2
         };
         
