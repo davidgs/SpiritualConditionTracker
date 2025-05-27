@@ -69,7 +69,7 @@ export async function resetDatabase() {
     console.log('[ reset-database.js: 63 ] Recreating tables with current schema...');
     
     // Import and call the table setup function
-    const { setupTables } = await import('./sqliteLoader.js');
+    const { setupTables } = await import('./sqliteLoader');
     await setupTables(sqlitePlugin);
     
     console.log('[ reset-database.js: 68 ] All tables recreated successfully');
