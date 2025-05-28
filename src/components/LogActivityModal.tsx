@@ -551,48 +551,57 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
                     </Box>
                   </Box>
                   
-                  <Box sx={{ marginBottom: '1rem', maxWidth: '100%' }}>
-                    <Box 
-                      component="label"
-                      sx={(theme) => ({
-                        display: 'block',
-                        fontSize: '0.875rem',
-                        fontWeight: '500',
-                        marginBottom: '0.25rem',
-                        color: theme.palette.text.secondary
-                      })}
-                    >
-                      Meeting Name
-                    </Box>
-                    <Box 
-                      component="input"
-                      type="text"
-                      value={meetingName || ''}
-                      onChange={(e) => setMeetingName(e.target.value)}
-                      placeholder={selectedMeetingId ? "Meeting selected from dropdown" : "Enter meeting name"}
-                      disabled={selectedMeetingId !== null}
-                      sx={(theme) => ({
-                        ...getTextFieldStyle(theme),
-                        ...(selectedMeetingId && {
-                          backgroundColor: theme.palette.action.disabled,
-                          color: theme.palette.text.primary,
-                          opacity: 0.8
-                        })
-                      })}
-                    />
-                    {errors.meetingName && (
+                  {/* Meeting Name field - only show if no meeting selected from dropdown */}
+                  {!selectedMeetingId && (
+                    <Box sx={{ marginBottom: '1rem', maxWidth: '100%' }}>
                       <Box 
-                        component="p" 
+                        component="label"
                         sx={(theme) => ({
-                          color: theme.palette.error.main,
-                          fontSize: '0.75rem',
-                          marginTop: '0.25rem'
+                          display: 'block',
+                          fontSize: '0.875rem',
+                          fontWeight: '500',
+                          marginBottom: '0.25rem',
+                          color: theme.palette.text.secondary
                         })}
                       >
-                        {errors.meetingName}
+                        Meeting Name
                       </Box>
-                    )}
-                  </Box>
+                      <Box 
+                        component="input"
+                        type="text"
+                        value={meetingName || ''}
+                        onChange={(e) => {
+                          const inputValue = e.target.value;
+                          setMeetingName(inputValue);
+                          
+                          // Try to match existing meeting by name
+                          if (inputValue.trim()) {
+                            const matchingMeeting = meetings.find(m => 
+                              m.name.toLowerCase() === inputValue.toLowerCase()
+                            );
+                            if (matchingMeeting) {
+                              setSelectedMeetingId(matchingMeeting.id);
+                              setMeetingName(matchingMeeting.name);
+                            }
+                          }
+                        }}
+                        placeholder="Enter meeting name"
+                        sx={(theme) => getTextFieldStyle(theme)}
+                      />
+                      {errors.meetingName && (
+                        <Box 
+                          component="p" 
+                          sx={(theme) => ({
+                            color: theme.palette.error.main,
+                            fontSize: '0.75rem',
+                            marginTop: '0.25rem'
+                          })}
+                        >
+                          {errors.meetingName}
+                        </Box>
+                      )}
+                    </Box>
+                  )}
                   
                   {/* Meeting participation checkboxes */}
                   <Box sx={{ marginBottom: '1rem' }}>
