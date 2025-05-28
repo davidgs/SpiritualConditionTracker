@@ -344,7 +344,7 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
           {activityType === 'meeting' && showMeetingForm ? (
             <MeetingForm
               onSave={handleSaveMeeting}
-              onCancel={() => setShowMeetingForm(false)}
+              onClose={() => setShowMeetingForm(false)}
               darkMode={isDarkMode}
               isOverlay={false}
             />

@@ -25,7 +25,8 @@ export default function MeetingForm({
   onClose,
   isEdit = false,
   open = true,
-  darkMode: propDarkMode
+  darkMode: propDarkMode,
+  isOverlay = false
 }) {
   // Get theme context
   const muiTheme = useTheme();
