@@ -17,29 +17,15 @@ export async function resetDatabase() {
   }
 
   try {
+    // Use the existing global database connection instead of creating a new one
     const sqlitePlugin = window.Capacitor.Plugins.CapacitorSQLite;
     
-    // Create connection if needed
-    try {
-      await sqlitePlugin.createConnection({
-        database: DB_NAME,
-        encrypted: false,
-        mode: 'no-encryption'
-      });
-      console.log('[ reset-database.js: 29 ] Database connection created');
-    } catch (error) {
-      // Connection might already exist, try to continue
-      console.log('[ reset-database.js: 32 ] Connection may already exist:', error.message);
-    }
-    
-    // Open the database
-    try {
-      await sqlitePlugin.open({ database: DB_NAME });
-      console.log('[ reset-database.js: 38 ] Database opened successfully');
-    } catch (error) {
-      console.error('[ reset-database.js: 40 ] Error opening database:', error);
+    if (!window.db || !window.dbInitialized) {
+      console.error('[ reset-database.js: 17 ] Global database not initialized');
       return false;
     }
+    
+    console.log('[ reset-database.js: 21 ] Using existing database connection');
     
     // Drop all tables - updated list from current sqliteLoader
     const tables = [
