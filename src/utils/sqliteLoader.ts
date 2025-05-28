@@ -451,6 +451,17 @@ function setupGlobalDB(sqlite) {
           values: values
         });
         
+        // Force commit to ensure data is immediately available for queries
+        try {
+          await sqlite.execute({
+            database: DB_NAME,
+            statements: 'COMMIT;'
+          });
+          console.log('[ sqliteLoader.js:458 add ] Transaction committed successfully');
+        } catch (commitError) {
+          console.warn('[ sqliteLoader.js:461 add ] Commit failed, but continuing:', commitError);
+        }
+        
         // Get the last inserted ID
         const result = await sqlite.query({
           database: DB_NAME,
