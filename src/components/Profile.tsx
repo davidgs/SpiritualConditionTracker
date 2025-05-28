@@ -171,7 +171,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
   const [editingPersonalInfo, setEditingPersonalInfo] = useState(false);
   const [showMeetingForm, setShowMeetingForm] = useState(false);
 
-  // Load user data when component mounts or user changes
+  // Load user data ONLY when user ID changes (not on every user object change)
   useEffect(() => {
     if (user) {
       setName(user.name || '');
@@ -205,7 +205,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
       setShareLastName(user.privacySettings?.shareLastName !== false);
       setUse24HourFormat(user.preferences?.use24HourFormat || false);
     }
-  }, [user]);
+  }, [user?.id]); // Only run when user ID changes, not on every user prop update
 
   // State for tracking privacy settings and preferences
   const [allowMessages, setAllowMessages] = useState(user?.privacySettings?.allowMessages !== false);
@@ -847,15 +847,13 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
                 <MenuItem value="">
                   <em>None</em>
                 </MenuItem>
-                {/* Generate menu items from meetings */}
-                {(() => {
-                  const meetings = window.db?.getAll('meetings') || [];
-                  return meetings.length > 0 
-                    ? meetings.map(meeting => (
-                        <MenuItem key={meeting.id} value={meeting.name}>{meeting.name}</MenuItem>
-                      ))
-                    : <MenuItem value="none" disabled>No saved meetings</MenuItem>;
-                })()}
+                {/* Generate menu items from meetings prop (no database queries) */}
+                {meetings && meetings.length > 0 
+                  ? meetings.map((meeting: any) => (
+                      <MenuItem key={meeting.id} value={meeting.name}>{meeting.name}</MenuItem>
+                    ))
+                  : <MenuItem value="none" disabled>No saved meetings</MenuItem>
+                }
                 <MenuItem value="add_new" sx={{ color: 'primary.main' }}>
                   <i className="fas fa-plus" style={{ marginRight: '8px', fontSize: '0.75rem' }}></i>
                   Add New Meeting
