@@ -85,33 +85,72 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
     calculateSpiritualFitnessScore();
   }, [scoreTimeframe]);
   
-  // Function to calculate spiritual fitness score independently
-  async function calculateSpiritualFitnessScore() {
-    try {
-      console.log('[ Dashboard.js: 91 ] calculateSpiritualFitnessScore called - activities available:', activities.length);
-      console.log('[ Dashboard.js: 92 ]  Activities:', activities.slice(0, 3).map(a => ({ type: a.type, date: a.date })));
-      console.log('[ Dashboard.js: 93 ] Current scoreTimeframe:', scoreTimeframe);
-      
-      // Use the SQLite-based calculation method
-      if (window.db?.calculateSpiritualFitnessWithTimeframe) {
-        console.log('[ Dashboard.js ] Calculating score with SQLite, timeframe:', scoreTimeframe);
-        const score = await window.db.calculateSpiritualFitnessWithTimeframe(scoreTimeframe);
-        console.log('[ Dashboard.js ] SQLite calculation result:', score);
-        setSpiritualFitness(score);
-        setCurrentScore(score);
-      } else {
-        console.warn('[ Dashboard.js ] SQLite calculation method not available - using fallback');
-        console.log('[ Dashboard.js ] Activities passed to fallback:', activities.length);
-        const fallbackScore = calculateFallbackFitness();
-        setSpiritualFitness(fallbackScore);
-        setCurrentScore(fallbackScore); 
+  // Function to calculate spiritual fitness score using activities from props
+  function calculateSpiritualFitnessScore() {
+    console.log('[ Dashboard.tsx:94 calculateSpiritualFitnessScore ] Called with activities:', activities.length);
+    console.log('[ Dashboard.tsx:95 calculateSpiritualFitnessScore ] Sample activities:', activities.slice(0, 3).map(a => ({ type: a.type, date: a.date })));
+    console.log('[ Dashboard.tsx:96 calculateSpiritualFitnessScore ] Timeframe:', scoreTimeframe);
+    
+    // Calculate score using activities passed from App component
+    const score = calculateFitnessFromActivities(activities, scoreTimeframe);
+    console.log('[ Dashboard.tsx:100 calculateSpiritualFitnessScore ] Calculated score:', score);
+    
+    setSpiritualFitness(score);
+    setCurrentScore(score);
+  }
+
+  // Calculate spiritual fitness from activities array (no database queries)
+  function calculateFitnessFromActivities(allActivities: Activity[], timeframeDays: number): number {
+    console.log('[ Dashboard.tsx:108 calculateFitnessFromActivities ] Starting calculation with', allActivities.length, 'activities, timeframe:', timeframeDays);
+    
+    // Base score
+    const baseScore = 5;
+    
+    // Filter activities within the timeframe
+    const now = new Date();
+    const timeframeStart = new Date(now.getTime() - (timeframeDays * 24 * 60 * 60 * 1000));
+    
+    const recentActivities = allActivities.filter(activity => {
+      if (!activity.date) {
+        console.log('[ Dashboard.tsx:118 calculateFitnessFromActivities ] Skipping activity with no date:', activity);
+        return false;
       }
-    } catch (error) {
-      console.error('[ Dashboard.js ] Error calculating spiritual fitness:', error);
-      const fallbackScore = calculateFallbackFitness();
-      setSpiritualFitness(fallbackScore);
-      setCurrentScore(fallbackScore);
+      const activityDate = new Date(activity.date);
+      const isRecent = activityDate >= timeframeStart;
+      console.log('[ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date:', activity.date, 'isRecent:', isRecent);
+      return isRecent;
+    });
+    
+    console.log('[ Dashboard.tsx:127 calculateFitnessFromActivities ] Filtered', recentActivities.length, 'recent activities');
+    
+    if (recentActivities.length === 0) {
+      console.log('[ Dashboard.tsx:130 calculateFitnessFromActivities ] No recent activities, returning base score:', baseScore);
+      return baseScore;
     }
+    
+    // Activity points (2 points per activity, max 40)
+    const activityPoints = Math.min(recentActivities.length * 2, 40);
+    
+    // Consistency points - count unique days with activities
+    const activityDays = new Set();
+    recentActivities.forEach(activity => {
+      const day = new Date(activity.date).toISOString().split('T')[0];
+      activityDays.add(day);
+    });
+    
+    const consistencyPercentage = activityDays.size / timeframeDays;
+    const consistencyPoints = Math.round(consistencyPercentage * 40); // Up to 40 points
+    
+    // Total score (capped at 100)
+    const totalScore = Math.min(100, baseScore + activityPoints + consistencyPoints);
+    
+    console.log('[ Dashboard.tsx:147 calculateFitnessFromActivities ] Calculation result:');
+    console.log('[ Dashboard.tsx:148 calculateFitnessFromActivities ] - Base score:', baseScore);
+    console.log('[ Dashboard.tsx:149 calculateFitnessFromActivities ] - Activity points:', activityPoints, '(from', recentActivities.length, 'activities)');
+    console.log('[ Dashboard.tsx:150 calculateFitnessFromActivities ] - Consistency points:', consistencyPoints, '(from', activityDays.size, 'unique days)');
+    console.log('[ Dashboard.tsx:151 calculateFitnessFromActivities ] - Total score:', totalScore);
+    
+    return totalScore;
   }
   
   // Fallback calculation function using activities data
