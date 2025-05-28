@@ -353,13 +353,14 @@ function setupGlobalDB(sqlite) {
      */
     getAll: async function(collection) {
       try {
+        console.log(`[ sqliteLoader.js:356 ] Getting all items from ${collection}`);
         // iOS has specific format requirements
         const result = await sqlite.query({
           database: DB_NAME,
           statement: `SELECT * FROM ${collection}`,
           values: []
         });
-        
+        console.log(`[ sqliteLoader.js:363 ] Result from ${collection}:`, result);
         return result.values || [];
       } catch (error) {
         console.error(`[ sqliteLoader.js ] Error getting items from ${collection}:`, error);
