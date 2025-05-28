@@ -29,18 +29,45 @@ function App(): JSX.Element {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [currentTimeframe, setCurrentTimeframe] = useState<number>(30); // Default 30 days
 
+  // Filter activities by timeframe
+  function filterActivitiesByTimeframe(allActivities: Activity[], timeframeDays: number): Activity[] {
+    const now = new Date();
+    const timeframeStart = new Date(now.getTime() - (timeframeDays * 24 * 60 * 60 * 1000));
+    
+    return allActivities.filter(activity => {
+      if (!activity.date) return false;
+      const activityDate = new Date(activity.date);
+      return activityDate >= timeframeStart;
+    });
+  }
+
+  // Function to reload activities when timeframe changes
+  async function handleTimeframeChange(newTimeframe: number) {
+    console.log(`[ App.tsx:43 handleTimeframeChange ] Changing timeframe from ${currentTimeframe} to ${newTimeframe} days`);
+    setCurrentTimeframe(newTimeframe);
+    
+    // Reload activities for new timeframe
+    if (dbInitialized && window.db) {
+      try {
+        const allActivitiesData = await window.db.getAll('activities');
+        if (allActivitiesData && allActivitiesData.length > 0) {
+          const filteredActivities = filterActivitiesByTimeframe(allActivitiesData, newTimeframe);
+          console.log(`[ App.tsx:51 handleTimeframeChange ] Loaded ${filteredActivities.length} activities within ${newTimeframe} days`);
+          setActivities(filteredActivities);
+        }
+      } catch (error) {
+        console.error('[ App.tsx:55 handleTimeframeChange ] Error reloading activities:', error);
+      }
+    }
+  }
+
   // Load data when component mounts
   useEffect(() => {
     // Initialize database first, then load data
     initDatabaseAndLoadData();
   }, []);
 
-  // Calculate spiritual fitness score when activities change AND database is initialized
-  // useEffect(() => {
-  //   if (dbInitialized && activities.length > 0) {
-  //     calculateSpiritualFitness();
-  //   }
-  // }, [activities, dbInitialized]);
+  // Removed old calculateSpiritualFitness - now handled by Dashboard using activities from state
   
   // Initialize the database and load data
   async function initDatabaseAndLoadData() {
@@ -229,9 +256,7 @@ function App(): JSX.Element {
   // Messaging-related functionality has been removed
 
   // Dashboard handles spiritual fitness calculation - keeping this for interface compatibility
-  async function calculateSpiritualFitness() {
-    return 0; // Dashboard calculates the actual value
-  }
+  // Spiritual fitness calculation now handled entirely by Dashboard component using activities from state
 
   // Handle saving a new activity
   async function handleSaveActivity(newActivity: Omit<Activity, 'id' | 'createdAt' | 'updatedAt'>): Promise<Activity | null> {
@@ -400,6 +425,8 @@ function App(): JSX.Element {
             meetings={meetings}
             onSave={handleSaveActivity}
             onSaveMeeting={handleSaveMeeting}
+            onTimeframeChange={handleTimeframeChange}
+            currentTimeframe={currentTimeframe}
           />
         );
       case 'meetings':

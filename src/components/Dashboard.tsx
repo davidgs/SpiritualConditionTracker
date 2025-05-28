@@ -16,9 +16,11 @@ interface DashboardProps {
   meetings: Meeting[];
   onSave: (activity: Omit<Activity, 'id' | 'createdAt' | 'updatedAt'>) => void;
   onSaveMeeting: (meeting: Omit<Meeting, 'id' | 'createdAt' | 'updatedAt'>) => void;
+  onTimeframeChange: (timeframe: number) => void;
+  currentTimeframe: number;
 }
 
-export default function Dashboard({ setCurrentView, user, activities, meetings = [], onSave, onSaveMeeting }: DashboardProps) {
+export default function Dashboard({ setCurrentView, user, activities, meetings = [], onSave, onSaveMeeting, onTimeframeChange, currentTimeframe }: DashboardProps) {
   // Get theme from MUI theme provider
   const { mode } = useAppTheme();
   const darkMode = mode === 'dark';
@@ -28,21 +30,9 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
   const [showActivityModal, setShowActivityModal] = useState<boolean>(false);
   const [activityDaysFilter, setActivityDaysFilter] = useState<number>(7);
   const [activityTypeFilter, setActivityTypeFilter] = useState<string>('all');
-  const [scoreTimeframe, setScoreTimeframe] = useState<number>(30);
+  // Use timeframe from props instead of local state
+  const scoreTimeframe = currentTimeframe;
   const [spiritualFitness, setSpiritualFitness] = useState<number>(5);
-  
-  // Load user preference for score timeframe on component mount
-  useEffect(() => {
-    async function loadScoreTimeframe() {
-      if (window.db?.getPreference) {
-        const savedTimeframe = await window.db.getPreference('scoreTimeframe');
-        if (savedTimeframe) {
-          setScoreTimeframe(parseInt(savedTimeframe, 10));
-        }
-      }
-    }
-    loadScoreTimeframe();
-  }, []);
   const [currentScore, setCurrentScore] = useState<number>(0);
   
   const modalRef = useRef(null);
@@ -295,7 +285,8 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
       window.db.setPreference('scoreTimeframe', newTimeframe);
     }
     
-    setScoreTimeframe(newTimeframe);
+    // Call the parent's timeframe change handler
+    onTimeframeChange(newTimeframe);
   };
   // Use the shared date formatting function from utils
   const formatDate = formatDateForDisplay;
