@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useTheme } from '@mui/material/styles';
 import ThemeSelector from './ThemeSelector';
 import MeetingFormDialog from './MeetingFormDialog';
@@ -293,14 +293,18 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
     onUpdate(updates, { redirectToDashboard: false });
   };
 
-  // Calculate sobriety information if user has a sobriety date
-  const sobrietyDays = sobrietyDate 
-    ? window.db?.calculateSobrietyDays(sobrietyDate) || 0
-    : 0;
+  // Calculate sobriety information only when sobriety date changes
+  const sobrietyDays = useMemo(() => {
+    return sobrietyDate && user?.sobrietyDate 
+      ? window.db?.calculateSobrietyDays(user.sobrietyDate) || 0
+      : 0;
+  }, [user?.sobrietyDate]);
   
-  const sobrietyYears = sobrietyDate 
-    ? window.db?.calculateSobrietyYears(sobrietyDate, 2) || 0
-    : 0;
+  const sobrietyYears = useMemo(() => {
+    return sobrietyDate && user?.sobrietyDate 
+      ? window.db?.calculateSobrietyYears(user.sobrietyDate, 2) || 0
+      : 0;
+  }, [user?.sobrietyDate]);
     
   // Removed automatic date updating that was interfering with manual saves
     
