@@ -726,7 +726,7 @@ function setupGlobalDB(sqlite) {
         // Let's also try a direct SQL query to see what's really in the database
         const directQuery = await sqlite.query({
           database: DB_NAME,
-          statement: 'SELECT id, type, date, duration, notes, createdAt FROM activities ORDER BY createdAt DESC LIMIT 10',
+          statement: 'SELECT * FROM activities ORDER BY createdAt DESC',
           values: []
         });
         console.log('[ sqliteLoader.js ] Direct SQL query result:', JSON.stringify(directQuery, null, 2));
