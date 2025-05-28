@@ -152,11 +152,11 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
     if (!date) newErrors.date = 'Date is required';
     
     // Validate activity-specific fields
-    if (activityType === 'literature' && !literatureTitle.trim()) {
+    if (activityType === 'literature' && !(literatureTitle || '').trim()) {
       newErrors.literatureTitle = 'Literature title is required';
     }
     
-    if (activityType === 'meeting' && !showMeetingForm && !meetingName.trim()) {
+    if (activityType === 'meeting' && !showMeetingForm && !selectedMeetingId && !(meetingName || '').trim()) {
       newErrors.meetingName = 'Meeting name is required';
     }
     
