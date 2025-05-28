@@ -88,9 +88,9 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
   // Function to calculate spiritual fitness score independently
   async function calculateSpiritualFitnessScore() {
     try {
-      console.log('[ Dashboard.js ] calculateSpiritualFitnessScore called - activities available:', activities.length);
-      console.log('[ Dashboard.js ] Sample activities:', activities.slice(0, 3).map(a => ({ type: a.type, date: a.date })));
-      console.log('[ Dashboard.js ] Current scoreTimeframe:', scoreTimeframe);
+      console.log('[ Dashboard.js: 91 ] calculateSpiritualFitnessScore called - activities available:', activities.length);
+      console.log('[ Dashboard.js: 92 ]  Activities:', activities.slice(0, 3).map(a => ({ type: a.type, date: a.date })));
+      console.log('[ Dashboard.js: 93 ] Current scoreTimeframe:', scoreTimeframe);
       
       // Use the SQLite-based calculation method
       if (window.db?.calculateSpiritualFitnessWithTimeframe) {

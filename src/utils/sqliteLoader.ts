@@ -604,7 +604,8 @@ function setupGlobalDB(sqlite) {
         let recentActivities = activities;
         if (!recentActivities) {
           const allActivities = await this.getAll('activities');
-          
+          console.log('[ sqliteLoader.js: 607 ] Retrieved activities from database:', allActivities.length);
+          console.log('[ sqliteLoader.js: 608 ] Activities:', allActivities.slice(0, 3).map(a => ({ type: a.type, date: a.date })));
           // Define time period (last 30 days)
           const now = new Date();
           const thirtyDaysAgo = new Date();
@@ -613,7 +614,7 @@ function setupGlobalDB(sqlite) {
           // Filter for activities in the last 30 days
           recentActivities = allActivities.filter(activity => {
             // Debug: Log each activity being processed
-            console.log('[ sqliteLoader.js ] Processing activity:', {
+            console.log('[ sqliteLoader.js: 617 ] Processing activity:', {
               id: activity.id,
               type: activity.type, 
               date: activity.date,
@@ -623,14 +624,14 @@ function setupGlobalDB(sqlite) {
             
             // Handle both date formats: "2025-05-26" and "2025-05-26T18:04:42.737Z"
             if (!activity.date || !activity.type) {
-              console.log('[ sqliteLoader.js ] Activity has null date or type, skipping:', {date: activity.date, type: activity.type});
+              console.log('[ sqliteLoader.js: 627 ] Activity has null date or type, skipping:', {date: activity.date, type: activity.type});
               return false;
             }
             
             // All dates should be full ISO format
             const activityDate = new Date(activity.date);
             
-            console.log('[ sqliteLoader.js ] Parsed date:', {
+            console.log('[ sqliteLoader.js: 634 ] Parsed date:', {
               original: activity.date,
               parsed: activityDate,
               isValid: !isNaN(activityDate.getTime()),
@@ -730,10 +731,10 @@ function setupGlobalDB(sqlite) {
           statement: 'SELECT * FROM activities ORDER BY createdAt DESC',
           values: []
         });
-        console.log('[ sqliteLoader.js ] Direct SQL query result:', JSON.stringify(directQuery, null, 2));
+        console.log('[ sqliteLoader.js:733 ] Direct SQL query result:', JSON.stringify(directQuery, null, 2));
         
         const activities = await this.getAll('activities');
-        console.log('[ sqliteLoader.js ] Retrieved activities from database:', activities.length);
+        console.log('[ sqliteLoader.js: 737 ] Retrieved activities from database:', activities.length);
         
         if (!activities || activities.length === 0) {
           console.log('[ sqliteLoader.js ] No activities found, returning base score 5');
