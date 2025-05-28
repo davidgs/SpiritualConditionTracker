@@ -567,10 +567,18 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
                     <Box 
                       component="input"
                       type="text"
-                      value={meetingName}
+                      value={meetingName || ''}
                       onChange={(e) => setMeetingName(e.target.value)}
-                      placeholder="Enter meeting name"
-                      sx={(theme) => getTextFieldStyle(theme)}
+                      placeholder={selectedMeetingId ? "Meeting selected from dropdown" : "Enter meeting name"}
+                      disabled={selectedMeetingId !== null}
+                      sx={(theme) => ({
+                        ...getTextFieldStyle(theme),
+                        ...(selectedMeetingId && {
+                          backgroundColor: theme.palette.action.disabled,
+                          color: theme.palette.text.primary,
+                          opacity: 0.8
+                        })
+                      })}
                     />
                     {errors.meetingName && (
                       <Box 
