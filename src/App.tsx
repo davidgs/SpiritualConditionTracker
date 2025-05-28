@@ -446,6 +446,8 @@ function App(): JSX.Element {
             setCurrentView={setCurrentView}
             user={user}
             onUpdate={handleUpdateProfile}
+            meetings={meetings}
+            onSaveMeeting={handleSaveMeeting}
           />
         );
       case 'stepwork':

@@ -25,7 +25,15 @@ import {
 } from '@mui/material';
 import { resetDatabase } from '../utils/reset-database'
 
-export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
+interface ProfileProps {
+  setCurrentView: (view: string) => void;
+  user: any;
+  onUpdate: (updates: any, options?: any) => Promise<any>;
+  meetings: any[];
+  onSaveMeeting: (meeting: any) => Promise<any>;
+}
+
+export default function Profile({ setCurrentView, user, onUpdate, meetings, onSaveMeeting }: ProfileProps) {
   // Handle Reset All Data button click
   const handleResetAllData = async () => {
     // First confirmation dialog
@@ -170,7 +178,23 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
       setLastName(user.lastName || '');
       setPhoneNumber(user.phoneNumber || '');
       setEmail(user.email || '');
-      setSobrietyDate(user.sobrietyDate ? user.sobrietyDate.split('T')[0] : '');
+      // Fix sobriety date handling to prevent off-by-one errors
+      if (user.sobrietyDate) {
+        // If it's already in YYYY-MM-DD format, use as-is
+        if (user.sobrietyDate.includes('T')) {
+          // Convert from ISO format, keeping the date part only
+          const date = new Date(user.sobrietyDate);
+          const year = date.getFullYear();
+          const month = String(date.getMonth() + 1).padStart(2, '0');
+          const day = String(date.getDate()).padStart(2, '0');
+          setSobrietyDate(`${year}-${month}-${day}`);
+        } else {
+          // Already in YYYY-MM-DD format
+          setSobrietyDate(user.sobrietyDate);
+        }
+      } else {
+        setSobrietyDate('');
+      }
       // Convert homeGroup to array if it's a string, or use empty array
       const homeGroupsData = user.homeGroups ? user.homeGroups : 
                            (user.homeGroup ? [user.homeGroup] : []);
@@ -205,12 +229,24 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
   };
   
   // Handle adding a new meeting from meeting form
-  const handleAddMeeting = (meeting) => {
+  const handleAddMeeting = async (meeting: any) => {
     setShowMeetingForm(false);
     if (meeting && meeting.name) {
-      // Add the new meeting to homeGroups list if it's not already there
-      if (!homeGroups.includes(meeting.name)) {
-        setHomeGroups([...homeGroups, meeting.name]);
+      try {
+        // Save the meeting through the centralized function
+        const savedMeeting = await onSaveMeeting(meeting);
+        if (savedMeeting) {
+          // Add the new meeting to homeGroups list if it's not already there
+          if (!homeGroups.includes(meeting.name)) {
+            setHomeGroups([...homeGroups, meeting.name]);
+          }
+        }
+      } catch (error) {
+        console.error('[Profile.tsx:handleAddMeeting] Error saving meeting:', error);
+        // Still add to homeGroups even if save failed, for better UX
+        if (!homeGroups.includes(meeting.name)) {
+          setHomeGroups([...homeGroups, meeting.name]);
+        }
       }
     }
   };
@@ -830,23 +866,16 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings }) {
               </TextField>
             </Box>
             
-            <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1 }}>
+            <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
               <Button 
-                size="small"
                 variant="contained"
+                color="error"
+                size="small"
                 onClick={() => setEditingPersonalInfo(false)}
-                sx={{ 
-                  color: 'error',
-                  '&:hover': {
-                    backgroundColor: 'transparent',
-                    color: 'primary.main'
-                  }
-                }}
               >
                 Cancel
               </Button>
               <Button 
-                type="submit"
                 variant="contained"
                 color="success"
                 size="small"
