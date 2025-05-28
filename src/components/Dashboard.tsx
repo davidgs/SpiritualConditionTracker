@@ -131,16 +131,17 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
     const consistencyPercentage = activityDays.size / timeframeDays;
     const consistencyPoints = Math.round(consistencyPercentage * 40); // Up to 40 points
     
-    // Total score (capped at 100)
+    // Total score (capped at 100, with decimal precision)
     const totalScore = Math.min(100, baseScore + activityPoints + consistencyPoints);
+    const preciseScore = Math.round(totalScore * 10) / 10; // Round to 1 decimal place
     
     console.log('[ Dashboard.tsx:147 calculateFitnessFromActivities ] Calculation result:');
     console.log('[ Dashboard.tsx:148 calculateFitnessFromActivities ] - Base score:', baseScore);
     console.log('[ Dashboard.tsx:149 calculateFitnessFromActivities ] - Activity points:', activityPoints, '(from', recentActivities.length, 'activities)');
     console.log('[ Dashboard.tsx:150 calculateFitnessFromActivities ] - Consistency points:', consistencyPoints, '(from', activityDays.size, 'unique days)');
-    console.log('[ Dashboard.tsx:151 calculateFitnessFromActivities ] - Total score:', totalScore);
+    console.log('[ Dashboard.tsx:151 calculateFitnessFromActivities ] - Total score:', preciseScore);
     
-    return totalScore;
+    return preciseScore;
   }
   
   // Fallback calculation function using activities data

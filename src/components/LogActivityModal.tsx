@@ -225,13 +225,14 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
     // Show success message
     setShowSuccess(true);
     
-    // Hide success message after 2 seconds
+    // Hide success message and close modal after 2 seconds
     setTimeout(() => {
       setShowSuccess(false);
       
       // Only close the dialog on success if it's not a meeting form
       if (!showMeetingForm) {
         resetForm();
+        onClose(); // Auto-close the modal
       }
     }, 2000);
   };
