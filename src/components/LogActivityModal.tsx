@@ -187,11 +187,11 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
     
     // Add activity-specific fields
     if (activityType === 'literature') {
-      newActivity.literatureTitle = literatureTitle.trim();
+      newActivity.literatureTitle = (literatureTitle || '').trim();
     }
     
     if (activityType === 'meeting') {
-      newActivity.meetingName = meetingName.trim();
+      newActivity.meetingName = (meetingName || '').trim();
       newActivity.wasChair = wasChair;
       newActivity.wasShare = wasShare;
       newActivity.wasSpeaker = wasSpeaker;
