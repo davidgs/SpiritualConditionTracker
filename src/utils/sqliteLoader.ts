@@ -444,23 +444,14 @@ function setupGlobalDB(sqlite) {
         console.log('[ sqliteLoader.js ] SQL keys:', keys);
         console.log('[ sqliteLoader.js ] SQL values:', values);
         
-        // Execute the SQL insert
+        // Execute the SQL insert (autocommit mode - automatically commits)
         await sqlite.execute({
           database: DB_NAME,
           statements: `INSERT INTO ${collection} (${keys.join(', ')}) VALUES (${placeholders})`,
           values: values
         });
         
-        // Force commit to ensure data is immediately available for queries
-        try {
-          await sqlite.execute({
-            database: DB_NAME,
-            statements: 'COMMIT;'
-          });
-          console.log('[ sqliteLoader.js:458 add ] Transaction committed successfully');
-        } catch (commitError) {
-          console.warn('[ sqliteLoader.js:461 add ] Commit failed, but continuing:', commitError);
-        }
+        console.log('[ sqliteLoader.js:453 add ] Insert completed in autocommit mode');
         
         // Get the last inserted ID
         const result = await sqlite.query({
