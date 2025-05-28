@@ -302,14 +302,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
     ? window.db?.calculateSobrietyYears(sobrietyDate, 2) || 0
     : 0;
     
-  // Ensure sobriety date is in correct format for display and calculations
-  useEffect(() => {
-    if (sobrietyDate && user?.sobrietyDate !== sobrietyDate && !editingSobriety) {
-      // Format has changed - update in database to ensure consistency
-      const updates = { sobrietyDate };
-      onUpdate(updates, { redirectToDashboard: false });
-    }
-  }, [sobrietyDate, user?.sobrietyDate]);
+  // Removed automatic date updating that was interfering with manual saves
     
   // State for editing sobriety date
   const [editingSobriety, setEditingSobriety] = useState(false);
