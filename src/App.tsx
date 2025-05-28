@@ -27,6 +27,7 @@ function App(): JSX.Element {
   const [dbInitialized, setDbInitialized] = useState<boolean>(false);
   const [dbInitError, setDbInitError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [currentTimeframe, setCurrentTimeframe] = useState<number>(30); // Default 30 days
 
   // Load data when component mounts
   useEffect(() => {
@@ -198,10 +199,12 @@ function App(): JSX.Element {
       // Set the user data
       setUser(userData);
 
-      // Get activities - using async version
-      const activitiesData = await window.db.getAll('activities');
-      if (activitiesData && activitiesData.length > 0) {
-        setActivities(activitiesData);
+      // Get activities within current timeframe - using async version
+      const allActivitiesData = await window.db.getAll('activities');
+      if (allActivitiesData && allActivitiesData.length > 0) {
+        const filteredActivities = filterActivitiesByTimeframe(allActivitiesData, currentTimeframe);
+        console.log(`[ App.tsx:218 loadData ] Loaded ${filteredActivities.length} activities within ${currentTimeframe} days (from ${allActivitiesData.length} total)`);
+        setActivities(filteredActivities);
       } else {
         console.log("No activities found in database");
         setActivities([]);
