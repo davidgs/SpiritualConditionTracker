@@ -293,17 +293,22 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
     onUpdate(updates, { redirectToDashboard: false });
   };
 
-  // Calculate sobriety information only when sobriety date changes
+  // Calculate sobriety information using pure JavaScript (no database calls)
   const sobrietyDays = useMemo(() => {
-    return sobrietyDate && user?.sobrietyDate 
-      ? window.db?.calculateSobrietyDays(user.sobrietyDate) || 0
-      : 0;
+    if (!user?.sobrietyDate) return 0;
+    const sobrietyDate = new Date(user.sobrietyDate);
+    const today = new Date();
+    const diffTime = Math.abs(today.getTime() - sobrietyDate.getTime());
+    return Math.floor(diffTime / (1000 * 60 * 60 * 24));
   }, [user?.sobrietyDate]);
   
   const sobrietyYears = useMemo(() => {
-    return sobrietyDate && user?.sobrietyDate 
-      ? window.db?.calculateSobrietyYears(user.sobrietyDate, 2) || 0
-      : 0;
+    if (!user?.sobrietyDate) return 0;
+    const sobrietyDate = new Date(user.sobrietyDate);
+    const today = new Date();
+    const diffTime = Math.abs(today.getTime() - sobrietyDate.getTime());
+    const years = diffTime / (1000 * 60 * 60 * 24 * 365.25);
+    return Math.round(years * 100) / 100; // Round to 2 decimal places
   }, [user?.sobrietyDate]);
     
   // Removed automatic date updating that was interfering with manual saves
