@@ -476,14 +476,26 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
                   size="small"
                   onClick={() => setEditingSobriety(false)}
                   variant="contained"
-                  color="error"
+                  sx={{ 
+                    backgroundColor: '#ef4444',
+                    color: '#ffffff',
+                    '&:hover': {
+                      backgroundColor: '#dc2626'
+                    }
+                  }}
                 >
                   Cancel
                 </Button>
                 <Button 
                   size="small"
                   variant="contained"
-                  color="success"
+                  sx={{ 
+                    backgroundColor: '#22c55e',
+                    color: '#ffffff',
+                    '&:hover': {
+                      backgroundColor: '#16a34a'
+                    }
+                  }}
                   onClick={() => {
                     if (sobrietyDate) {
                       // Update the sobriety date directly
@@ -870,19 +882,31 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
             <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
               <Button 
                 variant="contained"
-                color="error"
                 size="small"
                 onClick={() => setEditingPersonalInfo(false)}
+                sx={{ 
+                  backgroundColor: '#ef4444',
+                  color: '#ffffff',
+                  '&:hover': {
+                    backgroundColor: '#dc2626'
+                  }
+                }}
               >
                 Cancel
               </Button>
               <Button 
                 variant="contained"
-                color="success"
                 size="small"
                 onClick={() => {
                   handleSubmit({preventDefault: () => {}});
                   setEditingPersonalInfo(false);
+                }}
+                sx={{ 
+                  backgroundColor: '#22c55e',
+                  color: '#ffffff',
+                  '&:hover': {
+                    backgroundColor: '#16a34a'
+                  }
                 }}
               >
                 Save
