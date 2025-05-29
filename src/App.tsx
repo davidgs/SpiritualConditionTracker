@@ -412,17 +412,64 @@ function App(): JSX.Element {
     }
   }
 
-  // Handle resetting all data - clears both database and React state
-  function handleResetAllData() {
-    console.log('[ App.tsx ] Resetting all React state variables');
+  // Handle resetting all data - clears profile data but keeps user ID
+  async function handleResetAllData() {
+    console.log('[ App.tsx ] Resetting all data while preserving user ID');
     
-    // Reset all state to initial values
-    setUser(null);
-    setActivities([]);
-    setMeetings([]);
-    setCurrentTimeframe(30);
-    
-    console.log('[ App.tsx ] All React state variables have been reset');
+    if (!dbInitialized || !window.db || !currentUserId) {
+      console.error('[ App.tsx ] Cannot reset data - database not initialized or no user ID');
+      return;
+    }
+
+    try {
+      // Reset user profile to empty values but keep the ID
+      const today = new Date().toISOString().split('T')[0];
+      const resetUserData = {
+        name: '',
+        lastName: '',
+        phoneNumber: '',
+        email: '',
+        sobrietyDate: today, // Reset to today's date
+        homeGroups: JSON.stringify([]),
+        privacySettings: JSON.stringify({
+          allowMessages: true,
+          shareLastName: true
+        }),
+        preferences: JSON.stringify({
+          use24HourFormat: false
+        }),
+        updatedAt: new Date().toISOString()
+      };
+
+      // Update the user in database with reset values
+      const updatedUser = await window.db.update('users', currentUserId, resetUserData);
+      console.log('[ App.tsx ] User profile reset to default values');
+
+      // Clear activities and meetings from database
+      const allActivities = await window.db.getAll('activities');
+      for (const activity of allActivities) {
+        if (activity.id) {
+          await window.db.remove('activities', activity.id);
+        }
+      }
+
+      const allMeetings = await window.db.getAll('meetings');
+      for (const meeting of allMeetings) {
+        if (meeting.id) {
+          await window.db.remove('meetings', meeting.id);
+        }
+      }
+
+      // Reset React state to match database
+      setUser(updatedUser);
+      setActivities([]);
+      setMeetings([]);
+      setCurrentTimeframe(30);
+      
+      console.log('[ App.tsx ] All data reset successfully, user ID preserved:', currentUserId);
+    } catch (error) {
+      console.error('[ App.tsx ] Error resetting data:', error);
+    }
   }
 
   // Privacy settings function removed - was primarily used for Nearby features
