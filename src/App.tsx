@@ -369,24 +369,32 @@ function App(): JSX.Element {
       let updatedUser;
       
       try {
-        if (!user || !user.id) {
-          // If no user exists yet, create one
-          console.log('[ App.tsx: 374 ] Creating new user with profile data', updates);
+        // First, check if any users exist in the database
+        const existingUsers = await window.db.getAll('users');
+        console.log('[ App.tsx: 374 ] Existing users in database:', existingUsers.length);
+        
+        if (existingUsers.length === 0) {
+          // No users exist, create the first one
+          console.log('[ App.tsx: 376 ] Creating first user with profile data', updates);
           updatedUser = await window.db.add('users', {
             ...updates,
-            id: 1,
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString()
           });
+          console.log('[ App.tsx: 381 ] First user created:', updatedUser);
         } else {
-          // Update existing user
-          updatedUser = await window.db.update('users', user.id, {
+          // Users exist, update the first one (or the current user if available)
+          const userToUpdate = user && user.id ? user : existingUsers[0];
+          console.log('[ App.tsx: 384 ] Updating existing user:', userToUpdate.id);
+          
+          updatedUser = await window.db.update('users', userToUpdate.id, {
             ...updates,
             updatedAt: new Date().toISOString()
           });
+          console.log('[ App.tsx: 389 ] User updated:', updatedUser);
         }
       } catch (dbError) {
-        console.error('[ App.tsx: 389 ] Database error updating user:', dbError);
+        console.error('[ App.tsx: 392 ] Database error updating user:', dbError);
         // Fallback to using the current user data plus updates to avoid UI disruption
         updatedUser = { ...user, ...updates };
       }
