@@ -164,8 +164,7 @@ function App(): JSX.Element {
       console.error("[ App.js ] Database initialization error:", error);
       setDbInitError("Database initialization failed. Using fallback mode.");
       
-      // Set a default spiritual fitness score to prevent blank display
-      setSpiritualFitness(DEFAULT_SPIRITUAL_FITNESS_SCORE);
+      // Note: Spiritual fitness will be calculated by Dashboard component
     } finally {
       // Always clear loading state no matter what
       setIsLoading(false);
@@ -246,8 +245,7 @@ function App(): JSX.Element {
         setMeetings([]);
       }
 
-      // Calculate spiritual fitness
-      calculateSpiritualFitness();
+      // Note: Spiritual fitness is calculated by Dashboard component using activities
     } catch (error) {
       console.error("Error loading data:", error);
     }
