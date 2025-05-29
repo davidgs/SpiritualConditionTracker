@@ -83,6 +83,14 @@ const server = http.createServer((req, res) => {
   // Determine the file path
   let filePath = path.join(__dirname, pathname);
   
+  // Special handling for bundle files - check dist directory first
+  if (pathname.endsWith('.bundle.js') || pathname.endsWith('.bundle.js.map')) {
+    const distPath = path.join(__dirname, 'dist', pathname);
+    if (fs.existsSync(distPath)) {
+      filePath = distPath;
+    }
+  }
+  
   // Check if file exists, otherwise serve index.html for SPA routing
   if (!fs.existsSync(filePath)) {
     console.log(`File not found, serving index.html instead of ${pathname}`);
