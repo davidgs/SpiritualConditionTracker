@@ -508,6 +508,7 @@ function App(): JSX.Element {
             user={user}
             onUpdate={handleUpdateProfile}
             meetings={meetings}
+            currentUserId={currentUserId}
             onSaveMeeting={handleSaveMeeting}
             onResetAllData={handleResetAllData}
           />

@@ -35,9 +35,10 @@ interface ProfileProps {
   meetings: any[];
   onSaveMeeting: (meeting: any) => Promise<any>;
   onResetAllData?: () => void;
+  currentUserId: number | null;
 }
 
-export default function Profile({ setCurrentView, user, onUpdate, meetings, onSaveMeeting, onResetAllData }: ProfileProps) {
+export default function Profile({ setCurrentView, user, onUpdate, meetings, onSaveMeeting, onResetAllData, currentUserId }: ProfileProps) {
   // Handle Reset All Data button click
   const handleResetAllData = async () => {
     // First confirmation dialog
