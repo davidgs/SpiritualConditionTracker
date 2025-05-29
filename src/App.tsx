@@ -28,6 +28,7 @@ function App(): JSX.Element {
   const [dbInitError, setDbInitError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [currentTimeframe, setCurrentTimeframe] = useState<number>(30); // Default 30 days
+  const [currentUserId, setCurrentUserId] = useState<number | null>(null);
 
   // Filter activities by timeframe
   function filterActivitiesByTimeframe(allActivities: Activity[], timeframeDays: number): Activity[] {
@@ -223,8 +224,12 @@ function App(): JSX.Element {
         userData = await window.db.add('users', newUser);
       }
       
-      // Set the user data
+      // Set the user data and current user ID
       setUser(userData);
+      if (userData && userData.id) {
+        setCurrentUserId(userData.id);
+        console.log('[ App.tsx ] Current user ID set to:', userData.id);
+      }
 
       // Get activities within current timeframe - using async version
       const allActivitiesData = await window.db.getAll('activities');
@@ -369,30 +374,17 @@ function App(): JSX.Element {
       let updatedUser;
       
       try {
-        // First, check if any users exist in the database
-        const existingUsers = await window.db.getAll('users');
-        console.log('[ App.tsx: 374 ] Existing users in database:', existingUsers.length);
-        
-        if (existingUsers.length === 0) {
-          // No users exist, create the first one
-          console.log('[ App.tsx: 376 ] Creating first user with profile data', updates);
-          updatedUser = await window.db.add('users', {
-            ...updates,
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString()
-          });
-          console.log('[ App.tsx: 381 ] First user created:', updatedUser);
-        } else {
-          // Users exist, update the first one (or the current user if available)
-          const userToUpdate = user && user.id ? user : existingUsers[0];
-          console.log('[ App.tsx: 384 ] Updating existing user:', userToUpdate.id);
-          
-          updatedUser = await window.db.update('users', userToUpdate.id, {
-            ...updates,
-            updatedAt: new Date().toISOString()
-          });
-          console.log('[ App.tsx: 389 ] User updated:', updatedUser);
+        if (!currentUserId) {
+          console.error('[ App.tsx ] No current user ID available for update');
+          return null;
         }
+        
+        console.log('[ App.tsx ] Updating user with ID:', currentUserId);
+        updatedUser = await window.db.update('users', currentUserId, {
+          ...updates,
+          updatedAt: new Date().toISOString()
+        });
+        console.log('[ App.tsx ] User updated:', updatedUser);
       } catch (dbError) {
         console.error('[ App.tsx: 392 ] Database error updating user:', dbError);
         // Fallback to using the current user data plus updates to avoid UI disruption

@@ -73,6 +73,13 @@ async function initSQLiteDatabase() {
     setupGlobalDB(sqlitePlugin);
     console.log('[ sqliteLoader.js ] Database setup complete, global db interface ready');
 
+    // Step 5: Ensure default user exists
+    try {
+      await ensureDefaultUser(sqlitePlugin);
+    } catch (error) {
+      console.error('[ sqliteLoader.js ] Error creating default user:', error);
+    }
+
     return sqlitePlugin;
   } catch (error) {
     console.error('[ sqliteLoader.js ] Error initializing Capacitor SQLite:', error);
@@ -82,6 +89,78 @@ async function initSQLiteDatabase() {
       stack: error.stack
     }, null, 2));
     
+    throw error;
+  }
+}
+
+/**
+ * Ensure a default user exists in the database
+ * @param {Object} sqlite - SQLite plugin instance
+ */
+async function ensureDefaultUser(sqlite) {
+  console.log('[ sqliteLoader.js ] Checking if default user exists...');
+  
+  try {
+    // Check if any users exist
+    const result = await sqlite.query({
+      database: DB_NAME,
+      statement: 'SELECT COUNT(*) as count FROM users',
+      values: []
+    });
+    
+    let userCount = 0;
+    if (result.values && result.values.length > 0) {
+      // Handle iOS format
+      if (result.values[0] && result.values[0].ios_columns) {
+        userCount = result.values[1]?.count || 0;
+      } else {
+        userCount = result.values[0]?.count || 0;
+      }
+    }
+    
+    console.log('[ sqliteLoader.js ] Existing user count:', userCount);
+    
+    if (userCount === 0) {
+      console.log('[ sqliteLoader.js ] No users found, creating default user...');
+      
+      const today = new Date().toISOString().split('T')[0]; // Today's date in YYYY-MM-DD format
+      const now = new Date().toISOString();
+      
+      const defaultUser = {
+        name: '',
+        lastName: '',
+        phoneNumber: '',
+        email: '',
+        sobrietyDate: today,
+        homeGroups: JSON.stringify([]),
+        privacySettings: JSON.stringify({
+          allowMessages: true,
+          shareLastName: true
+        }),
+        preferences: JSON.stringify({
+          use24HourFormat: false
+        }),
+        createdAt: now,
+        updatedAt: now
+      };
+      
+      // Insert default user
+      const keys = Object.keys(defaultUser);
+      const placeholders = keys.map(() => '?').join(', ');
+      const values = Object.values(defaultUser);
+      
+      await sqlite.execute({
+        database: DB_NAME,
+        statements: `INSERT INTO users (${keys.join(', ')}) VALUES (${placeholders})`,
+        values: values
+      });
+      
+      console.log('[ sqliteLoader.js ] Default user created with sobriety date:', today);
+    } else {
+      console.log('[ sqliteLoader.js ] Users already exist, no need to create default user');
+    }
+  } catch (error) {
+    console.error('[ sqliteLoader.js ] Error ensuring default user:', error);
     throw error;
   }
 }
