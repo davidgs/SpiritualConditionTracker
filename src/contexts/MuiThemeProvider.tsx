@@ -33,7 +33,7 @@ const MuiThemeProvider = ({ children }) => {
     const loadPreferencesFromDatabase = async () => {
       try {
         // Only access database if it's been properly initialized
-        if (window.db && window.dbInitialized) {
+        if (window.db && window.dbInitialized && window.db.getPreference) {
           // Check for saved theme mode in database
           const savedTheme = await window.db.getPreference('theme');
           if (savedTheme === 'dark' || savedTheme === 'light') {
@@ -54,7 +54,10 @@ const MuiThemeProvider = ({ children }) => {
           setInitialTheme('dark');
         }
       } catch (error) {
-        console.error('Error accessing theme preferences:', error);
+        // Silently fall back to system preferences - don't log error for expected behavior
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+          setInitialTheme('dark');
+        }
       }
     };
     
