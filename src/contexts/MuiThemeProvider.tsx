@@ -28,41 +28,8 @@ const MuiThemeProvider = ({ children }) => {
   // Available color options for the theme picker
   const availableColors = Object.keys(defaultThemeColors);
   
-  // Load theme preferences from database on component mount
-  useEffect(() => {
-    const loadPreferencesFromDatabase = async () => {
-      try {
-        // Only access database if it's been properly initialized
-        if (window.db && window.dbInitialized && window.db.getPreference) {
-          // Check for saved theme mode in database
-          const savedTheme = await window.db.getPreference('theme');
-          if (savedTheme === 'dark' || savedTheme === 'light') {
-            setInitialTheme(savedTheme);
-          }
-          
-          // Check for saved primary color preference
-          const savedColor = await window.db.getPreference('primaryColor');
-          if (savedColor && defaultThemeColors[savedColor]) {
-            setPrimaryColor(savedColor);
-          }
-          
-          return;
-        }
-        
-        // Check system preference if database not available
-        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-          setInitialTheme('dark');
-        }
-      } catch (error) {
-        // Silently fall back to system preferences - don't log error for expected behavior
-        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-          setInitialTheme('dark');
-        }
-      }
-    };
-    
-    loadPreferencesFromDatabase();
-  }, []);
+  // No database access - theme preferences will be managed by App.tsx
+  // Just use system preference as fallback
   
   const [theme, setTheme] = useState(initialTheme);
   const darkMode = theme === 'dark';
