@@ -226,9 +226,13 @@ function App(): JSX.Element {
       
       // Set the user data and current user ID
       setUser(userData);
+      console.log('[ App.tsx ] Raw user data from database:', userData);
       if (userData && userData.id) {
         setCurrentUserId(userData.id);
         console.log('[ App.tsx ] Current user ID set to:', userData.id);
+      } else {
+        console.log('[ App.tsx ] Warning: User data loaded but no ID found');
+        console.log('[ App.tsx ] User data keys:', userData ? Object.keys(userData) : 'userData is null');
       }
 
       // Get activities within current timeframe - using async version
@@ -374,13 +378,24 @@ function App(): JSX.Element {
       let updatedUser;
       
       try {
-        if (!currentUserId) {
-          console.error('[ App.tsx ] No current user ID available for update');
-          return null;
+        let userIdToUpdate = currentUserId;
+        
+        // If no current user ID, get the first user from database
+        if (!userIdToUpdate) {
+          console.log('[ App.tsx ] No current user ID, getting first user from database');
+          const allUsers = await window.db.getAll('users');
+          if (allUsers && allUsers.length > 0) {
+            userIdToUpdate = allUsers[0].id;
+            setCurrentUserId(userIdToUpdate); // Set it for future use
+            console.log('[ App.tsx ] Found user ID from database:', userIdToUpdate);
+          } else {
+            console.error('[ App.tsx ] No users found in database');
+            return null;
+          }
         }
         
-        console.log('[ App.tsx ] Updating user with ID:', currentUserId);
-        updatedUser = await window.db.update('users', currentUserId, {
+        console.log('[ App.tsx ] Updating user with ID:', userIdToUpdate);
+        updatedUser = await window.db.update('users', userIdToUpdate, {
           ...updates,
           updatedAt: new Date().toISOString()
         });
