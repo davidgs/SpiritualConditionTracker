@@ -520,22 +520,39 @@ function setupGlobalDB(sqlite) {
           numericId = parseInt(id, 10);
         }
         
+        // Ensure database connection is open before update
+        try {
+          await sqlite.open({ database: DB_NAME });
+        } catch (openError) {
+          console.log('[ sqliteLoader.js ] Database already open or connection issue:', openError);
+        }
+        
         // Always update timestamp
         const updatesWithTimestamp = {
           ...updates,
           updatedAt: new Date().toISOString()
         };
         
-        // Build SET clause
+        // Build SET clause and properly serialize complex data types
         const setClause = Object.keys(updatesWithTimestamp)
           .map(key => `${key} = ?`)
           .join(', ');
         
-        // Prepare values array (all update values + ID for WHERE clause)
-        const values = [
-          ...Object.values(updatesWithTimestamp),
-          numericId
-        ];
+        // Prepare values array with proper serialization for complex types
+        const values = Object.keys(updatesWithTimestamp).map(key => {
+          const value = updatesWithTimestamp[key];
+          // Serialize arrays and objects as JSON strings for SQLite storage
+          if (Array.isArray(value) || (typeof value === 'object' && value !== null)) {
+            return JSON.stringify(value);
+          }
+          return value;
+        });
+        
+        // Add the ID at the end for the WHERE clause
+        values.push(numericId);
+        
+        console.log('[ sqliteLoader.js ] Update SQL:', `UPDATE ${collection} SET ${setClause} WHERE id = ?`);
+        console.log('[ sqliteLoader.js ] Update values:', values);
         
         // Execute update
         await sqlite.execute({

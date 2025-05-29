@@ -1,0 +1,14 @@
+⚡️  [log] - [ App.tsx: 350 ] Updating user profile with: {"name":"David","lastName":"Simmons","phoneNumber":"+1 919 534 5099","email":"davidgs@me.com","sobrietyDate":"1986-05-15","homeGroups":[],"privacySettings":{"allowMessages":true,"shareLastName":true},"preferences":{"use24HourFormat":false}}
+⚡️  To Native ->  CapacitorSQLite open 7794725
+⚡️  [log] - [ sqliteLoader.js:356 ] Getting all items from users
+⚡️  TO JS undefined
+⚡️  To Native ->  CapacitorSQLite query 7794726
+⚡️  TO JS {"values":[{"ios_columns":["id","name","lastName","phoneNumber","email","sobrietyDate","homeGroups","privacySettings","preferences","sponsor_name","sponsor_lastName","sponsor_phone","sponsor_email","sponsor_sobrietyDate","sponsor_notes","messagingKeys","pr
+⚡️  [log] - [ sqliteLoader.js:363 ] Result from users: {"values":[{"ios_columns":["id","name","lastName","phoneNumber","email","sobrietyDate","homeGroups","privacySettings","preferences","sponsor_name","sponsor_lastName","sponsor_phone","sponsor_email","sponsor_sobrietyDate","sponsor_notes","messagingKeys","profileImageUri","language","dateFormat","timeFormat","distanceUnit","themePreference","notificationSettings","locationPermission","contactPermission","createdAt","updatedAt"]},{"sobrietyDate":null,"sponsor_phone":null,"sponsor_notes":null,"email":null,"themePreference":null,"lastName":null,"preferences":null,"id":1,"homeGroups":null,"sponsor_sobrietyDate":null,"phoneNumber":null,"timeFormat":null,"profileImageUri":null,"name":null,"sponsor_email":null,"privacySettings":null,"notificationSettings":null,"updatedAt":null,"distanceUnit":null,"sponsor_lastName":null,"sponsor_name":null,"createdAt":null,"language":null,"messagingKeys":null,"dateFormat":null,"contactPermission":null,"locationPermission":null}]}
+⚡️  To Native ->  CapacitorSQLite execute 7794727
+⚡️  [log] - [ App.tsx: 374 ] Existing users in database: 2
+⚡️  [log] - [ App.tsx: 384 ] Updating existing user: 1
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite query 7794728
+⚡️  TO JS {"values":[{"ios_columns":["id","name","lastName","phoneNumber","email","sobrietyDate","homeGroups","privacySettings","preferences","sponsor_name","sponsor_lastName","sponsor_phone","sponsor_email","sponsor_sobrietyDate","sponsor_notes","messagingKeys","pr
+⚡️  [log] - [ App.tsx: 389 ] User updated: {"ios_columns":["id","name","lastName","phoneNumber","email","sobrietyDate","homeGroups","privacySettings","preferences","sponsor_name","sponsor_lastName","sponsor_phone","sponsor_email","sponsor_sobrietyDate","sponsor_notes","messagingKeys","profileImageUri","language","dateFormat","timeFormat","distanceUnit","themePreference","notificationSettings","locationPermission","contactPermission","createdAt","updatedAt"]}
