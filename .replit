@@ -14,10 +14,6 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "ExpoApp"
-
-[[workflows.workflow.tasks]]
-task = "workflow.run"
 args = "DirectAppServer"
 
 [[workflows.workflow.tasks]]
@@ -26,28 +22,11 @@ args = "AppServer"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "EnhancedIOSServer"
-
-[[workflows.workflow.tasks]]
-task = "workflow.run"
-args = "IOSNativeServer"
-
-[[workflows.workflow.tasks]]
-task = "workflow.run"
-args = "ReactNativeServer"
-
-[[workflows.workflow.tasks]]
-task = "workflow.run"
 args = "DevBuild"
 
-[[workflows.workflow]]
-name = "ExpoApp"
-author = "agent"
-
 [[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "node root-server.js"
-waitForPort = 5001
+task = "workflow.run"
+args = "SimpleServer"
 
 [[workflows.workflow]]
 name = "DirectAppServer"
@@ -68,39 +47,21 @@ args = "node app-server.js"
 waitForPort = 5000
 
 [[workflows.workflow]]
-name = "EnhancedIOSServer"
-author = "agent"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "node enhanced-ios-server.js"
-waitForPort = 5000
-
-[[workflows.workflow]]
-name = "IOSNativeServer"
-author = "agent"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "node ios-native-server.js"
-waitForPort = 5002
-
-[[workflows.workflow]]
-name = "ReactNativeServer"
-author = "agent"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "node simple-react-native-server.js"
-waitForPort = 5003
-
-[[workflows.workflow]]
 name = "DevBuild"
 author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "npm run dev"
+
+[[workflows.workflow]]
+name = "SimpleServer"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python3 -m http.server 5000 --bind 0.0.0.0"
+waitForPort = 5000
 
 [deployment]
 run = ["sh", "-c", "node deployment-server.js"]
