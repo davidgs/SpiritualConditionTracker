@@ -404,6 +404,20 @@ export function getCompleteTheme(colorName, mode) {
               backgroundColor: primaryColor.light,
             },
           },
+          containedError: {
+            backgroundColor: isDark ? '#f87171' : '#ef4444',
+            color: '#ffffff',
+            '&:hover': {
+              backgroundColor: isDark ? '#ef4444' : '#dc2626',
+            },
+          },
+          containedSuccess: {
+            backgroundColor: isDark ? '#34d399' : '#22c55e',
+            color: '#ffffff',
+            '&:hover': {
+              backgroundColor: isDark ? '#10b981' : '#16a34a',
+            },
+          },
         },
       },
       MuiPaper: {
