@@ -4,11 +4,21 @@ import App from './App';
 import './styles/tailwind.css';
 import './styles/main.css';
 
-// Wait for DOM to be ready
-document.addEventListener('DOMContentLoaded', async () => {
-  // Render the React application - database initialization is now handled in App.js
-  // This prevents race conditions and ensures proper loading sequence
+// Function to initialize the app
+function initializeApp() {
   const rootElement = document.getElementById('app');
-  const root = createRoot(rootElement);
-  root.render(<App />);
-});
+  if (rootElement) {
+    const root = createRoot(rootElement);
+    root.render(<App />);
+  } else {
+    // If DOM isn't ready yet, wait a bit and try again
+    setTimeout(initializeApp, 100);
+  }
+}
+
+// Start initialization when DOM is ready or immediately if already ready
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initializeApp);
+} else {
+  initializeApp();
+}
