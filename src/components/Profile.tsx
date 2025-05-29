@@ -30,10 +30,10 @@ import { resetDatabase } from '../utils/reset-database'
 
 interface ProfileProps {
   setCurrentView: (view: string) => void;
-  user: any;
-  onUpdate: (updates: any, options?: any) => Promise<any>;
-  meetings: any[];
-  onSaveMeeting: (meeting: any) => Promise<any>;
+  user: User | null;
+  onUpdate: (updates: Partial<User>, options?: { redirectToDashboard: boolean }) => Promise<User | null>;
+  meetings: Meeting[];
+  onSaveMeeting: (meeting: Omit<Meeting, 'id' | 'createdAt' | 'updatedAt'>) => Promise<Meeting | null>;
 }
 
 export default function Profile({ setCurrentView, user, onUpdate, meetings, onSaveMeeting }: ProfileProps) {
@@ -340,7 +340,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
 
   return (
     <MuiThemeProvider>
-    <Box sx={{ p: 2, maxWidth: 600, mx: 'auto' }}>
+      <Box sx={{ p: 2, maxWidth: 600, mx: 'auto' }}>
         {/* Meeting Form Dialog - Using our new MeetingFormDialog component */}
       {showMeetingForm && (
         <MeetingFormDialog
