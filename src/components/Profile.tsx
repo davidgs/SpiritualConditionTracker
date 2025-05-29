@@ -9,6 +9,7 @@ import { useAppTheme } from '../contexts/MuiThemeProvider';
 import { Capacitor } from '@capacitor/core';
 import { formatPhoneNumber, formatPhoneNumberForInput } from '../utils/phoneUtils';
 import { MuiTelInput } from 'mui-tel-input';
+import MuiThemeProvider from '../contexts/MuiThemeProvider';
 import Button from '@mui/material/Button';
 import { 
   Switch, 
@@ -337,6 +338,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
   };
 
   return (
+    <MuiThemeProvider>
     <Box sx={{ p: 2, maxWidth: 600, mx: 'auto' }}>
         {/* Meeting Form Dialog - Using our new MeetingFormDialog component */}
       {showMeetingForm && (
@@ -470,7 +472,6 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
                   Your sobriety date is confidential and used to calculate your recovery milestones
                 </Typography>
               </Box>
-              
               <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1 }}>
                 <Button 
                   size="small"
@@ -985,5 +986,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
         </Box>
       </Paper>
     </Box>
+      </MuiThemeProvider>
+
   );
 }
