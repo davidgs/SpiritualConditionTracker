@@ -374,7 +374,7 @@ function App(): JSX.Element {
           console.log('[ App.tsx: 374 ] Creating new user with profile data', updates);
           updatedUser = await window.db.add('users', {
             ...updates,
-            id: 'user_default',
+            id: 1,
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString()
           });
