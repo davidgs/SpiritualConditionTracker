@@ -9,11 +9,11 @@ import { useAppTheme } from '../contexts/MuiThemeProvider';
 import { Capacitor } from '@capacitor/core';
 import { formatPhoneNumber, formatPhoneNumberForInput } from '../utils/phoneUtils';
 import { MuiTelInput } from 'mui-tel-input';
+import Button from '@mui/material/Button';
 import { 
   Switch, 
   FormControlLabel, 
   TextField, 
-  Button, 
   Paper, 
   Typography, 
   Box, 
