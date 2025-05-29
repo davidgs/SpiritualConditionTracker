@@ -410,6 +410,22 @@ function setupGlobalDB(sqlite) {
           return null;
         }
         
+        // Handle iOS format: [{"ios_columns":["col1","col2"...]}, {"col1":"val1","col2":"val2"...}]
+        if (result.values.length > 1 && result.values[0] && result.values[0].ios_columns) {
+          const columns = result.values[0].ios_columns;
+          const data = result.values[1];
+          
+          // Convert iOS format to standard object format
+          const standardFormat = {};
+          columns.forEach((column, index) => {
+            standardFormat[column] = data[column];
+          });
+          
+          console.log('[ sqliteLoader.js ] Converted iOS format to standard:', standardFormat);
+          return standardFormat;
+        }
+        
+        // Standard format
         return result.values[0];
       } catch (error) {
         console.error(`[ sqliteLoader.js ] Error getting item by ID from ${collection}:`, error);
