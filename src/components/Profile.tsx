@@ -9,7 +9,7 @@ import { useAppTheme } from '../contexts/MuiThemeProvider';
 import { Capacitor } from '@capacitor/core';
 import { formatPhoneNumber, formatPhoneNumberForInput } from '../utils/phoneUtils';
 import { MuiTelInput } from 'mui-tel-input';
-import MuiThemeProvider from '../contexts/MuiThemeProvider';
+
 import Button from '@mui/material/Button';
 import { 
   Switch, 
@@ -338,7 +338,6 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
   };
 
   return (
-    <MuiThemeProvider>
     <Box sx={{ p: 2, maxWidth: 600, mx: 'auto' }}>
         {/* Meeting Form Dialog - Using our new MeetingFormDialog component */}
       {showMeetingForm && (
@@ -986,7 +985,6 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
         </Box>
       </Paper>
     </Box>
-      </MuiThemeProvider>
 
   );
 }
