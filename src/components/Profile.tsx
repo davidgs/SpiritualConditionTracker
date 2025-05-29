@@ -966,7 +966,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
           alignItems: 'center',
           gap: 1
         }}>
-          <i className="fas fa-exclamation-triangle" style={{ color: '#dc2626' }}></i>
+          <i className="fas fa-exclamation-triangle" style={{ color: muiTheme.palette.error.main }}></i>
           Danger Zone
         </Typography>
         
