@@ -340,7 +340,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
 
   return (
     <MuiThemeProvider>
-    <Box sx={{ p: 2, maxWidth: 600, mx: 'auto' }}>
+      <Box sx={{ p: 2, maxWidth: 600, mx: 'auto' }}>
         {/* Meeting Form Dialog - Using our new MeetingFormDialog component */}
       {showMeetingForm && (
         <MeetingFormDialog
@@ -986,8 +986,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
           </Button>
         </Box>
       </Paper>
-    </Box>
+      </Box>
     </MuiThemeProvider>
-
   );
 }
