@@ -342,11 +342,12 @@ function App(): JSX.Element {
   // Handle updating user profile
   async function handleUpdateProfile(updates: Partial<User>, options: { redirectToDashboard: boolean } = { redirectToDashboard: true }): Promise<User | null> {
     if (!window.db) {
-      console.error('Database not initialized');
+      console.error('[ App.tsx: 345 ] Database not initialized');
       return;
     }
 
     try {
+      console.log('[ App.tsx: 350 ] Updating user profile with:', updates);
       // Process sobriety date to ensure consistent format
       if (updates.sobrietyDate) {
         // Store the sobriety date exactly as it is in YYYY-MM-DD format
@@ -358,7 +359,7 @@ function App(): JSX.Element {
         // Validate that it's a proper date
         const isValidDate = /^\d{4}-\d{2}-\d{2}$/.test(updates.sobrietyDate);
         if (!isValidDate) {
-          console.error('Invalid sobriety date format:', updates.sobrietyDate);
+          console.error('[ App.tsx: 362 ] Invalid sobriety date format:', updates.sobrietyDate);
           // Default to empty string if invalid
           updates.sobrietyDate = '';
         }
@@ -370,7 +371,7 @@ function App(): JSX.Element {
       try {
         if (!user || !user.id) {
           // If no user exists yet, create one
-          console.log('Creating new user with profile data');
+          console.log('[ App.tsx: 374 ] Creating new user with profile data', updates);
           updatedUser = await window.db.add('users', {
             ...updates,
             id: 'user_default',
@@ -385,13 +386,13 @@ function App(): JSX.Element {
           });
         }
       } catch (dbError) {
-        console.error('Database error updating user:', dbError);
+        console.error('[ App.tsx: 389 ] Database error updating user:', dbError);
         // Fallback to using the current user data plus updates to avoid UI disruption
         updatedUser = { ...user, ...updates };
       }
       
       if (!updatedUser) {
-        console.error('Failed to update user - using local update only');
+        console.error('[ App.tsx: 395 ] Failed to update user - using local update only');
         // Still provide an update to the UI by merging changes
         updatedUser = { ...user, ...updates };
       }
