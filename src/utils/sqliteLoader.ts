@@ -354,6 +354,14 @@ function setupGlobalDB(sqlite) {
     getAll: async function(collection) {
       try {
         console.log(`[ sqliteLoader.js:356 ] Getting all items from ${collection}`);
+        
+        // Ensure database connection is open before query
+        try {
+          await sqlite.open({ database: DB_NAME });
+        } catch (openError) {
+          console.log('[ sqliteLoader.js ] Database already open or connection issue:', openError);
+        }
+        
         // iOS has specific format requirements
         const result = await sqlite.query({
           database: DB_NAME,
@@ -418,6 +426,13 @@ function setupGlobalDB(sqlite) {
     add: async function(collection, item) {
       try {
         console.log('[ sqliteLoader.js ] Original item received for save:', JSON.stringify(item, null, 2));
+        
+        // Ensure database connection is open before insert
+        try {
+          await sqlite.open({ database: DB_NAME });
+        } catch (openError) {
+          console.log('[ sqliteLoader.js ] Database already open or connection issue:', openError);
+        }
         
         // Don't include ID field - let SQLite generate it with AUTOINCREMENT
         const { id, ...itemWithoutId } = item;

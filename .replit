@@ -20,14 +20,6 @@ args = "DirectAppServer"
 task = "workflow.run"
 args = "AppServer"
 
-[[workflows.workflow.tasks]]
-task = "workflow.run"
-args = "DevBuild"
-
-[[workflows.workflow.tasks]]
-task = "workflow.run"
-args = "SimpleServer"
-
 [[workflows.workflow]]
 name = "DirectAppServer"
 author = "agent"
@@ -44,23 +36,6 @@ author = "agent"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "node app-server.js"
-waitForPort = 5000
-
-[[workflows.workflow]]
-name = "DevBuild"
-author = "agent"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "npm run dev"
-
-[[workflows.workflow]]
-name = "SimpleServer"
-author = "agent"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "python3 -m http.server 5000 --bind 0.0.0.0"
 waitForPort = 5000
 
 [deployment]

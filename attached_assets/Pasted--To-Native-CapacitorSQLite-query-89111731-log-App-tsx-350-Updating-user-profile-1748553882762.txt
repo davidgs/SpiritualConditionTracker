@@ -1,0 +1,68 @@
+⚡️  To Native ->  CapacitorSQLite query 89111731
+⚡️  [log] - [ App.tsx: 350 ] Updating user profile with: {"name":"David","lastName":"Simmons","phoneNumber":"+1 919 534 5099","email":"davidgs@me.com","sobrietyDate":"1986-05-15","homeGroups":[],"privacySettings":{"allowMessages":true,"shareLastName":true},"preferences":{"use24HourFormat":false}}
+⚡️  [log] - [ sqliteLoader.js:356 ] Getting all items from users
+ERROR MESSAGE:  {"message":"Query: Connection to spiritualTracker not available","errorMessage":"Query: Connection to spiritualTracker not available"}
+⚡️  [error] - {"message":"Query: Connection to spiritualTracker not available","errorMessage":"Query: Connection to spiritualTracker not available"}
+⚡️  [error] - [ sqliteLoader.js ] Error getting items from users: {"errorMessage":"Query: Connection to spiritualTracker not available"}
+⚡️  [log] - [ App.tsx: 374 ] Existing users in database: 0
+⚡️  [log] - [ App.tsx: 376 ] Creating first user with profile data {"name":"David","lastName":"Simmons","phoneNumber":"+1 919 534 5099","email":"davidgs@me.com","sobrietyDate":"1986-05-15","homeGroups":[],"privacySettings":{"allowMessages":true,"shareLastName":true},"preferences":{"use24HourFormat":false}}
+⚡️  [log] - [ sqliteLoader.js ] Original item received for save: {
+  "name": "David",
+  "lastName": "Simmons",
+  "phoneNumber": "+1 919 534 5099",
+  "email": "davidgs@me.com",
+  "sobrietyDate": "1986-05-15",
+  "homeGroups": [],
+  "privacySettings": {
+    "allowMessages": true,
+    "shareLastName": true
+  },
+  "preferences": {
+    "use24HourFormat": false
+  },
+  "createdAt": "2025-05-29T21:24:04.826Z",
+  "updatedAt": "2025-05-29T21:24:04.826Z"
+}
+⚡️  To Native ->  CapacitorSQLite execute 89111732
+⚡️  [log] - [ sqliteLoader.js ] Item without ID: {
+  "name": "David",
+  "lastName": "Simmons",
+  "phoneNumber": "+1 919 534 5099",
+  "email": "davidgs@me.com",
+  "sobrietyDate": "1986-05-15",
+  "homeGroups": [],
+  "privacySettings": {
+    "allowMessages": true,
+    "shareLastName": true
+  },
+  "preferences": {
+    "use24HourFormat": false
+  },
+  "createdAt": "2025-05-29T21:24:04.826Z",
+  "updatedAt": "2025-05-29T21:24:04.826Z"
+}
+⚡️  [log] - [ sqliteLoader.js ] Final item for database: {
+  "name": "David",
+  "lastName": "Simmons",
+  "phoneNumber": "+1 919 534 5099",
+  "email": "davidgs@me.com",
+  "sobrietyDate": "1986-05-15",
+  "homeGroups": [],
+  "privacySettings": {
+    "allowMessages": true,
+    "shareLastName": true
+  },
+  "preferences": {
+    "use24HourFormat": false
+  },
+  "createdAt": "2025-05-29T21:24:04.827Z",
+  "updatedAt": "2025-05-29T21:24:04.827Z"
+}
+⚡️  [log] - [ sqliteLoader.js ] Date field specifically: undefined
+⚡️  [log] - [ sqliteLoader.js ] Date field type: undefined
+⚡️  [log] - [ sqliteLoader.js ] SQL keys: ["name","lastName","phoneNumber","email","sobrietyDate","homeGroups","privacySettings","preferences","createdAt","updatedAt"]
+⚡️  [log] - [ sqliteLoader.js ] SQL values: ["David","Simmons","+1 919 534 5099","davidgs@me.com","1986-05-15",[],{"allowMessages":true,"shareLastName":true},{"use24HourFormat":false},"2025-05-29T21:24:04.827Z","2025-05-29T21:24:04.827Z"]
+ERROR MESSAGE:  {"errorMessage":"Execute: Connection to spiritualTracker not available","message":"Execute: Connection to spiritualTracker not available"}
+⚡️  [error] - {"errorMessage":"Execute: Connection to spiritualTracker not available","message":"Execute: Connection to spiritualTracker not available"}
+⚡️  [error] - [ sqliteLoader.js ] Error adding item to users: {"errorMessage":"Execute: Connection to spiritualTracker not available"}
+⚡️  [error] - [ App.tsx: 392 ] Database error updating user: {"errorMessage":"Execute: Connection to spiritualTracker not available"}
