@@ -1,0 +1,21 @@
+⚡️  To Native ->  CapacitorSQLite open 64513273
+⚡️  [log] - [ App.tsx: 350 ] Updating user profile with: {"sobrietyDate":"1986-05-15"}
+⚡️  [log] - [ App.tsx ] No current user ID, getting first user from database
+⚡️  [log] - [ sqliteLoader.js:356 ] Getting all items from users
+⚡️  TO JS undefined
+⚡️  To Native ->  CapacitorSQLite query 64513274
+⚡️  TO JS {"values":[{"ios_columns":["id","name","lastName","phoneNumber","email","sobrietyDate","homeGroups","privacySettings","preferences","sponsor_name","sponsor_lastName","sponsor_phone","sponsor_email","sponsor_sobrietyDate","sponsor_notes","messagingKeys","pr
+⚡️  [log] - [ sqliteLoader.js:363 ] Result from users: {"values":[{"ios_columns":["id","name","lastName","phoneNumber","email","sobrietyDate","homeGroups","privacySettings","preferences","sponsor_name","sponsor_lastName","sponsor_phone","sponsor_email","sponsor_sobrietyDate","sponsor_notes","messagingKeys","profileImageUri","language","dateFormat","timeFormat","distanceUnit","themePreference","notificationSettings","locationPermission","contactPermission","createdAt","updatedAt"]},{"sponsor_sobrietyDate":null,"notificationSettings":null,"sponsor_lastName":null,"id":1,"updatedAt":null,"homeGroups":null,"sobrietyDate":null,"sponsor_email":null,"preferences":null,"dateFormat":null,"distanceUnit":null,"locationPermission":null,"contactPermission":null,"sponsor_phone":null,"language":null,"email":null,"privacySettings":null,"lastName":null,"sponsor_name":null,"sponsor_notes":null,"timeFormat":null,"messagingKeys":null,"phoneNumber":null,"createdAt":null,"name":null,"profileImageUri":null,"themePreference":null}]}
+⚡️  [log] - [ sqliteLoader.js ] Converted 1 iOS format items to standard format
+⚡️  [log] - [ App.tsx ] Found user ID from database: 1
+⚡️  [log] - [ App.tsx ] Updating user with ID: 1
+⚡️  To Native ->  CapacitorSQLite open 64513275
+⚡️  TO JS undefined
+⚡️  [log] - [ sqliteLoader.js ] Update SQL: UPDATE users SET sobrietyDate = ?, updatedAt = ? WHERE id = ?
+⚡️  [log] - [ sqliteLoader.js ] Update values: ["1986-05-15","2025-05-29T21:59:34.561Z",1]
+⚡️  To Native ->  CapacitorSQLite execute 64513276
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite query 64513277
+⚡️  TO JS {"values":[{"ios_columns":["id","name","lastName","phoneNumber","email","sobrietyDate","homeGroups","privacySettings","preferences","sponsor_name","sponsor_lastName","sponsor_phone","sponsor_email","sponsor_sobrietyDate","sponsor_notes","messagingKeys","pr
+⚡️  [log] - [ sqliteLoader.js ] Converted iOS format to standard: {"id":1,"name":null,"lastName":null,"phoneNumber":null,"email":null,"sobrietyDate":null,"homeGroups":null,"privacySettings":null,"preferences":null,"sponsor_name":null,"sponsor_lastName":null,"sponsor_phone":null,"sponsor_email":null,"sponsor_sobrietyDate":null,"sponsor_notes":null,"messagingKeys":null,"profileImageUri":null,"language":null,"dateFormat":null,"timeFormat":null,"distanceUnit":null,"themePreference":null,"notificationSettings":null,"locationPermission":null,"contactPermission":null,"createdAt":null,"updatedAt":null}
+⚡️  [log] - [ App.tsx ] User updated: {"id":1,"name":null,"lastName":null,"phoneNumber":null,"email":null,"sobrietyDate":null,"homeGroups":null,"privacySettings":null,"preferences":null,"sponsor_name":null,"sponsor_lastName":null,"sponsor_phone":null,"sponsor_email":null,"sponsor_sobrietyDate":null,"sponsor_notes":null,"messagingKeys":null,"profileImageUri":null,"language":null,"dateFormat":null,"timeFormat":null,"distanceUnit":null,"themePreference":null,"notificationSettings":null,"locationPermission":null,"contactPermission":null,"createdAt":null,"updatedAt":null}

@@ -674,6 +674,14 @@ function setupGlobalDB(sqlite) {
         console.log('[ sqliteLoader.js ] Update SQL:', `UPDATE ${collection} SET ${setClause} WHERE id = ?`);
         console.log('[ sqliteLoader.js ] Update values:', values);
         
+        // Debug: Check what's actually in the database before update
+        const beforeUpdate = await sqlite.query({
+          database: DB_NAME,
+          statement: `SELECT * FROM ${collection} WHERE id = ?`,
+          values: [numericId]
+        });
+        console.log('[ sqliteLoader.js ] Record before update:', beforeUpdate);
+        
         // Execute update
         await sqlite.execute({
           database: DB_NAME,
