@@ -420,6 +420,19 @@ function App(): JSX.Element {
     }
   }
 
+  // Handle resetting all data - clears both database and React state
+  function handleResetAllData() {
+    console.log('[ App.tsx ] Resetting all React state variables');
+    
+    // Reset all state to initial values
+    setUser(null);
+    setActivities([]);
+    setMeetings([]);
+    setCurrentTimeframe(30);
+    
+    console.log('[ App.tsx ] All React state variables have been reset');
+  }
+
   // Privacy settings function removed - was primarily used for Nearby features
 
   // Render current view based on navigation state
@@ -457,6 +470,7 @@ function App(): JSX.Element {
             onUpdate={handleUpdateProfile}
             meetings={meetings}
             onSaveMeeting={handleSaveMeeting}
+            onResetAllData={handleResetAllData}
           />
         );
       case 'stepwork':

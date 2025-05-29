@@ -34,9 +34,10 @@ interface ProfileProps {
   onUpdate: (updates: any, options?: any) => Promise<any>;
   meetings: any[];
   onSaveMeeting: (meeting: any) => Promise<any>;
+  onResetAllData?: () => void;
 }
 
-export default function Profile({ setCurrentView, user, onUpdate, meetings, onSaveMeeting }: ProfileProps) {
+export default function Profile({ setCurrentView, user, onUpdate, meetings, onSaveMeeting, onResetAllData }: ProfileProps) {
   // Handle Reset All Data button click
   const handleResetAllData = async () => {
     // First confirmation dialog
@@ -148,7 +149,12 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
       //   }
       // }
       
-      console.log('Data reset complete - navigating to dashboard');
+      console.log('Data reset complete - clearing React state and navigating to dashboard');
+      
+      // Call the parent component's reset function to clear all React state
+      if (onResetAllData) {
+        onResetAllData();
+      }
       
       // Show success message
       alert('All data has been reset successfully.');
