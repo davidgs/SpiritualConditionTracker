@@ -476,26 +476,14 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
                   size="small"
                   onClick={() => setEditingSobriety(false)}
                   variant="contained"
-                  sx={{ 
-                    backgroundColor: '#ef4444',
-                    color: '#ffffff',
-                    '&:hover': {
-                      backgroundColor: '#dc2626'
-                    }
-                  }}
+                  color="error"
                 >
                   Cancel
                 </Button>
                 <Button 
                   size="small"
                   variant="contained"
-                  sx={{ 
-                    backgroundColor: '#22c55e',
-                    color: '#ffffff',
-                    '&:hover': {
-                      backgroundColor: '#16a34a'
-                    }
-                  }}
+                  color="success"
                   onClick={() => {
                     if (sobrietyDate) {
                       // Update the sobriety date directly
@@ -884,29 +872,17 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
                 variant="contained"
                 size="small"
                 onClick={() => setEditingPersonalInfo(false)}
-                sx={{ 
-                  backgroundColor: '#ef4444',
-                  color: '#ffffff',
-                  '&:hover': {
-                    backgroundColor: '#dc2626'
-                  }
-                }}
+                color="error"
               >
                 Cancel
               </Button>
               <Button 
                 variant="contained"
                 size="small"
+                color="success"
                 onClick={() => {
                   handleSubmit({preventDefault: () => {}});
                   setEditingPersonalInfo(false);
-                }}
-                sx={{ 
-                  backgroundColor: '#22c55e',
-                  color: '#ffffff',
-                  '&:hover': {
-                    backgroundColor: '#16a34a'
-                  }
                 }}
               >
                 Save
