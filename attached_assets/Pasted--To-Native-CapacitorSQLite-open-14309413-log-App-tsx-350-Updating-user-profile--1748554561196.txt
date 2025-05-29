@@ -1,0 +1,19 @@
+⚡️  To Native ->  CapacitorSQLite open 14309413
+⚡️  [log] - [ App.tsx: 350 ] Updating user profile with: {"sobrietyDate":"1986-05-15"}
+⚡️  [log] - [ sqliteLoader.js:356 ] Getting all items from users
+⚡️  TO JS undefined
+⚡️  To Native ->  CapacitorSQLite query 14309414
+⚡️  TO JS {"values":[{"ios_columns":["id","name","lastName","phoneNumber","email","sobrietyDate","homeGroups","privacySettings","preferences","sponsor_name","sponsor_lastName","sponsor_phone","sponsor_email","sponsor_sobrietyDate","sponsor_notes","messagingKeys","pr
+⚡️  [log] - [ sqliteLoader.js:363 ] Result from users: {"values":[{"ios_columns":["id","name","lastName","phoneNumber","email","sobrietyDate","homeGroups","privacySettings","preferences","sponsor_name","sponsor_lastName","sponsor_phone","sponsor_email","sponsor_sobrietyDate","sponsor_notes","messagingKeys","profileImageUri","language","dateFormat","timeFormat","distanceUnit","themePreference","notificationSettings","locationPermission","contactPermission","createdAt","updatedAt"]},{"contactPermission":null,"notificationSettings":null,"homeGroups":null,"timeFormat":null,"sobrietyDate":null,"preferences":null,"name":null,"phoneNumber":null,"profileImageUri":null,"email":null,"createdAt":null,"sponsor_name":null,"locationPermission":null,"language":null,"sponsor_sobrietyDate":null,"distanceUnit":null,"updatedAt":null,"id":1,"themePreference":null,"lastName":null,"dateFormat":null,"sponsor_notes":null,"privacySettings":null,"sponsor_lastName":null,"sponsor_email":null,"messagingKeys":null,"sponsor_phone":null}]}
+⚡️  [log] - [ App.tsx: 374 ] Existing users in database: 2
+⚡️  [log] - [ App.tsx: 384 ] Updating existing user: undefined
+⚡️  To Native ->  CapacitorSQLite open 14309415
+⚡️  TO JS undefined
+⚡️  [log] - [ sqliteLoader.js ] Update SQL: UPDATE users SET sobrietyDate = ?, updatedAt = ? WHERE id = ?
+⚡️  To Native ->  CapacitorSQLite execute 14309416
+⚡️  [log] - [ sqliteLoader.js ] Update values: ["1986-05-15","2025-05-29T21:35:31.515Z",null]
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite query 14309417
+⚡️  TO JS {"values":[]}
+⚡️  [log] - [ App.tsx: 389 ] User updated: null
+⚡️  [error] - [ App.tsx: 395 ] Failed to update user - using local update only

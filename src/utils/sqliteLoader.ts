@@ -369,6 +369,31 @@ function setupGlobalDB(sqlite) {
           values: []
         });
         console.log(`[ sqliteLoader.js:363 ] Result from ${collection}:`, result);
+        
+        // Handle iOS format for getAll as well
+        if (result.values && result.values.length > 0) {
+          // Check if this is iOS format: [{"ios_columns":["col1","col2"...]}, {"col1":"val1","col2":"val2"...}, ...]
+          if (result.values[0] && result.values[0].ios_columns) {
+            const columns = result.values[0].ios_columns;
+            const standardFormatArray = [];
+            
+            // Convert each data row (skip the first element which contains column info)
+            for (let i = 1; i < result.values.length; i++) {
+              const data = result.values[i];
+              const standardFormat = {};
+              
+              columns.forEach((column) => {
+                standardFormat[column] = data[column];
+              });
+              
+              standardFormatArray.push(standardFormat);
+            }
+            
+            console.log(`[ sqliteLoader.js ] Converted ${standardFormatArray.length} iOS format items to standard format`);
+            return standardFormatArray;
+          }
+        }
+        
         return result.values || [];
       } catch (error) {
         console.error(`[ sqliteLoader.js ] Error getting items from ${collection}:`, error);
