@@ -42,6 +42,7 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
   const [editingSponsor, setEditingSponsor] = useState(false);
   const [editingSponseeId, setEditingSponseeId] = useState(null);
   const [editingActionItem, setEditingActionItem] = useState(null);
+  const [editingContact, setEditingContact] = useState(null);
   
   // Load sponsor and sponsees data from user
   useEffect(() => {
@@ -137,17 +138,16 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
     try {
       console.log('Toggling action item completion:', actionItem);
       
-      // Update the activity in place using direct database update
-      if (!window.db || !window.db.update) {
-        console.error('Database update function not available');
+      if (!dbHandlers || !dbHandlers.update) {
+        console.error('Database handlers not available');
         return;
       }
       
       const newLocation = actionItem.completed ? 'pending' : 'completed';
       console.log('Updating action item ID:', actionItem.activityData.id, 'to location:', newLocation);
       
-      // Use direct database update to avoid creating duplicates
-      await window.db.update('activities', actionItem.activityData.id, {
+      // Use the shared database handlers from App.tsx
+      await dbHandlers.update('activities', actionItem.activityData.id, {
         location: newLocation,
         updatedAt: new Date().toISOString()
       });
@@ -158,6 +158,74 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
       loadSponsorContacts();
     } catch (error) {
       console.error('Error toggling action item completion:', error);
+    }
+  };
+
+  // Handle editing existing contact
+  const handleEditContact = async (contactData, actionItems = []) => {
+    try {
+      console.log('Editing existing contact:', editingContact);
+      console.log('Updated contact data:', contactData);
+      
+      if (!editingContact?.activityData?.id) {
+        console.error('No editing contact ID available');
+        return;
+      }
+
+      // Update the existing contact activity
+      const updatedActivityData = {
+        type: 'sponsor-contact',
+        date: contactData.date || editingContact.activityData.date,
+        notes: `${contactData.note || ''} [Contact: ${contactData.type}${contactData.topic ? ', Topic: ' + contactData.topic : ''}]`,
+        duration: contactData.duration ? parseInt(contactData.duration) : undefined,
+        location: contactData.type,
+        updatedAt: new Date().toISOString()
+      };
+
+      console.log('Updating existing contact activity:', updatedActivityData);
+      
+      // Update the existing activity
+      await onSaveActivity({
+        ...updatedActivityData,
+        id: editingContact.activityData.id
+      });
+
+      // Handle action items - remove old ones and add new ones
+      if (actionItems && actionItems.length > 0) {
+        // First remove existing action items for this contact
+        const existingActionItems = getActionItemsForContact(editingContact);
+        for (const existingItem of existingActionItems) {
+          if (existingItem.activityData?.id) {
+            await onSaveActivity({
+              ...existingItem.activityData,
+              type: 'action-item-deleted',
+              updatedAt: new Date().toISOString()
+            });
+          }
+        }
+
+        // Add new action items
+        for (const actionItem of actionItems) {
+          const actionActivityData = {
+            type: 'action-item',
+            date: actionItem.dueDate || contactData.date,
+            title: actionItem.title,
+            text: actionItem.text || '',
+            notes: actionItem.notes || '',
+            location: actionItem.completed ? 'completed' : 'pending'
+          };
+
+          console.log('Adding updated action item:', actionActivityData);
+          await onSaveActivity(actionActivityData);
+        }
+      }
+
+      console.log('Contact updated successfully');
+      setShowContactForm(false);
+      setEditingContact(null);
+      loadSponsorContacts();
+    } catch (error) {
+      console.error('Error updating contact:', error);
     }
   };
 
@@ -547,8 +615,10 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
                           <IconButton
                             size="small"
                             onClick={() => {
-                              // TODO: Implement edit contact functionality
                               console.log('Edit contact:', contact);
+                              // Set the contact data for editing and open the form
+                              setEditingContact(contact);
+                              setShowContactForm(true);
                             }}
                             sx={{
                               p: 0.5,
@@ -641,25 +711,7 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
                                       >
                                         {item.title}
                                       </Typography>
-                                      <IconButton
-                                        size="small"
-                                        onClick={() => {
-                                          console.log('Edit action item:', item);
-                                          // Open the contact form with the action item's parent contact for editing
-                                          setEditingActionItem(item);
-                                          setShowContactForm(true);
-                                        }}
-                                        sx={{
-                                          p: 0.25,
-                                          color: theme.palette.text.secondary,
-                                          '&:hover': {
-                                            color: theme.palette.primary.main,
-                                            backgroundColor: 'transparent'
-                                          }
-                                        }}
-                                      >
-                                        <i className="fa-solid fa-pen" style={{ fontSize: '10px' }}></i>
-                                      </IconButton>
+
                                     </Box>
                                   ))}
                                 </Box>
@@ -828,21 +880,15 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
         onClose={() => {
           setShowContactForm(false);
           setEditingActionItem(null);
+          setEditingContact(null);
         }}
-        onSubmit={handleAddContact}
+        onSubmit={editingContact ? handleEditContact : handleAddContact}
         userId={user?.id || 'default_user'}
-        initialData={editingActionItem ? {
+        initialData={editingContact || (editingActionItem ? {
           type: 'phone', // Default type since action items don't store contact type
           date: editingActionItem.dueDate,
           note: editingActionItem.title
-        } : null}
-        details={editingActionItem ? [{
-          title: editingActionItem.title,
-          text: editingActionItem.text,
-          notes: editingActionItem.notes,
-          dueDate: editingActionItem.dueDate,
-          completed: editingActionItem.completed
-        }] : []}
+        } : null)}
       />
     </div>
   );
