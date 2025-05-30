@@ -579,7 +579,7 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
                     <IconButton 
                       onClick={() => handleEditSponsee(sponsee.id)}
                       size="small"
-                      sx={{ color: darkMode ? '#93c5fd' : '#3b82f6' }}
+                      sx={{ color: theme.palette.primary.main }}
                     >
                       <i className="fa-solid fa-pen-to-square"></i>
                     </IconButton>
@@ -587,7 +587,7 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
                     <IconButton 
                       onClick={() => handleDeleteSponsee(sponsee.id)}
                       size="small"
-                      sx={{ color: darkMode ? '#f87171' : '#ef4444' }}
+                      sx={{ color: theme.palette.error.main }}
                     >
                       <i className="fa-solid fa-trash"></i>
                     </IconButton>
@@ -602,11 +602,11 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
           elevation={0}
           className="p-6 rounded-lg text-center"
           sx={{ 
-            backgroundColor: darkMode ? 'rgba(30, 41, 59, 0.8)' : 'rgba(255, 255, 255, 0.8)',
-            boxShadow: darkMode ? '0 4px 12px rgba(0, 0, 0, 0.25)' : '0 4px 12px rgba(0, 0, 0, 0.1)'
+            backgroundColor: theme.palette.background.paper,
+            boxShadow: theme.shadows[2]
           }}
         >
-          <Typography variant="body1" sx={{ color: darkMode ? '#d1d5db' : '#4b5563' }}>
+          <Typography variant="body1" sx={{ color: theme.palette.text.primary }}>
             You haven't added any sponsees yet.
           </Typography>
         </Paper>
