@@ -212,35 +212,35 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
     const varietyTypes = Object.keys(breakdown).length;
     const daysCoveragePercent = (daysWithActivities / scoreTimeframe) * 100;
     
-    // Calculate score based on timeframe (matching the working algorithm)
+    // Calculate score based on timeframe (with decimal precision)
     let finalScore;
     if (scoreTimeframe <= 30) {
       const basePoints = 20;
-      const activityPoints = Math.min(40, Math.round(totalPoints / 8));
-      const consistencyPoints = Math.min(30, Math.round(daysCoveragePercent * 1.5));
+      const activityPoints = Math.min(40, totalPoints / 8);
+      const consistencyPoints = Math.min(30, daysCoveragePercent * 1.5);
       const varietyBonus = Math.min(10, varietyTypes * 2);
       finalScore = basePoints + activityPoints + consistencyPoints + varietyBonus;
     } else if (scoreTimeframe <= 90) {
       const basePoints = 15;
-      const activityPoints = Math.min(35, Math.round(totalPoints / 12));
-      const consistencyPoints = Math.min(25, Math.round(daysCoveragePercent * 2.5));
+      const activityPoints = Math.min(35, totalPoints / 12);
+      const consistencyPoints = Math.min(25, daysCoveragePercent * 2.5);
       const varietyBonus = Math.min(10, varietyTypes * 2);
       finalScore = basePoints + activityPoints + consistencyPoints + varietyBonus;
     } else if (scoreTimeframe <= 180) {
       const basePoints = 10;
-      const activityPoints = Math.min(30, Math.round(totalPoints / 18));
-      const consistencyPoints = Math.min(20, Math.round(daysCoveragePercent * 4));
+      const activityPoints = Math.min(30, totalPoints / 18);
+      const consistencyPoints = Math.min(20, daysCoveragePercent * 4);
       const varietyBonus = Math.min(10, varietyTypes * 2);
       finalScore = basePoints + activityPoints + consistencyPoints + varietyBonus;
     } else {
       const basePoints = 5;
-      const activityPoints = Math.min(25, Math.round(totalPoints / 24));
-      const consistencyPoints = Math.min(15, Math.round(daysCoveragePercent * 6));
+      const activityPoints = Math.min(25, totalPoints / 24);
+      const consistencyPoints = Math.min(15, daysCoveragePercent * 6);
       const varietyBonus = Math.min(10, varietyTypes * 2);
       finalScore = basePoints + activityPoints + consistencyPoints + varietyBonus;
     }
     
-    finalScore = Math.min(100, Math.round(finalScore));
+    finalScore = Math.min(100, Math.round(finalScore * 100) / 100); // Keep 2 decimal places
     
     console.log('[ Dashboard.js ] Fallback calculation details:', {
       totalPoints,

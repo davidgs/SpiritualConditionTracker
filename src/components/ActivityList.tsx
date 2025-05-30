@@ -58,6 +58,14 @@ export default function ActivityList({
           }
           return typeMatch;
         })
+        // Filter out uncompleted action items (they should only appear when completed)
+        .filter(activity => {
+          if (activity.type === 'action-item' && activity.location !== 'completed') {
+            console.log('[ ActivityList.js ] Filtering out uncompleted action item:', activity.id);
+            return false;
+          }
+          return true;
+        })
         // Filter by maximum days ago if specified
         .filter(activity => {
           if (!maxDaysAgo) return true;
