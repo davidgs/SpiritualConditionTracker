@@ -464,31 +464,6 @@ export default function SponsorSponsee({ user, onUpdate }) {
 
       {/* Sponsees Tab Content */}
       <TabPanel value={currentTab} index={1}>
-          </Box>
-        ) : (
-          <Box className="text-center py-6">
-            <Typography variant="body1" sx={{ color: darkMode ? '#d1d5db' : '#4b5563', mb: 3 }}>
-              You haven't added your sponsor yet.
-            </Typography>
-            
-            <Button 
-              variant="contained" 
-              color="primary"
-              onClick={() => {
-                setEditingSponsor(false);
-                setShowSponsorForm(true);
-              }}
-              startIcon={<i className="fa-solid fa-plus"></i>}
-            >
-              Add Sponsor
-            </Button>
-          </Box>
-        )}
-      </Paper>
-      </TabPanel>
-
-      {/* Sponsees Tab Content */}
-      <TabPanel value={currentTab} index={1}>
         <Box className="flex justify-between items-center mb-4">
           <Button 
             variant="contained" 
