@@ -177,9 +177,16 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
                   size="small"
                   color="error"
                   onClick={() => removeScheduleItem(item.day, item.time)}
-                  sx={{ minWidth: 'auto', px: 1, fontSize: '0.7rem' }}
+                  sx={{ 
+                    minWidth: 'auto', 
+                    width: '24px', 
+                    height: '24px', 
+                    px: 0,
+                    fontSize: '1rem',
+                    borderRadius: '50%'
+                  }}
                 >
-                  Remove
+                  ×
                 </Button>
               </Box>
             }
