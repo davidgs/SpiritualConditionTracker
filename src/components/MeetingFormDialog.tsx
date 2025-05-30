@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import SimpleMeetingSchedule from './SimpleMeetingSchedule';
+import TreeMeetingSchedule from './TreeMeetingSchedule';
 import { useTheme } from '@mui/material/styles';
 import { useAppTheme } from '../contexts/MuiThemeProvider';
 import StyledDialog from './StyledDialog';
@@ -455,7 +455,7 @@ export default function MeetingFormDialog({
             <Box sx={{ color: muiTheme.palette.text.secondary, fontSize: '14px', mb: '4px' }}>
               Meeting Schedule
             </Box>
-            <SimpleMeetingSchedule 
+            <TreeMeetingSchedule 
               schedule={meetingSchedule} 
               onChange={setMeetingSchedule}
               use24HourFormat={use24HourFormat}
