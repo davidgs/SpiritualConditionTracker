@@ -163,7 +163,7 @@ export default function ActionItemForm({ onSubmit, onCancel, initialData }: Acti
           variant="contained"
           color="primary"
         >
-          {initialData ? 'Update' : 'Add'} Action Item
+          {initialData ? 'Update' : 'Save'} Action Item
         </Button>
       </Box>
     </Box>
