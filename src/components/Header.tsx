@@ -37,7 +37,7 @@ function Header({ title, menuOpen, setMenuOpen, isMobile }) {
       {/* Logo and title - left aligned */}
       <Box
         component="img" 
-        src="/logo.jpg"
+        src="/assets/logo.jpg"
         alt="App Logo" 
         sx={{ 
           width: '20px',
