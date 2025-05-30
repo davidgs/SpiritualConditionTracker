@@ -142,84 +142,88 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
           }
         }}
       >
-        {days.map(day => {
-          const daySchedule = getDaySchedule(day.key);
-          const availableTimes = timeOptions.filter(time => 
-            !daySchedule.some(item => item.time === time.value)
-          );
+        {/* Show all existing meetings first */}
+        {schedule.map((item, index) => (
+          <TreeItem
+            key={`existing-${index}`}
+            itemId={`existing-${index}`}
+            label={
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, py: 0.5 }}>
+                <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                  {days.find(d => d.key === item.day)?.label || item.day}
+                </Typography>
+                <Typography variant="body2">
+                  {timeOptions.find(t => t.value === item.time)?.label || item.time}
+                </Typography>
+                <Chip 
+                  label={item.format ? item.format.charAt(0).toUpperCase() + item.format.slice(1).replace('_', ' ') : 'Unknown'}
+                  size="small"
+                  color="primary"
+                  sx={{ fontSize: '0.7rem', height: '20px' }}
+                />
+                <Chip 
+                  label={item.access ? item.access.charAt(0).toUpperCase() + item.access.slice(1) : 'Unknown'}
+                  size="small"
+                  color="secondary"
+                  sx={{ fontSize: '0.7rem', height: '20px' }}
+                />
+                <Button
+                  size="small"
+                  color="error"
+                  onClick={() => removeScheduleItem(item.day, item.time)}
+                  sx={{ minWidth: 'auto', px: 1, fontSize: '0.7rem' }}
+                >
+                  Remove
+                </Button>
+              </Box>
+            }
+          />
+        ))}
 
-          return (
-            <TreeItem 
-              key={day.key} 
-              itemId={day.key} 
+        {/* Single "Select Day" item that starts the progressive flow */}
+        <TreeItem
+          itemId="select-day"
+          label={
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, py: 0.5 }}>
+              <Typography variant="body2" sx={{ color: 'primary.main', fontWeight: 500 }}>
+                + Select Day
+              </Typography>
+            </Box>
+          }
+        >
+          {/* Step 1: Day selection */}
+          {days.map(day => (
+            <TreeItem
+              key={`day-${day.key}`}
+              itemId={`day-${day.key}`}
               label={
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, py: 0.5 }}>
-                  <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                  <Typography variant="body2" sx={{ color: 'text.secondary' }}>
                     {day.label}
                   </Typography>
-                  {daySchedule.length > 0 && (
-                    <Chip 
-                      label={`${daySchedule.length} meeting${daySchedule.length > 1 ? 's' : ''}`}
-                      size="small"
-                      sx={{ fontSize: '0.7rem', height: '20px' }}
-                    />
-                  )}
                 </Box>
               }
             >
-              {/* Existing meetings - show as completed items */}
-              {daySchedule.map(item => (
+              {/* Step 2: Time selection */}
+              {timeOptions.filter(time => 
+                !schedule.some(item => item.day === day.key && item.time === time.value)
+              ).map(time => (
                 <TreeItem
-                  key={`${day.key}-${item.time}`}
-                  itemId={`${day.key}-${item.time}`}
+                  key={`day-${day.key}-time-${time.value}`}
+                  itemId={`day-${day.key}-time-${time.value}`}
                   label={
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, py: 0.5 }}>
-                      <Typography variant="body2">
-                        {timeOptions.find(t => t.value === item.time)?.label || item.time}
-                      </Typography>
-                      <Chip 
-                        label={item.format ? item.format.charAt(0).toUpperCase() + item.format.slice(1).replace('_', ' ') : 'Unknown'}
-                        size="small"
-                        color="primary"
-                        sx={{ fontSize: '0.7rem', height: '20px' }}
-                      />
-                      <Chip 
-                        label={item.access ? item.access.charAt(0).toUpperCase() + item.access.slice(1) : 'Unknown'}
-                        size="small"
-                        color="secondary"
-                        sx={{ fontSize: '0.7rem', height: '20px' }}
-                      />
-                      <Button
-                        size="small"
-                        color="error"
-                        onClick={() => removeScheduleItem(day.key, item.time)}
-                        sx={{ minWidth: 'auto', px: 1, fontSize: '0.7rem' }}
-                      >
-                        Remove
-                      </Button>
-                    </Box>
-                  }
-                />
-              ))}
-
-              {/* Progressive selection flow for new meetings */}
-              {availableTimes.map(time => (
-                <TreeItem
-                  key={`${day.key}-${time.value}-new`}
-                  itemId={`${day.key}-${time.value}-new`}
-                  label={
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, py: 0.5 }}>
-                      <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                      <Typography variant="body2" sx={{ fontSize: '0.8rem', color: 'text.secondary' }}>
                         {time.label}
                       </Typography>
                     </Box>
                   }
                 >
-                  {/* Step 2: Format selection */}
+                  {/* Step 3: Format selection */}
                   {meetingFormats.map(format => (
                     <TreeItem
-                      key={`${day.key}-${time.value}-${format.value}-new`}
-                      itemId={`${day.key}-${time.value}-${format.value}-new`}
+                      key={`day-${day.key}-time-${time.value}-format-${format.value}`}
+                      itemId={`day-${day.key}-time-${time.value}-format-${format.value}`}
                       label={
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, py: 0.5 }}>
                           <Typography variant="body2" sx={{ fontSize: '0.8rem', color: 'text.secondary' }}>
@@ -228,11 +232,11 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
                         </Box>
                       }
                     >
-                      {/* Step 3: Access selection - completes the meeting creation */}
+                      {/* Step 4: Access selection - completes the meeting creation */}
                       {meetingAccess.map(access => (
                         <TreeItem
-                          key={`${day.key}-${time.value}-${format.value}-${access.value}-final`}
-                          itemId={`${day.key}-${time.value}-${format.value}-${access.value}-final`}
+                          key={`day-${day.key}-time-${time.value}-format-${format.value}-access-${access.value}`}
+                          itemId={`day-${day.key}-time-${time.value}-format-${format.value}-access-${access.value}`}
                           label={
                             <Box 
                               sx={{ 
@@ -262,8 +266,8 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
                 </TreeItem>
               ))}
             </TreeItem>
-          );
-        })}
+          ))}
+        </TreeItem>
       </SimpleTreeView>
     </Box>
   );
