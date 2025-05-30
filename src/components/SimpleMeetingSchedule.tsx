@@ -147,6 +147,7 @@ const SimpleMeetingSchedule = ({ schedule, onChange, use24HourFormat = false }) 
                   boxSizing: 'border-box'
                 }}>
                   <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                    {/* Time Selection */}
                     <Select
                       fullWidth
                       variant="outlined"
@@ -180,7 +181,7 @@ const SimpleMeetingSchedule = ({ schedule, onChange, use24HourFormat = false }) 
                         }
                       }}
                     >
-                      <MenuItem value="none">{hasTime ? "Remove" : "None"}</MenuItem>
+                      <MenuItem value="none">None</MenuItem>
                       <MenuItem value="06:00">{use24HourFormat ? "06:00" : "6:00 AM"}</MenuItem>
                       <MenuItem value="07:00">{use24HourFormat ? "07:00" : "7:00 AM"}</MenuItem>
                       <MenuItem value="08:00">{use24HourFormat ? "08:00" : "8:00 AM"}</MenuItem>
@@ -200,51 +201,50 @@ const SimpleMeetingSchedule = ({ schedule, onChange, use24HourFormat = false }) 
                       <MenuItem value="22:00">{use24HourFormat ? "22:00" : "10:00 PM"}</MenuItem>
                     </Select>
                     
-                    {/* Format and Access dropdowns appear when time is selected */}
+                    {/* Format Selection - appears when time is selected */}
                     {hasTime && (
-                      <Box sx={{ display: 'flex', gap: 1 }}>
-                        <Select
-                          fullWidth
-                          variant="outlined"
-                          size="small"
-                          value={formatValue}
-                          onChange={(e) => handleFormatChange(day.key, e.target.value)}
-                          sx={(theme) => ({
-                            flex: 1,
-                            bgcolor: theme.palette.mode === 'dark' ? theme.palette.background.default : theme.palette.background.paper,
-                            '& .MuiOutlinedInput-notchedOutline': {
-                              borderColor: theme.palette.divider
-                            }
-                          })}
-                        >
-                          {meetingFormats.map((format) => (
-                            <MenuItem key={format.value} value={format.value}>
-                              {format.label}
-                            </MenuItem>
-                          ))}
-                        </Select>
-                        
-                        <Select
-                          fullWidth
-                          variant="outlined"
-                          size="small"
-                          value={accessValue}
-                          onChange={(e) => handleAccessChange(day.key, e.target.value)}
-                          sx={(theme) => ({
-                            flex: 1,
-                            bgcolor: theme.palette.mode === 'dark' ? theme.palette.background.default : theme.palette.background.paper,
-                            '& .MuiOutlinedInput-notchedOutline': {
-                              borderColor: theme.palette.divider
-                            }
-                          })}
-                        >
-                          {meetingAccess.map((access) => (
-                            <MenuItem key={access.value} value={access.value}>
-                              {access.label}
-                            </MenuItem>
-                          ))}
-                        </Select>
-                      </Box>
+                      <Select
+                        fullWidth
+                        variant="outlined"
+                        size="small"
+                        value={formatValue}
+                        onChange={(e) => handleFormatChange(day.key, e.target.value)}
+                        sx={(theme) => ({
+                          bgcolor: theme.palette.mode === 'dark' ? theme.palette.background.default : theme.palette.background.paper,
+                          '& .MuiOutlinedInput-notchedOutline': {
+                            borderColor: theme.palette.divider
+                          }
+                        })}
+                      >
+                        {meetingFormats.map((format) => (
+                          <MenuItem key={format.value} value={format.value}>
+                            {format.label}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    )}
+                    
+                    {/* Access Selection - appears when format is selected */}
+                    {hasTime && formatValue && (
+                      <Select
+                        fullWidth
+                        variant="outlined"
+                        size="small"
+                        value={accessValue}
+                        onChange={(e) => handleAccessChange(day.key, e.target.value)}
+                        sx={(theme) => ({
+                          bgcolor: theme.palette.mode === 'dark' ? theme.palette.background.default : theme.palette.background.paper,
+                          '& .MuiOutlinedInput-notchedOutline': {
+                            borderColor: theme.palette.divider
+                          }
+                        })}
+                      >
+                        {meetingAccess.map((access) => (
+                          <MenuItem key={access.value} value={access.value}>
+                            {access.label}
+                          </MenuItem>
+                        ))}
+                      </Select>
                     )}
                   </Box>
                 </TableCell>
