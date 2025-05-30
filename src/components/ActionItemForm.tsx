@@ -62,8 +62,6 @@ export default function ActionItemForm({ onSubmit, onCancel, initialData }: Acti
 
   return (
     <Box 
-      component="form" 
-      onSubmit={handleSubmit}
       sx={{ 
         p: 2, 
         border: `1px solid ${theme.palette.divider}`, 
@@ -161,7 +159,7 @@ export default function ActionItemForm({ onSubmit, onCancel, initialData }: Acti
           Cancel
         </Button>
         <Button
-          type="submit"
+          onClick={handleSubmit}
           variant="contained"
           color="success"
         >
