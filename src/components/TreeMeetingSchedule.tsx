@@ -149,16 +149,15 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
               <Box sx={{ 
                 display: 'flex', 
                 alignItems: 'center', 
-                gap: 1, 
+                gap: 0.5, 
                 py: 0.5,
                 flexWrap: 'nowrap',
-                minWidth: '100%',
-                ml: -2  // Move content further left
+                minWidth: '100%'
               }}>
-                <Typography variant="body2" sx={{ fontWeight: 500, minWidth: '80px', textAlign: 'left' }}>
+                <Typography variant="body2" sx={{ fontWeight: 500, minWidth: '70px', textAlign: 'left' }}>
                   {days.find(d => d.key === item.day)?.label || item.day}
                 </Typography>
-                <Typography variant="body2" sx={{ minWidth: '80px', textAlign: 'left' }}>
+                <Typography variant="body2" sx={{ minWidth: '70px', textAlign: 'left' }}>
                   {timeOptions.find(t => t.value === item.time)?.label || item.time}
                 </Typography>
                 <Chip 
