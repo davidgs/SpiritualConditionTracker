@@ -239,17 +239,17 @@ function NavBar({ currentView, setCurrentView }) {
           
           <Box
             component="button"
-            onClick={() => handleNavClick('sponsor')}
+            onClick={() => handleNavClick('sponsorship')}
             sx={{ 
               minWidth: 'auto',
               flexDirection: 'column',
               fontSize: '0.75rem',
               px: 1,
               py: 0.5,
-              backgroundColor: currentView === 'sponsor' ? 'primary.main' : 'transparent',
-              color: currentView === 'sponsor' ? 'primary.contrastText' : 'text.secondary',
+              backgroundColor: (currentView === 'sponsorship' || currentView === 'sponsor' || currentView === 'sponsee') ? 'primary.main' : 'transparent',
+              color: (currentView === 'sponsorship' || currentView === 'sponsor' || currentView === 'sponsee') ? 'primary.contrastText' : 'text.secondary',
               border: 'none',
-              borderRadius: currentView === 'sponsor' ? 2 : 0,
+              borderRadius: (currentView === 'sponsorship' || currentView === 'sponsor' || currentView === 'sponsee') ? 2 : 0,
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center'
@@ -257,7 +257,7 @@ function NavBar({ currentView, setCurrentView }) {
           >
             🤝
             <Box component="span" sx={{ fontSize: '0.65rem', ml: 0.5 }}>
-              Sponsor
+              Sponsorship
             </Box>
           </Box>
           

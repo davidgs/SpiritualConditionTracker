@@ -7,6 +7,7 @@ import Meetings from './components/Meetings';
 import StepWork from './components/StepWork';
 import Sponsor from './components/Sponsor';
 import Sponsee from './components/Sponsee';
+import SponsorSponsee from './components/SponsorSponsee';
 import MuiThemeProvider, { useAppTheme } from './contexts/MuiThemeProvider';
 import ThemeBackground from './components/ThemeBackground';
 import { DEFAULT_SPIRITUAL_FITNESS_SCORE } from './utils/constants';
@@ -16,7 +17,7 @@ import initSQLiteDatabase, { cleanupBrokenActivities } from './utils/sqliteLoade
 import { User, Activity, Meeting } from './types/database';
 
 // Define valid view types
-type ViewType = 'dashboard' | 'profile' | 'meetings' | 'stepwork' | 'sponsor' | 'sponsee';
+type ViewType = 'dashboard' | 'profile' | 'meetings' | 'stepwork' | 'sponsorship' | 'sponsor' | 'sponsee';
 
 // Main App Component
 function App(): JSX.Element {
@@ -534,16 +535,11 @@ function App(): JSX.Element {
             setCurrentView={setCurrentView}
           />
         );
+      case 'sponsorship':
       case 'sponsor':
-        return (
-          <Sponsor
-            user={user}
-            onUpdate={handleUpdateProfile}
-          />
-        );
       case 'sponsee':
         return (
-          <Sponsee
+          <SponsorSponsee
             user={user}
             onUpdate={handleUpdateProfile}
           />
