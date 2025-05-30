@@ -403,11 +403,12 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
       {sponsor && (
         <Paper 
           elevation={0}
-          className="p-5 rounded-lg mt-4"
+          className="p-5 rounded-lg"
           sx={{ 
             backgroundColor: theme.palette.background.paper,
             boxShadow: theme.shadows[2],
-            paddingTop: "1rem"
+            paddingTop: "1rem",
+            marginTop: "1.5rem"
           }}
         >
           <Box className="flex justify-between items-center mb-4" >
@@ -420,9 +421,10 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
               size="small"
               sx={{ 
                 color: theme.palette.primary.main,
-                backgroundColor: theme.palette.primary.light,
+                padding: '4px',
                 '&:hover': {
-                  backgroundColor: theme.palette.primary.dark
+                  backgroundColor: 'transparent',
+                  color: theme.palette.primary.dark
                 }
               }}
             >
