@@ -23,6 +23,20 @@ const SimpleMeetingSchedule = ({ schedule, onChange, use24HourFormat = false }) 
     { key: 'saturday', label: 'Saturday' }
   ];
 
+  const meetingTypes = [
+    { value: 'none', label: 'None' },
+    { value: 'open', label: 'Open' },
+    { value: 'closed', label: 'Closed' },
+    { value: 'discussion', label: 'Discussion' },
+    { value: 'speaker', label: 'Speaker' },
+    { value: 'big_book', label: 'Big Book' },
+    { value: 'step_study', label: 'Step Study' },
+    { value: 'literature', label: 'Literature' },
+    { value: 'young_people', label: 'Young People' },
+    { value: 'womens', label: 'Women\'s' },
+    { value: 'mens', label: 'Men\'s' }
+  ];
+
   const handleTimeChange = (day, value) => {
     if (value === "none") {
       // Remove this day from schedule
@@ -32,14 +46,32 @@ const SimpleMeetingSchedule = ({ schedule, onChange, use24HourFormat = false }) 
       const existingItemIndex = schedule.findIndex(item => item.day === day);
       
       if (existingItemIndex >= 0) {
-        // Update existing day
+        // Update existing day - keep existing meeting type if any
         const newSchedule = [...schedule];
-        newSchedule[existingItemIndex] = { day, time: value };
+        newSchedule[existingItemIndex] = { 
+          day, 
+          time: value, 
+          type: newSchedule[existingItemIndex].type || 'open' 
+        };
         onChange(newSchedule);
       } else {
-        // Add new day
-        onChange([...schedule, { day, time: value }]);
+        // Add new day with default meeting type
+        onChange([...schedule, { day, time: value, type: 'open' }]);
       }
+    }
+  };
+
+  const handleTypeChange = (day, value) => {
+    const existingItemIndex = schedule.findIndex(item => item.day === day);
+    
+    if (existingItemIndex >= 0) {
+      // Update existing day's meeting type
+      const newSchedule = [...schedule];
+      newSchedule[existingItemIndex] = { 
+        ...newSchedule[existingItemIndex],
+        type: value 
+      };
+      onChange(newSchedule);
     }
   };
 
@@ -51,63 +83,118 @@ const SimpleMeetingSchedule = ({ schedule, onChange, use24HourFormat = false }) 
       boxSizing: 'border-box',
       overflowX: 'hidden' 
     }}>
-      <Box sx={(theme) => ({
-        border: `1px solid ${theme.palette.divider}`,
-        borderRadius: 1,
-        overflow: 'hidden',
-        width: '100%',
+      <Table sx={{ 
+        width: '100%', 
+        borderCollapse: 'collapse', 
+        tableLayout: 'fixed',
         maxWidth: '100%',
         boxSizing: 'border-box'
-      })}>
-        <Table sx={{ 
-          width: '100%', 
-          borderCollapse: 'collapse', 
-          tableLayout: 'fixed',
-          maxWidth: '100%',
-          boxSizing: 'border-box'
-        }}>
-          <TableBody>
-            {days.map((day, index) => {
-              const existingItem = schedule.find(item => item.day === day.key);
-              const hasTime = !!existingItem;
-              const timeValue = existingItem ? existingItem.time : '';
-              
-              return (
-                <TableRow 
-                  key={day.key} 
+      }}>
+        <TableBody>
+          {days.map((day, index) => {
+            const existingItem = schedule.find(item => item.day === day.key);
+            const hasTime = !!existingItem;
+            const timeValue = existingItem ? existingItem.time : '';
+            const typeValue = existingItem ? existingItem.type : 'open';
+            
+            return (
+              <TableRow 
+                key={day.key} 
+                sx={{
+                  width: '100%',
+                  maxWidth: '100%',
+                  boxSizing: 'border-box'
+                }}
+              >
+                <TableCell 
                   sx={(theme) => ({
-                    borderBottom: index < days.length - 1 ? `1px solid ${theme.palette.divider}` : 'none',
-                    width: '100%',
-                    maxWidth: '100%',
+                    py: 1.5, 
+                    px: 2, 
+                    border: 'none',
+                    color: theme.palette.text.primary,
+                    fontWeight: 500,
+                    width: '30%',
                     boxSizing: 'border-box'
                   })}
                 >
-                  <TableCell 
+                  {day.label}
+                </TableCell>
+                <TableCell sx={{ 
+                  p: 1, 
+                  pt: 1.25, 
+                  border: 'none',
+                  width: '35%',
+                  maxWidth: '35%',
+                  boxSizing: 'border-box'
+                }}>
+                  <Select
+                    fullWidth
+                    variant="outlined"
+                    size="small"
+                    value={timeValue || "none"}
+                    onChange={(e) => handleTimeChange(day.key, e.target.value)}
                     sx={(theme) => ({
-                      py: 1.5, 
-                      px: 2, 
-                      borderRight: `1px solid ${theme.palette.divider}`,
-                      color: theme.palette.text.primary,
-                      fontWeight: 500,
-                      width: '40%',
-                      boxSizing: 'border-box'
+                      width: '100%',
+                      maxWidth: '100%',
+                      boxSizing: 'border-box',
+                      bgcolor: theme.palette.mode === 'dark' ? theme.palette.background.default : theme.palette.background.paper,
+                      '& .MuiOutlinedInput-notchedOutline': {
+                        borderColor: theme.palette.divider
+                      },
+                      '& .MuiSelect-select': {
+                        width: '100%',
+                        maxWidth: '100%',
+                        boxSizing: 'border-box',
+                      },
+                      '& .MuiInputBase-root': {
+                        width: '100%',
+                        maxWidth: '100%',
+                        boxSizing: 'border-box'
+                      }
                     })}
+                    MenuProps={{
+                      PaperProps: {
+                        style: {
+                          maxHeight: 300
+                        }
+                      }
+                    }}
                   >
-                    {day.label}
-                  </TableCell>
-                  <TableCell sx={{ 
-                    p: 1, 
-                    pt: 1.25, 
-                    width: '60%',
-                    maxWidth: '60%',
-                    boxSizing: 'border-box'
-                  }}>
+                    <MenuItem value="none">{hasTime ? "Remove" : "None"}</MenuItem>
+                    <MenuItem value="06:00">{use24HourFormat ? "06:00" : "6:00 AM"}</MenuItem>
+                    <MenuItem value="07:00">{use24HourFormat ? "07:00" : "7:00 AM"}</MenuItem>
+                    <MenuItem value="08:00">{use24HourFormat ? "08:00" : "8:00 AM"}</MenuItem>
+                    <MenuItem value="09:00">{use24HourFormat ? "09:00" : "9:00 AM"}</MenuItem>
+                    <MenuItem value="10:00">{use24HourFormat ? "10:00" : "10:00 AM"}</MenuItem>
+                    <MenuItem value="11:00">{use24HourFormat ? "11:00" : "11:00 AM"}</MenuItem>
+                    <MenuItem value="12:00">{use24HourFormat ? "12:00" : "12:00 PM"}</MenuItem>
+                    <MenuItem value="13:00">{use24HourFormat ? "13:00" : "1:00 PM"}</MenuItem>
+                    <MenuItem value="14:00">{use24HourFormat ? "14:00" : "2:00 PM"}</MenuItem>
+                    <MenuItem value="15:00">{use24HourFormat ? "15:00" : "3:00 PM"}</MenuItem>
+                    <MenuItem value="16:00">{use24HourFormat ? "16:00" : "4:00 PM"}</MenuItem>
+                    <MenuItem value="17:00">{use24HourFormat ? "17:00" : "5:00 PM"}</MenuItem>
+                    <MenuItem value="18:00">{use24HourFormat ? "18:00" : "6:00 PM"}</MenuItem>
+                    <MenuItem value="19:00">{use24HourFormat ? "19:00" : "7:00 PM"}</MenuItem>
+                    <MenuItem value="20:00">{use24HourFormat ? "20:00" : "8:00 PM"}</MenuItem>
+                    <MenuItem value="21:00">{use24HourFormat ? "21:00" : "9:00 PM"}</MenuItem>
+                    <MenuItem value="22:00">{use24HourFormat ? "22:00" : "10:00 PM"}</MenuItem>
+                  </Select>
+                </TableCell>
+                <TableCell sx={{ 
+                  p: 1, 
+                  pt: 1.25, 
+                  border: 'none',
+                  width: '35%',
+                  maxWidth: '35%',
+                  boxSizing: 'border-box'
+                }}>
+                  {hasTime && (
                     <Select
                       fullWidth
                       variant="outlined"
                       size="small"
-                      value={timeValue || "none"}
-                      onChange={(e) => handleTimeChange(day.key, e.target.value)}
+                      value={typeValue}
+                      onChange={(e) => handleTypeChange(day.key, e.target.value)}
                       sx={(theme) => ({
                         width: '100%',
                         maxWidth: '100%',
@@ -135,32 +222,19 @@ const SimpleMeetingSchedule = ({ schedule, onChange, use24HourFormat = false }) 
                         }
                       }}
                     >
-                      <MenuItem value="none">{hasTime ? "Remove" : "None"}</MenuItem>
-                      <MenuItem value="06:00">{use24HourFormat ? "06:00" : "6:00 AM"}</MenuItem>
-                      <MenuItem value="07:00">{use24HourFormat ? "07:00" : "7:00 AM"}</MenuItem>
-                      <MenuItem value="08:00">{use24HourFormat ? "08:00" : "8:00 AM"}</MenuItem>
-                      <MenuItem value="09:00">{use24HourFormat ? "09:00" : "9:00 AM"}</MenuItem>
-                      <MenuItem value="10:00">{use24HourFormat ? "10:00" : "10:00 AM"}</MenuItem>
-                      <MenuItem value="11:00">{use24HourFormat ? "11:00" : "11:00 AM"}</MenuItem>
-                      <MenuItem value="12:00">{use24HourFormat ? "12:00" : "12:00 PM"}</MenuItem>
-                      <MenuItem value="13:00">{use24HourFormat ? "13:00" : "1:00 PM"}</MenuItem>
-                      <MenuItem value="14:00">{use24HourFormat ? "14:00" : "2:00 PM"}</MenuItem>
-                      <MenuItem value="15:00">{use24HourFormat ? "15:00" : "3:00 PM"}</MenuItem>
-                      <MenuItem value="16:00">{use24HourFormat ? "16:00" : "4:00 PM"}</MenuItem>
-                      <MenuItem value="17:00">{use24HourFormat ? "17:00" : "5:00 PM"}</MenuItem>
-                      <MenuItem value="18:00">{use24HourFormat ? "18:00" : "6:00 PM"}</MenuItem>
-                      <MenuItem value="19:00">{use24HourFormat ? "19:00" : "7:00 PM"}</MenuItem>
-                      <MenuItem value="20:00">{use24HourFormat ? "20:00" : "8:00 PM"}</MenuItem>
-                      <MenuItem value="21:00">{use24HourFormat ? "21:00" : "9:00 PM"}</MenuItem>
-                      <MenuItem value="22:00">{use24HourFormat ? "22:00" : "10:00 PM"}</MenuItem>
+                      {meetingTypes.slice(1).map((type) => (
+                        <MenuItem key={type.value} value={type.value}>
+                          {type.label}
+                        </MenuItem>
+                      ))}
                     </Select>
-                  </TableCell>
-                </TableRow>
-              );
-            })}
-          </TableBody>
-        </Table>
-      </Box>
+                  )}
+                </TableCell>
+              </TableRow>
+            );
+          })}
+        </TableBody>
+      </Table>
     </Box>
   );
 };
