@@ -99,8 +99,8 @@ function App(): JSX.Element {
       window.dbInitialized = true;
       console.log('[ App.tsx ] Database state flags set - ready for data operations');
       
-      // Now load the data
-      await loadData();
+      // Load data immediately after initialization (bypass state check)
+      await loadDataDirect();
       
       // Calculate spiritual fitness after database is ready and data is loaded
     } catch (error) {
@@ -169,6 +169,125 @@ function App(): JSX.Element {
     } finally {
       // Always clear loading state no matter what
       setIsLoading(false);
+    }
+  }
+
+  // Load data directly during initialization (bypasses state check)
+  async function loadDataDirect() {
+    console.log('[ App.js ] Loading data directly from initialized database');
+    
+    try {
+      // Get user data - using async version
+      let usersData = await window.db.getAll('users');
+      let userData = null;
+      
+      console.log('[ App.tsx ] All users found:', usersData?.length || 0);
+      
+      // Check if we have any users and log details
+      if (usersData && usersData.length > 0) {
+        // Log all user records to debug the issue
+        usersData.forEach((user, index) => {
+          console.log(`[ App.tsx ] User ${index + 1} (ID: ${user.id}):`, {
+            name: user.name || '[empty]',
+            lastName: user.lastName || '[empty]',
+            phoneNumber: user.phoneNumber || '[empty]',
+            email: user.email || '[empty]',
+            sobrietyDate: user.sobrietyDate || '[empty]'
+          });
+        });
+        
+        // Find the user with the most data (not empty)
+        let bestUser = usersData[0];
+        for (const user of usersData) {
+          const hasData = (user.name && user.name.trim()) || 
+                         (user.phoneNumber && user.phoneNumber.trim()) || 
+                         (user.email && user.email.trim()) ||
+                         (user.sobrietyDate && user.sobrietyDate.trim());
+          
+          if (hasData) {
+            bestUser = user;
+            console.log('[ App.tsx ] Found user with data, using ID:', user.id);
+            break;
+          }
+        }
+        
+        userData = bestUser;
+        console.log('[ App.tsx ] Selected user ID:', userData.id);
+      }
+      
+      // If no user found, create default user
+      if (!userData) {
+        console.log("No user found, creating default user...");
+        // Create default user (let SQLite auto-generate the ID)
+        const newUser = {
+          name: '',
+          lastName: '',
+          sobrietyDate: '',
+          homeGroup: '',
+          homeGroups: [],
+          phoneNumber: '',
+          email: '',
+          privacySettings: {
+            shareLocation: false,
+            shareActivities: false,
+            shareLastName: true
+          },
+          preferences: {
+            use24HourFormat: false
+          },
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        };
+        
+        // Save the new user
+        userData = await window.db.add('users', newUser);
+      }
+      
+      // Set the user data and current user ID
+      setUser(userData);
+      console.log('[ App.tsx ] Raw user data from database:', userData);
+      console.log('[ App.tsx ] User data fields:', {
+        name: userData?.name,
+        lastName: userData?.lastName,
+        phoneNumber: userData?.phoneNumber,
+        email: userData?.email,
+        sobrietyDate: userData?.sobrietyDate
+      });
+      
+      if (userData && userData.id) {
+        setCurrentUserId(userData.id);
+        console.log('[ App.tsx ] Current user ID set to:', userData.id);
+      } else {
+        console.log('[ App.tsx ] Warning: User data loaded but no ID found');
+        console.log('[ App.tsx ] User data keys:', userData ? Object.keys(userData) : 'userData is null');
+      }
+
+      // Get activities within current timeframe - using async version
+      const allActivitiesData = await window.db.getAll('activities');
+      if (allActivitiesData && allActivitiesData.length > 0) {
+        const filteredActivities = filterActivitiesByTimeframe(allActivitiesData, currentTimeframe);
+        console.log(`[ App.tsx:218 loadDataDirect ] Loaded ${filteredActivities.length} activities within ${currentTimeframe} days (from ${allActivitiesData.length} total)`);
+        setActivities(filteredActivities);
+      } else {
+        console.log("No activities found in database");
+        setActivities([]);
+      }
+
+      // Get meetings - using async version
+      const meetingsData = await window.db.getAll('meetings');
+      if (meetingsData && meetingsData.length > 0) {
+        setMeetings(meetingsData);
+      } else {
+        console.log("No meetings found in database");
+        setMeetings([]);
+      }
+
+      // Calculate spiritual fitness
+      const activitiesArray = Array.isArray(allActivitiesData) ? allActivitiesData : [];
+      const score = calculateSpiritualFitnessScore(activitiesArray, currentTimeframe);
+      setSpiritualFitness(score);
+    } catch (error) {
+      console.error("Error loading data directly:", error);
     }
   }
 
