@@ -204,7 +204,7 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
                 </Box>
               }
             >
-              {/* Step 2: Time selection */}
+              {/* Step 2: Time selection - only show times not already taken for this day */}
               {timeOptions.filter(time => 
                 !schedule.some(item => item.day === day.key && item.time === time.value)
               ).map(time => (
