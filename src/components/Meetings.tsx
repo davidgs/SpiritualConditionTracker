@@ -195,10 +195,10 @@ export default function Meetings({ setCurrentView, meetings = [], onSave, user }
               ) : (
                 // Legacy format - if there's no schedule, show days/time if available
                 meeting.days ? (
-                  <div className="flex flex-col gap-2">
-                    <div className="flex items-center">
-                      <i className="fa-solid fa-calendar-days text-gray-500 dark:text-gray-400 mr-3" style={{ fontSize: '1rem' }}></i>&nbsp;
-                      <span className="text-gray-600 dark:text-gray-300">
+                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                      <i className="fa-solid fa-calendar-days" style={{ fontSize: '1rem', opacity: 0.7, marginRight: '12px' }}></i>
+                      <Typography variant="body2" color="text.secondary">
                         {(() => {
                           // Parse days if it's a string (from SQLite JSON storage)
                           let daysArray = meeting.days;
