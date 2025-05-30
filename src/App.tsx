@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Dashboard from './components/Dashboard';
+import NavBar from './components/NavBar';
 // Removed NearbyMembers import as we won't be using Bluetooth
 import Profile from './components/Profile';
 import Meetings from './components/Meetings';
@@ -571,164 +572,24 @@ function App(): JSX.Element {
           className="app-container h-full flex flex-col transition-all duration-300"
           sx={{ 
             width: '100%',
-            height: '100vh',
-            color: 'text.primary',
-            position: 'relative'
+            height: '100%',
+            color: 'text.primary'
           }}
         >
-          {/* Sticky Header */}
-          <Box 
-            sx={{ 
-              position: 'sticky',
-              top: 0,
-              zIndex: 1000,
-              bgcolor: 'background.paper',
-              borderBottom: '1px solid',
-              borderColor: 'divider',
-              px: 2,
-              py: 1,
-              display: 'flex',
-              alignItems: 'center',
-              gap: 2,
-              minHeight: '60px'
-            }}
-          >
-            <img 
-              src="/logo.jpg" 
-              alt="Logo" 
-              style={{ 
-                width: '32px', 
-                height: '32px', 
-                borderRadius: '4px',
-                objectFit: 'cover'
-              }} 
-            />
-            <Typography variant="h6" sx={{ fontWeight: 600, color: 'text.primary' }}>
-              My Spiritual Condition
-            </Typography>
-          </Box>
-
-          {/* Main Content */}
-          <Box 
-            className="flex-grow" 
-            sx={{ 
-              bgcolor: 'background.default',
-              minHeight: 'calc(100vh - 60px - 80px)', // Account for header and bottom nav
-              paddingBottom: '20px',
-              paddingTop: '10px',
-              overflowY: 'auto'
-            }}
-          >
-            {renderCurrentView()}
-          </Box>
-
-          {/* Bottom Navigation */}
-          <Box 
-            sx={{ 
-              position: 'sticky',
-              bottom: 0,
-              zIndex: 1000,
-              bgcolor: 'background.paper',
-              borderTop: '1px solid',
-              borderColor: 'divider',
-              display: 'flex',
-              justifyContent: 'space-around',
-              alignItems: 'center',
-              minHeight: '80px',
-              px: 2
-            }}
-          >
-            <Button
-              variant={currentView === 'dashboard' ? 'contained' : 'text'}
-              size="small"
-              onClick={() => setCurrentView('dashboard')}
-              sx={{ 
-                minWidth: 'auto',
-                flexDirection: 'column',
-                fontSize: '0.75rem',
-                px: 1,
-                py: 0.5
-              }}
-            >
-              🏠
-              <Typography variant="caption" sx={{ fontSize: '0.65rem' }}>
-                Home
-              </Typography>
-            </Button>
-            
-            <Button
-              variant={currentView === 'meetings' ? 'contained' : 'text'}
-              size="small"
-              onClick={() => setCurrentView('meetings')}
-              sx={{ 
-                minWidth: 'auto',
-                flexDirection: 'column',
-                fontSize: '0.75rem',
-                px: 1,
-                py: 0.5
-              }}
-            >
-              👥
-              <Typography variant="caption" sx={{ fontSize: '0.65rem' }}>
-                Meetings
-              </Typography>
-            </Button>
-            
-            <Button
-              variant={currentView === 'stepwork' ? 'contained' : 'text'}
-              size="small"
-              onClick={() => setCurrentView('stepwork')}
-              sx={{ 
-                minWidth: 'auto',
-                flexDirection: 'column',
-                fontSize: '0.75rem',
-                px: 1,
-                py: 0.5
-              }}
-            >
-              📚
-              <Typography variant="caption" sx={{ fontSize: '0.65rem' }}>
-                Steps
-              </Typography>
-            </Button>
-            
-            <Button
-              variant={currentView === 'sponsor' ? 'contained' : 'text'}
-              size="small"
-              onClick={() => setCurrentView('sponsor')}
-              sx={{ 
-                minWidth: 'auto',
-                flexDirection: 'column',
-                fontSize: '0.75rem',
-                px: 1,
-                py: 0.5
-              }}
-            >
-              🤝
-              <Typography variant="caption" sx={{ fontSize: '0.65rem' }}>
-                Sponsor
-              </Typography>
-            </Button>
-            
-            <Button
-              variant={currentView === 'profile' ? 'contained' : 'text'}
-              size="small"
-              onClick={() => setCurrentView('profile')}
-              sx={{ 
-                minWidth: 'auto',
-                flexDirection: 'column',
-                fontSize: '0.75rem',
-                px: 1,
-                py: 0.5
-              }}
-            >
-              👤
-              <Typography variant="caption" sx={{ fontSize: '0.65rem' }}>
-                Profile
-              </Typography>
-            </Button>
-          </Box>
+        <NavBar currentView={currentView} setCurrentView={setCurrentView} />
+        <Box 
+          className="flex-grow" 
+          sx={{ 
+            bgcolor: 'background.default', // Ensure background color is applied here too
+            minHeight: 'calc(100vh - 60px)', // 60px is the header height
+            paddingBottom: '100px', // Significantly increased padding to ensure content is visible
+            paddingTop: '10px', // Space after the header
+            overflowY: 'visible' // Don't add scrollbar to this container
+          }}
+        >
+          {renderCurrentView()}
         </Box>
+      </Box>
       </ThemeBackground>
     </MuiThemeProvider>
   );

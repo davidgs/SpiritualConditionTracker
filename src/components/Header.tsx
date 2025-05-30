@@ -44,13 +44,13 @@ function Header({ title, menuOpen, setMenuOpen, isMobile }) {
           }}>
             <Box
               component="img" 
-              src="./assets/logo.jpg"
+              src="/logo.jpg"
               alt="App Logo" 
               sx={{ 
-                width: '50px',
-                height: '50px',
-                objectFit: 'contain',
-                borderRadius: '8px'
+                width: '32px',
+                height: '32px',
+                objectFit: 'cover',
+                borderRadius: '4px'
               }}
             />
           </Box>
@@ -65,25 +65,13 @@ function Header({ title, menuOpen, setMenuOpen, isMobile }) {
             <Typography 
               variant="h6" 
               sx={{ 
-                fontWeight: 'bold',
+                fontWeight: 600,
                 color: headerTextColor,
                 margin: 0,
                 lineHeight: 1.2
               }}
             >
-              Spiritual Condition Tracker
-            </Typography>
-            <Typography
-              variant="caption"
-              sx={{
-                color: 'text.secondary',
-                lineHeight: 1.1,
-                margin: 0,
-                borderBottom: `2px solid ${accentColor}`,
-                paddingBottom: '2px'
-              }}
-            >
-              Track your spiritual journey
+              My Spiritual Condition
             </Typography>
           </Box>
         </>
