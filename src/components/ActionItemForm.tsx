@@ -154,7 +154,6 @@ export default function ActionItemForm({ onSubmit, onCancel, initialData }: Acti
           variant="outlined"
           color="error"
           onClick={onCancel}
-          sx={{ color: theme.palette.text.secondary }}
         >
           Cancel
         </Button>

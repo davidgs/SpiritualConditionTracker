@@ -12,7 +12,8 @@ import {
   CardContent,
   Tabs,
   Tab,
-  ListItemText
+  ListItemText,
+  Checkbox
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import SponsorFormDialog from './SponsorFormDialog';
@@ -95,6 +96,49 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
     console.log('Found sponsor contact activities:', sponsorContactActivities);
     console.log('Converted to contacts:', contacts);
     setSponsorContacts(contacts);
+  };
+
+  // Get action items for a specific contact date
+  const getActionItemsForContact = (contactDate) => {
+    const contactDateObj = new Date(contactDate);
+    const contactDateString = contactDateObj.toISOString().split('T')[0];
+    
+    return activities.filter(activity => {
+      if (activity.type !== 'action-item') return false;
+      
+      const activityDateObj = new Date(activity.date);
+      const activityDateString = activityDateObj.toISOString().split('T')[0];
+      
+      // Match action items created on the same day as the contact
+      return activityDateString === contactDateString;
+    }).map(activity => ({
+      id: activity.id,
+      title: activity.notes?.split(' - ')[0]?.replace('Action Item: ', '') || 'Action Item',
+      text: activity.notes?.split(' - ')[1]?.split(' [Notes:')[0] || '',
+      notes: activity.notes?.match(/\[Notes: (.*?)\]/)?.[1] || '',
+      completed: activity.location === 'completed',
+      dueDate: activity.date,
+      activityData: activity // Keep reference to original activity
+    }));
+  };
+
+  // Toggle action item completion
+  const handleToggleActionItem = async (actionItem) => {
+    try {
+      // Use the database update function to change completion status
+      if (window.db && window.db.update) {
+        await window.db.update('activities', actionItem.id, {
+          location: actionItem.completed ? 'pending' : 'completed'
+        });
+        
+        // Trigger a reload of contacts to reflect the change
+        loadSponsorContacts();
+        
+        console.log('Action item completion toggled:', actionItem.id, !actionItem.completed);
+      }
+    } catch (error) {
+      console.error('Error toggling action item completion:', error);
+    }
   };
 
   // Handle sponsor contact form submission with action items
@@ -510,6 +554,76 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
                               Duration: {contact.duration} minutes
                             </Typography>
                           )}
+                          
+                          {/* Action Items Section */}
+                          {(() => {
+                            const actionItems = getActionItemsForContact(contact.date);
+                            return actionItems.length > 0 && (
+                              <Box sx={{ mt: 1.5, pl: 0 }}>
+                                <Typography variant="caption" sx={{ 
+                                  color: theme.palette.text.secondary, 
+                                  fontWeight: 600,
+                                  textTransform: 'uppercase',
+                                  letterSpacing: '0.5px'
+                                }}>
+                                  Action Items
+                                </Typography>
+                                <Box sx={{ mt: 0.5 }}>
+                                  {actionItems.map((item) => (
+                                    <Box 
+                                      key={item.id} 
+                                      sx={{ 
+                                        display: 'flex', 
+                                        alignItems: 'center', 
+                                        gap: 1, 
+                                        py: 0.25
+                                      }}
+                                    >
+                                      <Checkbox
+                                        checked={item.completed}
+                                        onChange={() => handleToggleActionItem(item)}
+                                        size="small"
+                                        sx={{
+                                          p: 0,
+                                          '& .MuiSvgIcon-root': {
+                                            fontSize: '16px'
+                                          }
+                                        }}
+                                      />
+                                      <Typography 
+                                        variant="body2" 
+                                        sx={{ 
+                                          color: item.completed ? theme.palette.text.secondary : theme.palette.text.primary,
+                                          textDecoration: item.completed ? 'line-through' : 'none',
+                                          flex: 1,
+                                          fontSize: '0.8rem'
+                                        }}
+                                      >
+                                        {item.title}
+                                      </Typography>
+                                      <IconButton
+                                        size="small"
+                                        onClick={() => {
+                                          // TODO: Implement edit action item functionality
+                                          console.log('Edit action item:', item);
+                                        }}
+                                        sx={{
+                                          p: 0.25,
+                                          color: theme.palette.text.secondary,
+                                          '&:hover': {
+                                            color: theme.palette.primary.main,
+                                            backgroundColor: 'transparent'
+                                          }
+                                        }}
+                                      >
+                                        <i className="fa-solid fa-pen" style={{ fontSize: '10px' }}></i>
+                                      </IconButton>
+                                    </Box>
+                                  ))}
+                                </Box>
+                              </Box>
+                            );
+                          })()}
                         </Box>
                       }
                     />
