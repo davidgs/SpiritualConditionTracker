@@ -763,17 +763,38 @@ function setupGlobalDB(sqlite) {
         console.log('[ sqliteLoader.js ] Update values:', values);
         
         // Debug: Check what's actually in the database before update
-        const beforeUpdate = await sqlite.query({
+        // Try both string and numeric ID formats to find the record
+        let beforeUpdate = await sqlite.query({
           database: DB_NAME,
           statement: `SELECT * FROM ${collection} WHERE id = ?`,
           values: [numericId]
         });
+        
+        // If not found with numeric, try string format
+        if (!beforeUpdate.values || beforeUpdate.values.length === 0) {
+          beforeUpdate = await sqlite.query({
+            database: DB_NAME,
+            statement: `SELECT * FROM ${collection} WHERE id = ?`,
+            values: [String(id)]
+          });
+        }
+        
         console.log('[ sqliteLoader.js ] Record before update:', beforeUpdate);
+        
+        // If still not found, check what IDs are actually in the table
+        if (!beforeUpdate.values || beforeUpdate.values.length === 0) {
+          const allRecords = await sqlite.query({
+            database: DB_NAME,
+            statement: `SELECT id FROM ${collection} LIMIT 5`,
+            values: []
+          });
+          console.log('[ sqliteLoader.js ] Sample IDs in table:', allRecords);
+        }
         
         // Execute update - try alternative approach with interpolated SQL
         console.log('[ sqliteLoader.js ] Attempting update with values:', values);
         
-        // First try the standard parameterized approach
+        // First try the standard parameterized approach with numeric ID
         const updateSQL = `UPDATE ${collection} SET ${setClause} WHERE id = ?`;
         let updateResult = await sqlite.execute({
           database: DB_NAME,
@@ -781,9 +802,21 @@ function setupGlobalDB(sqlite) {
           values: values
         });
         
-        console.log('[ sqliteLoader.js ] Update result:', updateResult);
+        console.log('[ sqliteLoader.js ] Update result (numeric ID):', updateResult);
         
-        // If that didn't work, try direct SQL approach as fallback
+        // If that didn't work, try with string ID
+        if (updateResult.changes && updateResult.changes.changes === 0) {
+          console.log('[ sqliteLoader.js ] Numeric ID update failed, trying string ID');
+          const stringValues = [...values.slice(0, -1), String(id)];
+          updateResult = await sqlite.execute({
+            database: DB_NAME,
+            statements: updateSQL,
+            values: stringValues
+          });
+          console.log('[ sqliteLoader.js ] Update result (string ID):', updateResult);
+        }
+        
+        // If still no changes, try direct SQL approach as fallback
         if (updateResult.changes && updateResult.changes.changes === 0) {
           console.log('[ sqliteLoader.js ] Parameterized update failed, trying direct SQL');
           

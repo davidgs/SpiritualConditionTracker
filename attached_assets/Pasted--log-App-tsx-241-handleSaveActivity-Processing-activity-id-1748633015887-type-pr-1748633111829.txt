@@ -1,0 +1,29 @@
+⚡️  [log] - [ App.tsx:241 handleSaveActivity ] Processing activity: {"id":"1748633015887","type":"prayer","duration":15,"date":"2025-05-30T16:00:00.000Z","notes":"","location":"completed"}
+⚡️  [log] - [ App.tsx ] Updating existing activity with ID: 1748633015887
+⚡️  To Native ->  CapacitorSQLite open 76290479
+⚡️  TO JS undefined
+⚡️  To Native ->  CapacitorSQLite query 76290480
+⚡️  [log] - [ sqliteLoader.js ] Update SQL: UPDATE activities SET id = ?, type = ?, duration = ?, date = ?, notes = ?, location = ?, updatedAt = ? WHERE id = ?
+⚡️  [log] - [ sqliteLoader.js ] Update values: ["1748633015887","prayer",15,"2025-05-30T16:00:00.000Z","","completed","2025-05-30T19:23:35.895Z",1748633015887]
+⚡️  TO JS {"values":[]}
+⚡️  To Native ->  CapacitorSQLite execute 76290481
+⚡️  [log] - [ sqliteLoader.js ] Record before update: {"values":[]}
+⚡️  [log] - [ sqliteLoader.js ] Attempting update with values: ["1748633015887","prayer",15,"2025-05-30T16:00:00.000Z","","completed","2025-05-30T19:23:35.895Z",1748633015887]
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 76290482
+⚡️  [log] - [ sqliteLoader.js ] Update result: {"changes":{"changes":0}}
+⚡️  [log] - [ sqliteLoader.js ] Parameterized update failed, trying direct SQL
+⚡️  [log] - [ sqliteLoader.js ] Direct SQL: UPDATE activities SET id = '1748633015887', type = 'prayer', duration = 15, date = '2025-05-30T16:00:00.000Z', notes = '', location = 'completed', updatedAt = '2025-05-30T19:23:35.895Z' WHERE id = 1748633015887
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  [log] - [ sqliteLoader.js ] Direct SQL result: {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite query 76290483
+⚡️  TO JS {"values":[]}
+⚡️  [log] - [ App.tsx ] Activity operation completed: null
+⚡️  [log] - [ Dashboard.js ] Dashboard initial spiritualFitness: 5
+⚡️  [log] - [ Dashboard.js ] Dashboard currentScore state: 5
+⚡️  [log] - [ Dashboard.js ] Dashboard formattedScore for display: 5.00
+⚡️  [log] - [ Dashboard.js ] Dashboard progressPercent: 5
+⚡️  [log] - Formatting date: 1986-05-15
+⚡️  [log] - [ ActivityList.js ] Total activities received: 0
+⚡️  [log] - [ ActivityList.js ] Filter params - limit: 15 filter: all maxDaysAgo: 7
+⚡️  [log] - [ ActivityList.js ] Final filtered activities count: 0
