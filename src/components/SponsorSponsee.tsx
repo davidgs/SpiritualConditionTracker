@@ -511,18 +511,37 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
                   <ListItem sx={{ px: 0 }}>
                     <ListItemText
                       primary={
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                          <i 
-                            className={getContactTypeInfo(contact.type).icon}
-                            style={{ 
-                              color: theme.palette.primary.main,
-                              fontSize: '16px',
-                              width: '20px'
+                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                            <i 
+                              className={getContactTypeInfo(contact.type).icon}
+                              style={{ 
+                                color: theme.palette.primary.main,
+                                fontSize: '16px',
+                                width: '20px'
+                              }}
+                            />
+                            <Typography sx={{ color: theme.palette.text.primary, fontWeight: 500 }}>
+                              {getContactTypeInfo(contact.type).label}
+                            </Typography>
+                          </Box>
+                          <IconButton
+                            size="small"
+                            onClick={() => {
+                              // TODO: Implement edit contact functionality
+                              console.log('Edit contact:', contact);
                             }}
-                          />
-                          <Typography sx={{ color: theme.palette.text.primary, fontWeight: 500 }}>
-                            {getContactTypeInfo(contact.type).label}
-                          </Typography>
+                            sx={{
+                              p: 0.5,
+                              color: theme.palette.text.secondary,
+                              '&:hover': {
+                                color: theme.palette.primary.main,
+                                backgroundColor: 'transparent'
+                              }
+                            }}
+                          >
+                            <i className="fa-solid fa-pen" style={{ fontSize: '14px' }}></i>
+                          </IconButton>
                         </Box>
                       }
                       secondary={
@@ -558,6 +577,8 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
                           {/* Action Items Section */}
                           {(() => {
                             const actionItems = getActionItemsForContact(contact.date);
+                            console.log('Action items for contact:', contact.date, actionItems);
+                            console.log('All activities:', activities);
                             return actionItems.length > 0 && (
                               <Box sx={{ mt: 1.5, pl: 0 }}>
                                 <Typography variant="caption" sx={{ 
