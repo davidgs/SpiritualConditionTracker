@@ -146,24 +146,31 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
             key={`existing-${index}`}
             itemId={`existing-${index}`}
             label={
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, py: 0.5 }}>
-                <Typography variant="body2" sx={{ fontWeight: 500 }}>
+              <Box sx={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: 1, 
+                py: 0.5,
+                flexWrap: 'nowrap',
+                minWidth: '100%'
+              }}>
+                <Typography variant="body2" sx={{ fontWeight: 500, minWidth: 'fit-content' }}>
                   {days.find(d => d.key === item.day)?.label || item.day}
                 </Typography>
-                <Typography variant="body2">
+                <Typography variant="body2" sx={{ minWidth: 'fit-content' }}>
                   {timeOptions.find(t => t.value === item.time)?.label || item.time}
                 </Typography>
                 <Chip 
                   label={item.format ? item.format.charAt(0).toUpperCase() + item.format.slice(1).replace('_', ' ') : 'Unknown'}
                   size="small"
                   color="primary"
-                  sx={{ fontSize: '0.7rem', height: '20px' }}
+                  sx={{ fontSize: '0.7rem', height: '20px', minWidth: 'fit-content' }}
                 />
                 <Chip 
                   label={item.access ? item.access.charAt(0).toUpperCase() + item.access.slice(1) : 'Unknown'}
                   size="small"
                   color="secondary"
-                  sx={{ fontSize: '0.7rem', height: '20px' }}
+                  sx={{ fontSize: '0.7rem', height: '20px', minWidth: 'fit-content' }}
                 />
                 <Button
                   size="small"
