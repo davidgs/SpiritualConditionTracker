@@ -120,18 +120,25 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
       
       // Save action items as individual activities if any were provided
       if (actionItems && actionItems.length > 0) {
-        for (const actionItem of actionItems) {
-          const todoActivityData = {
-            type: 'todo',
-            date: actionItem.dueDate || new Date().toISOString(),
-            notes: `${actionItem.title}${actionItem.text ? ' - ' + actionItem.text : ''}${actionItem.notes ? ' [Notes: ' + actionItem.notes + ']' : ''}`,
-            location: actionItem.completed ? 'completed' : 'pending'
-          };
+        try {
+          const actionItemPromises = actionItems.map(actionItem => {
+            const todoActivityData = {
+              type: 'todo',
+              date: actionItem.dueDate || new Date().toISOString(),
+              notes: `${actionItem.title}${actionItem.text ? ' - ' + actionItem.text : ''}${actionItem.notes ? ' [Notes: ' + actionItem.notes + ']' : ''}`,
+              location: actionItem.completed ? 'completed' : 'pending'
+            };
+            
+            console.log('Saving action item as activity:', todoActivityData);
+            return onSaveActivity(todoActivityData);
+          });
           
-          console.log('Saving action item as activity:', todoActivityData);
-          await onSaveActivity(todoActivityData);
+          await Promise.all(actionItemPromises);
+          console.log('All action items saved successfully');
+        } catch (actionItemError) {
+          console.warn('Some action items failed to save:', actionItemError);
+          // Don't let action item failures prevent the contact from being saved
         }
-        console.log('All action items saved successfully');
       }
       
       // Close the form

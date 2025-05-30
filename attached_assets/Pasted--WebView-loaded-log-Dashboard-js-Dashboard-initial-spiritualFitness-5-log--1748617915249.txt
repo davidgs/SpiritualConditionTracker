@@ -1,0 +1,77 @@
+⚡️  WebView loaded
+⚡️  [log] - [ Dashboard.js ] Dashboard initial spiritualFitness: 5
+⚡️  [log] - [ Dashboard.js ] Dashboard currentScore state: 0
+⚡️  [log] - [ Dashboard.js ] Dashboard formattedScore for display: 0
+⚡️  [log] - [ Dashboard.js ] Dashboard progressPercent: 0
+⚡️  [log] - [ ActivityList.js ] Total activities received: 0
+⚡️  [log] - [ ActivityList.js ] Filter params - limit: 15 filter: all maxDaysAgo: 7
+⚡️  [log] - [ ActivityList.js ] Final filtered activities count: 0
+⚡️  [log] - Light mode activated
+⚡️  [log] - Applying native theme: blue (#3b82f6) in light mode
+⚡️  [log] - Applied MUI theme to iOS components
+⚡️  [log] - Applied MUI theme to iOS native components: blue
+⚡️  [log] - Light mode activated
+⚡️  [log] - Applying native theme: blue (#3b82f6) in light mode
+⚡️  [log] - Applied MUI theme to iOS components
+⚡️  [log] - Applied MUI theme to iOS native components: blue
+⚡️  [log] - [ Dashboard.js ] Dashboard useEffect [activities] triggered - calculating spiritual fitness
+⚡️  [log] - [ Dashboard.tsx:94 calculateSpiritualFitnessScore ] Called with activities: 0
+⚡️  [log] - [ Dashboard.tsx:95 calculateSpiritualFitnessScore ] Sample activities: []
+⚡️  [log] - [ Dashboard.tsx:96 calculateSpiritualFitnessScore ] Timeframe: 30
+⚡️  [log] - [ Dashboard.tsx:108 calculateFitnessFromActivities ] Starting calculation with 0 activities, timeframe: 30
+⚡️  [log] - [ Dashboard.tsx:127 calculateFitnessFromActivities ] Filtered 0 recent activities
+⚡️  [log] - [ Dashboard.tsx:130 calculateFitnessFromActivities ] No recent activities, returning base score: 5
+⚡️  [log] - [ Dashboard.tsx:100 calculateSpiritualFitnessScore ] Calculated score: 5
+⚡️  [log] - [ Dashboard.js ] Dashboard useEffect [scoreTimeframe] triggered with timeframe: 30
+⚡️  [log] - [ Dashboard.tsx:94 calculateSpiritualFitnessScore ] Called with activities: 0
+⚡️  [log] - [ Dashboard.tsx:95 calculateSpiritualFitnessScore ] Sample activities: []
+⚡️  [log] - [ Dashboard.tsx:96 calculateSpiritualFitnessScore ] Timeframe: 30
+⚡️  [log] - [ Dashboard.tsx:108 calculateFitnessFromActivities ] Starting calculation with 0 activities, timeframe: 30
+⚡️  [log] - [ Dashboard.tsx:127 calculateFitnessFromActivities ] Filtered 0 recent activities
+⚡️  [log] - [ Dashboard.tsx:130 calculateFitnessFromActivities ] No recent activities, returning base score: 5
+⚡️  [log] - [ Dashboard.tsx:100 calculateSpiritualFitnessScore ] Calculated score: 5
+⚡️  To Native ->  CapacitorSQLite createConnection 10576989
+⚡️  [log] - Light mode activated
+⚡️  [log] - Applying native theme: blue (#3b82f6) in light mode
+⚡️  [log] - Applied MUI theme to iOS components
+⚡️  [log] - Applied MUI theme to iOS native components: blue
+⚡️  [log] - Initializing database for native app with Capacitor...
+⚡️  [log] - [ sqliteLoader.js ] Initializing SQLite database via Capacitor...
+⚡️  [log] - [ sqliteLoader.js ] Capacitor platform detected: ios
+⚡️  [log] - [ sqliteLoader.js ] Capacitor plugins available: ["CapacitorHttp","Console","WebView","CapacitorCookies","CapacitorSQLite"]
+⚡️  [log] - [ sqliteLoader.js ] iOS environment detected - using iOS-specific database setup
+⚡️  [log] - [ sqliteLoader.js ] Found CapacitorSQLite plugin: true
+ERROR MESSAGE:  {"message":"CreateConnection: Connection spiritualTracker already exists","errorMessage":"CreateConnection: Connection spiritualTracker already exists"}
+⚡️  [log] - [ Dashboard.js ] Dashboard initial spiritualFitness: 5
+⚡️  [log] - [ Dashboard.js ] Dashboard currentScore state: 5
+⚡️  [log] - [ Dashboard.js ] Dashboard formattedScore for display: 5.00
+⚡️  [log] - [ Dashboard.js ] Dashboard progressPercent: 5
+⚡️  [log] - [ ActivityList.js ] Total activities received: 0
+⚡️  [log] - [ ActivityList.js ] Filter params - limit: 15 filter: all maxDaysAgo: 7
+⚡️  [log] - [ ActivityList.js ] Final filtered activities count: 0
+⚡️  [error] - {"message":"CreateConnection: Connection spiritualTracker already exists","errorMessage":"CreateConnection: Connection spiritualTracker already exists"}
+⚡️  [error] - [ sqliteLoader.js ] Error creating database connection: {"errorMessage":"CreateConnection: Connection spiritualTracker already exists"}
+⚡️  [error] - [ sqliteLoader.js ] Error initializing Capacitor SQLite: {}
+⚡️  [error] - [ sqliteLoader.js ] Detailed error info: {
+  "message": "Database connection failed: CreateConnection: Connection spiritualTracker already exists",
+  "name": "Error",
+  "stack": "@capacitor://localhost/bundle.js:2:288974\np@capacitor://localhost/bundle.js:2:282688\n@capacitor://localhost/bundle.js:2:282458\nu@capacitor://localhost/bundle.js:2:287360\nl@capacitor://localhost/bundle.js:2:287600"
+}
+⚡️  [error] - Database not initialized {}
+⚡️  [error] - [ App.js ] Error details: {
+  "message": "Database connection failed: CreateConnection: Connection spiritualTracker already exists",
+  "name": "Error",
+  "stack": "@capacitor://localhost/bundle.js:2:288974\np@capacitor://localhost/bundle.js:2:282688\n@capacitor://localhost/bundle.js:2:282458\nu@capacitor://localhost/bundle.js:2:287360\nl@capacitor://localhost/bundle.js:2:287600"
+}
+⚡️  [warn] - [ App.js ] Using localStorage fallback due to SQLite initialization failure
+⚡️  [error] - [ App.js ] Database not initialized or not ready for data operations
+⚡️  [error] - [ App.js ] Database initialization error: {}
+⚡️  [log] - [ Dashboard.js ] Dashboard initial spiritualFitness: 5
+⚡️  [log] - [ Dashboard.js ] Dashboard currentScore state: 5
+⚡️  [log] - [ Dashboard.js ] Dashboard formattedScore for display: 5.00
+⚡️  [log] - [ Dashboard.js ] Dashboard progressPercent: 5
+⚡️  [log] - [ ActivityList.js ] Total activities received: 0
+⚡️  [log] - [ ActivityList.js ] Filter params - limit: 15 filter: all maxDaysAgo: 7
+⚡️  [log] - [ ActivityList.js ] Final filtered activities count: 0
+⚡️  [log] - Found sponsor contact activities: []
+⚡️  [log] - Converted to contacts: []

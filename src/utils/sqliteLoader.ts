@@ -38,17 +38,41 @@ async function initSQLiteDatabase() {
 
     console.log('[ sqliteLoader.js ] Found CapacitorSQLite plugin:', !!sqlitePlugin);
 
-    // Step 1: Create connection
+    // Step 1: Create connection (check if already exists first)
     try {
-      await sqlitePlugin.createConnection({
-        database: DB_NAME,
-        encrypted: false,
-        mode: 'no-encryption'
-      });
-      console.log('[ sqliteLoader.js ] Database connection created successfully');
+      // Check if connection already exists
+      try {
+        const existingConnections = await sqlitePlugin.getConnectionList();
+        const connectionExists = existingConnections.some(conn => conn.database === DB_NAME);
+        
+        if (!connectionExists) {
+          await sqlitePlugin.createConnection({
+            database: DB_NAME,
+            encrypted: false,
+            mode: 'no-encryption'
+          });
+          console.log('[ sqliteLoader.js ] Database connection created successfully');
+        } else {
+          console.log('[ sqliteLoader.js ] Database connection already exists, reusing existing connection');
+        }
+      } catch (listError) {
+        // If getConnectionList fails, try to create connection anyway
+        console.log('[ sqliteLoader.js ] Could not check existing connections, attempting to create new connection');
+        await sqlitePlugin.createConnection({
+          database: DB_NAME,
+          encrypted: false,
+          mode: 'no-encryption'
+        });
+        console.log('[ sqliteLoader.js ] Database connection created successfully');
+      }
     } catch (error) {
-      console.error('[ sqliteLoader.js ] Error creating database connection:', error);
-      throw new Error(`Database connection failed: ${error.message || JSON.stringify(error)}`);
+      // If error message indicates connection already exists, that's fine
+      if (error.message && error.message.includes('already exists')) {
+        console.log('[ sqliteLoader.js ] Database connection already exists, continuing with existing connection');
+      } else {
+        console.error('[ sqliteLoader.js ] Error creating database connection:', error);
+        throw new Error(`Database connection failed: ${error.message || JSON.stringify(error)}`);
+      }
     }
 
     // Step 2: Open the database
