@@ -23,18 +23,21 @@ const SimpleMeetingSchedule = ({ schedule, onChange, use24HourFormat = false }) 
     { key: 'saturday', label: 'Saturday' }
   ];
 
-  const meetingTypes = [
-    { value: 'none', label: 'None' },
-    { value: 'open', label: 'Open' },
-    { value: 'closed', label: 'Closed' },
+  const meetingFormats = [
     { value: 'discussion', label: 'Discussion' },
     { value: 'speaker', label: 'Speaker' },
+    { value: 'mens', label: 'Men\'s' },
+    { value: 'womens', label: 'Women\'s' },
+    { value: 'young_people', label: 'Young People\'s' },
+    { value: 'beginners', label: 'Beginners' },
     { value: 'big_book', label: 'Big Book' },
     { value: 'step_study', label: 'Step Study' },
-    { value: 'literature', label: 'Literature' },
-    { value: 'young_people', label: 'Young People' },
-    { value: 'womens', label: 'Women\'s' },
-    { value: 'mens', label: 'Men\'s' }
+    { value: 'literature', label: 'Literature' }
+  ];
+
+  const meetingAccess = [
+    { value: 'open', label: 'Open' },
+    { value: 'closed', label: 'Closed' }
   ];
 
   const handleTimeChange = (day, value) => {
@@ -46,30 +49,45 @@ const SimpleMeetingSchedule = ({ schedule, onChange, use24HourFormat = false }) 
       const existingItemIndex = schedule.findIndex(item => item.day === day);
       
       if (existingItemIndex >= 0) {
-        // Update existing day - keep existing meeting type if any
+        // Update existing day - keep existing format and access if any
         const newSchedule = [...schedule];
         newSchedule[existingItemIndex] = { 
           day, 
           time: value, 
-          type: newSchedule[existingItemIndex].type || 'open' 
+          format: newSchedule[existingItemIndex].format || 'discussion',
+          access: newSchedule[existingItemIndex].access || 'open'
         };
         onChange(newSchedule);
       } else {
-        // Add new day with default meeting type
-        onChange([...schedule, { day, time: value, type: 'open' }]);
+        // Add new day with default format and access
+        onChange([...schedule, { day, time: value, format: 'discussion', access: 'open' }]);
       }
     }
   };
 
-  const handleTypeChange = (day, value) => {
+  const handleFormatChange = (day, value) => {
     const existingItemIndex = schedule.findIndex(item => item.day === day);
     
     if (existingItemIndex >= 0) {
-      // Update existing day's meeting type
+      // Update existing day's meeting format
       const newSchedule = [...schedule];
       newSchedule[existingItemIndex] = { 
         ...newSchedule[existingItemIndex],
-        type: value 
+        format: value 
+      };
+      onChange(newSchedule);
+    }
+  };
+
+  const handleAccessChange = (day, value) => {
+    const existingItemIndex = schedule.findIndex(item => item.day === day);
+    
+    if (existingItemIndex >= 0) {
+      // Update existing day's meeting access
+      const newSchedule = [...schedule];
+      newSchedule[existingItemIndex] = { 
+        ...newSchedule[existingItemIndex],
+        access: value 
       };
       onChange(newSchedule);
     }
@@ -95,7 +113,8 @@ const SimpleMeetingSchedule = ({ schedule, onChange, use24HourFormat = false }) 
             const existingItem = schedule.find(item => item.day === day.key);
             const hasTime = !!existingItem;
             const timeValue = existingItem ? existingItem.time : '';
-            const typeValue = existingItem ? existingItem.type : 'open';
+            const formatValue = existingItem ? existingItem.format : 'discussion';
+            const accessValue = existingItem ? existingItem.access : 'open';
             
             return (
               <TableRow 
@@ -113,7 +132,7 @@ const SimpleMeetingSchedule = ({ schedule, onChange, use24HourFormat = false }) 
                     border: 'none',
                     color: theme.palette.text.primary,
                     fontWeight: 500,
-                    width: '30%',
+                    width: '25%',
                     boxSizing: 'border-box'
                   })}
                 >
@@ -123,8 +142,8 @@ const SimpleMeetingSchedule = ({ schedule, onChange, use24HourFormat = false }) 
                   p: 1, 
                   pt: 1.25, 
                   border: 'none',
-                  width: '35%',
-                  maxWidth: '35%',
+                  width: '25%',
+                  maxWidth: '25%',
                   boxSizing: 'border-box'
                 }}>
                   <Select
@@ -184,8 +203,8 @@ const SimpleMeetingSchedule = ({ schedule, onChange, use24HourFormat = false }) 
                   p: 1, 
                   pt: 1.25, 
                   border: 'none',
-                  width: '35%',
-                  maxWidth: '35%',
+                  width: '25%',
+                  maxWidth: '25%',
                   boxSizing: 'border-box'
                 }}>
                   {hasTime && (
@@ -193,8 +212,8 @@ const SimpleMeetingSchedule = ({ schedule, onChange, use24HourFormat = false }) 
                       fullWidth
                       variant="outlined"
                       size="small"
-                      value={typeValue}
-                      onChange={(e) => handleTypeChange(day.key, e.target.value)}
+                      value={formatValue}
+                      onChange={(e) => handleFormatChange(day.key, e.target.value)}
                       sx={(theme) => ({
                         width: '100%',
                         maxWidth: '100%',
@@ -222,9 +241,59 @@ const SimpleMeetingSchedule = ({ schedule, onChange, use24HourFormat = false }) 
                         }
                       }}
                     >
-                      {meetingTypes.slice(1).map((type) => (
-                        <MenuItem key={type.value} value={type.value}>
-                          {type.label}
+                      {meetingFormats.map((format) => (
+                        <MenuItem key={format.value} value={format.value}>
+                          {format.label}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  )}
+                </TableCell>
+                <TableCell sx={{ 
+                  p: 1, 
+                  pt: 1.25, 
+                  border: 'none',
+                  width: '25%',
+                  maxWidth: '25%',
+                  boxSizing: 'border-box'
+                }}>
+                  {hasTime && (
+                    <Select
+                      fullWidth
+                      variant="outlined"
+                      size="small"
+                      value={accessValue}
+                      onChange={(e) => handleAccessChange(day.key, e.target.value)}
+                      sx={(theme) => ({
+                        width: '100%',
+                        maxWidth: '100%',
+                        boxSizing: 'border-box',
+                        bgcolor: theme.palette.mode === 'dark' ? theme.palette.background.default : theme.palette.background.paper,
+                        '& .MuiOutlinedInput-notchedOutline': {
+                          borderColor: theme.palette.divider
+                        },
+                        '& .MuiSelect-select': {
+                          width: '100%',
+                          maxWidth: '100%',
+                          boxSizing: 'border-box',
+                        },
+                        '& .MuiInputBase-root': {
+                          width: '100%',
+                          maxWidth: '100%',
+                          boxSizing: 'border-box'
+                        }
+                      })}
+                      MenuProps={{
+                        PaperProps: {
+                          style: {
+                            maxHeight: 300
+                          }
+                        }
+                      }}
+                    >
+                      {meetingAccess.map((access) => (
+                        <MenuItem key={access.value} value={access.value}>
+                          {access.label}
                         </MenuItem>
                       ))}
                     </Select>

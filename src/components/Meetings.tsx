@@ -157,12 +157,8 @@ export default function Meetings({ setCurrentView, meetings = [], onSave, user }
             {(() => {
               let meetingTypes = [];
               
-              // First check if there's a direct types array
-              if (meeting.types && Array.isArray(meeting.types)) {
-                meetingTypes = meeting.types;
-              } 
-              // Otherwise extract from schedule
-              else if (meeting.schedule) {
+              // Extract format and access from schedule
+              if (meeting.schedule) {
                 let scheduleArray = meeting.schedule;
                 
                 if (typeof meeting.schedule === 'string') {
@@ -174,7 +170,12 @@ export default function Meetings({ setCurrentView, meetings = [], onSave, user }
                 }
                 
                 if (Array.isArray(scheduleArray)) {
-                  meetingTypes = [...new Set(scheduleArray.map(item => item.type).filter(Boolean))];
+                  // Get unique formats and access types
+                  const formats = [...new Set(scheduleArray.map(item => item.format).filter(Boolean))];
+                  const accessTypes = [...new Set(scheduleArray.map(item => item.access).filter(Boolean))];
+                  
+                  // Combine them for display
+                  meetingTypes = [...formats, ...accessTypes];
                 }
               }
               
