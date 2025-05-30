@@ -9,7 +9,9 @@ import {
   IconButton, 
   Divider,
   Card,
-  CardContent 
+  CardContent,
+  Tabs,
+  Tab
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import SponsorFormDialog from './SponsorFormDialog';
@@ -19,6 +21,9 @@ import { formatDateForDisplay } from '../utils/dateUtils';
 export default function SponsorSponsee({ user, onUpdate }) {
   const theme = useTheme();
   const darkMode = theme.palette.mode === 'dark';
+  
+  // Tab state
+  const [currentTab, setCurrentTab] = useState(0);
   
   // State for sponsor and sponsees
   const [sponsor, setSponsor] = useState(null);
@@ -136,17 +141,63 @@ export default function SponsorSponsee({ user, onUpdate }) {
     setSponsor(null);
   };
   
+  // Handle tab change
+  const handleTabChange = (event, newValue) => {
+    setCurrentTab(newValue);
+  };
+
+  // Custom TabPanel component
+  function TabPanel({ children, value, index, ...other }) {
+    return (
+      <div
+        role="tabpanel"
+        hidden={value !== index}
+        id={`sponsorship-tabpanel-${index}`}
+        aria-labelledby={`sponsorship-tab-${index}`}
+        {...other}
+      >
+        {value === index && (
+          <Box sx={{ pt: 3 }}>
+            {children}
+          </Box>
+        )}
+      </div>
+    );
+  }
+
   return (
     <div className="p-4 md:p-6">
-      {/* Sponsor Section */}
+      {/* Page Title */}
       <Typography 
-        variant="h5" 
-        component="h2" 
-        className="mb-4"
-        sx={{ color: darkMode ? '#f3f4f6' : '#1f2937', fontWeight: 'bold' }}
+        variant="h4" 
+        component="h1" 
+        className="mb-6"
+        sx={{ color: theme.palette.text.primary, fontWeight: 'bold', textAlign: 'center' }}
       >
-        My Sponsor
+        Sponsorship Management
       </Typography>
+
+      {/* Material-UI Tabs */}
+      <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 3 }}>
+        <Tabs 
+          value={currentTab} 
+          onChange={handleTabChange} 
+          variant="fullWidth"
+          sx={{
+            '& .MuiTab-root': {
+              textTransform: 'none',
+              fontSize: '1rem',
+              fontWeight: 600
+            }
+          }}
+        >
+          <Tab label="My Sponsor" />
+          <Tab label="My Sponsees" />
+        </Tabs>
+      </Box>
+
+      {/* Sponsor Tab Content */}
+      <TabPanel value={currentTab} index={0}>
       
       <Paper 
         elevation={0}
@@ -248,30 +299,24 @@ export default function SponsorSponsee({ user, onUpdate }) {
           </Box>
         )}
       </Paper>
-      
-      {/* Sponsees Section */}
-      <Box className="flex justify-between items-center mb-4">
-        <Typography 
-          variant="h5" 
-          component="h2"
-          sx={{ color: darkMode ? '#f3f4f6' : '#1f2937', fontWeight: 'bold' }}
-        >
-          My Sponsees
-        </Typography>
-        
-        <Button 
-          variant="contained" 
-          color="primary"
-          onClick={() => {
-            setEditingSponseeId(null);
-            setShowSponseeForm(true);
-          }}
-          startIcon={<i className="fa-solid fa-plus"></i>}
-          size="small"
-        >
-          Add Sponsee
-        </Button>
-      </Box>
+      </TabPanel>
+
+      {/* Sponsees Tab Content */}
+      <TabPanel value={currentTab} index={1}>
+        <Box className="flex justify-between items-center mb-4">
+          <Button 
+            variant="contained" 
+            color="primary"
+            onClick={() => {
+              setEditingSponseeId(null);
+              setShowSponseeForm(true);
+            }}
+            startIcon={<i className="fa-solid fa-plus"></i>}
+            size="small"
+          >
+            Add Sponsee
+          </Button>
+        </Box>
       
       {sponsees.length > 0 ? (
         <Box className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -366,6 +411,7 @@ export default function SponsorSponsee({ user, onUpdate }) {
           </Typography>
         </Paper>
       )}
+      </TabPanel>
       
       {/* Sponsor Form Dialog */}
       <SponsorFormDialog 
