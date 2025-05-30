@@ -300,10 +300,12 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
       
       <Paper 
         elevation={0}
-        className="p-5 mb-8 rounded-lg"
         sx={{ 
           backgroundColor: theme.palette.background.paper,
-          boxShadow: theme.shadows[2]
+          boxShadow: theme.shadows[2],
+          borderRadius: 2,
+          p: 1.5,
+          mb: 1.5
         }}
       >
         {sponsor ? (
@@ -403,12 +405,12 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
       {sponsor && (
         <Paper 
           elevation={0}
-          className="p-5 rounded-lg"
           sx={{ 
             backgroundColor: theme.palette.background.paper,
             boxShadow: theme.shadows[2],
-            paddingTop: "1rem",
-            marginTop: "1.5rem"
+            borderRadius: 2,
+            p: 1.5,
+            mt: 1.5
           }}
         >
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
@@ -602,10 +604,12 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
       ) : (
         <Paper 
           elevation={0}
-          className="p-6 rounded-lg text-center"
           sx={{ 
             backgroundColor: theme.palette.background.paper,
-            boxShadow: theme.shadows[2]
+            boxShadow: theme.shadows[2],
+            borderRadius: 2,
+            p: 1.5,
+            textAlign: 'center'
           }}
         >
           <Typography variant="body1" sx={{ color: theme.palette.text.primary }}>
