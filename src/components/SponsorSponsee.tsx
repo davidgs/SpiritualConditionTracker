@@ -411,7 +411,7 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
             marginTop: "1.5rem"
           }}
         >
-          <Box className="flex justify-between items-center mb-4" >
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
             <Typography variant="h6" sx={{ color: theme.palette.text.primary, fontWeight: 'bold' }}>
               Sponsor Contacts
             </Typography>
