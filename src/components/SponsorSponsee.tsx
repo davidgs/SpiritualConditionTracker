@@ -190,7 +190,8 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
       console.log('Editing existing contact:', editingContact);
       console.log('Updated contact data:', contactData);
       
-      if (!editingContact?.activityData?.id) {
+      const contactId = editingContact?.activityData?.id || editingContact?.id;
+      if (!contactId) {
         console.error('No editing contact ID available');
         return;
       }
@@ -198,7 +199,7 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
       // Update the existing contact activity
       const updatedActivityData = {
         type: 'sponsor-contact',
-        date: contactData.date || editingContact.activityData.date,
+        date: contactData.date || editingContact.activityData?.date || editingContact.date,
         notes: `${contactData.note || ''} [Contact: ${contactData.type}${contactData.topic ? ', Topic: ' + contactData.topic : ''}]`,
         duration: contactData.duration ? parseInt(contactData.duration) : undefined,
         location: contactData.type,
@@ -210,7 +211,7 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
       // Update the existing activity
       await onSaveActivity({
         ...updatedActivityData,
-        id: editingContact.activityData.id
+        id: contactId
       });
 
       // Handle action items - remove old ones and add new ones
