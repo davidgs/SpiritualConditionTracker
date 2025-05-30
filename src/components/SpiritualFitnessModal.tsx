@@ -61,62 +61,68 @@ const SpiritualFitnessModal = ({ open, onClose }) => {
         <DialogContent dividers>
           <Box sx={{ mb: 3 }}>
             <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: 'medium' }}>
-              Base Points for Activities
+              Activity Point Values
             </Typography>
             <ul style={{ paddingLeft: '1.5rem', marginTop: '0.5rem' }}>
               <Typography component="li" variant="body2" gutterBottom>
-                AA Meeting: 5 points (speaker +3, shared +1, chair +1)
+                <strong>Meetings:</strong> 10 points (plus speaker, chair, share bonuses)
               </Typography>
               <Typography component="li" variant="body2" gutterBottom>
-                Reading Literature: 2 points per 30 min
+                <strong>Step Work:</strong> 10 points
               </Typography>
               <Typography component="li" variant="body2" gutterBottom>
-                Prayer/Meditation: 2 points per 30 min
+                <strong>Service:</strong> 9 points
               </Typography>
               <Typography component="li" variant="body2" gutterBottom>
-                Talking with Sponsor: 3 points per 30 min
+                <strong>Prayer/Meditation:</strong> 8 points each
               </Typography>
               <Typography component="li" variant="body2" gutterBottom>
-                Working with Sponsee: 4 points per 30 min (max 20)
+                <strong>Reading/Literature:</strong> 6 points each
               </Typography>
               <Typography component="li" variant="body2" gutterBottom>
-                AA Calls: 1 point each (no limit)
+                <strong>Sponsor Calls:</strong> 5 points
               </Typography>
               <Typography component="li" variant="body2" gutterBottom>
-                Variety of activities: 1-5 bonus points
+                <strong>Sponsee Calls:</strong> 4 points
+              </Typography>
+              <Typography component="li" variant="body2" gutterBottom>
+                <strong>AA Member Calls:</strong> 5 points
+              </Typography>
+              <Typography component="li" variant="body2" gutterBottom>
+                <strong>Action Items:</strong> +0.5 points when completed, -0.5 points when deleted
               </Typography>
             </ul>
           </Box>
           
           <Box sx={{ mb: 3 }}>
             <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: 'medium' }}>
-              Timeframe Adjustments
+              Calculation Method
             </Typography>
             <ul style={{ paddingLeft: '1.5rem', marginTop: '0.5rem' }}>
               <Typography component="li" variant="body2" gutterBottom>
-                Consistency bonus for regular activity across weeks
+                Points are calculated based on weighted activity values
               </Typography>
               <Typography component="li" variant="body2" gutterBottom>
-                Higher expectations for longer timeframes
+                Consistency bonus for regular activity across multiple days
               </Typography>
               <Typography component="li" variant="body2" gutterBottom>
-                Recent activity weighted more heavily
+                Variety bonus for engaging in different types of activities
               </Typography>
               <Typography component="li" variant="body2" gutterBottom>
-                Score reflects sustained engagement over time
+                Action items only count when completed (positive) or deleted (negative)
               </Typography>
             </ul>
           </Box>
           
           <Box sx={{ mb: 3 }}>
             <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: 'medium' }}>
-              How Timeframes Affect Your Score
+              Timeframe Impact
             </Typography>
             <Typography variant="body2" gutterBottom>
-              Shorter timeframes (30 days) focus on recent activity, while 
-              longer timeframes (60-365 days) measure your consistent 
-              engagement over time. A high score over a 365-day period 
-              demonstrates sustained spiritual fitness.
+              Different timeframes use adjusted scoring formulas. Shorter periods 
+              (30 days) emphasize recent activity, while longer periods require 
+              sustained engagement. The score displays with decimal precision 
+              to reflect your exact spiritual fitness level.
             </Typography>
           </Box>
           
