@@ -76,14 +76,21 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
     const sponsorContactActivities = activities.filter(activity => activity.type === 'sponsor-contact');
     
     // Convert activity format back to contact format for display
-    const contacts = sponsorContactActivities.map(activity => ({
-      id: activity.id,
-      type: activity.details?.contactType || 'other',
-      date: activity.date,
-      note: activity.note || '',
-      duration: activity.details?.duration || '',
-      topic: activity.details?.topic || ''
-    }));
+    const contacts = sponsorContactActivities.map(activity => {
+      // Extract topic from notes if it exists
+      const notesMatch = activity.notes?.match(/^(.*?) \[Contact: ([^,\]]+)(?:, Topic: ([^\]]+))?\]$/);
+      const note = notesMatch ? notesMatch[1] : activity.notes || '';
+      const topic = notesMatch ? notesMatch[3] : '';
+      
+      return {
+        id: activity.id,
+        type: activity.location || 'other', // Contact type stored in location field
+        date: activity.date,
+        note: note,
+        duration: activity.duration ? activity.duration.toString() : '',
+        topic: topic
+      };
+    });
     
     console.log('Found sponsor contact activities:', sponsorContactActivities);
     console.log('Converted to contacts:', contacts);
@@ -99,12 +106,9 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
       const activityData = {
         type: 'sponsor-contact',
         date: contactData.date || new Date().toISOString(),
-        notes: contactData.note || '',
-        details: {
-          contactType: contactData.type,
-          duration: contactData.duration || '',
-          topic: contactData.topic || ''
-        }
+        notes: `${contactData.note || ''} [Contact: ${contactData.type}${contactData.topic ? ', Topic: ' + contactData.topic : ''}]`,
+        duration: contactData.duration ? parseInt(contactData.duration) : undefined,
+        location: contactData.type // Store contact type in location field for filtering
       };
       
       console.log('Saving sponsor contact as activity:', activityData);
