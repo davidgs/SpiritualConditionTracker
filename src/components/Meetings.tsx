@@ -4,6 +4,7 @@ import MeetingFormDialog from './MeetingFormDialog';
 import { useTheme } from '@mui/material/styles';
 import { useAppTheme } from '../contexts/MuiThemeProvider';
 import { formatDay, formatTimeByPreference } from '../utils/dateUtils';
+import { Paper, Box, Typography, IconButton } from '@mui/material';
 
 export default function Meetings({ setCurrentView, meetings = [], onSave, user }) {
   // Get dark mode from theme context
@@ -129,20 +130,33 @@ export default function Meetings({ setCurrentView, meetings = [], onSave, user }
   // Render a single meeting item
   const renderMeetingItem = (meeting) => {
     return (
-      <div key={meeting.id} className="bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 p-4 mb-4 transition-all hover:shadow-lg">
-        <div className="flex flex-col">
-          <div className="mb-3">
-            <h3 className="text-xl font-bold text-gray-800 dark:text-gray-100 flex items-center">
+      <Paper 
+        key={meeting.id} 
+        elevation={2}
+        sx={{ 
+          p: 3, 
+          mb: 2, 
+          borderRadius: 2,
+          transition: 'all 0.2s ease-in-out',
+          '&:hover': {
+            elevation: 4,
+            transform: 'translateY(-1px)'
+          }
+        }}
+      >
+        <Box>
+          <Box sx={{ mb: 2 }}>
+            <Typography variant="h6" component="h3" sx={{ fontWeight: 'bold', display: 'flex', alignItems: 'center' }}>
               {meeting.isHomeGroup && (
-                <i className="fa-solid fa-house text-gray-500 dark:text-gray-200 mr-2" title="Home Group" style={{ fontSize: '1rem' }}></i>
+                <i className="fa-solid fa-house" title="Home Group" style={{ fontSize: '1rem', marginRight: '8px', opacity: 0.7 }}></i>
               )}
               {meeting.name}
-            </h3>
-          </div>
+            </Typography>
+          </Box>
           
-          <div className="flex flex-col gap-3 text-sm">
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5, fontSize: '0.875rem' }}>
             {/* Use schedule if available, otherwise use days/time */}
-            <div className="space-y-2">
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
               {/* Schedule display - handle both array and JSON string formats */}
               {meeting.schedule ? (
                 (() => {
@@ -166,12 +180,12 @@ export default function Meetings({ setCurrentView, meetings = [], onSave, user }
                   // Ensure it's an array before mapping
                   if (Array.isArray(scheduleArray) && scheduleArray.length > 0) {
                     return scheduleArray.map((item, idx) => (
-                      <div key={`${meeting.id}-schedule-${idx}`} className="flex items-center gap-2">
-                        <i className="fa-solid fa-calendar-days text-gray-500 dark:text-gray-400 mr-3 flex-shrink-0" style={{ fontSize: '1rem' }}></i>&nbsp;
-                        <span className="text-gray-600 dark:text-gray-300">{formatDay(item.day)}</span>&nbsp;
-                        <i className="fa-regular fa-clock text-gray-500 dark:text-gray-400 mx-1 flex-shrink-0" style={{ fontSize: '0.85rem' }}></i>&nbsp;
-                        <span className="text-gray-600 dark:text-gray-300">{formatTimeByPreference(item.time, use24HourFormat)}</span>
-                      </div>
+                      <Box key={`${meeting.id}-schedule-${idx}`} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <i className="fa-solid fa-calendar-days" style={{ fontSize: '1rem', opacity: 0.7, marginRight: '12px' }}></i>
+                        <Typography variant="body2" color="text.secondary">{formatDay(item.day)}</Typography>
+                        <i className="fa-regular fa-clock" style={{ fontSize: '0.85rem', opacity: 0.7, margin: '0 4px' }}></i>
+                        <Typography variant="body2" color="text.secondary">{formatTimeByPreference(item.time, use24HourFormat)}</Typography>
+                      </Box>
                     ));
                   }
                   
@@ -269,8 +283,8 @@ export default function Meetings({ setCurrentView, meetings = [], onSave, user }
               </button>
             </div>
           </div>
-        </div>
-      </div>
+        </Box>
+      </Paper>
     );
   };
   
