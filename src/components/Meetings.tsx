@@ -223,66 +223,56 @@ export default function Meetings({ setCurrentView, meetings = [], onSave, user }
                             return 'Days not specified';
                           }
                         })()}
-                      </span>
-                    </div>
+                      </Typography>
+                    </Box>
                     {meeting.time && (
-                      <div className="flex items-center">
-                        <i className="fa-regular fa-clock text-gray-500 dark:text-gray-400 mr-3" style={{ fontSize: '1rem' }}></i>&nbsp;
-                        <span className="text-gray-600 dark:text-gray-300">
+                      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                        <i className="fa-regular fa-clock" style={{ fontSize: '1rem', opacity: 0.7, marginRight: '12px' }}></i>
+                        <Typography variant="body2" color="text.secondary">
                           {formatTimeByPreference(meeting.time, use24HourFormat)}
-                        </span>
-                      </div>
+                        </Typography>
+                      </Box>
                     )}
-                  </div>
+                  </Box>
                 ) : (
-                  <div className="text-gray-600 dark:text-gray-300">
-                    <i className="fa-solid fa-info-circle text-gray-500 dark:text-gray-400 mr-2"></i>
+                  <Typography variant="body2" color="text.secondary" sx={{ display: 'flex', alignItems: 'center' }}>
+                    <i className="fa-solid fa-info-circle" style={{ marginRight: '8px', opacity: 0.7 }}></i>
                     No schedule information available
-                  </div>
+                  </Typography>
                 )
               )}
-            </div>
+            </Box>
             
             {/* Address */}
-            <div className="text-gray-600 dark:text-gray-300 flex items-start">
-              <div className="w-full">
-                {formatAddress(meeting)}
-              </div>
-            </div>
-          </div>
+            <Box sx={{ display: 'flex', alignItems: 'flex-start' }}>
+              <Box sx={{ width: '100%' }}>
+                <Typography variant="body2" color="text.secondary">
+                  {formatAddress(meeting)}
+                </Typography>
+              </Box>
+            </Box>
+          </Box>
           
-          <div className="mt-4 pt-3 flex justify-end border-t border-gray-200 dark:border-gray-700">
-            <div className="flex gap-2">
-              <button
+          <Box sx={{ mt: 2, pt: 2, display: 'flex', justifyContent: 'flex-end', borderTop: 1, borderColor: 'divider' }}>
+            <Box sx={{ display: 'flex', gap: 1 }}>
+              <IconButton
                 onClick={() => handleEdit(meeting)}
-                className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
+                color="primary"
                 title="Edit meeting"
-                style={{ 
-                  background: 'transparent',
-                  border: 'none',
-                  cursor: 'pointer',
-                  fontSize: '1.1rem',
-                  padding: '0.25rem'
-                }}
+                size="small"
               >
                 <i className="fa-solid fa-pen-to-square"></i>
-              </button>
-              <button
+              </IconButton>
+              <IconButton
                 onClick={() => handleDelete(meeting.id)}
-                className="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300"
+                color="error"
                 title="Delete meeting"
-                style={{ 
-                  background: 'transparent',
-                  border: 'none',
-                  cursor: 'pointer',
-                  fontSize: '1.1rem',
-                  padding: '0.25rem'
-                }}
+                size="small"
               >
-                <i className="fa-solid fa-trash-can text-red-500 dark:text-gray-400"></i>
-              </button>
-            </div>
-          </div>
+                <i className="fa-solid fa-trash-can"></i>
+              </IconButton>
+            </Box>
+          </Box>
         </Box>
       </Paper>
     );
