@@ -68,7 +68,7 @@ export default function SponsorContactFormPage({ open, userId, onSubmit, onClose
   // Handle field changes with strict typing
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | { target: { name: string; value: ContactType | string } }): void => {
     const { name, value } = e.target;
-    console.log(`[SponsorContactFormPage.tsx: handleChange] Field changed: ${name} = ${value}`);
+    // console.log(`[SponsorContactFormPage.tsx: handleChange] Field changed: ${name} = ${value}`);
     
     // TypeScript ensures we can only set valid contact types
     if (name === 'type' && typeof value === 'string') {
@@ -198,6 +198,12 @@ export default function SponsorContactFormPage({ open, userId, onSubmit, onClose
           type="date"
           value={contactData.date}
           onChange={handleChange}
+          sx={{ 
+            '& .MuiInputBase-root': { 
+              height: '56px', 
+              borderRadius: '8px',
+            }
+          }}
           InputLabelProps={{
             shrink: true,
           }}
