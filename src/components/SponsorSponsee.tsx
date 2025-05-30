@@ -125,18 +125,18 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
     }
   };
 
-  // Get contact type label for display
-  const getContactTypeLabel = (type) => {
-    const typeLabels = {
-      'phone': 'Phone Call',
-      'in-person': 'In Person', 
-      'video': 'Video Call',
-      'text': 'Text Message',
-      'email': 'Email',
-      'other': 'Other'
+  // Get contact type label and icon for display
+  const getContactTypeInfo = (type) => {
+    const typeInfo = {
+      'phone': { label: 'Phone Call', icon: 'fa-solid fa-phone' },
+      'in-person': { label: 'In Person', icon: 'fa-solid fa-handshake' }, 
+      'video': { label: 'Video Call', icon: 'fa-solid fa-video' },
+      'text': { label: 'Text Message', icon: 'fa-solid fa-message' },
+      'email': { label: 'Email', icon: 'fa-solid fa-envelope' },
+      'other': { label: 'Other', icon: 'fa-solid fa-comment' }
     };
     
-    return typeLabels[type] || 'Contact';
+    return typeInfo[type] || { label: 'Contact', icon: 'fa-solid fa-comment' };
   };
   
   // Handle sponsor form submission
@@ -433,18 +433,47 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
                   <ListItem sx={{ px: 0 }}>
                     <ListItemText
                       primary={
-                        <Typography sx={{ color: darkMode ? '#f3f4f6' : '#1f2937', fontWeight: 500 }}>
-                          {getContactTypeLabel(contact.type)}
-                        </Typography>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                          <i 
+                            className={getContactTypeInfo(contact.type).icon}
+                            style={{ 
+                              color: darkMode ? '#93c5fd' : '#3b82f6',
+                              fontSize: '16px',
+                              width: '20px'
+                            }}
+                          />
+                          <Typography sx={{ color: darkMode ? '#f3f4f6' : '#1f2937', fontWeight: 500 }}>
+                            {getContactTypeInfo(contact.type).label}
+                          </Typography>
+                        </Box>
                       }
                       secondary={
-                        <Box>
-                          <Typography variant="body2" sx={{ color: darkMode ? '#9ca3af' : '#6b7280' }}>
-                            {formatDateForDisplay(contact.date)}
-                          </Typography>
+                        <Box sx={{ ml: 3 }}>
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                            <i 
+                              className="fa-solid fa-calendar"
+                              style={{ 
+                                color: darkMode ? '#9ca3af' : '#6b7280',
+                                fontSize: '12px'
+                              }}
+                            />
+                            <Typography variant="body2" sx={{ color: darkMode ? '#9ca3af' : '#6b7280' }}>
+                              {formatDateForDisplay(contact.date)}
+                            </Typography>
+                          </Box>
                           {contact.note && (
                             <Typography variant="body2" sx={{ color: darkMode ? '#d1d5db' : '#4b5563', mt: 0.5 }}>
                               {contact.note}
+                            </Typography>
+                          )}
+                          {contact.topic && (
+                            <Typography variant="body2" sx={{ color: darkMode ? '#a78bfa' : '#8b5cf6', mt: 0.5, fontStyle: 'italic' }}>
+                              Topic: {contact.topic}
+                            </Typography>
+                          )}
+                          {contact.duration && (
+                            <Typography variant="body2" sx={{ color: darkMode ? '#9ca3af' : '#6b7280', mt: 0.5 }}>
+                              Duration: {contact.duration} minutes
                             </Typography>
                           )}
                         </Box>
