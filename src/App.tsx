@@ -197,16 +197,15 @@ function App(): JSX.Element {
       // If no user found, create default user
       if (!userData) {
         console.log("No user found, creating default user...");
-        // Create default user
+        // Create default user (let SQLite auto-generate the ID)
         const newUser = {
-          id: 'user_' + Date.now(),
-          name: 'John',
-          lastName: 'Doe',
-          sobrietyDate: '2024-01-01T00:00:00.000Z',
-          homeGroup: 'My Home Group',
-          homeGroups: ['My Home Group'],
-          phone: '',
-          email: 'doe@example.com',
+          name: '',
+          lastName: '',
+          sobrietyDate: '',
+          homeGroup: '',
+          homeGroups: [],
+          phoneNumber: '',
+          email: '',
           privacySettings: {
             shareLocation: false,
             shareActivities: false,
@@ -228,6 +227,14 @@ function App(): JSX.Element {
       // Set the user data and current user ID
       setUser(userData);
       console.log('[ App.tsx ] Raw user data from database:', userData);
+      console.log('[ App.tsx ] User data fields:', {
+        name: userData?.name,
+        lastName: userData?.lastName,
+        phoneNumber: userData?.phoneNumber,
+        email: userData?.email,
+        sobrietyDate: userData?.sobrietyDate
+      });
+      
       if (userData && userData.id) {
         setCurrentUserId(userData.id);
         console.log('[ App.tsx ] Current user ID set to:', userData.id);
