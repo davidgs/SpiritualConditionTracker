@@ -1,0 +1,32 @@
+⚡️  TO JS undefined
+⚡️  [log] - [ sqliteLoader.js ] Item without ID: {
+  "userId": 1,
+  "type": "action-item",
+  "date": "2025-06-02",
+  "notes": "Action Item: Meeting time - Pick a time for regular meeting",
+  "location": "pending"
+}
+⚡️  [log] - [ sqliteLoader.js ] Final item for database: {
+  "userId": 1,
+  "type": "action-item",
+  "date": "2025-06-02",
+  "notes": "Action Item: Meeting time - Pick a time for regular meeting",
+  "location": "pending",
+  "createdAt": "2025-05-30T17:48:09.759Z",
+  "updatedAt": "2025-05-30T17:48:09.759Z"
+}
+⚡️  [log] - [ sqliteLoader.js ] Date field specifically: 2025-06-02
+⚡️  [log] - [ sqliteLoader.js ] Date field type: string
+⚡️  [log] - [ sqliteLoader.js ] SQL keys: ["userId","type","date","notes","location","createdAt","updatedAt"]
+⚡️  [log] - [ sqliteLoader.js ] SQL values: [1,"action-item","2025-06-02","Action Item: Meeting time - Pick a time for regular meeting","pending","2025-05-30T17:48:09.759Z","2025-05-30T17:48:09.759Z"]
+⚡️  To Native ->  CapacitorSQLite execute 96431445
+ERROR MESSAGE:  {"message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: table activities has no column named userId","errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: table activities has no column named userId"}
+⚡️  [log] - Found sponsor contact activities: [{"type":"sponsor-contact","date":"2025-05-28","notes":"Has agreed to sponsor me [Contact: phone]","location":"phone","createdAt":"2025-05-30T17:48:09.747Z","updatedAt":"2025-05-30T17:48:09.747Z","id":17}]
+⚡️  [log] - Converted to contacts: [{"id":17,"type":"phone","date":"2025-05-28","note":"Has agreed to sponsor me","duration":""}]
+⚡️  [error] - {"message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: table activities has no column named userId","errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: table activities has no column named userId"}
+⚡️  [error] - [ sqliteLoader.js ] Error adding item to activities: {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: table activities has no column named userId"}
+⚡️  [error] - Error saving activity: {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: table activities has no column named userId"}
+⚡️  [log] - All action items saved successfully
+⚡️  [log] - Formatting date: 2025-05-28
+⚡️  [log] - Action items for contact: 2025-05-28 []
+⚡️  [log] - All activities:
