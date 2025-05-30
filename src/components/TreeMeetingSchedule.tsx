@@ -73,16 +73,18 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
   ];
 
   const addTimeToDay = (day: string, time: string) => {
-    const newSchedule = [...schedule, { 
-      day, 
-      time, 
-      format: 'discussion', 
-      access: 'open' 
-    }];
+    // Don't add immediately - just expand to show format options
+    setExpandedItems(prev => [...prev, day, `${day}-${time}-new`]);
+  };
+
+  const addMeetingWithDetails = (day: string, time: string, format: string, access: string) => {
+    const newSchedule = [...schedule, { day, time, format, access }];
     onChange(newSchedule);
     
-    // Expand the day to show the new time
-    setExpandedItems(prev => [...prev, day, `${day}-${time}`]);
+    // Collapse the "new" item and show the actual meeting
+    setExpandedItems(prev => 
+      prev.filter(item => !item.includes('-new')).concat([day, `${day}-${time}`])
+    );
   };
 
   const updateScheduleItem = (day: string, time: string, field: 'format' | 'access', value: string) => {
@@ -152,7 +154,7 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
                 </Box>
               }
             >
-              {/* Existing meetings */}
+              {/* Existing meetings - show as completed items */}
               {daySchedule.map(item => (
                 <TreeItem
                   key={`${day.key}-${item.time}`}
@@ -184,43 +186,40 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
                       </Button>
                     </Box>
                   }
+                />
+              ))}
+
+              {/* Progressive selection flow for new meetings */}
+              {availableTimes.map(time => (
+                <TreeItem
+                  key={`${day.key}-${time.value}-new`}
+                  itemId={`${day.key}-${time.value}-new`}
+                  label={
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, py: 0.5 }}>
+                      <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                        {time.label}
+                      </Typography>
+                    </Box>
+                  }
                 >
-                  {/* Format options */}
+                  {/* Step 2: Format selection */}
                   {meetingFormats.map(format => (
                     <TreeItem
-                      key={`${day.key}-${item.time}-${format.value}`}
-                      itemId={`${day.key}-${item.time}-${format.value}`}
+                      key={`${day.key}-${time.value}-${format.value}-new`}
+                      itemId={`${day.key}-${time.value}-${format.value}-new`}
                       label={
-                        <Box 
-                          sx={{ 
-                            display: 'flex', 
-                            alignItems: 'center', 
-                            gap: 1, 
-                            py: 0.5,
-                            cursor: 'pointer',
-                            bgcolor: item.format === format.value ? muiTheme.palette.action.selected : 'transparent',
-                            '&:hover': {
-                              bgcolor: muiTheme.palette.action.hover
-                            }
-                          }}
-                          onClick={() => updateScheduleItem(day.key, item.time, 'format', format.value)}
-                        >
-                          <Typography variant="body2" sx={{ fontSize: '0.8rem' }}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, py: 0.5 }}>
+                          <Typography variant="body2" sx={{ fontSize: '0.8rem', color: 'text.secondary' }}>
                             {format.label}
                           </Typography>
-                          {item.format === format.value && (
-                            <Typography variant="body2" sx={{ fontSize: '0.7rem', color: 'primary.main' }}>
-                              ✓
-                            </Typography>
-                          )}
                         </Box>
                       }
                     >
-                      {/* Access options - only show if this format is selected */}
-                      {item.format === format.value && meetingAccess.map(access => (
+                      {/* Step 3: Access selection - completes the meeting creation */}
+                      {meetingAccess.map(access => (
                         <TreeItem
-                          key={`${day.key}-${item.time}-${format.value}-${access.value}`}
-                          itemId={`${day.key}-${item.time}-${format.value}-${access.value}`}
+                          key={`${day.key}-${time.value}-${format.value}-${access.value}-final`}
+                          itemId={`${day.key}-${time.value}-${format.value}-${access.value}-final`}
                           label={
                             <Box 
                               sx={{ 
@@ -229,21 +228,18 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
                                 gap: 1, 
                                 py: 0.5,
                                 cursor: 'pointer',
-                                bgcolor: item.access === access.value ? muiTheme.palette.action.selected : 'transparent',
                                 '&:hover': {
                                   bgcolor: muiTheme.palette.action.hover
                                 }
                               }}
-                              onClick={() => updateScheduleItem(day.key, item.time, 'access', access.value)}
+                              onClick={() => addMeetingWithDetails(day.key, time.value, format.value, access.value)}
                             >
-                              <Typography variant="body2" sx={{ fontSize: '0.8rem' }}>
-                                {access.label}
+                              <Typography variant="body2" sx={{ fontSize: '0.8rem', color: 'primary.main' }}>
+                                {access.label} Meeting
                               </Typography>
-                              {item.access === access.value && (
-                                <Typography variant="body2" sx={{ fontSize: '0.7rem', color: 'secondary.main' }}>
-                                  ✓
-                                </Typography>
-                              )}
+                              <Typography variant="body2" sx={{ fontSize: '0.7rem', color: 'primary.main' }}>
+                                ← Click to add
+                              </Typography>
                             </Box>
                           }
                         />
@@ -251,26 +247,6 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
                     </TreeItem>
                   ))}
                 </TreeItem>
-              ))}
-
-              {/* Add new time options */}
-              {availableTimes.map(time => (
-                <TreeItem
-                  key={`${day.key}-add-${time.value}`}
-                  itemId={`${day.key}-add-${time.value}`}
-                  label={
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, py: 0.5 }}>
-                      <Button
-                        size="small"
-                        variant="outlined"
-                        onClick={() => addTimeToDay(day.key, time.value)}
-                        sx={{ fontSize: '0.75rem' }}
-                      >
-                        Add {time.label}
-                      </Button>
-                    </Box>
-                  }
-                />
               ))}
             </TreeItem>
           );
