@@ -206,8 +206,27 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
         setSobrietyDate('');
       }
       // Convert homeGroup to array if it's a string, or use empty array
-      const homeGroupsData = user.homeGroups ? user.homeGroups : 
-                           (user.homeGroup ? [user.homeGroup] : []);
+      let homeGroupsData = [];
+      if (user.homeGroups) {
+        if (typeof user.homeGroups === 'string') {
+          try {
+            // Try to parse as JSON first
+            homeGroupsData = JSON.parse(user.homeGroups);
+            if (!Array.isArray(homeGroupsData)) {
+              homeGroupsData = [user.homeGroups];
+            }
+          } catch {
+            // If JSON parsing fails, treat as a single string
+            homeGroupsData = [user.homeGroups];
+          }
+        } else if (Array.isArray(user.homeGroups)) {
+          homeGroupsData = user.homeGroups;
+        } else {
+          homeGroupsData = [];
+        }
+      } else if (user.homeGroup) {
+        homeGroupsData = [user.homeGroup];
+      }
       setHomeGroups(homeGroupsData);
       
       // Load privacy settings and preferences
@@ -845,7 +864,12 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
                 }}
                 SelectProps={{
                   multiple: true,
-                  renderValue: (selected) => Array.isArray(selected) ? selected.join(', ') : selected,
+                  renderValue: (selected) => {
+                    if (Array.isArray(selected)) {
+                      return selected.join(', ');
+                    }
+                    return selected || '';
+                  },
                   MenuProps: {
                     PaperProps: {
                       sx: {
