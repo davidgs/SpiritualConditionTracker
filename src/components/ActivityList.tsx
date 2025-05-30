@@ -58,12 +58,14 @@ export default function ActivityList({
           }
           return typeMatch;
         })
-        // Filter out uncompleted action items (they should only appear when completed)
+        // Filter out only uncompleted action items (regular activities should always show)
         .filter(activity => {
+          // Only filter action items that aren't completed
           if (activity.type === 'action-item' && activity.location !== 'completed') {
             console.log('[ ActivityList.js ] Filtering out uncompleted action item:', activity.id);
             return false;
           }
+          // All other activities (prayer, meetings, etc.) should always be shown
           return true;
         })
         // Filter by maximum days ago if specified

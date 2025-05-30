@@ -180,6 +180,7 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
       duration: parseInt(duration, 10),
       date: new Date(`${date}T12:00:00`).toISOString(), // Convert to full ISO format
       notes: (notes || '').trim(),
+      location: 'completed' // Mark all logged activities as completed so they appear in the activity list
     };
     
     console.log('[ LogActivityModal.tsx:179 handleSubmit ] Created activity with ISO date:', newActivity.date);
