@@ -138,16 +138,12 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
     try {
       console.log('Toggling action item completion:', actionItem);
       
-      if (!dbHandlers || !dbHandlers.update) {
-        console.error('Database handlers not available');
-        return;
-      }
-      
       const newLocation = actionItem.completed ? 'pending' : 'completed';
       console.log('Updating action item ID:', actionItem.activityData.id, 'to location:', newLocation);
       
-      // Use the shared database handlers from App.tsx
-      await dbHandlers.update('activities', actionItem.activityData.id, {
+      // Update the existing activity using onSaveActivity
+      await onSaveActivity({
+        ...actionItem.activityData,
         location: newLocation,
         updatedAt: new Date().toISOString()
       });
