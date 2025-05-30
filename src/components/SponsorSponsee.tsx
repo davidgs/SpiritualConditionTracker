@@ -137,18 +137,22 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
     try {
       console.log('Toggling action item completion:', actionItem);
       
-      // Update the activity directly using the activity data
-      const updatedActivity = {
-        ...actionItem.activityData,
-        location: actionItem.completed ? 'pending' : 'completed'
-      };
+      // Update the activity in place using direct database update
+      if (!window.db || !window.db.update) {
+        console.error('Database update function not available');
+        return;
+      }
       
-      console.log('Updating activity with:', updatedActivity);
+      const newLocation = actionItem.completed ? 'pending' : 'completed';
+      console.log('Updating action item ID:', actionItem.activityData.id, 'to location:', newLocation);
       
-      // Use the shared database handler from App.tsx
-      await onSaveActivity(updatedActivity);
+      // Use direct database update to avoid creating duplicates
+      await window.db.update('activities', actionItem.activityData.id, {
+        location: newLocation,
+        updatedAt: new Date().toISOString()
+      });
       
-      console.log('Action item completion toggled:', actionItem.id, !actionItem.completed);
+      console.log('Action item completion toggled successfully');
       
       // Trigger a reload of contacts to reflect the change
       loadSponsorContacts();
@@ -641,8 +645,9 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
                                         size="small"
                                         onClick={() => {
                                           console.log('Edit action item:', item);
-                                          // Show an action item edit dialog
+                                          // Open the contact form with the action item's parent contact for editing
                                           setEditingActionItem(item);
+                                          setShowContactForm(true);
                                         }}
                                         sx={{
                                           p: 0.25,
@@ -820,9 +825,24 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
       {/* Sponsor Contact Form Dialog */}
       <SponsorContactFormPage
         open={showContactForm}
-        onClose={() => setShowContactForm(false)}
+        onClose={() => {
+          setShowContactForm(false);
+          setEditingActionItem(null);
+        }}
         onSubmit={handleAddContact}
         userId={user?.id || 'default_user'}
+        initialData={editingActionItem ? {
+          type: 'phone', // Default type since action items don't store contact type
+          date: editingActionItem.dueDate,
+          note: editingActionItem.title
+        } : null}
+        details={editingActionItem ? [{
+          title: editingActionItem.title,
+          text: editingActionItem.text,
+          notes: editingActionItem.notes,
+          dueDate: editingActionItem.dueDate,
+          completed: editingActionItem.completed
+        }] : []}
       />
     </div>
   );
