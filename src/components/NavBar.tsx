@@ -33,7 +33,7 @@ function NavBar({ currentView, setCurrentView }) {
   
   // Function to check if the screen size is mobile
   const checkMobileSize = () => {
-    setIsMobile(window.innerWidth < 768); // 768px is a common breakpoint for mobile
+    setIsMobile(window.innerWidth < 300); // Very small breakpoint so task bar shows on all devices
   };
   
   // Add event listener to check screen size on resize
