@@ -124,7 +124,7 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
           const actionItemPromises = actionItems.map(actionItem => {
             const todoActivityData = {
               userId: user?.id || 1, // Ensure userId is provided
-              type: 'other', // Use valid ActivityType
+              type: 'action-item', // Use new action-item type
               date: actionItem.dueDate || new Date().toISOString(),
               notes: `Action Item: ${actionItem.title}${actionItem.text ? ' - ' + actionItem.text : ''}${actionItem.notes ? ' [Notes: ' + actionItem.notes + ']' : ''}`,
               location: actionItem.completed ? 'completed' : 'pending'

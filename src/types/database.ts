@@ -7,7 +7,7 @@
 export type ContactType = 'phone' | 'in-person' | 'video' | 'text' | 'email' | 'other';
 
 // Activity types enum
-export type ActivityType = 'prayer' | 'meditation' | 'reading' | 'meeting' | 'service' | 'inventory' | 'amends' | 'sponsor-contact' | 'other';
+export type ActivityType = 'prayer' | 'meditation' | 'reading' | 'meeting' | 'service' | 'inventory' | 'amends' | 'sponsor-contact' | 'action-item' | 'other';
 
 // Base interface for database entities
 export interface BaseEntity {
