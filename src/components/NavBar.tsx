@@ -146,53 +146,145 @@ function NavBar({ currentView, setCurrentView }) {
         />
       )}
       
-      {/* Desktop bottom navigation - only shown on desktop */}
+      {/* Bottom navigation - shown on all devices (not mobile due to breakpoint change) */}
       {!isMobile && (
-        <div style={{
-          position: 'fixed',
-          bottom: 0,
-          left: 0,
-          right: 0,
-          zIndex: 10,
-          display: 'flex',
-          justifyContent: 'space-around',
-          backgroundColor: navBackgroundColor,
-          borderTop: `1px solid ${muiTheme.palette.divider}`,
-          paddingBottom: '5px' // Add some bottom padding for devices with home indicators
-        }}>
-          {navItems.map((item) => (
-            <Box
-              key={item.id}
-              onClick={() => handleNavClick(item.id)}
-              component="button"
-              sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                padding: '12px 0',
-                flex: 1,
-                backgroundColor: 'transparent',
-                border: 'none',
-                color: currentView === item.id ? muiTheme.palette.primary.main : muiTheme.palette.text.secondary,
-                cursor: 'pointer',
-                position: 'relative',
-                '&::after': currentView === item.id ? {
-                  content: '""',
-                  position: 'absolute',
-                  bottom: '-1px',
-                  left: '20%',
-                  width: '60%',
-                  height: '3px', 
-                  backgroundColor: muiTheme.palette.primary.main,
-                  borderRadius: '3px 3px 0 0'
-                } : {}
-              }}
-            >
-              <i className={`${item.icon}`} style={{ fontSize: '1.25rem' }}></i>
-              <span style={{ fontSize: '0.75rem', marginTop: '4px' }}>{item.name}</span>
+        <Box 
+          sx={{ 
+            position: 'fixed',
+            bottom: 0,
+            left: 0,
+            right: 0,
+            zIndex: 1000,
+            bgcolor: 'background.paper',
+            borderTop: '1px solid',
+            borderColor: 'divider',
+            display: 'flex',
+            justifyContent: 'space-around',
+            alignItems: 'center',
+            minHeight: '80px',
+            px: 2
+          }}
+        >
+          <Box
+            component="button"
+            onClick={() => handleNavClick('dashboard')}
+            sx={{ 
+              minWidth: 'auto',
+              flexDirection: 'column',
+              fontSize: '0.75rem',
+              px: 1,
+              py: 0.5,
+              backgroundColor: currentView === 'dashboard' ? 'primary.main' : 'transparent',
+              color: currentView === 'dashboard' ? 'primary.contrastText' : 'text.secondary',
+              border: 'none',
+              borderRadius: currentView === 'dashboard' ? 2 : 0,
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center'
+            }}
+          >
+            🏠
+            <Box component="span" sx={{ fontSize: '0.65rem', ml: 0.5 }}>
+              Home
             </Box>
-          ))}
-        </div>
+          </Box>
+          
+          <Box
+            component="button"
+            onClick={() => handleNavClick('meetings')}
+            sx={{ 
+              minWidth: 'auto',
+              flexDirection: 'column',
+              fontSize: '0.75rem',
+              px: 1,
+              py: 0.5,
+              backgroundColor: currentView === 'meetings' ? 'primary.main' : 'transparent',
+              color: currentView === 'meetings' ? 'primary.contrastText' : 'text.secondary',
+              border: 'none',
+              borderRadius: currentView === 'meetings' ? 2 : 0,
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center'
+            }}
+          >
+            👥
+            <Box component="span" sx={{ fontSize: '0.65rem', ml: 0.5 }}>
+              Meetings
+            </Box>
+          </Box>
+          
+          <Box
+            component="button"
+            onClick={() => handleNavClick('stepwork')}
+            sx={{ 
+              minWidth: 'auto',
+              flexDirection: 'column',
+              fontSize: '0.75rem',
+              px: 1,
+              py: 0.5,
+              backgroundColor: currentView === 'stepwork' ? 'primary.main' : 'transparent',
+              color: currentView === 'stepwork' ? 'primary.contrastText' : 'text.secondary',
+              border: 'none',
+              borderRadius: currentView === 'stepwork' ? 2 : 0,
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center'
+            }}
+          >
+            📚
+            <Box component="span" sx={{ fontSize: '0.65rem', ml: 0.5 }}>
+              Steps
+            </Box>
+          </Box>
+          
+          <Box
+            component="button"
+            onClick={() => handleNavClick('sponsor')}
+            sx={{ 
+              minWidth: 'auto',
+              flexDirection: 'column',
+              fontSize: '0.75rem',
+              px: 1,
+              py: 0.5,
+              backgroundColor: currentView === 'sponsor' ? 'primary.main' : 'transparent',
+              color: currentView === 'sponsor' ? 'primary.contrastText' : 'text.secondary',
+              border: 'none',
+              borderRadius: currentView === 'sponsor' ? 2 : 0,
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center'
+            }}
+          >
+            🤝
+            <Box component="span" sx={{ fontSize: '0.65rem', ml: 0.5 }}>
+              Sponsor
+            </Box>
+          </Box>
+          
+          <Box
+            component="button"
+            onClick={() => handleNavClick('profile')}
+            sx={{ 
+              minWidth: 'auto',
+              flexDirection: 'column',
+              fontSize: '0.75rem',
+              px: 1,
+              py: 0.5,
+              backgroundColor: currentView === 'profile' ? 'primary.main' : 'transparent',
+              color: currentView === 'profile' ? 'primary.contrastText' : 'text.secondary',
+              border: 'none',
+              borderRadius: currentView === 'profile' ? 2 : 0,
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center'
+            }}
+          >
+            👤
+            <Box component="span" sx={{ fontSize: '0.65rem', ml: 0.5 }}>
+              Profile
+            </Box>
+          </Box>
+        </Box>
       )}
     </>
   );
