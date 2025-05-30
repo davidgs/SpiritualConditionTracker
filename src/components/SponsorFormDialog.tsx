@@ -10,6 +10,7 @@ import {
   Box
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
+import { MuiTelInput } from 'mui-tel-input';
 
 export default function SponsorFormDialog({ open, onClose, onSubmit, initialData }) {
   const theme = useTheme();
@@ -64,26 +65,9 @@ export default function SponsorFormDialog({ open, onClose, onSubmit, initialData
     setErrors({});
   };
   
-  // Format phone number as (xxx) xxx-xxxx
-  const formatPhoneNumber = (value) => {
-    if (!value) return value;
-    
-    // Remove all non-digits
-    const phoneNumber = value.replace(/[^\d]/g, '');
-    
-    // Take first 10 digits only
-    const phoneNumberLength = phoneNumber.length;
-    if (phoneNumberLength < 4) return phoneNumber;
-    if (phoneNumberLength < 7) {
-      return `(${phoneNumber.slice(0, 3)}) ${phoneNumber.slice(3)}`;
-    }
-    return `(${phoneNumber.slice(0, 3)}) ${phoneNumber.slice(3, 6)}-${phoneNumber.slice(6, 10)}`;
-  };
-  
   // Handle phone number input
-  const handlePhoneChange = (e) => {
-    const formattedNumber = formatPhoneNumber(e.target.value);
-    setPhone(formattedNumber);
+  const handlePhoneChange = (value) => {
+    setPhone(value);
   };
   
   // Handle form submission
@@ -209,14 +193,13 @@ export default function SponsorFormDialog({ open, onClose, onSubmit, initialData
           />
           
           {/* Phone Number */}
-          <TextField
+          <MuiTelInput
             fullWidth
-            variant="outlined"
-            placeholder="Phone Number"
+            label="Phone Number"
             value={phone}
             onChange={handlePhoneChange}
+            defaultCountry="US"
             size="medium"
-            margin="none"
             sx={{ 
               mb: 2,
               '& .MuiOutlinedInput-root': { 

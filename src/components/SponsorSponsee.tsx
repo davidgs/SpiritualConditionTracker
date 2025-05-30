@@ -38,9 +38,18 @@ export default function SponsorSponsee({ user, onUpdate }) {
   // Load sponsor and sponsees data from user
   useEffect(() => {
     if (user) {
-      // Load sponsor data if available
-      if (user.sponsor) {
-        setSponsor(user.sponsor);
+      // Load sponsor data from flattened fields
+      if (user.sponsor_name) {
+        // Reconstruct sponsor object from flattened fields
+        const sponsorData = {
+          name: user.sponsor_name || '',
+          lastName: user.sponsor_lastName || '',
+          phone: user.sponsor_phone || '',
+          email: user.sponsor_email || '',
+          sobrietyDate: user.sponsor_sobrietyDate || '',
+          notes: user.sponsor_notes || ''
+        };
+        setSponsor(sponsorData);
       }
       
       // Load sponsees if available
@@ -52,9 +61,14 @@ export default function SponsorSponsee({ user, onUpdate }) {
   
   // Handle sponsor form submission
   const handleSponsorSubmit = (sponsorData) => {
-    // Create a copy of the current user data
+    // Create a copy of the current user data with flattened sponsor fields
     const userUpdate = {
-      sponsor: sponsorData
+      sponsor_name: sponsorData.name || '',
+      sponsor_lastName: sponsorData.lastName || '',
+      sponsor_phone: sponsorData.phone || '',
+      sponsor_email: sponsorData.email || '',
+      sponsor_sobrietyDate: sponsorData.sobrietyDate || '',
+      sponsor_notes: sponsorData.notes || ''
     };
     
     // Update user in database through parent component
