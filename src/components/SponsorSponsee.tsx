@@ -403,7 +403,7 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
       {sponsor && (
         <Paper 
           elevation={0}
-          className="p-5 rounded-lg"
+          className="p-5 rounded-lg mt-4"
           sx={{ 
             backgroundColor: darkMode ? 'rgba(30, 41, 59, 0.8)' : 'rgba(255, 255, 255, 0.8)',
             boxShadow: darkMode ? '0 4px 12px rgba(0, 0, 0, 0.25)' : '0 4px 12px rgba(0, 0, 0, 0.1)'
@@ -414,15 +414,19 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
               Sponsor Contacts
             </Typography>
             
-            <Button 
-              variant="contained" 
-              color="primary"
-              size="small"
+            <IconButton 
               onClick={() => setShowContactForm(true)}
-              startIcon={<i className="fa-solid fa-plus"></i>}
+              size="small"
+              sx={{ 
+                color: darkMode ? '#93c5fd' : '#3b82f6',
+                backgroundColor: darkMode ? 'rgba(59, 130, 246, 0.1)' : 'rgba(59, 130, 246, 0.1)',
+                '&:hover': {
+                  backgroundColor: darkMode ? 'rgba(59, 130, 246, 0.2)' : 'rgba(59, 130, 246, 0.2)'
+                }
+              }}
             >
-              Add Contact
-            </Button>
+              <i className="fa-solid fa-plus"></i>
+            </IconButton>
           </Box>
 
           {/* Contact List */}
