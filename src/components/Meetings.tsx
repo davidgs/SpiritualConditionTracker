@@ -4,7 +4,7 @@ import MeetingFormDialog from './MeetingFormDialog';
 import { useTheme } from '@mui/material/styles';
 import { useAppTheme } from '../contexts/MuiThemeProvider';
 import { formatDay, formatTimeByPreference } from '../utils/dateUtils';
-import { Paper, Box, Typography, IconButton } from '@mui/material';
+import { Paper, Box, Typography, IconButton, Chip } from '@mui/material';
 
 export default function Meetings({ setCurrentView, meetings = [], onSave, user }) {
   // Get dark mode from theme context
@@ -152,6 +152,56 @@ export default function Meetings({ setCurrentView, meetings = [], onSave, user }
               )}
               {meeting.name}
             </Typography>
+            
+            {/* Meeting Type Pills */}
+            {(() => {
+              let meetingTypes = [];
+              
+              // First check if there's a direct types array
+              if (meeting.types && Array.isArray(meeting.types)) {
+                meetingTypes = meeting.types;
+              } 
+              // Otherwise extract from schedule
+              else if (meeting.schedule) {
+                let scheduleArray = meeting.schedule;
+                
+                if (typeof meeting.schedule === 'string') {
+                  try {
+                    scheduleArray = JSON.parse(meeting.schedule);
+                  } catch (e) {
+                    scheduleArray = [];
+                  }
+                }
+                
+                if (Array.isArray(scheduleArray)) {
+                  meetingTypes = [...new Set(scheduleArray.map(item => item.type).filter(Boolean))];
+                }
+              }
+              
+              if (meetingTypes.length > 0) {
+                return (
+                  <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, mt: 1 }}>
+                    {meetingTypes.map((type, index) => (
+                      <Chip
+                        key={index}
+                        label={type.charAt(0).toUpperCase() + type.slice(1).replace('_', ' ')}
+                        size="small"
+                        sx={{
+                          fontSize: '0.75rem',
+                          height: '24px',
+                          bgcolor: 'primary.main',
+                          color: 'primary.contrastText',
+                          '&:hover': {
+                            bgcolor: 'primary.dark'
+                          }
+                        }}
+                      />
+                    ))}
+                  </Box>
+                );
+              }
+              return null;
+            })()}
           </Box>
           
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5, fontSize: '0.875rem' }}>

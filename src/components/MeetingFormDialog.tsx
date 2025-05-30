@@ -336,6 +336,9 @@ export default function MeetingFormDialog({
     // Use the first time in the schedule for backwards compatibility
     const firstTime = meetingSchedule.length > 0 ? meetingSchedule[0].time : '';
     
+    // Extract meeting types for display
+    const meetingTypes = [...new Set(meetingSchedule.map(item => item.type).filter(Boolean))];
+    
     const meetingData = {
       // For editing existing meetings, keep their ID
       // For new meetings, let the database generate the ID with AUTOINCREMENT
@@ -346,6 +349,8 @@ export default function MeetingFormDialog({
       time: firstTime,
       // New format
       schedule: meetingSchedule,
+      // Store meeting types for easy access
+      types: meetingTypes,
       address: formattedAddress,
       // Store the location name
       locationName: locationName.trim(),
@@ -453,7 +458,6 @@ export default function MeetingFormDialog({
             <SimpleMeetingSchedule 
               schedule={meetingSchedule} 
               onChange={setMeetingSchedule}
-              darkMode={darkMode}
               use24HourFormat={use24HourFormat}
             />
           </Box>
