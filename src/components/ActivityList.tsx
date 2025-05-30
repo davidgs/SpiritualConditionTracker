@@ -90,7 +90,7 @@ export default function ActivityList({
   if (filteredActivities.length === 0) {
     return (
       <div style={{ 
-        color: darkMode ? '#9ca3af' : '#6b7280', 
+        color: theme.palette.text.secondary, 
         textAlign: 'center',
         padding: '1rem',
         fontStyle: 'italic',
@@ -168,7 +168,7 @@ export default function ActivityList({
           <h2 style={{
             fontSize: '1.1rem',
             fontWeight: 600,
-            color: darkMode ? '#d1d5db' : '#374151'
+            color: theme.palette.text.primary
           }}>{title}</h2>
         </div>
       )}
@@ -185,10 +185,10 @@ export default function ActivityList({
             <div style={{
               fontSize: '0.9rem',
               fontWeight: 500,
-              color: darkMode ? '#9ca3af' : '#6b7280',
+              color: theme.palette.text.secondary,
               marginBottom: '0.5rem',
               paddingBottom: '0.25rem',
-              borderBottom: darkMode ? '1px solid #374151' : '1px solid #e5e7eb'
+              borderBottom: `1px solid ${theme.palette.divider}`
             }}>
               {formatDate(dateKey)}
             </div>
@@ -199,7 +199,7 @@ export default function ActivityList({
                 <div key={activity.id || `${activity.date}-${activity.type}-${index}`} style={{
                   display: 'flex',
                   alignItems: 'center',
-                  borderBottom: darkMode ? '1px solid #374151' : '1px solid #f3f4f6',
+                  borderBottom: `1px solid ${theme.palette.divider}`,
                   paddingBottom: '0.5rem',
                   marginBottom: '0.25rem'
                 }}>
@@ -207,7 +207,7 @@ export default function ActivityList({
                     width: '1.75rem',
                     height: '1.75rem',
                     borderRadius: '50%',
-                    backgroundColor: darkMode ? '#1e3a8a' : '#dbeafe',
+                    backgroundColor: theme.palette.primary.light,
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -216,7 +216,7 @@ export default function ActivityList({
                   }}>
                     <i className={`fas ${getActivityIcon(activity.type)}`} style={{
                       fontSize: '0.8rem',
-                      color: darkMode ? '#60a5fa' : '#3b82f6'
+                      color: theme.palette.primary.main
                     }}></i>
                   </div>
                   <div style={{ flexGrow: 1, minWidth: 0 }}>
@@ -225,7 +225,7 @@ export default function ActivityList({
                       alignItems: 'center',
                       fontWeight: 500,
                       fontSize: '0.8rem',
-                      color: darkMode ? '#e5e7eb' : '#374151',
+                      color: theme.palette.text.primary,
                       lineHeight: '1.2',
                       marginBottom: '0.1rem'
                     }}>
@@ -242,8 +242,8 @@ export default function ActivityList({
                               fontSize: '0.6rem',
                               padding: '1px 5px',
                               borderRadius: '10px',
-                              backgroundColor: darkMode ? '#065f46' : '#d1fae5',
-                              color: darkMode ? '#10b981' : '#047857',
+                              backgroundColor: theme.palette.success.light,
+                              color: theme.palette.success.dark,
                               fontWeight: 'bold'
                             }}>Chair</span>
                           )}
@@ -252,8 +252,8 @@ export default function ActivityList({
                               fontSize: '0.6rem',
                               padding: '1px 5px',
                               borderRadius: '10px',
-                              backgroundColor: darkMode ? '#1e40af' : '#dbeafe',
-                              color: darkMode ? '#60a5fa' : '#1e40af',
+                              backgroundColor: theme.palette.info.light,
+                              color: theme.palette.info.dark,
                               fontWeight: 'bold'
                             }}>Share</span>
                           )}
