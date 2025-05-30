@@ -583,7 +583,7 @@ function App(): JSX.Element {
             bgcolor: 'background.default', // Ensure background color is applied here too
             minHeight: 'calc(100vh - 60px)', // 60px is the header height
             paddingBottom: '100px', // Significantly increased padding to ensure content is visible
-            paddingTop: '10px', // Space after the header
+            paddingTop: '5rem', // Space after the fixed header (matches header height)
             overflowY: 'visible' // Don't add scrollbar to this container
           }}
         >

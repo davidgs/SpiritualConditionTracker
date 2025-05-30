@@ -21,8 +21,10 @@ function Header({ title, menuOpen, setMenuOpen, isMobile }) {
   return (
     <SafeAreaHeader
       sx={{
-        position: 'absolute',
+        position: 'fixed',
         top: 0,
+        left: 0,
+        right: 0,
         zIndex: 1100,
         backgroundColor: headerBackgroundColor,
         borderBottom: `1px solid ${muiTheme.palette.divider}`,
