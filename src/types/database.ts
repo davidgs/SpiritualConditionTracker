@@ -152,6 +152,7 @@ export interface ActionItemFormData {
   notes: string;
   dueDate: string | null;
   completed: boolean;
+  deleted?: boolean;
   type: 'todo' | 'action' | 'reminder';
 }
 

@@ -14,7 +14,8 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
-  DialogActions
+  DialogActions,
+  Checkbox
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { ContactType, ContactFormData, ActionItemFormData, SponsorContactFormProps } from '../types/database';
@@ -109,16 +110,20 @@ export default function SponsorContactFormPage({ open, userId, onSubmit, onClose
   // Toggle todo completion
   const handleToggleTodo = (todoId: number): void => {
     setTodos(prev => prev.map(todo => 
-      todo.id === todoId 
+      todo.id === todoId && !todo.deleted
         ? { ...todo, completed: !todo.completed }
         : todo
     ));
   };
 
-  // Delete todo item
+  // Delete todo item (mark as deleted, don't remove)
   const handleDeleteTodo = (todoId: number): void => {
-    console.log('[SponsorContactFormPage.tsx: 120 handleDeleteTodo] Deleting todo at id:', todoId);
-    setTodos(prev => prev.filter(todo => todo.id !== todoId));
+    console.log('[SponsorContactFormPage.tsx: 120 handleDeleteTodo] Marking todo as deleted at id:', todoId);
+    setTodos(prev => prev.map(todo => 
+      todo.id === todoId 
+        ? { ...todo, deleted: true, completed: false }
+        : todo
+    ));
   };
 
   // Handle form submission
@@ -235,56 +240,89 @@ export default function SponsorContactFormPage({ open, userId, onSubmit, onClose
           {todos.length > 0 && (
             <Box sx={{ mb: 2 }}>
               {todos.map((todo) => (
-                <Paper
+                <Box
                   key={todo.id}
                   sx={{
-                    p: 2,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 1,
+                    py: 0.5,
+                    px: 1,
                     mb: 1,
-                    backgroundColor: todo.completed 
-                      ? theme.palette.action.selected 
-                      : theme.palette.background.paper
+                    borderRadius: 1,
+                    backgroundColor: theme.palette.background.paper
                   }}
                 >
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                    <Box sx={{ flex: 1 }}>
+                  <Checkbox
+                    checked={todo.completed || todo.deleted}
+                    onChange={() => handleToggleTodo(todo.id!)}
+                    size="small"
+                    disabled={todo.deleted}
+                    icon={todo.deleted ? <i className="fa-solid fa-xmark" style={{ fontSize: '12px', color: theme.palette.error.main }} /> : undefined}
+                    checkedIcon={todo.deleted ? <i className="fa-solid fa-xmark" style={{ fontSize: '12px', color: theme.palette.error.main }} /> : undefined}
+                    sx={{
+                      p: 0,
+                      '& .MuiSvgIcon-root': {
+                        fontSize: '16px',
+                        color: todo.completed && !todo.deleted ? theme.palette.success.main : 'inherit'
+                      }
+                    }}
+                  />
+                  <Box sx={{ flex: 1 }}>
+                    <Typography 
+                      variant="body2" 
+                      sx={{ 
+                        color: todo.deleted ? theme.palette.error.main : 
+                               todo.completed ? theme.palette.success.main : 
+                               theme.palette.text.primary,
+                        textDecoration: todo.deleted ? 'line-through' : 'none',
+                        fontSize: '0.9rem'
+                      }}
+                    >
+                      {todo.title}
+                    </Typography>
+                    {todo.text && (
                       <Typography 
-                        variant="subtitle1" 
+                        variant="caption" 
                         sx={{ 
-                          textDecoration: todo.completed ? 'line-through' : 'none',
-                          color: todo.completed ? theme.palette.text.secondary : theme.palette.text.primary
+                          color: todo.deleted ? theme.palette.error.main : theme.palette.text.secondary,
+                          textDecoration: todo.deleted ? 'line-through' : 'none',
+                          display: 'block'
                         }}
                       >
-                        {todo.title}
+                        {todo.text}
                       </Typography>
-                      {todo.text && (
-                        <Typography variant="body2" sx={{ color: theme.palette.text.secondary }}>
-                          {todo.text}
-                        </Typography>
-                      )}
-                      {todo.dueDate && (
-                        <Typography variant="caption" sx={{ color: theme.palette.text.secondary }}>
-                          Due: {new Date(todo.dueDate).toLocaleDateString()}
-                        </Typography>
-                      )}
-                    </Box>
-                    <Box>
-                      <Button
-                        size="small"
-                        onClick={() => handleToggleTodo(todo.id!)}
-                        sx={{ mr: 1 }}
+                    )}
+                    {todo.dueDate && (
+                      <Typography 
+                        variant="caption" 
+                        sx={{ 
+                          color: todo.deleted ? theme.palette.error.main : theme.palette.text.secondary,
+                          textDecoration: todo.deleted ? 'line-through' : 'none',
+                          display: 'block'
+                        }}
                       >
-                        {todo.completed ? 'Undo' : 'Complete'}
-                      </Button>
-                      <Button
-                        size="small"
-                        color="error"
-                        onClick={() => handleDeleteTodo(todo.id!)}
-                      >
-                        Delete
-                      </Button>
-                    </Box>
+                        Due: {new Date(todo.dueDate).toLocaleDateString()}
+                      </Typography>
+                    )}
                   </Box>
-                </Paper>
+                  {!todo.deleted && (
+                    <IconButton
+                      size="small"
+                      onClick={() => handleDeleteTodo(todo.id!)}
+                      sx={{
+                        p: 0.25,
+                        color: theme.palette.error.main,
+                        '&:hover': {
+                          color: theme.palette.error.dark,
+                          backgroundColor: 'transparent'
+                        }
+                      }}
+                    >
+                      <i className="fa-solid fa-xmark" style={{ fontSize: '10px' }}></i>
+                    </IconButton>
+                  )}
+                </Box>
               ))}
             </Box>
           )}
