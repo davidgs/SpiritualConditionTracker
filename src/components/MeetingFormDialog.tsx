@@ -97,9 +97,9 @@ export default function MeetingFormDialog({
   
   // Initialize form with meeting data if provided
   useEffect(() => {
-    // If it's a new meeting, start with one schedule item
+    // If it's a new meeting, start with empty schedule
     if (!meeting) {
-      setMeetingSchedule([{ day: 'monday', time: '18:00' }]);
+      setMeetingSchedule([]);
       return;
     }
     

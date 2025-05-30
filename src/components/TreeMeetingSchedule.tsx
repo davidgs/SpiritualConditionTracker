@@ -152,12 +152,13 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
                 gap: 1, 
                 py: 0.5,
                 flexWrap: 'nowrap',
-                minWidth: '100%'
+                minWidth: '100%',
+                ml: -2  // Move content further left
               }}>
-                <Typography variant="body2" sx={{ fontWeight: 500, minWidth: 'fit-content' }}>
+                <Typography variant="body2" sx={{ fontWeight: 500, minWidth: '80px', textAlign: 'left' }}>
                   {days.find(d => d.key === item.day)?.label || item.day}
                 </Typography>
-                <Typography variant="body2" sx={{ minWidth: 'fit-content' }}>
+                <Typography variant="body2" sx={{ minWidth: '80px', textAlign: 'left' }}>
                   {timeOptions.find(t => t.value === item.time)?.label || item.time}
                 </Typography>
                 <Chip 
