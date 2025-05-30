@@ -45,7 +45,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
   console.log('[ Dashboard.js ] Dashboard currentScore state:', currentScore);
   
   // Format score to 2 decimal places for display
-  const formattedScore: number = currentScore > 0 ? currentScore.toFixed(2) : '0';
+  const formattedScore: string = currentScore > 0 ? currentScore.toFixed(2) : '0.00';
   
   console.log('[ Dashboard.js ] Dashboard formattedScore for display:', formattedScore);
   
@@ -133,7 +133,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
     
     // Total score (capped at 100, with decimal precision)
     const totalScore = Math.min(100, baseScore + activityPoints + consistencyPoints);
-    const preciseScore = Math.round(totalScore * 10) / 10; // Round to 1 decimal place
+    const preciseScore = Math.round(totalScore * 100) / 100; // Round to 2 decimal places
     
     console.log('[ Dashboard.tsx:147 calculateFitnessFromActivities ] Calculation result:');
     console.log('[ Dashboard.tsx:148 calculateFitnessFromActivities ] - Base score:', baseScore);

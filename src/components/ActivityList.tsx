@@ -61,7 +61,7 @@ export default function ActivityList({
           if (!maxDaysAgo) return true;
           
           const activityDate = new Date(activity.date);
-          const diffTime = Math.abs(today - activityDate);
+          const diffTime = Math.abs(today.getTime() - activityDate.getTime());
           const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
           const withinTimeframe = diffDays <= maxDaysAgo;
           
@@ -77,7 +77,7 @@ export default function ActivityList({
           const dateA = new Date(a.date);
           const dateB = new Date(b.date);
           // Sort in descending order (newest first)
-          return dateB - dateA;
+          return dateB.getTime() - dateA.getTime();
         })
         // Limit the number of activities if specified
         .slice(0, limit || activities.length)
@@ -144,7 +144,7 @@ export default function ActivityList({
     
     // Sort the dates (newest first)
     const sortedDateKeys = Object.keys(groups).sort((a, b) => {
-      return new Date(b) - new Date(a);
+      return new Date(b).getTime() - new Date(a).getTime();
     });
     
     // Return the grouped result with dates in order
@@ -317,7 +317,12 @@ export default function ActivityList({
                         textOverflow: 'ellipsis',
                         marginRight: '0.5rem'
                       }}>
-                        {activity.duration ? `${activity.duration} min` : 'Done'} 
+                        {activity.duration ? `${activity.duration} min` : 
+                         activity.type === 'action-item' && activity.location === 'completed' ? 
+                         <span style={{ color: darkMode ? '#10b981' : '#047857' }}>
+                           <i className="fas fa-check-circle" style={{ marginRight: '4px' }}></i>
+                           Completed
+                         </span> : 'Done'} 
                         {activity.meetingName ? ` - ${activity.meetingName}` : ''}
                         {activity.literatureTitle ? ` - ${activity.literatureTitle}` : ''}
                         {activity.notes && !activity.meetingName && !activity.literatureTitle ? ` - ${activity.notes}` : ''}
