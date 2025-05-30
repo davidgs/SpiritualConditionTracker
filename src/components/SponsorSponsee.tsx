@@ -103,28 +103,24 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
     console.log('Getting action items for contact date:', contactDate);
     console.log('All activities in database:', activities);
     
-    const contactDateObj = new Date(contactDate);
-    const contactDateString = contactDateObj.toISOString().split('T')[0];
-    
-    console.log('Looking for action items on date:', contactDateString);
-    
     const actionItemActivities = activities.filter(activity => activity.type === 'action-item');
     console.log('Found action-item activities:', actionItemActivities);
     
     const matchingActionItems = activities.filter(activity => {
       if (activity.type !== 'action-item') return false;
       
-      const activityDateObj = new Date(activity.date);
-      const activityDateString = activityDateObj.toISOString().split('T')[0];
+      // Look for ContactRef in the notes that matches this contact's date
+      const contactRefMatch = activity.notes?.match(/\[ContactRef: ([^\]]+)\]/);
+      const referencedContactDate = contactRefMatch ? contactRefMatch[1] : null;
       
-      console.log('Comparing activity date:', activityDateString, 'with contact date:', contactDateString);
+      console.log('Activity:', activity.id, 'references contact date:', referencedContactDate, 'looking for:', contactDate);
       
-      // Match action items created on the same day as the contact
-      return activityDateString === contactDateString;
+      // Match action items that reference this contact
+      return referencedContactDate === contactDate;
     }).map(activity => ({
       id: activity.id,
       title: activity.notes?.split(' - ')[0]?.replace('Action Item: ', '') || 'Action Item',
-      text: activity.notes?.split(' - ')[1]?.split(' [Notes:')[0] || '',
+      text: activity.notes?.split(' - ')[1]?.split(' [Notes:')[0]?.split(' [ContactRef:')[0] || '',
       notes: activity.notes?.match(/\[Notes: (.*?)\]/)?.[1] || '',
       completed: activity.location === 'completed',
       dueDate: activity.date,
@@ -181,8 +177,8 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
           const actionItemPromises = actionItems.map(actionItem => {
             const todoActivityData = {
               type: 'action-item', // Use new action-item type
-              date: contactData.date || new Date().toISOString(), // Use the same date as the contact
-              notes: `Action Item: ${actionItem.title}${actionItem.text ? ' - ' + actionItem.text : ''}${actionItem.notes ? ' [Notes: ' + actionItem.notes + ']' : ''}`,
+              date: actionItem.dueDate || new Date().toISOString(), // Use the due date as specified
+              notes: `Action Item: ${actionItem.title}${actionItem.text ? ' - ' + actionItem.text : ''}${actionItem.notes ? ' [Notes: ' + actionItem.notes + ']' : ''} [ContactRef: ${contactData.date}]`,
               location: actionItem.completed ? 'completed' : 'pending'
             };
             
