@@ -84,11 +84,12 @@ export default function SponsorContactFormPage({ open, userId, onSubmit, onClose
         [name]: value as string
       }));
     }
+    console.log('[SponsorContactFormPage.tsx:87 handleChange] Updated contactData:', contactData);
   };
   
   // Add new todo item
   const handleAddTodo = (todoItem: ActionItemFormData): void => {
-    console.log('[SponsorContactFormPage.tsx: handleAddTodo] Adding todo item:', todoItem);
+    console.log('[SponsorContactFormPage.tsx: handleAddTodo : 91] Adding todo item:', todoItem);
     
     // Create a clean ActionItemFormData object
     const newTodo: ActionItemFormData = {
@@ -100,7 +101,7 @@ export default function SponsorContactFormPage({ open, userId, onSubmit, onClose
       completed: Boolean(todoItem.completed),
       type: todoItem.type
     };
-    
+    console.log('[SponsorContactFormPage.tsx: handleAddTodo : 104] New todo object:', newTodo);
     setTodos(prev => [...prev, newTodo]);
     setShowInput(false);
   };
@@ -116,15 +117,15 @@ export default function SponsorContactFormPage({ open, userId, onSubmit, onClose
 
   // Delete todo item
   const handleDeleteTodo = (todoId: number): void => {
-    console.log('[SponsorContactFormPage.tsx: handleDeleteTodo] Deleting todo at id:', todoId);
+    console.log('[SponsorContactFormPage.tsx: 120 handleDeleteTodo] Deleting todo at id:', todoId);
     setTodos(prev => prev.filter(todo => todo.id !== todoId));
   };
 
   // Handle form submission
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
-    console.log('[SponsorContactFormPage.tsx: handleSubmit] Submitting contact with data:', contactData);
-    console.log('[SponsorContactFormPage.tsx: handleSubmit] Submitting todos:', todos);
+    console.log('[SponsorContactFormPage.tsx: 127 handleSubmit] Submitting contact with data:', contactData);
+    console.log('[SponsorContactFormPage.tsx: 128 handleSubmit] Submitting todos:', todos);
     
     // Validate required fields
     if (!contactData.note.trim()) {
@@ -295,6 +296,7 @@ export default function SponsorContactFormPage({ open, userId, onSubmit, onClose
             />
           ) : (
             <Button
+              size="small"
               variant="outlined"
               onClick={() => setShowInput(true)}
               fullWidth
@@ -311,6 +313,7 @@ export default function SponsorContactFormPage({ open, userId, onSubmit, onClose
             variant="contained"
             color="error"
             onClick={onClose}
+            disabled={showInput}
           >
             Cancel
           </Button>
@@ -319,6 +322,7 @@ export default function SponsorContactFormPage({ open, userId, onSubmit, onClose
             size="small"
             variant="contained"
             color="success"
+            disabled={showInput}
           >
             Save
           </Button>
