@@ -228,19 +228,28 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
           }
         }
 
-        // Add new action items
+        // Add new action items to the action_items table instead of activities table
         for (const actionItem of actionItems) {
-          const actionActivityData = {
-            type: 'action-item',
-            date: actionItem.dueDate || contactData.date,
+          const actionItemData = {
             title: actionItem.title,
             text: actionItem.text || '',
             notes: actionItem.notes || '',
-            location: actionItem.completed ? 'completed' : 'pending'
+            dueDate: actionItem.dueDate || contactData.date,
+            completed: actionItem.completed ? 1 : 0,
+            type: 'todo',
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString()
           };
 
-          console.log('Adding updated action item:', actionActivityData);
-          await onSaveActivity(actionActivityData);
+          console.log('Adding action item to action_items table:', actionItemData);
+          
+          try {
+            // Save to action_items table instead of activities table
+            await window.db.add('action_items', actionItemData);
+            console.log('Action item saved successfully');
+          } catch (error) {
+            console.error('Error saving action item:', error);
+          }
         }
       }
 
@@ -274,19 +283,23 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
       const savedActivity = await onSaveActivity(activityData);
       console.log('Contact saved successfully as activity:', savedActivity);
       
-      // Save action items as individual activities if any were provided
+      // Save action items to the action_items table if any were provided
       if (actionItems && actionItems.length > 0) {
         try {
-          const actionItemPromises = actionItems.map(actionItem => {
-            const todoActivityData = {
-              type: 'action-item', // Use new action-item type
-              date: actionItem.dueDate || new Date().toISOString(), // Use the due date as specified
-              notes: `Action Item: ${actionItem.title}${actionItem.text ? ' - ' + actionItem.text : ''}${actionItem.notes ? ' [Notes: ' + actionItem.notes + ']' : ''} [ContactRef: ${contactData.date}]`,
-              location: actionItem.completed ? 'completed' : 'pending'
+          const actionItemPromises = actionItems.map(async (actionItem) => {
+            const actionItemData = {
+              title: actionItem.title,
+              text: actionItem.text || '',
+              notes: actionItem.notes || '',
+              dueDate: actionItem.dueDate || new Date().toISOString().split('T')[0],
+              completed: actionItem.completed ? 1 : 0,
+              type: 'todo',
+              createdAt: new Date().toISOString(),
+              updatedAt: new Date().toISOString()
             };
             
-            console.log('Saving action item as activity:', todoActivityData);
-            return onSaveActivity(todoActivityData);
+            console.log('Saving action item to action_items table:', actionItemData);
+            return await window.db.add('action_items', actionItemData);
           });
           
           await Promise.all(actionItemPromises);

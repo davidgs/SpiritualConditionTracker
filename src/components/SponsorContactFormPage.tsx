@@ -35,7 +35,7 @@ export default function SponsorContactFormPage({ open, userId, onSubmit, onClose
   const [todos, setTodos] = useState<ActionItemFormData[]>([]);
   const [showInput, setShowInput] = useState<boolean>(false);
   
-  // Update form state when initial data changes - but only run once on mount
+  // Update form state when initial data changes - clear form for new contacts
   useEffect(() => {
     if (initialData) {
       // Format date for input with strict typing
@@ -64,8 +64,16 @@ export default function SponsorContactFormPage({ open, userId, onSubmit, onClose
       if (todoItems.length > 0) {
         setTodos(todoItems);
       }
+    } else {
+      // Clear form for new contact
+      setContactData({
+        type: 'phone' as ContactType,
+        date: new Date().toISOString().split('T')[0],
+        note: ''
+      });
+      setTodos([]);
     }
-  }, []);
+  }, [initialData, open]); // Also depend on open state to clear when dialog opens
   
   // Handle field changes with strict typing
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | { target: { name: string; value: ContactType | string } }): void => {
