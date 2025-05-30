@@ -97,7 +97,14 @@ async function initSQLiteDatabase() {
     setupGlobalDB(sqlitePlugin);
     console.log('[ sqliteLoader.js ] Database setup complete, global db interface ready');
 
-    // Step 5: Ensure default user exists
+    // Step 5: Perform database validation and logging
+    try {
+      await validateAndLogDatabase(sqlitePlugin);
+    } catch (error) {
+      console.error('[ sqliteLoader.js ] Error validating database:', error);
+    }
+
+    // Step 6: Ensure default user exists
     try {
       await ensureDefaultUser(sqlitePlugin);
     } catch (error) {
@@ -114,6 +121,63 @@ async function initSQLiteDatabase() {
     }, null, 2));
     
     throw error;
+  }
+}
+
+/**
+ * Validate database schema and log current state (preserves data)
+ * @param {Object} sqlite - SQLite plugin instance
+ */
+async function validateAndLogDatabase(sqlite) {
+  console.log('[ sqliteLoader.js ] Validating database schema and logging current state...');
+  
+  try {
+    // Check if main tables exist and log their row counts
+    const tables = ['users', 'activities', 'meetings', 'action_items', 'sponsor_contacts'];
+    
+    for (const table of tables) {
+      try {
+        const result = await sqlite.query({
+          database: DB_NAME,
+          statement: `SELECT COUNT(*) as count FROM ${table}`,
+          values: []
+        });
+        
+        let count = 0;
+        if (result?.values?.length > 0) {
+          // Handle iOS format
+          if (result.values[0]?.ios_columns) {
+            count = result.values[1]?.count || 0;
+          } else {
+            count = result.values[0]?.count || 0;
+          }
+        }
+        
+        console.log(`[ sqliteLoader.js ] Table '${table}': ${count} records`);
+      } catch (error) {
+        console.log(`[ sqliteLoader.js ] Table '${table}': does not exist or error accessing:`, error.message);
+      }
+    }
+    
+    // Log sample data from key tables
+    try {
+      // Show recent activities
+      const activitiesResult = await sqlite.query({
+        database: DB_NAME,
+        statement: `SELECT type, date, notes FROM activities ORDER BY date DESC LIMIT 3`,
+        values: []
+      });
+      
+      if (activitiesResult?.values?.length > 0) {
+        console.log('[ sqliteLoader.js ] Recent activities found:', activitiesResult.values.length);
+      }
+      
+    } catch (error) {
+      console.log('[ sqliteLoader.js ] Could not query sample data:', error.message);
+    }
+    
+  } catch (error) {
+    console.error('[ sqliteLoader.js ] Error during database validation:', error);
   }
 }
 
@@ -190,11 +254,11 @@ async function ensureDefaultUser(sqlite) {
 }
 
 /**
- * Create database tables if they don't exist
+ * Verify database tables exist and create only if missing (preserves existing data)
  * @param {Object} sqlite - SQLite plugin instance
  */
 export async function setupTables(sqlite) {
-  console.log('[ sqliteLoader.js ] Setting up database tables if they don\'t exist');
+  console.log('[ sqliteLoader.js ] Verifying database schema (preserving existing data)');
   
   // Create users table with all required fields - better structured
   await sqlite.execute({
