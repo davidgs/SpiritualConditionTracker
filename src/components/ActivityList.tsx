@@ -262,8 +262,8 @@ export default function ActivityList({
                               fontSize: '0.6rem',
                               padding: '1px 5px',
                               borderRadius: '10px',
-                              backgroundColor: darkMode ? '#7e22ce' : '#f3e8ff',
-                              color: darkMode ? '#c084fc' : '#7e22ce',
+                              backgroundColor: theme.palette.secondary.light,
+                              color: theme.palette.secondary.dark,
                               fontWeight: 'bold'
                             }}>Speaker</span>
                           )}
@@ -278,8 +278,8 @@ export default function ActivityList({
                               fontSize: '0.6rem',
                               padding: '1px 5px',
                               borderRadius: '10px',
-                              backgroundColor: darkMode ? '#065f46' : '#d1fae5',
-                              color: darkMode ? '#10b981' : '#047857',
+                              backgroundColor: theme.palette.success.light,
+                              color: theme.palette.success.dark,
                               fontWeight: 'bold'
                             }}>Sponsor</span>
                           )}
@@ -288,8 +288,8 @@ export default function ActivityList({
                               fontSize: '0.6rem',
                               padding: '1px 5px',
                               borderRadius: '10px',
-                              backgroundColor: darkMode ? '#1e40af' : '#dbeafe',
-                              color: darkMode ? '#60a5fa' : '#1e40af',
+                              backgroundColor: theme.palette.info.light,
+                              color: theme.palette.info.dark,
                               fontWeight: 'bold'
                             }}>Sponsee</span>
                           )}
@@ -298,8 +298,8 @@ export default function ActivityList({
                               fontSize: '0.6rem',
                               padding: '1px 5px',
                               borderRadius: '10px',
-                              backgroundColor: darkMode ? '#7e22ce' : '#f3e8ff',
-                              color: darkMode ? '#c084fc' : '#7e22ce',
+                              backgroundColor: theme.palette.secondary.light,
+                              color: theme.palette.secondary.dark,
                               fontWeight: 'bold'
                             }}>AA Member</span>
                           )}
@@ -310,7 +310,7 @@ export default function ActivityList({
                       display: 'flex',
                       justifyContent: 'space-between',
                       fontSize: '0.75rem',
-                      color: darkMode ? '#9ca3af' : '#6b7280',
+                      color: theme.palette.text.secondary,
                       lineHeight: '1.2'
                     }}>
                       <div style={{
