@@ -302,14 +302,14 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
         elevation={0}
         className="p-5 mb-8 rounded-lg"
         sx={{ 
-          backgroundColor: darkMode ? 'rgba(30, 41, 59, 0.8)' : 'rgba(255, 255, 255, 0.8)',
-          boxShadow: darkMode ? '0 4px 12px rgba(0, 0, 0, 0.25)' : '0 4px 12px rgba(0, 0, 0, 0.1)'
+          backgroundColor: theme.palette.background.paper,
+          boxShadow: theme.shadows[2]
         }}
       >
         {sponsor ? (
           <Box>
             <Box className="mb-4">
-              <Typography variant="h6" sx={{ color: darkMode ? '#f3f4f6' : '#1f2937', fontWeight: 'bold' }}>
+              <Typography variant="h6" sx={{ color: theme.palette.text.primary, fontWeight: 'bold' }}>
                 {sponsor.name} {sponsor.lastName || ''}
               </Typography>
             </Box>
@@ -317,21 +317,21 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
             <Box className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Contact Information */}
               <Box>
-                <Typography variant="subtitle2" sx={{ color: darkMode ? '#9ca3af' : '#6b7280', mb: 1 }}>
+                <Typography variant="subtitle2" sx={{ color: theme.palette.text.secondary, mb: 1 }}>
                   Contact Information
                 </Typography>
                 
                 <Box className="grid grid-cols-1 gap-2">
                   {sponsor.phone && (
-                    <Typography sx={{ color: darkMode ? '#d1d5db' : '#4b5563', display: 'flex', alignItems: 'center', gap: 1 }}>
-                      <i className="fa-solid fa-phone text-sm" style={{ color: darkMode ? '#9ca3af' : '#6b7280' }}></i>
+                    <Typography sx={{ color: theme.palette.text.primary, display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <i className="fa-solid fa-phone text-sm" style={{ color: theme.palette.text.secondary }}></i>
                       {sponsor.phone}
                     </Typography>
                   )}
                   
                   {sponsor.email && (
-                    <Typography sx={{ color: darkMode ? '#d1d5db' : '#4b5563', display: 'flex', alignItems: 'center', gap: 1 }}>
-                      <i className="fa-solid fa-envelope text-sm" style={{ color: darkMode ? '#9ca3af' : '#6b7280' }}></i>
+                    <Typography sx={{ color: theme.palette.text.primary, display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <i className="fa-solid fa-envelope text-sm" style={{ color: theme.palette.text.secondary }}></i>
                       {sponsor.email}
                     </Typography>
                   )}
@@ -406,10 +406,11 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
           className="p-5 rounded-lg mt-4"
           sx={{ 
             backgroundColor: darkMode ? 'rgba(30, 41, 59, 0.8)' : 'rgba(255, 255, 255, 0.8)',
-            boxShadow: darkMode ? '0 4px 12px rgba(0, 0, 0, 0.25)' : '0 4px 12px rgba(0, 0, 0, 0.1)'
+            boxShadow: darkMode ? '0 4px 12px rgba(0, 0, 0, 0.25)' : '0 4px 12px rgba(0, 0, 0, 0.1)',
+            paddingTop: "1rem"
           }}
         >
-          <Box className="flex justify-between items-center mb-4">
+          <Box className="flex justify-between items-center mb-4" >
             <Typography variant="h6" sx={{ color: darkMode ? '#f3f4f6' : '#1f2937', fontWeight: 'bold' }}>
               Sponsor Contacts
             </Typography>
