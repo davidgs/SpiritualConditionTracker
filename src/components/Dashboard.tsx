@@ -118,18 +118,49 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
       return baseScore;
     }
     
-    // Activity points (2 points per activity, max 40)
-    const activityPoints = Math.min(recentActivities.length * 2, 40);
+    // Calculate weighted activity points with action item scoring
+    const weights = {
+      meeting: 10,
+      prayer: 8,
+      meditation: 8,
+      reading: 6,
+      literature: 6,
+      callSponsor: 5,
+      callSponsee: 4,
+      call: 5,
+      service: 9,
+      stepWork: 10,
+      stepwork: 10,
+      'action-item': 0.5  // Will be adjusted based on status
+    };
     
-    // Consistency points - count unique days with activities
+    let totalActivityPoints = 0;
     const activityDays = new Set();
+    
     recentActivities.forEach(activity => {
+      // Track unique days
       const day = new Date(activity.date).toISOString().split('T')[0];
       activityDays.add(day);
+      
+      // Calculate points for this activity with action item logic
+      let points;
+      if (activity.type === 'action-item') {
+        if (activity.location === 'completed') {
+          points = 0.5; // Completed action items add points
+        } else if (activity.location === 'deleted') {
+          points = -0.5; // Deleted action items subtract points
+        } else {
+          points = 0; // Pending action items don't count
+        }
+      } else {
+        points = weights[activity.type] || 2;
+      }
+      totalActivityPoints += points;
     });
     
+    const activityPoints = Math.min(totalActivityPoints / 4, 40); // Scale down and cap at 40
     const consistencyPercentage = activityDays.size / timeframeDays;
-    const consistencyPoints = Math.round(consistencyPercentage * 40); // Up to 40 points
+    const consistencyPoints = consistencyPercentage * 40; // Up to 40 points
     
     // Total score (capped at 100, with decimal precision)
     const totalScore = Math.min(100, baseScore + activityPoints + consistencyPoints);
@@ -165,7 +196,8 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
       call: 5,
       service: 9,
       stepWork: 10,
-      stepwork: 10
+      stepwork: 10,
+      'action-item': 0.5  // Completed action items
     };
     
     const now = new Date();
@@ -196,8 +228,19 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
         activityDays.add(dayKey);
       }
       
-      // Add points for activity type
-      const points = weights[activity.type] || 2;
+      // Add points for activity type, with special handling for action items
+      let points;
+      if (activity.type === 'action-item') {
+        if (activity.location === 'completed') {
+          points = 0.5; // Completed action items add points
+        } else if (activity.location === 'deleted') {
+          points = -0.5; // Deleted action items subtract points
+        } else {
+          points = 0; // Pending action items don't count
+        }
+      } else {
+        points = weights[activity.type] || 2;
+      }
       totalPoints += points;
       
       // Track breakdown
