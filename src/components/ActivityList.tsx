@@ -1,5 +1,6 @@
 import React from 'react';
 import { formatDateForDisplay, compareDatesForSorting } from '../utils/dateUtils';
+import { useTheme } from '@mui/material/styles';
 
 export default function ActivityList({ 
   activities, 
@@ -10,6 +11,7 @@ export default function ActivityList({
   maxDaysAgo = null,
   title = null
 }) {
+  const theme = useTheme();
   // Get icon for activity type
   const getActivityIcon = (type) => {
     switch (type) {

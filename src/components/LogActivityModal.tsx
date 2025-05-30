@@ -324,8 +324,8 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
           {showSuccess && (
             <Box
               sx={(theme) => ({
-                backgroundColor: theme.palette.mode === 'dark' ? 'rgba(6, 78, 59, 0.8)' : 'rgba(209, 250, 229, 0.8)',
-                color: theme.palette.mode === 'dark' ? '#6ee7b7' : '#065f46',
+                backgroundColor: theme.palette.success.light,
+                color: theme.palette.success.dark,
                 padding: '0.75rem',
                 borderRadius: '0.375rem',
                 display: 'flex',
