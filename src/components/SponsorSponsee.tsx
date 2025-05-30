@@ -337,8 +337,8 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
                   )}
                   
                   {sponsor.sobrietyDate && (
-                    <Typography sx={{ color: darkMode ? '#d1d5db' : '#4b5563', display: 'flex', alignItems: 'center', gap: 1 }}>
-                      <i className="fa-solid fa-calendar-check text-sm" style={{ color: darkMode ? '#9ca3af' : '#6b7280' }}></i>
+                    <Typography sx={{ color: theme.palette.text.primary, display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <i className="fa-solid fa-calendar-check text-sm" style={{ color: theme.palette.text.secondary }}></i>
                       {formatDateForDisplay(sponsor.sobrietyDate)}
                     </Typography>
                   )}
@@ -349,11 +349,11 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
             {/* Notes Section */}
             {sponsor.notes && (
               <Box className="mt-4">
-                <Typography variant="subtitle2" sx={{ color: darkMode ? '#9ca3af' : '#6b7280', mb: 1 }}>
+                <Typography variant="subtitle2" sx={{ color: theme.palette.text.secondary, mb: 1 }}>
                   Notes
                 </Typography>
                 
-                <Typography sx={{ color: darkMode ? '#d1d5db' : '#4b5563', whiteSpace: 'pre-wrap' }}>
+                <Typography sx={{ color: theme.palette.text.primary, whiteSpace: 'pre-wrap' }}>
                   {sponsor.notes}
                 </Typography>
               </Box>
@@ -364,7 +364,7 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
               <IconButton 
                 onClick={handleEditSponsor}
                 size="small"
-                sx={{ color: darkMode ? '#93c5fd' : '#3b82f6' }}
+                sx={{ color: theme.palette.primary.main }}
               >
                 <i className="fa-solid fa-pen-to-square"></i>
               </IconButton>
@@ -372,7 +372,7 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
               <IconButton 
                 onClick={handleDeleteSponsor}
                 size="small"
-                sx={{ color: darkMode ? '#f87171' : '#ef4444' }}
+                sx={{ color: theme.palette.error.main }}
               >
                 <i className="fa-solid fa-trash"></i>
               </IconButton>
@@ -380,7 +380,7 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
           </Box>
         ) : (
           <Box className="text-center py-6">
-            <Typography variant="body1" sx={{ color: darkMode ? '#d1d5db' : '#4b5563', mb: 3 }}>
+            <Typography variant="body1" sx={{ color: theme.palette.text.primary, mb: 3 }}>
               You haven't added your sponsor yet.
             </Typography>
             
@@ -405,13 +405,13 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
           elevation={0}
           className="p-5 rounded-lg mt-4"
           sx={{ 
-            backgroundColor: darkMode ? 'rgba(30, 41, 59, 0.8)' : 'rgba(255, 255, 255, 0.8)',
-            boxShadow: darkMode ? '0 4px 12px rgba(0, 0, 0, 0.25)' : '0 4px 12px rgba(0, 0, 0, 0.1)',
+            backgroundColor: theme.palette.background.paper,
+            boxShadow: theme.shadows[2],
             paddingTop: "1rem"
           }}
         >
           <Box className="flex justify-between items-center mb-4" >
-            <Typography variant="h6" sx={{ color: darkMode ? '#f3f4f6' : '#1f2937', fontWeight: 'bold' }}>
+            <Typography variant="h6" sx={{ color: theme.palette.text.primary, fontWeight: 'bold' }}>
               Sponsor Contacts
             </Typography>
             
@@ -419,10 +419,10 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
               onClick={() => setShowContactForm(true)}
               size="small"
               sx={{ 
-                color: darkMode ? '#93c5fd' : '#3b82f6',
-                backgroundColor: darkMode ? 'rgba(59, 130, 246, 0.1)' : 'rgba(59, 130, 246, 0.1)',
+                color: theme.palette.primary.main,
+                backgroundColor: theme.palette.primary.light,
                 '&:hover': {
-                  backgroundColor: darkMode ? 'rgba(59, 130, 246, 0.2)' : 'rgba(59, 130, 246, 0.2)'
+                  backgroundColor: theme.palette.primary.dark
                 }
               }}
             >
@@ -442,12 +442,12 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
                           <i 
                             className={getContactTypeInfo(contact.type).icon}
                             style={{ 
-                              color: darkMode ? '#93c5fd' : '#3b82f6',
+                              color: theme.palette.primary.main,
                               fontSize: '16px',
                               width: '20px'
                             }}
                           />
-                          <Typography sx={{ color: darkMode ? '#f3f4f6' : '#1f2937', fontWeight: 500 }}>
+                          <Typography sx={{ color: theme.palette.text.primary, fontWeight: 500 }}>
                             {getContactTypeInfo(contact.type).label}
                           </Typography>
                         </Box>
@@ -458,11 +458,11 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
                             <i 
                               className="fa-solid fa-calendar"
                               style={{ 
-                                color: darkMode ? '#9ca3af' : '#6b7280',
+                                color: theme.palette.text.secondary,
                                 fontSize: '12px'
                               }}
                             />
-                            <Typography variant="body2" sx={{ color: darkMode ? '#9ca3af' : '#6b7280' }}>
+                            <Typography variant="body2" sx={{ color: theme.palette.text.secondary }}>
                               {formatDateForDisplay(contact.date)}
                             </Typography>
                           </Box>
