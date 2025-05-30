@@ -683,11 +683,15 @@ function setupGlobalDB(sqlite) {
         console.log('[ sqliteLoader.js ] Record before update:', beforeUpdate);
         
         // Execute update
-        await sqlite.execute({
+        const updateResult = await sqlite.execute({
           database: DB_NAME,
-          statements: `UPDATE ${collection} SET ${setClause} WHERE id = ?`,
-          values: values
+          statements: [{
+            statement: `UPDATE ${collection} SET ${setClause} WHERE id = ?`,
+            values: values
+          }]
         });
+        
+        console.log('[ sqliteLoader.js ] Update result:', updateResult);
         
         // Return updated item
         return this.getById(collection, numericId);
