@@ -21,106 +21,43 @@ function Header({ title, menuOpen, setMenuOpen, isMobile }) {
   return (
     <SafeAreaHeader
       sx={{
-        position: 'relative', // Not sticky anymore
-        zIndex: 20,
+        position: 'sticky',
+        top: 0,
+        zIndex: 1100,
         backgroundColor: headerBackgroundColor,
         borderBottom: `1px solid ${muiTheme.palette.divider}`,
-        borderLeft: `4px solid ${accentColor}`,
-        padding: isMobile ? '2.75rem .25rem .25rem .25rem' : '0.75rem 1rem',
+        padding: '0.5rem 1rem',
         display: 'flex',
         alignItems: 'center',
-        justifyContent: isMobile ? 'space-between' : 'center',
+        justifyContent: 'flex-start',
         boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
-        flexDirection: isMobile ? 'row' : 'column'
+        gap: 1
       }}
     >
-      {/* Logo - Left aligned on mobile, centered on desktop */}
-      {isMobile ? (
-        // Mobile layout: Logo on left, text in center, hamburger on right
-        <>
-          <Box sx={{ 
-            display: 'flex',
-            alignItems: 'center'
-          }}>
-            <Box
-              component="img" 
-              src="/logo.jpg"
-              alt="App Logo" 
-              sx={{ 
-                width: '32px',
-                height: '32px',
-                objectFit: 'cover',
-                borderRadius: '4px'
-              }}
-            />
-          </Box>
-          
-          <Box sx={{
-            textAlign: 'center',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            flex: 1
-          }}>
-            <Typography 
-              variant="h6" 
-              sx={{ 
-                fontWeight: 600,
-                color: headerTextColor,
-                margin: 0,
-                lineHeight: 1.2
-              }}
-            >
-              My Spiritual Condition
-            </Typography>
-          </Box>
-        </>
-      ) : (
-        // Desktop layout: Logo and text centered vertically
-        <Box sx={{ 
-          textAlign: 'center',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center'
-        }}>
-          <Box 
-            component="img"
-            src="./logo.jpg"
-            alt="App Logo" 
-            sx={{ 
-              width: '80px',
-              height: '80px',
-              objectFit: 'contain',
-              borderRadius: '12px',
-              marginBottom: '0.5rem',
-              border: `2px solid ${accentColor}`
-            }}
-          />
-          <Typography
-            variant="h4"
-            sx={{ 
-              fontWeight: 'bold', 
-              color: headerTextColor,
-              marginBottom: '0.25rem',
-              lineHeight: 1.1
-            }}
-          >
-            Spiritual Condition Tracker
-          </Typography>
-          <Typography 
-            variant="caption"
-            sx={{ 
-              color: 'text.secondary',
-              lineHeight: 1.1,
-              margin: 0,
-              borderBottom: `2px solid ${accentColor}`,
-              paddingBottom: '2px'
-            }}
-          >
-            Track your spiritual journey
-          </Typography>
-        </Box>
-      )}
+      {/* Logo and title - left aligned */}
+      <Box
+        component="img" 
+        src="/logo.jpg"
+        alt="App Logo" 
+        sx={{ 
+          width: '20px',
+          height: '20px',
+          objectFit: 'cover',
+          borderRadius: '3px'
+        }}
+      />
+      
+      <Typography 
+        variant="h6" 
+        sx={{ 
+          fontWeight: 600,
+          color: headerTextColor,
+          fontSize: '0.95rem',
+          lineHeight: 1.2
+        }}
+      >
+        My Spiritual Condition
+      </Typography>
       
       {/* Mobile Hamburger Menu Button */}
       {isMobile && (
