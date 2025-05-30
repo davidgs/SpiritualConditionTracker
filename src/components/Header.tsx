@@ -21,7 +21,7 @@ function Header({ title, menuOpen, setMenuOpen, isMobile }) {
   return (
     <SafeAreaHeader
       sx={{
-        position: 'sticky',
+        position: 'absolute',
         top: 0,
         zIndex: 1100,
         backgroundColor: headerBackgroundColor,
