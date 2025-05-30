@@ -99,7 +99,7 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
       const activityData = {
         type: 'sponsor-contact',
         date: contactData.date || new Date().toISOString(),
-        note: contactData.note || '',
+        notes: contactData.note || '',
         details: {
           contactType: contactData.type,
           duration: contactData.duration || '',
