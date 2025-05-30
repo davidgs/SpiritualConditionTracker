@@ -11,12 +11,15 @@ import {
   Card,
   CardContent,
   Tabs,
-  Tab
+  Tab,
+  ListItemText
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import SponsorFormDialog from './SponsorFormDialog';
 import SponseeFormDialog from './SponseeFormDialog';
+import SponsorContactFormPage from './SponsorContactFormPage';
 import { formatDateForDisplay } from '../utils/dateUtils';
+import sponsorDB from '../utils/sponsor-database';
 
 export default function SponsorSponsee({ user, onUpdate }) {
   const theme = useTheme();
@@ -28,6 +31,10 @@ export default function SponsorSponsee({ user, onUpdate }) {
   // State for sponsor and sponsees
   const [sponsor, setSponsor] = useState(null);
   const [sponsees, setSponsees] = useState([]);
+  
+  // State for sponsor contacts
+  const [sponsorContacts, setSponsorContacts] = useState([]);
+  const [showContactForm, setShowContactForm] = useState(false);
   
   // Dialog states
   const [showSponsorForm, setShowSponsorForm] = useState(false);
@@ -56,8 +63,76 @@ export default function SponsorSponsee({ user, onUpdate }) {
       if (user.sponsees && Array.isArray(user.sponsees)) {
         setSponsees(user.sponsees);
       }
+      
+      // Load sponsor contacts
+      loadSponsorContacts();
     }
   }, [user]);
+
+  // Load sponsor contacts from database
+  const loadSponsorContacts = async () => {
+    try {
+      // Use default_user if user.id is not available to match what we use when saving
+      const userId = user?.id || 'default_user';
+      console.log('Loading sponsor contacts for userId:', userId);
+      
+      // Use our specialized sponsor database module
+      const contacts = await sponsorDB.getSponsorContacts(userId);
+      console.log('Found sponsor contacts:', contacts);
+      setSponsorContacts(contacts);
+      
+    } catch (error) {
+      console.error('Error loading sponsor contacts:', error);
+    }
+  };
+
+  // Handle sponsor contact form submission
+  const handleAddContact = async (contactData) => {
+    try {
+      console.log('Adding new sponsor contact with data:', contactData);
+      
+      // Prepare data for insertion
+      const { id, ...contactWithoutId } = contactData;
+      
+      // Ensure we have a valid userId to avoid constraint errors
+      const userId = user?.id || 'default_user';
+      
+      const contactToSave = {
+        ...contactWithoutId,
+        userId: userId,
+        date: contactData.date || new Date().toISOString()
+      };
+      
+      console.log('Contact data to save:', contactToSave);
+      
+      // Add contact to database
+      const savedContact = await sponsorDB.addSponsorContact(contactToSave);
+      console.log('Contact saved successfully:', savedContact);
+      
+      // Reload contacts to refresh the list
+      await loadSponsorContacts();
+      
+      // Close the form
+      setShowContactForm(false);
+      
+    } catch (error) {
+      console.error('Error adding sponsor contact:', error);
+    }
+  };
+
+  // Get contact type label for display
+  const getContactTypeLabel = (type) => {
+    const typeLabels = {
+      'phone': 'Phone Call',
+      'in-person': 'In Person', 
+      'video': 'Video Call',
+      'text': 'Text Message',
+      'email': 'Email',
+      'other': 'Other'
+    };
+    
+    return typeLabels[type] || 'Contact';
+  };
   
   // Handle sponsor form submission
   const handleSponsorSubmit = (sponsorData) => {
@@ -318,6 +393,98 @@ export default function SponsorSponsee({ user, onUpdate }) {
           </Box>
         )}
       </Paper>
+
+      {/* Sponsor Contacts Section - only show if sponsor exists */}
+      {sponsor && (
+        <Paper 
+          elevation={0}
+          className="p-5 rounded-lg"
+          sx={{ 
+            backgroundColor: darkMode ? 'rgba(30, 41, 59, 0.8)' : 'rgba(255, 255, 255, 0.8)',
+            boxShadow: darkMode ? '0 4px 12px rgba(0, 0, 0, 0.25)' : '0 4px 12px rgba(0, 0, 0, 0.1)'
+          }}
+        >
+          <Box className="flex justify-between items-center mb-4">
+            <Typography variant="h6" sx={{ color: darkMode ? '#f3f4f6' : '#1f2937', fontWeight: 'bold' }}>
+              Sponsor Contacts
+            </Typography>
+            
+            <Button 
+              variant="contained" 
+              color="primary"
+              size="small"
+              onClick={() => setShowContactForm(true)}
+              startIcon={<i className="fa-solid fa-plus"></i>}
+            >
+              Add Contact
+            </Button>
+          </Box>
+
+          {/* Contact List */}
+          {sponsorContacts.length > 0 ? (
+            <List>
+              {sponsorContacts.map((contact, index) => (
+                <React.Fragment key={contact.id || index}>
+                  <ListItem sx={{ px: 0 }}>
+                    <ListItemText
+                      primary={
+                        <Typography sx={{ color: darkMode ? '#f3f4f6' : '#1f2937', fontWeight: 500 }}>
+                          {getContactTypeLabel(contact.type)}
+                        </Typography>
+                      }
+                      secondary={
+                        <Box>
+                          <Typography variant="body2" sx={{ color: darkMode ? '#9ca3af' : '#6b7280' }}>
+                            {formatDateForDisplay(contact.date)}
+                          </Typography>
+                          {contact.note && (
+                            <Typography variant="body2" sx={{ color: darkMode ? '#d1d5db' : '#4b5563', mt: 0.5 }}>
+                              {contact.note}
+                            </Typography>
+                          )}
+                        </Box>
+                      }
+                    />
+                  </ListItem>
+                  {index < sponsorContacts.length - 1 && <Divider />}
+                </React.Fragment>
+              ))}
+            </List>
+          ) : (
+            <Box className="text-center py-4">
+              <Typography variant="body2" sx={{ color: darkMode ? '#9ca3af' : '#6b7280' }}>
+                No sponsor contacts recorded yet.
+              </Typography>
+            </Box>
+          )}
+        </Paper>
+      )}
+      
+      </TabPanel>
+
+      {/* Sponsees Tab Content */}
+      <TabPanel value={currentTab} index={1}>
+          </Box>
+        ) : (
+          <Box className="text-center py-6">
+            <Typography variant="body1" sx={{ color: darkMode ? '#d1d5db' : '#4b5563', mb: 3 }}>
+              You haven't added your sponsor yet.
+            </Typography>
+            
+            <Button 
+              variant="contained" 
+              color="primary"
+              onClick={() => {
+                setEditingSponsor(false);
+                setShowSponsorForm(true);
+              }}
+              startIcon={<i className="fa-solid fa-plus"></i>}
+            >
+              Add Sponsor
+            </Button>
+          </Box>
+        )}
+      </Paper>
       </TabPanel>
 
       {/* Sponsees Tab Content */}
@@ -452,6 +619,14 @@ export default function SponsorSponsee({ user, onUpdate }) {
         }}
         onSubmit={handleSponseeSubmit}
         initialData={editingSponseeId ? sponsees.find(s => s.id === editingSponseeId) : null}
+      />
+
+      {/* Sponsor Contact Form Dialog */}
+      <SponsorContactFormPage
+        open={showContactForm}
+        onClose={() => setShowContactForm(false)}
+        onSubmit={handleAddContact}
+        userId={user?.id || 'default_user'}
       />
     </div>
   );
