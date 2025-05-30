@@ -304,8 +304,17 @@ export default function SponseeFormDialog({ open, onClose, onSubmit, initialData
           justifyContent: 'space-between'
         }}>
           <Button 
+            size="small"
+            variant="outlined"
             onClick={handleCancel} 
-            sx={{ color: theme.palette.error.main }}
+            sx={{ 
+              color: theme.palette.error.main,
+              borderColor: theme.palette.error.main,
+              '&:hover': {
+                backgroundColor: theme.palette.error.main,
+                color: theme.palette.error.contrastText
+              }
+            }}
           >
             Cancel
           </Button>

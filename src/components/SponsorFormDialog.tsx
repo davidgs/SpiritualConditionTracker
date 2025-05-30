@@ -300,9 +300,16 @@ export default function SponsorFormDialog({ open, onClose, onSubmit, initialData
         }}>
           <Button 
             size="small"
-            variant="contained"
+            variant="outlined"
             onClick={handleCancel} 
-            sx={{ color: theme.palette.error.main }}
+            sx={{ 
+              color: theme.palette.error.main,
+              borderColor: theme.palette.error.main,
+              '&:hover': {
+                backgroundColor: theme.palette.error.main,
+                color: theme.palette.error.contrastText
+              }
+            }}
           >
             Cancel
           </Button>
