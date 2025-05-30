@@ -94,10 +94,8 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
     const newSchedule = [...schedule, newMeeting];
     onChange(newSchedule);
     
-    // Collapse the "new" item and show the actual meeting
-    setExpandedItems(prev => 
-      prev.filter(item => !item.includes('-new')).concat([day, `${day}-${time}`])
-    );
+    // Collapse all expanded items to clean up the interface
+    setExpandedItems([]);
   };
 
   const updateScheduleItem = (day: string, time: string, field: 'format' | 'access', value: string) => {
