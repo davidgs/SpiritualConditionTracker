@@ -467,17 +467,17 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
                             </Typography>
                           </Box>
                           {contact.note && (
-                            <Typography variant="body2" sx={{ color: darkMode ? '#d1d5db' : '#4b5563', mt: 0.5 }}>
+                            <Typography variant="body2" sx={{ color: theme.palette.text.primary, mt: 0.5 }}>
                               {contact.note}
                             </Typography>
                           )}
                           {contact.topic && (
-                            <Typography variant="body2" sx={{ color: darkMode ? '#a78bfa' : '#8b5cf6', mt: 0.5, fontStyle: 'italic' }}>
+                            <Typography variant="body2" sx={{ color: theme.palette.secondary.main, mt: 0.5, fontStyle: 'italic' }}>
                               Topic: {contact.topic}
                             </Typography>
                           )}
                           {contact.duration && (
-                            <Typography variant="body2" sx={{ color: darkMode ? '#9ca3af' : '#6b7280', mt: 0.5 }}>
+                            <Typography variant="body2" sx={{ color: theme.palette.text.secondary, mt: 0.5 }}>
                               Duration: {contact.duration} minutes
                             </Typography>
                           )}
@@ -491,7 +491,7 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
             </List>
           ) : (
             <Box className="text-center py-4">
-              <Typography variant="body2" sx={{ color: darkMode ? '#9ca3af' : '#6b7280' }}>
+              <Typography variant="body2" sx={{ color: theme.palette.text.secondary }}>
                 No sponsor contacts recorded yet.
               </Typography>
             </Box>
@@ -524,14 +524,14 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
             <Card 
               key={sponsee.id}
               sx={{ 
-                backgroundColor: darkMode ? 'rgba(30, 41, 59, 0.8)' : 'rgba(255, 255, 255, 0.8)',
-                boxShadow: darkMode ? '0 4px 12px rgba(0, 0, 0, 0.25)' : '0 4px 12px rgba(0, 0, 0, 0.1)',
+                backgroundColor: theme.palette.background.paper,
+                boxShadow: theme.shadows[2],
                 borderRadius: '0.5rem'
               }}
             >
               <CardContent>
                 <Box className="mb-3">
-                  <Typography variant="h6" sx={{ color: darkMode ? '#f3f4f6' : '#1f2937', fontWeight: 'bold' }}>
+                  <Typography variant="h6" sx={{ color: theme.palette.text.primary, fontWeight: 'bold' }}>
                     {sponsee.name} {sponsee.lastName || ''}
                   </Typography>
                 </Box>
@@ -540,22 +540,22 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
                   {/* Contact Information */}
                   <Box className="grid grid-cols-1 gap-2">
                     {sponsee.phone && (
-                      <Typography sx={{ color: darkMode ? '#d1d5db' : '#4b5563', fontSize: '0.875rem', display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <i className="fa-solid fa-phone text-sm" style={{ color: darkMode ? '#9ca3af' : '#6b7280' }}></i>
+                      <Typography sx={{ color: theme.palette.text.primary, fontSize: '0.875rem', display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <i className="fa-solid fa-phone text-sm" style={{ color: theme.palette.text.secondary }}></i>
                         {sponsee.phone}
                       </Typography>
                     )}
                     
                     {sponsee.email && (
-                      <Typography sx={{ color: darkMode ? '#d1d5db' : '#4b5563', fontSize: '0.875rem', display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <i className="fa-solid fa-envelope text-sm" style={{ color: darkMode ? '#9ca3af' : '#6b7280' }}></i>
+                      <Typography sx={{ color: theme.palette.text.primary, fontSize: '0.875rem', display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <i className="fa-solid fa-envelope text-sm" style={{ color: theme.palette.text.secondary }}></i>
                         {sponsee.email}
                       </Typography>
                     )}
                     
                     {sponsee.sobrietyDate && (
-                      <Typography sx={{ color: darkMode ? '#d1d5db' : '#4b5563', fontSize: '0.875rem', display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <i className="fa-solid fa-calendar-check text-sm" style={{ color: darkMode ? '#9ca3af' : '#6b7280' }}></i>
+                      <Typography sx={{ color: theme.palette.text.primary, fontSize: '0.875rem', display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <i className="fa-solid fa-calendar-check text-sm" style={{ color: theme.palette.text.secondary }}></i>
                         {formatDateForDisplay(sponsee.sobrietyDate)}
                       </Typography>
                     )}
@@ -565,10 +565,10 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
                   {sponsee.notes && (
                     <Box className="mt-2">
                       <Divider sx={{ my: 1 }} />
-                      <Typography variant="caption" sx={{ color: darkMode ? '#9ca3af' : '#6b7280', display: 'block', mb: 0.5 }}>
+                      <Typography variant="caption" sx={{ color: theme.palette.text.secondary, display: 'block', mb: 0.5 }}>
                         Notes
                       </Typography>
-                      <Typography sx={{ color: darkMode ? '#d1d5db' : '#4b5563', fontSize: '0.875rem', whiteSpace: 'pre-wrap' }}>
+                      <Typography sx={{ color: theme.palette.text.primary, fontSize: '0.875rem', whiteSpace: 'pre-wrap' }}>
                         {sponsee.notes}
                       </Typography>
                     </Box>
