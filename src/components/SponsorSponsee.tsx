@@ -41,6 +41,7 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
   const [showSponseeForm, setShowSponseeForm] = useState(false);
   const [editingSponsor, setEditingSponsor] = useState(false);
   const [editingSponseeId, setEditingSponseeId] = useState(null);
+  const [editingActionItem, setEditingActionItem] = useState(null);
   
   // Load sponsor and sponsees data from user
   useEffect(() => {
@@ -134,17 +135,23 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
   // Toggle action item completion
   const handleToggleActionItem = async (actionItem) => {
     try {
-      // Use the database update function to change completion status
-      if (window.db && window.db.update) {
-        await window.db.update('activities', actionItem.id, {
-          location: actionItem.completed ? 'pending' : 'completed'
-        });
-        
-        // Trigger a reload of contacts to reflect the change
-        loadSponsorContacts();
-        
-        console.log('Action item completion toggled:', actionItem.id, !actionItem.completed);
-      }
+      console.log('Toggling action item completion:', actionItem);
+      
+      // Update the activity directly using the activity data
+      const updatedActivity = {
+        ...actionItem.activityData,
+        location: actionItem.completed ? 'pending' : 'completed'
+      };
+      
+      console.log('Updating activity with:', updatedActivity);
+      
+      // Use the shared database handler from App.tsx
+      await onSaveActivity(updatedActivity);
+      
+      console.log('Action item completion toggled:', actionItem.id, !actionItem.completed);
+      
+      // Trigger a reload of contacts to reflect the change
+      loadSponsorContacts();
     } catch (error) {
       console.error('Error toggling action item completion:', error);
     }
@@ -633,8 +640,9 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
                                       <IconButton
                                         size="small"
                                         onClick={() => {
-                                          // TODO: Implement edit action item functionality
                                           console.log('Edit action item:', item);
+                                          // Show an action item edit dialog
+                                          setEditingActionItem(item);
                                         }}
                                         sx={{
                                           p: 0.25,
