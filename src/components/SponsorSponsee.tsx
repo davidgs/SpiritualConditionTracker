@@ -62,11 +62,13 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
       if (user.sponsees && Array.isArray(user.sponsees)) {
         setSponsees(user.sponsees);
       }
-      
-      // Load sponsor contacts
-      loadSponsorContacts();
     }
   }, [user]);
+
+  // Load sponsor contacts whenever activities change
+  useEffect(() => {
+    loadSponsorContacts();
+  }, [activities]);
 
   // Load sponsor contacts from activities (they should be stored as activities)
   const loadSponsorContacts = () => {
