@@ -143,9 +143,14 @@ export default function SponsorSponsee({ user, onUpdate }) {
   
   // Delete sponsor
   const handleDeleteSponsor = () => {
-    // Create update to remove sponsor
+    // Create update to remove all sponsor fields
     const userUpdate = {
-      sponsor: null
+      sponsor_name: '',
+      sponsor_lastName: '',
+      sponsor_phone: '',
+      sponsor_email: '',
+      sponsor_sobrietyDate: '',
+      sponsor_notes: ''
     };
     
     // Update user in database
