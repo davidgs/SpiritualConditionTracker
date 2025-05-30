@@ -170,12 +170,8 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
       return;
     }
     
-    // Create a unique ID for the activity
-    const activityId = Date.now().toString();
-    
-    // Create new activity object with core fields
+    // Create new activity object with core fields (let SQLite auto-generate the ID)
     const newActivity = {
-      id: activityId,
       type: activityType,
       duration: parseInt(duration, 10),
       date: new Date(`${date}T12:00:00`).toISOString(), // Convert to full ISO format
