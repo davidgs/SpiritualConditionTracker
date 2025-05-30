@@ -82,17 +82,10 @@ function App(): JSX.Element {
       const sqliteDb = await initSQLiteDatabase();
       console.log("SQLite database initialized successfully");
       
-      // Set both local state and global flag to indicate database is initialized
-      setDbInitialized(true);
-      window.dbInitialized = true;
-      
       // Log successful initialization to help with debugging
       console.log('Database successfully initialized and ready for use');
       
-      // Wait a moment to ensure database is fully ready
-      await new Promise(resolve => setTimeout(resolve, 100));
-      
-      // Verify database is accessible before loading data
+      // Verify database is accessible before setting ready flags
       if (!window.db || !window.db.getAll) {
         throw new Error("Database interface not properly initialized");
       }
@@ -100,6 +93,11 @@ function App(): JSX.Element {
       // Clean up broken activities before loading data
       console.log('[ App.tsx ] Running database cleanup...');
       await cleanupBrokenActivities();
+      
+      // Set database as ready ONLY after everything is verified and cleaned up
+      setDbInitialized(true);
+      window.dbInitialized = true;
+      console.log('[ App.tsx ] Database state flags set - ready for data operations');
       
       // Now load the data
       await loadData();

@@ -1,0 +1,35 @@
+⚡️  To Native ->  CapacitorSQLite open 3160713
+⚡️  [log] - [ App.tsx: 350 ] Updating user profile with: {"sobrietyDate":"1986-05-15"}
+⚡️  [log] - [ App.tsx ] No current user ID, getting first user from database
+⚡️  [log] - [ sqliteLoader.js:356 ] Getting all items from users
+⚡️  TO JS undefined
+⚡️  To Native ->  CapacitorSQLite query 3160714
+⚡️  TO JS {"values":[{"ios_columns":["id","name","lastName","phoneNumber","email","sobrietyDate","homeGroups","privacySettings","preferences","sponsor_name","sponsor_lastName","sponsor_phone","sponsor_email","sponsor_sobrietyDate","sponsor_notes","messagingKeys","pr
+⚡️  [log] - [ sqliteLoader.js:363 ] Result from users: {"values":[{"ios_columns":["id","name","lastName","phoneNumber","email","sobrietyDate","homeGroups","privacySettings","preferences","sponsor_name","sponsor_lastName","sponsor_phone","sponsor_email","sponsor_sobrietyDate","sponsor_notes","messagingKeys","profileImageUri","language","dateFormat","timeFormat","distanceUnit","themePreference","notificationSettings","locationPermission","contactPermission","createdAt","updatedAt"]},{"sponsor_name":"Jerry","name":"David","dateFormat":null,"id":1,"profileImageUri":null,"phoneNumber":"+1 919 534 5099","updatedAt":"2025-05-30T19:40:40.715Z","locationPermission":null,"sponsor_phone":"+1 919 418 9900","sponsor_email":"","createdAt":null,"language":null,"preferences":"{\"use24HourFormat\":false}","themePreference":null,"contactPermission":null,"email":"davidgs@me.com","sponsor_notes":"","homeGroups":"[]","notificationSettings":null,"sponsor_sobrietyDate":"","privacySettings":"{\"allowMessages\":true,\"shareLastName\":true}","distanceUnit":null,"messagingKeys":null,"sponsor_lastName":"Weaver","timeFormat":null,"lastName":"Simmons","sobrietyDate":"1986-05-15"},{"lastName":null,"sponsor_notes":null,"sponsor_name":null,"sobrietyDate":null,"sponsor_email":null,"locationPermission":null,"email":null,"updatedAt":null,"privacySettings":null,"id":2,"phoneNumber":null,"name":null,"sponsor_sobrietyDate":null,"notificationSettings":null,"sponsor_lastName":null,"language":null,"messagingKeys":null,"preferences":null,"themePreference":null,"timeFormat":null,"createdAt":null,"homeGroups":null,"distanceUnit":null,"profileImageUri":null,"sponsor_phone":null,"contactPermission":null,"dateFormat":null}]}
+⚡️  [log] - [ sqliteLoader.js ] Converted 2 iOS format items to standard format
+⚡️  [log] - [ App.tsx ] Found user ID from database: 1
+⚡️  [log] - [ App.tsx ] Updating user with ID: 1
+⚡️  To Native ->  CapacitorSQLite open 3160715
+⚡️  TO JS undefined
+⚡️  To Native ->  CapacitorSQLite ⚡️  [log] - [ sqliteLoader.js ] Update SQL: UPDATE users SET sobrietyDate = ?, updatedAt = ? WHERE id = ?
+query 3160716
+⚡️  [log] - [ sqliteLoader.js ] Update values: ["1986-05-15","2025-05-30T19:48:08.384Z",1]
+⚡️  TO JS {"values":[{"ios_columns":["id","name","lastName","phoneNumber","email","sobrietyDate","homeGroups","privacySettings","preferences","sponsor_name","sponsor_lastName","sponsor_phone","sponsor_email","sponsor_sobrietyDate","sponsor_notes","messagingKeys","pr
+⚡️  [log] - [ sqliteLoader.js ] Record before update: {"values":[{"ios_columns":["id","name","lastName","phoneNumber","email","sobrietyDate","homeGroups","privacySettings","preferences","sponsor_name","sponsor_lastName","sponsor_phone","sponsor_email","sponsor_sobrietyDate","sponsor_notes","messagingKeys","profileImageUri","language","dateFormat","timeFormat","distanceUnit","themePreference","notificationSettings","locationPermission","contactPermission","createdAt","updatedAt"]},{"lastName":"Simmons","sponsor_notes":"","sponsor_name":"Jerry","sobrietyDate":"1986-05-15","sponsor_email":"","locationPermission":null,"email":"davidgs@me.com","updatedAt":"2025-05-30T19:40:40.715Z","privacySettings":"{\"allowMessages\":true,\"shareLastName\":true}","phoneNumber":"+1 919 534 5099","id":1,"name":"David","sponsor_sobrietyDate":"","notificationSettings":null,"sponsor_lastName":"Weaver","language":null,"messagingKeys":null,"preferences":"{\"use24HourFormat\":false}","themePreference":null,"timeFormat":null,"createdAt":null,"homeGroups":"[]","distanceUnit":null,"profileImageUri":null,"sponsor_phone":"+1 919 418 9900","contactPermission":null,"dateFormat":null}]}
+⚡️  To Native ->  CapacitorSQLite execute 3160717
+⚡️  [log] - [ sqliteLoader.js ] Attempting update with values: ["1986-05-15","2025-05-30T19:48:08.384Z",1]
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 3160718
+⚡️  [log] - [ sqliteLoader.js ] Update result (numeric ID): {"changes":{"changes":0}}
+⚡️  [log] - [ sqliteLoader.js ] Numeric ID update failed, trying string ID
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  [log] - [ sqliteLoader.js ] Update result (string ID): {"changes":{"changes":0}}
+⚡️  [log] - [ sqliteLoader.js ] Parameterized update failed, trying direct SQL
+⚡️  To Native ->  CapacitorSQLite execute 3160719
+⚡️  [log] - [ sqliteLoader.js ] Direct SQL: UPDATE users SET sobrietyDate = '1986-05-15', updatedAt = '2025-05-30T19:48:08.384Z' WHERE id = 1
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  [log] - [ sqliteLoader.js ] Direct SQL result: {"changes":{"changes":1}}
+⚡️  To Native ->  CapacitorSQLite query 3160720
+⚡️  TO JS {"values":[{"ios_columns":["id","name","lastName","phoneNumber","email","sobrietyDate","homeGroups","privacySettings","preferences","sponsor_name","sponsor_lastName","sponsor_phone","sponsor_email","sponsor_sobrietyDate","sponsor_notes","messagingKeys","pr
+⚡️  [log] - [ sqliteLoader.js ] Converted iOS format to standard: {"id":1,"name":"David","lastName":"Simmons","phoneNumber":"+1 919 534 5099","email":"davidgs@me.com","sobrietyDate":"1986-05-15","homeGroups":"[]","privacySettings":"{\"allowMessages\":true,\"shareLastName\":true}","preferences":"{\"use24HourFormat\":false}","sponsor_name":"Jerry","sponsor_lastName":"Weaver","sponsor_phone":"+1 919 418 9900","sponsor_email":"","sponsor_sobrietyDate":"","sponsor_notes":"","messagingKeys":null,"profileImageUri":null,"language":null,"dateFormat":null,"timeFormat":null,"distanceUnit":null,"themePreference":null,"notificationSettings":null,"locationPermission":null,"contactPermission":null,"createdAt":null,"updatedAt":"2025-05-30T19:48:08.384Z"}
+⚡️  [log] - [ App.tsx ] User updated: {"id":1,"name":"David","lastName":"Simmons","phoneNumber":"+1 919 534 5099","email":"davidgs@me.com","sobrietyDate":"1986-05-15","homeGroups":"[]","privacySettings":"{\"allowMessages\":true,\"shareLastName\":true}","preferences":"{\"use24HourFormat\":false}","sponsor_name":"Jerry","sponsor_lastName":"Weaver","sponsor_phone":"+1 919 418 9900","sponsor_email":"","sponsor_sobrietyDate":"","sponsor_notes":"","messagingKeys":null,"profileImageUri":null,"language":null,"dateFormat":null,"timeFormat":null,"distanceUnit":null,"themePreference":null,"notificationSettings":null,"locationPermission":null,"contactPermission":null,"createdAt":null,"updatedAt":"2025-05-30T19:48:08.384Z"}
