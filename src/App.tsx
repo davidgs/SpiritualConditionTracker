@@ -542,6 +542,8 @@ function App(): JSX.Element {
           <SponsorSponsee
             user={user}
             onUpdate={handleUpdateProfile}
+            onSaveActivity={handleSaveActivity}
+            activities={activities}
           />
         );
       default:

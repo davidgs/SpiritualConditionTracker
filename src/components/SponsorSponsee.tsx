@@ -19,9 +19,8 @@ import SponsorFormDialog from './SponsorFormDialog';
 import SponseeFormDialog from './SponseeFormDialog';
 import SponsorContactFormPage from './SponsorContactFormPage';
 import { formatDateForDisplay } from '../utils/dateUtils';
-import sponsorDB from '../utils/sponsor-database';
 
-export default function SponsorSponsee({ user, onUpdate }) {
+export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activities = [] }) {
   const theme = useTheme();
   const darkMode = theme.palette.mode === 'dark';
   
@@ -69,21 +68,24 @@ export default function SponsorSponsee({ user, onUpdate }) {
     }
   }, [user]);
 
-  // Load sponsor contacts from database
-  const loadSponsorContacts = async () => {
-    try {
-      // Use default_user if user.id is not available to match what we use when saving
-      const userId = user?.id || 'default_user';
-      console.log('Loading sponsor contacts for userId:', userId);
-      
-      // Use our specialized sponsor database module
-      const contacts = await sponsorDB.getSponsorContacts(userId);
-      console.log('Found sponsor contacts:', contacts);
-      setSponsorContacts(contacts);
-      
-    } catch (error) {
-      console.error('Error loading sponsor contacts:', error);
-    }
+  // Load sponsor contacts from activities (they should be stored as activities)
+  const loadSponsorContacts = () => {
+    // Filter activities to find sponsor contacts
+    const sponsorContactActivities = activities.filter(activity => activity.type === 'sponsor-contact');
+    
+    // Convert activity format back to contact format for display
+    const contacts = sponsorContactActivities.map(activity => ({
+      id: activity.id,
+      type: activity.details?.contactType || 'other',
+      date: activity.date,
+      note: activity.note || '',
+      duration: activity.details?.duration || '',
+      topic: activity.details?.topic || ''
+    }));
+    
+    console.log('Found sponsor contact activities:', sponsorContactActivities);
+    console.log('Converted to contacts:', contacts);
+    setSponsorContacts(contacts);
   };
 
   // Handle sponsor contact form submission
@@ -91,26 +93,23 @@ export default function SponsorSponsee({ user, onUpdate }) {
     try {
       console.log('Adding new sponsor contact with data:', contactData);
       
-      // Prepare data for insertion
-      const { id, ...contactWithoutId } = contactData;
-      
-      // Ensure we have a valid userId to avoid constraint errors
-      const userId = user?.id || 'default_user';
-      
-      const contactToSave = {
-        ...contactWithoutId,
-        userId: userId,
-        date: contactData.date || new Date().toISOString()
+      // Convert sponsor contact to activity format
+      const activityData = {
+        type: 'sponsor-contact',
+        date: contactData.date || new Date().toISOString(),
+        note: contactData.note || '',
+        details: {
+          contactType: contactData.type,
+          duration: contactData.duration || '',
+          topic: contactData.topic || ''
+        }
       };
       
-      console.log('Contact data to save:', contactToSave);
+      console.log('Saving sponsor contact as activity:', activityData);
       
-      // Add contact to database
-      const savedContact = await sponsorDB.addSponsorContact(contactToSave);
-      console.log('Contact saved successfully:', savedContact);
-      
-      // Reload contacts to refresh the list
-      await loadSponsorContacts();
+      // Save using the shared database handler from App.tsx
+      const savedActivity = await onSaveActivity(activityData);
+      console.log('Contact saved successfully as activity:', savedActivity);
       
       // Close the form
       setShowContactForm(false);
