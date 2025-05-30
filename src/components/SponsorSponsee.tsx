@@ -181,7 +181,7 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
           const actionItemPromises = actionItems.map(actionItem => {
             const todoActivityData = {
               type: 'action-item', // Use new action-item type
-              date: actionItem.dueDate || new Date().toISOString(),
+              date: contactData.date || new Date().toISOString(), // Use the same date as the contact
               notes: `Action Item: ${actionItem.title}${actionItem.text ? ' - ' + actionItem.text : ''}${actionItem.notes ? ' [Notes: ' + actionItem.notes + ']' : ''}`,
               location: actionItem.completed ? 'completed' : 'pending'
             };
