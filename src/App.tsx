@@ -268,37 +268,53 @@ function App(): JSX.Element {
   // Dashboard handles spiritual fitness calculation - keeping this for interface compatibility
   // Spiritual fitness calculation now handled entirely by Dashboard component using activities from state
 
-  // Handle saving a new activity
-  async function handleSaveActivity(newActivity: Omit<Activity, 'id' | 'createdAt' | 'updatedAt'>): Promise<Activity | null> {
+  // Handle saving a new activity or updating an existing one
+  async function handleSaveActivity(activityData: any): Promise<Activity | null> {
     if (!window.db) {
       console.error('Database not initialized');
-      return;
+      return null;
     }
 
     try {
-      console.log('[ App.tsx:241 handleSaveActivity ] Saving activity to database:', newActivity);
-      console.log('[ App.tsx:242 handleSaveActivity ] Activity date before save:', newActivity.date);
+      console.log('[ App.tsx:241 handleSaveActivity ] Processing activity:', activityData);
       
-      // Add activity to database - using async version
-      const savedActivity = await window.db.add('activities', newActivity);
+      let savedActivity;
       
-      console.log('[ App.tsx:246 handleSaveActivity ] Activity saved, returned from database:', savedActivity);
-      console.log('[ App.tsx:247 handleSaveActivity ] Saved activity ID:', savedActivity?.id);
-      console.log('[ App.tsx:248 handleSaveActivity ] Saved activity date:', savedActivity?.date);
-      
-      // Verify the activity has a valid ID before adding to state
-      if (!savedActivity || savedActivity.id === undefined || savedActivity.id === null) {
-        console.error('[ App.tsx ] Database returned activity without valid ID:', savedActivity);
-        return null;
+      // Check if this is an update (has existing ID) or a new activity
+      if (activityData.id) {
+        console.log('[ App.tsx ] Updating existing activity with ID:', activityData.id);
+        // Update existing activity
+        savedActivity = await window.db.update('activities', activityData.id, {
+          ...activityData,
+          updatedAt: new Date().toISOString()
+        });
+        
+        if (savedActivity) {
+          // Update the activity in state
+          setActivities(prev => prev.map(activity => 
+            activity.id === activityData.id ? savedActivity : activity
+          ));
+          console.log('[ App.tsx ] Activity successfully updated in state');
+        }
+      } else {
+        console.log('[ App.tsx ] Creating new activity');
+        // Create new activity
+        const newActivity = {
+          ...activityData,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        };
+        
+        savedActivity = await window.db.add('activities', newActivity);
+        
+        if (savedActivity && savedActivity.id !== undefined && savedActivity.id !== null) {
+          // Add new activity to state
+          setActivities(prev => [...prev, savedActivity]);
+          console.log('[ App.tsx ] Activity successfully added to state');
+        }
       }
       
-      // Update activities state
-      setActivities(prev => [...prev, savedActivity]);
-      
-      console.log('[ App.tsx ] Activity successfully added to state');
-      
-      // Dashboard will recalculate spiritual fitness when activities update
-      
+      console.log('[ App.tsx ] Activity operation completed:', savedActivity);
       return savedActivity;
     } catch (error) {
       console.error('Error saving activity:', error);
