@@ -18,6 +18,7 @@ export default function ActivityList({
       case 'literature': return 'fa-book-open';
       case 'service': return 'fa-hands-helping';
       case 'sponsor': return 'fa-phone';
+      case 'sponsor-contact': return 'fa-user-tie';
       case 'sponsee': return 'fa-user-friends';
       case 'aa_call': return 'fa-phone-alt';
       case 'call': return 'fa-phone';
