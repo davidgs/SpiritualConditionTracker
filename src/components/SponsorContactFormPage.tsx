@@ -18,6 +18,7 @@ import {
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { ContactType, ContactFormData, ActionItemFormData, SponsorContactFormProps } from '../types/database';
+import ActionItemForm from './ActionItemForm';
 
 export default function SponsorContactFormPage({ open, userId, onSubmit, onClose, initialData, details = [] }: SponsorContactFormProps) {
   const theme = useTheme();
@@ -288,10 +289,10 @@ export default function SponsorContactFormPage({ open, userId, onSubmit, onClose
           )}
 
           {showInput ? (
-            <Box sx={{ p: 2, border: '1px solid #ccc', borderRadius: 1, mb: 2 }}>
-              <Typography>SponsorContactTodo component not implemented yet</Typography>
-              <Button onClick={() => setShowInput(false)}>Cancel</Button>
-            </Box>
+            <ActionItemForm
+              onSubmit={handleAddTodo}
+              onCancel={() => setShowInput(false)}
+            />
           ) : (
             <Button
               variant="outlined"
