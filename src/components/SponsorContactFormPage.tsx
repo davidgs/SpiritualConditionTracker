@@ -10,13 +10,17 @@ import {
   MenuItem,
   IconButton,
   Paper,
-  Divider
+  Divider,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import SponsorContactTodo from './SponsorContactTodo';
 import { ContactType, ContactFormData, ActionItemFormData, SponsorContactFormProps } from '../types/database';
 
-export default function SponsorContactFormPage({ userId, onSave, onCancel, initialData, details = [] }: SponsorContactFormProps) {
+export default function SponsorContactFormPage({ open, userId, onSubmit, onClose, initialData, details = [] }: SponsorContactFormProps) {
   const theme = useTheme();
   
   // Form state with strict typing
@@ -133,7 +137,7 @@ export default function SponsorContactFormPage({ userId, onSave, onCancel, initi
       ...contactData,
       userId: userId
     };
-    onSave(contactWithUserId, todos);
+    onSubmit(contactWithUserId, todos);
   };
 
   // Contact type options
@@ -147,23 +151,23 @@ export default function SponsorContactFormPage({ userId, onSave, onCancel, initi
   ];
 
   return (
-    <Box
-      sx={{
-        minHeight: '100vh',
-        backgroundColor: theme.palette.background.default,
-        padding: 2
+    <Dialog 
+      open={open} 
+      onClose={onClose}
+      maxWidth="md"
+      fullWidth
+      PaperProps={{
+        sx: {
+          backgroundColor: theme.palette.background.paper,
+          borderRadius: 2
+        }
       }}
     >
       <Box
         component="form"
         onSubmit={handleSubmit}
         sx={{
-          maxWidth: 600,
-          margin: '0 auto',
-          backgroundColor: theme.palette.background.paper,
-          borderRadius: 2,
-          padding: 3,
-          boxShadow: theme.shadows[2]
+          padding: 3
         }}
       >
         <Typography variant="h5" gutterBottom sx={{ color: theme.palette.text.primary }}>
@@ -300,7 +304,7 @@ export default function SponsorContactFormPage({ userId, onSave, onCancel, initi
             size="small"
             variant="contained"
             color="error"
-            onClick={onCancel}
+            onClick={onClose}
           >
             Cancel
           </Button>

@@ -157,9 +157,10 @@ export interface ActionItemFormData {
 
 // Component prop interfaces
 export interface SponsorContactFormProps {
+  open: boolean;
   userId: string;
-  onSave: (contact: Omit<SponsorContact, 'id' | 'createdAt' | 'updatedAt'>, actionItems: ActionItemFormData[]) => void;
-  onCancel: () => void;
+  onSubmit: (contact: Omit<SponsorContact, 'id' | 'createdAt' | 'updatedAt'>, actionItems: ActionItemFormData[]) => void;
+  onClose: () => void;
   initialData?: Partial<SponsorContact>;
   details?: ContactDetail[];
 }
