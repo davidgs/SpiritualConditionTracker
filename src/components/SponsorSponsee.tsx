@@ -100,14 +100,24 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
 
   // Get action items for a specific contact date
   const getActionItemsForContact = (contactDate) => {
+    console.log('Getting action items for contact date:', contactDate);
+    console.log('All activities in database:', activities);
+    
     const contactDateObj = new Date(contactDate);
     const contactDateString = contactDateObj.toISOString().split('T')[0];
     
-    return activities.filter(activity => {
+    console.log('Looking for action items on date:', contactDateString);
+    
+    const actionItemActivities = activities.filter(activity => activity.type === 'action-item');
+    console.log('Found action-item activities:', actionItemActivities);
+    
+    const matchingActionItems = activities.filter(activity => {
       if (activity.type !== 'action-item') return false;
       
       const activityDateObj = new Date(activity.date);
       const activityDateString = activityDateObj.toISOString().split('T')[0];
+      
+      console.log('Comparing activity date:', activityDateString, 'with contact date:', contactDateString);
       
       // Match action items created on the same day as the contact
       return activityDateString === contactDateString;
@@ -120,6 +130,9 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
       dueDate: activity.date,
       activityData: activity // Keep reference to original activity
     }));
+    
+    console.log('Matching action items found:', matchingActionItems);
+    return matchingActionItems;
   };
 
   // Toggle action item completion
