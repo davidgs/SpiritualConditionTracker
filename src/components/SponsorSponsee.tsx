@@ -125,6 +125,7 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
       text: activity.notes?.split(' - ')[1]?.split(' [Notes:')[0]?.split(' [ContactRef:')[0] || '',
       notes: activity.notes?.match(/\[Notes: (.*?)\]/)?.[1] || '',
       completed: activity.location === 'completed',
+      deleted: activity.location === 'deleted',
       dueDate: activity.date,
       activityData: activity // Keep reference to original activity
     }));
@@ -137,6 +138,11 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
   const handleToggleActionItem = async (actionItem) => {
     try {
       console.log('Toggling action item completion:', actionItem);
+      
+      // Don't allow toggling if item is deleted
+      if (actionItem.deleted) {
+        return;
+      }
       
       const newLocation = actionItem.completed ? 'pending' : 'completed';
       console.log('Updating action item ID:', actionItem.activityData.id, 'to location:', newLocation);
@@ -154,6 +160,27 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
       loadSponsorContacts();
     } catch (error) {
       console.error('Error toggling action item completion:', error);
+    }
+  };
+
+  // Delete action item
+  const handleDeleteActionItem = async (actionItem) => {
+    try {
+      console.log('Deleting action item:', actionItem);
+      
+      // Update the existing activity to mark it as deleted
+      await onSaveActivity({
+        ...actionItem.activityData,
+        location: 'deleted',
+        updatedAt: new Date().toISOString()
+      });
+      
+      console.log('Action item deleted successfully');
+      
+      // Trigger a reload of contacts to reflect the change
+      loadSponsorContacts();
+    } catch (error) {
+      console.error('Error deleting action item:', error);
     }
   };
 
@@ -686,27 +713,49 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
                                       }}
                                     >
                                       <Checkbox
-                                        checked={item.completed}
+                                        checked={item.completed || item.deleted}
                                         onChange={() => handleToggleActionItem(item)}
                                         size="small"
+                                        disabled={item.deleted}
+                                        icon={item.deleted ? <i className="fa-solid fa-xmark" style={{ fontSize: '12px', color: theme.palette.error.main }} /> : undefined}
+                                        checkedIcon={item.deleted ? <i className="fa-solid fa-xmark" style={{ fontSize: '12px', color: theme.palette.error.main }} /> : undefined}
                                         sx={{
                                           p: 0,
                                           '& .MuiSvgIcon-root': {
-                                            fontSize: '16px'
+                                            fontSize: '16px',
+                                            color: item.completed && !item.deleted ? theme.palette.success.main : 'inherit'
                                           }
                                         }}
                                       />
                                       <Typography 
                                         variant="body2" 
                                         sx={{ 
-                                          color: item.completed ? theme.palette.text.secondary : theme.palette.text.primary,
-                                          textDecoration: item.completed ? 'line-through' : 'none',
+                                          color: item.deleted ? theme.palette.error.main : 
+                                                 item.completed ? theme.palette.success.main : 
+                                                 theme.palette.text.primary,
+                                          textDecoration: (item.completed || item.deleted) ? 'line-through' : 'none',
                                           flex: 1,
                                           fontSize: '0.8rem'
                                         }}
                                       >
                                         {item.title}
                                       </Typography>
+                                      {!item.deleted && (
+                                        <IconButton
+                                          size="small"
+                                          onClick={() => handleDeleteActionItem(item)}
+                                          sx={{
+                                            p: 0.25,
+                                            color: theme.palette.error.main,
+                                            '&:hover': {
+                                              color: theme.palette.error.dark,
+                                              backgroundColor: 'transparent'
+                                            }
+                                          }}
+                                        >
+                                          <i className="fa-solid fa-xmark" style={{ fontSize: '10px' }}></i>
+                                        </IconButton>
+                                      )}
 
                                     </Box>
                                   ))}
