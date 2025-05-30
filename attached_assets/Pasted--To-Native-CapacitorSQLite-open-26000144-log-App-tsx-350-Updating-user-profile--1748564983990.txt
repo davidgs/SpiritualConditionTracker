@@ -1,0 +1,25 @@
+⚡️  To Native ->  CapacitorSQLite open 26000144
+⚡️  [log] - [ App.tsx: 350 ] Updating user profile with: {"sobrietyDate":"1982-05-15"}
+⚡️  [log] - [ App.tsx ] No current user ID, getting first user from database
+⚡️  [log] - [ sqliteLoader.js:356 ] Getting all items from users
+⚡️  TO JS undefined
+⚡️  To Native ->  CapacitorSQLite query 26000145
+⚡️  TO JS {"values":[{"ios_columns":["id","name","lastName","phoneNumber","email","sobrietyDate","homeGroups","privacySettings","preferences","sponsor_name","sponsor_lastName","sponsor_phone","sponsor_email","sponsor_sobrietyDate","sponsor_notes","messagingKeys","pr
+⚡️  [log] - [ sqliteLoader.js:363 ] Result from users: {"values":[{"ios_columns":["id","name","lastName","phoneNumber","email","sobrietyDate","homeGroups","privacySettings","preferences","sponsor_name","sponsor_lastName","sponsor_phone","sponsor_email","sponsor_sobrietyDate","sponsor_notes","messagingKeys","profileImageUri","language","dateFormat","timeFormat","distanceUnit","themePreference","notificationSettings","locationPermission","contactPermission","createdAt","updatedAt"]},{"themePreference":null,"sobrietyDate":null,"name":null,"profileImageUri":null,"locationPermission":null,"homeGroups":null,"messagingKeys":null,"sponsor_email":null,"sponsor_notes":null,"privacySettings":null,"createdAt":null,"language":null,"preferences":null,"sponsor_sobrietyDate":null,"distanceUnit":null,"dateFormat":null,"sponsor_name":null,"email":null,"id":1,"sponsor_lastName":null,"contactPermission":null,"notificationSettings":null,"updatedAt":null,"phoneNumber":null,"lastName":null,"timeFormat":null,"sponsor_phone":null}]}
+⚡️  [log] - [ sqliteLoader.js ] Converted 1 iOS format items to standard format
+⚡️  [log] - [ App.tsx ] Found user ID from database: 1
+⚡️  [log] - [ App.tsx ] Updating user with ID: 1
+⚡️  To Native ->  CapacitorSQLite open 26000146
+⚡️  TO JS undefined
+⚡️  [log] - [ sqliteLoader.js ] Update SQL: UPDATE users SET sobrietyDate = ?, updatedAt = ? WHERE id = ?
+⚡️  To Native ->  ⚡️  [log] - [ sqliteLoader.js ] Update values: ["1982-05-15","2025-05-30T00:28:57.295Z",1]
+CapacitorSQLite query 26000147
+⚡️  TO JS {"values":[{"ios_columns":["id","name","lastName","phoneNumber","email","sobrietyDate","homeGroups","privacySettings","preferences","sponsor_name","sponsor_lastName","sponsor_phone","sponsor_email","sponsor_sobrietyDate","sponsor_notes","messagingKeys","pr
+⚡️  To Native ->  CapacitorSQLite execute 26000148
+⚡️  [log] - [ sqliteLoader.js ] Record before update: {"values":[{"ios_columns":["id","name","lastName","phoneNumber","email","sobrietyDate","homeGroups","privacySettings","preferences","sponsor_name","sponsor_lastName","sponsor_phone","sponsor_email","sponsor_sobrietyDate","sponsor_notes","messagingKeys","profileImageUri","language","dateFormat","timeFormat","distanceUnit","themePreference","notificationSettings","locationPermission","contactPermission","createdAt","updatedAt"]},{"language":null,"timeFormat":null,"contactPermission":null,"dateFormat":null,"locationPermission":null,"homeGroups":null,"messagingKeys":null,"updatedAt":null,"notificationSettings":null,"sponsor_email":null,"name":null,"phoneNumber":null,"profileImageUri":null,"id":1,"themePreference":null,"sobrietyDate":null,"createdAt":null,"privacySettings":null,"sponsor_notes":null,"preferences":null,"sponsor_sobrietyDate":null,"lastName":null,"sponsor_name":null,"email":null,"sponsor_phone":null,"distanceUnit":null,"sponsor_lastName":null}]}
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  [log] - [ sqliteLoader.js ] Update result: {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite query 26000149
+⚡️  TO JS {"values":[{"ios_columns":["id","name","lastName","phoneNumber","email","sobrietyDate","homeGroups","privacySettings","preferences","sponsor_name","sponsor_lastName","sponsor_phone","sponsor_email","sponsor_sobrietyDate","sponsor_notes","messagingKeys","pr
+⚡️  [log] - [ sqliteLoader.js ] Converted iOS format to standard: {"id":1,"name":null,"lastName":null,"phoneNumber":null,"email":null,"sobrietyDate":null,"homeGroups":null,"privacySettings":null,"preferences":null,"sponsor_name":null,"sponsor_lastName":null,"sponsor_phone":null,"sponsor_email":null,"sponsor_sobrietyDate":null,"sponsor_notes":null,"messagingKeys":null,"profileImageUri":null,"language":null,"dateFormat":null,"timeFormat":null,"distanceUnit":null,"themePreference":null,"notificationSettings":null,"locationPermission":null,"contactPermission":null,"createdAt":null,"updatedAt":null}
+⚡️  [log] - [ App.tsx ] User updated: {"id":1,"name":null,"lastName":null,"phoneNumber":null,"email":null,"sobrietyDate":null,"homeGroups":null,"privacySettings":null,"preferences":null,"sponsor_name":null,"sponsor_lastName":null,"sponsor_phone":null,"sponsor_email":null,"sponsor_sobrietyDate":null,"sponsor_notes":null,"messagingKeys":null,"profileImageUri":null,"language":null,"dateFormat":null,"timeFormat":null,"distanceUnit":null,"themePreference":null,"notificationSettings":null,"locationPermission":null,"contactPermission":null,"createdAt":null,"updatedAt":null}

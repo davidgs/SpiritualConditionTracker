@@ -682,15 +682,42 @@ function setupGlobalDB(sqlite) {
         });
         console.log('[ sqliteLoader.js ] Record before update:', beforeUpdate);
         
-        // Execute update - use raw SQL format for Capacitor SQLite
+        // Execute update - try alternative approach with interpolated SQL
+        console.log('[ sqliteLoader.js ] Attempting update with values:', values);
+        
+        // First try the standard parameterized approach
         const updateSQL = `UPDATE ${collection} SET ${setClause} WHERE id = ?`;
-        const updateResult = await sqlite.execute({
+        let updateResult = await sqlite.execute({
           database: DB_NAME,
           statements: updateSQL,
           values: values
         });
         
         console.log('[ sqliteLoader.js ] Update result:', updateResult);
+        
+        // If that didn't work, try direct SQL approach as fallback
+        if (updateResult.changes && updateResult.changes.changes === 0) {
+          console.log('[ sqliteLoader.js ] Parameterized update failed, trying direct SQL');
+          
+          // Build direct SQL with escaped values
+          const directValues = values.slice(0, -1); // Remove the ID from end
+          const escapedValues = directValues.map(v => 
+            typeof v === 'string' ? `'${v.replace(/'/g, "''")}'` : v
+          );
+          const directSetClause = Object.keys(updatesWithTimestamp)
+            .map((key, index) => `${key} = ${escapedValues[index]}`)
+            .join(', ');
+          
+          const directSQL = `UPDATE ${collection} SET ${directSetClause} WHERE id = ${numericId}`;
+          console.log('[ sqliteLoader.js ] Direct SQL:', directSQL);
+          
+          updateResult = await sqlite.execute({
+            database: DB_NAME,
+            statements: directSQL
+          });
+          
+          console.log('[ sqliteLoader.js ] Direct SQL result:', updateResult);
+        }
         
         // Return updated item
         return this.getById(collection, numericId);
