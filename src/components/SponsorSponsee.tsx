@@ -97,10 +97,11 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
     setSponsorContacts(contacts);
   };
 
-  // Handle sponsor contact form submission
-  const handleAddContact = async (contactData) => {
+  // Handle sponsor contact form submission with action items
+  const handleAddContact = async (contactData, actionItems = []) => {
     try {
       console.log('Adding new sponsor contact with data:', contactData);
+      console.log('Adding action items:', actionItems);
       
       // Convert sponsor contact to activity format
       const activityData = {
@@ -116,6 +117,22 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
       // Save using the shared database handler from App.tsx
       const savedActivity = await onSaveActivity(activityData);
       console.log('Contact saved successfully as activity:', savedActivity);
+      
+      // Save action items as individual activities if any were provided
+      if (actionItems && actionItems.length > 0) {
+        for (const actionItem of actionItems) {
+          const todoActivityData = {
+            type: 'todo',
+            date: actionItem.dueDate || new Date().toISOString(),
+            notes: `${actionItem.title}${actionItem.text ? ' - ' + actionItem.text : ''}${actionItem.notes ? ' [Notes: ' + actionItem.notes + ']' : ''}`,
+            location: actionItem.completed ? 'completed' : 'pending'
+          };
+          
+          console.log('Saving action item as activity:', todoActivityData);
+          await onSaveActivity(todoActivityData);
+        }
+        console.log('All action items saved successfully');
+      }
       
       // Close the form
       setShowContactForm(false);

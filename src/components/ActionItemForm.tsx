@@ -83,7 +83,13 @@ export default function ActionItemForm({ onSubmit, onCancel, initialData }: Acti
         onChange={handleChange}
         placeholder="What needs to be done?"
         required
-        sx={{ mb: 2 }}
+        sx={{ 
+          '& .MuiInputBase-root': { 
+            height: '56px', 
+            borderRadius: '8px',
+            mb: 2
+          }
+        }}
       />
 
       <TextField
@@ -123,7 +129,13 @@ export default function ActionItemForm({ onSubmit, onCancel, initialData }: Acti
         InputLabelProps={{
           shrink: true,
         }}
-        sx={{ mb: 2 }}
+        sx={{ 
+          '& .MuiInputBase-root': { 
+            height: '56px', 
+            borderRadius: '8px',
+            mb: 2
+          }
+        }}
       />
 
       <FormControlLabel
