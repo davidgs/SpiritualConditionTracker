@@ -6,7 +6,7 @@ import SafeAreaHeader from './SafeAreaHeader';
 
 function Header({ title, menuOpen, setMenuOpen, isMobile }) {
   const muiTheme = useTheme();
-  const { primaryColor } = useAppTheme();
+  const { primaryColor, toggleTheme } = useAppTheme();
   const darkMode = muiTheme.palette.mode === 'dark';
   
   // Use MUI theme colors for consistent styling
@@ -53,11 +53,33 @@ function Header({ title, menuOpen, setMenuOpen, isMobile }) {
           fontWeight: 600,
           color: headerTextColor,
           fontSize: '0.95rem',
-          lineHeight: 1.2
+          lineHeight: 1.2,
+          flex: 1
         }}
       >
         My Spiritual Condition
       </Typography>
+
+      {/* Theme Toggle Button */}
+      <Box
+        component="button"
+        onClick={toggleTheme}
+        sx={{
+          border: 'none',
+          background: 'transparent',
+          cursor: 'pointer',
+          fontSize: '1.2rem',
+          padding: '4px',
+          borderRadius: '50%',
+          transition: 'all 0.2s ease',
+          '&:hover': {
+            transform: 'scale(1.1)'
+          }
+        }}
+        aria-label="Toggle theme"
+      >
+        {muiTheme.palette.mode === 'light' ? '🌑' : '☀️'}
+      </Box>
       
       {/* Mobile Hamburger Menu Button */}
       {isMobile && (
