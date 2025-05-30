@@ -132,7 +132,7 @@ const SimpleMeetingSchedule = ({ schedule, onChange, use24HourFormat = false }) 
                     border: 'none',
                     color: theme.palette.text.primary,
                     fontWeight: 500,
-                    width: '25%',
+                    width: '30%',
                     boxSizing: 'border-box'
                   })}
                 >
@@ -142,78 +142,17 @@ const SimpleMeetingSchedule = ({ schedule, onChange, use24HourFormat = false }) 
                   p: 1, 
                   pt: 1.25, 
                   border: 'none',
-                  width: '25%',
-                  maxWidth: '25%',
+                  width: '70%',
+                  maxWidth: '70%',
                   boxSizing: 'border-box'
                 }}>
-                  <Select
-                    fullWidth
-                    variant="outlined"
-                    size="small"
-                    value={timeValue || "none"}
-                    onChange={(e) => handleTimeChange(day.key, e.target.value)}
-                    sx={(theme) => ({
-                      width: '100%',
-                      maxWidth: '100%',
-                      boxSizing: 'border-box',
-                      bgcolor: theme.palette.mode === 'dark' ? theme.palette.background.default : theme.palette.background.paper,
-                      '& .MuiOutlinedInput-notchedOutline': {
-                        borderColor: theme.palette.divider
-                      },
-                      '& .MuiSelect-select': {
-                        width: '100%',
-                        maxWidth: '100%',
-                        boxSizing: 'border-box',
-                      },
-                      '& .MuiInputBase-root': {
-                        width: '100%',
-                        maxWidth: '100%',
-                        boxSizing: 'border-box'
-                      }
-                    })}
-                    MenuProps={{
-                      PaperProps: {
-                        style: {
-                          maxHeight: 300
-                        }
-                      }
-                    }}
-                  >
-                    <MenuItem value="none">{hasTime ? "Remove" : "None"}</MenuItem>
-                    <MenuItem value="06:00">{use24HourFormat ? "06:00" : "6:00 AM"}</MenuItem>
-                    <MenuItem value="07:00">{use24HourFormat ? "07:00" : "7:00 AM"}</MenuItem>
-                    <MenuItem value="08:00">{use24HourFormat ? "08:00" : "8:00 AM"}</MenuItem>
-                    <MenuItem value="09:00">{use24HourFormat ? "09:00" : "9:00 AM"}</MenuItem>
-                    <MenuItem value="10:00">{use24HourFormat ? "10:00" : "10:00 AM"}</MenuItem>
-                    <MenuItem value="11:00">{use24HourFormat ? "11:00" : "11:00 AM"}</MenuItem>
-                    <MenuItem value="12:00">{use24HourFormat ? "12:00" : "12:00 PM"}</MenuItem>
-                    <MenuItem value="13:00">{use24HourFormat ? "13:00" : "1:00 PM"}</MenuItem>
-                    <MenuItem value="14:00">{use24HourFormat ? "14:00" : "2:00 PM"}</MenuItem>
-                    <MenuItem value="15:00">{use24HourFormat ? "15:00" : "3:00 PM"}</MenuItem>
-                    <MenuItem value="16:00">{use24HourFormat ? "16:00" : "4:00 PM"}</MenuItem>
-                    <MenuItem value="17:00">{use24HourFormat ? "17:00" : "5:00 PM"}</MenuItem>
-                    <MenuItem value="18:00">{use24HourFormat ? "18:00" : "6:00 PM"}</MenuItem>
-                    <MenuItem value="19:00">{use24HourFormat ? "19:00" : "7:00 PM"}</MenuItem>
-                    <MenuItem value="20:00">{use24HourFormat ? "20:00" : "8:00 PM"}</MenuItem>
-                    <MenuItem value="21:00">{use24HourFormat ? "21:00" : "9:00 PM"}</MenuItem>
-                    <MenuItem value="22:00">{use24HourFormat ? "22:00" : "10:00 PM"}</MenuItem>
-                  </Select>
-                </TableCell>
-                <TableCell sx={{ 
-                  p: 1, 
-                  pt: 1.25, 
-                  border: 'none',
-                  width: '25%',
-                  maxWidth: '25%',
-                  boxSizing: 'border-box'
-                }}>
-                  {hasTime && (
+                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
                     <Select
                       fullWidth
                       variant="outlined"
                       size="small"
-                      value={formatValue}
-                      onChange={(e) => handleFormatChange(day.key, e.target.value)}
+                      value={timeValue || "none"}
+                      onChange={(e) => handleTimeChange(day.key, e.target.value)}
                       sx={(theme) => ({
                         width: '100%',
                         maxWidth: '100%',
@@ -241,63 +180,73 @@ const SimpleMeetingSchedule = ({ schedule, onChange, use24HourFormat = false }) 
                         }
                       }}
                     >
-                      {meetingFormats.map((format) => (
-                        <MenuItem key={format.value} value={format.value}>
-                          {format.label}
-                        </MenuItem>
-                      ))}
+                      <MenuItem value="none">{hasTime ? "Remove" : "None"}</MenuItem>
+                      <MenuItem value="06:00">{use24HourFormat ? "06:00" : "6:00 AM"}</MenuItem>
+                      <MenuItem value="07:00">{use24HourFormat ? "07:00" : "7:00 AM"}</MenuItem>
+                      <MenuItem value="08:00">{use24HourFormat ? "08:00" : "8:00 AM"}</MenuItem>
+                      <MenuItem value="09:00">{use24HourFormat ? "09:00" : "9:00 AM"}</MenuItem>
+                      <MenuItem value="10:00">{use24HourFormat ? "10:00" : "10:00 AM"}</MenuItem>
+                      <MenuItem value="11:00">{use24HourFormat ? "11:00" : "11:00 AM"}</MenuItem>
+                      <MenuItem value="12:00">{use24HourFormat ? "12:00" : "12:00 PM"}</MenuItem>
+                      <MenuItem value="13:00">{use24HourFormat ? "13:00" : "1:00 PM"}</MenuItem>
+                      <MenuItem value="14:00">{use24HourFormat ? "14:00" : "2:00 PM"}</MenuItem>
+                      <MenuItem value="15:00">{use24HourFormat ? "15:00" : "3:00 PM"}</MenuItem>
+                      <MenuItem value="16:00">{use24HourFormat ? "16:00" : "4:00 PM"}</MenuItem>
+                      <MenuItem value="17:00">{use24HourFormat ? "17:00" : "5:00 PM"}</MenuItem>
+                      <MenuItem value="18:00">{use24HourFormat ? "18:00" : "6:00 PM"}</MenuItem>
+                      <MenuItem value="19:00">{use24HourFormat ? "19:00" : "7:00 PM"}</MenuItem>
+                      <MenuItem value="20:00">{use24HourFormat ? "20:00" : "8:00 PM"}</MenuItem>
+                      <MenuItem value="21:00">{use24HourFormat ? "21:00" : "9:00 PM"}</MenuItem>
+                      <MenuItem value="22:00">{use24HourFormat ? "22:00" : "10:00 PM"}</MenuItem>
                     </Select>
-                  )}
-                </TableCell>
-                <TableCell sx={{ 
-                  p: 1, 
-                  pt: 1.25, 
-                  border: 'none',
-                  width: '25%',
-                  maxWidth: '25%',
-                  boxSizing: 'border-box'
-                }}>
-                  {hasTime && (
-                    <Select
-                      fullWidth
-                      variant="outlined"
-                      size="small"
-                      value={accessValue}
-                      onChange={(e) => handleAccessChange(day.key, e.target.value)}
-                      sx={(theme) => ({
-                        width: '100%',
-                        maxWidth: '100%',
-                        boxSizing: 'border-box',
-                        bgcolor: theme.palette.mode === 'dark' ? theme.palette.background.default : theme.palette.background.paper,
-                        '& .MuiOutlinedInput-notchedOutline': {
-                          borderColor: theme.palette.divider
-                        },
-                        '& .MuiSelect-select': {
-                          width: '100%',
-                          maxWidth: '100%',
-                          boxSizing: 'border-box',
-                        },
-                        '& .MuiInputBase-root': {
-                          width: '100%',
-                          maxWidth: '100%',
-                          boxSizing: 'border-box'
-                        }
-                      })}
-                      MenuProps={{
-                        PaperProps: {
-                          style: {
-                            maxHeight: 300
-                          }
-                        }
-                      }}
-                    >
-                      {meetingAccess.map((access) => (
-                        <MenuItem key={access.value} value={access.value}>
-                          {access.label}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  )}
+                    
+                    {/* Format and Access dropdowns appear when time is selected */}
+                    {hasTime && (
+                      <Box sx={{ display: 'flex', gap: 1 }}>
+                        <Select
+                          fullWidth
+                          variant="outlined"
+                          size="small"
+                          value={formatValue}
+                          onChange={(e) => handleFormatChange(day.key, e.target.value)}
+                          sx={(theme) => ({
+                            flex: 1,
+                            bgcolor: theme.palette.mode === 'dark' ? theme.palette.background.default : theme.palette.background.paper,
+                            '& .MuiOutlinedInput-notchedOutline': {
+                              borderColor: theme.palette.divider
+                            }
+                          })}
+                        >
+                          {meetingFormats.map((format) => (
+                            <MenuItem key={format.value} value={format.value}>
+                              {format.label}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                        
+                        <Select
+                          fullWidth
+                          variant="outlined"
+                          size="small"
+                          value={accessValue}
+                          onChange={(e) => handleAccessChange(day.key, e.target.value)}
+                          sx={(theme) => ({
+                            flex: 1,
+                            bgcolor: theme.palette.mode === 'dark' ? theme.palette.background.default : theme.palette.background.paper,
+                            '& .MuiOutlinedInput-notchedOutline': {
+                              borderColor: theme.palette.divider
+                            }
+                          })}
+                        >
+                          {meetingAccess.map((access) => (
+                            <MenuItem key={access.value} value={access.value}>
+                              {access.label}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </Box>
+                    )}
+                  </Box>
                 </TableCell>
               </TableRow>
             );
