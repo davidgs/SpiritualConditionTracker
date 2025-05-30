@@ -733,7 +733,7 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
                                           color: item.deleted ? theme.palette.error.main : 
                                                  item.completed ? theme.palette.success.main : 
                                                  theme.palette.text.primary,
-                                          textDecoration: (item.completed || item.deleted) ? 'line-through' : 'none',
+                                          textDecoration: item.deleted ? 'line-through' : 'none',
                                           flex: 1,
                                           fontSize: '0.8rem'
                                         }}
