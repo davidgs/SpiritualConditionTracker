@@ -189,9 +189,38 @@ function App(): JSX.Element {
       let usersData = await window.db.getAll('users');
       let userData = null;
       
-      // Check if we have any users
+      console.log('[ App.tsx ] All users found:', usersData?.length || 0);
+      
+      // Check if we have any users and log details
       if (usersData && usersData.length > 0) {
-        userData = usersData[0]; // Use the first user
+        // Log all user records to debug the issue
+        usersData.forEach((user, index) => {
+          console.log(`[ App.tsx ] User ${index + 1} (ID: ${user.id}):`, {
+            name: user.name || '[empty]',
+            lastName: user.lastName || '[empty]',
+            phoneNumber: user.phoneNumber || '[empty]',
+            email: user.email || '[empty]',
+            sobrietyDate: user.sobrietyDate || '[empty]'
+          });
+        });
+        
+        // Find the user with the most data (not empty)
+        let bestUser = usersData[0];
+        for (const user of usersData) {
+          const hasData = (user.name && user.name.trim()) || 
+                         (user.phoneNumber && user.phoneNumber.trim()) || 
+                         (user.email && user.email.trim()) ||
+                         (user.sobrietyDate && user.sobrietyDate.trim());
+          
+          if (hasData) {
+            bestUser = user;
+            console.log('[ App.tsx ] Found user with data, using ID:', user.id);
+            break;
+          }
+        }
+        
+        userData = bestUser;
+        console.log('[ App.tsx ] Selected user ID:', userData.id);
       }
       
       // If no user found, create default user

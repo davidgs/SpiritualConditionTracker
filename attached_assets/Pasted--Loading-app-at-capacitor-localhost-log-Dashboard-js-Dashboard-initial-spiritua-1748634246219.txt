@@ -1,0 +1,101 @@
+⚡️  Loading app at capacitor://localhost...
+⚡️  [log] - [ Dashboard.js ] Dashboard initial spiritualFitness: 5
+⚡️  [log] - [ Dashboard.js ] Dashboard currentScore state: 0
+⚡️  [log] - [ Dashboard.js ] Dashboard formattedScore for display: 0.00
+⚡️  [log] - [ Dashboard.js ] Dashboard progressPercent: 0
+⚡️  [log] - [ ActivityList.js ] Total activities received: 0
+⚡️  [log] - [ ActivityList.js ] Filter params - limit: 15 filter: all maxDaysAgo: 7
+⚡️  [log] - [ ActivityList.js ] Final filtered activities count: 0
+⚡️  WebView loaded
+⚡️  [log] - Dark mode activated
+⚡️  [log] - Applying native theme: blue (#3b82f6) in dark mode
+⚡️  [log] - Applied MUI theme to iOS components
+⚡️  [log] - Applied MUI theme to iOS native components: blue
+⚡️  [log] - Dark mode activated
+⚡️  [log] - Applying native theme: blue (#3b82f6) in dark mode
+⚡️  [log] - Applied MUI theme to iOS components
+⚡️  [log] - Applied MUI theme to iOS native components: blue
+⚡️  [log] - [ Dashboard.js ] Dashboard useEffect [activities] triggered - calculating spiritual fitness
+⚡️  [log] - [ Dashboard.tsx:94 calculateSpiritualFitnessScore ] Called with activities: 0
+⚡️  [log] - [ Dashboard.tsx:95 calculateSpiritualFitnessScore ] Sample activities: []
+⚡️  [log] - [ Dashboard.tsx:96 calculateSpiritualFitnessScore ] Timeframe: 30
+⚡️  [log] - [ Dashboard.tsx:108 calculateFitnessFromActivities ] Starting calculation with 0 activities, timeframe: 30
+⚡️  To Native ->  CapacitorSQLite createConnection 77880966
+⚡️  [log] - [ Dashboard.tsx:127 calculateFitnessFromActivities ] Filtered 0 recent activities
+⚡️  [log] - [ Dashboard.tsx:130 calculateFitnessFromActivities ] No recent activities, returning base score: 5
+⚡️  [log] - [ Dashboard.tsx:100 calculateSpiritualFitnessScore ] Calculated score: 5
+⚡️  [log] - [ Dashboard.js ] Dashboard useEffect [scoreTimeframe] triggered with timeframe: 30
+⚡️  [log] - [ Dashboard.tsx:94 calculateSpiritualFitnessScore ] Called with activities: 0
+⚡️  [log] - [ Dashboard.tsx:95 calculateSpiritualFitnessScore ] Sample activities: []
+⚡️  [log] - [ Dashboard.tsx:96 calculateSpiritualFitnessScore ] Timeframe: 30
+⚡️  [log] - [ Dashboard.tsx:108 calculateFitnessFromActivities ] Starting calculation with 0 activities, timeframe: 30
+⚡️  [log] - [ Dashboard.tsx:127 calculateFitnessFromActivities ] Filtered 0 recent activities
+⚡️  [log] - [ Dashboard.tsx:130 calculateFitnessFromActivities ] No recent activities, returning base score: 5
+⚡️  [log] - [ Dashboard.tsx:100 calculateSpiritualFitnessScore ] Calculated score: 5
+⚡️  [log] - Dark mode activated
+⚡️  [log] - Applying native theme: blue (#3b82f6) in dark mode
+⚡️  [log] - Applied MUI theme to iOS components
+⚡️  [log] - Applied MUI theme to iOS native components: blue
+⚡️  [log] - Initializing database for native app with Capacitor...
+⚡️  [log] - [ sqliteLoader.js ] Initializing SQLite database via Capacitor...
+⚡️  [log] - [ sqliteLoader.js ] Capacitor platform detected: ios
+⚡️  [log] - [ sqliteLoader.js ] Capacitor plugins available: ["CapacitorHttp","Console","WebView","CapacitorCookies","CapacitorSQLite"]
+⚡️  [log] - [ sqliteLoader.js ] iOS environment detected - using iOS-specific database setup
+⚡️  [log] - [ sqliteLoader.js ] Found CapacitorSQLite plugin: true
+⚡️  [log] - [ sqliteLoader.js ] Could not check existing connections, attempting to create new connection
+database path /var/mobile/Containers/Data/Application/ECDCE33D-61A3-45D9-80C7-100357680DC9/Documents/spiritualTrackerSQLite.db
+⚡️  TO JS undefined
+⚡️  [log] - [ Dashboard.js ] Dashboard initial spiritualFitness: 5
+⚡️  [log] - [ Dashboard.js ] Dashboard currentScore state: 5
+⚡️  [log] - [ Dashboard.js ] Dashboard formattedScore for display: 5.00
+⚡️  [log] - [ Dashboard.js ] Dashboard progressPercent: 5
+⚡️  [log] - [ ActivityList.js ] Total activities received: 0
+⚡️  [log] - [ ActivityList.js ] Filter params - limit: 15 filter: all maxDaysAgo: 7
+⚡️  [log] - [ ActivityList.js ] Final filtered activities count: 0
+⚡️  To Native ->  CapacitorSQLite open 77880967
+⚡️  [log] - [ sqliteLoader.js ] Database connection created successfully
+⚡️  TO JS undefined
+⚡️  [log] - [ sqliteLoader.js ] Database opened successfully
+⚡️  [log] - [ sqliteLoader.js ] Verifying database schema (preserving existing data)
+⚡️  To Native ->  CapacitorSQLite execute 77880968
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  [log] - [ sqliteLoader.js ] Users table created successfully
+⚡️  To Native ->  CapacitorSQLite execute 77880969
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  [log] - [ sqliteLoader.js ] Activities table created successfully
+⚡️  To Native ->  CapacitorSQLite execute 77880970
+⚡️  [log] - [ sqliteLoader.js ] Activities table includes all required columns
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 77880971
+⚡️  [log] - [ sqliteLoader.js ] Meetings table created successfully
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 77880972
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 77880973
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 77880974
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 77880975
+⚡️  [log] - [ sqliteLoader.js ] Dropped sponsor-related tables for schema update
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 77880976
+⚡️  [log] - [ sqliteLoader.js ] Sponsor contacts table created with flexible constraints
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 77880977
+⚡️  [log] - [ sqliteLoader.js ] Sponsor contact details table created with flexible constraints
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  [log] - [ sqliteLoader.js ] Action items table created
+⚡️  To Native ->  CapacitorSQLite execute 77880978
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 77880979
+⚡️  [log] - [ sqliteLoader.js ] Sponsor contact action items join table created
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  [log] - [ sqliteLoader.js ] Foreign key constraints re-enabled
+⚡️  To Native ->  CapacitorSQLite query 77880980
+⚡️  [log] - [ sqliteLoader.js ] Database tables created/verified successfully
+⚡️  [log] - [ sqliteLoader.js ] Database setup complete, global db interface ready
+⚡️  [log] - [ sqliteLoader.js ] Validating database schema and logging current state...
+⚡️  TO JS {"values":[{"ios_columns":["count"]},{"count":2}]}
+⚡️  To Native ->  CapacitorSQLite query 77880981
+⚡️  [log] - [ sqliteLoader.js ] Table 'users': 2 records
+⚡️  TO JS {"values":[{"ios_columns":["count"]},{"count":1}]}
