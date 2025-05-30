@@ -27,7 +27,7 @@ function Header({ title, menuOpen, setMenuOpen, isMobile }) {
         backgroundColor: headerBackgroundColor,
         borderBottom: `1px solid ${muiTheme.palette.divider}`,
         padding: '0.5rem 1rem',
-        paddingTop: 'max(0.5rem, env(safe-area-inset-top))',
+        paddingTop: '3rem',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'flex-start',
