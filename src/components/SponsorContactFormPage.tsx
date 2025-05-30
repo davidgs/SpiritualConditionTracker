@@ -89,7 +89,7 @@ export default function SponsorContactFormPage({ open, userId, onSubmit, onClose
   
   // Add new todo item
   const handleAddTodo = (todoItem: ActionItemFormData): void => {
-    console.log('[SponsorContactFormPage.tsx: handleAddTodo : 91] Adding todo item:', todoItem);
+    console.log('[SponsorContactFormPage.tsx: handleAddTodo : 92] Adding todo item:', todoItem);
     
     // Create a clean ActionItemFormData object
     const newTodo: ActionItemFormData = {

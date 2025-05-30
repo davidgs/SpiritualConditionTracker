@@ -50,6 +50,7 @@ export default function ActionItemForm({ onSubmit, onCancel, initialData }: Acti
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('[ActionItemForm.tsx: 53 handleSubmit] Submitting action item:', formData)
     
     if (!formData.title.trim()) {
       alert('Please enter a title for the action item');
@@ -153,6 +154,7 @@ export default function ActionItemForm({ onSubmit, onCancel, initialData }: Acti
       <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-end' }}>
         <Button
           variant="outlined"
+          color="error"
           onClick={onCancel}
           sx={{ color: theme.palette.text.secondary }}
         >
@@ -161,7 +163,7 @@ export default function ActionItemForm({ onSubmit, onCancel, initialData }: Acti
         <Button
           type="submit"
           variant="contained"
-          color="primary"
+          color="success"
         >
           {initialData ? 'Update' : 'Save'} Action Item
         </Button>
