@@ -17,7 +17,6 @@ import {
   DialogActions
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
-import SponsorContactTodo from './SponsorContactTodo';
 import { ContactType, ContactFormData, ActionItemFormData, SponsorContactFormProps } from '../types/database';
 
 export default function SponsorContactFormPage({ open, userId, onSubmit, onClose, initialData, details = [] }: SponsorContactFormProps) {
@@ -283,10 +282,10 @@ export default function SponsorContactFormPage({ open, userId, onSubmit, onClose
           )}
 
           {showInput ? (
-            <SponsorContactTodo 
-              onSave={handleAddTodo}
-              onCancel={() => setShowInput(false)}
-            />
+            <Box sx={{ p: 2, border: '1px solid #ccc', borderRadius: 1, mb: 2 }}>
+              <Typography>SponsorContactTodo component not implemented yet</Typography>
+              <Button onClick={() => setShowInput(false)}>Cancel</Button>
+            </Box>
           ) : (
             <Button
               variant="outlined"
@@ -318,6 +317,6 @@ export default function SponsorContactFormPage({ open, userId, onSubmit, onClose
           </Button>
         </Box>
       </Box>
-    </Box>
+    </Dialog>
   );
 }
