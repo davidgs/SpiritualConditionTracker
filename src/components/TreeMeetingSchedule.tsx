@@ -78,7 +78,20 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
   };
 
   const addMeetingWithDetails = (day: string, time: string, format: string, access: string) => {
-    const newSchedule = [...schedule, { day, time, format, access }];
+    // Validate all parameters are provided
+    if (!day || !time || !format || !access) {
+      console.error('Missing required meeting details:', { day, time, format, access });
+      return;
+    }
+    
+    const newMeeting = { 
+      day: day.trim(), 
+      time: time.trim(), 
+      format: format.trim(), 
+      access: access.trim() 
+    };
+    
+    const newSchedule = [...schedule, newMeeting];
     onChange(newSchedule);
     
     // Collapse the "new" item and show the actual meeting
@@ -165,13 +178,13 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
                         {timeOptions.find(t => t.value === item.time)?.label || item.time}
                       </Typography>
                       <Chip 
-                        label={item.format.charAt(0).toUpperCase() + item.format.slice(1).replace('_', ' ')}
+                        label={item.format ? item.format.charAt(0).toUpperCase() + item.format.slice(1).replace('_', ' ') : 'Unknown'}
                         size="small"
                         color="primary"
                         sx={{ fontSize: '0.7rem', height: '20px' }}
                       />
                       <Chip 
-                        label={item.access.charAt(0).toUpperCase() + item.access.slice(1)}
+                        label={item.access ? item.access.charAt(0).toUpperCase() + item.access.slice(1) : 'Unknown'}
                         size="small"
                         color="secondary"
                         sx={{ fontSize: '0.7rem', height: '20px' }}
