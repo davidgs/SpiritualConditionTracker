@@ -160,7 +160,7 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
             const accessChildren = meetingAccess.map(access => ({
               id: `${day.key}-${time.value}-${format.value}-${access.value}`,
               label: `${access.label} Meeting ← Click to add`,
-              color: 'primary.main',
+              color: access.value === 'open' ? 'success.main' : 'error.main',
               fontSize: '0.8rem',
               indentLevel: 4,
               onClick: () => addMeetingWithDetails(day.key, time.value, format.value, access.value),
