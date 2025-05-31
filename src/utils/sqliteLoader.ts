@@ -587,6 +587,47 @@ function setupGlobalDB(sqlite) {
           }
         }
         
+        // Parse JSON fields for standard format
+        if (result.values && result.values.length > 0 && collection === 'meetings') {
+          const parsedResults = result.values.map(item => {
+            const parsedItem = { ...item };
+            
+            // Parse JSON fields for meetings
+            if (parsedItem.days && typeof parsedItem.days === 'string') {
+              try {
+                parsedItem.days = JSON.parse(parsedItem.days);
+              } catch (e) {
+                parsedItem.days = [];
+              }
+            }
+            if (parsedItem.schedule && typeof parsedItem.schedule === 'string') {
+              try {
+                parsedItem.schedule = JSON.parse(parsedItem.schedule);
+              } catch (e) {
+                parsedItem.schedule = [];
+              }
+            }
+            if (parsedItem.types && typeof parsedItem.types === 'string') {
+              try {
+                parsedItem.types = JSON.parse(parsedItem.types);
+              } catch (e) {
+                parsedItem.types = [];
+              }
+            }
+            if (parsedItem.coordinates && typeof parsedItem.coordinates === 'string') {
+              try {
+                parsedItem.coordinates = JSON.parse(parsedItem.coordinates);
+              } catch (e) {
+                parsedItem.coordinates = null;
+              }
+            }
+            
+            return parsedItem;
+          });
+          
+          return parsedResults;
+        }
+        
         return result.values || [];
       } catch (error) {
         console.error(`[ sqliteLoader.js ] Error getting items from ${collection}:`, error);
