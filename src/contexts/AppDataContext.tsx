@@ -165,7 +165,7 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
         // Initialize database
         await databaseService.initialize();
       } catch (error) {
-        console.error('[ AppDataContext ] App initialization failed:', error);
+        console.error('[ AppDataContext.tsx:168 ] App initialization failed:', error);
         dispatch({ type: 'SET_ERROR', payload: 'Failed to initialize app' });
         dispatch({ type: 'SET_LOADING', payload: false });
       }
@@ -193,7 +193,7 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
       dispatch({ type: 'SET_LOADING', payload: false });
       console.log('[ AppDataContext.tsx:194 ] Initial data load complete');
     } catch (error) {
-      console.error('[ AppDataContext ] Failed to load initial data:', error);
+      console.error('[ AppDataContext.tsx:196 ] Failed to load initial data:', error);
       dispatch({ type: 'SET_ERROR', payload: 'Failed to load app data' });
       dispatch({ type: 'SET_LOADING', payload: false });
     }
@@ -246,7 +246,7 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
         console.log('[ AppDataContext.tsx:246 ] Created default user:', newUser.id);
       }
     } catch (error) {
-      console.error('[ AppDataContext ] Failed to load user data:', error);
+      console.error('[ AppDataContext.tsx:249 ] Failed to load user data:', error);
       throw error;
     }
   };
@@ -264,7 +264,7 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
       }
       return updatedUser;
     } catch (error) {
-      console.error('[ AppDataContext ] Failed to update user:', error);
+      console.error('[ AppDataContext.tsx:267 ] Failed to update user:', error);
       dispatch({ type: 'SET_ERROR', payload: 'Failed to update user profile' });
       return null;
     }
@@ -290,7 +290,7 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
       // Calculate spiritual fitness
       calculateSpiritualFitness();
     } catch (error) {
-      console.error('[ AppDataContext ] Failed to load activities:', error);
+      console.error('[ AppDataContext.tsx:293 ] Failed to load activities:', error);
       throw error;
     }
   };
@@ -312,7 +312,7 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
       console.log('[ AppDataContext.tsx:312 addActivity ] Activity added successfully with ID:', newActivity.id);
       return newActivity;
     } catch (error) {
-      console.error('[ AppDataContext.tsx:236 addActivity ] Failed to add activity:', error);
+      console.error('[ AppDataContext.tsx:315 addActivity ] Failed to add activity:', error);
       dispatch({ type: 'SET_ERROR', payload: 'Failed to save activity' });
       return null;
     }
@@ -325,7 +325,7 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
       dispatch({ type: 'SET_MEETINGS', payload: meetings });
       console.log('[ AppDataContext.tsx:326 ] Meetings loaded:', meetings.length);
     } catch (error) {
-      console.error('[ AppDataContext ] Failed to load meetings:', error);
+      console.error('[ AppDataContext.tsx:328 ] Failed to load meetings:', error);
       throw error;
     }
   };
@@ -337,7 +337,7 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
       console.log('[ AppDataContext.tsx:337 ] Meeting added:', newMeeting.id);
       return newMeeting;
     } catch (error) {
-      console.error('[ AppDataContext ] Failed to add meeting:', error);
+      console.error('[ AppDataContext.tsx:340 ] Failed to add meeting:', error);
       dispatch({ type: 'SET_ERROR', payload: 'Failed to save meeting' });
       return null;
     }
@@ -352,7 +352,7 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
       }
       return success;
     } catch (error) {
-      console.error('[ AppDataContext ] Failed to delete meeting:', error);
+      console.error('[ AppDataContext.tsx:355 ] Failed to delete meeting:', error);
       dispatch({ type: 'SET_ERROR', payload: 'Failed to delete meeting' });
       return false;
     }
@@ -407,7 +407,7 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
       // Could implement database clearing here if needed
       console.log('[ AppDataContext.tsx:408 ] All data reset');
     } catch (error) {
-      console.error('[ AppDataContext ] Failed to reset data:', error);
+      console.error('[ AppDataContext.tsx:410 ] Failed to reset data:', error);
       dispatch({ type: 'SET_ERROR', payload: 'Failed to reset data' });
     }
   };

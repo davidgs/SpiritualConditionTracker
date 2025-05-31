@@ -524,7 +524,7 @@ function setupGlobalDB(sqlite) {
         
         // For localStorage fallback, just proceed with the query
         if (!window.db) {
-          console.error('[ sqliteLoader.js ] Database not initialized');
+          console.error('[ sqliteLoader.js:527 ] Database not initialized');
           return [];
         }
         
@@ -712,7 +712,7 @@ function setupGlobalDB(sqlite) {
         
         // Check if database is initialized
         if (!window.db) {
-          console.error('[ sqliteLoader.js ] Database not ready for insert');
+          console.error('[ sqliteLoader.js:715 ] Database not ready for insert');
           throw new Error('Database not initialized');
         }
         
