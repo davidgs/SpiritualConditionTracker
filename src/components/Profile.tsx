@@ -190,6 +190,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
       setEmail(user.email || '');
       // Fix sobriety date handling to prevent off-by-one errors
       if (user.sobrietyDate) {
+        console.log('[ Profile.tsx: 187 ] User sobriety date:', user.sobrietyDate)
         // If it's already in YYYY-MM-DD format, use as-is
         if (user.sobrietyDate.includes('T')) {
           // Convert from ISO format, keeping the date part only
