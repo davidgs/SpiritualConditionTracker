@@ -137,12 +137,14 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
 
   // Initialize database on mount
   useEffect(() => {
+    let unsubscribeFunction: (() => void) | null = null;
+
     const initializeApp = async () => {
       console.log('[ AppDataContext ] Initializing app...');
       
       try {
         // Subscribe to database status changes
-        const unsubscribe = databaseService.onStatusChange((status) => {
+        unsubscribeFunction = databaseService.onStatusChange((status) => {
           console.log('[ AppDataContext ] Database status changed:', status);
           dispatch({ type: 'SET_DATABASE_STATUS', payload: status });
           
@@ -154,9 +156,6 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
 
         // Initialize database
         await databaseService.initialize();
-
-        // Cleanup subscription on unmount
-        return unsubscribe;
       } catch (error) {
         console.error('[ AppDataContext ] App initialization failed:', error);
         dispatch({ type: 'SET_ERROR', payload: 'Failed to initialize app' });
@@ -164,10 +163,12 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
       }
     };
 
-    const unsubscribe = initializeApp();
+    initializeApp();
+
+    // Cleanup function
     return () => {
-      if (unsubscribe && typeof unsubscribe === 'function') {
-        unsubscribe();
+      if (unsubscribeFunction) {
+        unsubscribeFunction();
       }
     };
   }, []);
