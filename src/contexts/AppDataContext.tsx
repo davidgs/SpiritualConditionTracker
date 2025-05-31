@@ -148,12 +148,12 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
     let unsubscribeFunction: (() => void) | null = null;
 
     const initializeApp = async () => {
-      console.log('[ AppDataContext ] Initializing app...');
+      console.log('[ AppDataContext.tsx:151 ] Initializing app...');
       
       try {
         // Subscribe to database status changes
         unsubscribeFunction = databaseService.onStatusChange((status) => {
-          console.log('[ AppDataContext ] Database status changed:', status);
+          console.log('[ AppDataContext.tsx:156 ] Database status changed:', status);
           dispatch({ type: 'SET_DATABASE_STATUS', payload: status });
           
           // Load data when database becomes ready
@@ -184,14 +184,14 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
   // Load initial data when database is ready
   const loadInitialData = async () => {
     try {
-      console.log('[ AppDataContext ] Loading initial data...');
+      console.log('[ AppDataContext.tsx:187 ] Loading initial data...');
       
       await loadUserData();
       await loadActivities();
       await loadMeetings();
       
       dispatch({ type: 'SET_LOADING', payload: false });
-      console.log('[ AppDataContext ] Initial data load complete');
+      console.log('[ AppDataContext.tsx:194 ] Initial data load complete');
     } catch (error) {
       console.error('[ AppDataContext ] Failed to load initial data:', error);
       dispatch({ type: 'SET_ERROR', payload: 'Failed to load app data' });
@@ -203,7 +203,7 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
   const loadUserData = async () => {
     try {
       const users = await databaseService.getAllUsers();
-      console.log('[ AppDataContext ] Loaded users:', users.length);
+      console.log('[ AppDataContext.tsx:206 ] Loaded users:', users.length);
       
       if (users.length > 0) {
         // Find user with most data
@@ -222,7 +222,7 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
         
         dispatch({ type: 'SET_USER', payload: bestUser });
         dispatch({ type: 'SET_CURRENT_USER_ID', payload: bestUser.id });
-        console.log('[ AppDataContext ] User data loaded:', bestUser.id);
+        console.log('[ AppDataContext.tsx:225 ] User data loaded:', bestUser.id);
       } else {
         // Create default user
         const newUser = await databaseService.addUser({
@@ -243,7 +243,7 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
         
         dispatch({ type: 'SET_USER', payload: newUser });
         dispatch({ type: 'SET_CURRENT_USER_ID', payload: newUser.id });
-        console.log('[ AppDataContext ] Created default user:', newUser.id);
+        console.log('[ AppDataContext.tsx:246 ] Created default user:', newUser.id);
       }
     } catch (error) {
       console.error('[ AppDataContext ] Failed to load user data:', error);
@@ -260,7 +260,7 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
       const updatedUser = await databaseService.updateUser(state.currentUserId, updates);
       if (updatedUser) {
         dispatch({ type: 'SET_USER', payload: updatedUser });
-        console.log('[ AppDataContext ] User updated:', updatedUser.id);
+        console.log('[ AppDataContext.tsx:263 ] User updated:', updatedUser.id);
       }
       return updatedUser;
     } catch (error) {
@@ -285,7 +285,7 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
       });
       
       dispatch({ type: 'SET_ACTIVITIES', payload: filteredActivities });
-      console.log('[ AppDataContext ] Activities loaded:', filteredActivities.length);
+      console.log('[ AppDataContext.tsx:288 ] Activities loaded:', filteredActivities.length);
       
       // Calculate spiritual fitness
       calculateSpiritualFitness();
@@ -297,19 +297,19 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
 
   const addActivity = async (activityData: Omit<Activity, 'id' | 'createdAt' | 'updatedAt'>): Promise<Activity | null> => {
     try {
-      console.log('[ AppDataContext.tsx:221 addActivity ] Received activity data:', JSON.stringify(activityData, null, 2));
-      console.log('[ AppDataContext.tsx:222 addActivity ] Calling databaseService.addActivity...');
+      console.log('[ AppDataContext.tsx:300 addActivity ] Received activity data:', JSON.stringify(activityData, null, 2));
+      console.log('[ AppDataContext.tsx:301 addActivity ] Calling databaseService.addActivity...');
       
       const newActivity = await databaseService.addActivity(activityData);
       
-      console.log('[ AppDataContext.tsx:226 addActivity ] DatabaseService returned:', JSON.stringify(newActivity, null, 2));
+      console.log('[ AppDataContext.tsx:305 addActivity ] DatabaseService returned:', JSON.stringify(newActivity, null, 2));
       
       dispatch({ type: 'ADD_ACTIVITY', payload: newActivity });
       
       // Recalculate spiritual fitness
       calculateSpiritualFitness();
       
-      console.log('[ AppDataContext.tsx:233 addActivity ] Activity added successfully with ID:', newActivity.id);
+      console.log('[ AppDataContext.tsx:312 addActivity ] Activity added successfully with ID:', newActivity.id);
       return newActivity;
     } catch (error) {
       console.error('[ AppDataContext.tsx:236 addActivity ] Failed to add activity:', error);
@@ -323,7 +323,7 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
     try {
       const meetings = await databaseService.getAllMeetings();
       dispatch({ type: 'SET_MEETINGS', payload: meetings });
-      console.log('[ AppDataContext ] Meetings loaded:', meetings.length);
+      console.log('[ AppDataContext.tsx:326 ] Meetings loaded:', meetings.length);
     } catch (error) {
       console.error('[ AppDataContext ] Failed to load meetings:', error);
       throw error;
@@ -334,7 +334,7 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
     try {
       const newMeeting = await databaseService.addMeeting(meetingData);
       dispatch({ type: 'ADD_MEETING', payload: newMeeting });
-      console.log('[ AppDataContext ] Meeting added:', newMeeting.id);
+      console.log('[ AppDataContext.tsx:337 ] Meeting added:', newMeeting.id);
       return newMeeting;
     } catch (error) {
       console.error('[ AppDataContext ] Failed to add meeting:', error);
@@ -348,7 +348,7 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
       const success = await databaseService.deleteMeeting(meetingId);
       if (success) {
         dispatch({ type: 'DELETE_MEETING', payload: meetingId });
-        console.log('[ AppDataContext ] Meeting deleted:', meetingId);
+        console.log('[ AppDataContext.tsx:351 ] Meeting deleted:', meetingId);
       }
       return success;
     } catch (error) {
@@ -405,7 +405,7 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
     try {
       dispatch({ type: 'RESET_ALL_DATA' });
       // Could implement database clearing here if needed
-      console.log('[ AppDataContext ] All data reset');
+      console.log('[ AppDataContext.tsx:408 ] All data reset');
     } catch (error) {
       console.error('[ AppDataContext ] Failed to reset data:', error);
       dispatch({ type: 'SET_ERROR', payload: 'Failed to reset data' });
