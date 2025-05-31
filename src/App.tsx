@@ -87,11 +87,16 @@ function AppContent() {
       };
 
       const savedActivity = await addActivity(newActivity);
-      console.log('[ App ] Activity saved successfully:', savedActivity?.id);
-      return savedActivity;
+      if (savedActivity) {
+        console.log('[ App ] Activity saved successfully:', savedActivity?.id);
+        return savedActivity;
+      } else {
+        console.log('[ App ] Activity saved to fallback storage');
+        return newActivity; // Return the activity data even if it went to fallback
+      }
     } catch (error) {
       console.error('[ App ] Error saving activity:', error);
-      return null;
+      throw error; // Re-throw to let the LogActivityModal handle the error display
     }
   }
 
