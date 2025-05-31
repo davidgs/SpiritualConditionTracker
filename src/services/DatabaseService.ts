@@ -265,20 +265,20 @@ class DatabaseService {
 
   async getAllMeetings(): Promise<Meeting[]> {
     return this.executeOperation(async () => {
-      const meetings = await this.database.getAll('meetings');
+      const meetings = await window.db.getAll('meetings');
       return meetings || [];
     });
   }
 
   async addMeeting(meeting: Omit<Meeting, 'id' | 'createdAt' | 'updatedAt'>): Promise<Meeting> {
     return this.executeOperation(async () => {
-      return await this.database.add('meetings', meeting);
+      return await window.db.add('meetings', meeting);
     });
   }
 
   async deleteMeeting(meetingId: string | number): Promise<boolean> {
     return this.executeOperation(async () => {
-      return await this.database.delete('meetings', meetingId);
+      return await window.db.delete('meetings', meetingId);
     });
   }
 }
