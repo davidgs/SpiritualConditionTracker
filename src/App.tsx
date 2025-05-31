@@ -72,13 +72,7 @@ function AppContent() {
   // Handle saving new activity
   async function handleSaveActivity(activityData: any): Promise<any> {
     try {
-      const userId = state.currentUserId;
-      if (!userId) {
-        throw new Error('No user ID available');
-      }
-
       const newActivity = {
-        userId: String(userId),
         type: activityData.type,
         date: activityData.date,
         notes: activityData.notes || '',

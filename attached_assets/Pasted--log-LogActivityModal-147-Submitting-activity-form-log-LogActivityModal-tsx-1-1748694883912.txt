@@ -1,0 +1,39 @@
+⚡️  [log] - [LogActivityModal:147] Submitting activity form...
+⚡️  [log] - [ LogActivityModal.tsx:179 handleSubmit ] Created activity with ISO date: 2025-05-31T16:00:00.000Z
+⚡️  [log] - [ LogActivityModal.tsx:180 handleSubmit ] Original date input: 2025-05-31
+⚡️  [log] - [ sqliteLoader.js ] Original item received for save: {
+  "userId": "1",
+  "type": "prayer",
+  "date": "2025-05-31T16:00:00.000Z",
+  "notes": "",
+  "duration": 15,
+  "location": "completed"
+}
+⚡️  [log] - [ sqliteLoader.js ] Item without ID: {
+  "userId": "1",
+  "type": "prayer",
+  "date": "2025-05-31T16:00:00.000Z",
+  "notes": "",
+  "duration": 15,
+  "location": "completed"
+}
+⚡️  [log] - [ sqliteLoader.js ] Final item for database: {
+  "userId": "1",
+  "type": "prayer",
+  "date": "2025-05-31T16:00:00.000Z",
+  "notes": "",
+  "duration": 15,
+  "location": "completed",
+  "createdAt": "2025-05-31T12:33:24.673Z",
+  "updatedAt": "2025-05-31T12:33:24.673Z"
+}
+⚡️  [log] - [ sqliteLoader.js ] Date field specifically: 2025-05-31T16:00:00.000Z
+⚡️  [log] - [ sqliteLoader.js ] Date field type: string
+⚡️  [log] - [ sqliteLoader.js ] SQL keys: ["userId","type","date","notes","duration","location","createdAt","updatedAt"]
+⚡️  [log] - [ sqliteLoader.js ] SQL values: ["1","prayer","2025-05-31T16:00:00.000Z","",15,"completed","2025-05-31T12:33:24.673Z","2025-05-31T12:33:24.673Z"]
+⚡️  To Native ->  CapacitorSQLite execute 51047488
+ERROR MESSAGE:  {"message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: table activities has no column named userId","errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: table activities has no column named userId"}
+⚡️  [error] - {"message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: table activities has no column named userId","errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: table activities has no column named userId"}
+⚡️  [error] - [ sqliteLoader.js ] Error adding item to activities: {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: table activities has no column named userId"}
+⚡️  [error] - [ AppDataContext ] Failed to add activity: {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: table activities has no column named userId"}
+⚡️  [log] - [ App ] Activity saved to fallback storage
