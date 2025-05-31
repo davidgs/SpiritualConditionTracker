@@ -10,10 +10,12 @@ import { useTheme } from '@mui/material/styles';
 // Import components for testing
 import Dashboard from './components/Dashboard';
 import Header from './components/Header';
+import BottomNavBar from './components/BottomNavBar';
 
 function AppContent() {
   const { state, addActivity, updateTimeframe } = useAppData();
   const muiTheme = useTheme();
+  const [currentView, setCurrentView] = React.useState('dashboard');
 
   // Show loading state
   if (state.isLoading) {
@@ -99,7 +101,7 @@ function AppContent() {
   // Simple navigation handler (does nothing for now)
   function handleNavigation(view: string) {
     console.log('Navigation to:', view);
-    // For testing, we stay on dashboard
+    setCurrentView(view);
   }
 
   const filteredActivities = filterActivitiesByTimeframe(state.activities, state.currentTimeframe);
@@ -118,21 +120,38 @@ function AppContent() {
           setMenuOpen={() => {}}
           isMobile={true}
         />
-        <div style={{ paddingTop: '80px' }}>
-          <Dashboard
-            user={state.user}
-            activities={filteredActivities}
-            meetings={state.meetings}
-            currentTimeframe={state.currentTimeframe}
-            onSave={handleSaveActivity}
-            onSaveMeeting={async (meetingData) => {
-              console.log('Meeting save not implemented yet:', meetingData);
-              return null;
-            }}
-            onTimeframeChange={handleTimeframeChange}
-            setCurrentView={handleNavigation}
-          />
+        <div style={{ paddingTop: '80px', paddingBottom: '80px' }}>
+          {currentView === 'dashboard' && (
+            <Dashboard
+              user={state.user}
+              activities={filteredActivities}
+              meetings={state.meetings}
+              currentTimeframe={state.currentTimeframe}
+              onSave={handleSaveActivity}
+              onSaveMeeting={async (meetingData) => {
+                console.log('Meeting save not implemented yet:', meetingData);
+                return null;
+              }}
+              onTimeframeChange={handleTimeframeChange}
+              setCurrentView={handleNavigation}
+            />
+          )}
+          {currentView !== 'dashboard' && (
+            <div style={{ 
+              padding: '20px', 
+              textAlign: 'center',
+              color: muiTheme.palette.text.secondary 
+            }}>
+              <h2>Coming Soon</h2>
+              <p>{currentView.charAt(0).toUpperCase() + currentView.slice(1)} page is under development</p>
+            </div>
+          )}
         </div>
+        
+        <BottomNavBar 
+          currentView={currentView}
+          onNavigate={handleNavigation}
+        />
       </div>
     );
   } catch (error) {

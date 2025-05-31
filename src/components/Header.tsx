@@ -84,25 +84,7 @@ function Header({ title, menuOpen, setMenuOpen, isMobile }) {
         {muiTheme.palette.mode === 'dark' ? '🌙' : '☀️'}
       </Box>
       
-      {/* Mobile Hamburger Menu Button */}
-      {isMobile && (
-        <IconButton
-          onClick={() => setMenuOpen(!menuOpen)}
-          color="primary"
-          aria-label={menuOpen ? "Close menu" : "Open menu"}
-          sx={{
-            padding: '8px',
-            fontSize: '1.75rem',
-            border: 'none',
-            transition: 'all 0.2s ease'
-          }}
-        >
-          {menuOpen ? 
-            <i className="fa-solid fa-xmark"></i> : 
-            <i className="fa-solid fa-bars"></i>
-          }
-        </IconButton>
-      )}
+
     </SafeAreaHeader>
   );
 }
