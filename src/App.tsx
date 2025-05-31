@@ -100,44 +100,98 @@ function AppContent() {
 
   const filteredActivities = filterActivitiesByTimeframe(state.activities, state.currentTimeframe);
 
-  // Try to render Dashboard component
-  try {
-    return (
-      <div style={{ 
-        minHeight: '100vh', 
-        backgroundColor: '#1a1a1a',
-        color: '#ffffff'
-      }}>
-        <Dashboard
-          user={state.user}
-          activities={filteredActivities}
-          currentTimeframe={state.currentTimeframe}
-          onSaveActivity={handleSaveActivity}
-          onTimeframeChange={handleTimeframeChange}
-          setCurrentView={handleNavigation}
-        />
+  // Simple Dashboard replacement without Material-UI
+  return (
+    <div style={{ 
+      minHeight: '100vh', 
+      backgroundColor: '#1a1a1a',
+      color: '#ffffff',
+      padding: '20px'
+    }}>
+      <h1>Recovery Dashboard</h1>
+      
+      <div style={{ marginBottom: '20px' }}>
+        <h3>Database Status: {state.databaseStatus}</h3>
       </div>
-    );
-  } catch (error) {
-    return (
-      <div style={{ 
-        minHeight: '100vh',
-        backgroundColor: '#1a1a1a',
-        color: '#ff6b6b',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: '20px'
-      }}>
-        <h2>Dashboard Component Error</h2>
-        <p>Error rendering Dashboard: {error instanceof Error ? error.message : 'Unknown error'}</p>
-        <pre style={{ fontSize: '12px', marginTop: '20px' }}>
-          {error instanceof Error ? error.stack : 'No stack trace available'}
-        </pre>
+
+      {state.user && (
+        <div style={{ marginBottom: '20px', padding: '15px', backgroundColor: '#2d2d2d', borderRadius: '8px' }}>
+          <h3>Welcome, {state.user.name || 'User'}</h3>
+          <p>Sobriety Date: {state.user.sobrietyDate || 'Not set'}</p>
+          <p>Phone: {state.user.phoneNumber || 'Not set'}</p>
+          <p>Email: {state.user.email || 'Not set'}</p>
+        </div>
+      )}
+
+      <div style={{ marginBottom: '20px', padding: '15px', backgroundColor: '#2d2d2d', borderRadius: '8px' }}>
+        <h3>Activities ({filteredActivities.length})</h3>
+        <p>Timeframe: {state.currentTimeframe} days</p>
+        <p>Spiritual Fitness: {state.spiritualFitness}</p>
+        
+        {filteredActivities.length > 0 ? (
+          filteredActivities.map((activity, index) => (
+            <div key={activity.id || index} style={{ 
+              marginBottom: '10px', 
+              padding: '10px', 
+              backgroundColor: '#3d3d3d', 
+              borderRadius: '4px' 
+            }}>
+              <p><strong>Type:</strong> {activity.type}</p>
+              <p><strong>Date:</strong> {activity.date}</p>
+              {activity.notes && <p><strong>Notes:</strong> {activity.notes}</p>}
+            </div>
+          ))
+        ) : (
+          <p>No activities in the last {state.currentTimeframe} days</p>
+        )}
       </div>
-    );
-  }
+
+      <div style={{ padding: '15px', backgroundColor: '#2d2d2d', borderRadius: '8px' }}>
+        <h3>Quick Actions</h3>
+        <button 
+          onClick={() => handleNavigation('profile')}
+          style={{
+            marginRight: '10px',
+            padding: '10px 20px',
+            backgroundColor: '#3b82f6',
+            color: 'white',
+            border: 'none',
+            borderRadius: '4px',
+            cursor: 'pointer'
+          }}
+        >
+          Profile
+        </button>
+        <button 
+          onClick={() => handleNavigation('meetings')}
+          style={{
+            marginRight: '10px',
+            padding: '10px 20px',
+            backgroundColor: '#3b82f6',
+            color: 'white',
+            border: 'none',
+            borderRadius: '4px',
+            cursor: 'pointer'
+          }}
+        >
+          Meetings
+        </button>
+        <button 
+          onClick={() => handleNavigation('stepwork')}
+          style={{
+            padding: '10px 20px',
+            backgroundColor: '#3b82f6',
+            color: 'white',
+            border: 'none',
+            borderRadius: '4px',
+            cursor: 'pointer'
+          }}
+        >
+          Step Work
+        </button>
+      </div>
+    </div>
+  );
 }
 
 function App() {
