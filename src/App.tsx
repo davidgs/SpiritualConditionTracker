@@ -150,10 +150,7 @@ function AppContent() {
             <Meetings
               setCurrentView={handleNavigation}
               meetings={state.meetings}
-              onSave={async (meetingData) => {
-                console.log('Meeting save not implemented yet:', meetingData);
-                return null;
-              }}
+              onSave={handleSaveMeeting}
               user={state.user}
             />
           )}
