@@ -129,7 +129,7 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
         sx={{
           '& .MuiTreeItem-content': {
             py: 1,
-            px: 2,
+            px: 0,
             borderRadius: 1,
             '&:hover': {
               bgcolor: muiTheme.palette.action.hover
@@ -139,9 +139,12 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
             fontSize: '0.875rem'
           },
           '& .MuiTreeItem-group': {
-            marginLeft: 1,
-            paddingLeft: 1,
-            borderLeft: `1px solid ${muiTheme.palette.divider}`
+            marginLeft: 0,
+            paddingLeft: 0
+          },
+          '& .MuiTreeItem-iconContainer': {
+            marginRight: 1,
+            width: 'auto'
           }
         }}
       >
@@ -214,7 +217,7 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
               key={`day-${day.key}`}
               itemId={`day-${day.key}`}
               label={
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, py: 0.5, ml: 2 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, py: 0.5, ml: 1 }}>
                   <Typography variant="body2" sx={{ color: 'text.primary', fontWeight: 500 }}>
                     {day.label}
                   </Typography>
@@ -229,7 +232,7 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
                   key={`day-${day.key}-time-${time.value}`}
                   itemId={`day-${day.key}-time-${time.value}`}
                   label={
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, py: 0.5, ml: 4 }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, py: 0.5, ml: 2 }}>
                       <Typography variant="body2" sx={{ fontSize: '0.8rem', color: 'info.main' }}>
                         {time.label}
                       </Typography>
@@ -242,7 +245,7 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
                       key={`day-${day.key}-time-${time.value}-format-${format.value}`}
                       itemId={`day-${day.key}-time-${time.value}-format-${format.value}`}
                       label={
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, py: 0.5, ml: 6 }}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, py: 0.5, ml: 3 }}>
                           <Typography variant="body2" sx={{ fontSize: '0.8rem', color: 'warning.main' }}>
                             {format.label}
                           </Typography>
@@ -261,7 +264,7 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
                                 alignItems: 'center', 
                                 gap: 1, 
                                 py: 0.5,
-                                ml: 8,
+                                ml: 4,
                                 cursor: 'pointer',
                                 '&:hover': {
                                   bgcolor: muiTheme.palette.action.hover
