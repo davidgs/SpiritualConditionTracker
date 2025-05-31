@@ -36,8 +36,8 @@ export default function ActivityList({
   // Filter activities
   const today = new Date();
   
-  console.log('[ ActivityList.js ] Total activities received:', activities?.length || 0);
-  console.log('[ ActivityList.js ] Filter params - limit:', limit, 'filter:', filter, 'maxDaysAgo:', maxDaysAgo);
+  console.log('[ ActivityList.js: 39 ] Total activities received:', activities?.length || 0);
+  console.log('[ ActivityList.js: 40 ] Filter params - limit:', limit, 'filter:', filter, 'maxDaysAgo:', maxDaysAgo);
   
   // Create a new copy of the activities array to avoid mutation issues
   const filteredActivities = activities
@@ -46,7 +46,7 @@ export default function ActivityList({
         .filter((activity, index, self) => {
           const isDuplicate = index !== self.findIndex(a => (a.id === activity.id));
           if (isDuplicate) {
-            console.log('[ ActivityList.js ] Removing duplicate activity with ID:', activity.id);
+            console.log('[ ActivityList.js: 49 ] Removing duplicate activity with ID:', activity.id);
           }
           return !isDuplicate;
         })
@@ -54,7 +54,7 @@ export default function ActivityList({
         .filter(activity => {
           const typeMatch = filter === 'all' || activity.type === filter;
           if (!typeMatch) {
-            console.log('[ ActivityList.js ] Filtering out activity type:', activity.type, 'filter:', filter);
+            console.log('[ ActivityList.js: 57 ] Filtering out activity type:', activity.type, 'filter:', filter);
           }
           return typeMatch;
         })
@@ -62,7 +62,7 @@ export default function ActivityList({
         .filter(activity => {
           // Only filter action items that aren't completed
           if (activity.type === 'action-item' && activity.location !== 'completed') {
-            console.log('[ ActivityList.js ] Filtering out uncompleted action item:', activity.id);
+            console.log('[ ActivityList.js: 65 ] Filtering out uncompleted action item:', activity.id);
             return false;
           }
           // All other activities (prayer, meetings, etc.) should always be shown
@@ -78,7 +78,7 @@ export default function ActivityList({
           const withinTimeframe = diffDays <= maxDaysAgo;
           
           if (!withinTimeframe) {
-            console.log('[ ActivityList.js ] Filtering out activity outside timeframe - days ago:', diffDays, 'max:', maxDaysAgo);
+            console.log('[ ActivityList.js: 81 ] Filtering out activity outside timeframe - days ago:', diffDays, 'max:', maxDaysAgo);
           }
           
           return withinTimeframe;
@@ -95,7 +95,7 @@ export default function ActivityList({
         .slice(0, limit || activities.length)
     : [];
     
-  console.log('[ ActivityList.js ] Final filtered activities count:', filteredActivities.length);
+  console.log('[ ActivityList.js: 98 ] Final filtered activities count:', filteredActivities.length);
     
   if (filteredActivities.length === 0) {
     return (
@@ -117,7 +117,7 @@ export default function ActivityList({
     
     activities.forEach(activity => {
       // Debug log to see what dates we're working with
-      console.log('[ ActivityList.js ] Grouping activity with date:', activity.date, 'Type:', typeof activity.date);
+      console.log('[ ActivityList.js: 120 ] Grouping activity with date:', activity.date, 'Type:', typeof activity.date);
       
       let dateKey;
       
@@ -125,15 +125,15 @@ export default function ActivityList({
       if (activity.date && activity.date.length === 10 && activity.date.includes('-')) {
         // Already in YYYY-MM-DD format, use it directly
         dateKey = activity.date;
-        console.log('[ ActivityList.js ] Using direct YYYY-MM-DD dateKey:', dateKey);
+        console.log('[ ActivityList.js: 128 ] Using direct YYYY-MM-DD dateKey:', dateKey);
       } else {
         // Handle ISO format or any other format
         // Get the date portion only in YYYY-MM-DD format
         const dateObj = new Date(activity.date);
-        console.log('[ ActivityList.js ] Date object created:', dateObj);
+        console.log('[ ActivityList.js: 133 ] Date object created:', dateObj);
         
         if (isNaN(dateObj.getTime())) {
-          console.error('[ ActivityList.js ] Invalid date object for:', activity.date);
+          console.error('[ ActivityList.js: 136 ] Invalid date object for:', activity.date);
           // Skip this activity if date is invalid
           return;
         }
@@ -144,7 +144,7 @@ export default function ActivityList({
         const month = String(dateObj.getMonth() + 1).padStart(2, '0');
         const day = String(dateObj.getDate()).padStart(2, '0');
         dateKey = `${year}-${month}-${day}`;
-        console.log('[ ActivityList.js ] Generated dateKey from object:', dateKey);
+        console.log('[ ActivityList.js: 147 ] Generated dateKey from object:', dateKey);
       }
       
       if (!groups[dateKey]) {

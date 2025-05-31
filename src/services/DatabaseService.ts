@@ -47,33 +47,33 @@ class DatabaseService {
 
   private async _performInitialization(): Promise<void> {
     try {
-      console.log('[ DatabaseService ] Starting database initialization...');
+      console.log('[ DatabaseService: 50 ] Starting database initialization...');
       this.setStatus('initializing');
 
       // Initialize SQLite database
       const sqliteDb = await initSQLiteDatabase();
-      console.log('[ DatabaseService ] SQLite database initialized successfully');
+      console.log('[ DatabaseService: 55 ] SQLite database initialized successfully');
 
       // Verify database is accessible
       if (!window.db || !window.db.getAll) {
-        throw new Error('Database interface not properly initialized');
+        throw new Error('Database interface not properly initialized: 59');
       }
 
       // Clean up any broken data
-      console.log('[ DatabaseService ] Running database cleanup...');
+      console.log('[ DatabaseService: 63 ] Running database cleanup...');
       await cleanupBrokenActivities();
 
       // Store database reference
       this.database = window.db;
       this.setStatus('ready');
 
-      console.log('[ DatabaseService ] Database initialization complete');
+      console.log('[ DatabaseService: 70 ] Database initialization complete');
 
       // Process any queued operations
       await this.processOperationQueue();
 
     } catch (error) {
-      console.error('[ DatabaseService ] Database initialization failed:', error);
+      console.error('[ DatabaseService: 76 ] Database initialization failed:', error);
       this.setStatus('error');
       throw error; // Don't use localStorage fallback in native app
     }
@@ -83,14 +83,14 @@ class DatabaseService {
    * Set up localStorage fallback when SQLite fails
    */
   private async setupFallbackDatabase(): Promise<void> {
-    console.log('[ DatabaseService ] Setting up localStorage fallback...');
+    console.log('[ DatabaseService: 86 ] Setting up localStorage fallback...');
     
     this.database = {
       getAll: async (collection: string) => {
         try {
           return JSON.parse(localStorage.getItem(collection) || '[]');
         } catch (e) {
-          console.error(`Error getting ${collection} from localStorage:`, e);
+          console.error(`[ DatabaseService: 93 ] Error getting ${collection} from localStorage:`, e);
           return [];
         }
       },
@@ -106,7 +106,7 @@ class DatabaseService {
           localStorage.setItem(collection, JSON.stringify(items));
           return item;
         } catch (e) {
-          console.error(`Error adding to ${collection} in localStorage:`, e);
+          console.error(`[DatabaseService: 109 ] Error adding to ${collection} in localStorage:`, e);
           throw e;
         }
       },
@@ -121,7 +121,7 @@ class DatabaseService {
           }
           return null;
         } catch (e) {
-          console.error(`Error updating ${collection} in localStorage:`, e);
+          console.error(`[DatabaseService: 124 ] Error updating ${collection} in localStorage:`, e);
           throw e;
         }
       },
@@ -132,7 +132,7 @@ class DatabaseService {
           localStorage.setItem(collection, JSON.stringify(filteredItems));
           return true;
         } catch (e) {
-          console.error(`Error removing from ${collection} in localStorage:`, e);
+          console.error(`[ DatabaseService: 135 ] Error removing from ${collection} in localStorage:`, e);
           throw e;
         }
       }
@@ -202,7 +202,7 @@ class DatabaseService {
    * Process all queued operations
    */
   private async processOperationQueue(): Promise<void> {
-    console.log(`[ DatabaseService ] Processing ${this.operationQueue.length} queued operations`);
+    console.log(`[ DatabaseService: 205 ] Processing ${this.operationQueue.length} queued operations`);
     
     while (this.operationQueue.length > 0) {
       const operation = this.operationQueue.shift();
@@ -211,7 +211,7 @@ class DatabaseService {
           const result = await operation.operation();
           operation.resolve(result);
         } catch (error) {
-          console.error('[ DatabaseService ] Queued operation failed:', error);
+          console.error('[ DatabaseService: 214 ] Queued operation failed:', error);
           operation.reject(error);
         }
       }
@@ -252,7 +252,7 @@ class DatabaseService {
 
   async getAllActivities(): Promise<Activity[]> {
     return this.executeOperation(async () => {
-      const activities = await window.db.getAll('activities');
+      const activities = await this.database.getAll('activities');
       return activities || [];
     });
   }
@@ -260,31 +260,31 @@ class DatabaseService {
   async addActivity(activity: Omit<Activity, 'id' | 'createdAt' | 'updatedAt'>): Promise<Activity> {
     return this.executeOperation(async () => {
       console.log('[ DatabaseService.ts:261 addActivity ] Received activity:', JSON.stringify(activity, null, 2));
-      console.log('[ DatabaseService.ts:262 addActivity ] Calling window.db.add...');
+      console.log('[ DatabaseService.ts:262 addActivity ] Calling this.database.add...');
       
-      const result = await window.db.add('activities', activity);
+      const result = await this.database.add('activities', activity);
       
-      console.log('[ DatabaseService.ts:266 addActivity ] window.db.add returned:', JSON.stringify(result, null, 2));
+      console.log('[ DatabaseService.ts:266 addActivity ] this.database.add returned:', JSON.stringify(result, null, 2));
       return result;
     });
   }
 
   async getAllMeetings(): Promise<Meeting[]> {
     return this.executeOperation(async () => {
-      const meetings = await window.db.getAll('meetings');
+      const meetings = await this.database.getAll('meetings');
       return meetings || [];
     });
   }
 
   async addMeeting(meeting: Omit<Meeting, 'id' | 'createdAt' | 'updatedAt'>): Promise<Meeting> {
     return this.executeOperation(async () => {
-      return await window.db.add('meetings', meeting);
+      return await this.database.add('meetings', meeting);
     });
   }
 
   async deleteMeeting(meetingId: string | number): Promise<boolean> {
     return this.executeOperation(async () => {
-      return await window.db.delete('meetings', meetingId);
+      return await this.database.remove('meetings', meetingId);
     });
   }
 }

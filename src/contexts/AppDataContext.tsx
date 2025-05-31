@@ -254,7 +254,7 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
   const updateUser = async (updates: Partial<User>): Promise<User | null> => {
     try {
       if (!state.currentUserId) {
-        throw new Error('No current user ID');
+        throw new Error('[AppDataContext: 257] No current user ID');
       }
       
       const updatedUser = await databaseService.updateUser(state.currentUserId, updates);

@@ -128,10 +128,10 @@ function AppContent() {
   async function handleUpdateProfile(updates: any, options: any = {}): Promise<any> {
     try {
       const updatedUser = await updateUser(updates);
-      console.log('[ App ] Profile updated successfully:', updatedUser?.id);
+      console.log('[ App: 131 ] Profile updated successfully:', updatedUser?.id);
       return updatedUser;
     } catch (error) {
-      console.error('[ App ] Error updating profile:', error);
+      console.error('[ App: 134 ] Error updating profile:', error);
       return null;
     }
   }
