@@ -34,6 +34,15 @@ class DatabaseService {
   }
 
   /**
+   * Reset the initialization state (needed after database reset)
+   */
+  resetInitialization(): void {
+    this.initializationPromise = null;
+    this.database = null;
+    this.setStatus('initializing');
+  }
+
+  /**
    * Initialize the database service
    */
   async initialize(): Promise<void> {

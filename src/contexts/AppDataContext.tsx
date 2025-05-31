@@ -403,12 +403,30 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
   // Reset all data
   const resetAllData = async () => {
     try {
+      console.log('[ AppDataContext.tsx:405 ] Starting complete app reset...');
+      
+      // Reset React state
       dispatch({ type: 'RESET_ALL_DATA' });
-      // Could implement database clearing here if needed
-      console.log('[ AppDataContext.tsx:408 ] All data reset');
+      
+      // Set loading state to show we're reinitializing
+      dispatch({ type: 'SET_LOADING', payload: true });
+      
+      // Reset and reinitialize the database service
+      console.log('[ AppDataContext.tsx:415 ] Resetting database service state...');
+      databaseService.resetInitialization();
+      
+      console.log('[ AppDataContext.tsx:418 ] Reinitializing database service...');
+      await databaseService.initialize();
+      
+      // Reload all initial data
+      console.log('[ AppDataContext.tsx:422 ] Reloading all data after reset...');
+      await loadInitialData();
+      
+      console.log('[ AppDataContext.tsx:420 ] Complete app reset finished');
     } catch (error) {
-      console.error('[ AppDataContext.tsx:410 ] Failed to reset data:', error);
+      console.error('[ AppDataContext.tsx:422 ] Failed to reset data:', error);
       dispatch({ type: 'SET_ERROR', payload: 'Failed to reset data' });
+      dispatch({ type: 'SET_LOADING', payload: false });
     }
   };
 
