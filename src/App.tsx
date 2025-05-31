@@ -4,6 +4,7 @@
 
 import React from 'react';
 import { AppDataProvider, useAppData } from './contexts/AppDataContext';
+import MuiThemeProvider from './contexts/MuiThemeProvider';
 
 // Import only Dashboard for testing
 import Dashboard from './components/Dashboard';
@@ -100,104 +101,58 @@ function AppContent() {
 
   const filteredActivities = filterActivitiesByTimeframe(state.activities, state.currentTimeframe);
 
-  // Simple Dashboard replacement without Material-UI
-  return (
-    <div style={{ 
-      minHeight: '100vh', 
-      backgroundColor: '#1a1a1a',
-      color: '#ffffff',
-      padding: '20px'
-    }}>
-      <h1>Recovery Dashboard</h1>
-      
-      <div style={{ marginBottom: '20px' }}>
-        <h3>Database Status: {state.databaseStatus}</h3>
-      </div>
-
-      {state.user && (
-        <div style={{ marginBottom: '20px', padding: '15px', backgroundColor: '#2d2d2d', borderRadius: '8px' }}>
-          <h3>Welcome, {state.user.name || 'User'}</h3>
-          <p>Sobriety Date: {state.user.sobrietyDate || 'Not set'}</p>
-          <p>Phone: {state.user.phoneNumber || 'Not set'}</p>
-          <p>Email: {state.user.email || 'Not set'}</p>
+  // Try to render Dashboard component with MuiThemeProvider context
+  try {
+    return (
+      <Dashboard
+        user={state.user}
+        activities={filteredActivities}
+        meetings={state.meetings}
+        currentTimeframe={state.currentTimeframe}
+        onSave={handleSaveActivity}
+        onSaveMeeting={async (meetingData) => {
+          console.log('Meeting save not implemented yet:', meetingData);
+          return null;
+        }}
+        onTimeframeChange={handleTimeframeChange}
+        setCurrentView={handleNavigation}
+      />
+    );
+  } catch (error) {
+    return (
+      <div style={{ 
+        minHeight: '100vh',
+        backgroundColor: '#1a1a1a',
+        color: '#ff6b6b',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '20px'
+      }}>
+        <h2>Dashboard Component Error</h2>
+        <p>Error rendering Dashboard: {error instanceof Error ? error.message : 'Unknown error'}</p>
+        <div style={{ marginTop: '20px', padding: '15px', backgroundColor: '#2d2d2d', borderRadius: '8px' }}>
+          <h3>Debug Info:</h3>
+          <p>Database Status: {state.databaseStatus}</p>
+          <p>User: {state.user ? 'Loaded' : 'Not loaded'}</p>
+          <p>Activities: {state.activities.length}</p>
+          <p>Timeframe: {state.currentTimeframe}</p>
         </div>
-      )}
-
-      <div style={{ marginBottom: '20px', padding: '15px', backgroundColor: '#2d2d2d', borderRadius: '8px' }}>
-        <h3>Activities ({filteredActivities.length})</h3>
-        <p>Timeframe: {state.currentTimeframe} days</p>
-        <p>Spiritual Fitness: {state.spiritualFitness}</p>
-        
-        {filteredActivities.length > 0 ? (
-          filteredActivities.map((activity, index) => (
-            <div key={activity.id || index} style={{ 
-              marginBottom: '10px', 
-              padding: '10px', 
-              backgroundColor: '#3d3d3d', 
-              borderRadius: '4px' 
-            }}>
-              <p><strong>Type:</strong> {activity.type}</p>
-              <p><strong>Date:</strong> {activity.date}</p>
-              {activity.notes && <p><strong>Notes:</strong> {activity.notes}</p>}
-            </div>
-          ))
-        ) : (
-          <p>No activities in the last {state.currentTimeframe} days</p>
-        )}
+        <pre style={{ fontSize: '12px', marginTop: '20px', maxWidth: '100%', overflow: 'auto' }}>
+          {error instanceof Error ? error.stack : 'No stack trace available'}
+        </pre>
       </div>
-
-      <div style={{ padding: '15px', backgroundColor: '#2d2d2d', borderRadius: '8px' }}>
-        <h3>Quick Actions</h3>
-        <button 
-          onClick={() => handleNavigation('profile')}
-          style={{
-            marginRight: '10px',
-            padding: '10px 20px',
-            backgroundColor: '#3b82f6',
-            color: 'white',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: 'pointer'
-          }}
-        >
-          Profile
-        </button>
-        <button 
-          onClick={() => handleNavigation('meetings')}
-          style={{
-            marginRight: '10px',
-            padding: '10px 20px',
-            backgroundColor: '#3b82f6',
-            color: 'white',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: 'pointer'
-          }}
-        >
-          Meetings
-        </button>
-        <button 
-          onClick={() => handleNavigation('stepwork')}
-          style={{
-            padding: '10px 20px',
-            backgroundColor: '#3b82f6',
-            color: 'white',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: 'pointer'
-          }}
-        >
-          Step Work
-        </button>
-      </div>
-    </div>
-  );
+    );
+  }
 }
 
 function App() {
   return (
     <AppDataProvider>
-      <AppContent />
+      <MuiThemeProvider>
+        <AppContent />
+      </MuiThemeProvider>
     </AppDataProvider>
   );
 }
