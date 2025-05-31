@@ -6,7 +6,7 @@ import { useAppTheme } from '../contexts/MuiThemeProvider';
 import { formatDay, formatTimeByPreference } from '../utils/dateUtils';
 import { Paper, Box, Typography, IconButton, Chip } from '@mui/material';
 
-export default function Meetings({ setCurrentView, meetings = [], onSave, user }) {
+export default function Meetings({ setCurrentView, meetings = [], onSave, onDelete, user }) {
   // Get dark mode from theme context
   const muiTheme = useTheme();
   const { theme } = useAppTheme();
@@ -50,16 +50,23 @@ export default function Meetings({ setCurrentView, meetings = [], onSave, user }
     setShowForm(true);
   };
   
-  // Delete a meeting (now relies on database operations being handled at App.js level)
-  const handleDelete = (meetingId) => {
+  // Delete a meeting (using proper data flow through App component)
+  const handleDelete = async (meetingId) => {
     if (window.confirm('Are you sure you want to delete this meeting?')) {
       try {
-        if (window.db) {
-          window.db.remove('meetings', meetingId);
-          // State will be updated when parent re-renders with updated meetings list
-        } else {
-          throw new Error('Database not initialized');
+        if (!onDelete) {
+          throw new Error('No onDelete callback provided');
         }
+        
+        // Call the onDelete from the parent component (App.js)
+        // This will handle the database operation through AppDataContext
+        const success = await onDelete(meetingId);
+        
+        if (!success) {
+          throw new Error('Delete operation failed');
+        }
+        
+        console.log('[ Meetings.js ] Meeting deleted successfully:', meetingId);
       } catch (error) {
         console.error('[ Meetings.js ] Error deleting meeting:', error);
         setError('Failed to delete meeting. Please try again.');
