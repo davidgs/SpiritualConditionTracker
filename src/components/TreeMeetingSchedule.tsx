@@ -3,11 +3,6 @@ import { Box, Typography, Button, Chip } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import CustomNestedMenu from './CustomNestedMenu';
 
-// Import meeting type icons
-import hybridIcon from '../assets/icons/hybrid-meeting.png';
-import onlineIcon from '../assets/icons/online-meeting.png';
-import inPersonIcon from '../assets/icons/in-person-meeting.png';
-
 interface ScheduleItem {
   day: string;
   time: string;
@@ -72,9 +67,9 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
   ];
 
   const meetingLocationTypes = [
-    { value: 'in_person', label: 'In-Person', icon: inPersonIcon },
-    { value: 'online', label: 'Online', icon: onlineIcon },
-    { value: 'hybrid', label: 'Hybrid', icon: hybridIcon }
+    { value: 'in_person', label: 'In-Person', icon: '🏢' },
+    { value: 'online', label: 'Online', icon: '💻' },
+    { value: 'hybrid', label: 'Hybrid', icon: '🌐' }
   ];
 
   const meetingAccess = [
@@ -127,16 +122,9 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
             <Typography variant="body2" sx={{ minWidth: '70px', textAlign: 'left' }}>
               {timeOptions.find(t => t.value === item.time)?.label || item.time}
             </Typography>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-              <img 
-                src={meetingLocationTypes.find(l => l.value === item.locationType)?.icon || inPersonIcon}
-                alt={meetingLocationTypes.find(l => l.value === item.locationType)?.label || 'Meeting type'}
-                style={{ width: '18px', height: '18px', borderRadius: '50%' }}
-              />
-              <Typography variant="body2" sx={{ fontSize: '0.75rem', minWidth: '60px' }}>
-                {meetingLocationTypes.find(l => l.value === item.locationType)?.label || item.locationType}
-              </Typography>
-            </Box>
+            <Typography sx={{ fontSize: '1.2rem' }}>
+              {meetingLocationTypes.find(l => l.value === item.locationType)?.icon || '🏢'}
+            </Typography>
             <Chip 
               label={item.format ? item.format.charAt(0).toUpperCase() + item.format.slice(1).replace('_', ' ') : 'Unknown'}
               size="small"
@@ -193,16 +181,7 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
 
               return {
                 id: `${day.key}-${time.value}-${format.value}-${locationType.value}`,
-                label: (
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <img 
-                      src={locationType.icon} 
-                      alt={locationType.label}
-                      style={{ width: '20px', height: '20px', borderRadius: '50%' }}
-                    />
-                    <Typography variant="body2">{locationType.label}</Typography>
-                  </Box>
-                ),
+                label: locationType.label,
                 color: 'secondary.main',
                 fontSize: '0.8rem',
                 indentLevel: 4,
