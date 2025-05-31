@@ -747,23 +747,33 @@ function setupGlobalDB(sqlite) {
         console.log('[ sqliteLoader.js:744 ]  Date field specifically:', itemWithTimestamps.date);
         console.log('[ sqliteLoader.js:745 ]  Date field type:', typeof itemWithTimestamps.date);
         
-        // Build the SQL statement
+        // Build the SQL statement with embedded values (Capacitor SQLite format)
         const keys = Object.keys(itemWithTimestamps);
-        const placeholders = keys.map(() => '?').join(', ');
         const values = keys.map(key => itemWithTimestamps[key]);
         
         console.log('[ sqliteLoader.js:752 ]  SQL keys:', keys);
         console.log('[ sqliteLoader.js:753 ]  SQL values:', values);
         
-        // Execute the SQL insert (autocommit mode - automatically commits)
-        const sqlStatement = `INSERT INTO ${collection} (${keys.join(', ')}) VALUES (${placeholders})`;
-        console.log('[ sqliteLoader.js:757 ]  Executing SQL:', sqlStatement);
-        console.log('[ sqliteLoader.js:758 ]  With values:', values);
+        // Format values for SQL - escape strings and handle nulls
+        const formattedValues = values.map(value => {
+          if (value === null || value === undefined) {
+            return 'NULL';
+          } else if (typeof value === 'string') {
+            return `'${value.replace(/'/g, "''")}'`; // Escape single quotes
+          } else if (typeof value === 'number') {
+            return value.toString();
+          } else {
+            return `'${String(value).replace(/'/g, "''")}'`;
+          }
+        }).join(', ');
+        
+        // Execute the SQL insert with embedded values
+        const sqlStatement = `INSERT INTO ${collection} (${keys.join(', ')}) VALUES (${formattedValues});`;
+        console.log('[ sqliteLoader.js:767 ]  Executing SQL with embedded values:', sqlStatement);
         
         await sqlite.execute({
           database: DB_NAME,
-          statements: sqlStatement,
-          values: [values] // Wrap values array for Capacitor SQLite
+          statements: sqlStatement
         });
         
         console.log('[ sqliteLoader.js:766 add ] Insert completed in autocommit mode');
