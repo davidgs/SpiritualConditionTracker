@@ -70,7 +70,7 @@ async function initSQLiteDatabase() {
       if (error.message && error.message.includes('already exists')) {
         console.log('[ sqliteLoader.js:71 ]  Database connection already exists, continuing with existing connection');
       } else {
-        console.error('[ sqliteLoader.js ] Error creating database connection:', error);
+        console.error('[ sqliteLoader.js:73 ] Error creating database connection:', error);
         throw new Error(`Database connection failed: ${error.message || JSON.stringify(error)}`);
       }
     }
@@ -80,7 +80,7 @@ async function initSQLiteDatabase() {
       await sqlitePlugin.open({ database: DB_NAME });
       console.log('[ sqliteLoader.js:81 ]  Database opened successfully');
     } catch (error) {
-      console.error('[ sqliteLoader.js ] Error opening database:', error);
+      console.error('[ sqliteLoader.js: 83 ] Error opening database:', error);
       throw new Error(`Database open failed: ${error.message || JSON.stringify(error)}`);
     }
 
@@ -89,7 +89,7 @@ async function initSQLiteDatabase() {
       await setupTables(sqlitePlugin);
       console.log('[ sqliteLoader.js:90 ]  Database tables created/verified successfully');
     } catch (error) {
-      console.error('[ sqliteLoader.js ] Error setting up database tables:', error);
+      console.error('[ sqliteLoader.js: 92 ] Error setting up database tables:', error);
       throw new Error(`Table setup failed: ${error.message || JSON.stringify(error)}`);
     }
 
@@ -101,20 +101,20 @@ async function initSQLiteDatabase() {
     try {
       await validateAndLogDatabase(sqlitePlugin);
     } catch (error) {
-      console.error('[ sqliteLoader.js ] Error validating database:', error);
+      console.error('[ sqliteLoader.js: 104 ] Error validating database:', error);
     }
 
     // Step 6: Ensure default user exists
     try {
       await ensureDefaultUser(sqlitePlugin);
     } catch (error) {
-      console.error('[ sqliteLoader.js ] Error creating default user:', error);
+      console.error('[ sqliteLoader.js: 111 ] Error creating default user:', error);
     }
 
     return sqlitePlugin;
   } catch (error) {
-    console.error('[ sqliteLoader.js ] Error initializing Capacitor SQLite:', error);
-    console.error('[ sqliteLoader.js ] Detailed error info:', JSON.stringify({
+    console.error('[ sqliteLoader.js: 116 ] Error initializing Capacitor SQLite:', error);
+    console.error('[ sqliteLoader.js: 117 ] Detailed error info:', JSON.stringify({
       message: error.message,
       name: error.name,
       stack: error.stack
@@ -153,9 +153,9 @@ async function validateAndLogDatabase(sqlite) {
           }
         }
         
-        console.log(`[ sqliteLoader.js ] Table '${table}': ${count} records`);
+        console.log(`[ sqliteLoader.js: 156 ] Table '${table}': ${count} records`);
       } catch (error) {
-        console.log(`[ sqliteLoader.js ] Table '${table}': does not exist or error accessing:`, error.message);
+        console.log(`[ sqliteLoader.js: 158 ] Table '${table}': does not exist or error accessing:`, error.message);
       }
     }
     
@@ -164,20 +164,23 @@ async function validateAndLogDatabase(sqlite) {
       // Show recent activities
       const activitiesResult = await sqlite.query({
         database: DB_NAME,
-        statement: `SELECT type, date, notes FROM activities ORDER BY date DESC LIMIT 3`,
+        statement: `SELECT type, date, notes FROM activities ORDER BY date DESC`,
         values: []
       });
       
       if (activitiesResult?.values?.length > 0) {
         console.log('[ sqliteLoader.js:172 ]  Recent activities found:', activitiesResult.values.length);
+        foreach (const activity of activitiesResult.values){
+          console.log('[ sqliteLoader.js:174 ]  Activity:', activity);
+        }
       }
       
     } catch (error) {
-      console.log('[ sqliteLoader.js:176 ]  Could not query sample data:', error.message);
+      console.log('[ sqliteLoader.js:179 ]  Could not query sample data:', error.message);
     }
     
   } catch (error) {
-    console.error('[ sqliteLoader.js ] Error during database validation:', error);
+    console.error('[ sqliteLoader.js: 183 ] Error during database validation:', error);
   }
 }
 
@@ -186,7 +189,7 @@ async function validateAndLogDatabase(sqlite) {
  * @param {Object} sqlite - SQLite plugin instance
  */
 async function ensureDefaultUser(sqlite) {
-  console.log('[ sqliteLoader.js:189 ]  Checking if default user exists...');
+  console.log('[ sqliteLoader.js:192 ]  Checking if default user exists...');
   
   try {
     // Check if any users exist
@@ -206,10 +209,10 @@ async function ensureDefaultUser(sqlite) {
       }
     }
     
-    console.log('[ sqliteLoader.js:209 ]  Existing user count:', userCount);
+    console.log('[ sqliteLoader.js:212 ]  Existing user count:', userCount);
     
     if (userCount === 0) {
-      console.log('[ sqliteLoader.js:212 ]  No users found, creating default user...');
+      console.log('[ sqliteLoader.js:215 ]  No users found, creating default user...');
       
       const today = new Date().toISOString().split('T')[0]; // Today's date in YYYY-MM-DD format
       const now = new Date().toISOString();
@@ -243,12 +246,12 @@ async function ensureDefaultUser(sqlite) {
         values: values
       });
       
-      console.log('[ sqliteLoader.js:246 ]  Default user created with sobriety date:', today);
+      console.log('[ sqliteLoader.js:249 ]  Default user created with sobriety date:', today);
     } else {
-      console.log('[ sqliteLoader.js:248 ]  Users already exist, no need to create default user');
+      console.log('[ sqliteLoader.js:251 ]  Users already exist, no need to create default user');
     }
   } catch (error) {
-    console.error('[ sqliteLoader.js ] Error ensuring default user:', error);
+    console.error('[ sqliteLoader.js: 254 ] Error ensuring default user:', error);
     throw error;
   }
 }
