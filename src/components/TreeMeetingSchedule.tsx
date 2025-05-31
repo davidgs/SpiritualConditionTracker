@@ -162,20 +162,20 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
                 <Typography variant="body2" sx={{ fontWeight: 500, minWidth: '70px', textAlign: 'left' }}>
                   {days.find(d => d.key === item.day)?.label || item.day}
                 </Typography>
-                <Typography variant="body2" sx={{ minWidth: '70px', textAlign: 'left' }}>
+                <Typography variant="body2" sx={{ minWidth: '70px', textAlign: 'left', paddingLeft: '5px' }}>
                   {timeOptions.find(t => t.value === item.time)?.label || item.time}
                 </Typography>
                 <Chip 
                   label={item.format ? item.format.charAt(0).toUpperCase() + item.format.slice(1).replace('_', ' ') : 'Unknown'}
                   size="small"
                   color="primary"
-                  sx={{ fontSize: '0.7rem', height: '20px', minWidth: 'fit-content' }}
+                  sx={{ fontSize: '0.8rem', height: '20px', minWidth: 'fit-content' }}
                 />
                 <Chip 
                   label={item.access ? item.access.charAt(0).toUpperCase() + item.access.slice(1) : 'Unknown'}
                   size="small"
                   color="secondary"
-                  sx={{ fontSize: '0.7rem', height: '20px', minWidth: 'fit-content' }}
+                  sx={{ fontSize: '0.8rem', height: '20px', minWidth: 'fit-content' }}
                 />
                 <Button
                   size="small"
