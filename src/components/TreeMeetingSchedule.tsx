@@ -181,21 +181,50 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
       const hourChildren = hourOptions.map(hour => {
         const minuteChildren = minuteOptions
           .filter(minute => !schedule.some(item => item.day === day.key && item.time === `${hour.value}:${minute.value}`))
-          .map(minute => ({
-            id: `${day.key}-${hour.value}-${minute.value}`,
-            label: `${minute.label} - Click to select format`,
-            color: 'info.main',
-            fontSize: '0.8rem',
-            indentLevel: 3,
-            onClick: () => {
-              // Store the selected day, hour, minute and proceed to format selection
-              const selectedTime = { day: day.key, hour: hour.value, minute: minute.value };
-              console.log('Selected time:', selectedTime);
-              // For now, use default values to prevent hanging
-              addMeetingWithDetails(day.key, hour.value, minute.value, 'discussion', 'in_person', 'open');
-            },
-            isExpandable: false
-          }));
+          .map(minute => {
+            // Only show the 3 most common meeting formats to prevent performance issues
+            const commonFormats = [
+              { value: 'discussion', label: 'Discussion' },
+              { value: 'speaker', label: 'Speaker' },
+              { value: 'step_study', label: 'Step Study' }
+            ];
+            
+            const formatChildren = commonFormats.map(format => ({
+              id: `${day.key}-${hour.value}-${minute.value}-${format.value}`,
+              label: `${format.label} → Select location`,
+              color: 'warning.main',
+              fontSize: '0.8rem',
+              indentLevel: 4,
+              children: meetingLocationTypes.map(locationType => ({
+                id: `${day.key}-${hour.value}-${minute.value}-${format.value}-${locationType.value}`,
+                label: `${locationType.label} → Select access`,
+                color: 'secondary.main',
+                fontSize: '0.8rem',
+                indentLevel: 5,
+                children: meetingAccess.map(access => ({
+                  id: `${day.key}-${hour.value}-${minute.value}-${format.value}-${locationType.value}-${access.value}`,
+                  label: `${access.label} Meeting ← Click to add`,
+                  color: access.value === 'open' ? 'success.main' : 'error.main',
+                  fontSize: '0.8rem',
+                  indentLevel: 6,
+                  onClick: () => addMeetingWithDetails(day.key, hour.value, minute.value, format.value, locationType.value, access.value),
+                  isExpandable: false
+                })),
+                isExpandable: true
+              })),
+              isExpandable: true
+            }));
+
+            return {
+              id: `${day.key}-${hour.value}-${minute.value}`,
+              label: `${minute.label} → Select format`,
+              color: 'info.main',
+              fontSize: '0.8rem',
+              indentLevel: 3,
+              children: formatChildren,
+              isExpandable: true
+            };
+          });
 
         return {
           id: `${day.key}-${hour.value}`,
