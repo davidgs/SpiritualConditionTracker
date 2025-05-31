@@ -11,7 +11,7 @@ const DB_NAME = 'spiritualTracker.db';
  * @returns {Promise<object>} Database connection object
  */
 async function initSQLiteDatabase() {
-  console.log('[ sqliteLoader.js ] Initializing SQLite database via Capacitor...');
+  console.log('[ sqliteLoader.js:14 ] Initializing SQLite database via Capacitor...');
 
   try {
     // First, check if Capacitor is available
@@ -21,13 +21,13 @@ async function initSQLiteDatabase() {
 
     // Detect platform information for specialized handling
     const platform = window.Capacitor.getPlatform?.() || 'unknown';
-    console.log('[ sqliteLoader.js ] Capacitor platform detected:', platform);
-    console.log('[ sqliteLoader.js ] Capacitor plugins available:', Object.keys(window.Capacitor.Plugins || {}));
+    console.log('[sqliteLoader.js: Capacitor platform detected:', platform);
+    console.log('[sqliteLoader.js: Capacitor plugins available:', Object.keys(window.Capacitor.Plugins || {}));
     
     // Special handling for iOS which has different plugin structure
     const isIOS = platform === 'ios';
     if (isIOS) {
-      console.log('[ sqliteLoader.js ] iOS environment detected - using iOS-specific database setup');
+      console.log('[sqliteLoader.js: iOS environment detected - using iOS-specific database setup');
     }
 
     // Get the SQLite plugin
@@ -36,7 +36,7 @@ async function initSQLiteDatabase() {
       throw new Error('CapacitorSQLite plugin not available - ensure the plugin is properly installed');
     }
 
-    console.log('[ sqliteLoader.js ] Found CapacitorSQLite plugin:', !!sqlitePlugin);
+    console.log('[sqliteLoader.js: Found CapacitorSQLite plugin:', !!sqlitePlugin);
 
     // Step 1: Create connection (check if already exists first)
     try {
@@ -51,24 +51,24 @@ async function initSQLiteDatabase() {
             encrypted: false,
             mode: 'no-encryption'
           });
-          console.log('[ sqliteLoader.js ] Database connection created successfully');
+          console.log('[sqliteLoader.js: Database connection created successfully');
         } else {
-          console.log('[ sqliteLoader.js ] Database connection already exists, reusing existing connection');
+          console.log('[sqliteLoader.js: Database connection already exists, reusing existing connection');
         }
       } catch (listError) {
         // If getConnectionList fails, try to create connection anyway
-        console.log('[ sqliteLoader.js ] Could not check existing connections, attempting to create new connection');
+        console.log('[sqliteLoader.js: Could not check existing connections, attempting to create new connection');
         await sqlitePlugin.createConnection({
           database: DB_NAME,
           encrypted: false,
           mode: 'no-encryption'
         });
-        console.log('[ sqliteLoader.js ] Database connection created successfully');
+        console.log('[sqliteLoader.js: Database connection created successfully');
       }
     } catch (error) {
       // If error message indicates connection already exists, that's fine
       if (error.message && error.message.includes('already exists')) {
-        console.log('[ sqliteLoader.js ] Database connection already exists, continuing with existing connection');
+        console.log('[sqliteLoader.js: Database connection already exists, continuing with existing connection');
       } else {
         console.error('[ sqliteLoader.js ] Error creating database connection:', error);
         throw new Error(`Database connection failed: ${error.message || JSON.stringify(error)}`);
@@ -78,7 +78,7 @@ async function initSQLiteDatabase() {
     // Step 2: Open the database
     try {
       await sqlitePlugin.open({ database: DB_NAME });
-      console.log('[ sqliteLoader.js ] Database opened successfully');
+      console.log('[sqliteLoader.js: Database opened successfully');
     } catch (error) {
       console.error('[ sqliteLoader.js ] Error opening database:', error);
       throw new Error(`Database open failed: ${error.message || JSON.stringify(error)}`);
@@ -87,7 +87,7 @@ async function initSQLiteDatabase() {
     // Step 3: Create tables
     try {
       await setupTables(sqlitePlugin);
-      console.log('[ sqliteLoader.js ] Database tables created/verified successfully');
+      console.log('[sqliteLoader.js: Database tables created/verified successfully');
     } catch (error) {
       console.error('[ sqliteLoader.js ] Error setting up database tables:', error);
       throw new Error(`Table setup failed: ${error.message || JSON.stringify(error)}`);
@@ -95,7 +95,7 @@ async function initSQLiteDatabase() {
 
     // Step 4: Create global database interface
     setupGlobalDB(sqlitePlugin);
-    console.log('[ sqliteLoader.js ] Database setup complete, global db interface ready');
+    console.log('[sqliteLoader.js: Database setup complete, global db interface ready');
 
     // Step 5: Perform database validation and logging
     try {
@@ -129,7 +129,7 @@ async function initSQLiteDatabase() {
  * @param {Object} sqlite - SQLite plugin instance
  */
 async function validateAndLogDatabase(sqlite) {
-  console.log('[ sqliteLoader.js ] Validating database schema and logging current state...');
+  console.log('[sqliteLoader.js: Validating database schema and logging current state...');
   
   try {
     // Check if main tables exist and log their row counts
@@ -169,11 +169,11 @@ async function validateAndLogDatabase(sqlite) {
       });
       
       if (activitiesResult?.values?.length > 0) {
-        console.log('[ sqliteLoader.js ] Recent activities found:', activitiesResult.values.length);
+        console.log('[sqliteLoader.js: Recent activities found:', activitiesResult.values.length);
       }
       
     } catch (error) {
-      console.log('[ sqliteLoader.js ] Could not query sample data:', error.message);
+      console.log('[sqliteLoader.js: Could not query sample data:', error.message);
     }
     
   } catch (error) {
@@ -186,7 +186,7 @@ async function validateAndLogDatabase(sqlite) {
  * @param {Object} sqlite - SQLite plugin instance
  */
 async function ensureDefaultUser(sqlite) {
-  console.log('[ sqliteLoader.js ] Checking if default user exists...');
+  console.log('[sqliteLoader.js: Checking if default user exists...');
   
   try {
     // Check if any users exist
@@ -206,10 +206,10 @@ async function ensureDefaultUser(sqlite) {
       }
     }
     
-    console.log('[ sqliteLoader.js ] Existing user count:', userCount);
+    console.log('[sqliteLoader.js: Existing user count:', userCount);
     
     if (userCount === 0) {
-      console.log('[ sqliteLoader.js ] No users found, creating default user...');
+      console.log('[sqliteLoader.js: No users found, creating default user...');
       
       const today = new Date().toISOString().split('T')[0]; // Today's date in YYYY-MM-DD format
       const now = new Date().toISOString();
@@ -243,9 +243,9 @@ async function ensureDefaultUser(sqlite) {
         values: values
       });
       
-      console.log('[ sqliteLoader.js ] Default user created with sobriety date:', today);
+      console.log('[sqliteLoader.js: Default user created with sobriety date:', today);
     } else {
-      console.log('[ sqliteLoader.js ] Users already exist, no need to create default user');
+      console.log('[sqliteLoader.js: Users already exist, no need to create default user');
     }
   } catch (error) {
     console.error('[ sqliteLoader.js ] Error ensuring default user:', error);
@@ -258,7 +258,7 @@ async function ensureDefaultUser(sqlite) {
  * @param {Object} sqlite - SQLite plugin instance
  */
 export async function setupTables(sqlite) {
-  console.log('[ sqliteLoader.js ] Verifying database schema (preserving existing data)');
+  console.log('[sqliteLoader.js: Verifying database schema (preserving existing data)');
   
   // Create users table with all required fields - better structured
   await sqlite.execute({
@@ -302,7 +302,7 @@ export async function setupTables(sqlite) {
       )
     `
   });
-  console.log('[ sqliteLoader.js ] Users table created successfully');
+  console.log('[sqliteLoader.js: Users table created successfully');
 
   // Create activities table with all required fields
   await sqlite.execute({
@@ -338,10 +338,10 @@ export async function setupTables(sqlite) {
       )
     `
   });
-  console.log('[ sqliteLoader.js ] Activities table created successfully');
+  console.log('[sqliteLoader.js: Activities table created successfully');
   
   // Migration code removed - all columns are now defined in the CREATE TABLE statement above
-  console.log('[ sqliteLoader.js ] Activities table includes all required columns');
+  console.log('[sqliteLoader.js: Activities table includes all required columns');
   
   // Create meetings table with all required fields
   await sqlite.execute({
@@ -384,7 +384,7 @@ export async function setupTables(sqlite) {
       )
     `
   });
-  console.log('[ sqliteLoader.js ] Meetings table created successfully');
+  console.log('[sqliteLoader.js: Meetings table created successfully');
 
   // Create sponsor_contacts table with INTEGER ID - without NOT NULL constraints
   // First disable foreign key constraints globally for safe table operations
@@ -410,7 +410,7 @@ export async function setupTables(sqlite) {
       statements: `DROP TABLE IF EXISTS sponsor_contacts;`
     });
     
-    console.log('[ sqliteLoader.js ] Dropped sponsor-related tables for schema update');
+    console.log('[sqliteLoader.js: Dropped sponsor-related tables for schema update');
   } catch (error) {
     console.warn('[ sqliteLoader.js ] Could not drop sponsor tables:', error);
   }
@@ -430,7 +430,7 @@ export async function setupTables(sqlite) {
       )
     `
   });
-  console.log('[ sqliteLoader.js ] Sponsor contacts table created with flexible constraints');
+  console.log('[sqliteLoader.js: Sponsor contacts table created with flexible constraints');
 
   // Create sponsor_contact_details table with INTEGER ID - without NOT NULL constraints
   await sqlite.execute({
@@ -450,7 +450,7 @@ export async function setupTables(sqlite) {
       )
     `
   });
-  console.log('[ sqliteLoader.js ] Sponsor contact details table created with flexible constraints');
+  console.log('[sqliteLoader.js: Sponsor contact details table created with flexible constraints');
   
   // Create action_items table for tracking all action items
   await sqlite.execute({
@@ -469,7 +469,7 @@ export async function setupTables(sqlite) {
       )
     `
   });
-  console.log('[ sqliteLoader.js ] Action items table created');
+  console.log('[sqliteLoader.js: Action items table created');
   
   // Create join table for linking action items to sponsor contacts
   await sqlite.execute({
@@ -487,7 +487,7 @@ export async function setupTables(sqlite) {
       )
     `
   });
-  console.log('[ sqliteLoader.js ] Sponsor contact action items join table created');
+  console.log('[sqliteLoader.js: Sponsor contact action items join table created');
   
   // Re-enable foreign key constraints after all table operations
   try {
@@ -495,7 +495,7 @@ export async function setupTables(sqlite) {
       database: DB_NAME,
       statements: `PRAGMA foreign_keys = ON;`
     });
-    console.log('[ sqliteLoader.js ] Foreign key constraints re-enabled');
+    console.log('[sqliteLoader.js: Foreign key constraints re-enabled');
   } catch (error) {
     console.warn('[ sqliteLoader.js ] Could not re-enable foreign keys:', error);
   }
@@ -520,7 +520,7 @@ function setupGlobalDB(sqlite) {
      */
     getAll: async function(collection) {
       try {
-        console.log(`[ sqliteLoader.js:356 ] Getting all items from ${collection}`);
+        console.log(`[ sqliteLoader.js:523 ] Getting all items from ${collection}`);
         
         // For localStorage fallback, just proceed with the query
         if (!window.db) {
@@ -538,11 +538,11 @@ function setupGlobalDB(sqlite) {
           });
         } catch (error) {
           // SQLite failed, use localStorage fallback
-          console.log(`[ sqliteLoader.js ] SQLite failed, using localStorage for ${collection}`);
+          console.log(`[ sqliteLoader.js:541 ] SQLite failed, using localStorage for ${collection}`);
           const localData = JSON.parse(localStorage.getItem(collection) || '[]');
           return localData;
         }
-        console.log(`[ sqliteLoader.js:363 ] Result from ${collection}:`, result);
+        console.log(`[ sqliteLoader.js:545 ] Result from ${collection}:`, result);
         
         // Handle iOS format for getAll as well
         if (result.values && result.values.length > 0) {
@@ -589,7 +589,7 @@ function setupGlobalDB(sqlite) {
               standardFormatArray.push(standardFormat);
             }
             
-            console.log(`[ sqliteLoader.js ] Converted ${standardFormatArray.length} iOS format items to standard format`);
+            console.log(`[ sqliteLoader.js:592 ] Converted ${standardFormatArray.length} iOS format items to standard format`);
             console.log(`[ sqliteLoader.js ] Sample converted item:`, standardFormatArray[0]);
             return standardFormatArray;
           }
@@ -688,7 +688,7 @@ function setupGlobalDB(sqlite) {
             standardFormat[column] = data[column];
           });
           
-          console.log('[ sqliteLoader.js ] Converted iOS format to standard:', standardFormat);
+          console.log('[sqliteLoader.js: Converted iOS format to standard:', standardFormat);
           return standardFormat;
         }
         
@@ -708,7 +708,7 @@ function setupGlobalDB(sqlite) {
      */
     add: async function(collection, item) {
       try {
-        console.log('[ sqliteLoader.js ] Original item received for save:', JSON.stringify(item, null, 2));
+        console.log('[ sqliteLoader.js:711 ] Original item received for save:', JSON.stringify(item, null, 2));
         
         // Check if database is initialized
         if (!window.db) {
@@ -719,7 +719,7 @@ function setupGlobalDB(sqlite) {
         // Don't include ID field - let SQLite generate it with AUTOINCREMENT
         const { id, ...itemWithoutId } = item;
         
-        console.log('[ sqliteLoader.js ] Item without ID:', JSON.stringify(itemWithoutId, null, 2));
+        console.log('[ sqliteLoader.js:722 ] Item without ID:', JSON.stringify(itemWithoutId, null, 2));
         
         // Always include timestamps
         const now = new Date().toISOString();
@@ -740,22 +740,22 @@ function setupGlobalDB(sqlite) {
           }
         });
         
-        console.log('[ sqliteLoader.js ] Final item for database:', JSON.stringify(itemWithTimestamps, null, 2));
-        console.log('[ sqliteLoader.js ] Date field specifically:', itemWithTimestamps.date);
-        console.log('[ sqliteLoader.js ] Date field type:', typeof itemWithTimestamps.date);
+        console.log('[sqliteLoader.js: Final item for database:', JSON.stringify(itemWithTimestamps, null, 2));
+        console.log('[sqliteLoader.js: Date field specifically:', itemWithTimestamps.date);
+        console.log('[sqliteLoader.js: Date field type:', typeof itemWithTimestamps.date);
         
         // Build the SQL statement
         const keys = Object.keys(itemWithTimestamps);
         const placeholders = keys.map(() => '?').join(', ');
         const values = keys.map(key => itemWithTimestamps[key]);
         
-        console.log('[ sqliteLoader.js ] SQL keys:', keys);
-        console.log('[ sqliteLoader.js ] SQL values:', values);
+        console.log('[sqliteLoader.js: SQL keys:', keys);
+        console.log('[sqliteLoader.js: SQL values:', values);
         
         // Execute the SQL insert (autocommit mode - automatically commits)
         const sqlStatement = `INSERT INTO ${collection} (${keys.join(', ')}) VALUES (${placeholders})`;
-        console.log('[ sqliteLoader.js ] Executing SQL:', sqlStatement);
-        console.log('[ sqliteLoader.js ] With values:', values);
+        console.log('[sqliteLoader.js: Executing SQL:', sqlStatement);
+        console.log('[sqliteLoader.js: With values:', values);
         
         await sqlite.execute({
           database: DB_NAME,
@@ -763,7 +763,7 @@ function setupGlobalDB(sqlite) {
           values: [values] // Wrap values array for Capacitor SQLite
         });
         
-        console.log('[ sqliteLoader.js:453 add ] Insert completed in autocommit mode');
+        console.log('[ sqliteLoader.js:766 add ] Insert completed in autocommit mode');
         
         // Get the last inserted ID
         const result = await sqlite.query({
@@ -772,7 +772,7 @@ function setupGlobalDB(sqlite) {
           values: []
         });
         
-        console.log('[ sqliteLoader.js ] Last insert ID result:', result);
+        console.log('[sqliteLoader.js: Last insert ID result:', result);
         
         // Return the complete item with ID - handle iOS format
         if (result.values && result.values.length > 0) {
@@ -788,7 +788,7 @@ function setupGlobalDB(sqlite) {
             insertedId = result.values[0].id;
           }
           
-          console.log('[ sqliteLoader.js ] Extracted ID:', insertedId);
+          console.log('[sqliteLoader.js: Extracted ID:', insertedId);
           
           if (insertedId) {
             return { ...itemWithTimestamps, id: insertedId };
@@ -821,7 +821,7 @@ function setupGlobalDB(sqlite) {
         try {
           await sqlite.open({ database: DB_NAME });
         } catch (openError) {
-          console.log('[ sqliteLoader.js ] Database already open or connection issue:', openError);
+          console.log('[sqliteLoader.js: Database already open or connection issue:', openError);
         }
         
         // Always update timestamp
@@ -848,8 +848,8 @@ function setupGlobalDB(sqlite) {
         // Add the ID at the end for the WHERE clause
         values.push(numericId);
         
-        console.log('[ sqliteLoader.js ] Update SQL:', `UPDATE ${collection} SET ${setClause} WHERE id = ?`);
-        console.log('[ sqliteLoader.js ] Update values:', values);
+        console.log('[sqliteLoader.js: Update SQL:', `UPDATE ${collection} SET ${setClause} WHERE id = ?`);
+        console.log('[sqliteLoader.js: Update values:', values);
         
         // Debug: Check what's actually in the database before update
         // Try both string and numeric ID formats to find the record
@@ -868,7 +868,7 @@ function setupGlobalDB(sqlite) {
           });
         }
         
-        console.log('[ sqliteLoader.js ] Record before update:', beforeUpdate);
+        console.log('[sqliteLoader.js: Record before update:', beforeUpdate);
         
         // If still not found, check what IDs are actually in the table
         if (!beforeUpdate.values || beforeUpdate.values.length === 0) {
@@ -877,11 +877,11 @@ function setupGlobalDB(sqlite) {
             statement: `SELECT id FROM ${collection} LIMIT 5`,
             values: []
           });
-          console.log('[ sqliteLoader.js ] Sample IDs in table:', allRecords);
+          console.log('[sqliteLoader.js: Sample IDs in table:', allRecords);
         }
         
         // Execute update - try alternative approach with interpolated SQL
-        console.log('[ sqliteLoader.js ] Attempting update with values:', values);
+        console.log('[sqliteLoader.js: Attempting update with values:', values);
         
         // First try the standard parameterized approach with numeric ID
         const updateSQL = `UPDATE ${collection} SET ${setClause} WHERE id = ?`;
@@ -891,23 +891,23 @@ function setupGlobalDB(sqlite) {
           values: values
         });
         
-        console.log('[ sqliteLoader.js ] Update result (numeric ID):', updateResult);
+        console.log('[sqliteLoader.js: Update result (numeric ID):', updateResult);
         
         // If that didn't work, try with string ID
         if (updateResult.changes && updateResult.changes.changes === 0) {
-          console.log('[ sqliteLoader.js ] Numeric ID update failed, trying string ID');
+          console.log('[sqliteLoader.js: Numeric ID update failed, trying string ID');
           const stringValues = [...values.slice(0, -1), String(id)];
           updateResult = await sqlite.execute({
             database: DB_NAME,
             statements: updateSQL,
             values: stringValues
           });
-          console.log('[ sqliteLoader.js ] Update result (string ID):', updateResult);
+          console.log('[sqliteLoader.js: Update result (string ID):', updateResult);
         }
         
         // If still no changes, try direct SQL approach as fallback
         if (updateResult.changes && updateResult.changes.changes === 0) {
-          console.log('[ sqliteLoader.js ] Parameterized update failed, trying direct SQL');
+          console.log('[sqliteLoader.js: Parameterized update failed, trying direct SQL');
           
           // Build direct SQL with escaped values
           const directValues = values.slice(0, -1); // Remove the ID from end
@@ -919,14 +919,14 @@ function setupGlobalDB(sqlite) {
             .join(', ');
           
           const directSQL = `UPDATE ${collection} SET ${directSetClause} WHERE id = ${numericId}`;
-          console.log('[ sqliteLoader.js ] Direct SQL:', directSQL);
+          console.log('[sqliteLoader.js: Direct SQL:', directSQL);
           
           updateResult = await sqlite.execute({
             database: DB_NAME,
             statements: directSQL
           });
           
-          console.log('[ sqliteLoader.js ] Direct SQL result:', updateResult);
+          console.log('[sqliteLoader.js: Direct SQL result:', updateResult);
         }
         
         // Return updated item
@@ -978,7 +978,7 @@ function setupGlobalDB(sqlite) {
         try {
           await sqlite.open({ database: DB_NAME });
         } catch (openError) {
-          console.log('[ sqliteLoader.js ] Database already open or connection issue:', openError);
+          console.log('[sqliteLoader.js: Database already open or connection issue:', openError);
         }
 
         // Check if record exists first
@@ -988,7 +988,7 @@ function setupGlobalDB(sqlite) {
           values: [id]
         });
         
-        console.log('[ sqliteLoader.js ] Record before delete:', beforeDelete);
+        console.log('[sqliteLoader.js: Record before delete:', beforeDelete);
         
         // Try delete with original ID format first
         let deleteResult = await sqlite.execute({
@@ -997,32 +997,32 @@ function setupGlobalDB(sqlite) {
           values: [id]
         });
         
-        console.log('[ sqliteLoader.js ] Delete result (original ID):', deleteResult);
+        console.log('[sqliteLoader.js: Delete result (original ID):', deleteResult);
         
         // If no changes, try with converted ID formats
         if (deleteResult.changes && deleteResult.changes.changes === 0) {
           // Try with numeric ID
           if (typeof id === 'string' && !isNaN(id)) {
             const numericId = parseInt(id, 10);
-            console.log('[ sqliteLoader.js ] Trying numeric ID:', numericId);
+            console.log('[sqliteLoader.js: Trying numeric ID:', numericId);
             deleteResult = await sqlite.execute({
               database: DB_NAME,
               statements: `DELETE FROM ${collection} WHERE id = ?`,
               values: [numericId]
             });
-            console.log('[ sqliteLoader.js ] Delete result (numeric ID):', deleteResult);
+            console.log('[sqliteLoader.js: Delete result (numeric ID):', deleteResult);
           }
           
           // Try with string ID
           if (deleteResult.changes && deleteResult.changes.changes === 0 && typeof id === 'number') {
             const stringId = String(id);
-            console.log('[ sqliteLoader.js ] Trying string ID:', stringId);
+            console.log('[sqliteLoader.js: Trying string ID:', stringId);
             deleteResult = await sqlite.execute({
               database: DB_NAME,
               statements: `DELETE FROM ${collection} WHERE id = ?`,
               values: [stringId]
             });
-            console.log('[ sqliteLoader.js ] Delete result (string ID):', deleteResult);
+            console.log('[sqliteLoader.js: Delete result (string ID):', deleteResult);
           }
         }
         
@@ -1041,14 +1041,14 @@ function setupGlobalDB(sqlite) {
      */
     resetAllData: async function() {
       try {
-        console.log('[ sqliteLoader.js ] Resetting all data');
+        console.log('[sqliteLoader.js: Resetting all data');
         
         // Clear localStorage fallback data
         const keys = Object.keys(localStorage);
         keys.forEach(key => {
           if (key.startsWith('db_') || key.includes('meetings') || key.includes('activities') || key.includes('users')) {
             localStorage.removeItem(key);
-            console.log('[ sqliteLoader.js ] Removed localStorage key:', key);
+            console.log('[sqliteLoader.js: Removed localStorage key:', key);
           }
         });
         
@@ -1063,9 +1063,9 @@ function setupGlobalDB(sqlite) {
               database: DB_NAME,
               statements: 'DELETE FROM activities'
             });
-            console.log('[ sqliteLoader.js ] Cleared SQLite tables');
+            console.log('[sqliteLoader.js: Cleared SQLite tables');
           } catch (sqlError) {
-            console.log('[ sqliteLoader.js ] Could not clear SQLite tables (using localStorage):', sqlError);
+            console.log('[sqliteLoader.js: Could not clear SQLite tables (using localStorage):', sqlError);
           }
         }
         
@@ -1153,12 +1153,12 @@ function setupGlobalDB(sqlite) {
             });
             
             if (isNaN(activityDate.getTime())) {
-              console.log('[ sqliteLoader.js ] Invalid date format, skipping:', activity.date);
+              console.log('[sqliteLoader.js: Invalid date format, skipping:', activity.date);
               return false;
             }
             
             const inRange = activityDate >= thirtyDaysAgo && activityDate <= now;
-            console.log('[ sqliteLoader.js ] Date range check:', {
+            console.log('[sqliteLoader.js: Date range check:', {
               activityDate: activityDate.toISOString(),
               thirtyDaysAgo: thirtyDaysAgo.toISOString(),
               now: now.toISOString(),
@@ -1169,11 +1169,11 @@ function setupGlobalDB(sqlite) {
           });
         }
         
-        console.log('[ sqliteLoader.js ] calculateSpiritualFitness - Recent activities count:', recentActivities ? recentActivities.length : 0);
-        console.log('[ sqliteLoader.js ] Sample recent activities:', recentActivities ? recentActivities.slice(0, 3).map(a => ({type: a.type, date: a.date})) : []);
+        console.log('[sqliteLoader.js: calculateSpiritualFitness - Recent activities count:', recentActivities ? recentActivities.length : 0);
+        console.log('[sqliteLoader.js: Sample recent activities:', recentActivities ? recentActivities.slice(0, 3).map(a => ({type: a.type, date: a.date})) : []);
         
         if (!recentActivities || recentActivities.length === 0) {
-          console.log('[ sqliteLoader.js ] No recent activities found, returning base score 5');
+          console.log('[sqliteLoader.js: No recent activities found, returning base score 5');
           return 5; // Default minimum score
         }
         
@@ -1204,7 +1204,7 @@ function setupGlobalDB(sqlite) {
           console.log(`[ sqliteLoader.js ] Activity type: ${type}`);
           typeCounts[type] = (typeCounts[type] || 0) + 1;
           totalScore += typeWeights[type] || 2;
-          console.log(`[ sqliteLoader.js ] Added ${typeWeights[type] || 2} points for ${type}`);
+          console.log(`[ sqliteLoader.js:1207 ] Added ${typeWeights[type] || 2} points for ${type}`);
         });
         
         // Bonus for consistency (multiple activities of same type)
@@ -1237,7 +1237,7 @@ function setupGlobalDB(sqlite) {
      */
     calculateSpiritualFitnessWithTimeframe: async function(timeframe = 30) {
       try {
-        console.log('[ sqliteLoader.js ] calculateSpiritualFitnessWithTimeframe called with timeframe:', timeframe);
+        console.log('[sqliteLoader.js: calculateSpiritualFitnessWithTimeframe called with timeframe:', timeframe);
         
         // Let's also try a direct SQL query to see what's really in the database
         const directQuery = await sqlite.query({
@@ -1245,21 +1245,21 @@ function setupGlobalDB(sqlite) {
           statement: 'SELECT * FROM activities ORDER BY createdAt DESC',
           values: []
         });
-        console.log('[ sqliteLoader.js:733 ] Direct SQL query result:', JSON.stringify(directQuery, null, 2));
+        console.log('[ sqliteLoader.js:1248 ] Direct SQL query result:', JSON.stringify(directQuery, null, 2));
         
         const activities = await this.getAll('activities');
         console.log('[ sqliteLoader.js: 737 ] Retrieved activities from database:', activities.length);
         
         if (!activities || activities.length === 0) {
-          console.log('[ sqliteLoader.js ] No activities found, returning base score 5');
+          console.log('[sqliteLoader.js: No activities found, returning base score 5');
           return 5; // Default minimum score
         }
         
         // Log first few activities to see their structure
-        console.log('[ sqliteLoader.js ] Sample activities:', activities.slice(0, 3).map(a => ({ type: a.type, date: a.date })));
+        console.log('[sqliteLoader.js: Sample activities:', activities.slice(0, 3).map(a => ({ type: a.type, date: a.date })));
         
         // Let's also log ALL activities to see what's really in the database
-        console.log('[ sqliteLoader.js ] ALL activities in database:');
+        console.log('[sqliteLoader.js: ALL activities in database:');
         activities.forEach((activity, index) => {
           console.log(`[ sqliteLoader.js ] Activity ${index}:`, { 
             id: activity.id, 
@@ -1274,39 +1274,39 @@ function setupGlobalDB(sqlite) {
         const now = new Date();
         const startDate = new Date();
         startDate.setDate(now.getDate() - timeframe);
-        console.log('[ sqliteLoader.js ] Date range:', { startDate: startDate.toISOString(), now: now.toISOString() });
+        console.log('[sqliteLoader.js: Date range:', { startDate: startDate.toISOString(), now: now.toISOString() });
         
         // Filter for activities in timeframe
         const filteredActivities = activities.filter(activity => {
           // Skip activities with null dates
           if (!activity.date || activity.date === null) {
-            console.log('[ sqliteLoader.js ] Activity has null date, skipping:', { date: activity.date, type: activity.type });
+            console.log('[sqliteLoader.js: Activity has null date, skipping:', { date: activity.date, type: activity.type });
             return false;
           }
           
           const activityDate = new Date(activity.date);
           if (isNaN(activityDate.getTime())) {
-            console.log('[ sqliteLoader.js ] Activity has invalid date, skipping:', { date: activity.date, type: activity.type });
+            console.log('[sqliteLoader.js: Activity has invalid date, skipping:', { date: activity.date, type: activity.type });
             return false;
           }
           
           const isInRange = activityDate >= startDate && activityDate <= now;
           if (!isInRange) {
-            console.log('[ sqliteLoader.js ] Activity outside range:', { date: activity.date, type: activity.type });
+            console.log('[sqliteLoader.js: Activity outside range:', { date: activity.date, type: activity.type });
           }
           return isInRange;
         });
         
-        console.log('[ sqliteLoader.js ] Filtered activities in timeframe:', filteredActivities.length);
+        console.log('[sqliteLoader.js: Filtered activities in timeframe:', filteredActivities.length);
         
         if (filteredActivities.length === 0) {
-          console.log('[ sqliteLoader.js ] No activities in timeframe, returning base score 5');
+          console.log('[sqliteLoader.js: No activities in timeframe, returning base score 5');
           return 5; // Default minimum score if no matching activities
         }
         
         // Use same scoring logic as default calculation
         const score = await this.calculateSpiritualFitness(filteredActivities);
-        console.log('[ sqliteLoader.js ] Final calculated score:', score);
+        console.log('[sqliteLoader.js: Final calculated score:', score);
         return score;
       } catch (error) {
         console.error('[ sqliteLoader.js ] Error calculating spiritual fitness with timeframe:', error);
@@ -1361,7 +1361,7 @@ function setupGlobalDB(sqlite) {
  * This removes broken activities that can't be used in calculations
  */
 async function cleanupBrokenActivities() {
-  console.log('[ sqliteLoader.js ] Starting cleanup of broken activities...');
+  console.log('[sqliteLoader.js: Starting cleanup of broken activities...');
   
   try {
     const sqlitePlugin = window.Capacitor?.Plugins?.CapacitorSQLite;
@@ -1376,7 +1376,7 @@ async function cleanupBrokenActivities() {
       values: []
     });
     
-    console.log('[ sqliteLoader.js ] All activities before cleanup:', JSON.stringify(allActivitiesResult, null, 2));
+    console.log('[sqliteLoader.js: All activities before cleanup:', JSON.stringify(allActivitiesResult, null, 2));
 
     // Count broken activities first
     const countResult = await sqlitePlugin.query({
@@ -1386,7 +1386,7 @@ async function cleanupBrokenActivities() {
     });
     
     const brokenCount = countResult.values[1]?.count || 0;
-    console.log('[ sqliteLoader.js ] Found broken activities to clean:', brokenCount);
+    console.log('[sqliteLoader.js: Found broken activities to clean:', brokenCount);
 
     if (brokenCount > 0) {
       // Show which activities will be deleted
@@ -1396,10 +1396,10 @@ async function cleanupBrokenActivities() {
         values: []
       });
       
-      console.log('[ sqliteLoader.js ] Activities to be deleted:', JSON.stringify(brokenActivitiesResult, null, 2));
+      console.log('[sqliteLoader.js: Activities to be deleted:', JSON.stringify(brokenActivitiesResult, null, 2));
       
       // TEMPORARILY DISABLE CLEANUP TO DIAGNOSE
-      console.log('[ sqliteLoader.js ] CLEANUP DISABLED FOR DEBUGGING - not deleting any activities');
+      console.log('[sqliteLoader.js: CLEANUP DISABLED FOR DEBUGGING - not deleting any activities');
       return 0;
       
       // Delete broken activities using raw SQL
@@ -1408,10 +1408,10 @@ async function cleanupBrokenActivities() {
       //   statements: 'DELETE FROM activities WHERE date IS NULL OR type IS NULL;'
       // });
       
-      // console.log('[ sqliteLoader.js ] Cleanup complete. Deleted activities:', deleteResult.changes?.changes || 0);
+      // console.log('[sqliteLoader.js: Cleanup complete. Deleted activities:', deleteResult.changes?.changes || 0);
       // return deleteResult.changes?.changes || 0;
     } else {
-      console.log('[ sqliteLoader.js ] No broken activities found to clean');
+      console.log('[sqliteLoader.js: No broken activities found to clean');
       return 0;
     }
     
