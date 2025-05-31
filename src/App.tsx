@@ -15,7 +15,7 @@ import Meetings from './components/Meetings';
 import Profile from './components/Profile';
 
 function AppContent() {
-  const { state, addActivity, addMeeting, deleteMeeting, updateTimeframe, updateUser } = useAppData();
+  const { state, addActivity, addMeeting, deleteMeeting, updateTimeframe, updateUser, resetAllData } = useAppData();
   const muiTheme = useTheme();
   const [currentView, setCurrentView] = React.useState('dashboard');
 
@@ -182,9 +182,13 @@ function AppContent() {
           )}
           {currentView === 'profile' && (
             <Profile
+              setCurrentView={handleNavigation}
               user={state.user}
               onUpdate={handleUpdateProfile}
-              onNavigate={handleNavigation}
+              meetings={state.meetings}
+              onSaveMeeting={handleSaveMeeting}
+              onResetAllData={resetAllData}
+              currentUserId={state.currentUserId}
             />
           )}
           {currentView !== 'dashboard' && currentView !== 'meetings' && currentView !== 'profile' && (

@@ -1,0 +1,69 @@
+⚡️  [log] - Starting data reset process
+⚡️  [log] - [ reset-database.js: 12 ] Attempting to reset database...
+⚡️  [log] - [ reset-database.js: 21 ] Using existing database connection
+⚡️  [log] - [ reset-database.js: 51 ] Dropping all existing tables...
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  ⚡️  [log] - [ reset-database.js: 58 ] Dropped table: sponsor_contact_action_items
+CapacitorSQLite execute 122118629
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  [log] - [ reset-database.js: 58 ] Dropped table: sponsor_contact_details
+⚡️  To Native ->  CapacitorSQLite execute 122118630
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 122118631
+⚡️  [log] - [ reset-database.js: 58 ] Dropped table: action_items
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  ⚡️  [log] - [ reset-database.js: 58 ] Dropped table: sponsor_contacts
+CapacitorSQLite execute 122118632
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 122118633
+⚡️  [log] - [ reset-database.js: 58 ] Dropped table: meetings
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 122118634
+⚡️  [log] - [ reset-database.js: 58 ] Dropped table: activities
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  [log] - [ reset-database.js: 58 ] Dropped table: users
+⚡️  [log] - [ reset-database.js: 63 ] Recreating tables with current schema...
+⚡️  To Native ->  ⚡️  [log] - [ sqliteLoader.js ] Verifying database schema (preserving existing data)
+CapacitorSQLite execute 122118635
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 122118636
+⚡️  [log] - [ sqliteLoader.js ] Users table created successfully
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 122118637
+⚡️  [log] - [ sqliteLoader.js ] Activities table created successfully
+⚡️  [log] - [ sqliteLoader.js ] Activities table includes all required columns
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  [log] - [ sqliteLoader.js ] Meetings table created successfully
+⚡️  To Native ->  CapacitorSQLite execute 122118638
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 122118639
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 122118640
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 122118641
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 122118642
+⚡️  [log] - [ sqliteLoader.js ] Dropped sponsor-related tables for schema update
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 122118643
+⚡️  [log] - [ sqliteLoader.js ] Sponsor contacts table created with flexible constraints
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  [log] - [ sqliteLoader.js ] Sponsor contact details table created with flexible constraints
+⚡️  To Native ->  CapacitorSQLite execute 122118644
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  [log] - [ sqliteLoader.js ] Action items table created
+⚡️  To Native ->  CapacitorSQLite execute 122118645
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  [log] - [ sqliteLoader.js ] Sponsor contact action items join table created
+⚡️  To Native ->  CapacitorSQLite execute 122118646
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  [log] - [ sqliteLoader.js ] Foreign key constraints re-enabled
+⚡️  To Native ->  CapacitorSQLite close 122118647
+⚡️  [log] - [ reset-database.js: 68 ] All tables recreated successfully
+⚡️  TO JS undefined
+⚡️  To Native ->  CapacitorSQLite closeConnection 122118648
+⚡️  TO JS undefined
+⚡️  [log] - [ reset-database.js: 75 ] Database reset completed successfully
+⚡️  [log] - [ reset-database.js: 76 ] Database is ready to use
+⚡️  [log] - Data reset complete - clearing React state and navigating to dashboard
+⚡️  [error] - Error resetting data: {}
