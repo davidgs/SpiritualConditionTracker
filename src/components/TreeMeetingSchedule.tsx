@@ -3,6 +3,11 @@ import { Box, Typography, Button, Chip } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import CustomNestedMenu from './CustomNestedMenu';
 
+// Import meeting type icons
+import hybridIcon from '../assets/icons/hybrid-meeting.png';
+import onlineIcon from '../assets/icons/online-meeting.png';
+import inPersonIcon from '../assets/icons/in-person-meeting.png';
+
 interface ScheduleItem {
   day: string;
   time: string;
@@ -67,9 +72,9 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
   ];
 
   const meetingLocationTypes = [
-    { value: 'in_person', label: 'In-Person', icon: '🏢' },
-    { value: 'online', label: 'Online', icon: '💻' },
-    { value: 'hybrid', label: 'Hybrid', icon: '🌐' }
+    { value: 'in_person', label: 'In-Person', icon: inPersonIcon },
+    { value: 'online', label: 'Online', icon: onlineIcon },
+    { value: 'hybrid', label: 'Hybrid', icon: hybridIcon }
   ];
 
   const meetingAccess = [
