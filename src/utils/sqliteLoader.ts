@@ -528,12 +528,20 @@ function setupGlobalDB(sqlite) {
           return [];
         }
         
-        // iOS has specific format requirements
-        const result = await sqlite.query({
-          database: DB_NAME,
-          statement: `SELECT * FROM ${collection}`,
-          values: []
-        });
+        // Check if SQLite is available, otherwise use localStorage
+        let result;
+        try {
+          result = await sqlite.query({
+            database: DB_NAME,
+            statement: `SELECT * FROM ${collection}`,
+            values: []
+          });
+        } catch (error) {
+          // SQLite failed, use localStorage fallback
+          console.log(`[ sqliteLoader.js ] SQLite failed, using localStorage for ${collection}`);
+          const localData = JSON.parse(localStorage.getItem(collection) || '[]');
+          return localData;
+        }
         console.log(`[ sqliteLoader.js:363 ] Result from ${collection}:`, result);
         
         // Handle iOS format for getAll as well
