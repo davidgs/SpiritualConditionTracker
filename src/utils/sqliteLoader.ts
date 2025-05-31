@@ -896,27 +896,32 @@ function setupGlobalDB(sqlite) {
         // Execute update - try alternative approach with interpolated SQL
         console.log('[ sqliteLoader.js:884 ]  Attempting update with values:', values);
         
-        // First try the standard parameterized approach with numeric ID
-        const updateSQL = `UPDATE ${collection} SET ${setClause} WHERE id = ?`;
+        // Use direct SQL with embedded values (Capacitor SQLite format)
+        const updateFields = Object.keys(updatesWithTimestamp);
+        const formattedUpdatePairs = updateFields.map(key => {
+          const value = updatesWithTimestamp[key];
+          let formattedValue;
+          if (value === null || value === undefined) {
+            formattedValue = 'NULL';
+          } else if (typeof value === 'string') {
+            formattedValue = `'${value.replace(/'/g, "''")}'`;
+          } else if (typeof value === 'number') {
+            formattedValue = value.toString();
+          } else {
+            formattedValue = `'${String(value).replace(/'/g, "''")}'`;
+          }
+          return `${key} = ${formattedValue}`;
+        }).join(', ');
+        
+        const updateSQL = `UPDATE ${collection} SET ${formattedUpdatePairs} WHERE id = ${numericId};`;
+        console.log('[ sqliteLoader.js:920 ]  Executing update SQL:', updateSQL);
+        
         let updateResult = await sqlite.execute({
           database: DB_NAME,
-          statements: updateSQL,
-          values: values
+          statements: updateSQL
         });
         
-        console.log('[ sqliteLoader.js:894 ]  Update result (numeric ID):', updateResult);
-        
-        // If that didn't work, try with string ID
-        if (updateResult.changes && updateResult.changes.changes === 0) {
-          console.log('[ sqliteLoader.js:898 ]  Numeric ID update failed, trying string ID');
-          const stringValues = [...values.slice(0, -1), String(id)];
-          updateResult = await sqlite.execute({
-            database: DB_NAME,
-            statements: updateSQL,
-            values: stringValues
-          });
-          console.log('[ sqliteLoader.js:905 ]  Update result (string ID):', updateResult);
-        }
+        console.log('[ sqliteLoader.js:925 ]  Update result:', updateResult);
         
         // If still no changes, try direct SQL approach as fallback
         if (updateResult.changes && updateResult.changes.changes === 0) {
@@ -1003,41 +1008,17 @@ function setupGlobalDB(sqlite) {
         
         console.log('[ sqliteLoader.js:991 ]  Record before delete:', beforeDelete);
         
-        // Try delete with original ID format first
+        // Use direct SQL with embedded values (Capacitor SQLite format)
+        const numericId = typeof id === 'string' ? parseInt(id, 10) : id;
+        const deleteSQL = `DELETE FROM ${collection} WHERE id = ${numericId};`;
+        console.log('[ sqliteLoader.js:1012 ]  Executing delete SQL:', deleteSQL);
+        
         let deleteResult = await sqlite.execute({
           database: DB_NAME,
-          statements: `DELETE FROM ${collection} WHERE id = ?`,
-          values: [id]
+          statements: deleteSQL
         });
         
-        console.log('[ sqliteLoader.js:1000 ]  Delete result (original ID):', deleteResult);
-        
-        // If no changes, try with converted ID formats
-        if (deleteResult.changes && deleteResult.changes.changes === 0) {
-          // Try with numeric ID
-          if (typeof id === 'string' && !isNaN(id)) {
-            const numericId = parseInt(id, 10);
-            console.log('[ sqliteLoader.js:1007 ]  Trying numeric ID:', numericId);
-            deleteResult = await sqlite.execute({
-              database: DB_NAME,
-              statements: `DELETE FROM ${collection} WHERE id = ?`,
-              values: [numericId]
-            });
-            console.log('[ sqliteLoader.js:1013 ]  Delete result (numeric ID):', deleteResult);
-          }
-          
-          // Try with string ID
-          if (deleteResult.changes && deleteResult.changes.changes === 0 && typeof id === 'number') {
-            const stringId = String(id);
-            console.log('[ sqliteLoader.js:1019 ]  Trying string ID:', stringId);
-            deleteResult = await sqlite.execute({
-              database: DB_NAME,
-              statements: `DELETE FROM ${collection} WHERE id = ?`,
-              values: [stringId]
-            });
-            console.log('[ sqliteLoader.js:1025 ]  Delete result (string ID):', deleteResult);
-          }
-        }
+        console.log('[ sqliteLoader.js:1020 ]  Delete result:', deleteResult);
         
         const success = deleteResult.changes && deleteResult.changes.changes > 0;
         console.log(`[ sqliteLoader.js ] Delete operation ${success ? 'succeeded' : 'failed'} for ${collection} ID:`, id);
