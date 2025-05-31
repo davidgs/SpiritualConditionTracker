@@ -18,9 +18,10 @@ interface NestedMenuItem {
 
 interface CustomNestedMenuProps {
   items: NestedMenuItem[];
+  onActionComplete?: () => void;
 }
 
-const CustomNestedMenu: React.FC<CustomNestedMenuProps> = ({ items }) => {
+const CustomNestedMenu: React.FC<CustomNestedMenuProps> = ({ items, onActionComplete }) => {
   const theme = useTheme();
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
 
@@ -57,6 +58,11 @@ const CustomNestedMenu: React.FC<CustomNestedMenuProps> = ({ items }) => {
               toggleExpanded(item.id);
             } else if (item.onClick) {
               item.onClick();
+              // Collapse all items after an action is completed
+              setExpandedItems(new Set());
+              if (onActionComplete) {
+                onActionComplete();
+              }
             }
           }}
         >

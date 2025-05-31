@@ -215,7 +215,12 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
 
   return (
     <Box sx={{ mb: 2 }}>
-      <CustomNestedMenu items={buildMenuItems()} />
+      <CustomNestedMenu 
+        items={buildMenuItems()} 
+        onActionComplete={() => {
+          // Additional cleanup can be done here if needed
+        }}
+      />
     </Box>
   );
 };
