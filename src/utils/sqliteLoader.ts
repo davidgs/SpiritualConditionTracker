@@ -522,11 +522,10 @@ function setupGlobalDB(sqlite) {
       try {
         console.log(`[ sqliteLoader.js:356 ] Getting all items from ${collection}`);
         
-        // Ensure database connection is open before query
-        try {
-          await sqlite.open({ database: DB_NAME });
-        } catch (openError) {
-          console.log('[ sqliteLoader.js ] Database already open or connection issue:', openError);
+        // For localStorage fallback, just proceed with the query
+        if (!window.db) {
+          console.error('[ sqliteLoader.js ] Database not initialized');
+          return [];
         }
         
         // iOS has specific format requirements
@@ -662,11 +661,10 @@ function setupGlobalDB(sqlite) {
       try {
         console.log('[ sqliteLoader.js ] Original item received for save:', JSON.stringify(item, null, 2));
         
-        // Ensure database connection is open before insert
-        try {
-          await sqlite.open({ database: DB_NAME });
-        } catch (openError) {
-          console.log('[ sqliteLoader.js ] Database already open or connection issue:', openError);
+        // Check if database is initialized
+        if (!window.db) {
+          console.error('[ sqliteLoader.js ] Database not ready for insert');
+          throw new Error('Database not initialized');
         }
         
         // Don't include ID field - let SQLite generate it with AUTOINCREMENT
@@ -980,6 +978,47 @@ function setupGlobalDB(sqlite) {
         return success;
       } catch (error) {
         console.error(`[ sqliteLoader.js ] Error deleting item from ${collection}:`, error);
+        return false;
+      }
+    },
+
+    /**
+     * Reset all data (clear localStorage fallback)
+     * @returns {Promise<boolean>} Success indicator
+     */
+    resetAllData: async function() {
+      try {
+        console.log('[ sqliteLoader.js ] Resetting all data');
+        
+        // Clear localStorage fallback data
+        const keys = Object.keys(localStorage);
+        keys.forEach(key => {
+          if (key.startsWith('db_') || key.includes('meetings') || key.includes('activities') || key.includes('users')) {
+            localStorage.removeItem(key);
+            console.log('[ sqliteLoader.js ] Removed localStorage key:', key);
+          }
+        });
+        
+        // Also try to clear SQLite tables if available
+        if (window.db && sqlite) {
+          try {
+            await sqlite.execute({
+              database: DB_NAME,
+              statements: 'DELETE FROM meetings'
+            });
+            await sqlite.execute({
+              database: DB_NAME,
+              statements: 'DELETE FROM activities'
+            });
+            console.log('[ sqliteLoader.js ] Cleared SQLite tables');
+          } catch (sqlError) {
+            console.log('[ sqliteLoader.js ] Could not clear SQLite tables (using localStorage):', sqlError);
+          }
+        }
+        
+        return true;
+      } catch (error) {
+        console.error('[ sqliteLoader.js ] Error resetting data:', error);
         return false;
       }
     },
