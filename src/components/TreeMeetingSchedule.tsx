@@ -34,75 +34,31 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
     { key: 'saturday', label: 'Saturday' }
   ];
 
-  const timeOptions = [
-    { value: '06:00', label: use24HourFormat ? '06:00' : '6:00 AM' },
-    { value: '06:15', label: use24HourFormat ? '06:15' : '6:15 AM' },
-    { value: '06:30', label: use24HourFormat ? '06:30' : '6:30 AM' },
-    { value: '06:45', label: use24HourFormat ? '06:45' : '6:45 AM' },
-    { value: '07:00', label: use24HourFormat ? '07:00' : '7:00 AM' },
-    { value: '07:15', label: use24HourFormat ? '07:15' : '7:15 AM' },
-    { value: '07:30', label: use24HourFormat ? '07:30' : '7:30 AM' },
-    { value: '07:45', label: use24HourFormat ? '07:45' : '7:45 AM' },
-    { value: '08:00', label: use24HourFormat ? '08:00' : '8:00 AM' },
-    { value: '08:15', label: use24HourFormat ? '08:15' : '8:15 AM' },
-    { value: '08:30', label: use24HourFormat ? '08:30' : '8:30 AM' },
-    { value: '08:45', label: use24HourFormat ? '08:45' : '8:45 AM' },
-    { value: '09:00', label: use24HourFormat ? '09:00' : '9:00 AM' },
-    { value: '09:15', label: use24HourFormat ? '09:15' : '9:15 AM' },
-    { value: '09:30', label: use24HourFormat ? '09:30' : '9:30 AM' },
-    { value: '09:45', label: use24HourFormat ? '09:45' : '9:45 AM' },
-    { value: '10:00', label: use24HourFormat ? '10:00' : '10:00 AM' },
-    { value: '10:15', label: use24HourFormat ? '10:15' : '10:15 AM' },
-    { value: '10:30', label: use24HourFormat ? '10:30' : '10:30 AM' },
-    { value: '10:45', label: use24HourFormat ? '10:45' : '10:45 AM' },
-    { value: '11:00', label: use24HourFormat ? '11:00' : '11:00 AM' },
-    { value: '11:15', label: use24HourFormat ? '11:15' : '11:15 AM' },
-    { value: '11:30', label: use24HourFormat ? '11:30' : '11:30 AM' },
-    { value: '11:45', label: use24HourFormat ? '11:45' : '11:45 AM' },
-    { value: '12:00', label: use24HourFormat ? '12:00' : '12:00 PM' },
-    { value: '12:15', label: use24HourFormat ? '12:15' : '12:15 PM' },
-    { value: '12:30', label: use24HourFormat ? '12:30' : '12:30 PM' },
-    { value: '12:45', label: use24HourFormat ? '12:45' : '12:45 PM' },
-    { value: '13:00', label: use24HourFormat ? '13:00' : '1:00 PM' },
-    { value: '13:15', label: use24HourFormat ? '13:15' : '1:15 PM' },
-    { value: '13:30', label: use24HourFormat ? '13:30' : '1:30 PM' },
-    { value: '13:45', label: use24HourFormat ? '13:45' : '1:45 PM' },
-    { value: '14:00', label: use24HourFormat ? '14:00' : '2:00 PM' },
-    { value: '14:15', label: use24HourFormat ? '14:15' : '2:15 PM' },
-    { value: '14:30', label: use24HourFormat ? '14:30' : '2:30 PM' },
-    { value: '14:45', label: use24HourFormat ? '14:45' : '2:45 PM' },
-    { value: '15:00', label: use24HourFormat ? '15:00' : '3:00 PM' },
-    { value: '15:15', label: use24HourFormat ? '15:15' : '3:15 PM' },
-    { value: '15:30', label: use24HourFormat ? '15:30' : '3:30 PM' },
-    { value: '15:45', label: use24HourFormat ? '15:45' : '3:45 PM' },
-    { value: '16:00', label: use24HourFormat ? '16:00' : '4:00 PM' },
-    { value: '16:15', label: use24HourFormat ? '16:15' : '4:15 PM' },
-    { value: '16:30', label: use24HourFormat ? '16:30' : '4:30 PM' },
-    { value: '16:45', label: use24HourFormat ? '16:45' : '4:45 PM' },
-    { value: '17:00', label: use24HourFormat ? '17:00' : '5:00 PM' },
-    { value: '17:15', label: use24HourFormat ? '17:15' : '5:15 PM' },
-    { value: '17:30', label: use24HourFormat ? '17:30' : '5:30 PM' },
-    { value: '17:45', label: use24HourFormat ? '17:45' : '5:45 PM' },
-    { value: '18:00', label: use24HourFormat ? '18:00' : '6:00 PM' },
-    { value: '18:15', label: use24HourFormat ? '18:15' : '6:15 PM' },
-    { value: '18:30', label: use24HourFormat ? '18:30' : '6:30 PM' },
-    { value: '18:45', label: use24HourFormat ? '18:45' : '6:45 PM' },
-    { value: '19:00', label: use24HourFormat ? '19:00' : '7:00 PM' },
-    { value: '19:15', label: use24HourFormat ? '19:15' : '7:15 PM' },
-    { value: '19:30', label: use24HourFormat ? '19:30' : '7:30 PM' },
-    { value: '19:45', label: use24HourFormat ? '19:45' : '7:45 PM' },
-    { value: '20:00', label: use24HourFormat ? '20:00' : '8:00 PM' },
-    { value: '20:15', label: use24HourFormat ? '20:15' : '8:15 PM' },
-    { value: '20:30', label: use24HourFormat ? '20:30' : '8:30 PM' },
-    { value: '20:45', label: use24HourFormat ? '20:45' : '8:45 PM' },
-    { value: '21:00', label: use24HourFormat ? '21:00' : '9:00 PM' },
-    { value: '21:15', label: use24HourFormat ? '21:15' : '9:15 PM' },
-    { value: '21:30', label: use24HourFormat ? '21:30' : '9:30 PM' },
-    { value: '21:45', label: use24HourFormat ? '21:45' : '9:45 PM' },
-    { value: '22:00', label: use24HourFormat ? '22:00' : '10:00 PM' },
-    { value: '22:15', label: use24HourFormat ? '22:15' : '10:15 PM' },
-    { value: '22:30', label: use24HourFormat ? '22:30' : '10:30 PM' },
-    { value: '22:45', label: use24HourFormat ? '22:45' : '10:45 PM' }
+  const hourOptions = [
+    { value: '06', label: use24HourFormat ? '06:xx' : '6:xx AM' },
+    { value: '07', label: use24HourFormat ? '07:xx' : '7:xx AM' },
+    { value: '08', label: use24HourFormat ? '08:xx' : '8:xx AM' },
+    { value: '09', label: use24HourFormat ? '09:xx' : '9:xx AM' },
+    { value: '10', label: use24HourFormat ? '10:xx' : '10:xx AM' },
+    { value: '11', label: use24HourFormat ? '11:xx' : '11:xx AM' },
+    { value: '12', label: use24HourFormat ? '12:xx' : '12:xx PM' },
+    { value: '13', label: use24HourFormat ? '13:xx' : '1:xx PM' },
+    { value: '14', label: use24HourFormat ? '14:xx' : '2:xx PM' },
+    { value: '15', label: use24HourFormat ? '15:xx' : '3:xx PM' },
+    { value: '16', label: use24HourFormat ? '16:xx' : '4:xx PM' },
+    { value: '17', label: use24HourFormat ? '17:xx' : '5:xx PM' },
+    { value: '18', label: use24HourFormat ? '18:xx' : '6:xx PM' },
+    { value: '19', label: use24HourFormat ? '19:xx' : '7:xx PM' },
+    { value: '20', label: use24HourFormat ? '20:xx' : '8:xx PM' },
+    { value: '21', label: use24HourFormat ? '21:xx' : '9:xx PM' },
+    { value: '22', label: use24HourFormat ? '22:xx' : '10:xx PM' }
+  ];
+
+  const minuteOptions = [
+    { value: '00', label: ':00' },
+    { value: '15', label: ':15' },
+    { value: '30', label: ':30' },
+    { value: '45', label: ':45' }
   ];
 
   const meetingFormats = [
@@ -128,12 +84,13 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
     { value: 'closed', label: 'Closed' }
   ];
 
-  const addMeetingWithDetails = (day: string, time: string, format: string, locationType: string, access: string) => {
-    if (!day || !time || !format || !locationType || !access) {
-      console.error('Missing required meeting details:', { day, time, format, locationType, access });
+  const addMeetingWithDetails = (day: string, hour: string, minute: string, format: string, locationType: string, access: string) => {
+    if (!day || !hour || !minute || !format || !locationType || !access) {
+      console.error('Missing required meeting details:', { day, hour, minute, format, locationType, access });
       return;
     }
     
+    const time = `${hour}:${minute}`;
     const newMeeting = { 
       day: day.trim(), 
       time: time.trim(), 
@@ -171,7 +128,13 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
               {days.find(d => d.key === item.day)?.label || item.day}
             </Typography>
             <Typography variant="body2" sx={{ minWidth: '70px', textAlign: 'left' }}>
-              {timeOptions.find(t => t.value === item.time)?.label || item.time}
+              {use24HourFormat ? item.time : (() => {
+                const [hour, minute] = item.time.split(':');
+                const hourNum = parseInt(hour);
+                const period = hourNum >= 12 ? 'PM' : 'AM';
+                const displayHour = hourNum === 0 ? 12 : hourNum > 12 ? hourNum - 12 : hourNum;
+                return `${displayHour}:${minute} ${period}`;
+              })()}
             </Typography>
             <Typography sx={{ fontSize: '1.2rem' }}>
               {meetingLocationTypes.find(l => l.value === item.locationType)?.icon || '🏢'}
@@ -215,53 +178,65 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
 
     // Add the "Select Day" menu structure
     const dayChildren = days.map(day => {
-      const timeChildren = timeOptions
-        .filter(time => !schedule.some(item => item.day === day.key && item.time === time.value))
-        .map(time => {
-          const formatChildren = meetingFormats.map(format => {
-            const locationChildren = meetingLocationTypes.map(locationType => {
-              const accessChildren = meetingAccess.map(access => ({
-                id: `${day.key}-${time.value}-${format.value}-${locationType.value}-${access.value}`,
-                label: `${access.label} Meeting ← Click to add`,
-                color: access.value === 'open' ? 'success.main' : 'error.main',
-                fontSize: '0.8rem',
-                indentLevel: 5,
-                onClick: () => addMeetingWithDetails(day.key, time.value, format.value, locationType.value, access.value),
-                isExpandable: false
-              }));
+      const hourChildren = hourOptions.map(hour => {
+        const minuteChildren = minuteOptions
+          .filter(minute => !schedule.some(item => item.day === day.key && item.time === `${hour.value}:${minute.value}`))
+          .map(minute => {
+            const formatChildren = meetingFormats.map(format => {
+              const locationChildren = meetingLocationTypes.map(locationType => {
+                const accessChildren = meetingAccess.map(access => ({
+                  id: `${day.key}-${hour.value}-${minute.value}-${format.value}-${locationType.value}-${access.value}`,
+                  label: `${access.label} Meeting ← Click to add`,
+                  color: access.value === 'open' ? 'success.main' : 'error.main',
+                  fontSize: '0.8rem',
+                  indentLevel: 6,
+                  onClick: () => addMeetingWithDetails(day.key, hour.value, minute.value, format.value, locationType.value, access.value),
+                  isExpandable: false
+                }));
+
+                return {
+                  id: `${day.key}-${hour.value}-${minute.value}-${format.value}-${locationType.value}`,
+                  label: locationType.label,
+                  color: 'secondary.main',
+                  fontSize: '0.8rem',
+                  indentLevel: 5,
+                  children: accessChildren,
+                  isExpandable: true
+                };
+              });
 
               return {
-                id: `${day.key}-${time.value}-${format.value}-${locationType.value}`,
-                label: locationType.label,
-                color: 'secondary.main',
+                id: `${day.key}-${hour.value}-${minute.value}-${format.value}`,
+                label: format.label,
+                color: 'warning.main',
                 fontSize: '0.8rem',
                 indentLevel: 4,
-                children: accessChildren,
+                children: locationChildren,
                 isExpandable: true
               };
             });
 
             return {
-              id: `${day.key}-${time.value}-${format.value}`,
-              label: format.label,
-              color: 'warning.main',
+              id: `${day.key}-${hour.value}-${minute.value}`,
+              label: minute.label,
+              color: 'info.main',
               fontSize: '0.8rem',
               indentLevel: 3,
-              children: locationChildren,
+              children: formatChildren,
               isExpandable: true
             };
           });
 
-          return {
-            id: `${day.key}-${time.value}`,
-            label: time.label,
-            color: 'info.main',
-            fontSize: '0.8rem',
-            indentLevel: 2,
-            children: formatChildren,
-            isExpandable: true
-          };
-        });
+        return {
+          id: `${day.key}-${hour.value}`,
+          label: hour.label,
+          color: 'info.main',
+          fontSize: '0.85rem',
+          indentLevel: 2,
+          children: minuteChildren,
+          isExpandable: true
+        };
+      });
 
       return {
         id: `day-${day.key}`,
@@ -269,7 +244,7 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
         color: 'text.primary',
         fontWeight: 500,
         indentLevel: 1,
-        children: timeChildren,
+        children: hourChildren,
         isExpandable: true
       };
     });
