@@ -6,6 +6,7 @@ import PopoverColorPicker from './PopoverColorPicker';
 import PopoverThemeDisplay from './PopoverThemeDisplay';
 import { useAppTheme } from '../contexts/MuiThemeProvider';
 import MuiThemeProvider from '../contexts/MuiThemeProvider';
+import { formatDateForDisplay } from '../utils/dateUtils';
 
 import { Capacitor } from '@capacitor/core';
 import { formatPhoneNumber, formatPhoneNumberForInput } from '../utils/phoneUtils';
@@ -369,16 +370,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
     return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   };
   
-  // Format date for display (YYYY-MM-DD -> Month Day, Year)
-  const formatDateForDisplay = (dateString) => {
-    if (!dateString) return '';
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { 
-      year: 'numeric', 
-      month: 'long', 
-      day: 'numeric' 
-    });
-  };
+
 
   return (
       <Box sx={{ p: 2, maxWidth: 600, mx: 'auto' }}>
