@@ -214,7 +214,7 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
               key={`day-${day.key}`}
               itemId={`day-${day.key}`}
               label={
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, py: 0.5 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, py: 0.5, ml: 2 }}>
                   <Typography variant="body2" sx={{ color: 'text.primary', fontWeight: 500 }}>
                     {day.label}
                   </Typography>
@@ -229,7 +229,7 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
                   key={`day-${day.key}-time-${time.value}`}
                   itemId={`day-${day.key}-time-${time.value}`}
                   label={
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, py: 0.5 }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, py: 0.5, ml: 4 }}>
                       <Typography variant="body2" sx={{ fontSize: '0.8rem', color: 'info.main' }}>
                         {time.label}
                       </Typography>
@@ -242,7 +242,7 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
                       key={`day-${day.key}-time-${time.value}-format-${format.value}`}
                       itemId={`day-${day.key}-time-${time.value}-format-${format.value}`}
                       label={
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, py: 0.5 }}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, py: 0.5, ml: 6 }}>
                           <Typography variant="body2" sx={{ fontSize: '0.8rem', color: 'warning.main' }}>
                             {format.label}
                           </Typography>
@@ -261,6 +261,7 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
                                 alignItems: 'center', 
                                 gap: 1, 
                                 py: 0.5,
+                                ml: 8,
                                 cursor: 'pointer',
                                 '&:hover': {
                                   bgcolor: muiTheme.palette.action.hover
