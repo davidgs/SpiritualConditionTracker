@@ -193,12 +193,8 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
         console.log('[ Profile.tsx: 187 ] User sobriety date:', user.sobrietyDate)
         // If it's already in YYYY-MM-DD format, use as-is
         if (user.sobrietyDate.includes('T')) {
-          // Convert from ISO format, keeping the date part only
-          const date = new Date(user.sobrietyDate);
-          const year = date.getFullYear();
-          const month = String(date.getMonth() + 1).padStart(2, '0');
-          const day = String(date.getDate()).padStart(2, '0');
-          setSobrietyDate(`${year}-${month}-${day}`);
+          // Convert from ISO format, keeping the date part only (avoid timezone conversion)
+          setSobrietyDate(user.sobrietyDate.split('T')[0]);
         } else {
           // Already in YYYY-MM-DD format
           setSobrietyDate(user.sobrietyDate);
@@ -324,19 +320,38 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
   };
 
   // Calculate sobriety information using pure JavaScript (no database calls)
+  // Fixed to handle timezone issues properly
   const sobrietyDays = useMemo(() => {
     if (!user?.sobrietyDate) return 0;
-    const sobrietyDate = new Date(user.sobrietyDate);
+    
+    // Get the date string in YYYY-MM-DD format
+    const dateStr = user.sobrietyDate.includes('T') ? user.sobrietyDate.split('T')[0] : user.sobrietyDate;
+    
+    // Parse date components to avoid timezone issues
+    const [year, month, day] = dateStr.split('-').map(Number);
+    const sobrietyDate = new Date(year, month - 1, day); // month is 0-indexed
+    
     const today = new Date();
-    const diffTime = Math.abs(today.getTime() - sobrietyDate.getTime());
+    const todayDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    
+    const diffTime = todayDate.getTime() - sobrietyDate.getTime();
     return Math.floor(diffTime / (1000 * 60 * 60 * 24));
   }, [user?.sobrietyDate]);
   
   const sobrietyYears = useMemo(() => {
     if (!user?.sobrietyDate) return 0;
-    const sobrietyDate = new Date(user.sobrietyDate);
+    
+    // Get the date string in YYYY-MM-DD format
+    const dateStr = user.sobrietyDate.includes('T') ? user.sobrietyDate.split('T')[0] : user.sobrietyDate;
+    
+    // Parse date components to avoid timezone issues
+    const [year, month, day] = dateStr.split('-').map(Number);
+    const sobrietyDate = new Date(year, month - 1, day); // month is 0-indexed
+    
     const today = new Date();
-    const diffTime = Math.abs(today.getTime() - sobrietyDate.getTime());
+    const todayDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    
+    const diffTime = todayDate.getTime() - sobrietyDate.getTime();
     const years = diffTime / (1000 * 60 * 60 * 24 * 365.25);
     return Math.round(years * 100) / 100; // Round to 2 decimal places
   }, [user?.sobrietyDate]);
