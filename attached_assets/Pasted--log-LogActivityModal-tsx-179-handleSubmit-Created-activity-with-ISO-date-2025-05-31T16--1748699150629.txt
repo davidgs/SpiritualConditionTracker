@@ -1,0 +1,52 @@
+⚡️  [log] - [ LogActivityModal.tsx:179 handleSubmit ] Created activity with ISO date: 2025-05-31T16:00:00.000Z
+⚡️  [log] - [ LogActivityModal.tsx:180 handleSubmit ] Original date input: 2025-05-31
+⚡️  [log] - [ sqliteLoader.js ] Original item received for save: {
+  "type": "prayer",
+  "date": "2025-05-31T16:00:00.000Z",
+  "notes": "",
+  "duration": 15,
+  "location": "completed"
+}
+⚡️  [log] - [ sqliteLoader.js ] Item without ID: {
+  "type": "prayer",
+  "date": "2025-05-31T16:00:00.000Z",
+  "notes": "",
+  "duration": 15,
+  "location": "completed"
+}
+⚡️  [log] - [ sqliteLoader.js ] Final item for database: {
+  "type": "prayer",
+  "date": "2025-05-31T16:00:00.000Z",
+  "notes": "",
+  "duration": 15,
+  "location": "completed",
+  "createdAt": "2025-05-31T13:44:36.599Z",
+  "updatedAt": "2025-05-31T13:44:36.599Z"
+}
+⚡️  [log] - [ sqliteLoader.js ] Date field specifically: 2025-05-31T16:00:00.000Z
+⚡️  [log] - [ sqliteLoader.js ] Date field type: string
+⚡️  [log] - [ sqliteLoader.js ] SQL keys: ["type","date","notes","duration","location","createdAt","updatedAt"]
+⚡️  [log] - [ sqliteLoader.js ] SQL values: ["prayer","2025-05-31T16:00:00.000Z","",15,"completed","2025-05-31T13:44:36.599Z","2025-05-31T13:44:36.599Z"]
+⚡️  To Native ->  CapacitorSQLite ⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO activities (type, date, notes, duration, location, createdAt, updatedAt) VALUES (?, ?, ?, ?, ?, ?, ?)
+execute 6310657
+⚡️  [log] - [ sqliteLoader.js ] With values: ["prayer","2025-05-31T16:00:00.000Z","",15,"completed","2025-05-31T13:44:36.599Z","2025-05-31T13:44:36.599Z"]
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  To Native ->  CapacitorSQLite query 6310658
+⚡️  [log] - [ sqliteLoader.js:453 add ] Insert completed in autocommit mode
+⚡️  TO JS {"values":[{"ios_columns":["id"]},{"id":4}]}
+⚡️  [log] - [ sqliteLoader.js ] Last insert ID result: {"values":[{"ios_columns":["id"]},{"id":4}]}
+⚡️  [log] - [ sqliteLoader.js ] Extracted ID: 4
+⚡️  [log] - [ AppDataContext ] Activity added: 4
+⚡️  [log] - [ App ] Activity saved successfully: 4
+⚡️  [log] - [ Dashboard.js ] Dashboard initial spiritualFitness: 5
+⚡️  [log] - [ Dashboard.js ] Dashboard currentScore state: 5
+⚡️  [log] - [ Dashboard.js ] Dashboard formattedScore for display: 5.00
+⚡️  [log] - [ Dashboard.js ] Dashboard progressPercent: 5
+⚡️  [log] - Formatting date: 1986-05-15
+⚡️  [log] - [ ActivityList.js ] Total activities received: 1
+⚡️  [log] - [ ActivityList.js ] Filter params - limit: 15 filter: all maxDaysAgo: 7
+⚡️  [log] - [ ActivityList.js ] Final filtered activities count: 1
+⚡️  [log] - [ ActivityList.js ] Grouping activity with date: 2025-05-31T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js ] Date object created: "2025-05-31T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js ] Generated dateKey from object: 2025-05-31
+⚡️  [log] - Formatting date: 2025-05-31

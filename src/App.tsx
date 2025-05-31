@@ -73,6 +73,7 @@ function AppContent() {
   async function handleSaveActivity(activityData: any): Promise<any> {
     try {
       const newActivity = {
+        userId: state.user?.id || '1', // Ensure userId is included
         type: activityData.type,
         date: activityData.date,
         notes: activityData.notes || '',
