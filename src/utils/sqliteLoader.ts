@@ -367,6 +367,7 @@ export async function setupTables(sqlite) {
         onlineUrl TEXT,
         phoneNumber TEXT,
         meetingCode TEXT,
+        locationType TEXT DEFAULT 'in_person',
         notes TEXT,
         latitude REAL,
         longitude REAL,
@@ -388,6 +389,18 @@ export async function setupTables(sqlite) {
     `
   });
   console.log('[ sqliteLoader.js:387 ]  Meetings table created successfully');
+
+  // Migration: Add locationType column to existing meetings table
+  try {
+    await sqlite.execute({
+      database: DB_NAME,
+      statements: `ALTER TABLE meetings ADD COLUMN locationType TEXT DEFAULT 'in_person'`
+    });
+    console.log('[ sqliteLoader.js:390 ]  Added locationType column to meetings table');
+  } catch (error) {
+    // Column might already exist, which is fine
+    console.log('[ sqliteLoader.js:393 ]  locationType column already exists or migration not needed');
+  }
 
   // Create sponsor_contacts table with INTEGER ID - without NOT NULL constraints
   // First disable foreign key constraints globally for safe table operations

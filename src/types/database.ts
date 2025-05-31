@@ -90,6 +90,7 @@ export interface Meeting extends BaseEntity {
   time: string;
   dayOfWeek: string;
   meetingType: string;
+  locationType: 'in_person' | 'online' | 'hybrid';
   notes?: string;
 }
 

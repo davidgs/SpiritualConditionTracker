@@ -7,6 +7,7 @@ interface ScheduleItem {
   day: string;
   time: string;
   format: string;
+  locationType: string;
   access: string;
 }
 
@@ -65,14 +66,20 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
     { value: 'literature', label: 'Literature' }
   ];
 
+  const meetingLocationTypes = [
+    { value: 'in_person', label: 'In-Person', icon: '🏢' },
+    { value: 'online', label: 'Online', icon: '💻' },
+    { value: 'hybrid', label: 'Hybrid', icon: '🌐' }
+  ];
+
   const meetingAccess = [
     { value: 'open', label: 'Open' },
     { value: 'closed', label: 'Closed' }
   ];
 
-  const addMeetingWithDetails = (day: string, time: string, format: string, access: string) => {
-    if (!day || !time || !format || !access) {
-      console.error('Missing required meeting details:', { day, time, format, access });
+  const addMeetingWithDetails = (day: string, time: string, format: string, locationType: string, access: string) => {
+    if (!day || !time || !format || !locationType || !access) {
+      console.error('Missing required meeting details:', { day, time, format, locationType, access });
       return;
     }
     
@@ -80,6 +87,7 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
       day: day.trim(), 
       time: time.trim(), 
       format: format.trim(), 
+      locationType: locationType.trim(),
       access: access.trim() 
     };
     
@@ -114,6 +122,14 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
             <Typography variant="body2" sx={{ minWidth: '70px', textAlign: 'left' }}>
               {timeOptions.find(t => t.value === item.time)?.label || item.time}
             </Typography>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+              <Typography sx={{ fontSize: '1rem' }}>
+                {meetingLocationTypes.find(l => l.value === item.locationType)?.icon || '📍'}
+              </Typography>
+              <Typography variant="body2" sx={{ fontSize: '0.75rem', minWidth: '60px' }}>
+                {meetingLocationTypes.find(l => l.value === item.locationType)?.label || item.locationType}
+              </Typography>
+            </Box>
             <Chip 
               label={item.format ? item.format.charAt(0).toUpperCase() + item.format.slice(1).replace('_', ' ') : 'Unknown'}
               size="small"
@@ -123,7 +139,7 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
             <Chip 
               label={item.access ? item.access.charAt(0).toUpperCase() + item.access.slice(1) : 'Unknown'}
               size="small"
-              color="secondary"
+              color={item.access === 'open' ? 'success' : 'error'}
               sx={{ fontSize: '0.7rem', height: '20px', minWidth: 'fit-content' }}
             />
             <Button
@@ -157,15 +173,27 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
         .filter(time => !schedule.some(item => item.day === day.key && item.time === time.value))
         .map(time => {
           const formatChildren = meetingFormats.map(format => {
-            const accessChildren = meetingAccess.map(access => ({
-              id: `${day.key}-${time.value}-${format.value}-${access.value}`,
-              label: `${access.label} Meeting ← Click to add`,
-              color: access.value === 'open' ? 'success.main' : 'error.main',
-              fontSize: '0.8rem',
-              indentLevel: 4,
-              onClick: () => addMeetingWithDetails(day.key, time.value, format.value, access.value),
-              isExpandable: false
-            }));
+            const locationChildren = meetingLocationTypes.map(locationType => {
+              const accessChildren = meetingAccess.map(access => ({
+                id: `${day.key}-${time.value}-${format.value}-${locationType.value}-${access.value}`,
+                label: `${access.label} Meeting ← Click to add`,
+                color: access.value === 'open' ? 'success.main' : 'error.main',
+                fontSize: '0.8rem',
+                indentLevel: 5,
+                onClick: () => addMeetingWithDetails(day.key, time.value, format.value, locationType.value, access.value),
+                isExpandable: false
+              }));
+
+              return {
+                id: `${day.key}-${time.value}-${format.value}-${locationType.value}`,
+                label: `${locationType.icon} ${locationType.label}`,
+                color: 'secondary.main',
+                fontSize: '0.8rem',
+                indentLevel: 4,
+                children: accessChildren,
+                isExpandable: true
+              };
+            });
 
             return {
               id: `${day.key}-${time.value}-${format.value}`,
@@ -173,7 +201,7 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
               color: 'warning.main',
               fontSize: '0.8rem',
               indentLevel: 3,
-              children: accessChildren,
+              children: locationChildren,
               isExpandable: true
             };
           });
