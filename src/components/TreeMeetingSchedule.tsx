@@ -128,9 +128,11 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
               {timeOptions.find(t => t.value === item.time)?.label || item.time}
             </Typography>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-              <Typography sx={{ fontSize: '1rem' }}>
-                {meetingLocationTypes.find(l => l.value === item.locationType)?.icon || '📍'}
-              </Typography>
+              <img 
+                src={meetingLocationTypes.find(l => l.value === item.locationType)?.icon || inPersonIcon}
+                alt={meetingLocationTypes.find(l => l.value === item.locationType)?.label || 'Meeting type'}
+                style={{ width: '18px', height: '18px', borderRadius: '50%' }}
+              />
               <Typography variant="body2" sx={{ fontSize: '0.75rem', minWidth: '60px' }}>
                 {meetingLocationTypes.find(l => l.value === item.locationType)?.label || item.locationType}
               </Typography>
@@ -191,7 +193,16 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
 
               return {
                 id: `${day.key}-${time.value}-${format.value}-${locationType.value}`,
-                label: `${locationType.icon} ${locationType.label}`,
+                label: (
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <img 
+                      src={locationType.icon} 
+                      alt={locationType.label}
+                      style={{ width: '20px', height: '20px', borderRadius: '50%' }}
+                    />
+                    <Typography variant="body2">{locationType.label}</Typography>
+                  </Box>
+                ),
                 color: 'secondary.main',
                 fontSize: '0.8rem',
                 indentLevel: 4,
