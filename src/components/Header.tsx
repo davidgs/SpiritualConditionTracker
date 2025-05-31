@@ -81,7 +81,7 @@ function Header({ title, menuOpen, setMenuOpen, isMobile }) {
         }}
         aria-label="Toggle theme"
       >
-        {muiTheme.palette.mode === 'light' ? '🌙' : '☀️'}
+        {muiTheme.palette.mode === 'dark' ? '🌙' : '☀️'}
       </Box>
       
       {/* Mobile Hamburger Menu Button */}

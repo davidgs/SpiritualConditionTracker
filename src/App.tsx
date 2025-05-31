@@ -4,7 +4,8 @@
 
 import React from 'react';
 import { AppDataProvider, useAppData } from './contexts/AppDataContext';
-import MuiThemeProvider from './contexts/MuiThemeProvider';
+import MuiThemeProvider, { useAppTheme } from './contexts/MuiThemeProvider';
+import { useTheme } from '@mui/material/styles';
 
 // Import components for testing
 import Dashboard from './components/Dashboard';
@@ -12,6 +13,7 @@ import Header from './components/Header';
 
 function AppContent() {
   const { state, addActivity, updateTimeframe } = useAppData();
+  const muiTheme = useTheme();
 
   // Show loading state
   if (state.isLoading) {
@@ -105,7 +107,11 @@ function AppContent() {
   // Try to render Header + Dashboard with MuiThemeProvider context
   try {
     return (
-      <div style={{ minHeight: '100vh' }}>
+      <div style={{ 
+        minHeight: '100vh',
+        backgroundColor: muiTheme.palette.background.default,
+        color: muiTheme.palette.text.primary
+      }}>
         <Header 
           title="Recovery Dashboard"
           menuOpen={false}
