@@ -170,8 +170,8 @@ async function validateAndLogDatabase(sqlite) {
       
       if (activitiesResult?.values?.length > 0) {
         console.log('[ sqliteLoader.js:172 ]  Recent activities found:', activitiesResult.values.length);
-        foreach (const activity of activitiesResult.values){
-          console.log('[ sqliteLoader.js:174 ]  Activity:', activity);
+        activitiesResults.values.forEach( (element) => {
+          console.log('[ sqliteLoader.js:174 ]  Activity:', element);
         }
       }
       
