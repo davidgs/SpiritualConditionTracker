@@ -753,10 +753,14 @@ function setupGlobalDB(sqlite) {
         console.log('[ sqliteLoader.js ] SQL values:', values);
         
         // Execute the SQL insert (autocommit mode - automatically commits)
+        const sqlStatement = `INSERT INTO ${collection} (${keys.join(', ')}) VALUES (${placeholders})`;
+        console.log('[ sqliteLoader.js ] Executing SQL:', sqlStatement);
+        console.log('[ sqliteLoader.js ] With values:', values);
+        
         await sqlite.execute({
           database: DB_NAME,
-          statements: `INSERT INTO ${collection} (${keys.join(', ')}) VALUES (${placeholders})`,
-          values: values
+          statements: sqlStatement,
+          values: [values] // Wrap values array for Capacitor SQLite
         });
         
         console.log('[ sqliteLoader.js:453 add ] Insert completed in autocommit mode');
