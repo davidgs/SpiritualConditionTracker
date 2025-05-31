@@ -708,7 +708,6 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
         <ActivityList 
           activities={activities}
           darkMode={darkMode}
-          limit={15}
           maxDaysAgo={activityDaysFilter === 0 ? null : activityDaysFilter}
           filter={activityTypeFilter}
           showDate={true}
