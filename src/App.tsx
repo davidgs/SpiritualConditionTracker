@@ -3,22 +3,10 @@
  */
 
 import React from 'react';
-import { ThemeProvider, createTheme } from '@mui/material/styles';
-import CssBaseline from '@mui/material/CssBaseline';
 import { AppDataProvider, useAppData } from './contexts/AppDataContext';
 
 // Import only Dashboard for testing
 import Dashboard from './components/Dashboard';
-
-// Simple theme
-const theme = createTheme({
-  palette: {
-    mode: 'dark',
-    primary: {
-      main: '#3b82f6',
-    },
-  },
-});
 
 function AppContent() {
   const { state, addActivity, updateTimeframe } = useAppData();
@@ -154,12 +142,9 @@ function AppContent() {
 
 function App() {
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <AppDataProvider>
-        <AppContent />
-      </AppDataProvider>
-    </ThemeProvider>
+    <AppDataProvider>
+      <AppContent />
+    </AppDataProvider>
   );
 }
 
