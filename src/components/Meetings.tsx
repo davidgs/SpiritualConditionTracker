@@ -194,20 +194,20 @@ export default function Meetings({ setCurrentView, meetings = [], onSave, onDele
               if (hasContent) {
                 return (
                   <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, mt: 1 }}>
-                    {/* Location Type Pills with emojis */}
+                    {/* Location Type Pills - text only */}
                     {locationTypes.map((locationType, index) => {
                       const locationConfig = {
-                        'in_person': { icon: '🏢', label: 'In-Person', color: 'success' },
-                        'online': { icon: '💻', label: 'Online', color: 'info' },
-                        'hybrid': { icon: '🌐', label: 'Hybrid', color: 'warning' }
+                        'in_person': { label: 'In-Person', color: 'success' },
+                        'online': { label: 'Online', color: 'info' },
+                        'hybrid': { label: 'Hybrid', color: 'warning' }
                       };
                       
-                      const config = locationConfig[locationType] || { icon: '📍', label: locationType, color: 'default' };
+                      const config = locationConfig[locationType] || { label: locationType, color: 'default' };
                       
                       return (
                         <Chip
                           key={`location-${index}`}
-                          label={`${config.icon} ${config.label}`}
+                          label={config.label}
                           size="small"
                           color={config.color}
                           sx={{
