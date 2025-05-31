@@ -1,12 +1,27 @@
 /**
- * Simple App Component for Testing
+ * App Component - Dashboard Only for Testing
  */
 
 import React from 'react';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
 import { AppDataProvider, useAppData } from './contexts/AppDataContext';
 
+// Import only Dashboard for testing
+import Dashboard from './components/Dashboard';
+
+// Simple theme
+const theme = createTheme({
+  palette: {
+    mode: 'dark',
+    primary: {
+      main: '#3b82f6',
+    },
+  },
+});
+
 function AppContent() {
-  const { state } = useAppData();
+  const { state, addActivity, updateTimeframe } = useAppData();
 
   // Show loading state
   if (state.isLoading) {
@@ -47,74 +62,104 @@ function AppContent() {
     );
   }
 
-  // Show app content
-  return (
-    <div style={{ 
-      minHeight: '100vh',
-      backgroundColor: '#1a1a1a',
-      color: '#ffffff',
-      padding: '20px'
-    }}>
-      <h1>Recovery App</h1>
-      
-      <div style={{ marginBottom: '20px' }}>
-        <h3>Database Status: {state.databaseStatus}</h3>
-      </div>
+  // Filter activities by timeframe
+  function filterActivitiesByTimeframe(activities: any[], timeframeDays: number): any[] {
+    const cutoffDate = new Date();
+    cutoffDate.setDate(cutoffDate.getDate() - timeframeDays);
+    
+    return activities.filter(activity => {
+      const activityDate = new Date(activity.date);
+      return activityDate >= cutoffDate;
+    });
+  }
 
-      {state.user && (
-        <div style={{ marginBottom: '20px', padding: '15px', backgroundColor: '#2d2d2d', borderRadius: '8px' }}>
-          <h3>User Profile</h3>
-          <p><strong>Name:</strong> {state.user.name || 'Not set'}</p>
-          <p><strong>Last Name:</strong> {state.user.lastName || 'Not set'}</p>
-          <p><strong>Phone:</strong> {state.user.phoneNumber || 'Not set'}</p>
-          <p><strong>Email:</strong> {state.user.email || 'Not set'}</p>
-          <p><strong>Sobriety Date:</strong> {state.user.sobrietyDate || 'Not set'}</p>
-        </div>
-      )}
+  // Handle saving new activity
+  async function handleSaveActivity(activityData: any): Promise<any> {
+    try {
+      const userId = state.currentUserId;
+      if (!userId) {
+        throw new Error('No user ID available');
+      }
 
-      <div style={{ marginBottom: '20px', padding: '15px', backgroundColor: '#2d2d2d', borderRadius: '8px' }}>
-        <h3>Activities ({state.activities.length})</h3>
-        {state.activities.length > 0 ? (
-          state.activities.map((activity, index) => (
-            <div key={activity.id || index} style={{ marginBottom: '10px', padding: '10px', backgroundColor: '#3d3d3d', borderRadius: '4px' }}>
-              <p><strong>Type:</strong> {activity.type}</p>
-              <p><strong>Date:</strong> {activity.date}</p>
-              {activity.notes && <p><strong>Notes:</strong> {activity.notes}</p>}
-            </div>
-          ))
-        ) : (
-          <p>No activities found</p>
-        )}
-      </div>
+      const newActivity = {
+        userId: String(userId),
+        type: activityData.type,
+        date: activityData.date,
+        notes: activityData.notes || '',
+        duration: activityData.duration || null,
+        location: activityData.location || null,
+      };
 
-      <div style={{ padding: '15px', backgroundColor: '#2d2d2d', borderRadius: '8px' }}>
-        <h3>Meetings ({state.meetings.length})</h3>
-        {state.meetings.length > 0 ? (
-          state.meetings.map((meeting, index) => (
-            <div key={meeting.id || index} style={{ marginBottom: '10px', padding: '10px', backgroundColor: '#3d3d3d', borderRadius: '4px' }}>
-              <p><strong>Name:</strong> {meeting.name}</p>
-              <p><strong>Location:</strong> {meeting.location}</p>
-              <p><strong>Time:</strong> {meeting.time}</p>
-            </div>
-          ))
-        ) : (
-          <p>No meetings found</p>
-        )}
-      </div>
+      const savedActivity = await addActivity(newActivity);
+      console.log('[ App ] Activity saved successfully:', savedActivity?.id);
+      return savedActivity;
+    } catch (error) {
+      console.error('[ App ] Error saving activity:', error);
+      return null;
+    }
+  }
 
-      <div style={{ marginTop: '20px', fontSize: '14px', opacity: 0.7 }}>
-        <p>Spiritual Fitness Score: {state.spiritualFitness}</p>
-        <p>Current Timeframe: {state.currentTimeframe} days</p>
+  // Handle timeframe change
+  async function handleTimeframeChange(newTimeframe: number) {
+    await updateTimeframe(newTimeframe);
+  }
+
+  // Simple navigation handler (does nothing for now)
+  function handleNavigation(view: string) {
+    console.log('Navigation to:', view);
+    // For testing, we stay on dashboard
+  }
+
+  const filteredActivities = filterActivitiesByTimeframe(state.activities, state.currentTimeframe);
+
+  // Try to render Dashboard component
+  try {
+    return (
+      <div style={{ 
+        minHeight: '100vh', 
+        backgroundColor: '#1a1a1a',
+        color: '#ffffff'
+      }}>
+        <Dashboard
+          user={state.user}
+          activities={filteredActivities}
+          currentTimeframe={state.currentTimeframe}
+          onSaveActivity={handleSaveActivity}
+          onTimeframeChange={handleTimeframeChange}
+          setCurrentView={handleNavigation}
+        />
       </div>
-    </div>
-  );
+    );
+  } catch (error) {
+    return (
+      <div style={{ 
+        minHeight: '100vh',
+        backgroundColor: '#1a1a1a',
+        color: '#ff6b6b',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '20px'
+      }}>
+        <h2>Dashboard Component Error</h2>
+        <p>Error rendering Dashboard: {error instanceof Error ? error.message : 'Unknown error'}</p>
+        <pre style={{ fontSize: '12px', marginTop: '20px' }}>
+          {error instanceof Error ? error.stack : 'No stack trace available'}
+        </pre>
+      </div>
+    );
+  }
 }
 
 function App() {
   return (
-    <AppDataProvider>
-      <AppContent />
-    </AppDataProvider>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <AppDataProvider>
+        <AppContent />
+      </AppDataProvider>
+    </ThemeProvider>
   );
 }
 
