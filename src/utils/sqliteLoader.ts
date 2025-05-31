@@ -676,11 +676,22 @@ function setupGlobalDB(sqlite) {
         
         // Always include timestamps
         const now = new Date().toISOString();
-        const itemWithTimestamps = {
+        let itemWithTimestamps = {
           ...itemWithoutId,
           createdAt: now,
           updatedAt: now
         };
+
+        // Convert array and object fields to JSON strings for SQLite storage
+        const jsonFields = ['days', 'schedule', 'coordinates', 'types'];
+        jsonFields.forEach(field => {
+          if (itemWithTimestamps[field] !== undefined && itemWithTimestamps[field] !== null) {
+            if (Array.isArray(itemWithTimestamps[field]) || typeof itemWithTimestamps[field] === 'object') {
+              itemWithTimestamps[field] = JSON.stringify(itemWithTimestamps[field]);
+              console.log(`[ sqliteLoader.js ] Converted ${field} to JSON:`, itemWithTimestamps[field]);
+            }
+          }
+        });
         
         console.log('[ sqliteLoader.js ] Final item for database:', JSON.stringify(itemWithTimestamps, null, 2));
         console.log('[ sqliteLoader.js ] Date field specifically:', itemWithTimestamps.date);
