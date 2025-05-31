@@ -12,9 +12,10 @@ import Dashboard from './components/Dashboard';
 import Header from './components/Header';
 import BottomNavBar from './components/BottomNavBar';
 import Meetings from './components/Meetings';
+import Profile from './components/Profile';
 
 function AppContent() {
-  const { state, addActivity, addMeeting, deleteMeeting, updateTimeframe } = useAppData();
+  const { state, addActivity, addMeeting, deleteMeeting, updateTimeframe, updateUser } = useAppData();
   const muiTheme = useTheme();
   const [currentView, setCurrentView] = React.useState('dashboard');
 
@@ -118,6 +119,18 @@ function AppContent() {
     }
   }
 
+  // Handle updating user profile
+  async function handleUpdateProfile(updates: any, options: any = {}): Promise<any> {
+    try {
+      const updatedUser = await updateUser(updates);
+      console.log('[ App ] Profile updated successfully:', updatedUser?.id);
+      return updatedUser;
+    } catch (error) {
+      console.error('[ App ] Error updating profile:', error);
+      return null;
+    }
+  }
+
   // Handle timeframe change
   async function handleTimeframeChange(newTimeframe: number) {
     await updateTimeframe(newTimeframe);
@@ -168,67 +181,11 @@ function AppContent() {
             />
           )}
           {currentView === 'profile' && (
-            <div style={{ 
-              padding: '20px',
-              color: muiTheme.palette.text.primary 
-            }}>
-              <div style={{ 
-                maxWidth: '600px', 
-                margin: '0 auto',
-                backgroundColor: muiTheme.palette.background.paper,
-                padding: '24px',
-                borderRadius: '8px',
-                boxShadow: muiTheme.shadows[2]
-              }}>
-                <h2 style={{ marginBottom: '24px', color: muiTheme.palette.text.primary }}>Profile Settings</h2>
-                
-                {state.user && (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                    <div>
-                      <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>Name:</label>
-                      <div style={{ padding: '8px', backgroundColor: muiTheme.palette.background.default, borderRadius: '4px' }}>
-                        {state.user.name || 'Not set'}
-                      </div>
-                    </div>
-                    
-                    <div>
-                      <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>Last Name:</label>
-                      <div style={{ padding: '8px', backgroundColor: muiTheme.palette.background.default, borderRadius: '4px' }}>
-                        {state.user.lastName || 'Not set'}
-                      </div>
-                    </div>
-                    
-                    <div>
-                      <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>Phone:</label>
-                      <div style={{ padding: '8px', backgroundColor: muiTheme.palette.background.default, borderRadius: '4px' }}>
-                        {state.user.phoneNumber || 'Not set'}
-                      </div>
-                    </div>
-                    
-                    <div>
-                      <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>Email:</label>
-                      <div style={{ padding: '8px', backgroundColor: muiTheme.palette.background.default, borderRadius: '4px' }}>
-                        {state.user.email || 'Not set'}
-                      </div>
-                    </div>
-                    
-                    <div>
-                      <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>Sobriety Date:</label>
-                      <div style={{ padding: '8px', backgroundColor: muiTheme.palette.background.default, borderRadius: '4px' }}>
-                        {state.user.sobrietyDate || 'Not set'}
-                      </div>
-                    </div>
-                    
-                    <div style={{ marginTop: '24px', padding: '16px', backgroundColor: muiTheme.palette.warning.light, borderRadius: '4px' }}>
-                      <p style={{ margin: 0, fontSize: '14px' }}>
-                        Profile editing functionality will be available in the mobile app. 
-                        This view shows your current profile information.
-                      </p>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
+            <Profile
+              user={state.user}
+              onUpdate={handleUpdateProfile}
+              onNavigate={handleNavigation}
+            />
           )}
           {currentView !== 'dashboard' && currentView !== 'meetings' && currentView !== 'profile' && (
             <div style={{ 
