@@ -220,22 +220,29 @@ export default function Meetings({ setCurrentView, meetings = [], onSave, onDele
                     })}
                     
                     {/* Format and Access Pills */}
-                    {meetingTypes.map((type, index) => (
-                      <Chip
-                        key={`type-${index}`}
-                        label={type.charAt(0).toUpperCase() + type.slice(1).replace('_', ' ')}
-                        size="small"
-                        sx={{
-                          fontSize: '0.75rem',
-                          height: '24px',
-                          bgcolor: 'primary.main',
-                          color: 'primary.contrastText',
-                          '&:hover': {
-                            bgcolor: 'primary.dark'
-                          }
-                        }}
-                      />
-                    ))}
+                    {meetingTypes.map((type, index) => {
+                      // Determine color based on type
+                      let chipColor = 'primary';
+                      if (type === 'open') {
+                        chipColor = 'success';
+                      } else if (type === 'closed') {
+                        chipColor = 'error';
+                      }
+
+                      return (
+                        <Chip
+                          key={`type-${index}`}
+                          label={type.charAt(0).toUpperCase() + type.slice(1).replace('_', ' ')}
+                          size="small"
+                          color={chipColor}
+                          sx={{
+                            fontSize: '0.75rem',
+                            height: '24px',
+                            fontWeight: 'medium'
+                          }}
+                        />
+                      );
+                    })}
                   </Box>
                 );
               }
