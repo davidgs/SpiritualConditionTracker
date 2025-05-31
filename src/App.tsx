@@ -72,8 +72,10 @@ function AppContent() {
   // Handle saving new activity
   async function handleSaveActivity(activityData: any): Promise<any> {
     try {
+      console.log('[ App.tsx:73 handleSaveActivity ] Received activity data:', JSON.stringify(activityData, null, 2));
+      console.log('[ App.tsx:74 handleSaveActivity ] Current user state:', state.user);
+      
       const newActivity = {
-        userId: state.user?.id || '1', // Ensure userId is included
         type: activityData.type,
         date: activityData.date,
         notes: activityData.notes || '',
@@ -81,16 +83,19 @@ function AppContent() {
         location: activityData.location || null,
       };
 
+      console.log('[ App.tsx:83 handleSaveActivity ] Calling addActivity with:', JSON.stringify(newActivity, null, 2));
       const savedActivity = await addActivity(newActivity);
+      
       if (savedActivity) {
-        console.log('[ App ] Activity saved successfully:', savedActivity?.id);
+        console.log('[ App.tsx:87 handleSaveActivity ] Activity saved successfully with ID:', savedActivity?.id);
+        console.log('[ App.tsx:88 handleSaveActivity ] Saved activity data:', JSON.stringify(savedActivity, null, 2));
         return savedActivity;
       } else {
-        console.log('[ App ] Activity saved to fallback storage');
+        console.log('[ App.tsx:91 handleSaveActivity ] Activity saved to fallback storage');
         return newActivity; // Return the activity data even if it went to fallback
       }
     } catch (error) {
-      console.error('[ App ] Error saving activity:', error);
+      console.error('[ App.tsx:95 handleSaveActivity ] Error saving activity:', error);
       throw error; // Re-throw to let the LogActivityModal handle the error display
     }
   }

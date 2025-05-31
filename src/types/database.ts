@@ -76,7 +76,6 @@ export interface SponsorContactActionItem extends BaseEntity {
 
 // Activity interface
 export interface Activity extends BaseEntity {
-  userId: string;
   type: ActivityType;
   date: string;
   notes?: string;

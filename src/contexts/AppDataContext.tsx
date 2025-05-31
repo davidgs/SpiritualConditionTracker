@@ -297,16 +297,22 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
 
   const addActivity = async (activityData: Omit<Activity, 'id' | 'createdAt' | 'updatedAt'>): Promise<Activity | null> => {
     try {
+      console.log('[ AppDataContext.tsx:221 addActivity ] Received activity data:', JSON.stringify(activityData, null, 2));
+      console.log('[ AppDataContext.tsx:222 addActivity ] Calling databaseService.addActivity...');
+      
       const newActivity = await databaseService.addActivity(activityData);
+      
+      console.log('[ AppDataContext.tsx:226 addActivity ] DatabaseService returned:', JSON.stringify(newActivity, null, 2));
+      
       dispatch({ type: 'ADD_ACTIVITY', payload: newActivity });
       
       // Recalculate spiritual fitness
       calculateSpiritualFitness();
       
-      console.log('[ AppDataContext ] Activity added:', newActivity.id);
+      console.log('[ AppDataContext.tsx:233 addActivity ] Activity added successfully with ID:', newActivity.id);
       return newActivity;
     } catch (error) {
-      console.error('[ AppDataContext ] Failed to add activity:', error);
+      console.error('[ AppDataContext.tsx:236 addActivity ] Failed to add activity:', error);
       dispatch({ type: 'SET_ERROR', payload: 'Failed to save activity' });
       return null;
     }

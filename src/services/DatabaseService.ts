@@ -259,7 +259,13 @@ class DatabaseService {
 
   async addActivity(activity: Omit<Activity, 'id' | 'createdAt' | 'updatedAt'>): Promise<Activity> {
     return this.executeOperation(async () => {
-      return await window.db.add('activities', activity);
+      console.log('[ DatabaseService.ts:261 addActivity ] Received activity:', JSON.stringify(activity, null, 2));
+      console.log('[ DatabaseService.ts:262 addActivity ] Calling window.db.add...');
+      
+      const result = await window.db.add('activities', activity);
+      
+      console.log('[ DatabaseService.ts:266 addActivity ] window.db.add returned:', JSON.stringify(result, null, 2));
+      return result;
     });
   }
 
