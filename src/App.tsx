@@ -11,6 +11,7 @@ import { useTheme } from '@mui/material/styles';
 import Dashboard from './components/Dashboard';
 import Header from './components/Header';
 import BottomNavBar from './components/BottomNavBar';
+import Meetings from './components/Meetings';
 
 function AppContent() {
   const { state, addActivity, updateTimeframe } = useAppData();
@@ -136,7 +137,18 @@ function AppContent() {
               setCurrentView={handleNavigation}
             />
           )}
-          {currentView !== 'dashboard' && (
+          {currentView === 'meetings' && (
+            <Meetings
+              setCurrentView={handleNavigation}
+              meetings={state.meetings}
+              onSave={async (meetingData) => {
+                console.log('Meeting save not implemented yet:', meetingData);
+                return null;
+              }}
+              user={state.user}
+            />
+          )}
+          {currentView !== 'dashboard' && currentView !== 'meetings' && (
             <div style={{ 
               padding: '20px', 
               textAlign: 'center',
