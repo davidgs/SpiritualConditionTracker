@@ -75,13 +75,7 @@ class DatabaseService {
     } catch (error) {
       console.error('[ DatabaseService ] Database initialization failed:', error);
       this.setStatus('error');
-
-      // Set up localStorage fallback
-      await this.setupFallbackDatabase();
-      this.setStatus('fallback');
-
-      // Process queued operations with fallback
-      await this.processOperationQueue();
+      throw error; // Don't use localStorage fallback in native app
     }
   }
 
@@ -258,14 +252,14 @@ class DatabaseService {
 
   async getAllActivities(): Promise<Activity[]> {
     return this.executeOperation(async () => {
-      const activities = await this.database.getAll('activities');
+      const activities = await window.db.getAll('activities');
       return activities || [];
     });
   }
 
   async addActivity(activity: Omit<Activity, 'id' | 'createdAt' | 'updatedAt'>): Promise<Activity> {
     return this.executeOperation(async () => {
-      return await this.database.add('activities', activity);
+      return await window.db.add('activities', activity);
     });
   }
 
