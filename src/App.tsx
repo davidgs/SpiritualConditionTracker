@@ -6,8 +6,9 @@ import React from 'react';
 import { AppDataProvider, useAppData } from './contexts/AppDataContext';
 import MuiThemeProvider from './contexts/MuiThemeProvider';
 
-// Import only Dashboard for testing
+// Import components for testing
 import Dashboard from './components/Dashboard';
+import Header from './components/Header';
 
 function AppContent() {
   const { state, addActivity, updateTimeframe } = useAppData();
@@ -101,22 +102,32 @@ function AppContent() {
 
   const filteredActivities = filterActivitiesByTimeframe(state.activities, state.currentTimeframe);
 
-  // Try to render Dashboard component with MuiThemeProvider context
+  // Try to render Header + Dashboard with MuiThemeProvider context
   try {
     return (
-      <Dashboard
-        user={state.user}
-        activities={filteredActivities}
-        meetings={state.meetings}
-        currentTimeframe={state.currentTimeframe}
-        onSave={handleSaveActivity}
-        onSaveMeeting={async (meetingData) => {
-          console.log('Meeting save not implemented yet:', meetingData);
-          return null;
-        }}
-        onTimeframeChange={handleTimeframeChange}
-        setCurrentView={handleNavigation}
-      />
+      <div style={{ minHeight: '100vh' }}>
+        <Header 
+          title="Recovery Dashboard"
+          menuOpen={false}
+          setMenuOpen={() => {}}
+          isMobile={true}
+        />
+        <div style={{ paddingTop: '80px' }}>
+          <Dashboard
+            user={state.user}
+            activities={filteredActivities}
+            meetings={state.meetings}
+            currentTimeframe={state.currentTimeframe}
+            onSave={handleSaveActivity}
+            onSaveMeeting={async (meetingData) => {
+              console.log('Meeting save not implemented yet:', meetingData);
+              return null;
+            }}
+            onTimeframeChange={handleTimeframeChange}
+            setCurrentView={handleNavigation}
+          />
+        </div>
+      </div>
     );
   } catch (error) {
     return (
