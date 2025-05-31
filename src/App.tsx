@@ -14,7 +14,7 @@ import BottomNavBar from './components/BottomNavBar';
 import Meetings from './components/Meetings';
 
 function AppContent() {
-  const { state, addActivity, updateTimeframe } = useAppData();
+  const { state, addActivity, addMeeting, updateTimeframe } = useAppData();
   const muiTheme = useTheme();
   const [currentView, setCurrentView] = React.useState('dashboard');
 
@@ -94,6 +94,18 @@ function AppContent() {
     }
   }
 
+  // Handle saving new meeting
+  async function handleSaveMeeting(meetingData: any): Promise<any> {
+    try {
+      const savedMeeting = await addMeeting(meetingData);
+      console.log('[ App ] Meeting saved successfully:', savedMeeting?.id);
+      return savedMeeting;
+    } catch (error) {
+      console.error('[ App ] Error saving meeting:', error);
+      return null;
+    }
+  }
+
   // Handle timeframe change
   async function handleTimeframeChange(newTimeframe: number) {
     await updateTimeframe(newTimeframe);
@@ -129,10 +141,7 @@ function AppContent() {
               meetings={state.meetings}
               currentTimeframe={state.currentTimeframe}
               onSave={handleSaveActivity}
-              onSaveMeeting={async (meetingData) => {
-                console.log('Meeting save not implemented yet:', meetingData);
-                return null;
-              }}
+              onSaveMeeting={handleSaveMeeting}
               onTimeframeChange={handleTimeframeChange}
               setCurrentView={handleNavigation}
             />
