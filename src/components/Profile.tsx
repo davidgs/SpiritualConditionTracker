@@ -513,9 +513,10 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
                   color="success"
                   onClick={() => {
                     if (sobrietyDate) {
-                      // Update the sobriety date directly
+                      // Ensure the date is properly formatted to avoid timezone issues
+                      const dateValue = sobrietyDate.includes('-') ? sobrietyDate : new Date(sobrietyDate).toISOString().split('T')[0];
                       const updates = {
-                        sobrietyDate: sobrietyDate
+                        sobrietyDate: dateValue
                       };
                       // Save the sobriety date without redirecting to dashboard
                       onUpdate(updates, { redirectToDashboard: false });
