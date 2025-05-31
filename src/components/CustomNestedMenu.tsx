@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { Box, Typography, Collapse, IconButton } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -25,62 +25,77 @@ const CustomNestedMenu: React.FC<CustomNestedMenuProps> = ({ items, onActionComp
   const theme = useTheme();
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
 
-  const toggleExpanded = (itemId: string) => {
-    const newExpanded = new Set(expandedItems);
-    if (newExpanded.has(itemId)) {
-      newExpanded.delete(itemId);
-    } else {
-      newExpanded.add(itemId);
-    }
-    setExpandedItems(newExpanded);
-  };
+  const toggleExpanded = useCallback((itemId: string) => {
+    setExpandedItems(prev => {
+      const newExpanded = new Set(prev);
+      if (newExpanded.has(itemId)) {
+        newExpanded.delete(itemId);
+      } else {
+        newExpanded.add(itemId);
+      }
+      return newExpanded;
+    });
+  }, []);
 
-  const renderMenuItem = (item: NestedMenuItem) => {
+  const handleItemClick = useCallback((item: NestedMenuItem, hasChildren: boolean) => {
+    if (hasChildren) {
+      toggleExpanded(item.id);
+    } else if (item.onClick) {
+      item.onClick();
+      setExpandedItems(new Set());
+      onActionComplete?.();
+    }
+  }, [toggleExpanded, onActionComplete]);
+
+  const baseStyles = useMemo(() => ({
+    menuItem: {
+      display: 'flex',
+      alignItems: 'center',
+      py: 0.5,
+      cursor: 'pointer',
+      '&:hover': {
+        bgcolor: theme.palette.action.hover
+      }
+    },
+    iconButton: {
+      p: 0,
+      mr: 0.5,
+      width: 20,
+      height: 20
+    },
+    spacer: {
+      width: 20,
+      mr: 0.5
+    },
+    icon: {
+      fontSize: 16
+    }
+  }), [theme.palette.action.hover]);
+
+  const renderMenuItem = useCallback((item: NestedMenuItem) => {
     const isExpanded = expandedItems.has(item.id);
     const hasChildren = item.children && item.children.length > 0;
-    const baseIndent = item.indentLevel * 24; // 24px per level
+    const baseIndent = item.indentLevel * 24;
 
     return (
       <Box key={item.id}>
         <Box
           sx={{
-            display: 'flex',
-            alignItems: 'center',
-            py: 0.5,
-            pl: `${baseIndent}px`,
-            cursor: hasChildren || item.onClick ? 'pointer' : 'default',
-            '&:hover': {
-              bgcolor: theme.palette.action.hover
-            }
+            ...baseStyles.menuItem,
+            pl: `${baseIndent}px`
           }}
-          onClick={() => {
-            if (hasChildren) {
-              toggleExpanded(item.id);
-            } else if (item.onClick) {
-              item.onClick();
-              // Collapse all items after an action is completed
-              setExpandedItems(new Set());
-              if (onActionComplete) {
-                onActionComplete();
-              }
-            }
-          }}
+          onClick={() => handleItemClick(item, hasChildren)}
         >
-          {hasChildren && (
-            <IconButton
-              size="small"
-              sx={{ p: 0, mr: 0.5, width: 20, height: 20 }}
-            >
+          {hasChildren ? (
+            <IconButton size="small" sx={baseStyles.iconButton}>
               {isExpanded ? (
-                <ExpandMoreIcon sx={{ fontSize: 16 }} />
+                <ExpandMoreIcon sx={baseStyles.icon} />
               ) : (
-                <ChevronRightIcon sx={{ fontSize: 16 }} />
+                <ChevronRightIcon sx={baseStyles.icon} />
               )}
             </IconButton>
-          )}
-          
-          {!hasChildren && (
-            <Box sx={{ width: 20, mr: 0.5 }} /> // Spacer for alignment
+          ) : (
+            <Box sx={baseStyles.spacer} />
           )}
           
           <Typography
@@ -96,7 +111,7 @@ const CustomNestedMenu: React.FC<CustomNestedMenuProps> = ({ items, onActionComp
         </Box>
 
         {hasChildren && (
-          <Collapse in={isExpanded}>
+          <Collapse in={isExpanded} timeout={200}>
             <Box>
               {item.children!.map(child => renderMenuItem(child))}
             </Box>
@@ -104,7 +119,7 @@ const CustomNestedMenu: React.FC<CustomNestedMenuProps> = ({ items, onActionComp
         )}
       </Box>
     );
-  };
+  }, [expandedItems, baseStyles, handleItemClick]);
 
   return (
     <Box>
