@@ -1,0 +1,158 @@
+⚡️  Loading app at capacitor://localhost...
+⚡️  WebView loaded
+⚡️  To Native ->  CapacitorSQLite createConnection 34686171
+⚡️  [log] - Dark mode activated
+⚡️  [log] - Applying native theme: blue (#3b82f6) in dark mode
+⚡️  [log] - Applied MUI theme to iOS components
+⚡️  [log] - Applied MUI theme to iOS native components: blue
+⚡️  [log] - [ AppDataContext ] Initializing app...
+⚡️  [log] - [ AppDataContext ] Database status changed: initializing
+⚡️  [log] - [ DatabaseService ] Starting database initialization...
+⚡️  [log] - [ AppDataContext ] Database status changed: initializing
+⚡️  [log] - [ sqliteLoader.js ] Initializing SQLite database via Capacitor...
+⚡️  [log] - [ sqliteLoader.js ] Capacitor platform detected: ios
+⚡️  [log] - [ sqliteLoader.js ] Capacitor plugins available: ["CapacitorHttp","Console","WebView","CapacitorCookies","CapacitorSQLite"]
+⚡️  [log] - [ sqliteLoader.js ] iOS environment detected - using iOS-specific database setup
+⚡️  [log] - [ sqliteLoader.js ] Found CapacitorSQLite plugin: true
+⚡️  [log] - [ sqliteLoader.js ] Could not check existing connections, attempting to create new connection
+database path /var/mobile/Containers/Data/Application/09450BCB-BFC4-474C-992A-A3D178E76D7A/Documents/spiritualTrackerSQLite.db
+⚡️  TO JS undefined
+⚡️  To Native ->  CapacitorSQLite open 34686172
+⚡️  [log] - [ sqliteLoader.js ] Database connection created successfully
+⚡️  TO JS undefined
+⚡️  [log] - [ sqliteLoader.js ] Database opened successfully
+⚡️  To Native ->  CapacitorSQLite execute 34686173
+⚡️  [log] - [ sqliteLoader.js ] Verifying database schema (preserving existing data)
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 34686174
+⚡️  [log] - [ sqliteLoader.js ] Users table created successfully
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 34686175
+⚡️  [log] - [ sqliteLoader.js ] Activities table created successfully
+⚡️  [log] - [ sqliteLoader.js ] Activities table includes all required columns
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 34686176
+⚡️  [log] - [ sqliteLoader.js ] Meetings table created successfully
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 34686177
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 34686178
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 34686179
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 34686180
+⚡️  [log] - [ sqliteLoader.js ] Dropped sponsor-related tables for schema update
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 34686181
+⚡️  [log] - [ sqliteLoader.js ] Sponsor contacts table created with flexible constraints
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 34686182
+⚡️  [log] - [ sqliteLoader.js ] Sponsor contact details table created with flexible constraints
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 34686183
+⚡️  [log] - [ sqliteLoader.js ] Action items table created
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 34686184
+⚡️  [log] - [ sqliteLoader.js ] Sponsor contact action items join table created
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  [log] - [ sqliteLoader.js ] Foreign key constraints re-enabled
+⚡️  [log] - [ sqliteLoader.js ] Database tables created/verified successfully
+⚡️  [log] - [ sqliteLoader.js ] Database setup complete, global db interface ready
+⚡️  To Native ->  CapacitorSQLite query 34686185
+⚡️  [log] - [ sqliteLoader.js ] Validating database schema and logging current state...
+⚡️  TO JS {"values":[{"ios_columns":["count"]},{"count":1}]}
+⚡️  To Native ->  CapacitorSQLite query 34686186
+⚡️  [log] - [ sqliteLoader.js ] Table 'users': 1 records
+⚡️  TO JS {"values":[{"ios_columns":["count"]},{"count":1}]}
+⚡️  To Native ->  CapacitorSQLite query 34686187
+⚡️  [log] - [ sqliteLoader.js ] Table 'activities': 1 records
+⚡️  TO JS {"values":[{"ios_columns":["count"]},{"count":1}]}
+⚡️  To Native ->  CapacitorSQLite ⚡️  [log] - [ sqliteLoader.js ] Table 'meetings': 1 records
+query 34686188
+⚡️  TO JS {"values":[{"ios_columns":["count"]},{"count":0}]}
+⚡️  To Native ->  CapacitorSQLite query 34686189
+⚡️  [log] - [ sqliteLoader.js ] Table 'action_items': 0 records
+⚡️  TO JS {"values":[{"ios_columns":["count"]},{"count":0}]}
+⚡️  To Native ->  CapacitorSQLite query 34686190
+⚡️  [log] - [ sqliteLoader.js ] Table 'sponsor_contacts': 0 records
+⚡️  TO JS {"values":[{"ios_columns":["type","date","notes"]},{"notes":null,"date":null,"type":null}]}
+⚡️  [log] - [ sqliteLoader.js ] Recent activities found: 2
+⚡️  To Native ->  CapacitorSQLite query 34686191
+⚡️  [log] - [ sqliteLoader.js ] Checking if default user exists...
+⚡️  TO JS {"values":[{"ios_columns":["count"]},{"count":1}]}
+⚡️  [log] - [ sqliteLoader.js ] Existing user count: 1
+⚡️  [log] - [ sqliteLoader.js ] Users already exist, no need to create default user
+⚡️  To Native ->  CapacitorSQLite query 34686192
+⚡️  [log] - [ DatabaseService ] SQLite database initialized successfully
+⚡️  [log] - [ DatabaseService ] Running database cleanup...
+⚡️  [log] - [ sqliteLoader.js ] Starting cleanup of broken activities...
+⚡️  TO JS {"values":[{"ios_columns":["count"]},{"count":1}]}
+⚡️  To Native ->  CapacitorSQLite execute 34686193
+⚡️  [log] - [ sqliteLoader.js ] Found broken activities to clean: 1
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  [log] - [ sqliteLoader.js ] Cleanup complete. Deleted activities: 1
+⚡️  [log] - [ AppDataContext ] Database status changed: ready
+⚡️  [log] - [ AppDataContext ] Loading initial data...
+⚡️  [log] - [ sqliteLoader.js:356 ] Getting all items from users
+⚡️  To Native ->  CapacitorSQLite query 34686194
+⚡️  TO JS {"values":[{"ios_columns":["id","name","lastName","phoneNumber","email","sobrietyDate","homeGroups","privacySettings","preferences","sponsor_name","sponsor_lastName","sponsor_phone","sponsor_email","sponsor_sobrietyDate","sponsor_notes","messagingKeys","pr
+⚡️  [log] - [ DatabaseService ] Database initialization complete
+⚡️  [log] - [ DatabaseService ] Processing 0 queued operations
+⚡️  [log] - [ sqliteLoader.js:363 ] Result from users: {"values":[{"ios_columns":["id","name","lastName","phoneNumber","email","sobrietyDate","homeGroups","privacySettings","preferences","sponsor_name","sponsor_lastName","sponsor_phone","sponsor_email","sponsor_sobrietyDate","sponsor_notes","messagingKeys","profileImageUri","language","dateFormat","timeFormat","distanceUnit","themePreference","notificationSettings","locationPermission","contactPermission","createdAt","updatedAt"]},{"sponsor_lastName":null,"messagingKeys":null,"lastName":null,"contactPermission":null,"id":1,"profileImageUri":null,"email":null,"timeFormat":null,"updatedAt":"2025-05-31T13:12:50.602Z","locationPermission":null,"sponsor_phone":null,"distanceUnit":null,"sponsor_sobrietyDate":null,"dateFormat":null,"createdAt":null,"sobrietyDate":"1986-05-15","preferences":null,"sponsor_notes":null,"language":null,"themePreference":null,"phoneNumber":null,"homeGroups":null,"name":null,"privacySettings":null,"sponsor_email":null,"sponsor_name":null,"notificationSettings":null}]}
+⚡️  [log] - [ sqliteLoader.js ] Converted 1 iOS format items to standard format
+⚡️  [log] - [ sqliteLoader.js ] Sample converted item: {"id":1,"name":null,"lastName":null,"phoneNumber":null,"email":null,"sobrietyDate":"1986-05-15","homeGroups":null,"privacySettings":null,"preferences":null,"sponsor_name":null,"sponsor_lastName":null,"sponsor_phone":null,"sponsor_email":null,"sponsor_sobrietyDate":null,"sponsor_notes":null,"messagingKeys":null,"profileImageUri":null,"language":null,"dateFormat":null,"timeFormat":null,"distanceUnit":null,"themePreference":null,"notificationSettings":null,"locationPermission":null,"contactPermission":null,"createdAt":null,"updatedAt":"2025-05-31T13:12:50.602Z"}
+⚡️  To Native ->  CapacitorSQLite query 34686195
+⚡️  [log] - [ AppDataContext ] Loaded users: 1
+⚡️  [log] - [ AppDataContext ] User data loaded: 1
+⚡️  [log] - [ sqliteLoader.js:356 ] Getting all items from activities
+⚡️  TO JS {"values":[]}
+⚡️  [log] - [ sqliteLoader.js:363 ] Result from activities: {"values":[]}
+⚡️  [log] - [ AppDataContext ] Activities loaded: 0
+⚡️  To Native ->  CapacitorSQLite query 34686196
+⚡️  [log] - [ sqliteLoader.js:356 ] Getting all items from meetings
+⚡️  TO JS {"values":[{"ios_columns":["id","name","days","time","schedule","address","locationName","streetAddress","city","state","zipCode","country","online","onlineUrl","phoneNumber","meetingCode","notes","latitude","longitude","types","format","accessibility","la
+⚡️  [log] - [ sqliteLoader.js:363 ] Result from meetings: {"values":[{"ios_columns":["id","name","days","time","schedule","address","locationName","streetAddress","city","state","zipCode","country","online","onlineUrl","phoneNumber","meetingCode","notes","latitude","longitude","types","format","accessibility","languages","isHomeGroup","isTemporarilyClosed","contactName","contactEmail","contactPhone","attendance","lastAttended","createdAt","updatedAt","coordinates"]},{"lastAttended":null,"locationName":null,"notes":null,"isHomeGroup":null,"contactPhone":null,"format":null,"state":null,"id":1,"longitude":null,"online":null,"contactName":null,"zipCode":null,"createdAt":null,"updatedAt":null,"contactEmail":null,"accessibility":null,"coordinates":null,"city":null,"latitude":null,"schedule":null,"country":null,"days":null,"phoneNumber":null,"address":null,"streetAddress":null,"attendance":null,"name":null,"meetingCode":null,"languages":null,"time":null,"onlineUrl":null,"types":null,"isTemporarilyClosed":null}]}
+⚡️  [log] - [ sqliteLoader.js ] Converted 1 iOS format items to standard format
+⚡️  [log] - [ sqliteLoader.js ] Sample converted item: {"id":1,"name":null,"days":null,"time":null,"schedule":null,"address":null,"locationName":null,"streetAddress":null,"city":null,"state":null,"zipCode":null,"country":null,"online":null,"onlineUrl":null,"phoneNumber":null,"meetingCode":null,"notes":null,"latitude":null,"longitude":null,"types":null,"format":null,"accessibility":null,"languages":null,"isHomeGroup":null,"isTemporarilyClosed":null,"contactName":null,"contactEmail":null,"contactPhone":null,"attendance":null,"lastAttended":null,"createdAt":null,"updatedAt":null,"coordinates":null}
+⚡️  [log] - [ AppDataContext ] Meetings loaded: 1
+⚡️  [log] - [ AppDataContext ] Initial data load complete
+⚡️  [log] - [ Dashboard.js ] Dashboard initial spiritualFitness: 5
+⚡️  [log] - [ Dashboard.js ] Dashboard currentScore state: 0
+⚡️  [log] - [ Dashboard.js ] Dashboard formattedScore for display: 0.00
+⚡️  [log] - [ Dashboard.js ] Dashboard progressPercent: 0
+⚡️  [log] - Formatting date: 1986-05-15
+⚡️  [log] - [ ActivityList.js ] Total activities received: 0
+⚡️  [log] - [ ActivityList.js ] Filter params - limit: 15 filter: all maxDaysAgo: 7
+⚡️  [log] - [ ActivityList.js ] Final filtered activities count: 0
+⚡️  [log] - Dark mode activated
+⚡️  [log] - Applying native theme: blue (#3b82f6) in dark mode
+⚡️  [log] - Applied MUI theme to iOS components
+⚡️  [log] - Applied MUI theme to iOS native components: blue
+⚡️  [log] - Dark mode activated
+⚡️  [log] - Applying native theme: blue (#3b82f6) in dark mode
+⚡️  [log] - Applied MUI theme to iOS components
+⚡️  [log] - Applied MUI theme to iOS native components: blue
+⚡️  [log] - [ Dashboard.js ] Dashboard useEffect [activities] triggered - calculating spiritual fitness
+⚡️  [log] - [ Dashboard.tsx:94 calculateSpiritualFitnessScore ] Called with activities: 0
+⚡️  [log] - [ Dashboard.tsx:95 calculateSpiritualFitnessScore ] Sample activities: []
+⚡️  [log] - [ Dashboard.tsx:96 calculateSpiritualFitnessScore ] Timeframe: 30
+⚡️  [log] - [ Dashboard.tsx:108 calculateFitnessFromActivities ] Starting calculation with 0 activities, timeframe: 30
+⚡️  [log] - [ Dashboard.tsx:127 calculateFitnessFromActivities ] Filtered 0 recent activities
+⚡️  [log] - [ Dashboard.tsx:130 calculateFitnessFromActivities ] No recent activities, returning base score: 5
+⚡️  [log] - [ Dashboard.tsx:100 calculateSpiritualFitnessScore ] Calculated score: 5
+⚡️  [log] - [ Dashboard.js ] Dashboard useEffect [scoreTimeframe] triggered with timeframe: 30
+⚡️  [log] - [ Dashboard.tsx:94 calculateSpiritualFitnessScore ] Called with activities: 0
+⚡️  [log] - [ Dashboard.tsx:95 calculateSpiritualFitnessScore ] Sample activities: []
+⚡️  [log] - [ Dashboard.tsx:96 calculateSpiritualFitnessScore ] Timeframe: 30
+⚡️  [log] - [ Dashboard.tsx:108 calculateFitnessFromActivities ] Starting calculation with 0 activities, timeframe: 30
+⚡️  [log] - [ Dashboard.tsx:127 calculateFitnessFromActivities ] Filtered 0 recent activities
+⚡️  [log] - [ Dashboard.tsx:130 calculateFitnessFromActivities ] No recent activities, returning base score: 5
+⚡️  [log] - [ Dashboard.tsx:100 calculateSpiritualFitnessScore ] Calculated score: 5
+⚡️  [log] - [ Dashboard.js ] Dashboard initial spiritualFitness: 5
+⚡️  [log] - [ Dashboard.js ] Dashboard currentScore state: 5
+⚡️  [log] - [ Dashboard.js ] Dashboard formattedScore for display: 5.00
+⚡️  [log] - [ Dashboard.js ] Dashboard progressPercent: 5
+⚡️  [log] - Formatting date: 1986-05-15
+⚡️  [log] - [ ActivityList.js ] Total activities received: 0
+⚡️  [log] - [ ActivityList.js ] Filter params - limit: 15 filter: all maxDaysAgo: 7
+⚡️  [log] - [ ActivityList.js ] Final filtered activities count: 0

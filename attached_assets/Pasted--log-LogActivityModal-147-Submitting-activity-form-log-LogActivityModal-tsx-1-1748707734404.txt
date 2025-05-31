@@ -1,0 +1,154 @@
+⚡️  [log] - [LogActivityModal:147] Submitting activity form...
+⚡️  [log] - [ LogActivityModal.tsx:179 handleSubmit ] Created activity with ISO date: 2025-05-31T16:00:00.000Z
+⚡️  [log] - [ LogActivityModal.tsx:180 handleSubmit ] Original date input: 2025-05-31
+⚡️  [log] - [ App.tsx:73 handleSaveActivity ] Received activity data: {
+  "type": "prayer",
+  "duration": 15,
+  "date": "2025-05-31T16:00:00.000Z",
+  "notes": "",
+  "location": "completed"
+}
+⚡️  [log] - [ App.tsx:74 handleSaveActivity ] Current user state: {"id":1,"name":null,"lastName":null,"phoneNumber":null,"email":null,"sobrietyDate":"1986-05-15","homeGroups":null,"privacySettings":null,"preferences":null,"sponsor_name":null,"sponsor_lastName":null,"sponsor_phone":null,"sponsor_email":null,"sponsor_sobrietyDate":null,"sponsor_notes":null,"messagingKeys":null,"profileImageUri":null,"language":null,"dateFormat":null,"timeFormat":null,"distanceUnit":null,"themePreference":null,"notificationSettings":null,"locationPermission":null,"contactPermission":null,"createdAt":null,"updatedAt":"2025-05-31T13:12:50.602Z"}
+⚡️  [log] - [ App.tsx:83 handleSaveActivity ] Calling addActivity with: {
+  "type": "prayer",
+  "date": "2025-05-31T16:00:00.000Z",
+  "notes": "",
+  "duration": 15,
+  "location": "completed"
+}
+⚡️  [log] - [ AppDataContext.tsx:221 addActivity ] Received activity data: {
+  "type": "prayer",
+  "date": "2025-05-31T16:00:00.000Z",
+  "notes": "",
+  "duration": 15,
+  "location": "completed"
+}
+⚡️  [log] - [ AppDataContext.tsx:222 addActivity ] Calling databaseService.addActivity...
+⚡️  [log] - [ DatabaseService.ts:261 addActivity ] Received activity: {
+  "type": "prayer",
+  "date": "2025-05-31T16:00:00.000Z",
+  "notes": "",
+  "duration": 15,
+  "location": "completed"
+}
+⚡️  [log] - [ DatabaseService.ts:262 addActivity ] Calling window.db.add...
+⚡️  [log] - [ sqliteLoader.js ] Original item received for save: {
+  "type": "prayer",
+  "date": "2025-05-31T16:00:00.000Z",
+  "notes": "",
+  "duration": 15,
+  "location": "completed"
+}
+⚡️  [log] - [ sqliteLoader.js ] Item without ID: {
+  "type": "prayer",
+  "date": "2025-05-31T16:00:00.000Z",
+  "notes": "",
+  "duration": 15,
+  "location": "completed"
+}
+⚡️  [log] - [ sqliteLoader.js ] Final item for database: {
+  "type": "prayer",
+  "date": "2025-05-31T16:00:00.000Z",
+  "notes": "",
+  "duration": 15,
+  "location": "completed",
+  "createdAt": "2025-05-31T16:04:26.695Z",
+  "updatedAt": "2025-05-31T16:04:26.695Z"
+}
+⚡️  [log] - [ sqliteLoader.js ] Date field specifically: 2025-05-31T16:00:00.000Z
+⚡️  [log] - [ sqliteLoader.js ] Date field type: string
+⚡️  [log] - [ sqliteLoader.js ] SQL keys: ["type","date","notes","duration","location","createdAt","updatedAt"]
+⚡️  To Native ->  CapacitorSQLite execute 25492557
+⚡️  [log] - [ sqliteLoader.js ] SQL values: ["prayer","2025-05-31T16:00:00.000Z","",15,"completed","2025-05-31T16:04:26.695Z","2025-05-31T16:04:26.695Z"]
+⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO activities (type, date, notes, duration, location, createdAt, updatedAt) VALUES (?, ?, ?, ?, ?, ?, ?)
+⚡️  [log] - [ sqliteLoader.js ] With values: ["prayer","2025-05-31T16:00:00.000Z","",15,"completed","2025-05-31T16:04:26.695Z","2025-05-31T16:04:26.695Z"]
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  To Native ->  CapacitorSQLite query 25492558
+⚡️  [log] - [ sqliteLoader.js:453 add ] Insert completed in autocommit mode
+⚡️  TO JS {"values":[{"ios_columns":["id"]},{"id":5}]}
+⚡️  [log] - [ sqliteLoader.js ] Last insert ID result: {"values":[{"ios_columns":["id"]},{"id":5}]}
+⚡️  [log] - [ sqliteLoader.js ] Extracted ID: 5
+⚡️  [log] - [ DatabaseService.ts:266 addActivity ] window.db.add returned: {
+  "type": "prayer",
+  "date": "2025-05-31T16:00:00.000Z",
+  "notes": "",
+  "duration": 15,
+  "location": "completed",
+  "createdAt": "2025-05-31T16:04:26.695Z",
+  "updatedAt": "2025-05-31T16:04:26.695Z",
+  "id": 5
+}
+⚡️  [log] - [ AppDataContext.tsx:226 addActivity ] DatabaseService returned: {
+  "type": "prayer",
+  "date": "2025-05-31T16:00:00.000Z",
+  "notes": "",
+  "duration": 15,
+  "location": "completed",
+  "createdAt": "2025-05-31T16:04:26.695Z",
+  "updatedAt": "2025-05-31T16:04:26.695Z",
+  "id": 5
+}
+⚡️  [log] - [ AppDataContext.tsx:233 addActivity ] Activity added successfully with ID: 5
+⚡️  [log] - [ App.tsx:87 handleSaveActivity ] Activity saved successfully with ID: 5
+⚡️  [log] - [ App.tsx:88 handleSaveActivity ] Saved activity data: {
+  "type": "prayer",
+  "date": "2025-05-31T16:00:00.000Z",
+  "notes": "",
+  "duration": 15,
+  "location": "completed",
+  "createdAt": "2025-05-31T16:04:26.695Z",
+  "updatedAt": "2025-05-31T16:04:26.695Z",
+  "id": 5
+}
+⚡️  [log] - [ Dashboard.js ] Dashboard initial spiritualFitness: 5
+⚡️  [log] - [ Dashboard.js ] Dashboard currentScore state: 5
+⚡️  [log] - [ Dashboard.js ] Dashboard formattedScore for display: 5.00
+⚡️  [log] - [ Dashboard.js ] Dashboard progressPercent: 5
+⚡️  [log] - Formatting date: 1986-05-15
+⚡️  [log] - [ ActivityList.js ] Total activities received: 1
+⚡️  [log] - [ ActivityList.js ] Filter params - limit: 15 filter: all maxDaysAgo: 7
+⚡️  [log] - [ ActivityList.js ] Final filtered activities count: 1
+⚡️  [log] - [ ActivityList.js ] Grouping activity with date: 2025-05-31T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js ] Date object created: "2025-05-31T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js ] Generated dateKey from object: 2025-05-31
+⚡️  [log] - Formatting date: 2025-05-31
+⚡️  [log] - Formatting date: 2025-05-31T16:00:00.000Z
+⚡️  [log] - [ Dashboard.js ] Dashboard useEffect [activities] triggered - calculating spiritual fitness
+⚡️  [log] - [ Dashboard.tsx:94 calculateSpiritualFitnessScore ] Called with activities: 1
+⚡️  [log] - [ Dashboard.tsx:95 calculateSpiritualFitnessScore ] Sample activities: [{"type":"prayer","date":"2025-05-31T16:00:00.000Z"}]
+⚡️  [log] - [ Dashboard.tsx:96 calculateSpiritualFitnessScore ] Timeframe: 30
+⚡️  [log] - [ Dashboard.tsx:108 calculateFitnessFromActivities ] Starting calculation with 1 activities, timeframe: 30
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-31T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:127 calculateFitnessFromActivities ] Filtered 1 recent activities
+⚡️  [log] - [ Dashboard.tsx:147 calculateFitnessFromActivities ] Calculation result:
+⚡️  [log] - [ Dashboard.tsx:148 calculateFitnessFromActivities ] - Base score: 5
+⚡️  [log] - [ Dashboard.tsx:149 calculateFitnessFromActivities ] - Activity points: 2 (from 1 activities)
+⚡️  [log] - [ Dashboard.tsx:150 calculateFitnessFromActivities ] - Consistency points: 1.3333333333333333 (from 1 unique days)
+⚡️  [log] - [ Dashboard.tsx:151 calculateFitnessFromActivities ] - Total score: 8.33
+⚡️  [log] - [ Dashboard.tsx:100 calculateSpiritualFitnessScore ] Calculated score: 8.33
+⚡️  [log] - [ Dashboard.js ] Dashboard initial spiritualFitness: 8.33
+⚡️  [log] - [ Dashboard.js ] Dashboard currentScore state: 8.33
+⚡️  [log] - [ Dashboard.js ] Dashboard formattedScore for display: 8.33
+⚡️  [log] - [ Dashboard.js ] Dashboard progressPercent: 8.33
+⚡️  [log] - Formatting date: 1986-05-15
+⚡️  [log] - [ ActivityList.js ] Total activities received: 1
+⚡️  [log] - [ ActivityList.js ] Filter params - limit: 15 filter: all maxDaysAgo: 7
+⚡️  [log] - [ ActivityList.js ] Final filtered activities count: 1
+⚡️  [log] - [ ActivityList.js ] Grouping activity with date: 2025-05-31T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js ] Date object created: "2025-05-31T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js ] Generated dateKey from object: 2025-05-31
+⚡️  [log] - Formatting date: 2025-05-31
+⚡️  [log] - Formatting date: 2025-05-31T16:00:00.000Z
+⚡️  [log] - [ Dashboard.js ] Dashboard initial spiritualFitness: 8.33
+⚡️  [log] - [ Dashboard.js ] Dashboard currentScore state: 8.33
+⚡️  [log] - [ Dashboard.js ] Dashboard formattedScore for display: 8.33
+⚡️  [log] - [ Dashboard.js ] Dashboard progressPercent: 8.33
+⚡️  [log] - Formatting date: 1986-05-15
+⚡️  [log] - [ ActivityList.js ] Total activities received: 1
+⚡️  [log] - [ ActivityList.js ] Filter params - limit: 15 filter: all maxDaysAgo: 7
+⚡️  [log] - [ ActivityList.js ] Final filtered activities count: 1
+⚡️  [log] - [ ActivityList.js ] Grouping activity with date: 2025-05-31T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js ] Date object created: "2025-05-31T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js ] Generated dateKey from object: 2025-05-31
+⚡️  [log] - Formatting date: 2025-05-31
+⚡️  [log] - Formatting date: 2025-05-31T16:00:00.000Z

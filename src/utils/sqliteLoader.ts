@@ -1369,6 +1369,15 @@ async function cleanupBrokenActivities() {
       throw new Error('SQLite plugin not available');
     }
 
+    // First, let's see what activities we have before cleanup
+    const allActivitiesResult = await sqlitePlugin.query({
+      database: DB_NAME,
+      statement: 'SELECT id, type, date, notes FROM activities',
+      values: []
+    });
+    
+    console.log('[ sqliteLoader.js ] All activities before cleanup:', JSON.stringify(allActivitiesResult, null, 2));
+
     // Count broken activities first
     const countResult = await sqlitePlugin.query({
       database: DB_NAME,
@@ -1380,14 +1389,27 @@ async function cleanupBrokenActivities() {
     console.log('[ sqliteLoader.js ] Found broken activities to clean:', brokenCount);
 
     if (brokenCount > 0) {
-      // Delete broken activities using raw SQL
-      const deleteResult = await sqlitePlugin.execute({
+      // Show which activities will be deleted
+      const brokenActivitiesResult = await sqlitePlugin.query({
         database: DB_NAME,
-        statements: 'DELETE FROM activities WHERE date IS NULL OR type IS NULL;'
+        statement: 'SELECT id, type, date, notes FROM activities WHERE date IS NULL OR type IS NULL',
+        values: []
       });
       
-      console.log('[ sqliteLoader.js ] Cleanup complete. Deleted activities:', deleteResult.changes?.changes || 0);
-      return deleteResult.changes?.changes || 0;
+      console.log('[ sqliteLoader.js ] Activities to be deleted:', JSON.stringify(brokenActivitiesResult, null, 2));
+      
+      // TEMPORARILY DISABLE CLEANUP TO DIAGNOSE
+      console.log('[ sqliteLoader.js ] CLEANUP DISABLED FOR DEBUGGING - not deleting any activities');
+      return 0;
+      
+      // Delete broken activities using raw SQL
+      // const deleteResult = await sqlitePlugin.execute({
+      //   database: DB_NAME,
+      //   statements: 'DELETE FROM activities WHERE date IS NULL OR type IS NULL;'
+      // });
+      
+      // console.log('[ sqliteLoader.js ] Cleanup complete. Deleted activities:', deleteResult.changes?.changes || 0);
+      // return deleteResult.changes?.changes || 0;
     } else {
       console.log('[ sqliteLoader.js ] No broken activities found to clean');
       return 0;
