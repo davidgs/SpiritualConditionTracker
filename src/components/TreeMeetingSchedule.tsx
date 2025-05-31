@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { Box, Typography, Button, Chip } from '@mui/material';
-import { SimpleTreeView } from '@mui/x-tree-view/SimpleTreeView';
-import { TreeItem } from '@mui/x-tree-view/TreeItem';
 import { useTheme } from '@mui/material/styles';
+import CustomNestedMenu from './CustomNestedMenu';
 
 interface ScheduleItem {
   day: string;
@@ -23,7 +22,6 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
   use24HourFormat = false 
 }) => {
   const muiTheme = useTheme();
-  const [expandedItems, setExpandedItems] = useState<string[]>([]);
 
   const days = [
     { key: 'sunday', label: 'Sunday' },
@@ -72,13 +70,7 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
     { value: 'closed', label: 'Closed' }
   ];
 
-  const addTimeToDay = (day: string, time: string) => {
-    // Don't add immediately - just expand to show format options
-    setExpandedItems(prev => [...prev, day, `${day}-${time}-new`]);
-  };
-
   const addMeetingWithDetails = (day: string, time: string, format: string, access: string) => {
-    // Validate all parameters are provided
     if (!day || !time || !format || !access) {
       console.error('Missing required meeting details:', { day, time, format, access });
       return;
@@ -93,19 +85,6 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
     
     const newSchedule = [...schedule, newMeeting];
     onChange(newSchedule);
-    
-    // Collapse all expanded items to clean up the interface
-    setExpandedItems([]);
-  };
-
-  const updateScheduleItem = (day: string, time: string, field: 'format' | 'access', value: string) => {
-    const newSchedule = schedule.map(item => {
-      if (item.day === day && item.time === time) {
-        return { ...item, [field]: value };
-      }
-      return item;
-    });
-    onChange(newSchedule);
   };
 
   const removeScheduleItem = (day: string, time: string) => {
@@ -113,183 +92,130 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
     onChange(newSchedule);
   };
 
-  const getDaySchedule = (day: string) => {
-    return schedule.filter(item => item.day === day);
-  };
+  const buildMenuItems = () => {
+    const menuItems: any[] = [];
 
-  const handleExpandedItemsChange = (event: React.SyntheticEvent, itemIds: string[]) => {
-    setExpandedItems(itemIds);
+    // Add existing meetings first
+    schedule.forEach((item, index) => {
+      menuItems.push({
+        id: `existing-${index}`,
+        label: (
+          <Box sx={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: 0.5, 
+            py: 0.5,
+            flexWrap: 'nowrap',
+            minWidth: '100%'
+          }}>
+            <Typography variant="body2" sx={{ fontWeight: 500, minWidth: '70px', textAlign: 'left' }}>
+              {days.find(d => d.key === item.day)?.label || item.day}
+            </Typography>
+            <Typography variant="body2" sx={{ minWidth: '70px', textAlign: 'left' }}>
+              {timeOptions.find(t => t.value === item.time)?.label || item.time}
+            </Typography>
+            <Chip 
+              label={item.format ? item.format.charAt(0).toUpperCase() + item.format.slice(1).replace('_', ' ') : 'Unknown'}
+              size="small"
+              color="primary"
+              sx={{ fontSize: '0.7rem', height: '20px', minWidth: 'fit-content' }}
+            />
+            <Chip 
+              label={item.access ? item.access.charAt(0).toUpperCase() + item.access.slice(1) : 'Unknown'}
+              size="small"
+              color="secondary"
+              sx={{ fontSize: '0.7rem', height: '20px', minWidth: 'fit-content' }}
+            />
+            <Button
+              size="small"
+              color="error"
+              onClick={(e) => {
+                e.stopPropagation();
+                removeScheduleItem(item.day, item.time);
+              }}
+              sx={{ 
+                minWidth: 'auto', 
+                width: '24px', 
+                height: '24px', 
+                px: 0,
+                fontSize: '1rem',
+                borderRadius: '50%'
+              }}
+            >
+              ×
+            </Button>
+          </Box>
+        ),
+        indentLevel: 0,
+        isExpandable: false
+      });
+    });
+
+    // Add the "Select Day" menu structure
+    const dayChildren = days.map(day => {
+      const timeChildren = timeOptions
+        .filter(time => !schedule.some(item => item.day === day.key && item.time === time.value))
+        .map(time => {
+          const formatChildren = meetingFormats.map(format => {
+            const accessChildren = meetingAccess.map(access => ({
+              id: `${day.key}-${time.value}-${format.value}-${access.value}`,
+              label: `${access.label} Meeting ← Click to add`,
+              color: 'primary.main',
+              fontSize: '0.8rem',
+              indentLevel: 4,
+              onClick: () => addMeetingWithDetails(day.key, time.value, format.value, access.value),
+              isExpandable: false
+            }));
+
+            return {
+              id: `${day.key}-${time.value}-${format.value}`,
+              label: format.label,
+              color: 'warning.main',
+              fontSize: '0.8rem',
+              indentLevel: 3,
+              children: accessChildren,
+              isExpandable: true
+            };
+          });
+
+          return {
+            id: `${day.key}-${time.value}`,
+            label: time.label,
+            color: 'info.main',
+            fontSize: '0.8rem',
+            indentLevel: 2,
+            children: formatChildren,
+            isExpandable: true
+          };
+        });
+
+      return {
+        id: `day-${day.key}`,
+        label: day.label,
+        color: 'text.primary',
+        fontWeight: 500,
+        indentLevel: 1,
+        children: timeChildren,
+        isExpandable: true
+      };
+    });
+
+    menuItems.push({
+      id: 'select-day',
+      label: '+ Select Day',
+      color: 'primary.main',
+      fontWeight: 500,
+      indentLevel: 0,
+      children: dayChildren,
+      isExpandable: true
+    });
+
+    return menuItems;
   };
 
   return (
     <Box sx={{ mb: 2 }}>
-      <SimpleTreeView
-        expandedItems={expandedItems}
-        onExpandedItemsChange={handleExpandedItemsChange}
-        sx={{
-          '& .MuiTreeItem-content': {
-            py: 1,
-            px: 0,
-            borderRadius: 1,
-            '&:hover': {
-              bgcolor: muiTheme.palette.action.hover
-            }
-          },
-          '& .MuiTreeItem-label': {
-            fontSize: '0.875rem'
-          },
-          '& .MuiTreeItem-group': {
-            marginLeft: 0,
-            paddingLeft: 0
-          },
-          '& .MuiTreeItem-iconContainer': {
-            marginRight: 1,
-            width: 'auto'
-          }
-        }}
-      >
-        {/* Show all existing meetings first */}
-        {schedule.map((item, index) => (
-          <TreeItem
-            key={`existing-${index}`}
-            itemId={`existing-${index}`}
-            label={
-              <Box sx={{ 
-                display: 'flex', 
-                alignItems: 'center', 
-                gap: 0.5, 
-                py: 0.5,
-                flexWrap: 'nowrap',
-                minWidth: '100%'
-              }}>
-                <Typography variant="body2" sx={{ fontWeight: 500, minWidth: '70px', textAlign: 'left' }}>
-                  {days.find(d => d.key === item.day)?.label || item.day}
-                </Typography>
-                <Typography variant="body2" sx={{ minWidth: '70px', textAlign: 'left', paddingLeft: '5px' }}>
-                  {timeOptions.find(t => t.value === item.time)?.label || item.time}
-                </Typography>
-                <Chip 
-                  label={item.format ? item.format.charAt(0).toUpperCase() + item.format.slice(1).replace('_', ' ') : 'Unknown'}
-                  size="small"
-                  color="primary"
-                  sx={{ fontSize: '0.8rem', height: '20px', minWidth: 'fit-content' }}
-                />
-                <Chip 
-                  label={item.access ? item.access.charAt(0).toUpperCase() + item.access.slice(1) : 'Unknown'}
-                  size="small"
-                  color="secondary"
-                  sx={{ fontSize: '0.8rem', height: '20px', minWidth: 'fit-content' }}
-                />
-                <Button
-                  size="small"
-                  color="error"
-                  onClick={() => removeScheduleItem(item.day, item.time)}
-                  sx={{ 
-                    minWidth: 'auto', 
-                    width: '24px', 
-                    height: '24px', 
-                    px: 0,
-                    fontSize: '1rem',
-                    borderRadius: '50%'
-                  }}
-                >
-                  ×
-                </Button>
-              </Box>
-            }
-          />
-        ))}
-
-        {/* Single "Select Day" item that starts the progressive flow */}
-        <TreeItem
-          itemId="select-day"
-          label={
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, py: 0.5 }}>
-              <Typography variant="body2" sx={{ color: 'primary.main', fontWeight: 500 }}>
-                + Select Day
-              </Typography>
-            </Box>
-          }
-        >
-          {/* Step 1: Day selection */}
-          {days.map(day => (
-            <TreeItem
-              key={`day-${day.key}`}
-              itemId={`day-${day.key}`}
-              label={
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, py: 0.5, ml: 1 }}>
-                  <Typography variant="body2" sx={{ color: 'text.primary', fontWeight: 500 }}>
-                    {day.label}
-                  </Typography>
-                </Box>
-              }
-            >
-              {/* Step 2: Time selection - only show times not already taken for this day */}
-              {timeOptions.filter(time => 
-                !schedule.some(item => item.day === day.key && item.time === time.value)
-              ).map(time => (
-                <TreeItem
-                  key={`day-${day.key}-time-${time.value}`}
-                  itemId={`day-${day.key}-time-${time.value}`}
-                  label={
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, py: 0.5, ml: 2 }}>
-                      <Typography variant="body2" sx={{ fontSize: '0.8rem', color: 'info.main' }}>
-                        {time.label}
-                      </Typography>
-                    </Box>
-                  }
-                >
-                  {/* Step 3: Format selection */}
-                  {meetingFormats.map(format => (
-                    <TreeItem
-                      key={`day-${day.key}-time-${time.value}-format-${format.value}`}
-                      itemId={`day-${day.key}-time-${time.value}-format-${format.value}`}
-                      label={
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, py: 0.5, ml: 3 }}>
-                          <Typography variant="body2" sx={{ fontSize: '0.8rem', color: 'warning.main' }}>
-                            {format.label}
-                          </Typography>
-                        </Box>
-                      }
-                    >
-                      {/* Step 4: Access selection - completes the meeting creation */}
-                      {meetingAccess.map(access => (
-                        <TreeItem
-                          key={`day-${day.key}-time-${time.value}-format-${format.value}-access-${access.value}`}
-                          itemId={`day-${day.key}-time-${time.value}-format-${format.value}-access-${access.value}`}
-                          label={
-                            <Box 
-                              sx={{ 
-                                display: 'flex', 
-                                alignItems: 'center', 
-                                gap: 1, 
-                                py: 0.5,
-                                ml: 4,
-                                cursor: 'pointer',
-                                '&:hover': {
-                                  bgcolor: muiTheme.palette.action.hover
-                                }
-                              }}
-                              onClick={() => addMeetingWithDetails(day.key, time.value, format.value, access.value)}
-                            >
-                              <Typography variant="body2" sx={{ fontSize: '0.8rem', color: 'primary.main' }}>
-                                {access.label} Meeting
-                              </Typography>
-                              <Typography variant="body2" sx={{ fontSize: '0.7rem', color: 'primary.main' }}>
-                                ← Click to add
-                              </Typography>
-                            </Box>
-                          }
-                        />
-                      ))}
-                    </TreeItem>
-                  ))}
-                </TreeItem>
-              ))}
-            </TreeItem>
-          ))}
-        </TreeItem>
-      </SimpleTreeView>
+      <CustomNestedMenu items={buildMenuItems()} />
     </Box>
   );
 };
