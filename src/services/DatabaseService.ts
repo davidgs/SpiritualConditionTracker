@@ -281,6 +281,12 @@ class DatabaseService {
       return await this.database.add('meetings', meeting);
     });
   }
+
+  async deleteMeeting(meetingId: string | number): Promise<boolean> {
+    return this.executeOperation(async () => {
+      return await this.database.delete('meetings', meetingId);
+    });
+  }
 }
 
 export default DatabaseService;

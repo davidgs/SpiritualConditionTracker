@@ -552,6 +552,32 @@ function setupGlobalDB(sqlite) {
               columns.forEach((column) => {
                 standardFormat[column] = data[column];
               });
+
+              // Parse JSON fields based on collection type
+              if (collection === 'meetings') {
+                // Parse JSON fields for meetings
+                if (standardFormat.days && typeof standardFormat.days === 'string') {
+                  try {
+                    standardFormat.days = JSON.parse(standardFormat.days);
+                  } catch (e) {
+                    standardFormat.days = [];
+                  }
+                }
+                if (standardFormat.schedule && typeof standardFormat.schedule === 'string') {
+                  try {
+                    standardFormat.schedule = JSON.parse(standardFormat.schedule);
+                  } catch (e) {
+                    standardFormat.schedule = [];
+                  }
+                }
+                if (standardFormat.coordinates && typeof standardFormat.coordinates === 'string') {
+                  try {
+                    standardFormat.coordinates = JSON.parse(standardFormat.coordinates);
+                  } catch (e) {
+                    standardFormat.coordinates = null;
+                  }
+                }
+              }
               
               standardFormatArray.push(standardFormat);
             }

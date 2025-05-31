@@ -42,6 +42,7 @@ type AppAction =
   | { type: 'ADD_ACTIVITY'; payload: Activity }
   | { type: 'SET_MEETINGS'; payload: Meeting[] }
   | { type: 'ADD_MEETING'; payload: Meeting }
+  | { type: 'DELETE_MEETING'; payload: string | number }
   | { type: 'SET_SPIRITUAL_FITNESS'; payload: number }
   | { type: 'SET_TIMEFRAME'; payload: number }
   | { type: 'RESET_ALL_DATA' };
@@ -89,6 +90,12 @@ function appReducer(state: AppState, action: AppAction): AppState {
     case 'ADD_MEETING':
       return { ...state, meetings: [...state.meetings, action.payload] };
     
+    case 'DELETE_MEETING':
+      return { 
+        ...state, 
+        meetings: state.meetings.filter(meeting => meeting.id !== action.payload) 
+      };
+    
     case 'SET_SPIRITUAL_FITNESS':
       return { ...state, spiritualFitness: action.payload };
     
@@ -120,6 +127,7 @@ interface AppDataContextType {
   
   loadMeetings: () => Promise<void>;
   addMeeting: (meeting: Omit<Meeting, 'id' | 'createdAt' | 'updatedAt'>) => Promise<Meeting | null>;
+  deleteMeeting: (meetingId: string | number) => Promise<boolean>;
   
   updateTimeframe: (timeframe: number) => Promise<void>;
   calculateSpiritualFitness: () => void;
@@ -329,6 +337,21 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const deleteMeeting = async (meetingId: string | number): Promise<boolean> => {
+    try {
+      const success = await databaseService.deleteMeeting(meetingId);
+      if (success) {
+        dispatch({ type: 'DELETE_MEETING', payload: meetingId });
+        console.log('[ AppDataContext ] Meeting deleted:', meetingId);
+      }
+      return success;
+    } catch (error) {
+      console.error('[ AppDataContext ] Failed to delete meeting:', error);
+      dispatch({ type: 'SET_ERROR', payload: 'Failed to delete meeting' });
+      return false;
+    }
+  };
+
   // Timeframe operations
   const updateTimeframe = async (timeframe: number) => {
     dispatch({ type: 'SET_TIMEFRAME', payload: timeframe });
@@ -392,6 +415,7 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
     addActivity,
     loadMeetings,
     addMeeting,
+    deleteMeeting,
     updateTimeframe,
     calculateSpiritualFitness,
     resetAllData,
