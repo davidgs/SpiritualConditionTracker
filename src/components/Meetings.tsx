@@ -163,8 +163,9 @@ export default function Meetings({ setCurrentView, meetings = [], onSave, onDele
             {/* Meeting Type Pills */}
             {(() => {
               let meetingTypes = [];
+              let locationTypes = [];
               
-              // Extract format and access from schedule
+              // Extract format, access, and location types from schedule
               if (meeting.schedule) {
                 let scheduleArray = meeting.schedule;
                 
@@ -180,18 +181,48 @@ export default function Meetings({ setCurrentView, meetings = [], onSave, onDele
                   // Get unique formats and access types
                   const formats = [...new Set(scheduleArray.map(item => item.format).filter(Boolean))];
                   const accessTypes = [...new Set(scheduleArray.map(item => item.access).filter(Boolean))];
+                  const locationTypesList = [...new Set(scheduleArray.map(item => item.locationType).filter(Boolean))];
                   
-                  // Combine them for display
+                  // Combine formats and access for display
                   meetingTypes = [...formats, ...accessTypes];
+                  locationTypes = locationTypesList;
                 }
               }
               
-              if (meetingTypes.length > 0) {
+              const hasContent = meetingTypes.length > 0 || locationTypes.length > 0;
+              
+              if (hasContent) {
                 return (
                   <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, mt: 1 }}>
+                    {/* Location Type Pills with emojis */}
+                    {locationTypes.map((locationType, index) => {
+                      const locationConfig = {
+                        'in_person': { icon: '🏢', label: 'In-Person', color: 'success' },
+                        'online': { icon: '💻', label: 'Online', color: 'info' },
+                        'hybrid': { icon: '🌐', label: 'Hybrid', color: 'warning' }
+                      };
+                      
+                      const config = locationConfig[locationType] || { icon: '📍', label: locationType, color: 'default' };
+                      
+                      return (
+                        <Chip
+                          key={`location-${index}`}
+                          label={`${config.icon} ${config.label}`}
+                          size="small"
+                          color={config.color}
+                          sx={{
+                            fontSize: '0.75rem',
+                            height: '24px',
+                            fontWeight: 'medium'
+                          }}
+                        />
+                      );
+                    })}
+                    
+                    {/* Format and Access Pills */}
                     {meetingTypes.map((type, index) => (
                       <Chip
-                        key={index}
+                        key={`type-${index}`}
                         label={type.charAt(0).toUpperCase() + type.slice(1).replace('_', ' ')}
                         size="small"
                         sx={{
