@@ -137,6 +137,11 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
           },
           '& .MuiTreeItem-label': {
             fontSize: '0.875rem'
+          },
+          '& .MuiTreeItem-group': {
+            marginLeft: 1,
+            paddingLeft: 1,
+            borderLeft: `1px solid ${muiTheme.palette.divider}`
           }
         }}
       >
