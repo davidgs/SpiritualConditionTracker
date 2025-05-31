@@ -1,252 +1,120 @@
 /**
- * Main App Component - Centralized State Management Version
- * Uses AppDataContext for all data operations
+ * Simple App Component for Testing
  */
 
 import React from 'react';
-import { ThemeProvider, createTheme } from '@mui/material/styles';
-import CssBaseline from '@mui/material/CssBaseline';
 import { AppDataProvider, useAppData } from './contexts/AppDataContext';
 
-// Import components
-import Dashboard from './components/Dashboard';
-import Profile from './components/Profile';
-import Meetings from './components/Meetings';
-import StepWork from './components/StepWork';
-import SponsorSponsee from './components/SponsorSponsee';
-
-// Create theme
-const theme = createTheme({
-  palette: {
-    mode: 'dark',
-    primary: {
-      main: '#3b82f6',
-    },
-    background: {
-      default: '#1a1a1a',
-      paper: '#2d2d2d',
-    },
-  },
-  typography: {
-    fontFamily: '"Segoe UI", "Roboto", "Helvetica", "Arial", sans-serif',
-  },
-});
-
-type ViewType = 'dashboard' | 'profile' | 'meetings' | 'stepwork' | 'sponsorship' | 'sponsor' | 'sponsee';
-
 function AppContent() {
-  const { state, addActivity, addMeeting, updateUser, updateTimeframe } = useAppData();
-  const [currentView, setCurrentView] = React.useState<ViewType>('dashboard');
+  const { state } = useAppData();
 
-  // Show loading screen while initializing
+  // Show loading state
   if (state.isLoading) {
     return (
       <div style={{ 
+        minHeight: '100vh',
+        backgroundColor: '#1a1a1a',
+        color: '#ffffff',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        minHeight: '100vh',
-        backgroundColor: '#1a1a1a',
-        color: '#ffffff',
-        padding: '20px',
-        textAlign: 'center'
+        padding: '20px'
       }}>
-        <div style={{ marginBottom: '20px' }}>Loading...</div>
-        <div style={{ fontSize: '14px', opacity: 0.7 }}>
-          Status: {state.databaseStatus}
-        </div>
+        <h2>Loading...</h2>
+        <p>Database Status: {state.databaseStatus}</p>
       </div>
     );
   }
 
-  // Show error if initialization failed
+  // Show error state
   if (state.error) {
     return (
       <div style={{ 
-        padding: '20px', 
-        textAlign: 'center', 
-        color: '#ff6b6b',
-        backgroundColor: '#1a1a1a',
         minHeight: '100vh',
+        backgroundColor: '#1a1a1a',
+        color: '#ff6b6b',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        padding: '20px'
       }}>
-        <h2>App Error</h2>
+        <h2>Error</h2>
         <p>{state.error}</p>
-        <p>Using fallback storage mode.</p>
+        <p>Using fallback storage</p>
       </div>
     );
   }
 
-  // Filter activities by timeframe for current view
-  function filterActivitiesByTimeframe(activities: any[], timeframeDays: number): any[] {
-    const cutoffDate = new Date();
-    cutoffDate.setDate(cutoffDate.getDate() - timeframeDays);
-    
-    return activities.filter(activity => {
-      const activityDate = new Date(activity.date);
-      return activityDate >= cutoffDate;
-    });
-  }
-
-  // Handle saving new activity
-  async function handleSaveActivity(activityData: any): Promise<any> {
-    try {
-      const userId = state.currentUserId;
-      if (!userId) {
-        throw new Error('No user ID available');
-      }
-
-      const newActivity = {
-        userId: String(userId),
-        type: activityData.type,
-        date: activityData.date,
-        notes: activityData.notes || '',
-        duration: activityData.duration || null,
-        location: activityData.location || null,
-      };
-
-      const savedActivity = await addActivity(newActivity);
-      console.log('[ App ] Activity saved successfully:', savedActivity?.id);
-      return savedActivity;
-    } catch (error) {
-      console.error('[ App ] Error saving activity:', error);
-      return null;
-    }
-  }
-
-  // Handle saving new meeting
-  async function handleSaveMeeting(newMeeting: any): Promise<any> {
-    try {
-      const savedMeeting = await addMeeting(newMeeting);
-      console.log('[ App ] Meeting saved successfully:', savedMeeting?.id);
-      return savedMeeting;
-    } catch (error) {
-      console.error('[ App ] Error saving meeting:', error);
-      return null;
-    }
-  }
-
-  // Handle updating user profile
-  async function handleUpdateProfile(updates: any, options: any = {}): Promise<any> {
-    try {
-      const updatedUser = await updateUser(updates);
-      console.log('[ App ] Profile updated successfully');
-      
-      if (options.redirectToDashboard) {
-        setCurrentView('dashboard');
-      }
-      
-      return updatedUser;
-    } catch (error) {
-      console.error('[ App ] Error updating profile:', error);
-      return null;
-    }
-  }
-
-  // Handle timeframe change
-  async function handleTimeframeChange(newTimeframe: number) {
-    await updateTimeframe(newTimeframe);
-  }
-
-  // Navigation handler
-  function handleNavigation(view: ViewType) {
-    setCurrentView(view);
-  }
-
-  // Render current view
-  function renderCurrentView() {
-    const filteredActivities = filterActivitiesByTimeframe(state.activities, state.currentTimeframe);
-
-    switch (currentView) {
-      case 'dashboard':
-        return (
-          <Dashboard
-            user={state.user}
-            activities={filteredActivities}
-            currentTimeframe={state.currentTimeframe}
-            onSaveActivity={handleSaveActivity}
-            onTimeframeChange={handleTimeframeChange}
-            setCurrentView={handleNavigation}
-          />
-        );
-
-      case 'profile':
-        return (
-          <Profile
-            user={state.user}
-            onUpdate={handleUpdateProfile}
-            setCurrentView={handleNavigation}
-          />
-        );
-
-      case 'meetings':
-        return (
-          <Meetings
-            meetings={state.meetings}
-            onSave={handleSaveMeeting}
-            user={state.user}
-            setCurrentView={handleNavigation}
-          />
-        );
-
-      case 'stepwork':
-        return (
-          <StepWork
-            onSaveActivity={handleSaveActivity}
-            setCurrentView={handleNavigation}
-          />
-        );
-
-      case 'sponsorship':
-      case 'sponsor':
-      case 'sponsee':
-        return (
-          <SponsorSponsee
-            user={state.user}
-            onUpdate={handleUpdateProfile}
-            onSaveActivity={handleSaveActivity}
-            activities={filteredActivities}
-            setCurrentView={handleNavigation}
-          />
-        );
-
-      default:
-        return (
-          <Dashboard
-            user={state.user}
-            activities={filteredActivities}
-            currentTimeframe={state.currentTimeframe}
-            onSaveActivity={handleSaveActivity}
-            onTimeframeChange={handleTimeframeChange}
-            setCurrentView={handleNavigation}
-          />
-        );
-    }
-  }
-
+  // Show app content
   return (
     <div style={{ 
-      minHeight: '100vh', 
+      minHeight: '100vh',
       backgroundColor: '#1a1a1a',
-      color: '#ffffff'
+      color: '#ffffff',
+      padding: '20px'
     }}>
-      {renderCurrentView()}
+      <h1>Recovery App</h1>
+      
+      <div style={{ marginBottom: '20px' }}>
+        <h3>Database Status: {state.databaseStatus}</h3>
+      </div>
+
+      {state.user && (
+        <div style={{ marginBottom: '20px', padding: '15px', backgroundColor: '#2d2d2d', borderRadius: '8px' }}>
+          <h3>User Profile</h3>
+          <p><strong>Name:</strong> {state.user.name || 'Not set'}</p>
+          <p><strong>Last Name:</strong> {state.user.lastName || 'Not set'}</p>
+          <p><strong>Phone:</strong> {state.user.phoneNumber || 'Not set'}</p>
+          <p><strong>Email:</strong> {state.user.email || 'Not set'}</p>
+          <p><strong>Sobriety Date:</strong> {state.user.sobrietyDate || 'Not set'}</p>
+        </div>
+      )}
+
+      <div style={{ marginBottom: '20px', padding: '15px', backgroundColor: '#2d2d2d', borderRadius: '8px' }}>
+        <h3>Activities ({state.activities.length})</h3>
+        {state.activities.length > 0 ? (
+          state.activities.map((activity, index) => (
+            <div key={activity.id || index} style={{ marginBottom: '10px', padding: '10px', backgroundColor: '#3d3d3d', borderRadius: '4px' }}>
+              <p><strong>Type:</strong> {activity.type}</p>
+              <p><strong>Date:</strong> {activity.date}</p>
+              {activity.notes && <p><strong>Notes:</strong> {activity.notes}</p>}
+            </div>
+          ))
+        ) : (
+          <p>No activities found</p>
+        )}
+      </div>
+
+      <div style={{ padding: '15px', backgroundColor: '#2d2d2d', borderRadius: '8px' }}>
+        <h3>Meetings ({state.meetings.length})</h3>
+        {state.meetings.length > 0 ? (
+          state.meetings.map((meeting, index) => (
+            <div key={meeting.id || index} style={{ marginBottom: '10px', padding: '10px', backgroundColor: '#3d3d3d', borderRadius: '4px' }}>
+              <p><strong>Name:</strong> {meeting.name}</p>
+              <p><strong>Location:</strong> {meeting.location}</p>
+              <p><strong>Time:</strong> {meeting.time}</p>
+            </div>
+          ))
+        ) : (
+          <p>No meetings found</p>
+        )}
+      </div>
+
+      <div style={{ marginTop: '20px', fontSize: '14px', opacity: 0.7 }}>
+        <p>Spiritual Fitness Score: {state.spiritualFitness}</p>
+        <p>Current Timeframe: {state.currentTimeframe} days</p>
+      </div>
     </div>
   );
 }
 
 function App() {
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <AppDataProvider>
-        <AppContent />
-      </AppDataProvider>
-    </ThemeProvider>
+    <AppDataProvider>
+      <AppContent />
+    </AppDataProvider>
   );
 }
 

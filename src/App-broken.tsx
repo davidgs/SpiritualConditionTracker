@@ -1,0 +1,247 @@
+/**
+ * Main App Component - Centralized State Management Version
+ * Uses AppDataContext for all data operations
+ */
+
+import React from 'react';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
+import { AppDataProvider, useAppData } from './contexts/AppDataContext';
+
+// Import components
+import Dashboard from './components/Dashboard';
+import Profile from './components/Profile';
+import Meetings from './components/Meetings';
+import StepWork from './components/StepWork';
+import SponsorSponsee from './components/SponsorSponsee';
+
+// Create theme
+const theme = createTheme({
+  palette: {
+    mode: 'dark',
+    primary: {
+      main: '#3b82f6',
+    },
+  },
+});
+
+type ViewType = 'dashboard' | 'profile' | 'meetings' | 'stepwork' | 'sponsorship' | 'sponsor' | 'sponsee';
+
+function AppContent() {
+  try {
+    const { state, addActivity, addMeeting, updateUser, updateTimeframe } = useAppData();
+    const [currentView, setCurrentView] = React.useState<ViewType>('dashboard');
+
+    // Show loading screen while initializing
+    if (state.isLoading) {
+      return (
+        <div style={{ 
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          minHeight: '100vh',
+          backgroundColor: '#1a1a1a',
+          color: '#ffffff',
+          padding: '20px',
+          textAlign: 'center'
+        }}>
+          <div style={{ marginBottom: '20px' }}>Loading...</div>
+          <div style={{ fontSize: '14px', opacity: 0.7 }}>
+            Status: {state.databaseStatus}
+          </div>
+        </div>
+      );
+    }
+
+  // Show error if initialization failed
+  if (state.error) {
+    return (
+      <div style={{ 
+        padding: '20px', 
+        textAlign: 'center', 
+        color: '#ff6b6b',
+        backgroundColor: '#1a1a1a',
+        minHeight: '100vh',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center'
+      }}>
+        <h2>App Error</h2>
+        <p>{state.error}</p>
+        <p>Using fallback storage mode.</p>
+      </div>
+    );
+  }
+
+  // Filter activities by timeframe for current view
+  function filterActivitiesByTimeframe(activities: any[], timeframeDays: number): any[] {
+    const cutoffDate = new Date();
+    cutoffDate.setDate(cutoffDate.getDate() - timeframeDays);
+    
+    return activities.filter(activity => {
+      const activityDate = new Date(activity.date);
+      return activityDate >= cutoffDate;
+    });
+  }
+
+  // Handle saving new activity
+  async function handleSaveActivity(activityData: any): Promise<any> {
+    try {
+      const userId = state.currentUserId;
+      if (!userId) {
+        throw new Error('No user ID available');
+      }
+
+      const newActivity = {
+        userId: String(userId),
+        type: activityData.type,
+        date: activityData.date,
+        notes: activityData.notes || '',
+        duration: activityData.duration || null,
+        location: activityData.location || null,
+      };
+
+      const savedActivity = await addActivity(newActivity);
+      console.log('[ App ] Activity saved successfully:', savedActivity?.id);
+      return savedActivity;
+    } catch (error) {
+      console.error('[ App ] Error saving activity:', error);
+      return null;
+    }
+  }
+
+  // Handle saving new meeting
+  async function handleSaveMeeting(newMeeting: any): Promise<any> {
+    try {
+      const savedMeeting = await addMeeting(newMeeting);
+      console.log('[ App ] Meeting saved successfully:', savedMeeting?.id);
+      return savedMeeting;
+    } catch (error) {
+      console.error('[ App ] Error saving meeting:', error);
+      return null;
+    }
+  }
+
+  // Handle updating user profile
+  async function handleUpdateProfile(updates: any, options: any = {}): Promise<any> {
+    try {
+      const updatedUser = await updateUser(updates);
+      console.log('[ App ] Profile updated successfully');
+      
+      if (options.redirectToDashboard) {
+        setCurrentView('dashboard');
+      }
+      
+      return updatedUser;
+    } catch (error) {
+      console.error('[ App ] Error updating profile:', error);
+      return null;
+    }
+  }
+
+  // Handle timeframe change
+  async function handleTimeframeChange(newTimeframe: number) {
+    await updateTimeframe(newTimeframe);
+  }
+
+  // Navigation handler
+  function handleNavigation(view: ViewType) {
+    setCurrentView(view);
+  }
+
+  // Render current view
+  function renderCurrentView() {
+    const filteredActivities = filterActivitiesByTimeframe(state.activities, state.currentTimeframe);
+
+    switch (currentView) {
+      case 'dashboard':
+        return (
+          <Dashboard
+            user={state.user}
+            activities={filteredActivities}
+            currentTimeframe={state.currentTimeframe}
+            onSaveActivity={handleSaveActivity}
+            onTimeframeChange={handleTimeframeChange}
+            setCurrentView={handleNavigation}
+          />
+        );
+
+      case 'profile':
+        return (
+          <Profile
+            user={state.user}
+            onUpdate={handleUpdateProfile}
+            setCurrentView={handleNavigation}
+          />
+        );
+
+      case 'meetings':
+        return (
+          <Meetings
+            meetings={state.meetings}
+            onSave={handleSaveMeeting}
+            user={state.user}
+            setCurrentView={handleNavigation}
+          />
+        );
+
+      case 'stepwork':
+        return (
+          <StepWork
+            onSaveActivity={handleSaveActivity}
+            setCurrentView={handleNavigation}
+          />
+        );
+
+      case 'sponsorship':
+      case 'sponsor':
+      case 'sponsee':
+        return (
+          <SponsorSponsee
+            user={state.user}
+            onUpdate={handleUpdateProfile}
+            onSaveActivity={handleSaveActivity}
+            activities={filteredActivities}
+            setCurrentView={handleNavigation}
+          />
+        );
+
+      default:
+        return (
+          <Dashboard
+            user={state.user}
+            activities={filteredActivities}
+            currentTimeframe={state.currentTimeframe}
+            onSaveActivity={handleSaveActivity}
+            onTimeframeChange={handleTimeframeChange}
+            setCurrentView={handleNavigation}
+          />
+        );
+    }
+  }
+
+  return (
+    <div style={{ 
+      minHeight: '100vh', 
+      backgroundColor: '#1a1a1a',
+      color: '#ffffff'
+    }}>
+      {renderCurrentView()}
+    </div>
+  );
+}
+
+function App() {
+  return (
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <AppDataProvider>
+        <AppContent />
+      </AppDataProvider>
+    </ThemeProvider>
+  );
+}
+
+export default App;
