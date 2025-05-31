@@ -172,7 +172,7 @@ async function validateAndLogDatabase(sqlite) {
         console.log('[ sqliteLoader.js:172 ]  Recent activities found:', activitiesResult.values.length);
         activitiesResults.values.forEach( (element) => {
           console.log('[ sqliteLoader.js:174 ]  Activity:', element);
-        }
+        });
       }
       
     } catch (error) {
