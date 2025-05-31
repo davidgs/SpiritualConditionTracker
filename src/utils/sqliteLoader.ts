@@ -583,6 +583,7 @@ function setupGlobalDB(sqlite) {
             }
             
             console.log(`[ sqliteLoader.js ] Converted ${standardFormatArray.length} iOS format items to standard format`);
+            console.log(`[ sqliteLoader.js ] Sample converted item:`, standardFormatArray[0]);
             return standardFormatArray;
           }
         }
@@ -897,6 +898,77 @@ function setupGlobalDB(sqlite) {
         return true;
       } catch (error) {
         console.error(`[ sqliteLoader.js ] Error removing item from ${collection}:`, error);
+        return false;
+      }
+    },
+
+    /**
+     * Delete an item from a collection (alias for remove with better error handling)
+     * @param {string} collection - Collection name
+     * @param {string|number} id - Item ID
+     * @returns {Promise<boolean>} Success indicator
+     */
+    delete: async function(collection, id) {
+      try {
+        console.log(`[ sqliteLoader.js ] Attempting to delete ${collection} with ID:`, id, typeof id);
+        
+        // Ensure database connection is open before delete
+        try {
+          await sqlite.open({ database: DB_NAME });
+        } catch (openError) {
+          console.log('[ sqliteLoader.js ] Database already open or connection issue:', openError);
+        }
+
+        // Check if record exists first
+        const beforeDelete = await sqlite.query({
+          database: DB_NAME,
+          statement: `SELECT * FROM ${collection} WHERE id = ?`,
+          values: [id]
+        });
+        
+        console.log('[ sqliteLoader.js ] Record before delete:', beforeDelete);
+        
+        // Try delete with original ID format first
+        let deleteResult = await sqlite.execute({
+          database: DB_NAME,
+          statements: `DELETE FROM ${collection} WHERE id = ?`,
+          values: [id]
+        });
+        
+        console.log('[ sqliteLoader.js ] Delete result (original ID):', deleteResult);
+        
+        // If no changes, try with converted ID formats
+        if (deleteResult.changes && deleteResult.changes.changes === 0) {
+          // Try with numeric ID
+          if (typeof id === 'string' && !isNaN(id)) {
+            const numericId = parseInt(id, 10);
+            console.log('[ sqliteLoader.js ] Trying numeric ID:', numericId);
+            deleteResult = await sqlite.execute({
+              database: DB_NAME,
+              statements: `DELETE FROM ${collection} WHERE id = ?`,
+              values: [numericId]
+            });
+            console.log('[ sqliteLoader.js ] Delete result (numeric ID):', deleteResult);
+          }
+          
+          // Try with string ID
+          if (deleteResult.changes && deleteResult.changes.changes === 0 && typeof id === 'number') {
+            const stringId = String(id);
+            console.log('[ sqliteLoader.js ] Trying string ID:', stringId);
+            deleteResult = await sqlite.execute({
+              database: DB_NAME,
+              statements: `DELETE FROM ${collection} WHERE id = ?`,
+              values: [stringId]
+            });
+            console.log('[ sqliteLoader.js ] Delete result (string ID):', deleteResult);
+          }
+        }
+        
+        const success = deleteResult.changes && deleteResult.changes.changes > 0;
+        console.log(`[ sqliteLoader.js ] Delete operation ${success ? 'succeeded' : 'failed'} for ${collection} ID:`, id);
+        return success;
+      } catch (error) {
+        console.error(`[ sqliteLoader.js ] Error deleting item from ${collection}:`, error);
         return false;
       }
     },

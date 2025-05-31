@@ -14,7 +14,7 @@ import BottomNavBar from './components/BottomNavBar';
 import Meetings from './components/Meetings';
 
 function AppContent() {
-  const { state, addActivity, addMeeting, updateTimeframe } = useAppData();
+  const { state, addActivity, addMeeting, deleteMeeting, updateTimeframe } = useAppData();
   const muiTheme = useTheme();
   const [currentView, setCurrentView] = React.useState('dashboard');
 
@@ -106,6 +106,18 @@ function AppContent() {
     }
   }
 
+  // Handle deleting meeting
+  async function handleDeleteMeeting(meetingId: string | number): Promise<boolean> {
+    try {
+      const success = await deleteMeeting(meetingId);
+      console.log('[ App ] Meeting deleted successfully:', meetingId);
+      return success;
+    } catch (error) {
+      console.error('[ App ] Error deleting meeting:', error);
+      return false;
+    }
+  }
+
   // Handle timeframe change
   async function handleTimeframeChange(newTimeframe: number) {
     await updateTimeframe(newTimeframe);
@@ -151,6 +163,7 @@ function AppContent() {
               setCurrentView={handleNavigation}
               meetings={state.meetings}
               onSave={handleSaveMeeting}
+              onDelete={handleDeleteMeeting}
               user={state.user}
             />
           )}
