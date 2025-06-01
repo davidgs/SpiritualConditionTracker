@@ -12,7 +12,7 @@ export function calculateSpiritualFitnessScore(
   const baseScore = 5;
   console.log('[ SpiritualFitness.js ] calculateSpiritualFitnessScore baseScore:', baseScore);
   console.log('[ SpiritualFitness.js ] calculateSpiritualFitnessScore timeframeDays:', timeframeDays);
-  console.log('[ SpiritualFitness.js ] calculateSpiritualFitnessScore activities:', activities);
+  console.log('[ SpiritualFitness.js ] calculateSpiritualFitnessScore activities #:', activities.length);
   // Filter activities within the timeframe using millisecond calculation
   const now = new Date();
   const timeframeStartMs = now.getTime() - (timeframeDays * 24 * 60 * 60 * 1000);
@@ -22,7 +22,7 @@ export function calculateSpiritualFitnessScore(
       return false;
     }
     const activityDate = new Date(activity.date);
-    console.log('[ SpiritualFitness.js ] calculateSpiritualFitnessScore activityDate:', activityDate);
+    //console.log('[ SpiritualFitness.js ] calculateSpiritualFitnessScore activityDate:', activityDate);
     return activityDate.getTime() >= timeframeStartMs;
   });
   
@@ -71,8 +71,9 @@ export function calculateSpiritualFitnessScore(
     }
     
     totalActivityPoints += points;
-    console.log('[ SpiritualFitness.js ] calculateSpiritualFitnessScore totalActivityPoints:', totalActivityPoints);
+    
   });
+  console.log('[ SpiritualFitness.js ] calculateSpiritualFitnessScore totalActivityPoints:', totalActivityPoints);
   
   // Scale activity points and cap at 40
   const activityPoints = Math.min(totalActivityPoints / 4, 40);
