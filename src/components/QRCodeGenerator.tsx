@@ -83,7 +83,7 @@ export default function QRCodeGenerator({ data, title, open, onClose, size = 300
     };
     
     // Load the logo image
-    logoImg.src = '/logo.jpg';
+    logoImg.src = '/assets/logo.png';
   };
 
   const generateQRCode = async () => {
