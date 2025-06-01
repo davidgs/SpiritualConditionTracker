@@ -48,7 +48,8 @@ export default function QRCodeGenerator({ data, title, open, onClose, size = 300
     
     const logoImg = new Image();
     logoImg.crossOrigin = 'anonymous';
-    
+    // Load the logo image
+    logoImg.src = '/assets/logo.png';
     logoImg.onload = () => {
       console.log('Logo loaded successfully, adding to QR code');
       
@@ -82,8 +83,7 @@ export default function QRCodeGenerator({ data, title, open, onClose, size = 300
       // QR code is still functional without the logo
     };
     
-    // Load the logo image
-    logoImg.src = '/assets/logo.png';
+    
   };
 
   const generateQRCode = async () => {
