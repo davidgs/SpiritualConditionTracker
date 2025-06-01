@@ -320,8 +320,8 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
           sx={{ 
             display: 'flex', 
             alignItems: 'center', 
-            gap: 1, 
-            py: 1,
+            gap: 0.5, 
+            py: 0.5,
             borderBottom: '1px solid #eee',
             mb: 1
           }}
@@ -329,7 +329,7 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
           <Button
             variant="text"
             onClick={() => startEditingMeeting(index, 'day')}
-            sx={{ fontWeight: 500, minWidth: '70px', textAlign: 'left' }}
+            sx={{ fontWeight: 500, minWidth: '60px', textAlign: 'left', fontSize: '0.85rem', px: 0.5 }}
           >
             {days.find(d => d.key === item.day)?.label || item.day}
           </Button>
@@ -337,7 +337,7 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
           <Button
             variant="text"
             onClick={() => startEditingMeeting(index, 'time')}
-            sx={{ minWidth: '70px', textAlign: 'left' }}
+            sx={{ minWidth: '60px', textAlign: 'left', fontSize: '0.85rem', px: 0.5 }}
           >
             {use24HourFormat ? item.time : (() => {
               const [hour, minute] = item.time.split(':');
@@ -351,7 +351,7 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
           <Button
             variant="text"
             onClick={() => startEditingMeeting(index, 'locationType')}
-            sx={{ fontSize: '1.2rem', minWidth: 'auto' }}
+            sx={{ fontSize: '1rem', minWidth: 'auto', px: 0.5 }}
           >
             {meetingLocationTypes.find(l => l.value === item.locationType)?.icon || '🏢'}
           </Button>
@@ -361,7 +361,7 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
             size="small"
             color="primary"
             onClick={() => startEditingMeeting(index, 'format')}
-            sx={{ fontSize: '0.7rem', height: '24px', cursor: 'pointer' }}
+            sx={{ fontSize: '0.65rem', height: '20px', cursor: 'pointer', mx: 0.25 }}
           />
           
           <Chip 
@@ -369,7 +369,7 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
             size="small"
             color={item.access === 'open' ? 'success' : 'error'}
             onClick={() => startEditingMeeting(index, 'access')}
-            sx={{ fontSize: '0.7rem', height: '24px', cursor: 'pointer' }}
+            sx={{ fontSize: '0.65rem', height: '20px', cursor: 'pointer', mx: 0.25 }}
           />
           
           <Button
@@ -378,11 +378,12 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
             onClick={() => removeScheduleItem(item.day, item.time)}
             sx={{ 
               minWidth: 'auto', 
-              width: '24px', 
-              height: '24px', 
+              width: '20px', 
+              height: '20px', 
               px: 0,
-              fontSize: '1rem',
-              borderRadius: '50%'
+              fontSize: '0.9rem',
+              borderRadius: '50%',
+              ml: 0.5
             }}
           >
             ×
