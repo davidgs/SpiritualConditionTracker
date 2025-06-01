@@ -7,7 +7,7 @@
  * Handles both YYYY-MM-DD format and ISO date strings
  */
 export function formatDateForDisplay(dateString: string): string {
-  console.log("Formatting date:", dateString);
+  // console.log("Formatting date:", dateString);
   
   if (!dateString) {
     console.error("Empty date string provided to formatDateForDisplay");
