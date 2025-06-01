@@ -3,7 +3,7 @@
  * Centralized state management for all app data
  */
 
-import React, { createContext, useContext, useReducer, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useReducer, useEffect, useState, ReactNode } from 'react';
 import DatabaseService, { DatabaseStatus } from '../services/DatabaseService';
 import type { User, Activity, Meeting } from '../types/database';
 
@@ -134,6 +134,7 @@ interface AppDataContextType {
   updateUser: (updates: Partial<User>) => Promise<User | null>;
   
   loadActivities: () => Promise<void>;
+  getActivitiesForTimeframe: (timeframe: number) => Promise<Activity[]>;
   addActivity: (activity: Omit<Activity, 'id' | 'createdAt' | 'updatedAt'>) => Promise<Activity | null>;
   
   loadMeetings: () => Promise<void>;
@@ -153,6 +154,7 @@ const AppDataContext = createContext<AppDataContextType | null>(null);
 // Provider component
 export function AppDataProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(appReducer, initialState);
+  const [extendedCache, setExtendedCache] = useState<Map<number, Activity[]>>(new Map());
   const databaseService = DatabaseService.getInstance();
 
   // Initialize database on mount
@@ -287,22 +289,72 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
     try {
       const activities = await databaseService.getAllActivities();
       
-      // Filter by current timeframe
+      // Always load last 180 days for base cache (fixed window for memory management)
+      const CACHE_DAYS = 180;
       const cutoffDate = new Date();
-      cutoffDate.setDate(cutoffDate.getDate() - state.currentTimeframe);
+      cutoffDate.setDate(cutoffDate.getDate() - CACHE_DAYS);
       
-      const filteredActivities = activities.filter(activity => {
+      const cachedActivities = activities.filter(activity => {
         const activityDate = new Date(activity.date);
         return activityDate >= cutoffDate;
       });
       
-      dispatch({ type: 'SET_ACTIVITIES', payload: filteredActivities });
-      console.log('[ AppDataContext.tsx:288 ] Activities loaded:', filteredActivities.length);
+      dispatch({ type: 'SET_ACTIVITIES', payload: cachedActivities });
+      console.log(`[ AppDataContext.tsx:288 ] Activities cached (${CACHE_DAYS} days):`, cachedActivities.length);
       
       // Calculate spiritual fitness
       calculateSpiritualFitness();
     } catch (error) {
       console.error('[ AppDataContext.tsx:293 ] Failed to load activities:', error);
+      throw error;
+    }
+  };
+
+  // Smart caching function for timeframe-specific activities
+  const getActivitiesForTimeframe = async (timeframe: number): Promise<Activity[]> => {
+    const CACHE_DAYS = 180;
+    
+    // For timeframes within our base cache, use existing data
+    if (timeframe <= CACHE_DAYS) {
+      const cutoffDate = new Date();
+      cutoffDate.setDate(cutoffDate.getDate() - timeframe);
+      
+      const filteredActivities = state.activities.filter(activity => {
+        const activityDate = new Date(activity.date);
+        return activityDate >= cutoffDate;
+      });
+      
+      console.log(`[ AppDataContext.tsx:315 ] Using cached activities for ${timeframe} days:`, filteredActivities.length);
+      return filteredActivities;
+    }
+    
+    // For longer timeframes, check extended cache first
+    if (extendedCache.has(timeframe)) {
+      const cached = extendedCache.get(timeframe)!;
+      console.log(`[ AppDataContext.tsx:322 ] Using extended cache for ${timeframe} days:`, cached.length);
+      return cached;
+    }
+    
+    // Fetch extended data for longer timeframes
+    try {
+      console.log(`[ AppDataContext.tsx:327 ] Fetching extended data for ${timeframe} days...`);
+      const allActivities = await databaseService.getAllActivities();
+      
+      const cutoffDate = new Date();
+      cutoffDate.setDate(cutoffDate.getDate() - timeframe);
+      
+      const extendedActivities = allActivities.filter(activity => {
+        const activityDate = new Date(activity.date);
+        return activityDate >= cutoffDate;
+      });
+      
+      // Cache the result
+      setExtendedCache(prev => new Map(prev).set(timeframe, extendedActivities));
+      console.log(`[ AppDataContext.tsx:338 ] Extended cache updated for ${timeframe} days:`, extendedActivities.length);
+      
+      return extendedActivities;
+    } catch (error) {
+      console.error('[ AppDataContext.tsx:342 ] Failed to fetch extended activities:', error);
       throw error;
     }
   };

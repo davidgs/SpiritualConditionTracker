@@ -1,0 +1,35 @@
+⚡️  [log] - [ Dashboard.js ] Dashboard useEffect [activities] triggered - calculating spiritual fitness
+⚡️  [log] - [ Dashboard.js ] Dashboard scoreBreak: {"baseScore":5,"activityPoints":30.38,"consistencyPoints":10,"totalScore":45.38,"recentActivities":16,"activeDays":15}
+⚡️  [log] - [ SpiritualFitness.js ] calculateSpiritualFitnessScore baseScore: 5
+⚡️  [log] - [ SpiritualFitness.js ] calculateSpiritualFitnessScore timeframeDays: 60
+⚡️  [log] - [ SpiritualFitness.js ] calculateSpiritualFitnessScore activities #: 16
+⚡️  [log] - [ SpiritualFitness.js ] calculateSpiritualFitnessScore totalActivityPoints: 121.5
+⚡️  [log] - [ SpiritualFitness.js ] calculateSpiritualFitnessScore totalScore: 45.375
+⚡️  [log] - [ SpiritualFitness.js ] calculateSpiritualFitnessScore preciseScore: 45.38
+⚡️  [log] - [ Dashboard.js: 71 ] Dashboard newScore: 45.38
+⚡️  [log] - [ Dashboard.js ] Dashboard initial spiritualFitness: 5
+⚡️  [log] - [ Dashboard.js ] Dashboard currentScore state: 45.38
+⚡️  [log] - [ Dashboard.js ] Dashboard currentTimeframe: 60
+⚡️  [log] - [ Dashboard.js ] Dashboard scoreTimeframe: 60
+⚡️  [log] - [ Dashboard.js ] Dashboard formattedScore for display: 45.38
+⚡️  [log] - [ Dashboard.js ] Dashboard progressPercent: 45.38
+⚡️  [log] - [ ActivityList.js: 39 ] Total activities received: 16
+⚡️  [log] - [ sqliteLoader.js:592 ] Converted 16 iOS format items to standard format
+⚡️  [log] - [ sqliteLoader.js ] Sample converted item: {"id":2,"type":"action-item","duration":0,"date":"2025-06-02","notes":"Action Item: Regular meeting time - Pick a regular meeting time that works.  [ContactRef: 2025-05-28]","literatureTitle":"","literatureType":"","meetingName":"","wasChair":0,"wasShare":0,"wasSpeaker":0,"meetingId":null,"callPerson":"","isSponsorCall":0,"isSponseeCall":0,"isAAMemberCall":0,"callType":"","servicePerson":"","location":"deleted","mood":"","gratitude":"","steps":"","sponsor":"","attendees":"","createdAt":"2025-05-30T18:50:41.586Z","updatedAt":"2025-05-30T18:50:48.713Z"}
+⚡️  [log] - [ AppDataContext.tsx:288 ] Activities loaded: 16
+⚡️  [log] - [ Dashboard.js ] Dashboard initial spiritualFitness: 5
+⚡️  [log] - [ Dashboard.js ] Dashboard currentScore state: 45.38
+⚡️  [log] - [ Dashboard.js ] Dashboard currentTimeframe: 60
+⚡️  [log] - [ Dashboard.js ] Dashboard scoreTimeframe: 60
+⚡️  [log] - [ Dashboard.js ] Dashboard formattedScore for display: 45.38
+⚡️  [log] - [ Dashboard.js ] Dashboard progressPercent: 45.38
+⚡️  [log] - [ ActivityList.js: 39 ] Total activities received: 16
+⚡️  [log] - [ Dashboard.js ] Dashboard useEffect [activities] triggered - calculating spiritual fitness
+⚡️  [log] - [ Dashboard.js ] Dashboard scoreBreak: {"baseScore":5,"activityPoints":30.38,"consistencyPoints":10,"totalScore":45.38,"recentActivities":16,"activeDays":15}
+⚡️  [log] - [ SpiritualFitness.js ] calculateSpiritualFitnessScore baseScore: 5
+⚡️  [log] - [ SpiritualFitness.js ] calculateSpiritualFitnessScore timeframeDays: 60
+⚡️  [log] - [ SpiritualFitness.js ] calculateSpiritualFitnessScore activities #: 16
+⚡️  [log] - [ SpiritualFitness.js ] calculateSpiritualFitnessScore totalActivityPoints: 121.5
+⚡️  [log] - [ SpiritualFitness.js ] calculateSpiritualFitnessScore totalScore: 45.375
+⚡️  [log] - [ SpiritualFitness.js ] calculateSpiritualFitnessScore preciseScore: 45.38
+⚡️  [log] - [ Dashboard.js: 71 ] Dashboard newScore: 45.38
