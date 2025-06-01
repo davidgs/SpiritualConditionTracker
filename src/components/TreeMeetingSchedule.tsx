@@ -174,9 +174,10 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <MobileTimePicker
               value={newMeeting.time ? dayjs(`2022-04-17T${newMeeting.time}`) : dayjs('2022-04-17T19:00')}
-              minutesStep={15}
+              minutesStep={1}
               ampm={!use24HourFormat}
               onChange={(value) => {
+                console.log('Time picker changed to:', value);
                 // Real-time update as user scrolls through time
                 if (value && value.isValid()) {
                   const timeString = value.format('HH:mm');
