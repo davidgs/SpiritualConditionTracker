@@ -21,12 +21,12 @@ export default function QRCodeGenerator({ data, title, open, onClose, size = 300
     quietZone: 10,
     bgColor: '#ffffff',
     fgColor: '#000000',
-    logoImage: '/assets/logo.jpg',
-    logoWidth: size * 0.15,
-    logoHeight: size * 0.15,
+    logoImage: '/assets/gr-logo.png',
+    logoWidth: size * 0.2,
+    logoHeight: size * 0.2,
     logoOpacity: 1,
     removeQrCodeBehindLogo: true,
-    logoPadding: 6,
+    logoPadding: 3,
     logoPaddingStyle: 'circle' as const,
     eyeRadius: [
       { outer: [10, 10, 0, 10], inner: [0, 10, 10, 0] },
@@ -34,7 +34,7 @@ export default function QRCodeGenerator({ data, title, open, onClose, size = 300
       { outer: [10, 0, 10, 10], inner: [0, 10, 0, 0] }
     ],
     eyeColor: '#000000',
-    qrStyle: 'squares' as const,
+    qrStyle: 'dots' as const,
     id: 'react-qrcode-logo'
   };
 
