@@ -42,6 +42,7 @@ type AppAction =
   | { type: 'ADD_ACTIVITY'; payload: Activity }
   | { type: 'SET_MEETINGS'; payload: Meeting[] }
   | { type: 'ADD_MEETING'; payload: Meeting }
+  | { type: 'UPDATE_MEETING'; payload: { id: string | number; data: Partial<Meeting> } }
   | { type: 'DELETE_MEETING'; payload: string | number }
   | { type: 'SET_SPIRITUAL_FITNESS'; payload: number }
   | { type: 'SET_TIMEFRAME'; payload: number }
@@ -89,6 +90,16 @@ function appReducer(state: AppState, action: AppAction): AppState {
     
     case 'ADD_MEETING':
       return { ...state, meetings: [...state.meetings, action.payload] };
+    
+    case 'UPDATE_MEETING':
+      return {
+        ...state,
+        meetings: state.meetings.map(meeting => 
+          meeting.id === action.payload.id 
+            ? { ...meeting, ...action.payload.data, updatedAt: new Date().toISOString() }
+            : meeting
+        )
+      };
     
     case 'DELETE_MEETING':
       return { 
