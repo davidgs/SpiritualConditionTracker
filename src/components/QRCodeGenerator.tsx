@@ -15,8 +15,31 @@ export default function QRCodeGenerator({ data, title, open, onClose, size = 300
   const [qrGenerated, setQrGenerated] = useState(false);
 
   useEffect(() => {
-    if (open && data && canvasRef.current) {
-      generateQRCode();
+    if (open && data) {
+      console.log('Dialog opened, attempting to generate QR code');
+      setQrGenerated(false);
+      
+      // Use a longer delay and multiple attempts to find the canvas
+      let attempts = 0;
+      const maxAttempts = 10;
+      
+      const tryGenerate = () => {
+        attempts++;
+        console.log(`Attempt ${attempts} to find canvas element`);
+        
+        if (canvasRef.current) {
+          console.log('Canvas found! Generating QR code');
+          generateQRCode();
+        } else if (attempts < maxAttempts) {
+          console.log('Canvas not found, trying again in 200ms');
+          setTimeout(tryGenerate, 200);
+        } else {
+          console.error('Canvas never became available after', maxAttempts, 'attempts');
+        }
+      };
+      
+      // Start trying after a short delay
+      setTimeout(tryGenerate, 300);
     }
   }, [open, data]);
 

@@ -74,7 +74,7 @@ export default function Meetings({ setCurrentView, meetings = [], onSave, onDele
     if (meeting.onlineUrl) meetingInfo += `Online: ${meeting.onlineUrl}\n`;
     
     meetingInfo += '\nShared from AA Recovery Tracker';
-
+    console.log('[ Meetings.js:77 ] Sharing meeting:', meetingInfo);
     setQrCodeData(meetingInfo);
     setQrCodeTitle(`Share Meeting: ${meeting.name}`);
     setQrCodeOpen(true);
