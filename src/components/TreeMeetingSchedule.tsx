@@ -105,7 +105,7 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
       const newSchedule = [...schedule, completeMeeting];
       onChange(newSchedule);
       
-      // Reset for next meeting
+      // Reset for next meeting - go back to day selection
       setNewMeeting({});
       setCurrentStep('day');
     }
@@ -347,6 +347,53 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
           </Button>
         </Box>
       ))}
+
+      {/* Progressive meeting display - shows as each part is selected */}
+      {Object.keys(newMeeting).length > 0 && editingMeeting === null && (
+        <Box sx={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          gap: 1, 
+          py: 1,
+          borderBottom: '1px solid #eee',
+          mb: 2,
+          backgroundColor: '#f5f5f5',
+          borderRadius: 1,
+          px: 1
+        }}>
+          <Typography variant="body2" sx={{ fontWeight: 500, minWidth: '70px', textAlign: 'left' }}>
+            {newMeeting.day ? (days.find(d => d.key === newMeeting.day)?.label || newMeeting.day) : '---'}
+          </Typography>
+          
+          <Typography variant="body2" sx={{ minWidth: '70px', textAlign: 'left' }}>
+            {newMeeting.time ? (use24HourFormat ? newMeeting.time : (() => {
+              const [hour, minute] = newMeeting.time.split(':');
+              const hourNum = parseInt(hour);
+              const period = hourNum >= 12 ? 'PM' : 'AM';
+              const displayHour = hourNum === 0 ? 12 : hourNum > 12 ? hourNum - 12 : hourNum;
+              return `${displayHour}:${minute} ${period}`;
+            })()) : '---'}
+          </Typography>
+          
+          <Typography sx={{ fontSize: '1.2rem' }}>
+            {newMeeting.locationType ? (meetingLocationTypes.find(l => l.value === newMeeting.locationType)?.icon || '🏢') : '---'}
+          </Typography>
+          
+          <Chip 
+            label={newMeeting.format ? newMeeting.format.charAt(0).toUpperCase() + newMeeting.format.slice(1).replace('_', ' ') : '---'}
+            size="small"
+            color="primary"
+            sx={{ fontSize: '0.7rem', height: '24px' }}
+          />
+          
+          <Chip 
+            label={newMeeting.access ? newMeeting.access.charAt(0).toUpperCase() + newMeeting.access.slice(1) : '---'}
+            size="small"
+            color={newMeeting.access === 'open' ? 'success' : newMeeting.access === 'closed' ? 'error' : 'default'}
+            sx={{ fontSize: '0.7rem', height: '24px' }}
+          />
+        </Box>
+      )}
 
       {/* Tree structure for day selection, then step-by-step flow */}
       {currentStep === 'day' && editingMeeting === null && (
