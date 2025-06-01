@@ -71,7 +71,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
   // Effect to calculate spiritual fitness when activities change
   useEffect(() => {
     console.log('[ Dashboard.js ] Dashboard useEffect [activities] triggered - calculating spiritual fitness');
-    const newScore: number = calculateFitnessFromActivities(activities, scoreTimeFrame);
+    const newScore: number = calculateFitnessFromActivities(activities, scoreTimeframe);
     console.log('[ Dashboard.js: 71 ] Dashboard newScore:', newScore);
     setCurrentScore(newScore);
   }, [activities, scoreTimeframe]);
