@@ -121,14 +121,42 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
     return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   };
 
-  // Calculate sobriety information if user has a sobriety date
-  //const sobrietyDays = user?.sobrietyDate 
-  //  ? window.db?.calculateSobrietyDays(user.sobrietyDate) || 0
-  //  : 0;
+  // Calculate sobriety information using pure JavaScript (no database calls)
+  // Fixed to handle timezone issues properly
+  const sobrietyDays = useMemo(() => {
+    if (!user?.sobrietyDate) return 0;
+    
+    // Get the date string in YYYY-MM-DD format
+    const dateStr = user.sobrietyDate.includes('T') ? user.sobrietyDate.split('T')[0] : user.sobrietyDate;
+    
+    // Parse date components to avoid timezone issues
+    const [year, month, day] = dateStr.split('-').map(Number);
+    const sobrietyDate = new Date(year, month - 1, day); // month is 0-indexed
+    
+    const today = new Date();
+    const todayDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    
+    const diffTime = todayDate.getTime() - sobrietyDate.getTime();
+    return Math.floor(diffTime / (1000 * 60 * 60 * 24));
+  }, [user?.sobrietyDate]);
   
- // const sobrietyYears = user?.sobrietyDate 
-  //  ? window.db?.calculateSobrietyYears(user.sobrietyDate, 2) || 0
-  //  : 0;
+  const sobrietyYears = useMemo(() => {
+    if (!user?.sobrietyDate) return 0;
+    
+    // Get the date string in YYYY-MM-DD format
+    const dateStr = user.sobrietyDate.includes('T') ? user.sobrietyDate.split('T')[0] : user.sobrietyDate;
+    
+    // Parse date components to avoid timezone issues
+    const [year, month, day] = dateStr.split('-').map(Number);
+    const sobrietyDate = new Date(year, month - 1, day); // month is 0-indexed
+    
+    const today = new Date();
+    const todayDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    
+    const diffTime = todayDate.getTime() - sobrietyDate.getTime();
+    const years = diffTime / (1000 * 60 * 60 * 24 * 365.25);
+    return Math.round(years * 100) / 100; // Round to 2 decimal places
+  }, [user?.sobrietyDate]);
 
   // Determine whether to show years or days more prominently
   const showYearsProminent = sobrietyYears >= 1;
