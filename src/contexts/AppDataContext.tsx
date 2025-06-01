@@ -143,7 +143,7 @@ interface AppDataContextType {
   deleteMeeting: (meetingId: string | number) => Promise<boolean>;
   
   updateTimeframe: (timeframe: number) => Promise<void>;
-  calculateSpiritualFitness: () => void;
+  calculateSpiritualFitness: () => Promise<void>;
   
   resetAllData: () => Promise<void>;
 }
@@ -303,7 +303,7 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
       console.log(`[ AppDataContext.tsx:288 ] Activities cached (${CACHE_DAYS} days):`, cachedActivities.length);
       
       // Calculate spiritual fitness
-      calculateSpiritualFitness();
+      await calculateSpiritualFitness();
     } catch (error) {
       console.error('[ AppDataContext.tsx:293 ] Failed to load activities:', error);
       throw error;
@@ -447,43 +447,52 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
   // Timeframe operations
   const updateTimeframe = async (timeframe: number) => {
     dispatch({ type: 'SET_TIMEFRAME', payload: timeframe });
-    await loadActivities(); // Reload activities with new timeframe
+    // No need to reload activities since we use smart caching now
+    // Just recalculate spiritual fitness with the new timeframe
+    await calculateSpiritualFitness();
   };
 
   // Spiritual fitness calculation
-  const calculateSpiritualFitness = () => {
-    const activities = state.activities;
-    
-    if (activities.length === 0) {
-      dispatch({ type: 'SET_SPIRITUAL_FITNESS', payload: 5 });
-      return;
+  const calculateSpiritualFitness = async () => {
+    try {
+      // Use smart caching to get activities for current timeframe
+      const activities = await getActivitiesForTimeframe(state.currentTimeframe);
+      console.log(`[ AppDataContext.tsx:454 ] Calculating spiritual fitness with ${activities.length} activities for ${state.currentTimeframe} days`);
+      
+      if (activities.length === 0) {
+        dispatch({ type: 'SET_SPIRITUAL_FITNESS', payload: 5 });
+        return;
+      }
+
+      // Calculate score based on activities
+      let score = 5; // Base score
+      
+      // Weight different activity types
+      const activityWeights: { [key: string]: number } = {
+        'prayer': 15,
+        'meditation': 15,
+        'meeting': 20,
+        'stepwork': 25,
+        'service': 20,
+        'reading': 10,
+        'sponsorship': 25,
+        'inventory': 20,
+        'amends': 30
+      };
+
+      activities.forEach(activity => {
+        const weight = activityWeights[activity.type] || 10;
+        score += weight * 0.1; // Scale down the impact
+      });
+
+      // Cap at 100
+      score = Math.min(score, 100);
+      
+      dispatch({ type: 'SET_SPIRITUAL_FITNESS', payload: Math.round(score * 100) / 100 });
+    } catch (error) {
+      console.error('[ AppDataContext.tsx:481 ] Failed to calculate spiritual fitness:', error);
+      dispatch({ type: 'SET_SPIRITUAL_FITNESS', payload: 5 }); // Fallback to base score
     }
-
-    // Calculate score based on activities
-    let score = 5; // Base score
-    
-    // Weight different activity types
-    const activityWeights: { [key: string]: number } = {
-      'prayer': 15,
-      'meditation': 15,
-      'meeting': 20,
-      'stepwork': 25,
-      'service': 20,
-      'reading': 10,
-      'sponsorship': 25,
-      'inventory': 20,
-      'amends': 30
-    };
-
-    activities.forEach(activity => {
-      const weight = activityWeights[activity.type] || 10;
-      score += weight * 0.1; // Scale down the impact
-    });
-
-    // Cap at 100
-    score = Math.min(score, 100);
-    
-    dispatch({ type: 'SET_SPIRITUAL_FITNESS', payload: Math.round(score * 100) / 100 });
   };
 
   // Reset all data
@@ -522,6 +531,7 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
     loadUserData,
     updateUser,
     loadActivities,
+    getActivitiesForTimeframe,
     addActivity,
     loadMeetings,
     addMeeting,
