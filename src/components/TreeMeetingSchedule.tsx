@@ -173,20 +173,24 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
           <Typography variant="h6" sx={{ mb: 1 }}>Select Time</Typography>
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <MobileTimePicker
-              value={newMeeting.time ? dayjs(`2022-04-17T${newMeeting.time}`) : null}
+              value={newMeeting.time ? dayjs(`2022-04-17T${newMeeting.time}`) : dayjs('2022-04-17T19:00')}
               minutesStep={15}
               ampm={!use24HourFormat}
+              onChange={(value) => {
+                // Real-time update as user scrolls through time
+                if (value && value.isValid()) {
+                  const timeString = value.format('HH:mm');
+                  console.log('Time picker changed to:', timeString);
+                  setNewMeeting({ ...newMeeting, time: timeString });
+                }
+              }}
               onAccept={(value) => {
+                // Advance to next step when OK is clicked
                 if (value && value.isValid()) {
                   const timeString = value.format('HH:mm');
                   console.log('Time picker accepted:', timeString);
                   setNewMeeting({ ...newMeeting, time: timeString });
                   setCurrentStep('format');
-                }
-              }}
-              slotProps={{
-                textField: {
-                  placeholder: "Select time"
                 }
               }}
             />
