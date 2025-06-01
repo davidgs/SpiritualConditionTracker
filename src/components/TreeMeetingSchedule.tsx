@@ -1,15 +1,11 @@
 import React, { useState } from 'react';
-import { Box, Typography, Button, Chip, Select, MenuItem, FormControl, InputLabel, SpeedDial, SpeedDialAction, SpeedDialIcon } from '@mui/material';
+import { Box, Typography, Button, Chip, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { MobileTimePicker } from '@mui/x-date-pickers/MobileTimePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs from 'dayjs';
-import EditIcon from '@mui/icons-material/Edit';
-import AccessTimeIcon from '@mui/icons-material/AccessTime';
-import LocationOnIcon from '@mui/icons-material/LocationOn';
-import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
-import LockIcon from '@mui/icons-material/Lock';
+import CustomNestedMenu from './CustomNestedMenu';
 
 interface ScheduleItem {
   day: string;
@@ -352,29 +348,33 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
         </Box>
       ))}
 
-      {/* Simple day selection buttons - first level of original tree */}
+      {/* Tree structure for day selection, then step-by-step flow */}
       {currentStep === 'day' && editingMeeting === null && (
-        <Box sx={{ mt: 2 }}>
-          <Typography variant="h6" sx={{ mb: 1 }}>Select Day for New Meeting</Typography>
-          {days.map(day => (
-            <Button
-              key={day.key}
-              variant="outlined"
-              fullWidth
-              onClick={() => {
-                setNewMeeting({ ...newMeeting, day: day.key });
-                setCurrentStep('time');
-              }}
-              sx={{ 
-                mb: 1, 
-                textAlign: 'left',
-                justifyContent: 'flex-start'
-              }}
-            >
-              {day.label}
-            </Button>
-          ))}
-        </Box>
+        <CustomNestedMenu 
+          items={[
+            {
+              id: 'select-day',
+              label: '+ Select Day',
+              color: 'primary.main',
+              fontWeight: 500,
+              indentLevel: 0,
+              children: days.map(day => ({
+                id: `day-${day.key}`,
+                label: day.label,
+                color: 'text.primary',
+                fontWeight: 500,
+                indentLevel: 1,
+                onClick: () => {
+                  setNewMeeting({ ...newMeeting, day: day.key });
+                  setCurrentStep('time');
+                },
+                isExpandable: false
+              })),
+              isExpandable: true
+            }
+          ]}
+          onActionComplete={() => {}}
+        />
       )}
 
       {/* Step-by-step selectors after day is chosen */}
