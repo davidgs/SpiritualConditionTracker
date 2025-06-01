@@ -21,7 +21,7 @@ export default function QRCodeGenerator({ data, title, open, onClose, size = 300
     quietZone: 10,
     bgColor: '#ffffff',
     fgColor: '#000000',
-    logoImage: '/assets/gr-logo.png',
+    logoImage: '/assets/qr-logo.png',
     logoWidth: size * 0.2,
     logoHeight: size * 0.2,
     logoOpacity: 1,
