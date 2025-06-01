@@ -36,6 +36,8 @@
     "lru-cache": "11.1.0",
     "mui-tel-input": "^9.0.1",
     "postcss-loader": "^8.1.1",
+    "qrcode": "^1.5.4",
+    "qrcode-generator": "^1.4.4",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "react-router-dom": "7.6.0",

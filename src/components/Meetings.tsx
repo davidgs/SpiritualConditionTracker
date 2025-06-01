@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { meetingOperations } from '../utils/database';
 import MeetingFormDialog from './MeetingFormDialog';
+import QRCodeGenerator from './QRCodeGenerator';
 import { useTheme } from '@mui/material/styles';
 import { useAppTheme } from '../contexts/MuiThemeProvider';
 import { formatDay, formatTimeByPreference } from '../utils/dateUtils';
@@ -43,11 +44,40 @@ export default function Meetings({ setCurrentView, meetings = [], onSave, onDele
   const [showForm, setShowForm] = useState(false);
   const [currentMeeting, setCurrentMeeting] = useState(null);
   const [error, setError] = useState('');
+  const [qrCodeOpen, setQrCodeOpen] = useState(false);
+  const [qrCodeData, setQrCodeData] = useState('');
+  const [qrCodeTitle, setQrCodeTitle] = useState('');
   
   // Edit an existing meeting
   const handleEdit = (meeting) => {
     setCurrentMeeting(meeting);
     setShowForm(true);
+  };
+
+  // Share meeting as QR code
+  const handleShareMeeting = (meeting) => {
+    // Format meeting schedule for display
+    let scheduleText = '';
+    if (meeting.schedule && Array.isArray(meeting.schedule)) {
+      scheduleText = meeting.schedule.map(item => 
+        `${formatDay(item.day)} at ${formatTimeByPreference(item.time, use24HourFormat)}`
+      ).join(', ');
+    } else if (meeting.days && meeting.time) {
+      const days = Array.isArray(meeting.days) ? meeting.days : [meeting.days];
+      scheduleText = `${days.map(formatDay).join(', ')} at ${formatTimeByPreference(meeting.time, use24HourFormat)}`;
+    }
+
+    // Create meeting info text
+    let meetingInfo = `${meeting.name}\n\n`;
+    if (scheduleText) meetingInfo += `Schedule: ${scheduleText}\n`;
+    if (meeting.address) meetingInfo += `Location: ${meeting.address}\n`;
+    if (meeting.onlineUrl) meetingInfo += `Online: ${meeting.onlineUrl}\n`;
+    
+    meetingInfo += '\nShared from AA Recovery Tracker';
+
+    setQrCodeData(meetingInfo);
+    setQrCodeTitle(`Share Meeting: ${meeting.name}`);
+    setQrCodeOpen(true);
   };
   
   // Delete a meeting (using proper data flow through App component)
@@ -356,6 +386,14 @@ export default function Meetings({ setCurrentView, meetings = [], onSave, onDele
           
           <Box sx={{ mt: 2, pt: 2, display: 'flex', justifyContent: 'flex-end', borderTop: 1, borderColor: 'divider' }}>
             <Box sx={{ display: 'flex', gap: 1 }}>
+              <IconButton
+                onClick={() => handleShareMeeting(meeting)}
+                color="info"
+                title="Share meeting"
+                size="small"
+              >
+                <i className="fa-solid fa-share"></i>
+              </IconButton>
               <IconButton
                 onClick={() => handleEdit(meeting)}
                 color="primary"
