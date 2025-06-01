@@ -94,6 +94,7 @@ export default function MeetingFormDialog({
   const [error, setError] = useState('');
   const [searchingLocation, setSearchingLocation] = useState(false);
   const [isHomeGroup, setIsHomeGroup] = useState(false);
+  const [onlineUrl, setOnlineUrl] = useState('');
   
   // Initialize form with meeting data if provided
   useEffect(() => {
@@ -119,6 +120,7 @@ export default function MeetingFormDialog({
       setMeetingAddress('');
       setLocation(null);
       setIsHomeGroup(false);
+      setOnlineUrl('');
       setError('');
       return;
     }
@@ -219,6 +221,9 @@ export default function MeetingFormDialog({
       
       // Set isHomeGroup if it exists in the meeting data
       setIsHomeGroup(meeting.isHomeGroup || false);
+      
+      // Set online URL if it exists
+      setOnlineUrl(meeting.onlineUrl || '');
     }
   }, [meeting]);
   
@@ -381,6 +386,8 @@ export default function MeetingFormDialog({
       zipCode: zipCode.trim(),
       coordinates: location,
       isHomeGroup: isHomeGroup,
+      // Store online URL for virtual meetings
+      onlineUrl: onlineUrl.trim(),
       createdAt: meeting ? meeting.createdAt : new Date().toISOString(),
       updatedAt: new Date().toISOString()
     };
@@ -570,6 +577,26 @@ export default function MeetingFormDialog({
             </Box>
           </Box>
         </Box>
+        
+        {/* Online URL Field - Show when any schedule item has online location */}
+        {meetingSchedule.some(item => item.locationType === 'online') && (
+          <Box sx={{ mt: 3, mb: 2, px: 3 }}>
+            <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 'bold' }}>
+              Online Meeting URL
+            </Typography>
+            <TextField
+              fullWidth
+              value={onlineUrl}
+              onChange={(e) => setOnlineUrl(e.target.value)}
+              placeholder="https://zoom.us/j/123456789 or meeting platform URL"
+              size="medium"
+              sx={(theme) => getTextFieldStyle(theme)}
+            />
+            <Typography variant="body2" sx={{ mt: 0.5 }} color="text.secondary">
+              Enter the URL participants will use to join the online meeting.
+            </Typography>
+          </Box>
+        )}
         
         {/* Home Group Checkbox */}
         <Box sx={{ mt: 3, mb: 1, px: 3 }}>

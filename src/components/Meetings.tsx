@@ -219,10 +219,20 @@ export default function Meetings({ setCurrentView, meetings = [], onSave, onDele
                                 };
                                 return colorConfig[item.locationType] || 'default';
                               })()}
+                              clickable={item.locationType === 'online' && meeting.onlineUrl}
+                              onClick={item.locationType === 'online' && meeting.onlineUrl ? () => {
+                                window.open(meeting.onlineUrl, '_blank');
+                              } : undefined}
                               sx={{
                                 fontSize: '0.65rem',
                                 height: '20px',
-                                fontWeight: 'medium'
+                                fontWeight: 'medium',
+                                ...(item.locationType === 'online' && meeting.onlineUrl && {
+                                  cursor: 'pointer',
+                                  '&:hover': {
+                                    backgroundColor: (theme) => theme.palette.info.dark
+                                  }
+                                })
                               }}
                             />
                           )}
