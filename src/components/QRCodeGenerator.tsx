@@ -126,31 +126,30 @@ export default function QRCodeGenerator({ data, title, open, onClose, size = 300
 
       console.log('Canvas cleared and sized');
 
-      // Generate QR code with basic settings first
-      const qrOptions = {
-        width: size,
-        margin: 2,
-        color: {
-          dark: '#000000', // Use black for better visibility
-          light: '#ffffff'
-        },
-        errorCorrectionLevel: 'M' // Medium error correction
-      };
-
-      console.log('QR options:', qrOptions);
-
-      // Generate the QR code
-      await QRCode.toCanvas(canvas, data, qrOptions);
-      
-      console.log('QR code generated successfully');
-      
-      // Try to load and add the logo
+      // Try to load the logo first, then generate QR with it
       try {
         console.log('Loading logo image...');
         const logoImg = await loadImage('/assets/logo.jpg');
-        console.log('Logo loaded successfully, adding to QR code');
+        console.log('Logo loaded successfully');
         
-        // Calculate logo size (about 15% of QR code size for good readability)
+        // Generate QR code with logo overlay
+        const qrOptions = {
+          width: size,
+          margin: 2,
+          color: {
+            dark: '#000000',
+            light: '#ffffff'
+          },
+          errorCorrectionLevel: 'H' // High error correction for logo overlay
+        };
+
+        console.log('QR options:', qrOptions);
+
+        // Generate the base QR code
+        await QRCode.toCanvas(canvas, data, qrOptions);
+        console.log('QR code generated successfully');
+        
+        // Add logo overlay
         const logoSize = size * 0.15;
         const logoX = (size - logoSize) / 2;
         const logoY = (size - logoSize) / 2;
@@ -174,8 +173,21 @@ export default function QRCodeGenerator({ data, title, open, onClose, size = 300
         
         console.log('Logo added to QR code successfully');
       } catch (error) {
-        console.log('Logo failed to load, QR code will display without logo:', error);
-        // QR code is still functional without the logo
+        console.log('Logo failed to load, generating QR code without logo:', error);
+        
+        // Generate QR code without logo
+        const qrOptions = {
+          width: size,
+          margin: 2,
+          color: {
+            dark: '#000000',
+            light: '#ffffff'
+          },
+          errorCorrectionLevel: 'M'
+        };
+
+        await QRCode.toCanvas(canvas, data, qrOptions);
+        console.log('QR code generated successfully without logo');
       }
       
       setQrGenerated(true);
