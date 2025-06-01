@@ -61,8 +61,8 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
   };
   
   // Calculate progress percentage, capped at 100%
-  // const progressPercent = Math.min(currentScore, 100);
-  // console.log('[ Dashboard.js ] Dashboard progressPercent:', progressPercent);
+   const progressPercent = Math.min(currentScore, 100);
+  console.log('[ Dashboard.js ] Dashboard progressPercent:', progressPercent);
   
   // Effect to calculate spiritual fitness when activities change
   useEffect(() => {
