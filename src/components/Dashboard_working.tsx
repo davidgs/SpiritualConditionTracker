@@ -133,36 +133,16 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
     calculateSpiritualFitnessScore();
   }, [scoreTimeframe]);
 
-  // Log spiritualFitness prop for debugging
-  // console.log('[ Dashboard.js ] Dashboard initial spiritualFitness:', spiritualFitness);
-  
-  // Log current score state
-  // console.log('[ Dashboard.js ] Dashboard currentScore state:', currentScore);
-  
   // Format score to 2 decimal places for display
   const formattedScore: string = currentScore > 0 ? currentScore.toFixed(2) : '0.00';
-  
-  // console.log('[ Dashboard.js ] Dashboard formattedScore for display:', formattedScore);
-  
-  // Calculate progress percentage, capped at 100%
-  const progressPercent = Math.min(currentScore, 100);
-  // console.log('[ Dashboard.js ] Dashboard progressPercent:', progressPercent);
 
-  // Calculate sobriety stats
+  // Calculate sobriety days
   const calculateSobrietyDays = (): number => {
     if (!user?.sobrietyDate) return 0;
-    
     const sobrietyDate = new Date(user.sobrietyDate);
     const today = new Date();
     const diffTime = Math.abs(today.getTime() - sobrietyDate.getTime());
-    const days = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    
-    return days;
-  };
-
-  const calculateSobrietyYears = (): number => {
-    const days = calculateSobrietyDays();
-    return Math.floor(days / 365);
+    return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
   };
 
   const handleClickOutside = (event: any) => {
@@ -182,7 +162,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
   }, [showScoreModal]);
 
   const handleTimeframeChange = (newTimeframe: number) => {
-    // console.log('[ Dashboard.js ] Timeframe changed to:', newTimeframe);
+    // console.log('[ Dashboard.tsx ] Timeframe changed to:', newTimeframe);
     onTimeframeChange(newTimeframe);
   };
 
@@ -200,166 +180,104 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
   };
 
   return (
-    <div style={{ 
-      padding: '20px', 
-      maxWidth: '600px', 
-      margin: '0 auto',
-      backgroundColor: darkMode ? '#121212' : '#f5f5f5',
-      minHeight: '100vh'
-    }}>
+    <div className="container max-w-md mx-auto bg-white dark:bg-gray-900 min-h-screen">
       {/* Header */}
-      <div style={{ 
-        display: 'flex', 
-        alignItems: 'center', 
-        marginBottom: '25px',
-        padding: '15px',
-        backgroundColor: darkMode ? '#1e1e1e' : 'white',
-        borderRadius: '12px',
-        boxShadow: darkMode ? '0 2px 8px rgba(0,0,0,0.3)' : '0 2px 8px rgba(0,0,0,0.1)'
-      }}>
-        <img src={logoImg} alt="Logo" style={{ width: '40px', height: '40px', marginRight: '15px' }} />
-        <div>
-          <h1 style={{ 
-            margin: '0', 
-            fontSize: '24px', 
-            fontWeight: 'bold',
-            color: darkMode ? '#ffffff' : '#333333'
-          }}>
+      <div className="pt-6 pb-4 px-4">
+        <div className="flex items-center mb-4">
+          <img src={logoImg} alt="Logo" className="w-8 h-8 mr-2" />
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
             Recovery Dashboard
           </h1>
-          <p style={{ 
-            margin: '5px 0 0 0', 
-            color: darkMode ? '#cccccc' : '#666666',
-            fontSize: '16px'
-          }}>
-            Welcome back, {user?.name || 'Friend'}
-          </p>
         </div>
+        <p className="text-gray-600 dark:text-gray-300">
+          Welcome back, {user?.name || 'Friend'}
+        </p>
       </div>
 
       {/* Sobriety Counter */}
-      <Paper style={{ 
-        padding: '20px', 
-        marginBottom: '20px', 
-        backgroundColor: darkMode ? '#1e1e1e' : 'white',
-        color: darkMode ? '#ffffff' : '#333333'
-      }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
-          <h2 style={{ margin: '0', fontSize: '20px', fontWeight: '600' }}>Sobriety Journey</h2>
-          <IconButton 
-            size="small" 
-            onClick={() => setCurrentView('profile')}
-            style={{ color: darkMode ? '#90caf9' : '#1976d2' }}
-          >
-            ✏️
-          </IconButton>
-        </div>
-        
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', textAlign: 'center' }}>
-          <div>
-            <div style={{ 
-              fontSize: '32px', 
-              fontWeight: 'bold', 
-              color: darkMode ? '#90caf9' : '#1976d2',
-              marginBottom: '5px'
-            }}>
-              {calculateSobrietyDays()}
-            </div>
-            <div style={{ color: darkMode ? '#cccccc' : '#666666', fontSize: '14px' }}>
-              Days Clean
-            </div>
+      <div className="px-4 mb-6">
+        <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4">
+          <div className="flex items-center justify-between mb-2">
+            <h2 className="text-lg font-semibold text-blue-900 dark:text-blue-100">
+              Sobriety Journey
+            </h2>
+            <IconButton
+              size="small"
+              onClick={() => setCurrentView('profile')}
+              className="text-blue-600 dark:text-blue-400"
+            >
+              ✏️
+            </IconButton>
           </div>
-          <div>
-            <div style={{ color: darkMode ? '#cccccc' : '#666666', fontSize: '14px', marginBottom: '5px' }}>
-              Since
+          <div className="grid grid-cols-2 gap-4">
+            <div className="text-center">
+              <div className="text-2xl font-bold text-blue-900 dark:text-blue-100">
+                {calculateSobrietyDays()}
+              </div>
+              <div className="text-sm text-blue-700 dark:text-blue-300">
+                Days Clean
+              </div>
             </div>
-            <div style={{ 
-              fontSize: '18px', 
-              fontWeight: '600',
-              color: darkMode ? '#90caf9' : '#1976d2'
-            }}>
-              {getSobrietyDateDisplay()}
+            <div className="text-center">
+              <div className="text-sm text-blue-700 dark:text-blue-300">
+                Since
+              </div>
+              <div className="text-lg font-semibold text-blue-900 dark:text-blue-100">
+                {getSobrietyDateDisplay()}
+              </div>
             </div>
           </div>
         </div>
-      </Paper>
+      </div>
 
       {/* Spiritual Fitness Score */}
-      <Paper style={{ 
-        padding: '20px', 
-        marginBottom: '20px', 
-        backgroundColor: darkMode ? '#1e1e1e' : 'white',
-        color: darkMode ? '#ffffff' : '#333333'
-      }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
-          <h2 style={{ margin: '0', fontSize: '20px', fontWeight: '600' }}>Spiritual Fitness</h2>
-          <button
-            ref={buttonRef}
-            onClick={() => setShowScoreModal(!showScoreModal)}
-            style={{
-              background: 'none',
-              border: 'none',
-              color: darkMode ? '#81c784' : '#388e3c',
-              fontSize: '14px',
-              textDecoration: 'underline',
-              cursor: 'pointer'
-            }}
-          >
-            Details
-          </button>
-        </div>
-        
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <div style={{ 
-            fontSize: '48px', 
-            fontWeight: 'bold', 
-            color: darkMode ? '#81c784' : '#388e3c'
-          }}>
-            {formattedScore}
+      <div className="px-4 mb-6">
+        <div className="bg-green-50 dark:bg-green-900/20 rounded-lg p-4">
+          <div className="flex items-center justify-between mb-2">
+            <h2 className="text-lg font-semibold text-green-900 dark:text-green-100">
+              Spiritual Fitness
+            </h2>
+            <button
+              ref={buttonRef}
+              onClick={() => setShowScoreModal(!showScoreModal)}
+              className="text-green-600 dark:text-green-400 text-sm underline"
+            >
+              Details
+            </button>
           </div>
-          <div style={{ textAlign: 'right' }}>
-            <div style={{ color: darkMode ? '#cccccc' : '#666666', fontSize: '14px' }}>
-              out of 100
+          <div className="flex items-center justify-between">
+            <div className="text-3xl font-bold text-green-900 dark:text-green-100">
+              {formattedScore}
             </div>
-            <div style={{ color: darkMode ? '#81c784' : '#388e3c', fontSize: '12px' }}>
-              Last {scoreTimeframe} days
+            <div className="text-right">
+              <div className="text-sm text-green-700 dark:text-green-300">
+                out of 100
+              </div>
+              <div className="text-xs text-green-600 dark:text-green-400">
+                Last {scoreTimeframe} days
+              </div>
             </div>
           </div>
         </div>
-      </Paper>
+      </div>
 
       {/* Quick Actions */}
-      <div style={{ marginBottom: '20px' }}>
-        <h2 style={{ 
-          marginBottom: '15px', 
-          fontSize: '20px', 
-          fontWeight: '600',
-          color: darkMode ? '#ffffff' : '#333333'
-        }}>
+      <div className="px-4 mb-6">
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">
           Quick Actions
         </h2>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+        <div className="grid grid-cols-2 gap-3">
           <Button
             variant="contained"
             onClick={() => setShowActivityModal(true)}
-            style={{
-              backgroundColor: darkMode ? '#1976d2' : '#2196f3',
-              color: 'white',
-              padding: '12px',
-              fontWeight: '600'
-            }}
+            className="bg-blue-600 hover:bg-blue-700 text-white py-3"
           >
             Log Activity
           </Button>
           <Button
             variant="outlined"
             onClick={() => setCurrentView('meetings')}
-            style={{
-              borderColor: darkMode ? '#1976d2' : '#2196f3',
-              color: darkMode ? '#90caf9' : '#1976d2',
-              padding: '12px',
-              fontWeight: '600'
-            }}
+            className="border-blue-600 text-blue-600 py-3"
           >
             View Meetings
           </Button>
@@ -367,13 +285,8 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
       </div>
 
       {/* Recent Activities */}
-      <div>
-        <h2 style={{ 
-          marginBottom: '15px', 
-          fontSize: '20px', 
-          fontWeight: '600',
-          color: darkMode ? '#ffffff' : '#333333'
-        }}>
+      <div className="px-4 mb-6">
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">
           Recent Activities
         </h2>
         <ActivityList
