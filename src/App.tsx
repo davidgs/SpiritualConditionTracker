@@ -103,8 +103,18 @@ function AppContent() {
   // Handle saving new meeting
   async function handleSaveMeeting(meetingData: any): Promise<any> {
     try {
-      const savedMeeting = await addMeeting(meetingData);
-      console.log('[ App ] Meeting saved successfully:', savedMeeting?.id);
+      let savedMeeting;
+      
+      // If the meeting has an ID, it's an update
+      if (meetingData.id) {
+        savedMeeting = await updateMeeting(meetingData.id, meetingData);
+        console.log('[ App ] Meeting updated successfully:', savedMeeting?.id);
+      } else {
+        // If no ID, it's a new meeting
+        savedMeeting = await addMeeting(meetingData);
+        console.log('[ App ] Meeting created successfully:', savedMeeting?.id);
+      }
+      
       return savedMeeting;
     } catch (error) {
       console.error('[ App ] Error saving meeting:', error);
