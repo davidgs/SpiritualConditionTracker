@@ -176,6 +176,7 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
               value={newMeeting.time ? dayjs(`2022-04-17T${newMeeting.time}`) : dayjs('2022-04-17T19:00')}
               minutesStep={15}
               ampm={!use24HourFormat}
+              open={true}
               onChange={(value) => {
                 // Real-time update as user scrolls through time
                 if (value && value.isValid()) {
@@ -197,6 +198,11 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
                   } else {
                     setCurrentStep('format');
                   }
+                }
+              }}
+              slotProps={{
+                textField: {
+                  style: { display: 'none' }
                 }
               }}
             />
