@@ -142,7 +142,7 @@ export default function Meetings({ setCurrentView, meetings = [], onSave, onDele
       `DTSTART:${formatCalendarDate(eventDate)}`,
       `DTEND:${formatCalendarDate(endDate)}`,
       `SUMMARY:${meeting.name}`,
-      `DESCRIPTION:AA Meeting\\n${meeting.type || 'Regular Meeting'}`,
+      `DESCRIPTION:AA Meeting\\n${meeting.type || 'Open Meeting'}`,
       meeting.address ? `LOCATION:${meeting.address}` : '',
       meeting.onlineUrl ? `URL:${meeting.onlineUrl}` : '',
       'RRULE:FREQ=WEEKLY;BYDAY=' + nextMeeting.day.substring(0, 2).toUpperCase(),
