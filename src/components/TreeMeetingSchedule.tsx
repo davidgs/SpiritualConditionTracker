@@ -175,15 +175,23 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
             <MobileTimePicker
               value={newMeeting.time ? dayjs(`2022-04-17T${newMeeting.time}`) : dayjs('2022-04-17T19:30')}
               onChange={(value) => {
-                if (value) {
+                // Update state during selection but don't advance step
+                if (value && value.isValid()) {
                   const timeString = value.format('HH:mm');
                   setNewMeeting({ ...newMeeting, time: timeString });
                 }
               }}
               onAccept={(value) => {
-                if (value) {
+                // Only advance to next step when OK is clicked
+                if (value && value.isValid()) {
                   const timeString = value.format('HH:mm');
                   setNewMeeting({ ...newMeeting, time: timeString });
+                  setCurrentStep('format');
+                }
+              }}
+              onClose={() => {
+                // Fallback: if user closes without accepting, still advance if time is set
+                if (newMeeting.time) {
                   setCurrentStep('format');
                 }
               }}
