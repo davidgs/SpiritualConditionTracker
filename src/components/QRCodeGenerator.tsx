@@ -43,6 +43,16 @@ export default function QRCodeGenerator({ data, title, open, onClose, size = 300
     }
   }, [open, data]);
 
+  const loadImage = (url: string): Promise<HTMLImageElement> => {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => resolve(img);
+      img.onerror = reject;
+      img.crossOrigin = 'anonymous';
+      img.src = url;
+    });
+  };
+
   const addLogoToQRCode = (canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D) => {
     console.log('Adding logo to QR code');
     
@@ -134,11 +144,10 @@ export default function QRCodeGenerator({ data, title, open, onClose, size = 300
       
       console.log('QR code generated successfully');
       
-      // Load and add the logo
-      const logoImg = new Image();
-      logoImg.crossOrigin = 'anonymous';
-      
-      logoImg.onload = () => {
+      // Try to load and add the logo
+      try {
+        console.log('Loading logo image...');
+        const logoImg = await loadImage('/assets/logo.png');
         console.log('Logo loaded successfully, adding to QR code');
         
         // Calculate logo size (about 15% of QR code size for good readability)
@@ -164,17 +173,12 @@ export default function QRCodeGenerator({ data, title, open, onClose, size = 300
         ctx.drawImage(logoImg, logoX, logoY, logoSize, logoSize);
         
         console.log('Logo added to QR code successfully');
-        setQrGenerated(true);
-      };
-      
-      logoImg.onerror = (error) => {
+      } catch (error) {
         console.log('Logo failed to load, QR code will display without logo:', error);
         // QR code is still functional without the logo
-        setQrGenerated(true);
-      };
+      }
       
-      // Start loading the logo image
-      logoImg.src = '/assets/logo.png';
+      setQrGenerated(true);
 
     } catch (error) {
       console.error('Error generating QR code:', error);
