@@ -390,7 +390,7 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
       ))}
 
       {/* Step-by-step meeting creation/editing */}
-      {(currentStep !== 'complete' && editingMeeting === null) && (
+      {(currentStep !== 'day' && editingMeeting === null) && (
         <Box sx={{ mt: 2, p: 2, border: '1px solid #ddd', borderRadius: 1 }}>
           <Typography variant="h6" sx={{ mb: 2 }}>Add New Meeting</Typography>
           {renderStepSelector()}
@@ -417,21 +417,22 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
       )}
 
       {/* Add new meeting button */}
-      {schedule.length === 0 || (currentStep === 'day' && editingMeeting === null && Object.keys(newMeeting).length === 0) ? (
+      {(currentStep === 'day' && editingMeeting === null) && (
         <Box sx={{ mt: 2, p: 2, border: '1px solid #ddd', borderRadius: 1 }}>
           <Typography variant="h6" sx={{ mb: 2 }}>Add New Meeting</Typography>
           {renderStepSelector()}
         </Box>
-      ) : (
-        currentStep === 'day' && editingMeeting === null && (
-          <Button
-            variant="contained"
-            onClick={() => setCurrentStep('day')}
-            sx={{ mt: 2 }}
-          >
-            + Add Another Meeting
-          </Button>
-        )
+      )}
+
+      {/* Add another meeting button - only show after at least one meeting exists and not in creation flow */}
+      {schedule.length > 0 && currentStep === 'day' && editingMeeting === null && Object.keys(newMeeting).length === 0 && (
+        <Button
+          variant="contained"
+          onClick={() => setCurrentStep('day')}
+          sx={{ mt: 2 }}
+        >
+          + Add Another Meeting
+        </Button>
       )}
     </Box>
   );
