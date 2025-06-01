@@ -38,374 +38,607 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
   const modalRef = useRef(null);
   const buttonRef = useRef(null);
   
-  // Calculate spiritual fitness score using proper millisecond-based filtering
-  const calculateSpiritualFitnessScore = () => {
-    // console.log('[ Dashboard.tsx ] calculateSpiritualFitnessScore with timeframe:', scoreTimeframe, 'days');
-    
-    // Base score
-    const baseScore = 5;
-    
-    // Filter activities within the timeframe using millisecond calculation
-    const now = new Date();
-    const timeframeStartMs = now.getTime() - (scoreTimeframe * 24 * 60 * 60 * 1000);
-    
-    const recentActivities = activities.filter(activity => {
-      if (!activity.date) {
-        return false;
-      }
-      const activityDate = new Date(activity.date);
-      return activityDate.getTime() >= timeframeStartMs;
-    });
-    
-    // console.log('[ Dashboard.tsx ] Filtered', recentActivities.length, 'recent activities from', activities.length, 'total');
-    
-    if (recentActivities.length === 0) {
-      const score = baseScore;
-      setCurrentScore(score);
-      setSpiritualFitness(score);
-      return score;
-    }
-    
-    // Calculate weighted activity points with action item scoring
-    const weights = {
-      meeting: 10,
-      prayer: 8,
-      meditation: 8,
-      reading: 6,
-      literature: 6,
-      callSponsor: 5,
-      callSponsee: 4,
-      call: 5,
-      service: 9,
-      stepWork: 10,
-      stepwork: 10,
-      'action-item': 0.5  // Will be adjusted based on status
-    };
-    
-    let totalActivityPoints = 0;
-    const activityDays = new Set();
-    
-    recentActivities.forEach(activity => {
-      // Track unique days
-      const day = new Date(activity.date).toISOString().split('T')[0];
-      activityDays.add(day);
-      
-      // Calculate points for this activity with action item logic
-      let points;
-      if (activity.type === 'action-item') {
-        if (activity.location === 'completed') {
-          points = 0.5; // Completed action items add points
-        } else if (activity.location === 'deleted') {
-          points = -0.5; // Deleted action items subtract points
-        } else {
-          points = 0; // Pending action items don't count
-        }
-      } else {
-        points = weights[activity.type] || 2;
-      }
-      totalActivityPoints += points;
-    });
-    
-    const activityPoints = Math.min(totalActivityPoints / 4, 40); // Scale down and cap at 40
-    const consistencyPercentage = activityDays.size / scoreTimeframe;
-    const consistencyPoints = consistencyPercentage * 40; // Up to 40 points
-    
-    // Total score (capped at 100, with decimal precision)
-    const totalScore = Math.min(100, baseScore + activityPoints + consistencyPoints);
-    const preciseScore = Math.round(totalScore * 100) / 100; // Round to 2 decimal places
-    
-    // console.log('[ Dashboard.tsx ] Calculation result:', preciseScore);
-    
-    setCurrentScore(preciseScore);
-    setSpiritualFitness(preciseScore);
-    return preciseScore;
-  };
-
-  // Calculate score when component mounts or activities change
-  useEffect(() => {
-    // console.log('[ Dashboard.tsx ] useEffect [activities] triggered with', activities.length, 'activities');
-    calculateSpiritualFitnessScore();
-  }, [activities]);
-
-  // Effect to recalculate score when timeframe changes
-  useEffect(() => {
-    // console.log('[ Dashboard.tsx ] useEffect [scoreTimeframe] triggered with timeframe:', scoreTimeframe);
-    calculateSpiritualFitnessScore();
-  }, [scoreTimeframe]);
-
   // Log spiritualFitness prop for debugging
-  // console.log('[ Dashboard.js ] Dashboard initial spiritualFitness:', spiritualFitness);
+  console.log('[ Dashboard.js ] Dashboard initial spiritualFitness:', spiritualFitness);
   
   // Log current score state
-  // console.log('[ Dashboard.js ] Dashboard currentScore state:', currentScore);
+  console.log('[ Dashboard.js ] Dashboard currentScore state:', currentScore);
   
   // Format score to 2 decimal places for display
   const formattedScore: string = currentScore > 0 ? currentScore.toFixed(2) : '0.00';
   
-  // console.log('[ Dashboard.js ] Dashboard formattedScore for display:', formattedScore);
+  console.log('[ Dashboard.js ] Dashboard formattedScore for display:', formattedScore);
+  
+  // Use MUI theme for colors
+  const muiTheme = useTheme();
+  
+  // Determine color based on score using theme palette
+  const getScoreColor = (score: number): string => {
+    if (score < 30) return muiTheme.palette.error.main; // Red
+    if (score < 75) return muiTheme.palette.warning.main; // Yellow/Amber
+    return muiTheme.palette.success.main; // Green
+  };
   
   // Calculate progress percentage, capped at 100%
   const progressPercent = Math.min(currentScore, 100);
-  // console.log('[ Dashboard.js ] Dashboard progressPercent:', progressPercent);
-
-  // Calculate sobriety stats
-  const calculateSobrietyDays = (): number => {
-    if (!user?.sobrietyDate) return 0;
+  console.log('[ Dashboard.js ] Dashboard progressPercent:', progressPercent);
+  
+  // Calculate spiritual fitness from pre-filtered activities (no additional filtering needed)
+  const calculateFitnessFromPreFilteredActivities = (filteredActivities: Activity[]): number => {
+    console.log('[ Dashboard.tsx:108 calculateFitnessFromPreFilteredActivities ] Starting calculation with', filteredActivities.length, 'pre-filtered activities');
     
-    const sobrietyDate = new Date(user.sobrietyDate);
-    const today = new Date();
-    const diffTime = Math.abs(today.getTime() - sobrietyDate.getTime());
-    const days = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    // Base score
+    const baseScore = 5;
     
-    return days;
-  };
-
-  const calculateSobrietyYears = (): number => {
-    const days = calculateSobrietyDays();
-    return Math.floor(days / 365);
-  };
-
-  const handleClickOutside = (event: any) => {
-    if (modalRef.current && !modalRef.current.contains(event.target) && 
-        buttonRef.current && !buttonRef.current.contains(event.target)) {
-      setShowScoreModal(false);
+    if (filteredActivities.length === 0) {
+      console.log('[ Dashboard.tsx:130 calculateFitnessFromPreFilteredActivities ] No activities, returning base score:', baseScore);
+      return baseScore;
     }
+    
+    // Calculate activity scores using the activities that are already filtered by timeframe
+    const weights: { [key: string]: number } = {
+      meeting: 10,
+      prayer: 8,
+      meditation: 8,
+      literature: 6,
+      call: 5,
+      service: 9,
+      'step-work': 10,
+      'action-item': 3
+    };
+    
+    let totalPoints = 0;
+    let eligibleActivities = 0;
+    const activityDays = new Set<string>();
+    
+    filteredActivities.forEach(activity => {
+      // Track unique days with activities
+      if (activity.date) {
+        const day = new Date(activity.date).toISOString().split('T')[0];
+        activityDays.add(day);
+      }
+      
+      // Skip activities with unknown types
+      if (!weights[activity.type]) return;
+      
+      // Calculate points based on activity type and duration
+      let activityPoints = weights[activity.type];
+      
+      // Duration bonus (if applicable)
+      if (activity.duration && activity.duration > 15) {
+        activityPoints *= 1.2; // 20% bonus for longer activities
+      }
+      
+      totalPoints += activityPoints;
+      eligibleActivities++;
+    });
+    
+    // Consistency bonus: points for having activities on multiple days
+    const uniqueDays = activityDays.size;
+    const consistencyBonus = Math.min(uniqueDays * 0.67, 10); // Max 10 points for consistency
+    
+    // Calculate final score
+    const activityScore = eligibleActivities > 0 ? totalPoints / eligibleActivities : 0;
+    const finalScore = Math.min(baseScore + activityScore + consistencyBonus, 100);
+    
+    console.log('[ Dashboard.tsx:147 calculateFitnessFromPreFilteredActivities ] Calculation result:');
+    console.log('[ Dashboard.tsx:148 calculateFitnessFromPreFilteredActivities ] - Base score:', baseScore);
+    console.log('[ Dashboard.tsx:149 calculateFitnessFromPreFilteredActivities ] - Activity points:', activityScore, '(from', eligibleActivities, 'activities)');
+    console.log('[ Dashboard.tsx:150 calculateFitnessFromPreFilteredActivities ] - Consistency points:', consistencyBonus, '(from', uniqueDays, 'unique days)');
+    console.log('[ Dashboard.tsx:151 calculateFitnessFromPreFilteredActivities ] - Total score:', finalScore);
+    
+    return Math.round(finalScore * 100) / 100; // Round to 2 decimal places
   };
 
+  // Function to calculate spiritual fitness score using activities from props
+  const calculateSpiritualFitnessScore = () => {
+    console.log('[ Dashboard.tsx:94 calculateSpiritualFitnessScore ] Called with activities:', activities.length);
+    console.log('[ Dashboard.tsx:95 calculateSpiritualFitnessScore ] Sample activities:', activities.slice(0, 3).map(a => ({ type: a.type, date: a.date })));
+    console.log('[ Dashboard.tsx:96 calculateSpiritualFitnessScore ] Timeframe:', scoreTimeframe);
+    
+    // Activities are already filtered by timeframe in App.tsx, so use them directly
+    const score = calculateFitnessFromPreFilteredActivities(activities);
+    console.log('[ Dashboard.tsx:100 calculateSpiritualFitnessScore ] Calculated score:', score);
+    
+    setSpiritualFitness(score);
+    setCurrentScore(score);
+  };
+
+  // Effect to calculate spiritual fitness when activities change
   useEffect(() => {
-    if (showScoreModal) {
-      document.addEventListener('mousedown', handleClickOutside);
+    console.log('[ Dashboard.js ] Dashboard useEffect [activities] triggered - calculating spiritual fitness');
+    calculateSpiritualFitnessScore();
+  }, [activities]);
+  
+  // Effect to recalculate score when timeframe changes
+  useEffect(() => {
+    console.log('[ Dashboard.js ] Dashboard useEffect [scoreTimeframe] triggered with timeframe:', scoreTimeframe);
+    calculateSpiritualFitnessScore();
+  }, [scoreTimeframe]);
+      if (!breakdown[activity.type]) {
+        breakdown[activity.type] = { count: 0, points: 0 };
+      }
+      breakdown[activity.type].count++;
+      breakdown[activity.type].points += points;
+    });
+    
+    const daysWithActivities = activityDays.size;
+    const varietyTypes = Object.keys(breakdown).length;
+    const daysCoveragePercent = (daysWithActivities / scoreTimeframe) * 100;
+    
+    // Calculate score based on timeframe (with decimal precision)
+    let finalScore;
+    if (scoreTimeframe <= 30) {
+      const basePoints = 20;
+      const activityPoints = Math.min(40, totalPoints / 8);
+      const consistencyPoints = Math.min(30, daysCoveragePercent * 1.5);
+      const varietyBonus = Math.min(10, varietyTypes * 2);
+      finalScore = basePoints + activityPoints + consistencyPoints + varietyBonus;
+    } else if (scoreTimeframe <= 90) {
+      const basePoints = 15;
+      const activityPoints = Math.min(35, totalPoints / 12);
+      const consistencyPoints = Math.min(25, daysCoveragePercent * 2.5);
+      const varietyBonus = Math.min(10, varietyTypes * 2);
+      finalScore = basePoints + activityPoints + consistencyPoints + varietyBonus;
+    } else if (scoreTimeframe <= 180) {
+      const basePoints = 10;
+      const activityPoints = Math.min(30, totalPoints / 18);
+      const consistencyPoints = Math.min(20, daysCoveragePercent * 4);
+      const varietyBonus = Math.min(10, varietyTypes * 2);
+      finalScore = basePoints + activityPoints + consistencyPoints + varietyBonus;
+    } else {
+      const basePoints = 5;
+      const activityPoints = Math.min(25, totalPoints / 24);
+      const consistencyPoints = Math.min(15, daysCoveragePercent * 6);
+      const varietyBonus = Math.min(10, varietyTypes * 2);
+      finalScore = basePoints + activityPoints + consistencyPoints + varietyBonus;
     }
+    
+    finalScore = Math.min(100, Math.round(finalScore * 100) / 100); // Keep 2 decimal places
+    
+    console.log('[ Dashboard.js ] Fallback calculation details:', {
+      totalPoints,
+      daysWithActivities,
+      daysCoveragePercent: daysCoveragePercent.toFixed(1) + '%',
+      varietyTypes,
+      finalScore,
+      breakdown
+    });
+    
+    return finalScore;
+  }
+  
+  // Close modal when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (modalRef.current && !modalRef.current.contains(event.target) && 
+          buttonRef.current && !buttonRef.current.contains(event.target)) {
+        setShowScoreModal(false);
+      }
+    }
+    
+    document.addEventListener('mousedown', handleClickOutside);
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [showScoreModal]);
-
-  const handleTimeframeChange = (newTimeframe: number) => {
-    // console.log('[ Dashboard.js ] Timeframe changed to:', newTimeframe);
+  }, [modalRef, buttonRef]);
+  
+  // Function to cycle through timeframe options
+  const cycleTimeframe = () => {
+    let newTimeframe;
+    switch(scoreTimeframe) {
+      case 7: newTimeframe = 30; break;
+      case 30: newTimeframe = 60; break;
+      case 60: newTimeframe = 90; break;
+      case 90: newTimeframe = 180; break;
+      case 180: newTimeframe = 365; break;
+      default: newTimeframe = 7;
+    }
+    
+    // Save preference to database
+    if (window.db?.setPreference) {
+      window.db.setPreference('scoreTimeframe', newTimeframe);
+    }
+    
+    // Call the parent's timeframe change handler
     onTimeframeChange(newTimeframe);
   };
+  // Use the shared date formatting function from utils
+  const formatDate = formatDateForDisplay;
 
-  // Format sobriety date for display
-  const getSobrietyDateDisplay = () => {
-    if (!user?.sobrietyDate) return 'Not Set';
-    return formatDateForDisplay(user.sobrietyDate);
+  // Format number with thousands separator
+  const formatNumber = (number) => {
+    return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   };
 
-  const getSobrietyDaysDisplay = () => {
-    const days = calculateSobrietyDays();
-    if (days === 0) return 'Not Set';
-    if (days === 1) return '1 Day';
-    return `${days} Days`;
-  };
+  // Calculate sobriety information if user has a sobriety date
+  const sobrietyDays = user?.sobrietyDate 
+    ? window.db?.calculateSobrietyDays(user.sobrietyDate) || 0
+    : 0;
+  
+  const sobrietyYears = user?.sobrietyDate 
+    ? window.db?.calculateSobrietyYears(user.sobrietyDate, 2) || 0
+    : 0;
+
+  // Determine whether to show years or days more prominently
+  const showYearsProminent = sobrietyYears >= 1;
 
   return (
-    <div style={{ 
-      padding: '20px', 
-      maxWidth: '600px', 
-      margin: '0 auto',
-      backgroundColor: darkMode ? '#121212' : '#f5f5f5',
-      minHeight: '100vh'
-    }}>
-      {/* Header */}
-      <div style={{ 
-        display: 'flex', 
-        alignItems: 'center', 
-        marginBottom: '25px',
-        padding: '15px',
-        backgroundColor: darkMode ? '#1e1e1e' : 'white',
-        borderRadius: '12px',
-        boxShadow: darkMode ? '0 2px 8px rgba(0,0,0,0.3)' : '0 2px 8px rgba(0,0,0,0.1)'
-      }}>
-        <img src={logoImg} alt="Logo" style={{ width: '40px', height: '40px', marginRight: '15px' }} />
-        <div>
-          <h1 style={{ 
-            margin: '0', 
-            fontSize: '24px', 
-            fontWeight: 'bold',
-            color: darkMode ? '#ffffff' : '#333333'
+    <Box sx={{ p: 3, maxWidth: 'md', mx: 'auto' }}>
+      {/* Sobriety Section - Full Width */}
+      <Paper 
+          elevation={1}
+          sx={{
+            bgcolor: 'background.paper',
+            borderRadius: 2,
+            p: 2,
+            textAlign: 'center',
+            border: 1,
+            borderColor: 'divider',
+            borderLeft: 4,
+            borderLeftColor: 'success.main',
+            mb: 1.5,
           }}>
-            Recovery Dashboard
-          </h1>
-          <p style={{ 
-            margin: '5px 0 0 0', 
-            color: darkMode ? '#cccccc' : '#666666',
-            fontSize: '16px'
-          }}>
-            Welcome back, {user?.name || 'Friend'}
-          </p>
-        </div>
-      </div>
-
-      {/* Sobriety Counter */}
-      <Paper style={{ 
-        padding: '20px', 
-        marginBottom: '20px', 
-        backgroundColor: darkMode ? '#1e1e1e' : 'white',
-        color: darkMode ? '#ffffff' : '#333333'
-      }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
-          <h2 style={{ margin: '0', fontSize: '20px', fontWeight: '600' }}>Sobriety Journey</h2>
-          <IconButton 
-            size="small" 
-            onClick={() => setCurrentView('profile')}
-            style={{ color: darkMode ? '#90caf9' : '#1976d2' }}
-          >
-            ✏️
-          </IconButton>
-        </div>
-        
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', textAlign: 'center' }}>
-          <div>
-            <div style={{ 
-              fontSize: '32px', 
-              fontWeight: 'bold', 
-              color: darkMode ? '#90caf9' : '#1976d2',
-              marginBottom: '5px'
-            }}>
-              {calculateSobrietyDays()}
-            </div>
-            <div style={{ color: darkMode ? '#cccccc' : '#666666', fontSize: '14px' }}>
-              Days Clean
-            </div>
-          </div>
-          <div>
-            <div style={{ color: darkMode ? '#cccccc' : '#666666', fontSize: '14px', marginBottom: '5px' }}>
-              Since
-            </div>
-            <div style={{ 
-              fontSize: '18px', 
-              fontWeight: '600',
-              color: darkMode ? '#90caf9' : '#1976d2'
-            }}>
-              {getSobrietyDateDisplay()}
-            </div>
-          </div>
-        </div>
-      </Paper>
-
-      {/* Spiritual Fitness Score */}
-      <Paper style={{ 
-        padding: '20px', 
-        marginBottom: '20px', 
-        backgroundColor: darkMode ? '#1e1e1e' : 'white',
-        color: darkMode ? '#ffffff' : '#333333'
-      }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
-          <h2 style={{ margin: '0', fontSize: '20px', fontWeight: '600' }}>Spiritual Fitness</h2>
-          <button
-            ref={buttonRef}
-            onClick={() => setShowScoreModal(!showScoreModal)}
-            style={{
-              background: 'none',
-              border: 'none',
-              color: darkMode ? '#81c784' : '#388e3c',
-              fontSize: '14px',
-              textDecoration: 'underline',
-              cursor: 'pointer'
+          <Typography
+            variant="h6"
+            sx={{
+              fontSize: '1.1rem',
+              fontWeight: 600,
+              color: 'text.primary',
+              mb: 0.5,
+              textAlign: 'center'
             }}
           >
-            Details
-          </button>
-        </div>
-        
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <div style={{ 
-            fontSize: '48px', 
-            fontWeight: 'bold', 
-            color: darkMode ? '#81c784' : '#388e3c'
+            Sobriety
+          </Typography>
+          
+          {/* Add sobriety date display */}
+          {user?.sobrietyDate && (
+            <Typography
+              variant="body2" 
+              sx={{ 
+                fontSize: '0.85rem', 
+                color: 'text.secondary',
+                mb: 0.5,
+                textAlign: 'center'
+              }}
+            >
+              Since {formatDate(user.sobrietyDate)}
+            </Typography>
+          )}
+          
+          {showYearsProminent ? (
+            <Box sx={{ textAlign: 'center' }}>
+              <Box sx={{ display: 'flex', alignItems: 'baseline', mb: 0.5, justifyContent: 'center' }}>
+                <Typography 
+                  variant="h4"
+                  sx={{ 
+                    fontSize: '1.6rem', 
+                    fontWeight: 'bold', 
+                    color: 'primary.main',
+                    mr: 0.5,
+                    lineHeight: 1.1
+                  }}
+                >
+                  {sobrietyYears.toFixed(2)}
+                </Typography>
+                <Typography 
+                  variant="body1" 
+                  sx={{ 
+                    fontSize: '1rem', 
+                    color: 'text.secondary',
+                    lineHeight: 1.1
+                  }}
+                >
+                  years
+                </Typography>
+              </Box>
+              <Typography 
+                variant="body1" 
+                sx={{ 
+                  fontSize: '1rem', 
+                  color: 'primary.main',
+                  lineHeight: 1.1,
+                  textAlign: 'center',
+                  alignmentBaseline: 'middle'
+                }}
+              >
+                {formatNumber(sobrietyDays)} days
+              </Typography>
+            </Box>
+          ) : (
+            <Box sx={{ textAlign: 'center' }}>
+              <Box sx={{ display: 'flex', alignItems: 'baseline', mb: 0.5, justifyContent: 'center' }}>
+                <Typography 
+                  variant="h4"
+                  sx={{ 
+                    fontSize: '1.6rem', 
+                    fontWeight: 'bold', 
+                    color: 'primary.main',
+                    mr: 0.5,
+                    lineHeight: 1.1
+                  }}
+                >
+                  {formatNumber(sobrietyDays)}
+                </Typography>
+                <Typography 
+                  variant="body1" 
+                  sx={{ 
+                    fontSize: '1rem', 
+                    color: 'text.secondary',
+                    lineHeight: 1.1
+                  }}
+                >
+                  days
+                </Typography>
+              </Box>
+              <Typography 
+                variant="body1" 
+                sx={{ 
+                  fontSize: '1rem', 
+                  color: 'primary.main',
+                  lineHeight: 1.1,
+                  textAlign: 'center',
+                  alignmentBaseline: 'middle'
+                }}
+              >
+                {sobrietyYears.toFixed(2)} years
+              </Typography>
+            </Box>
+          )}
+      </Paper>
+        <Paper 
+          elevation={1}
+          sx={{
+            p: 2,
+            textAlign: 'center',
+            borderRadius: 2,
+            bgcolor: 'background.paper',
+            border: 1,
+            borderColor: 'divider',
+            borderLeft: 4,
+            borderLeftColor: 'primary.main',
+            mb: 1.5,
           }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 1 }}>
+            <Typography
+              variant="h6"
+              sx={{
+                fontSize: '1.1rem',
+                fontWeight: 600,
+                m: 0,
+                display: 'flex',
+                alignItems: 'center'
+              }}
+            >
+              Spiritual Fitness
+              <Box
+                component="button"
+                onClick={() => setShowScoreModal(!showScoreModal)}
+                sx={{
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  fontSize: '0.75em',
+                  p: '0 0 0 4px',
+                  position: 'relative',
+                  top: '-5px',
+                  color: 'primary.main'
+                }}
+                aria-label="Show how spiritual fitness is calculated"
+              >
+                <i className="fa-solid fa-question"></i>
+              </Box>
+            </Typography>
+          </Box>
+          
+          {/* Score display with dynamic color */}
+          <Typography
+            variant="h4"
+            sx={{ 
+              fontSize: '1.6rem', 
+              fontWeight: 'bold',
+              mb: 0.5,
+              color: getScoreColor(currentScore),
+              lineHeight: 1.1
+            }}
+          >
             {formattedScore}
-          </div>
-          <div style={{ textAlign: 'right' }}>
-            <div style={{ color: darkMode ? '#cccccc' : '#666666', fontSize: '14px' }}>
-              out of 100
-            </div>
-            <div style={{ color: darkMode ? '#81c784' : '#388e3c', fontSize: '12px' }}>
-              Last {scoreTimeframe} days
-            </div>
-          </div>
-        </div>
-      </Paper>
-
-      {/* Quick Actions */}
-      <div style={{ marginBottom: '20px' }}>
-        <h2 style={{ 
-          marginBottom: '15px', 
-          fontSize: '20px', 
-          fontWeight: '600',
-          color: darkMode ? '#ffffff' : '#333333'
+          </Typography>
+          
+          {/* Gradient progress bar with mask - thicker version with no markers */}
+          <Box sx={{ 
+            position: 'relative',
+            height: '32px',
+            width: '100%',
+            borderRadius: '12px',
+            background: (theme) => `linear-gradient(
+              90deg,
+              ${theme.palette.error.main} 0%,
+              ${theme.palette.error.light} 25%,
+              ${theme.palette.warning.main} 50%,
+              ${theme.palette.success.light} 75%,
+              ${theme.palette.success.main} 100%
+            )`,
+            mb: '6px',
+            border: 1,
+            borderColor: 'divider',
+            overflow: 'hidden',
+            boxShadow: (theme) => theme.palette.mode === 'dark' 
+              ? 'inset 0 1px 2px rgba(0,0,0,0.2)' 
+              : 'inset 0 1px 2px rgba(0,0,0,0.1)'
+          }}>
+            <Box sx={{
+              borderRadius: '0 8px 8px 0',
+              bgcolor: (theme) => theme.palette.mode === 'dark' ? '#374151' : '#F3F4F6',
+              position: 'absolute',
+              right: 0,
+              bottom: 0,
+              top: 0,
+              width: `${100 - progressPercent}%`
+            }}></Box>
+          </Box>
+          
+          <Box sx={{ 
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 0.5,
+            fontSize: '1rem',
+            color: 'text.secondary'
+          }}>
+            <Typography variant="body2" sx={{ fontSize: 'inherit' }}>{scoreTimeframe}-day score</Typography>
+            <IconButton 
+              onClick={cycleTimeframe}
+              size="small"
+              sx={{
+                padding: '2px',
+                color: 'primary.main',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}
+              title="Change timeframe"
+            >
+              <i className="fa-solid fa-shuffle"></i>
+            </IconButton>
+          </Box>
+          {/* "How is this calculated" button removed - now using the icon in the header */}
+          
+          {/* Render modal at the end of the Dashboard component body to avoid positioning issues */}
+        </Paper>
+      
+      {/* Recent Activities Section */}
+      <Paper 
+        elevation={1}
+        sx={{
+          bgcolor: 'background.paper',
+          borderRadius: 2,
+          p: 1.5,
+          border: 1,
+          borderColor: 'divider',
+          borderLeft: 4,
+          borderLeftColor: 'info.main',
+          mb: 1.5,
+          // No fixed height or overflow here - the entire page scrolls
         }}>
-          Quick Actions
-        </h2>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
-          <Button
-            variant="contained"
-            onClick={() => setShowActivityModal(true)}
-            style={{
-              backgroundColor: darkMode ? '#1976d2' : '#2196f3',
-              color: 'white',
-              padding: '12px',
-              fontWeight: '600'
-            }}
-          >
-            Log Activity
-          </Button>
-          <Button
-            variant="outlined"
-            onClick={() => setCurrentView('meetings')}
-            style={{
-              borderColor: darkMode ? '#1976d2' : '#2196f3',
-              color: darkMode ? '#90caf9' : '#1976d2',
-              padding: '12px',
-              fontWeight: '600'
-            }}
-          >
-            View Meetings
-          </Button>
-        </div>
-      </div>
-
-      {/* Recent Activities */}
-      <div>
-        <h2 style={{ 
-          marginBottom: '15px', 
-          fontSize: '20px', 
-          fontWeight: '600',
-          color: darkMode ? '#ffffff' : '#333333'
+        <Box sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          mb: 0.5
         }}>
-          Recent Activities
-        </h2>
-        <ActivityList
+          <Typography 
+            variant="h6" 
+            sx={{
+              fontSize: '1.1rem',
+              fontWeight: 600,
+              color: 'text.primary',
+              paddingRight: '0.15rem'
+            }}
+          >Activities</Typography>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+            {/* Activity type filter */}
+            <Box 
+              component="select" 
+              sx={{
+                bgcolor: 'transparent',
+                border: 1,
+                borderColor: 'divider',
+                borderRadius: 0.25,
+                color: 'text.primary',
+                padding: '0.15rem 0.5rem',
+                fontSize: '0.7rem',
+                cursor: 'pointer'
+              }}
+              defaultValue="all"
+              onChange={(e) => {
+                const filter = e.target.value;
+                setActivityTypeFilter(filter);
+              }}
+            >
+              <option value="all">All types</option>
+              <option value="prayer">Prayer</option>
+              <option value="meditation">Meditation</option>
+              <option value="literature">Reading</option>
+              <option value="meeting">Meetings</option>
+              <option value="call">Calls</option>
+              <option value="service">Service</option>
+            </Box>
+            
+            {/* Activity timeframe selector */}
+            <Box 
+              component="select"
+              sx={{
+                bgcolor: 'transparent',
+                border: 1,
+                borderColor: 'divider',
+                borderRadius: 0.25,
+                color: 'text.primary',
+                padding: '0.15rem 0.5rem',
+                fontSize: '0.7rem',
+                cursor: 'pointer'
+              }}
+              defaultValue="7"
+              onChange={(e) => {
+                const days = parseInt(e.target.value, 10);
+                setActivityDaysFilter(days);
+                // This will update when we connect the state to ActivityList
+              }}
+            >
+              <option value="7">7 days</option>
+              <option value="14">14 days</option>
+              <option value="30">30 days</option>
+              <option value="90">90 days</option>
+              <option value="0">All time</option>
+            </Box>
+            
+            {/* Log new activity button */}
+            {/* Button to open activity modal */}
+            <IconButton
+              onClick={() => setShowActivityModal(true)}
+              title="Log new activity"
+              aria-label="Log new activity"
+              size="medium"
+              sx={{ 
+                fontSize: '1.5rem', 
+                p: 0.5,
+                color: 'primary.main',
+                '&:hover': {
+                  color: 'primary.dark'
+                }
+              }}
+            >
+              <i className="fa-solid fa-scroll"></i>
+            </IconButton>
+            
+          </Box>
+        </Box>
+        
+        {/* Use the reusable ActivityList component */}
+        <ActivityList 
           activities={activities}
-          daysFilter={activityDaysFilter}
-          typeFilter={activityTypeFilter}
-          onDaysFilterChange={setActivityDaysFilter}
-          onTypeFilterChange={setActivityTypeFilter}
           darkMode={darkMode}
+          maxDaysAgo={activityDaysFilter === 0 ? null : activityDaysFilter}
+          filter={activityTypeFilter}
+          showDate={true}
         />
-      </div>
-
-      {/* Spiritual Fitness Modal */}
-      {showScoreModal && (
-        <SpiritualFitnessModal
-          ref={modalRef}
-          score={currentScore}
-          timeframe={scoreTimeframe}
-          onTimeframeChange={handleTimeframeChange}
-          onClose={() => setShowScoreModal(false)}
-          darkMode={darkMode}
-        />
-      )}
-
-      {/* Log Activity Modal */}
-      {showActivityModal && (
-        <LogActivityModal
-          onClose={() => setShowActivityModal(false)}
-          onSave={onSave}
-          darkMode={darkMode}
-        />
-      )}
-    </div>
+      </Paper>
+      
+      {/* Material UI Dialog for Spiritual Fitness */}
+      <SpiritualFitnessModal 
+        open={showScoreModal} 
+        onClose={() => setShowScoreModal(false)}
+      />
+      
+      {/* Activity Log Modal */}
+      <LogActivityModal 
+        open={showActivityModal}
+        onClose={() => setShowActivityModal(false)}
+        onSave={onSave}
+        onSaveMeeting={onSaveMeeting}
+        meetings={meetings}
+      />
+    </Box>
   );
 }
