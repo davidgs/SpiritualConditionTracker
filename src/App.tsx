@@ -64,23 +64,23 @@ function AppContent() {
     const cutoffTime = now.getTime() - (timeframeDays * 24 * 60 * 60 * 1000);
     const cutoffDate = new Date(cutoffTime);
     
-    console.log(`[ App.tsx ] Filtering activities for ${timeframeDays} days`);
-    console.log(`[ App.tsx ] Cutoff date: ${cutoffDate.toISOString()}`);
-    console.log(`[ App.tsx ] Total activities before filter: ${activities.length}`);
+    // console.log(`[ App.tsx ] Filtering activities for ${timeframeDays} days`);
+    // console.log(`[ App.tsx ] Cutoff date: ${cutoffDate.toISOString()}`);
+    // console.log(`[ App.tsx ] Total activities before filter: ${activities.length}`);
     
     const filtered = activities.filter(activity => {
       if (!activity.date) return false;
       const activityDate = new Date(activity.date);
       const isWithinRange = activityDate >= cutoffDate;
       
-      if (isWithinRange) {
-        console.log(`[ App.tsx ] Including activity: ${activity.type} on ${activity.date}`);
-      }
+      // if (isWithinRange) {
+      //   console.log(`[ App.tsx ] Including activity: ${activity.type} on ${activity.date}`);
+      // }
       
       return isWithinRange;
     });
     
-    console.log(`[ App.tsx ] Activities after ${timeframeDays}-day filter: ${filtered.length}`);
+    // console.log(`[ App.tsx ] Activities after ${timeframeDays}-day filter: ${filtered.length}`);
     
     return filtered;
   }

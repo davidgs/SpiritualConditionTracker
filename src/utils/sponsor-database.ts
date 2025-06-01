@@ -289,7 +289,7 @@ export async function addSponsorContact(contact) {
           }
           
           // Format date as ISO string
-          console.log('Formatting date:', dateObj.toISOString());
+          // console.log('Formatting date:', dateObj.toISOString());
           return dateObj.toISOString();
         } catch (e) {
           console.log('Error parsing date, using null instead:', e);
