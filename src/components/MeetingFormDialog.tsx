@@ -632,7 +632,6 @@ export default function MeetingFormDialog({
             Your Home Group is your primary AA group where you regularly attend and participate.
           </Typography>
         </Box>
-        </Box>
       </DialogContent>
       
       <Divider sx={(theme) => ({ borderColor: theme.palette.divider })} />
