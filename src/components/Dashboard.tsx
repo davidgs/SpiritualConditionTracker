@@ -44,6 +44,10 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
   
   // Log current score state
   console.log('[ Dashboard.js ] Dashboard currentScore state:', currentScore);
+
+  // log current time frame
+  console.log('[ Dashboard.js ] Dashboard currentTimeframe:', currentTimeframe);
+  console.log('[ Dashboard.js ] Dashboard scoreTimeframe:', scoreTimeframe);
   
   // Format score to 2 decimal places for display
   const formattedScore: string = currentScore > 0 ? currentScore.toFixed(2) : '0.00';
