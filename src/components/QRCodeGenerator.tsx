@@ -147,7 +147,7 @@ export default function QRCodeGenerator({ data, title, open, onClose, size = 300
       // Try to load and add the logo
       try {
         console.log('Loading logo image...');
-        const logoImg = await loadImage('/assets/logo.png');
+        const logoImg = await loadImage('/assets/logo.jpg');
         console.log('Logo loaded successfully, adding to QR code');
         
         // Calculate logo size (about 15% of QR code size for good readability)
