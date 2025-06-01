@@ -138,6 +138,7 @@ interface AppDataContextType {
   
   loadMeetings: () => Promise<void>;
   addMeeting: (meeting: Omit<Meeting, 'id' | 'createdAt' | 'updatedAt'>) => Promise<Meeting | null>;
+  updateMeeting: (meetingId: string | number, updates: Partial<Meeting>) => Promise<Meeting | null>;
   deleteMeeting: (meetingId: string | number) => Promise<boolean>;
   
   updateTimeframe: (timeframe: number) => Promise<void>;
@@ -354,6 +355,21 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const updateMeeting = async (meetingId: string | number, updates: Partial<Meeting>): Promise<Meeting | null> => {
+    try {
+      const updatedMeeting = await databaseService.updateMeeting(meetingId, updates);
+      if (updatedMeeting) {
+        dispatch({ type: 'UPDATE_MEETING', payload: { id: meetingId, data: updates } });
+        console.log('[ AppDataContext.tsx:349 ] Meeting updated:', meetingId);
+      }
+      return updatedMeeting;
+    } catch (error) {
+      console.error('[ AppDataContext.tsx:353 ] Failed to update meeting:', error);
+      dispatch({ type: 'SET_ERROR', payload: 'Failed to update meeting' });
+      return null;
+    }
+  };
+
   const deleteMeeting = async (meetingId: string | number): Promise<boolean> => {
     try {
       const success = await databaseService.deleteMeeting(meetingId);
@@ -450,6 +466,7 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
     addActivity,
     loadMeetings,
     addMeeting,
+    updateMeeting,
     deleteMeeting,
     updateTimeframe,
     calculateSpiritualFitness,

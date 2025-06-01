@@ -291,6 +291,12 @@ class DatabaseService {
     });
   }
 
+  async updateMeeting(id: string | number, updates: Partial<Meeting>): Promise<Meeting | null> {
+    return this.executeOperation(async () => {
+      return await this.database.update('meetings', id, updates);
+    });
+  }
+
   async deleteMeeting(meetingId: string | number): Promise<boolean> {
     return this.executeOperation(async () => {
       return await this.database.remove('meetings', meetingId);

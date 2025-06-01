@@ -15,7 +15,7 @@ import Meetings from './components/Meetings';
 import Profile from './components/Profile';
 
 function AppContent() {
-  const { state, addActivity, addMeeting, deleteMeeting, updateTimeframe, updateUser, resetAllData } = useAppData();
+  const { state, addActivity, addMeeting, updateMeeting, deleteMeeting, updateTimeframe, updateUser, resetAllData } = useAppData();
   const muiTheme = useTheme();
   const [currentView, setCurrentView] = React.useState('dashboard');
 
@@ -100,12 +100,22 @@ function AppContent() {
     }
   }
 
-  // Handle saving new meeting
+  // Handle saving meeting (new or update)
   async function handleSaveMeeting(meetingData: any): Promise<any> {
     try {
-      // For now, always treat as new meeting since context doesn't support updates yet
-      const savedMeeting = await addMeeting(meetingData);
-      console.log('[ App ] Meeting saved successfully:', savedMeeting?.id);
+      let savedMeeting;
+      
+      // If the meeting has an ID, it's an update
+      if (meetingData.id) {
+        const { id, ...updateData } = meetingData;
+        savedMeeting = await updateMeeting(id, updateData);
+        console.log('[ App ] Meeting updated successfully:', savedMeeting?.id);
+      } else {
+        // If no ID, it's a new meeting
+        savedMeeting = await addMeeting(meetingData);
+        console.log('[ App ] Meeting created successfully:', savedMeeting?.id);
+      }
+      
       return savedMeeting;
     } catch (error) {
       console.error('[ App ] Error saving meeting:', error);
