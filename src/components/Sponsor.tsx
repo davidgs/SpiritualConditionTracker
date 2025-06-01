@@ -167,10 +167,12 @@ export default function Sponsor({ user, onUpdate }: SponsorProps) {
       };
       
       // Insert using our specialized sponsor database module
-      console.log('Inserting contact into database:', contact);
+      console.log('[ Sponsor ] Inserting contact into database:', contact);
+      console.log('[ Sponsor ] About to call sponsorDB.addSponsorContact...');
       const savedContact = await sponsorDB.addSponsorContact(contact);
       
-      console.log('Contact saved with ID:', savedContact.id);
+      console.log('[ Sponsor ] Contact saved with ID:', savedContact.id);
+      console.log('[ Sponsor ] Full saved contact object:', savedContact);
       
       // Add any associated Action Items
       if (actionItems && actionItems.length > 0) {
