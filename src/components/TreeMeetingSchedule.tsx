@@ -1,7 +1,15 @@
 import React, { useState } from 'react';
-import { Box, Typography, Button, Chip } from '@mui/material';
+import { Box, Typography, Button, Chip, Select, MenuItem, FormControl, InputLabel, SpeedDial, SpeedDialAction, SpeedDialIcon } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
-import CustomNestedMenu from './CustomNestedMenu';
+import { MobileTimePicker } from '@mui/x-date-pickers/MobileTimePicker';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import dayjs from 'dayjs';
+import EditIcon from '@mui/icons-material/Edit';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
+import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
+import LockIcon from '@mui/icons-material/Lock';
 
 interface ScheduleItem {
   day: string;
@@ -23,6 +31,11 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
   use24HourFormat = false 
 }) => {
   const muiTheme = useTheme();
+  
+  // State for the step-by-step meeting creation
+  const [currentStep, setCurrentStep] = useState<'day' | 'time' | 'format' | 'location' | 'access' | 'complete'>('day');
+  const [newMeeting, setNewMeeting] = useState<Partial<ScheduleItem>>({});
+  const [editingMeeting, setEditingMeeting] = useState<number | null>(null);
 
   const days = [
     { key: 'sunday', label: 'Sunday' },
@@ -84,23 +97,22 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
     { value: 'closed', label: 'Closed' }
   ];
 
-  const addMeetingWithDetails = (day: string, hour: string, minute: string, format: string, locationType: string, access: string) => {
-    if (!day || !hour || !minute || !format || !locationType || !access) {
-      console.error('Missing required meeting details:', { day, hour, minute, format, locationType, access });
-      return;
+  const completeNewMeeting = () => {
+    if (newMeeting.day && newMeeting.time && newMeeting.format && newMeeting.locationType && newMeeting.access) {
+      const completeMeeting: ScheduleItem = {
+        day: newMeeting.day,
+        time: newMeeting.time,
+        format: newMeeting.format,
+        locationType: newMeeting.locationType,
+        access: newMeeting.access
+      };
+      const newSchedule = [...schedule, completeMeeting];
+      onChange(newSchedule);
+      
+      // Reset for next meeting
+      setNewMeeting({});
+      setCurrentStep('day');
     }
-    
-    const time = `${hour}:${minute}`;
-    const newMeeting = { 
-      day: day.trim(), 
-      time: time.trim(), 
-      format: format.trim(), 
-      locationType: locationType.trim(),
-      access: access.trim() 
-    };
-    
-    const newSchedule = [...schedule, newMeeting];
-    onChange(newSchedule);
   };
 
   const removeScheduleItem = (day: string, time: string) => {
@@ -108,135 +120,319 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
     onChange(newSchedule);
   };
 
-  const buildMenuItems = () => {
-    const menuItems: any[] = [];
+  const startEditingMeeting = (index: number, field: 'day' | 'time' | 'format' | 'locationType' | 'access') => {
+    setEditingMeeting(index);
+    setNewMeeting({...schedule[index]});
+    setCurrentStep(field === 'locationType' ? 'location' : field);
+  };
 
-    // Add existing meetings first
-    schedule.forEach((item, index) => {
-      menuItems.push({
-        id: `existing-${index}`,
-        label: (
-          <Box sx={{ 
-            display: 'flex', 
-            alignItems: 'center', 
-            gap: 0.5, 
-            py: 0.5,
-            flexWrap: 'nowrap',
-            minWidth: '100%'
-          }}>
-            <Typography variant="body2" sx={{ fontWeight: 500, minWidth: '70px', textAlign: 'left' }}>
-              {days.find(d => d.key === item.day)?.label || item.day}
-            </Typography>
-            <Typography variant="body2" sx={{ minWidth: '70px', textAlign: 'left' }}>
-              {use24HourFormat ? item.time : (() => {
-                const [hour, minute] = item.time.split(':');
-                const hourNum = parseInt(hour);
-                const period = hourNum >= 12 ? 'PM' : 'AM';
-                const displayHour = hourNum === 0 ? 12 : hourNum > 12 ? hourNum - 12 : hourNum;
-                return `${displayHour}:${minute} ${period}`;
-              })()}
-            </Typography>
-            <Typography sx={{ fontSize: '1.2rem' }}>
-              {meetingLocationTypes.find(l => l.value === item.locationType)?.icon || '🏢'}
-            </Typography>
-            <Chip 
-              label={item.format ? item.format.charAt(0).toUpperCase() + item.format.slice(1).replace('_', ' ') : 'Unknown'}
-              size="small"
-              color="primary"
-              sx={{ fontSize: '0.7rem', height: '20px', minWidth: 'fit-content' }}
-            />
-            <Chip 
-              label={item.access ? item.access.charAt(0).toUpperCase() + item.access.slice(1) : 'Unknown'}
-              size="small"
-              color={item.access === 'open' ? 'success' : 'error'}
-              sx={{ fontSize: '0.7rem', height: '20px', minWidth: 'fit-content' }}
-            />
-            <Button
-              size="small"
-              color="error"
-              onClick={(e) => {
-                e.stopPropagation();
-                removeScheduleItem(item.day, item.time);
+  const updateExistingMeeting = () => {
+    if (editingMeeting !== null && newMeeting.day && newMeeting.time && newMeeting.format && newMeeting.locationType && newMeeting.access) {
+      const updatedSchedule = [...schedule];
+      updatedSchedule[editingMeeting] = {
+        day: newMeeting.day,
+        time: newMeeting.time,
+        format: newMeeting.format,
+        locationType: newMeeting.locationType,
+        access: newMeeting.access
+      };
+      onChange(updatedSchedule);
+      
+      // Reset editing state
+      setEditingMeeting(null);
+      setNewMeeting({});
+      setCurrentStep('day');
+    }
+  };
+
+  const renderStepSelector = () => {
+    if (currentStep === 'day') {
+      return (
+        <Box sx={{ mb: 2 }}>
+          <Typography variant="h6" sx={{ mb: 1 }}>Select Day</Typography>
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+            {days.map(day => (
+              <Button
+                key={day.key}
+                variant="outlined"
+                onClick={() => {
+                  setNewMeeting({ ...newMeeting, day: day.key });
+                  setCurrentStep('time');
+                }}
+                sx={{ mb: 1 }}
+              >
+                {day.label}
+              </Button>
+            ))}
+          </Box>
+        </Box>
+      );
+    }
+
+    if (currentStep === 'time') {
+      return (
+        <Box sx={{ mb: 2 }}>
+          <Typography variant="h6" sx={{ mb: 1 }}>Select Time</Typography>
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <MobileTimePicker
+              defaultValue={dayjs('2022-04-17T15:30')}
+              onChange={(value) => {
+                if (value) {
+                  const timeString = value.format('HH:mm');
+                  setNewMeeting({ ...newMeeting, time: timeString });
+                  setCurrentStep('format');
+                }
               }}
-              sx={{ 
-                minWidth: 'auto', 
-                width: '24px', 
-                height: '24px', 
-                px: 0,
-                fontSize: '1rem',
-                borderRadius: '50%'
+            />
+          </LocalizationProvider>
+        </Box>
+      );
+    }
+
+    if (currentStep === 'format') {
+      return (
+        <Box sx={{ mb: 2 }}>
+          <Typography variant="h6" sx={{ mb: 1 }}>Select Meeting Format</Typography>
+          <FormControl fullWidth>
+            <InputLabel>Format</InputLabel>
+            <Select
+              value={newMeeting.format || ''}
+              label="Format"
+              onChange={(e) => {
+                setNewMeeting({ ...newMeeting, format: e.target.value });
+                setCurrentStep('location');
               }}
             >
-              ×
-            </Button>
-          </Box>
-        ),
-        indentLevel: 0,
-        isExpandable: false
-      });
-    });
+              {meetingFormats.map(format => (
+                <MenuItem key={format.value} value={format.value}>
+                  {format.label}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </Box>
+      );
+    }
 
-    // Add the "Select Day" menu structure
-    const dayChildren = days.map(day => {
-      const hourChildren = hourOptions.map(hour => {
-        const minuteChildren = minuteOptions
-          .filter(minute => !schedule.some(item => item.day === day.key && item.time === `${hour.value}:${minute.value}`))
-          .map(minute => ({
-            id: `${day.key}-${hour.value}-${minute.value}`,
-            label: `${minute.label} → Add Discussion Meeting`,
-            color: 'info.main',
-            fontSize: '0.8rem',
-            indentLevel: 3,
-            onClick: () => {
-              // Create meeting with most common defaults to prevent menu explosion
-              addMeetingWithDetails(day.key, hour.value, minute.value, 'discussion', 'in_person', 'open');
-            },
-            isExpandable: false
-          }));
+    if (currentStep === 'location') {
+      return (
+        <Box sx={{ mb: 2 }}>
+          <Typography variant="h6" sx={{ mb: 1 }}>Select Location Type</Typography>
+          <FormControl fullWidth>
+            <InputLabel>Location</InputLabel>
+            <Select
+              value={newMeeting.locationType || ''}
+              label="Location"
+              onChange={(e) => {
+                setNewMeeting({ ...newMeeting, locationType: e.target.value });
+                setCurrentStep('access');
+              }}
+            >
+              {meetingLocationTypes.map(location => (
+                <MenuItem key={location.value} value={location.value}>
+                  {location.icon} {location.label}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </Box>
+      );
+    }
 
-        return {
-          id: `${day.key}-${hour.value}`,
-          label: hour.label,
-          color: 'info.main',
-          fontSize: '0.85rem',
-          indentLevel: 2,
-          children: minuteChildren,
-          isExpandable: true
-        };
-      });
+    if (currentStep === 'access') {
+      return (
+        <Box sx={{ mb: 2 }}>
+          <Typography variant="h6" sx={{ mb: 1 }}>Select Access Type</Typography>
+          <FormControl fullWidth>
+            <InputLabel>Access</InputLabel>
+            <Select
+              value={newMeeting.access || ''}
+              label="Access"
+              onChange={(e) => {
+                setNewMeeting({ ...newMeeting, access: e.target.value });
+                if (editingMeeting !== null) {
+                  updateExistingMeeting();
+                } else {
+                  completeNewMeeting();
+                }
+              }}
+            >
+              {meetingAccess.map(access => (
+                <MenuItem key={access.value} value={access.value}>
+                  {access.label}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </Box>
+      );
+    }
 
-      return {
-        id: `day-${day.key}`,
-        label: day.label,
-        color: 'text.primary',
-        fontWeight: 500,
-        indentLevel: 1,
-        children: hourChildren,
-        isExpandable: true
-      };
-    });
-
-    menuItems.push({
-      id: 'select-day',
-      label: '+ Select Day',
-      color: 'primary.main',
-      fontWeight: 500,
-      indentLevel: 0,
-      children: dayChildren,
-      isExpandable: true
-    });
-
-    return menuItems;
+    return null;
   };
 
   return (
     <Box sx={{ mb: 2 }}>
-      <CustomNestedMenu 
-        items={buildMenuItems()} 
-        onActionComplete={() => {
-          // Additional cleanup can be done here if needed
-        }}
-      />
+      {/* Display existing meetings */}
+      {schedule.map((item, index) => (
+        <Box
+          key={index}
+          sx={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: 1, 
+            py: 1,
+            borderBottom: '1px solid #eee',
+            mb: 1
+          }}
+        >
+          <Button
+            variant="text"
+            onClick={() => startEditingMeeting(index, 'day')}
+            sx={{ fontWeight: 500, minWidth: '70px', textAlign: 'left' }}
+          >
+            {days.find(d => d.key === item.day)?.label || item.day}
+          </Button>
+          
+          <Button
+            variant="text"
+            onClick={() => startEditingMeeting(index, 'time')}
+            sx={{ minWidth: '70px', textAlign: 'left' }}
+          >
+            {use24HourFormat ? item.time : (() => {
+              const [hour, minute] = item.time.split(':');
+              const hourNum = parseInt(hour);
+              const period = hourNum >= 12 ? 'PM' : 'AM';
+              const displayHour = hourNum === 0 ? 12 : hourNum > 12 ? hourNum - 12 : hourNum;
+              return `${displayHour}:${minute} ${period}`;
+            })()}
+          </Button>
+          
+          <Button
+            variant="text"
+            onClick={() => startEditingMeeting(index, 'locationType')}
+            sx={{ fontSize: '1.2rem', minWidth: 'auto' }}
+          >
+            {meetingLocationTypes.find(l => l.value === item.locationType)?.icon || '🏢'}
+          </Button>
+          
+          <Chip 
+            label={item.format ? item.format.charAt(0).toUpperCase() + item.format.slice(1).replace('_', ' ') : 'Unknown'}
+            size="small"
+            color="primary"
+            onClick={() => startEditingMeeting(index, 'format')}
+            sx={{ fontSize: '0.7rem', height: '24px', cursor: 'pointer' }}
+          />
+          
+          <Chip 
+            label={item.access ? item.access.charAt(0).toUpperCase() + item.access.slice(1) : 'Unknown'}
+            size="small"
+            color={item.access === 'open' ? 'success' : 'error'}
+            onClick={() => startEditingMeeting(index, 'access')}
+            sx={{ fontSize: '0.7rem', height: '24px', cursor: 'pointer' }}
+          />
+
+          <Box sx={{ position: 'relative', ml: 1 }}>
+            <SpeedDial
+              ariaLabel="Edit meeting options"
+              sx={{ 
+                position: 'absolute', 
+                bottom: -20, 
+                right: -20,
+                '& .MuiFab-root': { 
+                  width: 32, 
+                  height: 32, 
+                  minHeight: 32 
+                }
+              }}
+              icon={<SpeedDialIcon icon={<EditIcon />} />}
+              direction="left"
+            >
+              <SpeedDialAction
+                icon={<AccessTimeIcon />}
+                tooltipTitle="Change time"
+                onClick={() => startEditingMeeting(index, 'time')}
+              />
+              <SpeedDialAction
+                icon={<FormatListBulletedIcon />}
+                tooltipTitle="Change format"
+                onClick={() => startEditingMeeting(index, 'format')}
+              />
+              <SpeedDialAction
+                icon={<LocationOnIcon />}
+                tooltipTitle="Change location"
+                onClick={() => startEditingMeeting(index, 'locationType')}
+              />
+              <SpeedDialAction
+                icon={<LockIcon />}
+                tooltipTitle="Change access"
+                onClick={() => startEditingMeeting(index, 'access')}
+              />
+            </SpeedDial>
+          </Box>
+          
+          <Button
+            size="small"
+            color="error"
+            onClick={() => removeScheduleItem(item.day, item.time)}
+            sx={{ 
+              minWidth: 'auto', 
+              width: '24px', 
+              height: '24px', 
+              px: 0,
+              fontSize: '1rem',
+              borderRadius: '50%'
+            }}
+          >
+            ×
+          </Button>
+        </Box>
+      ))}
+
+      {/* Step-by-step meeting creation/editing */}
+      {(currentStep !== 'complete' && editingMeeting === null) && (
+        <Box sx={{ mt: 2, p: 2, border: '1px solid #ddd', borderRadius: 1 }}>
+          <Typography variant="h6" sx={{ mb: 2 }}>Add New Meeting</Typography>
+          {renderStepSelector()}
+        </Box>
+      )}
+
+      {/* Editing existing meeting */}
+      {editingMeeting !== null && (
+        <Box sx={{ mt: 2, p: 2, border: '1px solid #orange', borderRadius: 1 }}>
+          <Typography variant="h6" sx={{ mb: 2 }}>Edit Meeting</Typography>
+          {renderStepSelector()}
+          <Button 
+            variant="outlined" 
+            onClick={() => {
+              setEditingMeeting(null);
+              setNewMeeting({});
+              setCurrentStep('day');
+            }}
+            sx={{ mt: 1 }}
+          >
+            Cancel
+          </Button>
+        </Box>
+      )}
+
+      {/* Add new meeting button */}
+      {schedule.length === 0 || (currentStep === 'day' && editingMeeting === null && Object.keys(newMeeting).length === 0) ? (
+        <Box sx={{ mt: 2, p: 2, border: '1px solid #ddd', borderRadius: 1 }}>
+          <Typography variant="h6" sx={{ mb: 2 }}>Add New Meeting</Typography>
+          {renderStepSelector()}
+        </Box>
+      ) : (
+        currentStep === 'day' && editingMeeting === null && (
+          <Button
+            variant="contained"
+            onClick={() => setCurrentStep('day')}
+            sx={{ mt: 2 }}
+          >
+            + Add Another Meeting
+          </Button>
+        )
+      )}
     </Box>
   );
 };
