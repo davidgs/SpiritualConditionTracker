@@ -380,17 +380,21 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
 
       {/* Progressive meeting display - shows as each part is selected */}
       {Object.keys(newMeeting).length > 0 && editingMeeting === null && (
-        <Box sx={{ 
-          display: 'flex', 
-          alignItems: 'center', 
-          gap: 1, 
-          py: 1,
-          borderBottom: '1px solid #eee',
-          mb: 2,
-          backgroundColor: '#f5f5f5',
-          borderRadius: 1,
-          px: 1
-        }}>
+        <Box 
+          key={`${newMeeting.day}-${newMeeting.time}-${newMeeting.format}-${newMeeting.locationType}-${newMeeting.access}`}
+          sx={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: 1, 
+            py: 1,
+            borderBottom: '1px solid #eee',
+            mb: 2,
+            backgroundColor: '#f5f5f5',
+            borderRadius: 1,
+            px: 1
+          }}
+        >
+          {console.log('Progressive display rendering with newMeeting:', newMeeting)}
           <Typography variant="body2" sx={{ fontWeight: 500, minWidth: '70px', textAlign: 'left' }}>
             {newMeeting.day ? (days.find(d => d.key === newMeeting.day)?.label || newMeeting.day) : '---'}
           </Typography>
