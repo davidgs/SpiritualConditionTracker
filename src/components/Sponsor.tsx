@@ -313,9 +313,10 @@ export default function Sponsor({ user, onUpdate }: SponsorProps) {
         />
       ) : currentView === 'add-contact' ? (
         <SponsorContactFormPage
+          open={true}
           userId={user ? user.id : ''}
-          onSave={handleAddContact}
-          onCancel={handleBackToMain}
+          onSubmit={(contactData, actionItems) => handleAddContact(contactData, actionItems)}
+          onClose={handleBackToMain}
           initialData={null}
         />
       ) : currentView === 'add-sponsor' ? (
