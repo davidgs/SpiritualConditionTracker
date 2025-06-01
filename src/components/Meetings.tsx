@@ -331,6 +331,27 @@ export default function Meetings({ setCurrentView, meetings = [], onSave, onDele
                 </Typography>
               </Box>
             </Box>
+            
+            {/* Online Meeting URL */}
+            {meeting.onlineUrl && (
+              <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
+                <i className="fa-solid fa-link" style={{ fontSize: '1rem', opacity: 0.7, marginRight: '12px' }}></i>
+                <Typography 
+                  variant="body2" 
+                  color="primary"
+                  sx={{ 
+                    cursor: 'pointer',
+                    textDecoration: 'underline',
+                    '&:hover': {
+                      color: 'primary.dark'
+                    }
+                  }}
+                  onClick={() => window.open(meeting.onlineUrl, '_blank')}
+                >
+                  Join Online Meeting
+                </Typography>
+              </Box>
+            )}
           </Box>
           
           <Box sx={{ mt: 2, pt: 2, display: 'flex', justifyContent: 'flex-end', borderTop: 1, borderColor: 'divider' }}>
