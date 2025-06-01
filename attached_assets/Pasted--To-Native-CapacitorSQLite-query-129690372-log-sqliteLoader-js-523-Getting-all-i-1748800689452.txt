@@ -1,0 +1,1123 @@
+⚡️  To Native ->  CapacitorSQLite query 129690372
+⚡️  [log] - [ sqliteLoader.js:523 ] Getting all items from activities
+⚡️  TO JS {"values":[{"ios_columns":["id","type","duration","date","notes","literatureTitle","literatureType","meetingName","wasChair","wasShare","wasSpeaker","meetingId","callPerson","isSponsorCall","isSponseeCall","isAAMemberCall","callType","servicePerson","locat
+⚡️  [log] - [ Dashboard.js ] Dashboard initial spiritualFitness: 55.38
+⚡️  [log] - [ Dashboard.js ] Dashboard currentScore state: 55.38
+⚡️  [log] - [ Dashboard.js ] Dashboard formattedScore for display: 55.38
+⚡️  [log] - [ Dashboard.js ] Dashboard progressPercent: 55.38
+⚡️  [log] - [ ActivityList.js: 39 ] Total activities received: 16
+⚡️  [log] - [ ActivityList.js: 40 ] Filter params - limit: null filter: all maxDaysAgo: 7
+⚡️  [log] - [ ActivityList.js: 65 ] Filtering out uncompleted action item: 2
+⚡️  [log] - [ ActivityList.js: 81 ] Filtering out activity outside timeframe - days ago: 14 max: 7
+⚡️  [log] - [ ActivityList.js: 81 ] Filtering out activity outside timeframe - days ago: 13 max: 7
+⚡️  [log] - [ ActivityList.js: 81 ] Filtering out activity outside timeframe - days ago: 12 max: 7
+⚡️  [log] - [ ActivityList.js: 81 ] Filtering out activity outside timeframe - days ago: 11 max: 7
+⚡️  [log] - [ ActivityList.js: 81 ] Filtering out activity outside timeframe - days ago: 10 max: 7
+⚡️  [log] - [ ActivityList.js: 81 ] Filtering out activity outside timeframe - days ago: 9 max: 7
+⚡️  [log] - [ ActivityList.js: 81 ] Filtering out activity outside timeframe - days ago: 8 max: 7
+⚡️  [log] - [ ActivityList.js: 98 ] Final filtered activities count: 8
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-06-01T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-06-01T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-06-01
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-06-01T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-06-01T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-06-01
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-05-31T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-05-31T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-05-31
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-05-30T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-05-30T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-05-30
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-05-29T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-05-29T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-05-29
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-05-28T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-05-28T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-05-28
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-05-27T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-05-27T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-05-27
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-05-26T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-05-26T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-05-26
+⚡️  [log] - [ Dashboard.js ] Dashboard useEffect [activities] triggered - calculating spiritual fitness
+⚡️  [log] - [ Dashboard.tsx:94 calculateSpiritualFitnessScore ] Called with activities: 16
+⚡️  [log] - [ Dashboard.tsx:95 calculateSpiritualFitnessScore ] Sample activities: [{"type":"action-item","date":"2025-06-02"},{"type":"meeting","date":"2025-05-26T16:00:00.000Z"},{"type":"prayer","date":"2025-06-01T16:00:00.000Z"}]
+⚡️  [log] - [ Dashboard.tsx:96 calculateSpiritualFitnessScore ] Timeframe: 60
+⚡️  [log] - [ Dashboard.tsx:108 calculateFitnessFromActivities ] Starting calculation with 16 activities, timeframe: 60
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-06-02 isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-26T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-06-01T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-06-01T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-19T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-20T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-21T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-22T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-23T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-24T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-25T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-27T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-28T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-29T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-30T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-31T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:127 calculateFitnessFromActivities ] Filtered 16 recent activities
+⚡️  [log] - [ Dashboard.tsx:147 calculateFitnessFromActivities ] Calculation result:
+⚡️  [log] - [ Dashboard.tsx:148 calculateFitnessFromActivities ] - Base score: 5
+⚡️  [log] - [ Dashboard.tsx:149 calculateFitnessFromActivities ] - Activity points: 30.375 (from 16 activities)
+⚡️  [log] - [ Dashboard.tsx:150 calculateFitnessFromActivities ] - Consistency points: 10 (from 15 unique days)
+⚡️  [log] - [ Dashboard.tsx:151 calculateFitnessFromActivities ] - Total score: 45.38
+⚡️  [log] - [ Dashboard.tsx:100 calculateSpiritualFitnessScore ] Calculated score: 45.38
+⚡️  [log] - [ Dashboard.js ] Dashboard useEffect [scoreTimeframe] triggered with timeframe: 60
+⚡️  [log] - [ Dashboard.tsx:94 calculateSpiritualFitnessScore ] Called with activities: 16
+⚡️  [log] - [ Dashboard.tsx:95 calculateSpiritualFitnessScore ] Sample activities: [{"type":"action-item","date":"2025-06-02"},{"type":"meeting","date":"2025-05-26T16:00:00.000Z"},{"type":"prayer","date":"2025-06-01T16:00:00.000Z"}]
+⚡️  [log] - [ Dashboard.tsx:96 calculateSpiritualFitnessScore ] Timeframe: 60
+⚡️  [log] - [ Dashboard.tsx:108 calculateFitnessFromActivities ] Starting calculation with 16 activities, timeframe: 60
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-06-02 isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-26T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-06-01T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-06-01T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-19T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-20T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-21T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-22T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-23T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-24T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-25T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-27T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-28T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-29T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-30T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-31T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:127 calculateFitnessFromActivities ] Filtered 16 recent activities
+⚡️  [log] - [ Dashboard.tsx:147 calculateFitnessFromActivities ] Calculation result:
+⚡️  [log] - [ Dashboard.tsx:148 calculateFitnessFromActivities ] - Base score: 5
+⚡️  [log] - [ Dashboard.tsx:149 calculateFitnessFromActivities ] - Activity points: 30.375 (from 16 activities)
+⚡️  [log] - [ Dashboard.tsx:150 calculateFitnessFromActivities ] - Consistency points: 10 (from 15 unique days)
+⚡️  [log] - [ Dashboard.tsx:151 calculateFitnessFromActivities ] - Total score: 45.38
+⚡️  [log] - [ Dashboard.tsx:100 calculateSpiritualFitnessScore ] Calculated score: 45.38
+⚡️  [log] - [ Dashboard.js ] Dashboard initial spiritualFitness: 45.38
+⚡️  [log] - [ Dashboard.js ] Dashboard currentScore state: 45.38
+⚡️  [log] - [ Dashboard.js ] Dashboard formattedScore for display: 45.38
+⚡️  [log] - [ Dashboard.js ] Dashboard progressPercent: 45.38
+⚡️  [log] - [ ActivityList.js: 39 ] Total activities received: 16
+⚡️  [log] - [ ActivityList.js: 40 ] Filter params - limit: null filter: all maxDaysAgo: 7
+⚡️  [log] - [ ActivityList.js: 65 ] Filtering out uncompleted action item: 2
+⚡️  [log] - [ ActivityList.js: 81 ] Filtering out activity outside timeframe - days ago: 14 max: 7
+⚡️  [log] - [ ActivityList.js: 81 ] Filtering out activity outside timeframe - days ago: 13 max: 7
+⚡️  [log] - [ ActivityList.js: 81 ] Filtering out activity outside timeframe - days ago: 12 max: 7
+⚡️  [log] - [ ActivityList.js: 81 ] Filtering out activity outside timeframe - days ago: 11 max: 7
+⚡️  [log] - [ ActivityList.js: 81 ] Filtering out activity outside timeframe - days ago: 10 max: 7
+⚡️  [log] - [ ActivityList.js: 81 ] Filtering out activity outside timeframe - days ago: 9 max: 7
+⚡️  [log] - [ ActivityList.js: 81 ] Filtering out activity outside timeframe - days ago: 8 max: 7
+⚡️  [log] - [ ActivityList.js: 98 ] Final filtered activities count: 8
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-06-01T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-06-01T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-06-01
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-06-01T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-06-01T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-06-01
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-05-31T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-05-31T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-05-31
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-05-30T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-05-30T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-05-30
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-05-29T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-05-29T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-05-29
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-05-28T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-05-28T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-05-28
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-05-27T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-05-27T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-05-27
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-05-26T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-05-26T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-05-26
+⚡️  [log] - [ sqliteLoader.js:545 ] Result from activities: {"values":[{"ios_columns":["id","type","duration","date","notes","literatureTitle","literatureType","meetingName","wasChair","wasShare","wasSpeaker","meetingId","callPerson","isSponsorCall","isSponseeCall","isAAMemberCall","callType","servicePerson","location","mood","gratitude","steps","sponsor","attendees","createdAt","updatedAt"]},{"isSponseeCall":0,"date":"2025-06-02","createdAt":"2025-05-30T18:50:41.586Z","notes":"Action Item: Regular meeting time - Pick a regular meeting time that works.  [ContactRef: 2025-05-28]","mood":"","wasSpeaker":0,"callPerson":"","updatedAt":"2025-05-30T18:50:48.713Z","isSponsorCall":0,"meetingName":"","literatureTitle":"","type":"action-item","callType":"","attendees":"","location":"deleted","sponsor":"","steps":"","isAAMemberCall":0,"id":2,"servicePerson":"","meetingId":null,"wasShare":0,"literatureType":"","gratitude":"","wasChair":0,"duration":0},{"isSponsorCall":0,"callPerson":"","date":"2025-05-26T16:00:00.000Z","literatureTitle":"","updatedAt":"2025-06-01T17:37:47.611Z","duration":60,"type":"meeting","steps":"","isSponseeCall":0,"notes":"","servicePerson":"","meetingId":null,"gratitude":"","mood":"","sponsor":"","callType":"","wasSpeaker":0,"attendees":"","wasChair":0,"literatureType":"","isAAMemberCall":0,"id":4,"location":"completed","wasShare":0,"createdAt":"2025-06-01T17:37:47.611Z","meetingName":""},{"meetingId":null,"servicePerson":"","literatureType":"","date":"2025-06-01T16:00:00.000Z","type":"prayer","createdAt":"2025-06-01T17:37:55.740Z","notes":"","wasChair":0,"gratitude":"","updatedAt":"2025-06-01T17:37:55.740Z","isSponsorCall":0,"wasShare":0,"id":5,"steps":"","sponsor":"","isSponseeCall":0,"callPerson":"","isAAMemberCall":0,"literatureTitle":"","duration":15,"mood":"","wasSpeaker":0,"meetingName":"","attendees":"","location":"completed","callType":""},{"location":"completed","literatureType":"","isAAMemberCall":0,"wasSpeaker":0,"meetingName":"","updatedAt":"2025-06-01T17:38:03.578Z","duration":15,"id":6,"date":"2025-06-01T16:00:00.000Z","callPerson":"","isSponseeCall":0,"mood":"","gratitude":"","literatureTitle":"","notes":"","callType":"","sponsor":"","wasShare":0,"type":"meditation","createdAt":"2025-06-01T17:38:03.578Z","isSponsorCall":0,"attendees":"","wasChair":0,"steps":"","servicePerson":"","meetingId":null},{"wasShare":0,"isSponseeCall":0,"id":7,"createdAt":"2025-06-01T17:38:23.307Z","notes":"","date":"2025-05-19T16:00:00.000Z","isSponsorCall":0,"sponsor":"","gratitude":"","steps":"","servicePerson":"","isAAMemberCall":0,"literatureType":"","literatureTitle":"","callPerson":"","location":"completed","meetingName":"","type":"prayer","wasSpeaker":0,"mood":"","updatedAt":"2025-06-01T17:38:23.307Z","wasChair":0,"duration":15,"meetingId":null,"callType":"","attendees":""},{"callType":"","isSponseeCall":0,"createdAt":"2025-06-01T17:38:34.909Z","callPerson":"","wasChair":0,"gratitude":"","location":"completed","steps":"","isSponsorCall":0,"duration":15,"wasSpeaker":0,"attendees":"","literatureType":"","meetingId":null,"mood":"","id":8,"meetingName":"","wasShare":0,"sponsor":"","notes":"","date":"2025-05-20T16:00:00.000Z","updatedAt":"2025-06-01T17:38:34.909Z","servicePerson":"","type":"prayer","literatureTitle":"","isAAMemberCall":0},{"wasShare":0,"wasChair":0,"duration":15,"sponsor":"","id":9,"notes":"","callType":"","literatureTitle":"","type":"prayer","gratitude":"","servicePerson":"","mood":"","date":"2025-05-21T16:00:00.000Z","isSponsorCall":0,"isSponseeCall":0,"steps":"","isAAMemberCall":0,"meetingName":"","meetingId":null,"createdAt":"2025-06-01T17:38:47.988Z","callPerson":"","literatureType":"","updatedAt":"2025-06-01T17:38:47.988Z","location":"completed","attendees":"","wasSpeaker":0},{"callPerson":"","mood":"","createdAt":"2025-06-01T17:39:15.957Z","attendees":"","duration":15,"callType":"","wasChair":0,"wasSpeaker":0,"isSponseeCall":0,"notes":"","updatedAt":"2025-06-01T17:39:15.957Z","steps":"","meetingId":null,"id":10,"literatureType":"","isAAMemberCall":0,"wasShare":0,"sp
+⚡️  [log] - [ sqliteLoader.js:592 ] Converted 16 iOS format items to standard format
+⚡️  [log] - [ sqliteLoader.js ] Sample converted item: {"id":2,"type":"action-item","duration":0,"date":"2025-06-02","notes":"Action Item: Regular meeting time - Pick a regular meeting time that works.  [ContactRef: 2025-05-28]","literatureTitle":"","literatureType":"","meetingName":"","wasChair":0,"wasShare":0,"wasSpeaker":0,"meetingId":null,"callPerson":"","isSponsorCall":0,"isSponseeCall":0,"isAAMemberCall":0,"callType":"","servicePerson":"","location":"deleted","mood":"","gratitude":"","steps":"","sponsor":"","attendees":"","createdAt":"2025-05-30T18:50:41.586Z","updatedAt":"2025-05-30T18:50:48.713Z"}
+⚡️  [log] - [ AppDataContext.tsx:288 ] Activities loaded: 16
+⚡️  [log] - [ Dashboard.js ] Dashboard initial spiritualFitness: 45.38
+⚡️  [log] - [ Dashboard.js ] Dashboard currentScore state: 45.38
+⚡️  [log] - [ Dashboard.js ] Dashboard formattedScore for display: 45.38
+⚡️  [log] - [ Dashboard.js ] Dashboard progressPercent: 45.38
+⚡️  [log] - [ ActivityList.js: 39 ] Total activities received: 16
+⚡️  [log] - [ ActivityList.js: 40 ] Filter params - limit: null filter: all maxDaysAgo: 7
+⚡️  [log] - [ ActivityList.js: 65 ] Filtering out uncompleted action item: 2
+⚡️  [log] - [ ActivityList.js: 81 ] Filtering out activity outside timeframe - days ago: 14 max: 7
+⚡️  [log] - [ ActivityList.js: 81 ] Filtering out activity outside timeframe - days ago: 13 max: 7
+⚡️  [log] - [ ActivityList.js: 81 ] Filtering out activity outside timeframe - days ago: 12 max: 7
+⚡️  [log] - [ ActivityList.js: 81 ] Filtering out activity outside timeframe - days ago: 11 max: 7
+⚡️  [log] - [ ActivityList.js: 81 ] Filtering out activity outside timeframe - days ago: 10 max: 7
+⚡️  [log] - [ ActivityList.js: 81 ] Filtering out activity outside timeframe - days ago: 9 max: 7
+⚡️  [log] - [ ActivityList.js: 81 ] Filtering out activity outside timeframe - days ago: 8 max: 7
+⚡️  [log] - [ ActivityList.js: 98 ] Final filtered activities count: 8
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-06-01T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-06-01T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-06-01
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-06-01T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-06-01T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-06-01
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-05-31T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-05-31T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-05-31
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-05-30T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-05-30T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-05-30
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-05-29T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-05-29T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-05-29
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-05-28T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-05-28T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-05-28
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-05-27T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-05-27T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-05-27
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-05-26T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-05-26T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-05-26
+⚡️  [log] - [ Dashboard.js ] Dashboard useEffect [activities] triggered - calculating spiritual fitness
+⚡️  [log] - [ Dashboard.tsx:94 calculateSpiritualFitnessScore ] Called with activities: 16
+⚡️  [log] - [ Dashboard.tsx:95 calculateSpiritualFitnessScore ] Sample activities: [{"type":"action-item","date":"2025-06-02"},{"type":"meeting","date":"2025-05-26T16:00:00.000Z"},{"type":"prayer","date":"2025-06-01T16:00:00.000Z"}]
+⚡️  [log] - [ Dashboard.tsx:96 calculateSpiritualFitnessScore ] Timeframe: 60
+⚡️  [log] - [ Dashboard.tsx:108 calculateFitnessFromActivities ] Starting calculation with 16 activities, timeframe: 60
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-06-02 isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-26T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-06-01T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-06-01T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-19T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-20T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-21T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-22T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-23T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-24T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-25T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-27T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-28T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-29T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-30T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-31T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:127 calculateFitnessFromActivities ] Filtered 16 recent activities
+⚡️  [log] - [ Dashboard.tsx:147 calculateFitnessFromActivities ] Calculation result:
+⚡️  [log] - [ Dashboard.tsx:148 calculateFitnessFromActivities ] - Base score: 5
+⚡️  [log] - [ Dashboard.tsx:149 calculateFitnessFromActivities ] - Activity points: 30.375 (from 16 activities)
+⚡️  [log] - [ Dashboard.tsx:150 calculateFitnessFromActivities ] - Consistency points: 10 (from 15 unique days)
+⚡️  [log] - [ Dashboard.tsx:151 calculateFitnessFromActivities ] - Total score: 45.38
+⚡️  [log] - [ Dashboard.tsx:100 calculateSpiritualFitnessScore ] Calculated score: 45.38
+⚡️  To Native ->  CapacitorSQLite query 129690373
+⚡️  [log] - [ sqliteLoader.js:523 ] Getting all items from activities
+⚡️  TO JS {"values":[{"ios_columns":["id","type","duration","date","notes","literatureTitle","literatureType","meetingName","wasChair","wasShare","wasSpeaker","meetingId","callPerson","isSponsorCall","isSponseeCall","isAAMemberCall","callType","servicePerson","locat
+⚡️  [log] - [ Dashboard.js ] Dashboard initial spiritualFitness: 45.38
+⚡️  [log] - [ Dashboard.js ] Dashboard currentScore state: 45.38
+⚡️  [log] - [ Dashboard.js ] Dashboard formattedScore for display: 45.38
+⚡️  [log] - [ Dashboard.js ] Dashboard progressPercent: 45.38
+⚡️  [log] - [ ActivityList.js: 39 ] Total activities received: 16
+⚡️  [log] - [ ActivityList.js: 40 ] Filter params - limit: null filter: all maxDaysAgo: 7
+⚡️  [log] - [ ActivityList.js: 65 ] Filtering out uncompleted action item: 2
+⚡️  [log] - [ ActivityList.js: 81 ] Filtering out activity outside timeframe - days ago: 14 max: 7
+⚡️  [log] - [ ActivityList.js: 81 ] Filtering out activity outside timeframe - days ago: 13 max: 7
+⚡️  [log] - [ ActivityList.js: 81 ] Filtering out activity outside timeframe - days ago: 12 max: 7
+⚡️  [log] - [ ActivityList.js: 81 ] Filtering out activity outside timeframe - days ago: 11 max: 7
+⚡️  [log] - [ ActivityList.js: 81 ] Filtering out activity outside timeframe - days ago: 10 max: 7
+⚡️  [log] - [ ActivityList.js: 81 ] Filtering out activity outside timeframe - days ago: 9 max: 7
+⚡️  [log] - [ ActivityList.js: 81 ] Filtering out activity outside timeframe - days ago: 8 max: 7
+⚡️  [log] - [ ActivityList.js: 98 ] Final filtered activities count: 8
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-06-01T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-06-01T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-06-01
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-06-01T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-06-01T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-06-01
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-05-31T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-05-31T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-05-31
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-05-30T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-05-30T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-05-30
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-05-29T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-05-29T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-05-29
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-05-28T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-05-28T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-05-28
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-05-27T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-05-27T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-05-27
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-05-26T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-05-26T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-05-26
+⚡️  [log] - [ Dashboard.js ] Dashboard useEffect [activities] triggered - calculating spiritual fitness
+⚡️  [log] - [ Dashboard.tsx:94 calculateSpiritualFitnessScore ] Called with activities: 16
+⚡️  [log] - [ Dashboard.tsx:95 calculateSpiritualFitnessScore ] Sample activities: [{"type":"action-item","date":"2025-06-02"},{"type":"meeting","date":"2025-05-26T16:00:00.000Z"},{"type":"prayer","date":"2025-06-01T16:00:00.000Z"}]
+⚡️  [log] - [ Dashboard.tsx:96 calculateSpiritualFitnessScore ] Timeframe: 90
+⚡️  [log] - [ Dashboard.tsx:108 calculateFitnessFromActivities ] Starting calculation with 16 activities, timeframe: 90
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-06-02 isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-26T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-06-01T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-06-01T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-19T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-20T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-21T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-22T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-23T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-24T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-25T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-27T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-28T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-29T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-30T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-31T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:127 calculateFitnessFromActivities ] Filtered 16 recent activities
+⚡️  [log] - [ Dashboard.tsx:147 calculateFitnessFromActivities ] Calculation result:
+⚡️  [log] - [ Dashboard.tsx:148 calculateFitnessFromActivities ] - Base score: 5
+⚡️  [log] - [ Dashboard.tsx:149 calculateFitnessFromActivities ] - Activity points: 30.375 (from 16 activities)
+⚡️  [log] - [ Dashboard.tsx:150 calculateFitnessFromActivities ] - Consistency points: 6.666666666666666 (from 15 unique days)
+⚡️  [log] - [ Dashboard.tsx:151 calculateFitnessFromActivities ] - Total score: 42.04
+⚡️  [log] - [ Dashboard.tsx:100 calculateSpiritualFitnessScore ] Calculated score: 42.04
+⚡️  [log] - [ Dashboard.js ] Dashboard useEffect [scoreTimeframe] triggered with timeframe: 90
+⚡️  [log] - [ Dashboard.tsx:94 calculateSpiritualFitnessScore ] Called with activities: 16
+⚡️  [log] - [ Dashboard.tsx:95 calculateSpiritualFitnessScore ] Sample activities: [{"type":"action-item","date":"2025-06-02"},{"type":"meeting","date":"2025-05-26T16:00:00.000Z"},{"type":"prayer","date":"2025-06-01T16:00:00.000Z"}]
+⚡️  [log] - [ Dashboard.tsx:96 calculateSpiritualFitnessScore ] Timeframe: 90
+⚡️  [log] - [ Dashboard.tsx:108 calculateFitnessFromActivities ] Starting calculation with 16 activities, timeframe: 90
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-06-02 isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-26T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-06-01T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-06-01T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-19T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-20T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-21T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-22T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-23T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-24T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-25T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-27T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-28T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-29T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-30T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-31T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:127 calculateFitnessFromActivities ] Filtered 16 recent activities
+⚡️  [log] - [ Dashboard.tsx:147 calculateFitnessFromActivities ] Calculation result:
+⚡️  [log] - [ Dashboard.tsx:148 calculateFitnessFromActivities ] - Base score: 5
+⚡️  [log] - [ Dashboard.tsx:149 calculateFitnessFromActivities ] - Activity points: 30.375 (from 16 activities)
+⚡️  [log] - [ Dashboard.tsx:150 calculateFitnessFromActivities ] - Consistency points: 6.666666666666666 (from 15 unique days)
+⚡️  [log] - [ Dashboard.tsx:151 calculateFitnessFromActivities ] - Total score: 42.04
+⚡️  [log] - [ Dashboard.tsx:100 calculateSpiritualFitnessScore ] Calculated score: 42.04
+⚡️  [log] - [ sqliteLoader.js:545 ] Result from activities: {"values":[{"ios_columns":["id","type","duration","date","notes","literatureTitle","literatureType","meetingName","wasChair","wasShare","wasSpeaker","meetingId","callPerson","isSponsorCall","isSponseeCall","isAAMemberCall","callType","servicePerson","location","mood","gratitude","steps","sponsor","attendees","createdAt","updatedAt"]},{"isSponsorCall":0,"notes":"Action Item: Regular meeting time - Pick a regular meeting time that works.  [ContactRef: 2025-05-28]","wasSpeaker":0,"sponsor":"","meetingName":"","createdAt":"2025-05-30T18:50:41.586Z","isSponseeCall":0,"callPerson":"","duration":0,"type":"action-item","literatureType":"","attendees":"","servicePerson":"","literatureTitle":"","wasShare":0,"wasChair":0,"updatedAt":"2025-05-30T18:50:48.713Z","date":"2025-06-02","mood":"","meetingId":null,"isAAMemberCall":0,"location":"deleted","callType":"","id":2,"gratitude":"","steps":""},{"notes":"","meetingId":null,"isSponsorCall":0,"callPerson":"","updatedAt":"2025-06-01T17:37:47.611Z","location":"completed","wasChair":0,"isAAMemberCall":0,"sponsor":"","servicePerson":"","createdAt":"2025-06-01T17:37:47.611Z","duration":60,"literatureType":"","mood":"","steps":"","literatureTitle":"","id":4,"callType":"","attendees":"","wasShare":0,"meetingName":"","isSponseeCall":0,"date":"2025-05-26T16:00:00.000Z","type":"meeting","wasSpeaker":0,"gratitude":""},{"duration":15,"location":"completed","id":5,"isAAMemberCall":0,"updatedAt":"2025-06-01T17:37:55.740Z","meetingName":"","type":"prayer","wasChair":0,"sponsor":"","literatureTitle":"","steps":"","wasSpeaker":0,"isSponseeCall":0,"literatureType":"","meetingId":null,"callPerson":"","isSponsorCall":0,"gratitude":"","callType":"","notes":"","date":"2025-06-01T16:00:00.000Z","attendees":"","wasShare":0,"createdAt":"2025-06-01T17:37:55.740Z","mood":"","servicePerson":""},{"type":"meditation","sponsor":"","isSponsorCall":0,"gratitude":"","steps":"","callPerson":"","location":"completed","isAAMemberCall":0,"meetingId":null,"isSponseeCall":0,"literatureTitle":"","updatedAt":"2025-06-01T17:38:03.578Z","callType":"","wasChair":0,"wasSpeaker":0,"id":6,"servicePerson":"","literatureType":"","createdAt":"2025-06-01T17:38:03.578Z","attendees":"","notes":"","wasShare":0,"meetingName":"","duration":15,"mood":"","date":"2025-06-01T16:00:00.000Z"},{"attendees":"","servicePerson":"","type":"prayer","isAAMemberCall":0,"steps":"","updatedAt":"2025-06-01T17:38:23.307Z","wasSpeaker":0,"callPerson":"","gratitude":"","location":"completed","id":7,"isSponseeCall":0,"wasChair":0,"createdAt":"2025-06-01T17:38:23.307Z","meetingName":"","callType":"","meetingId":null,"wasShare":0,"isSponsorCall":0,"duration":15,"sponsor":"","notes":"","date":"2025-05-19T16:00:00.000Z","literatureTitle":"","mood":"","literatureType":""},{"sponsor":"","location":"completed","isAAMemberCall":0,"servicePerson":"","updatedAt":"2025-06-01T17:38:34.909Z","meetingId":null,"id":8,"wasSpeaker":0,"meetingName":"","date":"2025-05-20T16:00:00.000Z","attendees":"","wasShare":0,"steps":"","isSponseeCall":0,"createdAt":"2025-06-01T17:38:34.909Z","notes":"","isSponsorCall":0,"callType":"","mood":"","wasChair":0,"gratitude":"","literatureType":"","callPerson":"","type":"prayer","literatureTitle":"","duration":15},{"mood":"","servicePerson":"","updatedAt":"2025-06-01T17:38:47.988Z","literatureType":"","wasSpeaker":0,"duration":15,"isSponsorCall":0,"meetingId":null,"id":9,"isAAMemberCall":0,"gratitude":"","type":"prayer","createdAt":"2025-06-01T17:38:47.988Z","wasChair":0,"meetingName":"","callPerson":"","date":"2025-05-21T16:00:00.000Z","steps":"","attendees":"","notes":"","wasShare":0,"literatureTitle":"","isSponseeCall":0,"callType":"","sponsor":"","location":"completed"},{"duration":15,"attendees":"","wasChair":0,"meetingName":"","type":"prayer","location":"completed","wasShare":0,"createdAt":"2025-06-01T17:39:15.957Z","id":10,"literatureType":"","date":"2025-05-22T16:00:00.000Z","servicePerson":"","isSponseeCall":0,"meetingId":null,"callType":"","gratitude":"",
+⚡️  [log] - [ sqliteLoader.js:592 ] Converted 16 iOS format items to standard format
+⚡️  [log] - [ sqliteLoader.js ] Sample converted item: {"id":2,"type":"action-item","duration":0,"date":"2025-06-02","notes":"Action Item: Regular meeting time - Pick a regular meeting time that works.  [ContactRef: 2025-05-28]","literatureTitle":"","literatureType":"","meetingName":"","wasChair":0,"wasShare":0,"wasSpeaker":0,"meetingId":null,"callPerson":"","isSponsorCall":0,"isSponseeCall":0,"isAAMemberCall":0,"callType":"","servicePerson":"","location":"deleted","mood":"","gratitude":"","steps":"","sponsor":"","attendees":"","createdAt":"2025-05-30T18:50:41.586Z","updatedAt":"2025-05-30T18:50:48.713Z"}
+⚡️  [log] - [ AppDataContext.tsx:288 ] Activities loaded: 16
+⚡️  [log] - [ Dashboard.js ] Dashboard initial spiritualFitness: 42.04
+⚡️  [log] - [ Dashboard.js ] Dashboard currentScore state: 42.04
+⚡️  [log] - [ Dashboard.js ] Dashboard formattedScore for display: 42.04
+⚡️  [log] - [ Dashboard.js ] Dashboard progressPercent: 42.04
+⚡️  [log] - [ ActivityList.js: 39 ] Total activities received: 16
+⚡️  [log] - [ ActivityList.js: 40 ] Filter params - limit: null filter: all maxDaysAgo: 7
+⚡️  [log] - [ ActivityList.js: 65 ] Filtering out uncompleted action item: 2
+⚡️  [log] - [ ActivityList.js: 81 ] Filtering out activity outside timeframe - days ago: 14 max: 7
+⚡️  [log] - [ ActivityList.js: 81 ] Filtering out activity outside timeframe - days ago: 13 max: 7
+⚡️  [log] - [ ActivityList.js: 81 ] Filtering out activity outside timeframe - days ago: 12 max: 7
+⚡️  [log] - [ ActivityList.js: 81 ] Filtering out activity outside timeframe - days ago: 11 max: 7
+⚡️  [log] - [ ActivityList.js: 81 ] Filtering out activity outside timeframe - days ago: 10 max: 7
+⚡️  [log] - [ ActivityList.js: 81 ] Filtering out activity outside timeframe - days ago: 9 max: 7
+⚡️  [log] - [ ActivityList.js: 81 ] Filtering out activity outside timeframe - days ago: 8 max: 7
+⚡️  [log] - [ ActivityList.js: 98 ] Final filtered activities count: 8
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-06-01T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-06-01T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-06-01
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-06-01T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-06-01T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-06-01
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-05-31T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-05-31T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-05-31
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-05-30T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-05-30T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-05-30
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-05-29T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-05-29T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-05-29
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-05-28T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-05-28T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-05-28
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-05-27T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-05-27T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-05-27
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-05-26T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-05-26T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-05-26
+⚡️  [log] - [ Dashboard.js ] Dashboard useEffect [activities] triggered - calculating spiritual fitness
+⚡️  [log] - [ Dashboard.tsx:94 calculateSpiritualFitnessScore ] Called with activities: 16
+⚡️  [log] - [ Dashboard.tsx:95 calculateSpiritualFitnessScore ] Sample activities: [{"type":"action-item","date":"2025-06-02"},{"type":"meeting","date":"2025-05-26T16:00:00.000Z"},{"type":"prayer","date":"2025-06-01T16:00:00.000Z"}]
+⚡️  [log] - [ Dashboard.tsx:96 calculateSpiritualFitnessScore ] Timeframe: 90
+⚡️  [log] - [ Dashboard.tsx:108 calculateFitnessFromActivities ] Starting calculation with 16 activities, timeframe: 90
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-06-02 isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-26T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-06-01T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-06-01T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-19T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-20T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-21T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-22T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-23T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-24T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-25T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-27T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-28T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-29T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-30T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-31T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:127 calculateFitnessFromActivities ] Filtered 16 recent activities
+⚡️  [log] - [ Dashboard.tsx:147 calculateFitnessFromActivities ] Calculation result:
+⚡️  [log] - [ Dashboard.tsx:148 calculateFitnessFromActivities ] - Base score: 5
+⚡️  [log] - [ Dashboard.tsx:149 calculateFitnessFromActivities ] - Activity points: 30.375 (from 16 activities)
+⚡️  [log] - [ Dashboard.tsx:150 calculateFitnessFromActivities ] - Consistency points: 6.666666666666666 (from 15 unique days)
+⚡️  [log] - [ Dashboard.tsx:151 calculateFitnessFromActivities ] - Total score: 42.04
+⚡️  [log] - [ Dashboard.tsx:100 calculateSpiritualFitnessScore ] Calculated score: 42.04
+⚡️  [log] - [ Dashboard.js ] Dashboard initial spiritualFitness: 42.04
+⚡️  [log] - [ Dashboard.js ] Dashboard currentScore state: 42.04
+⚡️  [log] - [ Dashboard.js ] Dashboard formattedScore for display: 42.04
+⚡️  [log] - [ Dashboard.js ] Dashboard progressPercent: 42.04
+⚡️  [log] - [ sqliteLoader.js:523 ] Getting all items from activities
+⚡️  To Native ->  CapacitorSQLite query 129690374
+⚡️  TO JS {"values":[{"ios_columns":["id","type","duration","date","notes","literatureTitle","literatureType","meetingName","wasChair","wasShare","wasSpeaker","meetingId","callPerson","isSponsorCall","isSponseeCall","isAAMemberCall","callType","servicePerson","locat
+⚡️  [log] - [ Dashboard.js ] Dashboard initial spiritualFitness: 42.04
+⚡️  [log] - [ Dashboard.js ] Dashboard currentScore state: 42.04
+⚡️  [log] - [ Dashboard.js ] Dashboard formattedScore for display: 42.04
+⚡️  [log] - [ Dashboard.js ] Dashboard progressPercent: 42.04
+⚡️  [log] - [ ActivityList.js: 39 ] Total activities received: 16
+⚡️  [log] - [ ActivityList.js: 40 ] Filter params - limit: null filter: all maxDaysAgo: 7
+⚡️  [log] - [ ActivityList.js: 65 ] Filtering out uncompleted action item: 2
+⚡️  [log] - [ ActivityList.js: 81 ] Filtering out activity outside timeframe - days ago: 14 max: 7
+⚡️  [log] - [ ActivityList.js: 81 ] Filtering out activity outside timeframe - days ago: 13 max: 7
+⚡️  [log] - [ ActivityList.js: 81 ] Filtering out activity outside timeframe - days ago: 12 max: 7
+⚡️  [log] - [ ActivityList.js: 81 ] Filtering out activity outside timeframe - days ago: 11 max: 7
+⚡️  [log] - [ ActivityList.js: 81 ] Filtering out activity outside timeframe - days ago: 10 max: 7
+⚡️  [log] - [ ActivityList.js: 81 ] Filtering out activity outside timeframe - days ago: 9 max: 7
+⚡️  [log] - [ ActivityList.js: 81 ] Filtering out activity outside timeframe - days ago: 8 max: 7
+⚡️  [log] - [ ActivityList.js: 98 ] Final filtered activities count: 8
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-06-01T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-06-01T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-06-01
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-06-01T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-06-01T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-06-01
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-05-31T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-05-31T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-05-31
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-05-30T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-05-30T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-05-30
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-05-29T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-05-29T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-05-29
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-05-28T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-05-28T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-05-28
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-05-27T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-05-27T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-05-27
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-05-26T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-05-26T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-05-26
+⚡️  [log] - [ Dashboard.js ] Dashboard useEffect [activities] triggered - calculating spiritual fitness
+⚡️  [log] - [ Dashboard.tsx:94 calculateSpiritualFitnessScore ] Called with activities: 16
+⚡️  [log] - [ Dashboard.tsx:95 calculateSpiritualFitnessScore ] Sample activities: [{"type":"action-item","date":"2025-06-02"},{"type":"meeting","date":"2025-05-26T16:00:00.000Z"},{"type":"prayer","date":"2025-06-01T16:00:00.000Z"}]
+⚡️  [log] - [ Dashboard.tsx:96 calculateSpiritualFitnessScore ] Timeframe: 180
+⚡️  [log] - [ Dashboard.tsx:108 calculateFitnessFromActivities ] Starting calculation with 16 activities, timeframe: 180
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-06-02 isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-26T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-06-01T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-06-01T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-19T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-20T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-21T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-22T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-23T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-24T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-25T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-27T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-28T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-29T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-30T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-31T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:127 calculateFitnessFromActivities ] Filtered 16 recent activities
+⚡️  [log] - [ Dashboard.tsx:147 calculateFitnessFromActivities ] Calculation result:
+⚡️  [log] - [ Dashboard.tsx:148 calculateFitnessFromActivities ] - Base score: 5
+⚡️  [log] - [ Dashboard.tsx:149 calculateFitnessFromActivities ] - Activity points: 30.375 (from 16 activities)
+⚡️  [log] - [ Dashboard.tsx:150 calculateFitnessFromActivities ] - Consistency points: 3.333333333333333 (from 15 unique days)
+⚡️  [log] - [ Dashboard.tsx:151 calculateFitnessFromActivities ] - Total score: 38.71
+⚡️  [log] - [ Dashboard.tsx:100 calculateSpiritualFitnessScore ] Calculated score: 38.71
+⚡️  [log] - [ Dashboard.js ] Dashboard useEffect [scoreTimeframe] triggered with timeframe: 180
+⚡️  [log] - [ Dashboard.tsx:94 calculateSpiritualFitnessScore ] Called with activities: 16
+⚡️  [log] - [ Dashboard.tsx:95 calculateSpiritualFitnessScore ] Sample activities: [{"type":"action-item","date":"2025-06-02"},{"type":"meeting","date":"2025-05-26T16:00:00.000Z"},{"type":"prayer","date":"2025-06-01T16:00:00.000Z"}]
+⚡️  [log] - [ Dashboard.tsx:96 calculateSpiritualFitnessScore ] Timeframe: 180
+⚡️  [log] - [ Dashboard.tsx:108 calculateFitnessFromActivities ] Starting calculation with 16 activities, timeframe: 180
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-06-02 isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-26T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-06-01T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-06-01T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-19T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-20T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-21T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-22T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-23T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-24T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-25T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-27T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-28T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-29T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-30T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-31T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:127 calculateFitnessFromActivities ] Filtered 16 recent activities
+⚡️  [log] - [ Dashboard.tsx:147 calculateFitnessFromActivities ] Calculation result:
+⚡️  [log] - [ Dashboard.tsx:148 calculateFitnessFromActivities ] - Base score: 5
+⚡️  [log] - [ Dashboard.tsx:149 calculateFitnessFromActivities ] - Activity points: 30.375 (from 16 activities)
+⚡️  [log] - [ Dashboard.tsx:150 calculateFitnessFromActivities ] - Consistency points: 3.333333333333333 (from 15 unique days)
+⚡️  [log] - [ Dashboard.tsx:151 calculateFitnessFromActivities ] - Total score: 38.71
+⚡️  [log] - [ Dashboard.tsx:100 calculateSpiritualFitnessScore ] Calculated score: 38.71
+⚡️  [log] - [ sqliteLoader.js:545 ] Result from activities: {"values":[{"ios_columns":["id","type","duration","date","notes","literatureTitle","literatureType","meetingName","wasChair","wasShare","wasSpeaker","meetingId","callPerson","isSponsorCall","isSponseeCall","isAAMemberCall","callType","servicePerson","location","mood","gratitude","steps","sponsor","attendees","createdAt","updatedAt"]},{"sponsor":"","meetingId":null,"wasSpeaker":0,"location":"deleted","isSponseeCall":0,"callType":"","date":"2025-06-02","literatureTitle":"","steps":"","callPerson":"","servicePerson":"","notes":"Action Item: Regular meeting time - Pick a regular meeting time that works.  [ContactRef: 2025-05-28]","mood":"","gratitude":"","attendees":"","meetingName":"","id":2,"createdAt":"2025-05-30T18:50:41.586Z","wasChair":0,"duration":0,"updatedAt":"2025-05-30T18:50:48.713Z","type":"action-item","literatureType":"","isSponsorCall":0,"isAAMemberCall":0,"wasShare":0},{"isSponsorCall":0,"literatureType":"","gratitude":"","wasChair":0,"servicePerson":"","wasSpeaker":0,"duration":60,"steps":"","mood":"","updatedAt":"2025-06-01T17:37:47.611Z","createdAt":"2025-06-01T17:37:47.611Z","meetingName":"","callType":"","literatureTitle":"","callPerson":"","meetingId":null,"location":"completed","id":4,"type":"meeting","notes":"","wasShare":0,"isAAMemberCall":0,"attendees":"","isSponseeCall":0,"sponsor":"","date":"2025-05-26T16:00:00.000Z"},{"callPerson":"","meetingId":null,"literatureTitle":"","duration":15,"isAAMemberCall":0,"callType":"","attendees":"","date":"2025-06-01T16:00:00.000Z","wasChair":0,"mood":"","createdAt":"2025-06-01T17:37:55.740Z","isSponsorCall":0,"wasSpeaker":0,"steps":"","meetingName":"","isSponseeCall":0,"servicePerson":"","type":"prayer","updatedAt":"2025-06-01T17:37:55.740Z","sponsor":"","gratitude":"","notes":"","literatureType":"","location":"completed","wasShare":0,"id":5},{"attendees":"","wasShare":0,"meetingName":"","isAAMemberCall":0,"notes":"","wasSpeaker":0,"updatedAt":"2025-06-01T17:38:03.578Z","id":6,"isSponsorCall":0,"createdAt":"2025-06-01T17:38:03.578Z","date":"2025-06-01T16:00:00.000Z","meetingId":null,"callType":"","callPerson":"","steps":"","literatureTitle":"","servicePerson":"","gratitude":"","sponsor":"","literatureType":"","location":"completed","mood":"","isSponseeCall":0,"wasChair":0,"type":"meditation","duration":15},{"isSponsorCall":0,"notes":"","meetingName":"","isAAMemberCall":0,"sponsor":"","createdAt":"2025-06-01T17:38:23.307Z","attendees":"","callType":"","servicePerson":"","location":"completed","gratitude":"","updatedAt":"2025-06-01T17:38:23.307Z","wasShare":0,"date":"2025-05-19T16:00:00.000Z","wasChair":0,"wasSpeaker":0,"steps":"","duration":15,"type":"prayer","isSponseeCall":0,"mood":"","meetingId":null,"literatureTitle":"","callPerson":"","literatureType":"","id":7},{"gratitude":"","isAAMemberCall":0,"callPerson":"","literatureTitle":"","id":8,"date":"2025-05-20T16:00:00.000Z","updatedAt":"2025-06-01T17:38:34.909Z","mood":"","steps":"","location":"completed","wasSpeaker":0,"isSponseeCall":0,"callType":"","sponsor":"","meetingId":null,"wasChair":0,"wasShare":0,"type":"prayer","meetingName":"","isSponsorCall":0,"servicePerson":"","attendees":"","literatureType":"","createdAt":"2025-06-01T17:38:34.909Z","notes":"","duration":15},{"sponsor":"","location":"completed","isAAMemberCall":0,"steps":"","notes":"","callType":"","isSponsorCall":0,"callPerson":"","literatureTitle":"","type":"prayer","id":9,"attendees":"","literatureType":"","createdAt":"2025-06-01T17:38:47.988Z","date":"2025-05-21T16:00:00.000Z","meetingName":"","wasSpeaker":0,"duration":15,"gratitude":"","wasChair":0,"updatedAt":"2025-06-01T17:38:47.988Z","servicePerson":"","isSponseeCall":0,"meetingId":null,"wasShare":0,"mood":""},{"servicePerson":"","id":10,"callPerson":"","notes":"","isSponseeCall":0,"wasSpeaker":0,"meetingName":"","isAAMemberCall":0,"sponsor":"","literatureType":"","wasChair":0,"attendees":"","createdAt":"2025-06-01T17:39:15.957Z","duration":15,"mood":"","literatureTitle":"","updatedAt":"2025-06-01T17:
+⚡️  [log] - [ sqliteLoader.js:592 ] Converted 16 iOS format items to standard format
+⚡️  [log] - [ sqliteLoader.js ] Sample converted item: {"id":2,"type":"action-item","duration":0,"date":"2025-06-02","notes":"Action Item: Regular meeting time - Pick a regular meeting time that works.  [ContactRef: 2025-05-28]","literatureTitle":"","literatureType":"","meetingName":"","wasChair":0,"wasShare":0,"wasSpeaker":0,"meetingId":null,"callPerson":"","isSponsorCall":0,"isSponseeCall":0,"isAAMemberCall":0,"callType":"","servicePerson":"","location":"deleted","mood":"","gratitude":"","steps":"","sponsor":"","attendees":"","createdAt":"2025-05-30T18:50:41.586Z","updatedAt":"2025-05-30T18:50:48.713Z"}
+⚡️  [log] - [ AppDataContext.tsx:288 ] Activities loaded: 16
+⚡️  [log] - [ Dashboard.js ] Dashboard initial spiritualFitness: 38.71
+⚡️  [log] - [ Dashboard.js ] Dashboard currentScore state: 38.71
+⚡️  [log] - [ Dashboard.js ] Dashboard formattedScore for display: 38.71
+⚡️  [log] - [ Dashboard.js ] Dashboard progressPercent: 38.71
+⚡️  [log] - [ ActivityList.js: 39 ] Total activities received: 16
+⚡️  [log] - [ ActivityList.js: 40 ] Filter params - limit: null filter: all maxDaysAgo: 7
+⚡️  [log] - [ ActivityList.js: 65 ] Filtering out uncompleted action item: 2
+⚡️  [log] - [ ActivityList.js: 81 ] Filtering out activity outside timeframe - days ago: 14 max: 7
+⚡️  [log] - [ ActivityList.js: 81 ] Filtering out activity outside timeframe - days ago: 13 max: 7
+⚡️  [log] - [ ActivityList.js: 81 ] Filtering out activity outside timeframe - days ago: 12 max: 7
+⚡️  [log] - [ ActivityList.js: 81 ] Filtering out activity outside timeframe - days ago: 11 max: 7
+⚡️  [log] - [ ActivityList.js: 81 ] Filtering out activity outside timeframe - days ago: 10 max: 7
+⚡️  [log] - [ ActivityList.js: 81 ] Filtering out activity outside timeframe - days ago: 9 max: 7
+⚡️  [log] - [ ActivityList.js: 81 ] Filtering out activity outside timeframe - days ago: 8 max: 7
+⚡️  [log] - [ ActivityList.js: 98 ] Final filtered activities count: 8
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-06-01T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-06-01T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-06-01
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-06-01T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-06-01T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-06-01
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-05-31T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-05-31T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-05-31
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-05-30T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-05-30T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-05-30
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-05-29T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-05-29T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-05-29
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-05-28T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-05-28T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-05-28
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-05-27T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-05-27T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-05-27
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-05-26T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-05-26T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-05-26
+⚡️  [log] - [ Dashboard.js ] Dashboard useEffect [activities] triggered - calculating spiritual fitness
+⚡️  [log] - [ Dashboard.tsx:94 calculateSpiritualFitnessScore ] Called with activities: 16
+⚡️  [log] - [ Dashboard.tsx:95 calculateSpiritualFitnessScore ] Sample activities: [{"type":"action-item","date":"2025-06-02"},{"type":"meeting","date":"2025-05-26T16:00:00.000Z"},{"type":"prayer","date":"2025-06-01T16:00:00.000Z"}]
+⚡️  [log] - [ Dashboard.tsx:96 calculateSpiritualFitnessScore ] Timeframe: 180
+⚡️  [log] - [ Dashboard.tsx:108 calculateFitnessFromActivities ] Starting calculation with 16 activities, timeframe: 180
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-06-02 isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-26T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-06-01T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-06-01T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-19T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-20T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-21T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-22T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-23T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-24T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-25T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-27T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-28T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-29T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-30T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-31T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:127 calculateFitnessFromActivities ] Filtered 16 recent activities
+⚡️  [log] - [ Dashboard.tsx:147 calculateFitnessFromActivities ] Calculation result:
+⚡️  [log] - [ Dashboard.tsx:148 calculateFitnessFromActivities ] - Base score: 5
+⚡️  [log] - [ Dashboard.tsx:149 calculateFitnessFromActivities ] - Activity points: 30.375 (from 16 activities)
+⚡️  [log] - [ Dashboard.tsx:150 calculateFitnessFromActivities ] - Consistency points: 3.333333333333333 (from 15 unique days)
+⚡️  [log] - [ Dashboard.tsx:151 calculateFitnessFromActivities ] - Total score: 38.71
+⚡️  [log] - [ Dashboard.tsx:100 calculateSpiritualFitnessScore ] Calculated score: 38.71
+⚡️  [log] - [ Dashboard.js ] Dashboard initial spiritualFitness: 38.71
+⚡️  [log] - [ Dashboard.js ] Dashboard currentScore state: 38.71
+⚡️  [log] - [ Dashboard.js ] Dashboard formattedScore for display: 38.71
+⚡️  [log] - [ Dashboard.js ] Dashboard progressPercent: 38.71
+⚡️  [log] - [ sqliteLoader.js:523 ] Getting all items from activities
+⚡️  To Native ->  CapacitorSQLite query 129690375
+⚡️  TO JS {"values":[{"ios_columns":["id","type","duration","date","notes","literatureTitle","literatureType","meetingName","wasChair","wasShare","wasSpeaker","meetingId","callPerson","isSponsorCall","isSponseeCall","isAAMemberCall","callType","servicePerson","locat
+⚡️  [log] - [ Dashboard.js ] Dashboard initial spiritualFitness: 38.71
+⚡️  [log] - [ Dashboard.js ] Dashboard currentScore state: 38.71
+⚡️  [log] - [ Dashboard.js ] Dashboard formattedScore for display: 38.71
+⚡️  [log] - [ Dashboard.js ] Dashboard progressPercent: 38.71
+⚡️  [log] - [ ActivityList.js: 39 ] Total activities received: 16
+⚡️  [log] - [ ActivityList.js: 40 ] Filter params - limit: null filter: all maxDaysAgo: 7
+⚡️  [log] - [ ActivityList.js: 65 ] Filtering out uncompleted action item: 2
+⚡️  [log] - [ ActivityList.js: 81 ] Filtering out activity outside timeframe - days ago: 14 max: 7
+⚡️  [log] - [ ActivityList.js: 81 ] Filtering out activity outside timeframe - days ago: 13 max: 7
+⚡️  [log] - [ ActivityList.js: 81 ] Filtering out activity outside timeframe - days ago: 12 max: 7
+⚡️  [log] - [ ActivityList.js: 81 ] Filtering out activity outside timeframe - days ago: 11 max: 7
+⚡️  [log] - [ ActivityList.js: 81 ] Filtering out activity outside timeframe - days ago: 10 max: 7
+⚡️  [log] - [ ActivityList.js: 81 ] Filtering out activity outside timeframe - days ago: 9 max: 7
+⚡️  [log] - [ ActivityList.js: 81 ] Filtering out activity outside timeframe - days ago: 8 max: 7
+⚡️  [log] - [ ActivityList.js: 98 ] Final filtered activities count: 8
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-06-01T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-06-01T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-06-01
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-06-01T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-06-01T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-06-01
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-05-31T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-05-31T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-05-31
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-05-30T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-05-30T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-05-30
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-05-29T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-05-29T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-05-29
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-05-28T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-05-28T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-05-28
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-05-27T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-05-27T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-05-27
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-05-26T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-05-26T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-05-26
+⚡️  [log] - [ Dashboard.js ] Dashboard useEffect [activities] triggered - calculating spiritual fitness
+⚡️  [log] - [ Dashboard.tsx:94 calculateSpiritualFitnessScore ] Called with activities: 16
+⚡️  [log] - [ Dashboard.tsx:95 calculateSpiritualFitnessScore ] Sample activities: [{"type":"action-item","date":"2025-06-02"},{"type":"meeting","date":"2025-05-26T16:00:00.000Z"},{"type":"prayer","date":"2025-06-01T16:00:00.000Z"}]
+⚡️  [log] - [ Dashboard.tsx:96 calculateSpiritualFitnessScore ] Timeframe: 365
+⚡️  [log] - [ Dashboard.tsx:108 calculateFitnessFromActivities ] Starting calculation with 16 activities, timeframe: 365
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-06-02 isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-26T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-06-01T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-06-01T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-19T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-20T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-21T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-22T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-23T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-24T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-25T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-27T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-28T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-29T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-30T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-31T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:127 calculateFitnessFromActivities ] Filtered 16 recent activities
+⚡️  [log] - [ Dashboard.tsx:147 calculateFitnessFromActivities ] Calculation result:
+⚡️  [log] - [ Dashboard.tsx:148 calculateFitnessFromActivities ] - Base score: 5
+⚡️  [log] - [ Dashboard.tsx:149 calculateFitnessFromActivities ] - Activity points: 30.375 (from 16 activities)
+⚡️  [log] - [ Dashboard.tsx:150 calculateFitnessFromActivities ] - Consistency points: 1.643835616438356 (from 15 unique days)
+⚡️  [log] - [ Dashboard.tsx:151 calculateFitnessFromActivities ] - Total score: 37.02
+⚡️  [log] - [ Dashboard.tsx:100 calculateSpiritualFitnessScore ] Calculated score: 37.02
+⚡️  [log] - [ Dashboard.js ] Dashboard useEffect [scoreTimeframe] triggered with timeframe: 365
+⚡️  [log] - [ Dashboard.tsx:94 calculateSpiritualFitnessScore ] Called with activities: 16
+⚡️  [log] - [ Dashboard.tsx:95 calculateSpiritualFitnessScore ] Sample activities: [{"type":"action-item","date":"2025-06-02"},{"type":"meeting","date":"2025-05-26T16:00:00.000Z"},{"type":"prayer","date":"2025-06-01T16:00:00.000Z"}]
+⚡️  [log] - [ Dashboard.tsx:96 calculateSpiritualFitnessScore ] Timeframe: 365
+⚡️  [log] - [ Dashboard.tsx:108 calculateFitnessFromActivities ] Starting calculation with 16 activities, timeframe: 365
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-06-02 isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-26T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-06-01T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-06-01T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-19T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-20T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-21T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-22T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-23T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-24T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-25T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-27T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-28T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-29T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-30T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-31T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:127 calculateFitnessFromActivities ] Filtered 16 recent activities
+⚡️  [log] - [ Dashboard.tsx:147 calculateFitnessFromActivities ] Calculation result:
+⚡️  [log] - [ Dashboard.tsx:148 calculateFitnessFromActivities ] - Base score: 5
+⚡️  [log] - [ Dashboard.tsx:149 calculateFitnessFromActivities ] - Activity points: 30.375 (from 16 activities)
+⚡️  [log] - [ Dashboard.tsx:150 calculateFitnessFromActivities ] - Consistency points: 1.643835616438356 (from 15 unique days)
+⚡️  [log] - [ Dashboard.tsx:151 calculateFitnessFromActivities ] - Total score: 37.02
+⚡️  [log] - [ Dashboard.tsx:100 calculateSpiritualFitnessScore ] Calculated score: 37.02
+⚡️  [log] - [ sqliteLoader.js:545 ] Result from activities: {"values":[{"ios_columns":["id","type","duration","date","notes","literatureTitle","literatureType","meetingName","wasChair","wasShare","wasSpeaker","meetingId","callPerson","isSponsorCall","isSponseeCall","isAAMemberCall","callType","servicePerson","location","mood","gratitude","steps","sponsor","attendees","createdAt","updatedAt"]},{"literatureType":"","sponsor":"","meetingId":null,"callPerson":"","updatedAt":"2025-05-30T18:50:48.713Z","isSponseeCall":0,"isSponsorCall":0,"type":"action-item","mood":"","attendees":"","wasChair":0,"duration":0,"wasSpeaker":0,"wasShare":0,"notes":"Action Item: Regular meeting time - Pick a regular meeting time that works.  [ContactRef: 2025-05-28]","isAAMemberCall":0,"gratitude":"","callType":"","id":2,"steps":"","createdAt":"2025-05-30T18:50:41.586Z","servicePerson":"","literatureTitle":"","location":"deleted","meetingName":"","date":"2025-06-02"},{"location":"completed","gratitude":"","wasChair":0,"mood":"","servicePerson":"","sponsor":"","literatureType":"","callType":"","date":"2025-05-26T16:00:00.000Z","steps":"","isAAMemberCall":0,"notes":"","wasShare":0,"duration":60,"id":4,"updatedAt":"2025-06-01T17:37:47.611Z","isSponseeCall":0,"meetingId":null,"isSponsorCall":0,"type":"meeting","meetingName":"","literatureTitle":"","wasSpeaker":0,"attendees":"","createdAt":"2025-06-01T17:37:47.611Z","callPerson":""},{"type":"prayer","isAAMemberCall":0,"id":5,"callType":"","callPerson":"","gratitude":"","meetingName":"","servicePerson":"","wasShare":0,"isSponseeCall":0,"duration":15,"wasSpeaker":0,"wasChair":0,"literatureTitle":"","createdAt":"2025-06-01T17:37:55.740Z","mood":"","literatureType":"","isSponsorCall":0,"attendees":"","notes":"","location":"completed","meetingId":null,"sponsor":"","updatedAt":"2025-06-01T17:37:55.740Z","date":"2025-06-01T16:00:00.000Z","steps":""},{"notes":"","location":"completed","literatureTitle":"","date":"2025-06-01T16:00:00.000Z","type":"meditation","steps":"","gratitude":"","callPerson":"","servicePerson":"","sponsor":"","isAAMemberCall":0,"updatedAt":"2025-06-01T17:38:03.578Z","wasSpeaker":0,"meetingName":"","literatureType":"","callType":"","isSponsorCall":0,"id":6,"duration":15,"isSponseeCall":0,"attendees":"","meetingId":null,"mood":"","wasShare":0,"createdAt":"2025-06-01T17:38:03.578Z","wasChair":0},{"isAAMemberCall":0,"isSponsorCall":0,"wasShare":0,"duration":15,"servicePerson":"","sponsor":"","wasChair":0,"isSponseeCall":0,"literatureType":"","date":"2025-05-19T16:00:00.000Z","callType":"","type":"prayer","literatureTitle":"","updatedAt":"2025-06-01T17:38:23.307Z","meetingId":null,"callPerson":"","mood":"","wasSpeaker":0,"attendees":"","gratitude":"","meetingName":"","notes":"","location":"completed","createdAt":"2025-06-01T17:38:23.307Z","id":7,"steps":""},{"servicePerson":"","isAAMemberCall":0,"wasChair":0,"literatureTitle":"","wasShare":0,"isSponsorCall":0,"id":8,"date":"2025-05-20T16:00:00.000Z","gratitude":"","callPerson":"","wasSpeaker":0,"attendees":"","isSponseeCall":0,"meetingId":null,"steps":"","mood":"","callType":"","literatureType":"","createdAt":"2025-06-01T17:38:34.909Z","meetingName":"","location":"completed","sponsor":"","updatedAt":"2025-06-01T17:38:34.909Z","type":"prayer","duration":15,"notes":""},{"meetingId":null,"duration":15,"gratitude":"","wasSpeaker":0,"isSponseeCall":0,"mood":"","updatedAt":"2025-06-01T17:38:47.988Z","wasShare":0,"sponsor":"","attendees":"","isAAMemberCall":0,"isSponsorCall":0,"date":"2025-05-21T16:00:00.000Z","location":"completed","id":9,"createdAt":"2025-06-01T17:38:47.988Z","servicePerson":"","callType":"","meetingName":"","literatureTitle":"","type":"prayer","literatureType":"","wasChair":0,"steps":"","callPerson":"","notes":""},{"mood":"","callType":"","servicePerson":"","type":"prayer","meetingId":null,"date":"2025-05-22T16:00:00.000Z","wasShare":0,"isSponseeCall":0,"isSponsorCall":0,"callPerson":"","wasChair":0,"createdAt":"2025-06-01T17:39:15.957Z","meetingName":"","duration":15,"attendees":"","gratitude":"","update
+⚡️  [log] - [ sqliteLoader.js:592 ] Converted 16 iOS format items to standard format
+⚡️  [log] - [ sqliteLoader.js ] Sample converted item: {"id":2,"type":"action-item","duration":0,"date":"2025-06-02","notes":"Action Item: Regular meeting time - Pick a regular meeting time that works.  [ContactRef: 2025-05-28]","literatureTitle":"","literatureType":"","meetingName":"","wasChair":0,"wasShare":0,"wasSpeaker":0,"meetingId":null,"callPerson":"","isSponsorCall":0,"isSponseeCall":0,"isAAMemberCall":0,"callType":"","servicePerson":"","location":"deleted","mood":"","gratitude":"","steps":"","sponsor":"","attendees":"","createdAt":"2025-05-30T18:50:41.586Z","updatedAt":"2025-05-30T18:50:48.713Z"}
+⚡️  [log] - [ AppDataContext.tsx:288 ] Activities loaded: 16
+⚡️  [log] - [ Dashboard.js ] Dashboard initial spiritualFitness: 37.02
+⚡️  [log] - [ Dashboard.js ] Dashboard currentScore state: 37.02
+⚡️  [log] - [ Dashboard.js ] Dashboard formattedScore for display: 37.02
+⚡️  [log] - [ Dashboard.js ] Dashboard progressPercent: 37.02
+⚡️  [log] - [ ActivityList.js: 39 ] Total activities received: 16
+⚡️  [log] - [ ActivityList.js: 40 ] Filter params - limit: null filter: all maxDaysAgo: 7
+⚡️  [log] - [ ActivityList.js: 65 ] Filtering out uncompleted action item: 2
+⚡️  [log] - [ ActivityList.js: 81 ] Filtering out activity outside timeframe - days ago: 14 max: 7
+⚡️  [log] - [ ActivityList.js: 81 ] Filtering out activity outside timeframe - days ago: 13 max: 7
+⚡️  [log] - [ ActivityList.js: 81 ] Filtering out activity outside timeframe - days ago: 12 max: 7
+⚡️  [log] - [ ActivityList.js: 81 ] Filtering out activity outside timeframe - days ago: 11 max: 7
+⚡️  [log] - [ ActivityList.js: 81 ] Filtering out activity outside timeframe - days ago: 10 max: 7
+⚡️  [log] - [ ActivityList.js: 81 ] Filtering out activity outside timeframe - days ago: 9 max: 7
+⚡️  [log] - [ ActivityList.js: 81 ] Filtering out activity outside timeframe - days ago: 8 max: 7
+⚡️  [log] - [ ActivityList.js: 98 ] Final filtered activities count: 8
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-06-01T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-06-01T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-06-01
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-06-01T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-06-01T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-06-01
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-05-31T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-05-31T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-05-31
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-05-30T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-05-30T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-05-30
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-05-29T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-05-29T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-05-29
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-05-28T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-05-28T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-05-28
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-05-27T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-05-27T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-05-27
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-05-26T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-05-26T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-05-26
+⚡️  [log] - [ Dashboard.js ] Dashboard useEffect [activities] triggered - calculating spiritual fitness
+⚡️  [log] - [ Dashboard.tsx:94 calculateSpiritualFitnessScore ] Called with activities: 16
+⚡️  [log] - [ Dashboard.tsx:95 calculateSpiritualFitnessScore ] Sample activities: [{"type":"action-item","date":"2025-06-02"},{"type":"meeting","date":"2025-05-26T16:00:00.000Z"},{"type":"prayer","date":"2025-06-01T16:00:00.000Z"}]
+⚡️  [log] - [ Dashboard.tsx:96 calculateSpiritualFitnessScore ] Timeframe: 365
+⚡️  [log] - [ Dashboard.tsx:108 calculateFitnessFromActivities ] Starting calculation with 16 activities, timeframe: 365
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-06-02 isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-26T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-06-01T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-06-01T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-19T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-20T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-21T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-22T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-23T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-24T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-25T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-27T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-28T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-29T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-30T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-31T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:127 calculateFitnessFromActivities ] Filtered 16 recent activities
+⚡️  [log] - [ Dashboard.tsx:147 calculateFitnessFromActivities ] Calculation result:
+⚡️  [log] - [ Dashboard.tsx:148 calculateFitnessFromActivities ] - Base score: 5
+⚡️  [log] - [ Dashboard.tsx:149 calculateFitnessFromActivities ] - Activity points: 30.375 (from 16 activities)
+⚡️  [log] - [ Dashboard.tsx:150 calculateFitnessFromActivities ] - Consistency points: 1.643835616438356 (from 15 unique days)
+⚡️  [log] - [ Dashboard.tsx:151 calculateFitnessFromActivities ] - Total score: 37.02
+⚡️  [log] - [ Dashboard.tsx:100 calculateSpiritualFitnessScore ] Calculated score: 37.02
+⚡️  [log] - [ Dashboard.js ] Dashboard initial spiritualFitness: 37.02
+⚡️  [log] - [ Dashboard.js ] Dashboard currentScore state: 37.02
+⚡️  [log] - [ Dashboard.js ] Dashboard formattedScore for display: 37.02
+⚡️  [log] - [ Dashboard.js ] Dashboard progressPercent: 37.02
+⚡️  To Native ->  CapacitorSQLite query 129690376
+⚡️  [log] - [ sqliteLoader.js:523 ] Getting all items from activities
+⚡️  TO JS {"values":[{"ios_columns":["id","type","duration","date","notes","literatureTitle","literatureType","meetingName","wasChair","wasShare","wasSpeaker","meetingId","callPerson","isSponsorCall","isSponseeCall","isAAMemberCall","callType","servicePerson","locat
+⚡️  [log] - [ Dashboard.js ] Dashboard initial spiritualFitness: 37.02
+⚡️  [log] - [ Dashboard.js ] Dashboard currentScore state: 37.02
+⚡️  [log] - [ Dashboard.js ] Dashboard formattedScore for display: 37.02
+⚡️  [log] - [ Dashboard.js ] Dashboard progressPercent: 37.02
+⚡️  [log] - [ ActivityList.js: 39 ] Total activities received: 9
+⚡️  [log] - [ ActivityList.js: 40 ] Filter params - limit: null filter: all maxDaysAgo: 7
+⚡️  [log] - [ ActivityList.js: 65 ] Filtering out uncompleted action item: 2
+⚡️  [log] - [ ActivityList.js: 98 ] Final filtered activities count: 8
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-06-01T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-06-01T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-06-01
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-06-01T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-06-01T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-06-01
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-05-31T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-05-31T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-05-31
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-05-30T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-05-30T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-05-30
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-05-29T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-05-29T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-05-29
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-05-28T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-05-28T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-05-28
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-05-27T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-05-27T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-05-27
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-05-26T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-05-26T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-05-26
+⚡️  [log] - [ Dashboard.js ] Dashboard useEffect [activities] triggered - calculating spiritual fitness
+⚡️  [log] - [ Dashboard.tsx:94 calculateSpiritualFitnessScore ] Called with activities: 9
+⚡️  [log] - [ Dashboard.tsx:95 calculateSpiritualFitnessScore ] Sample activities: [{"type":"action-item","date":"2025-06-02"},{"type":"meeting","date":"2025-05-26T16:00:00.000Z"},{"type":"prayer","date":"2025-06-01T16:00:00.000Z"}]
+⚡️  [log] - [ Dashboard.tsx:96 calculateSpiritualFitnessScore ] Timeframe: 7
+⚡️  [log] - [ Dashboard.tsx:108 calculateFitnessFromActivities ] Starting calculation with 9 activities, timeframe: 7
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-06-02 isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-26T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-06-01T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-06-01T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-27T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-28T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-29T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-30T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-31T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:127 calculateFitnessFromActivities ] Filtered 9 recent activities
+⚡️  [log] - [ Dashboard.tsx:147 calculateFitnessFromActivities ] Calculation result:
+⚡️  [log] - [ Dashboard.tsx:148 calculateFitnessFromActivities ] - Base score: 5
+⚡️  [log] - [ Dashboard.tsx:149 calculateFitnessFromActivities ] - Activity points: 16.375 (from 9 activities)
+⚡️  [log] - [ Dashboard.tsx:150 calculateFitnessFromActivities ] - Consistency points: 45.71428571428571 (from 8 unique days)
+⚡️  [log] - [ Dashboard.tsx:151 calculateFitnessFromActivities ] - Total score: 67.09
+⚡️  [log] - [ Dashboard.tsx:100 calculateSpiritualFitnessScore ] Calculated score: 67.09
+⚡️  [log] - [ Dashboard.js ] Dashboard useEffect [scoreTimeframe] triggered with timeframe: 7
+⚡️  [log] - [ Dashboard.tsx:94 calculateSpiritualFitnessScore ] Called with activities: 9
+⚡️  [log] - [ Dashboard.tsx:95 calculateSpiritualFitnessScore ] Sample activities: [{"type":"action-item","date":"2025-06-02"},{"type":"meeting","date":"2025-05-26T16:00:00.000Z"},{"type":"prayer","date":"2025-06-01T16:00:00.000Z"}]
+⚡️  [log] - [ Dashboard.tsx:96 calculateSpiritualFitnessScore ] Timeframe: 7
+⚡️  [log] - [ Dashboard.tsx:108 calculateFitnessFromActivities ] Starting calculation with 9 activities, timeframe: 7
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-06-02 isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-26T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-06-01T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-06-01T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-27T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-28T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-29T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-30T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-31T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:127 calculateFitnessFromActivities ] Filtered 9 recent activities
+⚡️  [log] - [ Dashboard.tsx:147 calculateFitnessFromActivities ] Calculation result:
+⚡️  [log] - [ Dashboard.tsx:148 calculateFitnessFromActivities ] - Base score: 5
+⚡️  [log] - [ Dashboard.tsx:149 calculateFitnessFromActivities ] - Activity points: 16.375 (from 9 activities)
+⚡️  [log] - [ Dashboard.tsx:150 calculateFitnessFromActivities ] - Consistency points: 45.71428571428571 (from 8 unique days)
+⚡️  [log] - [ Dashboard.tsx:151 calculateFitnessFromActivities ] - Total score: 67.09
+⚡️  [log] - [ Dashboard.tsx:100 calculateSpiritualFitnessScore ] Calculated score: 67.09
+⚡️  [log] - [ sqliteLoader.js:545 ] Result from activities: {"values":[{"ios_columns":["id","type","duration","date","notes","literatureTitle","literatureType","meetingName","wasChair","wasShare","wasSpeaker","meetingId","callPerson","isSponsorCall","isSponseeCall","isAAMemberCall","callType","servicePerson","location","mood","gratitude","steps","sponsor","attendees","createdAt","updatedAt"]},{"isSponsorCall":0,"notes":"Action Item: Regular meeting time - Pick a regular meeting time that works.  [ContactRef: 2025-05-28]","wasSpeaker":0,"sponsor":"","meetingName":"","createdAt":"2025-05-30T18:50:41.586Z","isSponseeCall":0,"callPerson":"","duration":0,"type":"action-item","literatureType":"","attendees":"","servicePerson":"","literatureTitle":"","wasShare":0,"wasChair":0,"updatedAt":"2025-05-30T18:50:48.713Z","date":"2025-06-02","mood":"","meetingId":null,"isAAMemberCall":0,"location":"deleted","callType":"","id":2,"gratitude":"","steps":""},{"steps":"","type":"meeting","isSponseeCall":0,"wasShare":0,"duration":60,"isAAMemberCall":0,"createdAt":"2025-06-01T17:37:47.611Z","wasChair":0,"notes":"","sponsor":"","callType":"","wasSpeaker":0,"mood":"","literatureTitle":"","gratitude":"","servicePerson":"","attendees":"","literatureType":"","id":4,"updatedAt":"2025-06-01T17:37:47.611Z","isSponsorCall":0,"location":"completed","meetingName":"","meetingId":null,"callPerson":"","date":"2025-05-26T16:00:00.000Z"},{"mood":"","meetingId":null,"notes":"","wasSpeaker":0,"callPerson":"","literatureType":"","servicePerson":"","literatureTitle":"","isSponseeCall":0,"meetingName":"","sponsor":"","isAAMemberCall":0,"isSponsorCall":0,"location":"completed","steps":"","updatedAt":"2025-06-01T17:37:55.740Z","wasShare":0,"attendees":"","duration":15,"callType":"","wasChair":0,"type":"prayer","date":"2025-06-01T16:00:00.000Z","gratitude":"","id":5,"createdAt":"2025-06-01T17:37:55.740Z"},{"createdAt":"2025-06-01T17:38:03.578Z","isSponseeCall":0,"duration":15,"isAAMemberCall":0,"date":"2025-06-01T16:00:00.000Z","mood":"","gratitude":"","steps":"","notes":"","wasChair":0,"updatedAt":"2025-06-01T17:38:03.578Z","attendees":"","type":"meditation","wasSpeaker":0,"location":"completed","id":6,"callType":"","meetingId":null,"sponsor":"","literatureType":"","meetingName":"","callPerson":"","servicePerson":"","isSponsorCall":0,"literatureTitle":"","wasShare":0},{"duration":15,"updatedAt":"2025-06-01T17:38:23.307Z","steps":"","gratitude":"","literatureType":"","meetingId":null,"mood":"","createdAt":"2025-06-01T17:38:23.307Z","servicePerson":"","wasSpeaker":0,"id":7,"notes":"","wasShare":0,"isSponseeCall":0,"type":"prayer","attendees":"","callType":"","literatureTitle":"","sponsor":"","callPerson":"","wasChair":0,"meetingName":"","isSponsorCall":0,"date":"2025-05-19T16:00:00.000Z","location":"completed","isAAMemberCall":0},{"createdAt":"2025-06-01T17:38:34.909Z","mood":"","location":"completed","sponsor":"","wasChair":0,"literatureTitle":"","notes":"","meetingId":null,"gratitude":"","literatureType":"","callPerson":"","isSponsorCall":0,"isSponseeCall":0,"attendees":"","date":"2025-05-20T16:00:00.000Z","wasShare":0,"steps":"","id":8,"wasSpeaker":0,"type":"prayer","updatedAt":"2025-06-01T17:38:34.909Z","duration":15,"meetingName":"","callType":"","servicePerson":"","isAAMemberCall":0},{"attendees":"","isSponseeCall":0,"notes":"","type":"prayer","steps":"","wasChair":0,"wasShare":0,"sponsor":"","gratitude":"","isAAMemberCall":0,"literatureTitle":"","id":9,"literatureType":"","mood":"","callPerson":"","meetingId":null,"isSponsorCall":0,"meetingName":"","date":"2025-05-21T16:00:00.000Z","callType":"","servicePerson":"","updatedAt":"2025-06-01T17:38:47.988Z","wasSpeaker":0,"duration":15,"createdAt":"2025-06-01T17:38:47.988Z","location":"completed"},{"meetingId":null,"literatureType":"","isSponseeCall":0,"servicePerson":"","literatureTitle":"","location":"completed","id":10,"isAAMemberCall":0,"sponsor":"","attendees":"","gratitude":"","callType":"","steps":"","wasChair":0,"meetingName":"","callPerson":"","wasSpeaker":0,"isSponsorCall":0,"du
+⚡️  [log] - [ sqliteLoader.js:592 ] Converted 16 iOS format items to standard format
+⚡️  [log] - [ sqliteLoader.js ] Sample converted item: {"id":2,"type":"action-item","duration":0,"date":"2025-06-02","notes":"Action Item: Regular meeting time - Pick a regular meeting time that works.  [ContactRef: 2025-05-28]","literatureTitle":"","literatureType":"","meetingName":"","wasChair":0,"wasShare":0,"wasSpeaker":0,"meetingId":null,"callPerson":"","isSponsorCall":0,"isSponseeCall":0,"isAAMemberCall":0,"callType":"","servicePerson":"","location":"deleted","mood":"","gratitude":"","steps":"","sponsor":"","attendees":"","createdAt":"2025-05-30T18:50:41.586Z","updatedAt":"2025-05-30T18:50:48.713Z"}
+⚡️  [log] - [ AppDataContext.tsx:288 ] Activities loaded: 16
+⚡️  [log] - [ Dashboard.js ] Dashboard initial spiritualFitness: 67.09
+⚡️  [log] - [ Dashboard.js ] Dashboard currentScore state: 67.09
+⚡️  [log] - [ Dashboard.js ] Dashboard formattedScore for display: 67.09
+⚡️  [log] - [ Dashboard.js ] Dashboard progressPercent: 67.09
+⚡️  [log] - [ ActivityList.js: 39 ] Total activities received: 9
+⚡️  [log] - [ ActivityList.js: 40 ] Filter params - limit: null filter: all maxDaysAgo: 7
+⚡️  [log] - [ ActivityList.js: 65 ] Filtering out uncompleted action item: 2
+⚡️  [log] - [ ActivityList.js: 98 ] Final filtered activities count: 8
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-06-01T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-06-01T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-06-01
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-06-01T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-06-01T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-06-01
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-05-31T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-05-31T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-05-31
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-05-30T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-05-30T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-05-30
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-05-29T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-05-29T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-05-29
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-05-28T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-05-28T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-05-28
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-05-27T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-05-27T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-05-27
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-05-26T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-05-26T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-05-26
+⚡️  [log] - [ Dashboard.js ] Dashboard useEffect [activities] triggered - calculating spiritual fitness
+⚡️  [log] - [ Dashboard.tsx:94 calculateSpiritualFitnessScore ] Called with activities: 9
+⚡️  [log] - [ Dashboard.tsx:95 calculateSpiritualFitnessScore ] Sample activities: [{"type":"action-item","date":"2025-06-02"},{"type":"meeting","date":"2025-05-26T16:00:00.000Z"},{"type":"prayer","date":"2025-06-01T16:00:00.000Z"}]
+⚡️  [log] - [ Dashboard.tsx:96 calculateSpiritualFitnessScore ] Timeframe: 7
+⚡️  [log] - [ Dashboard.tsx:108 calculateFitnessFromActivities ] Starting calculation with 9 activities, timeframe: 7
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-06-02 isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-26T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-06-01T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-06-01T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-27T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-28T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-29T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-30T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-31T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:127 calculateFitnessFromActivities ] Filtered 9 recent activities
+⚡️  [log] - [ Dashboard.tsx:147 calculateFitnessFromActivities ] Calculation result:
+⚡️  [log] - [ Dashboard.tsx:148 calculateFitnessFromActivities ] - Base score: 5
+⚡️  [log] - [ Dashboard.tsx:149 calculateFitnessFromActivities ] - Activity points: 16.375 (from 9 activities)
+⚡️  [log] - [ Dashboard.tsx:150 calculateFitnessFromActivities ] - Consistency points: 45.71428571428571 (from 8 unique days)
+⚡️  [log] - [ Dashboard.tsx:151 calculateFitnessFromActivities ] - Total score: 67.09
+⚡️  [log] - [ Dashboard.tsx:100 calculateSpiritualFitnessScore ] Calculated score: 67.09
+⚡️  [log] - [ Dashboard.js ] Dashboard initial spiritualFitness: 67.09
+⚡️  [log] - [ Dashboard.js ] Dashboard currentScore state: 67.09
+⚡️  [log] - [ Dashboard.js ] Dashboard formattedScore for display: 67.09
+⚡️  [log] - [ Dashboard.js ] Dashboard progressPercent: 67.09
+⚡️  To Native ->  CapacitorSQLite ⚡️  [log] - [ sqliteLoader.js:523 ] Getting all items from activities
+query 129690377
+⚡️  TO JS {"values":[{"ios_columns":["id","type","duration","date","notes","literatureTitle","literatureType","meetingName","wasChair","wasShare","wasSpeaker","meetingId","callPerson","isSponsorCall","isSponseeCall","isAAMemberCall","callType","servicePerson","locat
+⚡️  [log] - [ Dashboard.js ] Dashboard initial spiritualFitness: 67.09
+⚡️  [log] - [ Dashboard.js ] Dashboard currentScore state: 67.09
+⚡️  [log] - [ Dashboard.js ] Dashboard formattedScore for display: 67.09
+⚡️  [log] - [ Dashboard.js ] Dashboard progressPercent: 67.09
+⚡️  [log] - [ ActivityList.js: 39 ] Total activities received: 16
+⚡️  [log] - [ ActivityList.js: 40 ] Filter params - limit: null filter: all maxDaysAgo: 7
+⚡️  [log] - [ ActivityList.js: 65 ] Filtering out uncompleted action item: 2
+⚡️  [log] - [ ActivityList.js: 81 ] Filtering out activity outside timeframe - days ago: 14 max: 7
+⚡️  [log] - [ ActivityList.js: 81 ] Filtering out activity outside timeframe - days ago: 13 max: 7
+⚡️  [log] - [ ActivityList.js: 81 ] Filtering out activity outside timeframe - days ago: 12 max: 7
+⚡️  [log] - [ ActivityList.js: 81 ] Filtering out activity outside timeframe - days ago: 11 max: 7
+⚡️  [log] - [ ActivityList.js: 81 ] Filtering out activity outside timeframe - days ago: 10 max: 7
+⚡️  [log] - [ ActivityList.js: 81 ] Filtering out activity outside timeframe - days ago: 9 max: 7
+⚡️  [log] - [ ActivityList.js: 81 ] Filtering out activity outside timeframe - days ago: 8 max: 7
+⚡️  [log] - [ ActivityList.js: 98 ] Final filtered activities count: 8
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-06-01T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-06-01T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-06-01
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-06-01T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-06-01T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-06-01
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-05-31T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-05-31T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-05-31
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-05-30T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-05-30T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-05-30
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-05-29T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-05-29T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-05-29
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-05-28T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-05-28T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-05-28
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-05-27T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-05-27T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-05-27
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-05-26T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-05-26T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-05-26
+⚡️  [log] - [ Dashboard.js ] Dashboard useEffect [activities] triggered - calculating spiritual fitness
+⚡️  [log] - [ Dashboard.tsx:94 calculateSpiritualFitnessScore ] Called with activities: 16
+⚡️  [log] - [ Dashboard.tsx:95 calculateSpiritualFitnessScore ] Sample activities: [{"type":"action-item","date":"2025-06-02"},{"type":"meeting","date":"2025-05-26T16:00:00.000Z"},{"type":"prayer","date":"2025-06-01T16:00:00.000Z"}]
+⚡️  [log] - [ Dashboard.tsx:96 calculateSpiritualFitnessScore ] Timeframe: 30
+⚡️  [log] - [ Dashboard.tsx:108 calculateFitnessFromActivities ] Starting calculation with 16 activities, timeframe: 30
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-06-02 isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-26T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-06-01T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-06-01T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-19T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-20T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-21T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-22T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-23T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-24T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-25T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-27T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-28T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-29T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-30T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-31T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:127 calculateFitnessFromActivities ] Filtered 16 recent activities
+⚡️  [log] - [ Dashboard.tsx:147 calculateFitnessFromActivities ] Calculation result:
+⚡️  [log] - [ Dashboard.tsx:148 calculateFitnessFromActivities ] - Base score: 5
+⚡️  [log] - [ Dashboard.tsx:149 calculateFitnessFromActivities ] - Activity points: 30.375 (from 16 activities)
+⚡️  [log] - [ Dashboard.tsx:150 calculateFitnessFromActivities ] - Consistency points: 20 (from 15 unique days)
+⚡️  [log] - [ Dashboard.tsx:151 calculateFitnessFromActivities ] - Total score: 55.38
+⚡️  [log] - [ Dashboard.tsx:100 calculateSpiritualFitnessScore ] Calculated score: 55.38
+⚡️  [log] - [ Dashboard.js ] Dashboard useEffect [scoreTimeframe] triggered with timeframe: 30
+⚡️  [log] - [ Dashboard.tsx:94 calculateSpiritualFitnessScore ] Called with activities: 16
+⚡️  [log] - [ Dashboard.tsx:95 calculateSpiritualFitnessScore ] Sample activities: [{"type":"action-item","date":"2025-06-02"},{"type":"meeting","date":"2025-05-26T16:00:00.000Z"},{"type":"prayer","date":"2025-06-01T16:00:00.000Z"}]
+⚡️  [log] - [ Dashboard.tsx:96 calculateSpiritualFitnessScore ] Timeframe: 30
+⚡️  [log] - [ Dashboard.tsx:108 calculateFitnessFromActivities ] Starting calculation with 16 activities, timeframe: 30
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-06-02 isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-26T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-06-01T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-06-01T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-19T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-20T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-21T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-22T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-23T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-24T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-25T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-27T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-28T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-29T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-30T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-31T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:127 calculateFitnessFromActivities ] Filtered 16 recent activities
+⚡️  [log] - [ Dashboard.tsx:147 calculateFitnessFromActivities ] Calculation result:
+⚡️  [log] - [ Dashboard.tsx:148 calculateFitnessFromActivities ] - Base score: 5
+⚡️  [log] - [ Dashboard.tsx:149 calculateFitnessFromActivities ] - Activity points: 30.375 (from 16 activities)
+⚡️  [log] - [ Dashboard.tsx:150 calculateFitnessFromActivities ] - Consistency points: 20 (from 15 unique days)
+⚡️  [log] - [ Dashboard.tsx:151 calculateFitnessFromActivities ] - Total score: 55.38
+⚡️  [log] - [ Dashboard.tsx:100 calculateSpiritualFitnessScore ] Calculated score: 55.38
+⚡️  [log] - [ Dashboard.js ] Dashboard initial spiritualFitness: 55.38
+⚡️  [log] - [ Dashboard.js ] Dashboard currentScore state: 55.38
+⚡️  [log] - [ Dashboard.js ] Dashboard formattedScore for display: 55.38
+⚡️  [log] - [ Dashboard.js ] Dashboard progressPercent: 55.38
+⚡️  [log] - [ ActivityList.js: 39 ] Total activities received: 16
+⚡️  [log] - [ ActivityList.js: 40 ] Filter params - limit: null filter: all maxDaysAgo: 7
+⚡️  [log] - [ ActivityList.js: 65 ] Filtering out uncompleted action item: 2
+⚡️  [log] - [ ActivityList.js: 81 ] Filtering out activity outside timeframe - days ago: 14 max: 7
+⚡️  [log] - [ ActivityList.js: 81 ] Filtering out activity outside timeframe - days ago: 13 max: 7
+⚡️  [log] - [ ActivityList.js: 81 ] Filtering out activity outside timeframe - days ago: 12 max: 7
+⚡️  [log] - [ ActivityList.js: 81 ] Filtering out activity outside timeframe - days ago: 11 max: 7
+⚡️  [log] - [ ActivityList.js: 81 ] Filtering out activity outside timeframe - days ago: 10 max: 7
+⚡️  [log] - [ ActivityList.js: 81 ] Filtering out activity outside timeframe - days ago: 9 max: 7
+⚡️  [log] - [ ActivityList.js: 81 ] Filtering out activity outside timeframe - days ago: 8 max: 7
+⚡️  [log] - [ ActivityList.js: 98 ] Final filtered activities count: 8
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-06-01T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-06-01T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-06-01
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-06-01T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-06-01T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-06-01
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-05-31T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-05-31T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-05-31
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-05-30T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-05-30T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-05-30
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-05-29T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-05-29T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-05-29
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-05-28T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-05-28T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-05-28
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-05-27T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-05-27T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-05-27
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-05-26T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-05-26T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-05-26
+⚡️  [log] - [ sqliteLoader.js:545 ] Result from activities: {"values":[{"ios_columns":["id","type","duration","date","notes","literatureTitle","literatureType","meetingName","wasChair","wasShare","wasSpeaker","meetingId","callPerson","isSponsorCall","isSponseeCall","isAAMemberCall","callType","servicePerson","location","mood","gratitude","steps","sponsor","attendees","createdAt","updatedAt"]},{"isSponsorCall":0,"notes":"Action Item: Regular meeting time - Pick a regular meeting time that works.  [ContactRef: 2025-05-28]","wasSpeaker":0,"sponsor":"","meetingName":"","createdAt":"2025-05-30T18:50:41.586Z","isSponseeCall":0,"callPerson":"","duration":0,"type":"action-item","literatureType":"","attendees":"","servicePerson":"","literatureTitle":"","wasShare":0,"wasChair":0,"updatedAt":"2025-05-30T18:50:48.713Z","date":"2025-06-02","mood":"","meetingId":null,"isAAMemberCall":0,"location":"deleted","callType":"","id":2,"gratitude":"","steps":""},{"steps":"","type":"meeting","isSponseeCall":0,"wasShare":0,"duration":60,"isAAMemberCall":0,"createdAt":"2025-06-01T17:37:47.611Z","wasChair":0,"notes":"","sponsor":"","callType":"","wasSpeaker":0,"mood":"","literatureTitle":"","gratitude":"","servicePerson":"","attendees":"","literatureType":"","id":4,"updatedAt":"2025-06-01T17:37:47.611Z","isSponsorCall":0,"location":"completed","meetingName":"","meetingId":null,"callPerson":"","date":"2025-05-26T16:00:00.000Z"},{"mood":"","meetingId":null,"notes":"","wasSpeaker":0,"callPerson":"","literatureType":"","servicePerson":"","literatureTitle":"","isSponseeCall":0,"meetingName":"","sponsor":"","isAAMemberCall":0,"isSponsorCall":0,"location":"completed","steps":"","updatedAt":"2025-06-01T17:37:55.740Z","wasShare":0,"attendees":"","duration":15,"callType":"","wasChair":0,"type":"prayer","date":"2025-06-01T16:00:00.000Z","gratitude":"","id":5,"createdAt":"2025-06-01T17:37:55.740Z"},{"createdAt":"2025-06-01T17:38:03.578Z","isSponseeCall":0,"duration":15,"isAAMemberCall":0,"date":"2025-06-01T16:00:00.000Z","mood":"","gratitude":"","steps":"","notes":"","wasChair":0,"updatedAt":"2025-06-01T17:38:03.578Z","attendees":"","type":"meditation","wasSpeaker":0,"location":"completed","id":6,"callType":"","meetingId":null,"sponsor":"","literatureType":"","meetingName":"","callPerson":"","servicePerson":"","isSponsorCall":0,"literatureTitle":"","wasShare":0},{"duration":15,"updatedAt":"2025-06-01T17:38:23.307Z","steps":"","gratitude":"","literatureType":"","meetingId":null,"mood":"","createdAt":"2025-06-01T17:38:23.307Z","servicePerson":"","wasSpeaker":0,"id":7,"notes":"","wasShare":0,"isSponseeCall":0,"type":"prayer","attendees":"","callType":"","literatureTitle":"","sponsor":"","callPerson":"","wasChair":0,"meetingName":"","isSponsorCall":0,"date":"2025-05-19T16:00:00.000Z","location":"completed","isAAMemberCall":0},{"createdAt":"2025-06-01T17:38:34.909Z","mood":"","location":"completed","sponsor":"","wasChair":0,"literatureTitle":"","notes":"","meetingId":null,"gratitude":"","literatureType":"","callPerson":"","isSponsorCall":0,"isSponseeCall":0,"attendees":"","date":"2025-05-20T16:00:00.000Z","wasShare":0,"steps":"","id":8,"wasSpeaker":0,"type":"prayer","updatedAt":"2025-06-01T17:38:34.909Z","duration":15,"meetingName":"","callType":"","servicePerson":"","isAAMemberCall":0},{"attendees":"","isSponseeCall":0,"notes":"","type":"prayer","steps":"","wasChair":0,"wasShare":0,"sponsor":"","gratitude":"","isAAMemberCall":0,"literatureTitle":"","id":9,"literatureType":"","mood":"","callPerson":"","meetingId":null,"isSponsorCall":0,"meetingName":"","date":"2025-05-21T16:00:00.000Z","callType":"","servicePerson":"","updatedAt":"2025-06-01T17:38:47.988Z","wasSpeaker":0,"duration":15,"createdAt":"2025-06-01T17:38:47.988Z","location":"completed"},{"date":"2025-05-22T16:00:00.000Z","attendees":"","callPerson":"","duration":15,"servicePerson":"","callType":"","isSponsorCall":0,"type":"prayer","notes":"","id":10,"location":"completed","wasChair":0,"meetingId":null,"createdAt":"2025-06-01T17:39:15.957Z","sponsor":"","literatureType":"","upda
+⚡️  [log] - [ sqliteLoader.js:592 ] Converted 16 iOS format items to standard format
+⚡️  [log] - [ sqliteLoader.js ] Sample converted item: {"id":2,"type":"action-item","duration":0,"date":"2025-06-02","notes":"Action Item: Regular meeting time - Pick a regular meeting time that works.  [ContactRef: 2025-05-28]","literatureTitle":"","literatureType":"","meetingName":"","wasChair":0,"wasShare":0,"wasSpeaker":0,"meetingId":null,"callPerson":"","isSponsorCall":0,"isSponseeCall":0,"isAAMemberCall":0,"callType":"","servicePerson":"","location":"deleted","mood":"","gratitude":"","steps":"","sponsor":"","attendees":"","createdAt":"2025-05-30T18:50:41.586Z","updatedAt":"2025-05-30T18:50:48.713Z"}
+⚡️  [log] - [ AppDataContext.tsx:288 ] Activities loaded: 9
+⚡️  [log] - [ Dashboard.js ] Dashboard initial spiritualFitness: 55.38
+⚡️  [log] - [ Dashboard.js ] Dashboard currentScore state: 55.38
+⚡️  [log] - [ Dashboard.js ] Dashboard formattedScore for display: 55.38
+⚡️  [log] - [ Dashboard.js ] Dashboard progressPercent: 55.38
+⚡️  [log] - [ ActivityList.js: 39 ] Total activities received: 9
+⚡️  [log] - [ ActivityList.js: 40 ] Filter params - limit: null filter: all maxDaysAgo: 7
+⚡️  [log] - [ ActivityList.js: 65 ] Filtering out uncompleted action item: 2
+⚡️  [log] - [ ActivityList.js: 98 ] Final filtered activities count: 8
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-06-01T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-06-01T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-06-01
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-06-01T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-06-01T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-06-01
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-05-31T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-05-31T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-05-31
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-05-30T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-05-30T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-05-30
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-05-29T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-05-29T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-05-29
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-05-28T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-05-28T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-05-28
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-05-27T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-05-27T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-05-27
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-05-26T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-05-26T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-05-26
+⚡️  [log] - [ Dashboard.js ] Dashboard useEffect [activities] triggered - calculating spiritual fitness
+⚡️  [log] - [ Dashboard.tsx:94 calculateSpiritualFitnessScore ] Called with activities: 9
+⚡️  [log] - [ Dashboard.tsx:95 calculateSpiritualFitnessScore ] Sample activities: [{"type":"action-item","date":"2025-06-02"},{"type":"meeting","date":"2025-05-26T16:00:00.000Z"},{"type":"prayer","date":"2025-06-01T16:00:00.000Z"}]
+⚡️  [log] - [ Dashboard.tsx:96 calculateSpiritualFitnessScore ] Timeframe: 30
+⚡️  [log] - [ Dashboard.tsx:108 calculateFitnessFromActivities ] Starting calculation with 9 activities, timeframe: 30
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-06-02 isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-26T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-06-01T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-06-01T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-27T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-28T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-29T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-30T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date: 2025-05-31T16:00:00.000Z isRecent: true
+⚡️  [log] - [ Dashboard.tsx:127 calculateFitnessFromActivities ] Filtered 9 recent activities
+⚡️  [log] - [ Dashboard.tsx:147 calculateFitnessFromActivities ] Calculation result:
+⚡️  [log] - [ Dashboard.tsx:148 calculateFitnessFromActivities ] - Base score: 5
+⚡️  [log] - [ Dashboard.tsx:149 calculateFitnessFromActivities ] - Activity points: 16.375 (from 9 activities)
+⚡️  [log] - [ Dashboard.tsx:150 calculateFitnessFromActivities ] - Consistency points: 10.666666666666666 (from 8 unique days)
+⚡️  [log] - [ Dashboard.tsx:151 calculateFitnessFromActivities ] - Total score: 32.04
+⚡️  [log] - [ Dashboard.tsx:100 calculateSpiritualFitnessScore ] Calculated score: 32.04
+⚡️  [log] - [ Dashboard.js ] Dashboard initial spiritualFitness: 32.04
+⚡️  [log] - [ Dashboard.js ] Dashboard currentScore state: 32.04
+⚡️  [log] - [ Dashboard.js ] Dashboard formattedScore for display: 32.04
+⚡️  [log] - [ Dashboard.js ] Dashboard progressPercent: 32.04
+⚡️  [log] - [ ActivityList.js: 39 ] Total activities received: 9
+⚡️  [log] - [ ActivityList.js: 40 ] Filter params - limit: null filter: all maxDaysAgo: 7
+⚡️  [log] - [ ActivityList.js: 65 ] Filtering out uncompleted action item: 2
+⚡️  [log] - [ ActivityList.js: 98 ] Final filtered activities count: 8
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-06-01T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-06-01T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-06-01
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-06-01T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-06-01T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-06-01
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-05-31T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-05-31T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-05-31
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-05-30T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-05-30T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-05-30
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-05-29T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-05-29T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-05-29
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-05-28T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-05-28T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-05-28
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-05-27T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-05-27T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-05-27
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-05-26T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-05-26T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-05-26
+⚡️  [log] - [ Dashboard.js ] Dashboard initial spiritualFitness: 32.04
+⚡️  [log] - [ Dashboard.js ] Dashboard currentScore state: 32.04
+⚡️  [log] - [ Dashboard.js ] Dashboard formattedScore for display: 32.04
+⚡️  [log] - [ Dashboard.js ] Dashboard progressPercent: 32.04
+⚡️  [log] - [ ActivityList.js: 39 ] Total activities received: 9
+⚡️  [log] - [ ActivityList.js: 40 ] Filter params - limit: null filter: all maxDaysAgo: null
+⚡️  [log] - [ ActivityList.js: 65 ] Filtering out uncompleted action item: 2
+⚡️  [log] - [ ActivityList.js: 98 ] Final filtered activities count: 8
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-06-01T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-06-01T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-06-01
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-06-01T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-06-01T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-06-01
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-05-31T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-05-31T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-05-31
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-05-30T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-05-30T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-05-30
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-05-29T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-05-29T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-05-29
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-05-28T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-05-28T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-05-28
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-05-27T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-05-27T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-05-27
+⚡️  [log] - [ ActivityList.js: 120 ] Grouping activity with date: 2025-05-26T16:00:00.000Z Type: string
+⚡️  [log] - [ ActivityList.js: 133 ] Date object created: "2025-05-26T16:00:00.000Z"
+⚡️  [log] - [ ActivityList.js: 147 ] Generated dateKey from object: 2025-05-26
