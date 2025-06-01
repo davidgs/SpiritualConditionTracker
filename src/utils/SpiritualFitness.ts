@@ -53,7 +53,7 @@ export function calculateSpiritualFitnessScore(
     // Track unique days for consistency calculation
     const day = new Date(activity.date).toISOString().split('T')[0];
     activityDays.add(day);
-    console.log('[ SpiritualFitness.js ] calculateSpiritualFitnessScore Day:', day);
+    //console.log('[ SpiritualFitness.js ] calculateSpiritualFitnessScore Day:', day);
     
     // Calculate points for this activity
     let points: number;
