@@ -97,9 +97,29 @@ export default function MeetingFormDialog({
   
   // Initialize form with meeting data if provided
   useEffect(() => {
-    // If it's a new meeting, start with empty schedule
+    // If it's a new meeting, clear all fields
     if (!meeting) {
+      setMeetingName('');
       setMeetingSchedule([]);
+      setMeetingDays({
+        monday: false,
+        tuesday: false,
+        wednesday: false,
+        thursday: false,
+        friday: false,
+        saturday: false,
+        sunday: false
+      });
+      setMeetingTime('');
+      setLocationName('');
+      setStreetAddress('');
+      setCity('');
+      setState('');
+      setZipCode('');
+      setMeetingAddress('');
+      setLocation(null);
+      setIsHomeGroup(false);
+      setError('');
       return;
     }
     

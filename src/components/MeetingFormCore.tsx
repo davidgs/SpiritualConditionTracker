@@ -65,7 +65,17 @@ export default function MeetingFormCore({
   // Initialize form with meeting data if provided
   useEffect(() => {
     if (!meeting) {
+      setMeetingName('');
       setMeetingSchedule([{ day: 'monday', time: '18:00' }]);
+      setMeetingAddress('');
+      setLocationName('');
+      setStreetAddress('');
+      setCity('');
+      setState('');
+      setZipCode('');
+      setLocation(null);
+      setIsHomeGroup(false);
+      setError('');
       return;
     }
 
