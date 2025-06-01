@@ -150,21 +150,23 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
       return (
         <Box sx={{ mb: 2 }}>
           <Typography variant="h6" sx={{ mb: 1 }}>Select Day</Typography>
-          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-            {days.map(day => (
-              <Button
-                key={day.key}
-                variant="outlined"
-                onClick={() => {
-                  setNewMeeting({ ...newMeeting, day: day.key });
-                  setCurrentStep('time');
-                }}
-                sx={{ mb: 1 }}
-              >
-                {day.label}
-              </Button>
-            ))}
-          </Box>
+          <FormControl fullWidth>
+            <InputLabel>Day</InputLabel>
+            <Select
+              value={newMeeting.day || ''}
+              label="Day"
+              onChange={(e) => {
+                setNewMeeting({ ...newMeeting, day: e.target.value });
+                setCurrentStep('time');
+              }}
+            >
+              {days.map(day => (
+                <MenuItem key={day.key} value={day.key}>
+                  {day.label}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
         </Box>
       );
     }
@@ -331,45 +333,6 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
             onClick={() => startEditingMeeting(index, 'access')}
             sx={{ fontSize: '0.7rem', height: '24px', cursor: 'pointer' }}
           />
-
-          <Box sx={{ position: 'relative', ml: 1 }}>
-            <SpeedDial
-              ariaLabel="Edit meeting options"
-              sx={{ 
-                position: 'absolute', 
-                bottom: -20, 
-                right: -20,
-                '& .MuiFab-root': { 
-                  width: 32, 
-                  height: 32, 
-                  minHeight: 32 
-                }
-              }}
-              icon={<SpeedDialIcon icon={<EditIcon />} />}
-              direction="left"
-            >
-              <SpeedDialAction
-                icon={<AccessTimeIcon />}
-                tooltipTitle="Change time"
-                onClick={() => startEditingMeeting(index, 'time')}
-              />
-              <SpeedDialAction
-                icon={<FormatListBulletedIcon />}
-                tooltipTitle="Change format"
-                onClick={() => startEditingMeeting(index, 'format')}
-              />
-              <SpeedDialAction
-                icon={<LocationOnIcon />}
-                tooltipTitle="Change location"
-                onClick={() => startEditingMeeting(index, 'locationType')}
-              />
-              <SpeedDialAction
-                icon={<LockIcon />}
-                tooltipTitle="Change access"
-                onClick={() => startEditingMeeting(index, 'access')}
-              />
-            </SpeedDial>
-          </Box>
           
           <Button
             size="small"
@@ -389,10 +352,34 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
         </Box>
       ))}
 
-      {/* Step-by-step meeting creation/editing */}
-      {(currentStep !== 'day' && editingMeeting === null) && (
-        <Box sx={{ mt: 2, p: 2, border: '1px solid #ddd', borderRadius: 1 }}>
-          <Typography variant="h6" sx={{ mb: 2 }}>Add New Meeting</Typography>
+      {/* Simple day selection buttons - first level of original tree */}
+      {currentStep === 'day' && editingMeeting === null && (
+        <Box sx={{ mt: 2 }}>
+          <Typography variant="h6" sx={{ mb: 1 }}>Select Day for New Meeting</Typography>
+          {days.map(day => (
+            <Button
+              key={day.key}
+              variant="outlined"
+              fullWidth
+              onClick={() => {
+                setNewMeeting({ ...newMeeting, day: day.key });
+                setCurrentStep('time');
+              }}
+              sx={{ 
+                mb: 1, 
+                textAlign: 'left',
+                justifyContent: 'flex-start'
+              }}
+            >
+              {day.label}
+            </Button>
+          ))}
+        </Box>
+      )}
+
+      {/* Step-by-step selectors after day is chosen */}
+      {currentStep !== 'day' && editingMeeting === null && (
+        <Box sx={{ mt: 2 }}>
           {renderStepSelector()}
         </Box>
       )}
@@ -414,25 +401,6 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
             Cancel
           </Button>
         </Box>
-      )}
-
-      {/* Add new meeting button */}
-      {(currentStep === 'day' && editingMeeting === null) && (
-        <Box sx={{ mt: 2, p: 2, border: '1px solid #ddd', borderRadius: 1 }}>
-          <Typography variant="h6" sx={{ mb: 2 }}>Add New Meeting</Typography>
-          {renderStepSelector()}
-        </Box>
-      )}
-
-      {/* Add another meeting button - only show after at least one meeting exists and not in creation flow */}
-      {schedule.length > 0 && currentStep === 'day' && editingMeeting === null && Object.keys(newMeeting).length === 0 && (
-        <Button
-          variant="contained"
-          onClick={() => setCurrentStep('day')}
-          sx={{ mt: 2 }}
-        >
-          + Add Another Meeting
-        </Button>
       )}
     </Box>
   );
