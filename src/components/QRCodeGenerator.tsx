@@ -28,11 +28,7 @@ export default function QRCodeGenerator({ data, title, open, onClose, size = 300
     removeQrCodeBehindLogo: true,
     logoPadding: 3,
     logoPaddingStyle: 'circle' as const,
-    eyeRadius: [
-      { outer: [10, 10, 0, 10], inner: [0, 10, 10, 0] },
-      { outer: [10, 10, 10, 0], inner: [10, 0, 0, 10] },
-      { outer: [10, 0, 10, 10], inner: [0, 10, 0, 0] }
-    ],
+
     eyeColor: '#000000',
     qrStyle: 'dots' as const,
     id: 'react-qrcode-logo'
@@ -91,7 +87,7 @@ export default function QRCodeGenerator({ data, title, open, onClose, size = 300
     <Dialog 
       open={open} 
       onClose={onClose} 
-      maxWidth="sm" 
+      maxWidth="xs" 
       fullWidth
       sx={{
         '& .MuiDialog-container': {
@@ -100,11 +96,9 @@ export default function QRCodeGenerator({ data, title, open, onClose, size = 300
           minHeight: '100vh'
         },
         '& .MuiDialog-paper': {
-          margin: '16px',
-          position: 'fixed',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
+          margin: { xs: '8px', sm: '16px' },
+          maxWidth: { xs: 'calc(100vw - 16px)', sm: '400px' },
+          width: '100%',
           maxHeight: 'calc(100vh - 32px)'
         }
       }}
@@ -126,13 +120,23 @@ export default function QRCodeGenerator({ data, title, open, onClose, size = 300
         </Box>
       </DialogContent>
 
-      <DialogActions sx={{ justifyContent: 'center', gap: 1, pb: 3 }}>
+      <DialogActions sx={{ 
+        justifyContent: 'center', 
+        flexDirection: { xs: 'column', sm: 'row' },
+        gap: { xs: 1, sm: 2 }, 
+        pb: 3,
+        px: 3
+      }}>
         <Button
           variant="outlined"
           color="primary"
           startIcon={<i className="fa-solid fa-download"></i>}
           onClick={downloadQRCode}
-          sx={{ minWidth: 120 }}
+          sx={{ 
+            flex: { xs: 1, sm: 'none' },
+            minWidth: { xs: 'auto', sm: 100 },
+            width: { xs: '100%', sm: 'auto' }
+          }}
         >
           Download
         </Button>
@@ -142,7 +146,11 @@ export default function QRCodeGenerator({ data, title, open, onClose, size = 300
           color="primary"
           startIcon={<i className="fa-solid fa-share"></i>}
           onClick={shareQRCode}
-          sx={{ minWidth: 120 }}
+          sx={{ 
+            flex: { xs: 1, sm: 'none' },
+            minWidth: { xs: 'auto', sm: 100 },
+            width: { xs: '100%', sm: 'auto' }
+          }}
         >
           Share
         </Button>
@@ -151,7 +159,11 @@ export default function QRCodeGenerator({ data, title, open, onClose, size = 300
           variant="outlined"
           color="inherit"
           onClick={onClose}
-          sx={{ minWidth: 120 }}
+          sx={{ 
+            flex: { xs: 1, sm: 'none' },
+            minWidth: { xs: 'auto', sm: 100 },
+            width: { xs: '100%', sm: 'auto' }
+          }}
         >
           Close
         </Button>
