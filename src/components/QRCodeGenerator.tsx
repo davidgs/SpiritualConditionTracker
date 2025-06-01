@@ -43,6 +43,49 @@ export default function QRCodeGenerator({ data, title, open, onClose, size = 300
     }
   }, [open, data]);
 
+  const addLogoToQRCode = (canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D) => {
+    console.log('Adding logo to QR code');
+    
+    const logoImg = new Image();
+    logoImg.crossOrigin = 'anonymous';
+    
+    logoImg.onload = () => {
+      console.log('Logo loaded successfully, adding to QR code');
+      
+      // Calculate logo size (about 15% of QR code size for good readability)
+      const logoSize = size * 0.15;
+      const logoX = (size - logoSize) / 2;
+      const logoY = (size - logoSize) / 2;
+      
+      // Create a white background circle for the logo
+      const circleRadius = logoSize / 2 + 8;
+      ctx.fillStyle = '#ffffff';
+      ctx.beginPath();
+      ctx.arc(size / 2, size / 2, circleRadius, 0, 2 * Math.PI);
+      ctx.fill();
+      
+      // Add a subtle border around the circle
+      ctx.strokeStyle = '#e2e8f0';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.arc(size / 2, size / 2, circleRadius, 0, 2 * Math.PI);
+      ctx.stroke();
+      
+      // Draw the logo image
+      ctx.drawImage(logoImg, logoX, logoY, logoSize, logoSize);
+      
+      console.log('Logo added to QR code successfully');
+    };
+    
+    logoImg.onerror = (error) => {
+      console.log('Logo failed to load, QR code will display without logo:', error);
+      // QR code is still functional without the logo
+    };
+    
+    // Load the logo image
+    logoImg.src = '/logo.jpg';
+  };
+
   const generateQRCode = async () => {
     if (!canvasRef.current || !data) {
       console.log('Canvas ref or data missing:', { canvas: !!canvasRef.current, data });
@@ -90,6 +133,10 @@ export default function QRCodeGenerator({ data, title, open, onClose, size = 300
       await QRCode.toCanvas(canvas, data, qrOptions);
       
       console.log('QR code generated successfully');
+      
+      // Now add the logo in the center
+      addLogoToQRCode(canvas, ctx);
+      
       setQrGenerated(true);
 
     } catch (error) {
