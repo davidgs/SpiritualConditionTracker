@@ -190,7 +190,13 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
                   const timeString = value.format('HH:mm');
                   console.log('Time picker accepted:', timeString);
                   setNewMeeting(prev => ({ ...prev, time: timeString }));
-                  setCurrentStep('format');
+                  
+                  // If editing an existing meeting, update it immediately
+                  if (editingMeeting !== null) {
+                    updateExistingMeeting();
+                  } else {
+                    setCurrentStep('format');
+                  }
                 }
               }}
             />
@@ -394,7 +400,6 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
             px: 1
           }}
         >
-          {console.log('Progressive display rendering with newMeeting:', newMeeting)}
           <Typography variant="body2" sx={{ fontWeight: 500, minWidth: '70px', textAlign: 'left' }}>
             {newMeeting.day ? (days.find(d => d.key === newMeeting.day)?.label || newMeeting.day) : '---'}
           </Typography>
