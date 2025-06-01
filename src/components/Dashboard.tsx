@@ -122,13 +122,13 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
   };
 
   // Calculate sobriety information if user has a sobriety date
-  const sobrietyDays = user?.sobrietyDate 
-    ? window.db?.calculateSobrietyDays(user.sobrietyDate) || 0
-    : 0;
+  //const sobrietyDays = user?.sobrietyDate 
+  //  ? window.db?.calculateSobrietyDays(user.sobrietyDate) || 0
+  //  : 0;
   
-  const sobrietyYears = user?.sobrietyDate 
-    ? window.db?.calculateSobrietyYears(user.sobrietyDate, 2) || 0
-    : 0;
+ // const sobrietyYears = user?.sobrietyDate 
+  //  ? window.db?.calculateSobrietyYears(user.sobrietyDate, 2) || 0
+  //  : 0;
 
   // Determine whether to show years or days more prominently
   const showYearsProminent = sobrietyYears >= 1;
