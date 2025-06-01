@@ -299,7 +299,10 @@ class DatabaseService {
 
   async deleteMeeting(meetingId: string | number): Promise<boolean> {
     return this.executeOperation(async () => {
-      return await this.database.remove('meetings', meetingId);
+      console.log('[ DatabaseService.ts:301 ] Calling database.remove with meetingId:', meetingId, 'Type:', typeof meetingId);
+      const result = await this.database.remove('meetings', meetingId);
+      console.log('[ DatabaseService.ts:303 ] Database remove result:', result);
+      return result;
     });
   }
 }

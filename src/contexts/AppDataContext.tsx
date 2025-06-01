@@ -372,14 +372,21 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
 
   const deleteMeeting = async (meetingId: string | number): Promise<boolean> => {
     try {
+      console.log('[ AppDataContext.tsx:373 ] Attempting to delete meeting with ID:', meetingId, 'Type:', typeof meetingId);
+      
       const success = await databaseService.deleteMeeting(meetingId);
+      console.log('[ AppDataContext.tsx:376 ] Database delete result:', success);
+      
       if (success) {
         dispatch({ type: 'DELETE_MEETING', payload: meetingId });
-        console.log('[ AppDataContext.tsx:351 ] Meeting deleted:', meetingId);
+        console.log('[ AppDataContext.tsx:379 ] Meeting deleted from UI state:', meetingId);
+      } else {
+        console.warn('[ AppDataContext.tsx:381 ] Database delete returned false - meeting may not exist or delete failed');
+        dispatch({ type: 'SET_ERROR', payload: 'Meeting could not be deleted from database' });
       }
       return success;
     } catch (error) {
-      console.error('[ AppDataContext.tsx:355 ] Failed to delete meeting:', error);
+      console.error('[ AppDataContext.tsx:385 ] Failed to delete meeting:', error);
       dispatch({ type: 'SET_ERROR', payload: 'Failed to delete meeting' });
       return false;
     }
