@@ -343,10 +343,18 @@ export default function MeetingFormDialog({
     }
     
     // Check if any schedule item requires physical address (not purely online)
-    const hasPhysicalMeeting = meetingSchedule.some(item => item.locationType !== 'online');
+    const hasPhysicalMeeting = meetingSchedule.some(item => item.locationType === 'in_person' || item.locationType === 'hybrid');
     
     if (hasPhysicalMeeting && !streetAddress.trim()) {
-      setError('Street address is required for in-person meetings');
+      setError('Street address is required for in-person and hybrid meetings');
+      return;
+    }
+    
+    // Check if online URL is required for online/hybrid meetings
+    const hasOnlineMeeting = meetingSchedule.some(item => item.locationType === 'online' || item.locationType === 'hybrid');
+    
+    if (hasOnlineMeeting && !onlineUrl.trim()) {
+      setError('Online meeting URL is required for online and hybrid meetings');
       return;
     }
     
@@ -584,8 +592,8 @@ export default function MeetingFormDialog({
             )}
         </Box>
         
-        {/* Online URL Field - Show when any schedule item has online location */}
-        {meetingSchedule.some(item => item.locationType === 'online') && (
+        {/* Online URL Field - Show when any schedule item has online or hybrid location */}
+        {meetingSchedule.some(item => item.locationType === 'online' || item.locationType === 'hybrid') && (
           <Box sx={{ mt: 3, mb: 2, px: 3 }}>
             <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 'bold' }}>
               Online Meeting URL
