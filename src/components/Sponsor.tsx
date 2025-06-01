@@ -156,8 +156,8 @@ export default function Sponsor({ user, onUpdate }: SponsorProps) {
       const { id, ...contactWithoutId } = contactData;
       
       // Ensure we have a valid userId to avoid constraint errors
-      // If user.id is undefined/null, use a default value
-      const userId = user && user.id ? user.id : 'default_user';
+      // Convert userId to string to match database schema (TEXT field)
+      const userId = user && user.id ? String(user.id) : 'default_user';
       
       const contact = {
         ...contactWithoutId,
