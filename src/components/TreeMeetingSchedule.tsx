@@ -173,8 +173,14 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
           <Typography variant="h6" sx={{ mb: 1 }}>Select Time</Typography>
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <MobileTimePicker
-              defaultValue={dayjs('2022-04-17T15:30')}
+              value={newMeeting.time ? dayjs(`2022-04-17T${newMeeting.time}`) : dayjs('2022-04-17T19:30')}
               onChange={(value) => {
+                if (value) {
+                  const timeString = value.format('HH:mm');
+                  setNewMeeting({ ...newMeeting, time: timeString });
+                }
+              }}
+              onAccept={(value) => {
                 if (value) {
                   const timeString = value.format('HH:mm');
                   setNewMeeting({ ...newMeeting, time: timeString });
