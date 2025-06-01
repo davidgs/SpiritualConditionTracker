@@ -4,6 +4,7 @@ import ThemeSelector from './ThemeSelector';
 import MeetingFormDialog from './MeetingFormDialog';
 import PopoverColorPicker from './PopoverColorPicker';
 import PopoverThemeDisplay from './PopoverThemeDisplay';
+import QRCodeGenerator from './QRCodeGenerator';
 import { useAppTheme } from '../contexts/MuiThemeProvider';
 import MuiThemeProvider from '../contexts/MuiThemeProvider';
 import { formatDateForDisplay } from '../utils/dateUtils';

@@ -485,6 +485,26 @@ export default function Meetings({ setCurrentView, meetings = [], onSave, onDele
           </div>
         )}
       </div>
+
+      {/* Render the meeting form */}
+      <MeetingFormDialog
+        open={showForm}
+        meeting={currentMeeting}
+        onSave={onSave}
+        onClose={() => {
+          setShowForm(false);
+          setCurrentMeeting(null);
+        }}
+        use24HourFormat={use24HourFormat}
+      />
+
+      {/* QR Code Generator */}
+      <QRCodeGenerator
+        open={qrCodeOpen}
+        data={qrCodeData}
+        title={qrCodeTitle}
+        onClose={() => setQrCodeOpen(false)}
+      />
     </div>
   );
 }
