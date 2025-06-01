@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import logoImg from '../assets/logo-small.png';
 import { formatDateForDisplay } from '../utils/dateUtils';
 import { useTheme } from '@mui/material/styles';
