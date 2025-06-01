@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import { QRCode } from 'react-qrcode-logo';
-import { Box, Button, Dialog, DialogTitle, DialogContent, DialogActions, Typography } from '@mui/material';
+import { Box, Button, Dialog, DialogTitle, DialogContent, DialogActions, Typography, useTheme } from '@mui/material';
 
 interface QRCodeGeneratorProps {
   data: string;
@@ -12,6 +12,7 @@ interface QRCodeGeneratorProps {
 
 export default function QRCodeGenerator({ data, title, open, onClose, size = 300 }: QRCodeGeneratorProps) {
   const qrRef = useRef<any>(null);
+  const theme = useTheme();
 
   const qrSettings = {
     value: data,
@@ -19,8 +20,8 @@ export default function QRCodeGenerator({ data, title, open, onClose, size = 300
     enableCORS: true,
     size: size,
     quietZone: 10,
-    bgColor: '#ffffff',
-    fgColor: '#000000',
+    bgColor: theme.palette.background.paper,
+    fgColor: theme.palette.text.primary,
     logoImage: '/assets/qr-logo.png',
     logoWidth: size * 0.3,
     logoHeight: size * 0.3,
@@ -29,7 +30,7 @@ export default function QRCodeGenerator({ data, title, open, onClose, size = 300
     logoPadding: 3,
     logoPaddingStyle: 'circle' as const,
 
-    eyeColor: '#000000',
+    eyeColor: theme.palette.text.primary,
     qrStyle: 'dots' as const,
     id: 'react-qrcode-logo'
   };

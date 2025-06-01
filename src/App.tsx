@@ -99,15 +99,15 @@ function AppContent() {
         location: activityData.location || null,
       };
 
-      console.log('[ App.tsx:83 handleSaveActivity ] Calling addActivity with:', JSON.stringify(newActivity, null, 2));
+     // console.log('[ App.tsx:83 handleSaveActivity ] Calling addActivity with:', JSON.stringify(newActivity, null, 2));
       const savedActivity = await addActivity(newActivity);
       
       if (savedActivity) {
-        console.log('[ App.tsx:87 handleSaveActivity ] Activity saved successfully with ID:', savedActivity?.id);
-        console.log('[ App.tsx:88 handleSaveActivity ] Saved activity data:', JSON.stringify(savedActivity, null, 2));
+       // console.log('[ App.tsx:87 handleSaveActivity ] Activity saved successfully with ID:', savedActivity?.id);
+      //  console.log('[ App.tsx:88 handleSaveActivity ] Saved activity data:', JSON.stringify(savedActivity, null, 2));
         return savedActivity;
       } else {
-        console.log('[ App.tsx:91 handleSaveActivity ] Activity saved to fallback storage');
+       // console.log('[ App.tsx:91 handleSaveActivity ] Activity saved to fallback storage');
         return newActivity; // Return the activity data even if it went to fallback
       }
     } catch (error) {
@@ -125,11 +125,11 @@ function AppContent() {
       if (meetingData.id) {
         const { id, ...updateData } = meetingData;
         savedMeeting = await updateMeeting(id, updateData);
-        console.log('[ App ] Meeting updated successfully:', savedMeeting?.id);
+       // console.log('[ App ] Meeting updated successfully:', savedMeeting?.id);
       } else {
         // If no ID, it's a new meeting
         savedMeeting = await addMeeting(meetingData);
-        console.log('[ App ] Meeting created successfully:', savedMeeting?.id);
+       // console.log('[ App ] Meeting created successfully:', savedMeeting?.id);
       }
       
       return savedMeeting;
@@ -143,7 +143,7 @@ function AppContent() {
   async function handleDeleteMeeting(meetingId: string | number): Promise<boolean> {
     try {
       const success = await deleteMeeting(meetingId);
-      console.log('[ App ] Meeting deleted successfully:', meetingId);
+    //  console.log('[ App ] Meeting deleted successfully:', meetingId);
       return success;
     } catch (error) {
       console.error('[ App ] Error deleting meeting:', error);
@@ -155,7 +155,7 @@ function AppContent() {
   async function handleUpdateProfile(updates: any, options: any = {}): Promise<any> {
     try {
       const updatedUser = await updateUser(updates);
-      console.log('[ App: 131 ] Profile updated successfully:', updatedUser?.id);
+     // console.log('[ App: 131 ] Profile updated successfully:', updatedUser?.id);
       return updatedUser;
     } catch (error) {
       console.error('[ App: 134 ] Error updating profile:', error);

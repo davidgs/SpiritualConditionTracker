@@ -20,7 +20,7 @@ export default function Meetings({ setCurrentView, meetings = [], onSave, onDele
   useEffect(() => {
     if (user && user.preferences) {
       const timeFormat = user.preferences.use24HourFormat || false;
-      console.log('[ Meetings.js ] Setting time format preference to:', timeFormat);
+     // console.log('[ Meetings.js ] Setting time format preference to:', timeFormat);
       setUse24HourFormat(timeFormat);
     }
   }, [user, user?.preferences?.use24HourFormat]);
@@ -166,7 +166,7 @@ export default function Meetings({ setCurrentView, meetings = [], onSave, onDele
   // Share meeting as QR code
   const handleShareMeeting = (meeting) => {
     const calendarData = generateCalendarData(meeting);
-    console.log('[ Meetings.js ] Sharing meeting calendar data:', calendarData);
+  //  console.log('[ Meetings.js ] Sharing meeting calendar data:', calendarData);
     setQrCodeData(calendarData);
     setQrCodeTitle(`Add Meeting: ${meeting.name}`);
     setQrCodeOpen(true);
@@ -188,7 +188,7 @@ export default function Meetings({ setCurrentView, meetings = [], onSave, onDele
           throw new Error('Delete operation failed');
         }
         
-        console.log('[ Meetings.js ] Meeting deleted successfully:', meetingId);
+       // console.log('[ Meetings.js ] Meeting deleted successfully:', meetingId);
       } catch (error) {
         console.error('[ Meetings.js ] Error deleting meeting:', error);
         setError('Failed to delete meeting. Please try again.');

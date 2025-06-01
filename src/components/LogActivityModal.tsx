@@ -144,7 +144,7 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
   // Handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log('[LogActivityModal:147] Submitting activity form...')
+   // console.log('[LogActivityModal:147] Submitting activity form...')
     // Validate form
     const newErrors = {};
     if (!activityType) newErrors.activityType = 'Activity type is required';
@@ -179,8 +179,8 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
       location: 'completed' // Mark all logged activities as completed so they appear in the activity list
     };
     
-    console.log('[ LogActivityModal.tsx:179 handleSubmit ] Created activity with ISO date:', newActivity.date);
-    console.log('[ LogActivityModal.tsx:180 handleSubmit ] Original date input:', date);
+  //  console.log('[ LogActivityModal.tsx:179 handleSubmit ] Created activity with ISO date:', newActivity.date);
+  //  console.log('[ LogActivityModal.tsx:180 handleSubmit ] Original date input:', date);
     
     // Add activity-specific fields
     if (activityType === 'literature') {
