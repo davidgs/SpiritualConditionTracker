@@ -63,12 +63,12 @@ async function initSQLiteDatabase() {
           encrypted: false,
           mode: 'no-encryption'
         });
-        console.log('[ sqliteLoader.js:66 ]  Database connection created successfully');
+        // console.log('[ sqliteLoader.js:66 ]  Database connection created successfully');
       }
     } catch (error) {
       // If error message indicates connection already exists, that's fine
       if (error.message && error.message.includes('already exists')) {
-        console.log('[ sqliteLoader.js:71 ]  Database connection already exists, continuing with existing connection');
+        // console.log('[ sqliteLoader.js:71 ]  Database connection already exists, continuing with existing connection');
       } else {
         console.error('[ sqliteLoader.js:73 ] Error creating database connection:', error);
         throw new Error(`Database connection failed: ${error.message || JSON.stringify(error)}`);
@@ -78,7 +78,7 @@ async function initSQLiteDatabase() {
     // Step 2: Open the database
     try {
       await sqlitePlugin.open({ database: DB_NAME });
-      console.log('[ sqliteLoader.js:81 ]  Database opened successfully');
+      // console.log('[ sqliteLoader.js:81 ]  Database opened successfully');
     } catch (error) {
       console.error('[ sqliteLoader.js: 83 ] Error opening database:', error);
       throw new Error(`Database open failed: ${error.message || JSON.stringify(error)}`);
@@ -87,7 +87,7 @@ async function initSQLiteDatabase() {
     // Step 3: Create tables
     try {
       await setupTables(sqlitePlugin);
-      console.log('[ sqliteLoader.js:90 ]  Database tables created/verified successfully');
+      // console.log('[ sqliteLoader.js:90 ]  Database tables created/verified successfully');
     } catch (error) {
       console.error('[ sqliteLoader.js: 92 ] Error setting up database tables:', error);
       throw new Error(`Table setup failed: ${error.message || JSON.stringify(error)}`);
@@ -95,7 +95,7 @@ async function initSQLiteDatabase() {
 
     // Step 4: Create global database interface
     setupGlobalDB(sqlitePlugin);
-    console.log('[ sqliteLoader.js:98 ]  Database setup complete, global db interface ready');
+   // console.log('[ sqliteLoader.js:98 ]  Database setup complete, global db interface ready');
 
     // Step 5: Perform database validation and logging
     try {
@@ -129,7 +129,7 @@ async function initSQLiteDatabase() {
  * @param {Object} sqlite - SQLite plugin instance
  */
 async function validateAndLogDatabase(sqlite) {
-  console.log('[ sqliteLoader.js:132 ]  Validating database schema and logging current state...');
+  // console.log('[ sqliteLoader.js:132 ]  Validating database schema and logging current state...');
   
   try {
     // Check if main tables exist and log their row counts
@@ -153,9 +153,9 @@ async function validateAndLogDatabase(sqlite) {
           }
         }
         
-        console.log(`[ sqliteLoader.js: 156 ] Table '${table}': ${count} records`);
+       // console.log(`[ sqliteLoader.js: 156 ] Table '${table}': ${count} records`);
       } catch (error) {
-        console.log(`[ sqliteLoader.js: 158 ] Table '${table}': does not exist or error accessing:`, error.message);
+        console.error(`[ sqliteLoader.js: 158 ] Table '${table}': does not exist or error accessing:`, error.message);
       }
     }
     
@@ -170,13 +170,13 @@ async function validateAndLogDatabase(sqlite) {
       
       if (activitiesResult?.values?.length > 0) {
         console.log('[ sqliteLoader.js:172 ]  Recent activities found:', activitiesResult.values.length);
-        activitiesResult.values.forEach( (element) => {
-          console.log('[ sqliteLoader.js:174 ]  Activity:', element);
-        });
+        // activitiesResult.values.forEach( (element) => {
+        //  console.log('[ sqliteLoader.js:174 ]  Activity:', element);
+        //});
       }
       
     } catch (error) {
-      console.log('[ sqliteLoader.js:179 ]  Could not query sample data:', error.message);
+      console.error('[ sqliteLoader.js:179 ]  Could not query sample data:', error.message);
     }
     
   } catch (error) {
@@ -536,7 +536,7 @@ function setupGlobalDB(sqlite) {
      */
     getAll: async function(collection) {
       try {
-        console.log(`[ sqliteLoader.js:523 ] Getting all items from ${collection}`);
+       // console.log(`[ sqliteLoader.js:523 ] Getting all items from ${collection}`);
         
         // For localStorage fallback, just proceed with the query
         if (!window.db) {
@@ -558,7 +558,7 @@ function setupGlobalDB(sqlite) {
           const localData = JSON.parse(localStorage.getItem(collection) || '[]');
           return localData;
         }
-        console.log(`[ sqliteLoader.js:545 ] Result from ${collection}:`, result);
+       //  console.log(`[ sqliteLoader.js:545 ] Result from ${collection}:`, result);
         
         // Handle iOS format for getAll as well
         if (result.values && result.values.length > 0) {
