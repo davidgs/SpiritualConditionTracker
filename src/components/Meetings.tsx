@@ -189,11 +189,72 @@ export default function Meetings({ setCurrentView, meetings = [], onSave, onDele
                   // Ensure it's an array before mapping
                   if (Array.isArray(scheduleArray) && scheduleArray.length > 0) {
                     return scheduleArray.map((item, idx) => (
-                      <Box key={`${meeting.id}-schedule-${idx}`} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <i className="fa-solid fa-calendar-days" style={{ fontSize: '1rem', opacity: 0.7, marginRight: '12px' }}></i>
-                        <Typography variant="body2" color="text.secondary">{formatDay(item.day)}</Typography>
-                        <i className="fa-regular fa-clock" style={{ fontSize: '0.85rem', opacity: 0.7, margin: '0 4px' }}></i>
-                        <Typography variant="body2" color="text.secondary">{formatTimeByPreference(item.time, use24HourFormat)}</Typography>
+                      <Box key={`${meeting.id}-schedule-${idx}`} sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                          <i className="fa-solid fa-calendar-days" style={{ fontSize: '1rem', opacity: 0.7, marginRight: '12px' }}></i>
+                          <Typography variant="body2" color="text.secondary">{formatDay(item.day)}</Typography>
+                          <i className="fa-regular fa-clock" style={{ fontSize: '0.85rem', opacity: 0.7, margin: '0 4px' }}></i>
+                          <Typography variant="body2" color="text.secondary">{formatTimeByPreference(item.time, use24HourFormat)}</Typography>
+                        </Box>
+                        
+                        {/* Meeting type chips for this specific day */}
+                        <Box sx={{ display: 'flex', gap: 0.5, ml: 1 }}>
+                          {/* Location Type */}
+                          {item.locationType && (
+                            <Chip
+                              label={(() => {
+                                const locationConfig = {
+                                  'in_person': 'In-Person',
+                                  'online': 'Online',
+                                  'hybrid': 'Hybrid'
+                                };
+                                return locationConfig[item.locationType] || item.locationType;
+                              })()}
+                              size="small"
+                              color={(() => {
+                                const colorConfig = {
+                                  'in_person': 'success',
+                                  'online': 'info',
+                                  'hybrid': 'warning'
+                                };
+                                return colorConfig[item.locationType] || 'default';
+                              })()}
+                              sx={{
+                                fontSize: '0.65rem',
+                                height: '20px',
+                                fontWeight: 'medium'
+                              }}
+                            />
+                          )}
+                          
+                          {/* Format */}
+                          {item.format && (
+                            <Chip
+                              label={item.format.charAt(0).toUpperCase() + item.format.slice(1).replace('_', ' ')}
+                              size="small"
+                              color="primary"
+                              sx={{
+                                fontSize: '0.65rem',
+                                height: '20px',
+                                fontWeight: 'medium'
+                              }}
+                            />
+                          )}
+                          
+                          {/* Access */}
+                          {item.access && (
+                            <Chip
+                              label={item.access.charAt(0).toUpperCase() + item.access.slice(1)}
+                              size="small"
+                              color={item.access === 'open' ? 'success' : 'error'}
+                              sx={{
+                                fontSize: '0.65rem',
+                                height: '20px',
+                                fontWeight: 'medium'
+                              }}
+                            />
+                          )}
+                        </Box>
                       </Box>
                     ));
                   }
