@@ -976,21 +976,14 @@ function setupGlobalDB(sqlite) {
      */
     remove: async function(collection, id) {
       try {
-        // Ensure ID is in numeric format
-        let numericId = id;
-        if (typeof id === 'string' && !isNaN(id)) {
-          numericId = parseInt(id, 10);
-        }
+        console.log(`[ sqliteLoader.js:977 ] window.db.remove called with collection: ${collection}, id: ${id}`);
         
-        await sqlite.execute({
-          database: DB_NAME,
-          statements: `DELETE FROM ${collection} WHERE id = ?`,
-          values: [numericId]
-        });
-        
-        return true;
+        // Use the proper delete function that checks for actual row changes
+        const result = await this.delete(collection, id);
+        console.log(`[ sqliteLoader.js:981 ] window.db.remove result: ${result}`);
+        return result;
       } catch (error) {
-        console.error(`[ sqliteLoader.js ] Error removing item from ${collection}:`, error);
+        console.error(`[ sqliteLoader.js ] Error in window.db.remove for ${collection}:`, error);
         return false;
       }
     },
