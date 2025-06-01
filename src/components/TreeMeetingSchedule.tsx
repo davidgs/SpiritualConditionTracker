@@ -190,12 +190,22 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
                 if (value && value.isValid()) {
                   const timeString = value.format('HH:mm');
                   console.log('Time picker accepted:', timeString);
-                  setNewMeeting(prev => ({ ...prev, time: timeString }));
                   
-                  // If editing an existing meeting, update it immediately
+                  // If editing an existing meeting, update it immediately with the new time
                   if (editingMeeting !== null) {
-                    updateExistingMeeting();
+                    const updatedSchedule = [...schedule];
+                    updatedSchedule[editingMeeting] = {
+                      ...updatedSchedule[editingMeeting],
+                      time: timeString
+                    };
+                    onChange(updatedSchedule);
+                    
+                    // Reset editing state
+                    setEditingMeeting(null);
+                    setNewMeeting({});
+                    setCurrentStep('day');
                   } else {
+                    setNewMeeting(prev => ({ ...prev, time: timeString }));
                     setCurrentStep('format');
                   }
                 }
