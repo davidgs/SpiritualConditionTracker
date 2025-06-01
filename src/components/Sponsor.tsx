@@ -206,8 +206,11 @@ export default function Sponsor({ user, onUpdate }: SponsorProps) {
   
   // View contact details
   const handleViewContactDetails = (contact) => {
+    console.log('[ Sponsor ] handleViewContactDetails called with contact:', contact);
+    console.log('[ Sponsor ] Setting currentView to details and selectedContact to:', contact);
     setSelectedContact(contact);
     setCurrentView('details');
+    console.log('[ Sponsor ] Navigation state updated - currentView: details, selectedContact set');
   };
   
   // Add new contact
@@ -292,6 +295,9 @@ export default function Sponsor({ user, onUpdate }: SponsorProps) {
     }
   };
   
+  // Add debug logging for render state
+  console.log('[ Sponsor ] Render - currentView:', currentView, 'selectedContact:', selectedContact);
+
   return (
     <Box sx={{ p: { xs: 2, md: 3 } }}>
       {/* Show contact details page if in details view */}
