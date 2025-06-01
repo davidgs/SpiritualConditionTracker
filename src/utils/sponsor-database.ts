@@ -16,7 +16,7 @@ export async function getSponsorContacts(userId: string): Promise<SponsorContact
     console.log('[ sponsor-database ] Querying sponsor contacts with userId:', userId);
     
     // Use DatabaseService to get all sponsor contacts
-    const allContacts = await databaseService.query<SponsorContact>('sponsor_contacts', () => true);
+    const allContacts = await databaseService.getAll<SponsorContact>('sponsor_contacts');
     
     // Filter by userId if provided
     const userContacts = allContacts.filter(contact => contact.userId === userId);
@@ -57,7 +57,7 @@ export async function getContactDetails(contactId: number): Promise<ContactDetai
     
     console.log('[ sponsor-database ] Getting contact details for contactId:', contactId);
     
-    const allDetails = await databaseService.query<ContactDetail>('contact_details', () => true);
+    const allDetails = await databaseService.getAll<ContactDetail>('contact_details');
     const contactDetails = allDetails.filter(detail => detail.contactId === contactId);
     
     console.log(`[ sponsor-database ] Found ${contactDetails.length} contact details`);

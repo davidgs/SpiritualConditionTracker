@@ -241,6 +241,32 @@ class DatabaseService {
       return result;
     });
   }
+
+  // Generic database operations for any table
+  async getAll<T>(tableName: string): Promise<T[]> {
+    return this.executeOperation(async () => {
+      const data = await this.database.getAll(tableName);
+      return data || [];
+    });
+  }
+
+  async add<T>(tableName: string, item: Omit<T, 'id' | 'createdAt' | 'updatedAt'>): Promise<T> {
+    return this.executeOperation(async () => {
+      return await this.database.add(tableName, item);
+    });
+  }
+
+  async update<T>(tableName: string, id: string | number, updates: Partial<T>): Promise<T | null> {
+    return this.executeOperation(async () => {
+      return await this.database.update(tableName, id, updates);
+    });
+  }
+
+  async remove(tableName: string, id: string | number): Promise<boolean> {
+    return this.executeOperation(async () => {
+      return await this.database.remove(tableName, id);
+    });
+  }
 }
 
 export default DatabaseService;
