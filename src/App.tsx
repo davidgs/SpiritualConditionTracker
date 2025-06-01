@@ -60,13 +60,29 @@ function AppContent() {
 
   // Filter activities by timeframe
   function filterActivitiesByTimeframe(activities: any[], timeframeDays: number): any[] {
-    const cutoffDate = new Date();
-    cutoffDate.setDate(cutoffDate.getDate() - timeframeDays);
+    const now = new Date();
+    const cutoffTime = now.getTime() - (timeframeDays * 24 * 60 * 60 * 1000);
+    const cutoffDate = new Date(cutoffTime);
     
-    return activities.filter(activity => {
+    console.log(`[ App.tsx ] Filtering activities for ${timeframeDays} days`);
+    console.log(`[ App.tsx ] Cutoff date: ${cutoffDate.toISOString()}`);
+    console.log(`[ App.tsx ] Total activities before filter: ${activities.length}`);
+    
+    const filtered = activities.filter(activity => {
+      if (!activity.date) return false;
       const activityDate = new Date(activity.date);
-      return activityDate >= cutoffDate;
+      const isWithinRange = activityDate >= cutoffDate;
+      
+      if (isWithinRange) {
+        console.log(`[ App.tsx ] Including activity: ${activity.type} on ${activity.date}`);
+      }
+      
+      return isWithinRange;
     });
+    
+    console.log(`[ App.tsx ] Activities after ${timeframeDays}-day filter: ${filtered.length}`);
+    
+    return filtered;
   }
 
   // Handle saving new activity
