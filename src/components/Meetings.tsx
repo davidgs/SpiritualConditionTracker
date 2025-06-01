@@ -133,6 +133,16 @@ export default function Meetings({ setCurrentView, meetings = [], onSave, onDele
       return date.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
     };
 
+    // Build meeting type description from the schedule data
+    let meetingTypeDescription = 'AA';
+    if (nextMeeting.access) {
+      meetingTypeDescription += ` ${nextMeeting.access.charAt(0).toUpperCase() + nextMeeting.access.slice(1)}`;
+    }
+    if (nextMeeting.format) {
+      meetingTypeDescription += ` ${nextMeeting.format.charAt(0).toUpperCase() + nextMeeting.format.slice(1).replace('_', ' ')}`;
+    }
+    meetingTypeDescription += ' Meeting';
+
     // Create calendar event data (vCalendar format)
     const calendarData = [
       'BEGIN:VCALENDAR',
@@ -142,7 +152,7 @@ export default function Meetings({ setCurrentView, meetings = [], onSave, onDele
       `DTSTART:${formatCalendarDate(eventDate)}`,
       `DTEND:${formatCalendarDate(endDate)}`,
       `SUMMARY:${meeting.name}`,
-      `DESCRIPTION:AA Meeting\\n${meeting.type || 'Open Meeting'}`,
+      `DESCRIPTION:${meetingTypeDescription}`,
       meeting.address ? `LOCATION:${meeting.address}` : '',
       meeting.onlineUrl ? `URL:${meeting.onlineUrl}` : '',
       'RRULE:FREQ=WEEKLY;BYDAY=' + nextMeeting.day.substring(0, 2).toUpperCase(),
