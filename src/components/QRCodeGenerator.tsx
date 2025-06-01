@@ -21,14 +21,20 @@ export default function QRCodeGenerator({ data, title, open, onClose, size = 300
   }, [open, data]);
 
   const generateQRCode = async () => {
-    if (!canvasRef.current) return;
+    if (!canvasRef.current || !data) return;
 
     try {
       const canvas = canvasRef.current;
       const ctx = canvas.getContext('2d');
       if (!ctx) return;
 
-      // Generate QR code
+      // Set canvas dimensions
+      canvas.width = size;
+      canvas.height = size;
+
+      console.log('Generating QR code for data:', data);
+
+      // Generate QR code first
       await QRCode.toCanvas(canvas, data, {
         width: size,
         margin: 2,
@@ -39,30 +45,40 @@ export default function QRCodeGenerator({ data, title, open, onClose, size = 300
         errorCorrectionLevel: 'H' // High error correction for logo overlay
       });
 
-      // Add logo in center
+      console.log('QR code generated successfully');
+      setQrGenerated(true);
+
+      // Try to add logo after QR code is generated
       const logoImg = new Image();
+      logoImg.crossOrigin = 'anonymous';
+      
       logoImg.onload = () => {
-        const logoSize = size * 0.2; // 20% of QR code size
+        console.log('Logo loaded, adding to QR code');
+        const logoSize = size * 0.15; // 15% of QR code size (smaller to ensure readability)
         const logoX = (size - logoSize) / 2;
         const logoY = (size - logoSize) / 2;
 
         // Create a white background circle for the logo
         ctx.fillStyle = '#ffffff';
         ctx.beginPath();
-        ctx.arc(size / 2, size / 2, logoSize / 2 + 8, 0, 2 * Math.PI);
+        ctx.arc(size / 2, size / 2, logoSize / 2 + 6, 0, 2 * Math.PI);
         ctx.fill();
+
+        // Add a subtle border
+        ctx.strokeStyle = '#e2e8f0';
+        ctx.lineWidth = 2;
+        ctx.stroke();
 
         // Draw the logo
         ctx.drawImage(logoImg, logoX, logoY, logoSize, logoSize);
-        setQrGenerated(true);
       };
 
-      logoImg.onerror = () => {
-        // If logo fails to load, just show QR code without logo
-        setQrGenerated(true);
+      logoImg.onerror = (error) => {
+        console.log('Logo failed to load, showing QR code without logo:', error);
+        // QR code is already generated and visible
       };
 
-      // Try to load the logo
+      // Try to load the logo (fallback if logo doesn't exist)
       logoImg.src = '/logo.jpg';
     } catch (error) {
       console.error('Error generating QR code:', error);
@@ -114,7 +130,22 @@ export default function QRCodeGenerator({ data, title, open, onClose, size = 300
   };
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
+    <Dialog 
+      open={open} 
+      onClose={onClose} 
+      maxWidth="sm" 
+      fullWidth
+      sx={{
+        '& .MuiDialog-container': {
+          alignItems: 'center',
+          justifyContent: 'center'
+        },
+        '& .MuiDialog-paper': {
+          margin: 'auto',
+          position: 'relative'
+        }
+      }}
+    >
       <DialogTitle sx={{ textAlign: 'center', pb: 1 }}>
         <i className="fa-solid fa-qrcode mr-2"></i>
         {title}
