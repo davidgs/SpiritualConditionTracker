@@ -342,8 +342,11 @@ export default function MeetingFormDialog({
       return;
     }
     
-    if (!streetAddress.trim()) {
-      setError('Street address is required');
+    // Check if any schedule item requires physical address (not purely online)
+    const hasPhysicalMeeting = meetingSchedule.some(item => item.locationType !== 'online');
+    
+    if (hasPhysicalMeeting && !streetAddress.trim()) {
+      setError('Street address is required for in-person meetings');
       return;
     }
     
@@ -489,23 +492,25 @@ export default function MeetingFormDialog({
             />
           </Box>
           
-          <Box>
-            <Box sx={{ color: muiTheme.palette.text.secondary, fontSize: '14px', mb: '4px' }}>
-              Location
-            </Box>
-            
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-              <TextField
-                fullWidth
-                value={locationName}
-                onChange={(e) => setLocationName(e.target.value)}
-                placeholder="Location name (e.g. Apex United Methodist Church)"
-                size="medium"
-                margin="none"
-                sx={(theme) => ({
-                  ...getTextFieldStyle(theme)
-                })}
-              />
+          {/* Show address fields for in-person and hybrid meetings */}
+          {meetingSchedule.some(item => item.locationType === 'in_person' || item.locationType === 'hybrid') && (
+            <Box>
+              <Box sx={{ color: muiTheme.palette.text.secondary, fontSize: '14px', mb: '4px' }}>
+                Location
+              </Box>
+              
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                <TextField
+                  fullWidth
+                  value={locationName}
+                  onChange={(e) => setLocationName(e.target.value)}
+                  placeholder="Location name (e.g. Apex United Methodist Church)"
+                  size="medium"
+                  margin="none"
+                  sx={(theme) => ({
+                    ...getTextFieldStyle(theme)
+                  })}
+                />
               
               <TextField
                 fullWidth
@@ -576,6 +581,7 @@ export default function MeetingFormDialog({
               </Box>
             </Box>
           </Box>
+            )}
         </Box>
         
         {/* Online URL Field - Show when any schedule item has online location */}
@@ -617,6 +623,7 @@ export default function MeetingFormDialog({
           <Typography variant="body2" sx={{ mt: 0.5, ml: 4 }} color="text.secondary">
             Your Home Group is your primary AA group where you regularly attend and participate.
           </Typography>
+        </Box>
         </Box>
       </DialogContent>
       
