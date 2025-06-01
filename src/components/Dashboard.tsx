@@ -155,6 +155,19 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
     console.log('[ Dashboard.js ] Dashboard useEffect [scoreTimeframe] triggered with timeframe:', scoreTimeframe);
     calculateSpiritualFitnessScore();
   }, [scoreTimeframe]);
+        if (activity.location === 'completed') {
+          points = 0.5; // Completed action items add points
+        } else if (activity.location === 'deleted') {
+          points = -0.5; // Deleted action items subtract points
+        } else {
+          points = 0; // Pending action items don't count
+        }
+      } else {
+        points = weights[activity.type] || 2;
+      }
+      totalPoints += points;
+      
+      // Track breakdown
       if (!breakdown[activity.type]) {
         breakdown[activity.type] = { count: 0, points: 0 };
       }
