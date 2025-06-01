@@ -21,67 +21,69 @@ export default function QRCodeGenerator({ data, title, open, onClose, size = 300
   }, [open, data]);
 
   const generateQRCode = async () => {
-    if (!canvasRef.current || !data) return;
+    if (!canvasRef.current || !data) {
+      console.log('Canvas ref or data missing:', { canvas: !!canvasRef.current, data });
+      return;
+    }
 
     try {
       const canvas = canvasRef.current;
       const ctx = canvas.getContext('2d');
-      if (!ctx) return;
+      if (!ctx) {
+        console.error('Could not get canvas context');
+        return;
+      }
 
-      // Set canvas dimensions
+      console.log('Starting QR code generation...');
+      console.log('Canvas element:', canvas);
+      console.log('Data to encode:', data);
+      console.log('Size:', size);
+
+      // Clear the canvas first
       canvas.width = size;
       canvas.height = size;
+      ctx.clearRect(0, 0, size, size);
 
-      console.log('Generating QR code for data:', data);
+      // Set white background
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, size, size);
 
-      // Generate QR code first
-      await QRCode.toCanvas(canvas, data, {
+      console.log('Canvas cleared and sized');
+
+      // Generate QR code with basic settings first
+      const qrOptions = {
         width: size,
         margin: 2,
         color: {
-          dark: '#1a365d', // Dark blue matching app theme
+          dark: '#000000', // Use black for better visibility
           light: '#ffffff'
         },
-        errorCorrectionLevel: 'H' // High error correction for logo overlay
-      });
+        errorCorrectionLevel: 'M' // Medium error correction
+      };
 
+      console.log('QR options:', qrOptions);
+
+      // Generate the QR code
+      await QRCode.toCanvas(canvas, data, qrOptions);
+      
       console.log('QR code generated successfully');
       setQrGenerated(true);
 
-      // Try to add logo after QR code is generated
-      const logoImg = new Image();
-      logoImg.crossOrigin = 'anonymous';
-      
-      logoImg.onload = () => {
-        console.log('Logo loaded, adding to QR code');
-        const logoSize = size * 0.15; // 15% of QR code size (smaller to ensure readability)
-        const logoX = (size - logoSize) / 2;
-        const logoY = (size - logoSize) / 2;
-
-        // Create a white background circle for the logo
-        ctx.fillStyle = '#ffffff';
-        ctx.beginPath();
-        ctx.arc(size / 2, size / 2, logoSize / 2 + 6, 0, 2 * Math.PI);
-        ctx.fill();
-
-        // Add a subtle border
-        ctx.strokeStyle = '#e2e8f0';
-        ctx.lineWidth = 2;
-        ctx.stroke();
-
-        // Draw the logo
-        ctx.drawImage(logoImg, logoX, logoY, logoSize, logoSize);
-      };
-
-      logoImg.onerror = (error) => {
-        console.log('Logo failed to load, showing QR code without logo:', error);
-        // QR code is already generated and visible
-      };
-
-      // Try to load the logo (fallback if logo doesn't exist)
-      logoImg.src = '/logo.jpg';
     } catch (error) {
       console.error('Error generating QR code:', error);
+      console.error('Error details:', error.message, error.stack);
+      
+      // Fallback: draw a simple rectangle to show something is working
+      const canvas = canvasRef.current;
+      const ctx = canvas.getContext('2d');
+      if (ctx) {
+        ctx.fillStyle = '#f0f0f0';
+        ctx.fillRect(0, 0, size, size);
+        ctx.fillStyle = '#000000';
+        ctx.font = '16px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText('QR Error', size/2, size/2);
+      }
       setQrGenerated(true);
     }
   };
@@ -138,11 +140,16 @@ export default function QRCodeGenerator({ data, title, open, onClose, size = 300
       sx={{
         '& .MuiDialog-container': {
           alignItems: 'center',
-          justifyContent: 'center'
+          justifyContent: 'center',
+          minHeight: '100vh'
         },
         '& .MuiDialog-paper': {
-          margin: 'auto',
-          position: 'relative'
+          margin: '16px',
+          position: 'fixed',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          maxHeight: 'calc(100vh - 32px)'
         }
       }}
     >
