@@ -8,7 +8,7 @@ import LogActivityModal from './LogActivityModal';
 import { useAppTheme } from '../contexts/MuiThemeProvider';
 import { Paper, Box, Typography, IconButton, Button } from '@mui/material';
 import { User, Activity, Meeting } from '../types/database';
-import { calculateFitnessFromActivities } from '../utils/SpiritualFitness'
+import { calculateSpiritualFitnessScore } from '../utils/SpiritualFitness'
 
 interface DashboardProps {
   setCurrentView: (view: string) => void;
@@ -71,7 +71,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
   // Effect to calculate spiritual fitness when activities change
   useEffect(() => {
     console.log('[ Dashboard.js ] Dashboard useEffect [activities] triggered - calculating spiritual fitness');
-    const newScore: number = calculateFitnessFromActivities(activities, scoreTimeframe);
+    const newScore: number = calculateSpiritualFitnessScore(activities, scoreTimeframe);
     console.log('[ Dashboard.js: 71 ] Dashboard newScore:', newScore);
     setCurrentScore(newScore);
   }, [activities, scoreTimeframe]);
