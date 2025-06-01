@@ -247,11 +247,29 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
               value={newMeeting.access || ''}
               label="Access"
               onChange={(e) => {
-                setNewMeeting({ ...newMeeting, access: e.target.value });
+                const updatedMeeting = { ...newMeeting, access: e.target.value };
+                setNewMeeting(updatedMeeting);
+                
+                // Complete the meeting immediately after access is selected
                 if (editingMeeting !== null) {
                   updateExistingMeeting();
                 } else {
-                  completeNewMeeting();
+                  // Need to call completeNewMeeting with the updated meeting data
+                  if (updatedMeeting.day && updatedMeeting.time && updatedMeeting.format && updatedMeeting.locationType && updatedMeeting.access) {
+                    const completeMeeting: ScheduleItem = {
+                      day: updatedMeeting.day,
+                      time: updatedMeeting.time,
+                      format: updatedMeeting.format,
+                      locationType: updatedMeeting.locationType,
+                      access: updatedMeeting.access
+                    };
+                    const newSchedule = [...schedule, completeMeeting];
+                    onChange(newSchedule);
+                    
+                    // Reset for next meeting - go back to day selection
+                    setNewMeeting({});
+                    setCurrentStep('day');
+                  }
                 }
               }}
             >
