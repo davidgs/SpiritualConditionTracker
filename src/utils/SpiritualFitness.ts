@@ -10,7 +10,9 @@ export function calculateSpiritualFitnessScore(
 ): number {
   // Base score - everyone starts with 5 points
   const baseScore = 5;
-  
+  console.log('[ SpiritualFitness.js ] calculateSpiritualFitnessScore baseScore:', baseScore);
+  console.log('[ SpiritualFitness.js ] calculateSpiritualFitnessScore timeframeDays:', timeframeDays);
+  console.log('[ SpiritualFitness.js ] calculateSpiritualFitnessScore activities:', activities);
   // Filter activities within the timeframe using millisecond calculation
   const now = new Date();
   const timeframeStartMs = now.getTime() - (timeframeDays * 24 * 60 * 60 * 1000);
@@ -20,6 +22,7 @@ export function calculateSpiritualFitnessScore(
       return false;
     }
     const activityDate = new Date(activity.date);
+    console.log('[ SpiritualFitness.js ] calculateSpiritualFitnessScore activityDate:', activityDate);
     return activityDate.getTime() >= timeframeStartMs;
   });
   
@@ -50,6 +53,7 @@ export function calculateSpiritualFitnessScore(
     // Track unique days for consistency calculation
     const day = new Date(activity.date).toISOString().split('T')[0];
     activityDays.add(day);
+    console.log('[ SpiritualFitness.js ] calculateSpiritualFitnessScore Day:', day);
     
     // Calculate points for this activity
     let points: number;
@@ -67,6 +71,7 @@ export function calculateSpiritualFitnessScore(
     }
     
     totalActivityPoints += points;
+    console.log('[ SpiritualFitness.js ] calculateSpiritualFitnessScore totalActivityPoints:', totalActivityPoints);
   });
   
   // Scale activity points and cap at 40
@@ -79,7 +84,8 @@ export function calculateSpiritualFitnessScore(
   // Total score (capped at 100, rounded to 2 decimal places)
   const totalScore = Math.min(100, baseScore + activityPoints + consistencyPoints);
   const preciseScore = Math.round(totalScore * 100) / 100;
-  
+  console.log('[ SpiritualFitness.js ] calculateSpiritualFitnessScore totalScore:', totalScore);
+  console.log('[ SpiritualFitness.js ] calculateSpiritualFitnessScore preciseScore:', preciseScore);
   return preciseScore;
 }
 
