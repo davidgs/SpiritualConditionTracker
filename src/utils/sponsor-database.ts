@@ -198,7 +198,32 @@ const sponsorDB = {
   addActionItem,
   updateContactDetail,
   deleteSponsorContact,
-  deleteContactDetail
+  deleteContactDetail,
+  getActionItemsByContactId
 };
+
+/**
+ * Get action items for a specific contact
+ */
+export async function getActionItemsByContactId(contactId: string | number): Promise<ActionItem[]> {
+  try {
+    const databaseService = DatabaseService.getInstance();
+    
+    console.log(`[ sponsor-database ] Loading action items for contact ID: ${contactId}`);
+    
+    // Get all action items and filter by contactId
+    const allActionItems = await databaseService.getAllActionItems();
+    const contactActionItems = allActionItems.filter(item => 
+      item.contactId === contactId || item.contactId === String(contactId)
+    );
+    
+    console.log(`[ sponsor-database ] Found ${contactActionItems.length} action items for contact ${contactId}`);
+    
+    return contactActionItems;
+  } catch (error) {
+    console.error('[ sponsor-database ] Error getting action items for contact:', error);
+    return [];
+  }
+}
 
 export default sponsorDB;

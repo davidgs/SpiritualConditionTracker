@@ -67,14 +67,15 @@ export default function SponsorContactDetailsPage({
     
     async function loadActionItems() {
       try {
-        console.log(`[SponsorContactDetailsPage] Loading contact details for contact ID: ${contact.id}`);
+        console.log(`[SponsorContactDetailsPage] Loading action items for contact ID: ${contact.id}`);
         
-        const contactDetailsList = await sponsorDB.getContactDetails(contact.id);
-        console.log(`[SponsorContactDetailsPage] Found ${contactDetailsList.length} contact details`);
+        // Load action items from the action_items table, not contact_details
+        const actionItemsList = await sponsorDB.getActionItemsByContactId(contact.id);
+        console.log(`[SponsorContactDetailsPage] Found ${actionItemsList.length} action items for contact`);
         
-        setActionItems(contactDetailsList);
+        setActionItems(actionItemsList);
       } catch (error) {
-        console.error('[SponsorContactDetailsPage] Error loading contact details:', error);
+        console.error('[SponsorContactDetailsPage] Error loading action items:', error);
         setActionItems([]);
       }
     }
