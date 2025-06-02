@@ -767,7 +767,11 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
                                     >
                                       <Checkbox
                                         checked={item.completed || item.deleted}
-                                        onChange={() => handleToggleActionItem(item)}
+                                        onChange={(e) => {
+                                          e.stopPropagation();
+                                          console.log('[SponsorSponsee] Checkbox clicked for item:', item);
+                                          handleToggleActionItem(item);
+                                        }}
                                         size="small"
                                         disabled={false}
                                         icon={item.deleted ? <i className="fa-solid fa-xmark" style={{ fontSize: '12px', color: theme.palette.error.main }} /> : undefined}
@@ -796,7 +800,11 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
                                       {!item.deleted && (
                                         <IconButton
                                           size="small"
-                                          onClick={() => handleDeleteActionItem(item)}
+                                          onClick={(e) => {
+                                            e.stopPropagation();
+                                            console.log('[SponsorSponsee] Delete button clicked for item:', item);
+                                            handleDeleteActionItem(item);
+                                          }}
                                           sx={{
                                             p: 0.25,
                                             color: theme.palette.error.main,
