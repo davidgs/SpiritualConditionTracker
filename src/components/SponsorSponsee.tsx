@@ -43,6 +43,7 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
   const [editingSponseeId, setEditingSponseeId] = useState(null);
   const [editingActionItem, setEditingActionItem] = useState(null);
   const [editingContact, setEditingContact] = useState(null);
+  const [refreshKey, setRefreshKey] = useState(0);
   
   // Load sponsor and sponsees data from user
   useEffect(() => {
@@ -199,8 +200,12 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
       
       console.log('[SponsorSponsee] Action item completion toggled successfully');
       
-      // Trigger a reload of contacts to reflect the change
+      // Trigger a reload of both contacts and activities to reflect the change
       loadSponsorContacts();
+      
+      // Manually trigger a re-render by updating a state value
+      console.log('[SponsorSponsee] Triggering manual refresh...');
+      setRefreshKey(prev => prev + 1);
     } catch (error) {
       console.error('[SponsorSponsee] Error toggling action item completion:', error);
     }
@@ -761,8 +766,9 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
                           
                           {/* Action Items Section */}
                           {(() => {
+                            // Force recalculation when refreshKey changes
                             const actionItems = getActionItemsForContact(contact.date);
-                            console.log('Action items for contact:', contact.date, actionItems);
+                            console.log('Action items for contact:', contact.date, actionItems, 'refreshKey:', refreshKey);
                             console.log('All activities:', activities);
                             return actionItems.length > 0 && (
                               <Box sx={{ mt: 1.5, pl: 0 }}>
