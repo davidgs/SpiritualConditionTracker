@@ -6,6 +6,7 @@ import React from 'react';
 import { AppDataProvider, useAppData } from './contexts/AppDataContext';
 import MuiThemeProvider, { useAppTheme } from './contexts/MuiThemeProvider';
 import { useTheme } from '@mui/material/styles';
+import DatabaseService from './services/DatabaseService';
 
 // Import components for testing
 import Dashboard from './components/Dashboard';
@@ -86,30 +87,47 @@ function AppContent() {
     return filtered;
   }
 
-  // Handle saving new activity
+  // Handle saving new activity or updating existing one
   async function handleSaveActivity(activityData: any): Promise<any> {
     try {
       console.log('[ App.tsx:73 handleSaveActivity ] Received activity data:', JSON.stringify(activityData, null, 2));
       console.log('[ App.tsx:74 handleSaveActivity ] Current user state:', state.user);
       
-      const newActivity = {
-        type: activityData.type,
-        date: activityData.date,
-        notes: activityData.notes || '',
-        duration: activityData.duration || null,
-        location: activityData.location || null,
-      };
-
-     // console.log('[ App.tsx:83 handleSaveActivity ] Calling addActivity with:', JSON.stringify(newActivity, null, 2));
-      const savedActivity = await addActivity(newActivity);
-      
-      if (savedActivity) {
-       // console.log('[ App.tsx:87 handleSaveActivity ] Activity saved successfully with ID:', savedActivity?.id);
-      //  console.log('[ App.tsx:88 handleSaveActivity ] Saved activity data:', JSON.stringify(savedActivity, null, 2));
-        return savedActivity;
+      // Check if this is an update (has ID) or new activity
+      if (activityData.id) {
+        console.log('[ App.tsx:76 handleSaveActivity ] Updating existing activity with ID:', activityData.id);
+        // This is an update - preserve the ID and update the existing record
+        const updateData = {
+          type: activityData.type,
+          date: activityData.date,
+          notes: activityData.notes || '',
+          duration: activityData.duration || null,
+          location: activityData.location || null,
+          updatedAt: new Date().toISOString()
+        };
+        
+        // Use the database service directly to update
+        const databaseService = DatabaseService.getInstance();
+        const updatedActivity = await databaseService.updateActivity(activityData.id, updateData);
+        console.log('[ App.tsx:87 handleSaveActivity ] Activity updated successfully:', updatedActivity);
+        return updatedActivity;
       } else {
-       // console.log('[ App.tsx:91 handleSaveActivity ] Activity saved to fallback storage');
-        return newActivity; // Return the activity data even if it went to fallback
+        // This is a new activity
+        const newActivity = {
+          type: activityData.type,
+          date: activityData.date,
+          notes: activityData.notes || '',
+          duration: activityData.duration || null,
+          location: activityData.location || null,
+        };
+
+        const savedActivity = await addActivity(newActivity);
+        
+        if (savedActivity) {
+          return savedActivity;
+        } else {
+          return newActivity; // Return the activity data even if it went to fallback
+        }
       }
     } catch (error) {
       console.error('[ App.tsx:95 handleSaveActivity ] Error saving activity:', error);

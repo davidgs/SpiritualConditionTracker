@@ -181,12 +181,15 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
         return;
       }
       
-      // Update the existing activity using onSaveActivity
-      await onSaveActivity({
+      // Update the existing activity using onSaveActivity with proper ID handling
+      const updatedActivity = {
         ...actionItem.activityData,
         location: newLocation,
         updatedAt: new Date().toISOString()
-      });
+      };
+      
+      console.log('[SponsorSponsee] About to update activity with data:', updatedActivity);
+      await onSaveActivity(updatedActivity);
       
       console.log('[SponsorSponsee] Action item completion toggled successfully');
       

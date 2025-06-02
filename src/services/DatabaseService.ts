@@ -214,6 +214,15 @@ class DatabaseService {
     });
   }
 
+  async updateActivity(id: string | number, updates: Partial<Activity>): Promise<Activity | null> {
+    return this.executeOperation(async () => {
+      console.log('[ DatabaseService.ts updateActivity ] Updating activity with ID:', id, 'updates:', updates);
+      const result = await this.database.update('activities', id, updates);
+      console.log('[ DatabaseService.ts updateActivity ] Update result:', result);
+      return result;
+    });
+  }
+
   async getAllMeetings(): Promise<Meeting[]> {
     return this.executeOperation(async () => {
       const meetings = await this.database.getAll('meetings');
