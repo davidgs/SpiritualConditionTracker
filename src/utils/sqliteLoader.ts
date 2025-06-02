@@ -114,9 +114,9 @@ async function setupBasicSchema(sqlite) {
       statements: `
         CREATE TABLE IF NOT EXISTS activities (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
-          type TEXT NOT NULL,
+          type TEXT,
           duration INTEGER,
-          date TEXT NOT NULL,
+          date TEXT,
           notes TEXT,
           literatureTitle TEXT,
           literatureType TEXT,
