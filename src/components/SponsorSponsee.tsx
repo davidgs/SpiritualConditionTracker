@@ -435,7 +435,7 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
         >
           <Box className="mb-4" sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <Typography variant="h6" sx={{ color: theme.palette.text.primary, fontWeight: 'bold' }}>
-              {sponsor.name} {sponsor.lastName || ''}
+              {(sponsor.name || 'Sponsor').trim()} {(sponsor.lastName || '').trim()}
               {sponsor.sponsorType && sponsor.sponsorType !== 'sponsor' && (
                 <Typography component="span" variant="caption" sx={{ ml: 1, color: theme.palette.text.secondary }}>
                   ({sponsor.sponsorType})
@@ -723,7 +723,7 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
               {sponsors.map((sponsor, index) => (
                 <Tab 
                   key={sponsor.id} 
-                  label={`${sponsor.name} ${sponsor.lastName || ''}`} 
+                  label={`${sponsor.name || 'Sponsor'} ${sponsor.lastName || ''}`.trim()} 
                 />
               ))}
               <Tab label="+ Add Sponsor" />

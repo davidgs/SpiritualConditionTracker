@@ -284,17 +284,27 @@ function createDatabaseInterface(sqlite) {
 
         const columns = Object.keys(itemWithTimestamp);
         const values = Object.values(itemWithTimestamp);
-        const placeholders = columns.map(() => '?').join(', ');
+        
+        // Create properly escaped values for SQL
+        const escapedValues = values.map(value => {
+          if (value === null || value === undefined) {
+            return 'NULL';
+          } else if (typeof value === 'string') {
+            return `'${value.replace(/'/g, "''")}'`; // Escape single quotes
+          } else if (typeof value === 'number') {
+            return value.toString();
+          } else {
+            return `'${JSON.stringify(value).replace(/'/g, "''")}'`;
+          }
+        }).join(', ');
 
-        const insertSQL = `INSERT INTO ${collection} (${columns.join(', ')}) VALUES (${placeholders})`;
+        const insertSQL = `INSERT INTO ${collection} (${columns.join(', ')}) VALUES (${escapedValues})`;
         
         console.log(`[ sqliteLoader.js ] Insert SQL: ${insertSQL}`);
-        console.log(`[ sqliteLoader.js ] Values: ${JSON.stringify(values)}`);
 
         const result = await sqlite.execute({
           database: DB_NAME,
-          statements: insertSQL,
-          values: values
+          statements: insertSQL
         });
 
         if (result && result.changes && result.changes.lastId) {
@@ -323,15 +333,30 @@ function createDatabaseInterface(sqlite) {
 
         const columns = Object.keys(updatesWithTimestamp);
         const values = Object.values(updatesWithTimestamp);
-        const setClause = columns.map(col => `${col} = ?`).join(', ');
+        
+        // Create properly escaped SET clause for SQL
+        const setClause = columns.map((col, index) => {
+          const value = values[index];
+          let escapedValue;
+          if (value === null || value === undefined) {
+            escapedValue = 'NULL';
+          } else if (typeof value === 'string') {
+            escapedValue = `'${value.replace(/'/g, "''")}'`;
+          } else if (typeof value === 'number') {
+            escapedValue = value.toString();
+          } else {
+            escapedValue = `'${JSON.stringify(value).replace(/'/g, "''")}'`;
+          }
+          return `${col} = ${escapedValue}`;
+        }).join(', ');
 
-        const updateSQL = `UPDATE ${collection} SET ${setClause} WHERE id = ?`;
-        values.push(id);
+        const updateSQL = `UPDATE ${collection} SET ${setClause} WHERE id = ${id}`;
+        
+        console.log(`[ sqliteLoader.js ] Update SQL: ${updateSQL}`);
 
         await sqlite.execute({
           database: DB_NAME,
-          statements: updateSQL,
-          values: values
+          statements: updateSQL
         });
 
         return await this.getById(collection, id);
