@@ -358,7 +358,7 @@ export async function associateActionItemWithContact(contactId, actionItemId) {
         SELECT * FROM sponsor_contact_action_items 
         WHERE contactId = ? AND actionItemId = ?
       `,
-      values: [contactId, actionItemId]
+      values: [contactIdInt, actionItemIdInt]
     });
     
     console.log(`[action-items.js - associateActionItemWithContact: 183] Check for existing association result:`, JSON.stringify(checkResult));
