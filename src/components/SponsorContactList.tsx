@@ -114,9 +114,7 @@ export default function SponsorContactList({ userId, contacts = [], onContactAdd
       >
         {contacts && contacts.length > 0 ? (
           <List sx={{ width: '100%', p: 0 }}>
-            {contacts
-              .sort((a, b) => new Date(b.createdAt || b.date).getTime() - new Date(a.createdAt || a.date).getTime())
-              .map((contact, index) => (
+            {contacts.map((contact, index) => (
               <React.Fragment key={contact.id}>
                 <ListItem 
                   sx={{ 
