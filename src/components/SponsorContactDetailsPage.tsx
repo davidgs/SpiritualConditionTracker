@@ -129,19 +129,26 @@ export default function SponsorContactDetailsPage({
   // Toggle action item completion
   const handleToggleComplete = async (actionItem) => {
     try {
+      console.log('[SponsorContactDetailsPage] Toggling completion for action item:', actionItem);
+      
       const updatedItem = {
         ...actionItem,
         completed: actionItem.completed ? 0 : 1
       };
       
+      console.log('[SponsorContactDetailsPage] Updated item data:', updatedItem);
+      
       const result = await sponsorDB.updateContactDetail(updatedItem);
+      console.log('[SponsorContactDetailsPage] Update result:', result);
       
       if (result) {
-        setActionItems(prev => 
-          prev.map(item => 
+        setActionItems(prev => {
+          const updated = prev.map(item => 
             item.id === actionItem.id ? updatedItem : item
-          )
-        );
+          );
+          console.log('[SponsorContactDetailsPage] Updated action items list:', updated);
+          return updated;
+        });
       }
     } catch (error) {
       console.error('[SponsorContactDetailsPage] Error toggling completion:', error);
@@ -151,10 +158,17 @@ export default function SponsorContactDetailsPage({
   // Delete action item
   const handleDeleteAction = async (actionItemId) => {
     try {
+      console.log('[SponsorContactDetailsPage] Deleting action item with ID:', actionItemId);
+      
       const success = await sponsorDB.deleteContactDetail(actionItemId);
+      console.log('[SponsorContactDetailsPage] Delete result:', success);
       
       if (success) {
-        setActionItems(prev => prev.filter(item => item.id !== actionItemId));
+        setActionItems(prev => {
+          const filtered = prev.filter(item => item.id !== actionItemId);
+          console.log('[SponsorContactDetailsPage] Updated action items after delete:', filtered);
+          return filtered;
+        });
       }
     } catch (error) {
       console.error('[SponsorContactDetailsPage] Error deleting action item:', error);
