@@ -44,7 +44,12 @@ async function initSQLiteDatabase() {
     // Setup basic schema
     await setupBasicSchema(sqlitePlugin);
 
-    return createDatabaseInterface(sqlitePlugin);
+    const dbInterface = createDatabaseInterface(sqlitePlugin);
+    
+    // Set global database reference for DatabaseService
+    window.db = dbInterface;
+    
+    return dbInterface;
   } catch (error) {
     console.error('[ sqliteLoader.js ] Error initializing Capacitor SQLite:', error);
     throw new Error(`CapacitorSQLite plugin not available - ensure the plugin is properly installed`);
