@@ -138,13 +138,15 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
       }
       
       return false;
-    }).map(activity => ({
+    })
+    .filter(activity => activity.location !== 'deleted') // Filter out deleted items
+    .map(activity => ({
       id: activity.id,
       title: activity.notes?.split(' - ')[0]?.replace('Action Item: ', '') || 'Action Item',
       text: activity.notes?.split(' - ')[1]?.split(' [Notes:')[0]?.split(' [ContactRef:')[0] || '',
       notes: activity.notes?.match(/\[Notes: (.*?)\]/)?.[1] || '',
       completed: activity.location === 'completed',
-      deleted: activity.location === 'deleted',
+      deleted: false, // Since we filtered out deleted items, this is always false
       dueDate: activity.date,
       activityData: activity, // Keep reference to original activity
       actionItemId: activity.actionItemId // Reference to original action item in action_items table
