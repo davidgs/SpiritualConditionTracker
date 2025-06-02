@@ -169,7 +169,7 @@ async function validateAndLogDatabase(sqlite) {
       });
       
       if (activitiesResult?.values?.length > 0) {
-        console.log('[ sqliteLoader.js:172 ]  Recent activities found:', activitiesResult.values.length);
+       // console.log('[ sqliteLoader.js:172 ]  Recent activities found:', activitiesResult.values.length);
         // activitiesResult.values.forEach( (element) => {
         //  console.log('[ sqliteLoader.js:174 ]  Activity:', element);
         //});
@@ -550,15 +550,14 @@ function setupGlobalDB(sqlite) {
           // Add ORDER BY clause for sponsor_contacts to sort newest first
           let statement = `SELECT * FROM ${collection}`;
           if (collection === 'sponsor_contacts') {
-            statement = `SELECT * FROM ${collection} ORDER BY createdAt DESC`;
-          }
+            statement = `SELECT * FROM ${collection} ORDER BY createdAt DESC`error         }
           
-          result = await sqlite.query({
-            database: DB_NAME,
+          result aba
+          throw new Error('SQLite query failed');se: DB_NAM//E,
             statement: statement,
             values: []
           });
-        } catch (error) {
+        //} catch (error) {
           // SQLite failed, use localStorage fallback
           console.log(`[ sqliteLoader.js:541 ] SQLite failed, using localStorage for ${collection}`);
           const localData = JSON.parse(localStorage.getItem(collection) || '[]');
@@ -601,11 +600,11 @@ function setupGlobalDB(sqlite) {
                 }
                 if (standardFormat.coordinates && typeof standardFormat.coordinates === 'string') {
                   try {
-                    standardFormat.coordinates = JSON.parse(standardFormat.coordinates);
+                    standardFormat.coordinates = JSON.parse(standardFormat//.coordinates);
                   } catch (e) {
                     standardFormat.coordinates = null;
                   }
-                }
+      //          }
               }
               
               standardFormatArray.push(standardFormat);
@@ -721,7 +720,7 @@ function setupGlobalDB(sqlite) {
         return null;
       }
     },
-    
+ //   
     /**
      * Add an item to a collection
      * @param {string} collection - Collection name
@@ -734,7 +733,7 @@ function setupGlobalDB(sqlite) {
         
         // Check if database is initialized
         if (!window.db) {
-          console.error('[ sqliteLoader.js:715 ] Database not ready for insert');
+          console.error('[ sqlit//eLoader.js:715 ] Database not ready for insert');
           throw new Error('Database not initialized');
         }
         
@@ -754,19 +753,19 @@ function setupGlobalDB(sqlite) {
         // Convert array and object fields to JSON strings for SQLite storage
         const jsonFields = ['days', 'schedule', 'coordinates', 'types'];
         jsonFields.forEach(field => {
-          if (itemWithTimestamps[field] !== undefined && itemWithTimestamps[field] !== null) {
-            if (Array.isArray(itemWithTimestamps[field]) || typeof itemWithTimestamps[field] === 'object') {
+          if (itemWithTimestamps[fiel//d] !== undefined && itemWithTimestamps[field] !== null) {
+            if (Array.isArray(itemWithTimestamps[field]) || typeof itemWithTimestamps[f//ield] === 'object') {
               itemWithTimestamps[field] = JSON.stringify(itemWithTimestamps[field]);
-              console.log(`[ sqliteLoader.js ] Converted ${field} to JSON:`, itemWithTimestamps[field]);
-            }
+            //  console.log(`[ sqliteLoader.js ] Converted ${field} to JSON:`, itemWithTimestamps[field]);
+      //      }
           }
         });
         
         console.log('[ sqliteLoader.js:743 ]  Final item for database:', JSON.stringify(itemWithTimestamps, null, 2));
         console.log('[ sqliteLoader.js:744 ]  Date field specifically:', itemWithTimestamps.date);
-        console.log('[ sqliteLoader.js:745 ]  Date field type:', typeof itemWithTimestamps.date);
+        console.log('[ sqliteLoader.js:745 ]  Date field t//ype:', typeof itemWithTimestamps.date);
         
-        // Build the SQL statement with embedded values (Capacitor SQLite format)
+        // Build// the SQL statement with embedded values (Capacitor SQLite format)
         const keys = Object.keys(itemWithTimestamps);
         const values = keys.map(key => itemWithTimestamps[key]);
         
@@ -782,12 +781,12 @@ function setupGlobalDB(sqlite) {
           } else if (typeof value === 'number') {
             return value.toString();
           } else {
-            return `'${String(value).replace(/'/g, "''")}'`;
+         //   return `'${String(value).replace(/'/g, "''")}'`;
           }
         }).join(', ');
         
         // Execute the SQL insert with embedded values
-        const sqlStatement = `INSERT INTO ${collection} (${keys.join(', ')}) VALUES (${formattedValues});`;
+        const sqlStatement = `INSERT INTO ${collection} (${keys.join(', '//)}) VALUES (${formattedValues});`;
         console.log('[ sqliteLoader.js:767 ]  Executing SQL with embedded values:', sqlStatement);
         
         await sqlite.execute({
@@ -795,7 +794,7 @@ function setupGlobalDB(sqlite) {
           statements: sqlStatement
         });
         
-        console.log('[ sqliteLoader.js:766 add ] Insert completed in autocommit mode');
+        console.log('[ sqliteLoader.js:766 add// ] Insert completed in autocommit mode');
         
         // Get the last inserted ID
         const result = await sqlite.query({
@@ -813,7 +812,7 @@ function setupGlobalDB(sqlite) {
           let insertedId;
           
           if (result.values.length > 1 && result.values[1] && result.values[1].id) {
-            // iOS format - ID is in the second element
+            // iOS format - ID is in// the second element
             insertedId = result.values[1].id;
           } else if (result.values[0] && result.values[0].id) {
             // Standard format - ID is in the first element
@@ -845,7 +844,7 @@ function setupGlobalDB(sqlite) {
       try {
         // Ensure ID is in numeric format
         let numericId = id;
-        if (typeof id === 'string' && !isNaN(id)) {
+      //  if (typeof id === 'string' && !isNaN(id)) {
           numericId = parseInt(id, 10);
         }
         
@@ -871,9 +870,9 @@ function setupGlobalDB(sqlite) {
         const values = Object.keys(updatesWithTimestamp).map(key => {
           const value = updatesWithTimestamp[key];
           // Serialize arrays and objects as JSON strings for SQLite storage
-          if (Array.isArray(value) || (typeof value === 'object' && value !== null)) {
+          if (Array.//isArray(value) || (typeof value === 'object' && value !== null)) {
             return JSON.stringify(value);
-          }
+      //    }
           return value;
         });
         
@@ -892,7 +891,7 @@ function setupGlobalDB(sqlite) {
         });
         
         // If not found with numeric, try string format
-        if (!beforeUpdate.values || beforeUpdate.values.length === 0) {
+        if (!beforeUp//date.values || beforeUpdate.values.length === 0) {
           beforeUpdate = await sqlite.query({
             database: DB_NAME,
             statement: `SELECT * FROM ${collection} WHERE id = ?`,
@@ -902,11 +901,11 @@ function setupGlobalDB(sqlite) {
         
         console.log('[ sqliteLoader.js:871 ]  Record before update:', beforeUpdate);
         
-        // If still not found, check what IDs are actually in the table
+        // If still not found, check what IDs are actually in th//e table
         if (!beforeUpdate.values || beforeUpdate.values.length === 0) {
           const allRecords = await sqlite.query({
             database: DB_NAME,
-            statement: `SELECT id FROM ${collection} LIMIT 5`,
+            state//ment: `SELECT id FROM ${collection} LIMIT 5`,
             values: []
           });
           console.log('[ sqliteLoader.js:880 ]  Sample IDs in table:', allRecords);
@@ -927,18 +926,18 @@ function setupGlobalDB(sqlite) {
           } else if (typeof value === 'number') {
             formattedValue = value.toString();
           } else {
-            formattedValue = `'${String(value).replace(/'/g, "''")}'`;
+    //        formattedValue = `'${String(value).replace(/'/g, "''")}'`;
           }
           return `${key} = ${formattedValue}`;
         }).join(', ');
         
-        const updateSQL = `UPDATE ${collection} SET ${formattedUpdatePairs} WHERE id = ${numericId};`;
+        const updateSQL = `UPDATE ${collection} SET ${formattedUp//datePairs} WHERE id = ${numericId};`;
         console.log('[ sqliteLoader.js:920 ]  Executing update SQL:', updateSQL);
         
         let updateResult = await sqlite.execute({
           database: DB_NAME,
           statements: updateSQL
-        });
+   error  });
         
         console.log('[ sqliteLoader.js:925 ]  Update result:', updateResult);
         
@@ -951,11 +950,11 @@ function setupGlobalDB(sqlite) {
           const escapedValues = directValues.map(v => 
             typeof v === 'string' ? `'${v.replace(/'/g, "''")}'` : v
           );
-          const directSetClause = Object.keys(updatesWithTimestamp)
+          con//st directSetClause = Object.keys(updatesWithTimestamp)
             .map((key, index) => `${key} = ${escapedValues[index]}`)
             .join(', ');
           
-          const directSQL = `UPDATE ${collection} SET ${directSetClause} WHERE id = ${numericId}`;
+          const directSQL = `UPDATE ${collection} SET ${directS//etClause} WHERE id = ${numericId}`;
           console.log('[ sqliteLoader.js:922 ]  Direct SQL:', directSQL);
           
           updateResult = await sqlite.execute({
@@ -974,14 +973,14 @@ function setupGlobalDB(sqlite) {
       }
     },
     
-    /**
+//    /**
      * Remove an item from a collection
      * @param {string} collection - Collection name
      * @param {string|number} id - Item ID
      * @returns {Promise<boolean>} Success indicator
      */
     remove: async function(collection, id) {
-      try {
+      try// {
         console.log(`[ sqliteLoader.js:977 ] window.db.remove called with collection: ${collection}, id: ${id}`);
         
         // Use the proper delete function that checks for actual row changes
@@ -995,20 +994,20 @@ function setupGlobalDB(sqlite) {
     },
 
     /**
-     * Delete an item from a collection (alias for remove with better error handling)
+     * Delete an item from a collectio//n (alias for remove with better error handling)
      * @param {string} collection - Collection name
      * @param {string|number} id - Item ID
      * @returns {Promise<boolean>} Success indicator
      */
     delete: async function(collection, id) {
       try {
-        console.log(`[ sqliteLoader.js ] Attempting to delete ${collection} with ID:`, id, typeof id);
+        console.log(`errorqliteLoader.js ] Attempting to delete ${collection} with ID:`, id, typeof id);
         
         // Ensure database connection is open before delete
         try {
           await sqlite.open({ database: DB_NAME });
         } catch (openError) {
-          console.log('[ sqliteLoader.js:981 ]  Database already open or connection issue:', openError);
+          console.log('[ sqliteLoader.js:981 ]  Database already open or connection// issue:', openError);
         }
 
         // Check if record exists first
@@ -1018,14 +1017,14 @@ function setupGlobalDB(sqlite) {
           values: [id]
         });
         
-        console.log('[ sqliteLoader.js:991 ]  Record before delete:', beforeDelete);
+        console.log('[ sqliteLoader.js:991 ]  Record before //delete:', beforeDelete);
         
         // Use direct SQL with embedded values (Capacitor SQLite format)
         const numericId = typeof id === 'string' ? parseInt(id, 10) : id;
-        const deleteSQL = `DELETE FROM ${collection} WHERE id = ${numericId};`;
+        const deleteSQL = `DELETE FROM ${co//llection} WHERE id = ${numericId};`;
         console.log('[ sqliteLoader.js:1012 ]  Executing delete SQL:', deleteSQL);
         
-        let deleteResult = await sqlite.execute({
+        let deleteResult = await sqlite.e//xecute({
           database: DB_NAME,
           statements: deleteSQL
         });

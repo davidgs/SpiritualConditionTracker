@@ -95,8 +95,8 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
       };
     });
     
-    console.log('Found sponsor contact activities:', sponsorContactActivities);
-    console.log('Converted to contacts:', contacts);
+    // console.log('Found sponsor contact activities:', sponsorContactActivities);
+    //  console.log('Converted to contacts:', contacts);
     
     // Sort contacts by date - newest first
     const sortedContacts = contacts.sort((a, b) => {
@@ -110,8 +110,8 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
 
   // Get action items for a specific contact date from the unified activities list
   const getActionItemsForContact = (contactDate) => {
-    console.log('Getting action items for contact date:', contactDate);
-    console.log('All activities in database:', activities);
+   // console.log('Getting action items for contact date:', contactDate);
+   // console.log('All activities in database:', activities);
     
     const actionItemActivities = activities.filter(activity => activity.type === 'action-item');
     console.log('Found action-item activities:', actionItemActivities);
@@ -159,39 +159,43 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
     try {
       console.log('[SponsorSponsee] handleToggleActionItem called with:', actionItem);
       
-      if (!actionItem.activityData?.id) {
-        console.error('[SponsorSponsee] No activity data or ID found for action item');
+      // Check if this is a proper action item (has actionItemData) or legacy activity-based action item
+      if (actionItem.actionItemData?.id) {
+        // This is a proper action item from action_items table
+        console.log('[SponsorSponsee] Updating action item in action_items table, ID:', actionItem.actionItemData.id);
+        
+        const newCompleted = actionItem.actionItemData.completed ? 0 : 1;
+        console.log('[SponsorSponsee] Toggling completed from', actionItem.actionItemData.completed, 'to', newCompleted);
+        
+        // Update in action_items table using window.db
+        const updatedActionItem = {
+          ...actionItem.actionItemData,
+          completed: newCompleted,
+          updatedAt: new Date().toISOString()
+        };
+        
+        await window.db.update('action_items', actionItem.actionItemData.id, updatedActionItem);
+        console.log('[SponsorSponsee] Action item updated successfully in action_items table');
+        
+      } else if (actionItem.activityData?.id) {
+        // This is a legacy activity-based action item - update the activity
+        console.log('[SponsorSponsee] Updating legacy activity-based action item, ID:', actionItem.activityData.id);
+        
+        const currentLocation = actionItem.activityData.location || 'pending';
+        const newLocation = currentLocation === 'completed' ? 'pending' : 'completed';
+        
+        const updatedActivity = {
+          ...actionItem.activityData,
+          location: newLocation,
+          updatedAt: new Date().toISOString()
+        };
+        
+        await onSaveActivity(updatedActivity);
+        console.log('[SponsorSponsee] Legacy action item updated successfully');
+      } else {
+        console.error('[SponsorSponsee] No valid ID found for action item update');
         return;
       }
-      
-      // Determine the current status from the location field
-      const currentLocation = actionItem.activityData.location || 'pending';
-      console.log('[SponsorSponsee] Current location status:', currentLocation);
-      
-      let newLocation;
-      if (currentLocation === 'deleted') {
-        // If deleted, restore to pending
-        newLocation = 'pending';
-        console.log('[SponsorSponsee] Item is deleted, will restore to pending');
-      } else if (currentLocation === 'completed') {
-        // If completed, toggle to pending
-        newLocation = 'pending';
-        console.log('[SponsorSponsee] Item is completed, will toggle to pending');
-      } else {
-        // If pending or anything else, toggle to completed
-        newLocation = 'completed';
-        console.log('[SponsorSponsee] Item is pending, will toggle to completed');
-      }
-      
-      // Update the existing activity using onSaveActivity with proper ID handling
-      const updatedActivity = {
-        ...actionItem.activityData,
-        location: newLocation,
-        updatedAt: new Date().toISOString()
-      };
-      
-      console.log('[SponsorSponsee] About to update activity with data:', updatedActivity);
-      await onSaveActivity(updatedActivity);
       
       console.log('[SponsorSponsee] Action item completion toggled successfully');
       
@@ -207,17 +211,28 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
     try {
       console.log('[SponsorSponsee] handleDeleteActionItem called with:', actionItem);
       
-      if (!actionItem.activityData?.id) {
-        console.error('[SponsorSponsee] No activity data or ID found for action item');
+      // Check if this is a proper action item (has actionItemData) or legacy activity-based action item
+      if (actionItem.actionItemData?.id) {
+        // This is a proper action item from action_items table - delete it completely
+        console.log('[SponsorSponsee] Deleting action item from action_items table, ID:', actionItem.actionItemData.id);
+        
+        await window.db.remove('action_items', actionItem.actionItemData.id);
+        console.log('[SponsorSponsee] Action item deleted successfully from action_items table');
+        
+      } else if (actionItem.activityData?.id) {
+        // This is a legacy activity-based action item - mark as deleted
+        console.log('[SponsorSponsee] Marking legacy activity-based action item as deleted, ID:', actionItem.activityData.id);
+        
+        await onSaveActivity({
+          ...actionItem.activityData,
+          location: 'deleted',
+          updatedAt: new Date().toISOString()
+        });
+        console.log('[SponsorSponsee] Legacy action item marked as deleted');
+      } else {
+        console.error('[SponsorSponsee] No valid ID found for action item deletion');
         return;
       }
-      
-      // Update the existing activity to mark it as deleted
-      await onSaveActivity({
-        ...actionItem.activityData,
-        location: 'deleted',
-        updatedAt: new Date().toISOString()
-      });
       
       console.log('[SponsorSponsee] Action item deleted successfully');
       

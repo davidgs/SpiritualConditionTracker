@@ -316,8 +316,35 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
         // Continue without action items if they fail to load
       }
       
-      // Combine regular activities with action item activities
-      const allActivities = [...activities, ...actionItemActivities];
+      // Also fetch sponsor contacts from sponsor_contacts table and convert to activity format
+      let sponsorContactActivities = [];
+      try {
+        const sponsorContacts = await databaseService.getAllSponsorContacts();
+        console.log('[ AppDataContext.tsx ] Fetched sponsor contacts:', sponsorContacts.length);
+        
+        // Convert sponsor contacts to activity format for unified display
+        sponsorContactActivities = sponsorContacts.map(contact => ({
+          id: `sponsor-contact-${contact.id}`, // Prefix to avoid ID conflicts
+          type: 'sponsor-contact',
+          date: contact.date || contact.createdAt?.split('T')[0] || new Date().toISOString().split('T')[0],
+          notes: `${contact.note || 'Sponsor contact'} [Contact: ${contact.type}]`,
+          duration: undefined,
+          location: contact.type, // Store contact type in location field for consistency
+          createdAt: contact.createdAt || new Date().toISOString(),
+          updatedAt: contact.updatedAt || new Date().toISOString(),
+          // Keep reference to original sponsor contact
+          sponsorContactId: contact.id,
+          sponsorContactData: contact
+        }));
+        
+        console.log('[ AppDataContext.tsx ] Converted sponsor contacts to activities:', sponsorContactActivities.length);
+      } catch (sponsorContactError) {
+        console.warn('[ AppDataContext.tsx ] Failed to load sponsor contacts:', sponsorContactError);
+        // Continue without sponsor contacts if they fail to load
+      }
+      
+      // Combine all activities from the 3 tables
+      const allActivities = [...activities, ...actionItemActivities, ...sponsorContactActivities];
       
       // Always load last 180 days for base cache (fixed window for memory management)
       const CACHE_DAYS = 180;
