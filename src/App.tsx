@@ -175,6 +175,25 @@ function AppContent() {
     setCurrentView(view);
   }
 
+  // Handle action item updates (complete/delete)
+  async function handleUpdateActionItem(actionItemId: string, status: 'completed' | 'deleted') {
+    try {
+      console.log('Updating action item:', actionItemId, 'to status:', status);
+      // TODO: Implement action item update logic
+      // This would call a function to update the action item status in the database
+    } catch (error) {
+      console.error('Error updating action item:', error);
+    }
+  }
+
+  // Handle navigation to sponsor contact details
+  function handleNavigateToSponsorContact(contactId: string) {
+    console.log('Navigating to sponsor contact:', contactId);
+    // TODO: Implement navigation to sponsor contact details page
+    // For now, just navigate to the sponsor page
+    setCurrentView('sponsor');
+  }
+
   const filteredActivities = filterActivitiesByTimeframe(state.activities, state.currentTimeframe);
 
   // Try to render Header + Dashboard with MuiThemeProvider context
@@ -202,6 +221,8 @@ function AppContent() {
               onSaveMeeting={handleSaveMeeting}
               onTimeframeChange={handleTimeframeChange}
               setCurrentView={handleNavigation}
+              onUpdateActionItem={handleUpdateActionItem}
+              onNavigateToSponsorContact={handleNavigateToSponsorContact}
             />
           )}
           {currentView === 'meetings' && (
