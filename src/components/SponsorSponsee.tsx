@@ -97,7 +97,15 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
     
     console.log('Found sponsor contact activities:', sponsorContactActivities);
     console.log('Converted to contacts:', contacts);
-    setSponsorContacts(contacts);
+    
+    // Sort contacts by date - newest first
+    const sortedContacts = contacts.sort((a, b) => {
+      const dateA = new Date(a.date);
+      const dateB = new Date(b.date);
+      return dateB.getTime() - dateA.getTime();
+    });
+    
+    setSponsorContacts(sortedContacts);
   };
 
   // Get action items for a specific contact date from the unified activities list
