@@ -246,7 +246,15 @@ class DatabaseService {
   async getAllSponsorContacts(): Promise<SponsorContact[]> {
     return this.executeOperation(async () => {
       const contacts = await this.database.getAll('sponsor_contacts');
-      return contacts || [];
+      
+      // Sort contacts by date - newest first
+      const sortedContacts = (contacts || []).sort((a, b) => {
+        const dateA = new Date(a.date || a.createdAt || 0);
+        const dateB = new Date(b.date || b.createdAt || 0);
+        return dateB.getTime() - dateA.getTime();
+      });
+      
+      return sortedContacts;
     });
   }
 
