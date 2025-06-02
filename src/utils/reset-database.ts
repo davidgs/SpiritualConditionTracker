@@ -5,11 +5,111 @@
 
 const DB_NAME = 'spiritualTracker.db';
 
+async function setupBasicSchema(sqlite) {
+  console.log('[ reset-database.js ] Setting up database schema...');
+
+  try {
+    // Users table
+    await sqlite.execute({
+      database: DB_NAME,
+      statements: `
+        CREATE TABLE IF NOT EXISTS users (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          name TEXT,
+          lastName TEXT,
+          phoneNumber TEXT,
+          email TEXT,
+          sobrietyDate TEXT,
+          homeGroups TEXT,
+          sponsor_name TEXT,
+          sponsor_lastName TEXT,
+          sponsor_phone TEXT,
+          sponsor_email TEXT,
+          createdAt TEXT,
+          updatedAt TEXT
+        )
+      `
+    });
+
+    // Activities table
+    await sqlite.execute({
+      database: DB_NAME,
+      statements: `
+        CREATE TABLE IF NOT EXISTS activities (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          type TEXT NOT NULL,
+          duration INTEGER,
+          date TEXT NOT NULL,
+          notes TEXT,
+          location TEXT,
+          createdAt TEXT,
+          updatedAt TEXT
+        )
+      `
+    });
+
+    // Action items table
+    await sqlite.execute({
+      database: DB_NAME,
+      statements: `
+        CREATE TABLE IF NOT EXISTS action_items (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          title TEXT,
+          text TEXT,
+          notes TEXT,
+          dueDate TEXT,
+          completed INTEGER DEFAULT 0,
+          type TEXT DEFAULT 'todo',
+          createdAt TEXT,
+          updatedAt TEXT
+        )
+      `
+    });
+
+    // Sponsor contacts table
+    await sqlite.execute({
+      database: DB_NAME,
+      statements: `
+        CREATE TABLE IF NOT EXISTS sponsor_contacts (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          userId TEXT DEFAULT 'default_user',
+          date TEXT,
+          type TEXT DEFAULT 'general',
+          note TEXT DEFAULT '',
+          createdAt TEXT,
+          updatedAt TEXT
+        )
+      `
+    });
+
+    // Meetings table
+    await sqlite.execute({
+      database: DB_NAME,
+      statements: `
+        CREATE TABLE IF NOT EXISTS meetings (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          name TEXT,
+          days TEXT,
+          time TEXT,
+          address TEXT,
+          createdAt TEXT,
+          updatedAt TEXT
+        )
+      `
+    });
+
+    console.log('[ reset-database.js ] Database schema setup complete');
+  } catch (error) {
+    console.error('[ reset-database.js ] Error setting up database schema:', error);
+    throw error;
+  }
+}
+
 /**
  * Reset the database by dropping all tables and recreating them
  */
 export async function resetDatabase() {
-  console.log('[ reset-database.js: 12 ] Attempting to reset database...');
+  console.log('Starting data reset process');
 
   if (!window.Capacitor || !window.Capacitor.Plugins?.CapacitorSQLite) {
     console.error('[ reset-database.js: 15 ] CapacitorSQLite plugin not available');
@@ -17,15 +117,25 @@ export async function resetDatabase() {
   }
 
   try {
-    // Use the existing global database connection instead of creating a new one
     const sqlitePlugin = window.Capacitor.Plugins.CapacitorSQLite;
     
-    if (!window.db || !window.dbInitialized) {
-      console.error('[ reset-database.js: 17 ] Global database not initialized');
-      return false;
+    console.log('[ reset-database.js: 21 ] Using CapacitorSQLite plugin directly');
+    
+    // Ensure connection exists
+    try {
+      await sqlitePlugin.createConnection({
+        database: DB_NAME,
+        version: 1,
+        encrypted: false,
+        mode: 'no-encryption',
+        readonly: false
+      });
+    } catch (createError) {
+      console.log('[ reset-database.js ] Connection already exists, continuing...');
     }
     
-    console.log('[ reset-database.js: 21 ] Using existing database connection');
+    // Open database
+    await sqlitePlugin.open({ database: DB_NAME, readonly: false });
     
     // Drop all tables - updated list from current sqliteLoader
     const tables = [
@@ -54,21 +164,19 @@ export async function resetDatabase() {
     // Recreate all tables using the current schema from sqliteLoader
     console.log('[ reset-database.js: 63 ] Recreating tables with current schema...');
     
-    // Import and call the table setup function
-    const { setupTables } = await import('./sqliteLoader');
-    await setupTables(sqlitePlugin);
+    // Recreate tables directly since simplified sqliteLoader doesn't export setupTables
+    await setupBasicSchema(sqlitePlugin);
     
     console.log('[ reset-database.js: 68 ] All tables recreated successfully');
     
-    // Close the connection to ensure all changes are saved
-    await sqlitePlugin.close({ database: DB_NAME });
+    console.log('[ reset-database.js: 68 ] All tables recreated successfully');
     
-    // Release the connection
-    await sqlitePlugin.closeConnection({ database: DB_NAME });
+    // Clear the global database reference so it gets reinitialized
+    if (window.db) {
+      delete window.db;
+    }
     
     console.log('[ reset-database.js: 75 ] Database reset completed successfully');
-    console.log('[ reset-database.js: 76 ] Database is ready to use');
-    
     return true;
   } catch (error) {
     console.error('[ reset-database.js: 75 ] Error resetting database:', error);
