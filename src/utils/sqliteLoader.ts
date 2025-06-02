@@ -41,10 +41,9 @@ async function initSQLiteDatabase() {
     await sqlitePlugin.open({ database: DB_NAME, readonly: false });
     console.log('[ sqliteLoader.js:76 ]  Database opened successfully');
 
-    // EMERGENCY DATABASE RESET (commented out - uncomment if schema needs complete rebuild)
-    /*
+    // EMERGENCY DATABASE RESET (temporarily uncommented to add sponsors table)
     console.log('[ sqliteLoader.js ] FORCING DATABASE SCHEMA RESET - DROP ALL TABLES');
-    const tables = ['users', 'activities', 'action_items', 'sponsor_contacts', 'meetings'];
+    const tables = ['users', 'activities', 'action_items', 'sponsor_contacts', 'sponsors', 'meetings'];
     
     for (const table of tables) {
       try {
@@ -57,7 +56,6 @@ async function initSQLiteDatabase() {
         console.log(`[ sqliteLoader.js ] Could not drop table ${table}:`, error);
       }
     }
-    */
     
     // Setup basic schema with correct fields
     await setupBasicSchema(sqlitePlugin);
@@ -92,12 +90,7 @@ async function setupBasicSchema(sqlite) {
           homeGroups TEXT,
           privacySettings TEXT,
           preferences TEXT,
-          sponsor_name TEXT,
-          sponsor_lastName TEXT,
-          sponsor_phone TEXT,
-          sponsor_email TEXT,
-          sponsor_sobrietyDate TEXT,
-          sponsor_notes TEXT,
+          sponsor_ids TEXT,
           messagingKeys TEXT,
           profileImageUri TEXT,
           sponsees TEXT,
@@ -164,6 +157,27 @@ async function setupBasicSchema(sqlite) {
     });
     console.log('[ sqliteLoader.js:472 ]  Action items table created');
 
+    // Sponsors table
+    await sqlite.execute({
+      database: DB_NAME,
+      statements: `
+        CREATE TABLE IF NOT EXISTS sponsors (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          userId TEXT DEFAULT 'default_user',
+          name TEXT,
+          lastName TEXT,
+          phone TEXT,
+          email TEXT,
+          sobrietyDate TEXT,
+          notes TEXT,
+          sponsorType TEXT DEFAULT 'sponsor',
+          createdAt TEXT,
+          updatedAt TEXT
+        )
+      `
+    });
+    console.log('[ sqliteLoader.js:433 ]  Sponsors table created');
+
     // Sponsor contacts table
     await sqlite.execute({
       database: DB_NAME,
@@ -171,11 +185,15 @@ async function setupBasicSchema(sqlite) {
         CREATE TABLE IF NOT EXISTS sponsor_contacts (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
           userId TEXT DEFAULT 'default_user',
+          sponsorId INTEGER,
           date TEXT,
           type TEXT DEFAULT 'general',
           note TEXT DEFAULT '',
+          topic TEXT,
+          duration INTEGER,
           createdAt TEXT,
-          updatedAt TEXT
+          updatedAt TEXT,
+          FOREIGN KEY (sponsorId) REFERENCES sponsors(id)
         )
       `
     });
