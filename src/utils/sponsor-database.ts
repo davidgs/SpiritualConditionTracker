@@ -30,13 +30,14 @@ export async function getSponsorContacts(): Promise<SponsorContact[]> {
 }
 
 /**
- * Add a new sponsor contact
+ * Add a new sponsor contact with action items
  */
-export async function addSponsorContact(contactData: Omit<SponsorContact, 'id' | 'createdAt' | 'updatedAt'>): Promise<SponsorContact> {
+export async function addSponsorContact(contactData: Omit<SponsorContact, 'id' | 'createdAt' | 'updatedAt'>, actionItems: any[] = []): Promise<SponsorContact> {
   try {
     const databaseService = DatabaseService.getInstance();
     
     console.log('[ sponsor-database ] Adding sponsor contact:', contactData);
+    console.log('[ sponsor-database ] With action items:', actionItems);
     
     const savedContact = await databaseService.addSponsorContact(contactData);
     
@@ -57,6 +58,30 @@ export async function addSponsorContact(contactData: Omit<SponsorContact, 'id' |
     } catch (activityError) {
       console.warn('[ sponsor-database ] Failed to create activity entry:', activityError);
       // Don't throw - the contact was still saved successfully
+    }
+    
+    // Save action items with proper contactId linking
+    if (actionItems && actionItems.length > 0) {
+      try {
+        for (const actionItem of actionItems) {
+          const actionItemData = {
+            contactId: savedContact.id, // Link to the saved contact
+            title: actionItem.title,
+            text: actionItem.text || actionItem.title,
+            notes: actionItem.notes || '',
+            dueDate: actionItem.dueDate || contactData.date,
+            completed: actionItem.completed ? 1 : 0,
+            type: 'todo'
+          };
+          
+          console.log('[ sponsor-database ] Saving action item with contactId:', actionItemData);
+          await databaseService.addActionItem(actionItemData);
+        }
+        console.log(`[ sponsor-database ] Successfully saved ${actionItems.length} action items`);
+      } catch (actionItemError) {
+        console.error('[ sponsor-database ] Error saving action items:', actionItemError);
+        // Don't throw - the contact was still saved successfully
+      }
     }
     
     return savedContact;
