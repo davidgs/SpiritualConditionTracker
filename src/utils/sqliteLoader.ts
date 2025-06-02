@@ -266,6 +266,9 @@ function createDatabaseInterface(sqlite) {
         const placeholders = columns.map(() => '?').join(', ');
 
         const insertSQL = `INSERT INTO ${collection} (${columns.join(', ')}) VALUES (${placeholders})`;
+        
+        console.log(`[ sqliteLoader.js ] Insert SQL: ${insertSQL}`);
+        console.log(`[ sqliteLoader.js ] Values: ${JSON.stringify(values)}`);
 
         const result = await sqlite.execute({
           database: DB_NAME,
