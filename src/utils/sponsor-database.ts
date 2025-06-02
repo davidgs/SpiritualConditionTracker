@@ -16,7 +16,7 @@ export async function getSponsorContacts(userId: string): Promise<SponsorContact
     console.log('[ sponsor-database ] Querying sponsor contacts with userId:', userId);
     
     // Use DatabaseService to get all sponsor contacts
-    const allContacts = await databaseService.getAll<SponsorContact>('sponsor_contacts');
+    const allContacts = await databaseService.getAllSponsorContacts();
     
     console.log('[ sponsor-database ] Raw database response:', allContacts);
     console.log('[ sponsor-database ] Number of total contacts in database:', allContacts.length);
@@ -42,7 +42,7 @@ export async function addSponsorContact(contactData: Omit<SponsorContact, 'id' |
     
     console.log('[ sponsor-database ] Adding sponsor contact:', contactData);
     
-    const savedContact = await databaseService.add<SponsorContact>('sponsor_contacts', contactData);
+    const savedContact = await databaseService.addSponsorContact(contactData);
     
     console.log('[ sponsor-database ] Sponsor contact saved with ID:', savedContact.id);
     return savedContact;

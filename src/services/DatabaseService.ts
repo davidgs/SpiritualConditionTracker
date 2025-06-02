@@ -5,7 +5,7 @@
 
 import initSQLiteDatabase from '../utils/sqliteLoader';
 import { cleanupBrokenActivities } from '../utils/sqliteLoader';
-import type { User, Activity, Meeting } from '../types/database';
+import type { User, Activity, Meeting, SponsorContact } from '../types/database';
 
 export type DatabaseStatus = 'initializing' | 'ready' | 'error' | 'fallback';
 
@@ -242,29 +242,59 @@ class DatabaseService {
     });
   }
 
-  // Generic database operations for any table
-  async getAll<T>(tableName: string): Promise<T[]> {
+  // Sponsor contact operations
+  async getAllSponsorContacts(): Promise<SponsorContact[]> {
     return this.executeOperation(async () => {
-      const data = await this.database.getAll(tableName);
-      return data || [];
+      const contacts = await this.database.getAll('sponsor_contacts');
+      return contacts || [];
     });
   }
 
-  async add<T>(tableName: string, item: Omit<T, 'id' | 'createdAt' | 'updatedAt'>): Promise<T> {
+  async addSponsorContact(contact: Omit<SponsorContact, 'id' | 'createdAt' | 'updatedAt'>): Promise<SponsorContact> {
     return this.executeOperation(async () => {
-      return await this.database.add(tableName, item);
+      console.log('[ DatabaseService ] Adding sponsor contact:', contact);
+      const result = await this.database.add('sponsor_contacts', contact);
+      console.log('[ DatabaseService ] Sponsor contact saved:', result);
+      return result;
     });
   }
 
-  async update<T>(tableName: string, id: string | number, updates: Partial<T>): Promise<T | null> {
+  async updateSponsorContact(id: string | number, updates: Partial<SponsorContact>): Promise<SponsorContact | null> {
     return this.executeOperation(async () => {
-      return await this.database.update(tableName, id, updates);
+      return await this.database.update('sponsor_contacts', id, updates);
     });
   }
 
-  async remove(tableName: string, id: string | number): Promise<boolean> {
+  async deleteSponsorContact(contactId: string | number): Promise<boolean> {
     return this.executeOperation(async () => {
-      return await this.database.remove(tableName, id);
+      const result = await this.database.remove('sponsor_contacts', contactId);
+      return result;
+    });
+  }
+
+  // Generic database operations for other entities
+  async getAll<T>(collection: string): Promise<T[]> {
+    return this.executeOperation(async () => {
+      const items = await this.database.getAll(collection);
+      return items || [];
+    });
+  }
+
+  async add<T>(collection: string, item: Omit<T, 'id' | 'createdAt' | 'updatedAt'>): Promise<T> {
+    return this.executeOperation(async () => {
+      return await this.database.add(collection, item);
+    });
+  }
+
+  async update<T>(collection: string, id: string | number, updates: Partial<T>): Promise<T | null> {
+    return this.executeOperation(async () => {
+      return await this.database.update(collection, id, updates);
+    });
+  }
+
+  async remove(collection: string, id: string | number): Promise<boolean> {
+    return this.executeOperation(async () => {
+      return await this.database.remove(collection, id);
     });
   }
 }
