@@ -354,25 +354,92 @@ export default function ActivityList({
                       display: 'flex',
                       justifyContent: 'space-between',
                       fontSize: '0.75rem',
-                      color: theme.palette.text.secondary,
-                      lineHeight: '1.2'
+                      color: activity.type === 'action-item' && activity.location === 'deleted' 
+                        ? theme.palette.error.main 
+                        : theme.palette.text.secondary,
+                      lineHeight: '1.2',
+                      textDecoration: activity.type === 'action-item' && activity.location === 'deleted' 
+                        ? 'line-through' 
+                        : 'none'
                     }}>
                       <div style={{
                         whiteSpace: 'nowrap',
                         overflow: 'hidden',
                         textOverflow: 'ellipsis',
-                        marginRight: '0.5rem'
+                        marginRight: '0.5rem',
+                        flexGrow: 1
                       }}>
-                        {activity.duration ? `${activity.duration} min` : 
-                         activity.type === 'action-item' && activity.location === 'completed' ? 
-                         <span style={{ color: darkMode ? '#10b981' : '#047857' }}>
-                           <i className="fas fa-check-circle" style={{ marginRight: '4px' }}></i>
-                           Completed
-                         </span> : 'Done'} 
-                        {activity.meetingName ? ` - ${activity.meetingName}` : ''}
-                        {activity.literatureTitle ? ` - ${activity.literatureTitle}` : ''}
-                        {activity.notes && !activity.meetingName && !activity.literatureTitle ? ` - ${activity.notes}` : ''}
+                        {activity.type === 'action-item' ? (
+                          // Show action item text/title
+                          <span>
+                            {activity.text || activity.title || 'Action Item'}
+                            {activity.location === 'completed' && (
+                              <span style={{ color: theme.palette.success.main, marginLeft: '8px' }}>
+                                <i className="fas fa-check-circle" style={{ marginRight: '4px' }}></i>
+                                Completed
+                              </span>
+                            )}
+                            {activity.location === 'deleted' && (
+                              <span style={{ color: theme.palette.error.main, marginLeft: '8px' }}>
+                                <i className="fas fa-trash" style={{ marginRight: '4px' }}></i>
+                                Deleted
+                              </span>
+                            )}
+                          </span>
+                        ) : (
+                          // Regular activity display
+                          <span>
+                            {activity.duration ? `${activity.duration} min` : 'Done'} 
+                            {activity.meetingName ? ` - ${activity.meetingName}` : ''}
+                            {activity.literatureTitle ? ` - ${activity.literatureTitle}` : ''}
+                            {activity.notes && !activity.meetingName && !activity.literatureTitle ? ` - ${activity.notes}` : ''}
+                          </span>
+                        )}
                       </div>
+                      
+                      {/* Action buttons for action items */}
+                      {activity.type === 'action-item' && activity.location === 'pending' && (
+                        <div style={{ display: 'flex', gap: '8px', flexShrink: 0 }}>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              if (onActivityClick) {
+                                onActivityClick(activity, 'complete');
+                              }
+                            }}
+                            style={{
+                              background: 'none',
+                              border: 'none',
+                              color: theme.palette.success.main,
+                              cursor: 'pointer',
+                              padding: '2px',
+                              fontSize: '0.8rem'
+                            }}
+                            title="Mark as completed"
+                          >
+                            <i className="fas fa-check"></i>
+                          </button>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              if (onActivityClick) {
+                                onActivityClick(activity, 'delete');
+                              }
+                            }}
+                            style={{
+                              background: 'none',
+                              border: 'none',
+                              color: theme.palette.error.main,
+                              cursor: 'pointer',
+                              padding: '2px',
+                              fontSize: '0.8rem'
+                            }}
+                            title="Delete action item"
+                          >
+                            <i className="fas fa-trash"></i>
+                          </button>
+                        </div>
+                      )}
                       {showDate && (
                         <div style={{ flexShrink: 0, fontSize: '0.7rem' }}>
                           {formatDate(activity.date)}

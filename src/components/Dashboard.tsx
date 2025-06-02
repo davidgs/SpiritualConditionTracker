@@ -19,9 +19,11 @@ interface DashboardProps {
   onSaveMeeting: (meeting: Omit<Meeting, 'id' | 'createdAt' | 'updatedAt'>) => void;
   onTimeframeChange: (timeframe: number) => void;
   currentTimeframe: number;
+  onUpdateActionItem?: (actionItemId: string, status: 'completed' | 'deleted') => void;
+  onNavigateToSponsorContact?: (contactId: string) => void;
 }
 
-export default function Dashboard({ setCurrentView, user, activities, meetings = [], onSave, onSaveMeeting, onTimeframeChange, currentTimeframe }: DashboardProps) {
+export default function Dashboard({ setCurrentView, user, activities, meetings = [], onSave, onSaveMeeting, onTimeframeChange, currentTimeframe, onUpdateActionItem, onNavigateToSponsorContact }: DashboardProps) {
   // Get theme from MUI theme provider
   const { mode } = useAppTheme();
   const darkMode = mode === 'dark';
@@ -160,6 +162,24 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
 
   // Determine whether to show years or days more prominently
   const showYearsProminent = sobrietyYears >= 1;
+
+  // Handle activity clicks for sponsor contacts and action items
+  const handleActivityClick = (activity: Activity, action: string) => {
+    console.log('Activity clicked:', activity, 'Action:', action);
+    
+    if (activity.type === 'sponsor-contact') {
+      // Navigate to sponsor contact details page
+      if (onNavigateToSponsorContact && (activity as any).contactId) {
+        onNavigateToSponsorContact((activity as any).contactId);
+      }
+    } else if (activity.type === 'action-item') {
+      if (action === 'complete' && onUpdateActionItem) {
+        onUpdateActionItem(String(activity.id), 'completed');
+      } else if (action === 'delete' && onUpdateActionItem) {
+        onUpdateActionItem(String(activity.id), 'deleted');
+      }
+    }
+  };
 
   return (
     <Box sx={{ p: 3, maxWidth: 'md', mx: 'auto' }}>
@@ -521,6 +541,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
           maxDaysAgo={activityDaysFilter === 0 ? null : activityDaysFilter}
           filter={activityTypeFilter}
           showDate={true}
+          onActivityClick={handleActivityClick}
         />
       </Paper>
       
