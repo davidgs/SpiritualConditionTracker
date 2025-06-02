@@ -159,26 +159,28 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
     try {
       console.log('[SponsorSponsee] handleToggleActionItem called with:', actionItem);
       
-      // Allow toggling for deleted items to restore them
-      if (actionItem.deleted) {
-        console.log('[SponsorSponsee] Item is deleted, will restore it');
-        // Update the existing activity to restore it
-        await onSaveActivity({
-          ...actionItem.activityData,
-          location: 'pending',
-          updatedAt: new Date().toISOString()
-        });
-        console.log('[SponsorSponsee] Item restored successfully');
-        loadSponsorContacts();
-        return;
-      }
-      
-      const newLocation = actionItem.completed ? 'pending' : 'completed';
-      console.log('[SponsorSponsee] Updating action item ID:', actionItem.activityData?.id, 'to location:', newLocation);
-      
       if (!actionItem.activityData?.id) {
         console.error('[SponsorSponsee] No activity data or ID found for action item');
         return;
+      }
+      
+      // Determine the current status from the location field
+      const currentLocation = actionItem.activityData.location || 'pending';
+      console.log('[SponsorSponsee] Current location status:', currentLocation);
+      
+      let newLocation;
+      if (currentLocation === 'deleted') {
+        // If deleted, restore to pending
+        newLocation = 'pending';
+        console.log('[SponsorSponsee] Item is deleted, will restore to pending');
+      } else if (currentLocation === 'completed') {
+        // If completed, toggle to pending
+        newLocation = 'pending';
+        console.log('[SponsorSponsee] Item is completed, will toggle to pending');
+      } else {
+        // If pending or anything else, toggle to completed
+        newLocation = 'completed';
+        console.log('[SponsorSponsee] Item is pending, will toggle to completed');
       }
       
       // Update the existing activity using onSaveActivity with proper ID handling
