@@ -157,15 +157,21 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
   // Toggle action item completion
   const handleToggleActionItem = async (actionItem) => {
     try {
-      console.log('Toggling action item completion:', actionItem);
+      console.log('[SponsorSponsee] handleToggleActionItem called with:', actionItem);
       
       // Don't allow toggling if item is deleted
       if (actionItem.deleted) {
+        console.log('[SponsorSponsee] Item is deleted, cannot toggle');
         return;
       }
       
       const newLocation = actionItem.completed ? 'pending' : 'completed';
-      console.log('Updating action item ID:', actionItem.activityData.id, 'to location:', newLocation);
+      console.log('[SponsorSponsee] Updating action item ID:', actionItem.activityData?.id, 'to location:', newLocation);
+      
+      if (!actionItem.activityData?.id) {
+        console.error('[SponsorSponsee] No activity data or ID found for action item');
+        return;
+      }
       
       // Update the existing activity using onSaveActivity
       await onSaveActivity({
@@ -174,19 +180,24 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
         updatedAt: new Date().toISOString()
       });
       
-      console.log('Action item completion toggled successfully');
+      console.log('[SponsorSponsee] Action item completion toggled successfully');
       
       // Trigger a reload of contacts to reflect the change
       loadSponsorContacts();
     } catch (error) {
-      console.error('Error toggling action item completion:', error);
+      console.error('[SponsorSponsee] Error toggling action item completion:', error);
     }
   };
 
   // Delete action item
   const handleDeleteActionItem = async (actionItem) => {
     try {
-      console.log('Deleting action item:', actionItem);
+      console.log('[SponsorSponsee] handleDeleteActionItem called with:', actionItem);
+      
+      if (!actionItem.activityData?.id) {
+        console.error('[SponsorSponsee] No activity data or ID found for action item');
+        return;
+      }
       
       // Update the existing activity to mark it as deleted
       await onSaveActivity({
@@ -195,12 +206,12 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
         updatedAt: new Date().toISOString()
       });
       
-      console.log('Action item deleted successfully');
+      console.log('[SponsorSponsee] Action item deleted successfully');
       
       // Trigger a reload of contacts to reflect the change
       loadSponsorContacts();
     } catch (error) {
-      console.error('Error deleting action item:', error);
+      console.error('[SponsorSponsee] Error deleting action item:', error);
     }
   };
 
