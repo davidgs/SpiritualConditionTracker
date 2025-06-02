@@ -18,6 +18,9 @@ export async function getSponsorContacts(userId: string): Promise<SponsorContact
     // Use DatabaseService to get all sponsor contacts
     const allContacts = await databaseService.getAll<SponsorContact>('sponsor_contacts');
     
+    console.log('[ sponsor-database ] Raw database response:', allContacts);
+    console.log('[ sponsor-database ] Number of total contacts in database:', allContacts.length);
+    
     // Filter by userId if provided (ensure both are strings for comparison)
     const userContacts = allContacts;
       // .filter(contact => String(contact.userId) === String(userId));
