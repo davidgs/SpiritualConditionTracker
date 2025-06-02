@@ -97,6 +97,7 @@ export default function SponsorContactDetailsPage({
       const actionData = {
         contactId: contact.id,
         actionItem: newAction.actionItem,
+        text: newAction.actionItem, // Required field - use same value as actionItem
         notes: newAction.notes || '',
         dueDate: newAction.dueDate || null,
         completed: newAction.completed ? 1 : 0,
