@@ -124,14 +124,10 @@ export default function SponsorContactFormPage({ open, userId, onSubmit, onClose
     ));
   };
 
-  // Delete todo item (mark as deleted, don't remove)
+  // Delete todo item (remove from list)
   const handleDeleteTodo = (todoId: number): void => {
-    console.log('[SponsorContactFormPage.tsx: 120 handleDeleteTodo] Marking todo as deleted at id:', todoId);
-    setTodos(prev => prev.map(todo => 
-      todo.id === todoId 
-        ? { ...todo, deleted: true, completed: false }
-        : todo
-    ));
+    console.log('[SponsorContactFormPage.tsx: 120 handleDeleteTodo] Removing todo from form at id:', todoId);
+    setTodos(prev => prev.filter(todo => todo.id !== todoId));
   };
 
   // Handle form submission
