@@ -547,9 +547,15 @@ function setupGlobalDB(sqlite) {
         // Check if SQLite is available, otherwise use localStorage
         let result;
         try {
+          // Add ORDER BY clause for sponsor_contacts to sort newest first
+          let statement = `SELECT * FROM ${collection}`;
+          if (collection === 'sponsor_contacts') {
+            statement = `SELECT * FROM ${collection} ORDER BY createdAt DESC`;
+          }
+          
           result = await sqlite.query({
             database: DB_NAME,
-            statement: `SELECT * FROM ${collection}`,
+            statement: statement,
             values: []
           });
         } catch (error) {
