@@ -9,7 +9,7 @@ async function setupBasicSchema(sqlite) {
   console.log('[ reset-database.js ] Setting up database schema...');
 
   try {
-    // Users table
+    // Users table with complete schema
     await sqlite.execute({
       database: DB_NAME,
       statements: `
@@ -21,10 +21,17 @@ async function setupBasicSchema(sqlite) {
           email TEXT,
           sobrietyDate TEXT,
           homeGroups TEXT,
+          privacySettings TEXT,
+          preferences TEXT,
           sponsor_name TEXT,
           sponsor_lastName TEXT,
           sponsor_phone TEXT,
           sponsor_email TEXT,
+          sponsor_sobrietyDate TEXT,
+          sponsor_notes TEXT,
+          messagingKeys TEXT,
+          profileImageUri TEXT,
+          sponsees TEXT,
           createdAt TEXT,
           updatedAt TEXT
         )
@@ -41,7 +48,26 @@ async function setupBasicSchema(sqlite) {
           duration INTEGER,
           date TEXT NOT NULL,
           notes TEXT,
+          literatureTitle TEXT,
+          literatureType TEXT,
+          meetingName TEXT,
+          wasChair INTEGER DEFAULT 0,
+          wasShare INTEGER DEFAULT 0,
+          wasSpeaker INTEGER DEFAULT 0,
+          meetingId INTEGER,
+          callPerson TEXT,
+          isSponsorCall INTEGER DEFAULT 0,
+          isSponseeCall INTEGER DEFAULT 0,
+          isAAMemberCall INTEGER DEFAULT 0,
+          callType TEXT,
+          servicePerson TEXT,
           location TEXT,
+          mood TEXT,
+          gratitude TEXT,
+          steps TEXT,
+          prayers TEXT,
+          actionItemId INTEGER,
+          actionItemData TEXT,
           createdAt TEXT,
           updatedAt TEXT
         )
@@ -91,7 +117,26 @@ async function setupBasicSchema(sqlite) {
           name TEXT,
           days TEXT,
           time TEXT,
+          schedule TEXT,
           address TEXT,
+          locationName TEXT,
+          streetAddress TEXT,
+          city TEXT,
+          state TEXT,
+          zipCode TEXT,
+          country TEXT,
+          online INTEGER DEFAULT 0,
+          onlineUrl TEXT,
+          phoneNumber TEXT,
+          meetingCode TEXT,
+          notes TEXT,
+          latitude REAL,
+          longitude REAL,
+          types TEXT,
+          format TEXT,
+          accessibility TEXT,
+          languages TEXT,
+          coordinates TEXT,
           createdAt TEXT,
           updatedAt TEXT
         )
