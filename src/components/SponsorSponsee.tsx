@@ -27,6 +27,8 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
   
   // Tab state
   const [currentTab, setCurrentTab] = useState(0);
+  const [currentSponsorTab, setCurrentSponsorTab] = useState(0);
+  const [currentSponseeTab, setCurrentSponseeTab] = useState(0);
   
   // State for sponsors (multiple) and sponsees
   const [sponsors, setSponsors] = useState([]);
@@ -79,28 +81,33 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
     loadSponsorContacts();
   }, [activities]);
 
-  // Load sponsor contacts from sponsor_contacts table
-  const loadSponsorContacts = async () => {
+  // Load sponsor contacts from sponsor_contacts table for a specific sponsor
+  const loadSponsorContacts = async (sponsorId = null) => {
     try {
       if (!window.db) {
         console.error('Database not initialized');
-        return;
+        return [];
       }
 
       const allContacts = await window.db.getAll('sponsor_contacts');
       console.log('Loaded sponsor contacts:', allContacts);
       
+      // Filter by sponsor ID if provided
+      const filteredContacts = sponsorId 
+        ? (allContacts || []).filter(contact => contact.sponsorId === sponsorId)
+        : (allContacts || []);
+      
       // Sort contacts by date - newest first
-      const sortedContacts = (allContacts || []).sort((a, b) => {
+      const sortedContacts = filteredContacts.sort((a, b) => {
         const dateA = new Date(a.date);
         const dateB = new Date(b.date);
         return dateB.getTime() - dateA.getTime();
       });
       
-      setSponsorContacts(sortedContacts);
+      return sortedContacts;
     } catch (error) {
       console.error('Error loading sponsor contacts:', error);
-      setSponsorContacts([]);
+      return [];
     }
   };
 
@@ -187,10 +194,17 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
         return;
       }
 
+      // Get the currently selected sponsor
+      const currentSponsor = sponsors[currentSponsorTab];
+      if (!currentSponsor) {
+        console.error('No sponsor selected');
+        return;
+      }
+
       // Add contact to sponsor_contacts table
       const newContact = {
         ...contactData,
-        sponsorId: sponsors.length > 0 ? sponsors[0].id : null, // Associate with first sponsor for now
+        sponsorId: currentSponsor.id, // Associate with currently selected sponsor
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
       };
@@ -214,8 +228,6 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
         await onSaveActivity(actionItemActivity);
       }
 
-      // Reload data
-      await loadSponsorContacts();
       setShowContactForm(false);
       setEditingContact(null);
       setEditingActionItem(null);
@@ -352,6 +364,16 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
     setCurrentTab(newValue);
   };
 
+  // Handle sponsor tab change
+  const handleSponsorTabChange = (event, newValue) => {
+    setCurrentSponsorTab(newValue);
+  };
+
+  // Handle sponsee tab change
+  const handleSponseeTabChange = (event, newValue) => {
+    setCurrentSponseeTab(newValue);
+  };
+
   // Custom TabPanel component
   function TabPanel({ children, value, index, ...other }) {
     return (
@@ -368,6 +390,286 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
           </Box>
         )}
       </div>
+    );
+  }
+
+  // Individual Sponsor Content Component
+  function SponsorContent({ 
+    sponsor, 
+    theme, 
+    onEdit, 
+    onDelete, 
+    onAddContact, 
+    loadSponsorContacts,
+    getActionItemsForContact,
+    getContactTypeInfo,
+    handleEditContact,
+    handleToggleActionItem,
+    handleDeleteActionItem,
+    refreshKey,
+    formatDateForDisplay
+  }) {
+    const [sponsorContacts, setSponsorContacts] = React.useState([]);
+
+    // Load contacts for this specific sponsor
+    React.useEffect(() => {
+      const loadContacts = async () => {
+        const contacts = await loadSponsorContacts(sponsor.id);
+        setSponsorContacts(contacts);
+      };
+      loadContacts();
+    }, [sponsor.id, refreshKey]);
+
+    return (
+      <Box>
+        {/* Sponsor Information */}
+        <Paper 
+          elevation={0}
+          sx={{ 
+            backgroundColor: theme.palette.background.paper,
+            boxShadow: theme.shadows[2],
+            borderRadius: 2,
+            p: 1.5,
+            mb: 1.5
+          }}
+        >
+          <Box className="mb-4" sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <Typography variant="h6" sx={{ color: theme.palette.text.primary, fontWeight: 'bold' }}>
+              {sponsor.name} {sponsor.lastName || ''}
+              {sponsor.sponsorType && sponsor.sponsorType !== 'sponsor' && (
+                <Typography component="span" variant="caption" sx={{ ml: 1, color: theme.palette.text.secondary }}>
+                  ({sponsor.sponsorType})
+                </Typography>
+              )}
+            </Typography>
+            <Box sx={{ display: 'flex', gap: 1 }}>
+              <IconButton 
+                size="small" 
+                onClick={onEdit}
+                sx={{ color: theme.palette.primary.main }}
+              >
+                <i className="fa-solid fa-pen-to-square"></i>
+              </IconButton>
+              <IconButton 
+                size="small" 
+                onClick={onDelete}
+                sx={{ color: theme.palette.error.main }}
+              >
+                <i className="fa-solid fa-trash"></i>
+              </IconButton>
+            </Box>
+          </Box>
+          
+          <Box className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Contact Information */}
+            <Box>
+              <Typography variant="subtitle2" sx={{ color: theme.palette.text.secondary, mb: 1 }}>
+                Contact Information
+              </Typography>
+              
+              <Box className="grid grid-cols-1 gap-2">
+                {sponsor.phone && (
+                  <Typography sx={{ color: theme.palette.text.primary, display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <i className="fa-solid fa-phone text-sm" style={{ color: theme.palette.text.secondary }}></i>
+                    {sponsor.phone}
+                  </Typography>
+                )}
+                
+                {sponsor.email && (
+                  <Typography sx={{ color: theme.palette.text.primary, display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <i className="fa-solid fa-envelope text-sm" style={{ color: theme.palette.text.secondary }}></i>
+                    {sponsor.email}
+                  </Typography>
+                )}
+                
+                {sponsor.sobrietyDate && (
+                  <Typography sx={{ color: theme.palette.text.primary, display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <i className="fa-solid fa-calendar-check text-sm" style={{ color: theme.palette.text.secondary }}></i>
+                    {formatDateForDisplay(sponsor.sobrietyDate)}
+                  </Typography>
+                )}
+              </Box>
+            </Box>
+            
+            {/* Notes Section */}
+            {sponsor.notes && (
+              <Box>
+                <Typography variant="subtitle2" sx={{ color: theme.palette.text.secondary, mb: 1 }}>
+                  Notes
+                </Typography>
+                
+                <Typography sx={{ color: theme.palette.text.primary, whiteSpace: 'pre-wrap' }}>
+                  {sponsor.notes}
+                </Typography>
+              </Box>
+            )}
+          </Box>
+        </Paper>
+
+        {/* Sponsor Contacts Section */}
+        <Paper 
+          elevation={0}
+          sx={{ 
+            backgroundColor: theme.palette.background.paper,
+            boxShadow: theme.shadows[2],
+            borderRadius: 2,
+            p: 1.5,
+            mt: 1.5
+          }}
+        >
+          <Box className="flex justify-between items-center mb-4">
+            <Typography variant="h6" sx={{ color: theme.palette.text.primary, fontWeight: 'bold' }}>
+              Contacts with {sponsor.name}
+            </Typography>
+            
+            <Button 
+              variant="contained" 
+              color="primary"
+              size="small"
+              onClick={onAddContact}
+              startIcon={<i className="fa-solid fa-plus"></i>}
+              sx={{ 
+                backgroundColor: theme.palette.primary.main,
+                color: theme.palette.primary.contrastText,
+                '&:hover': {
+                  backgroundColor: theme.palette.primary.dark,
+                }
+              }}
+            >
+              Add Contact
+            </Button>
+          </Box>
+          
+          {sponsorContacts.length === 0 ? (
+            <Box className="text-center py-4">
+              <Typography sx={{ color: theme.palette.text.secondary }}>
+                No contacts recorded with {sponsor.name} yet.
+              </Typography>
+            </Box>
+          ) : (
+            <List className="space-y-3">
+              {sponsorContacts.map((contact, index) => {
+                const contactTypeInfo = getContactTypeInfo(contact.type);
+                
+                return (
+                  <ListItem
+                    key={contact.id || index}
+                    className="rounded-lg border border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                    sx={{
+                      backgroundColor: theme.palette.background.default,
+                      mb: 1,
+                      p: 2,
+                      borderRadius: 2,
+                      border: `1px solid ${theme.palette.divider}`,
+                      '&:hover': {
+                        backgroundColor: theme.palette.action.hover,
+                      },
+                      cursor: 'pointer'
+                    }}
+                    onClick={() => handleEditContact(contact)}
+                  >
+                    <Box className="w-full">
+                      <Box className="flex justify-between items-start mb-2">
+                        <Box className="flex items-center gap-2">
+                          <i className={contactTypeInfo.icon} style={{ color: theme.palette.text.secondary }}></i>
+                          <Typography variant="body2" sx={{ color: theme.palette.text.secondary }}>
+                            {contactTypeInfo.label}
+                          </Typography>
+                        </Box>
+                        
+                        <Typography variant="body2" sx={{ color: theme.palette.text.secondary }}>
+                          {formatDateForDisplay(contact.date)}
+                        </Typography>
+                      </Box>
+                      
+                      <Typography variant="body1" sx={{ color: theme.palette.text.primary, mb: 1 }}>
+                        {contact.note}
+                      </Typography>
+                      
+                      {contact.topic && (
+                        <Typography variant="body2" sx={{ color: theme.palette.text.secondary, mb: 1 }}>
+                          Topic: {contact.topic}
+                        </Typography>
+                      )}
+                      
+                      {contact.duration && (
+                        <Typography variant="body2" sx={{ color: theme.palette.text.secondary }}>
+                          Duration: {contact.duration} minutes
+                        </Typography>
+                      )}
+                      
+                      {/* Action Items for this contact */}
+                      {(() => {
+                        const actionItems = getActionItemsForContact(contact.date);
+                        return actionItems.length > 0 && (
+                          <Box className="mt-3 pt-2 border-t border-gray-200 dark:border-gray-600">
+                            <Typography variant="subtitle2" sx={{ color: theme.palette.text.secondary, mb: 1 }}>
+                              Action Items:
+                            </Typography>
+                            
+                            {actionItems.map((actionItem) => (
+                              <Box 
+                                key={actionItem.id}
+                                className="flex items-center justify-between py-1"
+                                sx={{
+                                  '&:hover': {
+                                    backgroundColor: theme.palette.action.hover,
+                                  }
+                                }}
+                              >
+                                <Box className="flex items-center gap-2 flex-1">
+                                  <Checkbox
+                                    checked={actionItem.completed === 1}
+                                    onChange={() => handleToggleActionItem(actionItem.id)}
+                                    size="small"
+                                    sx={{
+                                      color: theme.palette.text.secondary,
+                                      '&.Mui-checked': {
+                                        color: theme.palette.primary.main,
+                                      }
+                                    }}
+                                  />
+                                  
+                                  <Typography 
+                                    variant="body2" 
+                                    sx={{ 
+                                      color: theme.palette.text.primary,
+                                      textDecoration: actionItem.completed === 1 ? 'line-through' : 'none',
+                                      opacity: actionItem.completed === 1 ? 0.7 : 1
+                                    }}
+                                  >
+                                    {actionItem.title}
+                                  </Typography>
+                                </Box>
+                                
+                                <IconButton 
+                                  size="small" 
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleDeleteActionItem(actionItem.id);
+                                  }}
+                                  sx={{ 
+                                    color: theme.palette.error.main,
+                                    '&:hover': {
+                                      backgroundColor: theme.palette.error.light + '20',
+                                    }
+                                  }}
+                                >
+                                  <i className="fa-solid fa-trash text-xs"></i>
+                                </IconButton>
+                              </Box>
+                            ))}
+                          </Box>
+                        );
+                      })()}
+                    </Box>
+                  </ListItem>
+                );
+              })}
+            </List>
+          )}
+        </Paper>
+      </Box>
     );
   }
 
@@ -397,288 +699,96 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
 
       {/* Sponsor Tab */}
       <TabPanel value={currentTab} index={0}>
-        {/* Sponsor Information */}
-        <Paper 
-          elevation={0}
-          sx={{ 
-            backgroundColor: theme.palette.background.paper,
-            boxShadow: theme.shadows[2],
-            borderRadius: 2,
-            p: 1.5,
-            mb: 1.5
-          }}
-        >
-          {sponsors.length > 0 ? (
-            <Box>
+        {sponsors.length > 0 ? (
+          <Box>
+            {/* Nested tabs for multiple sponsors */}
+            <Tabs 
+              value={currentSponsorTab} 
+              onChange={handleSponsorTabChange}
+              sx={{ 
+                borderBottom: 1, 
+                borderColor: 'divider',
+                mb: 2,
+                '& .MuiTabs-indicator': {
+                  backgroundColor: theme.palette.secondary.main,
+                },
+                '& .MuiTab-root': {
+                  color: theme.palette.text.secondary,
+                  '&.Mui-selected': {
+                    color: theme.palette.secondary.main,
+                  },
+                },
+              }}
+            >
               {sponsors.map((sponsor, index) => (
-                <Box key={sponsor.id} sx={{ mb: sponsors.length > 1 ? 3 : 0 }}>
-                  <Box className="mb-4" sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <Typography variant="h6" sx={{ color: theme.palette.text.primary, fontWeight: 'bold' }}>
-                      {sponsor.name} {sponsor.lastName || ''}
-                      {sponsor.sponsorType && sponsor.sponsorType !== 'sponsor' && (
-                        <Typography component="span" variant="caption" sx={{ ml: 1, color: theme.palette.text.secondary }}>
-                          ({sponsor.sponsorType})
-                        </Typography>
-                      )}
-                    </Typography>
-                    <Box sx={{ display: 'flex', gap: 1 }}>
-                      <IconButton 
-                        size="small" 
-                        onClick={() => handleEditSponsor(sponsor)}
-                        sx={{ color: theme.palette.primary.main }}
-                      >
-                        <i className="fa-solid fa-pen-to-square"></i>
-                      </IconButton>
-                      <IconButton 
-                        size="small" 
-                        onClick={() => handleDeleteSponsor(sponsor.id)}
-                        sx={{ color: theme.palette.error.main }}
-                      >
-                        <i className="fa-solid fa-trash"></i>
-                      </IconButton>
-                    </Box>
-                  </Box>
-                  
-                  <Box className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {/* Contact Information */}
-                    <Box>
-                      <Typography variant="subtitle2" sx={{ color: theme.palette.text.secondary, mb: 1 }}>
-                        Contact Information
-                      </Typography>
-                      
-                      <Box className="grid grid-cols-1 gap-2">
-                        {sponsor.phone && (
-                          <Typography sx={{ color: theme.palette.text.primary, display: 'flex', alignItems: 'center', gap: 1 }}>
-                            <i className="fa-solid fa-phone text-sm" style={{ color: theme.palette.text.secondary }}></i>
-                            {sponsor.phone}
-                          </Typography>
-                        )}
-                        
-                        {sponsor.email && (
-                          <Typography sx={{ color: theme.palette.text.primary, display: 'flex', alignItems: 'center', gap: 1 }}>
-                            <i className="fa-solid fa-envelope text-sm" style={{ color: theme.palette.text.secondary }}></i>
-                            {sponsor.email}
-                          </Typography>
-                        )}
-                        
-                        {sponsor.sobrietyDate && (
-                          <Typography sx={{ color: theme.palette.text.primary, display: 'flex', alignItems: 'center', gap: 1 }}>
-                            <i className="fa-solid fa-calendar-check text-sm" style={{ color: theme.palette.text.secondary }}></i>
-                            {formatDateForDisplay(sponsor.sobrietyDate)}
-                          </Typography>
-                        )}
-                      </Box>
-                    </Box>
-                    
-                    {/* Notes Section */}
-                    {sponsor.notes && (
-                      <Box>
-                        <Typography variant="subtitle2" sx={{ color: theme.palette.text.secondary, mb: 1 }}>
-                          Notes
-                        </Typography>
-                        
-                        <Typography sx={{ color: theme.palette.text.primary, whiteSpace: 'pre-wrap' }}>
-                          {sponsor.notes}
-                        </Typography>
-                      </Box>
-                    )}
-                  </Box>
-                </Box>
+                <Tab 
+                  key={sponsor.id} 
+                  label={`${sponsor.name} ${sponsor.lastName || ''}`} 
+                />
               ))}
-            </Box>
-          ) : (
-            <Box className="text-center py-6">
-              <Typography variant="body1" sx={{ color: theme.palette.text.primary, mb: 3 }}>
-                You haven't added your sponsor yet.
-              </Typography>
-              
-              <Button 
-                variant="contained" 
-                color="primary"
-                onClick={() => {
-                  setEditingSponsor(false);
-                  setShowSponsorForm(true);
-                }}
-                startIcon={<i className="fa-solid fa-plus"></i>}
-              >
-                Add Sponsor
-              </Button>
-            </Box>
-          )}
-        </Paper>
+              <Tab label="+ Add Sponsor" />
+            </Tabs>
 
-        {/* Sponsor Contacts Section - only show if sponsors exist */}
-        {sponsors.length > 0 && (
-          <Paper 
-            elevation={0}
-            sx={{ 
-              backgroundColor: theme.palette.background.paper,
-              boxShadow: theme.shadows[2],
-              borderRadius: 2,
-              p: 1.5,
-              mt: 1.5
-            }}
-          >
-            <Box className="flex justify-between items-center mb-4">
-              <Typography variant="h6" sx={{ color: theme.palette.text.primary, fontWeight: 'bold' }}>
-                Sponsor Contacts
-              </Typography>
-              
-              <Button 
-                variant="contained" 
-                color="primary"
-                size="small"
-                onClick={handleAddContact}
-                startIcon={<i className="fa-solid fa-plus"></i>}
-                sx={{ 
-                  backgroundColor: theme.palette.primary.main,
-                  color: theme.palette.primary.contrastText,
-                  '&:hover': {
-                    backgroundColor: theme.palette.primary.dark,
-                  }
-                }}
-              >
-                Add Contact
-              </Button>
-            </Box>
-            
-            {sponsorContacts.length === 0 ? (
-              <Box className="text-center py-4">
-                <Typography sx={{ color: theme.palette.text.secondary }}>
-                  No sponsor contacts recorded yet.
+            {/* Sponsor content panels */}
+            {sponsors.map((sponsor, index) => (
+              <TabPanel key={sponsor.id} value={currentSponsorTab} index={index}>
+                <SponsorContent 
+                  sponsor={sponsor}
+                  theme={theme}
+                  onEdit={() => handleEditSponsor(sponsor)}
+                  onDelete={() => handleDeleteSponsor(sponsor.id)}
+                  onAddContact={handleAddContact}
+                  loadSponsorContacts={loadSponsorContacts}
+                  getActionItemsForContact={getActionItemsForContact}
+                  getContactTypeInfo={getContactTypeInfo}
+                  handleEditContact={handleEditContact}
+                  handleToggleActionItem={handleToggleActionItem}
+                  handleDeleteActionItem={handleDeleteActionItem}
+                  refreshKey={refreshKey}
+                  formatDateForDisplay={formatDateForDisplay}
+                />
+              </TabPanel>
+            ))}
+
+            {/* Add Sponsor panel */}
+            <TabPanel value={currentSponsorTab} index={sponsors.length}>
+              <Box className="text-center py-6">
+                <Typography variant="body1" sx={{ color: theme.palette.text.primary, mb: 3 }}>
+                  Add another sponsor or service sponsor.
                 </Typography>
+                
+                <Button 
+                  variant="contained" 
+                  color="primary"
+                  onClick={() => {
+                    setEditingSponsor(false);
+                    setShowSponsorForm(true);
+                  }}
+                  startIcon={<i className="fa-solid fa-plus"></i>}
+                >
+                  Add Sponsor
+                </Button>
               </Box>
-            ) : (
-              <List className="space-y-3">
-                {sponsorContacts.map((contact, index) => {
-                  const contactTypeInfo = getContactTypeInfo(contact.type);
-                  
-                  return (
-                    <ListItem
-                      key={contact.id || index}
-                      className="rounded-lg border border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-                      sx={{
-                        backgroundColor: theme.palette.background.default,
-                        mb: 1,
-                        p: 2,
-                        borderRadius: 2,
-                        border: `1px solid ${theme.palette.divider}`,
-                        '&:hover': {
-                          backgroundColor: theme.palette.action.hover,
-                        }
-                      }}
-                      button
-                      onClick={() => handleEditContact(contact)}
-                    >
-                      <Box className="w-full">
-                        <Box className="flex justify-between items-start mb-2">
-                          <Box className="flex items-center gap-2">
-                            <i className={contactTypeInfo.icon} style={{ color: theme.palette.text.secondary }}></i>
-                            <Typography variant="body2" sx={{ color: theme.palette.text.secondary }}>
-                              {contactTypeInfo.label}
-                            </Typography>
-                          </Box>
-                          
-                          <Typography variant="body2" sx={{ color: theme.palette.text.secondary }}>
-                            {formatDateForDisplay(contact.date)}
-                          </Typography>
-                        </Box>
-                        
-                        <Typography variant="body1" sx={{ color: theme.palette.text.primary, mb: 1 }}>
-                          {contact.note}
-                        </Typography>
-                        
-                        {contact.topic && (
-                          <Typography variant="body2" sx={{ color: theme.palette.text.secondary, mb: 1 }}>
-                            Topic: {contact.topic}
-                          </Typography>
-                        )}
-                        
-                        {contact.duration && (
-                          <Typography variant="body2" sx={{ color: theme.palette.text.secondary }}>
-                            Duration: {contact.duration} minutes
-                          </Typography>
-                        )}
-                        
-                        {/* Action Items for this contact */}
-                        {(() => {
-                          const actionItems = getActionItemsForContact(contact.date);
-                          return actionItems.length > 0 && (
-                            <Box className="mt-3 pt-2 border-t border-gray-200 dark:border-gray-600" key={refreshKey}>
-                              <Typography variant="subtitle2" sx={{ color: theme.palette.text.secondary, mb: 1 }}>
-                                Action Items:
-                              </Typography>
-                              
-                              {actionItems.map((actionItem) => (
-                                <Box 
-                                  key={actionItem.id}
-                                  className="flex items-center justify-between py-1"
-                                  sx={{
-                                    '&:hover': {
-                                      backgroundColor: theme.palette.action.hover,
-                                    }
-                                  }}
-                                >
-                                  <Box className="flex items-center gap-2 flex-1">
-                                    <Checkbox
-                                      checked={actionItem.completed === 1}
-                                      onChange={() => handleToggleActionItem(actionItem.id)}
-                                      size="small"
-                                      sx={{
-                                        color: theme.palette.text.secondary,
-                                        '&.Mui-checked': {
-                                          color: theme.palette.primary.main,
-                                        }
-                                      }}
-                                    />
-                                    
-                                    <Typography 
-                                      variant="body2" 
-                                      sx={{ 
-                                        color: theme.palette.text.primary,
-                                        textDecoration: actionItem.completed === 1 ? 'line-through' : 'none',
-                                        opacity: actionItem.completed === 1 ? 0.7 : 1
-                                      }}
-                                    >
-                                      {actionItem.title}
-                                    </Typography>
-                                  </Box>
-                                  
-                                  <IconButton 
-                                    size="small" 
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      handleDeleteActionItem(actionItem.id);
-                                    }}
-                                    sx={{ 
-                                      color: theme.palette.error.main,
-                                      '&:hover': {
-                                        backgroundColor: theme.palette.error.light + '20',
-                                      }
-                                    }}
-                                  >
-                                    <i className="fa-solid fa-trash text-xs"></i>
-                                  </IconButton>
-                                </Box>
-                              ))}
-                            </Box>
-                          );
-                        })()}
-                      </Box>
-                    </ListItem>
-                  );
-                })}
-              </List>
-            )}
+            </TabPanel>
+          </Box>
+        ) : (
+          <Box className="text-center py-6">
+            <Typography variant="body1" sx={{ color: theme.palette.text.primary, mb: 3 }}>
+              You haven't added your sponsor yet.
+            </Typography>
             
-            {sponsorContacts.length === 0 && (
-              <Box className="text-center py-8">
-                <Typography variant="body1" sx={{ color: theme.palette.text.secondary, mb: 2 }}>
-                  No contacts with your sponsor yet.
-                </Typography>
-              </Box>
-            )}
-          </Paper>
+            <Button 
+              variant="contained" 
+              color="primary"
+              onClick={() => {
+                setEditingSponsor(false);
+                setShowSponsorForm(true);
+              }}
+              startIcon={<i className="fa-solid fa-plus"></i>}
+            >
+              Add Sponsor
+            </Button>
+          </Box>
         )}
       </TabPanel>
 
