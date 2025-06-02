@@ -119,6 +119,7 @@ export default function SponsorContactList({ userId, contacts = [], onContactAdd
               .sort((a, b) => {
                 const dateA = new Date(a.date || a.createdAt || 0);
                 const dateB = new Date(b.date || b.createdAt || 0);
+                console.log(`Sorting: Contact A date: ${a.date || a.createdAt} (${dateA.getTime()}) vs Contact B date: ${b.date || b.createdAt} (${dateB.getTime()})`);
                 return dateB.getTime() - dateA.getTime(); // Newest first
               })
               .map((contact, index) => (
