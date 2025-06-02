@@ -41,7 +41,23 @@ async function initSQLiteDatabase() {
     await sqlitePlugin.open({ database: DB_NAME, readonly: false });
     console.log('[ sqliteLoader.js:76 ]  Database opened successfully');
 
-    // Setup basic schema
+    // TEMPORARY: Force drop and recreate all tables with correct schema (run once only)
+    console.log('[ sqliteLoader.js ] FORCING DATABASE SCHEMA RESET - DROP ALL TABLES');
+    const tables = ['users', 'activities', 'action_items', 'sponsor_contacts', 'meetings'];
+    
+    for (const table of tables) {
+      try {
+        await sqlitePlugin.execute({
+          database: DB_NAME,
+          statements: `DROP TABLE IF EXISTS ${table};`
+        });
+        console.log(`[ sqliteLoader.js ] Dropped table: ${table}`);
+      } catch (error) {
+        console.log(`[ sqliteLoader.js ] Could not drop table ${table}:`, error);
+      }
+    }
+    
+    // Setup basic schema with correct fields
     await setupBasicSchema(sqlitePlugin);
 
     const dbInterface = createDatabaseInterface(sqlitePlugin);
