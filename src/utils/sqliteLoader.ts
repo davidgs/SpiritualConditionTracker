@@ -550,14 +550,15 @@ function setupGlobalDB(sqlite) {
           // Add ORDER BY clause for sponsor_contacts to sort newest first
           let statement = `SELECT * FROM ${collection}`;
           if (collection === 'sponsor_contacts') {
-            statement = `SELECT * FROM ${collection} ORDER BY createdAt DESC`error         }
+            statement = `SELECT * FROM ${collection} ORDER BY createdAt DESC`;
+          }
           
-          result aba
-          throw new Error('SQLite query failed');se: DB_NAM//E,
+          result = await sqlite.query({
+            database: DB_NAME,
             statement: statement,
             values: []
           });
-        //} catch (error) {
+        } catch (error) {
           // SQLite failed, use localStorage fallback
           console.log(`[ sqliteLoader.js:541 ] SQLite failed, using localStorage for ${collection}`);
           const localData = JSON.parse(localStorage.getItem(collection) || '[]');
