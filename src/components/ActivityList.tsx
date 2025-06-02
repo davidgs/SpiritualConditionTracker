@@ -9,7 +9,8 @@ export default function ActivityList({
   filter = 'all',
   showDate = true,
   maxDaysAgo = null,
-  title = null
+  title = null,
+  onActivityClick = null
 }) {
   const theme = useTheme();
   // Get icon for activity type
@@ -26,6 +27,7 @@ export default function ActivityList({
       case 'call': return 'fa-phone';
       case 'meeting': return 'fa-users';
       case 'multiple': return 'fa-phone';
+      case 'action-item': return 'fa-tasks';
       default: return 'fa-check-circle';
     }
   };
@@ -206,13 +208,38 @@ export default function ActivityList({
             {/* Activities for this date */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
               {groups[dateKey].map((activity, index) => (
-                <div key={activity.id || `${activity.date}-${activity.type}-${index}`} style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  borderBottom: `1px solid ${theme.palette.divider}`,
-                  paddingBottom: '0.5rem',
-                  marginBottom: '0.25rem'
-                }}>
+                <div 
+                  key={activity.id || `${activity.date}-${activity.type}-${index}`} 
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    borderBottom: `1px solid ${theme.palette.divider}`,
+                    paddingBottom: '0.5rem',
+                    marginBottom: '0.25rem',
+                    cursor: (activity.type === 'sponsor-contact' || activity.type === 'action-item') ? 'pointer' : 'default',
+                    padding: '0.25rem',
+                    borderRadius: '4px',
+                    transition: 'background-color 0.2s',
+                    backgroundColor: 'transparent'
+                  }}
+                  onMouseEnter={(e) => {
+                    if (activity.type === 'sponsor-contact' || activity.type === 'action-item') {
+                      e.currentTarget.style.backgroundColor = theme.palette.action.hover;
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (activity.type === 'sponsor-contact' || activity.type === 'action-item') {
+                      e.currentTarget.style.backgroundColor = 'transparent';
+                    }
+                  }}
+                  onClick={() => {
+                    if (activity.type === 'sponsor-contact' && onActivityClick) {
+                      onActivityClick(activity, 'sponsor-contact');
+                    } else if (activity.type === 'action-item' && onActivityClick) {
+                      onActivityClick(activity, 'action-item');
+                    }
+                  }}
+                >
                   <div style={{
                     width: '1.75rem',
                     height: '1.75rem',
@@ -235,13 +262,20 @@ export default function ActivityList({
                       alignItems: 'center',
                       fontWeight: 500,
                       fontSize: '0.8rem',
-                      color: theme.palette.text.primary,
+                      color: activity.type === 'action-item' && activity.location === 'deleted' 
+                        ? theme.palette.error.main 
+                        : theme.palette.text.primary,
                       lineHeight: '1.2',
-                      marginBottom: '0.1rem'
+                      marginBottom: '0.1rem',
+                      textDecoration: activity.type === 'action-item' && activity.location === 'deleted' 
+                        ? 'line-through' 
+                        : 'none'
                     }}>
                       {/* For call types, show the appropriate label */}
                       {activity.type === 'call' 
-                        ? 'Call' 
+                        ? 'Call'
+                        : activity.type === 'action-item'
+                        ? 'Action Item'
                         : activity.type.charAt(0).toUpperCase() + activity.type.slice(1)}
                       
                       {/* Add role pills for meetings */}
