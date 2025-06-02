@@ -111,16 +111,25 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
     }
   };
 
-  // Get action items for a specific contact date from the unified activities list
-  const getActionItemsForContact = (contactDate) => {
-   // console.log('Getting action items for contact date:', contactDate);
-    
-    // For now, get all action items - they should reference sponsor contacts
-    const actionItems = activities.filter(activity => activity.type === 'action-item');
-    
-    // console.log('All action items found:', actionItems);
-    
-    return actionItems;
+  // Get action items for a specific sponsor contact
+  const getActionItemsForContact = async (contactId) => {
+    try {
+      if (!window.db) {
+        console.error('Database not initialized');
+        return [];
+      }
+
+      // Get action items that reference this specific contact
+      const allActionItems = await window.db.getAll('action_items');
+      const contactActionItems = (allActionItems || []).filter(item => 
+        item.contactId === contactId || item.sponsorContactId === contactId
+      );
+      
+      return contactActionItems;
+    } catch (error) {
+      console.error('Error loading action items for contact:', error);
+      return [];
+    }
   };
   
   // Toggle action item completion (checkbox)
@@ -128,6 +137,12 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
     console.log('[ SponsorSponsee ] Checkbox clicked for item id:', actionItemId);
     
     try {
+      // Check if activities is null or undefined
+      if (!activities || !Array.isArray(activities)) {
+        console.error('Activities is null or not an array');
+        return;
+      }
+      
       // Find the activity in the activities list
       const activity = activities.find(act => act.id === actionItemId);
       if (!activity) {
