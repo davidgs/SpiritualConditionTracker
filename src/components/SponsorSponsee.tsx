@@ -138,15 +138,13 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
       }
       
       return false;
-    })
-    .filter(activity => activity.location !== 'deleted') // Filter out deleted items
-    .map(activity => ({
+    }).map(activity => ({
       id: activity.id,
       title: activity.notes?.split(' - ')[0]?.replace('Action Item: ', '') || 'Action Item',
       text: activity.notes?.split(' - ')[1]?.split(' [Notes:')[0]?.split(' [ContactRef:')[0] || '',
       notes: activity.notes?.match(/\[Notes: (.*?)\]/)?.[1] || '',
       completed: activity.location === 'completed',
-      deleted: false, // Since we filtered out deleted items, this is always false
+      deleted: activity.location === 'deleted',
       dueDate: activity.date,
       activityData: activity, // Keep reference to original activity
       actionItemId: activity.actionItemId // Reference to original action item in action_items table
@@ -161,9 +159,17 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
     try {
       console.log('[SponsorSponsee] handleToggleActionItem called with:', actionItem);
       
-      // Don't allow toggling if item is deleted
+      // Allow toggling for deleted items to restore them
       if (actionItem.deleted) {
-        console.log('[SponsorSponsee] Item is deleted, cannot toggle');
+        console.log('[SponsorSponsee] Item is deleted, will restore it');
+        // Update the existing activity to restore it
+        await onSaveActivity({
+          ...actionItem.activityData,
+          location: 'pending',
+          updatedAt: new Date().toISOString()
+        });
+        console.log('[SponsorSponsee] Item restored successfully');
+        loadSponsorContacts();
         return;
       }
       
@@ -763,7 +769,7 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
                                         checked={item.completed || item.deleted}
                                         onChange={() => handleToggleActionItem(item)}
                                         size="small"
-                                        disabled={item.deleted}
+                                        disabled={false}
                                         icon={item.deleted ? <i className="fa-solid fa-xmark" style={{ fontSize: '12px', color: theme.palette.error.main }} /> : undefined}
                                         checkedIcon={item.deleted ? <i className="fa-solid fa-xmark" style={{ fontSize: '12px', color: theme.palette.error.main }} /> : undefined}
                                         sx={{
