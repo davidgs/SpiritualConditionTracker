@@ -4,7 +4,6 @@
  */
 
 import initSQLiteDatabase from '../utils/sqliteLoader';
-import { cleanupBrokenActivities } from '../utils/sqliteLoader';
 import type { User, Activity, Meeting, SponsorContact, ContactDetail, ActionItem } from '../types/database';
 
 export type DatabaseStatus = 'initializing' | 'ready' | 'error' | 'fallback';
@@ -68,9 +67,8 @@ class DatabaseService {
         throw new Error('Database interface not properly initialized: 59');
       }
 
-      // Clean up any broken data
-      console.log('[ DatabaseService: 63 ] Running database cleanup...');
-      await cleanupBrokenActivities();
+      // Database is ready - no cleanup needed with simplified loader
+      console.log('[ DatabaseService: 63 ] Database ready');
 
       // Store database reference
       this.database = window.db;
