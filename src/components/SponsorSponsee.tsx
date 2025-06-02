@@ -100,7 +100,7 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
     setSponsorContacts(contacts);
   };
 
-  // Get action items for a specific contact date
+  // Get action items for a specific contact date from the unified activities list
   const getActionItemsForContact = (contactDate) => {
     console.log('Getting action items for contact date:', contactDate);
     console.log('All activities in database:', activities);
@@ -111,14 +111,25 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
     const matchingActionItems = activities.filter(activity => {
       if (activity.type !== 'action-item') return false;
       
-      // Look for ContactRef in the notes that matches this contact's date
+      // For new unified approach, check if notes contain ContactRef OR if this is a standalone action item
       const contactRefMatch = activity.notes?.match(/\[ContactRef: ([^\]]+)\]/);
       const referencedContactDate = contactRefMatch ? contactRefMatch[1] : null;
       
       console.log('Activity:', activity.id, 'references contact date:', referencedContactDate, 'looking for:', contactDate);
       
-      // Match action items that reference this contact
-      return referencedContactDate === contactDate;
+      // Match action items that reference this contact OR standalone action items near this contact's date
+      if (referencedContactDate === contactDate) {
+        return true;
+      }
+      
+      // For standalone action items, match if they're within a day of the contact
+      if (!contactRefMatch && activity.actionItemData) {
+        const itemDate = activity.date;
+        const daysDiff = Math.abs(new Date(itemDate).getTime() - new Date(contactDate).getTime()) / (1000 * 60 * 60 * 24);
+        return daysDiff <= 1; // Within 1 day
+      }
+      
+      return false;
     }).map(activity => ({
       id: activity.id,
       title: activity.notes?.split(' - ')[0]?.replace('Action Item: ', '') || 'Action Item',
@@ -127,7 +138,8 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
       completed: activity.location === 'completed',
       deleted: activity.location === 'deleted',
       dueDate: activity.date,
-      activityData: activity // Keep reference to original activity
+      activityData: activity, // Keep reference to original activity
+      actionItemId: activity.actionItemId // Reference to original action item in action_items table
     }));
     
     console.log('Matching action items found:', matchingActionItems);
@@ -283,7 +295,7 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
       const savedActivity = await onSaveActivity(activityData);
       console.log('Contact saved successfully as activity:', savedActivity);
       
-      // Save action items to the action_items table if any were provided
+      // Save action items to the action_items table only
       if (actionItems && actionItems.length > 0) {
         try {
           const actionItemPromises = actionItems.map(async (actionItem) => {

@@ -289,18 +289,48 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
     try {
       const activities = await databaseService.getAllActivities();
       
+      // Also fetch action items from action_items table and convert to activity format
+      let actionItemActivities = [];
+      try {
+        const actionItems = await window.db.getAll('action_items');
+        console.log('[ AppDataContext.tsx ] Fetched action items:', actionItems.length);
+        
+        // Convert action items to activity format for unified display
+        actionItemActivities = actionItems.map(item => ({
+          id: `action-item-${item.id}`, // Prefix to avoid ID conflicts
+          type: 'action-item',
+          date: item.dueDate || item.createdAt?.split('T')[0] || new Date().toISOString().split('T')[0],
+          notes: `Action Item: ${item.title}${item.text ? ' - ' + item.text : ''}${item.notes ? ' [Notes: ' + item.notes + ']' : ''}`,
+          duration: undefined,
+          location: item.completed ? 'completed' : 'pending',
+          createdAt: item.createdAt || new Date().toISOString(),
+          updatedAt: item.updatedAt || new Date().toISOString(),
+          // Keep reference to original action item
+          actionItemId: item.id,
+          actionItemData: item
+        }));
+        
+        console.log('[ AppDataContext.tsx ] Converted action items to activities:', actionItemActivities.length);
+      } catch (actionItemError) {
+        console.warn('[ AppDataContext.tsx ] Failed to load action items:', actionItemError);
+        // Continue without action items if they fail to load
+      }
+      
+      // Combine regular activities with action item activities
+      const allActivities = [...activities, ...actionItemActivities];
+      
       // Always load last 180 days for base cache (fixed window for memory management)
       const CACHE_DAYS = 180;
       const cutoffDate = new Date();
       cutoffDate.setDate(cutoffDate.getDate() - CACHE_DAYS);
       
-      const cachedActivities = activities.filter(activity => {
+      const cachedActivities = allActivities.filter(activity => {
         const activityDate = new Date(activity.date);
         return activityDate >= cutoffDate;
       });
       
       dispatch({ type: 'SET_ACTIVITIES', payload: cachedActivities });
-      console.log(`[ AppDataContext.tsx:288 ] Activities cached (${CACHE_DAYS} days):`, cachedActivities.length);
+      console.log(`[ AppDataContext.tsx:288 ] Activities cached (${CACHE_DAYS} days):`, cachedActivities.length, '(including action items)');
       
       // Calculate spiritual fitness
       await calculateSpiritualFitness();
