@@ -5,6 +5,7 @@
 
 import DatabaseService from '../services/DatabaseService';
 import { SponsorContact, ActionItem, ContactDetail } from '../types/database';
+import { associateActionItemWithContact } from './action-items';
 
 /**
  * Get all sponsor contacts (single user app)
@@ -60,24 +61,28 @@ export async function addSponsorContact(contactData: Omit<SponsorContact, 'id' |
       // Don't throw - the contact was still saved successfully
     }
     
-    // Save action items with proper contactId linking
+    // Save action items using proper join table structure
     if (actionItems && actionItems.length > 0) {
       try {
         for (const actionItem of actionItems) {
+          // First, save the action item to the action_items table
           const actionItemData = {
-            contactId: savedContact.id, // Link to the saved contact
             title: actionItem.title,
             text: actionItem.text || actionItem.title,
             notes: actionItem.notes || '',
             dueDate: actionItem.dueDate || contactData.date,
-            completed: actionItem.completed ? 1 : 0,
-            type: 'todo'
+            completed: (actionItem.completed ? 1 : 0) as 0 | 1,
+            type: 'todo' as const
           };
           
-          console.log('[ sponsor-database ] Saving action item with contactId:', actionItemData);
-          await databaseService.addActionItem(actionItemData);
+          console.log('[ sponsor-database ] Saving action item:', actionItemData);
+          const savedActionItem = await databaseService.addActionItem(actionItemData);
+          
+          // Then, create the association in the join table
+          console.log('[ sponsor-database ] Creating association between contact', savedContact.id, 'and action item', savedActionItem.id);
+          await associateActionItemWithContact(savedContact.id, savedActionItem.id);
         }
-        console.log(`[ sponsor-database ] Successfully saved ${actionItems.length} action items`);
+        console.log(`[ sponsor-database ] Successfully saved ${actionItems.length} action items with proper associations`);
       } catch (actionItemError) {
         console.error('[ sponsor-database ] Error saving action items:', actionItemError);
         // Don't throw - the contact was still saved successfully
@@ -228,23 +233,19 @@ const sponsorDB = {
 };
 
 /**
- * Get action items for a specific contact
+ * Get action items for a specific contact using proper join table
  */
 export async function getActionItemsByContactId(contactId: string | number): Promise<ActionItem[]> {
   try {
-    const databaseService = DatabaseService.getInstance();
-    
     console.log(`[ sponsor-database ] Loading action items for contact ID: ${contactId}`);
     
-    // Get all action items and filter by contactId
-    const allActionItems = await databaseService.getAllActionItems();
-    const contactActionItems = allActionItems.filter(item => 
-      item.contactId === contactId || item.contactId === String(contactId)
-    );
+    // Use the existing action-items utility function that handles the join table properly
+    const { getActionItemsForContact } = await import('./action-items');
+    const actionItems = await getActionItemsForContact(contactId);
     
-    console.log(`[ sponsor-database ] Found ${contactActionItems.length} action items for contact ${contactId}`);
+    console.log(`[ sponsor-database ] Found ${actionItems.length} action items for contact ${contactId}`);
     
-    return contactActionItems;
+    return actionItems;
   } catch (error) {
     console.error('[ sponsor-database ] Error getting action items for contact:', error);
     return [];
