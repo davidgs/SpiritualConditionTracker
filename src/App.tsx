@@ -189,8 +189,7 @@ function AppContent() {
   // Handle navigation to sponsor contact details
   function handleNavigateToSponsorContact(contactId: string) {
     console.log('Navigating to sponsor contact:', contactId);
-    // TODO: Implement navigation to sponsor contact details page
-    // For now, just navigate to the sponsor page
+    // Navigate to the sponsor page which shows sponsor contacts
     setCurrentView('sponsor');
   }
 
