@@ -5,7 +5,7 @@
 
 import initSQLiteDatabase from '../utils/sqliteLoader';
 import { cleanupBrokenActivities } from '../utils/sqliteLoader';
-import type { User, Activity, Meeting, SponsorContact } from '../types/database';
+import type { User, Activity, Meeting, SponsorContact, ContactDetail, ActionItem } from '../types/database';
 
 export type DatabaseStatus = 'initializing' | 'ready' | 'error' | 'fallback';
 
@@ -295,6 +295,64 @@ class DatabaseService {
   async remove(collection: string, id: string | number): Promise<boolean> {
     return this.executeOperation(async () => {
       return await this.database.remove(collection, id);
+    });
+  }
+
+  // Contact details operations
+  async getAllContactDetails(): Promise<ContactDetail[]> {
+    return this.executeOperation(async () => {
+      const details = await this.database.getAll('sponsor_contact_details');
+      return details || [];
+    });
+  }
+
+  async addContactDetail(detail: Omit<ContactDetail, 'id' | 'createdAt' | 'updatedAt'>): Promise<ContactDetail> {
+    return this.executeOperation(async () => {
+      console.log('[ DatabaseService ] Adding contact detail:', detail);
+      const result = await this.database.add('sponsor_contact_details', detail);
+      console.log('[ DatabaseService ] Contact detail saved:', result);
+      return result;
+    });
+  }
+
+  async updateContactDetail(id: string | number, updates: Partial<ContactDetail>): Promise<ContactDetail | null> {
+    return this.executeOperation(async () => {
+      return await this.database.update('sponsor_contact_details', id, updates);
+    });
+  }
+
+  async deleteContactDetail(detailId: string | number): Promise<boolean> {
+    return this.executeOperation(async () => {
+      return await this.database.remove('sponsor_contact_details', detailId);
+    });
+  }
+
+  // Action items operations
+  async getAllActionItems(): Promise<ActionItem[]> {
+    return this.executeOperation(async () => {
+      const items = await this.database.getAll('action_items');
+      return items || [];
+    });
+  }
+
+  async addActionItem(item: Omit<ActionItem, 'id' | 'createdAt' | 'updatedAt'>): Promise<ActionItem> {
+    return this.executeOperation(async () => {
+      console.log('[ DatabaseService ] Adding action item:', item);
+      const result = await this.database.add('action_items', item);
+      console.log('[ DatabaseService ] Action item saved:', result);
+      return result;
+    });
+  }
+
+  async updateActionItem(id: string | number, updates: Partial<ActionItem>): Promise<ActionItem | null> {
+    return this.executeOperation(async () => {
+      return await this.database.update('action_items', id, updates);
+    });
+  }
+
+  async deleteActionItem(itemId: string | number): Promise<boolean> {
+    return this.executeOperation(async () => {
+      return await this.database.remove('action_items', itemId);
     });
   }
 }
