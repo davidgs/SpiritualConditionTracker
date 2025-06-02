@@ -13,7 +13,7 @@ import Header from './components/Header';
 import BottomNavBar from './components/BottomNavBar';
 import Meetings from './components/Meetings';
 import Profile from './components/Profile';
-import Sponsor from './components/Sponsor';
+import SponsorSponsee from './components/SponsorSponsee';
 
 function AppContent() {
   const { state, addActivity, addMeeting, updateMeeting, deleteMeeting, updateTimeframe, updateUser, resetAllData } = useAppData();
@@ -225,9 +225,11 @@ function AppContent() {
             />
           )}
           {currentView === 'sponsor' && (
-            <Sponsor
+            <SponsorSponsee
               user={state.user}
               onUpdate={handleUpdateProfile}
+              onSaveActivity={handleSaveActivity}
+              activities={state.activities}
             />
           )}
           {currentView !== 'dashboard' && currentView !== 'meetings' && currentView !== 'profile' && currentView !== 'sponsor' && (
