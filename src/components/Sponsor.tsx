@@ -66,12 +66,10 @@ export default function Sponsor({ user, onUpdate }: SponsorProps) {
   // Load sponsor contacts from database
   const loadSponsorContacts = async () => {
     try {
-      // Use default_user if user.id is not available to match what we use when saving
-      const userId = user?.id || 'default_user';
-      console.log('Loading sponsor contacts for userId:', userId);
+      console.log('Loading sponsor contacts...');
       
       // Use our specialized sponsor database module
-      const contacts = await sponsorDB.getSponsorContacts(userId);
+      const contacts = await sponsorDB.getSponsorContacts();
       console.log('Found sponsor contacts:', contacts);
       setContacts(contacts);
       

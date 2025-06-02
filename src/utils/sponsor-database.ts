@@ -7,13 +7,13 @@ import DatabaseService from '../services/DatabaseService';
 import { SponsorContact, ActionItem, ContactDetail } from '../types/database';
 
 /**
- * Get all sponsor contacts for a user using DatabaseService
+ * Get all sponsor contacts (single user app)
  */
-export async function getSponsorContacts(userId: string): Promise<SponsorContact[]> {
+export async function getSponsorContacts(): Promise<SponsorContact[]> {
   try {
     const databaseService = DatabaseService.getInstance();
     
-    console.log('[ sponsor-database ] Querying sponsor contacts with userId:', userId);
+    console.log('[ sponsor-database ] Querying all sponsor contacts');
     
     // Use DatabaseService to get all sponsor contacts
     const allContacts = await databaseService.getAllSponsorContacts();
@@ -21,12 +21,8 @@ export async function getSponsorContacts(userId: string): Promise<SponsorContact
     console.log('[ sponsor-database ] Raw database response:', allContacts);
     console.log('[ sponsor-database ] Number of total contacts in database:', allContacts.length);
     
-    // Filter by userId if provided (ensure both are strings for comparison)
-    const userContacts = allContacts;
-      // .filter(contact => String(contact.userId) === String(userId));
-    
-    console.log(`[ sponsor-database ] Found ${userContacts.length} sponsor contacts for user ${userId}`);
-    return userContacts;
+    console.log(`[ sponsor-database ] Found ${allContacts.length} sponsor contacts`);
+    return allContacts;
   } catch (error) {
     console.error('[ sponsor-database ] Error getting sponsor contacts:', error);
     return [];
