@@ -160,7 +160,7 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
     try {
       console.log('[SponsorSponsee] handleToggleActionItem called with:', actionItem);
       
-      // Check if this is a proper action item (has actionItemData) or legacy activity-based action item
+      // Always prioritize the proper action_items table over legacy activity-based storage
       if (actionItem.actionItemData?.id) {
         // This is a proper action item from action_items table
         console.log('[SponsorSponsee] Updating action item in action_items table, ID:', actionItem.actionItemData.id);
@@ -178,8 +178,23 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
         await window.db.update('action_items', actionItem.actionItemData.id, updatedActionItem);
         console.log('[SponsorSponsee] Action item updated successfully in action_items table');
         
+      } else if (actionItem.activityData?.actionItemId) {
+        // This activity references an action item - update the action_items table directly
+        console.log('[SponsorSponsee] Updating action item via actionItemId:', actionItem.activityData.actionItemId);
+        
+        const currentCompleted = actionItem.completed ? 1 : 0;
+        const newCompleted = currentCompleted === 1 ? 0 : 1;
+        
+        const updatedActionItem = {
+          completed: newCompleted,
+          updatedAt: new Date().toISOString()
+        };
+        
+        await window.db.update('action_items', actionItem.activityData.actionItemId, updatedActionItem);
+        console.log('[SponsorSponsee] Action item updated successfully via actionItemId');
+        
       } else if (actionItem.activityData?.id) {
-        // This is a legacy activity-based action item - update the activity
+        // Legacy fallback - update the activity location field
         console.log('[SponsorSponsee] Updating legacy activity-based action item, ID:', actionItem.activityData.id);
         
         const currentLocation = actionItem.activityData.location || 'pending';
