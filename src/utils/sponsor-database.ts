@@ -61,7 +61,7 @@ export async function getContactDetails(contactId: number): Promise<ContactDetai
     
     console.log('[ sponsor-database ] Getting contact details for contactId:', contactId);
     
-    const allDetails = await databaseService.getAll<ContactDetail>('contact_details');
+    const allDetails = await databaseService.getAll<ContactDetail>('sponsor_contact_details');
     const contactDetails = allDetails.filter(detail => detail.contactId === contactId);
     
     console.log(`[ sponsor-database ] Found ${contactDetails.length} contact details`);
@@ -81,7 +81,7 @@ export async function addContactDetail(detailData: Omit<ContactDetail, 'id' | 'c
     
     console.log('[ sponsor-database ] Adding contact detail:', detailData);
     
-    const savedDetail = await databaseService.add<ContactDetail>('contact_details', detailData);
+    const savedDetail = await databaseService.add<ContactDetail>('sponsor_contact_details', detailData);
     
     console.log('[ sponsor-database ] Contact detail saved with ID:', savedDetail.id);
     return savedDetail;
@@ -120,7 +120,7 @@ export async function updateContactDetail(detailData: Partial<ContactDetail> & {
     console.log('[ sponsor-database ] Updating contact detail:', detailData.id);
     
     const { id, ...updateData } = detailData;
-    const updatedDetail = await databaseService.update<ContactDetail>('contact_details', id, updateData);
+    const updatedDetail = await databaseService.update<ContactDetail>('sponsor_contact_details', id, updateData);
     
     console.log('[ sponsor-database ] Contact detail updated');
     return updatedDetail;
@@ -142,7 +142,7 @@ export async function deleteSponsorContact(contactId: number): Promise<boolean> 
     // First delete associated contact details
     const details = await getContactDetails(contactId);
     for (const detail of details) {
-      await databaseService.remove('contact_details', detail.id);
+      await databaseService.remove('sponsor_contact_details', detail.id);
     }
     
     // Then delete the contact itself
@@ -165,7 +165,7 @@ export async function deleteContactDetail(detailId: number): Promise<boolean> {
     
     console.log('[ sponsor-database ] Deleting contact detail:', detailId);
     
-    const success = await databaseService.remove('contact_details', detailId);
+    const success = await databaseService.remove('sponsor_contact_details', detailId);
     
     console.log('[ sponsor-database ] Contact detail deleted:', success);
     return success;
