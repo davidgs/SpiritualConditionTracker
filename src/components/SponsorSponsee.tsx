@@ -232,23 +232,23 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
         updatedAt: new Date().toISOString()
       };
 
-      await window.db.add('sponsor_contacts', newContact);
+      const savedContact = await window.db.add('sponsor_contacts', newContact);
 
-      // If there's action item data, save it as an activity
+      // If there's action item data, save it to action_items table
       if (actionItemData && actionItemData.title) {
-        const actionItemActivity = {
-          type: 'action-item',
+        const actionItem = {
+          contactId: savedContact?.id || newContact.id, // Link to the new contact
           title: actionItemData.title,
           text: actionItemData.text || actionItemData.title,
           notes: actionItemData.notes || '',
-          date: new Date().toISOString().split('T')[0],
-          completed: 0,
           dueDate: actionItemData.dueDate || null,
+          completed: 0,
+          type: 'todo',
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString()
         };
 
-        await onSaveActivity(actionItemActivity);
+        await window.db.add('action_items', actionItem);
       }
 
       setShowContactForm(false);
@@ -282,22 +282,20 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
 
       // Handle action items if any
       for (const actionItemData of actionItems) {
-        // Create activity record for each action item
-        const actionItemActivity = {
-          id: `action-item-${Date.now()}-${Math.random()}`,
-          type: 'action-item',
+        // Create action item directly in action_items table
+        const actionItem = {
+          contactId: editingContact.id, // Link to the specific contact
           title: actionItemData.title,
           text: actionItemData.text || actionItemData.title,
           notes: actionItemData.notes || '',
-          date: new Date().toISOString().split('T')[0],
-          completed: 0,
           dueDate: actionItemData.dueDate || null,
-          sponsorContactId: editingContact.id, // Link to the specific contact
+          completed: 0,
+          type: 'todo',
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString()
         };
 
-        await onSaveActivity(actionItemActivity);
+        await window.db.add('action_items', actionItem);
       }
 
       setShowContactForm(false);

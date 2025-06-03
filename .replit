@@ -5,25 +5,6 @@ channel = "stable-24_05"
 packages = ["jdk11", "imagemagick", "tree"]
 
 [workflows]
-runButton = "Project"
-
-[[workflows.workflow]]
-name = "Project"
-mode = "parallel"
-author = "agent"
-
-[[workflows.workflow.tasks]]
-task = "workflow.run"
-args = "React App"
-
-[[workflows.workflow]]
-name = "React App"
-author = "agent"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "npm run dev"
-waitForPort = 5000
 
 [deployment]
 run = ["sh", "-c", "node deployment-server.js"]

@@ -46,6 +46,17 @@ module.exports = {
       assets: path.resolve(__dirname, 'assets/'),
     }
   },
+  devServer: {
+    static: {
+      directory: path.join(__dirname, '.'),
+    },
+    compress: true,
+    port: 5000,
+    host: '0.0.0.0',
+    allowedHosts: 'all',
+    historyApiFallback: true,
+    hot: true
+  },
   mode: 'development',
   devtool: 'source-map'
 };

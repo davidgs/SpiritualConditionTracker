@@ -140,12 +140,13 @@ async function setupBasicSchema(sqlite) {
     });
     console.log('[ sqliteLoader.js:141 ]  Activities table created successfully');
 
-    // Action items table
+    // Action items table - linked to contacts
     await sqlite.execute({
       database: DB_NAME,
       statements: `
         CREATE TABLE IF NOT EXISTS action_items (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
+          contactId INTEGER,
           title TEXT,
           text TEXT,
           notes TEXT,
@@ -153,19 +154,20 @@ async function setupBasicSchema(sqlite) {
           completed INTEGER DEFAULT 0,
           type TEXT DEFAULT 'todo',
           createdAt TEXT,
-          updatedAt TEXT
+          updatedAt TEXT,
+          FOREIGN KEY (contactId) REFERENCES sponsor_contacts(id)
         )
       `
     });
     console.log('[ sqliteLoader.js:160 ]  Action items table created');
 
-    // Sponsors table
+    // Sponsors table - linked to users
     await sqlite.execute({
       database: DB_NAME,
       statements: `
         CREATE TABLE IF NOT EXISTS sponsors (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
-          userId TEXT DEFAULT 'default_user',
+          userId INTEGER,
           name TEXT,
           lastName TEXT,
           phone TEXT,
@@ -174,7 +176,8 @@ async function setupBasicSchema(sqlite) {
           notes TEXT,
           sponsorType TEXT DEFAULT 'sponsor',
           createdAt TEXT,
-          updatedAt TEXT
+          updatedAt TEXT,
+          FOREIGN KEY (userId) REFERENCES users(id)
         )
       `
     });

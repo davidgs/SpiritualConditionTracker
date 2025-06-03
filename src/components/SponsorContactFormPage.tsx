@@ -40,14 +40,12 @@ export default function SponsorContactFormPage({ open, userId, onSubmit, onClose
     try {
       if (!window.db) return [];
       
-      const allActivities = await window.db.getAll('activities');
-      const activitiesArray = Array.isArray(allActivities) ? allActivities : [];
+      const allActionItems = await window.db.getAll('action_items');
+      const actionItemsArray = Array.isArray(allActionItems) ? allActionItems : [];
       
-      // Find action items that reference this contact
-      const contactActionItems = activitiesArray.filter(activity => 
-        activity && 
-        activity.type === 'action-item' &&
-        (activity.sponsorContactId === contactId || activity.contactId === contactId)
+      // Find action items that belong to this contact
+      const contactActionItems = actionItemsArray.filter(item => 
+        item && item.contactId === contactId
       );
       
       // Convert to ActionItemFormData format
