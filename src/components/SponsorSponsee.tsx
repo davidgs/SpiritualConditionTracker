@@ -43,7 +43,7 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
   // Dialog states
   const [showSponsorForm, setShowSponsorForm] = useState(false);
   const [showSponseeForm, setShowSponseeForm] = useState(false);
-  const [editingSponsor, setEditingSponsor] = useState(false);
+  const [editingSponsor, setEditingSponsor] = useState(null);
   const [editingSponseeId, setEditingSponseeId] = useState(null);
   const [editingActionItem, setEditingActionItem] = useState(null);
   const [editingContact, setEditingContact] = useState(null);
@@ -92,7 +92,7 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
       // Filter by sponsor ID if provided
       console.log('[SponsorSponsee.tsx:99] Before filter - contactsArray:', contactsArray, 'sponsorId:', sponsorId);
       const filteredContacts = sponsorId 
-        ? contactsArray.filter(contact => contact && contact.sponsorId === sponsorId)
+        ? contactsArray.filter((contact: any) => contact && contact.sponsorId === sponsorId)
         : contactsArray;
       
       // Sort contacts by date - newest first, but only if we have valid contacts
@@ -258,7 +258,7 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
               text: actionItemWithoutId.text || actionItemWithoutId.title,
               notes: actionItemWithoutId.notes || '',
               dueDate: actionItemWithoutId.dueDate || null,
-              completed: actionItemWithoutId.completed ? 1 : 0,
+              completed: (actionItemWithoutId.completed ? 1 : 0) as 0 | 1,
               type: actionItemWithoutId.type || 'todo',
               createdAt: new Date().toISOString(),
               updatedAt: new Date().toISOString()
@@ -327,7 +327,7 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
           text: actionItemWithoutId.text || actionItemWithoutId.title,
           notes: actionItemWithoutId.notes || '',
           dueDate: actionItemWithoutId.dueDate || null,
-          completed: actionItemWithoutId.completed ? 1 : 0,
+          completed: (actionItemWithoutId.completed ? 1 : 0) as 0 | 1,
           type: actionItemWithoutId.type || 'todo',
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString()
@@ -414,7 +414,7 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
       // Reload sponsors
       await loadSponsors();
       setShowSponsorForm(false);
-      setEditingSponsor(false);
+      setEditingSponsor(null);
     } catch (error) {
       console.error('Error saving sponsor:', error);
     }
@@ -879,7 +879,7 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
                   variant="contained" 
                   color="primary"
                   onClick={() => {
-                    setEditingSponsor(false);
+                    setEditingSponsor(null);
                     setShowSponsorForm(true);
                   }}
                   startIcon={<i className="fa-solid fa-plus"></i>}
@@ -899,7 +899,7 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
               variant="contained" 
               color="primary"
               onClick={() => {
-                setEditingSponsor(false);
+                setEditingSponsor(null);
                 setShowSponsorForm(true);
               }}
               startIcon={<i className="fa-solid fa-plus"></i>}
