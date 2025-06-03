@@ -296,8 +296,11 @@ function createDatabaseInterface(sqlite) {
           updatedAt: item.updatedAt || timestamp
         };
 
-        const columns = Object.keys(itemWithTimestamp);
-        const values = Object.values(itemWithTimestamp);
+        // Remove 'id' field to let AUTO_INCREMENT handle it
+        const { id, ...itemForInsert } = itemWithTimestamp;
+        
+        const columns = Object.keys(itemForInsert);
+        const values = Object.values(itemForInsert);
         
         // Create properly escaped values for SQL
         const escapedValues = values.map(value => {
@@ -323,39 +326,47 @@ function createDatabaseInterface(sqlite) {
 
         console.log(`[ sqliteLoader.js ] Insert result:`, result);
         
-        // For successful inserts, we need to query back to get the actual ID
-        // since SQLite auto-increment IDs may not be returned correctly
+        // Check if insert was successful
         if (result && result.changes && result.changes.changes > 0) {
-          console.log(`[ sqliteLoader.js ] Insert successful, querying back to get actual ID`);
+          console.log(`[ sqliteLoader.js ] Insert successful, getting the AUTO_INCREMENT ID`);
           
-          // Query the most recent record to get the actual ID
+          // Query the most recent record to get the actual AUTO_INCREMENT ID
           const recentRecords = await sqlite.query({
             database: DB_NAME,
-            statement: `SELECT * FROM ${collection} ORDER BY id DESC LIMIT 1`
+            statement: `SELECT id FROM ${collection} ORDER BY id DESC LIMIT 1`
           });
           
-          if (recentRecords && recentRecords.values && recentRecords.values.length > 1) {
-            const actualRecord = convertIOSFormatToStandard(recentRecords.values);
-            if (actualRecord.length > 0) {
-              const actualId = actualRecord[0].id;
-              console.log(`[ sqliteLoader.js ] Found actual ID: ${actualId} for new ${collection} record`);
+          console.log(`[ sqliteLoader.js ] Recent records query result:`, recentRecords);
+          
+          if (recentRecords && recentRecords.values && recentRecords.values.length > 0) {
+            // Handle Capacitor SQLite iOS format
+            if (recentRecords.values.length > 1 && recentRecords.values[0].ios_columns) {
+              const actualRecord = convertIOSFormatToStandard(recentRecords.values);
+              if (actualRecord.length > 0) {
+                const actualId = actualRecord[0].id;
+                console.log(`[ sqliteLoader.js ] Found actual AUTO_INCREMENT ID: ${actualId}`);
+                
+                return {
+                  ...itemForInsert,
+                  id: actualId
+                };
+              }
+            } else {
+              // Handle standard format
+              const actualId = recentRecords.values[0].id || recentRecords.values[0][0];
+              console.log(`[ sqliteLoader.js ] Found actual AUTO_INCREMENT ID: ${actualId}`);
               
               return {
-                ...itemWithTimestamp,
+                ...itemForInsert,
                 id: actualId
               };
             }
           }
         }
         
-        // Fallback to timestamp ID if we can't get the actual ID
-        const fallbackId = Date.now();
-        console.log(`[ sqliteLoader.js ] Using fallback ID: ${fallbackId} for new ${collection} record`);
-        
-        return {
-          ...itemWithTimestamp,
-          id: fallbackId
-        };
+        // If we can't get the ID, something went wrong
+        console.error(`[ sqliteLoader.js ] Could not retrieve AUTO_INCREMENT ID for ${collection}`);
+        throw new Error('Failed to get database ID for new record');
       } catch (error) {
         console.error(`[ sqliteLoader.js ] Error adding to ${collection}:`, error);
         throw error;
