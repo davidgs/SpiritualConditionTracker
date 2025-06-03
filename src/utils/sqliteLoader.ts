@@ -350,13 +350,16 @@ function createDatabaseInterface(sqlite) {
           return `${col} = ${escapedValue}`;
         }).join(', ');
 
-        const updateSQL = `UPDATE ${collection} SET ${setClause} WHERE id = '${id}'`;
+        const updateSQL = `UPDATE ${collection} SET ${setClause} WHERE id = ?`;
         
         console.log(`[ sqliteLoader.js:355 ] Update SQL: ${updateSQL}`);
 
         await sqlite.execute({
           database: DB_NAME,
-          statements: updateSQL
+          statements: [{
+            statement: updateSQL,
+            values: [id]
+          }]
         });
 
         return await this.getById(collection, id);
@@ -370,7 +373,8 @@ function createDatabaseInterface(sqlite) {
       try {
         const result = await sqlite.query({
           database: DB_NAME,
-          statement: `SELECT * FROM ${collection} WHERE id = '${id}'`
+          statement: `SELECT * FROM ${collection} WHERE id = ?`,
+          values: [id]
         });
 
         if (!result || !result.values || result.values.length === 0) {
@@ -391,7 +395,10 @@ function createDatabaseInterface(sqlite) {
 
         const result = await sqlite.execute({
           database: DB_NAME,
-          statements: `DELETE FROM ${collection} WHERE id = '${id}'`
+          statements: [{
+            statement: `DELETE FROM ${collection} WHERE id = ?`,
+            values: [id]
+          }]
         });
 
         return result && result.changes && result.changes.changes > 0;

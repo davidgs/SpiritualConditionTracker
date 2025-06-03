@@ -292,6 +292,7 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
           date: new Date().toISOString().split('T')[0],
           completed: 0,
           dueDate: actionItemData.dueDate || null,
+          sponsorContactId: editingContact.id, // Link to the specific contact
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString()
         };

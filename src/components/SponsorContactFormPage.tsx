@@ -35,6 +35,37 @@ export default function SponsorContactFormPage({ open, userId, onSubmit, onClose
   const [todos, setTodos] = useState<ActionItemFormData[]>([]);
   const [showInput, setShowInput] = useState<boolean>(false);
   
+  // Load existing action items for this contact
+  const loadContactActionItems = async (contactId: number) => {
+    try {
+      if (!window.db) return [];
+      
+      const allActivities = await window.db.getAll('activities');
+      const activitiesArray = Array.isArray(allActivities) ? allActivities : [];
+      
+      // Find action items that reference this contact
+      const contactActionItems = activitiesArray.filter(activity => 
+        activity && 
+        activity.type === 'action-item' &&
+        (activity.sponsorContactId === contactId || activity.contactId === contactId)
+      );
+      
+      // Convert to ActionItemFormData format
+      return contactActionItems.map(item => ({
+        id: item.id,
+        title: item.title,
+        text: item.text || item.title,
+        notes: item.notes || '',
+        dueDate: item.dueDate,
+        completed: item.completed === 1,
+        type: 'todo' as const
+      }));
+    } catch (error) {
+      console.error('Error loading contact action items:', error);
+      return [];
+    }
+  };
+
   // Update form state when initial data changes - clear form for new contacts
   useEffect(() => {
     if (initialData) {
@@ -64,6 +95,13 @@ export default function SponsorContactFormPage({ open, userId, onSubmit, onClose
       
       if (todoItems.length > 0) {
         setTodos(todoItems);
+      } else {
+        // Load existing action items from activities table
+        loadContactActionItems(initialData.id).then(existingItems => {
+          if (existingItems.length > 0) {
+            setTodos(existingItems);
+          }
+        });
       }
     } else {
       // Clear form for new contact
