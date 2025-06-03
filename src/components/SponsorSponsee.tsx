@@ -615,7 +615,9 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
                       
                       {/* Action Items for this contact */}
                       {(() => {
-                        const actionItems = getActionItemsForContact(contact.date);
+                        // For now, don't show action items in the contact cards since we need async data
+                        // This will be handled by a separate state management solution
+                        const actionItems = [];
                         return actionItems.length > 0 && (
                           <Box className="mt-3 pt-2 border-t border-gray-200 dark:border-gray-600">
                             <Typography variant="subtitle2" sx={{ color: theme.palette.text.secondary, mb: 1 }}>
