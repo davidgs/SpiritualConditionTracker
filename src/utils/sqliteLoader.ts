@@ -1,31 +1,39 @@
 /**
- * Simple SQLite database loader for Capacitor
+ * SQLite database loader optimized for Capacitor
+ * Provides cross-platform SQLite access with special handling for iOS
  */
 
+// Default database name for consistency
 const DB_NAME = 'spiritual_condition_tracker.db';
 
+/**
+ * Initialize SQLite database
+ * @returns {Promise<object>} Database connection object
+ */
 export default async function initSQLiteDatabase() {
-  console.log('[ sqliteLoader.js:8 ] Initializing SQLite database via Capacitor...');
+  console.log('[ sqliteLoader.js:14 ] Initializing SQLite database via Capacitor...');
   
   try {
-    // Check if we're in a Capacitor environment
+    // First, check if Capacitor is available
     if (!window.Capacitor || !window.Capacitor.Plugins) {
       throw new Error('Capacitor not found - this app requires a native environment');
     }
     
+    // Detect platform information for specialized handling
     const platform = window.Capacitor.getPlatform();
-    console.log('[ sqliteLoader.js:16 ]  Capacitor platform detected:', platform);
-    console.log('[ sqliteLoader.js:17 ]  Capacitor plugins available:', Object.keys(window.Capacitor.Plugins || {}));
-    
+    console.log('[ sqliteLoader.js:24 ]  Capacitor platform detected:', platform);
+    console.log('[ sqliteLoader.js:25 ]  Capacitor plugins available:', Object.keys(window.Capacitor.Plugins || {}));
+
+    // Get the SQLite plugin
     const sqlite = window.Capacitor.Plugins.CapacitorSQLite;
     
     if (!sqlite) {
       throw new Error('CapacitorSQLite plugin not found');
     }
     
-    console.log('[ sqliteLoader.js:24 ]  Found CapacitorSQLite plugin:', !!sqlite);
+    console.log('[ sqliteLoader.js:39 ]  Found CapacitorSQLite plugin:', !!sqlite);
     
-    // Create connection
+    // Step 1: Create connection (check if already exists first)
     try {
       await sqlite.createConnection({
         database: DB_NAME,
@@ -34,24 +42,23 @@ export default async function initSQLiteDatabase() {
         mode: 'no-encryption',
         readonly: false
       });
-      console.log('[ sqliteLoader.js:37 ]  Database connection created');
+      console.log('[ sqliteLoader.js:50 ]  Database connection created');
     } catch (connectionError) {
-      console.log('[ sqliteLoader.js:39 ]  Connection may already exist:', connectionError.message);
+      console.log('[ sqliteLoader.js:52 ]  Connection may already exist:', connectionError.message);
     }
 
-    // Open the database
+    // Step 2: Open the database
     await sqlite.open({ database: DB_NAME, readonly: false });
-    console.log('[ sqliteLoader.js:43 ]  Database opened successfully');
+    console.log('[ sqliteLoader.js:56 ]  Database opened successfully');
 
-    // Create all tables
+    // Step 3: Create tables
     await createTables(sqlite);
-    
-    console.log('[ sqliteLoader.js:47 ]  Database initialization complete');
+    console.log('[ sqliteLoader.js:59 ]  Database initialization complete');
 
-    // Return the database interface
+    // Return database interface
     return {
       async getAll(collection) {
-        console.log(`[ sqliteLoader.js:251 ] Getting all items from ${collection}`);
+        console.log(`[ sqliteLoader.js:523 ] Getting all items from ${collection}`);
         
         const result = await sqlite.query({
           database: DB_NAME,
@@ -60,11 +67,11 @@ export default async function initSQLiteDatabase() {
         });
 
         if (!result || !result.values) {
-          console.log(`[ sqliteLoader.js:260 ] No data found for ${collection}`);
+          console.log(`[ sqliteLoader.js:531 ] No data found for ${collection}`);
           return [];
         }
 
-        console.log(`[ sqliteLoader.js:264 ] Raw query result for ${collection}:`, result);
+        console.log(`[ sqliteLoader.js:535 ] Raw query result for ${collection}:`, result);
 
         // Handle different response formats
         let items = [];
@@ -77,83 +84,100 @@ export default async function initSQLiteDatabase() {
           items = result.values || [];
         }
 
-        console.log(`[ sqliteLoader.js:277 ] Processed ${items.length} items from ${collection}`);
+        console.log(`[ sqliteLoader.js:548 ] Processed ${items.length} items from ${collection}`);
         return items;
       },
 
       async add(collection, item) {
         try {
-          console.log(`[ sqliteLoader.js ] Adding to ${collection}:`, item);
+          console.log('[ sqliteLoader.js ] Original item received for save:', JSON.stringify(item, null, 2));
 
-          const fields = Object.keys(item);
-          const values = Object.values(item);
-          
-          // Convert values to proper SQL format
-          const sqlValues = values.map(value => {
+          // Don't include ID field - let SQLite generate it with AUTOINCREMENT
+          const { id, ...itemWithoutId } = item;
+
+          console.log('[ sqliteLoader.js ] Item without ID:', JSON.stringify(itemWithoutId, null, 2));
+
+          // Always include timestamps
+          const now = new Date().toISOString();
+          let itemWithTimestamps = {
+            ...itemWithoutId,
+            createdAt: now,
+            updatedAt: now
+          };
+
+          // Convert array and object fields to JSON strings for SQLite storage
+          const jsonFields = ['days', 'schedule', 'coordinates', 'types', 'homeGroups', 'privacySettings', 'preferences'];
+          jsonFields.forEach(field => {
+            if (itemWithTimestamps[field] !== undefined && itemWithTimestamps[field] !== null) {
+              if (Array.isArray(itemWithTimestamps[field]) || typeof itemWithTimestamps[field] === 'object') {
+                itemWithTimestamps[field] = JSON.stringify(itemWithTimestamps[field]);
+              }
+            }
+          });
+
+          console.log('[ sqliteLoader.js ] Final item for database:', JSON.stringify(itemWithTimestamps, null, 2));
+
+          // Build the SQL statement with embedded values (Capacitor SQLite format)
+          const keys = Object.keys(itemWithTimestamps);
+          const values = keys.map(key => itemWithTimestamps[key]);
+
+          console.log('[ sqliteLoader.js ] SQL keys:', keys);
+          console.log('[ sqliteLoader.js ] SQL values:', values);
+
+          // Format values for SQL - escape strings and handle nulls
+          const formattedValues = values.map(value => {
             if (value === null || value === undefined) {
               return 'NULL';
             } else if (typeof value === 'string') {
               return `'${value.replace(/'/g, "''")}'`; // Escape single quotes
-            } else if (typeof value === 'object') {
-              return `'${JSON.stringify(value).replace(/'/g, "''")}'`;
+            } else if (typeof value === 'number') {
+              return value.toString();
             } else {
-              return value;
+              return `'${String(value).replace(/'/g, "''")}'`;
             }
           }).join(', ');
 
-          const sql = `INSERT INTO ${collection} (${fields.join(', ')}) VALUES (${sqlValues})`;
-          console.log(`[ sqliteLoader.js ] Insert SQL:`, sql);
+          // Execute the SQL insert with embedded values
+          const sqlStatement = `INSERT INTO ${collection} (${keys.join(', ')}) VALUES (${formattedValues});`;
+          console.log(`[ sqliteLoader.js ] Executing SQL: ${sqlStatement}`);
 
-          const result = await sqlite.execute({
+          await sqlite.execute({
             database: DB_NAME,
-            statements: sql,
+            statements: sqlStatement
+          });
+
+          console.log('[ sqliteLoader.js ] Insert completed');
+
+          // Get the last inserted ID
+          const result = await sqlite.query({
+            database: DB_NAME,
+            statement: 'SELECT last_insert_rowid() as id',
             values: []
           });
 
-          console.log(`[ sqliteLoader.js ] Insert result:`, result);
-          
-          // Check if insert was successful
-          if (result && result.changes && result.changes.changes > 0) {
-            console.log(`[ sqliteLoader.js ] Insert successful, getting the AUTO_INCREMENT ID`);
+          console.log('[ sqliteLoader.js ] Last insert ID result:', result);
+
+          // Return the complete item with ID - handle iOS format
+          if (result.values && result.values.length > 0) {
+            let newId;
             
-            // Query the most recent record to get the actual AUTO_INCREMENT ID
-            const recentRecords = await sqlite.query({
-              database: DB_NAME,
-              statement: `SELECT id FROM ${collection} ORDER BY id DESC LIMIT 1`,
-              values: []
-            });
-            
-            console.log(`[ sqliteLoader.js ] Recent records query result:`, recentRecords);
-            
-            if (recentRecords && recentRecords.values && recentRecords.values.length > 0) {
-              // Handle Capacitor SQLite iOS format
-              if (recentRecords.values.length > 1 && recentRecords.values[0].ios_columns) {
-                const actualRecord = convertIOSFormatToStandard(recentRecords.values);
-                if (actualRecord.length > 0) {
-                  const actualId = actualRecord[0].id;
-                  console.log(`[ sqliteLoader.js ] Found actual AUTO_INCREMENT ID: ${actualId}`);
-                  
-                  return {
-                    ...item,
-                    id: actualId
-                  };
-                }
-              } else {
-                // Handle standard format
-                const actualId = recentRecords.values[0].id || recentRecords.values[0][0];
-                console.log(`[ sqliteLoader.js ] Found actual AUTO_INCREMENT ID: ${actualId}`);
-                
-                return {
-                  ...item,
-                  id: actualId
-                };
-              }
+            if (result.values.length > 1 && result.values[0].ios_columns) {
+              // iOS format: [{"ios_columns":["id"]}, {"id":1}]
+              newId = result.values[1].id;
+            } else {
+              // Standard format
+              newId = result.values[0].id;
             }
+
+            console.log(`[ sqliteLoader.js ] Using ID: ${newId} for new ${collection} record`);
+            
+            return {
+              ...itemWithTimestamps,
+              id: newId
+            };
           }
-          
-          // If we can't get the ID, something went wrong
-          console.error(`[ sqliteLoader.js ] Could not retrieve AUTO_INCREMENT ID for ${collection}`);
-          throw new Error('Failed to get database ID for new record');
+
+          throw new Error('Failed to get inserted ID');
         } catch (error) {
           console.error(`[ sqliteLoader.js ] Error adding to ${collection}:`, error);
           throw error;
@@ -162,44 +186,50 @@ export default async function initSQLiteDatabase() {
 
       async update(collection, id, updates) {
         try {
-          console.log(`[ sqliteLoader.js:326 ] Updating ${collection} id ${id} with:`, updates);
+          console.log(`[ sqliteLoader.js ] Updating ${collection} id ${id} with:`, updates);
           
-          const fields = Object.keys(updates);
+          // Always include updatedAt timestamp
+          const updatesWithTimestamp = {
+            ...updates,
+            updatedAt: new Date().toISOString()
+          };
+
+          // Convert objects and arrays to JSON strings
+          const jsonFields = ['days', 'schedule', 'coordinates', 'types', 'homeGroups', 'privacySettings', 'preferences'];
+          jsonFields.forEach(field => {
+            if (updatesWithTimestamp[field] !== undefined && updatesWithTimestamp[field] !== null) {
+              if (Array.isArray(updatesWithTimestamp[field]) || typeof updatesWithTimestamp[field] === 'object') {
+                updatesWithTimestamp[field] = JSON.stringify(updatesWithTimestamp[field]);
+              }
+            }
+          });
           
-          // Convert updates to proper SQL format
-          const setClause = fields.map(field => {
-            const value = updates[field];
+          const setClause = Object.keys(updatesWithTimestamp).map(field => {
+            const value = updatesWithTimestamp[field];
             if (value === null || value === undefined) {
               return `${field} = NULL`;
             } else if (typeof value === 'string') {
               return `${field} = '${value.replace(/'/g, "''")}'`;
-            } else if (typeof value === 'object') {
-              return `${field} = '${JSON.stringify(value).replace(/'/g, "''")}'`;
-            } else {
+            } else if (typeof value === 'number') {
               return `${field} = ${value}`;
+            } else {
+              return `${field} = '${String(value).replace(/'/g, "''")}'`;
             }
           }).join(', ');
           
           const sql = `UPDATE ${collection} SET ${setClause} WHERE id = ${id}`;
+          console.log(`[ sqliteLoader.js ] Update SQL:`, sql);
           
-          console.log(`[ sqliteLoader.js:334 ] Update SQL:`, sql);
-          
-          const result = await sqlite.execute({
+          await sqlite.execute({
             database: DB_NAME,
-            statements: sql,
-            values: []
+            statements: sql
           });
           
-          console.log(`[ sqliteLoader.js:342 ] Update result:`, result);
+          console.log(`[ sqliteLoader.js ] Update completed for ${collection} id ${id}`);
           
-          if (result && result.changes && result.changes.changes > 0) {
-            return { ...updates, id };
-          } else {
-            console.error(`[ sqliteLoader.js:346 ] Update failed - no rows affected`);
-            return null;
-          }
+          return { ...updatesWithTimestamp, id };
         } catch (error) {
-          console.error(`[ sqliteLoader.js:350 ] Error updating ${collection}:`, error);
+          console.error(`[ sqliteLoader.js ] Error updating ${collection}:`, error);
           throw error;
         }
       },
@@ -208,8 +238,8 @@ export default async function initSQLiteDatabase() {
         try {
           const result = await sqlite.query({
             database: DB_NAME,
-            statement: `SELECT * FROM ${collection} WHERE id = ?`,
-            values: [id]
+            statement: `SELECT * FROM ${collection} WHERE id = ${id}`,
+            values: []
           });
 
           if (!result || !result.values || result.values.length === 0) {
@@ -231,26 +261,25 @@ export default async function initSQLiteDatabase() {
 
       async remove(collection, id) {
         try {
-          console.log(`[ sqliteLoader.js:419 ] Removing from ${collection} id:`, id);
+          console.log(`[ sqliteLoader.js ] Removing from ${collection} id:`, id);
           
-          const result = await sqlite.execute({
+          await sqlite.execute({
             database: DB_NAME,
-            statements: `DELETE FROM ${collection} WHERE id = ${id}`,
-            values: []
+            statements: `DELETE FROM ${collection} WHERE id = ${id}`
           });
           
-          console.log(`[ sqliteLoader.js:426 ] Delete result:`, result);
+          console.log(`[ sqliteLoader.js ] Delete completed for ${collection} id ${id}`);
           
-          return result && result.changes && result.changes.changes > 0;
+          return true;
         } catch (error) {
-          console.error(`[ sqliteLoader.js:430 ] Error removing from ${collection}:`, error);
+          console.error(`[ sqliteLoader.js ] Error removing from ${collection}:`, error);
           throw error;
         }
       }
     };
 
   } catch (error) {
-    console.error('[ sqliteLoader.js:437 ] Database initialization failed:', error);
+    console.error('[ sqliteLoader.js ] Database initialization failed:', error);
     throw error;
   }
 }
@@ -292,7 +321,7 @@ function convertIOSFormatToStandard(iosResult) {
 
 // Create all database tables
 async function createTables(sqlite) {
-  console.log('[ sqliteLoader.js:70 ] Creating database tables...');
+  console.log('[ sqliteLoader.js ] Creating database tables...');
 
   // Users table
   await sqlite.execute({
@@ -313,7 +342,7 @@ async function createTables(sqlite) {
       )
     `
   });
-  console.log('[ sqliteLoader.js:88 ] Users table created');
+  console.log('[ sqliteLoader.js ] Users table created');
 
   // Activities table
   await sqlite.execute({
@@ -331,7 +360,7 @@ async function createTables(sqlite) {
       )
     `
   });
-  console.log('[ sqliteLoader.js:103 ] Activities table created');
+  console.log('[ sqliteLoader.js ] Activities table created');
 
   // Meetings table
   await sqlite.execute({
@@ -355,7 +384,7 @@ async function createTables(sqlite) {
       )
     `
   });
-  console.log('[ sqliteLoader.js:123 ] Meetings table created');
+  console.log('[ sqliteLoader.js ] Meetings table created');
 
   // Sponsors table
   await sqlite.execute({
@@ -375,7 +404,7 @@ async function createTables(sqlite) {
       )
     `
   });
-  console.log('[ sqliteLoader.js:141 ] Sponsors table created');
+  console.log('[ sqliteLoader.js ] Sponsors table created');
 
   // Sponsor contacts table
   await sqlite.execute({
@@ -395,7 +424,7 @@ async function createTables(sqlite) {
       )
     `
   });
-  console.log('[ sqliteLoader.js:159 ] Sponsor contacts table created');
+  console.log('[ sqliteLoader.js ] Sponsor contacts table created');
 
   // Action items table
   await sqlite.execute({
@@ -415,7 +444,7 @@ async function createTables(sqlite) {
       )
     `
   });
-  console.log('[ sqliteLoader.js:177 ] Action items table created');
+  console.log('[ sqliteLoader.js ] Action items table created');
 
-  console.log('[ sqliteLoader.js:179 ] All tables created successfully');
+  console.log('[ sqliteLoader.js ] All tables created successfully');
 }
