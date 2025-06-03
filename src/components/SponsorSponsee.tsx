@@ -202,10 +202,6 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
   // Add contact with optional action item
   const handleAddContactWithActionItem = async (contactData, actionItems = []) => {
     try {
-      if (!window.db) {
-        console.error('Database not initialized');
-        return;
-      }
 
       console.log('[SponsorSponsee.tsx] Adding contact with data:', contactData, 'actionItems:', actionItems);
 
