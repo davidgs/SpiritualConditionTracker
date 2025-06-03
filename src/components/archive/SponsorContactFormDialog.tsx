@@ -17,6 +17,8 @@ import { useTheme } from '@mui/material/styles';
 export default function SponsorContactFormDialog({ open, onClose, onSubmit, initialData }) {
   const theme = useTheme();
   
+  console.log('SponsorContactFormDialog initialData:', initialData);
+  
   // Form state
   const [contactData, setContactData] = useState({
     type: 'phone',
@@ -27,6 +29,7 @@ export default function SponsorContactFormDialog({ open, onClose, onSubmit, init
   // Update form state when initial data changes
   useEffect(() => {
     if (initialData) {
+      console.log('Setting initial data for SponsorContactFormDialog:', initialData);
       // Format date for input
       const formattedData = {
         ...initialData,
