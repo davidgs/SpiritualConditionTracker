@@ -265,14 +265,17 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
         
         for (const actionItemData of actionItems) {
           if (actionItemData && actionItemData.title) {
+            // Remove the temporary negative ID and let AUTO_INCREMENT handle it
+            const { id, ...actionItemWithoutId } = actionItemData;
+            
             const actionItem = {
               contactId: savedContact.id, // Use the verified saved contact ID
-              title: actionItemData.title,
-              text: actionItemData.text || actionItemData.title,
-              notes: actionItemData.notes || '',
-              dueDate: actionItemData.dueDate || null,
-              completed: actionItemData.completed ? 1 : 0,
-              type: actionItemData.type || 'todo',
+              title: actionItemWithoutId.title,
+              text: actionItemWithoutId.text || actionItemWithoutId.title,
+              notes: actionItemWithoutId.notes || '',
+              dueDate: actionItemWithoutId.dueDate || null,
+              completed: actionItemWithoutId.completed ? 1 : 0,
+              type: actionItemWithoutId.type || 'todo',
               createdAt: new Date().toISOString(),
               updatedAt: new Date().toISOString()
             };
@@ -330,15 +333,17 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
 
       // Handle action items if any
       for (const actionItemData of actionItems) {
-        // Create action item directly in action_items table
+        // Remove the temporary negative ID and let AUTO_INCREMENT handle it
+        const { id, ...actionItemWithoutId } = actionItemData;
+        
         const actionItem = {
           contactId: editingContact.id, // Link to the specific contact
-          title: actionItemData.title,
-          text: actionItemData.text || actionItemData.title,
-          notes: actionItemData.notes || '',
-          dueDate: actionItemData.dueDate || null,
-          completed: 0,
-          type: 'todo',
+          title: actionItemWithoutId.title,
+          text: actionItemWithoutId.text || actionItemWithoutId.title,
+          notes: actionItemWithoutId.notes || '',
+          dueDate: actionItemWithoutId.dueDate || null,
+          completed: actionItemWithoutId.completed ? 1 : 0,
+          type: actionItemWithoutId.type || 'todo',
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString()
         };
