@@ -64,12 +64,8 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
   // Load sponsors from sponsors table
   const loadSponsors = async () => {
     try {
-      if (!window.db) {
-        console.error('Database not initialized');
-        return;
-      }
-
-      const allSponsors = await window.db.getAll('sponsors');
+      const databaseService = DatabaseService.getInstance();
+      const allSponsors = await databaseService.getAll('sponsors');
       console.log('Loaded sponsors:', allSponsors);
       setSponsors(allSponsors || []);
     } catch (error) {
@@ -86,12 +82,8 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
   // Load sponsor contacts from sponsor_contacts table for a specific sponsor
   const loadSponsorContacts = async (sponsorId = null) => {
     try {
-      if (!window.db) {
-        console.error('Database not initialized');
-        return [];
-      }
-
-      const allContacts = await window.db.getAll('sponsor_contacts');
+      const databaseService = DatabaseService.getInstance();
+      const allContacts = await databaseService.getAllSponsorContacts();
       console.log('Loaded sponsor contacts:', allContacts);
       
       // Ensure we have a valid array
@@ -403,18 +395,15 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
   // Handle sponsor form submission
   const handleSponsorSubmit = async (sponsorData) => {
     try {
-      if (!window.db) {
-        console.error('Database not initialized');
-        return;
-      }
+      const databaseService = DatabaseService.getInstance();
 
       // Add or update sponsor in sponsors table
       if (editingSponsor && editingSponsor.id) {
         // Update existing sponsor
-        await window.db.update('sponsors', editingSponsor.id, sponsorData);
+        await databaseService.update('sponsors', editingSponsor.id, sponsorData);
       } else {
         // Add new sponsor
-        await window.db.add('sponsors', {
+        await databaseService.add('sponsors', {
           ...sponsorData,
           sponsorType: 'sponsor', // Default type
           createdAt: new Date().toISOString(),
@@ -471,13 +460,10 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
   // Delete sponsor
   const handleDeleteSponsor = async (sponsorId) => {
     try {
-      if (!window.db) {
-        console.error('Database not initialized');
-        return;
-      }
+      const databaseService = DatabaseService.getInstance();
 
       // Delete sponsor from sponsors table
-      await window.db.remove('sponsors', sponsorId);
+      await databaseService.remove('sponsors', sponsorId);
       
       // Reload sponsors
       await loadSponsors();
