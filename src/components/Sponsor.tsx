@@ -50,7 +50,7 @@ export default function Sponsor({ user, onUpdate }: SponsorProps) {
         const sponsorData = {
           name: user.sponsor_name || '',
           lastName: user.sponsor_lastName || '',
-          phone: user.sponsor_phone || '',
+          phoneNumber: user.sponsor_phone || '',
           email: user.sponsor_email || '',
           sobrietyDate: user.sponsor_sobrietyDate || '',
           notes: user.sponsor_notes || ''
@@ -99,7 +99,7 @@ export default function Sponsor({ user, onUpdate }: SponsorProps) {
     const userUpdate = {
       sponsor_name: sponsorData.name || '',
       sponsor_lastName: sponsorData.lastName || '',
-      sponsor_phone: sponsorData.phone || '',
+      sponsor_phone: sponsorData.phoneNumber || '',
       sponsor_email: sponsorData.email || '',
       sponsor_sobrietyDate: sponsorData.sobrietyDate || '',
       sponsor_notes: sponsorData.notes || '',
@@ -428,7 +428,7 @@ export default function Sponsor({ user, onUpdate }: SponsorProps) {
                     </Typography>
                     
                     <Box sx={{ display: 'grid', gridTemplateColumns: '1fr', gap: 1 }}>
-                      {sponsor.phone && (
+                      {sponsor.phoneNumber && (
                         <Typography 
                           sx={{ 
                             color: theme.palette.text.secondary, 
@@ -442,7 +442,7 @@ export default function Sponsor({ user, onUpdate }: SponsorProps) {
                             style={{ color: theme.palette.text.secondary }}
                           ></i>
                           <Link 
-                            href={createPhoneUrl(sponsor.phone)}
+                            href={createPhoneUrl(sponsor.phoneNumber)}
                             sx={{ 
                               color: theme.palette.primary.main,
                               textDecoration: 'none',
@@ -451,7 +451,7 @@ export default function Sponsor({ user, onUpdate }: SponsorProps) {
                               }
                             }}
                           >
-                            {formatPhoneNumber(sponsor.phone)}
+                            {formatPhoneNumber(sponsor.phoneNumber)}
                           </Link>
                         </Typography>
                       )}

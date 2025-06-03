@@ -20,7 +20,7 @@ export interface BaseEntity {
 export interface SponsorData {
   name: string;
   lastName: string;
-  phone: string;
+  phoneNumber: string;
   email: string;
   sobrietyDate: string;
   notes: string;
