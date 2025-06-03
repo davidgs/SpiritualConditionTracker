@@ -87,15 +87,27 @@ export default async function initSQLiteDatabase() {
 
           const fields = Object.keys(item);
           const values = Object.values(item);
-          const placeholders = fields.map(() => '?').join(', ');
+          
+          // Convert values to proper SQL format
+          const sqlValues = values.map(value => {
+            if (value === null || value === undefined) {
+              return 'NULL';
+            } else if (typeof value === 'string') {
+              return `'${value.replace(/'/g, "''")}'`; // Escape single quotes
+            } else if (typeof value === 'object') {
+              return `'${JSON.stringify(value).replace(/'/g, "''")}'`;
+            } else {
+              return value;
+            }
+          }).join(', ');
 
-          const sql = `INSERT INTO ${collection} (${fields.join(', ')}) VALUES (${placeholders})`;
+          const sql = `INSERT INTO ${collection} (${fields.join(', ')}) VALUES (${sqlValues})`;
           console.log(`[ sqliteLoader.js ] Insert SQL:`, sql);
 
           const result = await sqlite.execute({
             database: DB_NAME,
             statements: sql,
-            values: [values]
+            values: []
           });
 
           console.log(`[ sqliteLoader.js ] Insert result:`, result);
@@ -153,19 +165,29 @@ export default async function initSQLiteDatabase() {
           console.log(`[ sqliteLoader.js:326 ] Updating ${collection} id ${id} with:`, updates);
           
           const fields = Object.keys(updates);
-          const values = Object.values(updates);
-          const setClause = fields.map(field => `${field} = ?`).join(', ');
           
-          const sql = `UPDATE ${collection} SET ${setClause} WHERE id = ?`;
-          values.push(id);
+          // Convert updates to proper SQL format
+          const setClause = fields.map(field => {
+            const value = updates[field];
+            if (value === null || value === undefined) {
+              return `${field} = NULL`;
+            } else if (typeof value === 'string') {
+              return `${field} = '${value.replace(/'/g, "''")}'`;
+            } else if (typeof value === 'object') {
+              return `${field} = '${JSON.stringify(value).replace(/'/g, "''")}'`;
+            } else {
+              return `${field} = ${value}`;
+            }
+          }).join(', ');
+          
+          const sql = `UPDATE ${collection} SET ${setClause} WHERE id = ${id}`;
           
           console.log(`[ sqliteLoader.js:334 ] Update SQL:`, sql);
-          console.log(`[ sqliteLoader.js:335 ] Update values:`, values);
           
           const result = await sqlite.execute({
             database: DB_NAME,
             statements: sql,
-            values: [values]
+            values: []
           });
           
           console.log(`[ sqliteLoader.js:342 ] Update result:`, result);
@@ -213,8 +235,8 @@ export default async function initSQLiteDatabase() {
           
           const result = await sqlite.execute({
             database: DB_NAME,
-            statements: `DELETE FROM ${collection} WHERE id = ?`,
-            values: [[id]]
+            statements: `DELETE FROM ${collection} WHERE id = ${id}`,
+            values: []
           });
           
           console.log(`[ sqliteLoader.js:426 ] Delete result:`, result);
@@ -251,6 +273,7 @@ function convertIOSFormatToStandard(iosResult) {
 
   valuesArrays.forEach(valueArray => {
     if (Array.isArray(valueArray.ios_values)) {
+      // Handle complex iOS format with ios_values array
       const item = {};
       valueArray.ios_values.forEach((value, index) => {
         if (index < columns.length) {
@@ -258,6 +281,9 @@ function convertIOSFormatToStandard(iosResult) {
         }
       });
       items.push(item);
+    } else if (typeof valueArray === 'object' && valueArray !== null) {
+      // Handle simple iOS format where data is directly in the object
+      items.push(valueArray);
     }
   });
 
