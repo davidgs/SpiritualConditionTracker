@@ -1,0 +1,37 @@
+⚡️  [log] - [ActionItemForm.tsx: 53 handleSubmit] Submitting action item: {"id":0,"title":"Pick regular meeting time","text":"","notes":"","dueDate":"2025-06-04","completed":false,"type":"todo"}
+⚡️  [log] - [SponsorContactFormPage.tsx: handleAddTodo : 92] Adding todo item: {"id":0,"title":"Pick regular meeting time","text":"","notes":"","dueDate":"2025-06-04","completed":false,"type":"todo"}
+⚡️  [log] - [SponsorContactFormPage.tsx: handleAddTodo : 104] New todo object: {"id":-8999,"title":"Pick regular meeting time","text":"","notes":"","dueDate":"2025-06-04","completed":false,"type":"todo"}
+⚡️  [log] - [SponsorContactFormPage.tsx: 127 handleSubmit] Submitting contact with data: {"type":"phone","date":"2025-05-28","note":"Agreed to be my Sponsor"}
+⚡️  [log] - [SponsorContactFormPage.tsx: 128 handleSubmit] Submitting todos: [{"id":-8999,"title":"Pick regular meeting time","text":"","notes":"","dueDate":"2025-06-04","completed":false,"type":"todo"}]
+⚡️  [log] - [SponsorSponsee.tsx] Editing contact with data: {"type":"phone","date":"2025-05-28","note":"Agreed to be my Sponsor","userId":1} actionItems: [{"id":-8999,"title":"Pick regular meeting time","text":"","notes":"","dueDate":"2025-06-04","completed":false,"type":"todo"}]
+⚡️  [log] - [ sqliteLoader.js:326 ] Updating sponsor_contacts id 1 with: {"id":1,"userId":"1","sponsorId":3,"date":"2025-05-28","type":"phone","note":"Agreed to be my Sponsor","topic":null,"duration":null,"createdAt":"2025-06-02T20:30:59.899Z","updatedAt":"2025-06-03T12:12:24.951Z"}
+⚡️  To Native ->  CapacitorSQLite ⚡️  [log] - [ sqliteLoader.js:355 ] Update SQL: UPDATE sponsor_contacts SET id = 1, userId = '1', sponsorId = 3, date = '2025-05-28', type = 'phone', note = 'Agreed to be my Sponsor', topic = NULL, duration = NULL, createdAt = '2025-06-02T20:30:59.899Z', updatedAt = '2025-06-03T12:12:24.951Z' WHERE id = 1
+execute 17365567
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  To Native ->  CapacitorSQLite query 17365568
+ERROR MESSAGE:  {"errorMessage":"Query: Must provide an Array of value","message":"Query: Must provide an Array of value"}
+⚡️  [error] - {"errorMessage":"Query: Must provide an Array of value","message":"Query: Must provide an Array of value"}
+⚡️  [error] - [ sqliteLoader.js:383 ] Error getting sponsor_contacts by id 1: {"errorMessage":"Query: Must provide an Array of value"}
+⚡️  [log] - [ App.tsx:73 handleSaveActivity ] Received activity data: {
+  "id": "action-item-1748952744960-0.7030260207378114",
+  "type": "action-item",
+  "title": "Pick regular meeting time",
+  "text": "Pick regular meeting time",
+  "notes": "",
+  "date": "2025-06-03",
+  "completed": 0,
+  "dueDate": "2025-06-04",
+  "createdAt": "2025-06-03T12:12:24.960Z",
+  "updatedAt": "2025-06-03T12:12:24.960Z"
+}
+⚡️  [log] - [ App.tsx:74 handleSaveActivity ] Current user state: {"id":1,"name":null,"lastName":null,"phoneNumber":null,"email":null,"sobrietyDate":null,"homeGroups":null,"privacySettings":null,"preferences":null,"sponsor_ids":null,"messagingKeys":null,"profileImageUri":null,"sponsees":"[{\"name\":\"Fu\",\"lastName\":\"Manchu\",\"phone\":\"+1 919 999 3321\",\"email\":\"\",\"sobrietyDate\":\"\",\"notes\":\"\",\"id\":\"sponsee_1748896182678\"},{\"name\":\"Daffy\",\"lastName\":\"Duck\",\"phone\":\"\",\"email\":\"\",\"sobrietyDate\":\"\",\"notes\":\"\",\"id\":\"sponsee_1748896199678\"}]","createdAt":null,"updatedAt":"2025-06-02T20:29:59.678Z"}
+⚡️  [log] - [ App.tsx:76 handleSaveActivity ] Updating existing activity with ID: action-item-1748952744960-0.7030260207378114
+⚡️  [log] - [ DatabaseService.ts updateActivity ] Updating activity with ID: action-item-1748952744960-0.7030260207378114 updates: {"type":"action-item","date":"2025-06-03","notes":"","duration":null,"location":null,"updatedAt":"2025-06-03T12:12:24.962Z"}
+⚡️  To Native ->  CapacitorSQLite ⚡️  [log] - [ sqliteLoader.js:326 ] Updating activities id action-item-1748952744960-0.7030260207378114 with: {"type":"action-item","date":"2025-06-03","notes":"","duration":null,"location":null,"updatedAt":"2025-06-03T12:12:24.962Z"}
+execute 17365569
+⚡️  [log] - [ sqliteLoader.js:355 ] Update SQL: UPDATE activities SET type = 'action-item', date = '2025-06-03', notes = '', duration = NULL, location = NULL, updatedAt = '2025-06-03T12:12:24.962Z' WHERE id = action-item-1748952744960-0.7030260207378114
+ERROR MESSAGE:  {"message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: no such column: action","errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: no such column: action"}
+⚡️  [error] - {"message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: no such column: action","errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: no such column: action"}
+⚡️  [error] - [ sqliteLoader.js:364 ] Error updating activities id action-item-1748952744960-0.7030260207378114: {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: no such column: action"}
+⚡️  [error] - [ App.tsx:95 handleSaveActivity ] Error saving activity: {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: no such column: action"}
+⚡️  [error] - Error editing contact: {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: no such column: action"}
