@@ -296,6 +296,7 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
         console.log('[ AppDataContext.tsx ] Fetched action items:', actionItems?.length || 0);
         
         // Convert action items to activity format for unified display
+        console.log('[AppDataContext.tsx:299] Before map - actionItems:', actionItems);
         const actionItemsArray = Array.isArray(actionItems) ? actionItems : [];
         actionItemActivities = actionItemsArray.map(item => ({
           id: `action-item-${item.id}`, // Prefix to avoid ID conflicts

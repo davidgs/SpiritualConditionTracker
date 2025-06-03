@@ -96,6 +96,7 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
       const contactsArray = Array.isArray(allContacts) ? allContacts : [];
       
       // Filter by sponsor ID if provided
+      console.log('[SponsorSponsee.tsx:99] Before filter - contactsArray:', contactsArray, 'sponsorId:', sponsorId);
       const filteredContacts = sponsorId 
         ? contactsArray.filter(contact => contact && contact.sponsorId === sponsorId)
         : contactsArray;
@@ -125,8 +126,10 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
 
       // Get action items that reference this specific contact
       const allActionItems = await window.db.getAll('action_items');
-      const contactActionItems = (allActionItems || []).filter(item => 
-        item.contactId === contactId || item.sponsorContactId === contactId
+      console.log('[SponsorSponsee.tsx:125] Before filter - allActionItems:', allActionItems, 'contactId:', contactId);
+      const actionItemsArray = Array.isArray(allActionItems) ? allActionItems : [];
+      const contactActionItems = actionItemsArray.filter(item => 
+        item && (item.contactId === contactId || item.sponsorContactId === contactId)
       );
       
       return contactActionItems;
@@ -269,6 +272,7 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
   
   // Delete sponsee
   const handleDeleteSponsee = (sponseeId) => {
+    console.log('[SponsorSponsee.tsx:274] Before filter - sponsees:', sponsees, 'sponseeId:', sponseeId);
     const sponseesArray = Array.isArray(sponsees) ? sponsees : [];
     const updatedSponsees = sponseesArray.filter(sponsee => sponsee && sponsee.id !== sponseeId);
     
@@ -338,6 +342,7 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
     // Check if we're editing an existing sponsee or adding a new one
     if (editingSponseeId) {
       // Update existing sponsee
+      console.log('[SponsorSponsee.tsx:345] Before map - sponseesArray:', sponseesArray, 'editingSponseeId:', editingSponseeId);
       updatedSponsees = sponseesArray.map(sponsee => 
         sponsee && sponsee.id === editingSponseeId ? { ...sponsee, ...sponseeData } : sponsee
       );
@@ -589,7 +594,10 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
                       },
                       cursor: 'pointer'
                     }}
-                    onClick={() => handleEditContact(contact)}
+                    onClick={() => {
+                      console.log('[SponsorSponsee.tsx:598] Contact clicked:', contact);
+                      handleEditContact(contact);
+                    }}
                   >
                     <Box className="w-full">
                       <Box className="flex justify-between items-start mb-2">
