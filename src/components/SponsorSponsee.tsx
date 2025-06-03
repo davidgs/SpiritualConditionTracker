@@ -290,16 +290,20 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
         }
       }
 
-      // Refresh contacts to show the new data
-      await loadSponsorContacts();
+      // Trigger UI refresh to show the new data
+      console.log('[SponsorSponsee.tsx] Triggering UI refresh...');
+      setRefreshKey(prev => prev + 1);
+      console.log('[SponsorSponsee.tsx] UI refresh triggered');
 
     } catch (error) {
-      console.error('Error adding contact:', error);
+      console.error('[SponsorSponsee.tsx] Error adding contact:', error);
     } finally {
       // Always close the modal, even if there were errors
+      console.log('[SponsorSponsee.tsx] Closing modal in finally block...');
       setShowContactForm(false);
       setEditingContact(null);
       setEditingActionItem(null);
+      console.log('[SponsorSponsee.tsx] Modal should now be closed');
     }
   };
 
