@@ -1,0 +1,26 @@
+⚡️  [log] - [ActionItemForm.tsx: 53 handleSubmit] Submitting action item: {"id":0,"title":"Tmes","text":"Find times","notes":"","dueDate":"2025-06-04","completed":false,"type":"todo"}
+⚡️  [log] - [SponsorContactFormPage.tsx: handleAddTodo : 92] Adding todo item: {"id":0,"title":"Tmes","text":"Find times","notes":"","dueDate":"2025-06-04","completed":false,"type":"todo"}
+⚡️  [log] - [SponsorContactFormPage.tsx: handleAddTodo : 104] New todo object: {"id":-6689,"title":"Tmes","text":"Find times","notes":"","dueDate":"2025-06-04","completed":false,"type":"todo"}
+⚡️  [log] - [SponsorContactFormPage.tsx: 127 handleSubmit] Submitting contact with data: {"type":"phone","date":"2025-05-28","note":"Agreed to be my sponsor"}
+⚡️  [log] - [SponsorContactFormPage.tsx: 128 handleSubmit] Submitting todos: [{"id":-6689,"title":"Tmes","text":"Find times","notes":"","dueDate":"2025-06-04","completed":false,"type":"todo"}]
+⚡️  [log] - [SponsorSponsee.tsx] Adding contact with data: {"type":"phone","date":"2025-05-28","note":"Agreed to be my sponsor","userId":1748984653729} actionItems: [{"id":-6689,"title":"Tmes","text":"Find times","notes":"","dueDate":"2025-06-04","completed":false,"type":"todo"}]
+⚡️  To Native ->  CapacitorSQLite ⚡️  [log] - [ sqliteLoader.js ] Adding item to sponsor_contacts: {"type":"phone","date":"2025-05-28","note":"Agreed to be my sponsor","userId":1748984653729,"sponsorId":1,"createdAt":"2025-06-03T21:05:54.541Z","updatedAt":"2025-06-03T21:05:54.541Z"}
+execute 55704621
+⚡️  [log] - [ sqliteLoader.js ] Insert SQL: INSERT INTO sponsor_contacts (type, date, note, userId, sponsorId, createdAt, updatedAt) VALUES ('phone', '2025-05-28', 'Agreed to be my sponsor', 1748984653729, 1, '2025-06-03T21:05:54.541Z', '2025-06-03T21:05:54.541Z')
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  [log] - [ sqliteLoader.js ] Insert result: {"changes":{"changes":1}}
+⚡️  [log] - [ sqliteLoader.js ] Using ID: 1748984754548 for new sponsor_contacts record
+⚡️  [log] - [SponsorSponsee.tsx] Saved contact with ID: 1748984754548
+⚡️  To Native ->  CapacitorSQLite query 55704622
+⚡️  TO JS {"values":[]}
+⚡️  [log] - [SponsorSponsee.tsx] Verified contact exists: null
+⚡️  [error] - [SponsorSponsee.tsx] Contact verification failed - contact not found in database
+⚡️  [log] - [SponsorSponsee.tsx] Closing modal in finally block...
+⚡️  [log] - [SponsorSponsee.tsx] Modal should now be closed
+⚡️  [log] - [SponsorSponsee.tsx:24] Component loaded with activities: [] type: object
+⚡️  To Native ->  CapacitorSQLite query 55704623
+⚡️  [log] - [ sqliteLoader.js:251 ] Getting all items from sponsor_contacts
+⚡️  TO JS {"values":[{"ios_columns":["id","userId","sponsorId","date","type","note","topic","duration","createdAt","updatedAt"]},{"createdAt":"2025-06-03T21:05:54.541Z","id":1,"date":"2025-05-28","sponsorId":1,"note":"Agreed to be my sponsor","userId":"1748984653729
+⚡️  [log] - [ sqliteLoader.js:265 ] Converted 1 iOS format items to standard format
+⚡️  [log] - Loaded sponsor contacts: [{"id":1,"userId":"1748984653729","sponsorId":1,"date":"2025-05-28","type":"phone","note":"Agreed to be my sponsor","topic":null,"duration":null,"createdAt":"2025-06-03T21:05:54.541Z","updatedAt":"2025-06-03T21:05:54.541Z"}]
+⚡️  [log] - [SponsorSponsee.tsx:99] Before filter - contactsArray: [{"id":1,"userId":"1748984653729","sponsorId":1,"date":"2025-05-28","type":"phone","note":"Agreed to be my sponsor","topic":null,"duration":null,"createdAt":"2025-06-03T21:05:54.541Z","updatedAt":"2025-06-03T21:05:54.541Z"}] sponsorId: 1

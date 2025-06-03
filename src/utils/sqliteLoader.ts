@@ -323,26 +323,38 @@ function createDatabaseInterface(sqlite) {
 
         console.log(`[ sqliteLoader.js ] Insert result:`, result);
         
-        // Extract the actual database ID from the result
-        let newId;
-        if (result && result.changes) {
-          if (result.changes.lastId) {
-            newId = result.changes.lastId;
-          } else if (result.changes.changes > 0) {
-            // If lastId is not available but insert was successful, generate timestamp ID
-            newId = Date.now();
+        // For successful inserts, we need to query back to get the actual ID
+        // since SQLite auto-increment IDs may not be returned correctly
+        if (result && result.changes && result.changes.changes > 0) {
+          console.log(`[ sqliteLoader.js ] Insert successful, querying back to get actual ID`);
+          
+          // Query the most recent record to get the actual ID
+          const recentRecords = await sqlite.query({
+            database: DB_NAME,
+            statement: `SELECT * FROM ${collection} ORDER BY id DESC LIMIT 1`
+          });
+          
+          if (recentRecords && recentRecords.values && recentRecords.values.length > 1) {
+            const actualRecord = convertIOSFormatToStandard(recentRecords.values);
+            if (actualRecord.length > 0) {
+              const actualId = actualRecord[0].id;
+              console.log(`[ sqliteLoader.js ] Found actual ID: ${actualId} for new ${collection} record`);
+              
+              return {
+                ...itemWithTimestamp,
+                id: actualId
+              };
+            }
           }
         }
         
-        if (!newId) {
-          newId = Date.now();
-        }
-        
-        console.log(`[ sqliteLoader.js ] Using ID: ${newId} for new ${collection} record`);
+        // Fallback to timestamp ID if we can't get the actual ID
+        const fallbackId = Date.now();
+        console.log(`[ sqliteLoader.js ] Using fallback ID: ${fallbackId} for new ${collection} record`);
         
         return {
           ...itemWithTimestamp,
-          id: newId
+          id: fallbackId
         };
       } catch (error) {
         console.error(`[ sqliteLoader.js ] Error adding to ${collection}:`, error);
