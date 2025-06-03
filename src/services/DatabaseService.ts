@@ -62,6 +62,9 @@ class DatabaseService {
       const sqliteDb = await initSQLiteDatabase();
       console.log('[ DatabaseService: 55 ] SQLite database initialized successfully');
 
+      // Assign database interface to window.db
+      window.db = sqliteDb;
+
       // Verify database is accessible
       if (!window.db || !window.db.getAll) {
         throw new Error('Database interface not properly initialized: 59');
