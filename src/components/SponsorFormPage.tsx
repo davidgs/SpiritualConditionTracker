@@ -20,7 +20,7 @@ export default function SponsorFormPage({ initialData, onSave, onCancel }) {
   const [formData, setFormData] = useState({
     name: '',
     lastName: '',
-    phone: '',
+    phoneNumber: '',
     email: '',
     sobrietyDate: '',
     notes: ''
@@ -53,7 +53,7 @@ export default function SponsorFormPage({ initialData, onSave, onCancel }) {
   const handlePhoneChange = (value) => {
     setFormData(prev => ({
       ...prev,
-      phone: value
+      phoneNumber: value
     }));
   };
 
@@ -164,7 +164,7 @@ export default function SponsorFormPage({ initialData, onSave, onCancel }) {
             {/* Phone Number */}
             <MuiTelInput
               label="Phone Number"
-              value={formData.phone || ''}
+              value={formData.phoneNumber || ''}
               onChange={handlePhoneChange}
               defaultCountry="US"
               forceCallingCode
