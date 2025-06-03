@@ -258,6 +258,58 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
       console.error('Error adding contact:', error);
     }
   };
+
+  // Handle editing existing contact with action items
+  const handleEditContactWithActionItem = async (contactData, actionItems = []) => {
+    try {
+      console.log('[SponsorSponsee.tsx] Editing contact with data:', contactData, 'actionItems:', actionItems);
+      
+      if (!editingContact || !editingContact.id) {
+        console.error('No contact being edited');
+        return;
+      }
+
+      // Update the existing contact
+      const updatedContact = {
+        ...editingContact,
+        type: contactData.type,
+        date: contactData.date,
+        note: contactData.note || '',
+        updatedAt: new Date().toISOString()
+      };
+
+      await window.db.update('sponsor_contacts', editingContact.id, updatedContact);
+
+      // Handle action items if any
+      for (const actionItemData of actionItems) {
+        // Create activity record for each action item
+        const actionItemActivity = {
+          id: `action-item-${Date.now()}-${Math.random()}`,
+          type: 'action-item',
+          title: actionItemData.title,
+          text: actionItemData.text || actionItemData.title,
+          notes: actionItemData.notes || '',
+          date: new Date().toISOString().split('T')[0],
+          completed: 0,
+          dueDate: actionItemData.dueDate || null,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        };
+
+        await onSaveActivity(actionItemActivity);
+      }
+
+      setShowContactForm(false);
+      setEditingContact(null);
+      setEditingActionItem(null);
+      
+      // Refresh the contacts list
+      setRefreshKey(prev => prev + 1);
+      
+    } catch (error) {
+      console.error('Error editing contact:', error);
+    }
+  };
   
   // Edit existing sponsor
   const handleEditSponsor = (sponsor) => {
@@ -948,7 +1000,7 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
           setEditingActionItem(null);
           setEditingContact(null);
         }}
-        onSubmit={editingContact ? null : handleAddContactWithActionItem}
+        onSubmit={editingContact ? handleEditContactWithActionItem : handleAddContactWithActionItem}
         userId={user ? user.id : null}
         initialData={editingContact ? editingContact : null}
         details={editingActionItem ? {
