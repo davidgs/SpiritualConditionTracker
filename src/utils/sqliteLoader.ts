@@ -5,7 +5,7 @@
 const DB_NAME = 'spiritualTracker.db';
 
 async function initSQLiteDatabase() {
-  console.log('[ sqliteLoader.js:14 ] Initializing SQLite database via Capacitor...');
+  console.log('[ sqliteLoader.js:8 ] Initializing SQLite database via Capacitor...');
 
   try {
     if (!window.Capacitor) {
@@ -13,15 +13,15 @@ async function initSQLiteDatabase() {
     }
 
     const platform = window.Capacitor.getPlatform?.() || 'unknown';
-    console.log('[ sqliteLoader.js:24 ]  Capacitor platform detected:', platform);
-    console.log('[ sqliteLoader.js:25 ]  Capacitor plugins available:', Object.keys(window.Capacitor.Plugins || {}));
+    console.log('[ sqliteLoader.js:16 ]  Capacitor platform detected:', platform);
+    console.log('[ sqliteLoader.js:17 ]  Capacitor plugins available:', Object.keys(window.Capacitor.Plugins || {}));
 
     const sqlitePlugin = window.Capacitor?.Plugins?.CapacitorSQLite;
     if (!sqlitePlugin) {
       throw new Error('CapacitorSQLite plugin not available - ensure the plugin is properly installed');
     }
 
-    console.log('[ sqliteLoader.js:39 ]  Found CapacitorSQLite plugin:', !!sqlitePlugin);
+    console.log('[ sqliteLoader.js:24 ]  Found CapacitorSQLite plugin:', !!sqlitePlugin);
 
     // Create connection
     try {
@@ -32,14 +32,14 @@ async function initSQLiteDatabase() {
         mode: 'no-encryption',
         readonly: false
       });
-      console.log('[ sqliteLoader.js:54 ]  Database connection created');
+      console.log('[ sqliteLoader.js:35 ]  Database connection created');
     } catch (createError) {
-      console.log('[ sqliteLoader.js:71 ]  Connection might already exist, continuing...');
+      console.log('[ sqliteLoader.js:37 ]  Connection might already exist, continuing...');
     }
 
     // Open database
     await sqlitePlugin.open({ database: DB_NAME, readonly: false });
-    console.log('[ sqliteLoader.js:76 ]  Database opened successfully');
+    console.log('[ sqliteLoader.js:42 ]  Database opened successfully');
 
     // EMERGENCY DATABASE RESET (commented out - uncomment if schema needs complete rebuild)
     /*
@@ -69,13 +69,13 @@ async function initSQLiteDatabase() {
     
     return dbInterface;
   } catch (error) {
-    console.error('[ sqliteLoader.js ] Error initializing Capacitor SQLite:', error);
+    console.error('[ sqliteLoader.js:72 ] Error initializing Capacitor SQLite:', error);
     throw new Error(`CapacitorSQLite plugin not available - ensure the plugin is properly installed`);
   }
 }
 
 async function setupBasicSchema(sqlite) {
-  console.log('[ sqliteLoader.js:261 ]  Verifying database schema (preserving existing data)');
+  console.log('[ sqliteLoader.js:78 ]  Verifying database schema (preserving existing data)');
 
   try {
     // Users table
@@ -101,7 +101,7 @@ async function setupBasicSchema(sqlite) {
         )
       `
     });
-    console.log('[ sqliteLoader.js:305 ]  Users table created successfully');
+    console.log('[ sqliteLoader.js:104 ]  Users table created successfully');
 
     // Activities table
     await sqlite.execute({
@@ -138,7 +138,7 @@ async function setupBasicSchema(sqlite) {
         )
       `
     });
-    console.log('[ sqliteLoader.js:341 ]  Activities table created successfully');
+    console.log('[ sqliteLoader.js:141 ]  Activities table created successfully');
 
     // Action items table
     await sqlite.execute({
@@ -157,7 +157,7 @@ async function setupBasicSchema(sqlite) {
         )
       `
     });
-    console.log('[ sqliteLoader.js:472 ]  Action items table created');
+    console.log('[ sqliteLoader.js:160 ]  Action items table created');
 
     // Sponsors table
     await sqlite.execute({
@@ -178,7 +178,7 @@ async function setupBasicSchema(sqlite) {
         )
       `
     });
-    console.log('[ sqliteLoader.js:433 ]  Sponsors table created');
+    console.log('[ sqliteLoader.js:181 ]  Sponsors table created');
 
     // Sponsor contacts table
     await sqlite.execute({
@@ -199,7 +199,7 @@ async function setupBasicSchema(sqlite) {
         )
       `
     });
-    console.log('[ sqliteLoader.js:433 ]  Sponsor contacts table created');
+    console.log('[ sqliteLoader.js:202 ]  Sponsor contacts table created');
 
     // Meetings table
     await sqlite.execute({
@@ -236,10 +236,10 @@ async function setupBasicSchema(sqlite) {
         )
       `
     });
-    console.log('[ sqliteLoader.js:387 ]  Meetings table created successfully');
+    console.log('[ sqliteLoader.js:239 ]  Meetings table created successfully');
 
   } catch (error) {
-    console.error('[ sqliteLoader.js ] Error setting up database schema:', error);
+    console.error('[ sqliteLoader.js:242 ] Error setting up database schema:', error);
     throw error;
   }
 }
@@ -248,7 +248,7 @@ function createDatabaseInterface(sqlite) {
   return {
     async getAll(collection) {
       try {
-        console.log(`[ sqliteLoader.js:523 ] Getting all items from ${collection}`);
+        console.log(`[ sqliteLoader.js:251 ] Getting all items from ${collection}`);
         
         const result = await sqlite.query({
           database: DB_NAME,
@@ -257,16 +257,16 @@ function createDatabaseInterface(sqlite) {
         });
 
         if (!result || !result.values) {
-          console.log(`[ sqliteLoader.js:547 ] No data found for ${collection}`);
+          console.log(`[ sqliteLoader.js:260 ] No data found for ${collection}`);
           return [];
         }
 
         const converted = convertIOSFormatToStandard(result.values);
-        console.log(`[ sqliteLoader.js:592 ] Converted ${converted.length} iOS format items to standard format`);
+        console.log(`[ sqliteLoader.js:265 ] Converted ${converted.length} iOS format items to standard format`);
         
         return converted;
       } catch (error) {
-        console.error(`[ sqliteLoader.js ] Error getting all from ${collection}:`, error);
+        console.error(`[ sqliteLoader.js: 269 ] Error getting all from ${collection}:`, error);
         return [];
       }
     },
@@ -323,7 +323,7 @@ function createDatabaseInterface(sqlite) {
 
     async update(collection, id, updates) {
       try {
-        console.log(`[ sqliteLoader.js ] Updating ${collection} id ${id} with:`, updates);
+        console.log(`[ sqliteLoader.js:326 ] Updating ${collection} id ${id} with:`, updates);
 
         const timestamp = new Date().toISOString();
         const updatesWithTimestamp = {
@@ -352,7 +352,7 @@ function createDatabaseInterface(sqlite) {
 
         const updateSQL = `UPDATE ${collection} SET ${setClause} WHERE id = ${id}`;
         
-        console.log(`[ sqliteLoader.js ] Update SQL: ${updateSQL}`);
+        console.log(`[ sqliteLoader.js:355 ] Update SQL: ${updateSQL}`);
 
         await sqlite.execute({
           database: DB_NAME,
@@ -361,7 +361,7 @@ function createDatabaseInterface(sqlite) {
 
         return await this.getById(collection, id);
       } catch (error) {
-        console.error(`[ sqliteLoader.js ] Error updating ${collection} id ${id}:`, error);
+        console.error(`[ sqliteLoader.js:364 ] Error updating ${collection} id ${id}:`, error);
         throw error;
       }
     },
@@ -380,14 +380,14 @@ function createDatabaseInterface(sqlite) {
         const converted = convertIOSFormatToStandard(result.values);
         return converted[0] || null;
       } catch (error) {
-        console.error(`[ sqliteLoader.js ] Error getting ${collection} by id ${id}:`, error);
+        console.error(`[ sqliteLoader.js:383 ] Error getting ${collection} by id ${id}:`, error);
         return null;
       }
     },
 
     async remove(collection, id) {
       try {
-        console.log(`[ sqliteLoader.js ] Removing ${collection} id ${id}`);
+        console.log(`[ sqliteLoader.js:390 ] Removing ${collection} id ${id}`);
 
         const result = await sqlite.execute({
           database: DB_NAME,
@@ -396,7 +396,7 @@ function createDatabaseInterface(sqlite) {
 
         return result && result.changes && result.changes.changes > 0;
       } catch (error) {
-        console.error(`[ sqliteLoader.js ] Error removing ${collection} id ${id}:`, error);
+        console.error(`[ sqliteLoader.js:399 ] Error removing ${collection} id ${id}:`, error);
         return false;
       }
     }

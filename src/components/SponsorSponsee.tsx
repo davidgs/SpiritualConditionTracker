@@ -92,17 +92,21 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
       const allContacts = await window.db.getAll('sponsor_contacts');
       console.log('Loaded sponsor contacts:', allContacts);
       
+      // Ensure we have a valid array
+      const contactsArray = Array.isArray(allContacts) ? allContacts : [];
+      
       // Filter by sponsor ID if provided
       const filteredContacts = sponsorId 
-        ? (allContacts || []).filter(contact => contact.sponsorId === sponsorId)
-        : (allContacts || []);
+        ? contactsArray.filter(contact => contact && contact.sponsorId === sponsorId)
+        : contactsArray;
       
-      // Sort contacts by date - newest first
-      const sortedContacts = filteredContacts.sort((a, b) => {
+      // Sort contacts by date - newest first, but only if we have valid contacts
+      const sortedContacts = filteredContacts.length > 0 ? filteredContacts.sort((a, b) => {
+        if (!a.date || !b.date) return 0;
         const dateA = new Date(a.date);
         const dateB = new Date(b.date);
         return dateB.getTime() - dateA.getTime();
-      });
+      }) : [];
       
       return sortedContacts;
     } catch (error) {
