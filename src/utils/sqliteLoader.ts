@@ -359,10 +359,7 @@ function createDatabaseInterface(sqlite) {
 
         await sqlite.execute({
           database: DB_NAME,
-          statements: [{
-            statement: updateSQL,
-            values: [id]
-          }]
+          statements: updateSQL.replace('?', `'${id}'`)
         });
 
         return await this.getById(collection, id);
@@ -398,10 +395,7 @@ function createDatabaseInterface(sqlite) {
 
         const result = await sqlite.execute({
           database: DB_NAME,
-          statements: [{
-            statement: `DELETE FROM ${collection} WHERE id = ?`,
-            values: [id]
-          }]
+          statements: `DELETE FROM ${collection} WHERE id = '${id}'`
         });
 
         return result && result.changes && result.changes.changes > 0;
