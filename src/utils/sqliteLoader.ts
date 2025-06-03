@@ -333,7 +333,8 @@ function createDatabaseInterface(sqlite) {
           // Query the most recent record to get the actual AUTO_INCREMENT ID
           const recentRecords = await sqlite.query({
             database: DB_NAME,
-            statement: `SELECT id FROM ${collection} ORDER BY id DESC LIMIT 1`
+            statement: `SELECT id FROM ${collection} ORDER BY id DESC LIMIT 1`,
+            values: []
           });
           
           console.log(`[ sqliteLoader.js ] Recent records query result:`, recentRecords);
