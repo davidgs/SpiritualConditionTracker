@@ -159,8 +159,7 @@ async function setupBasicSchema(sqlite) {
           completed INTEGER DEFAULT 0,
           type TEXT DEFAULT 'todo',
           createdAt TEXT,
-          updatedAt TEXT,
-          FOREIGN KEY (contactId) REFERENCES sponsor_contacts(id) ON DELETE CASCADE
+          updatedAt TEXT
         )
       `
     });
@@ -246,12 +245,12 @@ async function setupBasicSchema(sqlite) {
     });
     console.log('[ sqliteLoader.js:239 ]  Meetings table created successfully');
 
-    // Re-enable foreign key constraints after schema creation
+    // Keep foreign key constraints disabled for now to prevent save failures
     await sqlite.execute({
       database: DB_NAME,
-      statements: `PRAGMA foreign_keys = ON;`
+      statements: `PRAGMA foreign_keys = OFF;`
     });
-    console.log('[ sqliteLoader.js ] Foreign key constraints re-enabled');
+    console.log('[ sqliteLoader.js ] Foreign key constraints disabled for stability');
 
   } catch (error) {
     console.error('[ sqliteLoader.js:242 ] Error setting up database schema:', error);

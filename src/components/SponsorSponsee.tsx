@@ -243,6 +243,19 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
         return;
       }
 
+      // Double-check that the contact exists in the database
+      try {
+        const verifyContact = await window.db.getById('sponsor_contacts', savedContact.id);
+        console.log('[SponsorSponsee.tsx] Verified contact exists:', verifyContact);
+        if (!verifyContact) {
+          console.error('[SponsorSponsee.tsx] Contact verification failed - contact not found in database');
+          return;
+        }
+      } catch (verifyError) {
+        console.error('[SponsorSponsee.tsx] Error verifying contact:', verifyError);
+        return;
+      }
+
       // Process all action items if any exist
       if (actionItems && actionItems.length > 0) {
         console.log('[SponsorSponsee.tsx] Processing', actionItems.length, 'action items with contactId:', savedContact.id);
