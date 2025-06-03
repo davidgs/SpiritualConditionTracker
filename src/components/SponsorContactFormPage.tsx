@@ -49,8 +49,9 @@ export default function SponsorContactFormPage({ open, userId, onSubmit, onClose
       setContactData(formattedData);
       
       // Convert legacy details to ActionItemFormData if any
-      const todoItems: ActionItemFormData[] = details
-        .filter(item => item.type === 'todo')
+      const detailsArray = Array.isArray(details) ? details : [];
+      const todoItems: ActionItemFormData[] = detailsArray
+        .filter(item => item && item.type === 'todo')
         .map(item => ({
           id: item.id,
           title: item.actionItem,
