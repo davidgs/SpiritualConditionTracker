@@ -147,24 +147,24 @@ export async function getActionItemsForContact(contactId) {
       values: [contactIdInt]
     });
     
-    console.log(`[action-items.js - getActionItemsForContact: 166] CONTACT_ID: ${contactIdInt} - Action items result:`, JSON.stringify(result));
+    console.log(`[action-items.js - getActionItemsForContact: 166] CONTACT_ID: ${contactId} - Action items result:`, JSON.stringify(result));
     
     // Handle result format
     if (result.values && result.values.length > 0) {
       if (result.values[0].ios_columns) {
         const processedValues = result.values.slice(1);
-        console.log(`[action-items.js - getActionItemsForContact: 172] CONTACT_ID: ${contactIdInt} - iOS format, returning ${processedValues.length} items`);
+        console.log(`[action-items.js - getActionItemsForContact: 172] CONTACT_ID: ${contactId} - iOS format, returning ${processedValues.length} items`);
         return processedValues;
       } else {
-        console.log(`[action-items.js - getActionItemsForContact: 175] CONTACT_ID: ${contactIdInt} - Standard format, returning ${result.values.length} items`);
+        console.log(`[action-items.js - getActionItemsForContact: 175] CONTACT_ID: ${contactId} - Standard format, returning ${result.values.length} items`);
         return result.values;
       }
     } else {
-      console.log(`[action-items.js - getActionItemsForContact: 179] CONTACT_ID: ${contactIdInt} - No action items found`);
+      console.log(`[action-items.js - getActionItemsForContact: 179] CONTACT_ID: ${contactId} - No action items found`);
       return [];
     }
   } catch (error) {
-    console.error(`[action-items.js - getActionItemsForContact: 189] CONTACT_ID: ${contactIdInt} - Error getting action items:`, error);
+    console.error(`[action-items.js - getActionItemsForContact: 189] CONTACT_ID: ${contactId} - Error getting action items:`, error);
     return [];
   }
 }

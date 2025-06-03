@@ -14,15 +14,15 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "React Build"
+args = "Dev Server"
 
 [[workflows.workflow]]
-name = "React Build"
+name = "Dev Server"
 author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "npm run build"
+args = "npm run dev"
 waitForPort = 5000
 
 [deployment]

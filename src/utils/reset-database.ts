@@ -3,7 +3,7 @@
  * This will drop and recreate all tables
  */
 
-const DB_NAME = 'spiritualTracker.db';
+const DB_NAME = 'spiritualCondition.db';
 
 async function setupBasicSchema(sqlite) {
   console.log('[ reset-database.js ] Setting up database schema...');
