@@ -210,12 +210,14 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
   };
   
   // Add contact with optional action item
-  const handleAddContactWithActionItem = async (contactData, actionItemData) => {
+  const handleAddContactWithActionItem = async (contactData, actionItems = []) => {
     try {
       if (!window.db) {
         console.error('Database not initialized');
         return;
       }
+
+      console.log('[SponsorSponsee.tsx] Adding contact with data:', contactData, 'actionItems:', actionItems);
 
       // Get the currently selected sponsor
       const currentSponsor = sponsors[currentSponsorTab];
@@ -233,23 +235,35 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
       };
 
       const savedContact = await window.db.add('sponsor_contacts', newContact);
+      console.log('[SponsorSponsee.tsx] Saved contact with ID:', savedContact?.id);
 
-      // If there's action item data, save it to action_items table
-      if (actionItemData && actionItemData.title) {
-        const actionItem = {
-          contactId: savedContact?.id || newContact.id, // Link to the new contact
-          title: actionItemData.title,
-          text: actionItemData.text || actionItemData.title,
-          notes: actionItemData.notes || '',
-          dueDate: actionItemData.dueDate || null,
-          completed: 0,
-          type: 'todo',
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString()
-        };
+      // Process all action items if any exist
+      if (actionItems && actionItems.length > 0) {
+        console.log('[SponsorSponsee.tsx] Processing', actionItems.length, 'action items');
+        
+        for (const actionItemData of actionItems) {
+          if (actionItemData && actionItemData.title) {
+            const actionItem = {
+              contactId: savedContact?.id || newContact.id, // Link to the new contact
+              title: actionItemData.title,
+              text: actionItemData.text || actionItemData.title,
+              notes: actionItemData.notes || '',
+              dueDate: actionItemData.dueDate || null,
+              completed: actionItemData.completed ? 1 : 0,
+              type: actionItemData.type || 'todo',
+              createdAt: new Date().toISOString(),
+              updatedAt: new Date().toISOString()
+            };
 
-        await window.db.add('action_items', actionItem);
+            console.log('[SponsorSponsee.tsx] Saving action item:', actionItem);
+            const savedActionItem = await window.db.add('action_items', actionItem);
+            console.log('[SponsorSponsee.tsx] Saved action item with ID:', savedActionItem?.id);
+          }
+        }
       }
+
+      // Refresh contacts to show the new data
+      await loadSponsorContacts();
 
       setShowContactForm(false);
       setEditingContact(null);
