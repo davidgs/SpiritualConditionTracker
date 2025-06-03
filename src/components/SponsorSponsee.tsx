@@ -113,13 +113,10 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
   // Get action items for a specific sponsor contact
   const getActionItemsForContact = async (contactId) => {
     try {
-      if (!window.db) {
-        console.error('Database not initialized');
-        return [];
-      }
+      const databaseService = DatabaseService.getInstance();
 
       // Get action items that reference this specific contact
-      const allActionItems = await window.db.getAll('action_items');
+      const allActionItems = await databaseService.getAll('action_items');
       console.log('[SponsorSponsee.tsx:125] Before filter - allActionItems:', allActionItems, 'contactId:', contactId);
       const actionItemsArray = Array.isArray(allActionItems) ? allActionItems : [];
       const contactActionItems = actionItemsArray.filter(item => 
@@ -1009,7 +1006,7 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
         open={showSponsorForm}
         onClose={() => {
           setShowSponsorForm(false);
-          setEditingSponsor(false);
+          setEditingSponsor(null);
         }}
         onSubmit={handleSponsorSubmit}
         initialData={editingSponsor && sponsors.length > 0 ? sponsors[0] : null}
