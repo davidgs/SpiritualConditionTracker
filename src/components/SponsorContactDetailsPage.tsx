@@ -143,8 +143,9 @@ export default function SponsorContactDetailsPage({
       
       if (result) {
         setActionItems(prev => {
-          const updated = prev.map(item => 
-            item.id === actionItem.id ? updatedItem : item
+          const prevArray = Array.isArray(prev) ? prev : [];
+          const updated = prevArray.map(item => 
+            item && item.id === actionItem.id ? updatedItem : item
           );
           console.log('[SponsorContactDetailsPage] Updated action items list:', updated);
           return updated;
@@ -165,7 +166,8 @@ export default function SponsorContactDetailsPage({
       
       if (success) {
         setActionItems(prev => {
-          const filtered = prev.filter(item => item.id !== actionItemId);
+          const prevArray = Array.isArray(prev) ? prev : [];
+          const filtered = prevArray.filter(item => item && item.id !== actionItemId);
           console.log('[SponsorContactDetailsPage] Updated action items after delete:', filtered);
           return filtered;
         });
