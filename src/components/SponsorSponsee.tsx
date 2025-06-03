@@ -16,6 +16,7 @@ import {
   Checkbox
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
+import DatabaseService from '../services/DatabaseService';
 import SponsorFormDialog from './SponsorFormDialog';
 import SponseeFormDialog from './SponseeFormDialog';
 import SponsorContactFormPage from './SponsorContactFormPage';
@@ -234,7 +235,8 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
         updatedAt: new Date().toISOString()
       };
 
-      const savedContact = await window.db.add('sponsor_contacts', newContact);
+      const databaseService = DatabaseService.getInstance();
+      const savedContact = await databaseService.addSponsorContact(newContact);
       console.log('[SponsorSponsee.tsx] Saved contact with ID:', savedContact?.id);
 
       // Verify the contact was saved and get the actual ID
@@ -273,7 +275,7 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
             console.log('[SponsorSponsee.tsx] Saving action item:', actionItem);
             
             try {
-              const savedActionItem = await window.db.add('action_items', actionItem);
+              const savedActionItem = await databaseService.addActionItem(actionItem);
               console.log('[SponsorSponsee.tsx] Saved action item with ID:', savedActionItem?.id);
             } catch (actionItemError) {
               console.error('[SponsorSponsee.tsx] Failed to save action item:', actionItemError);
@@ -319,7 +321,8 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
         updatedAt: new Date().toISOString()
       };
 
-      await window.db.update('sponsor_contacts', editingContact.id, updatedContact);
+      const databaseService = DatabaseService.getInstance();
+      await databaseService.updateSponsorContact(editingContact.id, updatedContact);
 
       // Handle action items if any
       for (const actionItemData of actionItems) {
@@ -338,7 +341,7 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
           updatedAt: new Date().toISOString()
         };
 
-        await window.db.add('action_items', actionItem);
+        await databaseService.addActionItem(actionItem);
       }
 
       // Refresh the contacts list
