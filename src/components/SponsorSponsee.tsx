@@ -438,13 +438,13 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
     refreshKey,
     formatDateForDisplay
   }) {
-    const [sponsorContacts, setSponsorContacts] = React.useState([]);
+    const [contactsForSponsor, setContactsForSponsor] = React.useState([]);
 
     // Load contacts for this specific sponsor
     React.useEffect(() => {
       const loadContacts = async () => {
         const contacts = await loadSponsorContacts(sponsor.id);
-        setSponsorContacts(contacts);
+        setContactsForSponsor(contacts);
       };
       loadContacts();
     }, [sponsor.id, refreshKey]);
