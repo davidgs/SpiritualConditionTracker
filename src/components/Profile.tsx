@@ -28,7 +28,7 @@ import {
   DialogTitle,
   DialogContent
 } from '@mui/material';
-import { resetDatabase } from '../utils/reset-database'
+
 
 interface ProfileProps {
   setCurrentView: (view: string) => void;
@@ -56,13 +56,11 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
     console.log('Starting data reset process');
     
     try {
-      await resetDatabase();      
-      console.log('Data reset complete - clearing React state and navigating to dashboard');
-      
-      // Call the parent component's reset function to clear all React state
+      // Call the parent component's reset function to clear all React state and data
       if (onResetAllData) {
-        onResetAllData();
+        await onResetAllData();
       }
+      console.log('Data reset complete - navigating to dashboard');
       
       // Show success message
       alert('All data has been reset successfully.');

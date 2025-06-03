@@ -41,8 +41,7 @@ async function initSQLiteDatabase() {
     await sqlitePlugin.open({ database: DB_NAME, readonly: false });
     console.log('[ sqliteLoader.js:42 ]  Database opened successfully');
 
-    // EMERGENCY DATABASE RESET (commented out - uncomment if schema needs complete rebuild)
-    /*
+    // EMERGENCY DATABASE RESET (uncommented to rebuild schema with contactId)
     console.log('[ sqliteLoader.js ] FORCING DATABASE SCHEMA RESET - DROP ALL TABLES');
     const tables = ['users', 'activities', 'action_items', 'sponsor_contacts', 'sponsors', 'meetings'];
     
@@ -57,7 +56,6 @@ async function initSQLiteDatabase() {
         console.log(`[ sqliteLoader.js ] Could not drop table ${table}:`, error);
       }
     }
-    */
     
     // Setup basic schema with correct fields
     await setupBasicSchema(sqlitePlugin);
