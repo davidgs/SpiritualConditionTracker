@@ -293,10 +293,11 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
       let actionItemActivities = [];
       try {
         const actionItems = await window.db.getAll('action_items');
-        console.log('[ AppDataContext.tsx ] Fetched action items:', actionItems.length);
+        console.log('[ AppDataContext.tsx ] Fetched action items:', actionItems?.length || 0);
         
         // Convert action items to activity format for unified display
-        actionItemActivities = actionItems.map(item => ({
+        const actionItemsArray = Array.isArray(actionItems) ? actionItems : [];
+        actionItemActivities = actionItemsArray.map(item => ({
           id: `action-item-${item.id}`, // Prefix to avoid ID conflicts
           type: 'action-item',
           date: item.dueDate || item.createdAt?.split('T')[0] || new Date().toISOString().split('T')[0],

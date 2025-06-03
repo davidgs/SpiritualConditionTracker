@@ -269,7 +269,8 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
   
   // Delete sponsee
   const handleDeleteSponsee = (sponseeId) => {
-    const updatedSponsees = sponsees.filter(sponsee => sponsee.id !== sponseeId);
+    const sponseesArray = Array.isArray(sponsees) ? sponsees : [];
+    const updatedSponsees = sponseesArray.filter(sponsee => sponsee && sponsee.id !== sponseeId);
     
     // Create a copy of the current user data
     const userUpdate = {
@@ -331,11 +332,14 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
   const handleSponseeSubmit = (sponseeData) => {
     let updatedSponsees;
     
+    // Ensure sponsees is an array
+    const sponseesArray = Array.isArray(sponsees) ? sponsees : [];
+    
     // Check if we're editing an existing sponsee or adding a new one
     if (editingSponseeId) {
       // Update existing sponsee
-      updatedSponsees = sponsees.map(sponsee => 
-        sponsee.id === editingSponseeId ? { ...sponsee, ...sponseeData } : sponsee
+      updatedSponsees = sponseesArray.map(sponsee => 
+        sponsee && sponsee.id === editingSponseeId ? { ...sponsee, ...sponseeData } : sponsee
       );
     } else {
       // Add new sponsee with generated ID
@@ -343,7 +347,7 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
         ...sponseeData,
         id: `sponsee_${Date.now()}`
       };
-      updatedSponsees = [...sponsees, newSponsee];
+      updatedSponsees = [...sponseesArray, newSponsee];
     }
     
     // Create a copy of the current user data
