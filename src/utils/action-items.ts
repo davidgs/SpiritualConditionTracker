@@ -141,8 +141,7 @@ export async function getActionItemsForContact(contactId) {
     
     const joinResult = await sqlite.query({
       database: DB_NAME,
-      statement: `SELECT actionItemId FROM sponsor_contact_action_items WHERE contactId = ?`,
-      values: [contactIdInt]
+      statement: `SELECT actionItemId FROM sponsor_contact_action_items WHERE contactId = ${contactIdInt}`
     });
     
     console.log(`[action-items.js - getActionItemsForContact: 135] CONTACT_ID: ${contactIdInt} - Join table result:`, JSON.stringify(joinResult));
@@ -168,15 +167,14 @@ export async function getActionItemsForContact(contactId) {
     }
     
     // Now get the actual action items by their IDs
-    const placeholders = actionItemIds.map(() => '?').join(',');
-    const actionItemsQuery = `SELECT * FROM action_items WHERE id IN (${placeholders}) ORDER BY createdAt DESC`;
+    const idList = actionItemIds.join(',');
+    const actionItemsQuery = `SELECT * FROM action_items WHERE id IN (${idList}) ORDER BY createdAt DESC`;
     
     console.log(`[action-items.js - getActionItemsForContact: 159] CONTACT_ID: ${contactIdInt} - Querying action items:`, actionItemsQuery);
     
     const result = await sqlite.query({
       database: DB_NAME,
-      statement: actionItemsQuery,
-      values: actionItemIds
+      statement: actionItemsQuery
     });
     
     console.log(`[action-items.js - getActionItemsForContact: 166] CONTACT_ID: ${contactIdInt} - Action items result:`, JSON.stringify(result));
