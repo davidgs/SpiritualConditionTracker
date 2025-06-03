@@ -569,7 +569,7 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
             </Button>
           </Box>
           
-          {sponsorContacts.length === 0 ? (
+          {contactsForSponsor.length === 0 ? (
             <Box className="text-center py-4">
               <Typography sx={{ color: theme.palette.text.secondary }}>
                 No contacts recorded with {sponsor.name} yet.
@@ -577,7 +577,7 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
             </Box>
           ) : (
             <List className="space-y-3">
-              {sponsorContacts.map((contact, index) => {
+              {contactsForSponsor.map((contact, index) => {
                 const contactTypeInfo = getContactTypeInfo(contact.type);
                 
                 return (
