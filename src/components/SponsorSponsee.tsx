@@ -293,11 +293,13 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
       // Refresh contacts to show the new data
       await loadSponsorContacts();
 
+    } catch (error) {
+      console.error('Error adding contact:', error);
+    } finally {
+      // Always close the modal, even if there were errors
       setShowContactForm(false);
       setEditingContact(null);
       setEditingActionItem(null);
-    } catch (error) {
-      console.error('Error adding contact:', error);
     }
   };
 
@@ -340,15 +342,16 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
         await window.db.add('action_items', actionItem);
       }
 
-      setShowContactForm(false);
-      setEditingContact(null);
-      setEditingActionItem(null);
-      
       // Refresh the contacts list
       setRefreshKey(prev => prev + 1);
       
     } catch (error) {
       console.error('Error editing contact:', error);
+    } finally {
+      // Always close the modal, even if there were errors
+      setShowContactForm(false);
+      setEditingContact(null);
+      setEditingActionItem(null);
     }
   };
   
