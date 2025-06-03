@@ -98,12 +98,13 @@ export async function getActionItemsForContact(contactId) {
     // First verify that tables exist
     console.log(`[action-items.js - getActionItemsForContact: 95] CONTACT_ID: ${contactIdInt} - Verifying tables exist`);
     try {
-      // Ensure the action_items table exists
+      // Ensure the action_items table exists with contactId
       await sqlite.execute({
         database: DB_NAME,
         statements: `
           CREATE TABLE IF NOT EXISTS action_items (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
+            contactId INTEGER,
             title TEXT DEFAULT '',
             text TEXT DEFAULT '',
             notes TEXT DEFAULT '',
@@ -111,7 +112,8 @@ export async function getActionItemsForContact(contactId) {
             completed INTEGER DEFAULT 0,
             type TEXT DEFAULT 'todo',
             createdAt TEXT,
-            updatedAt TEXT
+            updatedAt TEXT,
+            FOREIGN KEY (contactId) REFERENCES sponsor_contacts(id)
           )
         `
       });
@@ -136,45 +138,13 @@ export async function getActionItemsForContact(contactId) {
       console.error(`[action-items.js - getActionItemsForContact: 147] CONTACT_ID: ${contactIdInt} - Error verifying tables:`, tableError);
     }
     
-    // First try to get associations for this contact from the join table
-    console.log(`[action-items.js - getActionItemsForContact: 128] CONTACT_ID: ${contactIdInt} - Querying join table for associations`);
-    
-    const joinResult = await sqlite.query({
-      database: DB_NAME,
-      statement: `SELECT actionItemId FROM sponsor_contact_action_items WHERE contactId = ${contactIdInt}`
-    });
-    
-    console.log(`[action-items.js - getActionItemsForContact: 135] CONTACT_ID: ${contactIdInt} - Join table result:`, JSON.stringify(joinResult));
-    
-    // Extract action item IDs for this contact
-    let actionItemIds = [];
-    if (joinResult.values && joinResult.values.length > 0) {
-      if (joinResult.values[0].ios_columns) {
-        // iOS format - skip first row with column info
-        actionItemIds = joinResult.values.slice(1).map(row => row.actionItemId);
-      } else {
-        // Standard format
-        actionItemIds = joinResult.values.map(row => row.actionItemId);
-      }
-    }
-    
-    console.log(`[action-items.js - getActionItemsForContact: 148] CONTACT_ID: ${contactIdInt} - Found action item IDs:`, actionItemIds);
-    
-    // If no associations found, return empty array
-    if (actionItemIds.length === 0) {
-      console.log(`[action-items.js - getActionItemsForContact: 152] CONTACT_ID: ${contactIdInt} - No associations found, returning empty array`);
-      return [];
-    }
-    
-    // Now get the actual action items by their IDs
-    const idList = actionItemIds.join(',');
-    const actionItemsQuery = `SELECT * FROM action_items WHERE id IN (${idList}) ORDER BY createdAt DESC`;
-    
-    console.log(`[action-items.js - getActionItemsForContact: 159] CONTACT_ID: ${contactIdInt} - Querying action items:`, actionItemsQuery);
+    // Query action items directly using contactId
+    console.log(`[action-items.js - getActionItemsForContact: 128] CONTACT_ID: ${contactIdInt} - Querying action items directly`);
     
     const result = await sqlite.query({
       database: DB_NAME,
-      statement: actionItemsQuery
+      statement: `SELECT * FROM action_items WHERE contactId = ? ORDER BY createdAt DESC`,
+      values: [contactIdInt]
     });
     
     console.log(`[action-items.js - getActionItemsForContact: 166] CONTACT_ID: ${contactIdInt} - Action items result:`, JSON.stringify(result));
@@ -216,6 +186,7 @@ export async function addActionItem(actionItem) {
       statements: `
         CREATE TABLE IF NOT EXISTS action_items (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
+          contactId INTEGER,
           title TEXT DEFAULT '',
           text TEXT DEFAULT '',
           notes TEXT DEFAULT '',
@@ -223,7 +194,8 @@ export async function addActionItem(actionItem) {
           completed INTEGER DEFAULT 0,
           type TEXT DEFAULT 'todo',
           createdAt TEXT,
-          updatedAt TEXT
+          updatedAt TEXT,
+          FOREIGN KEY (contactId) REFERENCES sponsor_contacts(id)
         )
       `
     });
@@ -231,6 +203,7 @@ export async function addActionItem(actionItem) {
     // Create a clean object with valid fields
     const now = new Date().toISOString();
     const actionItemData = {
+      contactId: actionItem.contactId || null,
       title: actionItem.title || '',
       text: actionItem.text || actionItem.title || '',
       notes: actionItem.notes || '',
@@ -246,9 +219,9 @@ export async function addActionItem(actionItem) {
     // Use direct SQL insertion with string values for iOS compatibility
     const insertSQL = `
       INSERT INTO action_items 
-      (title, text, notes, dueDate, completed, type, createdAt, updatedAt) 
+      (contactId, title, text, notes, dueDate, completed, type, createdAt, updatedAt) 
       VALUES 
-      ('${actionItemData.title}', '${actionItemData.text}', '${actionItemData.notes}', 
+      (${actionItemData.contactId || 'NULL'}, '${actionItemData.title}', '${actionItemData.text}', '${actionItemData.notes}', 
        ${actionItemData.dueDate ? `'${actionItemData.dueDate}'` : 'NULL'}, 
        ${actionItemData.completed}, 
        '${actionItemData.type}',
@@ -291,7 +264,7 @@ export async function addActionItem(actionItem) {
     }
     
     // Add the ID to the item
-    actionItemData.id = newId;
+    (actionItemData as any).id = newId;
     
     // Verify the item was inserted by querying for it
     if (newId) {
