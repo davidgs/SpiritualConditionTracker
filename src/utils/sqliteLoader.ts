@@ -43,6 +43,13 @@ async function initSQLiteDatabase() {
 
     // EMERGENCY DATABASE RESET (uncommented to rebuild schema with contactId)
     console.log('[ sqliteLoader.js ] FORCING DATABASE SCHEMA RESET - DROP ALL TABLES');
+    
+    // Disable foreign key constraints during reset
+    await sqlitePlugin.execute({
+      database: DB_NAME,
+      statements: `PRAGMA foreign_keys = OFF;`
+    });
+    
     const tables = ['users', 'activities', 'action_items', 'sponsor_contacts', 'sponsors', 'meetings'];
     
     for (const table of tables) {
@@ -153,7 +160,7 @@ async function setupBasicSchema(sqlite) {
           type TEXT DEFAULT 'todo',
           createdAt TEXT,
           updatedAt TEXT,
-          FOREIGN KEY (contactId) REFERENCES sponsor_contacts(id)
+          FOREIGN KEY (contactId) REFERENCES sponsor_contacts(id) ON DELETE CASCADE
         )
       `
     });
@@ -239,6 +246,13 @@ async function setupBasicSchema(sqlite) {
     });
     console.log('[ sqliteLoader.js:239 ]  Meetings table created successfully');
 
+    // Re-enable foreign key constraints after schema creation
+    await sqlite.execute({
+      database: DB_NAME,
+      statements: `PRAGMA foreign_keys = ON;`
+    });
+    console.log('[ sqliteLoader.js ] Foreign key constraints re-enabled');
+
   } catch (error) {
     console.error('[ sqliteLoader.js:242 ] Error setting up database schema:', error);
     throw error;
@@ -308,14 +322,29 @@ function createDatabaseInterface(sqlite) {
           statements: insertSQL
         });
 
-        if (result && result.changes && result.changes.lastId) {
-          return {
-            ...itemWithTimestamp,
-            id: result.changes.lastId
-          };
+        console.log(`[ sqliteLoader.js ] Insert result:`, result);
+        
+        // Extract the actual database ID from the result
+        let newId;
+        if (result && result.changes) {
+          if (result.changes.lastId) {
+            newId = result.changes.lastId;
+          } else if (result.changes.changes > 0) {
+            // If lastId is not available but insert was successful, generate timestamp ID
+            newId = Date.now();
+          }
         }
-
-        return { ...itemWithTimestamp, id: Date.now() };
+        
+        if (!newId) {
+          newId = Date.now();
+        }
+        
+        console.log(`[ sqliteLoader.js ] Using ID: ${newId} for new ${collection} record`);
+        
+        return {
+          ...itemWithTimestamp,
+          id: newId
+        };
       } catch (error) {
         console.error(`[ sqliteLoader.js ] Error adding to ${collection}:`, error);
         throw error;

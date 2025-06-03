@@ -226,7 +226,7 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
         return;
       }
 
-      // Add contact to sponsor_contacts table
+      // Add contact to sponsor_contacts table first
       const newContact = {
         ...contactData,
         sponsorId: currentSponsor.id, // Associate with currently selected sponsor
@@ -237,14 +237,23 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
       const savedContact = await window.db.add('sponsor_contacts', newContact);
       console.log('[SponsorSponsee.tsx] Saved contact with ID:', savedContact?.id);
 
+      // Verify the contact was saved and get the actual ID
+      if (!savedContact || !savedContact.id) {
+        console.error('[SponsorSponsee.tsx] Failed to save contact - no ID returned');
+        return;
+      }
+
       // Process all action items if any exist
       if (actionItems && actionItems.length > 0) {
-        console.log('[SponsorSponsee.tsx] Processing', actionItems.length, 'action items');
+        console.log('[SponsorSponsee.tsx] Processing', actionItems.length, 'action items with contactId:', savedContact.id);
+        
+        // Add a small delay to ensure the contact is fully committed to the database
+        await new Promise(resolve => setTimeout(resolve, 100));
         
         for (const actionItemData of actionItems) {
           if (actionItemData && actionItemData.title) {
             const actionItem = {
-              contactId: savedContact?.id || newContact.id, // Link to the new contact
+              contactId: savedContact.id, // Use the verified saved contact ID
               title: actionItemData.title,
               text: actionItemData.text || actionItemData.title,
               notes: actionItemData.notes || '',
@@ -256,8 +265,14 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
             };
 
             console.log('[SponsorSponsee.tsx] Saving action item:', actionItem);
-            const savedActionItem = await window.db.add('action_items', actionItem);
-            console.log('[SponsorSponsee.tsx] Saved action item with ID:', savedActionItem?.id);
+            
+            try {
+              const savedActionItem = await window.db.add('action_items', actionItem);
+              console.log('[SponsorSponsee.tsx] Saved action item with ID:', savedActionItem?.id);
+            } catch (actionItemError) {
+              console.error('[SponsorSponsee.tsx] Failed to save action item:', actionItemError);
+              // Continue with other action items even if one fails
+            }
           }
         }
       }

@@ -1,0 +1,20 @@
+⚡️  [log] - [ActionItemForm.tsx: 53 handleSubmit] Submitting action item: {"id":0,"title":"Meeting time","text":"We need to find a regular meeting timePick.","notes":"","dueDate":"2025-06-04","completed":false,"type":"todo"}
+⚡️  [log] - [SponsorContactFormPage.tsx: handleAddTodo : 92] Adding todo item: {"id":0,"title":"Meeting time","text":"We need to find a regular meeting timePick.","notes":"","dueDate":"2025-06-04","completed":false,"type":"todo"}
+⚡️  [log] - [SponsorContactFormPage.tsx: handleAddTodo : 104] New todo object: {"id":-2256,"title":"Meeting time","text":"We need to find a regular meeting timePick.","notes":"","dueDate":"2025-06-04","completed":false,"type":"todo"}
+⚡️  [log] - [SponsorContactFormPage.tsx: 127 handleSubmit] Submitting contact with data: {"type":"phone","date":"2025-05-28","note":"Agreed to be my Sponsor"}
+⚡️  [log] - [SponsorContactFormPage.tsx: 128 handleSubmit] Submitting todos: [{"id":-2256,"title":"Meeting time","text":"We need to find a regular meeting timePick.","notes":"","dueDate":"2025-06-04","completed":false,"type":"todo"}]
+⚡️  [log] - [SponsorSponsee.tsx] Adding contact with data: {"type":"phone","date":"2025-05-28","note":"Agreed to be my Sponsor","userId":1748983475046} actionItems: [{"id":-2256,"title":"Meeting time","text":"We need to find a regular meeting timePick.","notes":"","dueDate":"2025-06-04","completed":false,"type":"todo"}]
+⚡️  [log] - [ sqliteLoader.js ] Adding item to sponsor_contacts: {"type":"phone","date":"2025-05-28","note":"Agreed to be my Sponsor","userId":1748983475046,"sponsorId":1,"createdAt":"2025-06-03T20:46:40.411Z","updatedAt":"2025-06-03T20:46:40.411Z"}
+⚡️  To Native ->  CapacitorSQLite execute 40314423
+⚡️  [log] - [ sqliteLoader.js ] Insert SQL: INSERT INTO sponsor_contacts (type, date, note, userId, sponsorId, createdAt, updatedAt) VALUES ('phone', '2025-05-28', 'Agreed to be my Sponsor', 1748983475046, 1, '2025-06-03T20:46:40.411Z', '2025-06-03T20:46:40.411Z')
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  [log] - [SponsorSponsee.tsx] Saved contact with ID: 1748983600414
+⚡️  [log] - [SponsorSponsee.tsx] Processing 1 action items
+⚡️  [log] - [SponsorSponsee.tsx] Saving action item: {"contactId":1748983600414,"title":"Meeting time","text":"We need to find a regular meeting timePick.","notes":"","dueDate":"2025-06-04","completed":0,"type":"todo","createdAt":"2025-06-03T20:46:40.415Z","updatedAt":"2025-06-03T20:46:40.415Z"}
+⚡️  [log] - [ sqliteLoader.js ] Adding item to action_items: {"contactId":1748983600414,"title":"Meeting time","text":"We need to find a regular meeting timePick.","notes":"","dueDate":"2025-06-04","completed":0,"type":"todo","createdAt":"2025-06-03T20:46:40.415Z","updatedAt":"2025-06-03T20:46:40.415Z"}
+⚡️  To Native ->  CapacitorSQLite execute 40314424
+⚡️  [log] - [ sqliteLoader.js ] Insert SQL: INSERT INTO action_items (contactId, title, text, notes, dueDate, completed, type, createdAt, updatedAt) VALUES (1748983600414, 'Meeting time', 'We need to find a regular meeting timePick.', '', '2025-06-04', 0, 'todo', '2025-06-03T20:46:40.415Z', '2025-06-03T20:46:40.415Z')
+ERROR MESSAGE:  {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 19 message: FOREIGN KEY constraint failed","message":"Execute: Failed in executeSQL :  Error: execute failed rc: 19 message: FOREIGN KEY constraint failed"}
+⚡️  [error] - {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 19 message: FOREIGN KEY constraint failed","message":"Execute: Failed in executeSQL :  Error: execute failed rc: 19 message: FOREIGN KEY constraint failed"}
+⚡️  [error] - [ sqliteLoader.js ] Error adding to action_items: {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 19 message: FOREIGN KEY constraint failed"}
+⚡️  [error] - Error adding contact: {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 19 message: FOREIGN KEY constraint failed"}
