@@ -22,6 +22,7 @@ import SponsorContactFormPage from './SponsorContactFormPage';
 import { formatDateForDisplay } from '../utils/dateUtils';
 
 export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activities = [] }) {
+  console.log('[SponsorSponsee.tsx:24] Component loaded with activities:', activities, 'type:', typeof activities);
   const theme = useTheme();
   const darkMode = theme.palette.mode === 'dark';
   
