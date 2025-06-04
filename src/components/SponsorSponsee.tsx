@@ -850,16 +850,29 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
                       handleEditContact(contact);
                     }}
                   >
-                    <Box className="w-full">
-                      <Box className="flex justify-between items-center mb-2">
-                        <Box className="flex items-center gap-2">
+                    <Box sx={{ width: '100%' }}>
+                      <Box sx={{ 
+                        display: 'flex', 
+                        justifyContent: 'space-between', 
+                        alignItems: 'center', 
+                        mb: 2 
+                      }}>
+                        <Box sx={{ 
+                          display: 'flex', 
+                          alignItems: 'center', 
+                          gap: 1 
+                        }}>
                           <i className={contactTypeInfo.icon} style={{ color: theme.palette.text.secondary }}></i>
                           <Typography variant="body2" sx={{ color: theme.palette.text.secondary }}>
                             {contactTypeInfo.label}
                           </Typography>
                         </Box>
                         
-                        <Box className="flex items-center gap-1">
+                        <Box sx={{ 
+                          display: 'flex', 
+                          alignItems: 'center', 
+                          gap: 0.5 
+                        }}>
                           <i className="fa-solid fa-calendar" style={{ color: theme.palette.text.secondary, fontSize: '12px' }}></i>
                           <Typography variant="body2" sx={{ color: theme.palette.text.secondary }}>
                             {formatDateForDisplay(contact.date)}
