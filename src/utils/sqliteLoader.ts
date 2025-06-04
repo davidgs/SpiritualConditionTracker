@@ -347,7 +347,7 @@ async function createTables(sqlite) {
         phoneNumber TEXT DEFAULT '',
         email TEXT DEFAULT '',
         privacySettings TEXT DEFAULT '{"allowMessages":true,"shareLastName":true}',
-        preferences TEXT DEFAULT '{"use24HourFormat":false}',
+        preferences TEXT DEFAULT '{"use24HourFormat":false,"darkMode":false,"theme":"default"}',
         createdAt TEXT,
         updatedAt TEXT
       )

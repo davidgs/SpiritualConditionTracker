@@ -40,6 +40,8 @@ export interface User extends BaseEntity {
   };
   preferences: {
     use24HourFormat: boolean;
+    darkMode: boolean;
+    theme: string; // For future theme customization (default, blue, green, etc.)
   };
   // Sponsor fields (optional)
   sponsor_name?: string;

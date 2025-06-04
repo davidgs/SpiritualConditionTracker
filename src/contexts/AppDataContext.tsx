@@ -251,7 +251,9 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
             shareLastName: true
           },
           preferences: {
-            use24HourFormat: false
+            use24HourFormat: false,
+            darkMode: false,
+            theme: 'default'
           }
         });
         
