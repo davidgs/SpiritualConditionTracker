@@ -477,19 +477,6 @@ async function createTables(sqlite) {
   console.log('[ sqliteLoader.js ] Action items table created');
 
   console.log('[ sqliteLoader.js ] All tables created successfully');
-
-  // Add missing columns to existing tables
-  try {
-    // Add sobrietyDate column to sponsors table if it doesn't exist
-    await sqlite.execute({
-      database: DB_NAME,
-      statements: `ALTER TABLE sponsors ADD COLUMN sobrietyDate TEXT;`
-    });
-    console.log('[ sqliteLoader.js ] Added sobrietyDate column to sponsors table');
-  } catch (error) {
-    // Column might already exist, ignore error
-    console.log('[ sqliteLoader.js ] sobrietyDate column may already exist in sponsors table');
-  }
 }
 
 // Emergency database reset function

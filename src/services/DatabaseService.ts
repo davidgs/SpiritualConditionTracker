@@ -18,7 +18,6 @@ export interface DatabaseOperation {
 class DatabaseService {
   private static instance: DatabaseService;
   private status: DatabaseStatus = 'initializing';
-  private database: any = null;
   private operationQueue: DatabaseOperation[] = [];
   private statusCallbacks: ((status: DatabaseStatus) => void)[] = [];
   private initializationPromise: Promise<void> | null = null;
@@ -37,7 +36,6 @@ class DatabaseService {
    */
   resetInitialization(): void {
     this.initializationPromise = null;
-    this.database = null;
     this.setStatus('initializing');
   }
 
@@ -72,9 +70,6 @@ class DatabaseService {
 
       // Database is ready - no cleanup needed with simplified loader
       console.log('[ DatabaseService: 63 ] Database ready');
-
-      // Store database reference
-      this.database = window.db;
       this.setStatus('ready');
 
       console.log('[ DatabaseService: 70 ] Database initialization complete');
@@ -179,26 +174,26 @@ class DatabaseService {
 
   async getAllUsers(): Promise<User[]> {
     return this.executeOperation(async () => {
-      const users = await this.database.getAll('users');
+      const users = await window.db.getAll('users');
       return users || [];
     });
   }
 
   async addUser(user: Omit<User, 'id' | 'createdAt' | 'updatedAt'>): Promise<User> {
     return this.executeOperation(async () => {
-      return await this.database.add('users', user);
+      return await window.db.add('users', user);
     });
   }
 
   async updateUser(id: string | number, updates: Partial<User>): Promise<User | null> {
     return this.executeOperation(async () => {
-      return await this.database.update('users', id, updates);
+      return await window.db.update('users', id, updates);
     });
   }
 
   async getAllActivities(): Promise<Activity[]> {
     return this.executeOperation(async () => {
-      const activities = await this.database.getAll('activities');
+      const activities = await window.db.getAll('activities');
       return activities || [];
     });
   }
@@ -206,11 +201,11 @@ class DatabaseService {
   async addActivity(activity: Omit<Activity, 'id' | 'createdAt' | 'updatedAt'>): Promise<Activity> {
     return this.executeOperation(async () => {
       console.log('[ DatabaseService.ts:261 addActivity ] Received activity:', JSON.stringify(activity, null, 2));
-      console.log('[ DatabaseService.ts:262 addActivity ] Calling this.database.add...');
+      console.log('[ DatabaseService.ts:262 addActivity ] Calling window.db.add...');
       
-      const result = await this.database.add('activities', activity);
+      const result = await window.db.add('activities', activity);
       
-      console.log('[ DatabaseService.ts:266 addActivity ] this.database.add returned:', JSON.stringify(result, null, 2));
+      console.log('[ DatabaseService.ts:266 addActivity ] window.db.add returned:', JSON.stringify(result, null, 2));
       return result;
     });
   }
@@ -218,7 +213,7 @@ class DatabaseService {
   async updateActivity(id: string | number, updates: Partial<Activity>): Promise<Activity | null> {
     return this.executeOperation(async () => {
       console.log('[ DatabaseService.ts updateActivity ] Updating activity with ID:', id, 'updates:', updates);
-      const result = await this.database.update('activities', id, updates);
+      const result = await window.db.update('activities', id, updates);
       console.log('[ DatabaseService.ts updateActivity ] Update result:', result);
       return result;
     });
@@ -226,27 +221,27 @@ class DatabaseService {
 
   async getAllMeetings(): Promise<Meeting[]> {
     return this.executeOperation(async () => {
-      const meetings = await this.database.getAll('meetings');
+      const meetings = await window.db.getAll('meetings');
       return meetings || [];
     });
   }
 
   async addMeeting(meeting: Omit<Meeting, 'id' | 'createdAt' | 'updatedAt'>): Promise<Meeting> {
     return this.executeOperation(async () => {
-      return await this.database.add('meetings', meeting);
+      return await window.db.add('meetings', meeting);
     });
   }
 
   async updateMeeting(id: string | number, updates: Partial<Meeting>): Promise<Meeting | null> {
     return this.executeOperation(async () => {
-      return await this.database.update('meetings', id, updates);
+      return await window.db.update('meetings', id, updates);
     });
   }
 
   async deleteMeeting(meetingId: string | number): Promise<boolean> {
     return this.executeOperation(async () => {
-      console.log('[ DatabaseService.ts:301 ] Calling database.remove with meetingId:', meetingId, 'Type:', typeof meetingId);
-      const result = await this.database.remove('meetings', meetingId);
+      console.log('[ DatabaseService.ts:301 ] Calling window.db.remove with meetingId:', meetingId, 'Type:', typeof meetingId);
+      const result = await window.db.remove('meetings', meetingId);
       console.log('[ DatabaseService.ts:303 ] Database remove result:', result);
       return result;
     });
@@ -255,7 +250,7 @@ class DatabaseService {
   // Sponsor contact operations
   async getAllSponsorContacts(): Promise<SponsorContact[]> {
     return this.executeOperation(async () => {
-      const contacts = await this.database.getAll('sponsor_contacts');
+      const contacts = await window.db.getAll('sponsor_contacts');
       
       // Sort contacts by date - newest first
       const sortedContacts = (contacts || []).sort((a, b) => {
@@ -271,7 +266,7 @@ class DatabaseService {
   async addSponsorContact(contact: Omit<SponsorContact, 'id' | 'createdAt' | 'updatedAt'>): Promise<SponsorContact> {
     return this.executeOperation(async () => {
       console.log('[ DatabaseService ] Adding sponsor contact:', contact);
-      const result = await this.database.add('sponsor_contacts', contact);
+      const result = await window.db.add('sponsor_contacts', contact);
       console.log('[ DatabaseService ] Sponsor contact saved:', result);
       return result;
     });
@@ -279,13 +274,13 @@ class DatabaseService {
 
   async updateSponsorContact(id: string | number, updates: Partial<SponsorContact>): Promise<SponsorContact | null> {
     return this.executeOperation(async () => {
-      return await this.database.update('sponsor_contacts', id, updates);
+      return await window.db.update('sponsor_contacts', id, updates);
     });
   }
 
   async deleteSponsorContact(contactId: string | number): Promise<boolean> {
     return this.executeOperation(async () => {
-      const result = await this.database.remove('sponsor_contacts', contactId);
+      const result = await window.db.remove('sponsor_contacts', contactId);
       return result;
     });
   }
@@ -293,33 +288,33 @@ class DatabaseService {
   // Generic database operations for other entities
   async getAll<T>(collection: string): Promise<T[]> {
     return this.executeOperation(async () => {
-      const items = await this.database.getAll(collection);
+      const items = await window.db.getAll(collection);
       return items || [];
     });
   }
 
   async add<T>(collection: string, item: Omit<T, 'id' | 'createdAt' | 'updatedAt'>): Promise<T> {
     return this.executeOperation(async () => {
-      return await this.database.add(collection, item);
+      return await window.db.add(collection, item);
     });
   }
 
   async update<T>(collection: string, id: string | number, updates: Partial<T>): Promise<T | null> {
     return this.executeOperation(async () => {
-      return await this.database.update(collection, id, updates);
+      return await window.db.update(collection, id, updates);
     });
   }
 
   async remove(collection: string, id: string | number): Promise<boolean> {
     return this.executeOperation(async () => {
-      return await this.database.remove(collection, id);
+      return await window.db.remove(collection, id);
     });
   }
 
   // Contact details operations
   async getAllContactDetails(): Promise<ContactDetail[]> {
     return this.executeOperation(async () => {
-      const details = await this.database.getAll('sponsor_contact_details');
+      const details = await window.db.getAll('sponsor_contact_details');
       return details || [];
     });
   }
@@ -327,7 +322,7 @@ class DatabaseService {
   async addContactDetail(detail: Omit<ContactDetail, 'id' | 'createdAt' | 'updatedAt'>): Promise<ContactDetail> {
     return this.executeOperation(async () => {
       console.log('[ DatabaseService ] Adding contact detail:', detail);
-      const result = await this.database.add('sponsor_contact_details', detail);
+      const result = await window.db.add('sponsor_contact_details', detail);
       console.log('[ DatabaseService ] Contact detail saved:', result);
       return result;
     });
@@ -335,20 +330,20 @@ class DatabaseService {
 
   async updateContactDetail(id: string | number, updates: Partial<ContactDetail>): Promise<ContactDetail | null> {
     return this.executeOperation(async () => {
-      return await this.database.update('sponsor_contact_details', id, updates);
+      return await window.db.update('sponsor_contact_details', id, updates);
     });
   }
 
   async deleteContactDetail(detailId: string | number): Promise<boolean> {
     return this.executeOperation(async () => {
-      return await this.database.remove('sponsor_contact_details', detailId);
+      return await window.db.remove('sponsor_contact_details', detailId);
     });
   }
 
   // Action items operations
   async getAllActionItems(): Promise<ActionItem[]> {
     return this.executeOperation(async () => {
-      const items = await this.database.getAll('action_items');
+      const items = await window.db.getAll('action_items');
       return items || [];
     });
   }
@@ -356,7 +351,7 @@ class DatabaseService {
   async addActionItem(item: Omit<ActionItem, 'id' | 'createdAt' | 'updatedAt'>): Promise<ActionItem> {
     return this.executeOperation(async () => {
       console.log('[ DatabaseService ] Adding action item:', item);
-      const result = await this.database.add('action_items', item);
+      const result = await window.db.add('action_items', item);
       console.log('[ DatabaseService ] Action item saved:', result);
       return result;
     });
@@ -364,13 +359,13 @@ class DatabaseService {
 
   async updateActionItem(id: string | number, updates: Partial<ActionItem>): Promise<ActionItem | null> {
     return this.executeOperation(async () => {
-      return await this.database.update('action_items', id, updates);
+      return await window.db.update('action_items', id, updates);
     });
   }
 
   async deleteActionItem(itemId: string | number): Promise<boolean> {
     return this.executeOperation(async () => {
-      return await this.database.remove('action_items', itemId);
+      return await window.db.remove('action_items', itemId);
     });
   }
 }
