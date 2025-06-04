@@ -1,6 +1,5 @@
 import React from 'react';
-import { useTheme } from '@mui/material/styles';
-import MeetingFormCore from './MeetingFormCore';
+import MeetingFormDialog from './MeetingFormDialog';
 
 export default function MeetingForm({ 
   meeting = null, 
@@ -11,26 +10,14 @@ export default function MeetingForm({
   darkMode: propDarkMode,
   isOverlay = false
 }) {
-  const muiTheme = useTheme();
-  const isDarkMode = propDarkMode !== undefined ? propDarkMode : (muiTheme.palette.mode === 'dark');
-
-  const containerClass = isOverlay 
-    ? "fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 backdrop-blur-sm"
-    : "";
-
+  // Convert old MeetingForm props to MeetingFormDialog props
   return (
-    <div className={containerClass}>
-      <div className={isOverlay ? "max-w-lg w-full bg-white dark:bg-gray-800 rounded-xl shadow-xl overflow-hidden p-6" : ""}>
-        <MeetingFormCore
-          meeting={meeting}
-          onSave={onSave}
-          onCancel={onClose}
-          onClose={onClose}
-          isEdit={isEdit}
-          darkMode={isDarkMode}
-          use24HourFormat={false}
-        />
-      </div>
-    </div>
+    <MeetingFormDialog
+      meeting={meeting}
+      onSave={onSave}
+      onClose={onClose}
+      isEdit={isEdit}
+      open={open}
+    />
   );
 }

@@ -890,6 +890,63 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
         )}
       </Paper>
 
+      {/* Meetings Section */}
+      <Paper elevation={0} sx={{ 
+        p: 3,
+        mb: 3,
+        bgcolor: 'background.paper',
+        borderRadius: 2,
+        border: '1px solid',
+        borderColor: 'divider',
+      }}>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+          <Typography variant="h6" sx={{ color: 'text.primary' }}>
+            My Meetings
+          </Typography>
+          <Button
+            variant="contained"
+            color="primary"
+            startIcon={<i className="fas fa-plus"></i>}
+            onClick={() => setShowMeetingForm(true)}
+            size="small"
+          >
+            Add New Meeting
+          </Button>
+        </Box>
+        
+        <Typography variant="body2" sx={{ color: 'text.secondary', mb: 2 }}>
+          Manage your regular AA meetings and home groups
+        </Typography>
+        
+        {meetings && meetings.length > 0 ? (
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+            {meetings.map((meeting, index) => (
+              <Box 
+                key={index}
+                sx={{ 
+                  p: 2, 
+                  border: '1px solid', 
+                  borderColor: 'divider',
+                  borderRadius: 1,
+                  bgcolor: 'background.default'
+                }}
+              >
+                <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 0.5 }}>
+                  {meeting.name}
+                </Typography>
+                <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+                  {meeting.address || 'Address not specified'}
+                </Typography>
+              </Box>
+            ))}
+          </Box>
+        ) : (
+          <Typography variant="body2" sx={{ color: 'text.secondary', fontStyle: 'italic' }}>
+            No meetings added yet. Click "Add New Meeting" to get started.
+          </Typography>
+        )}
+      </Paper>
+
       {/* Reset All Data Section */}
       <Paper elevation={0} sx={{ 
         p: 3,
