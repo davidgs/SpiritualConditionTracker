@@ -19,7 +19,7 @@ export default function SponsorFormDialog({ open, onClose, onSubmit, initialData
   // Form state
   const [name, setName] = useState('');
   const [lastName, setLastName] = useState('');
-  const [phone, setPhone] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
   const [email, setEmail] = useState('');
   const [sobrietyDate, setSobrietyDate] = useState('');
   const [notes, setNotes] = useState('');
@@ -44,7 +44,7 @@ export default function SponsorFormDialog({ open, onClose, onSubmit, initialData
     if (initialData) {
       setName(initialData.name || '');
       setLastName(initialData.lastName || '');
-      setPhone(initialData.phone || '');
+      setPhoneNumber(initialData.phoneNumber || initialData.phone || '');
       setEmail(initialData.email || '');
       setSobrietyDate(initialData.sobrietyDate ? initialData.sobrietyDate.split('T')[0] : '');
       setNotes(initialData.notes || '');
@@ -58,7 +58,7 @@ export default function SponsorFormDialog({ open, onClose, onSubmit, initialData
   const resetForm = () => {
     setName('');
     setLastName('');
-    setPhone('');
+    setPhoneNumber('');
     setEmail('');
     setSobrietyDate('');
     setNotes('');
@@ -67,7 +67,7 @@ export default function SponsorFormDialog({ open, onClose, onSubmit, initialData
   
   // Handle phone number input
   const handlePhoneChange = (value) => {
-    setPhone(value);
+    setPhoneNumber(value);
   };
   
   // Handle form submission
@@ -75,7 +75,7 @@ export default function SponsorFormDialog({ open, onClose, onSubmit, initialData
     e.preventDefault();
     
     // Validate form - only name is required
-    const newErrors = {};
+    const newErrors: any = {};
     if (!name.trim()) newErrors.name = 'Name is required';
     
     if (Object.keys(newErrors).length > 0) {
@@ -87,7 +87,7 @@ export default function SponsorFormDialog({ open, onClose, onSubmit, initialData
     const sponsorData = {
       name: name.trim(),
       lastName: lastName.trim(),
-      phone,
+      phoneNumber,
       email: email.trim(),
       sobrietyDate: sobrietyDate ? new Date(sobrietyDate).toISOString() : '',
       notes: notes.trim()
@@ -196,7 +196,7 @@ export default function SponsorFormDialog({ open, onClose, onSubmit, initialData
           <MuiTelInput
             fullWidth
             label="Phone Number"
-            value={phone}
+            value={phoneNumber}
             onChange={handlePhoneChange}
             defaultCountry="US"
             size="medium"
