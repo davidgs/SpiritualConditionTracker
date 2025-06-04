@@ -6,6 +6,7 @@
 import React, { createContext, useContext, useReducer, useEffect, useState, ReactNode } from 'react';
 import DatabaseService, { DatabaseStatus } from '../services/DatabaseService';
 import type { User, Activity, Meeting } from '../types/database';
+import { fixCorruptedPreferences } from '../utils/fixDatabasePreferences';
 
 // State interface
 export interface AppState {
@@ -199,6 +200,14 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
   const loadInitialData = async () => {
     try {
       console.log('[ AppDataContext.tsx:187 ] Loading initial data...');
+      
+      // Fix any corrupted preferences data first
+      try {
+        await fixCorruptedPreferences();
+        console.log('[ AppDataContext.tsx ] Database preferences validated/fixed');
+      } catch (error) {
+        console.warn('[ AppDataContext.tsx ] Failed to fix preferences, continuing:', error);
+      }
       
       await loadUserData();
       await loadActivities();

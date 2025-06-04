@@ -198,7 +198,8 @@ export default async function initSQLiteDatabase() {
           const jsonFields = ['days', 'schedule', 'coordinates', 'types', 'homeGroups', 'privacySettings', 'preferences'];
           jsonFields.forEach(field => {
             if (updatesWithTimestamp[field] !== undefined && updatesWithTimestamp[field] !== null) {
-              if (Array.isArray(updatesWithTimestamp[field]) || typeof updatesWithTimestamp[field] === 'object') {
+              // Only stringify if it's not already a string
+              if ((Array.isArray(updatesWithTimestamp[field]) || typeof updatesWithTimestamp[field] === 'object') && typeof updatesWithTimestamp[field] !== 'string') {
                 updatesWithTimestamp[field] = JSON.stringify(updatesWithTimestamp[field]);
               }
             }
