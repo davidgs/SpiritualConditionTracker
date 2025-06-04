@@ -456,13 +456,32 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
   // Delete sponsor
   const handleDeleteSponsor = async (sponsorId) => {
     try {
+      console.log('[ SponsorSponsee.tsx ] Deleting sponsor with ID:', sponsorId);
       const databaseService = DatabaseService.getInstance();
 
       // Delete sponsor from sponsors table
       await databaseService.remove('sponsors', sponsorId);
+      console.log('[ SponsorSponsee.tsx ] Sponsor deleted successfully');
+      
+      // Also delete all related sponsor contacts
+      const allContacts = await databaseService.getAllSponsorContacts();
+      const sponsorContacts = allContacts.filter(contact => contact.sponsorId === sponsorId);
+      
+      for (const contact of sponsorContacts) {
+        await databaseService.remove('sponsor_contacts', contact.id);
+        console.log('[ SponsorSponsee.tsx ] Deleted sponsor contact:', contact.id);
+      }
       
       // Reload sponsors
       await loadSponsors();
+      
+      // Reset to first tab if current sponsor was deleted
+      const currentSponsor = sponsors[currentSponsorTab];
+      if (currentSponsor && currentSponsor.id === sponsorId) {
+        setCurrentSponsorTab(0);
+      }
+      
+      console.log('[ SponsorSponsee.tsx ] Sponsor deletion completed');
     } catch (error) {
       console.error('Error deleting sponsor:', error);
     }
