@@ -740,6 +740,9 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
           </Typography>
           
           <Box sx={{ mb: 3 }}>
+            {/* Debug sponsor data */}
+            {console.log('[SponsorSponsee.tsx] Sponsor data:', sponsor)}
+            
             {sponsor.phone && (
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
                 <IconButton 
@@ -778,6 +781,13 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
                   {sponsor.email}
                 </Typography>
               </Box>
+            )}
+            
+            {/* Show message if no contact info */}
+            {!sponsor.phone && !sponsor.email && (
+              <Typography variant="body2" sx={{ color: theme.palette.text.secondary, fontStyle: 'italic' }}>
+                No contact information available. Edit sponsor to add phone or email.
+              </Typography>
             )}
           </Box>
 
