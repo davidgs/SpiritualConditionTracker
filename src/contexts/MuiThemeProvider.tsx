@@ -6,9 +6,17 @@ import { applyNativeTheme, applyNativeCssVariables, defaultThemeColors, getSyste
 import { getCompleteTheme } from '../utils/muiThemeColors';
 import applyThemeDirectly from '../utils/applyThemeDirectly';
 import applyMuiThemeToIOS from '../utils/iOSThemeAdapter';
+import { useThemePreferences } from '../utils/themePreferences';
 
 // Create a context for theme management
-export const AppThemeContext = createContext();
+export const AppThemeContext = createContext({
+  theme: 'light',
+  toggleTheme: () => {},
+  primaryColor: 'blue',
+  setPrimaryColor: (color: string) => {},
+  availableColors: [] as string[],
+  mode: 'light'
+});
 
 /**
  * Material UI Theme Provider that handles all app theming functionality
@@ -18,21 +26,19 @@ export const AppThemeContext = createContext();
  * @returns {React.ReactElement} ThemeProvider component
  */
 const MuiThemeProvider = ({ children }) => {
-  // Check if user has previously set a theme or use system preference
-  // Try to detect system preference immediately for a better initial value
+  // Get theme preferences from user database
+  const { themePreferences, toggleDarkMode } = useThemePreferences();
+  
+  // Use system preference as fallback if no user preference is set
   const systemPrefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-  const [initialTheme, setInitialTheme] = useState(systemPrefersDark ? 'dark' : 'light');
-  // Add state for primary color theme (default to blue)
   const [primaryColor, setPrimaryColor] = useState('blue');
   
   // Available color options for the theme picker
   const availableColors = Object.keys(defaultThemeColors);
   
-  // No database access - theme preferences will be managed by App.tsx
-  // Just use system preference as fallback
-  
-  const [theme, setTheme] = useState(initialTheme);
-  const darkMode = theme === 'dark';
+  // Use user preference for dark mode, fallback to system preference
+  const darkMode = themePreferences.darkMode || systemPrefersDark;
+  const theme = darkMode ? 'dark' : 'light';
   
   // Get actual color value from the color name
   const primaryColorValue = defaultThemeColors[primaryColor] || defaultThemeColors.blue;
@@ -85,14 +91,14 @@ const MuiThemeProvider = ({ children }) => {
     }
   }, [theme, darkMode, primaryColor, primaryColorValue]);
   
-  // Toggle between light and dark mode
+  // Toggle between light and dark mode - now persists to database
   const toggleTheme = () => {
-    setTheme(prevTheme => prevTheme === 'light' ? 'dark' : 'light');
+    toggleDarkMode();
   };
   
   // Create a theme based on our app's dark/light mode and custom primary color
   const muiTheme = React.useMemo(
-    () => createTheme(getCompleteTheme(primaryColor, theme)),
+    () => createTheme(getCompleteTheme(primaryColor, theme as 'light' | 'dark')),
     [primaryColor, theme]
   );
   
@@ -119,7 +125,6 @@ const MuiThemeProvider = ({ children }) => {
     <AppThemeContext.Provider
       value={{
         theme,
-        setTheme,
         toggleTheme,
         primaryColor,
         setPrimaryColor,
