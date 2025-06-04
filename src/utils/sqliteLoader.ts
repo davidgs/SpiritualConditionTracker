@@ -275,6 +275,17 @@ export default async function initSQLiteDatabase() {
           console.error(`[ sqliteLoader.js ] Error removing from ${collection}:`, error);
           throw error;
         }
+      },
+
+      // Emergency database reset
+      async resetDatabase() {
+        try {
+          await resetDatabase(sqlite);
+          return true;
+        } catch (error) {
+          console.error('[ sqliteLoader.js ] Error during database reset:', error);
+          throw error;
+        }
       }
     };
 
@@ -466,4 +477,47 @@ async function createTables(sqlite) {
   console.log('[ sqliteLoader.js ] Action items table created');
 
   console.log('[ sqliteLoader.js ] All tables created successfully');
+
+  // Add missing columns to existing tables
+  try {
+    // Add sobrietyDate column to sponsors table if it doesn't exist
+    await sqlite.execute({
+      database: DB_NAME,
+      statements: `ALTER TABLE sponsors ADD COLUMN sobrietyDate TEXT;`
+    });
+    console.log('[ sqliteLoader.js ] Added sobrietyDate column to sponsors table');
+  } catch (error) {
+    // Column might already exist, ignore error
+    console.log('[ sqliteLoader.js ] sobrietyDate column may already exist in sponsors table');
+  }
+}
+
+// Emergency database reset function
+async function resetDatabase(sqlite) {
+  console.log('[ sqliteLoader.js ] Starting emergency database reset...');
+  
+  try {
+    // Drop all tables
+    const tables = ['users', 'activities', 'meetings', 'sponsors', 'sponsor_contacts', 'action_items'];
+    
+    for (const table of tables) {
+      try {
+        await sqlite.execute({
+          database: DB_NAME,
+          statements: `DROP TABLE IF EXISTS ${table};`
+        });
+        console.log(`[ sqliteLoader.js ] Dropped table: ${table}`);
+      } catch (error) {
+        console.log(`[ sqliteLoader.js ] Error dropping table ${table}:`, error);
+      }
+    }
+    
+    // Recreate all tables with new schema
+    await createTables(sqlite);
+    console.log('[ sqliteLoader.js ] Database reset complete');
+    
+  } catch (error) {
+    console.error('[ sqliteLoader.js ] Error during database reset:', error);
+    throw error;
+  }
 }
