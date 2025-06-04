@@ -23,6 +23,8 @@ import DatabaseService from '../services/DatabaseService';
 import SponsorFormDialog from './SponsorFormDialog';
 import SponseeFormDialog from './SponseeFormDialog';
 import SponsorContactFormPage from './SponsorContactFormPage';
+import { ActionItemsList } from './ActionItemsList';
+import { ContactCard } from './ContactCard';
 import { formatDateForDisplay } from '../utils/dateUtils';
 
 export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activities = [] }) {
@@ -520,96 +522,7 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
     );
   }
 
-  // ActionItemsSection component for displaying action items in contact cards
-  const ActionItemsSection = ({ contact, theme, onToggle, onDelete }) => {
-    const [actionItems, setActionItems] = React.useState([]);
-    
-    React.useEffect(() => {
-      const loadActionItems = async () => {
-        if (contact && contact.id) {
-          const items = await getActionItemsForContact(contact.id);
-          setActionItems(items);
-        }
-      };
-      loadActionItems();
-    }, [contact, refreshKey]);
-    
-    if (!actionItems || actionItems.length === 0) {
-      return null;
-    }
-    
-    return (
-      <Box sx={{ mt: 2, pt: 2, borderTop: `1px solid ${theme.palette.divider}` }}>
-        <Typography variant="subtitle2" sx={{ color: theme.palette.text.secondary, mb: 1 }}>
-          Action Items
-        </Typography>
-        
-        {actionItems.map((actionItem) => (
-          <Box 
-            key={actionItem.id}
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              py: 0.5,
-              '&:hover': {
-                backgroundColor: theme.palette.action.hover,
-              }
-            }}
-          >
-            <Box sx={{ 
-              display: 'flex', 
-              alignItems: 'center', 
-              gap: 1, 
-              flex: 1 
-            }}>
-              <Checkbox
-                checked={actionItem.completed === 1}
-                onChange={(e) => {
-                  e.stopPropagation();
-                  onToggle(actionItem.id);
-                }}
-                onClick={(e) => e.stopPropagation()}
-                size="small"
-                sx={{
-                  color: theme.palette.text.secondary,
-                  '&.Mui-checked': {
-                    color: theme.palette.success.main,
-                  }
-                }}
-              />
-              
-              <Typography 
-                variant="body2" 
-                sx={{ 
-                  color: actionItem.completed === 1 ? theme.palette.success.main : theme.palette.text.primary,
-                  fontWeight: actionItem.completed === 1 ? 500 : 400
-                }}
-              >
-                {actionItem.title}
-              </Typography>
-            </Box>
-            
-            <IconButton 
-              size="small" 
-              onClick={(e) => {
-                e.stopPropagation();
-                onDelete(actionItem.id);
-              }}
-              sx={{ 
-                color: theme.palette.error.main,
-                '&:hover': {
-                  backgroundColor: theme.palette.error.light + '20',
-                }
-              }}
-            >
-              <i className="fa-solid fa-times text-xs"></i>
-            </IconButton>
-          </Box>
-        ))}
-      </Box>
-    );
-  };
+
 
   // SponsorInfoAccordion component for collapsible sponsor details
   const SponsorInfoAccordion = ({ sponsor, theme, formatDateForDisplay }) => {
@@ -915,11 +828,10 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
                       )}
                       
                       {/* Action Items for this contact */}
-                      <ActionItemsSection 
-                        contact={contact}
+                      <ActionItemsList 
+                        contactId={contact.id}
                         theme={theme}
-                        onToggle={handleToggleActionItem}
-                        onDelete={handleDeleteActionItem}
+                        refreshKey={refreshKey}
                       />
                     </Box>
                   </ListItem>
