@@ -270,7 +270,8 @@ export default function MeetingFormCore({
             onChange={(e) => setMeetingName(e.target.value)}
             placeholder="Enter meeting name"
             size="medium"
-            required
+            error={!meetingName.trim() && isSubmitting}
+            helperText={!meetingName.trim() && isSubmitting ? "Meeting name is required" : ""}
           />
         </Box>
         
@@ -308,7 +309,8 @@ export default function MeetingFormCore({
               onChange={(e) => setStreetAddress(e.target.value)}
               placeholder="Street address*"
               size="medium"
-              required
+              error={!streetAddress.trim() && isSubmitting}
+              helperText={!streetAddress.trim() && isSubmitting ? "Street address is required" : ""}
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
