@@ -447,16 +447,14 @@ export default function MeetingFormDialog({
           <Alert 
             severity="error" 
             sx={(theme) => ({ 
-              mb: 2, 
-              bgcolor: theme.palette.mode === 'dark' ? 'rgba(220, 38, 38, 0.1)' : 'rgba(239, 68, 68, 0.1)',
-              color: theme.palette.error.main
+              mb: 2
             })}
           >
             {error}
           </Alert>
         )}
         
-        <Box component="form" id="meeting-form" onSubmit={handleSubmit} sx={{ 
+        <Box component="form" id="meeting-form" onSubmit={handleSubmit} noValidate sx={{ 
           display: 'flex', 
           flexDirection: 'column', 
           gap: 2, 
@@ -476,7 +474,6 @@ export default function MeetingFormDialog({
               placeholder="Enter meeting name"
               size="medium"
               margin="none"
-              required
               sx={(theme) => getTextFieldStyle(theme)}
             />
           </Box>
