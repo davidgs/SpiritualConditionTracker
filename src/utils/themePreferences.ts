@@ -22,12 +22,15 @@ export const useThemePreferences = () => {
 
   // Load preferences from user data when user changes
   useEffect(() => {
-    if (state.user?.preferences) {
-      const prefs = state.user.preferences;
+    if (state.user) {
+      // Use the simple isDarkMode column instead of complex JSON preferences
+      const darkMode = state.user.isDarkMode === 1;
+      const prefs = state.user.preferences || {};
+      
       setThemePreferences({
-        darkMode: prefs.darkMode || false,
-        theme: prefs.theme || 'default',
-        use24HourFormat: prefs.use24HourFormat || false
+        darkMode: darkMode,
+        theme: (prefs as any)?.theme || 'default',
+        use24HourFormat: (prefs as any)?.use24HourFormat || false
       });
     }
   }, [state.user]);
@@ -37,14 +40,24 @@ export const useThemePreferences = () => {
     try {
       if (!state.user) return;
 
-      const updatedPreferences = {
-        ...state.user.preferences,
-        [key]: value
-      };
+      if (key === 'darkMode') {
+        // Handle dark mode using the simple isDarkMode column
+        await updateUser({
+          isDarkMode: value ? 1 : 0
+        });
+        console.log(`Dark mode updated: isDarkMode = ${value ? 1 : 0}`);
+      } else {
+        // Handle other preferences using the JSON preferences column
+        const updatedPreferences = {
+          ...state.user.preferences,
+          [key]: value
+        };
 
-      await updateUser({
-        preferences: updatedPreferences
-      });
+        await updateUser({
+          preferences: updatedPreferences
+        });
+        console.log(`Theme preference updated: ${key} = ${value}`);
+      }
 
       // Update local state immediately for responsive UI
       setThemePreferences(prev => ({
@@ -52,7 +65,6 @@ export const useThemePreferences = () => {
         [key]: value
       }));
 
-      console.log(`Theme preference updated: ${key} = ${value}`);
     } catch (error) {
       console.error('Failed to update theme preference:', error);
     }

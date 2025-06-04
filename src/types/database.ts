@@ -43,6 +43,7 @@ export interface User extends BaseEntity {
     darkMode: boolean;
     theme: string; // For future theme customization (default, blue, green, etc.)
   };
+  isDarkMode?: number; // SQLite boolean as integer (0 or 1)
   // Sponsor fields (optional)
   sponsor_name?: string;
   sponsor_lastName?: string;

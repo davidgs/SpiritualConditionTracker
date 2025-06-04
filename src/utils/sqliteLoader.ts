@@ -361,12 +361,25 @@ async function createTables(sqlite) {
         email TEXT DEFAULT '',
         privacySettings TEXT DEFAULT '{"allowMessages":true,"shareLastName":true}',
         preferences TEXT DEFAULT '{"use24HourFormat":false,"darkMode":false,"theme":"default"}',
+        isDarkMode INTEGER DEFAULT 0,
         createdAt TEXT,
         updatedAt TEXT
       )
     `
   });
   console.log('[ sqliteLoader.js ] Users table created');
+
+  // Add isDarkMode column to existing users table (migration)
+  try {
+    await sqlite.execute({
+      database: DB_NAME,
+      statements: `ALTER TABLE users ADD COLUMN isDarkMode INTEGER DEFAULT 0`
+    });
+    console.log('[ sqliteLoader.js ] Added isDarkMode column to users table');
+  } catch (error) {
+    // Column already exists, which is fine
+    console.log('[ sqliteLoader.js ] isDarkMode column already exists or failed to add:', error.message);
+  }
 
   // Activities table
   await sqlite.execute({
