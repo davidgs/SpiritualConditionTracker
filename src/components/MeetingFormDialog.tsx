@@ -399,13 +399,17 @@ export default function MeetingFormDialog({
     };
     
     try {
+      console.log('[MeetingFormDialog] Calling onSave with meeting data:', meetingData);
+      
       // Call the onSave callback with the meeting data
-      onSave(meetingData);
+      await onSave(meetingData);
+      
+      console.log('[MeetingFormDialog] Meeting saved successfully, closing dialog');
       
       // Close the dialog
       onClose();
     } catch (error) {
-      console.error('[ MeetingFormDialog.js ] Error saving meeting:', error);
+      console.error('[ MeetingFormDialog ] Error saving meeting:', error);
       setError('An error occurred while saving the meeting. Please try again.');
     }
   };
