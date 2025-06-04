@@ -566,7 +566,11 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
             }}>
               <Checkbox
                 checked={actionItem.completed === 1}
-                onChange={() => onToggle(actionItem.id)}
+                onChange={(e) => {
+                  e.stopPropagation();
+                  onToggle(actionItem.id);
+                }}
+                onClick={(e) => e.stopPropagation()}
                 size="small"
                 sx={{
                   color: theme.palette.text.secondary,
