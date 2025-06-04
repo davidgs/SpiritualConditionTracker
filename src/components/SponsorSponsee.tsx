@@ -583,8 +583,7 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
                 variant="body2" 
                 sx={{ 
                   color: actionItem.completed === 1 ? theme.palette.success.main : theme.palette.text.primary,
-                  textDecoration: actionItem.completed === 1 ? 'line-through' : 'none',
-                  opacity: actionItem.completed === 1 ? 0.7 : 1
+                  fontWeight: actionItem.completed === 1 ? 500 : 400
                 }}
               >
                 {actionItem.title}
