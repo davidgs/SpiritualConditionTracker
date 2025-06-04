@@ -194,13 +194,25 @@ export default async function initSQLiteDatabase() {
             updatedAt: new Date().toISOString()
           };
 
-          // Convert objects and arrays to JSON strings
+          // Convert objects and arrays to JSON strings - prevent double-stringification
           const jsonFields = ['days', 'schedule', 'coordinates', 'types', 'homeGroups', 'privacySettings', 'preferences'];
           jsonFields.forEach(field => {
             if (updatesWithTimestamp[field] !== undefined && updatesWithTimestamp[field] !== null) {
-              // Only stringify if it's not already a string
-              if ((Array.isArray(updatesWithTimestamp[field]) || typeof updatesWithTimestamp[field] === 'object') && typeof updatesWithTimestamp[field] !== 'string') {
+              // Only stringify if it's not already a JSON string
+              if (typeof updatesWithTimestamp[field] === 'object') {
                 updatesWithTimestamp[field] = JSON.stringify(updatesWithTimestamp[field]);
+              } else if (typeof updatesWithTimestamp[field] === 'string') {
+                // Check if it's already valid JSON - if so, don't double-stringify
+                try {
+                  JSON.parse(updatesWithTimestamp[field]);
+                  // It's already a valid JSON string, keep as-is
+                } catch {
+                  // Not JSON, but for certain fields we might want to convert to JSON
+                  if (field === 'preferences' || field === 'homeGroups' || field === 'privacySettings') {
+                    // These should be objects, not plain strings
+                    console.warn(`[ sqliteLoader.js ] Warning: ${field} should be an object, not string:`, updatesWithTimestamp[field]);
+                  }
+                }
               }
             }
           });

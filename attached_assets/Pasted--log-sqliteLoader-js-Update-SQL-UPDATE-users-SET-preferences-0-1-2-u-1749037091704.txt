@@ -1,0 +1,45 @@
+⚡️  [log] - [ sqliteLoader.js ] Update SQL: UPDATE users SET preferences = '{"0":"{","1":"\"","2":"u","3":"s","4":"e","5":"2","6":"4","7":"H","8":"o","9":"u","10":"r","11":"F","12":"o","13":"r","14":"m","15":"a","16":"t","17":"\"","18":":","19":"f","20":"a","21":"l","22":"s","23":"e","24":",","25":"\"","26":"d","27":"a","28":"r","29":"k","30":"M","31":"o","32":"d","33":"e","34":"\"","35":":","36":"f","37":"a","38":"l","39":"s","40":"e","41":",","42":"\"","43":"t","44":"h","45":"e","46":"m","47":"e","48":"\"","49":":","50":"\"","51":"d","52":"e","53":"f","54":"a","55":"u","56":"l","57":"t","58":"\"","59":"}","darkMode":true}', updatedAt = '2025-06-04T11:37:12.923Z' WHERE id = 1
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  [log] - [ sqliteLoader.js ] Update completed for users id 1
+⚡️  [log] - [ AppDataContext.tsx:263 ] User updated: 1
+⚡️  [log] - Theme preference updated: darkMode = true
+⚡️  [log] - [ Dashboard.js ] Dashboard initial spiritualFitness: 5
+⚡️  [log] - [ Dashboard.js ] Dashboard currentScore state: 17.33
+⚡️  [log] - [ Dashboard.js ] Dashboard currentTimeframe: 30
+⚡️  [log] - [ Dashboard.js ] Dashboard scoreTimeframe: 30
+⚡️  [log] - [ Dashboard.js ] Dashboard formattedScore for display: 17.33
+⚡️  [log] - [ Dashboard.js ] Dashboard progressPercent: 17.33
+⚡️  [log] - [ ActivityList.js: 39 ] Total activities received: 4
+⚡️  [log] - [ Dashboard.js ] Dashboard useEffect [activities] triggered - calculating spiritual fitness
+⚡️  [log] - [ Dashboard.js ] Dashboard scoreBreak: {"baseScore":5,"activityPoints":7,"consistencyPoints":5.33,"totalScore":17.33,"recentActivities":4,"activeDays":4}
+⚡️  [log] - [ SpiritualFitness.js ] calculateSpiritualFitnessScore baseScore: 5
+⚡️  [log] - [ SpiritualFitness.js ] calculateSpiritualFitnessScore timeframeDays: 30
+⚡️  [log] - [ SpiritualFitness.js ] calculateSpiritualFitnessScore activities #: 4
+⚡️  [log] - [ SpiritualFitness.js ] calculateSpiritualFitnessScore totalActivityPoints: 28
+⚡️  [log] - [ SpiritualFitness.js ] calculateSpiritualFitnessScore totalScore: 17.333333333333332
+⚡️  [log] - [ SpiritualFitness.js ] calculateSpiritualFitnessScore preciseScore: 17.33
+⚡️  [log] - [ Dashboard.js: 71 ] Dashboard newScore: 17.33
+⚡️  [log] - Dark mode activated
+⚡️  [log] - Applying native theme: blue (#3b82f6) in dark mode
+⚡️  [log] - Applied MUI theme to iOS components
+⚡️  [log] - Applied MUI theme to iOS native components: blue
+⚡️  [log] - [ Dashboard.js ] Dashboard initial spiritualFitness: 5
+⚡️  [log] - [ Dashboard.js ] Dashboard currentScore state: 17.33
+⚡️  [log] - [ Dashboard.js ] Dashboard currentTimeframe: 30
+⚡️  [log] - [ Dashboard.js ] Dashboard scoreTimeframe: 30
+⚡️  [log] - [ Dashboard.js ] Dashboard formattedScore for display: 17.33
+⚡️  [log] - [ Dashboard.js ] Dashboard progressPercent: 17.33
+⚡️  [log] - [ ActivityList.js: 39 ] Total activities received: 4
+⚡️  [log] - [ Dashboard.js ] Dashboard useEffect [activities] triggered - calculating spiritual fitness
+⚡️  [log] - [ Dashboard.js ] Dashboard scoreBreak: {"baseScore":5,"activityPoints":7,"consistencyPoints":5.33,"totalScore":17.33,"recentActivities":4,"activeDays":4}
+⚡️  [log] - [ SpiritualFitness.js ] calculateSpiritualFitnessScore baseScore: 5
+⚡️  [log] - [ SpiritualFitness.js ] calculateSpiritualFitnessScore timeframeDays: 30
+⚡️  [log] - [ SpiritualFitness.js ] calculateSpiritualFitnessScore activities #: 4
+⚡️  [log] - [ SpiritualFitness.js ] calculateSpiritualFitnessScore totalActivityPoints: 28
+⚡️  [log] - [ SpiritualFitness.js ] calculateSpiritualFitnessScore totalScore: 17.333333333333332
+⚡️  [log] - [ SpiritualFitness.js ] calculateSpiritualFitnessScore preciseScore: 17.33
+⚡️  [log] - [ Dashboard.js: 71 ] Dashboard newScore: 17.33
+⚡️  [log] - Light mode activated
+⚡️  [log] - Applying native theme: blue (#3b82f6) in light mode
+⚡️  [log] - Applied MUI theme to iOS components
+⚡️  [log] - Applied MUI theme to iOS native components: blue
