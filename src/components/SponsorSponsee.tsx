@@ -13,7 +13,10 @@ import {
   Tabs,
   Tab,
   ListItemText,
-  Checkbox
+  Checkbox,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import DatabaseService from '../services/DatabaseService';
@@ -579,6 +582,72 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
     );
   };
 
+  // SponsorInfoAccordion component for collapsible sponsor details
+  const SponsorInfoAccordion = ({ sponsor, theme, formatDateForDisplay }) => {
+    const hasInfo = sponsor.sobrietyDate || sponsor.notes;
+    
+    if (!hasInfo) {
+      return null;
+    }
+    
+    return (
+      <Accordion 
+        elevation={0}
+        sx={{ 
+          backgroundColor: 'transparent',
+          '&:before': { display: 'none' },
+          boxShadow: 'none'
+        }}
+      >
+        <AccordionSummary
+          expandIcon={<i className="fa-solid fa-chevron-down" style={{ color: theme.palette.text.secondary }}></i>}
+          sx={{
+            padding: 0,
+            minHeight: 'auto',
+            '& .MuiAccordionSummary-content': {
+              margin: '8px 0',
+            }
+          }}
+        >
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <i className="fa-solid fa-info-circle" style={{ color: theme.palette.primary.main, fontSize: '14px' }}></i>
+            <Typography variant="body2" sx={{ color: theme.palette.primary.main }}>
+              Additional Information
+            </Typography>
+          </Box>
+        </AccordionSummary>
+        <AccordionDetails sx={{ padding: '0 0 16px 0' }}>
+          <Box sx={{ pl: 2 }}>
+            {sponsor.sobrietyDate && (
+              <Box sx={{ mb: 2 }}>
+                <Typography variant="subtitle2" sx={{ color: theme.palette.text.secondary, mb: 0.5 }}>
+                  Sobriety Date
+                </Typography>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <i className="fa-solid fa-calendar-check" style={{ color: theme.palette.success.main, fontSize: '14px' }}></i>
+                  <Typography variant="body2" sx={{ color: theme.palette.text.primary }}>
+                    {formatDateForDisplay(sponsor.sobrietyDate)}
+                  </Typography>
+                </Box>
+              </Box>
+            )}
+            
+            {sponsor.notes && (
+              <Box>
+                <Typography variant="subtitle2" sx={{ color: theme.palette.text.secondary, mb: 0.5 }}>
+                  Notes
+                </Typography>
+                <Typography variant="body2" sx={{ color: theme.palette.text.primary, whiteSpace: 'pre-wrap' }}>
+                  {sponsor.notes}
+                </Typography>
+              </Box>
+            )}
+          </Box>
+        </AccordionDetails>
+      </Accordion>
+    );
+  };
+
   // Individual Sponsor Content Component
   function SponsorContent({ 
     sponsor, 
@@ -646,50 +715,55 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
             </Box>
           </Box>
           
-          <Box className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* Contact Information */}
-            <Box>
-              <Typography variant="subtitle2" sx={{ color: theme.palette.text.secondary, mb: 1 }}>
-                Contact Information
-              </Typography>
-              
-              <Box className="grid grid-cols-1 gap-2">
-                {sponsor.phone && (
-                  <Typography sx={{ color: theme.palette.text.primary, display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <i className="fa-solid fa-phone text-sm" style={{ color: theme.palette.text.secondary }}></i>
-                    {sponsor.phone}
-                  </Typography>
-                )}
-                
-                {sponsor.email && (
-                  <Typography sx={{ color: theme.palette.text.primary, display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <i className="fa-solid fa-envelope text-sm" style={{ color: theme.palette.text.secondary }}></i>
-                    {sponsor.email}
-                  </Typography>
-                )}
-                
-                {sponsor.sobrietyDate && (
-                  <Typography sx={{ color: theme.palette.text.primary, display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <i className="fa-solid fa-calendar-check text-sm" style={{ color: theme.palette.text.secondary }}></i>
-                    {formatDateForDisplay(sponsor.sobrietyDate)}
-                  </Typography>
-                )}
-              </Box>
-            </Box>
-            
-            {/* Notes Section */}
-            {sponsor.notes && (
-              <Box>
-                <Typography variant="subtitle2" sx={{ color: theme.palette.text.secondary, mb: 1 }}>
-                  Notes
+          {/* Contact Information */}
+          <Typography variant="subtitle2" sx={{ color: theme.palette.text.secondary, mb: 2 }}>
+            Contact Information
+          </Typography>
+          
+          <Box sx={{ mb: 3 }}>
+            {sponsor.phone && (
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+                <IconButton 
+                  size="small" 
+                  component="a" 
+                  href={`tel:${sponsor.phone}`}
+                  sx={{ color: theme.palette.primary.main }}
+                >
+                  <i className="fa-solid fa-phone text-sm"></i>
+                </IconButton>
+                <IconButton 
+                  size="small" 
+                  component="a" 
+                  href={`sms:${sponsor.phone}`}
+                  sx={{ color: theme.palette.secondary.main }}
+                >
+                  <i className="fa-solid fa-message text-sm"></i>
+                </IconButton>
+                <Typography sx={{ color: theme.palette.text.primary, ml: 1 }}>
+                  {sponsor.phone}
                 </Typography>
-                
-                <Typography sx={{ color: theme.palette.text.primary, whiteSpace: 'pre-wrap' }}>
-                  {sponsor.notes}
+              </Box>
+            )}
+            
+            {sponsor.email && (
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+                <IconButton 
+                  size="small" 
+                  component="a" 
+                  href={`mailto:${sponsor.email}`}
+                  sx={{ color: theme.palette.primary.main }}
+                >
+                  <i className="fa-solid fa-envelope text-sm"></i>
+                </IconButton>
+                <Typography sx={{ color: theme.palette.text.primary, ml: 1 }}>
+                  {sponsor.email}
                 </Typography>
               </Box>
             )}
           </Box>
+
+          {/* Collapsible Info Section */}
+          <SponsorInfoAccordion sponsor={sponsor} theme={theme} formatDateForDisplay={formatDateForDisplay} />
         </Paper>
 
         {/* Sponsor Contacts Section */}
