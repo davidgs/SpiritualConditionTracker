@@ -548,14 +548,22 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
         {actionItems.map((actionItem) => (
           <Box 
             key={actionItem.id}
-            className="flex items-center justify-between py-1"
             sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              py: 0.5,
               '&:hover': {
                 backgroundColor: theme.palette.action.hover,
               }
             }}
           >
-            <Box className="flex items-center gap-2 flex-1">
+            <Box sx={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: 1, 
+              flex: 1 
+            }}>
               <Checkbox
                 checked={actionItem.completed === 1}
                 onChange={() => onToggle(actionItem.id)}
@@ -740,15 +748,13 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
           </Typography>
           
           <Box sx={{ mb: 3 }}>
-            {/* Debug sponsor data */}
-            {console.log('[SponsorSponsee.tsx] Sponsor data:', sponsor)}
             
-            {sponsor.phone && (
+            {sponsor.phoneNumber && (
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
                 <IconButton 
                   size="small" 
                   component="a" 
-                  href={`tel:${sponsor.phone}`}
+                  href={`tel:${sponsor.phoneNumber}`}
                   sx={{ color: theme.palette.primary.main }}
                 >
                   <i className="fa-solid fa-phone text-sm"></i>
@@ -756,13 +762,13 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
                 <IconButton 
                   size="small" 
                   component="a" 
-                  href={`sms:${sponsor.phone}`}
+                  href={`sms:${sponsor.phoneNumber}`}
                   sx={{ color: theme.palette.secondary.main }}
                 >
                   <i className="fa-solid fa-message text-sm"></i>
                 </IconButton>
                 <Typography sx={{ color: theme.palette.text.primary, ml: 1 }}>
-                  {sponsor.phone}
+                  {sponsor.phoneNumber}
                 </Typography>
               </Box>
             )}
@@ -784,7 +790,7 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
             )}
             
             {/* Show message if no contact info */}
-            {!sponsor.phone && !sponsor.email && (
+            {!sponsor.phoneNumber && !sponsor.phone && !sponsor.email && (
               <Typography variant="body2" sx={{ color: theme.palette.text.secondary, fontStyle: 'italic' }}>
                 No contact information available. Edit sponsor to add phone or email.
               </Typography>
