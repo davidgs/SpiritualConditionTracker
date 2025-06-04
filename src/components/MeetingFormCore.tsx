@@ -57,6 +57,7 @@ export default function MeetingFormCore({
   const [meetingAddress, setMeetingAddress] = useState('');
   
   const [location, setLocation] = useState(null);
+  const [onlineUrl, setOnlineUrl] = useState('');
   const [error, setError] = useState('');
   const [searchingLocation, setSearchingLocation] = useState(false);
   const [isHomeGroup, setIsHomeGroup] = useState(false);
@@ -179,7 +180,7 @@ export default function MeetingFormCore({
   };
 
   // Form validation
-  const isValid = meetingName.trim() && meetingSchedule.length > 0 && streetAddress.trim();
+  const isValid = meetingName.trim() && meetingSchedule.length > 0 ;
 
   // Handle form submission
   const handleSubmit = async (e?: React.FormEvent) => {
@@ -309,8 +310,6 @@ export default function MeetingFormCore({
               onChange={(e) => setStreetAddress(e.target.value)}
               placeholder="Street address*"
               size="medium"
-              error={!streetAddress.trim() && isSubmitting}
-              helperText={!streetAddress.trim() && isSubmitting ? "Street address is required" : ""}
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
