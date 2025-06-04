@@ -75,6 +75,7 @@ export default function MeetingFormCore({
       setState('');
       setZipCode('');
       setLocation(null);
+      setOnlineUrl('');
       setIsHomeGroup(false);
       setError('');
       return;
@@ -101,6 +102,7 @@ export default function MeetingFormCore({
     setState(meeting.state || '');
     setZipCode(meeting.zipCode || '');
     setLocation(meeting.coordinates || null);
+    setOnlineUrl(meeting.onlineUrl || '');
     setIsHomeGroup(meeting.isHomeGroup || false);
   }, [meeting]);
 
@@ -351,6 +353,24 @@ export default function MeetingFormCore({
             </Box>
           </Box>
         </Box>
+        
+        {/* Online Meeting URL - Show when any schedule item has online or hybrid location */}
+        {meetingSchedule.some(item => item.locationType === 'online' || item.locationType === 'hybrid') && (
+          <Box>
+            <Typography variant="body2" sx={{ mb: 1, fontWeight: 500 }}>
+              Meeting URL*
+            </Typography>
+            <TextField
+              fullWidth
+              value={onlineUrl}
+              onChange={(e) => setOnlineUrl(e.target.value)}
+              placeholder="https://zoom.us/j/... or meeting link"
+              size="medium"
+              error={!onlineUrl.trim() && isSubmitting && meetingSchedule.some(item => item.locationType === 'online' || item.locationType === 'hybrid')}
+              helperText={!onlineUrl.trim() && isSubmitting && meetingSchedule.some(item => item.locationType === 'online' || item.locationType === 'hybrid') ? "Meeting URL is required for online/hybrid meetings" : ""}
+            />
+          </Box>
+        )}
         
         {/* Home Group Checkbox */}
         <FormControlLabel
