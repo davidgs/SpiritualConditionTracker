@@ -397,6 +397,7 @@ async function createTables(sqlite) {
         lastName TEXT,
         phoneNumber TEXT,
         email TEXT,
+        sobrietyDate TEXT,
         notes TEXT,
         sponsorType TEXT DEFAULT 'sponsor',
         createdAt TEXT,
