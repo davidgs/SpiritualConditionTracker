@@ -100,7 +100,7 @@ export default function ActivityLog({ setCurrentView, onSave, onSaveMeeting, act
     console.log("[ ActivityLog.js ] Form submission - date value:", date);
     
     // Validate form
-    const newErrors = {};
+    const newErrors: Record<string, string> = {};
     if (!activityType) newErrors.activityType = 'Activity type is required';
     if (!duration) newErrors.duration = 'Duration is required';
     if (!date) newErrors.date = 'Date is required';
@@ -139,13 +139,19 @@ export default function ActivityLog({ setCurrentView, onSave, onSaveMeeting, act
       notes: notes.trim(),
       // Initialize all expanded schema fields with defaults
       meetingName: '',
-      wasChair: false,
-      wasShare: false,
-      wasSpeaker: false,
+      meetingId: null,
+      wasChair: 0,
+      wasShare: 0,
+      wasSpeaker: 0,
       literatureTitle: '',
+      isSponsorCall: 0,
+      isSponseeCall: 0,
+      isAAMemberCall: 0,
+      callType: '',
       stepNumber: null,
       personCalled: '',
       serviceType: '',
+      completed: 0
     };
     
     // Add activity-specific fields
@@ -154,49 +160,32 @@ export default function ActivityLog({ setCurrentView, onSave, onSaveMeeting, act
     }
     
     if (activityType === 'meeting') {
-      // Store meeting-related info in the 'notes' field as JSON to avoid schema issues
-      const meetingInfo = {
-        meetingName: meetingName.trim(),
-        wasChair: wasChair,
-        wasShare: wasShare,
-        wasSpeaker: wasSpeaker,
-        meetingId: selectedMeetingId || null
-      };
-      
-      // Append meeting info to notes instead of using separate fields
-      newActivity.notes = JSON.stringify(meetingInfo);
-      
-      // Also include the meeting name in the notes field for display
-      if (meetingName) {
-        newActivity.notes = `Meeting: ${meetingName.trim()}\n${newActivity.notes || ''}`;
-      }
+      // Use the new dedicated database columns
+      newActivity.meetingName = meetingName.trim();
+      newActivity.wasChair = wasChair ? 1 : 0;
+      newActivity.wasShare = wasShare ? 1 : 0;
+      newActivity.wasSpeaker = wasSpeaker ? 1 : 0;
+      newActivity.meetingId = selectedMeetingId || null;
     }
     
     if (activityType === 'call') {
-      // Store call-related info in notes field as JSON to avoid schema issues
-      const callInfo = {
-        isSponsorCall: isSponsorCall,
-        isSponseeCall: isSponseeCall, 
-        isAAMemberCall: isAAMemberCall
-      };
+      // Use the new dedicated database columns
+      newActivity.isSponsorCall = isSponsorCall ? 1 : 0;
+      newActivity.isSponseeCall = isSponseeCall ? 1 : 0;
+      newActivity.isAAMemberCall = isAAMemberCall ? 1 : 0;
       
-      // Determine the call type label for display
-      let callTypeLabel = 'Phone Call';
+      // Determine the call type for database storage
       if (isSponsorCall && !isSponseeCall && !isAAMemberCall) {
-        callTypeLabel = 'Call with Sponsor';
+        newActivity.callType = 'sponsor';
       } else if (!isSponsorCall && isSponseeCall && !isAAMemberCall) {
-        callTypeLabel = 'Call with Sponsee';
+        newActivity.callType = 'sponsee';
       } else if (!isSponsorCall && !isSponseeCall && isAAMemberCall) {
-        callTypeLabel = 'Call with AA Member';
+        newActivity.callType = 'aa_call';
       } else if (isSponsorCall || isSponseeCall || isAAMemberCall) {
-        callTypeLabel = 'Multiple Call Types';
+        newActivity.callType = 'multiple';
+      } else {
+        newActivity.callType = 'general';
       }
-      
-      // Append call info to notes
-      newActivity.notes = `${callTypeLabel}\n${newActivity.notes || ''}`;
-      
-      // Also save the callInfo in notes as JSON for potential future use
-      newActivity.notes += `\n${JSON.stringify(callInfo)}`;
     }
     
     console.log("[ ActivityLog.js ] Saving activity:", newActivity);

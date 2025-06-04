@@ -355,6 +355,20 @@ async function createTables(sqlite) {
         notes TEXT,
         location TEXT,
         duration INTEGER,
+        meetingName TEXT,
+        meetingId INTEGER,
+        wasChair INTEGER DEFAULT 0,
+        wasShare INTEGER DEFAULT 0,
+        wasSpeaker INTEGER DEFAULT 0,
+        literatureTitle TEXT,
+        isSponsorCall INTEGER DEFAULT 0,
+        isSponseeCall INTEGER DEFAULT 0,
+        isAAMemberCall INTEGER DEFAULT 0,
+        callType TEXT,
+        stepNumber INTEGER,
+        personCalled TEXT,
+        serviceType TEXT,
+        completed INTEGER DEFAULT 0,
         createdAt TEXT,
         updatedAt TEXT
       )
@@ -379,6 +393,10 @@ async function createTables(sqlite) {
         state TEXT,
         zipCode TEXT,
         coordinates TEXT,
+        phoneNumber TEXT,
+        onlineUrl TEXT,
+        isHomeGroup INTEGER DEFAULT 0,
+        types TEXT,
         createdAt TEXT,
         updatedAt TEXT
       )

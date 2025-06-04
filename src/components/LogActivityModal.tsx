@@ -171,12 +171,27 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
     }
     
     // Create new activity object with core fields (let SQLite auto-generate the ID)
-    const newActivity = {
+    const newActivity: any = {
       type: activityType,
       duration: parseInt(duration, 10),
       date: new Date(`${date}T12:00:00`).toISOString(), // Convert to full ISO format
       notes: (notes || '').trim(),
-      location: 'completed' // Mark all logged activities as completed so they appear in the activity list
+      location: 'completed', // Mark all logged activities as completed so they appear in the activity list
+      // Initialize all database fields with defaults
+      meetingName: '',
+      meetingId: null,
+      wasChair: 0,
+      wasShare: 0,
+      wasSpeaker: 0,
+      literatureTitle: '',
+      isSponsorCall: 0,
+      isSponseeCall: 0,
+      isAAMemberCall: 0,
+      callType: '',
+      stepNumber: null,
+      personCalled: '',
+      serviceType: '',
+      completed: 1
     };
     
   //  console.log('[ LogActivityModal.tsx:179 handleSubmit ] Created activity with ISO date:', newActivity.date);
@@ -189,9 +204,9 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
     
     if (activityType === 'meeting') {
       newActivity.meetingName = (meetingName || '').trim();
-      newActivity.wasChair = wasChair;
-      newActivity.wasShare = wasShare;
-      newActivity.wasSpeaker = wasSpeaker;
+      newActivity.wasChair = wasChair ? 1 : 0;
+      newActivity.wasShare = wasShare ? 1 : 0;
+      newActivity.wasSpeaker = wasSpeaker ? 1 : 0;
       
       // Include meeting ID if one was selected
       if (selectedMeetingId) {
@@ -200,9 +215,9 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
     }
     
     if (activityType === 'call') {
-      newActivity.isSponsorCall = isSponsorCall;
-      newActivity.isSponseeCall = isSponseeCall;
-      newActivity.isAAMemberCall = isAAMemberCall;
+      newActivity.isSponsorCall = isSponsorCall ? 1 : 0;
+      newActivity.isSponseeCall = isSponseeCall ? 1 : 0;
+      newActivity.isAAMemberCall = isAAMemberCall ? 1 : 0;
       
       // Determine the actual type for filtering/display purposes
       if (isSponsorCall && !isSponseeCall && !isAAMemberCall) {
