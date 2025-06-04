@@ -62,10 +62,7 @@ class DatabaseService {
       const sqliteDb = await initSQLiteDatabase();
       console.log('[ DatabaseService: 55 ] SQLite database initialized successfully');
 
-      // Assign database interface to window.db
-      window.db = sqliteDb;
-      
-      // Store database reference in service
+      // Store database reference in service - NEVER use window.db
       this.database = sqliteDb;
 
       // Verify database is accessible
@@ -364,7 +361,7 @@ class DatabaseService {
 
   async updateActionItem(id: string | number, updates: Partial<ActionItem>): Promise<ActionItem | null> {
     return this.executeOperation(async () => {
-      return await window.db.update('action_items', id, updates);
+      return await this.database.update('action_items', id, updates);
     });
   }
 

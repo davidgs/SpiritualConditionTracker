@@ -2,15 +2,18 @@
  * Database Preferences Fix Utility
  * Repairs corrupted user preferences in the database
  */
+import DatabaseService from '../services/DatabaseService';
 
 export async function fixCorruptedPreferences() {
   try {
-    if (!window.db) {
-      throw new Error('Database not initialized');
+    const databaseService = DatabaseService.getInstance();
+    
+    if (databaseService.getStatus() !== 'ready') {
+      throw new Error('Database not ready');
     }
 
     // Get all users
-    const users = await window.db.getAll('users');
+    const users = await databaseService.getAllUsers();
     console.log('Found users to fix:', users.length);
 
     for (const user of users) {
@@ -59,7 +62,7 @@ export async function fixCorruptedPreferences() {
         if (needsUpdate) {
           console.log(`Fixing preferences for user ${user.id}:`, fixedPreferences);
           
-          await window.db.update('users', user.id, {
+          await databaseService.updateUser(user.id, {
             preferences: fixedPreferences
           });
           
