@@ -21,7 +21,6 @@ export default function SponsorFormDialog({ open, onClose, onSubmit, initialData
   const [lastName, setLastName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [email, setEmail] = useState('');
-  const [sobrietyDate, setSobrietyDate] = useState('');
   const [notes, setNotes] = useState('');
   const [errors, setErrors] = useState({});
   
@@ -46,7 +45,6 @@ export default function SponsorFormDialog({ open, onClose, onSubmit, initialData
       setLastName(initialData.lastName || '');
       setPhoneNumber(initialData.phoneNumber || initialData.phone || '');
       setEmail(initialData.email || '');
-      setSobrietyDate(initialData.sobrietyDate ? initialData.sobrietyDate.split('T')[0] : '');
       setNotes(initialData.notes || '');
     } else {
       // Reset form for new entry
@@ -60,7 +58,6 @@ export default function SponsorFormDialog({ open, onClose, onSubmit, initialData
     setLastName('');
     setPhoneNumber('');
     setEmail('');
-    setSobrietyDate('');
     setNotes('');
     setErrors({});
   };
@@ -89,7 +86,6 @@ export default function SponsorFormDialog({ open, onClose, onSubmit, initialData
       lastName: lastName.trim(),
       phoneNumber,
       email: email.trim(),
-      sobrietyDate: sobrietyDate ? new Date(sobrietyDate).toISOString() : '',
       notes: notes.trim()
     };
     
@@ -221,31 +217,6 @@ export default function SponsorFormDialog({ open, onClose, onSubmit, initialData
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            size="medium"
-            margin="none"
-            sx={{ 
-              mb: 2,
-              '& .MuiOutlinedInput-root': { 
-                height: 56,
-                borderRadius: 2
-              },
-              '& .MuiOutlinedInput-input': {
-                fontSize: 16,
-                padding: '15px 14px'
-              }
-            }}
-          />
-          
-          {/* Sobriety Date */}
-          <Box sx={{ color: theme.palette.text.secondary, fontSize: '14px', mb: '4px' }}>
-            Sobriety Date
-          </Box>
-          <TextField
-            fullWidth
-            variant="outlined"
-            type="date"
-            value={sobrietyDate}
-            onChange={(e) => setSobrietyDate(e.target.value)}
             size="medium"
             margin="none"
             sx={{ 
