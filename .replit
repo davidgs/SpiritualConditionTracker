@@ -22,7 +22,7 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "npm run dev"
+args = "npx webpack --mode production && npx serve dist -s -l 5000"
 waitForPort = 5000
 
 [deployment]

@@ -8,13 +8,30 @@ import {
 import { ActionItemsList } from './ActionItemsList';
 import { formatDateForDisplay } from '../utils/dateUtils';
 
+// Contact type information helper function
+const getContactTypeInfo = (type: string) => {
+  switch (type) {
+    case 'call':
+      return { icon: 'fa-solid fa-phone', label: 'Phone Call' };
+    case 'meeting':
+      return { icon: 'fa-solid fa-users', label: 'Meeting' };
+    case 'text':
+      return { icon: 'fa-solid fa-message', label: 'Text Message' };
+    case 'email':
+      return { icon: 'fa-solid fa-envelope', label: 'Email' };
+    default:
+      return { icon: 'fa-solid fa-comment', label: 'Contact' };
+  }
+};
+
 interface Contact {
   id: number;
-  name: string;
+  name?: string;
   lastName?: string;
   phoneNumber?: string;
   email?: string;
-  notes?: string;
+  note?: string;
+  topic?: string;
   type: string;
   date: string;
   duration?: number;
@@ -33,133 +50,79 @@ export const ContactCard: React.FC<ContactCardProps> = ({
   refreshKey,
   onContactClick
 }) => {
+  const contactTypeInfo = getContactTypeInfo(contact.type);
+  
   return (
-    <ListItem 
-      key={contact.id}
+    <ListItem
+      className="rounded-lg border border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
       sx={{
-        flexDirection: 'column',
-        alignItems: 'stretch',
-        backgroundColor: theme.palette.background.paper,
+        backgroundColor: theme.palette.background.default,
+        mb: 1,
+        p: 2,
         borderRadius: 2,
-        mb: 2,
         border: `1px solid ${theme.palette.divider}`,
         '&:hover': {
           backgroundColor: theme.palette.action.hover,
-        }
+        },
+        cursor: 'pointer'
+      }}
+      onClick={() => {
+        console.log('[ContactCard.tsx] Contact clicked:', contact);
+        onContactClick(contact);
       }}
     >
-      <Box sx={{ 
-        display: 'flex', 
-        justifyContent: 'space-between', 
-        alignItems: 'flex-start',
-        width: '100%',
-        p: 2 
-      }}>
-        <Box sx={{ flex: 1 }}>
-          <Typography 
-            variant="h6" 
-            sx={{ 
-              color: theme.palette.text.primary,
-              fontWeight: 600,
-              mb: 1 
-            }}
-          >
-            {contact.name} {contact.lastName || ''}
-          </Typography>
-          
-          <Typography 
-            variant="body2" 
-            sx={{ 
-              color: theme.palette.text.secondary,
-              mb: 0.5 
-            }}
-          >
-            {formatDateForDisplay(contact.date)}
-          </Typography>
-          
-          {contact.type && (
-            <Typography 
-              variant="body2" 
-              sx={{ 
-                color: theme.palette.primary.main,
-                textTransform: 'capitalize',
-                mb: 0.5 
-              }}
-            >
-              Type: {contact.type}
+      <Box sx={{ width: '100%' }}>
+        <Box sx={{ 
+          display: 'flex', 
+          justifyContent: 'space-between', 
+          alignItems: 'center', 
+          mb: 2 
+        }}>
+          <Box sx={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: 1 
+          }}>
+            <i className={contactTypeInfo.icon} style={{ color: theme.palette.text.secondary }}></i>
+            <Typography variant="body2" sx={{ color: theme.palette.text.secondary }}>
+              {contactTypeInfo.label}
             </Typography>
-          )}
+          </Box>
           
-          {contact.phoneNumber && (
-            <Typography 
-              variant="body2" 
-              sx={{ 
-                color: theme.palette.text.secondary,
-                mb: 0.5 
-              }}
-            >
-              Phone: {contact.phoneNumber}
+          <Box sx={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: 0.5 
+          }}>
+            <i className="fa-solid fa-calendar" style={{ color: theme.palette.text.secondary, fontSize: '12px' }}></i>
+            <Typography variant="body2" sx={{ color: theme.palette.text.secondary }}>
+              {formatDateForDisplay(contact.date)}
             </Typography>
-          )}
-          
-          {contact.email && (
-            <Typography 
-              variant="body2" 
-              sx={{ 
-                color: theme.palette.text.secondary,
-                mb: 0.5 
-              }}
-            >
-              Email: {contact.email}
-            </Typography>
-          )}
-          
-          {contact.notes && (
-            <Typography 
-              variant="body2" 
-              sx={{ 
-                color: theme.palette.text.secondary,
-                fontStyle: 'italic',
-                mb: 0.5 
-              }}
-            >
-              Notes: {contact.notes}
-            </Typography>
-          )}
-          
-          {contact.duration && (
-            <Typography 
-              variant="body2" 
-              sx={{ 
-                color: theme.palette.text.secondary 
-              }}
-            >
-              Duration: {contact.duration} minutes
-            </Typography>
-          )}
-          
-          {/* Action Items for this contact */}
-          <ActionItemsList 
-            contactId={contact.id}
-            theme={theme}
-            refreshKey={refreshKey}
-          />
+          </Box>
         </Box>
         
-        <IconButton 
-          onClick={(e) => {
-            e.stopPropagation();
-            onContactClick(contact);
-          }}
-          sx={{ 
-            color: theme.palette.text.secondary,
-            '&:hover': {
-              color: theme.palette.primary.main,
-            }
-          }}
-        >
-          <i className="fa-solid fa-edit"></i>
-        </IconButton>
+        <Typography variant="body1" sx={{ color: theme.palette.text.primary, mb: 1 }}>
+          {contact.note}
+        </Typography>
+        
+        {contact.topic && (
+          <Typography variant="body2" sx={{ color: theme.palette.text.secondary, mb: 1 }}>
+            Topic: {contact.topic}
+          </Typography>
+        )}
+        
+        {contact.duration && (
+          <Typography variant="body2" sx={{ color: theme.palette.text.secondary }}>
+            Duration: {contact.duration} minutes
+          </Typography>
+        )}
+        
+        {/* Action Items for this contact */}
+        <ActionItemsList 
+          contactId={contact.id}
+          theme={theme}
+          refreshKey={refreshKey}
+        />
       </Box>
     </ListItem>
   );

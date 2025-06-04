@@ -758,85 +758,15 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
             </Box>
           ) : (
             <List className="space-y-3">
-              {contactsForSponsor.map((contact, index) => {
-                const contactTypeInfo = getContactTypeInfo(contact.type);
-                
-                return (
-                  <ListItem
-                    key={contact.id || index}
-                    className="rounded-lg border border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-                    sx={{
-                      backgroundColor: theme.palette.background.default,
-                      mb: 1,
-                      p: 2,
-                      borderRadius: 2,
-                      border: `1px solid ${theme.palette.divider}`,
-                      '&:hover': {
-                        backgroundColor: theme.palette.action.hover,
-                      },
-                      cursor: 'pointer'
-                    }}
-                    onClick={() => {
-                      console.log('[SponsorSponsee.tsx:598] Contact clicked:', contact);
-                      handleEditContact(contact);
-                    }}
-                  >
-                    <Box sx={{ width: '100%' }}>
-                      <Box sx={{ 
-                        display: 'flex', 
-                        justifyContent: 'space-between', 
-                        alignItems: 'center', 
-                        mb: 2 
-                      }}>
-                        <Box sx={{ 
-                          display: 'flex', 
-                          alignItems: 'center', 
-                          gap: 1 
-                        }}>
-                          <i className={contactTypeInfo.icon} style={{ color: theme.palette.text.secondary }}></i>
-                          <Typography variant="body2" sx={{ color: theme.palette.text.secondary }}>
-                            {contactTypeInfo.label}
-                          </Typography>
-                        </Box>
-                        
-                        <Box sx={{ 
-                          display: 'flex', 
-                          alignItems: 'center', 
-                          gap: 0.5 
-                        }}>
-                          <i className="fa-solid fa-calendar" style={{ color: theme.palette.text.secondary, fontSize: '12px' }}></i>
-                          <Typography variant="body2" sx={{ color: theme.palette.text.secondary }}>
-                            {formatDateForDisplay(contact.date)}
-                          </Typography>
-                        </Box>
-                      </Box>
-                      
-                      <Typography variant="body1" sx={{ color: theme.palette.text.primary, mb: 1 }}>
-                        {contact.note}
-                      </Typography>
-                      
-                      {contact.topic && (
-                        <Typography variant="body2" sx={{ color: theme.palette.text.secondary, mb: 1 }}>
-                          Topic: {contact.topic}
-                        </Typography>
-                      )}
-                      
-                      {contact.duration && (
-                        <Typography variant="body2" sx={{ color: theme.palette.text.secondary }}>
-                          Duration: {contact.duration} minutes
-                        </Typography>
-                      )}
-                      
-                      {/* Action Items for this contact */}
-                      <ActionItemsList 
-                        contactId={contact.id}
-                        theme={theme}
-                        refreshKey={refreshKey}
-                      />
-                    </Box>
-                  </ListItem>
-                );
-              })}
+              {contactsForSponsor.map((contact, index) => (
+                <ContactCard
+                  key={contact.id || index}
+                  contact={contact}
+                  theme={theme}
+                  refreshKey={refreshKey}
+                  onContactClick={handleEditContact}
+                />
+              ))}
             </List>
           )}
         </Paper>
