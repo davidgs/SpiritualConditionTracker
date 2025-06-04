@@ -499,6 +499,86 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
     );
   }
 
+  // ActionItemsSection component for displaying action items in contact cards
+  const ActionItemsSection = ({ contact, theme, onToggle, onDelete }) => {
+    const [actionItems, setActionItems] = React.useState([]);
+    
+    React.useEffect(() => {
+      const loadActionItems = async () => {
+        if (contact && contact.id) {
+          const items = await getActionItemsForContact(contact.id);
+          setActionItems(items);
+        }
+      };
+      loadActionItems();
+    }, [contact, refreshKey]);
+    
+    if (!actionItems || actionItems.length === 0) {
+      return null;
+    }
+    
+    return (
+      <Box sx={{ mt: 2, pt: 2, borderTop: `1px solid ${theme.palette.divider}` }}>
+        <Typography variant="subtitle2" sx={{ color: theme.palette.text.secondary, mb: 1 }}>
+          Action Items
+        </Typography>
+        
+        {actionItems.map((actionItem) => (
+          <Box 
+            key={actionItem.id}
+            className="flex items-center justify-between py-1"
+            sx={{
+              '&:hover': {
+                backgroundColor: theme.palette.action.hover,
+              }
+            }}
+          >
+            <Box className="flex items-center gap-2 flex-1">
+              <Checkbox
+                checked={actionItem.completed === 1}
+                onChange={() => onToggle(actionItem.id)}
+                size="small"
+                sx={{
+                  color: theme.palette.text.secondary,
+                  '&.Mui-checked': {
+                    color: theme.palette.success.main,
+                  }
+                }}
+              />
+              
+              <Typography 
+                variant="body2" 
+                sx={{ 
+                  color: actionItem.completed === 1 ? theme.palette.success.main : theme.palette.text.primary,
+                  textDecoration: actionItem.completed === 1 ? 'line-through' : 'none',
+                  opacity: actionItem.completed === 1 ? 0.7 : 1
+                }}
+              >
+                {actionItem.title}
+              </Typography>
+            </Box>
+            
+            <IconButton 
+              size="small" 
+              onClick={(e) => {
+                e.stopPropagation();
+                onDelete(actionItem.id);
+              }}
+              sx={{ 
+                color: theme.palette.error.main,
+                '&:hover': {
+                  backgroundColor: theme.palette.error.light + '20',
+                }
+              }}
+            >
+              <i className="fa-solid fa-times text-xs"></i>
+            </IconButton>
+          </Box>
+        ))}
+      </Box>
+    );
+  };
+
   // Individual Sponsor Content Component
   function SponsorContent({ 
     sponsor, 
@@ -678,7 +758,7 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
                     }}
                   >
                     <Box className="w-full">
-                      <Box className="flex justify-between items-start mb-2">
+                      <Box className="flex justify-between items-center mb-2">
                         <Box className="flex items-center gap-2">
                           <i className={contactTypeInfo.icon} style={{ color: theme.palette.text.secondary }}></i>
                           <Typography variant="body2" sx={{ color: theme.palette.text.secondary }}>
@@ -686,9 +766,12 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
                           </Typography>
                         </Box>
                         
-                        <Typography variant="body2" sx={{ color: theme.palette.text.secondary }}>
-                          {formatDateForDisplay(contact.date)}
-                        </Typography>
+                        <Box className="flex items-center gap-1">
+                          <i className="fa-solid fa-calendar" style={{ color: theme.palette.text.secondary, fontSize: '12px' }}></i>
+                          <Typography variant="body2" sx={{ color: theme.palette.text.secondary }}>
+                            {formatDateForDisplay(contact.date)}
+                          </Typography>
+                        </Box>
                       </Box>
                       
                       <Typography variant="body1" sx={{ color: theme.palette.text.primary, mb: 1 }}>
@@ -708,71 +791,12 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
                       )}
                       
                       {/* Action Items for this contact */}
-                      {(() => {
-                        // For now, don't show action items in the contact cards since we need async data
-                        // This will be handled by a separate state management solution
-                        const actionItems = [];
-                        return actionItems.length > 0 && (
-                          <Box className="mt-3 pt-2 border-t border-gray-200 dark:border-gray-600">
-                            <Typography variant="subtitle2" sx={{ color: theme.palette.text.secondary, mb: 1 }}>
-                              Action Items:
-                            </Typography>
-                            
-                            {actionItems.map((actionItem) => (
-                              <Box 
-                                key={actionItem.id}
-                                className="flex items-center justify-between py-1"
-                                sx={{
-                                  '&:hover': {
-                                    backgroundColor: theme.palette.action.hover,
-                                  }
-                                }}
-                              >
-                                <Box className="flex items-center gap-2 flex-1">
-                                  <Checkbox
-                                    checked={actionItem.completed === 1}
-                                    onChange={() => handleToggleActionItem(actionItem.id)}
-                                    size="small"
-                                    sx={{
-                                      color: theme.palette.text.secondary,
-                                      '&.Mui-checked': {
-                                        color: theme.palette.primary.main,
-                                      }
-                                    }}
-                                  />
-                                  
-                                  <Typography 
-                                    variant="body2" 
-                                    sx={{ 
-                                      color: theme.palette.text.primary,
-                                      textDecoration: actionItem.completed === 1 ? 'line-through' : 'none',
-                                      opacity: actionItem.completed === 1 ? 0.7 : 1
-                                    }}
-                                  >
-                                    {actionItem.title}
-                                  </Typography>
-                                </Box>
-                                
-                                <IconButton 
-                                  size="small" 
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleDeleteActionItem(actionItem.id);
-                                  }}
-                                  sx={{ 
-                                    color: theme.palette.error.main,
-                                    '&:hover': {
-                                      backgroundColor: theme.palette.error.light + '20',
-                                    }
-                                  }}
-                                >
-                                  <i className="fa-solid fa-trash text-xs"></i>
-                                </IconButton>
-                              </Box>
-                            ))}
-                          </Box>
-                        );
-                      })()}
+                      <ActionItemsSection 
+                        contact={contact}
+                        theme={theme}
+                        onToggle={handleToggleActionItem}
+                        onDelete={handleDeleteActionItem}
+                      />
                     </Box>
                   </ListItem>
                 );
@@ -883,7 +907,15 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
             </TabPanel>
           </Box>
         ) : (
-          <Box className="text-center py-6">
+          <Box sx={{ 
+            textAlign: 'center', 
+            py: 6, 
+            px: 3,
+            margin: '16px',
+            backgroundColor: theme.palette.background.paper,
+            borderRadius: '8px',
+            border: `1px solid ${theme.palette.divider}`
+          }}>
             <Typography variant="body1" sx={{ color: theme.palette.text.primary, mb: 3 }}>
               You haven't added your sponsor yet.
             </Typography>
