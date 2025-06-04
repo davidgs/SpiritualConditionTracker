@@ -138,29 +138,28 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
     console.log('[ SponsorSponsee ] Checkbox clicked for item id:', actionItemId);
     
     try {
-      // Check if activities is null or undefined
-      if (!activities || !Array.isArray(activities)) {
-        console.error('Activities is null or not an array');
-        return;
-      }
+      const databaseService = DatabaseService.getInstance();
       
-      // Find the activity in the activities list
-      const activity = activities.find(act => act.id === actionItemId);
-      if (!activity) {
-        console.error('Activity not found for ID:', actionItemId);
+      // Get all action items to find the one we're updating
+      const allActionItems = await databaseService.getAll('action_items');
+      const actionItem = allActionItems.find(item => item.id === actionItemId);
+      
+      if (!actionItem) {
+        console.error('Action item not found for ID:', actionItemId);
         return;
       }
       
       // Toggle completion status
-      const updatedActivity = {
-        ...activity,
-        completed: activity.completed === 1 ? 0 : 1
+      const updatedActionItem = {
+        ...actionItem,
+        completed: actionItem.completed === 1 ? 0 : 1,
+        updatedAt: new Date().toISOString()
       };
       
-      console.log('Toggling completion for activity:', updatedActivity);
+      console.log('Toggling completion for action item:', updatedActionItem);
       
-      // Save the updated activity
-      await onSaveActivity(updatedActivity);
+      // Update the action item in the database
+      await databaseService.update('action_items', actionItemId, updatedActionItem);
       
       // Refresh to get updated data
       setRefreshKey(prev => prev + 1);
@@ -171,20 +170,20 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
   };
   
   // Delete action item
-  const handleDeleteActionItem = (actionItemId) => {
-    // Find the action item in activities list and mark as deleted
-    const activity = activities.find(act => act.id === actionItemId);
-    if (activity) {
-      const deletedActivity = {
-        ...activity,
-        deleted: true
-      };
+  const handleDeleteActionItem = async (actionItemId) => {
+    try {
+      const databaseService = DatabaseService.getInstance();
       
-      // Save the deleted status
-      onSaveActivity(deletedActivity);
+      // Delete the action item from the database
+      await databaseService.remove('action_items', actionItemId);
+      
+      console.log('Deleted action item with ID:', actionItemId);
       
       // Refresh to get updated data
       setRefreshKey(prev => prev + 1);
+      
+    } catch (error) {
+      console.error('Error deleting action item:', error);
     }
   };
   
