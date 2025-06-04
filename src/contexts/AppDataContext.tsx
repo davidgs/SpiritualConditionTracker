@@ -559,26 +559,31 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
     try {
       console.log('[ AppDataContext.tsx:405 ] Starting complete app reset...');
       
-      // Reset React state
+      // Reset React state first
       dispatch({ type: 'RESET_ALL_DATA' });
       
-      // Set loading state to show we're reinitializing
+      // Set loading state to show we're resetting
       dispatch({ type: 'SET_LOADING', payload: true });
       
+      // CRITICAL: Actually reset the database by dropping and recreating tables
+      console.log('[ AppDataContext.tsx:415 ] Calling DatabaseService.resetAllData to drop and recreate all tables...');
+      await databaseService.resetAllData();
+      console.log('[ AppDataContext.tsx:417 ] Database tables dropped and recreated successfully');
+      
       // Reset and reinitialize the database service
-      console.log('[ AppDataContext.tsx:415 ] Resetting database service state...');
+      console.log('[ AppDataContext.tsx:423 ] Resetting database service state...');
       databaseService.resetInitialization();
       
-      console.log('[ AppDataContext.tsx:418 ] Reinitializing database service...');
+      console.log('[ AppDataContext.tsx:426 ] Reinitializing database service...');
       await databaseService.initialize();
       
-      // Reload all initial data
-      console.log('[ AppDataContext.tsx:422 ] Reloading all data after reset...');
+      // Reload all initial data (should be empty now)
+      console.log('[ AppDataContext.tsx:430 ] Reloading all data after reset...');
       await loadInitialData();
       
-      console.log('[ AppDataContext.tsx:420 ] Complete app reset finished');
+      console.log('[ AppDataContext.tsx:433 ] Complete app reset finished');
     } catch (error) {
-      console.error('[ AppDataContext.tsx:422 ] Failed to reset data:', error);
+      console.error('[ AppDataContext.tsx:435 ] Failed to reset data:', error);
       dispatch({ type: 'SET_ERROR', payload: 'Failed to reset data' });
       dispatch({ type: 'SET_LOADING', payload: false });
     }

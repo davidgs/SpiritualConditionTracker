@@ -18,6 +18,7 @@ export interface DatabaseOperation {
 class DatabaseService {
   private static instance: DatabaseService;
   private status: DatabaseStatus = 'initializing';
+  private database: any = null;
   private operationQueue: DatabaseOperation[] = [];
   private statusCallbacks: ((status: DatabaseStatus) => void)[] = [];
   private initializationPromise: Promise<void> | null = null;
@@ -36,6 +37,7 @@ class DatabaseService {
    */
   resetInitialization(): void {
     this.initializationPromise = null;
+    this.database = null;
     this.setStatus('initializing');
   }
 
@@ -62,9 +64,12 @@ class DatabaseService {
 
       // Assign database interface to window.db
       window.db = sqliteDb;
+      
+      // Store database reference in service
+      this.database = sqliteDb;
 
       // Verify database is accessible
-      if (!window.db || !window.db.getAll) {
+      if (!this.database || !this.database.getAll) {
         throw new Error('Database interface not properly initialized: 59');
       }
 
@@ -174,26 +179,26 @@ class DatabaseService {
 
   async getAllUsers(): Promise<User[]> {
     return this.executeOperation(async () => {
-      const users = await window.db.getAll('users');
+      const users = await this.database.getAll('users');
       return users || [];
     });
   }
 
   async addUser(user: Omit<User, 'id' | 'createdAt' | 'updatedAt'>): Promise<User> {
     return this.executeOperation(async () => {
-      return await window.db.add('users', user);
+      return await this.database.add('users', user);
     });
   }
 
   async updateUser(id: string | number, updates: Partial<User>): Promise<User | null> {
     return this.executeOperation(async () => {
-      return await window.db.update('users', id, updates);
+      return await this.database.update('users', id, updates);
     });
   }
 
   async getAllActivities(): Promise<Activity[]> {
     return this.executeOperation(async () => {
-      const activities = await window.db.getAll('activities');
+      const activities = await this.database.getAll('activities');
       return activities || [];
     });
   }
@@ -201,11 +206,11 @@ class DatabaseService {
   async addActivity(activity: Omit<Activity, 'id' | 'createdAt' | 'updatedAt'>): Promise<Activity> {
     return this.executeOperation(async () => {
       console.log('[ DatabaseService.ts:261 addActivity ] Received activity:', JSON.stringify(activity, null, 2));
-      console.log('[ DatabaseService.ts:262 addActivity ] Calling window.db.add...');
+      console.log('[ DatabaseService.ts:262 addActivity ] Calling this.database.add...');
       
-      const result = await window.db.add('activities', activity);
+      const result = await this.database.add('activities', activity);
       
-      console.log('[ DatabaseService.ts:266 addActivity ] window.db.add returned:', JSON.stringify(result, null, 2));
+      console.log('[ DatabaseService.ts:266 addActivity ] this.database.add returned:', JSON.stringify(result, null, 2));
       return result;
     });
   }
@@ -213,7 +218,7 @@ class DatabaseService {
   async updateActivity(id: string | number, updates: Partial<Activity>): Promise<Activity | null> {
     return this.executeOperation(async () => {
       console.log('[ DatabaseService.ts updateActivity ] Updating activity with ID:', id, 'updates:', updates);
-      const result = await window.db.update('activities', id, updates);
+      const result = await this.database.update('activities', id, updates);
       console.log('[ DatabaseService.ts updateActivity ] Update result:', result);
       return result;
     });
@@ -365,7 +370,23 @@ class DatabaseService {
 
   async deleteActionItem(itemId: string | number): Promise<boolean> {
     return this.executeOperation(async () => {
-      return await window.db.remove('action_items', itemId);
+      return await this.database.remove('action_items', itemId);
+    });
+  }
+
+  // Database reset method
+  async resetAllData(): Promise<void> {
+    return this.executeOperation(async () => {
+      console.log('[ DatabaseService ] Starting complete database reset...');
+      
+      if (!this.database || !this.database.resetDatabase) {
+        throw new Error('Database reset function not available');
+      }
+      
+      // Call the database reset function that drops and recreates tables
+      await this.database.resetDatabase();
+      
+      console.log('[ DatabaseService ] Database reset complete - all tables dropped and recreated');
     });
   }
 }
