@@ -197,15 +197,18 @@ export default function Meetings({ setCurrentView, meetings = [], onSave, onDele
   };
   
   // Handle form save - simplified to use only App.js onSave prop
-  const handleSaveMeeting = (meetingData) => {
+  const handleSaveMeeting = async (meetingData) => {
     try {
+      console.log('[Meetings] handleSaveMeeting called with:', meetingData);
+      
       if (!onSave) {
         throw new Error('No onSave callback provided');
       }
       
       // Call the onSave from the parent component (App.js)
       // This will handle the database operation and return the saved meeting
-      const savedMeeting = onSave(meetingData);
+      const savedMeeting = await onSave(meetingData);
+      console.log('[Meetings] Meeting saved successfully:', savedMeeting);
       
       // Reset form state
       setCurrentMeeting(null);
@@ -214,7 +217,7 @@ export default function Meetings({ setCurrentView, meetings = [], onSave, onDele
       // State will be updated correctly when the meetings prop updates
       // No need to manually update state here
     } catch (error) {
-      console.error('[ Meetings.js ] Error saving meeting:', error);
+      console.error('[ Meetings ] Error saving meeting:', error);
       setError('Failed to save meeting. Please try again.');
     }
   };
