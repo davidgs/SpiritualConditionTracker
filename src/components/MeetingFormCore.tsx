@@ -253,7 +253,7 @@ export default function MeetingFormCore({
         </Alert>
       )}
       
-      <Box component="form" onSubmit={handleSubmit} sx={{ 
+      <Box component="form" onSubmit={handleSubmit} noValidate sx={{ 
         display: 'flex', 
         flexDirection: 'column', 
         gap: 2,

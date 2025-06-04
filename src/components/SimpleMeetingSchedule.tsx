@@ -11,7 +11,7 @@ import {
   useTheme
 } from '@mui/material';
 
-const SimpleMeetingSchedule = ({ schedule, onChange, use24HourFormat = false }) => {
+const SimpleMeetingSchedule = ({ schedule, onChange, use24HourFormat = false, darkMode = false }) => {
   const theme = useTheme();
   const days = [
     { key: 'sunday', label: 'Sunday' },
@@ -94,20 +94,25 @@ const SimpleMeetingSchedule = ({ schedule, onChange, use24HourFormat = false }) 
   };
 
   return (
-    <Box sx={{ 
+    <Box sx={(theme) => ({ 
       mb: 2, 
       width: '100%', 
       maxWidth: '100%',
       boxSizing: 'border-box',
-      overflowX: 'hidden' 
-    }}>
-      <Table sx={{ 
+      overflowX: 'hidden',
+      backgroundColor: 'transparent',
+      borderRadius: 2,
+      border: `1px solid ${theme.palette.divider}`,
+      p: 2
+    })}>
+      <Table sx={(theme) => ({ 
         width: '100%', 
         borderCollapse: 'collapse', 
         tableLayout: 'fixed',
         maxWidth: '100%',
-        boxSizing: 'border-box'
-      }}>
+        boxSizing: 'border-box',
+        backgroundColor: 'transparent'
+      })}>
         <TableBody>
           {days.map((day, index) => {
             const existingItem = schedule.find(item => item.day === day.key);
