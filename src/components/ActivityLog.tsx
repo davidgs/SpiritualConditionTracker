@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { formatDateForDisplay } from '../utils/dateUtils';
 import ActivityList from './ActivityList';
-import MeetingForm from './MeetingForm';
+import MeetingFormDialog from './MeetingFormDialog';
 import { meetingOperations } from '../utils/database';
 
 export default function ActivityLog({ setCurrentView, onSave, onSaveMeeting, activities, meetings = [] }) {
@@ -519,17 +519,13 @@ export default function ActivityLog({ setCurrentView, onSave, onSaveMeeting, act
         
         {/* Meeting Form */}
         {activityType === 'meeting' && showMeetingForm && (
-          <div style={{ marginBottom: '1rem', padding: '1rem', backgroundColor: darkMode ? '#1f2937' : '#f3f4f6', borderRadius: '0.5rem' }}>
-            <h3 style={{ marginTop: 0, marginBottom: '1rem', fontSize: '1rem', fontWeight: 'bold', color: darkMode ? '#e5e7eb' : '#1f2937' }}>
-              Add New Meeting
-            </h3>
-            <MeetingForm 
-              onSave={handleSaveMeeting}
-              onCancel={() => setShowMeetingForm(false)}
-              darkMode={darkMode}
-              meeting={null} // Ensure we're creating a new meeting
-            />
-          </div>
+          <MeetingFormDialog
+            open={showMeetingForm}
+            onSave={handleSaveMeeting}
+            onClose={() => setShowMeetingForm(false)}
+            isEdit={false}
+            meeting={null}
+          />
         )}
         
         {/* Meeting Name - only for AA Meeting when not adding a new meeting */}

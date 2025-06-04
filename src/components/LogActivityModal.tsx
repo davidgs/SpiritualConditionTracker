@@ -8,7 +8,7 @@ import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import StyledDialog from './StyledDialog';
 import MuiThemeProvider from '../contexts/MuiThemeProvider';
-import MeetingForm from './MeetingForm';
+import MeetingFormDialog from './MeetingFormDialog';
 
 /**
  * Material UI Dialog component that displays the activity logging form
@@ -354,11 +354,11 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
           
           {/* Display the meeting form inside the modal when needed */}
           {activityType === 'meeting' && showMeetingForm ? (
-            <MeetingForm
+            <MeetingFormDialog
+              open={showMeetingForm}
               onSave={handleSaveMeeting}
               onClose={() => setShowMeetingForm(false)}
-              darkMode={isDarkMode}
-              isOverlay={false}
+              isEdit={false}
             />
           ) : (
             <form onSubmit={handleSubmit}>
