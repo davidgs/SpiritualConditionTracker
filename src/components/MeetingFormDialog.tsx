@@ -330,14 +330,17 @@ export default function MeetingFormDialog({
   // Handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
+    console.log('[MeetingFormDialog] Form submitted');
     setError('');
     
     if (!meetingName.trim()) {
+      console.log('[MeetingFormDialog] Validation failed: Missing meeting name');
       setError('Meeting name is required');
       return;
     }
     
     if (meetingSchedule.length === 0) {
+      console.log('[MeetingFormDialog] Validation failed: No schedule');
       setError('Please add at least one meeting day and time');
       return;
     }
