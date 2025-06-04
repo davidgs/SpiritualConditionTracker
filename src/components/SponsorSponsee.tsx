@@ -25,6 +25,7 @@ import SponseeFormDialog from './SponseeFormDialog';
 import SponsorContactFormPage from './SponsorContactFormPage';
 import { ActionItemsList } from './ActionItemsList';
 import { ContactCard } from './ContactCard';
+import { SponsorInfoSection } from './SponsorInfoSection';
 import { formatDateForDisplay } from '../utils/dateUtils';
 
 export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activities = [] }) {
@@ -524,71 +525,7 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
 
 
 
-  // SponsorInfoAccordion component for collapsible sponsor details
-  const SponsorInfoAccordion = ({ sponsor, theme, formatDateForDisplay }) => {
-    const hasInfo = sponsor.sobrietyDate || sponsor.notes;
-    
-    if (!hasInfo) {
-      return null;
-    }
-    
-    return (
-      <Accordion 
-        elevation={0}
-        sx={{ 
-          backgroundColor: 'transparent',
-          '&:before': { display: 'none' },
-          boxShadow: 'none'
-        }}
-      >
-        <AccordionSummary
-          expandIcon={<i className="fa-solid fa-chevron-down" style={{ color: theme.palette.text.secondary }}></i>}
-          sx={{
-            padding: 0,
-            minHeight: 'auto',
-            '& .MuiAccordionSummary-content': {
-              margin: '8px 0',
-            }
-          }}
-        >
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <i className="fa-solid fa-info-circle" style={{ color: theme.palette.primary.main, fontSize: '14px' }}></i>
-            <Typography variant="body2" sx={{ color: theme.palette.primary.main }}>
-              Additional Information
-            </Typography>
-          </Box>
-        </AccordionSummary>
-        <AccordionDetails sx={{ padding: '0 0 16px 0' }}>
-          <Box sx={{ pl: 2 }}>
-            {sponsor.sobrietyDate && (
-              <Box sx={{ mb: 2 }}>
-                <Typography variant="subtitle2" sx={{ color: theme.palette.text.secondary, mb: 0.5 }}>
-                  Sobriety Date
-                </Typography>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <i className="fa-solid fa-calendar-check" style={{ color: theme.palette.success.main, fontSize: '14px' }}></i>
-                  <Typography variant="body2" sx={{ color: theme.palette.text.primary }}>
-                    {formatDateForDisplay(sponsor.sobrietyDate)}
-                  </Typography>
-                </Box>
-              </Box>
-            )}
-            
-            {sponsor.notes && (
-              <Box>
-                <Typography variant="subtitle2" sx={{ color: theme.palette.text.secondary, mb: 0.5 }}>
-                  Notes
-                </Typography>
-                <Typography variant="body2" sx={{ color: theme.palette.text.primary, whiteSpace: 'pre-wrap' }}>
-                  {sponsor.notes}
-                </Typography>
-              </Box>
-            )}
-          </Box>
-        </AccordionDetails>
-      </Accordion>
-    );
-  };
+
 
   // Individual Sponsor Content Component
   function SponsorContent({ 
@@ -713,7 +650,7 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
           </Box>
 
           {/* Collapsible Info Section */}
-          <SponsorInfoAccordion sponsor={sponsor} theme={theme} formatDateForDisplay={formatDateForDisplay} />
+          <SponsorInfoSection sponsor={sponsor} theme={theme} />
         </Paper>
 
         {/* Sponsor Contacts Section */}
