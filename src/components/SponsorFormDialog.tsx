@@ -23,7 +23,7 @@ export default function SponsorFormDialog({ open, onClose, onSubmit, initialData
   const [email, setEmail] = useState('');
   const [sobrietyDate, setSobrietyDate] = useState('');
   const [notes, setNotes] = useState('');
-  const [errors, setErrors] = useState({});
+  const [errors, setErrors] = useState<Record<string, string>>({});
   
   // Track viewport changes for responsive adjustments
   useEffect(() => {
