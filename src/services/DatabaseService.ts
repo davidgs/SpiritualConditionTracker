@@ -189,7 +189,16 @@ class DatabaseService {
 
   async updateUser(id: string | number, updates: Partial<User>): Promise<User | null> {
     return this.executeOperation(async () => {
-      return await this.database.update('users', id, updates);
+      console.log('[ DatabaseService.ts updateUser ] Raw updates received:', JSON.stringify(updates, null, 2));
+      
+      if (updates.preferences) {
+        console.log('[ DatabaseService.ts updateUser ] Preferences type:', typeof updates.preferences);
+        console.log('[ DatabaseService.ts updateUser ] Preferences value:', updates.preferences);
+      }
+      
+      const result = await this.database.update('users', id, updates);
+      console.log('[ DatabaseService.ts updateUser ] Update result:', JSON.stringify(result, null, 2));
+      return result;
     });
   }
 
