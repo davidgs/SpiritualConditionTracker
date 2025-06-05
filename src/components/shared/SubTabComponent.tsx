@@ -42,6 +42,8 @@ export default function SubTabComponent({
 }: SubTabComponentProps) {
   const theme = useTheme();
 
+  console.log(`SubTabComponent ${personType}:`, 'persons:', persons, 'length:', persons.length);
+
   // If no persons, show empty state
   if (persons.length === 0) {
     return (

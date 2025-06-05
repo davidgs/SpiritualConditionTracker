@@ -45,6 +45,15 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
   const [sponseeContacts, setSponseeContacts] = useState([]);
   const [refreshKey, setRefreshKey] = useState(0);
 
+  // Debug state changes
+  useEffect(() => {
+    console.log('Sponsors state updated:', sponsors, 'Length:', sponsors.length);
+  }, [sponsors]);
+
+  useEffect(() => {
+    console.log('Sponsees state updated:', sponsees, 'Length:', sponsees.length);
+  }, [sponsees]);
+
   // Form state
   const [showPersonForm, setShowPersonForm] = useState(false);
   const [showContactForm, setShowContactForm] = useState(false);
@@ -60,9 +69,9 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
     try {
       const sponsorData = await databaseService.getAll('sponsors');
       console.log('Raw sponsor data:', sponsorData);
-      // Since there's only one user, show all sponsors
-      setSponsors(sponsorData as ContactPerson[]);
-      console.log('Loaded sponsors:', sponsorData.length);
+      const filteredSponsors = sponsorData.filter(sponsor => sponsor.userId === user?.id);
+      setSponsors(filteredSponsors as ContactPerson[]);
+      console.log('Filtered sponsors:', filteredSponsors.length, 'for user:', user?.id);
     } catch (error) {
       console.error('Failed to load sponsors:', error);
     }
@@ -72,9 +81,9 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
     try {
       const sponseeData = await databaseService.getAll('sponsees');
       console.log('Raw sponsee data:', sponseeData);
-      // Since there's only one user, show all sponsees
-      setSponsees(sponseeData as ContactPerson[]);
-      console.log('Loaded sponsees:', sponseeData.length);
+      const filteredSponsees = sponseeData.filter(sponsee => sponsee.userId === user?.id);
+      setSponsees(filteredSponsees as ContactPerson[]);
+      console.log('Filtered sponsees:', filteredSponsees.length, 'for user:', user?.id);
     } catch (error) {
       console.error('Failed to load sponsees:', error);
     }
