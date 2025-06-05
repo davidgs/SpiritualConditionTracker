@@ -926,45 +926,13 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
       {/* Sponsee Tab */}
       <TabPanel value={currentTab} index={1}>
         {sponsees.length > 0 ? (
-          <Box>
-            {/* Sponsee Tabs */}
-            <Box sx={{ 
-              mb: 2,
-              borderBottom: 1, 
-              borderColor: 'divider',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between'
-            }}>
-              <Tabs 
-                value={currentSponseeTab} 
-                onChange={(e, newValue) => setCurrentSponseeTab(newValue)}
-                variant="scrollable"
-                scrollButtons="auto"
-                sx={{
-                  '& .MuiTab-root': {
-                    color: theme.palette.text.secondary,
-                    fontWeight: 'normal',
-                    textTransform: 'none',
-                  },
-                  '& .Mui-selected': {
-                    color: theme.palette.primary.main,
-                    fontWeight: 'bold',
-                  },
-                  '& .MuiTabs-indicator': {
-                    backgroundColor: theme.palette.primary.main,
-                  }
-                }}
-              >
-                {sponsees.map((sponsee, index) => (
-                  <Tab 
-                    key={sponsee.id || index} 
-                    label={sponsee.name || `Sponsee ${index + 1}`}
-                  />
-                ))}
-                <Tab label="+ Add Sponsee" />
-              </Tabs>
-            </Box>
+          <ContactPersonTabs
+            persons={sponsees}
+            currentTab={currentSponseeTab}
+            onTabChange={handleSponseeTabChange}
+            addLabel="+ Add Sponsee"
+            emptyMessage="No sponsees added yet."
+          >
 
             {/* Individual Sponsee Content */}
             {sponsees.map((sponsee, index) => {
@@ -1135,7 +1103,7 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
                 </TabPanel>
               );
             })}
-          </Box>
+          </ContactPersonTabs>
         ) : (
           <Box sx={{ 
             textAlign: 'center', 
