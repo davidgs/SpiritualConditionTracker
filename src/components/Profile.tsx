@@ -204,6 +204,37 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
     // Create updates object with privacy settings
     // Fix for timezone issue - store the date in a timezone-neutral format (YYYY-MM-DD)
     // This prevents the date from shifting when displayed
+    
+    // Parse existing settings safely
+    let existingPrivacySettings = {};
+    let existingPreferences = {};
+    
+    try {
+      if (user?.privacySettings) {
+        if (typeof user.privacySettings === 'string') {
+          existingPrivacySettings = JSON.parse(user.privacySettings);
+        } else {
+          existingPrivacySettings = user.privacySettings;
+        }
+      }
+    } catch (error) {
+      console.warn('Failed to parse existing privacy settings:', error);
+      existingPrivacySettings = {};
+    }
+    
+    try {
+      if (user?.preferences) {
+        if (typeof user.preferences === 'string') {
+          existingPreferences = JSON.parse(user.preferences);
+        } else {
+          existingPreferences = user.preferences;
+        }
+      }
+    } catch (error) {
+      console.warn('Failed to parse existing preferences:', error);
+      existingPreferences = {};
+    }
+    
     const updates = {
       name,
       lastName,
@@ -213,12 +244,12 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
       sobrietyDate: sobrietyDate || '',
       homeGroups,
       privacySettings: {
-        ...(user?.privacySettings || {}),
+        ...existingPrivacySettings,
         allowMessages,
         shareLastName
       },
       preferences: {
-        ...(user?.preferences || {}),
+        ...existingPreferences,
         use24HourFormat
       }
     };
