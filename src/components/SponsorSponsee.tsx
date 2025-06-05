@@ -404,51 +404,34 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
   
   // Delete sponsee
   const handleDeleteSponsee = async (sponseeId) => {
+    if (!sponseeId) {
+      console.error('No sponsee ID provided for deletion');
+      return;
+    }
+
+    if (!window.confirm('Are you sure you want to delete this sponsee?')) {
+      return;
+    }
+
     try {
-      console.log('[ SponsorSponsee.tsx ] Deleting sponsee with ID:', sponseeId, 'Type:', typeof sponseeId);
-      
-      // Add confirmation dialog
-      if (!confirm('Are you sure you want to delete this sponsee? This action cannot be undone.')) {
-        console.log('[ SponsorSponsee.tsx ] User cancelled deletion');
-        return;
-      }
-      
-      // Check if sponsee exists before deletion
-      const existingSponsee = await databaseService.getById('sponsees', sponseeId);
-      console.log('[ SponsorSponsee.tsx ] Existing sponsee before deletion:', existingSponsee);
-      
-      if (!existingSponsee) {
-        console.log('[ SponsorSponsee.tsx ] Sponsee not found in database');
-        alert('Sponsee not found in database');
-        return;
-      }
-      
-      // Delete all related sponsee contacts first
-      const allSponseeContacts = await databaseService.getAll('sponsee_contacts');
-      console.log('[ SponsorSponsee.tsx ] All sponsee contacts:', allSponseeContacts);
-      const relatedContacts = allSponseeContacts.filter(contact => contact.sponseeId === sponseeId);
-      console.log('[ SponsorSponsee.tsx ] Related contacts to delete:', relatedContacts);
+      // Delete related contacts first
+      const contacts = await databaseService.getAll('sponsee_contacts');
+      const relatedContacts = contacts.filter(c => c.sponseeId === sponseeId);
       
       for (const contact of relatedContacts) {
-        console.log('[ SponsorSponsee.tsx ] Deleting related sponsee contact:', contact.id);
         await databaseService.remove('sponsee_contacts', contact.id);
       }
       
       // Delete the sponsee
-      console.log('[ SponsorSponsee.tsx ] Now deleting sponsee from database...');
-      const deleteResult = await databaseService.remove('sponsees', sponseeId);
-      console.log('[ SponsorSponsee.tsx ] Sponsee deletion result:', deleteResult);
+      await databaseService.remove('sponsees', sponseeId);
       
-      // Reload the sponsees list
-      console.log('[ SponsorSponsee.tsx ] Reloading sponsees list...');
+      // Refresh data
       await loadSponsees();
       await loadSponseeContacts();
-      setRefreshKey(prev => prev + 1);
       
-      console.log('[ SponsorSponsee.tsx ] Sponsee deletion completed successfully');
     } catch (error) {
-      console.error('[ SponsorSponsee.tsx ] Error deleting sponsee:', error);
-      alert('Failed to delete sponsee: ' + error.message);
+      console.error('Failed to delete sponsee:', error);
+      alert('Failed to delete sponsee');
     }
   };
   
