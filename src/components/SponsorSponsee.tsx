@@ -91,7 +91,7 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
       
       // Filter sponsees for current user
       const userSponsees = allSponsees.filter(sponsee => 
-        sponsee && (sponsee.userId === user?.id || sponsee.userId === 'default_user')
+        sponsee && (sponsee.userId === String(user?.id) || sponsee.userId === user?.id || sponsee.userId === 'default_user')
       );
       
       console.log('Filtered sponsees for user:', userSponsees);
