@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Typography, Button } from '@mui/material';
+import { Box, Typography, IconButton } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import TabComponent from './TabComponent';
 import PersonPage from './PersonPage';
@@ -60,14 +60,20 @@ export default function SubTabComponent({
           {emptyMessage}
         </Typography>
         
-        <Button 
-          variant="contained" 
+        <IconButton 
           color="primary"
           onClick={onAddPerson}
-          startIcon={<i className="fa-solid fa-plus"></i>}
+          sx={{ 
+            backgroundColor: theme.palette.primary.main,
+            color: 'white',
+            borderRadius: 1,
+            '&:hover': {
+              backgroundColor: theme.palette.primary.dark,
+            }
+          }}
         >
-          {addLabel}
-        </Button>
+          <i className="fa-solid fa-plus"></i>
+        </IconButton>
       </Box>
     );
   }

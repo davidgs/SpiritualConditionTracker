@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Paper, Typography, Button, IconButton, Divider } from '@mui/material';
+import { Box, Paper, Typography, IconButton, Divider } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { ContactPerson } from '../../types/ContactPerson';
 import { formatDateForDisplay } from '../../utils/dateUtils';
@@ -47,25 +47,29 @@ export default function PersonPage({
         </Typography>
         
         <Box sx={{ display: 'flex', gap: 1 }}>
-          <Button
-            variant="outlined"
+          <IconButton
             color="primary"
             size="small"
             onClick={() => onEditPerson(person)}
-            startIcon={<i className="fa-solid fa-pen-to-square"></i>}
+            sx={{ 
+              border: `1px solid ${theme.palette.primary.main}`,
+              borderRadius: 1
+            }}
           >
-            Edit
-          </Button>
+            <i className="fa-solid fa-pen-to-square"></i>
+          </IconButton>
           
-          <Button
-            variant="outlined"
+          <IconButton
             color="error"
             size="small"
             onClick={() => onDeletePerson(person.id)}
-            startIcon={<i className="fa-solid fa-trash"></i>}
+            sx={{ 
+              border: `1px solid ${theme.palette.error.main}`,
+              borderRadius: 1
+            }}
           >
-            Delete
-          </Button>
+            <i className="fa-solid fa-trash"></i>
+          </IconButton>
         </Box>
       </Box>
 
@@ -164,15 +168,21 @@ export default function PersonPage({
           <Typography variant="h6" sx={{ color: theme.palette.text.primary, fontWeight: 'bold' }}>
             Contact History ({contacts.length})
           </Typography>
-          <Button 
-            variant="contained" 
+          <IconButton 
             color="primary"
             size="small"
             onClick={() => onAddContact(person)}
-            startIcon={<i className="fa-solid fa-plus"></i>}
+            sx={{ 
+              backgroundColor: theme.palette.primary.main,
+              color: 'white',
+              borderRadius: 1,
+              '&:hover': {
+                backgroundColor: theme.palette.primary.dark,
+              }
+            }}
           >
-            Add Contact
-          </Button>
+            <i className="fa-solid fa-plus"></i>
+          </IconButton>
         </Box>
         
         {contacts.length === 0 ? (
