@@ -867,59 +867,33 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
       <TabPanel value={currentTab} index={0}>
         {sponsors.length > 0 ? (
           <Box>
-            <Box sx={{ 
-              display: 'flex', 
-              alignItems: 'center', 
-              justifyContent: 'space-between',
-              borderBottom: 1, 
-              borderColor: 'divider',
-              mb: 2
-            }}>
-              {/* Nested tabs for multiple sponsors */}
-              <Tabs 
-                value={currentSponsorTab} 
-                onChange={handleSponsorTabChange}
-                sx={{ 
-                  flex: 1,
-                  '& .MuiTabs-indicator': {
-                    backgroundColor: theme.palette.secondary.main,
+            {/* Nested tabs for multiple sponsors */}
+            <Tabs 
+              value={currentSponsorTab} 
+              onChange={handleSponsorTabChange}
+              sx={{ 
+                borderBottom: 1, 
+                borderColor: 'divider',
+                mb: 2,
+                '& .MuiTabs-indicator': {
+                  backgroundColor: theme.palette.secondary.main,
+                },
+                '& .MuiTab-root': {
+                  color: theme.palette.text.secondary,
+                  '&.Mui-selected': {
+                    color: theme.palette.secondary.main,
                   },
-                  '& .MuiTab-root': {
-                    color: theme.palette.text.secondary,
-                    '&.Mui-selected': {
-                      color: theme.palette.secondary.main,
-                    },
-                  },
-                }}
-              >
-                {sponsors.map((sponsor, index) => (
-                  <Tab 
-                    key={sponsor.id} 
-                    label={`${sponsor.name || 'Sponsor'} ${sponsor.lastName || ''}`.trim()} 
-                  />
-                ))}
-              </Tabs>
-              
-              <Button 
-                variant="contained" 
-                color="primary"
-                onClick={() => {
-                  setEditingSponsor(null);
-                  setShowSponsorForm(true);
-                }}
-                startIcon={<i className="fa-solid fa-plus"></i>}
-                sx={{ 
-                  ml: 2,
-                  backgroundColor: theme.palette.primary.main,
-                  color: theme.palette.primary.contrastText,
-                  '&:hover': {
-                    backgroundColor: theme.palette.primary.dark,
-                  }
-                }}
-              >
-                Add Sponsor
-              </Button>
-            </Box>
+                },
+              }}
+            >
+              {sponsors.map((sponsor, index) => (
+                <Tab 
+                  key={sponsor.id} 
+                  label={`${sponsor.name || 'Sponsor'} ${sponsor.lastName || ''}`.trim()} 
+                />
+              ))}
+              <Tab label="+ Add Sponsor" />
+            </Tabs>
 
             {/* Sponsor content panels */}
             {sponsors.map((sponsor, index) => (
