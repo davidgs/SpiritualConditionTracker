@@ -1010,13 +1010,19 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
               <Button 
                 variant="contained" 
                 color="primary"
-                size="small"
                 onClick={() => {
                   setEditingSponseeId(null);
                   setShowSponseeForm(true);
                 }}
                 startIcon={<i className="fa-solid fa-plus"></i>}
-                sx={{ ml: 2 }}
+                sx={{ 
+                  ml: 2,
+                  backgroundColor: theme.palette.primary.main,
+                  color: theme.palette.primary.contrastText,
+                  '&:hover': {
+                    backgroundColor: theme.palette.primary.dark,
+                  }
+                }}
               >
                 Add Sponsee
               </Button>
