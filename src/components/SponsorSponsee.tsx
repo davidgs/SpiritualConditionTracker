@@ -88,7 +88,14 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
       const databaseService = DatabaseService.getInstance();
       const allSponsees = await databaseService.getAll('sponsees');
       console.log('Loaded sponsees:', allSponsees);
-      setSponsees(allSponsees || []);
+      
+      // Filter sponsees for current user
+      const userSponsees = allSponsees.filter(sponsee => 
+        sponsee && (sponsee.userId === user?.id || sponsee.userId === 'default_user')
+      );
+      
+      console.log('Filtered sponsees for user:', userSponsees);
+      setSponsees(userSponsees || []);
     } catch (error) {
       console.error('Error loading sponsees:', error);
       setSponsees([]);
