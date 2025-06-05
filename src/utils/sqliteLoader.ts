@@ -278,9 +278,7 @@ export default async function initSQLiteDatabase() {
           
           const result = await sqlite.execute({
             database: DB_NAME,
-            statements: [
-              `DELETE FROM ${collection} WHERE id = ${id}`
-            ]
+            statements: `DELETE FROM ${collection} WHERE id = ${id};`
           });
           
           console.log(`[ sqliteLoader.js ] Delete result for ${collection} id ${id}:`, result);
