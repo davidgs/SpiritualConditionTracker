@@ -85,6 +85,9 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
   const [errors, setErrors] = useState({});
   const [editingPersonalInfo, setEditingPersonalInfo] = useState(false);
   const [showMeetingForm, setShowMeetingForm] = useState(false);
+  const [qrCodeOpen, setQrCodeOpen] = useState(false);
+  const [qrCodeData, setQrCodeData] = useState('');
+  const [qrCodeTitle, setQrCodeTitle] = useState('');
 
   // Load user data ONLY when user ID changes (not on every user object change)
   useEffect(() => {
@@ -272,6 +275,60 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
   // Format number with commas
   const formatNumber = (num) => {
     return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  };
+
+  // Generate vCard data for QR code sharing
+  const generateVCardData = () => {
+    const privacySettings = user?.privacySettings || {};
+    
+    // Respect privacy settings
+    const displayName = name || '';
+    const displayLastName = privacySettings.shareLastName ? (lastName || '') : '';
+    const displayPhone = phoneNumber || '';
+    const displayEmail = email || '';
+    
+    // Build full name
+    const fullName = `${displayName} ${displayLastName}`.trim();
+    
+    // Create vCard format
+    const vCardLines = [
+      'BEGIN:VCARD',
+      'VERSION:3.0',
+      `FN:${fullName}`,
+      `N:${displayLastName};${displayName};;;`,
+    ];
+    
+    if (displayPhone) {
+      vCardLines.push(`TEL:${displayPhone}`);
+    }
+    
+    if (displayEmail) {
+      vCardLines.push(`EMAIL:${displayEmail}`);
+    }
+    
+    // Add organization/note for AA context
+    vCardLines.push('ORG:AA Recovery Community');
+    vCardLines.push('NOTE:Shared from AA Recovery Tracker');
+    
+    vCardLines.push('END:VCARD');
+    
+    return vCardLines.join('\n');
+  };
+
+  // Handle sharing contact information
+  const handleShareContact = () => {
+    if (!name) {
+      alert('Please add your name before sharing contact information.');
+      return;
+    }
+    
+    const vCardData = generateVCardData();
+    const privacySettings = user?.privacySettings || {};
+    const displayName = privacySettings.shareLastName ? `${name} ${lastName}`.trim() : name;
+    
+    setQrCodeData(vCardData);
+    setQrCodeTitle(`Contact: ${displayName}`);
+    setQrCodeOpen(true);
   };
   
 
@@ -647,20 +704,36 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
             <Typography variant="h6" sx={{ color: 'text.primary' }}>
               Personal Information
             </Typography>
-            <IconButton 
-              onClick={() => setEditingPersonalInfo(!editingPersonalInfo)}
-              size="small"
-              aria-label={editingPersonalInfo ? "Cancel editing" : "Edit personal information"}
-              sx={{ 
-                color: 'text.secondary',
-                '&:hover': {
-                  color: 'primary.main',
-                  backgroundColor: 'transparent'
-                }
-              }}
-            >
-              <i className={`fas ${editingPersonalInfo ? "fa-times" : "fa-edit"}`} style={{ fontSize: '0.85rem' }}></i>
-            </IconButton>
+            <Box sx={{ display: 'flex', gap: 1 }}>
+              <IconButton 
+                onClick={handleShareContact}
+                size="small"
+                aria-label="Share contact information"
+                sx={{ 
+                  color: 'text.secondary',
+                  '&:hover': {
+                    color: 'primary.main',
+                    backgroundColor: 'transparent'
+                  }
+                }}
+              >
+                <i className="fas fa-share" style={{ fontSize: '0.85rem' }}></i>
+              </IconButton>
+              <IconButton 
+                onClick={() => setEditingPersonalInfo(!editingPersonalInfo)}
+                size="small"
+                aria-label={editingPersonalInfo ? "Cancel editing" : "Edit personal information"}
+                sx={{ 
+                  color: 'text.secondary',
+                  '&:hover': {
+                    color: 'primary.main',
+                    backgroundColor: 'transparent'
+                  }
+                }}
+              >
+                <i className={`fas ${editingPersonalInfo ? "fa-times" : "fa-edit"}`} style={{ fontSize: '0.85rem' }}></i>
+              </IconButton>
+            </Box>
           </Box>
         </Box>
         
@@ -926,6 +999,14 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
           </Button>
         </Box>
       </Paper>
+
+      {/* QR Code Generator for Contact Sharing */}
+      <QRCodeGenerator
+        open={qrCodeOpen}
+        data={qrCodeData}
+        title={qrCodeTitle}
+        onClose={() => setQrCodeOpen(false)}
+      />
     </Box>
   );
 }
