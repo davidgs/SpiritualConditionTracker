@@ -13,7 +13,6 @@ import SponsorContactFormPage from './SponsorContactFormPage';
 import SponseeContactFormPage from './SponseeContactFormPage';
 import { ContactCard } from './ContactCard';
 import { ContactPerson } from '../types/ContactPerson';
-import { formatDateForDisplay } from '../utils/dateUtils';
 
 function TabPanel({ children, value, index, ...other }) {
   return (
@@ -55,12 +54,11 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
   const [personFormType, setPersonFormType] = useState<'sponsor' | 'sponsee'>('sponsor');
   const [selectedSponseeForContact, setSelectedSponseeForContact] = useState(null);
 
-  // Load data
+  // Load data - FIXED: Show all sponsors/sponsees since there's only one user
   const loadSponsors = async () => {
     try {
       const sponsorData = await databaseService.getAll('sponsors');
-      const filteredSponsors = sponsorData.filter(sponsor => sponsor.userId === user?.id);
-      setSponsors(filteredSponsors as ContactPerson[]);
+      setSponsors(sponsorData as ContactPerson[]);
     } catch (error) {
       console.error('Failed to load sponsors:', error);
     }
@@ -69,8 +67,7 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
   const loadSponsees = async () => {
     try {
       const sponseeData = await databaseService.getAll('sponsees');
-      const filteredSponsees = sponseeData.filter(sponsee => sponsee.userId === user?.id);
-      setSponsees(filteredSponsees as ContactPerson[]);
+      setSponsees(sponseeData as ContactPerson[]);
     } catch (error) {
       console.error('Failed to load sponsees:', error);
     }
@@ -264,7 +261,7 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
   };
 
   return (
-    <div>
+    <div style={{ padding: '20px 16px' }}>
       <Typography variant="h4" sx={{ color: theme.palette.text.primary, mb: 3, fontWeight: 'bold' }}>
         Sponsor & Sponsees
       </Typography>
@@ -298,8 +295,9 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
             <ContactCard
               key={contact.id || index}
               contact={contact}
-              onToggleActionItem={handleToggleActionItem}
               theme={theme}
+              refreshKey={refreshKey}
+              onContactClick={() => {}}
             />
           )}
         />
@@ -325,8 +323,9 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
             <ContactCard
               key={contact.id || index}
               contact={contact}
-              onToggleActionItem={handleToggleActionItem}
               theme={theme}
+              refreshKey={refreshKey}
+              onContactClick={() => {}}
             />
           )}
         />
@@ -355,10 +354,7 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
         onSubmit={handleAddContactWithActionItem}
         userId={user ? user.id : null}
         initialData={editingContact ? editingContact : null}
-        details={editingActionItem ? {
-          dueDate: editingActionItem.dueDate,
-          notes: editingActionItem.notes
-        } : null}
+        details={editingActionItem ? editingActionItem : null}
       />
 
       <SponseeContactFormPage
