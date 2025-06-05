@@ -20,14 +20,15 @@ import {
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import DatabaseService from '../services/DatabaseService';
-import SponsorFormDialog from './SponsorFormDialog';
-import SponseeFormDialog from './SponseeFormDialog';
+import ContactPersonForm from './shared/ContactPersonForm';
+import ContactPersonTabs from './shared/ContactPersonTabs';
 import SponsorContactFormPage from './SponsorContactFormPage';
 import SponseeContactFormPage from './SponseeContactFormPage';
 import { ActionItemsList } from './ActionItemsList';
 import { ContactCard } from './ContactCard';
 import { SponsorInfoSection } from './SponsorInfoSection';
 import { formatDateForDisplay } from '../utils/dateUtils';
+import { ContactPerson } from '../types/ContactPerson';
 
 export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activities = [] }) {
   console.log('[SponsorSponsee.tsx:24] Component loaded with activities:', activities, 'type:', typeof activities);
@@ -39,24 +40,23 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
   const [currentSponsorTab, setCurrentSponsorTab] = useState(0);
   const [currentSponseeTab, setCurrentSponseeTab] = useState(0);
   
-  // State for sponsors (multiple) and sponsees
-  const [sponsors, setSponsors] = useState([]);
-  const [sponsees, setSponsees] = useState([]);
+  // State for sponsors and sponsees using shared interface
+  const [sponsors, setSponsors] = useState<ContactPerson[]>([]);
+  const [sponsees, setSponsees] = useState<ContactPerson[]>([]);
   
-  // State for sponsor contacts
+  // State for contacts
   const [sponsorContacts, setSponsorContacts] = useState([]);
-  const [showContactForm, setShowContactForm] = useState(false);
-  
-  // State for sponsee contacts  
   const [sponseeContacts, setSponseeContacts] = useState([]);
+  const [showContactForm, setShowContactForm] = useState(false);
   const [showSponseeContactForm, setShowSponseeContactForm] = useState(false);
   const [selectedSponseeForContact, setSelectedSponseeForContact] = useState(null);
   
-  // Dialog states
-  const [showSponsorForm, setShowSponsorForm] = useState(false);
-  const [showSponseeForm, setShowSponseeForm] = useState(false);
-  const [editingSponsor, setEditingSponsor] = useState(null);
-  const [editingSponseeId, setEditingSponseeId] = useState(null);
+  // Shared form dialog states
+  const [showPersonForm, setShowPersonForm] = useState(false);
+  const [personFormType, setPersonFormType] = useState<'sponsor' | 'sponsee'>('sponsor');
+  const [editingPerson, setEditingPerson] = useState<ContactPerson | null>(null);
+  
+  // Other states
   const [editingActionItem, setEditingActionItem] = useState(null);
   const [editingContact, setEditingContact] = useState(null);
   const [refreshKey, setRefreshKey] = useState(0);
@@ -425,62 +425,45 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
     return typeInfo[type] || { label: 'Contact', icon: 'fa-solid fa-comment' };
   };
   
-  // Handle sponsor form submission
-  const handleSponsorSubmit = async (sponsorData) => {
+  // Unified form submission handler for both sponsors and sponsees
+  const handlePersonSubmit = async (personData) => {
     try {
       const databaseService = DatabaseService.getInstance();
+      const tableName = personFormType === 'sponsor' ? 'sponsors' : 'sponsees';
 
-      // Add or update sponsor in sponsors table
-      if (editingSponsor && editingSponsor.id) {
-        // Update existing sponsor
-        await databaseService.update('sponsors', editingSponsor.id, sponsorData);
-      } else {
-        // Add new sponsor
-        await databaseService.add('sponsors', {
-          ...sponsorData,
-          sponsorType: 'sponsor', // Default type
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString()
-        });
-      }
-
-      // Reload sponsors
-      await loadSponsors();
-      setShowSponsorForm(false);
-      setEditingSponsor(null);
-    } catch (error) {
-      console.error('Error saving sponsor:', error);
-    }
-  };
-  
-  // Handle sponsee form submission
-  const handleSponseeSubmit = async (sponseeData) => {
-    try {
-      const databaseService = DatabaseService.getInstance();
-
-      // Check if we're editing an existing sponsee or adding a new one
-      if (editingSponseeId) {
-        // Update existing sponsee in sponsees table
-        await databaseService.update('sponsees', editingSponseeId, {
-          ...sponseeData,
+      if (editingPerson && editingPerson.id) {
+        // Update existing person
+        await databaseService.update(tableName, editingPerson.id, {
+          ...personData,
           updatedAt: new Date().toISOString()
         });
       } else {
-        // Add new sponsee to sponsees table
-        await databaseService.add('sponsees', {
-          ...sponseeData,
+        // Add new person
+        const newPersonData = {
+          ...personData,
           userId: user.id,
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString()
-        });
+        };
+        
+        if (personFormType === 'sponsor') {
+          newPersonData.sponsorType = 'sponsor';
+        }
+        
+        await databaseService.add(tableName, newPersonData);
       }
 
-      // Reload sponsees from database
-      await loadSponsees();
-      setShowSponseeForm(false);
-      setEditingSponseeId(null);
+      // Reload data from database
+      if (personFormType === 'sponsor') {
+        await loadSponsors();
+      } else {
+        await loadSponsees();
+      }
+      
+      setShowPersonForm(false);
+      setEditingPerson(null);
     } catch (error) {
-      console.error('Error saving sponsee:', error);
+      console.error(`Error saving ${personFormType}:`, error);
     }
   };
   
@@ -527,8 +510,9 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
   const handleSponsorTabChange = (event, newValue) => {
     // If the "+ Add Sponsor" tab is clicked, open the form instead of changing tab
     if (newValue === sponsors.length) {
-      setEditingSponsor(null);
-      setShowSponsorForm(true);
+      setEditingPerson(null);
+      setPersonFormType('sponsor');
+      setShowPersonForm(true);
       return;
     }
     setCurrentSponsorTab(newValue);
@@ -538,8 +522,9 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
   const handleSponseeTabChange = (event, newValue) => {
     // If the "+ Add Sponsee" tab is clicked, open the form instead of changing tab
     if (newValue === sponsees.length) {
-      setEditingSponseeId(null);
-      setShowSponseeForm(true);
+      setEditingPerson(null);
+      setPersonFormType('sponsee');
+      setShowPersonForm(true);
       return;
     }
     setCurrentSponseeTab(newValue);
@@ -1201,25 +1186,17 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
         )}
       </TabPanel>
 
-      {/* Dialog Components */}
-      <SponsorFormDialog
-        open={showSponsorForm}
+      {/* Shared Form Dialog */}
+      <ContactPersonForm
+        open={showPersonForm}
         onClose={() => {
-          setShowSponsorForm(false);
-          setEditingSponsor(null);
+          setShowPersonForm(false);
+          setEditingPerson(null);
         }}
-        onSubmit={handleSponsorSubmit}
-        initialData={editingSponsor && sponsors.length > 0 ? sponsors[0] : null}
-      />
-      
-      <SponseeFormDialog
-        open={showSponseeForm}
-        onClose={() => {
-          setShowSponseeForm(false);
-          setEditingSponseeId(null);
-        }}
-        onSubmit={handleSponseeSubmit}
-        initialData={editingSponseeId ? sponsees.find(s => s.id === editingSponseeId) : null}
+        onSubmit={handlePersonSubmit}
+        initialData={editingPerson}
+        title={personFormType === 'sponsor' ? 'Add Sponsor' : 'Add Sponsee'}
+        submitLabel={editingPerson ? 'Update' : 'Add'}
       />
       
       <SponsorContactFormPage
