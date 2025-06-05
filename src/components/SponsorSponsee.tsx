@@ -21,8 +21,8 @@ import {
 import { useTheme } from '@mui/material/styles';
 import DatabaseService from '../services/DatabaseService';
 import ContactPersonForm from './shared/ContactPersonForm';
-import TabComponent from './shared/TabComponent';
-import { useDeleteHandler } from '../hooks/useDeleteHandler';
+import SubTabComponent from './shared/SubTabComponent';
+import PersonInfoCard from './shared/PersonInfoCard';
 import SponsorContactFormPage from './SponsorContactFormPage';
 import SponseeContactFormPage from './SponseeContactFormPage';
 import { ActionItemsList } from './ActionItemsList';
@@ -40,30 +40,50 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
   // Initialize database service once at component level
   const databaseService = DatabaseService.getInstance();
 
-  // Delete handlers using reusable hook
-  const handleDeleteSponsor = useDeleteHandler({
-    entityType: 'sponsor',
-    entityTable: 'sponsors',
-    contactTable: 'sponsor_contacts',
-    foreignKey: 'sponsorId',
-    onSuccess: async () => {
-      await loadSponsors();
-      await loadSponsorContacts();
-      setRefreshKey(prev => prev + 1);
+  // Delete handlers
+  const handleDeletePerson = async (personType: 'sponsor' | 'sponsee', personId: string | number) => {
+    if (!personId) {
+      console.error(`No ${personType} ID provided for deletion`);
+      return;
     }
-  });
 
-  const handleDeleteSponsee = useDeleteHandler({
-    entityType: 'sponsee',
-    entityTable: 'sponsees',
-    contactTable: 'sponsee_contacts',
-    foreignKey: 'sponseeId',
-    onSuccess: async () => {
-      await loadSponsees();
-      await loadSponseeContacts();
-      setRefreshKey(prev => prev + 1);
+    if (!window.confirm(`Are you sure you want to delete this ${personType}?`)) {
+      return;
     }
-  });
+
+    try {
+      const contactTable = personType === 'sponsor' ? 'sponsor_contacts' : 'sponsee_contacts';
+      const personTable = personType === 'sponsor' ? 'sponsors' : 'sponsees';
+      const foreignKey = personType === 'sponsor' ? 'sponsorId' : 'sponseeId';
+
+      // Delete related contacts first
+      const contacts = await databaseService.getAll(contactTable);
+      const relatedContacts = contacts.filter(c => c[foreignKey] === personId);
+      
+      for (const contact of relatedContacts) {
+        await databaseService.remove(contactTable, contact.id);
+      }
+      
+      // Delete the person
+      await databaseService.remove(personTable, personId);
+      
+      // Refresh data
+      if (personType === 'sponsor') {
+        await loadSponsors();
+        await loadSponsorContacts();
+      } else {
+        await loadSponsees();
+        await loadSponseeContacts();
+      }
+      setRefreshKey(prev => prev + 1);
+      
+    } catch (error) {
+      console.error(`Failed to delete ${personType}:`, error);
+      alert(`Failed to delete ${personType}`);
+    }
+  };
+
+
   
   // Tab state
   const [currentTab, setCurrentTab] = useState(0);
