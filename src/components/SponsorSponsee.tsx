@@ -46,6 +46,11 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
   const [sponsorContacts, setSponsorContacts] = useState([]);
   const [showContactForm, setShowContactForm] = useState(false);
   
+  // State for sponsee contacts  
+  const [sponseeContacts, setSponseeContacts] = useState([]);
+  const [showSponseeContactForm, setShowSponseeContactForm] = useState(false);
+  const [selectedSponseeForContact, setSelectedSponseeForContact] = useState(null);
+  
   // Dialog states
   const [showSponsorForm, setShowSponsorForm] = useState(false);
   const [showSponseeForm, setShowSponseeForm] = useState(false);
@@ -59,11 +64,7 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
   useEffect(() => {
     if (user) {
       loadSponsors();
-      
-      // Load sponsees if available
-      if (user.sponsees && Array.isArray(user.sponsees)) {
-        setSponsees(user.sponsees);
-      }
+      loadSponsees();
     }
   }, [user]);
 
@@ -80,10 +81,40 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
     }
   };
 
+  // Load sponsees from sponsees table
+  const loadSponsees = async () => {
+    try {
+      const databaseService = DatabaseService.getInstance();
+      const allSponsees = await databaseService.getAll('sponsees');
+      console.log('Loaded sponsees:', allSponsees);
+      setSponsees(allSponsees || []);
+    } catch (error) {
+      console.error('Error loading sponsees:', error);
+      setSponsees([]);
+    }
+  };
+
   // Load sponsor contacts whenever activities change
   useEffect(() => {
     loadSponsorContacts();
+    loadSponseeContacts();
   }, [activities]);
+
+  // Load sponsee contacts from sponsee_contacts table
+  const loadSponseeContacts = async () => {
+    try {
+      const databaseService = DatabaseService.getInstance();
+      const allContacts = await databaseService.getAll('sponsee_contacts');
+      console.log('Loaded sponsee contacts:', allContacts);
+      
+      // Ensure we have a valid array
+      const contactsArray = Array.isArray(allContacts) ? allContacts : [];
+      setSponseeContacts(contactsArray);
+    } catch (error) {
+      console.error('Error loading sponsee contacts:', error);
+      setSponseeContacts([]);
+    }
+  };
 
   // Load sponsor contacts from sponsor_contacts table for a specific sponsor
   const loadSponsorContacts = async (sponsorId = null) => {
@@ -840,95 +871,256 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
 
       {/* Sponsee Tab */}
       <TabPanel value={currentTab} index={1}>
-        <Box className="text-center py-6">
-          <Button 
-            variant="contained" 
-            color="primary"
-            onClick={() => {
-              setEditingSponseeId(null);
-              setShowSponseeForm(true);
-            }}
-            startIcon={<i className="fa-solid fa-plus"></i>}
-          >
-            Add Sponsee
-          </Button>
-        </Box>
-        
-        {sponsees.length === 0 ? (
-          <Box className="text-center py-8">
-            <Typography variant="body1" sx={{ color: theme.palette.text.secondary }}>
-              No sponsees added yet.
-            </Typography>
-          </Box>
-        ) : (
-          <List className="space-y-4">
-            {sponsees.map((sponsee) => (
-              <ListItem
-                key={sponsee.id}
+        {sponsees.length > 0 ? (
+          <Box>
+            {/* Sponsee Tabs */}
+            <Box sx={{ 
+              mb: 2,
+              borderBottom: 1, 
+              borderColor: 'divider',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between'
+            }}>
+              <Tabs 
+                value={currentSponseeTab} 
+                onChange={(e, newValue) => setCurrentSponseeTab(newValue)}
+                variant="scrollable"
+                scrollButtons="auto"
                 sx={{
-                  backgroundColor: theme.palette.background.paper,
-                  boxShadow: theme.shadows[1],
-                  borderRadius: 2,
-                  p: 2,
-                  mb: 2,
-                  border: `1px solid ${theme.palette.divider}`,
-                  '&:hover': {
-                    backgroundColor: theme.palette.action.hover,
+                  '& .MuiTab-root': {
+                    color: theme.palette.text.secondary,
+                    fontWeight: 'normal',
+                    textTransform: 'none',
+                  },
+                  '& .Mui-selected': {
+                    color: theme.palette.primary.main,
+                    fontWeight: 'bold',
+                  },
+                  '& .MuiTabs-indicator': {
+                    backgroundColor: theme.palette.primary.main,
                   }
                 }}
               >
-                <ListItemText
-                  primary={
-                    <Typography variant="h6" sx={{ color: theme.palette.text.primary, fontWeight: 'bold' }}>
+                {sponsees.map((sponsee, index) => (
+                  <Tab 
+                    key={sponsee.id || index} 
+                    label={sponsee.name || `Sponsee ${index + 1}`}
+                  />
+                ))}
+              </Tabs>
+              
+              <Button 
+                variant="contained" 
+                color="primary"
+                size="small"
+                onClick={() => {
+                  setEditingSponseeId(null);
+                  setShowSponseeForm(true);
+                }}
+                startIcon={<i className="fa-solid fa-plus"></i>}
+                sx={{ ml: 2 }}
+              >
+                Add Sponsee
+              </Button>
+            </Box>
+
+            {/* Individual Sponsee Content */}
+            {sponsees.map((sponsee, index) => {
+              const contactsForSponsee = sponseeContacts.filter(contact => contact.sponseeId === sponsee.id);
+              
+              return (
+                <TabPanel key={sponsee.id || index} value={currentSponseeTab} index={index}>
+                  {/* Sponsee Info Section */}
+                  <Paper 
+                    elevation={0}
+                    sx={{ 
+                      backgroundColor: theme.palette.background.paper,
+                      boxShadow: theme.shadows[2],
+                      borderRadius: 2,
+                      p: 2,
+                      mb: 2,
+                      position: 'relative'
+                    }}
+                  >
+                    {/* Edit and Delete buttons */}
+                    <Box sx={{ position: 'absolute', top: 16, right: 16, display: 'flex', gap: 1 }}>
+                      <IconButton 
+                        onClick={() => handleEditSponsee(sponsee)}
+                        size="small"
+                        sx={{ color: theme.palette.primary.main }}
+                      >
+                        <i className="fa-solid fa-pen-to-square"></i>
+                      </IconButton>
+                      
+                      <IconButton 
+                        onClick={() => handleDeleteSponsee(sponsee.id)}
+                        size="small"
+                        sx={{ color: theme.palette.error.main }}
+                      >
+                        <i className="fa-solid fa-trash"></i>
+                      </IconButton>
+                    </Box>
+
+                    <Typography variant="h5" sx={{ color: theme.palette.text.primary, fontWeight: 'bold', mb: 1, pr: 8 }}>
                       {sponsee.name} {sponsee.lastName || ''}
                     </Typography>
-                  }
-                  secondary={
-                    <Box className="mt-2">
-                      {sponsee.phone && (
-                        <Typography variant="body2" sx={{ color: theme.palette.text.secondary, display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
-                          <i className="fa-solid fa-phone text-sm"></i>
-                          {sponsee.phone}
-                        </Typography>
+                    
+                    <Typography variant="body2" sx={{ color: theme.palette.text.secondary, mb: 2 }}>
+                      Contact Information
+                    </Typography>
+                    
+                    <Box sx={{ mb: 3 }}>
+                      {sponsee.phoneNumber && (
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+                          <IconButton 
+                            size="small" 
+                            component="a" 
+                            href={`tel:${sponsee.phoneNumber}`}
+                            sx={{ color: theme.palette.primary.main }}
+                          >
+                            <i className="fa-solid fa-phone text-sm"></i>
+                          </IconButton>
+                          <IconButton 
+                            size="small" 
+                            component="a" 
+                            href={`sms:${sponsee.phoneNumber}`}
+                            sx={{ color: theme.palette.secondary.main }}
+                          >
+                            <i className="fa-solid fa-message text-sm"></i>
+                          </IconButton>
+                          <Typography sx={{ color: theme.palette.text.primary, ml: 1 }}>
+                            {sponsee.phoneNumber}
+                          </Typography>
+                        </Box>
                       )}
                       
                       {sponsee.email && (
-                        <Typography variant="body2" sx={{ color: theme.palette.text.secondary, display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
-                          <i className="fa-solid fa-envelope text-sm"></i>
-                          {sponsee.email}
-                        </Typography>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+                          <IconButton 
+                            size="small" 
+                            component="a" 
+                            href={`mailto:${sponsee.email}`}
+                            sx={{ color: theme.palette.primary.main }}
+                          >
+                            <i className="fa-solid fa-envelope text-sm"></i>
+                          </IconButton>
+                          <Typography sx={{ color: theme.palette.text.primary, ml: 1 }}>
+                            {sponsee.email}
+                          </Typography>
+                        </Box>
                       )}
                       
                       {sponsee.sobrietyDate && (
-                        <Typography variant="body2" sx={{ color: theme.palette.text.secondary, display: 'flex', alignItems: 'center', gap: 1 }}>
-                          <i className="fa-solid fa-calendar-check text-sm"></i>
-                          Sobriety Date: {formatDateForDisplay(sponsee.sobrietyDate)}
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+                          <i className="fa-solid fa-calendar-check text-sm" style={{ color: theme.palette.primary.main, width: '20px' }}></i>
+                          <Typography sx={{ color: theme.palette.text.primary, ml: 1 }}>
+                            Sobriety Date: {formatDateForDisplay(sponsee.sobrietyDate)}
+                          </Typography>
+                        </Box>
+                      )}
+                      
+                      {/* Show message if no contact info */}
+                      {!sponsee.phoneNumber && !sponsee.email && (
+                        <Typography variant="body2" sx={{ color: theme.palette.text.secondary, fontStyle: 'italic' }}>
+                          No contact information available. Edit sponsee to add phone or email.
                         </Typography>
                       )}
                     </Box>
-                  }
-                />
-                
-                <Box className="flex gap-2">
-                  <IconButton 
-                    onClick={() => handleEditSponsee(sponsee)}
-                    size="small"
-                    sx={{ color: theme.palette.primary.main }}
+                  </Paper>
+
+                  {/* Sponsee Contacts Section */}
+                  <Paper 
+                    elevation={0}
+                    sx={{ 
+                      backgroundColor: theme.palette.background.paper,
+                      boxShadow: theme.shadows[2],
+                      borderRadius: 2,
+                      p: 1.5,
+                      mt: 1.5
+                    }}
                   >
-                    <i className="fa-solid fa-pen-to-square"></i>
-                  </IconButton>
-                  
-                  <IconButton 
-                    onClick={() => handleDeleteSponsee(sponsee.id)}
-                    size="small"
-                    sx={{ color: theme.palette.error.main }}
-                  >
-                    <i className="fa-solid fa-trash"></i>
-                  </IconButton>
-                </Box>
-              </ListItem>
-            ))}
-          </List>
+                    <Box className="flex justify-between items-center mb-4">
+                      <Typography variant="h6" sx={{ color: theme.palette.text.primary, fontWeight: 'bold' }}>
+                        Contacts with {sponsee.name}
+                      </Typography>
+                      
+                      <Button 
+                        variant="contained" 
+                        color="primary"
+                        size="small"
+                        onClick={() => {
+                          setSelectedSponseeForContact(sponsee);
+                          setShowSponseeContactForm(true);
+                        }}
+                        startIcon={<i className="fa-solid fa-plus"></i>}
+                        sx={{ 
+                          backgroundColor: theme.palette.primary.main,
+                          color: theme.palette.primary.contrastText,
+                          '&:hover': {
+                            backgroundColor: theme.palette.primary.dark,
+                          }
+                        }}
+                      >
+                        Add Contact
+                      </Button>
+                    </Box>
+                    
+                    {contactsForSponsee.length === 0 ? (
+                      <Box className="text-center py-4">
+                        <Typography sx={{ color: theme.palette.text.secondary }}>
+                          No contacts recorded with {sponsee.name} yet.
+                        </Typography>
+                      </Box>
+                    ) : (
+                      <List className="space-y-3">
+                        {contactsForSponsee.map((contact, index) => (
+                          <ContactCard
+                            key={contact.id || index}
+                            contact={contact}
+                            onEdit={(contact) => {
+                              setEditingContact(contact);
+                              setShowSponseeContactForm(true);
+                            }}
+                            onToggleActionItem={(actionItem) => {
+                              console.log('Sponsee - Checkbox clicked for item:', actionItem);
+                            }}
+                            theme={theme}
+                          />
+                        ))}
+                      </List>
+                    )}
+                  </Paper>
+                </TabPanel>
+              );
+            })}
+          </Box>
+        ) : (
+          <Box sx={{ 
+            textAlign: 'center', 
+            py: 6, 
+            px: 3,
+            margin: '16px',
+            backgroundColor: theme.palette.background.paper,
+            borderRadius: '8px',
+            border: `1px solid ${theme.palette.divider}`
+          }}>
+            <Typography variant="body1" sx={{ color: theme.palette.text.primary, mb: 3 }}>
+              You haven't added any sponsees yet.
+            </Typography>
+            
+            <Button 
+              variant="contained" 
+              color="primary"
+              onClick={() => {
+                setEditingSponseeId(null);
+                setShowSponseeForm(true);
+              }}
+              startIcon={<i className="fa-solid fa-plus"></i>}
+            >
+              Add Sponsee
+            </Button>
+          </Box>
         )}
       </TabPanel>
 
