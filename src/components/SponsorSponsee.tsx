@@ -45,15 +45,6 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
   const [sponseeContacts, setSponseeContacts] = useState([]);
   const [refreshKey, setRefreshKey] = useState(0);
 
-  // Debug state changes
-  useEffect(() => {
-    console.log('Sponsors state updated:', sponsors, 'Length:', sponsors.length);
-  }, [sponsors]);
-
-  useEffect(() => {
-    console.log('Sponsees state updated:', sponsees, 'Length:', sponsees.length);
-  }, [sponsees]);
-
   // Form state
   const [showPersonForm, setShowPersonForm] = useState(false);
   const [showContactForm, setShowContactForm] = useState(false);
@@ -68,10 +59,8 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
   const loadSponsors = async () => {
     try {
       const sponsorData = await databaseService.getAll('sponsors');
-      console.log('Raw sponsor data:', sponsorData);
       const filteredSponsors = sponsorData.filter(sponsor => sponsor.userId === user?.id);
       setSponsors(filteredSponsors as ContactPerson[]);
-      console.log('Filtered sponsors:', filteredSponsors.length, 'for user:', user?.id);
     } catch (error) {
       console.error('Failed to load sponsors:', error);
     }
@@ -80,10 +69,8 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
   const loadSponsees = async () => {
     try {
       const sponseeData = await databaseService.getAll('sponsees');
-      console.log('Raw sponsee data:', sponseeData);
       const filteredSponsees = sponseeData.filter(sponsee => sponsee.userId === user?.id);
       setSponsees(filteredSponsees as ContactPerson[]);
-      console.log('Filtered sponsees:', filteredSponsees.length, 'for user:', user?.id);
     } catch (error) {
       console.error('Failed to load sponsees:', error);
     }
@@ -109,13 +96,10 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
 
   useEffect(() => {
     if (user?.id) {
-      console.log('SponsorSponsee: Loading data for user:', user.id, 'Type:', typeof user.id);
       loadSponsors();
       loadSponsees();
       loadSponsorContacts();
       loadSponseeContacts();
-    } else {
-      console.log('SponsorSponsee: No user ID available, user object:', user);
     }
   }, [user?.id, refreshKey]);
 
@@ -280,7 +264,7 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
   };
 
   return (
-    <div style={{ padding: '20px 16px' }}>
+    <div>
       <Typography variant="h4" sx={{ color: theme.palette.text.primary, mb: 3, fontWeight: 'bold' }}>
         Sponsor & Sponsees
       </Typography>
@@ -296,7 +280,6 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
 
       {/* Sponsor Tab */}
       <TabPanel value={currentTab} index={0}>
-        {console.log('Rendering sponsor tab with sponsors:', sponsors, 'Length:', sponsors.length)}
         <SubTabComponent
           persons={sponsors}
           personType="sponsor"
