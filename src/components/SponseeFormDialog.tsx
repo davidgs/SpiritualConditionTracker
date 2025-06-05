@@ -45,7 +45,7 @@ export default function SponseeFormDialog({ open, onClose, onSubmit, initialData
     if (initialData) {
       setName(initialData.name || '');
       setLastName(initialData.lastName || '');
-      setPhone(initialData.phone || '');
+      setPhone(initialData.phoneNumber || initialData.phone || '');
       setEmail(initialData.email || '');
       setSobrietyDate(initialData.sobrietyDate ? initialData.sobrietyDate.split('T')[0] : '');
       setNotes(initialData.notes || '');
@@ -104,7 +104,7 @@ export default function SponseeFormDialog({ open, onClose, onSubmit, initialData
     const sponseeData = {
       name: name.trim(),
       lastName: lastName.trim(),
-      phone,
+      phoneNumber: phone,
       email: email.trim(),
       sobrietyDate: sobrietyDate ? new Date(sobrietyDate).toISOString() : '',
       notes: notes.trim()
