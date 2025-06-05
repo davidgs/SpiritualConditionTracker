@@ -56,111 +56,152 @@ export default function Meetings({ setCurrentView, meetings = [], onSave, onDele
 
   // Generate calendar event data for QR code sharing
   const generateCalendarData = (meeting) => {
-    // Get the next occurrence of this meeting
-    const getNextMeetingDate = (schedule) => {
-      const now = new Date();
-      const today = now.getDay(); // 0 = Sunday, 1 = Monday, etc.
-      
-      // Convert day names to numbers
-      const dayMap = {
-        'sunday': 0, 'monday': 1, 'tuesday': 2, 'wednesday': 3, 
-        'thursday': 4, 'friday': 5, 'saturday': 6
-      };
-      
-      if (schedule && Array.isArray(schedule) && schedule.length > 0) {
-        // Find the next meeting from the schedule
-        let nearestDays = schedule.map(item => {
-          const dayNum = dayMap[item.day.toLowerCase()];
-          let daysUntil = dayNum - today;
-          if (daysUntil <= 0) daysUntil += 7; // Next week if today or past
-          return { ...item, dayNum, daysUntil };
-        }).sort((a, b) => a.daysUntil - b.daysUntil);
+    try {
+      // Get the next occurrence of this meeting
+      const getNextMeetingDate = (schedule) => {
+        const now = new Date();
+        const today = now.getDay(); // 0 = Sunday, 1 = Monday, etc.
         
-        return nearestDays[0];
-      } else if (meeting.days && meeting.time) {
-        // Legacy format support
-        const days = Array.isArray(meeting.days) ? meeting.days : [meeting.days];
-        const dayNum = dayMap[days[0].toLowerCase()];
-        let daysUntil = dayNum - today;
-        if (daysUntil <= 0) daysUntil += 7;
-        return { day: days[0], time: meeting.time, dayNum, daysUntil };
+        // Convert day names to numbers
+        const dayMap = {
+          'sunday': 0, 'monday': 1, 'tuesday': 2, 'wednesday': 3, 
+          'thursday': 4, 'friday': 5, 'saturday': 6
+        };
+        
+        if (schedule && Array.isArray(schedule) && schedule.length > 0) {
+          // Find the next meeting from the schedule
+          let nearestDays = schedule.map(item => {
+            const dayNum = dayMap[item.day.toLowerCase()];
+            if (isNaN(dayNum)) return null;
+            let daysUntil = dayNum - today;
+            if (daysUntil <= 0) daysUntil += 7; // Next week if today or past
+            return { ...item, dayNum, daysUntil };
+          }).filter(item => item !== null).sort((a, b) => a.daysUntil - b.daysUntil);
+          
+          return nearestDays.length > 0 ? nearestDays[0] : null;
+        } else if (meeting.days && meeting.time) {
+          // Legacy format support - handle JSON string parsing
+          let days = meeting.days;
+          if (typeof days === 'string') {
+            try {
+              days = JSON.parse(days);
+            } catch (e) {
+              days = [days]; // Treat as single day if not valid JSON
+            }
+          }
+          if (!Array.isArray(days)) days = [days];
+          
+          const firstDay = days[0];
+          if (!firstDay) return null;
+          
+          const dayNum = dayMap[firstDay.toLowerCase()];
+          if (isNaN(dayNum)) return null;
+          
+          let daysUntil = dayNum - today;
+          if (daysUntil <= 0) daysUntil += 7;
+          return { day: firstDay, time: meeting.time, dayNum, daysUntil };
+        }
+        
+        return null;
+      };
+
+      const nextMeeting = getNextMeetingDate(meeting.schedule);
+      
+      if (!nextMeeting) {
+        // Fallback to text format if no schedule
+        let meetingInfo = `${meeting.name}\n\n`;
+        if (meeting.address) meetingInfo += `Location: ${meeting.address}\n`;
+        if (meeting.onlineUrl) meetingInfo += `Online: ${meeting.onlineUrl}\n`;
+        meetingInfo += '\nShared from AA Recovery Tracker';
+        return meetingInfo;
+      }
+
+      // Calculate the actual date and time
+      const eventDate = new Date();
+      if (isNaN(nextMeeting.daysUntil) || nextMeeting.daysUntil < 0) {
+        throw new Error('Invalid days until next meeting');
+      }
+      eventDate.setDate(eventDate.getDate() + nextMeeting.daysUntil);
+      
+      // Parse time (assuming format like "19:00" or "7:00 PM")
+      const timeStr = nextMeeting.time || '19:00';
+      let hours = 19, minutes = 0; // Default fallback
+      
+      if (timeStr && timeStr.includes(':')) {
+        const [hourStr, minuteStr] = timeStr.split(':');
+        const parsedHours = parseInt(hourStr);
+        const parsedMinutes = parseInt(minuteStr.replace(/[^\d]/g, ''));
+        
+        if (!isNaN(parsedHours) && !isNaN(parsedMinutes)) {
+          hours = parsedHours;
+          minutes = parsedMinutes;
+          
+          // Handle PM designation
+          if (timeStr.toLowerCase().includes('pm') && hours < 12) {
+            hours += 12;
+          } else if (timeStr.toLowerCase().includes('am') && hours === 12) {
+            hours = 0;
+          }
+        }
       }
       
-      return null;
-    };
+      eventDate.setHours(hours, minutes, 0, 0);
+      
+      // Validate the final date
+      if (isNaN(eventDate.getTime())) {
+        throw new Error('Invalid event date calculated');
+      }
+      
+      const endDate = new Date(eventDate.getTime() + 60 * 60 * 1000); // 1 hour duration
 
-    const nextMeeting = getNextMeetingDate(meeting.schedule);
-    
-    if (!nextMeeting) {
-      // Fallback to text format if no schedule
+      // Format dates for calendar (YYYYMMDDTHHMMSSZ format)
+      const formatCalendarDate = (date) => {
+        if (isNaN(date.getTime())) {
+          throw new Error('Invalid date for calendar formatting');
+        }
+        return date.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+      };
+
+      // Build meeting type description from the schedule data
+      let meetingTypeDescription = 'AA';
+      if (nextMeeting.access) {
+        meetingTypeDescription += ` ${nextMeeting.access.charAt(0).toUpperCase() + nextMeeting.access.slice(1)}`;
+      }
+      if (nextMeeting.format) {
+        meetingTypeDescription += ` ${nextMeeting.format.charAt(0).toUpperCase() + nextMeeting.format.slice(1).replace('_', ' ')}`;
+      }
+      meetingTypeDescription += ' Meeting';
+
+      // Create calendar event data (vCalendar format)
+      const calendarData = [
+        'BEGIN:VCALENDAR',
+        'VERSION:2.0',
+        'PRODID:-//AA Recovery Tracker//EN',
+        'BEGIN:VEVENT',
+        `DTSTART:${formatCalendarDate(eventDate)}`,
+        `DTEND:${formatCalendarDate(endDate)}`,
+        `SUMMARY:${meeting.name}`,
+        `DESCRIPTION:${meetingTypeDescription}`,
+        meeting.address ? `LOCATION:${meeting.address}` : '',
+        meeting.onlineUrl ? `URL:${meeting.onlineUrl}` : '',
+        'RRULE:FREQ=WEEKLY;BYDAY=' + (nextMeeting.day ? nextMeeting.day.substring(0, 2).toUpperCase() : 'MO'),
+        'END:VEVENT',
+        'END:VCALENDAR'
+      ].filter(line => line).join('\n');
+
+      return calendarData;
+      
+    } catch (error) {
+      console.error('Error generating calendar data:', error);
+      
+      // Fallback to simple text format
       let meetingInfo = `${meeting.name}\n\n`;
       if (meeting.address) meetingInfo += `Location: ${meeting.address}\n`;
       if (meeting.onlineUrl) meetingInfo += `Online: ${meeting.onlineUrl}\n`;
+      if (meeting.time) meetingInfo += `Time: ${meeting.time}\n`;
       meetingInfo += '\nShared from AA Recovery Tracker';
       return meetingInfo;
     }
-
-    // Calculate the actual date and time
-    const eventDate = new Date();
-    eventDate.setDate(eventDate.getDate() + nextMeeting.daysUntil);
-    
-    // Parse time (assuming format like "19:00" or "7:00 PM")
-    const timeStr = nextMeeting.time;
-    let hours = 19, minutes = 0; // Default fallback
-    
-    try {
-      if (timeStr.includes(':')) {
-        const [hourStr, minuteStr] = timeStr.split(':');
-        hours = parseInt(hourStr);
-        minutes = parseInt(minuteStr.replace(/[^\d]/g, ''));
-        
-        // Handle PM designation
-        if (timeStr.toLowerCase().includes('pm') && hours < 12) {
-          hours += 12;
-        } else if (timeStr.toLowerCase().includes('am') && hours === 12) {
-          hours = 0;
-        }
-      }
-    } catch (e) {
-      console.warn('Could not parse time:', timeStr);
-    }
-    
-    eventDate.setHours(hours, minutes, 0, 0);
-    const endDate = new Date(eventDate.getTime() + 60 * 60 * 1000); // 1 hour duration
-
-    // Format dates for calendar (YYYYMMDDTHHMMSSZ format)
-    const formatCalendarDate = (date) => {
-      return date.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
-    };
-
-    // Build meeting type description from the schedule data
-    let meetingTypeDescription = 'AA';
-    if (nextMeeting.access) {
-      meetingTypeDescription += ` ${nextMeeting.access.charAt(0).toUpperCase() + nextMeeting.access.slice(1)}`;
-    }
-    if (nextMeeting.format) {
-      meetingTypeDescription += ` ${nextMeeting.format.charAt(0).toUpperCase() + nextMeeting.format.slice(1).replace('_', ' ')}`;
-    }
-    meetingTypeDescription += ' Meeting';
-
-    // Create calendar event data (vCalendar format)
-    const calendarData = [
-      'BEGIN:VCALENDAR',
-      'VERSION:2.0',
-      'PRODID:-//AA Recovery Tracker//EN',
-      'BEGIN:VEVENT',
-      `DTSTART:${formatCalendarDate(eventDate)}`,
-      `DTEND:${formatCalendarDate(endDate)}`,
-      `SUMMARY:${meeting.name}`,
-      `DESCRIPTION:${meetingTypeDescription}`,
-      meeting.address ? `LOCATION:${meeting.address}` : '',
-      meeting.onlineUrl ? `URL:${meeting.onlineUrl}` : '',
-      'RRULE:FREQ=WEEKLY;BYDAY=' + nextMeeting.day.substring(0, 2).toUpperCase(),
-      'END:VEVENT',
-      'END:VCALENDAR'
-    ].filter(line => line).join('\n');
-
-    return calendarData;
   };
 
   // Share meeting as QR code

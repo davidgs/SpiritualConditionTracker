@@ -1,0 +1,28 @@
+⚡️  [log] - [ Meetings.js ] Meetings:  [{"time":"18:00","city":"Apex","onlineUrl":"","locationName":"Apex United Methodist Church","phoneNumber":null,"id":1,"state":"NC","isHomeGroup":"true","days":"[\"monday\"]","coordinates":null,"updatedAt":"2025-06-04T11:21:56.890Z","createdAt":"2025-06-04T11:21:56.890Z","zipCode":"","streetAddress":"100 Hughes St","schedule":"[{\"day\":\"monday\",\"time\":\"18:00\",\"format\":\"literature\",\"locationType\":\"in_person\",\"access\":\"closed\"}]","types":"[]","address":"100 Hughes St, Apex, NC","name":"Arch to Freedom"},{"onlineUrl":"","streetAddress":"700 Tyrone","address":"700 Tyrone","time":"19:00","city":"","phoneNumber":null,"state":"","name":"There is A Solution","isHomeGroup":"true","schedule":"[{\"day\":\"tuesday\",\"time\":\"19:00\",\"format\":\"beginners\",\"locationType\":\"in_person\",\"access\":\"open\"},{\"day\":\"thursday\",\"time\":\"19:00\",\"format\":\"discussion\",\"locationType\":\"in_person\",\"access\":\"closed\"}]","coordinates":null,"id":2,"zipCode":"","days":"[\"tuesday\",\"thursday\"]","types":"[]","locationName":"Macedonia United Methodist Church","updatedAt":"2025-06-04T11:29:09.031Z","createdAt":"2025-06-04T11:29:09.031Z"}]
+⚡️  [log] - Formatting day: monday
+⚡️  [log] - Formatting time: "18:00" with 24-hour format: false
+⚡️  [log] - Converted 24-hour to 12-hour: 18:00 -> 6:00 PM
+⚡️  [log] - Formatting day: tuesday
+⚡️  [log] - Formatting time: "19:00" with 24-hour format: false
+⚡️  [log] - Converted 24-hour to 12-hour: 19:00 -> 7:00 PM
+⚡️  [log] - Formatting day: thursday
+⚡️  [log] - Formatting time: "19:00" with 24-hour format: false
+⚡️  [log] - Converted 24-hour to 12-hour: 19:00 -> 7:00 PM
+
+⚡️  ------ STARTUP JS ERROR ------
+
+⚡️  RangeError: Invalid Date
+⚡️  URL: capacitor://localhost/bundle.js
+⚡️  [error] - {}
+⚡️  bundle.js:102:397726
+
+⚡️  See above for help with debugging blank-screen issues
+
+⚡️  ------ STARTUP JS ERROR ------
+
+⚡️  RangeError: Invalid Date
+⚡️  [error] - {}
+⚡️  URL: capacitor://localhost/bundle.js
+⚡️  bundle.js:102:397726
+
+⚡️  See above for help with debugging blank-screen issues

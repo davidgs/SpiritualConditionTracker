@@ -515,6 +515,47 @@ async function createTables(sqlite) {
   });
   console.log('[ sqliteLoader.js ] Action items table created');
 
+  // Sponsees table
+  await sqlite.execute({
+    database: DB_NAME,
+    statements: `
+      CREATE TABLE IF NOT EXISTS sponsees (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        userId TEXT DEFAULT 'default_user',
+        name TEXT,
+        lastName TEXT,
+        phoneNumber TEXT,
+        email TEXT,
+        sobrietyDate TEXT,
+        notes TEXT,
+        sponseeType TEXT DEFAULT 'sponsee',
+        createdAt TEXT,
+        updatedAt TEXT
+      )
+    `
+  });
+  console.log('[ sqliteLoader.js ] Sponsees table created');
+
+  // Sponsee contacts table
+  await sqlite.execute({
+    database: DB_NAME,
+    statements: `
+      CREATE TABLE IF NOT EXISTS sponsee_contacts (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        userId TEXT DEFAULT 'default_user',
+        sponseeId INTEGER,
+        date TEXT,
+        type TEXT DEFAULT 'general',
+        note TEXT DEFAULT '',
+        topic TEXT,
+        duration INTEGER,
+        createdAt TEXT,
+        updatedAt TEXT
+      )
+    `
+  });
+  console.log('[ sqliteLoader.js ] Sponsee contacts table created');
+
   console.log('[ sqliteLoader.js ] All tables created successfully');
 }
 
@@ -524,7 +565,7 @@ async function resetDatabase(sqlite) {
   
   try {
     // Drop all tables
-    const tables = ['users', 'activities', 'meetings', 'sponsors', 'sponsor_contacts', 'action_items'];
+    const tables = ['users', 'activities', 'meetings', 'sponsors', 'sponsor_contacts', 'sponsees', 'sponsee_contacts', 'action_items'];
     
     for (const table of tables) {
       try {
