@@ -530,6 +530,12 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
 
   // Handle sponsee tab change
   const handleSponseeTabChange = (event, newValue) => {
+    // If the "+ Add Sponsee" tab is clicked, open the form instead of changing tab
+    if (newValue === sponsees.length) {
+      setEditingSponseeId(null);
+      setShowSponseeForm(true);
+      return;
+    }
     setCurrentSponseeTab(newValue);
   };
 
@@ -1012,28 +1018,8 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
                     label={sponsee.name || `Sponsee ${index + 1}`}
                   />
                 ))}
+                <Tab label="+ Add Sponsee" />
               </Tabs>
-              
-              <Button 
-                variant="outlined"
-                onClick={() => {
-                  setEditingSponseeId(null);
-                  setShowSponseeForm(true);
-                }}
-                startIcon={<i className="fa-solid fa-plus"></i>}
-                sx={{ 
-                  ml: 2,
-                  borderColor: theme.palette.text.secondary,
-                  color: theme.palette.text.secondary,
-                  '&:hover': {
-                    borderColor: theme.palette.text.primary,
-                    color: theme.palette.text.primary,
-                    backgroundColor: 'transparent'
-                  }
-                }}
-              >
-                Add Sponsee
-              </Button>
             </Box>
 
             {/* Individual Sponsee Content */}
