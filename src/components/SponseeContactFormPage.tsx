@@ -205,19 +205,16 @@ export default function SponseeContactFormPage({ open, userId, onSubmit, onClose
             type="date"
             value={contactData.date}
             onChange={(e) => handleChange('date', e.target.value)}
-            InputLabelProps={{
-              shrink: true,
-              sx: { color: theme.palette.text.secondary }
-            }}
             sx={{ 
-              mb: 1,
-              backgroundColor: theme.palette.background.paper,
-              '& .MuiOutlinedInput-root': {
-                '& fieldset': {
-                  borderColor: theme.palette.divider
-                }
+              '& .MuiInputBase-root': { 
+                height: '56px', 
+                borderRadius: '8px',
               }
             }}
+            InputLabelProps={{
+              shrink: true,
+            }}
+            required
           />
 
           {/* Notes Input */}
