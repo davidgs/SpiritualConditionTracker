@@ -1,31 +1,44 @@
 import React from 'react';
-import { Box, Typography, Button, IconButton } from '@mui/material';
+import { Box, Typography, Button } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import TabComponent from './TabComponent';
+import PersonPage from './PersonPage';
 import { ContactPerson } from '../../types/ContactPerson';
 
 interface SubTabComponentProps {
   persons: ContactPerson[];
+  personType: 'sponsor' | 'sponsee';
+  contacts: any[];
+  actionItems: any[];
   currentTab: number;
   onTabChange: (event: any, newValue: number) => void;
   onAddPerson: () => void;
   onEditPerson: (person: ContactPerson) => void;
   onDeletePerson: (personId: string | number) => void;
+  onAddContact: (person: ContactPerson) => void;
+  onEditContact?: (contact: any) => void;
+  onToggleActionItem?: (actionItem: any) => void;
   addLabel: string;
   emptyMessage: string;
-  renderPersonContent: (person: ContactPerson, index: number) => React.ReactNode;
+  renderContactCard?: (contact: any, index: number) => React.ReactNode;
 }
 
 export default function SubTabComponent({
   persons,
+  personType,
+  contacts,
+  actionItems,
   currentTab,
   onTabChange,
   onAddPerson,
   onEditPerson,
   onDeletePerson,
+  onAddContact,
+  onEditContact,
+  onToggleActionItem,
   addLabel,
   emptyMessage,
-  renderPersonContent
+  renderContactCard
 }: SubTabComponentProps) {
   const theme = useTheme();
 
@@ -57,34 +70,29 @@ export default function SubTabComponent({
     );
   }
 
+  // Helper function to get contacts for a specific person
+  const getPersonContacts = (personId: string | number) => {
+    const foreignKey = personType === 'sponsor' ? 'sponsorId' : 'sponseeId';
+    return contacts.filter(contact => contact[foreignKey] === personId);
+  };
+
   // Create tab items for the TabComponent
   const tabItems = persons.map((person, index) => ({
     id: person.id || index,
     label: `${person.name} ${person.lastName || ''}`.trim(),
     content: (
-      <Box>
-        {/* Edit and Delete buttons */}
-        <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1, mb: 2 }}>
-          <IconButton 
-            onClick={() => onEditPerson(person)}
-            size="small"
-            sx={{ color: theme.palette.primary.main }}
-          >
-            <i className="fa-solid fa-pen-to-square"></i>
-          </IconButton>
-          
-          <IconButton 
-            onClick={() => onDeletePerson(person.id)}
-            size="small"
-            sx={{ color: theme.palette.error.main }}
-          >
-            <i className="fa-solid fa-trash"></i>
-          </IconButton>
-        </Box>
-
-        {/* Person-specific content */}
-        {renderPersonContent(person, index)}
-      </Box>
+      <PersonPage
+        person={person}
+        personType={personType}
+        contacts={getPersonContacts(person.id)}
+        actionItems={actionItems}
+        onAddContact={onAddContact}
+        onEditPerson={onEditPerson}
+        onDeletePerson={onDeletePerson}
+        onEditContact={onEditContact}
+        onToggleActionItem={onToggleActionItem}
+        renderContactCard={renderContactCard}
+      />
     )
   }));
 

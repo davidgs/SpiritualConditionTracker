@@ -930,75 +930,57 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
 
       {/* Sponsor Tab */}
       <TabPanel value={currentTab} index={0}>
-        {sponsors.length > 0 ? (
-          <ContactPersonTabs
-            persons={sponsors}
-            currentTab={currentSponsorTab}
-            onTabChange={handleSponsorTabChange}
-            addLabel="+ Add Sponsor"
-            emptyMessage="No sponsors added yet."
-          >
-            {/* Sponsor content panels */}
-            {sponsors.map((sponsor, index) => (
-              <TabPanel key={sponsor.id} value={currentSponsorTab} index={index}>
-                <SponsorContent 
-                  sponsor={sponsor}
-                  theme={theme}
-                  onEdit={() => handleEditSponsor(sponsor)}
-                  onDelete={() => handleDeleteSponsor(sponsor.id)}
-                  onAddContact={handleAddContact}
-                  loadSponsorContacts={loadSponsorContacts}
-                  getActionItemsForContact={getActionItemsForContact}
-                  getContactTypeInfo={getContactTypeInfo}
-                  handleEditContact={handleEditContact}
-                  handleToggleActionItem={handleToggleActionItem}
-                  handleDeleteActionItem={handleDeleteActionItem}
-                  refreshKey={refreshKey}
-                  formatDateForDisplay={formatDateForDisplay}
-                />
-              </TabPanel>
-            ))}
-          </ContactPersonTabs>
-        ) : (
-          <Box sx={{ 
-            textAlign: 'center', 
-            py: 6, 
-            px: 3,
-            margin: '16px',
-            backgroundColor: theme.palette.background.paper,
-            borderRadius: '8px',
-            border: `1px solid ${theme.palette.divider}`
-          }}>
-            <Typography variant="body1" sx={{ color: theme.palette.text.primary, mb: 3 }}>
-              You haven't added your sponsor yet.
-            </Typography>
-            
-            <Button 
-              variant="contained" 
-              color="primary"
-              onClick={() => {
-                setEditingPerson(null);
-                setPersonFormType('sponsor');
-                setShowPersonForm(true);
-              }}
-              startIcon={<i className="fa-solid fa-plus"></i>}
-            >
-              Add Sponsor
-            </Button>
-          </Box>
-        )}
+        <SubTabComponent
+          persons={sponsors}
+          personType="sponsor"
+          contacts={sponsorContacts}
+          actionItems={activities || []}
+          currentTab={currentSponsorTab}
+          onTabChange={handleSponsorTabChange}
+          onAddPerson={() => handleEditSponsor(null)}
+          onEditPerson={handleEditSponsor}
+          onDeletePerson={(id) => handleDeletePerson('sponsor', id)}
+          onAddContact={handleAddContact}
+          onToggleActionItem={handleToggleActionItem}
+          addLabel="+ Add Sponsor"
+          emptyMessage="No sponsors added yet."
+          renderContactCard={(contact, index) => (
+            <ContactCard
+              key={contact.id || index}
+              contact={contact}
+              onToggleActionItem={handleToggleActionItem}
+              theme={theme}
+            />
+          )}
+        />
       </TabPanel>
 
       {/* Sponsee Tab */}
       <TabPanel value={currentTab} index={1}>
-        {sponsees.length > 0 ? (
-          <ContactPersonTabs
-            persons={sponsees}
-            currentTab={currentSponseeTab}
-            onTabChange={handleSponseeTabChange}
-            addLabel="+ Add Sponsee"
-            emptyMessage="No sponsees added yet."
-          >
+        <SubTabComponent
+          persons={sponsees}
+          personType="sponsee"
+          contacts={sponseeContacts}
+          actionItems={activities || []}
+          currentTab={currentSponseeTab}
+          onTabChange={handleSponseeTabChange}
+          onAddPerson={() => handleEditSponsee(null)}
+          onEditPerson={handleEditSponsee}
+          onDeletePerson={(id) => handleDeletePerson('sponsee', id)}
+          onAddContact={handleAddContact}
+          onToggleActionItem={handleToggleActionItem}
+          addLabel="+ Add Sponsee"
+          emptyMessage="No sponsees added yet."
+          renderContactCard={(contact, index) => (
+            <ContactCard
+              key={contact.id || index}
+              contact={contact}
+              onToggleActionItem={handleToggleActionItem}
+              theme={theme}
+            />
+          )}
+        />
+      </TabPanel>
 
             {/* Individual Sponsee Content */}
             {sponsees.map((sponsee, index) => {
