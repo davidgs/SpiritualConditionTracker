@@ -191,12 +191,25 @@ class DatabaseService {
     return this.executeOperation(async () => {
       console.log('[ DatabaseService.ts updateUser ] Raw updates received:', JSON.stringify(updates, null, 2));
       
+      // Get current user data to preserve existing fields like isDarkMode
+      const currentUser = await this.database.getById('users', id);
+      if (!currentUser) {
+        throw new Error(`User with id ${id} not found`);
+      }
+      
+      // Preserve existing isDarkMode if not explicitly being updated
+      const finalUpdates = { ...updates };
+      if (finalUpdates.isDarkMode === undefined && currentUser.isDarkMode !== undefined) {
+        finalUpdates.isDarkMode = currentUser.isDarkMode;
+        console.log('[ DatabaseService.ts updateUser ] Preserving isDarkMode:', currentUser.isDarkMode);
+      }
+      
       if (updates.preferences) {
         console.log('[ DatabaseService.ts updateUser ] Preferences type:', typeof updates.preferences);
         console.log('[ DatabaseService.ts updateUser ] Preferences value:', updates.preferences);
       }
       
-      const result = await this.database.update('users', id, updates);
+      const result = await this.database.update('users', id, finalUpdates);
       console.log('[ DatabaseService.ts updateUser ] Update result:', JSON.stringify(result, null, 2));
       return result;
     });
