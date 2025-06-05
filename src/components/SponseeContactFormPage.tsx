@@ -229,12 +229,18 @@ export default function SponseeContactFormPage({ open, userId, onSubmit, onClose
             InputLabelProps={{
               sx: { color: theme.palette.text.secondary }
             }}
+            variant="outlined"
+            size="medium"
+            margin="none"
             sx={{ 
-              backgroundColor: theme.palette.background.paper,
-              '& .MuiOutlinedInput-root': {
-                '& fieldset': {
-                  borderColor: theme.palette.divider
-                }
+              mb: 2,
+              '& .MuiOutlinedInput-root': { 
+                height: 56,
+                borderRadius: 2
+              },
+              '& .MuiOutlinedInput-input': {
+                fontSize: 16,
+                padding: '15px 14px'
               }
             }}
           />
