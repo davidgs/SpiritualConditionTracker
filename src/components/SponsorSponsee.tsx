@@ -525,6 +525,12 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
 
   // Handle sponsor tab change
   const handleSponsorTabChange = (event, newValue) => {
+    // If the "+ Add Sponsor" tab is clicked, open the form instead of changing tab
+    if (newValue === sponsors.length) {
+      setEditingSponsor(null);
+      setShowSponsorForm(true);
+      return;
+    }
     setCurrentSponsorTab(newValue);
   };
 
@@ -922,33 +928,7 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
               </TabPanel>
             ))}
 
-            {/* Add Sponsor panel */}
-            <TabPanel value={currentSponsorTab} index={sponsors.length}>
-              <Box className="text-center py-6">
-                <Typography variant="body1" sx={{ color: theme.palette.text.primary, mb: 3 }}>
-                  Add another sponsor or service sponsor.
-                </Typography>
-                
-                <Button 
-                  variant="contained" 
-                  color="primary"
-                  onClick={() => {
-                    setEditingSponsor(null);
-                    setShowSponsorForm(true);
-                  }}
-                  startIcon={<i className="fa-solid fa-plus"></i>}
-                  sx={{ 
-                    backgroundColor: theme.palette.primary.main,
-                    color: theme.palette.primary.contrastText,
-                    '&:hover': {
-                      backgroundColor: theme.palette.primary.dark,
-                    }
-                  }}
-                >
-                  Add Sponsor
-                </Button>
-              </Box>
-            </TabPanel>
+
           </Box>
         ) : (
           <Box sx={{ 
