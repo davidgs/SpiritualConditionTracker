@@ -447,40 +447,34 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
   };
   
   // Handle sponsee form submission
-  const handleSponseeSubmit = (sponseeData) => {
-    let updatedSponsees;
-    
-    // Ensure sponsees is an array
-    const sponseesArray = Array.isArray(sponsees) ? sponsees : [];
-    
-    // Check if we're editing an existing sponsee or adding a new one
-    if (editingSponseeId) {
-      // Update existing sponsee
-      console.log('[SponsorSponsee.tsx:345] Before map - sponseesArray:', sponseesArray, 'editingSponseeId:', editingSponseeId);
-      updatedSponsees = sponseesArray.map(sponsee => 
-        sponsee && sponsee.id === editingSponseeId ? { ...sponsee, ...sponseeData } : sponsee
-      );
-    } else {
-      // Add new sponsee with generated ID
-      const newSponsee = {
-        ...sponseeData,
-        id: `sponsee_${Date.now()}`
-      };
-      updatedSponsees = [...sponseesArray, newSponsee];
+  const handleSponseeSubmit = async (sponseeData) => {
+    try {
+      const databaseService = DatabaseService.getInstance();
+
+      // Check if we're editing an existing sponsee or adding a new one
+      if (editingSponseeId) {
+        // Update existing sponsee in sponsees table
+        await databaseService.update('sponsees', editingSponseeId, {
+          ...sponseeData,
+          updatedAt: new Date().toISOString()
+        });
+      } else {
+        // Add new sponsee to sponsees table
+        await databaseService.add('sponsees', {
+          ...sponseeData,
+          userId: user.id,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        });
+      }
+
+      // Reload sponsees from database
+      await loadSponsees();
+      setShowSponseeForm(false);
+      setEditingSponseeId(null);
+    } catch (error) {
+      console.error('Error saving sponsee:', error);
     }
-    
-    // Create a copy of the current user data
-    const userUpdate = {
-      sponsees: updatedSponsees
-    };
-    
-    // Update user in database through parent component
-    onUpdate(userUpdate, { redirectToDashboard: false });
-    
-    // Update local state
-    setSponsees(updatedSponsees);
-    setShowSponseeForm(false);
-    setEditingSponseeId(null);
   };
   
   // Delete sponsor
