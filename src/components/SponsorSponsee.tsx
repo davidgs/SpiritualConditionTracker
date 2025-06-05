@@ -60,8 +60,13 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
     try {
       const sponsorData = await databaseService.getAll('sponsors');
       console.log('Raw sponsor data:', sponsorData);
-      const filteredSponsors = sponsorData.filter((sponsor: any) => sponsor.userId === user?.id);
-      console.log('Filtered sponsors:', filteredSponsors);
+      const filteredSponsors = sponsorData.filter((sponsor: any) => 
+        sponsor.userId === user?.id || 
+        sponsor.userId === String(user?.id) || 
+        sponsor.userId === Number(user?.id) ||
+        sponsor.userId === "default_user" // Handle legacy user ID
+      );
+      console.log('Filtered sponsors:', filteredSponsors, 'Looking for user:', user?.id);
       setSponsors(filteredSponsors as ContactPerson[]);
     } catch (error) {
       console.error('Failed to load sponsors:', error);
@@ -72,8 +77,12 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
     try {
       const sponseeData = await databaseService.getAll('sponsees');
       console.log('Raw sponsee data:', sponseeData);
-      const filteredSponsees = sponseeData.filter((sponsee: any) => sponsee.userId === user?.id);
-      console.log('Filtered sponsees:', filteredSponsees);
+      const filteredSponsees = sponseeData.filter((sponsee: any) => 
+        sponsee.userId === user?.id || 
+        sponsee.userId === String(user?.id) || 
+        sponsee.userId === Number(user?.id)
+      );
+      console.log('Filtered sponsees:', filteredSponsees, 'Looking for user:', user?.id);
       setSponsees(filteredSponsees as ContactPerson[]);
     } catch (error) {
       console.error('Failed to load sponsees:', error);
@@ -100,13 +109,13 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
 
   useEffect(() => {
     if (user?.id) {
-      console.log('SponsorSponsee: Loading data for user:', user.id);
+      console.log('SponsorSponsee: Loading data for user:', user.id, 'Type:', typeof user.id);
       loadSponsors();
       loadSponsees();
       loadSponsorContacts();
       loadSponseeContacts();
     } else {
-      console.log('SponsorSponsee: No user ID available');
+      console.log('SponsorSponsee: No user ID available, user object:', user);
     }
   }, [user?.id, refreshKey]);
 
