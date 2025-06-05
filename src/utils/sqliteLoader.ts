@@ -362,6 +362,7 @@ async function createTables(sqlite) {
         privacySettings TEXT DEFAULT '{"allowMessages":true,"shareLastName":true}',
         preferences TEXT DEFAULT '{"use24HourFormat":false,"darkMode":false,"theme":"default"}',
         isDarkMode INTEGER DEFAULT 0,
+        sponsees TEXT DEFAULT '[]',
         createdAt TEXT,
         updatedAt TEXT
       )
@@ -379,6 +380,18 @@ async function createTables(sqlite) {
   } catch (error) {
     // Column already exists, which is fine
     console.log('[ sqliteLoader.js ] isDarkMode column already exists or failed to add:', error.message);
+  }
+
+  // Add sponsees column to existing users table (migration)
+  try {
+    await sqlite.execute({
+      database: DB_NAME,
+      statements: `ALTER TABLE users ADD COLUMN sponsees TEXT DEFAULT '[]'`
+    });
+    console.log('[ sqliteLoader.js ] Added sponsees column to users table');
+  } catch (error) {
+    // Column already exists, which is fine
+    console.log('[ sqliteLoader.js ] sponsees column already exists or failed to add:', error.message);
   }
 
   // Activities table
