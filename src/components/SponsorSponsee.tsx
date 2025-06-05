@@ -392,21 +392,17 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
   };
   
   // Delete sponsee
-  const handleDeleteSponsee = (sponseeId) => {
-    console.log('[SponsorSponsee.tsx:274] Before filter - sponsees:', sponsees, 'sponseeId:', sponseeId);
-    const sponseesArray = Array.isArray(sponsees) ? sponsees : [];
-    const updatedSponsees = sponseesArray.filter(sponsee => sponsee && sponsee.id !== sponseeId);
-    
-    // Create a copy of the current user data
-    const userUpdate = {
-      sponsees: updatedSponsees
-    };
-    
-    // Update user in database through parent component
-    onUpdate(userUpdate, { redirectToDashboard: false });
-    
-    // Update local state
-    setSponsees(updatedSponsees);
+  const handleDeleteSponsee = async (sponseeId) => {
+    try {
+      const databaseService = DatabaseService.getInstance();
+      await databaseService.remove('sponsees', sponseeId);
+      
+      // Reload the sponsees list
+      await loadSponsees();
+      setRefreshKey(prev => prev + 1);
+    } catch (error) {
+      console.error('Error deleting sponsee:', error);
+    }
   };
   
   // Get contact type information (icon and label)
@@ -536,25 +532,7 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
     setCurrentSponseeTab(newValue);
   };
 
-  // Handler for editing a sponsee
-  const handleEditSponsee = (sponsee) => {
-    setEditingSponseeId(sponsee.id);
-    setShowSponseeForm(true);
-  };
 
-  // Handler for deleting a sponsee
-  const handleDeleteSponsee = async (sponseeId) => {
-    try {
-      const databaseService = DatabaseService.getInstance();
-      await databaseService.delete('sponsees', sponseeId);
-      
-      // Reload the sponsees list
-      await loadSponsees();
-      setRefreshKey(prev => prev + 1);
-    } catch (error) {
-      console.error('Error deleting sponsee:', error);
-    }
-  };
 
   // Handler for adding contact with sponsee and action items
   const handleAddSponseeContactWithActionItem = async (formData) => {
@@ -572,7 +550,7 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
         updatedAt: new Date().toISOString()
       };
       
-      const savedContact = await databaseService.save('sponsee_contacts', contactToSave);
+      const savedContact = await databaseService.add('sponsee_contacts', contactToSave);
       console.log('[SponsorSponsee.tsx] Saved sponsee contact:', savedContact);
       
       // Save action items if any
@@ -587,7 +565,7 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
             updatedAt: new Date().toISOString()
           };
           
-          const savedActionItem = await databaseService.save('action_items', actionItemToSave);
+          const savedActionItem = await databaseService.add('action_items', actionItemToSave);
           console.log('[SponsorSponsee.tsx] Saved action item:', savedActionItem);
         }
       }
