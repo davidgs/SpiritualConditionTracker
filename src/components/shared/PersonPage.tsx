@@ -160,11 +160,11 @@ export default function PersonPage({
           backgroundColor: theme.palette.background.paper,
           boxShadow: theme.shadows[2],
           borderRadius: 2,
-          p: 3,
-          mb: 3
+          p: 1.5,
+          mb: 1.5
         }}
       >
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1.5 }}>
           <Typography variant="h6" sx={{ color: theme.palette.text.primary, fontWeight: 'bold' }}>
             Contact History ({contacts.length})
           </Typography>
@@ -186,17 +186,17 @@ export default function PersonPage({
         </Box>
         
         {contacts.length === 0 ? (
-          <Box sx={{ textAlign: 'center', py: 4 }}>
+          <Box sx={{ textAlign: 'center', py: 2 }}>
             <Typography sx={{ color: theme.palette.text.secondary }}>
               No contacts recorded with {person.name} yet.
             </Typography>
           </Box>
         ) : (
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
             {contacts.map((contact, index) => (
               <Box key={contact.id || index}>
                 {renderContactCard ? renderContactCard(contact, index) : (
-                  <Box sx={{ p: 2, bgcolor: theme.palette.background.default, borderRadius: 1 }}>
+                  <Box sx={{ p: 1.5, bgcolor: theme.palette.background.default, borderRadius: 1 }}>
                     <Typography variant="body2" sx={{ color: theme.palette.text.primary }}>
                       {contact.type}: {contact.notes || 'No notes'}
                     </Typography>
@@ -215,26 +215,26 @@ export default function PersonPage({
           backgroundColor: theme.palette.background.paper,
           boxShadow: theme.shadows[2],
           borderRadius: 2,
-          p: 3
+          p: 1.5
         }}
       >
-        <Typography variant="h6" sx={{ color: theme.palette.text.primary, fontWeight: 'bold', mb: 3 }}>
+        <Typography variant="h6" sx={{ color: theme.palette.text.primary, fontWeight: 'bold', mb: 1.5 }}>
           Action Items ({personActionItems.length})
         </Typography>
         
         {personActionItems.length === 0 ? (
-          <Box sx={{ textAlign: 'center', py: 4 }}>
+          <Box sx={{ textAlign: 'center', py: 2 }}>
             <Typography sx={{ color: theme.palette.text.secondary }}>
               No action items for {person.name} yet.
             </Typography>
           </Box>
         ) : (
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
             {personActionItems.map((actionItem, index) => (
               <Box 
                 key={actionItem.id || index}
                 sx={{ 
-                  p: 2, 
+                  p: 1.5, 
                   bgcolor: theme.palette.background.default, 
                   borderRadius: 1,
                   display: 'flex',

@@ -30,8 +30,8 @@ export default function PersonInfoCard({
           backgroundColor: theme.palette.background.paper,
           boxShadow: theme.shadows[2],
           borderRadius: 2,
-          p: 2,
-          mb: 2
+          p: 1.5,
+          mb: 1.5
         }}
       >
         <Typography variant="h6" sx={{ color: theme.palette.text.primary, fontWeight: 'bold', mb: 0.5 }}>
@@ -93,8 +93,8 @@ export default function PersonInfoCard({
           )}
           
           {person.notes && (
-            <Box sx={{ mt: 2 }}>
-              <Typography variant="body2" sx={{ color: theme.palette.text.secondary, fontWeight: 'bold', mb: 1 }}>
+            <Box sx={{ mt: 1 }}>
+              <Typography variant="caption" sx={{ color: theme.palette.text.secondary, fontWeight: 'bold', mb: 0.5 }}>
                 Notes:
               </Typography>
               <Typography variant="body2" sx={{ color: theme.palette.text.primary }}>
@@ -112,11 +112,11 @@ export default function PersonInfoCard({
           backgroundColor: theme.palette.background.paper,
           boxShadow: theme.shadows[2],
           borderRadius: 2,
-          p: 2,
-          mb: 2
+          p: 1.5,
+          mb: 1.5
         }}
       >
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
           <Typography variant="h6" sx={{ color: theme.palette.text.primary }}>
             Contacts & Action Items
           </Typography>
