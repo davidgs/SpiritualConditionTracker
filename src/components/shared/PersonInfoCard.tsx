@@ -34,15 +34,15 @@ export default function PersonInfoCard({
           mb: 2
         }}
       >
-        <Typography variant="h5" sx={{ color: theme.palette.text.primary, fontWeight: 'bold', mb: 1 }}>
+        <Typography variant="h6" sx={{ color: theme.palette.text.primary, fontWeight: 'bold', mb: 0.5 }}>
           {person.name} {person.lastName || ''}
         </Typography>
         
-        <Typography variant="body2" sx={{ color: theme.palette.text.secondary, mb: 2 }}>
+        <Typography variant="caption" sx={{ color: theme.palette.text.secondary, mb: 1 }}>
           Contact Information
         </Typography>
 
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
           {person.phoneNumber && (
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               <IconButton 
