@@ -403,14 +403,29 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
   // Delete sponsee
   const handleDeleteSponsee = async (sponseeId) => {
     try {
+      console.log('[ SponsorSponsee.tsx ] Deleting sponsee with ID:', sponseeId);
       const databaseService = DatabaseService.getInstance();
-      await databaseService.remove('sponsees', sponseeId);
+      
+      // Also delete all related sponsee contacts first
+      const allSponseeContacts = await databaseService.getAll('sponsee_contacts');
+      const relatedContacts = allSponseeContacts.filter(contact => contact.sponseeId === sponseeId);
+      
+      for (const contact of relatedContacts) {
+        console.log('[ SponsorSponsee.tsx ] Deleting related sponsee contact:', contact.id);
+        await databaseService.remove('sponsee_contacts', contact.id);
+      }
+      
+      // Delete the sponsee
+      const deleteResult = await databaseService.remove('sponsees', sponseeId);
+      console.log('[ SponsorSponsee.tsx ] Sponsee deletion result:', deleteResult);
       
       // Reload the sponsees list
       await loadSponsees();
+      await loadSponseeContacts();
       setRefreshKey(prev => prev + 1);
     } catch (error) {
       console.error('Error deleting sponsee:', error);
+      alert('Failed to delete sponsee. Please try again.');
     }
   };
   
