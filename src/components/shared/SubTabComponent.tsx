@@ -49,14 +49,14 @@ export default function SubTabComponent({
     return (
       <Box sx={{ 
         textAlign: 'center', 
-        py: 6, 
-        px: 3,
-        margin: '16px',
+        py: 3, 
+        px: 2,
+        margin: '8px',
         backgroundColor: theme.palette.background.paper,
         borderRadius: '8px',
         border: `1px solid ${theme.palette.divider}`
       }}>
-        <Typography variant="body1" sx={{ color: theme.palette.text.primary, mb: 3 }}>
+        <Typography variant="body2" sx={{ color: theme.palette.text.primary, mb: 2 }}>
           {emptyMessage}
         </Typography>
         
