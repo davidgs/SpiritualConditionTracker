@@ -165,20 +165,30 @@ export default function SponseeContactFormPage({ open, userId, onSubmit, onClose
       <DialogTitle sx={{ 
         backgroundColor: theme.palette.background.paper,
         color: theme.palette.text.primary,
-        borderBottom: `1px solid ${theme.palette.divider}`
+        borderBottom: `1px solid ${theme.palette.divider}`,
+        py: 3,
+        textAlign: 'center',
+        fontSize: '1.2rem',
+        fontWeight: 600
       }}>
         {initialData ? 'Edit Contact' : 'Add Contact with Sponsee'}
       </DialogTitle>
       
-      <DialogContent sx={{ p: 3 }}>
-        <Box className="space-y-4">
+      <DialogContent sx={{ p: 4, pt: 3 }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
           {/* Contact Type Selection */}
-          <FormControl fullWidth>
-            <InputLabel>Contact Type</InputLabel>
+          <FormControl fullWidth sx={{ mb: 1 }}>
+            <InputLabel sx={{ color: theme.palette.text.secondary }}>Contact Type</InputLabel>
             <Select
               value={contactData.type}
               label="Contact Type"
               onChange={(e) => handleChange('type', e.target.value as ContactType)}
+              sx={{ 
+                backgroundColor: theme.palette.background.paper,
+                '& .MuiOutlinedInput-notchedOutline': {
+                  borderColor: theme.palette.divider
+                }
+              }}
             >
               <MenuItem value="phone">Phone Call</MenuItem>
               <MenuItem value="text">Text Message</MenuItem>
@@ -197,6 +207,16 @@ export default function SponseeContactFormPage({ open, userId, onSubmit, onClose
             onChange={(e) => handleChange('date', e.target.value)}
             InputLabelProps={{
               shrink: true,
+              sx: { color: theme.palette.text.secondary }
+            }}
+            sx={{ 
+              mb: 1,
+              backgroundColor: theme.palette.background.paper,
+              '& .MuiOutlinedInput-root': {
+                '& fieldset': {
+                  borderColor: theme.palette.divider
+                }
+              }
             }}
           />
 
@@ -205,18 +225,38 @@ export default function SponseeContactFormPage({ open, userId, onSubmit, onClose
             fullWidth
             label="Notes"
             multiline
-            rows={3}
+            rows={4}
             value={contactData.note}
             onChange={(e) => handleChange('note', e.target.value)}
             placeholder="Add any notes about this contact..."
+            InputLabelProps={{
+              sx: { color: theme.palette.text.secondary }
+            }}
+            sx={{ 
+              backgroundColor: theme.palette.background.paper,
+              '& .MuiOutlinedInput-root': {
+                '& fieldset': {
+                  borderColor: theme.palette.divider
+                }
+              }
+            }}
           />
 
           <Divider sx={{ my: 3 }} />
 
           {/* Action Items Section */}
-          <Box>
-            <Box className="flex justify-between items-center mb-3">
-              <Typography variant="h6" sx={{ color: theme.palette.text.primary }}>
+          <Box sx={{ mt: 2 }}>
+            <Box sx={{ 
+              display: 'flex', 
+              justifyContent: 'space-between', 
+              alignItems: 'center', 
+              mb: 3 
+            }}>
+              <Typography variant="h6" sx={{ 
+                color: theme.palette.text.primary,
+                fontSize: '1.1rem',
+                fontWeight: 600
+              }}>
                 Action Items
               </Typography>
               <Button
@@ -224,6 +264,14 @@ export default function SponseeContactFormPage({ open, userId, onSubmit, onClose
                 size="small"
                 onClick={() => setShowInput(true)}
                 startIcon={<i className="fa-solid fa-plus"></i>}
+                sx={{
+                  borderColor: theme.palette.primary.main,
+                  color: theme.palette.primary.main,
+                  '&:hover': {
+                    backgroundColor: theme.palette.primary.main,
+                    color: theme.palette.primary.contrastText
+                  }
+                }}
               >
                 Add Action Item
               </Button>
@@ -279,9 +327,22 @@ export default function SponseeContactFormPage({ open, userId, onSubmit, onClose
             )}
 
             {todos.length === 0 && !showInput && (
-              <Typography variant="body2" sx={{ color: theme.palette.text.secondary, textAlign: 'center', py: 2 }}>
-                No action items yet. Click "Add Action Item" to create one.
-              </Typography>
+              <Box sx={{ 
+                textAlign: 'center', 
+                py: 4,
+                px: 2,
+                backgroundColor: theme.palette.background.paper,
+                borderRadius: 2,
+                border: `1px dashed ${theme.palette.divider}`
+              }}>
+                <Typography variant="body2" sx={{ 
+                  color: theme.palette.text.secondary,
+                  mb: 1,
+                  fontSize: '0.95rem'
+                }}>
+                  No action items yet. Click "Add Action Item" to create one.
+                </Typography>
+              </Box>
             )}
           </Box>
         </Box>
