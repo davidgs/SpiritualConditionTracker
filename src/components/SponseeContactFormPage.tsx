@@ -353,15 +353,17 @@ export default function SponseeContactFormPage({ open, userId, onSubmit, onClose
         backgroundColor: theme.palette.background.paper,
         borderTop: `1px solid ${theme.palette.divider}`
       }}>
-        <Button onClick={onClose} sx={{ color: theme.palette.text.secondary }}>
+        <Button onClick={onClose} 
+          variant="outlined"
+          color="error">
           Cancel
         </Button>
         <Button 
           onClick={handleSubmit}
           variant="contained"
-          color="primary"
+          color="success"
         >
-          {initialData ? 'Update Contact' : 'Save Contact'}
+          {initialData ? 'Update' : 'Save'}
         </Button>
       </DialogActions>
     </Dialog>
