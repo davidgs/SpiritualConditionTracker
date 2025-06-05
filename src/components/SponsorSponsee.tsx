@@ -102,6 +102,8 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
 
   // Delete handler
   const handleDeletePerson = async (personType: 'sponsor' | 'sponsee', personId: string | number) => {
+    console.log(`Attempting to delete ${personType} with ID:`, personId, 'Type:', typeof personId);
+    
     if (!personId) {
       console.error(`No ${personType} ID provided for deletion`);
       return;
@@ -111,6 +113,7 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
       return;
     }
 
+    console.log(`Confirmed deletion of ${personType} ID: ${personId}`);
     try {
       const contactTable = personType === 'sponsor' ? 'sponsor_contacts' : 'sponsee_contacts';
       const personTable = personType === 'sponsor' ? 'sponsors' : 'sponsees';
