@@ -36,6 +36,9 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
   const theme = useTheme();
   const darkMode = theme.palette.mode === 'dark';
   
+  // Initialize database service once at component level
+  const databaseService = DatabaseService.getInstance();
+  
   // Tab state
   const [currentTab, setCurrentTab] = useState(0);
   const [currentSponsorTab, setCurrentSponsorTab] = useState(0);
@@ -73,7 +76,6 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
   // Load sponsors from sponsors table
   const loadSponsors = async () => {
     try {
-      const databaseService = DatabaseService.getInstance();
       const allSponsors = await databaseService.getAll('sponsors');
       console.log('Loaded sponsors:', allSponsors);
       setSponsors(allSponsors || []);
@@ -86,7 +88,6 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
   // Load sponsees from sponsees table
   const loadSponsees = async () => {
     try {
-      const databaseService = DatabaseService.getInstance();
       const allSponsees = await databaseService.getAll('sponsees');
       console.log('Loaded sponsees:', allSponsees);
       
@@ -412,8 +413,6 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
         return;
       }
       
-      const databaseService = DatabaseService.getInstance();
-      
       // Check if sponsee exists before deletion
       const existingSponsee = await databaseService.getById('sponsees', sponseeId);
       console.log('[ SponsorSponsee.tsx ] Existing sponsee before deletion:', existingSponsee);
@@ -469,7 +468,6 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
   // Unified form submission handler for both sponsors and sponsees
   const handlePersonSubmit = async (personData) => {
     try {
-      const databaseService = DatabaseService.getInstance();
       const tableName = personFormType === 'sponsor' ? 'sponsors' : 'sponsees';
 
       if (editingPerson && editingPerson.id) {
