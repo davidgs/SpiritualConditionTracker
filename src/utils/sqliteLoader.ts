@@ -276,12 +276,17 @@ export default async function initSQLiteDatabase() {
         try {
           console.log(`[ sqliteLoader.js ] Removing from ${collection} id:`, id);
           
-          await sqlite.execute({
+          const result = await sqlite.execute({
             database: DB_NAME,
-            statements: `DELETE FROM ${collection} WHERE id = ${id}`
+            statements: [
+              {
+                statement: `DELETE FROM ${collection} WHERE id = ?`,
+                values: [id]
+              }
+            ]
           });
           
-          console.log(`[ sqliteLoader.js ] Delete completed for ${collection} id ${id}`);
+          console.log(`[ sqliteLoader.js ] Delete result for ${collection} id ${id}:`, result);
           
           return true;
         } catch (error) {
