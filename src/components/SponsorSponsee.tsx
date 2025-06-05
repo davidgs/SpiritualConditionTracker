@@ -59,7 +59,9 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
   const loadSponsors = async () => {
     try {
       const sponsorData = await databaseService.getAll('sponsors');
-      const filteredSponsors = sponsorData.filter(sponsor => sponsor.userId === user?.id);
+      console.log('Raw sponsor data:', sponsorData);
+      const filteredSponsors = sponsorData.filter((sponsor: any) => sponsor.userId === user?.id);
+      console.log('Filtered sponsors:', filteredSponsors);
       setSponsors(filteredSponsors as ContactPerson[]);
     } catch (error) {
       console.error('Failed to load sponsors:', error);
@@ -69,7 +71,9 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
   const loadSponsees = async () => {
     try {
       const sponseeData = await databaseService.getAll('sponsees');
-      const filteredSponsees = sponseeData.filter(sponsee => sponsee.userId === user?.id);
+      console.log('Raw sponsee data:', sponseeData);
+      const filteredSponsees = sponseeData.filter((sponsee: any) => sponsee.userId === user?.id);
+      console.log('Filtered sponsees:', filteredSponsees);
       setSponsees(filteredSponsees as ContactPerson[]);
     } catch (error) {
       console.error('Failed to load sponsees:', error);
@@ -96,10 +100,13 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
 
   useEffect(() => {
     if (user?.id) {
+      console.log('SponsorSponsee: Loading data for user:', user.id);
       loadSponsors();
       loadSponsees();
       loadSponsorContacts();
       loadSponseeContacts();
+    } else {
+      console.log('SponsorSponsee: No user ID available');
     }
   }, [user?.id, refreshKey]);
 
@@ -264,7 +271,7 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
   };
 
   return (
-    <div>
+    <div style={{ padding: '20px 16px' }}>
       <Typography variant="h4" sx={{ color: theme.palette.text.primary, mb: 3, fontWeight: 'bold' }}>
         Sponsor & Sponsees
       </Typography>
