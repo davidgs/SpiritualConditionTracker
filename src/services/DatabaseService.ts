@@ -329,6 +329,12 @@ class DatabaseService {
     });
   }
 
+  async getById<T>(collection: string, id: string | number): Promise<T | null> {
+    return this.executeOperation(async () => {
+      return await this.database.getById(collection, id);
+    });
+  }
+
   async remove(collection: string, id: string | number): Promise<boolean> {
     return this.executeOperation(async () => {
       return await this.database.remove(collection, id);

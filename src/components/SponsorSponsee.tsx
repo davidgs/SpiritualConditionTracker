@@ -31,6 +31,7 @@ import { formatDateForDisplay } from '../utils/dateUtils';
 import { ContactPerson } from '../types/ContactPerson';
 
 export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activities = [] }) {
+  console.log('=== SPONSORSPONSEE COMPONENT LOADED ===');
   console.log('[SponsorSponsee.tsx:24] Component loaded with activities:', activities, 'type:', typeof activities);
   const theme = useTheme();
   const darkMode = theme.palette.mode === 'dark';
@@ -974,6 +975,7 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
 
             {/* Individual Sponsee Content */}
             {sponsees.map((sponsee, index) => {
+              console.log('[ SponsorSponsee.tsx ] Rendering sponsee:', sponsee, 'Index:', index, 'ID:', sponsee.id);
               const contactsForSponsee = sponseeContacts.filter(contact => contact.sponseeId === sponsee.id);
               
               return (
