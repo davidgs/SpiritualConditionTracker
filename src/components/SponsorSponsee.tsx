@@ -388,14 +388,16 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
   
   // Edit existing sponsor
   const handleEditSponsor = (sponsor) => {
-    setEditingSponsor(sponsor);
-    setShowSponsorForm(true);
+    setEditingPerson(sponsor);
+    setPersonFormType('sponsor');
+    setShowPersonForm(true);
   };
   
   // Edit existing sponsee
   const handleEditSponsee = (sponsee) => {
-    setEditingSponseeId(sponsee.id);
-    setShowSponseeForm(true);
+    setEditingPerson(sponsee);
+    setPersonFormType('sponsee');
+    setShowPersonForm(true);
   };
   
   // Delete sponsee
@@ -863,35 +865,13 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
       {/* Sponsor Tab */}
       <TabPanel value={currentTab} index={0}>
         {sponsors.length > 0 ? (
-          <Box>
-            {/* Nested tabs for multiple sponsors */}
-            <Tabs 
-              value={currentSponsorTab} 
-              onChange={handleSponsorTabChange}
-              sx={{ 
-                borderBottom: 1, 
-                borderColor: 'divider',
-                mb: 2,
-                '& .MuiTabs-indicator': {
-                  backgroundColor: theme.palette.secondary.main,
-                },
-                '& .MuiTab-root': {
-                  color: theme.palette.text.secondary,
-                  '&.Mui-selected': {
-                    color: theme.palette.secondary.main,
-                  },
-                },
-              }}
-            >
-              {sponsors.map((sponsor, index) => (
-                <Tab 
-                  key={sponsor.id} 
-                  label={`${sponsor.name || 'Sponsor'} ${sponsor.lastName || ''}`.trim()} 
-                />
-              ))}
-              <Tab label="+ Add Sponsor" />
-            </Tabs>
-
+          <ContactPersonTabs
+            persons={sponsors}
+            currentTab={currentSponsorTab}
+            onTabChange={handleSponsorTabChange}
+            addLabel="+ Add Sponsor"
+            emptyMessage="No sponsors added yet."
+          >
             {/* Sponsor content panels */}
             {sponsors.map((sponsor, index) => (
               <TabPanel key={sponsor.id} value={currentSponsorTab} index={index}>
@@ -912,9 +892,7 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
                 />
               </TabPanel>
             ))}
-
-
-          </Box>
+          </ContactPersonTabs>
         ) : (
           <Box sx={{ 
             textAlign: 'center', 
@@ -933,8 +911,9 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
               variant="contained" 
               color="primary"
               onClick={() => {
-                setEditingSponsor(null);
-                setShowSponsorForm(true);
+                setEditingPerson(null);
+                setPersonFormType('sponsor');
+                setShowPersonForm(true);
               }}
               startIcon={<i className="fa-solid fa-plus"></i>}
             >
@@ -1175,8 +1154,9 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
               variant="contained" 
               color="primary"
               onClick={() => {
-                setEditingSponseeId(null);
-                setShowSponseeForm(true);
+                setEditingPerson(null);
+                setPersonFormType('sponsee');
+                setShowPersonForm(true);
               }}
               startIcon={<i className="fa-solid fa-plus"></i>}
             >
