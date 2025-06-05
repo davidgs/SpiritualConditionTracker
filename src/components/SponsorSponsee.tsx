@@ -23,6 +23,7 @@ import DatabaseService from '../services/DatabaseService';
 import SponsorFormDialog from './SponsorFormDialog';
 import SponseeFormDialog from './SponseeFormDialog';
 import SponsorContactFormPage from './SponsorContactFormPage';
+import SponseeContactFormPage from './SponseeContactFormPage';
 import { ActionItemsList } from './ActionItemsList';
 import { ContactCard } from './ContactCard';
 import { SponsorInfoSection } from './SponsorInfoSection';
@@ -533,6 +534,123 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
   // Handle sponsee tab change
   const handleSponseeTabChange = (event, newValue) => {
     setCurrentSponseeTab(newValue);
+  };
+
+  // Handler for editing a sponsee
+  const handleEditSponsee = (sponsee) => {
+    setEditingSponseeId(sponsee.id);
+    setShowSponseeForm(true);
+  };
+
+  // Handler for deleting a sponsee
+  const handleDeleteSponsee = async (sponseeId) => {
+    try {
+      const databaseService = DatabaseService.getInstance();
+      await databaseService.delete('sponsees', sponseeId);
+      
+      // Reload the sponsees list
+      await loadSponsees();
+      setRefreshKey(prev => prev + 1);
+    } catch (error) {
+      console.error('Error deleting sponsee:', error);
+    }
+  };
+
+  // Handler for adding contact with sponsee and action items
+  const handleAddSponseeContactWithActionItem = async (formData) => {
+    try {
+      const databaseService = DatabaseService.getInstance();
+      
+      console.log('[SponsorSponsee.tsx] Adding sponsee contact with data:', formData);
+      
+      // Save the contact
+      const contactToSave = {
+        ...formData.contact,
+        userId: user.id,
+        sponseeId: selectedSponseeForContact?.id || formData.contact.sponseeId,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
+      
+      const savedContact = await databaseService.save('sponsee_contacts', contactToSave);
+      console.log('[SponsorSponsee.tsx] Saved sponsee contact:', savedContact);
+      
+      // Save action items if any
+      if (formData.actionItems && formData.actionItems.length > 0) {
+        for (const actionItem of formData.actionItems) {
+          const actionItemToSave = {
+            ...actionItem,
+            userId: user.id,
+            contactId: savedContact.id,
+            sponseeContactId: savedContact.id,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString()
+          };
+          
+          const savedActionItem = await databaseService.save('action_items', actionItemToSave);
+          console.log('[SponsorSponsee.tsx] Saved action item:', savedActionItem);
+        }
+      }
+      
+      // Refresh the contacts list
+      await loadSponseeContacts();
+      setSelectedSponseeForContact(null);
+      
+    } catch (error) {
+      console.error('[SponsorSponsee.tsx] Error adding sponsee contact:', error);
+    }
+  };
+
+  // Handler for editing contact with action items for sponsees
+  const handleEditSponseeContactWithActionItem = async (formData) => {
+    try {
+      const databaseService = DatabaseService.getInstance();
+      
+      console.log('[SponsorSponsee.tsx] Editing sponsee contact with data:', formData);
+      
+      // Update the contact
+      const contactToUpdate = {
+        ...editingContact,
+        ...formData.contact,
+        updatedAt: new Date().toISOString()
+      };
+      
+      const updatedContact = await databaseService.update('sponsee_contacts', editingContact.id, contactToUpdate);
+      console.log('[SponsorSponsee.tsx] Updated sponsee contact:', updatedContact);
+      
+      // Handle action items updates
+      if (formData.actionItems && formData.actionItems.length > 0) {
+        for (const actionItem of formData.actionItems) {
+          if (actionItem.id && actionItem.id !== editingContact.id) {
+            // Update existing action item
+            const updatedActionItem = await databaseService.update('action_items', actionItem.id, {
+              ...actionItem,
+              updatedAt: new Date().toISOString()
+            });
+            console.log('[SponsorSponsee.tsx] Updated action item:', updatedActionItem);
+          } else {
+            // Create new action item
+            const actionItemToSave = {
+              ...actionItem,
+              userId: user.id,
+              contactId: editingContact.id,
+              sponseeContactId: editingContact.id,
+              createdAt: new Date().toISOString(),
+              updatedAt: new Date().toISOString()
+            };
+            
+            const savedActionItem = await databaseService.save('action_items', actionItemToSave);
+            console.log('[SponsorSponsee.tsx] Created new action item:', savedActionItem);
+          }
+        }
+      }
+      
+      // Refresh the contacts list
+      await loadSponseeContacts();
+      
+    } catch (error) {
+      console.error('[SponsorSponsee.tsx] Error editing sponsee contact:', error);
+    }
   };
 
   // Custom TabPanel component
@@ -1159,6 +1277,19 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
           dueDate: editingActionItem.dueDate,
           notes: editingActionItem.notes
         } : null}
+      />
+
+      <SponseeContactFormPage
+        open={showSponseeContactForm}
+        onClose={() => {
+          setShowSponseeContactForm(false);
+          setEditingContact(null);
+          setSelectedSponseeForContact(null);
+        }}
+        onSubmit={editingContact ? handleEditSponseeContactWithActionItem : handleAddSponseeContactWithActionItem}
+        userId={user ? user.id : null}
+        sponseeId={selectedSponseeForContact?.id}
+        initialData={editingContact ? editingContact : null}
       />
     </div>
   );
