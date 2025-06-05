@@ -617,7 +617,7 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
               updatedAt: new Date().toISOString()
             };
             
-            const savedActionItem = await databaseService.save('action_items', actionItemToSave);
+            const savedActionItem = await databaseService.add('action_items', actionItemToSave);
             console.log('[SponsorSponsee.tsx] Created new action item:', savedActionItem);
           }
         }
