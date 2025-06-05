@@ -21,7 +21,8 @@ import {
 import { useTheme } from '@mui/material/styles';
 import DatabaseService from '../services/DatabaseService';
 import ContactPersonForm from './shared/ContactPersonForm';
-import ContactPersonTabs from './shared/ContactPersonTabs';
+import TabComponent from './shared/TabComponent';
+import { useDeleteHandler } from '../hooks/useDeleteHandler';
 import SponsorContactFormPage from './SponsorContactFormPage';
 import SponseeContactFormPage from './SponseeContactFormPage';
 import { ActionItemsList } from './ActionItemsList';
@@ -38,6 +39,31 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
   
   // Initialize database service once at component level
   const databaseService = DatabaseService.getInstance();
+
+  // Delete handlers using reusable hook
+  const handleDeleteSponsor = useDeleteHandler({
+    entityType: 'sponsor',
+    entityTable: 'sponsors',
+    contactTable: 'sponsor_contacts',
+    foreignKey: 'sponsorId',
+    onSuccess: async () => {
+      await loadSponsors();
+      await loadSponsorContacts();
+      setRefreshKey(prev => prev + 1);
+    }
+  });
+
+  const handleDeleteSponsee = useDeleteHandler({
+    entityType: 'sponsee',
+    entityTable: 'sponsees',
+    contactTable: 'sponsee_contacts',
+    foreignKey: 'sponseeId',
+    onSuccess: async () => {
+      await loadSponsees();
+      await loadSponseeContacts();
+      setRefreshKey(prev => prev + 1);
+    }
+  });
   
   // Tab state
   const [currentTab, setCurrentTab] = useState(0);
