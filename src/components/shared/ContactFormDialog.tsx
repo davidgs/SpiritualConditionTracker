@@ -474,7 +474,7 @@ export default function ContactFormDialog({
               }
             }}
           >
-            {isLoading ? 'Saving...' : (initialData ? 'Update Contact' : 'Add Contact')}
+            {isLoading ? 'Saving...' : (initialData ? 'Update' : 'Add')}
           </Button>
         </DialogActions>
       </Dialog>

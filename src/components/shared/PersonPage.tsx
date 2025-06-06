@@ -174,10 +174,6 @@ export default function PersonPage({
             color="primary"
             size="small"
             onClick={() => onAddContact(person)}
-            sx={{ 
-              border: `1px solid ${theme.palette.primary.main}`,
-              borderRadius: 1
-            }}
           >
             <i className="fa-solid fa-plus"></i>
           </IconButton>
