@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Dialog, 
-  DialogTitle, 
-  DialogContent, 
-  DialogActions, 
+  Typography,
   TextField,
   Button,
   IconButton,
@@ -14,7 +12,6 @@ import { MuiTelInput } from 'mui-tel-input';
 
 export default function SponsorFormDialog({ open, onClose, onSubmit, initialData }) {
   const theme = useTheme();
-  const [viewportWidth, setViewportWidth] = useState(window.innerWidth);
   
   // Form state
   const [name, setName] = useState('');
@@ -23,21 +20,7 @@ export default function SponsorFormDialog({ open, onClose, onSubmit, initialData
   const [email, setEmail] = useState('');
   const [sobrietyDate, setSobrietyDate] = useState('');
   const [notes, setNotes] = useState('');
-  const [errors, setErrors] = useState<Record<string, string>>({});
-  
-  // Track viewport changes for responsive adjustments
-  useEffect(() => {
-    const handleResize = () => {
-      setViewportWidth(window.innerWidth);
-    };
-    
-    window.addEventListener('resize', handleResize);
-    
-    // Clean up
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-  }, []);
+  const [errors, setErrors] = useState({});
   
   // Load initial data if editing
   useEffect(() => {
@@ -49,9 +32,9 @@ export default function SponsorFormDialog({ open, onClose, onSubmit, initialData
       setSobrietyDate(initialData.sobrietyDate ? initialData.sobrietyDate.split('T')[0] : '');
       setNotes(initialData.notes || '');
     } else {
-      // Reset form for new entry
       resetForm();
     }
+    setErrors({});
   }, [initialData, open]);
   
   // Reset form fields
@@ -65,247 +48,249 @@ export default function SponsorFormDialog({ open, onClose, onSubmit, initialData
     setErrors({});
   };
   
-  // Handle phone number input
-  const handlePhoneChange = (value) => {
-    setPhoneNumber(value);
-  };
-  
   // Handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
     
-    // Validate form - only name is required
-    const newErrors: Record<string, string> = {};
-    if (!name.trim()) newErrors.name = 'Name is required';
+    // Basic validation
+    const newErrors = {};
+    if (!name.trim()) {
+      newErrors.name = 'Name is required';
+    }
     
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       return;
     }
     
-    // Create sponsor data object
-    const sponsorData = {
+    // Prepare data for submission
+    const formData = {
       name: name.trim(),
       lastName: lastName.trim(),
-      phoneNumber,
+      phoneNumber: phoneNumber,
       email: email.trim(),
       sobrietyDate: sobrietyDate ? new Date(sobrietyDate).toISOString() : '',
       notes: notes.trim()
     };
     
-    // Submit the data
-    onSubmit(sponsorData);
-    
-    // Reset form
+    onSubmit(formData);
     resetForm();
   };
   
-  // Handle cancel
-  const handleCancel = () => {
-    resetForm();
-    onClose();
+  const fieldStyle = {
+    '& .MuiOutlinedInput-root': {
+      backgroundColor: '#ffffff',
+      borderRadius: '8px',
+      '& fieldset': {
+        borderColor: '#e0e0e0',
+      },
+      '&:hover fieldset': {
+        borderColor: theme.palette.primary.main,
+      },
+      '&.Mui-focused fieldset': {
+        borderColor: theme.palette.primary.main,
+        borderWidth: 2,
+      }
+    },
+    '& .MuiInputLabel-root': {
+      color: '#666666',
+      fontSize: '14px',
+    },
+    '& .MuiInputLabel-root.Mui-focused': {
+      color: theme.palette.primary.main,
+    }
   };
 
   return (
     <Dialog 
       open={open} 
       onClose={onClose}
-      fullWidth
+      fullScreen
       PaperProps={{
         sx: {
-          bgcolor: theme.palette.background.paper,
-          color: theme.palette.text.primary,
-          maxWidth: "95%",
-          width: "95%",
-          margin: "auto"
+          bgcolor: '#f8fafc',
+          color: theme.palette.text.primary
         }
       }}
     >
-      <DialogTitle sx={{ 
+      {/* Header */}
+      <Box sx={{ 
         display: 'flex', 
-        justifyContent: 'space-between', 
-        alignItems: 'center',
-        borderBottom: `1px solid ${theme.palette.divider}`,
-        padding: '16px'
+        alignItems: 'center', 
+        p: 2,
+        bgcolor: '#ffffff',
+        borderBottom: '1px solid #e5e7eb',
+        boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)'
       }}>
-        {initialData ? 'Edit Sponsor' : 'Add Sponsor'}
         <IconButton 
-          onClick={onClose} 
-          size="small" 
-          sx={{ color: theme.palette.text.secondary }}
-          aria-label="close"
+          onClick={onClose}
+          sx={{ 
+            mr: 2, 
+            color: '#374151',
+            '&:hover': {
+              bgcolor: '#f3f4f6'
+            }
+          }}
         >
           <i className="fa-solid fa-times"></i>
         </IconButton>
-      </DialogTitle>
-      
-      <form onSubmit={handleSubmit}>
-        <DialogContent sx={{ padding: '16px' }}>
-          {/* First Name */}
-          <Box sx={{ color: theme.palette.primary.main, fontSize: '14px', mb: '4px' }}>
-            First Name*
-          </Box>
-          <TextField
-            fullWidth
-            variant="outlined"
-            placeholder="First Name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
-            autoFocus
-            error={!!errors.name}
-            helperText={errors.name}
-            size="medium"
-            margin="none"
-            sx={{ 
-              mb: 2,
-              '& .MuiOutlinedInput-root': { 
-                height: 56,
-                borderRadius: 2
-              },
-              '& .MuiOutlinedInput-input': {
-                fontSize: 16,
-                padding: '15px 14px'
-              }
-            }}
-          />
-          
-          {/* Last Name */}
-          <TextField
-            fullWidth
-            variant="outlined"
-            placeholder="Last Name"
-            value={lastName}
-            onChange={(e) => setLastName(e.target.value)}
-            size="medium"
-            margin="none"
-            sx={{ 
-              mb: 2,
-              '& .MuiOutlinedInput-root': { 
-                height: 56,
-                borderRadius: 2
-              },
-              '& .MuiOutlinedInput-input': {
-                fontSize: 16,
-                padding: '15px 14px'
-              }
-            }}
-          />
-          
-          {/* Phone Number */}
-          <MuiTelInput
-            fullWidth
-            label="Phone Number"
-            value={phoneNumber}
-            onChange={handlePhoneChange}
-            defaultCountry="US"
-            size="medium"
-            sx={{ 
-              mb: 2,
-              '& .MuiOutlinedInput-root': { 
-                height: 56,
-                borderRadius: 2
-              },
-              '& .MuiOutlinedInput-input': {
-                fontSize: 16,
-                padding: '15px 14px'
-              }
-            }}
-          />
-          
-          {/* Email */}
-          <TextField
-            fullWidth
-            variant="outlined"
-            placeholder="Email Address"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            size="medium"
-            margin="none"
-            sx={{ 
-              mb: 2,
-              '& .MuiOutlinedInput-root': { 
-                height: 56,
-                borderRadius: 2
-              },
-              '& .MuiOutlinedInput-input': {
-                fontSize: 16,
-                padding: '15px 14px'
-              }
-            }}
-          />
-          
-          {/* Sobriety Date */}
-          <Box sx={{ color: theme.palette.text.secondary, fontSize: '14px', mb: '4px' }}>
-            Sobriety Date
-          </Box>
-          <TextField
-            fullWidth
-            variant="outlined"
-            type="date"
-            value={sobrietyDate}
-            onChange={(e) => setSobrietyDate(e.target.value)}
-            size="medium"
-            margin="none"
-            sx={{ 
-              mb: 2,
-              '& .MuiOutlinedInput-root': { 
-                height: 56,
-                borderRadius: 2
-              },
-              '& .MuiOutlinedInput-input': {
-                fontSize: 16,
-                padding: '15px 14px'
-              }
-            }}
-          />
-          
-          {/* Notes */}
-          <TextField
-            fullWidth
-            variant="outlined"
-            placeholder="Notes"
-            multiline
-            rows={4}
-            value={notes}
-            onChange={(e) => setNotes(e.target.value)}
-            margin="dense"
-            sx={{ mb: 1 }}
-          />
-        </DialogContent>
-        
-        <DialogActions sx={{ 
-          padding: '8px 16px 16px',
-          borderTop: `1px solid ${theme.palette.divider}`,
-          display: 'flex',
-          justifyContent: 'space-between'
+        <Typography 
+          variant="h6" 
+          component="h1"
+          sx={{ 
+            fontWeight: 600,
+            color: '#111827',
+            fontSize: '18px'
+          }}
+        >
+          {initialData ? 'Edit Sponsor' : 'Add Sponsor'}
+        </Typography>
+      </Box>
+
+      {/* Form Content */}
+      <Box sx={{ 
+        flex: 1,
+        p: 3,
+        bgcolor: '#f8fafc'
+      }}>
+        <Box sx={{ 
+          bgcolor: '#ffffff',
+          borderRadius: '12px',
+          p: 3,
+          boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+          border: '1px solid #e5e7eb'
         }}>
-          <Button 
-            size="small"
-            variant="outlined"
-            onClick={handleCancel} 
-            sx={{ 
-              color: theme.palette.error.main,
-              borderColor: theme.palette.error.main,
-              '&:hover': {
-                backgroundColor: theme.palette.error.main,
-                color: theme.palette.error.contrastText
-              }
-            }}
-          >
-            Cancel
-          </Button>
-          <Button 
-            size="small"
-            type="submit" 
-            variant="contained" 
-            color="success"
-          >
-            {initialData ? 'Update' : 'Save'}
-          </Button>
-        </DialogActions>
-      </form>
+          <form onSubmit={handleSubmit}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+              {/* First Name */}
+              <TextField
+                fullWidth
+                label="First Name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                error={!!errors.name}
+                helperText={errors.name}
+                required
+                variant="outlined"
+                sx={fieldStyle}
+              />
+              
+              {/* Last Name */}
+              <TextField
+                fullWidth
+                label="Last Name"
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+                variant="outlined"
+                sx={fieldStyle}
+              />
+              
+              {/* Phone Number */}
+              <MuiTelInput
+                label="Phone Number"
+                value={phoneNumber}
+                onChange={setPhoneNumber}
+                defaultCountry="US"
+                forceCallingCode
+                fullWidth
+                sx={{
+                  ...fieldStyle,
+                  '& .MuiTelInput-Flag': {
+                    borderRadius: '4px'
+                  }
+                }}
+              />
+              
+              {/* Email */}
+              <TextField
+                fullWidth
+                label="Email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                variant="outlined"
+                sx={fieldStyle}
+              />
+              
+              {/* Sobriety Date */}
+              <TextField
+                fullWidth
+                label="Sobriety Date"
+                type="date"
+                value={sobrietyDate}
+                onChange={(e) => setSobrietyDate(e.target.value)}
+                InputLabelProps={{ shrink: true }}
+                variant="outlined"
+                sx={fieldStyle}
+                helperText="Your sponsor's sobriety date (if known)"
+              />
+              
+              {/* Notes */}
+              <TextField
+                fullWidth
+                label="Notes"
+                multiline
+                rows={4}
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                variant="outlined"
+                sx={fieldStyle}
+                placeholder="Add any additional notes about your sponsor..."
+              />
+            </Box>
+          </form>
+        </Box>
+      </Box>
+      
+      {/* Bottom Actions */}
+      <Box sx={{ 
+        p: 3,
+        bgcolor: '#ffffff',
+        borderTop: '1px solid #e5e7eb',
+        display: 'flex',
+        gap: 2,
+        justifyContent: 'center'
+      }}>
+        <Button
+          variant="outlined"
+          onClick={onClose}
+          sx={{ 
+            flex: 1,
+            maxWidth: '140px',
+            borderRadius: '8px',
+            textTransform: 'none',
+            fontWeight: 600,
+            borderColor: '#d1d5db',
+            color: '#374151',
+            '&:hover': {
+              borderColor: '#9ca3af',
+              bgcolor: '#f9fafb'
+            }
+          }}
+        >
+          Cancel
+        </Button>
+        
+        <Button
+          variant="contained"
+          onClick={handleSubmit}
+          sx={{ 
+            flex: 1,
+            maxWidth: '140px',
+            borderRadius: '8px',
+            textTransform: 'none',
+            fontWeight: 600,
+            bgcolor: theme.palette.primary.main,
+            boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+            '&:hover': {
+              bgcolor: theme.palette.primary.dark,
+              boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
+            }
+          }}
+        >
+          {initialData ? 'Update' : 'Add'}
+        </Button>
+      </Box>
     </Dialog>
   );
 }
