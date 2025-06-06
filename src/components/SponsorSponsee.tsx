@@ -11,7 +11,7 @@ import {
 import { useTheme } from '@mui/material/styles';
 import DatabaseService from '../services/DatabaseService';
 import SubTabComponent from './shared/SubTabComponent';
-import UnifiedPersonForm from './shared/UnifiedPersonForm';
+import PersonFormDialog from './shared/PersonFormDialog';
 import { ContactCard } from './ContactCard';
 import { ContactPerson } from '../types/ContactPerson';
 
@@ -333,17 +333,19 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
       </TabPanel>
 
       {/* Forms */}
-      {showPersonForm && (
-        <UnifiedPersonForm
-          onSave={handlePersonSubmit}
-          onCancel={() => {
-            setShowPersonForm(false);
-            setEditingPerson(null);
-          }}
-          title={personFormType === 'sponsor' ? 'Add Sponsor' : 'Add Sponsee'}
-          initialData={editingPerson}
-        />
-      )}
+      <PersonFormDialog
+        open={showPersonForm}
+        onClose={() => {
+          setShowPersonForm(false);
+          setEditingPerson(null);
+        }}
+        onSave={handlePersonSubmit}
+        title={editingPerson ? 
+          `Edit ${personFormType === 'sponsor' ? 'Sponsor' : 'Sponsee'}` : 
+          `Add ${personFormType === 'sponsor' ? 'Sponsor' : 'Sponsee'}`
+        }
+        initialData={editingPerson}
+      />
     </div>
   );
 }
