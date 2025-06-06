@@ -330,43 +330,17 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
       </TabPanel>
 
       {/* Forms */}
-      <ContactPersonForm
-        open={showPersonForm}
-        onClose={() => {
-          setShowPersonForm(false);
-          setEditingPerson(null);
-        }}
-        onSubmit={handlePersonSubmit}
-        initialData={editingPerson}
-        title={personFormType === 'sponsor' ? 'Add Sponsor' : 'Add Sponsee'}
-        submitLabel={editingPerson ? 'Update' : 'Add'}
-      />
-      
-      <SponsorContactFormPage
-        open={showContactForm}
-        onClose={() => {
-          setShowContactForm(false);
-          setEditingActionItem(null);
-          setEditingContact(null);
-        }}
-        onSubmit={handleAddContactWithActionItem}
-        userId={user ? user.id : null}
-        initialData={editingContact ? editingContact : null}
-        details={editingActionItem ? editingActionItem : null}
-      />
-
-      <SponseeContactFormPage
-        open={showSponseeContactForm}
-        onClose={() => {
-          setShowSponseeContactForm(false);
-          setEditingContact(null);
-          setSelectedSponseeForContact(null);
-        }}
-        onSubmit={handleAddSponseeContactWithActionItem}
-        userId={user ? user.id : null}
-        sponseeId={selectedSponseeForContact?.id}
-        initialData={editingContact ? editingContact : null}
-      />
+      {showPersonForm && (
+        <UnifiedPersonForm
+          onSave={handlePersonSubmit}
+          onCancel={() => {
+            setShowPersonForm(false);
+            setEditingPerson(null);
+          }}
+          title={personFormType === 'sponsor' ? 'Add Sponsor' : 'Add Sponsee'}
+          initialData={editingPerson}
+        />
+      )}
     </div>
   );
 }
