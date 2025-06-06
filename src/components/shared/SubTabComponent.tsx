@@ -88,18 +88,22 @@ export default function SubTabComponent({
     id: person.id || index,
     label: `${person.name} ${person.lastName || ''}`.trim(),
     content: (
-      <PersonPage
-        person={person}
-        personType={personType}
-        contacts={getPersonContacts(person.id)}
-        actionItems={actionItems}
-        onAddContact={onAddContact}
-        onEditPerson={onEditPerson}
-        onDeletePerson={onDeletePerson}
-        onEditContact={onEditContact}
-        onToggleActionItem={onToggleActionItem}
-        renderContactCard={renderContactCard}
-      />
+      <Box sx={{ p: 2 }}>
+        <Typography variant="h6" sx={{ color: theme.palette.text.primary, mb: 2 }}>
+          {person.name} {person.lastName}
+        </Typography>
+        <Typography variant="body2" sx={{ color: theme.palette.text.secondary }}>
+          Phone: {person.phoneNumber || 'Not provided'}
+        </Typography>
+        <Typography variant="body2" sx={{ color: theme.palette.text.secondary }}>
+          Email: {person.email || 'Not provided'}
+        </Typography>
+        {person.notes && (
+          <Typography variant="body2" sx={{ color: theme.palette.text.secondary, mt: 1 }}>
+            Notes: {person.notes}
+          </Typography>
+        )}
+      </Box>
     )
   }));
 
