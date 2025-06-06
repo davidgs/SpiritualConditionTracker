@@ -85,7 +85,7 @@ export default function UnifiedPersonForm({
   return (
     <Box sx={{ 
       minHeight: '100vh',
-      bgcolor: '#ffffff',
+      bgcolor: theme.palette.background.default,
       display: 'flex',
       flexDirection: 'column'
     }}>
@@ -93,15 +93,15 @@ export default function UnifiedPersonForm({
       <Box sx={{ 
         display: 'flex', 
         alignItems: 'center', 
-        p: 2,
-        bgcolor: '#4a5568',
-        color: 'white'
+        p: theme.spacing(2),
+        bgcolor: theme.palette.primary.main,
+        color: theme.palette.primary.contrastText
       }}>
         <IconButton 
           onClick={onCancel}
           sx={{ 
-            mr: 2, 
-            color: 'white'
+            mr: theme.spacing(2), 
+            color: theme.palette.primary.contrastText
           }}
         >
           <i className="fa-solid fa-times"></i>
@@ -121,15 +121,14 @@ export default function UnifiedPersonForm({
       {/* Form Content */}
       <Box sx={{ 
         flex: 1,
-        p: 3,
-        bgcolor: '#4a5568'
+        p: theme.spacing(3),
+        bgcolor: theme.palette.background.default
       }}>
         <Box sx={{ 
-          bgcolor: '#4a5568',
           p: 0,
           display: 'flex',
           flexDirection: 'column',
-          gap: 2
+          gap: theme.spacing(2)
         }}>
           {/* First Name */}
           <TextField
@@ -140,23 +139,26 @@ export default function UnifiedPersonForm({
             onChange={handleChange}
             required
             variant="outlined"
-            InputProps={{
-              sx: {
-                bgcolor: '#2d3748',
-                borderRadius: '20px',
-                color: 'white',
-                '& fieldset': {
-                  border: 'none'
-                },
-                '& input::placeholder': {
-                  color: '#a0aec0',
-                  opacity: 1
-                }
-              }
-            }}
             sx={{
-              '& .MuiInputLabel-root': {
-                display: 'none'
+              '& .MuiOutlinedInput-root': {
+                borderRadius: theme.spacing(1),
+                backgroundColor: theme.palette.background.paper,
+                '& fieldset': {
+                  borderColor: theme.palette.divider
+                },
+                '&:hover fieldset': {
+                  borderColor: theme.palette.primary.main
+                },
+                '&.Mui-focused fieldset': {
+                  borderColor: theme.palette.primary.main
+                }
+              },
+              '& .MuiInputBase-input': {
+                color: theme.palette.text.primary
+              },
+              '& .MuiInputBase-input::placeholder': {
+                color: theme.palette.text.secondary,
+                opacity: 0.7
               }
             }}
           />
@@ -169,23 +171,26 @@ export default function UnifiedPersonForm({
             value={formData.lastName}
             onChange={handleChange}
             variant="outlined"
-            InputProps={{
-              sx: {
-                bgcolor: '#2d3748',
-                borderRadius: '20px',
-                color: 'white',
-                '& fieldset': {
-                  border: 'none'
-                },
-                '& input::placeholder': {
-                  color: '#a0aec0',
-                  opacity: 1
-                }
-              }
-            }}
             sx={{
-              '& .MuiInputLabel-root': {
-                display: 'none'
+              '& .MuiOutlinedInput-root': {
+                borderRadius: theme.spacing(1),
+                backgroundColor: theme.palette.background.paper,
+                '& fieldset': {
+                  borderColor: theme.palette.divider
+                },
+                '&:hover fieldset': {
+                  borderColor: theme.palette.primary.main
+                },
+                '&.Mui-focused fieldset': {
+                  borderColor: theme.palette.primary.main
+                }
+              },
+              '& .MuiInputBase-input': {
+                color: theme.palette.text.primary
+              },
+              '& .MuiInputBase-input::placeholder': {
+                color: theme.palette.text.secondary,
+                opacity: 0.7
               }
             }}
           />
@@ -200,19 +205,22 @@ export default function UnifiedPersonForm({
             placeholder="Phone Number"
             sx={{
               '& .MuiOutlinedInput-root': {
-                bgcolor: '#2d3748',
-                borderRadius: '20px',
-                color: 'white',
+                borderRadius: theme.spacing(1),
+                backgroundColor: theme.palette.background.paper,
+                color: theme.palette.text.primary,
                 '& fieldset': {
-                  border: 'none'
+                  borderColor: theme.palette.divider
+                },
+                '&:hover fieldset': {
+                  borderColor: theme.palette.primary.main
+                },
+                '&.Mui-focused fieldset': {
+                  borderColor: theme.palette.primary.main
                 },
                 '& input::placeholder': {
-                  color: '#a0aec0',
-                  opacity: 1
+                  color: theme.palette.text.secondary,
+                  opacity: 0.7
                 }
-              },
-              '& .MuiInputLabel-root': {
-                display: 'none'
               }
             }}
           />
@@ -226,23 +234,26 @@ export default function UnifiedPersonForm({
             value={formData.email}
             onChange={handleChange}
             variant="outlined"
-            InputProps={{
-              sx: {
-                bgcolor: '#2d3748',
-                borderRadius: '20px',
-                color: 'white',
-                '& fieldset': {
-                  border: 'none'
-                },
-                '& input::placeholder': {
-                  color: '#a0aec0',
-                  opacity: 1
-                }
-              }
-            }}
             sx={{
-              '& .MuiInputLabel-root': {
-                display: 'none'
+              '& .MuiOutlinedInput-root': {
+                borderRadius: theme.spacing(1),
+                backgroundColor: theme.palette.background.paper,
+                '& fieldset': {
+                  borderColor: theme.palette.divider
+                },
+                '&:hover fieldset': {
+                  borderColor: theme.palette.primary.main
+                },
+                '&.Mui-focused fieldset': {
+                  borderColor: theme.palette.primary.main
+                }
+              },
+              '& .MuiInputBase-input': {
+                color: theme.palette.text.primary
+              },
+              '& .MuiInputBase-input::placeholder': {
+                color: theme.palette.text.secondary,
+                opacity: 0.7
               }
             }}
           />
@@ -250,10 +261,10 @@ export default function UnifiedPersonForm({
           {/* Sobriety Date */}
           <Box sx={{ position: 'relative' }}>
             <Typography sx={{ 
-              color: '#a0aec0',
+              color: theme.palette.text.secondary,
               fontSize: '14px',
-              mb: 1,
-              ml: 2
+              mb: theme.spacing(1),
+              ml: theme.spacing(1)
             }}>
               Sobriety Date
             </Typography>
@@ -264,19 +275,20 @@ export default function UnifiedPersonForm({
               value={formData.sobrietyDate}
               onChange={handleChange}
               variant="outlined"
-              InputProps={{
-                sx: {
-                  bgcolor: '#2d3748',
-                  borderRadius: '20px',
-                  color: 'white',
-                  '& fieldset': {
-                    border: 'none'
-                  }
-                }
-              }}
               sx={{
-                '& .MuiInputLabel-root': {
-                  display: 'none'
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: theme.spacing(1),
+                  backgroundColor: theme.palette.background.paper,
+                  color: theme.palette.text.primary,
+                  '& fieldset': {
+                    borderColor: theme.palette.divider
+                  },
+                  '&:hover fieldset': {
+                    borderColor: theme.palette.primary.main
+                  },
+                  '&.Mui-focused fieldset': {
+                    borderColor: theme.palette.primary.main
+                  }
                 }
               }}
             />
@@ -292,23 +304,26 @@ export default function UnifiedPersonForm({
             value={formData.notes}
             onChange={handleChange}
             variant="outlined"
-            InputProps={{
-              sx: {
-                bgcolor: '#2d3748',
-                borderRadius: '20px',
-                color: 'white',
-                '& fieldset': {
-                  border: 'none'
-                },
-                '& textarea::placeholder': {
-                  color: '#a0aec0',
-                  opacity: 1
-                }
-              }
-            }}
             sx={{
-              '& .MuiInputLabel-root': {
-                display: 'none'
+              '& .MuiOutlinedInput-root': {
+                borderRadius: theme.spacing(1),
+                backgroundColor: theme.palette.background.paper,
+                '& fieldset': {
+                  borderColor: theme.palette.divider
+                },
+                '&:hover fieldset': {
+                  borderColor: theme.palette.primary.main
+                },
+                '&.Mui-focused fieldset': {
+                  borderColor: theme.palette.primary.main
+                }
+              },
+              '& .MuiInputBase-input': {
+                color: theme.palette.text.primary
+              },
+              '& .MuiInputBase-input::placeholder': {
+                color: theme.palette.text.secondary,
+                opacity: 0.7
               }
             }}
           />
@@ -317,10 +332,10 @@ export default function UnifiedPersonForm({
       
       {/* Bottom Actions */}
       <Box sx={{ 
-        p: 3,
-        bgcolor: '#4a5568',
+        p: theme.spacing(3),
+        bgcolor: theme.palette.background.default,
         display: 'flex',
-        gap: 2,
+        gap: theme.spacing(2),
         justifyContent: 'center'
       }}>
         <Button
@@ -329,14 +344,14 @@ export default function UnifiedPersonForm({
           sx={{ 
             flex: 1,
             maxWidth: '140px',
-            borderRadius: '20px',
+            borderRadius: theme.spacing(1),
             textTransform: 'none',
             fontWeight: 600,
-            borderColor: '#4299e1',
-            color: '#4299e1',
+            borderColor: theme.palette.primary.main,
+            color: theme.palette.primary.main,
             '&:hover': {
-              borderColor: '#3182ce',
-              bgcolor: 'rgba(66, 153, 225, 0.1)'
+              borderColor: theme.palette.primary.dark,
+              bgcolor: theme.palette.action.hover
             }
           }}
         >
@@ -349,12 +364,13 @@ export default function UnifiedPersonForm({
           sx={{ 
             flex: 1,
             maxWidth: '140px',
-            borderRadius: '20px',
+            borderRadius: theme.spacing(1),
             textTransform: 'none',
             fontWeight: 600,
-            bgcolor: '#4299e1',
+            bgcolor: theme.palette.primary.main,
+            color: theme.palette.primary.contrastText,
             '&:hover': {
-              bgcolor: '#3182ce'
+              bgcolor: theme.palette.primary.dark
             }
           }}
         >

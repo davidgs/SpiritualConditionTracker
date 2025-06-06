@@ -261,7 +261,7 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
   return (
     <div style={{ padding: '20px 16px' }}>
       <Typography variant="h4" sx={{ color: theme.palette.text.primary, mb: 3, fontWeight: 'bold' }}>
-        Sponsor & Sponsees
+        Sponsors & Sponsees
       </Typography>
 
       <Tabs 
@@ -269,7 +269,7 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
         onChange={(event, newValue) => setCurrentTab(newValue)}
         sx={{ borderBottom: 1, borderColor: 'divider' }}
       >
-        <Tab label="Sponsor" />
+        <Tab label="Sponsors" />
         <Tab label="Sponsees" />
       </Tabs>
 
