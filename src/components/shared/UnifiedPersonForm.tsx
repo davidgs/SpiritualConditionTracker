@@ -1,9 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
   Box,
   Typography,
   TextField,
@@ -14,7 +10,6 @@ import { useTheme } from '@mui/material/styles';
 import { MuiTelInput } from 'mui-tel-input';
 
 interface UnifiedPersonFormProps {
-  open: boolean;
   initialData?: any;
   onSave: (data: any) => void;
   onCancel: () => void;
