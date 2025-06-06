@@ -7,6 +7,118 @@
 const DB_NAME = 'spiritual_condition_tracker.db';
 
 /**
+ * Web fallback database using localStorage
+ */
+function createWebFallbackDatabase() {
+  console.log('[ sqliteLoader.js ] Creating web fallback database with localStorage');
+  
+  // Initialize localStorage collections if they don't exist
+  const collections = ['users', 'sponsors', 'sponsees', 'sponsor_contacts', 'sponsee_contacts', 'activities', 'meetings', 'action_items'];
+  collections.forEach(collection => {
+    if (!localStorage.getItem(collection)) {
+      localStorage.setItem(collection, JSON.stringify([]));
+    }
+  });
+
+  return {
+    async getAll(collection) {
+      console.log(`[ sqliteLoader.js ] Getting all items from ${collection} (localStorage)`);
+      try {
+        const data = localStorage.getItem(collection);
+        return data ? JSON.parse(data) : [];
+      } catch (error) {
+        console.error(`[ sqliteLoader.js ] Error getting ${collection}:`, error);
+        return [];
+      }
+    },
+
+    async add(collection, item) {
+      console.log('[ sqliteLoader.js ] Adding item to', collection, '(localStorage)');
+      try {
+        const items = await this.getAll(collection);
+        const newId = Math.max(0, ...items.map(i => i.id || 0)) + 1;
+        const now = new Date().toISOString();
+        
+        const newItem = {
+          ...item,
+          id: newId,
+          createdAt: now,
+          updatedAt: now
+        };
+        
+        items.push(newItem);
+        localStorage.setItem(collection, JSON.stringify(items));
+        return newItem;
+      } catch (error) {
+        console.error(`[ sqliteLoader.js ] Error adding to ${collection}:`, error);
+        throw error;
+      }
+    },
+
+    async update(collection, id, updates) {
+      console.log(`[ sqliteLoader.js ] Updating ${collection} id ${id} (localStorage)`);
+      try {
+        const items = await this.getAll(collection);
+        const index = items.findIndex(item => item.id === id);
+        
+        if (index === -1) {
+          throw new Error(`Item with id ${id} not found in ${collection}`);
+        }
+        
+        const updatedItem = {
+          ...items[index],
+          ...updates,
+          updatedAt: new Date().toISOString()
+        };
+        
+        items[index] = updatedItem;
+        localStorage.setItem(collection, JSON.stringify(items));
+        return updatedItem;
+      } catch (error) {
+        console.error(`[ sqliteLoader.js ] Error updating ${collection}:`, error);
+        throw error;
+      }
+    },
+
+    async getById(collection, id) {
+      try {
+        const items = await this.getAll(collection);
+        return items.find(item => item.id === id) || null;
+      } catch (error) {
+        console.error(`[ sqliteLoader.js ] Error getting ${collection} by id:`, error);
+        return null;
+      }
+    },
+
+    async remove(collection, id) {
+      console.log(`[ sqliteLoader.js ] Removing from ${collection} id ${id} (localStorage)`);
+      try {
+        const items = await this.getAll(collection);
+        const filteredItems = items.filter(item => item.id !== id);
+        localStorage.setItem(collection, JSON.stringify(filteredItems));
+        return true;
+      } catch (error) {
+        console.error(`[ sqliteLoader.js ] Error removing from ${collection}:`, error);
+        throw error;
+      }
+    },
+
+    async resetDatabase() {
+      console.log('[ sqliteLoader.js ] Resetting database (localStorage)');
+      try {
+        collections.forEach(collection => {
+          localStorage.setItem(collection, JSON.stringify([]));
+        });
+        return true;
+      } catch (error) {
+        console.error('[ sqliteLoader.js ] Error resetting database:', error);
+        throw error;
+      }
+    }
+  };
+}
+
+/**
  * Initialize SQLite database
  * @returns {Promise<object>} Database connection object
  */
@@ -14,6 +126,14 @@ export default async function initSQLiteDatabase() {
   console.log('[ sqliteLoader.js:14 ] Initializing SQLite database via Capacitor...');
   
   try {
+    // Check if we're in a web environment and use fallback storage
+    const isWeb = !window.Capacitor || window.Capacitor.getPlatform() === 'web';
+    
+    if (isWeb) {
+      console.log('[ sqliteLoader.js:18 ] Web environment detected, using localStorage fallback');
+      return createWebFallbackDatabase();
+    }
+    
     // First, check if Capacitor is available
     if (!window.Capacitor || !window.Capacitor.Plugins) {
       throw new Error('Capacitor not found - this app requires a native environment');
@@ -28,7 +148,8 @@ export default async function initSQLiteDatabase() {
     const sqlite = window.Capacitor.Plugins.CapacitorSQLite;
     
     if (!sqlite) {
-      throw new Error('CapacitorSQLite plugin not found');
+      console.log('[ sqliteLoader.js:31 ] CapacitorSQLite plugin not found, using web fallback');
+      return createWebFallbackDatabase();
     }
     
     console.log('[ sqliteLoader.js:39 ]  Found CapacitorSQLite plugin:', !!sqlite);
