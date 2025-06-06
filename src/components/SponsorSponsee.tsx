@@ -7,10 +7,8 @@ import {
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import DatabaseService from '../services/DatabaseService';
-import ContactPersonForm from './shared/ContactPersonForm';
 import SubTabComponent from './shared/SubTabComponent';
-import SponsorContactFormPage from './SponsorContactFormPage';
-import SponseeContactFormPage from './SponseeContactFormPage';
+import UnifiedPersonForm from './shared/UnifiedPersonForm';
 import { ContactCard } from './ContactCard';
 import { ContactPerson } from '../types/ContactPerson';
 
