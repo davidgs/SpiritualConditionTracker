@@ -31,12 +31,7 @@ export default function PersonPage({
 }: PersonPageProps) {
   const theme = useTheme();
 
-  const getPersonActionItems = () => {
-    const foreignKey = personType === 'sponsor' ? 'sponsorId' : 'sponseeId';
-    return actionItems.filter(item => item[foreignKey] === person.id);
-  };
 
-  const personActionItems = getPersonActionItems();
 
   return (
     <Box>
@@ -213,70 +208,6 @@ export default function PersonPage({
         )}
       </Paper>
 
-      {/* Action Items Section */}
-      <Paper 
-        elevation={0}
-        sx={{ 
-          backgroundColor: theme.palette.background.paper,
-          boxShadow: theme.shadows[2],
-          borderRadius: 2,
-          p: 3
-        }}
-      >
-        <Typography variant="h6" sx={{ color: theme.palette.text.primary, mb: 2, fontWeight: 'bold' }}>
-          Action Items
-        </Typography>
-
-        {personActionItems.length === 0 ? (
-          <Box sx={{ textAlign: 'center', py: 3 }}>
-            <Typography variant="body2" sx={{ color: theme.palette.text.secondary }}>
-              No action items for {person.name} yet.
-            </Typography>
-          </Box>
-        ) : (
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-            {personActionItems.map((actionItem, index) => (
-              <Box 
-                key={actionItem.id || index}
-                sx={{ 
-                  p: 1.5, 
-                  bgcolor: theme.palette.background.default, 
-                  borderRadius: 1,
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 2
-                }}
-              >
-                {onToggleActionItem && (
-                  <IconButton
-                    size="small"
-                    onClick={() => onToggleActionItem(actionItem)}
-                    sx={{ color: actionItem.completed ? theme.palette.success.main : theme.palette.text.secondary }}
-                  >
-                    <i className={actionItem.completed ? "fa-solid fa-check-circle" : "fa-regular fa-circle"}></i>
-                  </IconButton>
-                )}
-                <Box sx={{ flex: 1 }}>
-                  <Typography 
-                    variant="body2" 
-                    sx={{ 
-                      color: theme.palette.text.primary,
-                      textDecoration: actionItem.completed ? 'line-through' : 'none'
-                    }}
-                  >
-                    {actionItem.title || actionItem.text}
-                  </Typography>
-                  {actionItem.notes && (
-                    <Typography variant="body2" sx={{ color: theme.palette.text.secondary, mt: 0.5 }}>
-                      {actionItem.notes}
-                    </Typography>
-                  )}
-                </Box>
-              </Box>
-            ))}
-          </Box>
-        )}
-      </Paper>
     </Box>
   );
 }
