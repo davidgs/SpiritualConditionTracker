@@ -138,6 +138,7 @@ export default function UnifiedPersonForm({
             value={formData.name}
             onChange={handleChange}
             required
+            size="medium"
             variant="outlined"
             sx={{
               '& .MuiOutlinedInput-root': {
@@ -168,6 +169,7 @@ export default function UnifiedPersonForm({
             fullWidth
             placeholder="Last Name"
             name="lastName"
+            size="medium"
             value={formData.lastName}
             onChange={handleChange}
             variant="outlined"
@@ -231,6 +233,7 @@ export default function UnifiedPersonForm({
             placeholder="Email"
             name="email"
             type="email"
+            size="medium"
             value={formData.email}
             onChange={handleChange}
             variant="outlined"
@@ -272,6 +275,7 @@ export default function UnifiedPersonForm({
               fullWidth
               name="sobrietyDate"
               type="date"
+              size="medium"
               value={formData.sobrietyDate}
               onChange={handleChange}
               variant="outlined"

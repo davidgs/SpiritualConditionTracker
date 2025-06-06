@@ -51,10 +51,7 @@ export default function PersonPage({
             color="primary"
             size="small"
             onClick={() => onEditPerson(person)}
-            sx={{ 
-              border: `1px solid ${theme.palette.primary.main}`,
-              borderRadius: 1
-            }}
+            sx={{ color: theme.palette.primary.main }}
           >
             <i className="fa-solid fa-pen-to-square"></i>
           </IconButton>
@@ -63,10 +60,7 @@ export default function PersonPage({
             color="error"
             size="small"
             onClick={() => onDeletePerson(person.id)}
-            sx={{ 
-              border: `1px solid ${theme.palette.error.main}`,
-              borderRadius: 1
-            }}
+            sx={{ color: theme.palette.error.main }}
           >
             <i className="fa-solid fa-trash"></i>
           </IconButton>
