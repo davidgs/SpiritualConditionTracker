@@ -1,0 +1,53 @@
+⚡️  [log] - [ sqliteLoader.js ] Final item for database: {
+  "type": "meeting",
+  "date": "2025-06-05T16:11:29.519Z",
+  "note": "Just checked in during TIAS",
+  "topic": "Catch up",
+  "duration": 10,
+  "userId": 1,
+  "createdAt": "2025-06-06T16:12:03.980Z",
+  "updatedAt": "2025-06-06T16:12:03.980Z"
+}
+⚡️  [log] - [ sqliteLoader.js ] SQL keys: ["type","date","note","topic","duration","userId","createdAt","updatedAt"]
+⚡️  [log] - [ sqliteLoader.js ] SQL values: ["meeting","2025-06-05T16:11:29.519Z","Just checked in during TIAS","Catch up",10,1,"2025-06-06T16:12:03.980Z","2025-06-06T16:12:03.980Z"]
+⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO sponsor_contacts (type, date, note, topic, duration, userId, createdAt, updatedAt) VALUES ('meeting', '2025-06-05T16:11:29.519Z', 'Just checked in during TIAS', 'Catch up', 10, 1, '2025-06-06T16:12:03.980Z', '2025-06-06T16:12:03.980Z');
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  To Native ->  CapacitorSQLite query 101409354
+⚡️  [log] - [ sqliteLoader.js ] Insert completed
+⚡️  TO JS {"values":[{"ios_columns":["id"]},{"id":2}]}
+⚡️  [log] - [ sqliteLoader.js ] Last insert ID result: {"values":[{"ios_columns":["id"]},{"id":2}]}
+⚡️  [log] - [ sqliteLoader.js ] Using ID: 2 for new sponsor_contacts record
+⚡️  [log] - [ sqliteLoader.js:523 ] Getting all items from sponsor_contacts
+⚡️  To Native ->  CapacitorSQLite query 101409355
+⚡️  TO JS {"values":[{"ios_columns":["id","userId","sponsorId","date","type","note","topic","duration","createdAt","updatedAt"]},{"date":"2025-05-28","note":"Agreed to sponsor me","updatedAt":"2025-06-04T01:11:05.376Z","duration":null,"type":"phone","userId":"2","cr
+⚡️  [log] - SubTabComponent sponsor: persons: [{"createdAt":"2025-06-04T01:09:22.921Z","name":"Jerry","lastName":"Weaver","phoneNumber":"+1 919 481 9900","sobrietyDate":"","userId":"default_user","notes":"","sponsorType":"sponsor","id":1,"email":"","updatedAt":"2025-06-04T01:09:22.921Z"}] length: 1
+⚡️  [log] - [ sqliteLoader.js:535 ] Raw query result for sponsor_contacts: {"values":[{"ios_columns":["id","userId","sponsorId","date","type","note","topic","duration","createdAt","updatedAt"]},{"date":"2025-05-28","note":"Agreed to sponsor me","updatedAt":"2025-06-04T01:11:05.376Z","duration":null,"type":"phone","userId":"2","createdAt":"2025-06-04T01:11:05.376Z","id":1,"topic":null,"sponsorId":1},{"topic":"Catch up","date":"2025-06-05T16:11:29.519Z","duration":10,"createdAt":"2025-06-06T16:12:03.980Z","updatedAt":"2025-06-06T16:12:03.980Z","sponsorId":null,"type":"meeting","userId":"1","note":"Just checked in during TIAS","id":2}]}
+⚡️  [log] - [ sqliteLoader.js:548 ] Processed 2 items from sponsor_contacts
+⚡️  [log] - SubTabComponent sponsor: persons: [{"createdAt":"2025-06-04T01:09:22.921Z","name":"Jerry","lastName":"Weaver","phoneNumber":"+1 919 481 9900","sobrietyDate":"","userId":"default_user","notes":"","sponsorType":"sponsor","id":1,"email":"","updatedAt":"2025-06-04T01:09:22.921Z"}] length: 1
+⚡️  To Native ->  CapacitorSQLite query ⚡️  [log] - [ sqliteLoader.js:523 ] Getting all items from action_items
+101409356
+⚡️  TO JS {"values":[{"ios_columns":["id","contactId","title","text","notes","dueDate","completed","type","createdAt","updatedAt"]},{"title":"Calls","contactId":1,"notes":"","type":"todo","updatedAt":"2025-06-05T22:35:40.502Z","createdAt":"2025-06-04T01:11:05.484Z",
+⚡️  [log] - [ sqliteLoader.js:523 ] Getting all items from sponsors
+⚡️  To Native ->  CapacitorSQLite query 101409357
+⚡️  To Native ->  CapacitorSQLite query 101409358
+⚡️  To Native ->  CapacitorSQLite query 101409359
+⚡️  To Native ->  CapacitorSQLite query 101409360
+⚡️  TO JS {"values":[{"ios_columns":["id","userId","name","lastName","phoneNumber","email","sobrietyDate","notes","sponsorType","createdAt","updatedAt"]},{"lastName":"Weaver","notes":"","sobrietyDate":"","sponsorType":"sponsor","name":"Jerry","phoneNumber":"+1 919 4
+⚡️  [log] - [ sqliteLoader.js:523 ] Getting all items from sponsees
+⚡️  TO JS {"values":[{"ios_columns":["id","userId","name","lastName","phoneNumber","email","sobrietyDate","notes","sponseeType","createdAt","updatedAt"]},{"id":1,"sponseeType":"sponsee","lastName":"Blow","email":"joe@blow.com","name":"Joe","userId":"1","notes":"New 
+⚡️  [log] - [ sqliteLoader.js:523 ] Getting all items from sponsor_contacts
+⚡️  TO JS {"values":[{"ios_columns":["id","userId","sponsorId","date","type","note","topic","duration","createdAt","updatedAt"]},{"id":1,"type":"phone","sponsorId":1,"duration":null,"topic":null,"updatedAt":"2025-06-04T01:11:05.376Z","createdAt":"2025-06-04T01:11:05
+⚡️  [log] - [ sqliteLoader.js:523 ] Getting all items from sponsee_contacts
+⚡️  TO JS {"values":[{"ios_columns":["id","userId","sponseeId","date","type","note","topic","duration","createdAt","updatedAt"]},{"id":1,"type":"phone","duration":null,"sponseeId":1,"topic":null,"updatedAt":"2025-06-05T21:25:04.389Z","createdAt":"2025-06-05T21:25:04
+⚡️  [log] - [ sqliteLoader.js:535 ] Raw query result for action_items: {"values":[{"ios_columns":["id","contactId","title","text","notes","dueDate","completed","type","createdAt","updatedAt"]},{"title":"Calls","contactId":1,"notes":"","type":"todo","updatedAt":"2025-06-05T22:35:40.502Z","createdAt":"2025-06-04T01:11:05.484Z","dueDate":"2025-06-04","text":"Set up regular meeting times","id":1,"completed":1}]}
+⚡️  [log] - [ sqliteLoader.js:548 ] Processed 1 items from action_items
+⚡️  [log] - [ sqliteLoader.js:535 ] Raw query result for sponsors: {"values":[{"ios_columns":["id","userId","name","lastName","phoneNumber","email","sobrietyDate","notes","sponsorType","createdAt","updatedAt"]},{"lastName":"Weaver","notes":"","sobrietyDate":"","sponsorType":"sponsor","name":"Jerry","phoneNumber":"+1 919 481 9900","createdAt":"2025-06-04T01:09:22.921Z","userId":"default_user","updatedAt":"2025-06-04T01:09:22.921Z","id":1,"email":""}]}
+⚡️  [log] - [ sqliteLoader.js:548 ] Processed 1 items from sponsors
+⚡️  [log] - [ sqliteLoader.js:535 ] Raw query result for sponsees: {"values":[{"ios_columns":["id","userId","name","lastName","phoneNumber","email","sobrietyDate","notes","sponseeType","createdAt","updatedAt"]},{"id":1,"sponseeType":"sponsee","lastName":"Blow","email":"joe@blow.com","name":"Joe","userId":"1","notes":"New Sponsee!","sobrietyDate":"2025-05-01T00:00:00.000Z","phoneNumber":"+1 919 555 1212","createdAt":"2025-06-05T02:35:17.148Z","updatedAt":"2025-06-05T02:35:17.148Z"}]}
+⚡️  [log] - [ sqliteLoader.js:548 ] Processed 1 items from sponsees
+⚡️  [log] - [ sqliteLoader.js:535 ] Raw query result for sponsor_contacts: {"values":[{"ios_columns":["id","userId","sponsorId","date","type","note","topic","duration","createdAt","updatedAt"]},{"id":1,"type":"phone","sponsorId":1,"duration":null,"topic":null,"updatedAt":"2025-06-04T01:11:05.376Z","createdAt":"2025-06-04T01:11:05.376Z","note":"Agreed to sponsor me","userId":"2","date":"2025-05-28"},{"sponsorId":null,"duration":10,"createdAt":"2025-06-06T16:12:03.980Z","id":2,"topic":"Catch up","date":"2025-06-05T16:11:29.519Z","type":"meeting","updatedAt":"2025-06-06T16:12:03.980Z","note":"Just checked in during TIAS","userId":"1"}]}
+⚡️  [log] - [ sqliteLoader.js:548 ] Processed 2 items from sponsor_contacts
+⚡️  [log] - SubTabComponent sponsor: persons: [{"lastName":"Weaver","notes":"","sobrietyDate":"","sponsorType":"sponsor","name":"Jerry","phoneNumber":"+1 919 481 9900","createdAt":"2025-06-04T01:09:22.921Z","userId":"default_user","updatedAt":"2025-06-04T01:09:22.921Z","id":1,"email":""}] length: 1
+⚡️  [log] - [ sqliteLoader.js:535 ] Raw query result for sponsee_contacts: {"values":[{"ios_columns":["id","userId","sponseeId","date","type","note","topic","duration","createdAt","updatedAt"]},{"id":1,"type":"phone","duration":null,"sponseeId":1,"topic":null,"updatedAt":"2025-06-05T21:25:04.389Z","createdAt":"2025-06-05T21:25:04.389Z","note":"Talked","userId":"1","date":"2025-06-05"}]}
+⚡️  [log] - [ sqliteLoader.js:548 ] Processed 1 items from sponsee_contacts
+⚡️  [log] - SubTabComponent sponsor: persons: [{"lastName":"Weaver","notes":"","sobrietyDate":"","sponsorType":"sponsor","name":"Jerry","phoneNumber":"+1 919 481 9900","createdAt":"2025-06-04T01:09:22.921Z","userId":"default_user","updatedAt":"2025-06-04T01:09:22.921Z","id":1,"email":""}] length: 1

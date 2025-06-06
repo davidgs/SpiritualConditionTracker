@@ -55,6 +55,7 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
   const [editingActionItem, setEditingActionItem] = useState(null);
   const [personFormType, setPersonFormType] = useState<'sponsor' | 'sponsee'>('sponsor');
   const [selectedSponseeForContact, setSelectedSponseeForContact] = useState(null);
+  const [selectedSponsorForContact, setSelectedSponsorForContact] = useState(null);
 
   // Load data - FIXED: Show all sponsors/sponsees since there's only one user
   const loadSponsors = async () => {
@@ -202,6 +203,7 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
   const handleAddContact = (person: ContactPerson) => {
     if (sponsors.some(s => s.id === person.id)) {
       // This is a sponsor
+      setSelectedSponsorForContact(person);
       setEditingContact(null);
       setShowContactForm(true);
     } else {
@@ -216,12 +218,14 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
     try {
       await databaseService.add('sponsor_contacts', {
         ...contactData,
+        sponsorId: selectedSponsorForContact?.id,
         userId: user?.id,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
       });
       
       setShowContactForm(false);
+      setSelectedSponsorForContact(null);
       await loadSponsorContacts();
       setRefreshKey(prev => prev + 1);
     } catch (error) {
@@ -234,6 +238,7 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
     try {
       await databaseService.add('sponsee_contacts', {
         ...contactData,
+        sponseeId: selectedSponseeForContact?.id,
         userId: user?.id,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
@@ -354,6 +359,7 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
         onClose={() => {
           setShowContactForm(false);
           setEditingContact(null);
+          setSelectedSponsorForContact(null);
         }}
         onSave={handleAddContactWithActionItem}
         title={editingContact ? 'Edit Sponsor Contact' : 'Add Sponsor Contact'}
