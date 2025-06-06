@@ -25,20 +25,7 @@ const getContactTypeInfo = (type: string) => {
   }
 };
 
-interface Contact {
-  id: number;
-  name?: string;
-  lastName?: string;
-  phoneNumber?: string;
-  email?: string;
-  note?: string;
-  topic?: string;
-  type: string;
-  date: string;
-  duration?: number;
-  sponsorId?: number;
-  sponseeId?: number;
-}
+
 
 interface ContactCardProps {
   contact: Contact;

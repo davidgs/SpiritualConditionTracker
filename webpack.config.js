@@ -55,7 +55,15 @@ module.exports = {
     host: '0.0.0.0',
     allowedHosts: 'all',
     historyApiFallback: true,
-    hot: true
+    hot: true,
+    watchFiles: {
+      paths: ['src/**/*'],
+      options: {
+        usePolling: false,
+        aggregateTimeout: 300,
+        ignored: ['**/node_modules/**', '**/dist/**']
+      }
+    }
   },
   mode: 'development',
   devtool: 'source-map'

@@ -15,6 +15,7 @@ import PersonFormDialog from './shared/PersonFormDialog';
 import ContactFormDialog from './shared/ContactFormDialog';
 import { ContactCard } from './ContactCard';
 import { ContactPerson } from '../types/ContactPerson';
+import { Contact } from '../types/database';
 
 function TabPanel({ children, value, index, ...other }) {
   return (
@@ -121,10 +122,10 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
 
       // Delete related contacts first
       const contacts = await databaseService.getAll(contactTable);
-      const relatedContacts = contacts.filter(c => c[foreignKey] === personId);
+      const relatedContacts = contacts.filter((c: any) => c[foreignKey] === personId);
       
       for (const contact of relatedContacts) {
-        await databaseService.remove(contactTable, contact.id);
+        await databaseService.remove(contactTable, (contact as any).id);
       }
       
       // Delete the person
