@@ -179,14 +179,12 @@ export default function PersonFormDialog({
           }
         }}
       >
-        <DialogTitle sx={{ 
-          backgroundColor: theme.palette.primary.main,
-          color: theme.palette.primary.contrastText,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          p: theme.spacing(2)
-        }}>
+        <DialogTitle sx={(theme) => ({
+            backgroundColor: theme.palette.background.default,
+            color: theme.palette.text.primary,
+            borderBottom: '1px solid',
+            borderColor: theme.palette.divider,
+          })}>
           <Typography variant="h6" component="h2" sx={{ fontWeight: 600 }}>
             {title}
           </Typography>
