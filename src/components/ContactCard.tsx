@@ -7,6 +7,7 @@ import {
 } from '@mui/material';
 import { ActionItemsList } from './ActionItemsList';
 import { formatDateForDisplay } from '../utils/dateUtils';
+import { Contact } from '../types/database';
 
 // Contact type information helper function
 const getContactTypeInfo = (type: string) => {
@@ -35,6 +36,8 @@ interface Contact {
   type: string;
   date: string;
   duration?: number;
+  sponsorId?: number;
+  sponseeId?: number;
 }
 
 interface ContactCardProps {
@@ -42,13 +45,15 @@ interface ContactCardProps {
   theme: any;
   refreshKey: number;
   onContactClick: (contact: Contact) => void;
+  onEditContact?: (contact: Contact) => void;
 }
 
 export const ContactCard: React.FC<ContactCardProps> = ({
   contact,
   theme,
   refreshKey,
-  onContactClick
+  onContactClick,
+  onEditContact
 }) => {
   const contactTypeInfo = getContactTypeInfo(contact.type);
   
@@ -75,46 +80,86 @@ export const ContactCard: React.FC<ContactCardProps> = ({
         <Box sx={{ 
           display: 'flex', 
           justifyContent: 'space-between', 
-          alignItems: 'center', 
+          alignItems: 'flex-start', 
           mb: 2 
         }}>
-          <Box sx={{ 
-            display: 'flex', 
-            alignItems: 'center', 
-            gap: 1 
-          }}>
-            <i className={contactTypeInfo.icon} style={{ color: theme.palette.text.secondary }}></i>
-            <Typography variant="body2" sx={{ color: theme.palette.text.secondary }}>
-              {contactTypeInfo.label}
-            </Typography>
+          <Box sx={{ flex: 1 }}>
+            {/* Contact Type and Date Header */}
+            <Box sx={{ 
+              display: 'flex', 
+              justifyContent: 'space-between', 
+              alignItems: 'center', 
+              mb: 1 
+            }}>
+              <Box sx={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: 1 
+              }}>
+                <i className={contactTypeInfo.icon} style={{ color: theme.palette.text.secondary }}></i>
+                <Typography variant="body2" sx={{ color: theme.palette.text.secondary }}>
+                  {contactTypeInfo.label}
+                </Typography>
+              </Box>
+              
+              <Box sx={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: 0.5 
+              }}>
+                <i className="fa-solid fa-calendar" style={{ color: theme.palette.text.secondary, fontSize: '12px' }}></i>
+                <Typography variant="body2" sx={{ color: theme.palette.text.secondary }}>
+                  {formatDateForDisplay(contact.date)}
+                </Typography>
+              </Box>
+            </Box>
+
+            {/* Topic and Duration under header */}
+            {contact.topic && (
+              <Typography variant="body2" sx={{ color: theme.palette.text.secondary, mb: 0.5 }}>
+                Topic: {contact.topic}
+              </Typography>
+            )}
+            
+            {contact.duration && (
+              <Typography variant="body2" sx={{ color: theme.palette.text.secondary, mb: 1 }}>
+                Duration: {contact.duration} minutes
+              </Typography>
+            )}
           </Box>
-          
-          <Box sx={{ 
-            display: 'flex', 
-            alignItems: 'center', 
-            gap: 0.5 
-          }}>
-            <i className="fa-solid fa-calendar" style={{ color: theme.palette.text.secondary, fontSize: '12px' }}></i>
-            <Typography variant="body2" sx={{ color: theme.palette.text.secondary }}>
-              {formatDateForDisplay(contact.date)}
-            </Typography>
-          </Box>
+
+          {/* Edit button */}
+          {onEditContact && (
+            <IconButton
+              size="small"
+              onClick={(e) => {
+                e.stopPropagation();
+                onEditContact(contact);
+              }}
+              sx={{ 
+                color: theme.palette.text.secondary,
+                ml: 1,
+                '&:hover': {
+                  color: theme.palette.primary.main,
+                  backgroundColor: theme.palette.action.hover
+                }
+              }}
+            >
+              <i className="fa-solid fa-edit"></i>
+            </IconButton>
+          )}
         </Box>
-        
-        <Typography variant="body1" sx={{ color: theme.palette.text.primary, mb: 1 }}>
-          {contact.note}
-        </Typography>
-        
-        {contact.topic && (
-          <Typography variant="body2" sx={{ color: theme.palette.text.secondary, mb: 1 }}>
-            Topic: {contact.topic}
-          </Typography>
-        )}
-        
-        {contact.duration && (
-          <Typography variant="body2" sx={{ color: theme.palette.text.secondary }}>
-            Duration: {contact.duration} minutes
-          </Typography>
+
+        {/* Notes section with label */}
+        {contact.note && (
+          <Box sx={{ mb: 1 }}>
+            <Typography variant="body2" sx={{ color: theme.palette.text.secondary, fontWeight: 'bold', mb: 0.5 }}>
+              Notes:
+            </Typography>
+            <Typography variant="body1" sx={{ color: theme.palette.text.primary }}>
+              {contact.note}
+            </Typography>
+          </Box>
         )}
         
         {/* Action Items for this contact */}

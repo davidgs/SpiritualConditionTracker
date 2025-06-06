@@ -305,6 +305,11 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
               theme={theme}
               refreshKey={refreshKey}
               onContactClick={() => {}}
+              onEditContact={(contact) => {
+                setEditingContact(contact);
+                setSelectedSponsorForContact(sponsors.find(s => s.id === contact.sponsorId) || null);
+                setShowContactForm(true);
+              }}
             />
           )}
         />
@@ -333,6 +338,11 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
               theme={theme}
               refreshKey={refreshKey}
               onContactClick={() => {}}
+              onEditContact={(contact) => {
+                setEditingContact(contact);
+                setSelectedSponseeForContact(sponsees.find(s => s.id === contact.sponseeId) || null);
+                setShowSponseeContactForm(true);
+              }}
             />
           )}
         />

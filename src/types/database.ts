@@ -98,6 +98,21 @@ export interface Meeting extends BaseEntity {
   notes?: string;
 }
 
+// Contact interface for sponsor/sponsee contacts
+export interface Contact extends BaseEntity {
+  name?: string;
+  lastName?: string;
+  phoneNumber?: string;
+  email?: string;
+  note?: string;
+  topic?: string;
+  type: string;
+  date: string;
+  duration?: number;
+  sponsorId?: number;
+  sponseeId?: number;
+}
+
 // Contact Details (legacy table for backward compatibility)
 export interface ContactDetail extends BaseEntity {
   contactId: number;
