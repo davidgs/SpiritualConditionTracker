@@ -12,6 +12,7 @@ import { useTheme } from '@mui/material/styles';
 import DatabaseService from '../services/DatabaseService';
 import SubTabComponent from './shared/SubTabComponent';
 import PersonFormDialog from './shared/PersonFormDialog';
+import ContactFormDialog from './shared/ContactFormDialog';
 import { ContactCard } from './ContactCard';
 import { ContactPerson } from '../types/ContactPerson';
 
@@ -345,6 +346,31 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
           `Add ${personFormType === 'sponsor' ? 'Sponsor' : 'Sponsee'}`
         }
         initialData={editingPerson}
+      />
+
+      {/* Sponsor Contact Form */}
+      <ContactFormDialog
+        open={showContactForm}
+        onClose={() => {
+          setShowContactForm(false);
+          setEditingContact(null);
+        }}
+        onSave={handleAddContactWithActionItem}
+        title={editingContact ? 'Edit Sponsor Contact' : 'Add Sponsor Contact'}
+        initialData={editingContact}
+      />
+
+      {/* Sponsee Contact Form */}
+      <ContactFormDialog
+        open={showSponseeContactForm}
+        onClose={() => {
+          setShowSponseeContactForm(false);
+          setEditingContact(null);
+          setSelectedSponseeForContact(null);
+        }}
+        onSave={handleAddSponseeContactWithActionItem}
+        title={editingContact ? 'Edit Sponsee Contact' : 'Add Sponsee Contact'}
+        initialData={editingContact}
       />
     </div>
   );
