@@ -129,115 +129,246 @@ export default function ContactPersonForm({
     <Dialog 
       open={open} 
       onClose={onClose}
-      fullWidth
+      fullScreen
       PaperProps={{
         sx: {
-          bgcolor: theme.palette.background.paper,
-          color: theme.palette.text.primary,
-          maxWidth: "95%",
-          width: "95%",
-          margin: "auto"
+          bgcolor: theme.palette.background.default,
+          color: theme.palette.text.primary
         }
       }}
     >
-      <DialogTitle sx={{ 
+      {/* Header */}
+      <Box sx={{ 
         display: 'flex', 
-        justifyContent: 'space-between', 
-        alignItems: 'center',
-        borderBottom: `1px solid ${theme.palette.divider}`,
-        padding: '16px'
+        alignItems: 'center', 
+        p: 2,
+        bgcolor: theme.palette.background.paper,
+        borderBottom: `1px solid ${theme.palette.divider}`
       }}>
-        <Typography variant="h6">{title}</Typography>
         <IconButton 
           onClick={onClose}
-          sx={{ color: theme.palette.text.secondary }}
+          sx={{ mr: 2, color: theme.palette.text.primary }}
         >
           <i className="fa-solid fa-times"></i>
         </IconButton>
-      </DialogTitle>
-      
-      <DialogContent sx={{ padding: '20px' }}>
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-          <TextField
-            fullWidth
-            label="First Name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            error={!!errors.name}
-            helperText={errors.name}
-            sx={{ backgroundColor: theme.palette.background.default }}
-          />
-          
-          <TextField
-            fullWidth
-            label="Last Name"
-            value={lastName}
-            onChange={(e) => setLastName(e.target.value)}
-            sx={{ backgroundColor: theme.palette.background.default }}
-          />
-          
-          <TextField
-            fullWidth
-            label="Phone Number"
-            value={phone}
-            onChange={handlePhoneChange}
-            error={!!errors.phone}
-            helperText={errors.phone || "Format: (555) 123-4567"}
-            sx={{ backgroundColor: theme.palette.background.default }}
-          />
-          
-          <TextField
-            fullWidth
-            label="Email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            error={!!errors.email}
-            helperText={errors.email}
-            sx={{ backgroundColor: theme.palette.background.default }}
-          />
-          
-          <TextField
-            fullWidth
-            label="Sobriety Date"
-            type="date"
-            value={sobrietyDate}
-            onChange={(e) => setSobrietyDate(e.target.value)}
-            InputLabelProps={{ shrink: true }}
-            sx={{ backgroundColor: theme.palette.background.default }}
-          />
-          
-          <TextField
-            fullWidth
-            label="Notes"
-            multiline
-            rows={3}
-            value={notes}
-            onChange={(e) => setNotes(e.target.value)}
-            sx={{ backgroundColor: theme.palette.background.default }}
-          />
+        <Typography 
+          variant="h6" 
+          component="h1"
+          sx={{ 
+            fontWeight: 600,
+            color: theme.palette.text.primary
+          }}
+        >
+          {title}
+        </Typography>
+      </Box>
+
+      {/* Form Content */}
+      <Box sx={{ p: 2 }}>
+        <Box sx={{ 
+          bgcolor: theme.palette.background.paper,
+          borderRadius: 2,
+          p: 3
+        }}>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+            <TextField
+              fullWidth
+              label="First Name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              error={!!errors.name}
+              helperText={errors.name}
+              required
+              variant="outlined"
+              sx={{ 
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: '12px',
+                  backgroundColor: theme.palette.background.default,
+                  '& fieldset': {
+                    borderColor: theme.palette.divider,
+                  },
+                  '&:hover fieldset': {
+                    borderColor: theme.palette.primary.main,
+                  },
+                  '&.Mui-focused fieldset': {
+                    borderColor: theme.palette.primary.main,
+                  }
+                }
+              }}
+            />
+            
+            <TextField
+              fullWidth
+              label="Last Name"
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
+              variant="outlined"
+              sx={{ 
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: '12px',
+                  backgroundColor: theme.palette.background.default,
+                  '& fieldset': {
+                    borderColor: theme.palette.divider,
+                  },
+                  '&:hover fieldset': {
+                    borderColor: theme.palette.primary.main,
+                  },
+                  '&.Mui-focused fieldset': {
+                    borderColor: theme.palette.primary.main,
+                  }
+                }
+              }}
+            />
+            
+            <TextField
+              fullWidth
+              label="Phone Number"
+              value={phone}
+              onChange={handlePhoneChange}
+              error={!!errors.phone}
+              helperText={errors.phone || "Format: (555) 123-4567"}
+              variant="outlined"
+              sx={{ 
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: '12px',
+                  backgroundColor: theme.palette.background.default,
+                  '& fieldset': {
+                    borderColor: theme.palette.divider,
+                  },
+                  '&:hover fieldset': {
+                    borderColor: theme.palette.primary.main,
+                  },
+                  '&.Mui-focused fieldset': {
+                    borderColor: theme.palette.primary.main,
+                  }
+                }
+              }}
+            />
+            
+            <TextField
+              fullWidth
+              label="Email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              error={!!errors.email}
+              helperText={errors.email}
+              variant="outlined"
+              sx={{ 
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: '12px',
+                  backgroundColor: theme.palette.background.default,
+                  '& fieldset': {
+                    borderColor: theme.palette.divider,
+                  },
+                  '&:hover fieldset': {
+                    borderColor: theme.palette.primary.main,
+                  },
+                  '&.Mui-focused fieldset': {
+                    borderColor: theme.palette.primary.main,
+                  }
+                }
+              }}
+            />
+            
+            <TextField
+              fullWidth
+              label="Sobriety Date"
+              type="date"
+              value={sobrietyDate}
+              onChange={(e) => setSobrietyDate(e.target.value)}
+              InputLabelProps={{ shrink: true }}
+              variant="outlined"
+              sx={{ 
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: '12px',
+                  backgroundColor: theme.palette.background.default,
+                  '& fieldset': {
+                    borderColor: theme.palette.divider,
+                  },
+                  '&:hover fieldset': {
+                    borderColor: theme.palette.primary.main,
+                  },
+                  '&.Mui-focused fieldset': {
+                    borderColor: theme.palette.primary.main,
+                  }
+                }
+              }}
+            />
+            
+            <TextField
+              fullWidth
+              label="Notes"
+              multiline
+              rows={4}
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+              variant="outlined"
+              sx={{ 
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: '12px',
+                  backgroundColor: theme.palette.background.default,
+                  '& fieldset': {
+                    borderColor: theme.palette.divider,
+                  },
+                  '&:hover fieldset': {
+                    borderColor: theme.palette.primary.main,
+                  },
+                  '&.Mui-focused fieldset': {
+                    borderColor: theme.palette.primary.main,
+                  }
+                }
+              }}
+            />
+          </Box>
         </Box>
-      </DialogContent>
+      </Box>
       
-      <DialogActions sx={{ 
-        padding: '16px', 
+      {/* Fixed bottom buttons */}
+      <Box sx={{ 
+        position: 'sticky',
+        bottom: 0,
+        left: 0,
+        right: 0,
+        p: 2,
+        bgcolor: theme.palette.background.paper,
         borderTop: `1px solid ${theme.palette.divider}`,
-        gap: 1
+        display: 'flex',
+        gap: 2,
+        justifyContent: 'center'
       }}>
-        <Button 
+        <Button
+          variant="outlined"
           onClick={handleCancel}
-          sx={{ color: theme.palette.text.secondary }}
+          sx={{ 
+            flex: 1,
+            maxWidth: '120px',
+            borderRadius: '8px',
+            textTransform: 'none',
+            fontWeight: 600
+          }}
         >
           Cancel
         </Button>
-        <Button 
+        
+        <Button
+          variant="contained"
           onClick={handleSubmit}
-          variant="contained" 
-          color="primary"
+          sx={{ 
+            flex: 1,
+            maxWidth: '120px',
+            borderRadius: '8px',
+            textTransform: 'none',
+            fontWeight: 600,
+            bgcolor: theme.palette.primary.main,
+            '&:hover': {
+              bgcolor: theme.palette.primary.dark,
+            }
+          }}
         >
           {submitLabel}
         </Button>
-      </DialogActions>
+      </Box>
     </Dialog>
   );
 }
