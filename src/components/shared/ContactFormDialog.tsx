@@ -239,6 +239,7 @@ export default function ContactFormDialog({
                 onChange={handleSelectChange('type')}
                 label="Contact Type"
                 sx={{
+                  height: '56px',
                   borderRadius: theme.spacing(1),
                   backgroundColor: theme.palette.background.default,
                   '& .MuiOutlinedInput-notchedOutline': {
@@ -270,6 +271,11 @@ export default function ContactFormDialog({
                   fullWidth: true,
                   error: !!errors.date,
                   helperText: errors.date,
+                  InputProps: {
+                    sx: {
+                      height: '56px'
+                    }
+                  },
                   sx: {
                     '& .MuiOutlinedInput-root': {
                       borderRadius: theme.spacing(1),
@@ -287,6 +293,9 @@ export default function ContactFormDialog({
                     },
                     '& .MuiInputLabel-root': {
                       color: theme.palette.text.secondary
+                    },
+                    '& .MuiInputBase-input': {
+                      color: theme.palette.text.primary
                     }
                   }
                 }
@@ -301,15 +310,16 @@ export default function ContactFormDialog({
               value={formData.topic}
               onChange={handleChange('topic')}
               variant="outlined"
-              InputProps={{
-                sx: {
-                  height: '56px'
-                }
-              }}
               sx={{
                 '& .MuiOutlinedInput-root': {
                   borderRadius: theme.spacing(1),
                   backgroundColor: theme.palette.background.default,
+                  minHeight: '56px',
+                  '& input': {
+                    padding: '16px 14px',
+                    fontSize: '16px',
+                    lineHeight: '1.5'
+                  },
                   '& fieldset': {
                     borderColor: theme.palette.divider
                   },
@@ -321,7 +331,8 @@ export default function ContactFormDialog({
                   }
                 },
                 '& .MuiInputLabel-root': {
-                  color: theme.palette.text.secondary
+                  color: theme.palette.text.secondary,
+                  fontSize: '16px'
                 },
                 '& .MuiInputBase-input': {
                   color: theme.palette.text.primary
@@ -339,15 +350,16 @@ export default function ContactFormDialog({
                 value={formData.duration}
                 onChange={handleChange('duration')}
                 variant="outlined"
-                InputProps={{
-                  sx: {
-                    height: '56px'
-                  }
-                }}
                 sx={{
                   '& .MuiOutlinedInput-root': {
                     borderRadius: theme.spacing(1),
                     backgroundColor: theme.palette.background.default,
+                    minHeight: '56px',
+                    '& input': {
+                      padding: '16px 14px',
+                      fontSize: '16px',
+                      lineHeight: '1.5'
+                    },
                     '& fieldset': {
                       borderColor: theme.palette.divider
                     },
@@ -359,7 +371,8 @@ export default function ContactFormDialog({
                     }
                   },
                   '& .MuiInputLabel-root': {
-                    color: theme.palette.text.secondary
+                    color: theme.palette.text.secondary,
+                    fontSize: '16px'
                   },
                   '& .MuiInputBase-input': {
                     color: theme.palette.text.primary
