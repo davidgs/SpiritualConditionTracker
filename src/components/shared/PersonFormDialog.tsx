@@ -222,6 +222,7 @@ export default function PersonFormDialog({
               error={!!errors.name}
               helperText={errors.name}
               variant="outlined"
+              size="medium"
               sx={{
                 '& .MuiOutlinedInput-root': {
                   borderRadius: theme.spacing(1),
@@ -253,6 +254,7 @@ export default function PersonFormDialog({
               value={formData.lastName}
               onChange={handleChange('lastName')}
               variant="outlined"
+              size="medium"
               sx={{
                 '& .MuiOutlinedInput-root': {
                   borderRadius: theme.spacing(1),
@@ -420,10 +422,10 @@ export default function PersonFormDialog({
               borderRadius: theme.spacing(1),
               textTransform: 'none',
               fontWeight: 600,
-              borderColor: theme.palette.primary.main,
-              color: theme.palette.primary.main,
+              borderColor: theme.palette.error.main,
+              color: theme.palette.error.main,
               '&:hover': {
-                borderColor: theme.palette.primary.dark,
+                borderColor: theme.palette.error.dark,
                 backgroundColor: theme.palette.action.hover
               }
             }}
@@ -439,10 +441,10 @@ export default function PersonFormDialog({
               borderRadius: theme.spacing(1),
               textTransform: 'none',
               fontWeight: 600,
-              backgroundColor: theme.palette.primary.main,
-              color: theme.palette.primary.contrastText,
+              backgroundColor: theme.palette.success.main,
+              color: theme.palette.success.contrastText,
               '&:hover': {
-                backgroundColor: theme.palette.primary.dark
+                backgroundColor: theme.palette.success.dark
               },
               '&:disabled': {
                 backgroundColor: theme.palette.action.disabledBackground
