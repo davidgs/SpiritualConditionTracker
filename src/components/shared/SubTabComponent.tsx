@@ -2,7 +2,6 @@ import React from 'react';
 import { Box, Typography, IconButton } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import TabComponent from './TabComponent';
-import PersonPage from './PersonPage';
 import { ContactPerson } from '../../types/ContactPerson';
 
 interface SubTabComponentProps {
