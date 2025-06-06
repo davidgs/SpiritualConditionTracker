@@ -8,7 +8,8 @@ import {
   Button,
   IconButton,
   Box,
-  Typography
+  Typography,
+  Grid
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { MuiTelInput } from 'mui-tel-input';
@@ -170,30 +171,40 @@ export default function PersonFormDialog({
       <Dialog 
         open={open} 
         onClose={handleCancel}
-        maxWidth="sm"
+        maxWidth="md"
         fullWidth
+        sx={{
+          '& .MuiDialog-container': {
+            alignItems: 'center'
+          }
+        }}
         PaperProps={{
           sx: {
             backgroundColor: theme.palette.background.paper,
-            borderRadius: theme.spacing(2)
+            borderRadius: theme.spacing(2),
+            margin: theme.spacing(2),
+            maxHeight: '90vh'
           }
         }}
       >
-        <DialogTitle sx={(theme) => ({
-            backgroundColor: theme.palette.background.default,
-            color: theme.palette.text.primary,
-            borderBottom: '1px solid',
-            borderColor: theme.palette.divider,
-          })}>
+        <DialogTitle sx={{ 
+          backgroundColor: theme.palette.background.default,
+          color: theme.palette.text.primary,
+          borderBottom: `1px solid ${theme.palette.divider}`,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          p: theme.spacing(2)
+        }}>
           <Typography variant="h6" component="h2" sx={{ fontWeight: 600 }}>
             {title}
           </Typography>
           <IconButton
             onClick={handleCancel}
             sx={{ 
-              color: theme.palette.primary.contrastText,
+              color: theme.palette.text.secondary,
               '&:hover': {
-                backgroundColor: 'rgba(255, 255, 255, 0.1)'
+                backgroundColor: theme.palette.action.hover
               }
             }}
           >
@@ -201,16 +212,19 @@ export default function PersonFormDialog({
           </IconButton>
         </DialogTitle>
 
-        <DialogContent sx={{ p: theme.spacing(3) }}>
+        <DialogContent sx={{ p: theme.spacing(4) }}>
           <Box sx={{ 
             display: 'flex', 
             flexDirection: 'column', 
             gap: theme.spacing(3),
-            mt: theme.spacing(1)
+            mt: theme.spacing(1),
+            width: '100%'
           }}>
             
-            {/* First Name */}
-            <TextField
+            {/* Name Fields - Side by Side */}
+            <Grid container spacing={2}>
+              <Grid item xs={12} sm={6}>
+                <TextField
               fullWidth
               label="First Name"
               placeholder="Enter first name"
