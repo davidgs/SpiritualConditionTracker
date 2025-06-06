@@ -8,8 +8,7 @@ import {
   Button,
   IconButton,
   Box,
-  Typography,
-  Grid
+  Typography
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { MuiTelInput } from 'mui-tel-input';
@@ -171,19 +170,19 @@ export default function PersonFormDialog({
       <Dialog 
         open={open} 
         onClose={handleCancel}
-        maxWidth="md"
+        maxWidth="sm"
         fullWidth
         sx={{
           '& .MuiDialog-container': {
-            alignItems: 'center'
+            alignItems: 'flex-start',
+            paddingTop: '10vh'
           }
         }}
         PaperProps={{
           sx: {
             backgroundColor: theme.palette.background.paper,
             borderRadius: theme.spacing(2),
-            margin: theme.spacing(2),
-            maxHeight: '90vh'
+            margin: theme.spacing(2)
           }
         }}
       >
@@ -212,19 +211,16 @@ export default function PersonFormDialog({
           </IconButton>
         </DialogTitle>
 
-        <DialogContent sx={{ p: theme.spacing(4) }}>
+        <DialogContent sx={{ p: theme.spacing(3) }}>
           <Box sx={{ 
             display: 'flex', 
             flexDirection: 'column', 
             gap: theme.spacing(3),
-            mt: theme.spacing(1),
-            width: '100%'
+            mt: theme.spacing(1)
           }}>
             
-            {/* Name Fields - Side by Side */}
-            <Grid container spacing={2}>
-              <Grid item xs={12} sm={6}>
-                <TextField
+            {/* First Name */}
+            <TextField
               fullWidth
               label="First Name"
               placeholder="Enter first name"
@@ -234,7 +230,11 @@ export default function PersonFormDialog({
               error={!!errors.name}
               helperText={errors.name}
               variant="outlined"
-              size="medium"
+              InputProps={{
+                sx: {
+                  height: '56px'
+                }
+              }}
               sx={{
                 '& .MuiOutlinedInput-root': {
                   borderRadius: theme.spacing(1),
@@ -266,7 +266,11 @@ export default function PersonFormDialog({
               value={formData.lastName}
               onChange={handleChange('lastName')}
               variant="outlined"
-              size="medium"
+              InputProps={{
+                sx: {
+                  height: '56px'
+                }
+              }}
               sx={{
                 '& .MuiOutlinedInput-root': {
                   borderRadius: theme.spacing(1),
@@ -434,10 +438,10 @@ export default function PersonFormDialog({
               borderRadius: theme.spacing(1),
               textTransform: 'none',
               fontWeight: 600,
-              borderColor: theme.palette.error.main,
-              color: theme.palette.error.main,
+              borderColor: theme.palette.primary.main,
+              color: theme.palette.primary.main,
               '&:hover': {
-                borderColor: theme.palette.error.dark,
+                borderColor: theme.palette.primary.dark,
                 backgroundColor: theme.palette.action.hover
               }
             }}
@@ -453,10 +457,10 @@ export default function PersonFormDialog({
               borderRadius: theme.spacing(1),
               textTransform: 'none',
               fontWeight: 600,
-              backgroundColor: theme.palette.success.main,
-              color: theme.palette.success.contrastText,
+              backgroundColor: theme.palette.primary.main,
+              color: theme.palette.primary.contrastText,
               '&:hover': {
-                backgroundColor: theme.palette.success.dark
+                backgroundColor: theme.palette.primary.dark
               },
               '&:disabled': {
                 backgroundColor: theme.palette.action.disabledBackground
