@@ -187,7 +187,14 @@ export default function PersonPage({
           </Box>
         ) : (
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-            {contacts.map((contact, index) => (
+            {contacts
+              .slice()
+              .sort((a, b) => {
+                const dateA = new Date(a.date || a.createdAt || 0);
+                const dateB = new Date(b.date || b.createdAt || 0);
+                return dateB.getTime() - dateA.getTime(); // Newest first
+              })
+              .map((contact, index) => (
               <Box key={contact.id || index}>
                 {renderContactCard ? renderContactCard(contact, index) : (
                   <Box sx={{ p: 2, bgcolor: theme.palette.background.default, borderRadius: 1 }}>
