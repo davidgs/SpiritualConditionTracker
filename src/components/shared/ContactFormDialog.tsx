@@ -301,6 +301,11 @@ export default function ContactFormDialog({
               value={formData.topic}
               onChange={handleChange('topic')}
               variant="outlined"
+              InputProps={{
+                sx: {
+                  height: '56px'
+                }
+              }}
               sx={{
                 '& .MuiOutlinedInput-root': {
                   borderRadius: theme.spacing(1),
@@ -334,6 +339,11 @@ export default function ContactFormDialog({
                 value={formData.duration}
                 onChange={handleChange('duration')}
                 variant="outlined"
+                InputProps={{
+                  sx: {
+                    height: '56px'
+                  }
+                }}
                 sx={{
                   '& .MuiOutlinedInput-root': {
                     borderRadius: theme.spacing(1),
@@ -398,21 +408,27 @@ export default function ContactFormDialog({
 
         <DialogActions sx={{ 
           p: theme.spacing(3), 
-          pt: 0,
-          gap: theme.spacing(2)
+          pt: theme.spacing(2),
+          gap: theme.spacing(2),
+          justifyContent: 'flex-end'
         }}>
           <Button
             onClick={handleCancel}
             variant="outlined"
             disabled={isLoading}
+            size="large"
             sx={{
-              borderRadius: theme.spacing(1),
+              borderRadius: theme.spacing(1.5),
               textTransform: 'none',
               fontWeight: 600,
-              borderColor: theme.palette.primary.main,
-              color: theme.palette.primary.main,
+              fontSize: '16px',
+              minHeight: '48px',
+              px: theme.spacing(4),
+              borderColor: theme.palette.divider,
+              color: theme.palette.text.primary,
+              backgroundColor: 'transparent',
               '&:hover': {
-                borderColor: theme.palette.primary.dark,
+                borderColor: theme.palette.primary.main,
                 backgroundColor: theme.palette.action.hover
               }
             }}
@@ -424,17 +440,24 @@ export default function ContactFormDialog({
             onClick={handleSubmit}
             variant="contained"
             disabled={isLoading}
+            size="large"
             sx={{
-              borderRadius: theme.spacing(1),
+              borderRadius: theme.spacing(1.5),
               textTransform: 'none',
               fontWeight: 600,
+              fontSize: '16px',
+              minHeight: '48px',
+              px: theme.spacing(4),
               backgroundColor: theme.palette.primary.main,
               color: theme.palette.primary.contrastText,
+              boxShadow: theme.shadows[2],
               '&:hover': {
-                backgroundColor: theme.palette.primary.dark
+                backgroundColor: theme.palette.primary.dark,
+                boxShadow: theme.shadows[4]
               },
               '&:disabled': {
-                backgroundColor: theme.palette.action.disabledBackground
+                backgroundColor: theme.palette.action.disabledBackground,
+                color: theme.palette.action.disabled
               }
             }}
           >
