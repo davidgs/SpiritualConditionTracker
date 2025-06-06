@@ -15,7 +15,7 @@ function BottomNavBar({ currentView, onNavigate }: BottomNavBarProps) {
     { id: 'dashboard', name: 'Home', icon: '🏠' },
     { id: 'meetings', name: 'Meetings', icon: '📍' },
     { id: 'stepwork', name: 'Steps', icon: '📖' },
-    { id: 'sponsor', name: 'Sponsor', icon: '👥' },
+    { id: 'sponsor', name: 'Sponsorship', icon: '👥' },
     { id: 'profile', name: 'Profile', icon: '👤' }
   ];
 

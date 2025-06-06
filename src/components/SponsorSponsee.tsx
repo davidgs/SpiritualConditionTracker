@@ -3,13 +3,14 @@ import {
   Box,
   Tabs,
   Tab,
-  Typography
+  Typography,
+  Paper,
+  IconButton,
+  Button
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import DatabaseService from '../services/DatabaseService';
-import SubTabComponent from './shared/SubTabComponent';
 import UnifiedPersonForm from './shared/UnifiedPersonForm';
-import { ContactCard } from './ContactCard';
 import { ContactPerson } from '../types/ContactPerson';
 
 function TabPanel({ children, value, index, ...other }) {
@@ -275,58 +276,152 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
 
       {/* Sponsor Tab */}
       <TabPanel value={currentTab} index={0}>
-        <SubTabComponent
-          persons={sponsors}
-          personType="sponsor"
-          contacts={sponsorContacts}
-          actionItems={activities || []}
-          currentTab={currentSponsorTab}
-          onTabChange={(event, newValue) => setCurrentSponsorTab(newValue)}
-          onAddPerson={() => handleEditSponsor(null)}
-          onEditPerson={handleEditSponsor}
-          onDeletePerson={(id) => handleDeletePerson('sponsor', id)}
-          onAddContact={handleAddContact}
-          onToggleActionItem={handleToggleActionItem}
-          addLabel="+ Add Sponsor"
-          emptyMessage="No sponsors added yet."
-          renderContactCard={(contact, index) => (
-            <ContactCard
-              key={contact.id || index}
-              contact={contact}
-              theme={theme}
-              refreshKey={refreshKey}
-              onContactClick={() => {}}
-            />
+        <Box sx={{ p: 2 }}>
+          {sponsors.length > 0 ? (
+            sponsors.map((sponsor) => (
+              <Paper key={sponsor.id} sx={{ p: 2, mb: 2, backgroundColor: theme.palette.background.paper }}>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
+                  <Box>
+                    <Typography variant="h6" sx={{ color: theme.palette.text.primary, fontWeight: 600 }}>
+                      {sponsor.name} {sponsor.lastName}
+                    </Typography>
+                    {sponsor.phoneNumber && (
+                      <Typography variant="body2" sx={{ color: theme.palette.text.secondary }}>
+                        Phone: {sponsor.phoneNumber}
+                      </Typography>
+                    )}
+                    {sponsor.email && (
+                      <Typography variant="body2" sx={{ color: theme.palette.text.secondary }}>
+                        Email: {sponsor.email}
+                      </Typography>
+                    )}
+                    {sponsor.notes && (
+                      <Typography variant="body2" sx={{ color: theme.palette.text.secondary, mt: 1 }}>
+                        Notes: {sponsor.notes}
+                      </Typography>
+                    )}
+                  </Box>
+                  <Box sx={{ display: 'flex', gap: 1 }}>
+                    <IconButton 
+                      onClick={() => handleEditSponsor(sponsor)}
+                      size="small"
+                      sx={{ color: theme.palette.primary.main }}
+                    >
+                      <i className="fa-solid fa-edit"></i>
+                    </IconButton>
+                    <IconButton 
+                      onClick={() => handleDeletePerson('sponsor', sponsor.id)}
+                      size="small"
+                      sx={{ color: theme.palette.error.main }}
+                    >
+                      <i className="fa-solid fa-trash"></i>
+                    </IconButton>
+                  </Box>
+                </Box>
+              </Paper>
+            ))
+          ) : (
+            <Box sx={{ textAlign: 'center', py: 3 }}>
+              <Typography variant="body1" sx={{ color: theme.palette.text.secondary, mb: 2 }}>
+                No sponsors added yet.
+              </Typography>
+              <Button
+                variant="contained"
+                onClick={() => handleEditSponsor(null)}
+                sx={{ borderRadius: theme.spacing(1) }}
+              >
+                Add Sponsor
+              </Button>
+            </Box>
           )}
-        />
+          
+          {sponsors.length > 0 && (
+            <Box sx={{ textAlign: 'center', mt: 2 }}>
+              <Button
+                variant="outlined"
+                onClick={() => handleEditSponsor(null)}
+                sx={{ borderRadius: theme.spacing(1) }}
+              >
+                Add Another Sponsor
+              </Button>
+            </Box>
+          )}
+        </Box>
       </TabPanel>
 
       {/* Sponsee Tab */}
       <TabPanel value={currentTab} index={1}>
-        <SubTabComponent
-          persons={sponsees}
-          personType="sponsee"
-          contacts={sponseeContacts}
-          actionItems={activities || []}
-          currentTab={currentSponseeTab}
-          onTabChange={(event, newValue) => setCurrentSponseeTab(newValue)}
-          onAddPerson={() => handleEditSponsee(null)}
-          onEditPerson={handleEditSponsee}
-          onDeletePerson={(id) => handleDeletePerson('sponsee', id)}
-          onAddContact={handleAddContact}
-          onToggleActionItem={handleToggleActionItem}
-          addLabel="+ Add Sponsee"
-          emptyMessage="No sponsees added yet."
-          renderContactCard={(contact, index) => (
-            <ContactCard
-              key={contact.id || index}
-              contact={contact}
-              theme={theme}
-              refreshKey={refreshKey}
-              onContactClick={() => {}}
-            />
+        <Box sx={{ p: 2 }}>
+          {sponsees.length > 0 ? (
+            sponsees.map((sponsee) => (
+              <Paper key={sponsee.id} sx={{ p: 2, mb: 2, backgroundColor: theme.palette.background.paper }}>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
+                  <Box>
+                    <Typography variant="h6" sx={{ color: theme.palette.text.primary, fontWeight: 600 }}>
+                      {sponsee.name} {sponsee.lastName}
+                    </Typography>
+                    {sponsee.phoneNumber && (
+                      <Typography variant="body2" sx={{ color: theme.palette.text.secondary }}>
+                        Phone: {sponsee.phoneNumber}
+                      </Typography>
+                    )}
+                    {sponsee.email && (
+                      <Typography variant="body2" sx={{ color: theme.palette.text.secondary }}>
+                        Email: {sponsee.email}
+                      </Typography>
+                    )}
+                    {sponsee.notes && (
+                      <Typography variant="body2" sx={{ color: theme.palette.text.secondary, mt: 1 }}>
+                        Notes: {sponsee.notes}
+                      </Typography>
+                    )}
+                  </Box>
+                  <Box sx={{ display: 'flex', gap: 1 }}>
+                    <IconButton 
+                      onClick={() => handleEditSponsee(sponsee)}
+                      size="small"
+                      sx={{ color: theme.palette.primary.main }}
+                    >
+                      <i className="fa-solid fa-edit"></i>
+                    </IconButton>
+                    <IconButton 
+                      onClick={() => handleDeletePerson('sponsee', sponsee.id)}
+                      size="small"
+                      sx={{ color: theme.palette.error.main }}
+                    >
+                      <i className="fa-solid fa-trash"></i>
+                    </IconButton>
+                  </Box>
+                </Box>
+              </Paper>
+            ))
+          ) : (
+            <Box sx={{ textAlign: 'center', py: 3 }}>
+              <Typography variant="body1" sx={{ color: theme.palette.text.secondary, mb: 2 }}>
+                No sponsees added yet.
+              </Typography>
+              <Button
+                variant="contained"
+                onClick={() => handleEditSponsee(null)}
+                sx={{ borderRadius: theme.spacing(1) }}
+              >
+                Add Sponsee
+              </Button>
+            </Box>
           )}
-        />
+          
+          {sponsees.length > 0 && (
+            <Box sx={{ textAlign: 'center', mt: 2 }}>
+              <Button
+                variant="outlined"
+                onClick={() => handleEditSponsee(null)}
+                sx={{ borderRadius: theme.spacing(1) }}
+              >
+                Add Another Sponsee
+              </Button>
+            </Box>
+          )}
+        </Box>
       </TabPanel>
 
       {/* Forms */}
