@@ -437,11 +437,11 @@ export default function ContactFormDialog({
               fontSize: '16px',
               minHeight: '48px',
               px: theme.spacing(4),
-              borderColor: theme.palette.divider,
-              color: theme.palette.text.primary,
+              borderColor: theme.palette.error.main,
+              color: theme.palette.error.main,
               backgroundColor: 'transparent',
               '&:hover': {
-                borderColor: theme.palette.primary.main,
+                borderColor: theme.palette.error.main,
                 backgroundColor: theme.palette.action.hover
               }
             }}
@@ -461,11 +461,11 @@ export default function ContactFormDialog({
               fontSize: '16px',
               minHeight: '48px',
               px: theme.spacing(4),
-              backgroundColor: theme.palette.primary.main,
-              color: theme.palette.primary.contrastText,
+              backgroundColor: theme.palette.success.main,
+              color: theme.palette.success.contrastText,
               boxShadow: theme.shadows[2],
               '&:hover': {
-                backgroundColor: theme.palette.primary.dark,
+                backgroundColor: theme.palette.success.dark,
                 boxShadow: theme.shadows[4]
               },
               '&:disabled': {
