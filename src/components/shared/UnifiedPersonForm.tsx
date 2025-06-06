@@ -80,6 +80,8 @@ export default function UnifiedPersonForm({
     onSave(dataToSave);
   };
 
+  console.log('UnifiedPersonForm is rendering with title:', title);
+  
   return (
     <Box sx={{ 
       minHeight: '100vh',
