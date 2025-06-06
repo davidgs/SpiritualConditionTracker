@@ -1,14 +1,13 @@
 import React from 'react';
-import PersonForm from './shared/PersonForm';
+import UnifiedPersonForm from './shared/UnifiedPersonForm';
 
 export default function SponsorFormPage({ initialData, onSave, onCancel }) {
   return (
-    <PersonForm
+    <UnifiedPersonForm
       initialData={initialData}
       onSave={onSave}
       onCancel={onCancel}
       title={initialData ? 'Edit Sponsor' : 'Add Sponsor'}
-      isDialog={false}
     />
   );
 }

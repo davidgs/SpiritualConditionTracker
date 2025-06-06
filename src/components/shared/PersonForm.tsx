@@ -96,239 +96,58 @@ export default function PersonForm({
     }
   };
 
-  const formContent = (
-    <form onSubmit={handleSubmit}>
-      <Box sx={{ p: 3 }}>
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-          {/* First Name */}
-          <TextField
-            name="name"
-            label="First Name"
-            value={formData.name}
-            onChange={handleChange}
-            fullWidth
-            required
-            variant="outlined"
-            sx={{ 
-              '& .MuiOutlinedInput-root': {
-                borderRadius: '12px',
-                backgroundColor: theme.palette.background.default,
-                '& fieldset': {
-                  borderColor: theme.palette.divider,
-                },
-                '&:hover fieldset': {
-                  borderColor: theme.palette.primary.main,
-                },
-                '&.Mui-focused fieldset': {
-                  borderColor: theme.palette.primary.main,
-                }
-              }
-            }}
-          />
-          
-          {/* Last Name */}
-          <TextField
-            name="lastName"
-            label="Last Name"
-            value={formData.lastName || ''}
-            onChange={handleChange}
-            fullWidth
-            variant="outlined"
-            sx={{ 
-              '& .MuiOutlinedInput-root': {
-                borderRadius: '12px',
-                backgroundColor: theme.palette.background.default,
-                '& fieldset': {
-                  borderColor: theme.palette.divider,
-                },
-                '&:hover fieldset': {
-                  borderColor: theme.palette.primary.main,
-                },
-                '&.Mui-focused fieldset': {
-                  borderColor: theme.palette.primary.main,
-                }
-              }
-            }}
-          />
-          
-          {/* Phone Number */}
-          <MuiTelInput
-            label="Phone Number"
-            value={formData.phoneNumber || ''}
-            onChange={handlePhoneChange}
-            defaultCountry="US"
-            forceCallingCode
-            continents={['EU', 'OC', 'NA']}
-            fullWidth
-            sx={{ 
-              '& .MuiOutlinedInput-root': {
-                borderRadius: '12px',
-                backgroundColor: theme.palette.background.default,
-                '& fieldset': {
-                  borderColor: theme.palette.divider,
-                },
-                '&:hover fieldset': {
-                  borderColor: theme.palette.primary.main,
-                },
-                '&.Mui-focused fieldset': {
-                  borderColor: theme.palette.primary.main,
-                }
-              }
-            }}
-          />
-          
-          {/* Email */}
-          <TextField
-            name="email"
-            label="Email"
-            type="email"
-            value={formData.email || ''}
-            onChange={handleChange}
-            fullWidth
-            variant="outlined"
-            sx={{ 
-              '& .MuiOutlinedInput-root': {
-                borderRadius: '12px',
-                backgroundColor: theme.palette.background.default,
-                '& fieldset': {
-                  borderColor: theme.palette.divider,
-                },
-                '&:hover fieldset': {
-                  borderColor: theme.palette.primary.main,
-                },
-                '&.Mui-focused fieldset': {
-                  borderColor: theme.palette.primary.main,
-                }
-              }
-            }}
-          />
-          
-          {/* Sobriety Date */}
-          <TextField
-            name="sobrietyDate"
-            label="Sobriety Date"
-            type="date"
-            value={formData.sobrietyDate || ''}
-            onChange={handleChange}
-            fullWidth
-            InputLabelProps={{ shrink: true }}
-            variant="outlined"
-            sx={{ 
-              '& .MuiOutlinedInput-root': {
-                borderRadius: '12px',
-                backgroundColor: theme.palette.background.default,
-                '& fieldset': {
-                  borderColor: theme.palette.divider,
-                },
-                '&:hover fieldset': {
-                  borderColor: theme.palette.primary.main,
-                },
-                '&.Mui-focused fieldset': {
-                  borderColor: theme.palette.primary.main,
-                }
-              }
-            }}
-            helperText="Their sobriety date (if known)"
-          />
-          
-          {/* Notes */}
-          <TextField
-            name="notes"
-            label="Notes"
-            multiline
-            rows={4}
-            value={formData.notes || ''}
-            onChange={handleChange}
-            fullWidth
-            variant="outlined"
-            sx={{ 
-              '& .MuiOutlinedInput-root': {
-                borderRadius: '12px',
-                backgroundColor: theme.palette.background.default,
-                '& fieldset': {
-                  borderColor: theme.palette.divider,
-                },
-                '&:hover fieldset': {
-                  borderColor: theme.palette.primary.main,
-                },
-                '&.Mui-focused fieldset': {
-                  borderColor: theme.palette.primary.main,
-                }
-              }
-            }}
-          />
-        </Box>
-      </Box>
-      
-      {/* Form Actions */}
-      <Box sx={{ 
-        position: 'sticky',
-        bottom: 0,
-        left: 0,
-        right: 0,
-        p: 2,
-        bgcolor: theme.palette.background.paper,
-        borderTop: `1px solid ${theme.palette.divider}`,
-        display: 'flex',
-        gap: 2,
-        justifyContent: 'center'
-      }}>
-        <Button
-          variant="outlined"
-          onClick={onCancel}
-          sx={{ 
-            flex: 1,
-            maxWidth: '120px',
-            borderRadius: '8px',
-            textTransform: 'none',
-            fontWeight: 600
-          }}
-        >
-          Cancel
-        </Button>
-        
-        <Button
-          variant="contained"
-          type="submit"
-          sx={{ 
-            flex: 1,
-            maxWidth: '120px',
-            borderRadius: '8px',
-            textTransform: 'none',
-            fontWeight: 600,
-            bgcolor: theme.palette.primary.main,
-            '&:hover': {
-              bgcolor: theme.palette.primary.dark,
-            }
-          }}
-        >
-          {initialData ? 'Update' : 'Add'}
-        </Button>
-      </Box>
-    </form>
-  );
-
-  if (isDialog) {
-    return formContent;
-  }
+  const fieldStyle = {
+    '& .MuiOutlinedInput-root': {
+      backgroundColor: '#ffffff',
+      borderRadius: '8px',
+      '& fieldset': {
+        borderColor: '#e0e0e0',
+      },
+      '&:hover fieldset': {
+        borderColor: theme.palette.primary.main,
+      },
+      '&.Mui-focused fieldset': {
+        borderColor: theme.palette.primary.main,
+        borderWidth: 2,
+      }
+    },
+    '& .MuiInputLabel-root': {
+      color: '#666666',
+      fontSize: '14px',
+    },
+    '& .MuiInputLabel-root.Mui-focused': {
+      color: theme.palette.primary.main,
+    }
+  };
 
   return (
     <Box sx={{ 
       minHeight: '100vh',
-      bgcolor: theme.palette.background.default,
-      p: 0
+      bgcolor: '#f8fafc',
+      display: 'flex',
+      flexDirection: 'column'
     }}>
-      {/* Header with back button */}
+      {/* Header */}
       <Box sx={{ 
         display: 'flex', 
         alignItems: 'center', 
         p: 2,
-        bgcolor: theme.palette.background.paper,
-        borderBottom: `1px solid ${theme.palette.divider}`
+        bgcolor: '#ffffff',
+        borderBottom: '1px solid #e5e7eb',
+        boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+        position: 'sticky',
+        top: 0,
+        zIndex: 1
       }}>
         <IconButton 
           onClick={onCancel}
-          sx={{ mr: 2, color: theme.palette.text.primary }}
+          sx={{ 
+            mr: 2, 
+            color: '#374151',
+            '&:hover': {
+              bgcolor: '#f3f4f6'
+            }
+          }}
         >
           <i className="fa-solid fa-times"></i>
         </IconButton>
@@ -337,25 +156,162 @@ export default function PersonForm({
           component="h1"
           sx={{ 
             fontWeight: 600,
-            color: theme.palette.text.primary
+            color: '#111827',
+            fontSize: '18px'
           }}
         >
           {title}
         </Typography>
       </Box>
 
-      <Box sx={{ p: 2 }}>
-        <Paper
-          elevation={0}
+      {/* Form Content */}
+      <Box sx={{ 
+        flex: 1,
+        p: 3,
+        bgcolor: '#f8fafc'
+      }}>
+        <Box sx={{ 
+          bgcolor: '#ffffff',
+          borderRadius: '12px',
+          p: 3,
+          boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+          border: '1px solid #e5e7eb'
+        }}>
+          <form onSubmit={handleSubmit}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+              {/* First Name */}
+              <TextField
+                fullWidth
+                label="First Name"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                required
+                variant="outlined"
+                sx={fieldStyle}
+              />
+              
+              {/* Last Name */}
+              <TextField
+                fullWidth
+                label="Last Name"
+                name="lastName"
+                value={formData.lastName}
+                onChange={handleChange}
+                variant="outlined"
+                sx={fieldStyle}
+              />
+              
+              {/* Phone Number */}
+              <MuiTelInput
+                label="Phone Number"
+                value={formData.phoneNumber}
+                onChange={handlePhoneChange}
+                defaultCountry="US"
+                forceCallingCode
+                fullWidth
+                sx={{
+                  ...fieldStyle,
+                  '& .MuiTelInput-Flag': {
+                    borderRadius: '4px'
+                  }
+                }}
+              />
+              
+              {/* Email */}
+              <TextField
+                fullWidth
+                label="Email"
+                name="email"
+                type="email"
+                value={formData.email}
+                onChange={handleChange}
+                variant="outlined"
+                sx={fieldStyle}
+              />
+              
+              {/* Sobriety Date */}
+              <TextField
+                fullWidth
+                label="Sobriety Date"
+                name="sobrietyDate"
+                type="date"
+                value={formData.sobrietyDate}
+                onChange={handleChange}
+                InputLabelProps={{ shrink: true }}
+                variant="outlined"
+                sx={fieldStyle}
+                helperText="Your sponsor's sobriety date (if known)"
+              />
+              
+              {/* Notes */}
+              <TextField
+                fullWidth
+                label="Notes"
+                name="notes"
+                multiline
+                rows={4}
+                value={formData.notes}
+                onChange={handleChange}
+                variant="outlined"
+                sx={fieldStyle}
+                placeholder="Add any additional notes about your sponsor..."
+              />
+            </Box>
+          </form>
+        </Box>
+      </Box>
+      
+      {/* Bottom Actions */}
+      <Box sx={{ 
+        p: 3,
+        bgcolor: '#ffffff',
+        borderTop: '1px solid #e5e7eb',
+        display: 'flex',
+        gap: 2,
+        justifyContent: 'center',
+        position: 'sticky',
+        bottom: 0
+      }}>
+        <Button
+          variant="outlined"
+          onClick={onCancel}
           sx={{ 
-            p: 0, 
-            borderRadius: 2,
-            bgcolor: theme.palette.background.paper,
-            overflow: 'hidden'
+            flex: 1,
+            maxWidth: '140px',
+            borderRadius: '8px',
+            textTransform: 'none',
+            fontWeight: 600,
+            borderColor: '#d1d5db',
+            color: '#374151',
+            '&:hover': {
+              borderColor: '#9ca3af',
+              bgcolor: '#f9fafb'
+            }
           }}
         >
-          {formContent}
-        </Paper>
+          Cancel
+        </Button>
+        
+        <Button
+          variant="contained"
+          onClick={handleSubmit}
+          sx={{ 
+            flex: 1,
+            maxWidth: '140px',
+            borderRadius: '8px',
+            textTransform: 'none',
+            fontWeight: 600,
+            bgcolor: theme.palette.primary.main,
+            boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+            '&:hover': {
+              bgcolor: theme.palette.primary.dark,
+              boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
+            }
+          }}
+        >
+          {initialData ? 'Update' : 'Add'}
+        </Button>
       </Box>
     </Box>
   );
