@@ -234,7 +234,7 @@ function AppContent() {
           isMobile={true}
         />
         <div style={{ 
-          paddingTop: 'calc(44px + env(safe-area-inset-top, 0px))',
+          paddingTop: 'calc(52px + env(safe-area-inset-top, 0px))',
           paddingBottom: 'calc(80px + env(safe-area-inset-bottom, 0px))'
         }}>
           <React.Suspense fallback={
