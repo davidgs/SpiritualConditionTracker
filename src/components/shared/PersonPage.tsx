@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { Box, Paper, Typography, IconButton, Divider, TextField, Chip, InputAdornment } from '@mui/material';
+import { Box, Paper, Typography, IconButton, Divider, TextField, Chip, InputAdornment, Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { ContactPerson } from '../../types/ContactPerson';
 import { formatDateForDisplay } from '../../utils/dateUtils';
@@ -198,72 +198,122 @@ export default function PersonPage({
           </IconButton>
         </Box>
 
-        {/* Search and Filter Controls */}
+        {/* Search and Filter Controls in Accordion */}
         {contacts.length > 0 && (
-          <Box sx={{ mb: 3 }}>
-            {/* Search Field */}
-            <TextField
-              fullWidth
-              size="small"
-              placeholder="Search contacts by notes, topic, or type..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <i className="fa-solid fa-search" style={{ color: theme.palette.text.secondary, fontSize: '14px' }}></i>
-                  </InputAdornment>
-                ),
-                endAdornment: searchTerm && (
-                  <InputAdornment position="end">
-                    <IconButton
-                      size="small"
-                      onClick={() => setSearchTerm('')}
-                      sx={{ color: theme.palette.text.secondary }}
-                    >
-                      <i className="fa-solid fa-times" style={{ fontSize: '12px' }}></i>
-                    </IconButton>
-                  </InputAdornment>
-                )
+          <Accordion 
+            sx={{ 
+              mb: 2,
+              '&:before': { display: 'none' },
+              boxShadow: 'none',
+              border: `1px solid ${theme.palette.divider}`,
+              borderRadius: '8px !important',
+              '&.Mui-expanded': {
+                margin: '0 0 16px 0'
+              }
+            }}
+          >
+            <AccordionSummary
+              expandIcon={<i className="fa-solid fa-chevron-down" style={{ fontSize: '12px', color: theme.palette.text.secondary }}></i>}
+              sx={{
+                minHeight: 'unset',
+                '&.Mui-expanded': {
+                  minHeight: 'unset'
+                },
+                '& .MuiAccordionSummary-content': {
+                  margin: '8px 0',
+                  '&.Mui-expanded': {
+                    margin: '8px 0'
+                  }
+                }
               }}
-              sx={{ mb: 2 }}
-            />
-
-            {/* Contact Type Filter Chips */}
-            {contactTypes.length > 0 && (
-              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-                <Chip
-                  label="All Types"
-                  size="small"
-                  variant={selectedContactType === null ? "filled" : "outlined"}
-                  onClick={() => setSelectedContactType(null)}
-                  sx={{
-                    backgroundColor: selectedContactType === null ? theme.palette.primary.main : 'transparent',
-                    color: selectedContactType === null ? theme.palette.primary.contrastText : theme.palette.text.secondary,
-                    '&:hover': {
-                      backgroundColor: selectedContactType === null ? theme.palette.primary.dark : theme.palette.action.hover
-                    }
-                  }}
-                />
-                {contactTypes.map((type) => (
-                  <Chip
-                    key={type}
-                    label={type.charAt(0).toUpperCase() + type.slice(1)}
-                    size="small"
-                    variant={selectedContactType === type ? "filled" : "outlined"}
-                    onClick={() => setSelectedContactType(selectedContactType === type ? null : type)}
-                    sx={{
-                      backgroundColor: selectedContactType === type ? theme.palette.primary.main : 'transparent',
-                      color: selectedContactType === type ? theme.palette.primary.contrastText : theme.palette.text.secondary,
-                      '&:hover': {
-                        backgroundColor: selectedContactType === type ? theme.palette.primary.dark : theme.palette.action.hover
-                      }
-                    }}
-                  />
-                ))}
+            >
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <i className="fa-solid fa-filter" style={{ color: theme.palette.text.secondary, fontSize: '14px' }}></i>
+                <Typography variant="body2" sx={{ color: theme.palette.text.secondary }}>
+                  Search & Filter Contacts
+                  {(searchTerm || selectedContactType) && (
+                    <span style={{ color: theme.palette.primary.main, marginLeft: '8px' }}>
+                      (Active)
+                    </span>
+                  )}
+                </Typography>
               </Box>
-            )}
-          </Box>
+            </AccordionSummary>
+            <AccordionDetails sx={{ pt: 0 }}>
+              {/* Search Field - Full Width */}
+              <TextField
+                fullWidth
+                size="medium"
+                placeholder="Search contacts by notes, topic, or type..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <i className="fa-solid fa-search" style={{ color: theme.palette.text.secondary, fontSize: '16px' }}></i>
+                    </InputAdornment>
+                  ),
+                  endAdornment: searchTerm && (
+                    <InputAdornment position="end">
+                      <IconButton
+                        size="small"
+                        onClick={() => setSearchTerm('')}
+                        sx={{ color: theme.palette.text.secondary }}
+                      >
+                        <i className="fa-solid fa-times" style={{ fontSize: '14px' }}></i>
+                      </IconButton>
+                    </InputAdornment>
+                  )
+                }}
+                sx={{ 
+                  mb: 2,
+                  '& .MuiOutlinedInput-root': {
+                    fontSize: '16px'
+                  }
+                }}
+              />
+
+              {/* Contact Type Filter Chips */}
+              {contactTypes.length > 0 && (
+                <Box>
+                  <Typography variant="body2" sx={{ color: theme.palette.text.secondary, mb: 1 }}>
+                    Filter by contact type:
+                  </Typography>
+                  <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+                    <Chip
+                      label="All Types"
+                      size="small"
+                      variant={selectedContactType === null ? "filled" : "outlined"}
+                      onClick={() => setSelectedContactType(null)}
+                      sx={{
+                        backgroundColor: selectedContactType === null ? theme.palette.primary.main : 'transparent',
+                        color: selectedContactType === null ? theme.palette.primary.contrastText : theme.palette.text.secondary,
+                        '&:hover': {
+                          backgroundColor: selectedContactType === null ? theme.palette.primary.dark : theme.palette.action.hover
+                        }
+                      }}
+                    />
+                    {contactTypes.map((type) => (
+                      <Chip
+                        key={type}
+                        label={type.charAt(0).toUpperCase() + type.slice(1)}
+                        size="small"
+                        variant={selectedContactType === type ? "filled" : "outlined"}
+                        onClick={() => setSelectedContactType(selectedContactType === type ? null : type)}
+                        sx={{
+                          backgroundColor: selectedContactType === type ? theme.palette.primary.main : 'transparent',
+                          color: selectedContactType === type ? theme.palette.primary.contrastText : theme.palette.text.secondary,
+                          '&:hover': {
+                            backgroundColor: selectedContactType === type ? theme.palette.primary.dark : theme.palette.action.hover
+                          }
+                        }}
+                      />
+                    ))}
+                  </Box>
+                </Box>
+              )}
+            </AccordionDetails>
+          </Accordion>
         )}
 
         {contacts.length === 0 ? (
