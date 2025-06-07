@@ -1,953 +1,393 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  Paper, 
-  Typography, 
-  Box, 
-  Button, 
-  List, 
-  ListItem, 
-  IconButton, 
-  Divider,
-  Card,
-  CardContent,
+import {
+  Box,
   Tabs,
   Tab,
-  ListItemText,
-  Checkbox
+  Typography,
+  Paper,
+  IconButton,
+  Button
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
-import SponsorFormDialog from './SponsorFormDialog';
-import SponseeFormDialog from './SponseeFormDialog';
-import SponsorContactFormPage from './SponsorContactFormPage';
-import { formatDateForDisplay } from '../utils/dateUtils';
+import DatabaseService from '../services/DatabaseService';
+import SubTabComponent from './shared/SubTabComponent';
+import PersonFormDialog from './shared/PersonFormDialog';
+import ContactFormDialog from './shared/ContactFormDialog';
+import { ContactCard } from './ContactCard';
+import { ContactPerson } from '../types/ContactPerson';
+import { Contact } from '../types/database';
+
+function TabPanel({ children, value, index, ...other }) {
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`tabpanel-${index}`}
+      aria-labelledby={`tab-${index}`}
+      {...other}
+    >
+      {value === index && <Box sx={{ py: 3 }}>{children}</Box>}
+    </div>
+  );
+}
 
 export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activities = [] }) {
   const theme = useTheme();
-  const darkMode = theme.palette.mode === 'dark';
-  
+  const databaseService = DatabaseService.getInstance();
+
   // Tab state
   const [currentTab, setCurrentTab] = useState(0);
-  
-  // State for sponsor and sponsees
-  const [sponsor, setSponsor] = useState(null);
-  const [sponsees, setSponsees] = useState([]);
-  
-  // State for sponsor contacts
+  const [currentSponsorTab, setCurrentSponsorTab] = useState(0);
+  const [currentSponseeTab, setCurrentSponseeTab] = useState(0);
+
+  // Data state
+  const [sponsors, setSponsors] = useState<ContactPerson[]>([]);
+  const [sponsees, setSponsees] = useState<ContactPerson[]>([]);
   const [sponsorContacts, setSponsorContacts] = useState([]);
+  const [sponseeContacts, setSponseeContacts] = useState([]);
+  const [refreshKey, setRefreshKey] = useState(0);
+
+  // Form state
+  const [showPersonForm, setShowPersonForm] = useState(false);
   const [showContactForm, setShowContactForm] = useState(false);
-  
-  // Dialog states
-  const [showSponsorForm, setShowSponsorForm] = useState(false);
-  const [showSponseeForm, setShowSponseeForm] = useState(false);
-  const [editingSponsor, setEditingSponsor] = useState(false);
-  const [editingSponseeId, setEditingSponseeId] = useState(null);
-  const [editingActionItem, setEditingActionItem] = useState(null);
+  const [showSponseeContactForm, setShowSponseeContactForm] = useState(false);
+  const [editingPerson, setEditingPerson] = useState<ContactPerson | null>(null);
   const [editingContact, setEditingContact] = useState(null);
-  
-  // Load sponsor and sponsees data from user
-  useEffect(() => {
-    if (user) {
-      // Load sponsor data from flattened fields
-      if (user.sponsor_name) {
-        // Reconstruct sponsor object from flattened fields
-        const sponsorData = {
-          name: user.sponsor_name || '',
-          lastName: user.sponsor_lastName || '',
-          phone: user.sponsor_phone || '',
-          email: user.sponsor_email || '',
-          sobrietyDate: user.sponsor_sobrietyDate || '',
-          notes: user.sponsor_notes || ''
-        };
-        setSponsor(sponsorData);
-      }
-      
-      // Load sponsees if available
-      if (user.sponsees && Array.isArray(user.sponsees)) {
-        setSponsees(user.sponsees);
-      }
+  const [editingActionItem, setEditingActionItem] = useState(null);
+  const [personFormType, setPersonFormType] = useState<'sponsor' | 'sponsee'>('sponsor');
+  const [selectedSponseeForContact, setSelectedSponseeForContact] = useState(null);
+  const [selectedSponsorForContact, setSelectedSponsorForContact] = useState(null);
+
+  // Load data - FIXED: Show all sponsors/sponsees since there's only one user
+  const loadSponsors = async () => {
+    try {
+      const sponsorData = await databaseService.getAll('sponsors');
+      setSponsors(sponsorData as ContactPerson[]);
+    } catch (error) {
+      console.error('Failed to load sponsors:', error);
     }
-  }, [user]);
+  };
 
-  // Load sponsor contacts whenever activities change
+  const loadSponsees = async () => {
+    try {
+      const sponseeData = await databaseService.getAll('sponsees');
+      setSponsees(sponseeData as ContactPerson[]);
+    } catch (error) {
+      console.error('Failed to load sponsees:', error);
+    }
+  };
+
+  const loadSponsorContacts = async () => {
+    try {
+      const contacts = await databaseService.getAll('sponsor_contacts');
+      setSponsorContacts(contacts);
+    } catch (error) {
+      console.error('Failed to load sponsor contacts:', error);
+    }
+  };
+
+  const loadSponseeContacts = async () => {
+    try {
+      const contacts = await databaseService.getAll('sponsee_contacts');
+      setSponseeContacts(contacts);
+    } catch (error) {
+      console.error('Failed to load sponsee contacts:', error);
+    }
+  };
+
   useEffect(() => {
-    loadSponsorContacts();
-  }, [activities]);
+    if (user?.id) {
+      loadSponsors();
+      loadSponsees();
+      loadSponsorContacts();
+      loadSponseeContacts();
+    }
+  }, [user?.id, refreshKey]);
 
-  // Load sponsor contacts from activities (they should be stored as activities)
-  const loadSponsorContacts = () => {
-    // Filter activities to find sponsor contacts
-    const sponsorContactActivities = activities.filter(activity => activity.type === 'sponsor-contact');
-    
-    // Convert activity format back to contact format for display
-    const contacts = sponsorContactActivities.map(activity => {
-      // Extract topic from notes if it exists
-      const notesMatch = activity.notes?.match(/^(.*?) \[Contact: ([^,\]]+)(?:, Topic: ([^\]]+))?\]$/);
-      const note = notesMatch ? notesMatch[1] : activity.notes || '';
-      const topic = notesMatch ? notesMatch[3] : '';
+  // Delete handler
+  const handleDeletePerson = async (personType: 'sponsor' | 'sponsee', personId: string | number) => {
+    if (!personId) {
+      console.error(`No ${personType} ID provided for deletion`);
+      return;
+    }
+
+    if (!window.confirm(`Are you sure you want to delete this ${personType}?`)) {
+      return;
+    }
+
+    try {
+      const contactTable = personType === 'sponsor' ? 'sponsor_contacts' : 'sponsee_contacts';
+      const personTable = personType === 'sponsor' ? 'sponsors' : 'sponsees';
+      const foreignKey = personType === 'sponsor' ? 'sponsorId' : 'sponseeId';
+
+      // Delete related contacts first
+      const contacts = await databaseService.getAll(contactTable);
+      const relatedContacts = contacts.filter((c: any) => c[foreignKey] === personId);
       
-      return {
-        id: activity.id,
-        type: activity.location || 'other', // Contact type stored in location field
-        date: activity.date,
-        note: note,
-        duration: activity.duration ? activity.duration.toString() : '',
-        topic: topic
+      for (const contact of relatedContacts) {
+        await databaseService.remove(contactTable, (contact as any).id);
+      }
+      
+      // Delete the person
+      await databaseService.remove(personTable, personId);
+      
+      // Refresh data
+      if (personType === 'sponsor') {
+        await loadSponsors();
+        await loadSponsorContacts();
+      } else {
+        await loadSponsees();
+        await loadSponseeContacts();
+      }
+      setRefreshKey(prev => prev + 1);
+      
+    } catch (error) {
+      console.error(`Failed to delete ${personType}:`, error);
+      alert(`Failed to delete ${personType}`);
+    }
+  };
+
+  // Edit handlers
+  const handleEditSponsor = (sponsor: ContactPerson | null) => {
+    setEditingPerson(sponsor);
+    setPersonFormType('sponsor');
+    setShowPersonForm(true);
+  };
+
+  const handleEditSponsee = (sponsee: ContactPerson | null) => {
+    setEditingPerson(sponsee);
+    setPersonFormType('sponsee');
+    setShowPersonForm(true);
+  };
+
+  // Form submission handlers
+  const handlePersonSubmit = async (personData: ContactPerson) => {
+    try {
+      const tableMap = {
+        sponsor: 'sponsors',
+        sponsee: 'sponsees'
       };
-    });
-    
-    console.log('Found sponsor contact activities:', sponsorContactActivities);
-    console.log('Converted to contacts:', contacts);
-    setSponsorContacts(contacts);
-  };
 
-  // Get action items for a specific contact date
-  const getActionItemsForContact = (contactDate) => {
-    console.log('Getting action items for contact date:', contactDate);
-    console.log('All activities in database:', activities);
-    
-    const actionItemActivities = activities.filter(activity => activity.type === 'action-item');
-    console.log('Found action-item activities:', actionItemActivities);
-    
-    const matchingActionItems = activities.filter(activity => {
-      if (activity.type !== 'action-item') return false;
-      
-      // Look for ContactRef in the notes that matches this contact's date
-      const contactRefMatch = activity.notes?.match(/\[ContactRef: ([^\]]+)\]/);
-      const referencedContactDate = contactRefMatch ? contactRefMatch[1] : null;
-      
-      console.log('Activity:', activity.id, 'references contact date:', referencedContactDate, 'looking for:', contactDate);
-      
-      // Match action items that reference this contact
-      return referencedContactDate === contactDate;
-    }).map(activity => ({
-      id: activity.id,
-      title: activity.notes?.split(' - ')[0]?.replace('Action Item: ', '') || 'Action Item',
-      text: activity.notes?.split(' - ')[1]?.split(' [Notes:')[0]?.split(' [ContactRef:')[0] || '',
-      notes: activity.notes?.match(/\[Notes: (.*?)\]/)?.[1] || '',
-      completed: activity.location === 'completed',
-      deleted: activity.location === 'deleted',
-      dueDate: activity.date,
-      activityData: activity // Keep reference to original activity
-    }));
-    
-    console.log('Matching action items found:', matchingActionItems);
-    return matchingActionItems;
-  };
-
-  // Toggle action item completion
-  const handleToggleActionItem = async (actionItem) => {
-    try {
-      console.log('Toggling action item completion:', actionItem);
-      
-      // Don't allow toggling if item is deleted
-      if (actionItem.deleted) {
-        return;
-      }
-      
-      const newLocation = actionItem.completed ? 'pending' : 'completed';
-      console.log('Updating action item ID:', actionItem.activityData.id, 'to location:', newLocation);
-      
-      // Update the existing activity using onSaveActivity
-      await onSaveActivity({
-        ...actionItem.activityData,
-        location: newLocation,
-        updatedAt: new Date().toISOString()
-      });
-      
-      console.log('Action item completion toggled successfully');
-      
-      // Trigger a reload of contacts to reflect the change
-      loadSponsorContacts();
-    } catch (error) {
-      console.error('Error toggling action item completion:', error);
-    }
-  };
-
-  // Delete action item
-  const handleDeleteActionItem = async (actionItem) => {
-    try {
-      console.log('Deleting action item:', actionItem);
-      
-      // Update the existing activity to mark it as deleted
-      await onSaveActivity({
-        ...actionItem.activityData,
-        location: 'deleted',
-        updatedAt: new Date().toISOString()
-      });
-      
-      console.log('Action item deleted successfully');
-      
-      // Trigger a reload of contacts to reflect the change
-      loadSponsorContacts();
-    } catch (error) {
-      console.error('Error deleting action item:', error);
-    }
-  };
-
-  // Handle editing existing contact
-  const handleEditContact = async (contactData, actionItems = []) => {
-    try {
-      console.log('Editing existing contact:', editingContact);
-      console.log('Updated contact data:', contactData);
-      
-      const contactId = editingContact?.activityData?.id || editingContact?.id;
-      if (!contactId) {
-        console.error('No editing contact ID available');
-        return;
-      }
-
-      // Update the existing contact activity
-      const updatedActivityData = {
-        type: 'sponsor-contact',
-        date: contactData.date || editingContact.activityData?.date || editingContact.date,
-        notes: `${contactData.note || ''} [Contact: ${contactData.type}${contactData.topic ? ', Topic: ' + contactData.topic : ''}]`,
-        duration: contactData.duration ? parseInt(contactData.duration) : undefined,
-        location: contactData.type,
+      const table = tableMap[personFormType];
+      const dataToSave = {
+        ...personData,
+        userId: user?.id,
         updatedAt: new Date().toISOString()
       };
 
-      console.log('Updating existing contact activity:', updatedActivityData);
-      
-      // Update the existing activity
-      await onSaveActivity({
-        ...updatedActivityData,
-        id: contactId
-      });
-
-      // Handle action items - remove old ones and add new ones
-      if (actionItems && actionItems.length > 0) {
-        // First remove existing action items for this contact
-        const existingActionItems = getActionItemsForContact(editingContact);
-        for (const existingItem of existingActionItems) {
-          if (existingItem.activityData?.id) {
-            await onSaveActivity({
-              ...existingItem.activityData,
-              type: 'action-item-deleted',
-              updatedAt: new Date().toISOString()
-            });
-          }
-        }
-
-        // Add new action items to the action_items table instead of activities table
-        for (const actionItem of actionItems) {
-          const actionItemData = {
-            title: actionItem.title,
-            text: actionItem.text || '',
-            notes: actionItem.notes || '',
-            dueDate: actionItem.dueDate || contactData.date,
-            completed: actionItem.completed ? 1 : 0,
-            type: 'todo',
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString()
-          };
-
-          console.log('Adding action item to action_items table:', actionItemData);
-          
-          try {
-            // Save to action_items table instead of activities table
-            await window.db.add('action_items', actionItemData);
-            console.log('Action item saved successfully');
-          } catch (error) {
-            console.error('Error saving action item:', error);
-          }
-        }
+      if (editingPerson?.id) {
+        await databaseService.update(table, editingPerson.id, dataToSave);
+      } else {
+        await databaseService.add(table, {
+          ...dataToSave,
+          createdAt: new Date().toISOString()
+        });
       }
 
-      console.log('Contact updated successfully');
-      setShowContactForm(false);
+      setShowPersonForm(false);
+      setEditingPerson(null);
+      
+      // Refresh data
+      if (personFormType === 'sponsor') {
+        await loadSponsors();
+      } else {
+        await loadSponsees();
+      }
+      setRefreshKey(prev => prev + 1);
+    } catch (error) {
+      console.error('Failed to save person:', error);
+      alert('Failed to save person');
+    }
+  };
+
+  // Contact handlers
+  const handleAddContact = (person: ContactPerson) => {
+    if (sponsors.some(s => s.id === person.id)) {
+      // This is a sponsor
+      setSelectedSponsorForContact(person);
       setEditingContact(null);
-      loadSponsorContacts();
-    } catch (error) {
-      console.error('Error updating contact:', error);
-    }
-  };
-
-  // Handle sponsor contact form submission with action items
-  const handleAddContact = async (contactData, actionItems = []) => {
-    try {
-      console.log('Adding new sponsor contact with data:', contactData);
-      console.log('Adding action items:', actionItems);
-      
-      // Convert sponsor contact to activity format
-      const activityData = {
-        type: 'sponsor-contact',
-        date: contactData.date || new Date().toISOString(),
-        notes: `${contactData.note || ''} [Contact: ${contactData.type}${contactData.topic ? ', Topic: ' + contactData.topic : ''}]`,
-        duration: contactData.duration ? parseInt(contactData.duration) : undefined,
-        location: contactData.type // Store contact type in location field for filtering
-      };
-      
-      console.log('Saving sponsor contact as activity:', activityData);
-      
-      // Save using the shared database handler from App.tsx
-      const savedActivity = await onSaveActivity(activityData);
-      console.log('Contact saved successfully as activity:', savedActivity);
-      
-      // Save action items to the action_items table if any were provided
-      if (actionItems && actionItems.length > 0) {
-        try {
-          const actionItemPromises = actionItems.map(async (actionItem) => {
-            const actionItemData = {
-              title: actionItem.title,
-              text: actionItem.text || '',
-              notes: actionItem.notes || '',
-              dueDate: actionItem.dueDate || new Date().toISOString().split('T')[0],
-              completed: actionItem.completed ? 1 : 0,
-              type: 'todo',
-              createdAt: new Date().toISOString(),
-              updatedAt: new Date().toISOString()
-            };
-            
-            console.log('Saving action item to action_items table:', actionItemData);
-            return await window.db.add('action_items', actionItemData);
-          });
-          
-          await Promise.all(actionItemPromises);
-          console.log('All action items saved successfully');
-        } catch (actionItemError) {
-          console.warn('Some action items failed to save:', actionItemError);
-          // Don't let action item failures prevent the contact from being saved
-        }
-      }
-      
-      // Close the form
-      setShowContactForm(false);
-      
-    } catch (error) {
-      console.error('Error adding sponsor contact:', error);
-    }
-  };
-
-  // Get contact type label and icon for display
-  const getContactTypeInfo = (type) => {
-    const typeInfo = {
-      'phone': { label: 'Phone Call', icon: 'fa-solid fa-phone' },
-      'in-person': { label: 'In Person', icon: 'fa-solid fa-handshake' }, 
-      'video': { label: 'Video Call', icon: 'fa-solid fa-video' },
-      'text': { label: 'Text Message', icon: 'fa-solid fa-message' },
-      'email': { label: 'Email', icon: 'fa-solid fa-envelope' },
-      'other': { label: 'Other', icon: 'fa-solid fa-comment' }
-    };
-    
-    return typeInfo[type] || { label: 'Contact', icon: 'fa-solid fa-comment' };
-  };
-  
-  // Handle sponsor form submission
-  const handleSponsorSubmit = (sponsorData) => {
-    // Create a copy of the current user data with flattened sponsor fields
-    const userUpdate = {
-      sponsor_name: sponsorData.name || '',
-      sponsor_lastName: sponsorData.lastName || '',
-      sponsor_phone: sponsorData.phone || '',
-      sponsor_email: sponsorData.email || '',
-      sponsor_sobrietyDate: sponsorData.sobrietyDate || '',
-      sponsor_notes: sponsorData.notes || ''
-    };
-    
-    // Update user in database through parent component
-    onUpdate(userUpdate, { redirectToDashboard: false });
-    
-    // Update local state
-    setSponsor(sponsorData);
-    setShowSponsorForm(false);
-  };
-  
-  // Handle sponsee form submission
-  const handleSponseeSubmit = (sponseeData) => {
-    let updatedSponsees;
-    
-    // Check if we're editing an existing sponsee or adding a new one
-    if (editingSponseeId) {
-      // Update existing sponsee
-      updatedSponsees = sponsees.map(sponsee => 
-        sponsee.id === editingSponseeId ? { ...sponsee, ...sponseeData } : sponsee
-      );
+      setShowContactForm(true);
     } else {
-      // Add new sponsee with generated ID
-      const newSponsee = {
-        ...sponseeData,
-        id: `sponsee_${Date.now()}`
-      };
-      updatedSponsees = [...sponsees, newSponsee];
+      // This is a sponsee
+      setSelectedSponseeForContact(person);
+      setEditingContact(null);
+      setShowSponseeContactForm(true);
     }
-    
-    // Create a copy of the current user data
-    const userUpdate = {
-      sponsees: updatedSponsees
-    };
-    
-    // Update user in database through parent component
-    onUpdate(userUpdate, { redirectToDashboard: false });
-    
-    // Update local state
-    setSponsees(updatedSponsees);
-    setShowSponseeForm(false);
-    setEditingSponseeId(null);
-  };
-  
-  // Open sponsor form for editing
-  const handleEditSponsor = () => {
-    setEditingSponsor(true);
-    setShowSponsorForm(true);
-  };
-  
-  // Open sponsee form for editing
-  const handleEditSponsee = (sponseeId) => {
-    setEditingSponseeId(sponseeId);
-    setShowSponseeForm(true);
-  };
-  
-  // Delete a sponsee
-  const handleDeleteSponsee = (sponseeId) => {
-    // Filter out the sponsee with the given ID
-    const updatedSponsees = sponsees.filter(sponsee => sponsee.id !== sponseeId);
-    
-    // Create update for user data
-    const userUpdate = {
-      sponsees: updatedSponsees
-    };
-    
-    // Update user in database
-    onUpdate(userUpdate, { redirectToDashboard: false });
-    
-    // Update local state
-    setSponsees(updatedSponsees);
-  };
-  
-  // Delete sponsor
-  const handleDeleteSponsor = () => {
-    // Create update to remove all sponsor fields
-    const userUpdate = {
-      sponsor_name: '',
-      sponsor_lastName: '',
-      sponsor_phone: '',
-      sponsor_email: '',
-      sponsor_sobrietyDate: '',
-      sponsor_notes: ''
-    };
-    
-    // Update user in database
-    onUpdate(userUpdate, { redirectToDashboard: false });
-    
-    // Update local state
-    setSponsor(null);
-  };
-  
-  // Handle tab change
-  const handleTabChange = (event, newValue) => {
-    setCurrentTab(newValue);
   };
 
-  // Custom TabPanel component
-  function TabPanel({ children, value, index, ...other }) {
-    return (
-      <div
-        role="tabpanel"
-        hidden={value !== index}
-        id={`sponsorship-tabpanel-${index}`}
-        aria-labelledby={`sponsorship-tab-${index}`}
-        {...other}
-      >
-        {value === index && (
-          <Box sx={{ pt: 3 }}>
-            {children}
-          </Box>
-        )}
-      </div>
-    );
-  }
+  const handleAddContactWithActionItem = async (contactData) => {
+    try {
+      await databaseService.add('sponsor_contacts', {
+        ...contactData,
+        sponsorId: selectedSponsorForContact?.id,
+        userId: user?.id,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      });
+      
+      setShowContactForm(false);
+      setSelectedSponsorForContact(null);
+      await loadSponsorContacts();
+      setRefreshKey(prev => prev + 1);
+    } catch (error) {
+      console.error('Failed to add sponsor contact:', error);
+      alert('Failed to add contact');
+    }
+  };
+
+  const handleAddSponseeContactWithActionItem = async (contactData) => {
+    try {
+      await databaseService.add('sponsee_contacts', {
+        ...contactData,
+        sponseeId: selectedSponseeForContact?.id,
+        userId: user?.id,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      });
+      
+      setShowSponseeContactForm(false);
+      setSelectedSponseeForContact(null);
+      await loadSponseeContacts();
+      setRefreshKey(prev => prev + 1);
+    } catch (error) {
+      console.error('Failed to add sponsee contact:', error);
+      alert('Failed to add contact');
+    }
+  };
+
+  const handleToggleActionItem = async (actionItemId) => {
+    try {
+      const actionItem = activities.find(item => item.id === actionItemId);
+      if (actionItem) {
+        const updatedItem = { ...actionItem, completed: !actionItem.completed };
+        await onSaveActivity(updatedItem);
+        setRefreshKey(prev => prev + 1);
+      }
+    } catch (error) {
+      console.error('Failed to toggle action item:', error);
+    }
+  };
 
   return (
-    <div className="p-4 md:p-6">
-      {/* Page Title */}
-      <Typography 
-        variant="h4" 
-        component="h1" 
-        className="mb-6"
-        sx={{ color: theme.palette.text.primary, fontWeight: 'bold', textAlign: 'center' }}
-      >
-        Sponsorship Management
+    <div style={{ padding: '20px 16px' }}>
+      <Typography variant="h4" sx={{ color: theme.palette.text.primary, mb: 3, fontWeight: 'bold' }}>
+        Sponsors & Sponsees
       </Typography>
 
-      {/* Material-UI Tabs */}
-      <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 3 }}>
-        <Tabs 
-          value={currentTab} 
-          onChange={handleTabChange} 
-          variant="fullWidth"
-          sx={{
-            '& .MuiTab-root': {
-              textTransform: 'none',
-              fontSize: '1rem',
-              fontWeight: 600
-            }
-          }}
-        >
-          <Tab label="My Sponsor" />
-          <Tab label="My Sponsees" />
-        </Tabs>
-      </Box>
-
-      {/* Sponsor Tab Content */}
-      <TabPanel value={currentTab} index={0}>
-      
-      <Paper 
-        elevation={0}
-        sx={{ 
-          backgroundColor: theme.palette.background.paper,
-          boxShadow: theme.shadows[2],
-          borderRadius: 2,
-          p: 1.5,
-          mb: 1.5
-        }}
+      <Tabs 
+        value={currentTab} 
+        onChange={(event, newValue) => setCurrentTab(newValue)}
+        sx={{ borderBottom: 1, borderColor: 'divider' }}
       >
-        {sponsor ? (
-          <Box>
-            <Box className="mb-4">
-              <Typography variant="h6" sx={{ color: theme.palette.text.primary, fontWeight: 'bold' }}>
-                {sponsor.name} {sponsor.lastName || ''}
-              </Typography>
-            </Box>
-            
-            <Box className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* Contact Information */}
-              <Box>
-                <Typography variant="subtitle2" sx={{ color: theme.palette.text.secondary, mb: 1 }}>
-                  Contact Information
-                </Typography>
-                
-                <Box className="grid grid-cols-1 gap-2">
-                  {sponsor.phone && (
-                    <Typography sx={{ color: theme.palette.text.primary, display: 'flex', alignItems: 'center', gap: 1 }}>
-                      <i className="fa-solid fa-phone text-sm" style={{ color: theme.palette.text.secondary }}></i>
-                      {sponsor.phone}
-                    </Typography>
-                  )}
-                  
-                  {sponsor.email && (
-                    <Typography sx={{ color: theme.palette.text.primary, display: 'flex', alignItems: 'center', gap: 1 }}>
-                      <i className="fa-solid fa-envelope text-sm" style={{ color: theme.palette.text.secondary }}></i>
-                      {sponsor.email}
-                    </Typography>
-                  )}
-                  
-                  {sponsor.sobrietyDate && (
-                    <Typography sx={{ color: theme.palette.text.primary, display: 'flex', alignItems: 'center', gap: 1 }}>
-                      <i className="fa-solid fa-calendar-check text-sm" style={{ color: theme.palette.text.secondary }}></i>
-                      {formatDateForDisplay(sponsor.sobrietyDate)}
-                    </Typography>
-                  )}
-                </Box>
-              </Box>
-            </Box>
-            
-            {/* Notes Section */}
-            {sponsor.notes && (
-              <Box className="mt-4">
-                <Typography variant="subtitle2" sx={{ color: theme.palette.text.secondary, mb: 1 }}>
-                  Notes
-                </Typography>
-                
-                <Typography sx={{ color: theme.palette.text.primary, whiteSpace: 'pre-wrap' }}>
-                  {sponsor.notes}
-                </Typography>
-              </Box>
-            )}
-            
-            {/* Action Buttons */}
-            <Box className="flex justify-end gap-2 mt-4 pt-3 border-t border-gray-200 dark:border-gray-700">
-              <IconButton 
-                onClick={handleEditSponsor}
-                size="small"
-                sx={{ color: theme.palette.primary.main }}
-              >
-                <i className="fa-solid fa-pen-to-square"></i>
-              </IconButton>
-              
-              <IconButton 
-                onClick={handleDeleteSponsor}
-                size="small"
-                sx={{ color: theme.palette.error.main }}
-              >
-                <i className="fa-solid fa-trash"></i>
-              </IconButton>
-            </Box>
-          </Box>
-        ) : (
-          <Box className="text-center py-6">
-            <Typography variant="body1" sx={{ color: theme.palette.text.primary, mb: 3 }}>
-              You haven't added your sponsor yet.
-            </Typography>
-            
-            <Button 
-              variant="contained" 
-              color="primary"
-              onClick={() => {
-                setEditingSponsor(false);
-                setShowSponsorForm(true);
+        <Tab label="Sponsors" />
+        <Tab label="Sponsees" />
+      </Tabs>
+
+      {/* Sponsor Tab */}
+      <TabPanel value={currentTab} index={0}>
+        <SubTabComponent
+          persons={sponsors}
+          personType="sponsor"
+          contacts={sponsorContacts}
+          actionItems={activities || []}
+          currentTab={currentSponsorTab}
+          onTabChange={(event, newValue) => setCurrentSponsorTab(newValue)}
+          onAddPerson={() => handleEditSponsor(null)}
+          onEditPerson={handleEditSponsor}
+          onDeletePerson={(id) => handleDeletePerson('sponsor', id)}
+          onAddContact={handleAddContact}
+          onToggleActionItem={handleToggleActionItem}
+          addLabel="+ Add Sponsor"
+          emptyMessage="No sponsors added yet."
+          renderContactCard={(contact, index) => (
+            <ContactCard
+              key={contact.id || index}
+              contact={contact}
+              theme={theme}
+              refreshKey={refreshKey}
+              onContactClick={() => {}}
+              onEditContact={(contact) => {
+                setEditingContact(contact);
+                setSelectedSponsorForContact(sponsors.find(s => s.id === contact.sponsorId) || null);
+                setShowContactForm(true);
               }}
-              startIcon={<i className="fa-solid fa-plus"></i>}
-            >
-              Add Sponsor
-            </Button>
-          </Box>
-        )}
-      </Paper>
-
-      {/* Sponsor Contacts Section - only show if sponsor exists */}
-      {sponsor && (
-        <Paper 
-          elevation={0}
-          sx={{ 
-            backgroundColor: theme.palette.background.paper,
-            boxShadow: theme.shadows[2],
-            borderRadius: 2,
-            p: 1.5,
-            mt: 1.5
-          }}
-        >
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-            <Typography variant="h6" sx={{ color: theme.palette.text.primary, fontWeight: 'bold' }}>
-              Sponsor Contacts
-            </Typography>
-            
-            <IconButton 
-              onClick={() => setShowContactForm(true)}
-              size="small"
-              sx={{ 
-                color: theme.palette.primary.main,
-                padding: '4px',
-                '&:hover': {
-                  backgroundColor: 'transparent',
-                  color: theme.palette.primary.dark
-                }
-              }}
-            >
-              <i className="fa-solid fa-plus"></i>
-            </IconButton>
-          </Box>
-
-          {/* Contact List */}
-          {sponsorContacts.length > 0 ? (
-            <List>
-              {sponsorContacts.map((contact, index) => (
-                <React.Fragment key={contact.id || index}>
-                  <ListItem sx={{ px: 0 }}>
-                    <ListItemText
-                      primary={
-                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                            <i 
-                              className={getContactTypeInfo(contact.type).icon}
-                              style={{ 
-                                color: theme.palette.primary.main,
-                                fontSize: '16px',
-                                width: '20px'
-                              }}
-                            />
-                            <Typography sx={{ color: theme.palette.text.primary, fontWeight: 500 }}>
-                              {getContactTypeInfo(contact.type).label}
-                            </Typography>
-                          </Box>
-                          <IconButton
-                            size="small"
-                            onClick={() => {
-                              console.log('Edit contact:', contact);
-                              // Set the contact data for editing and open the form
-                              setEditingContact(contact);
-                              setShowContactForm(true);
-                            }}
-                            sx={{
-                              p: 0.5,
-                              color: theme.palette.text.secondary,
-                              '&:hover': {
-                                color: theme.palette.primary.main,
-                                backgroundColor: 'transparent'
-                              }
-                            }}
-                          >
-                            <i className="fa-solid fa-pen" style={{ fontSize: '14px' }}></i>
-                          </IconButton>
-                        </Box>
-                      }
-                      secondary={
-                        <Box sx={{ ml: 3 }}>
-                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                            <i 
-                              className="fa-solid fa-calendar"
-                              style={{ 
-                                color: theme.palette.text.secondary,
-                                fontSize: '12px'
-                              }}
-                            />
-                            <Typography variant="body2" sx={{ color: theme.palette.text.secondary }}>
-                              {formatDateForDisplay(contact.date)}
-                            </Typography>
-                          </Box>
-                          {contact.note && (
-                            <Typography variant="body2" sx={{ color: theme.palette.text.primary, mt: 0.5 }}>
-                              {contact.note}
-                            </Typography>
-                          )}
-                          {contact.topic && (
-                            <Typography variant="body2" sx={{ color: theme.palette.secondary.main, mt: 0.5, fontStyle: 'italic' }}>
-                              Topic: {contact.topic}
-                            </Typography>
-                          )}
-                          {contact.duration && (
-                            <Typography variant="body2" sx={{ color: theme.palette.text.secondary, mt: 0.5 }}>
-                              Duration: {contact.duration} minutes
-                            </Typography>
-                          )}
-                          
-                          {/* Action Items Section */}
-                          {(() => {
-                            const actionItems = getActionItemsForContact(contact.date);
-                            console.log('Action items for contact:', contact.date, actionItems);
-                            console.log('All activities:', activities);
-                            return actionItems.length > 0 && (
-                              <Box sx={{ mt: 1.5, pl: 0 }}>
-                                <Typography variant="caption" sx={{ 
-                                  color: theme.palette.text.secondary, 
-                                  fontWeight: 600,
-                                  textTransform: 'uppercase',
-                                  letterSpacing: '0.5px'
-                                }}>
-                                  Action Items
-                                </Typography>
-                                <Box sx={{ mt: 0.5 }}>
-                                  {actionItems.map((item) => (
-                                    <Box 
-                                      key={item.id} 
-                                      sx={{ 
-                                        display: 'flex', 
-                                        alignItems: 'center', 
-                                        gap: 1, 
-                                        py: 0.25
-                                      }}
-                                    >
-                                      <Checkbox
-                                        checked={item.completed || item.deleted}
-                                        onChange={() => handleToggleActionItem(item)}
-                                        size="small"
-                                        disabled={item.deleted}
-                                        icon={item.deleted ? <i className="fa-solid fa-xmark" style={{ fontSize: '12px', color: theme.palette.error.main }} /> : undefined}
-                                        checkedIcon={item.deleted ? <i className="fa-solid fa-xmark" style={{ fontSize: '12px', color: theme.palette.error.main }} /> : undefined}
-                                        sx={{
-                                          p: 0,
-                                          '& .MuiSvgIcon-root': {
-                                            fontSize: '16px',
-                                            color: item.completed && !item.deleted ? theme.palette.success.main : 'inherit'
-                                          }
-                                        }}
-                                      />
-                                      <Typography 
-                                        variant="body2" 
-                                        sx={{ 
-                                          color: item.deleted ? theme.palette.error.main : 
-                                                 item.completed ? theme.palette.success.main : 
-                                                 theme.palette.text.primary,
-                                          textDecoration: item.deleted ? 'line-through' : 'none',
-                                          flex: 1,
-                                          fontSize: '0.8rem'
-                                        }}
-                                      >
-                                        {item.title}
-                                      </Typography>
-                                      {!item.deleted && (
-                                        <IconButton
-                                          size="small"
-                                          onClick={() => handleDeleteActionItem(item)}
-                                          sx={{
-                                            p: 0.25,
-                                            color: theme.palette.error.main,
-                                            '&:hover': {
-                                              color: theme.palette.error.dark,
-                                              backgroundColor: 'transparent'
-                                            }
-                                          }}
-                                        >
-                                          <i className="fa-solid fa-xmark" style={{ fontSize: '10px' }}></i>
-                                        </IconButton>
-                                      )}
-
-                                    </Box>
-                                  ))}
-                                </Box>
-                              </Box>
-                            );
-                          })()}
-                        </Box>
-                      }
-                    />
-                  </ListItem>
-                  {index < sponsorContacts.length - 1 && <Divider />}
-                </React.Fragment>
-              ))}
-            </List>
-          ) : (
-            <Box className="text-center py-4">
-              <Typography variant="body2" sx={{ color: theme.palette.text.secondary }}>
-                No sponsor contacts recorded yet.
-              </Typography>
-            </Box>
+            />
           )}
-        </Paper>
-      )}
-      
+        />
       </TabPanel>
 
-      {/* Sponsees Tab Content */}
+      {/* Sponsee Tab */}
       <TabPanel value={currentTab} index={1}>
-        <Box className="flex justify-between items-center mb-4">
-          <Button 
-            variant="contained" 
-            color="primary"
-            onClick={() => {
-              setEditingSponseeId(null);
-              setShowSponseeForm(true);
-            }}
-            startIcon={<i className="fa-solid fa-plus"></i>}
-            size="small"
-          >
-            Add Sponsee
-          </Button>
-        </Box>
-      
-      {sponsees.length > 0 ? (
-        <Box className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {sponsees.map(sponsee => (
-            <Card 
-              key={sponsee.id}
-              sx={{ 
-                backgroundColor: theme.palette.background.paper,
-                boxShadow: theme.shadows[2],
-                borderRadius: '0.5rem'
+        <SubTabComponent
+          persons={sponsees}
+          personType="sponsee"
+          contacts={sponseeContacts}
+          actionItems={activities || []}
+          currentTab={currentSponseeTab}
+          onTabChange={(event, newValue) => setCurrentSponseeTab(newValue)}
+          onAddPerson={() => handleEditSponsee(null)}
+          onEditPerson={handleEditSponsee}
+          onDeletePerson={(id) => handleDeletePerson('sponsee', id)}
+          onAddContact={handleAddContact}
+          onToggleActionItem={handleToggleActionItem}
+          addLabel="+ Add Sponsee"
+          emptyMessage="No sponsees added yet."
+          renderContactCard={(contact, index) => (
+            <ContactCard
+              key={contact.id || index}
+              contact={contact}
+              theme={theme}
+              refreshKey={refreshKey}
+              onContactClick={() => {}}
+              onEditContact={(contact) => {
+                setEditingContact(contact);
+                setSelectedSponseeForContact(sponsees.find(s => s.id === contact.sponseeId) || null);
+                setShowSponseeContactForm(true);
               }}
-            >
-              <CardContent>
-                <Box className="mb-3">
-                  <Typography variant="h6" sx={{ color: theme.palette.text.primary, fontWeight: 'bold' }}>
-                    {sponsee.name} {sponsee.lastName || ''}
-                  </Typography>
-                </Box>
-                
-                <Box className="grid grid-cols-1 gap-2">
-                  {/* Contact Information */}
-                  <Box className="grid grid-cols-1 gap-2">
-                    {sponsee.phone && (
-                      <Typography sx={{ color: theme.palette.text.primary, fontSize: '0.875rem', display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <i className="fa-solid fa-phone text-sm" style={{ color: theme.palette.text.secondary }}></i>
-                        {sponsee.phone}
-                      </Typography>
-                    )}
-                    
-                    {sponsee.email && (
-                      <Typography sx={{ color: theme.palette.text.primary, fontSize: '0.875rem', display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <i className="fa-solid fa-envelope text-sm" style={{ color: theme.palette.text.secondary }}></i>
-                        {sponsee.email}
-                      </Typography>
-                    )}
-                    
-                    {sponsee.sobrietyDate && (
-                      <Typography sx={{ color: theme.palette.text.primary, fontSize: '0.875rem', display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <i className="fa-solid fa-calendar-check text-sm" style={{ color: theme.palette.text.secondary }}></i>
-                        {formatDateForDisplay(sponsee.sobrietyDate)}
-                      </Typography>
-                    )}
-                  </Box>
-                  
-                  {/* Notes (if present) */}
-                  {sponsee.notes && (
-                    <Box className="mt-2">
-                      <Divider sx={{ my: 1 }} />
-                      <Typography variant="caption" sx={{ color: theme.palette.text.secondary, display: 'block', mb: 0.5 }}>
-                        Notes
-                      </Typography>
-                      <Typography sx={{ color: theme.palette.text.primary, fontSize: '0.875rem', whiteSpace: 'pre-wrap' }}>
-                        {sponsee.notes}
-                      </Typography>
-                    </Box>
-                  )}
-                  
-                  {/* Action Buttons */}
-                  <Box className="flex justify-end gap-2 mt-4 pt-3 border-t border-gray-200 dark:border-gray-700">
-                    <IconButton 
-                      onClick={() => handleEditSponsee(sponsee.id)}
-                      size="small"
-                      sx={{ color: theme.palette.primary.main }}
-                    >
-                      <i className="fa-solid fa-pen-to-square"></i>
-                    </IconButton>
-                    
-                    <IconButton 
-                      onClick={() => handleDeleteSponsee(sponsee.id)}
-                      size="small"
-                      sx={{ color: theme.palette.error.main }}
-                    >
-                      <i className="fa-solid fa-trash"></i>
-                    </IconButton>
-                  </Box>
-                </Box>
-              </CardContent>
-            </Card>
-          ))}
-        </Box>
-      ) : (
-        <Paper 
-          elevation={0}
-          sx={{ 
-            backgroundColor: theme.palette.background.paper,
-            boxShadow: theme.shadows[2],
-            borderRadius: 2,
-            p: 1.5,
-            textAlign: 'center'
-          }}
-        >
-          <Typography variant="body1" sx={{ color: theme.palette.text.primary }}>
-            You haven't added any sponsees yet.
-          </Typography>
-        </Paper>
-      )}
+            />
+          )}
+        />
       </TabPanel>
-      
-      {/* Sponsor Form Dialog */}
-      <SponsorFormDialog 
-        open={showSponsorForm} 
+
+      {/* Forms */}
+      <PersonFormDialog
+        open={showPersonForm}
         onClose={() => {
-          setShowSponsorForm(false);
-          setEditingSponsor(false);
+          setShowPersonForm(false);
+          setEditingPerson(null);
         }}
-        onSubmit={handleSponsorSubmit}
-        initialData={editingSponsor ? sponsor : null}
-      />
-      
-      {/* Sponsee Form Dialog */}
-      <SponseeFormDialog
-        open={showSponseeForm}
-        onClose={() => {
-          setShowSponseeForm(false);
-          setEditingSponseeId(null);
-        }}
-        onSubmit={handleSponseeSubmit}
-        initialData={editingSponseeId ? sponsees.find(s => s.id === editingSponseeId) : null}
+        onSave={handlePersonSubmit}
+        title={editingPerson ? 
+          `Edit ${personFormType === 'sponsor' ? 'Sponsor' : 'Sponsee'}` : 
+          `Add ${personFormType === 'sponsor' ? 'Sponsor' : 'Sponsee'}`
+        }
+        initialData={editingPerson}
       />
 
-      {/* Sponsor Contact Form Dialog */}
-      <SponsorContactFormPage
+      {/* Sponsor Contact Form */}
+      <ContactFormDialog
         open={showContactForm}
         onClose={() => {
           setShowContactForm(false);
-          setEditingActionItem(null);
           setEditingContact(null);
+          setSelectedSponsorForContact(null);
         }}
-        onSubmit={editingContact ? handleEditContact : handleAddContact}
-        userId={user?.id || 'default_user'}
-        initialData={editingContact || (editingActionItem ? {
-          type: 'phone', // Default type since action items don't store contact type
-          date: editingActionItem.dueDate,
-          note: editingActionItem.title
-        } : null)}
+        onSave={handleAddContactWithActionItem}
+        title={editingContact ? 'Edit Sponsor Contact' : 'Add Sponsor Contact'}
+        initialData={editingContact}
+      />
+
+      {/* Sponsee Contact Form */}
+      <ContactFormDialog
+        open={showSponseeContactForm}
+        onClose={() => {
+          setShowSponseeContactForm(false);
+          setEditingContact(null);
+          setSelectedSponseeForContact(null);
+        }}
+        onSave={handleAddSponseeContactWithActionItem}
+        title={editingContact ? 'Edit Sponsee Contact' : 'Add Sponsee Contact'}
+        initialData={editingContact}
       />
     </div>
   );

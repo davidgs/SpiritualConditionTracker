@@ -1,0 +1,14 @@
+⚡️  To Native ->  CapacitorSQLite execute 18450015
+⚡️  [log] - [ AppDataContext.tsx:373 ] Attempting to delete meeting with ID: 2 Type: number
+⚡️  [log] - [ DatabaseService.ts:301 ] Calling database.remove with meetingId: 2 Type: number
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  [log] - [ DatabaseService.ts:303 ] Database remove result: true
+⚡️  [log] - [ AppDataContext.tsx:376 ] Database delete result: true
+⚡️  [log] - [ AppDataContext.tsx:379 ] Meeting deleted from UI state: 2
+⚡️  [log] - [ App ] Meeting deleted successfully: 2
+⚡️  [log] - [ Meetings.js ] Meeting deleted successfully: 2
+⚡️  [log] - Formatting day: monday
+⚡️  [log] - Formatting time: "18:00" with 24-hour format: false
+⚡️  [log] - Converted 24-hour to 12-hour: 18:00 -> 6:00 PM
+⚡️  [log] - [ Meetings.js ] User:  {"id":1,"name":"David","lastName":"Simmons","phoneNumber":"+1 919 534 5099","email":"davidgs@me.com","sobrietyDate":"1986-05-15","homeGroups":"Arch to Freedom","privacySettings":"[object Object]","preferences":"[object Object]","sponsor_name":"Jerry","sponsor_lastName":"Weaver","sponsor_phone":"+1 919 418 9900","sponsor_email":"","sponsor_sobrietyDate":"","sponsor_notes":"","messagingKeys":null,"profileImageUri":null,"language":null,"dateFormat":null,"timeFormat":null,"distanceUnit":null,"themePreference":null,"notificationSettings":null,"locationPermission":null,"contactPermission":null,"createdAt":null,"updatedAt":"2025-06-01T15:04:00.320Z"}
+⚡️  [log] - [ Meetings.js ] Meetings:  [{"id":1,"name":"Arch to Freedom","days":["monday"],"time":"18:00","schedule":[{"day":"monday","time":"18:00","format":"literature","locationType":"in_person","access":"closed"}],"address":"100 Hughes St, Apex, NC, 27502","locationName":"Apex United Methodist Church","streetAddress":"100 Hughes St","city":"Apex","state":"NC","zipCode":"27502","country":null,"online":null,"onlineUrl":null,"phoneNumber":null,"meetingCode":null,"notes":null,"latitude":null,"longitude":null,"types":"[]","format":null,"accessibility":null,"languages":null,"isHomeGroup":"true","isTemporarilyClosed":null,"contactName":null,"contactEmail":null,"contactPhone":null,"attendance":null,"lastAttended":null,"createdAt":"2025-06-01T13:48:45.936Z","updatedAt":"2025-06-01T13:48:45.936Z","coordinates":null,"locationType":"in_person"}]

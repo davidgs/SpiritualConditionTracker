@@ -1,0 +1,55 @@
+⚡️  To Native ->  CapacitorSQLite open 120395213
+⚡️  [log] - Navigation to: dashboard
+⚡️  [error] - {"message":"CreateConnection: Connection spiritualTracker already exists","errorMessage":"CreateConnection: Connection spiritualTracker already exists"}
+⚡️  [log] - [ sqliteLoader.js:71 ]  Connection might already exist, continuing...
+⚡️  TO JS undefined
+⚡️  [log] - [ sqliteLoader.js:76 ]  Database opened successfully
+⚡️  To Native ->  CapacitorSQLite execute 120395214
+⚡️  [log] - [ sqliteLoader.js:261 ]  Verifying database schema (preserving existing data)
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 120395215
+⚡️  [log] - [ sqliteLoader.js:305 ]  Users table created successfully
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 120395216
+⚡️  [log] - [ sqliteLoader.js:341 ]  Activities table created successfully
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 120395217
+⚡️  [log] - [ sqliteLoader.js:472 ]  Action items table created
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 120395218
+⚡️  [log] - [ sqliteLoader.js:433 ]  Sponsor contacts table created
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  [log] - [ sqliteLoader.js:387 ]  Meetings table created successfully
+⚡️  [log] - [ DatabaseService: 55 ] SQLite database initialized successfully
+⚡️  [log] - [ DatabaseService: 63 ] Database ready
+⚡️  [log] - [ AppDataContext.tsx:156 ] Database status changed: ready
+⚡️  [log] - [ AppDataContext.tsx:187 ] Loading initial data...
+⚡️  [log] - [ sqliteLoader.js:523 ] Getting all items from users
+⚡️  To Native ->  CapacitorSQLite query 120395219
+⚡️  To Native ->  CapacitorSQLite query 120395220
+⚡️  TO JS {"values":[]}
+⚡️  [log] - [ DatabaseService: 70 ] Database initialization complete
+⚡️  [log] - [ DatabaseService: 205 ] Processing 0 queued operations
+⚡️  [log] - [ AppDataContext.tsx:422 ] Reloading all data after reset...
+⚡️  [log] - [ AppDataContext.tsx:187 ] Loading initial data...
+⚡️  [log] - [ sqliteLoader.js:523 ] Getting all items from users
+⚡️  TO JS {"values":[]}
+⚡️  [log] - [ sqliteLoader.js:592 ] Converted 0 iOS format items to standard format
+⚡️  [log] - [ AppDataContext.tsx:206 ] Loaded users: 0
+⚡️  [log] - [ sqliteLoader.js ] Adding item to users: {"name":"","lastName":"","sobrietyDate":"","homeGroups":[],"phoneNumber":"","email":"","privacySettings":{"allowMessages":true,"shareLastName":true},"preferences":{"use24HourFormat":false}}
+⚡️  To Native ->  CapacitorSQLite execute 120395221
+⚡️  To Native ->  CapacitorSQLite execute 120395222
+⚡️  [log] - [ sqliteLoader.js:592 ] Converted 0 iOS format items to standard format
+⚡️  [log] - [ AppDataContext.tsx:206 ] Loaded users: 0
+⚡️  [log] - [ sqliteLoader.js ] Adding item to users: {"name":"","lastName":"","sobrietyDate":"","homeGroups":[],"phoneNumber":"","email":"","privacySettings":{"allowMessages":true,"shareLastName":true},"preferences":{"use24HourFormat":false}}
+ERROR MESSAGE:  {"message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: table users has no column named privacySettings","errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: table users has no column named privacySettings"}
+ERROR MESSAGE:  {"message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: table users has no column named privacySettings","errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: table users has no column named privacySettings"}
+⚡️  [error] - {"message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: table users has no column named privacySettings","errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: table users has no column named privacySettings"}
+⚡️  [error] - [ sqliteLoader.js ] Error adding to users: {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: table users has no column named privacySettings"}
+⚡️  [error] - [ AppDataContext.tsx:249 ] Failed to load user data: {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: table users has no column named privacySettings"}
+⚡️  [error] - [ AppDataContext.tsx:196 ] Failed to load initial data: {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: table users has no column named privacySettings"}
+⚡️  [error] - {"message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: table users has no column named privacySettings","errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: table users has no column named privacySettings"}
+⚡️  [error] - [ sqliteLoader.js ] Error adding to users: {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: table users has no column named privacySettings"}
+⚡️  [error] - [ AppDataContext.tsx:249 ] Failed to load user data: {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: table users has no column named privacySettings"}
+⚡️  [error] - [ AppDataContext.tsx:196 ] Failed to load initial data: {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: table users has no column named privacySettings"}
+⚡️  [log] - [ AppDataContext.tsx:420 ] Complete app reset finished

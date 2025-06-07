@@ -1,0 +1,21 @@
+⚡️  [log] - [ sqliteLoader.js:523 ] Getting all items from sponsee_contacts
+⚡️  TO JS {"values":[{"ios_columns":["id","userId","sponseeId","date","type","note","topic","duration","createdAt","updatedAt"]},{"sponseeId":1,"date":"2025-06-05","userId":"1","note":"Talked","duration":null,"id":1,"createdAt":"2025-06-05T21:25:04.389Z","updatedAt"
+⚡️  [log] - [ sqliteLoader.js:535 ] Raw query result for sponsors: {"values":[{"ios_columns":["id","userId","name","lastName","phoneNumber","email","sobrietyDate","notes","sponsorType","createdAt","updatedAt"]},{"sobrietyDate":"","sponsorType":"sponsor","lastName":"Weaver","email":"","updatedAt":"2025-06-04T01:09:22.921Z","phoneNumber":"+1 919 481 9900","notes":"","createdAt":"2025-06-04T01:09:22.921Z","userId":"default_user","name":"Jerry","id":1}]}
+⚡️  [log] - [ sqliteLoader.js:548 ] Processed 1 items from sponsors
+⚡️  [log] - [ sqliteLoader.js:535 ] Raw query result for sponsees: {"values":[{"ios_columns":["id","userId","name","lastName","phoneNumber","email","sobrietyDate","notes","sponseeType","createdAt","updatedAt"]},{"sobrietyDate":"2025-05-01T00:00:00.000Z","updatedAt":"2025-06-05T02:35:17.148Z","lastName":"Blow","email":"joe@blow.com","sponseeType":"sponsee","phoneNumber":"+1 919 555 1212","notes":"New Sponsee!","createdAt":"2025-06-05T02:35:17.148Z","userId":"1","name":"Joe","id":1}]}
+⚡️  [log] - [ sqliteLoader.js:548 ] Processed 1 items from sponsees
+⚡️  [log] - SubTabComponent sponsor: persons: [{"sobrietyDate":"","sponsorType":"sponsor","lastName":"Weaver","email":"","updatedAt":"2025-06-04T01:09:22.921Z","phoneNumber":"+1 919 481 9900","notes":"","createdAt":"2025-06-04T01:09:22.921Z","userId":"default_user","name":"Jerry","id":1}] length: 1
+⚡️  [log] - SubTabComponent sponsor: persons: [{"sobrietyDate":"","sponsorType":"sponsor","lastName":"Weaver","email":"","updatedAt":"2025-06-04T01:09:22.921Z","phoneNumber":"+1 919 481 9900","notes":"","createdAt":"2025-06-04T01:09:22.921Z","userId":"default_user","name":"Jerry","id":1}] length: 1
+⚡️  [error] - {}
+
+⚡️  ------ STARTUP JS ERROR ------
+
+⚡️  ReferenceError: Can't find variable: PersonPage
+⚡️  URL: capacitor://localhost/bundle.js
+⚡️  bundle.js:102:611033
+
+⚡️  See above for help with debugging blank-screen issues
+⚡️  [log] - [ sqliteLoader.js:535 ] Raw query result for sponsor_contacts: {"values":[{"ios_columns":["id","userId","sponsorId","date","type","note","topic","duration","createdAt","updatedAt"]},{"sponsorId":1,"topic":null,"createdAt":"2025-06-04T01:11:05.376Z","date":"2025-05-28","note":"Agreed to sponsor me","duration":null,"type":"phone","id":1,"updatedAt":"2025-06-04T01:11:05.376Z","userId":"2"}]}
+⚡️  [log] - [ sqliteLoader.js:548 ] Processed 1 items from sponsor_contacts
+⚡️  [log] - [ sqliteLoader.js:535 ] Raw query result for sponsee_contacts: {"values":[{"ios_columns":["id","userId","sponseeId","date","type","note","topic","duration","createdAt","updatedAt"]},{"sponseeId":1,"date":"2025-06-05","userId":"1","note":"Talked","duration":null,"id":1,"createdAt":"2025-06-05T21:25:04.389Z","updatedAt":"2025-06-05T21:25:04.389Z","type":"phone","topic":null}]}
+⚡️  [log] - [ sqliteLoader.js:548 ] Processed 1 items from sponsee_contacts

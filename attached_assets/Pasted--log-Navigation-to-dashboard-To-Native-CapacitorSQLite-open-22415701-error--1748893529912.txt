@@ -1,0 +1,139 @@
+⚡️  [log] - Navigation to: dashboard
+⚡️  To Native ->  CapacitorSQLite open 22415701
+⚡️  [error] - {"message":"CreateConnection: Connection spiritualTracker already exists","errorMessage":"CreateConnection: Connection spiritualTracker already exists"}
+⚡️  [log] - [ sqliteLoader.js:71 ]  Connection might already exist, continuing...
+⚡️  TO JS undefined
+⚡️  [log] - [ sqliteLoader.js:76 ]  Database opened successfully
+⚡️  [log] - [ sqliteLoader.js:261 ]  Verifying database schema (preserving existing data)
+⚡️  To Native ->  CapacitorSQLite execute 22415702
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  [log] - [ sqliteLoader.js:305 ]  Users table created successfully
+⚡️  To Native ->  CapacitorSQLite execute 22415703
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  [log] - [ sqliteLoader.js:341 ]  Activities table created successfully
+⚡️  To Native ->  CapacitorSQLite execute 22415704
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  [log] - [ sqliteLoader.js:472 ]  Action items table created
+⚡️  To Native ->  CapacitorSQLite execute 22415705
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  [log] - [ sqliteLoader.js:433 ]  Sponsor contacts table created
+⚡️  To Native ->  CapacitorSQLite execute 22415706
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  [log] - [ sqliteLoader.js:387 ]  Meetings table created successfully
+⚡️  [log] - [ DatabaseService: 55 ] SQLite database initialized successfully
+⚡️  [log] - [ DatabaseService: 63 ] Database ready
+⚡️  [log] - [ AppDataContext.tsx:156 ] Database status changed: ready
+⚡️  [log] - [ AppDataContext.tsx:187 ] Loading initial data...
+⚡️  [log] - [ sqliteLoader.js:523 ] Getting all items from users
+⚡️  To Native ->  CapacitorSQLite query 22415707
+⚡️  To Native ->  CapacitorSQLite query 22415708
+⚡️  TO JS {"values":[{"ios_columns":["id","name","lastName","phoneNumber","email","sobrietyDate","homeGroups","privacySettings","preferences","sponsor_name","sponsor_lastName","sponsor_phone","sponsor_email","sponsor_sobrietyDate","sponsor_notes","messagingKeys","pr
+⚡️  [log] - [ DatabaseService: 70 ] Database initialization complete
+⚡️  [log] - [ DatabaseService: 205 ] Processing 0 queued operations
+⚡️  [log] - [ AppDataContext.tsx:422 ] Reloading all data after reset...
+⚡️  [log] - [ AppDataContext.tsx:187 ] Loading initial data...
+⚡️  [log] - [ sqliteLoader.js:523 ] Getting all items from users
+⚡️  TO JS {"values":[{"ios_columns":["id","name","lastName","phoneNumber","email","sobrietyDate","homeGroups","privacySettings","preferences","sponsor_name","sponsor_lastName","sponsor_phone","sponsor_email","sponsor_sobrietyDate","sponsor_notes","messagingKeys","pr
+⚡️  [log] - [ sqliteLoader.js:592 ] Converted 1 iOS format items to standard format
+⚡️  [log] - [ AppDataContext.tsx:206 ] Loaded users: 1
+⚡️  [log] - [ AppDataContext.tsx:225 ] User data loaded: 1
+⚡️  [log] - [ sqliteLoader.js:523 ] Getting all items from activities
+⚡️  To Native ->  CapacitorSQLite query 22415709
+⚡️  To Native ->  CapacitorSQLite query 22415710
+⚡️  TO JS {"values":[{"ios_columns":["id","type","duration","date","notes","literatureTitle","literatureType","meetingName","wasChair","wasShare","wasSpeaker","meetingId","callPerson","isSponsorCall","isSponseeCall","isAAMemberCall","callType","servicePerson","locat
+⚡️  [log] - [ sqliteLoader.js:592 ] Converted 1 iOS format items to standard format
+⚡️  [log] - [ AppDataContext.tsx:206 ] Loaded users: 1
+⚡️  [log] - [ AppDataContext.tsx:225 ] User data loaded: 1
+⚡️  [log] - [ sqliteLoader.js:523 ] Getting all items from activities
+⚡️  To Native ->  CapacitorSQLite query 22415711
+⚡️  TO JS {"values":[{"ios_columns":["id","type","duration","date","notes","literatureTitle","literatureType","meetingName","wasChair","wasShare","wasSpeaker","meetingId","callPerson","isSponsorCall","isSponseeCall","isAAMemberCall","callType","servicePerson","locat
+⚡️  [log] - [ sqliteLoader.js:592 ] Converted 48 iOS format items to standard format
+⚡️  [log] - [ sqliteLoader.js:523 ] Getting all items from action_items
+⚡️  TO JS {"values":[{"ios_columns":["id","title","text","notes","dueDate","completed","type","createdAt","updatedAt"]},{"title":"Meeting time","notes":"","type":"todo","createdAt":"2025-06-01T22:54:03.257Z","completed":"false","text":"Find a time that we can meet r
+⚡️  [log] - [ sqliteLoader.js:592 ] Converted 48 iOS format items to standard format
+⚡️  [log] - [ sqliteLoader.js:523 ] Getting all items from action_items
+⚡️  To Native ->  CapacitorSQLite query 22415712
+⚡️  To Native ->  CapacitorSQLite query 22415713
+⚡️  TO JS {"values":[{"ios_columns":["id","title","text","notes","dueDate","completed","type","createdAt","updatedAt"]},{"updatedAt":"2025-06-01T22:54:03.257Z","id":1,"title":"Meeting time","completed":"false","notes":"","type":"todo","createdAt":"2025-06-01T22:54:0
+⚡️  [log] - [ sqliteLoader.js:592 ] Converted 9 iOS format items to standard format
+⚡️  [log] - [ AppDataContext.tsx ] Fetched action items: 9
+⚡️  [log] - [ AppDataContext.tsx ] Converted action items to activities: 9
+⚡️  [log] - [ sqliteLoader.js:523 ] Getting all items from sponsor_contacts
+⚡️  TO JS {"values":[]}
+⚡️  To Native ->  CapacitorSQLite query 22415714
+⚡️  [log] - [ sqliteLoader.js:592 ] Converted 9 iOS format items to standard format
+⚡️  [log] - [ AppDataContext.tsx ] Fetched action items: 9
+⚡️  [log] - [ AppDataContext.tsx ] Converted action items to activities: 9
+⚡️  [log] - [ sqliteLoader.js:523 ] Getting all items from sponsor_contacts
+⚡️  To Native ->  CapacitorSQLite query 22415715
+⚡️  TO JS {"values":[]}
+⚡️  [log] - [ sqliteLoader.js:592 ] Converted 0 iOS format items to standard format
+⚡️  [log] - [ AppDataContext.tsx ] Fetched sponsor contacts: 0
+⚡️  [log] - [ AppDataContext.tsx ] Converted sponsor contacts to activities: 0
+⚡️  [log] - [ AppDataContext.tsx:288 ] Activities cached (180 days): 57 (including action items)
+⚡️  [log] - [ AppDataContext.tsx:315 ] Using cached activities for 30 days: 0
+⚡️  [log] - [ AppDataContext.tsx:454 ] Calculating spiritual fitness with 0 activities for 30 days
+⚡️  [log] - [ sqliteLoader.js:523 ] Getting all items from meetings
+⚡️  TO JS {"values":[{"ios_columns":["id","name","days","time","schedule","address","locationName","streetAddress","city","state","zipCode","country","online","onlineUrl","phoneNumber","meetingCode","notes","latitude","longitude","types","format","accessibility","la
+⚡️  [log] - [ sqliteLoader.js:592 ] Converted 0 iOS format items to standard format
+⚡️  [log] - [ AppDataContext.tsx ] Fetched sponsor contacts: 0
+⚡️  [log] - [ AppDataContext.tsx ] Converted sponsor contacts to activities: 0
+⚡️  [log] - [ AppDataContext.tsx:288 ] Activities cached (180 days): 57 (including action items)
+⚡️  [log] - [ AppDataContext.tsx:315 ] Using cached activities for 30 days: 57
+⚡️  [log] - [ AppDataContext.tsx:454 ] Calculating spiritual fitness with 57 activities for 30 days
+⚡️  To Native ->  CapacitorSQLite query 22415716
+⚡️  [log] - [ sqliteLoader.js:523 ] Getting all items from meetings
+⚡️  TO JS {"values":[{"ios_columns":["id","name","days","time","schedule","address","locationName","streetAddress","city","state","zipCode","country","online","onlineUrl","phoneNumber","meetingCode","notes","latitude","longitude","types","format","accessibility","la
+⚡️  [log] - [ sqliteLoader.js:592 ] Converted 2 iOS format items to standard format
+⚡️  [log] - [ AppDataContext.tsx:326 ] Meetings loaded: 2
+⚡️  [log] - [ AppDataContext.tsx:194 ] Initial data load complete
+⚡️  [log] - [ Dashboard.js ] Dashboard initial spiritualFitness: 5
+⚡️  [log] - [ Dashboard.js ] Dashboard currentScore state: 0
+⚡️  [log] - [ Dashboard.js ] Dashboard currentTimeframe: 30
+⚡️  [log] - [ Dashboard.js ] Dashboard scoreTimeframe: 30
+⚡️  [log] - [ Dashboard.js ] Dashboard formattedScore for display: 0.00
+⚡️  [log] - [ Dashboard.js ] Dashboard progressPercent: 0
+⚡️  [log] - [ ActivityList.js: 39 ] Total activities received: 57
+⚡️  [log] - [ sqliteLoader.js:592 ] Converted 2 iOS format items to standard format
+⚡️  [log] - [ AppDataContext.tsx:326 ] Meetings loaded: 2
+⚡️  [log] - [ AppDataContext.tsx:194 ] Initial data load complete
+⚡️  [log] - [ AppDataContext.tsx:420 ] Complete app reset finished
+⚡️  [log] - Light mode activated
+⚡️  [log] - Applying native theme: blue (#3b82f6) in light mode
+⚡️  [log] - Applied MUI theme to iOS components
+⚡️  [log] - Applied MUI theme to iOS native components: blue
+⚡️  [log] - Light mode activated
+⚡️  [log] - Applying native theme: blue (#3b82f6) in light mode
+⚡️  [log] - Applied MUI theme to iOS components
+⚡️  [log] - Applied MUI theme to iOS native components: blue
+⚡️  [log] - [ Dashboard.js ] Dashboard useEffect [activities] triggered - calculating spiritual fitness
+⚡️  [log] - [ Dashboard.js ] Dashboard scoreBreak: {"baseScore":5,"activityPoints":34.63,"consistencyPoints":21.33,"totalScore":60.96,"recentActivities":57,"activeDays":16}
+⚡️  [log] - [ SpiritualFitness.js ] calculateSpiritualFitnessScore baseScore: 5
+⚡️  [log] - [ SpiritualFitness.js ] calculateSpiritualFitnessScore timeframeDays: 30
+⚡️  [log] - [ SpiritualFitness.js ] calculateSpiritualFitnessScore activities #: 57
+⚡️  [log] - [ SpiritualFitness.js ] calculateSpiritualFitnessScore totalActivityPoints: 138.5
+⚡️  [log] - [ SpiritualFitness.js ] calculateSpiritualFitnessScore totalScore: 60.95833333333333
+⚡️  [log] - [ SpiritualFitness.js ] calculateSpiritualFitnessScore preciseScore: 60.96
+⚡️  [log] - [ Dashboard.js: 71 ] Dashboard newScore: 60.96
+⚡️  [log] - [ Dashboard.js ] Dashboard initial spiritualFitness: 5
+⚡️  [log] - [ Dashboard.js ] Dashboard currentScore state: 60.96
+⚡️  [log] - [ Dashboard.js ] Dashboard currentTimeframe: 30
+⚡️  [log] - [ Dashboard.js ] Dashboard scoreTimeframe: 30
+⚡️  [log] - [ Dashboard.js ] Dashboard formattedScore for display: 60.96
+⚡️  [log] - [ Dashboard.js ] Dashboard progressPercent: 60.96
+⚡️  [log] - [ ActivityList.js: 39 ] Total activities received: 57
+⚡️  [log] - [ Dashboard.js ] Dashboard useEffect [activities] triggered - calculating spiritual fitness
+⚡️  [log] - [ Dashboard.js ] Dashboard scoreBreak: {"baseScore":5,"activityPoints":34.63,"consistencyPoints":21.33,"totalScore":60.96,"recentActivities":57,"activeDays":16}
+⚡️  [log] - [ SpiritualFitness.js ] calculateSpiritualFitnessScore baseScore: 5
+⚡️  [log] - [ SpiritualFitness.js ] calculateSpiritualFitnessScore timeframeDays: 30
+⚡️  [log] - [ SpiritualFitness.js ] calculateSpiritualFitnessScore activities #: 57
+⚡️  [log] - [ SpiritualFitness.js ] calculateSpiritualFitnessScore totalActivityPoints: 138.5
+⚡️  [log] - [ SpiritualFitness.js ] calculateSpiritualFitnessScore totalScore: 60.95833333333333
+⚡️  [log] - [ SpiritualFitness.js ] calculateSpiritualFitnessScore preciseScore: 60.96
+⚡️  [log] - [ Dashboard.js: 71 ] Dashboard newScore: 60.96
+⚡️  [log] - [ Dashboard.js ] Dashboard initial spiritualFitness: 5
+⚡️  [log] - [ Dashboard.js ] Dashboard currentScore state: 60.96
+⚡️  [log] - [ Dashboard.js ] Dashboard currentTimeframe: 30
+⚡️  [log] - [ Dashboard.js ] Dashboard scoreTimeframe: 30
+⚡️  [log] - [ Dashboard.js ] Dashboard formattedScore for display: 60.96
+⚡️  [log] - [ Dashboard.js ] Dashboard progressPercent: 60.96

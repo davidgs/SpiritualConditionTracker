@@ -1,679 +1,255 @@
 /**
  * Specialized database module for sponsor-related operations
- * Created to address the SQLite query issues with a direct approach
+ * Updated to use the new DatabaseService architecture
  */
 
-// Database name
-const DB_NAME = 'spiritualTracker.db';
-
-import { SponsorContact, ActionItem } from '../types/database';
-
-// Get Capacitor SQLite plugin
-function getSQLite(): any {
-  // First check if database has been initialized
-  if (!window.dbInitialized) {
-    throw new Error('Database not initialized yet - please wait for initialization to complete');
-  }
-  
-  // Then check if Capacitor SQLite plugin is available
-  if (!window.Capacitor?.Plugins?.CapacitorSQLite) {
-    throw new Error('CapacitorSQLite plugin not available');
-  }
-  
-  return window.Capacitor.Plugins.CapacitorSQLite;
-}
+import DatabaseService from '../services/DatabaseService';
+import { SponsorContact, ActionItem, ContactDetail } from '../types/database';
+import { associateActionItemWithContact } from './action-items';
 
 /**
- * Get all sponsor contacts for a user
- * @param {string} userId - User ID
- * @returns {Promise<Array>} - Sponsor contacts
+ * Get all sponsor contacts (single user app)
  */
-export async function getSponsorContacts(userId) {
+export async function getSponsorContacts(): Promise<SponsorContact[]> {
   try {
-    const sqlite = getSQLite();
+    const databaseService = DatabaseService.getInstance();
     
-    // Log query parameters for debugging
-    console.log('Querying sponsor contacts with userId:', userId);
+    console.log('[ sponsor-database ] Querying all sponsor contacts');
     
-    // Check if there are any contacts available in the database
-    try {
-      // First just check what's in the database
-      const checkContacts = await sqlite.query({
-        database: DB_NAME,
-        statement: "SELECT * FROM sponsor_contacts",
-        values: []
-      });
-      
-      // Log raw results for debugging
-      console.log('Raw contacts in database:', JSON.stringify(checkContacts));
-      
-      // Check if there are actual entries with non-null values
-      const hasValidContacts = checkContacts.values && 
-          (checkContacts.values.length > 1 || 
-           (checkContacts.values.length === 1 && !checkContacts.values[0].ios_columns));
-           
-      console.log('Has valid contacts:', hasValidContacts);
-    } catch (err) {
-      console.error('Error checking contacts:', err);
-    }
+    // Use DatabaseService to get all sponsor contacts
+    const allContacts = await databaseService.getAllSponsorContacts();
     
-    // List all contacts regardless of userId for debugging
-    try {
-      const allContacts = await sqlite.query({
-        database: DB_NAME,
-        statement: 'SELECT * FROM sponsor_contacts',
-        values: []
-      });
-      console.log('All contacts in database:', JSON.stringify(allContacts));
-    } catch (err) {
-      console.error('Error querying all contacts:', err);
-    }
+    console.log('[ sponsor-database ] Raw database response:', allContacts);
+    console.log('[ sponsor-database ] Number of total contacts in database:', allContacts.length);
     
-    // First drop and recreate the table if needed
-    try {
-      console.log('Checking if we need to recreate the sponsor_contacts table...');
-      
-      // Get a test contact
-      const testContact = await sqlite.query({
-        database: DB_NAME,
-        statement: 'SELECT * FROM sponsor_contacts LIMIT 1',
-        values: []
-      });
-      
-      console.log('Test contact result:', JSON.stringify(testContact));
-      
-      // Check if we have all NULL values
-      if (testContact.values && testContact.values.length > 0) {
-        let hasAllNulls = true;
-        
-        // Skip the column definition for iOS
-        const startIdx = testContact.values[0].ios_columns ? 1 : 0;
-        
-        if (startIdx < testContact.values.length) {
-          const contact = testContact.values[startIdx];
-          // Check if all values are null
-          for (const key in contact) {
-            if (contact[key] !== null) {
-              hasAllNulls = false;
-              break;
-            }
-          }
-          
-          if (hasAllNulls) {
-            console.log('Found contact with all NULL values, recreating table...');
-            
-            // Drop the table and recreate it
-            await sqlite.execute({
-              database: DB_NAME,
-              statements: 'DROP TABLE IF EXISTS sponsor_contacts'
-            });
-            
-            // Create the table with proper constraints
-            await sqlite.execute({
-              database: DB_NAME,
-              statements: `
-                CREATE TABLE IF NOT EXISTS sponsor_contacts (
-                  id INTEGER PRIMARY KEY AUTOINCREMENT,
-                  userId TEXT DEFAULT 'default_user',
-                  date TEXT DEFAULT NULL,
-                  type TEXT DEFAULT 'general',
-                  note TEXT DEFAULT '',
-                  createdAt TEXT,
-                  updatedAt TEXT
-                )
-              `
-            });
-            
-            console.log('Recreated sponsor_contacts table');
-            
-            // Since we just recreated the table, there are no contacts yet
-            return [];
-          }
-        }
-      }
-    } catch (err) {
-      console.error('Error checking/recreating table:', err);
-    }
-    
-    // Now query for contacts with the specified userId
-    const result = await sqlite.query({
-      database: DB_NAME,
-      statement: 'SELECT * FROM sponsor_contacts WHERE userId = ?',
-      values: [userId]
-    });
-    
-    console.log('Raw sponsor contacts query result:', JSON.stringify(result));
-    
-    // Handle iOS-specific format
-    if (result.values && result.values.length > 0) {
-      // Check if first item contains column information (iOS format)
-      if (result.values[0].ios_columns) {
-        // Extract column names
-        const columns = result.values[0].ios_columns;
-        console.log('iOS columns format detected:', columns);
-        
-        // Skip the first item (column info) and process the rest
-        const processedValues = [];
-        
-        for (let i = 1; i < result.values.length; i++) {
-          const item = result.values[i];
-          // Log each item to debug
-          console.log('Processing contact item:', item);
-          processedValues.push(item);
-        }
-        
-        return processedValues;
-      }
-    }
-    
-    // Standard format or empty result
-    return result.values || [];
+    console.log(`[ sponsor-database ] Found ${allContacts.length} sponsor contacts`);
+    return allContacts;
   } catch (error) {
-    console.error('Error getting sponsor contacts:', error);
+    console.error('[ sponsor-database ] Error getting sponsor contacts:', error);
     return [];
   }
 }
 
 /**
- * Get details for a sponsor contact
- * @param {string} contactId - Contact ID
- * @returns {Promise<Array>} - Contact details
+ * Add a new sponsor contact with action items
  */
-export async function getContactDetails(contactId) {
+export async function addSponsorContact(contactData: Omit<SponsorContact, 'id' | 'createdAt' | 'updatedAt'>, actionItems: any[] = []): Promise<SponsorContact> {
   try {
-    const sqlite = getSQLite();
+    const databaseService = DatabaseService.getInstance();
     
-    // First check if table exists
+    console.log('[ sponsor-database ] Adding sponsor contact:', contactData);
+    console.log('[ sponsor-database ] With action items:', actionItems);
+    
+    const savedContact = await databaseService.addSponsorContact(contactData);
+    
+    console.log('[ sponsor-database ] Sponsor contact saved with ID:', savedContact.id);
+    
+    // Also create an activity entry so it appears in the Dashboard
     try {
-      const tables = await sqlite.query({
-        database: DB_NAME,
-        statement: "SELECT name FROM sqlite_master WHERE type='table' AND name='sponsor_contact_details'",
-        values: []
-      });
+      const activityData = {
+        type: 'sponsor-contact' as const,
+        date: contactData.date,
+        notes: `${contactData.note || ''} [Contact: ${contactData.type}]`,
+        location: contactData.type,
+        duration: undefined
+      };
       
-      // Create table if it doesn't exist
-      const tableExists = tables.values && 
-        ((tables.values[0]?.ios_columns && tables.values.slice(1).some(t => t.name === 'sponsor_contact_details')) || 
-         tables.values.some(t => t.name === 'sponsor_contact_details'));
-      
-      if (!tableExists) {
-        console.log('Creating sponsor_contact_details table');
-        await sqlite.execute({
-          database: DB_NAME,
-          statements: `
-            CREATE TABLE IF NOT EXISTS sponsor_contact_details (
-              id INTEGER PRIMARY KEY AUTOINCREMENT,
-              contactId INTEGER,
-              actionItem TEXT DEFAULT '',
-              completed INTEGER DEFAULT 0,
-              notes TEXT DEFAULT '',
-              dueDate TEXT DEFAULT NULL,
-              type TEXT DEFAULT 'general',
-              text TEXT DEFAULT '',
-              createdAt TEXT,
-              FOREIGN KEY (contactId) REFERENCES sponsor_contacts (id)
-            )
-          `
-        });
-        return []; // No details yet since we just created the table
-      }
-    } catch (err) {
-      console.error('Error checking tables:', err);
+      await databaseService.addActivity(activityData);
+      console.log('[ sponsor-database ] Activity entry created for sponsor contact');
+    } catch (activityError) {
+      console.warn('[ sponsor-database ] Failed to create activity entry:', activityError);
+      // Don't throw - the contact was still saved successfully
     }
     
-    console.log('Querying contact details for contactId:', contactId);
-    
-    const result = await sqlite.query({
-      database: DB_NAME,
-      statement: 'SELECT * FROM sponsor_contact_details WHERE contactId = ?',
-      values: [contactId]
-    });
-    
-    console.log('Raw contact details query result:', JSON.stringify(result));
-    
-    // Handle iOS-specific format
-    if (result.values && result.values.length > 0) {
-      // Check if first item contains column information (iOS format)
-      if (result.values[0].ios_columns) {
-        // Skip the first item (column info) and process the rest
-        const processedValues = [];
-        
-        for (let i = 1; i < result.values.length; i++) {
-          const item = result.values[i];
-          console.log('Processing detail item:', item);
-          processedValues.push(item);
+    // Save action items using proper join table structure
+    if (actionItems && actionItems.length > 0) {
+      try {
+        for (const actionItem of actionItems) {
+          // First, save the action item to the action_items table
+          const actionItemData = {
+            title: actionItem.title,
+            text: actionItem.text || actionItem.title,
+            notes: actionItem.notes || '',
+            dueDate: actionItem.dueDate || contactData.date,
+            completed: (actionItem.completed ? 1 : 0) as 0 | 1,
+            type: 'todo' as const
+          };
+          
+          console.log('[ sponsor-database ] Saving action item:', actionItemData);
+          const savedActionItem = await databaseService.addActionItem(actionItemData);
+          
+          // Then, create the association in the join table
+          console.log('[ sponsor-database ] Creating association between contact', savedContact.id, 'and action item', savedActionItem.id);
+          await associateActionItemWithContact(savedContact.id, savedActionItem.id);
         }
-        
-        return processedValues;
+        console.log(`[ sponsor-database ] Successfully saved ${actionItems.length} action items with proper associations`);
+      } catch (actionItemError) {
+        console.error('[ sponsor-database ] Error saving action items:', actionItemError);
+        // Don't throw - the contact was still saved successfully
       }
     }
     
-    return result.values || [];
+    return savedContact;
   } catch (error) {
-    console.error('Error getting contact details:', error);
+    console.error('[ sponsor-database ] Error adding sponsor contact:', error);
+    throw error;
+  }
+}
+
+/**
+ * Get contact details for a specific contact
+ */
+export async function getContactDetails(contactId: number): Promise<ContactDetail[]> {
+  try {
+    const databaseService = DatabaseService.getInstance();
+    
+    console.log('[ sponsor-database ] Getting contact details for contactId:', contactId);
+    
+    const allDetails = await databaseService.getAllContactDetails();
+    const contactDetails = allDetails.filter(detail => detail.contactId === contactId);
+    
+    console.log(`[ sponsor-database ] Found ${contactDetails.length} contact details`);
+    return contactDetails;
+  } catch (error) {
+    console.error('[ sponsor-database ] Error getting contact details:', error);
     return [];
   }
 }
 
 /**
- * Add a new sponsor contact
- * @param {Object} contact - Contact data
- * @returns {Promise<Object>} - Added contact
+ * Add contact detail (action item)
  */
-export async function addSponsorContact(contact) {
+export async function addContactDetail(detailData: Omit<ContactDetail, 'id' | 'createdAt' | 'updatedAt'>): Promise<ContactDetail> {
   try {
-    const sqlite = getSQLite();
+    const databaseService = DatabaseService.getInstance();
     
-    // Create a clean object with valid fields, handling all database constraints
-    const contactData = {
-      userId: contact.userId || 'default_user',
-      type: contact.type || 'general',
-      note: contact.note || '',
-      
-      // Handle the date field properly to avoid constraints
-      date: (() => {
-        try {
-          // If date is missing or empty, use null (now allowed by our schema)
-          if (!contact.date || contact.date === '') {
-            console.log('No date provided, using null value');
-            return null;
-          }
-          
-          // Try to create a valid date
-          const dateObj = new Date(contact.date);
-          
-          // Check if the date is valid
-          if (isNaN(dateObj.getTime())) {
-            console.log('Invalid date format, using null instead');
-            return null;
-          }
-          
-          // Format date as ISO string
-          console.log('Formatting date:', dateObj.toISOString());
-          return dateObj.toISOString();
-        } catch (e) {
-          console.log('Error parsing date, using null instead:', e);
-          return null;
-        }
-      })(),
-      
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    };
+    console.log('[ sponsor-database ] Adding contact detail:', detailData);
     
-    console.log('Inserting contact into database:', contactData);
+    const savedDetail = await databaseService.addContactDetail(detailData);
     
-    // Build SQL statement with pre-defined fields to avoid accidentally including the ID
-    const keys = Object.keys(contactData);
-    const placeholders = keys.map(() => '?').join(', ');
-    const values = keys.map(key => contactData[key]);
-    
-    // Insert using a simpler approach
-    console.log('Inserting contact with simplified approach');
-    
-    // First try a direct value insertion with a simpler query
-    const insertSQL = `
-      INSERT INTO sponsor_contacts 
-      (userId, type, note, date, createdAt, updatedAt) 
-      VALUES 
-      ('${contactData.userId}', '${contactData.type}', '${contactData.note}', '${contactData.date || "NULL"}', '${contactData.createdAt}', '${contactData.updatedAt}')
-    `;
-    
-    console.log('Raw SQL statement:', insertSQL);
-    
-    // Execute the raw SQL
-    await sqlite.execute({
-      database: DB_NAME,
-      statements: insertSQL
-    });
-    
-    // Get the ID in a separate query for compatibility
-    const lastIdResult = await sqlite.query({
-      database: DB_NAME,
-      statement: 'SELECT last_insert_rowid() as id',
-      values: []
-    });
-    
-    // Apply the ID if available
-    if (lastIdResult?.values?.length > 0) {
-      // Log the entire result to see what structure we're getting
-      console.log('Last ID result from database:', JSON.stringify(lastIdResult));
-      
-      // Handle iOS-specific format where the first item contains column info
-      if (lastIdResult.values[0].ios_columns && lastIdResult.values[1]) {
-        contactData.id = lastIdResult.values[1].id;
-        console.log('Extracted ID from iOS format:', contactData.id);
-      } else {
-        // Standard format
-        contactData.id = lastIdResult.values[0].id;
-        console.log('Extracted ID from standard format:', contactData.id);
-      }
-    }
-    
-    return contactData;
+    console.log('[ sponsor-database ] Contact detail saved with ID:', savedDetail.id);
+    return savedDetail;
   } catch (error) {
-    console.error('Error adding sponsor contact:', error);
+    console.error('[ sponsor-database ] Error adding contact detail:', error);
     throw error;
   }
 }
 
 /**
- * Add contact detail (legacy method - now mostly used for text notes)
- * @param {Object} detail - Detail data
- * @returns {Promise<Object>} - Added detail
+ * Add action item
  */
-export async function addContactDetail(detail) {
+export async function addActionItem(itemData: Omit<ActionItem, 'id' | 'createdAt' | 'updatedAt'>, contactId?: number): Promise<ActionItem> {
   try {
-    const sqlite = getSQLite();
+    const databaseService = DatabaseService.getInstance();
     
-    // Create a clean object with valid fields
-    const detailData = {
-      contactId: detail.contactId,
-      actionItem: detail.actionItem || '',
-      completed: typeof detail.completed === 'number' ? detail.completed : 0,
-      notes: detail.notes || '',
-      dueDate: detail.dueDate || null,
-      type: detail.type || 'todo',
-      text: detail.text || '',
-      createdAt: new Date().toISOString()
-    };
+    console.log('[ sponsor-database ] Adding action item:', itemData);
     
-    console.log('Saving contact detail with data:', detailData);
+    const savedItem = await databaseService.addActionItem(itemData);
     
-    // Use the same direct SQL approach that worked for contacts
-    const insertSQL = `
-      INSERT INTO sponsor_contact_details 
-      (contactId, actionItem, completed, notes, dueDate, type, text, createdAt) 
-      VALUES 
-      (${detailData.contactId}, '${detailData.actionItem}', ${detailData.completed}, '${detailData.notes || ""}', '${detailData.dueDate || ""}', '${detailData.type}', '${detailData.text || ""}', '${detailData.createdAt}')
-    `;
-    
-    console.log('Detail SQL statement:', insertSQL);
-    
-    // Execute the raw SQL
-    await sqlite.execute({
-      database: DB_NAME,
-      statements: insertSQL
-    });
-    
-    // Get the ID in a separate query for compatibility
-    const lastIdResult = await sqlite.query({
-      database: DB_NAME,
-      statement: 'SELECT last_insert_rowid() as id',
-      values: []
-    });
-    
-    // Apply the ID if available
-    if (lastIdResult?.values?.length > 0) {
-      // Log the entire result to see what structure we're getting
-      console.log('Last ID result for detail:', JSON.stringify(lastIdResult));
-      
-      // Handle iOS-specific format where the first item contains column info
-      if (lastIdResult.values[0].ios_columns && lastIdResult.values[1]) {
-        detailData.id = lastIdResult.values[1].id;
-        console.log('Extracted ID from iOS format for detail:', detailData.id);
-      } else {
-        // Standard format
-        detailData.id = lastIdResult.values[0].id;
-        console.log('Extracted ID from standard format for detail:', detailData.id);
-      }
-    }
-    
-    return detailData;
+    console.log('[ sponsor-database ] Action item saved with ID:', savedItem.id);
+    return savedItem;
   } catch (error) {
-    console.error('Error adding contact detail:', error);
+    console.error('[ sponsor-database ] Error adding action item:', error);
     throw error;
-  }
-}
-
-/**
- * Add action item and associate it with a contact - Native iOS implementation
- * @param {Object} actionItem - Action item data
- * @param {number} contactId - Contact ID to associate with
- * @returns {Promise<Object>} - Added action item
- */
-export async function addActionItem(actionItem, contactId) {
-  try {
-    console.log(`[sponsor-database.js - addActionItem: 433] Adding action item for contact ID: ${contactId}`);
-    const sqlite = getSQLite();
-    
-    // Create a clean object with valid fields
-    const now = new Date().toISOString();
-    const actionItemData = {
-      title: actionItem.title || actionItem.text || '',
-      text: actionItem.text || actionItem.title || '',
-      notes: actionItem.notes || '',
-      dueDate: actionItem.dueDate || null,
-      completed: typeof actionItem.completed === 'number' ? actionItem.completed : 0,
-      type: actionItem.type || 'todo',
-      createdAt: now,
-      updatedAt: now
-    };
-    
-    console.log(`[sponsor-database.js - addActionItem: 448] SQL for action items table:
-      CREATE TABLE IF NOT EXISTS action_items (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        title TEXT DEFAULT '',
-        text TEXT DEFAULT '',
-        notes TEXT DEFAULT '',
-        dueDate TEXT DEFAULT NULL,
-        completed INTEGER DEFAULT 0,
-        type TEXT DEFAULT 'todo',
-        createdAt TEXT,
-        updatedAt TEXT
-      )
-    `);
-    
-    console.log(`[sponsor-database.js - addActionItem: 460] SQL for join table:
-      CREATE TABLE IF NOT EXISTS sponsor_contact_action_items (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        contactId INTEGER,
-        actionItemId INTEGER,
-        createdAt TEXT,
-        FOREIGN KEY (contactId) REFERENCES sponsor_contacts(id),
-        FOREIGN KEY (actionItemId) REFERENCES action_items(id)
-      )
-    `);
-    
-    console.log(`[sponsor-database.js - addActionItem: 470] Saving action item with data:`, JSON.stringify(actionItemData));
-    
-    // Use parameterized query with direct SQL insertion
-    const insertSQL = `
-      INSERT INTO action_items 
-      (title, text, notes, dueDate, completed, type, createdAt, updatedAt) 
-      VALUES 
-      ('${actionItemData.title}', '${actionItemData.text}', '${actionItemData.notes}', '${actionItemData.dueDate || ""}', ${actionItemData.completed}, '${actionItemData.type}', '${actionItemData.createdAt}', '${actionItemData.updatedAt}')
-    `;
-    
-    console.log('Action Item SQL statement:', insertSQL);
-    
-    // Execute the raw SQL
-    await sqlite.execute({
-      database: DB_NAME,
-      statements: insertSQL
-    });
-    
-    // Get the ID of the newly created action item
-    const lastIdResult = await sqlite.query({
-      database: DB_NAME,
-      statement: 'SELECT last_insert_rowid() as id',
-      values: []
-    });
-    
-    let actionItemId = null;
-    
-    // Apply the ID if available
-    if (lastIdResult?.values?.length > 0) {
-      // Handle iOS-specific format where the first item contains column info
-      if (lastIdResult.values[0].ios_columns && lastIdResult.values[1]) {
-        actionItemId = lastIdResult.values[1].id;
-      } else {
-        // Standard format
-        actionItemId = lastIdResult.values[0].id;
-      }
-      
-      actionItemData.id = actionItemId;
-      console.log('Created action item with ID:', actionItemId);
-      
-      // Now associate the action item with the contact
-      if (actionItemId && contactId) {
-        const joinSQL = `
-          INSERT INTO sponsor_contact_action_items 
-          (contactId, actionItemId, createdAt) 
-          VALUES 
-          (${contactId}, ${actionItemId}, '${now}')
-        `;
-        
-        console.log('Join table SQL statement:', joinSQL);
-        
-        await sqlite.execute({
-          database: DB_NAME,
-          statements: joinSQL
-        });
-        
-        console.log('Associated action item', actionItemId, 'with contact', contactId);
-      }
-    }
-    
-    return actionItemData;
-  } catch (error) {
-    console.error('Error adding action item:', error);
-    throw error;
-  }
-}
-
-/**
- * Get action items for a contact
- * @param {number} contactId - Contact ID
- * @returns {Promise<Array>} - Action items for the contact
- */
-export async function getActionItemsForContact(contactId) {
-  try {
-    const sqlite = getSQLite();
-    
-    console.log('Getting action items for contact:', contactId);
-    
-    // Query action items via join table
-    const result = await sqlite.query({
-      database: DB_NAME,
-      statement: `
-        SELECT ai.* 
-        FROM action_items ai
-        JOIN sponsor_contact_action_items scai ON ai.id = scai.actionItemId
-        WHERE scai.contactId = ?
-        ORDER BY ai.createdAt DESC
-      `,
-      values: [contactId]
-    });
-    
-    console.log('Action items query result:', JSON.stringify(result));
-    
-    if (!result.values || result.values.length === 0) {
-      console.log('No action items found for contact', contactId);
-      return [];
-    }
-    
-    return result.values;
-  } catch (error) {
-    console.error(`Error getting action items for contact ${contactId}:`, error);
-    return [];
   }
 }
 
 /**
  * Update contact detail
- * @param {Object} detail - Detail data
- * @returns {Promise<Object>} - Updated detail
  */
-export async function updateContactDetail(detail) {
+export async function updateContactDetail(detailData: Partial<ContactDetail> & { id: number }): Promise<ContactDetail | null> {
   try {
-    const sqlite = getSQLite();
+    const databaseService = DatabaseService.getInstance();
     
-    // Build SET clause
-    const setClause = Object.keys(detail)
-      .filter(key => key !== 'id')
-      .map(key => `${key} = ?`)
-      .join(', ');
+    console.log('[ sponsor-database ] Updating contact detail:', detailData.id);
     
-    // Prepare values
-    const values = Object.keys(detail)
-      .filter(key => key !== 'id')
-      .map(key => detail[key]);
+    const { id, ...updateData } = detailData;
+    const updatedDetail = await databaseService.updateContactDetail(id, updateData);
     
-    // Add ID for WHERE clause
-    values.push(detail.id);
-    
-    await sqlite.execute({
-      database: DB_NAME,
-      statements: `UPDATE sponsor_contact_details SET ${setClause} WHERE id = ?`,
-      values: values
-    });
-    
-    return detail;
+    console.log('[ sponsor-database ] Contact detail updated');
+    return updatedDetail;
   } catch (error) {
-    console.error('Error updating contact detail:', error);
-    throw error;
+    console.error('[ sponsor-database ] Error updating contact detail:', error);
+    return null;
   }
 }
 
 /**
  * Delete sponsor contact
- * @param {string} contactId - Contact ID
- * @returns {Promise<boolean>} - Success
  */
-export async function deleteSponsorContact(contactId) {
+export async function deleteSponsorContact(contactId: number): Promise<boolean> {
   try {
-    const sqlite = getSQLite();
+    const databaseService = DatabaseService.getInstance();
     
-    // Delete details first
-    await sqlite.execute({
-      database: DB_NAME,
-      statements: 'DELETE FROM sponsor_contact_details WHERE contactId = ?',
-      values: [contactId]
-    });
+    console.log('[ sponsor-database ] Deleting sponsor contact:', contactId);
     
-    // Delete contact
-    await sqlite.execute({
-      database: DB_NAME,
-      statements: 'DELETE FROM sponsor_contacts WHERE id = ?',
-      values: [contactId]
-    });
+    // First delete associated contact details
+    const details = await getContactDetails(contactId);
+    for (const detail of details) {
+      await databaseService.deleteContactDetail(detail.id);
+    }
     
-    return true;
+    // Then delete the contact itself
+    const success = await databaseService.deleteSponsorContact(contactId);
+    
+    console.log('[ sponsor-database ] Sponsor contact deleted:', success);
+    return success;
   } catch (error) {
-    console.error('Error deleting sponsor contact:', error);
+    console.error('[ sponsor-database ] Error deleting sponsor contact:', error);
     return false;
   }
 }
 
 /**
  * Delete contact detail
- * @param {string} detailId - Detail ID
- * @returns {Promise<boolean>} - Success
  */
-export async function deleteContactDetail(detailId) {
+export async function deleteContactDetail(detailId: number): Promise<boolean> {
   try {
-    const sqlite = getSQLite();
+    const databaseService = DatabaseService.getInstance();
     
-    await sqlite.execute({
-      database: DB_NAME,
-      statements: 'DELETE FROM sponsor_contact_details WHERE id = ?',
-      values: [detailId]
-    });
+    console.log('[ sponsor-database ] Deleting contact detail:', detailId);
     
-    return true;
+    const success = await databaseService.deleteContactDetail(detailId);
+    
+    console.log('[ sponsor-database ] Contact detail deleted:', success);
+    return success;
   } catch (error) {
-    console.error('Error deleting contact detail:', error);
+    console.error('[ sponsor-database ] Error deleting contact detail:', error);
     return false;
   }
 }
 
-export default {
+// Export as default object for compatibility
+const sponsorDB = {
   getSponsorContacts,
-  getContactDetails,
   addSponsorContact,
+  getContactDetails,
   addContactDetail,
+  addActionItem,
   updateContactDetail,
   deleteSponsorContact,
-  deleteContactDetail
+  deleteContactDetail,
+  getActionItemsByContactId
 };
+
+/**
+ * Get action items for a specific contact using proper join table
+ */
+export async function getActionItemsByContactId(contactId: string | number): Promise<ActionItem[]> {
+  try {
+    console.log(`[ sponsor-database ] Loading action items for contact ID: ${contactId}`);
+    
+    // Use the existing action-items utility function that handles the join table properly
+    const { getActionItemsForContact } = await import('./action-items');
+    const actionItems = await getActionItemsForContact(contactId);
+    
+    console.log(`[ sponsor-database ] Found ${actionItems.length} action items for contact ${contactId}`);
+    
+    return actionItems;
+  } catch (error) {
+    console.error('[ sponsor-database ] Error getting action items for contact:', error);
+    return [];
+  }
+}
+
+export default sponsorDB;

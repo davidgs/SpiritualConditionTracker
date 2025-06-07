@@ -1,0 +1,99 @@
+⚡️  [log] - [SponsorContactFormPage.tsx: handleAddTodo : 104] New todo object: {"id":-5118,"title":"Meeting time","text":"We need to find a time to meet. ","notes":"","dueDate":"2025-06-03","completed":false,"type":"todo"}
+⚡️  [log] - [SponsorContactFormPage.tsx: 127 handleSubmit] Submitting contact with data: {"type":"phone","date":"2025-05-28","note":"Jerry agreed to sponsor me"}
+⚡️  [log] - [SponsorContactFormPage.tsx: 128 handleSubmit] Submitting todos: [{"id":-5118,"title":"Meeting time","text":"We need to find a time to meet. ","notes":"","dueDate":"2025-06-03","completed":false,"type":"todo"}]
+⚡️  [log] - Adding new contact with data: {"type":"phone","date":"2025-05-28","note":"Jerry agreed to sponsor me","userId":1}
+⚡️  [log] - [ Sponsor ] Inserting contact into database: {"type":"phone","date":"2025-05-28","note":"Jerry agreed to sponsor me","userId":"1","createdAt":"2025-06-01T23:03:04.291Z","updatedAt":"2025-06-01T23:03:04.291Z"}
+⚡️  [log] - [ Sponsor ] About to call sponsorDB.addSponsorContact...
+⚡️  [log] - [ sponsor-database ] Adding sponsor contact: {"type":"phone","date":"2025-05-28","note":"Jerry agreed to sponsor me","userId":"1","createdAt":"2025-06-01T23:03:04.291Z","updatedAt":"2025-06-01T23:03:04.291Z"}
+⚡️  [log] - [ sqliteLoader.js:711 ] Original item received for save: {
+  "type": "phone",
+  "date": "2025-05-28",
+  "note": "Jerry agreed to sponsor me",
+  "userId": "1",
+  "createdAt": "2025-06-01T23:03:04.291Z",
+  "updatedAt": "2025-06-01T23:03:04.291Z"
+}
+⚡️  [log] - [ sqliteLoader.js:722 ] Item without ID: {
+  "type": "phone",
+  "date": "2025-05-28",
+  "note": "Jerry agreed to sponsor me",
+  "userId": "1",
+  "createdAt": "2025-06-01T23:03:04.291Z",
+  "updatedAt": "2025-06-01T23:03:04.291Z"
+}
+⚡️  [log] - [ sqliteLoader.js:743 ]  Final item for database: {
+  "type": "phone",
+  "date": "2025-05-28",
+  "note": "Jerry agreed to sponsor me",
+  "userId": "1",
+  "createdAt": "2025-06-01T23:03:04.292Z",
+  "updatedAt": "2025-06-01T23:03:04.292Z"
+}
+⚡️  [log] - [ sqliteLoader.js:744 ]  Date field specifically: 2025-05-28
+⚡️  [log] - [ sqliteLoader.js:745 ]  Date field type: string
+⚡️  [log] - [ sqliteLoader.js:752 ]  SQL keys: ["type","date","note","userId","createdAt","updatedAt"]
+⚡️  [log] - [ sqliteLoader.js:753 ]  SQL values: ["phone","2025-05-28","Jerry agreed to sponsor me","1","2025-06-01T23:03:04.292Z","2025-06-01T23:03:04.292Z"]
+⚡️  To Native ->  CapacitorSQLite execute 64977499
+⚡️  [log] - [ sqliteLoader.js:767 ]  Executing SQL with embedded values: INSERT INTO sponsor_contacts (type, date, note, userId, createdAt, updatedAt) VALUES ('phone', '2025-05-28', 'Jerry agreed to sponsor me', '1', '2025-06-01T23:03:04.292Z', '2025-06-01T23:03:04.292Z');
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  [log] - [ sqliteLoader.js:766 add ] Insert completed in autocommit mode
+⚡️  To Native ->  CapacitorSQLite query 64977500
+⚡️  TO JS {"values":[{"ios_columns":["id"]},{"id":1}]}
+⚡️  [log] - [ sqliteLoader.js:775 ]  Last insert ID result: {"values":[{"ios_columns":["id"]},{"id":1}]}
+⚡️  [log] - [ sqliteLoader.js:791 ]  Extracted ID: 1
+⚡️  [log] - [ sponsor-database ] Sponsor contact saved with ID: 1
+⚡️  [log] - [ Sponsor ] Contact saved with ID: 1
+⚡️  [log] - [ Sponsor ] Full saved contact object: {"type":"phone","date":"2025-05-28","note":"Jerry agreed to sponsor me","userId":"1","createdAt":"2025-06-01T23:03:04.292Z","updatedAt":"2025-06-01T23:03:04.292Z","id":1}
+⚡️  [log] - Adding Action Items with contact ID: 1
+⚡️  [log] - Processing action item: {"id":-5118,"title":"Meeting time","text":"We need to find a time to meet. ","notes":"","dueDate":"2025-06-03","completed":false,"type":"todo"}
+⚡️  [log] - [ sponsor-database ] Adding action item: {"id":-5118,"title":"Meeting time","text":"We need to find a time to meet. ","notes":"","dueDate":"2025-06-03","completed":false,"type":"todo"}
+⚡️  [log] - [ sqliteLoader.js:711 ] Original item received for save: {
+  "id": -5118,
+  "title": "Meeting time",
+  "text": "We need to find a time to meet. ",
+  "notes": "",
+  "dueDate": "2025-06-03",
+  "completed": false,
+  "type": "todo"
+}
+⚡️  [log] - [ sqliteLoader.js:722 ] Item without ID: {
+  "title": "Meeting time",
+  "text": "We need to find a time to meet. ",
+  "notes": "",
+  "dueDate": "2025-06-03",
+  "completed": false,
+  "type": "todo"
+}
+⚡️  [log] - [ sqliteLoader.js:743 ]  Final item for database: {
+  "title": "Meeting time",
+  "text": "We need to find a time to meet. ",
+  "notes": "",
+  "dueDate": "2025-06-03",
+  "completed": false,
+  "type": "todo",
+  "createdAt": "2025-06-01T23:03:04.298Z",
+  "updatedAt": "2025-06-01T23:03:04.298Z"
+}
+⚡️  To Native ->  CapacitorSQLite execute 64977501
+⚡️  [log] - [ sqliteLoader.js:744 ]  Date field specifically: undefined
+⚡️  [log] - [ sqliteLoader.js:745 ]  Date field type: undefined
+⚡️  [log] - [ sqliteLoader.js:752 ]  SQL keys: ["title","text","notes","dueDate","completed","type","createdAt","updatedAt"]
+⚡️  [log] - [ sqliteLoader.js:753 ]  SQL values: ["Meeting time","We need to find a time to meet. ","","2025-06-03",false,"todo","2025-06-01T23:03:04.298Z","2025-06-01T23:03:04.298Z"]
+⚡️  [log] - [ sqliteLoader.js:767 ]  Executing SQL with embedded values: INSERT INTO action_items (title, text, notes, dueDate, completed, type, createdAt, updatedAt) VALUES ('Meeting time', 'We need to find a time to meet. ', '', '2025-06-03', 'false', 'todo', '2025-06-01T23:03:04.298Z', '2025-06-01T23:03:04.298Z');
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  To Native ->  CapacitorSQLite ⚡️  [log] - [ sqliteLoader.js:766 add ] Insert completed in autocommit mode
+query 64977502
+⚡️  TO JS {"values":[{"ios_columns":["id"]},{"id":3}]}
+⚡️  [log] - [ sqliteLoader.js:775 ]  Last insert ID result: {"values":[{"ios_columns":["id"]},{"id":3}]}
+⚡️  [log] - [ sqliteLoader.js:791 ]  Extracted ID: 3
+⚡️  [log] - [ sponsor-database ] Action item saved with ID: 3
+⚡️  To Native ->  CapacitorSQLite query 64977503
+⚡️  [log] - Action item saved with ID: 3
+⚡️  [log] - Loading sponsor contacts for userId: 1
+⚡️  [log] - [ sponsor-database ] Querying sponsor contacts with userId: 1
+⚡️  TO JS {"values":[{"ios_columns":["id","userId","date","type","note","createdAt","updatedAt"]},{"userId":"1","createdAt":"2025-06-01T23:03:04.292Z","type":"phone","id":1,"date":"2025-05-28","updatedAt":"2025-06-01T23:03:04.292Z","note":"Jerry agreed to sponsor me
+⚡️  [log] - [ sqliteLoader.js:592 ] Converted 1 iOS format items to standard format
+⚡️  [log] - [ sqliteLoader.js ] Sample converted item: {"id":1,"userId":"1","date":"2025-05-28","type":"phone","note":"Jerry agreed to sponsor me","createdAt":"2025-06-01T23:03:04.292Z","updatedAt":"2025-06-01T23:03:04.292Z"}
+⚡️  [log] - [ sponsor-database ] Found 0 sponsor contacts for user 1
+⚡️  [log] - Found sponsor contacts: []
+⚡️  [log] - [ Sponsor ] Render - currentView: main selectedContact: null

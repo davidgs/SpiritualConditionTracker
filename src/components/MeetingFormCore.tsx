@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import SimpleMeetingSchedule from './SimpleMeetingSchedule';
+import TreeMeetingSchedule from './TreeMeetingSchedule';
+import { useTheme } from '@mui/material/styles';
 import { 
   TextField, 
   InputAdornment, 
@@ -12,40 +13,54 @@ import {
   Checkbox,
   FormControlLabel
 } from '@mui/material';
-import LocationOnIcon from '@mui/icons-material/LocationOn';
 
-interface MeetingFormCoreProps {
-  meeting?: any;
-  onSave: (meetingData: any) => void;
-  onCancel: () => void;
-  onClose?: () => void;
-  isEdit?: boolean;
-  darkMode?: boolean;
-  use24HourFormat?: boolean;
-  renderButtons?: (props: {
-    onCancel: () => void;
-    onSave: () => void;
-    isValid: boolean;
-    isSubmitting: boolean;
-  }) => React.ReactNode;
-  className?: string;
-}
+// Common TextField style to ensure consistent iOS-native styling
+const getTextFieldStyle = (theme) => ({
+  width: '100%',
+  maxWidth: '100%',
+  mb: 2,
+  '& .MuiOutlinedInput-root': { 
+    height: 56,
+    borderRadius: 2,
+    width: '100%',
+    maxWidth: '100%',
+    bgcolor: theme.palette.mode === 'dark' ? theme.palette.background.default : theme.palette.grey[50],
+    '& fieldset': {
+      borderColor: theme.palette.divider,
+    },
+    '&:hover fieldset': {
+      borderColor: theme.palette.action.hover,
+    },
+    '&.Mui-focused fieldset': {
+      borderColor: theme.palette.primary.main,
+    }
+  },
+  '& .MuiOutlinedInput-input': {
+    fontSize: 16,
+    padding: '15px 14px',
+    color: theme.palette.text.primary
+  }
+});
 
-export default function MeetingFormCore({
+// Standalone meeting form component that can be embedded anywhere
+export default function MeetingFormCore({ 
   meeting = null,
   onSave,
   onCancel,
-  onClose,
-  isEdit = false,
-  darkMode = false,
   use24HourFormat = false,
-  renderButtons,
+  showButtons = true,
   className = ''
-}: MeetingFormCoreProps) {
+}) {
+  // Get theme context
+  const muiTheme = useTheme();
+  const darkMode = muiTheme.palette.mode === 'dark';
+  
   // Form state
   const [meetingName, setMeetingName] = useState('');
+  
+  // New structure to store day-time combinations
   const [meetingSchedule, setMeetingSchedule] = useState([
-    { day: 'monday', time: '18:00' }
+    // Each item will be {day: 'monday', time: '18:00'} format
   ]);
   
   // Address fields
@@ -54,111 +69,96 @@ export default function MeetingFormCore({
   const [city, setCity] = useState('');
   const [state, setState] = useState('');
   const [zipCode, setZipCode] = useState('');
-  const [meetingAddress, setMeetingAddress] = useState('');
   
   const [location, setLocation] = useState(null);
   const [error, setError] = useState('');
   const [searchingLocation, setSearchingLocation] = useState(false);
   const [isHomeGroup, setIsHomeGroup] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [onlineUrl, setOnlineUrl] = useState('');
 
   // Initialize form with meeting data if provided
   useEffect(() => {
-    if (!meeting) {
-      setMeetingSchedule([{ day: 'monday', time: '18:00' }]);
-      return;
+    if (meeting) {
+      setMeetingName(meeting.name || '');
+      setLocationName(meeting.locationName || '');
+      setStreetAddress(meeting.streetAddress || '');
+      setCity(meeting.city || '');
+      setState(meeting.state || '');
+      setZipCode(meeting.zipCode || '');
+      setLocation(meeting.coordinates || null);
+      setIsHomeGroup(meeting.isHomeGroup || false);
+      setOnlineUrl(meeting.onlineUrl || '');
+      
+      // Handle schedule format
+      if (meeting.schedule) {
+        let scheduleArray = meeting.schedule;
+        
+        // Parse schedule if it's a JSON string (from SQLite storage)
+        if (typeof meeting.schedule === 'string') {
+          try {
+            scheduleArray = JSON.parse(meeting.schedule);
+          } catch (e) {
+            console.error('Failed to parse schedule JSON during editing:', e);
+            scheduleArray = [];
+          }
+        }
+        
+        if (Array.isArray(scheduleArray) && scheduleArray.length > 0) {
+          setMeetingSchedule(scheduleArray);
+        } else {
+          // Fallback to legacy format conversion
+          setMeetingSchedule([]);
+        }
+      } else if (meeting.days && meeting.time) {
+        // Convert legacy format
+        let daysArray = meeting.days;
+        
+        // Parse days if it's a JSON string (from SQLite storage)  
+        if (typeof meeting.days === 'string') {
+          try {
+            daysArray = JSON.parse(meeting.days);
+          } catch (e) {
+            console.error('Failed to parse days JSON during editing:', e);
+            daysArray = [meeting.days]; // Treat as single day if parsing fails
+          }
+        }
+        
+        // Ensure it's an array
+        if (!Array.isArray(daysArray)) {
+          daysArray = [daysArray];
+        }
+        
+        const schedule = daysArray.map(day => ({
+          day: day.toLowerCase(),
+          time: meeting.time,
+          format: meeting.format || 'discussion', // Default format
+          locationType: meeting.locationType || 'in_person',
+          access: meeting.access || 'open' // Default access
+        }));
+        setMeetingSchedule(schedule);
+      }
     }
-
-    setMeetingName(meeting.name || '');
-    
-    // Handle schedule format
-    if (meeting.schedule && Array.isArray(meeting.schedule) && meeting.schedule.length > 0) {
-      setMeetingSchedule(meeting.schedule);
-    } else if (meeting.days && meeting.time) {
-      const newSchedule = meeting.days.map((day: string) => ({
-        day,
-        time: meeting.time
-      }));
-      setMeetingSchedule(newSchedule);
-    }
-    
-    // Set address fields
-    setMeetingAddress(meeting.address || '');
-    setLocationName(meeting.locationName || '');
-    setStreetAddress(meeting.streetAddress || '');
-    setCity(meeting.city || '');
-    setState(meeting.state || '');
-    setZipCode(meeting.zipCode || '');
-    setLocation(meeting.coordinates || null);
-    setIsHomeGroup(meeting.isHomeGroup || false);
   }, [meeting]);
 
-  // Helper function to update address fields
-  const updateAddressFields = (addressData: any) => {
-    const fullAddress = [
-      addressData.streetAddress || addressData.street || addressData.road || '',
-      addressData.city || addressData.town || addressData.village || '',
-      addressData.state || addressData.county || '',
-      addressData.zipCode || addressData.postcode || ''
-    ].filter(Boolean).join(', ');
-    
-    setMeetingAddress(fullAddress);
-    setStreetAddress(addressData.streetAddress || addressData.street || addressData.road || '');
-    setCity(addressData.city || addressData.town || addressData.village || '');
-    setState(addressData.state || addressData.county || '');
-    setZipCode(addressData.zipCode || addressData.postcode || '');
-  };
-
-  // Auto-detect location
+  // Get current location
   const detectLocation = () => {
     setSearchingLocation(true);
     setError('');
     
     if (!navigator.geolocation) {
-      setError('Geolocation is not supported by your browser');
+      setError('Geolocation is not supported by this browser.');
       setSearchingLocation(false);
       return;
     }
     
     navigator.geolocation.getCurrentPosition(
-      async (position) => {
-        try {
-          const { latitude, longitude } = position.coords;
-          setLocation({ latitude, longitude });
-          
-          const response = await fetch(
-            `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`
-          );
-          
-          if (response.ok) {
-            const data = await response.json();
-            
-            if (data.address) {
-              const streetAddress = (data.address.house_number ? data.address.house_number + ' ' : '') + 
-                                 (data.address.road || data.address.street || '');
-              const city = data.address.city || data.address.town || data.address.village || '';
-              
-              const addressData = {
-                streetAddress: streetAddress,
-                city: city,
-                state: data.address.state || data.address.county || '',
-                zipCode: data.address.postcode || ''
-              };
-              
-              updateAddressFields(addressData);
-            } else if (data.display_name) {
-              setMeetingAddress(data.display_name);
-              const parts = data.display_name.split(',').map((part: string) => part.trim());
-              if (parts.length >= 1) {
-                setStreetAddress(parts[0]);
-              }
-            }
-          }
-        } catch (error) {
-          console.error('Error getting address:', error);
-        } finally {
-          setSearchingLocation(false);
-        }
+      (position) => {
+        const coords = {
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude
+        };
+        setLocation(coords);
+        setSearchingLocation(false);
       },
       (error) => {
         console.error('Error getting location:', error);
@@ -168,180 +168,255 @@ export default function MeetingFormCore({
     );
   };
 
-  // Form validation
-  const isValid = meetingName.trim() && meetingSchedule.length > 0 && streetAddress.trim();
-
   // Handle form submission
-  const handleSubmit = async (e?: React.FormEvent) => {
-    if (e) e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    console.log('[MeetingFormCore] Form submitted');
     setError('');
-    setIsSubmitting(true);
     
-    if (!isValid) {
-      setError('Please fill in all required fields');
-      setIsSubmitting(false);
+    if (!meetingName.trim()) {
+      console.log('[MeetingFormCore] Validation failed: Missing meeting name');
+      setError('Meeting name is required');
       return;
     }
     
+    if (meetingSchedule.length === 0) {
+      console.log('[MeetingFormCore] Validation failed: No schedule');
+      setError('Please add at least one meeting day and time');
+      return;
+    }
+
+    // Only validate online URL if explicitly marked as online/hybrid meeting
+    const hasOnlineMeeting = meetingSchedule.some(item => item.locationType === 'online' || item.locationType === 'hybrid');
+    
+    if (hasOnlineMeeting && !onlineUrl.trim()) {
+      setError('Meeting URL is required for online and hybrid meetings');
+      return;
+    }
+    
+    // Combine address fields for display and backwards compatibility
+    const formattedAddress = [
+      streetAddress.trim(),
+      city.trim(),
+      state.trim(),
+      zipCode.trim()
+    ].filter(Boolean).join(', ');
+    
+    // Create arrays of unique days for backwards compatibility
+    const uniqueDays = [...new Set(meetingSchedule.map(item => item.day))];
+    
+    // Use the first time in the schedule for backwards compatibility
+    const firstTime = meetingSchedule.length > 0 ? meetingSchedule[0].time : '';
+    
+    // Extract meeting types for display
+    const meetingTypes = [...new Set(meetingSchedule.map(item => item.type).filter(Boolean))];
+    
+    const meetingData = {
+      // For editing existing meetings, keep their ID
+      ...(meeting ? { id: meeting.id } : {}),
+      name: meetingName.trim(),
+      // For backward compatibility
+      days: uniqueDays,
+      time: firstTime,
+      // New format
+      schedule: meetingSchedule,
+      // Store meeting types for easy access
+      types: meetingTypes,
+      address: formattedAddress,
+      // Store the location name
+      locationName: locationName.trim(),
+      // Store individual address components for better editing
+      streetAddress: streetAddress.trim(),
+      city: city.trim(),
+      state: state.trim(),
+      zipCode: zipCode.trim(),
+      coordinates: location,
+      isHomeGroup: isHomeGroup,
+      // Store online URL for virtual meetings
+      onlineUrl: onlineUrl.trim(),
+      createdAt: meeting ? meeting.createdAt : new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+    
     try {
-      // Combine address fields
-      const formattedAddress = [
-        streetAddress.trim(),
-        city.trim(),
-        state.trim(),
-        zipCode.trim()
-      ].filter(Boolean).join(', ');
+      console.log('[MeetingFormCore] Calling onSave with meeting data:', meetingData);
       
-      // Create arrays of unique days for backwards compatibility
-      const uniqueDays = [...new Set(meetingSchedule.map(item => item.day))];
-      const firstTime = meetingSchedule.length > 0 ? meetingSchedule[0].time : '';
-      
-      const meetingData = {
-        ...(meeting ? { id: meeting.id } : {}),
-        name: meetingName.trim(),
-        days: uniqueDays,
-        time: firstTime,
-        schedule: meetingSchedule,
-        address: formattedAddress,
-        locationName: locationName.trim(),
-        streetAddress: streetAddress.trim(),
-        city: city.trim(),
-        state: state.trim(),
-        zipCode: zipCode.trim(),
-        coordinates: location,
-        isHomeGroup: isHomeGroup,
-        createdAt: meeting ? meeting.createdAt : new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-      };
-      
-      await onSave(meetingData);
-      
-      if (onClose) {
-        onClose();
+      if (onSave) {
+        await onSave(meetingData);
+        console.log('[MeetingFormCore] Meeting saved successfully');
       }
     } catch (error) {
-      console.error('Error saving meeting:', error);
+      console.error('[MeetingFormCore] Error saving meeting:', error);
       setError('An error occurred while saving the meeting. Please try again.');
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const handleCancel = () => {
-    if (onClose) {
-      onClose();
-    } else {
-      onCancel();
     }
   };
 
   return (
-    <Box className={className} sx={{ width: '100%', maxWidth: '100%' }}>
+    <Box className={className}>
+      <Typography variant="body2" sx={(theme) => ({ 
+        mb: 2,
+        color: theme.palette.text.secondary
+      })}>
+        Add details for your regular AA meeting. Most meetings occur in the evenings, typically between 6-9 PM.
+      </Typography>
+      
       {error && (
-        <Alert severity="error" sx={{ mb: 2 }}>
+        <Alert 
+          severity="error" 
+          sx={{ mb: 2 }}
+        >
           {error}
         </Alert>
       )}
       
-      <Box component="form" onSubmit={handleSubmit} sx={{ 
+      <Box component="form" onSubmit={handleSubmit} noValidate sx={{ 
         display: 'flex', 
         flexDirection: 'column', 
-        gap: 2,
-        width: '100%'
+        gap: 2, 
+        mt: 1,
+        width: '100%', 
+        maxWidth: '100%',
+        boxSizing: 'border-box',
+        overflow: 'hidden'
       }}>
-        {/* Meeting Name */}
         <Box>
-          <Typography variant="body2" sx={{ mb: 1, fontWeight: 500 }}>
+          <Box sx={{ color: muiTheme.palette.primary.main, fontSize: '14px', mb: '4px' }}>
             Meeting Name*
-          </Typography>
+          </Box>
           <TextField
-            fullWidth
             value={meetingName}
             onChange={(e) => setMeetingName(e.target.value)}
             placeholder="Enter meeting name"
             size="medium"
-            required
+            margin="none"
+            sx={(theme) => getTextFieldStyle(theme)}
           />
         </Box>
         
-        {/* Meeting Schedule */}
         <Box>
-          <Typography variant="body2" sx={{ mb: 1, fontWeight: 500 }}>
+          <Box sx={{ color: muiTheme.palette.text.secondary, fontSize: '14px', mb: '4px' }}>
             Meeting Schedule
-          </Typography>
-          <SimpleMeetingSchedule 
+          </Box>
+          <TreeMeetingSchedule 
             schedule={meetingSchedule} 
             onChange={setMeetingSchedule}
-            darkMode={darkMode}
             use24HourFormat={use24HourFormat}
           />
         </Box>
         
-        {/* Location */}
-        <Box>
-          <Typography variant="body2" sx={{ mb: 1, fontWeight: 500 }}>
-            Location
-          </Typography>
-          
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-            <TextField
-              fullWidth
-              value={locationName}
-              onChange={(e) => setLocationName(e.target.value)}
-              placeholder="Location name (e.g. Apex United Methodist Church)"
-              size="medium"
-            />
+        {/* Show address fields for in-person and hybrid meetings */}
+        {meetingSchedule.some(item => item.locationType === 'in_person' || item.locationType === 'hybrid') && (
+          <Box>
+            <Box sx={{ color: muiTheme.palette.text.secondary, fontSize: '14px', mb: '4px' }}>
+              Location
+            </Box>
+            
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+              <TextField
+                fullWidth
+                value={locationName}
+                onChange={(e) => setLocationName(e.target.value)}
+                placeholder="Location name (e.g. Apex United Methodist Church)"
+                size="medium"
+                margin="none"
+                sx={(theme) => ({
+                  ...getTextFieldStyle(theme)
+                })}
+              />
             
             <TextField
               fullWidth
               value={streetAddress}
               onChange={(e) => setStreetAddress(e.target.value)}
-              placeholder="Street address*"
+              placeholder="Street address"
               size="medium"
-              required
+              margin="none"
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
-                    <IconButton
+                    <IconButton 
                       onClick={detectLocation}
                       disabled={searchingLocation}
                       size="small"
+                      sx={(theme) => ({ color: theme.palette.text.secondary })}
                     >
                       {searchingLocation ? (
-                        <CircularProgress size={20} />
+                        <CircularProgress size={16} color="inherit" />
                       ) : (
-                        <LocationOnIcon />
+                        <i className="fas fa-location-arrow" />
                       )}
                     </IconButton>
                   </InputAdornment>
                 )
               }}
+              sx={(theme) => ({
+                ...getTextFieldStyle(theme)
+              })}
             />
             
-            <Box sx={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr', gap: 1 }}>
-              <TextField
-                value={city}
-                onChange={(e) => setCity(e.target.value)}
-                placeholder="City"
-                size="medium"
-              />
+            <TextField
+              fullWidth
+              value={city}
+              onChange={(e) => setCity(e.target.value)}
+              placeholder="City"
+              size="medium"
+              margin="none"
+              sx={(theme) => ({
+                ...getTextFieldStyle(theme)
+              })}
+            />
+            
+            <Box sx={{ display: 'flex', gap: 2 }}>
               <TextField
                 value={state}
                 onChange={(e) => setState(e.target.value)}
                 placeholder="State"
                 size="medium"
+                margin="none"
+                sx={(theme) => ({
+                  width: '50%',
+                  ...getTextFieldStyle(theme)
+                })}
               />
+              
               <TextField
                 value={zipCode}
                 onChange={(e) => setZipCode(e.target.value)}
-                placeholder="Zip"
+                placeholder="Zip code"
                 size="medium"
+                margin="none"
+                sx={(theme) => ({
+                  width: '50%',
+                  ...getTextFieldStyle(theme)
+                })}
               />
             </Box>
           </Box>
         </Box>
-        
-        {/* Home Group Checkbox */}
+          )}
+
+      {/* Online URL Field - Show when any schedule item has online or hybrid location */}
+      {meetingSchedule.some(item => item.locationType === 'online' || item.locationType === 'hybrid') && (
+        <Box>
+          <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 'bold' }}>
+            Online Meeting URL
+          </Typography>
+          <TextField
+            fullWidth
+            value={onlineUrl}
+            onChange={(e) => setOnlineUrl(e.target.value)}
+            placeholder="https://zoom.us/j/123456789 or meeting platform URL"
+            size="medium"
+            sx={(theme) => getTextFieldStyle(theme)}
+          />
+          <Typography variant="body2" sx={{ mt: 0.5 }} color="text.secondary">
+            Enter the URL participants will use to join the online meeting.
+          </Typography>
+        </Box>
+      )}
+      
+      {/* Home Group Checkbox */}
+      <Box>
         <FormControlLabel
           control={
             <Checkbox
@@ -351,46 +426,39 @@ export default function MeetingFormCore({
             />
           }
           label={
-            <Box>
-              <Typography variant="body2">
-                This is my Home Group
-              </Typography>
-              <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                Your Home Group is your primary AA group where you regularly attend and participate.
-              </Typography>
-            </Box>
+            <Typography component="span" sx={(theme) => ({ color: theme.palette.text.primary })}>
+              This is my Home Group
+            </Typography>
           }
         />
-        
-        {/* Buttons */}
-        {renderButtons ? (
-          renderButtons({
-            onCancel: handleCancel,
-            onSave: handleSubmit,
-            isValid: Boolean(isValid),
-            isSubmitting
-          })
-        ) : (
-          <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2, mt: 3 }}>
+        <Typography variant="body2" sx={{ mt: 0.5, ml: 4 }} color="text.secondary">
+          Your Home Group is your primary AA group where you regularly attend and participate.
+        </Typography>
+      </Box>
+
+      {/* Action buttons */}
+      {showButtons && (
+        <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-end', mt: 2 }}>
+          {onCancel && (
             <Button
               variant="contained"
+              onClick={onCancel}
               color="error"
-              onClick={handleCancel}
-              disabled={isSubmitting}
             >
               Cancel
             </Button>
-            <Button
-              variant="contained"
-              color="success"
-              onClick={handleSubmit}
-              disabled={!isValid || isSubmitting}
-            >
-              {isSubmitting ? 'Saving...' : 'Save'}
-            </Button>
-          </Box>
-        )}
-      </Box>
+          )}
+          
+          <Button
+            variant="contained"
+            type="submit"
+            color="success"
+          >
+            Save
+          </Button>
+        </Box>
+      )}
+    </Box>
     </Box>
   );
 }

@@ -1,0 +1,45 @@
+⚡️  WebView loaded
+⚡️  To Native ->  CapacitorSQLite createConnection 70713642
+⚡️  [log] - Light mode activated
+⚡️  [log] - Applying native theme: blue (#3b82f6) in light mode
+⚡️  [log] - Applied MUI theme to iOS components
+⚡️  [log] - Applied MUI theme to iOS native components: blue
+⚡️  [log] - [ AppDataContext.tsx:151 ] Initializing app...
+⚡️  [log] - [ AppDataContext.tsx:156 ] Database status changed: initializing
+⚡️  [log] - [ DatabaseService: 50 ] Starting database initialization...
+⚡️  [log] - [ AppDataContext.tsx:156 ] Database status changed: initializing
+⚡️  [log] - [ sqliteLoader.js:8 ] Initializing SQLite database via Capacitor...
+⚡️  [log] - [ sqliteLoader.js:16 ]  Capacitor platform detected: ios
+⚡️  [log] - [ sqliteLoader.js:17 ]  Capacitor plugins available: ["CapacitorHttp","Console","WebView","CapacitorCookies","CapacitorSQLite"]
+⚡️  [log] - [ sqliteLoader.js:24 ]  Found CapacitorSQLite plugin: true
+database path /Users/davidgs/Library/Developer/CoreSimulator/Devices/E7B518C7-65A2-4386-A19F-01F0D573877F/data/Containers/Data/Application/DD841458-13E4-4B70-98D6-6825AA058C03/Documents/spiritual_condition_trackerSQLite.db
+⚡️  TO JS undefined
+⚡️  To Native ->  CapacitorSQLite open ⚡️  [log] - [ sqliteLoader.js:37 ]  Database connection created
+70713643
+⚡️  TO JS undefined
+⚡️  To Native ->  CapacitorSQLite execute 70713644
+⚡️  [log] - [ sqliteLoader.js:43 ]  Database opened successfully
+⚡️  [log] - [ sqliteLoader.js:70 ] Creating database tables...
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  [log] - [ sqliteLoader.js:88 ] Users table created
+⚡️  To Native ->  CapacitorSQLite execute 70713645
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 70713646
+⚡️  [log] - [ sqliteLoader.js:103 ] Activities table created
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  [log] - [ sqliteLoader.js:123 ] Meetings table created
+⚡️  To Native ->  CapacitorSQLite execute 70713647
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  [log] - [ sqliteLoader.js:141 ] Sponsors table created
+⚡️  To Native ->  CapacitorSQLite execute 70713648
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 70713649
+⚡️  [log] - [ sqliteLoader.js:159 ] Sponsor contacts table created
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  [log] - [ sqliteLoader.js:177 ] Action items table created
+⚡️  [log] - [ sqliteLoader.js:179 ] All tables created successfully
+⚡️  [log] - [ sqliteLoader.js:47 ]  Database initialization complete
+⚡️  [log] - [ DatabaseService: 55 ] SQLite database initialized successfully
+⚡️  [error] - [ DatabaseService: 76 ] Database initialization failed: {}
+⚡️  [log] - [ AppDataContext.tsx:156 ] Database status changed: error
+⚡️  [error] - [ AppDataContext.tsx:168 ] App initialization failed: {}

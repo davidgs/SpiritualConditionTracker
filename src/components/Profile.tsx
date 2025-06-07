@@ -4,8 +4,10 @@ import ThemeSelector from './ThemeSelector';
 import MeetingFormDialog from './MeetingFormDialog';
 import PopoverColorPicker from './PopoverColorPicker';
 import PopoverThemeDisplay from './PopoverThemeDisplay';
+import QRCodeGenerator from './QRCodeGenerator';
 import { useAppTheme } from '../contexts/MuiThemeProvider';
 import MuiThemeProvider from '../contexts/MuiThemeProvider';
+import { formatDateForDisplay } from '../utils/dateUtils';
 
 import { Capacitor } from '@capacitor/core';
 import { formatPhoneNumber, formatPhoneNumberForInput } from '../utils/phoneUtils';
@@ -26,7 +28,7 @@ import {
   DialogTitle,
   DialogContent
 } from '@mui/material';
-import { resetDatabase } from '../utils/reset-database'
+
 
 interface ProfileProps {
   setCurrentView: (view: string) => void;
@@ -54,108 +56,11 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
     console.log('Starting data reset process');
     
     try {
-      await resetDatabase();
-      // Clear all data via structured transaction approach
-      // if (window.db) {
-      //   console.log('Using window.db to clear data');
-        
-        // Instead of looping through items and removing them one by one (which can cause issues),
-        // we'll use direct DELETE statements to clear collections
-        
-        // Define collections to clear - order matters (due to potential foreign key constraints)
-        // const collections = ['activities', 'meetings', 'preferences', 'users'];
-        
-        // Verify database access first
-        // try {
-        //   const activitiesCount = await window.db.getAll('activities');
-        //   console.log(`Found ${activitiesCount.length} activities before reset`);
-        // } catch (testError) {
-        //   console.warn('Database test read failed, may need to initialize DB first:', testError);
-        // }
-        
-        // Create a safe version of clearing with multiple approaches
-      //   for (const collection of collections) {
-      //     try {
-      //       // Approach 1: Try to use the Capacitor SQLite direct execute method if available
-      //       if (window.Capacitor?.Plugins?.CapacitorSQLite) {
-      //         try {
-      //           const sqlPlugin = window.Capacitor.Plugins.CapacitorSQLite;
-      //           const dbName = 'spiritualTracker.db'; // Match name used in sqliteLoader.js
-                
-      //           await sqlPlugin.execute({
-      //             database: dbName,
-      //             statements: `DELETE FROM ${collection}`, 
-      //             values: []
-      //           });
-      //           console.log(`Cleared ${collection} via direct SQL execute`);
-      //           continue; // Skip to next collection if this worked
-      //         } catch (directSqlError) {
-      //           console.log(`Direct SQL clear of ${collection} failed:`, directSqlError);
-      //           // Fall through to next approach
-      //         }
-      //       }
-            
-      //       // Approach 2: Use the safer window.db interface if available
-      //       const items = await window.db.getAll(collection) || [];
-      //       console.log(`Clearing ${items.length} items from ${collection}`);
-            
-      //       // Clear each item with proper error handling for each
-      //       for (const item of items) {
-      //         try {
-      //           if (item && item.id) {
-      //             await window.db.remove(collection, item.id);
-      //           }
-      //         } catch (itemError) {
-      //           console.log(`Error removing item ${item.id} from ${collection}:`, itemError);
-      //           // Continue with other items
-      //         }
-      //       }
-            
-      //       console.log(`Cleared ${collection}`);
-      //     } catch (collectionError) {
-      //       console.log(`Error clearing ${collection}:`, collectionError);
-      //       // Continue with next collection despite errors
-      //     }
-      //   }
-        
-      //   console.log('All collections cleared successfully');
-      // }
-      
-      // // Clear any localStorage backup data
-      // try {
-      //   localStorage.removeItem('activities');
-      //   localStorage.removeItem('meetings');
-      //   localStorage.removeItem('user');
-      //   localStorage.removeItem('preferences');
-      //   console.log('localStorage data cleared');
-      // } catch (localStorageError) {
-      //   console.log('Error clearing localStorage:', localStorageError);
-      // }
-      
-      // console.log('All data cleared');
-      
-      // // Set initial default data to ensure app works after reset
-      // if (window.db) {
-      //   try {
-      //     // Add default user record
-      //     await window.db.add('users', {
-      //       id: 'user_default',
-      //       name: 'Anonymous',
-      //       createdAt: new Date().toISOString(),
-      //       updatedAt: new Date().toISOString()
-      //     });
-      //     console.log('Created default user after reset');
-      //   } catch (defaultDataError) {
-      //     console.log('Error creating default data:', defaultDataError);
-      //   }
-      // }
-      
-      console.log('Data reset complete - clearing React state and navigating to dashboard');
-      
-      // Call the parent component's reset function to clear all React state
+      // Call the parent component's reset function to clear all React state and data
       if (onResetAllData) {
-        onResetAllData();
+        await onResetAllData();
       }
+      console.log('Data reset complete - navigating to dashboard');
       
       // Show success message
       alert('All data has been reset successfully.');
@@ -180,6 +85,9 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
   const [errors, setErrors] = useState({});
   const [editingPersonalInfo, setEditingPersonalInfo] = useState(false);
   const [showMeetingForm, setShowMeetingForm] = useState(false);
+  const [qrCodeOpen, setQrCodeOpen] = useState(false);
+  const [qrCodeData, setQrCodeData] = useState('');
+  const [qrCodeTitle, setQrCodeTitle] = useState('');
 
   // Load user data ONLY when user ID changes (not on every user object change)
   useEffect(() => {
@@ -190,14 +98,11 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
       setEmail(user.email || '');
       // Fix sobriety date handling to prevent off-by-one errors
       if (user.sobrietyDate) {
+        //console.log('[ Profile.tsx: 187 ] User sobriety date:', user.sobrietyDate)
         // If it's already in YYYY-MM-DD format, use as-is
         if (user.sobrietyDate.includes('T')) {
-          // Convert from ISO format, keeping the date part only
-          const date = new Date(user.sobrietyDate);
-          const year = date.getFullYear();
-          const month = String(date.getMonth() + 1).padStart(2, '0');
-          const day = String(date.getDate()).padStart(2, '0');
-          setSobrietyDate(`${year}-${month}-${day}`);
+          // Convert from ISO format, keeping the date part only (avoid timezone conversion)
+          setSobrietyDate(user.sobrietyDate.split('T')[0]);
         } else {
           // Already in YYYY-MM-DD format
           setSobrietyDate(user.sobrietyDate);
@@ -299,6 +204,37 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
     // Create updates object with privacy settings
     // Fix for timezone issue - store the date in a timezone-neutral format (YYYY-MM-DD)
     // This prevents the date from shifting when displayed
+    
+    // Parse existing settings safely
+    let existingPrivacySettings = {};
+    let existingPreferences = {};
+    
+    try {
+      if (user?.privacySettings) {
+        if (typeof user.privacySettings === 'string') {
+          existingPrivacySettings = JSON.parse(user.privacySettings);
+        } else {
+          existingPrivacySettings = user.privacySettings;
+        }
+      }
+    } catch (error) {
+      console.warn('Failed to parse existing privacy settings:', error);
+      existingPrivacySettings = {};
+    }
+    
+    try {
+      if (user?.preferences) {
+        if (typeof user.preferences === 'string') {
+          existingPreferences = JSON.parse(user.preferences);
+        } else {
+          existingPreferences = user.preferences;
+        }
+      }
+    } catch (error) {
+      console.warn('Failed to parse existing preferences:', error);
+      existingPreferences = {};
+    }
+    
     const updates = {
       name,
       lastName,
@@ -308,12 +244,12 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
       sobrietyDate: sobrietyDate || '',
       homeGroups,
       privacySettings: {
-        ...(user?.privacySettings || {}),
+        ...existingPrivacySettings,
         allowMessages,
         shareLastName
       },
       preferences: {
-        ...(user?.preferences || {}),
+        ...existingPreferences,
         use24HourFormat
       }
     };
@@ -323,19 +259,38 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
   };
 
   // Calculate sobriety information using pure JavaScript (no database calls)
+  // Fixed to handle timezone issues properly
   const sobrietyDays = useMemo(() => {
     if (!user?.sobrietyDate) return 0;
-    const sobrietyDate = new Date(user.sobrietyDate);
+    
+    // Get the date string in YYYY-MM-DD format
+    const dateStr = user.sobrietyDate.includes('T') ? user.sobrietyDate.split('T')[0] : user.sobrietyDate;
+    
+    // Parse date components to avoid timezone issues
+    const [year, month, day] = dateStr.split('-').map(Number);
+    const sobrietyDate = new Date(year, month - 1, day); // month is 0-indexed
+    
     const today = new Date();
-    const diffTime = Math.abs(today.getTime() - sobrietyDate.getTime());
+    const todayDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    
+    const diffTime = todayDate.getTime() - sobrietyDate.getTime();
     return Math.floor(diffTime / (1000 * 60 * 60 * 24));
   }, [user?.sobrietyDate]);
   
   const sobrietyYears = useMemo(() => {
     if (!user?.sobrietyDate) return 0;
-    const sobrietyDate = new Date(user.sobrietyDate);
+    
+    // Get the date string in YYYY-MM-DD format
+    const dateStr = user.sobrietyDate.includes('T') ? user.sobrietyDate.split('T')[0] : user.sobrietyDate;
+    
+    // Parse date components to avoid timezone issues
+    const [year, month, day] = dateStr.split('-').map(Number);
+    const sobrietyDate = new Date(year, month - 1, day); // month is 0-indexed
+    
     const today = new Date();
-    const diffTime = Math.abs(today.getTime() - sobrietyDate.getTime());
+    const todayDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    
+    const diffTime = todayDate.getTime() - sobrietyDate.getTime();
     const years = diffTime / (1000 * 60 * 60 * 24 * 365.25);
     return Math.round(years * 100) / 100; // Round to 2 decimal places
   }, [user?.sobrietyDate]);
@@ -352,17 +307,62 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
   const formatNumber = (num) => {
     return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   };
-  
-  // Format date for display (YYYY-MM-DD -> Month Day, Year)
-  const formatDateForDisplay = (dateString) => {
-    if (!dateString) return '';
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { 
-      year: 'numeric', 
-      month: 'long', 
-      day: 'numeric' 
-    });
+
+  // Generate vCard data for QR code sharing
+  const generateVCardData = () => {
+    const privacySettings = user?.privacySettings || {};
+    
+    // Respect privacy settings
+    const displayName = name || '';
+    const displayLastName = privacySettings.shareLastName ? (lastName || '') : '';
+    const displayPhone = phoneNumber || '';
+    const displayEmail = email || '';
+    
+    // Build full name
+    const fullName = `${displayName} ${displayLastName}`.trim();
+    
+    // Create vCard format
+    const vCardLines = [
+      'BEGIN:VCARD',
+      'VERSION:3.0',
+      `FN:${fullName}`,
+      `N:${displayLastName};${displayName};;;`,
+    ];
+    
+    if (displayPhone) {
+      vCardLines.push(`TEL:${displayPhone}`);
+    }
+    
+    if (displayEmail) {
+      vCardLines.push(`EMAIL:${displayEmail}`);
+    }
+    
+    // Add organization/note for AA context
+    vCardLines.push('ORG:AA Recovery Community');
+    vCardLines.push('NOTE:Shared from AA Recovery Tracker');
+    
+    vCardLines.push('END:VCARD');
+    
+    return vCardLines.join('\n');
   };
+
+  // Handle sharing contact information
+  const handleShareContact = () => {
+    if (!name) {
+      alert('Please add your name before sharing contact information.');
+      return;
+    }
+    
+    const vCardData = generateVCardData();
+    const privacySettings = user?.privacySettings || {};
+    const displayName = privacySettings.shareLastName ? `${name} ${lastName}`.trim() : name;
+    
+    setQrCodeData(vCardData);
+    setQrCodeTitle(`Contact: ${displayName}`);
+    setQrCodeOpen(true);
+  };
+  
+
 
   return (
       <Box sx={{ p: 2, maxWidth: 600, mx: 'auto' }}>
@@ -513,9 +513,10 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
                   color="success"
                   onClick={() => {
                     if (sobrietyDate) {
-                      // Update the sobriety date directly
+                      // Ensure the date is properly formatted to avoid timezone issues
+                      const dateValue = sobrietyDate.includes('-') ? sobrietyDate : new Date(sobrietyDate).toISOString().split('T')[0];
                       const updates = {
-                        sobrietyDate: sobrietyDate
+                        sobrietyDate: dateValue
                       };
                       // Save the sobriety date without redirecting to dashboard
                       onUpdate(updates, { redirectToDashboard: false });
@@ -734,20 +735,36 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
             <Typography variant="h6" sx={{ color: 'text.primary' }}>
               Personal Information
             </Typography>
-            <IconButton 
-              onClick={() => setEditingPersonalInfo(!editingPersonalInfo)}
-              size="small"
-              aria-label={editingPersonalInfo ? "Cancel editing" : "Edit personal information"}
-              sx={{ 
-                color: 'text.secondary',
-                '&:hover': {
-                  color: 'primary.main',
-                  backgroundColor: 'transparent'
-                }
-              }}
-            >
-              <i className={`fas ${editingPersonalInfo ? "fa-times" : "fa-edit"}`} style={{ fontSize: '0.85rem' }}></i>
-            </IconButton>
+            <Box sx={{ display: 'flex', gap: 1 }}>
+              <IconButton 
+                onClick={handleShareContact}
+                size="small"
+                aria-label="Share contact information"
+                sx={{ 
+                  color: 'text.secondary',
+                  '&:hover': {
+                    color: 'primary.main',
+                    backgroundColor: 'transparent'
+                  }
+                }}
+              >
+                <i className="fas fa-share" style={{ fontSize: '0.85rem' }}></i>
+              </IconButton>
+              <IconButton 
+                onClick={() => setEditingPersonalInfo(!editingPersonalInfo)}
+                size="small"
+                aria-label={editingPersonalInfo ? "Cancel editing" : "Edit personal information"}
+                sx={{ 
+                  color: 'text.secondary',
+                  '&:hover': {
+                    color: 'primary.main',
+                    backgroundColor: 'transparent'
+                  }
+                }}
+              >
+                <i className={`fas ${editingPersonalInfo ? "fa-times" : "fa-edit"}`} style={{ fontSize: '0.85rem' }}></i>
+              </IconButton>
+            </Box>
           </Box>
         </Box>
         
@@ -1013,6 +1030,14 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
           </Button>
         </Box>
       </Paper>
+
+      {/* QR Code Generator for Contact Sharing */}
+      <QRCodeGenerator
+        open={qrCodeOpen}
+        data={qrCodeData}
+        title={qrCodeTitle}
+        onClose={() => setQrCodeOpen(false)}
+      />
     </Box>
   );
 }

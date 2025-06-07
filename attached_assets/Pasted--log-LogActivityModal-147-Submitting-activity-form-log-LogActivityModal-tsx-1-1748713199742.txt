@@ -1,0 +1,62 @@
+⚡️  [log] - [LogActivityModal:147] Submitting activity form...
+⚡️  [log] - [ LogActivityModal.tsx:179 handleSubmit ] Created activity with ISO date: 2025-05-31T16:00:00.000Z
+⚡️  [log] - [ LogActivityModal.tsx:180 handleSubmit ] Original date input: 2025-05-31
+⚡️  [log] - [ App.tsx:73 handleSaveActivity ] Received activity data: {
+  "type": "prayer",
+  "duration": 15,
+  "date": "2025-05-31T16:00:00.000Z",
+  "notes": "",
+  "location": "completed"
+}
+⚡️  [log] - [ App.tsx:74 handleSaveActivity ] Current user state: {"id":1,"name":null,"lastName":null,"phoneNumber":null,"email":null,"sobrietyDate":"1986-05-15","homeGroups":null,"privacySettings":null,"preferences":null,"sponsor_name":null,"sponsor_lastName":null,"sponsor_phone":null,"sponsor_email":null,"sponsor_sobrietyDate":null,"sponsor_notes":null,"messagingKeys":null,"profileImageUri":null,"language":null,"dateFormat":null,"timeFormat":null,"distanceUnit":null,"themePreference":null,"notificationSettings":null,"locationPermission":null,"contactPermission":null,"createdAt":null,"updatedAt":"2025-05-31T13:12:50.602Z"}
+⚡️  [log] - [ App.tsx:83 handleSaveActivity ] Calling addActivity with: {
+  "type": "prayer",
+  "date": "2025-05-31T16:00:00.000Z",
+  "notes": "",
+  "duration": 15,
+  "location": "completed"
+}
+⚡️  [log] - [ AppDataContext.tsx:300 addActivity ] Received activity data: {
+  "type": "prayer",
+  "date": "2025-05-31T16:00:00.000Z",
+  "notes": "",
+  "duration": 15,
+  "location": "completed"
+}
+⚡️  [log] - [ AppDataContext.tsx:301 addActivity ] Calling databaseService.addActivity...
+⚡️  [log] - [ DatabaseService.ts:261 addActivity ] Received activity: {
+  "type": "prayer",
+  "date": "2025-05-31T16:00:00.000Z",
+  "notes": "",
+  "duration": 15,
+  "location": "completed"
+}
+⚡️  [log] - [ DatabaseService.ts:262 addActivity ] Calling this.database.add...
+⚡️  [log] - [ sqliteLoader.js:711 ] Original item received for save: {
+  "type": "prayer",
+  "date": "2025-05-31T16:00:00.000Z",
+  "notes": "",
+  "duration": 15,
+  "location": "completed"
+}
+⚡️  [log] - [ sqliteLoader.js:722 ] Item without ID: {
+  "type": "prayer",
+  "date": "2025-05-31T16:00:00.000Z",
+  "notes": "",
+  "duration": 15,
+  "location": "completed"
+}
+⚡️  [log] - [ sqliteLoader.js:743 ]  Final item for database: {
+  "type": "prayer",
+  "date": "2025-05-31T16:00:00.000Z",
+  "notes": "",
+  "duration": 15,
+  "location": "completed",
+  "createdAt": "2025-05-31T17:36:31.280Z",
+  "updatedAt": "2025-05-31T17:36:31.280Z"
+}
+⚡️  [log] - [ sqliteLoader.js:744 ]  Date field specifically: 2025-05-31T16:00:00.000Z
+⚡️  [log] - [ sqliteLoader.js:745 ]  Date field type: string
+⚡️  [log] - [ sqliteLoader.js:752 ]  SQL keys: ["type","date","notes","duration","location","createdAt","updatedAt"]
+⚡️  [log] - [ sqliteLoader.js:753 ]  SQL values: ["prayer","2025-05-31T16:00:00.000Z","",15,"completed","2025-05-31T17:36:31.280Z","2025-05-31T17:36:31.280Z"]
+⚡️  To Native ->  ⚡️  [log] - [ sqliteLoader.js:757 ]  Executing SQL: INSERT INTO activities (type, date, notes, duration, location, createdAt, updatedAt) VALUES (?, ?, ?, ?, ?, ?, ?)

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import logoImg from '../assets/logo-small.png';
 import { formatDateForDisplay } from '../utils/dateUtils';
 import { useTheme } from '@mui/material/styles';
@@ -8,6 +8,7 @@ import LogActivityModal from './LogActivityModal';
 import { useAppTheme } from '../contexts/MuiThemeProvider';
 import { Paper, Box, Typography, IconButton, Button } from '@mui/material';
 import { User, Activity, Meeting } from '../types/database';
+import { calculateSpiritualFitnessScore, getSpiritualFitnessBreakdown } from '../utils/SpiritualFitness'
 
 interface DashboardProps {
   setCurrentView: (view: string) => void;
@@ -18,9 +19,11 @@ interface DashboardProps {
   onSaveMeeting: (meeting: Omit<Meeting, 'id' | 'createdAt' | 'updatedAt'>) => void;
   onTimeframeChange: (timeframe: number) => void;
   currentTimeframe: number;
+  onUpdateActionItem?: (actionItemId: string, status: 'completed' | 'deleted') => void;
+  onNavigateToSponsorContact?: (contactId: string) => void;
 }
 
-export default function Dashboard({ setCurrentView, user, activities, meetings = [], onSave, onSaveMeeting, onTimeframeChange, currentTimeframe }: DashboardProps) {
+export default function Dashboard({ setCurrentView, user, activities, meetings = [], onSave, onSaveMeeting, onTimeframeChange, currentTimeframe, onUpdateActionItem, onNavigateToSponsorContact }: DashboardProps) {
   // Get theme from MUI theme provider
   const { mode } = useAppTheme();
   const darkMode = mode === 'dark';
@@ -43,6 +46,10 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
   
   // Log current score state
   console.log('[ Dashboard.js ] Dashboard currentScore state:', currentScore);
+
+  // log current time frame
+  console.log('[ Dashboard.js ] Dashboard currentTimeframe:', currentTimeframe);
+  console.log('[ Dashboard.js ] Dashboard scoreTimeframe:', scoreTimeframe);
   
   // Format score to 2 decimal places for display
   const formattedScore: string = currentScore > 0 ? currentScore.toFixed(2) : '0.00';
@@ -60,242 +67,18 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
   };
   
   // Calculate progress percentage, capped at 100%
-  const progressPercent = Math.min(currentScore, 100);
+   const progressPercent = Math.min(currentScore, 100);
   console.log('[ Dashboard.js ] Dashboard progressPercent:', progressPercent);
   
   // Effect to calculate spiritual fitness when activities change
   useEffect(() => {
     console.log('[ Dashboard.js ] Dashboard useEffect [activities] triggered - calculating spiritual fitness');
-    calculateSpiritualFitnessScore();
-  }, [activities]);
-  
-  // Effect to recalculate score when timeframe changes
-  useEffect(() => {
-    console.log('[ Dashboard.js ] Dashboard useEffect [scoreTimeframe] triggered with timeframe:', scoreTimeframe);
-    calculateSpiritualFitnessScore();
-  }, [scoreTimeframe]);
-  
-  // Function to calculate spiritual fitness score using activities from props
-  function calculateSpiritualFitnessScore() {
-    console.log('[ Dashboard.tsx:94 calculateSpiritualFitnessScore ] Called with activities:', activities.length);
-    console.log('[ Dashboard.tsx:95 calculateSpiritualFitnessScore ] Sample activities:', activities.slice(0, 3).map(a => ({ type: a.type, date: a.date })));
-    console.log('[ Dashboard.tsx:96 calculateSpiritualFitnessScore ] Timeframe:', scoreTimeframe);
-    
-    // Calculate score using activities passed from App component
-    const score = calculateFitnessFromActivities(activities, scoreTimeframe);
-    console.log('[ Dashboard.tsx:100 calculateSpiritualFitnessScore ] Calculated score:', score);
-    
-    setSpiritualFitness(score);
-    setCurrentScore(score);
-  }
-
-  // Calculate spiritual fitness from activities array (no database queries)
-  function calculateFitnessFromActivities(allActivities: Activity[], timeframeDays: number): number {
-    console.log('[ Dashboard.tsx:108 calculateFitnessFromActivities ] Starting calculation with', allActivities.length, 'activities, timeframe:', timeframeDays);
-    
-    // Base score
-    const baseScore = 5;
-    
-    // Filter activities within the timeframe
-    const now = new Date();
-    const timeframeStart = new Date(now.getTime() - (timeframeDays * 24 * 60 * 60 * 1000));
-    
-    const recentActivities = allActivities.filter(activity => {
-      if (!activity.date) {
-        console.log('[ Dashboard.tsx:118 calculateFitnessFromActivities ] Skipping activity with no date:', activity);
-        return false;
-      }
-      const activityDate = new Date(activity.date);
-      const isRecent = activityDate >= timeframeStart;
-      console.log('[ Dashboard.tsx:123 calculateFitnessFromActivities ] Activity date:', activity.date, 'isRecent:', isRecent);
-      return isRecent;
-    });
-    
-    console.log('[ Dashboard.tsx:127 calculateFitnessFromActivities ] Filtered', recentActivities.length, 'recent activities');
-    
-    if (recentActivities.length === 0) {
-      console.log('[ Dashboard.tsx:130 calculateFitnessFromActivities ] No recent activities, returning base score:', baseScore);
-      return baseScore;
-    }
-    
-    // Calculate weighted activity points with action item scoring
-    const weights = {
-      meeting: 10,
-      prayer: 8,
-      meditation: 8,
-      reading: 6,
-      literature: 6,
-      callSponsor: 5,
-      callSponsee: 4,
-      call: 5,
-      service: 9,
-      stepWork: 10,
-      stepwork: 10,
-      'action-item': 0.5  // Will be adjusted based on status
-    };
-    
-    let totalActivityPoints = 0;
-    const activityDays = new Set();
-    
-    recentActivities.forEach(activity => {
-      // Track unique days
-      const day = new Date(activity.date).toISOString().split('T')[0];
-      activityDays.add(day);
-      
-      // Calculate points for this activity with action item logic
-      let points;
-      if (activity.type === 'action-item') {
-        if (activity.location === 'completed') {
-          points = 0.5; // Completed action items add points
-        } else if (activity.location === 'deleted') {
-          points = -0.5; // Deleted action items subtract points
-        } else {
-          points = 0; // Pending action items don't count
-        }
-      } else {
-        points = weights[activity.type] || 2;
-      }
-      totalActivityPoints += points;
-    });
-    
-    const activityPoints = Math.min(totalActivityPoints / 4, 40); // Scale down and cap at 40
-    const consistencyPercentage = activityDays.size / timeframeDays;
-    const consistencyPoints = consistencyPercentage * 40; // Up to 40 points
-    
-    // Total score (capped at 100, with decimal precision)
-    const totalScore = Math.min(100, baseScore + activityPoints + consistencyPoints);
-    const preciseScore = Math.round(totalScore * 100) / 100; // Round to 2 decimal places
-    
-    console.log('[ Dashboard.tsx:147 calculateFitnessFromActivities ] Calculation result:');
-    console.log('[ Dashboard.tsx:148 calculateFitnessFromActivities ] - Base score:', baseScore);
-    console.log('[ Dashboard.tsx:149 calculateFitnessFromActivities ] - Activity points:', activityPoints, '(from', recentActivities.length, 'activities)');
-    console.log('[ Dashboard.tsx:150 calculateFitnessFromActivities ] - Consistency points:', consistencyPoints, '(from', activityDays.size, 'unique days)');
-    console.log('[ Dashboard.tsx:151 calculateFitnessFromActivities ] - Total score:', preciseScore);
-    
-    return preciseScore;
-  }
-  
-  // Fallback calculation function using activities data
-  function calculateFallbackFitness() {
-    console.log('[ Dashboard.js ] Using fallback fitness calculation');
-    
-    if (!activities || activities.length === 0) {
-      console.log('[ Dashboard.js ] No activities for fallback calculation');
-      return 5;
-    }
-    
-    // Define weights for activity types (matching the working calculation)
-    const weights = {
-      meeting: 10,
-      prayer: 8,
-      meditation: 8,
-      reading: 6,
-      literature: 6,
-      callSponsor: 5,
-      callSponsee: 4,
-      call: 5,
-      service: 9,
-      stepWork: 10,
-      stepwork: 10,
-      'action-item': 0.5  // Completed action items
-    };
-    
-    const now = new Date();
-    const daysAgo = new Date();
-    daysAgo.setDate(now.getDate() - scoreTimeframe);
-    
-    const recentActivities = activities.filter(activity => {
-      const activityDate = new Date(activity.date);
-      return activityDate >= daysAgo && activityDate <= now;
-    });
-    
-    console.log('[ Dashboard.js ] Found', recentActivities.length, 'activities in the last', scoreTimeframe, 'days');
-    console.log('[ Dashboard.js ] Sample activity types:', recentActivities.slice(0, 3).map(a => a.type));
-    
-    if (recentActivities.length === 0) {
-      return 5;
-    }
-    
-    // Calculate total points and track activity days
-    let totalPoints = 0;
-    const activityDays = new Set();
-    const breakdown = {};
-    
-    recentActivities.forEach(activity => {
-      // Track unique days
-      if (activity.date) {
-        const dayKey = new Date(activity.date).toISOString().split('T')[0];
-        activityDays.add(dayKey);
-      }
-      
-      // Add points for activity type, with special handling for action items
-      let points;
-      if (activity.type === 'action-item') {
-        if (activity.location === 'completed') {
-          points = 0.5; // Completed action items add points
-        } else if (activity.location === 'deleted') {
-          points = -0.5; // Deleted action items subtract points
-        } else {
-          points = 0; // Pending action items don't count
-        }
-      } else {
-        points = weights[activity.type] || 2;
-      }
-      totalPoints += points;
-      
-      // Track breakdown
-      if (!breakdown[activity.type]) {
-        breakdown[activity.type] = { count: 0, points: 0 };
-      }
-      breakdown[activity.type].count++;
-      breakdown[activity.type].points += points;
-    });
-    
-    const daysWithActivities = activityDays.size;
-    const varietyTypes = Object.keys(breakdown).length;
-    const daysCoveragePercent = (daysWithActivities / scoreTimeframe) * 100;
-    
-    // Calculate score based on timeframe (with decimal precision)
-    let finalScore;
-    if (scoreTimeframe <= 30) {
-      const basePoints = 20;
-      const activityPoints = Math.min(40, totalPoints / 8);
-      const consistencyPoints = Math.min(30, daysCoveragePercent * 1.5);
-      const varietyBonus = Math.min(10, varietyTypes * 2);
-      finalScore = basePoints + activityPoints + consistencyPoints + varietyBonus;
-    } else if (scoreTimeframe <= 90) {
-      const basePoints = 15;
-      const activityPoints = Math.min(35, totalPoints / 12);
-      const consistencyPoints = Math.min(25, daysCoveragePercent * 2.5);
-      const varietyBonus = Math.min(10, varietyTypes * 2);
-      finalScore = basePoints + activityPoints + consistencyPoints + varietyBonus;
-    } else if (scoreTimeframe <= 180) {
-      const basePoints = 10;
-      const activityPoints = Math.min(30, totalPoints / 18);
-      const consistencyPoints = Math.min(20, daysCoveragePercent * 4);
-      const varietyBonus = Math.min(10, varietyTypes * 2);
-      finalScore = basePoints + activityPoints + consistencyPoints + varietyBonus;
-    } else {
-      const basePoints = 5;
-      const activityPoints = Math.min(25, totalPoints / 24);
-      const consistencyPoints = Math.min(15, daysCoveragePercent * 6);
-      const varietyBonus = Math.min(10, varietyTypes * 2);
-      finalScore = basePoints + activityPoints + consistencyPoints + varietyBonus;
-    }
-    
-    finalScore = Math.min(100, Math.round(finalScore * 100) / 100); // Keep 2 decimal places
-    
-    console.log('[ Dashboard.js ] Fallback calculation details:', {
-      totalPoints,
-      daysWithActivities,
-      daysCoveragePercent: daysCoveragePercent.toFixed(1) + '%',
-      varietyTypes,
-      finalScore,
-      breakdown
-    });
-    
-    return finalScore;
-  }
+    const scoreBreak = getSpiritualFitnessBreakdown(activities, scoreTimeframe);
+    console.log('[ Dashboard.js ] Dashboard scoreBreak:', scoreBreak);
+    const newScore: number = calculateSpiritualFitnessScore(activities, scoreTimeframe);
+    console.log('[ Dashboard.js: 71 ] Dashboard newScore:', newScore);
+    setCurrentScore(newScore);
+  }, [activities, scoreTimeframe]);
   
   // Close modal when clicking outside
   useEffect(() => {
@@ -340,17 +123,63 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
     return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   };
 
-  // Calculate sobriety information if user has a sobriety date
-  const sobrietyDays = user?.sobrietyDate 
-    ? window.db?.calculateSobrietyDays(user.sobrietyDate) || 0
-    : 0;
+  // Calculate sobriety information using pure JavaScript (no database calls)
+  // Fixed to handle timezone issues properly
+  const sobrietyDays = useMemo(() => {
+    if (!user?.sobrietyDate) return 0;
+    
+    // Get the date string in YYYY-MM-DD format
+    const dateStr = user.sobrietyDate.includes('T') ? user.sobrietyDate.split('T')[0] : user.sobrietyDate;
+    
+    // Parse date components to avoid timezone issues
+    const [year, month, day] = dateStr.split('-').map(Number);
+    const sobrietyDate = new Date(year, month - 1, day); // month is 0-indexed
+    
+    const today = new Date();
+    const todayDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    
+    const diffTime = todayDate.getTime() - sobrietyDate.getTime();
+    return Math.floor(diffTime / (1000 * 60 * 60 * 24));
+  }, [user?.sobrietyDate]);
   
-  const sobrietyYears = user?.sobrietyDate 
-    ? window.db?.calculateSobrietyYears(user.sobrietyDate, 2) || 0
-    : 0;
+  const sobrietyYears = useMemo(() => {
+    if (!user?.sobrietyDate) return 0;
+    
+    // Get the date string in YYYY-MM-DD format
+    const dateStr = user.sobrietyDate.includes('T') ? user.sobrietyDate.split('T')[0] : user.sobrietyDate;
+    
+    // Parse date components to avoid timezone issues
+    const [year, month, day] = dateStr.split('-').map(Number);
+    const sobrietyDate = new Date(year, month - 1, day); // month is 0-indexed
+    
+    const today = new Date();
+    const todayDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    
+    const diffTime = todayDate.getTime() - sobrietyDate.getTime();
+    const years = diffTime / (1000 * 60 * 60 * 24 * 365.25);
+    return Math.round(years * 100) / 100; // Round to 2 decimal places
+  }, [user?.sobrietyDate]);
 
   // Determine whether to show years or days more prominently
   const showYearsProminent = sobrietyYears >= 1;
+
+  // Handle activity clicks for sponsor contacts and action items
+  const handleActivityClick = (activity: Activity, action: string) => {
+    console.log('Activity clicked:', activity, 'Action:', action);
+    
+    if (activity.type === 'sponsor-contact') {
+      // Navigate to sponsor contact details page
+      if (onNavigateToSponsorContact && (activity as any).contactId) {
+        onNavigateToSponsorContact((activity as any).contactId);
+      }
+    } else if (activity.type === 'action-item') {
+      if (action === 'complete' && onUpdateActionItem) {
+        onUpdateActionItem(String(activity.id), 'completed');
+      } else if (action === 'delete' && onUpdateActionItem) {
+        onUpdateActionItem(String(activity.id), 'deleted');
+      }
+    }
+  };
 
   return (
     <Box sx={{ p: 3, maxWidth: 'md', mx: 'auto' }}>
@@ -712,6 +541,8 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
           maxDaysAgo={activityDaysFilter === 0 ? null : activityDaysFilter}
           filter={activityTypeFilter}
           showDate={true}
+          onActivityClick={handleActivityClick}
+          meetings={meetings}
         />
       </Paper>
       

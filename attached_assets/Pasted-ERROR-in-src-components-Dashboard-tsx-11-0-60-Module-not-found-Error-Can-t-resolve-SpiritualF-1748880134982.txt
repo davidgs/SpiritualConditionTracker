@@ -1,0 +1,39 @@
+ERROR in ./src/components/Dashboard.tsx 11:0-60
+Module not found: Error: Can't resolve './SpiritualFitnessModal' in '/Users/davidgs/github.com/SpiritualConditionTracker/src/components'
+ @ ./src/App.tsx 24:0-47 324:71-80
+ @ ./src/index.tsx 3:0-24 12:49-52
+
+ERROR in ./src/components/LogActivityModal.tsx 15:0-42
+Module not found: Error: Can't resolve './StyledDialog' in '/Users/davidgs/github.com/SpiritualConditionTracker/src/components'
+ @ ./src/components/Dashboard.tsx 12:0-50 558:39-55
+ @ ./src/App.tsx 24:0-47 324:71-80
+ @ ./src/index.tsx 3:0-24 12:49-52
+
+ERROR in ./src/components/Meetings.tsx 17:0-52
+Module not found: Error: Can't resolve './MeetingFormDialog' in '/Users/davidgs/github.com/SpiritualConditionTracker/src/components'
+ @ ./src/App.tsx 27:0-45 335:71-79
+ @ ./src/index.tsx 3:0-24 12:49-52
+
+ERROR in ./src/components/Profile.tsx 22:0-52
+Module not found: Error: Can't resolve './MeetingFormDialog' in '/Users/davidgs/github.com/SpiritualConditionTracker/src/components'
+ @ ./src/App.tsx 28:0-43 341:70-77
+ @ ./src/index.tsx 3:0-24 12:49-52
+
+ERROR in ./src/components/SponsorContactFormPage.tsx 20:0-46
+Module not found: Error: Can't resolve './ActionItemForm' in '/Users/davidgs/github.com/SpiritualConditionTracker/src/components'
+ @ ./src/components/SponsorSponsee.tsx 30:0-62 1260:39-61
+ @ ./src/App.tsx 29:0-57 349:70-84
+ @ ./src/index.tsx 3:0-24 12:49-52
+
+ERROR in ./src/components/SponsorSponsee.tsx 28:0-52
+Module not found: Error: Can't resolve './SponsorFormDialog' in '/Users/davidgs/github.com/SpiritualConditionTracker/src/components'
+ @ ./src/App.tsx 29:0-57 349:70-84
+ @ ./src/index.tsx 3:0-24 12:49-52
+
+ERROR in ./src/components/SponsorSponsee.tsx 29:0-52
+Module not found: Error: Can't resolve './SponseeFormDialog' in '/Users/davidgs/github.com/SpiritualConditionTracker/src/components'
+ @ ./src/App.tsx 29:0-57 349:70-84
+ @ ./src/index.tsx 3:0-24 12:49-52
+
+7 errors have detailed information that is not shown.
+Use 'stats.errorDetails: true' resp. '--stats-error-details' to show it.

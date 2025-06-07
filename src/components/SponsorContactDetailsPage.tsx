@@ -22,8 +22,7 @@ import {
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { formatDateForDisplay } from '../utils/dateUtils';
-// Not using UUIDs for database IDs
-import SponsorContactTodo from './SponsorContactTodo';
+import sponsorDB from '../utils/sponsor-database';
 
 export default function SponsorContactDetailsPage({ 
   contact, 
@@ -38,9 +37,8 @@ export default function SponsorContactDetailsPage({
   const [contactDetails, setContactDetails] = useState(details);
   const [showAddActionForm, setShowAddActionForm] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  const [showAddActionDialog, setShowAddActionDialog] = useState(false);
   
-  // State for edited contact - allows changes without modifying original
+  // State for edited contact
   const [editedContact, setEditedContact] = useState(contact);
   const [isEditing, setIsEditing] = useState(false);
   
@@ -52,9 +50,8 @@ export default function SponsorContactDetailsPage({
     completed: false
   });
   
-  // State for action items - using a ref to avoid infinite loops
+  // State for action items
   const [actionItems, setActionItems] = useState([]);
-  const actionItemsRef = React.useRef([]);
   
   // Update local state when the contact prop changes
   useEffect(() => {
@@ -62,162 +59,28 @@ export default function SponsorContactDetailsPage({
     setEditedContact(contact);
   }, [contact]);
   
-  // Native iOS - Load action items when contact changes
+  // Load action items when contact changes
   useEffect(() => {
     if (!contact || !contact.id) return;
     
-    // Set contact details from props
     setContactDetails(details);
     
-    // For native iOS environment - use SQLite via Capacitor
-    // This will load action items directly from the database using a direct SQL approach
-    async function loadActionItemsFromDatabase() {
+    async function loadActionItems() {
       try {
-        console.log(`[SponsorContactDetailsPage.js - loadActionItemsFromDatabase: 64] Loading action items for contact ID: ${contact.id}`);
+        console.log(`[SponsorContactDetailsPage] Loading action items for contact ID: ${contact.id}`);
         
-        // Use direct SQLite access to avoid any wrapper issues
-        const getSQLite = () => {
-          if (!window.Capacitor?.Plugins?.CapacitorSQLite) {
-            throw new Error('CapacitorSQLite plugin not available');
-          }
-          return window.Capacitor.Plugins.CapacitorSQLite;
-        };
+        // Load action items from the action_items table, not contact_details
+        const actionItemsList = await sponsorDB.getActionItemsByContactId(contact.id);
+        console.log(`[SponsorContactDetailsPage] Found ${actionItemsList.length} action items for contact`);
         
-        const sqlite = getSQLite();
-        const DB_NAME = 'spiritualTracker.db';
-        
-        // Ensure tables exist
-        console.log(`[SponsorContactDetailsPage.js - loadActionItemsFromDatabase: 76] Ensuring tables exist`);
-        await sqlite.execute({
-          database: DB_NAME,
-          statements: `
-            CREATE TABLE IF NOT EXISTS action_items (
-              id INTEGER PRIMARY KEY AUTOINCREMENT,
-              title TEXT DEFAULT '',
-              text TEXT DEFAULT '',
-              notes TEXT DEFAULT '',
-              dueDate TEXT DEFAULT NULL,
-              completed INTEGER DEFAULT 0,
-              type TEXT DEFAULT 'todo',
-              createdAt TEXT,
-              updatedAt TEXT
-            )
-          `
-        });
-        
-        await sqlite.execute({
-          database: DB_NAME,
-          statements: `
-            CREATE TABLE IF NOT EXISTS sponsor_contact_action_items (
-              id INTEGER PRIMARY KEY AUTOINCREMENT,
-              contactId INTEGER,
-              actionItemId INTEGER,
-              createdAt TEXT,
-              FOREIGN KEY (contactId) REFERENCES sponsor_contacts(id),
-              FOREIGN KEY (actionItemId) REFERENCES action_items(id)
-            )
-          `
-        });
-        
-        // Direct SQL query to get action items
-        console.log(`[SponsorContactDetailsPage.js - loadActionItemsFromDatabase: 103] Executing SQL query for contact's action items`);
-        const sqlQuery = `
-          SELECT ai.* 
-          FROM action_items ai
-          JOIN sponsor_contact_action_items scai ON ai.id = scai.actionItemId
-          WHERE scai.contactId = ${contact.id}
-          ORDER BY ai.createdAt DESC
-        `;
-        
-        console.log(`[SponsorContactDetailsPage.js - loadActionItemsFromDatabase: 111] SQL: ${sqlQuery}`);
-        
-        const result = await sqlite.query({
-          database: DB_NAME,
-          statement: sqlQuery,
-          values: []
-        });
-        
-        console.log(`[SponsorContactDetailsPage.js - loadActionItemsFromDatabase: 118] Query result:`, JSON.stringify(result));
-        
-        let actionItemsFound = [];
-        
-        // Process the result based on the format
-        if (result.values && result.values.length > 0) {
-          if (result.values[0].ios_columns) {
-            // iOS format - skip the first item with column info
-            if (result.values.length > 1) {
-              actionItemsFound = result.values.slice(1);
-              console.log(`[SponsorContactDetailsPage.js - loadActionItemsFromDatabase: 128] Found ${actionItemsFound.length} action items (iOS format)`);
-              
-              // Log each item
-              actionItemsFound.forEach((item, index) => {
-                console.log(`[SponsorContactDetailsPage.js - loadActionItemsFromDatabase: 132] Item ${index}: ID=${item.id}, Title=${item.title}, Completed=${item.completed}`);
-              });
-            } else {
-              console.log(`[SponsorContactDetailsPage.js - loadActionItemsFromDatabase: 135] No action items found (iOS format with only column info)`);
-            }
-          } else {
-            // Standard format
-            actionItemsFound = result.values;
-            console.log(`[SponsorContactDetailsPage.js - loadActionItemsFromDatabase: 140] Found ${actionItemsFound.length} action items (standard format)`);
-            
-            // Log each item
-            actionItemsFound.forEach((item, index) => {
-              console.log(`[SponsorContactDetailsPage.js - loadActionItemsFromDatabase: 144] Item ${index}: ID=${item.id}, Title=${item.title}, Completed=${item.completed}`);
-            });
-          }
-          
-          // Set the found items to state
-          setActionItems(actionItemsFound);
-          actionItemsRef.current = actionItemsFound;
-        } else {
-          console.log(`[SponsorContactDetailsPage.js - loadActionItemsFromDatabase: 152] No action items found in database for contact: ${contact.id}`);
-          
-          // Check the join table directly to debug
-          console.log(`[SponsorContactDetailsPage.js - loadActionItemsFromDatabase: 155] Checking join table entries`);
-          const joinQuery = `
-            SELECT * FROM sponsor_contact_action_items 
-            WHERE contactId = ${contact.id}
-          `;
-          
-          const joinResult = await sqlite.query({
-            database: DB_NAME,
-            statement: joinQuery,
-            values: []
-          });
-          
-          console.log(`[SponsorContactDetailsPage.js - loadActionItemsFromDatabase: 165] Join table result:`, JSON.stringify(joinResult));
-          
-          // Still show any todo items from contact details for backward compatibility
-          const todoItems = details.filter(item => item.type === 'todo');
-          if (todoItems.length > 0) {
-            console.log(`[SponsorContactDetailsPage.js - loadActionItemsFromDatabase: 170] Found ${todoItems.length} legacy todo items`);
-            
-            // Log each legacy item for debugging
-            todoItems.forEach((item, index) => {
-              console.log(`[SponsorContactDetailsPage.js - loadActionItemsFromDatabase: 174] Legacy item ${index}: ID=${item.id}, Text=${item.text || item.actionItem}, Completed=${item.completed}`);
-            });
-            
-            setActionItems(todoItems);
-            actionItemsRef.current = todoItems;
-          } else {
-            // Initialize with empty array
-            console.log(`[SponsorContactDetailsPage.js - loadActionItemsFromDatabase: 181] No legacy items found, initializing with empty array`);
-            setActionItems([]);
-            actionItemsRef.current = [];
-          }
-        }
+        setActionItems(actionItemsList);
       } catch (error) {
-        console.error('[SponsorContactDetailsPage.js - loadActionItemsFromDatabase: 186] Error loading action items:', error);
+        console.error('[SponsorContactDetailsPage] Error loading action items:', error);
+        setActionItems([]);
       }
     }
     
-    // Execute the function to load action items
-    loadActionItemsFromDatabase();
-    
-    // Add a debug message when this effect runs
-    console.log(`[SponsorContactDetailsPage.js - useEffect: 105] Action items loading effect triggered for contact ID: ${contact.id}`);
-    
+    loadActionItems();
   }, [contact, details]);
   
   // Handle form changes for new action item
@@ -229,469 +92,88 @@ export default function SponsorContactDetailsPage({
     }));
   };
   
-  // Add new action directly from the form
-  const handleAddActionFromForm = () => {
-    // In SQLite, the ID will be generated automatically with AUTOINCREMENT
-    // We'll use a temporary negative ID for the UI state only
-    const tempId = -Math.floor(Math.random() * 10000) - 1;
-    
-    // Format the action item for our new action_items table
-    const actionItem = {
-      title: newAction.actionItem,
-      text: newAction.actionItem,
-      notes: newAction.notes || '',
-      dueDate: newAction.dueDate || null,
-      completed: newAction.completed ? 1 : 0,
-      type: 'todo',
-      id: tempId // Temporary ID for UI state
-    };
-    
-    // Add to local state for immediate UI update
-    setActionItems(prev => [actionItem, ...prev]);
-    
-    // Use async IIFE to handle the database operation
-    (async () => {
-      try {
-        // Import is done inside to avoid circular dependencies
-        const sponsorDB = await import('../utils/sponsor-database');
-        
-        // Save to database using the new addActionItem function
-        const savedItem = await sponsorDB.addActionItem(actionItem, contact.id);
-        console.log('Action item saved with ID:', savedItem.id);
-        
-        // Update the local state with the real ID
-        setActionItems(prev => 
-          prev.map(item => 
-            item.id === tempId ? { ...item, id: savedItem.id } : item
-          )
-        );
-      } catch (error) {
-        console.error('Error saving action item:', error);
-      }
-    })();
-    
-    // Reset form and hide it
-    setNewAction({
-      actionItem: '',
-      notes: '',
-      dueDate: '',
-      completed: false
-    });
-    setShowAddActionForm(false);
-    setShowAddActionDialog(false);
+  // Add new action item
+  const handleAddAction = async () => {
+    try {
+      const actionData = {
+        contactId: contact.id,
+        actionItem: newAction.actionItem,
+        text: newAction.actionItem, // Required field - use same value as actionItem
+        notes: newAction.notes || '',
+        dueDate: newAction.dueDate || null,
+        completed: newAction.completed ? 1 : 0,
+        type: 'todo'
+      };
+      
+      console.log('[SponsorContactDetailsPage] Adding new contact detail:', actionData);
+      
+      const savedDetail = await sponsorDB.addContactDetail(actionData);
+      
+      // Update local state
+      setActionItems(prev => [savedDetail, ...prev]);
+      
+      // Reset form
+      setNewAction({
+        actionItem: '',
+        notes: '',
+        dueDate: '',
+        completed: false
+      });
+      setShowAddActionForm(false);
+      
+    } catch (error) {
+      console.error('[SponsorContactDetailsPage] Error adding action item:', error);
+    }
   };
   
   // Toggle action item completion
-  const handleToggleComplete = (id) => {
-    const updatedDetails = contactDetails.map(detail => {
-      if (detail.id === id) {
-        const updatedDetail = {
-          ...detail,
-          completed: detail.completed ? 0 : 1 // Toggle between 0 and 1
-        };
-        // Update in database
-        onSaveDetails(updatedDetail);
-        return updatedDetail;
-      }
-      return detail;
-    });
-    
-    setContactDetails(updatedDetails);
-  };
-  
-  // Native iOS implementation for adding action items
-  const handleAddActionItem = async (todoItem) => {
-    console.log("**********************************************************");
-    console.log("***** SPONSOR CONTACT DETAILS - HANDLE ADD ACTION ITEM ****");
-    console.log("**********************************************************");
-    console.log("todoItem received:", todoItem);
-    console.log("contact:", contact);
-    console.log("Capacitor SQLite available:", !!window.Capacitor?.Plugins?.CapacitorSQLite);
-    console.log("Database initialized:", !!window.dbInitialized);
-    
-    // Generate a temporary ID for immediate UI update
-    const tempId = -Math.floor(Math.random() * 10000) - 1;
-    
-    // Prepare the action item object for SQLite storage
-    const newItem = {
-      id: tempId,
-      title: todoItem.title || todoItem.text || '',
-      text: todoItem.text || todoItem.title || '',
-      notes: todoItem.notes || '',
-      dueDate: todoItem.dueDate || null,
-      completed: 0,
-      type: 'todo',
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    };
-    
-    console.log(`[SponsorContactDetailsPage - handleAddActionItem] Adding action item for contact ID: ${contact?.id}`);
-    console.log("New item object:", newItem);
-    
-    // Update UI immediately for responsiveness
-    const updatedItems = [newItem, ...actionItemsRef.current];
-    actionItemsRef.current = updatedItems;
-    setActionItems(updatedItems);
-    
-    if (contact?.id) {
-      try {
-        // DIRECT DATABASE INITIALIZATION
-        // We're bypassing the normal initialization to ensure we can save action items
-        if (!window.dbInitialized && window.Capacitor?.Plugins?.CapacitorSQLite) {
-          console.log("**********************************************************");
-          console.log("************* DIRECTLY INITIALIZING DATABASE *************");
-          console.log("**********************************************************");
-          
-          // Set the initialization flag to true
-          window.dbInitialized = true;
-          
-          console.log("Database initialized flag set to true");
-        }
-        
-        // Use a direct import of the SQLite instance to ensure we bypass any wrapper issues
-        const getSQLite = () => {
-          if (!window.Capacitor?.Plugins?.CapacitorSQLite) {
-            throw new Error('CapacitorSQLite plugin not available');
-          }
-          return window.Capacitor.Plugins.CapacitorSQLite;
-        };
-        
-        // First, make sure the table exists
-        console.log(`[SponsorContactDetailsPage.js - handleAddActionItem: 227] Ensuring action_items table exists`);
-        const sqlite = getSQLite();
-        
-        // Database name must match what's used elsewhere
-        const DB_NAME = 'spiritualTracker.db';
-        
-        // Create the table if it doesn't exist
-        await sqlite.execute({
-          database: DB_NAME,
-          statements: `
-            CREATE TABLE IF NOT EXISTS action_items (
-              id INTEGER PRIMARY KEY AUTOINCREMENT,
-              title TEXT DEFAULT '',
-              text TEXT DEFAULT '',
-              notes TEXT DEFAULT '',
-              dueDate TEXT DEFAULT NULL,
-              completed INTEGER DEFAULT 0,
-              type TEXT DEFAULT 'todo',
-              createdAt TEXT,
-              updatedAt TEXT
-            )
-          `
-        });
-        
-        console.log(`[SponsorContactDetailsPage.js - handleAddActionItem: 247] Creating join table if not exists`);
-        await sqlite.execute({
-          database: DB_NAME,
-          statements: `
-            CREATE TABLE IF NOT EXISTS sponsor_contact_action_items (
-              id INTEGER PRIMARY KEY AUTOINCREMENT,
-              contactId INTEGER,
-              actionItemId INTEGER,
-              createdAt TEXT,
-              FOREIGN KEY (contactId) REFERENCES sponsor_contacts(id),
-              FOREIGN KEY (actionItemId) REFERENCES action_items(id)
-            )
-          `
-        });
-        
-        // Initialize database (needed for the simulator)
-        try {
-          // iOS simulator needs explicit database connection
-          console.log(`**********************************************************`);
-          console.log(`*********** INITIALIZING DATABASE CONNECTION *************`);
-          console.log(`**********************************************************`);
-
-          // Explicitly connect to the database
-          await sqlite.createConnection({
-            database: DB_NAME,
-            encrypted: false
-          });
-          console.log("Database connection created successfully");
-          
-          await sqlite.open({
-            database: DB_NAME
-          });
-          console.log("Database opened successfully");
-        } catch (dbError) {
-          console.error("Error initializing database:", dbError);
-        }
-        
-        // Create tables explicitly 
-        console.log(`**********************************************************`);
-        console.log(`************** CREATING DATABASE TABLES ******************`);
-        console.log(`**********************************************************`);
-        
-        // Try to create action_items table
-        try {
-          const createActionItemsTable = `
-            CREATE TABLE IF NOT EXISTS action_items (
-              id INTEGER PRIMARY KEY AUTOINCREMENT,
-              title TEXT DEFAULT '',
-              text TEXT DEFAULT '',
-              notes TEXT DEFAULT '',
-              dueDate TEXT DEFAULT NULL,
-              completed INTEGER DEFAULT 0,
-              type TEXT DEFAULT 'todo',
-              createdAt TEXT,
-              updatedAt TEXT
-            )
-          `;
-          
-          console.log("Creating action_items table with SQL:", createActionItemsTable);
-          
-          await sqlite.execute({
-            database: DB_NAME,
-            statements: createActionItemsTable
-          });
-          
-          console.log("Action items table created successfully");
-        } catch (tableError) {
-          console.error("Error creating action_items table:", tableError);
-        }
-        
-        // Try to create join table
-        try {
-          const createJoinTable = `
-            CREATE TABLE IF NOT EXISTS sponsor_contact_action_items (
-              id INTEGER PRIMARY KEY AUTOINCREMENT,
-              contactId INTEGER,
-              actionItemId INTEGER,
-              createdAt TEXT,
-              FOREIGN KEY (contactId) REFERENCES sponsor_contacts(id),
-              FOREIGN KEY (actionItemId) REFERENCES action_items(id)
-            )
-          `;
-          
-          console.log("Creating join table with SQL:", createJoinTable);
-          
-          await sqlite.execute({
-            database: DB_NAME,
-            statements: createJoinTable
-          });
-          
-          console.log("Join table created successfully");
-        } catch (joinTableError) {
-          console.error("Error creating join table:", joinTableError);
-        }
-        
-        // Directly insert the action item using SQL
-        console.log(`**********************************************************`);
-        console.log(`************* INSERTING INTO ACTION_ITEMS TABLE ***********`);
-        console.log(`**********************************************************`);
-        
-        const insertSQL = `
-          INSERT INTO action_items 
-          (title, text, notes, dueDate, completed, type, createdAt, updatedAt) 
-          VALUES 
-          ('${newItem.title.replace(/'/g, "''")}', 
-           '${newItem.text.replace(/'/g, "''")}', 
-           '${newItem.notes.replace(/'/g, "''")}', 
-           ${newItem.dueDate ? `'${newItem.dueDate}'` : 'NULL'}, 
-           ${newItem.completed}, 
-           '${newItem.type}',
-           '${newItem.createdAt}',
-           '${newItem.updatedAt}')
-        `;
-        
-        console.log(`ABOUT TO EXECUTE SQL: ${insertSQL}`);
-        
-        // Execute the direct SQL insertion with try/catch
-        try {
-          const insertResult = await sqlite.execute({
-            database: DB_NAME,
-            statements: insertSQL
-          });
-          
-          console.log(`**********************************************************`);
-          console.log(`************* ACTION ITEM SAVED SUCCESSFULLY *************`);
-          console.log(`**********************************************************`);
-          console.log(`INSERT RESULT:`, JSON.stringify(insertResult));
-        } catch (insertError) {
-          console.error("ERROR INSERTING ACTION ITEM:", insertError);
-        }
-        
-        // Get the ID of the inserted record
-        const idResult = await sqlite.query({
-          database: DB_NAME,
-          statement: 'SELECT last_insert_rowid() as id',
-          values: []
-        });
-        
-        console.log(`[SponsorContactDetailsPage.js - handleAddActionItem: 291] ID query result:`, JSON.stringify(idResult));
-        
-        let newId = null;
-        if (idResult.values && idResult.values.length > 0) {
-          if (idResult.values[0].ios_columns) {
-            // iOS format
-            newId = idResult.values[1]?.id;
-          } else {
-            // Standard format
-            newId = idResult.values[0]?.id;
-          }
-        }
-        
-        console.log(`[SponsorContactDetailsPage.js - handleAddActionItem: 303] Extracted ID: ${newId}`);
-        
-        // Create a savedItem object with the new ID
-        const savedItem = { ...newItem, id: newId };
-        
-        if (newId) {
-          console.log(`[SponsorContactDetailsPage.js - handleAddActionItem: 309] Action item saved with ID: ${newId}`);
-          
-          // Create the association directly in the join table
-          console.log(`**********************************************************`);
-          console.log(`************* CREATING JOIN TABLE ENTRY *******************`);
-          console.log(`**********************************************************`);
-          console.log(`Contact ID: ${contact.id}, Action Item ID: ${newId}`);
-          
-          const now = new Date().toISOString();
-          const joinSQL = `
-            INSERT INTO sponsor_contact_action_items
-            (contactId, actionItemId, createdAt)
-            VALUES
-            (${contact.id}, ${newId}, '${now}')
-          `;
-          
-          console.log(`JOIN SQL: ${joinSQL}`);
-          
-          try {
-            const joinResult = await sqlite.execute({
-              database: DB_NAME,
-              statements: joinSQL
-            });
-            
-            console.log(`**********************************************************`);
-            console.log(`************* JOIN ENTRY CREATED SUCCESSFULLY *************`);
-            console.log(`**********************************************************`);
-            console.log(`Join result:`, JSON.stringify(joinResult));
-            
-            // Verify the join table entry was created
-            const verifyJoinSQL = `
-              SELECT * FROM sponsor_contact_action_items 
-              WHERE contactId = ${contact.id} AND actionItemId = ${newId}
-            `;
-            
-            const verifyResult = await sqlite.query({
-              database: DB_NAME,
-              statement: verifyJoinSQL,
-              values: []
-            });
-            
-            console.log(`Join verification result:`, JSON.stringify(verifyResult));
-          } catch (joinError) {
-            console.error(`ERROR CREATING JOIN TABLE ENTRY:`, joinError);
-          }
-          
-          // Update local state with real database ID
-          const itemsWithRealId = actionItems.map(item => 
-            item.id === tempId ? { ...savedItem } : item
+  const handleToggleComplete = async (actionItem) => {
+    try {
+      console.log('[SponsorContactDetailsPage] Toggling completion for action item:', actionItem);
+      
+      const updatedItem = {
+        ...actionItem,
+        completed: actionItem.completed ? 0 : 1
+      };
+      
+      console.log('[SponsorContactDetailsPage] Updated item data:', updatedItem);
+      
+      const result = await sponsorDB.updateContactDetail(updatedItem);
+      console.log('[SponsorContactDetailsPage] Update result:', result);
+      
+      if (result) {
+        setActionItems(prev => {
+          const prevArray = Array.isArray(prev) ? prev : [];
+          const updated = prevArray.map(item => 
+            item && item.id === actionItem.id ? updatedItem : item
           );
-          setActionItems(itemsWithRealId);
-          actionItemsRef.current = itemsWithRealId;
-          
-          // Verify the items are now associated with the contact
-          console.log(`[SponsorContactDetailsPage.js - handleAddActionItem: 335] Verifying items are associated with contact`);
-          const verifySQL = `
-            SELECT ai.*
-            FROM action_items ai
-            JOIN sponsor_contact_action_items scai ON ai.id = scai.actionItemId
-            WHERE scai.contactId = ${contact.id}
-          `;
-          
-          const verifyResult = await sqlite.query({
-            database: DB_NAME,
-            statement: verifySQL,
-            values: []
-          });
-          
-          console.log(`[SponsorContactDetailsPage.js - handleAddActionItem: 347] Verification result:`, JSON.stringify(verifyResult));
-          
-          // Log each found item
-          if (verifyResult.values && verifyResult.values.length > 0) {
-            if (verifyResult.values[0].ios_columns) {
-              // iOS format
-              console.log(`[SponsorContactDetailsPage.js - handleAddActionItem: 353] Found ${verifyResult.values.length - 1} action items for contact ${contact.id}`);
-              for (let i = 1; i < verifyResult.values.length; i++) {
-                console.log(`[SponsorContactDetailsPage.js - handleAddActionItem: 355] Item ${i}: ID=${verifyResult.values[i].id}, Title=${verifyResult.values[i].title}`);
-              }
-            } else {
-              // Standard format
-              console.log(`[SponsorContactDetailsPage.js - handleAddActionItem: 359] Found ${verifyResult.values.length} action items for contact ${contact.id}`);
-              verifyResult.values.forEach((item, index) => {
-                console.log(`[SponsorContactDetailsPage.js - handleAddActionItem: 361] Item ${index}: ID=${item.id}, Title=${item.title}`);
-              });
-            }
-          } else {
-            console.log(`[SponsorContactDetailsPage.js - handleAddActionItem: 365] No action items found for contact ${contact.id} after saving`);
-          }
-        }
-      } catch (error) {
-        console.error(`[SponsorContactDetailsPage - handleAddActionItem] Error saving to SQLite:`, error);
+          console.log('[SponsorContactDetailsPage] Updated action items list:', updated);
+          return updated;
+        });
       }
+    } catch (error) {
+      console.error('[SponsorContactDetailsPage] Error toggling completion:', error);
     }
   };
   
-  // Toggle action item completion - Native iOS implementation
-  const handleToggleActionItem = async (actionItemId) => {
-    // Update UI immediately for responsiveness
-    setActionItems(prev => prev.map(item => 
-      item.id === actionItemId 
-        ? {...item, completed: item.completed === 1 ? 0 : 1}
-        : item
-    ));
-    
-    // Also update the ref to keep state consistent
-    actionItemsRef.current = actionItemsRef.current.map(item => 
-      item.id === actionItemId 
-        ? {...item, completed: item.completed === 1 ? 0 : 1}
-        : item
-    );
-    
-    // Update in SQLite database
+  // Delete action item
+  const handleDeleteAction = async (actionItemId) => {
     try {
-      console.log(`[SponsorContactDetailsPage - handleToggleActionItem] Toggling action item ${actionItemId} in database`);
-      const { toggleActionItemCompletion } = await import('../utils/action-items');
+      console.log('[SponsorContactDetailsPage] Deleting action item with ID:', actionItemId);
       
-      // Update in database
-      const updatedItem = await toggleActionItemCompletion(actionItemId);
-      console.log(`[SponsorContactDetailsPage - handleToggleActionItem] Database update result:`, JSON.stringify(updatedItem));
+      const success = await sponsorDB.deleteContactDetail(actionItemId);
+      console.log('[SponsorContactDetailsPage] Delete result:', success);
       
-      if (contact?.id) {
-        // Verify with database state
-        const { getActionItemsForContact } = await import('../utils/action-items');
-        const refreshedItems = await getActionItemsForContact(contact.id);
-        console.log(`[SponsorContactDetailsPage - handleToggleActionItem] Refreshed items from database:`, refreshedItems.length);
+      if (success) {
+        setActionItems(prev => {
+          const prevArray = Array.isArray(prev) ? prev : [];
+          const filtered = prevArray.filter(item => item && item.id !== actionItemId);
+          console.log('[SponsorContactDetailsPage] Updated action items after delete:', filtered);
+          return filtered;
+        });
       }
     } catch (error) {
-      console.error(`[SponsorContactDetailsPage - handleToggleActionItem] Error updating in database:`, error);
-    }
-  };
-  
-  // Delete action item - Native iOS implementation
-  const handleDeleteActionItem = async (actionItemId) => {
-    // Update UI immediately for responsiveness
-    setActionItems(prev => prev.filter(item => item.id !== actionItemId));
-    actionItemsRef.current = actionItemsRef.current.filter(item => item.id !== actionItemId);
-    
-    // Delete from SQLite database
-    try {
-      console.log(`[SponsorContactDetailsPage - handleDeleteActionItem] Deleting action item ${actionItemId} from database`);
-      const { deleteActionItem } = await import('../utils/action-items');
-      
-      // First delete the association, then the action item
-      const success = await deleteActionItem(actionItemId);
-      console.log(`[SponsorContactDetailsPage - handleDeleteActionItem] Database delete result: ${success}`);
-      
-      if (contact?.id) {
-        // Verify current state from database
-        const { getActionItemsForContact } = await import('../utils/action-items');
-        const remainingItems = await getActionItemsForContact(contact.id);
-        console.log(`[SponsorContactDetailsPage - handleDeleteActionItem] Remaining items in database: ${remainingItems.length}`);
-      }
-    } catch (error) {
-      console.error(`[SponsorContactDetailsPage - handleDeleteActionItem] Error deleting from database:`, error);
+      console.error('[SponsorContactDetailsPage] Error deleting action item:', error);
     }
   };
   
@@ -705,7 +187,6 @@ export default function SponsorContactDetailsPage({
       'email': 'Email',
       'other': 'Other'
     };
-    
     return typeLabels[type] || 'Contact';
   };
   
@@ -719,7 +200,6 @@ export default function SponsorContactDetailsPage({
       'email': 'fa-envelope',
       'other': 'fa-handshake'
     };
-    
     return typeIcons[type] || 'fa-handshake';
   };
   
@@ -786,83 +266,33 @@ export default function SponsorContactDetailsPage({
             <i className={`fa-solid ${getContactTypeIcon(contact.type)} fa-lg`}></i>
           </Box>
           
-          <Box sx={{ width: '100%' }}>
-            {/* Contact Type and Date */}
-            <Box sx={{ 
-              display: 'flex', 
-              justifyContent: 'space-between',
-              alignItems: 'flex-start',
-              mb: 1
-            }}>
-              <Box>
-                <Typography 
-                  variant="h6" 
-                  sx={{ 
-                    fontSize: '1.1rem',
-                    fontWeight: 'bold',
-                    color: theme.palette.text.primary
-                  }}
-                >
-                  {getContactTypeLabel(contact.type)}
-                </Typography>
-                <Typography 
-                  variant="body2"
-                  sx={{ 
-                    color: theme.palette.text.secondary,
-                    mb: 1
-                  }}
-                >
-                  {formatDateForDisplay(contact.date)}
-                </Typography>
-              </Box>
-              
-              {/* Action buttons */}
-              <Box sx={{ display: 'flex', gap: 1 }}>
-                <IconButton 
-                  size="small"
-                  onClick={() => {
-                    // Add the missing handleSaveContact function implementation
-                    console.log("**********************************************************");
-                    console.log("**************** SAVING CONTACT CHANGES ******************");
-                    console.log("**********************************************************");
-                    console.log("Contact data being saved:", contact);
-                    
-                    // Call the parent component's update handler
-                    if (typeof onUpdateContact === 'function') {
-                      onUpdateContact(contact);
-                      alert("Contact saved successfully!");
-                    } else {
-                      console.error("onUpdateContact function not provided to SponsorContactDetailsPage");
-                    }
-                  }}
-                  sx={{ color: theme.palette.primary.main }}
-                >
-                  <i className="fa-solid fa-check"></i>
-                </IconButton>
-                <IconButton 
-                  size="small"
-                  onClick={() => setShowDeleteConfirm(true)}
-                  sx={{ color: theme.palette.error.main }}
-                >
-                  <i className="fa-solid fa-trash"></i>
-                </IconButton>
-              </Box>
-            </Box>
+          {/* Contact Details */}
+          <Box sx={{ flex: 1 }}>
+            <Typography 
+              variant="h6" 
+              sx={{ 
+                fontWeight: 'bold',
+                color: theme.palette.text.primary,
+                mb: 0.5
+              }}
+            >
+              {getContactTypeLabel(contact.type)}
+            </Typography>
             
-            {/* Contact Note */}
+            <Typography 
+              variant="body2" 
+              sx={{ 
+                color: theme.palette.text.secondary,
+                mb: 1
+              }}
+            >
+              {formatDateForDisplay(contact.date)}
+            </Typography>
+            
             {contact.note && (
               <Box sx={{ mt: 1.5 }}>
                 <Typography 
-                  variant="subtitle2" 
-                  sx={{ 
-                    color: theme.palette.text.secondary,
-                    mb: 0.5
-                  }}
-                >
-                  Note
-                </Typography>
-                <Typography 
-                  variant="body2"
+                  variant="body2" 
                   sx={{ 
                     color: theme.palette.text.primary,
                     whiteSpace: 'pre-wrap'
@@ -876,7 +306,7 @@ export default function SponsorContactDetailsPage({
         </Box>
       </Paper>
       
-      {/* Action Items Section - Using SQLite structure */}
+      {/* Action Items Section */}
       <Paper
         elevation={0}
         sx={{
@@ -913,275 +343,161 @@ export default function SponsorContactDetailsPage({
           </Button>
         </Box>
         
-        <SponsorContactTodo 
-          todos={actionItems} 
-          onAddTodo={handleAddActionItem}
-          onToggleTodo={handleToggleActionItem}
-          onDeleteTodo={handleDeleteActionItem}
-          showForm={showAddActionForm}
-          onFormClose={() => setShowAddActionForm(false)}
-          emptyMessage="No action items added yet. Click 'Add Action' to create one."
-        />
-      </Paper>
-      
-      {/* Legacy Action Items Section - Hidden */}
-      <Box sx={{ display: 'none' }}>
-        <Box sx={{ 
-          display: 'flex', 
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          mb: 1.5
-        }}>
-          <Typography 
-            variant="h6" 
-            sx={{ 
-              fontWeight: 'bold',
-              color: theme.palette.text.primary
-            }}
-          >
-            Action Items
-          </Typography>
-          <Button
-            variant="outlined"
-            startIcon={<i className="fa-solid fa-plus"></i>}
-            onClick={() => setShowAddActionDialog(true)}
-            size="small"
-            sx={{ textTransform: 'none' }}
-          >
-            Add Action
-          </Button>
-        </Box>
-        
-        {/* Action Items List */}
-        {contactDetails && contactDetails.length > 0 ? (
-          <List sx={{ 
-            p: 0,
-            bgcolor: theme.palette.background.paper,
-            borderRadius: 2,
-            border: 1,
-            borderColor: 'divider'
-          }}>
-            {contactDetails.map((detail, index) => (
-              <React.Fragment key={detail.id}>
-                <ListItem
-                  sx={{ 
-                    px: 2,
-                    py: 1.5,
-                    display: 'flex',
-                    alignItems: 'flex-start'
-                  }}
-                >
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        checked={!!detail.completed}
-                        onChange={() => handleToggleComplete(detail.id)}
-                        sx={{ 
-                          color: theme.palette.primary.main,
-                          '&.Mui-checked': {
-                            color: theme.palette.primary.main,
-                          },
-                        }}
-                      />
-                    }
-                    label=""
-                    sx={{ ml: -1, mr: 0 }}
-                  />
-                  <Box sx={{ flex: 1 }}>
-                    <Typography
-                      variant="body1"
-                      sx={{ 
-                        textDecoration: detail.completed ? 'line-through' : 'none',
-                        color: detail.completed ? theme.palette.text.secondary : theme.palette.text.primary,
-                        fontWeight: detail.completed ? 'normal' : 'medium'
-                      }}
-                    >
-                      {detail.actionItem}
-                    </Typography>
-                    
-                    {/* Due Date */}
-                    {detail.dueDate && (
-                      <Typography
-                        variant="caption"
-                        sx={{ 
-                          display: 'block',
-                          mt: 0.5,
-                          color: theme.palette.text.secondary
-                        }}
-                      >
-                        Due: {formatDateForDisplay(detail.dueDate)}
-                      </Typography>
-                    )}
-                    
-                    {/* Notes */}
-                    {detail.notes && (
-                      <Typography
-                        variant="body2"
-                        sx={{ 
-                          mt: 1,
-                          whiteSpace: 'pre-wrap',
-                          color: theme.palette.text.secondary
-                        }}
-                      >
-                        {detail.notes}
-                      </Typography>
-                    )}
-                  </Box>
-                </ListItem>
-                {index < contactDetails.length - 1 && (
-                  <Divider component="li" />
-                )}
-              </React.Fragment>
-            ))}
-          </List>
-        ) : (
-          <Box sx={{ 
-            p: 3, 
-            textAlign: 'center', 
-            bgcolor: theme.palette.background.paper,
-            borderRadius: 2,
-            border: 1,
-            borderColor: 'divider'
-          }}>
-            <Typography variant="body2" color="text.secondary">
-              No action items yet. Add items your sponsor asked you to complete.
-            </Typography>
-          </Box>
-        )}
-      </Box>
-      
-      {/* Add Action Dialog */}
-      <Dialog
-        open={showAddActionDialog}
-        onClose={() => setShowAddActionDialog(false)}
-        fullWidth
-        maxWidth="sm"
-      >
-        <DialogTitle sx={{ borderBottom: `1px solid ${theme.palette.divider}` }}>
-          Add Action Item
-        </DialogTitle>
-        <DialogContent sx={{ mt: 2 }}>
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5, pt: 1 }}>
+        {/* Add Action Form */}
+        {showAddActionForm && (
+          <Box sx={{ mb: 3, p: 2, border: '1px solid', borderColor: 'divider', borderRadius: 1 }}>
             <TextField
-              name="actionItem"
+              fullWidth
               label="Action Item"
+              name="actionItem"
               value={newAction.actionItem}
               onChange={handleActionChange}
-              fullWidth
-              required
-              sx={{ 
-                '& .MuiInputBase-root': { 
-                  height: '56px', 
-                  borderRadius: '8px',
-                }
-              }}
+              sx={{ mb: 2 }}
             />
-            
             <TextField
-              name="dueDate"
+              fullWidth
+              label="Notes"
+              name="notes"
+              value={newAction.notes}
+              onChange={handleActionChange}
+              multiline
+              rows={2}
+              sx={{ mb: 2 }}
+            />
+            <TextField
+              fullWidth
               label="Due Date"
+              name="dueDate"
               type="date"
               value={newAction.dueDate}
               onChange={handleActionChange}
-              fullWidth
               InputLabelProps={{ shrink: true }}
-              sx={{ 
-                '& .MuiInputBase-root': { 
-                  height: '56px', 
-                  borderRadius: '8px',
-                }
-              }}
+              sx={{ mb: 2 }}
             />
-            
-            <TextField
-              name="notes"
-              label="Notes"
-              multiline
-              rows={3}
-              value={newAction.notes}
-              onChange={handleActionChange}
-              fullWidth
-              sx={{ 
-                '& .MuiInputBase-root': {
-                  borderRadius: '8px',
-                }
-              }}
-            />
-            
             <FormControlLabel
               control={
                 <Checkbox
                   name="completed"
                   checked={newAction.completed}
                   onChange={handleActionChange}
-                  sx={{ color: theme.palette.primary.main }}
                 />
               }
-              label="Already Completed"
+              label="Completed"
+              sx={{ mb: 2 }}
             />
+            <Box sx={{ display: 'flex', gap: 1 }}>
+              <Button variant="contained" onClick={handleAddAction}>
+                Save
+              </Button>
+              <Button variant="outlined" onClick={() => setShowAddActionForm(false)}>
+                Cancel
+              </Button>
+            </Box>
           </Box>
-        </DialogContent>
-        <DialogActions sx={{ px: 3, pb: 2, borderTop: `1px solid ${theme.palette.divider}` }}>
-          <Button onClick={() => setShowAddActionDialog(false)}
-            size="small"
-            variant="contained"
-            color="error">
-            Cancel
-          </Button>
-          <Button 
-            onClick={handleAddActionFromForm}
-            size="small"
-            variant="contained"
-            color="success"
-            disabled={!newAction.actionItem}
-          >
-            Save
-          </Button>
-        </DialogActions>
-      </Dialog>
+        )}
+        
+        {/* Action Items List */}
+        {actionItems.length > 0 ? (
+          <List sx={{ p: 0 }}>
+            {actionItems.map((item, index) => (
+              <ListItem
+                key={item.id || index}
+                sx={{
+                  p: 2,
+                  mb: 1,
+                  border: '1px solid',
+                  borderColor: 'divider',
+                  borderRadius: 1,
+                  bgcolor: item.completed ? 'action.hover' : 'background.paper'
+                }}
+              >
+                <Box sx={{ width: '100%' }}>
+                  <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
+                    <Box sx={{ flex: 1 }}>
+                      <Typography
+                        variant="body1"
+                        sx={{
+                          textDecoration: item.completed ? 'line-through' : 'none',
+                          color: item.completed ? 'text.secondary' : 'text.primary',
+                          fontWeight: item.completed ? 'normal' : 'medium'
+                        }}
+                      >
+                        {item.actionItem || item.text || 'Untitled Action'}
+                      </Typography>
+                      {item.notes && (
+                        <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+                          {item.notes}
+                        </Typography>
+                      )}
+                      {item.dueDate && (
+                        <Typography variant="caption" color="text.secondary" sx={{ mt: 0.5, display: 'block' }}>
+                          Due: {formatDateForDisplay(item.dueDate)}
+                        </Typography>
+                      )}
+                    </Box>
+                    <Box sx={{ ml: 2, display: 'flex', gap: 1 }}>
+                      <IconButton
+                        size="small"
+                        onClick={() => handleToggleComplete(item)}
+                        sx={{ color: item.completed ? 'success.main' : 'text.secondary' }}
+                      >
+                        <i className={`fa-solid ${item.completed ? 'fa-check-circle' : 'fa-circle'}`}></i>
+                      </IconButton>
+                      <IconButton
+                        size="small"
+                        onClick={() => handleDeleteAction(item.id)}
+                        sx={{ color: 'error.main' }}
+                      >
+                        <i className="fa-solid fa-trash"></i>
+                      </IconButton>
+                    </Box>
+                  </Box>
+                </Box>
+              </ListItem>
+            ))}
+          </List>
+        ) : (
+          <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center', py: 3 }}>
+            No action items yet. Add one to get started!
+          </Typography>
+        )}
+      </Paper>
+      
+      {/* Delete Contact Button */}
+      <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
+        <Button
+          variant="outlined"
+          color="error"
+          startIcon={<i className="fa-solid fa-trash"></i>}
+          onClick={() => setShowDeleteConfirm(true)}
+          sx={{ textTransform: 'none' }}
+        >
+          Delete Contact
+        </Button>
+      </Box>
       
       {/* Delete Confirmation Dialog */}
-      <Dialog
-        open={showDeleteConfirm}
-        onClose={() => setShowDeleteConfirm(false)}
-        maxWidth="xs"
-        fullWidth
-      >
-        <DialogTitle>Delete Contact?</DialogTitle>
+      <Dialog open={showDeleteConfirm} onClose={() => setShowDeleteConfirm(false)}>
+        <DialogTitle>Delete Contact</DialogTitle>
         <DialogContent>
-          <Typography variant="body1">
-            Are you sure you want to delete this contact record? This will also delete all associated action items.
+          <Typography>
+            Are you sure you want to delete this contact? This action cannot be undone.
           </Typography>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setShowDeleteConfirm(false)}>
-            Cancel
-          </Button>
+          <Button onClick={() => setShowDeleteConfirm(false)}>Cancel</Button>
           <Button 
             onClick={() => {
               onDeleteContact(contact.id);
               setShowDeleteConfirm(false);
-            }}
+              onBack();
+            }} 
             color="error"
           >
             Delete
           </Button>
         </DialogActions>
       </Dialog>
-      
-      {/* Floating back button */}
-      <Fab
-        color="primary"
-        aria-label="back"
-        onClick={onBack}
-        sx={{ 
-          position: 'fixed',
-          bottom: 20,
-          right: 20
-        }}
-      >
-        <i className="fa-solid fa-arrow-left"></i>
-      </Fab>
     </Box>
   );
 }

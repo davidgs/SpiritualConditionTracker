@@ -1,0 +1,18 @@
+⚡️  [log] - [ sponsor-database ] Querying sponsor contacts with userId: 1
+⚡️  TO JS {"values":[{"ios_columns":["id","userId","date","type","note","createdAt","updatedAt"]},{"note":"Jerry agreed to sponsor me","type":"phone","updatedAt":"2025-06-02T00:15:57.273Z","createdAt":"2025-06-02T00:15:57.273Z","userId":"1","id":1,"date":"2025-05-28
+⚡️  [log] - [ sqliteLoader.js:592 ] Converted 1 iOS format items to standard format
+⚡️  [log] - [ sqliteLoader.js ] Sample converted item: {"id":1,"userId":"1","date":"2025-05-28","type":"phone","note":"Jerry agreed to sponsor me","createdAt":"2025-06-02T00:15:57.273Z","updatedAt":"2025-06-02T00:15:57.273Z"}
+⚡️  [log] - [ sponsor-database ] Raw database response: [{"id":1,"userId":"1","date":"2025-05-28","type":"phone","note":"Jerry agreed to sponsor me","createdAt":"2025-06-02T00:15:57.273Z","updatedAt":"2025-06-02T00:15:57.273Z"}]
+⚡️  [log] - [ sponsor-database ] Number of total contacts in database: 1
+⚡️  [log] - [ sponsor-database ] Found 1 sponsor contacts for user 1
+⚡️  [log] - Found sponsor contacts: [{"id":1,"userId":"1","date":"2025-05-28","type":"phone","note":"Jerry agreed to sponsor me","createdAt":"2025-06-02T00:15:57.273Z","updatedAt":"2025-06-02T00:15:57.273Z"}]
+⚡️  [log] - Loading details for contact ID: 1
+⚡️  [log] - [ sponsor-database ] Getting contact details for contactId: 1
+⚡️  To Native ->  CapacitorSQLite query 64328337
+ERROR MESSAGE:  {"errorMessage":"Query: Failed in selectSQL : Error: querySQL prepare failed rc: 1 message: no such table: contact_details","message":"Query: Failed in selectSQL : Error: querySQL prepare failed rc: 1 message: no such table: contact_details"}
+⚡️  [log] - [ Sponsor ] Render - currentView: add-contact selectedContact: null
+⚡️  [error] - {"errorMessage":"Query: Failed in selectSQL : Error: querySQL prepare failed rc: 1 message: no such table: contact_details","message":"Query: Failed in selectSQL : Error: querySQL prepare failed rc: 1 message: no such table: contact_details"}
+⚡️  [log] - [ sqliteLoader.js:541 ] SQLite failed, using localStorage for contact_details
+⚡️  [log] - [ sponsor-database ] Found 0 contact details
+⚡️  [log] - Found contact details: []
+⚡️  [log] - [ Sponsor ] Render - currentView: main selectedContact: null

@@ -11,7 +11,7 @@ import {
   useTheme
 } from '@mui/material';
 
-const SimpleMeetingSchedule = ({ schedule, onChange, use24HourFormat = false }) => {
+const SimpleMeetingSchedule = ({ schedule, onChange, use24HourFormat = false, darkMode = false }) => {
   const theme = useTheme();
   const days = [
     { key: 'sunday', label: 'Sunday' },
@@ -35,6 +35,12 @@ const SimpleMeetingSchedule = ({ schedule, onChange, use24HourFormat = false }) 
     { value: 'literature', label: 'Literature' }
   ];
 
+  const meetingLocationTypes = [
+    { value: 'in_person', label: 'In-Person', icon: '🏢' },
+    { value: 'online', label: 'Online', icon: '💻' },
+    { value: 'hybrid', label: 'Hybrid', icon: '🌐' }
+  ];
+
   const meetingAccess = [
     { value: 'open', label: 'Open' },
     { value: 'closed', label: 'Closed' }
@@ -49,18 +55,19 @@ const SimpleMeetingSchedule = ({ schedule, onChange, use24HourFormat = false }) 
       const existingItemIndex = schedule.findIndex(item => item.day === day);
       
       if (existingItemIndex >= 0) {
-        // Update existing day - keep existing format and access if any
+        // Update existing day - keep existing format, access, and location type if any
         const newSchedule = [...schedule];
         newSchedule[existingItemIndex] = { 
           day, 
           time: value, 
           format: newSchedule[existingItemIndex].format || 'discussion',
-          access: newSchedule[existingItemIndex].access || 'open'
+          access: newSchedule[existingItemIndex].access || 'open',
+          locationType: newSchedule[existingItemIndex].locationType || 'in_person'
         };
         onChange(newSchedule);
       } else {
-        // Add new day with default format and access
-        onChange([...schedule, { day, time: value, format: 'discussion', access: 'open' }]);
+        // Add new day with default format, access, and location type
+        onChange([...schedule, { day, time: value, format: 'discussion', access: 'open', locationType: 'in_person' }]);
       }
     }
   };
@@ -93,27 +100,47 @@ const SimpleMeetingSchedule = ({ schedule, onChange, use24HourFormat = false }) 
     }
   };
 
+  const handleLocationTypeChange = (day, value) => {
+    const existingItemIndex = schedule.findIndex(item => item.day === day);
+    
+    if (existingItemIndex >= 0) {
+      // Update existing day's location type
+      const newSchedule = [...schedule];
+      newSchedule[existingItemIndex] = { 
+        ...newSchedule[existingItemIndex],
+        locationType: value 
+      };
+      onChange(newSchedule);
+    }
+  };
+
   return (
-    <Box sx={{ 
+    <Box sx={(theme) => ({ 
       mb: 2, 
       width: '100%', 
       maxWidth: '100%',
       boxSizing: 'border-box',
-      overflowX: 'hidden' 
-    }}>
-      <Table sx={{ 
+      overflowX: 'hidden',
+      backgroundColor: 'transparent',
+      borderRadius: 2,
+      border: `1px solid ${theme.palette.divider}`,
+      p: 2
+    })}>
+      <Table sx={(theme) => ({ 
         width: '100%', 
         borderCollapse: 'collapse', 
         tableLayout: 'fixed',
         maxWidth: '100%',
-        boxSizing: 'border-box'
-      }}>
+        boxSizing: 'border-box',
+        backgroundColor: 'transparent'
+      })}>
         <TableBody>
           {days.map((day, index) => {
             const existingItem = schedule.find(item => item.day === day.key);
             const hasTime = !!existingItem;
             const timeValue = existingItem ? existingItem.time : '';
             const formatValue = existingItem ? existingItem.format : 'discussion';
+            const locationTypeValue = existingItem ? existingItem.locationType : 'in_person';
             const accessValue = existingItem ? existingItem.access : 'open';
             
             return (
@@ -219,6 +246,29 @@ const SimpleMeetingSchedule = ({ schedule, onChange, use24HourFormat = false }) 
                         {meetingFormats.map((format) => (
                           <MenuItem key={format.value} value={format.value}>
                             {format.label}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    )}
+                    
+                    {/* Location Type Selection - appears when format is selected */}
+                    {hasTime && formatValue && (
+                      <Select
+                        fullWidth
+                        variant="outlined"
+                        size="small"
+                        value={locationTypeValue}
+                        onChange={(e) => handleLocationTypeChange(day.key, e.target.value)}
+                        sx={(theme) => ({
+                          bgcolor: theme.palette.mode === 'dark' ? theme.palette.background.default : theme.palette.background.paper,
+                          '& .MuiOutlinedInput-notchedOutline': {
+                            borderColor: theme.palette.divider
+                          }
+                        })}
+                      >
+                        {meetingLocationTypes.map((locationType) => (
+                          <MenuItem key={locationType.value} value={locationType.value}>
+                            {locationType.icon} {locationType.label}
                           </MenuItem>
                         ))}
                       </Select>

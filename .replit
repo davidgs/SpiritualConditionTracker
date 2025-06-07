@@ -14,28 +14,15 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "DirectAppServer"
-
-[[workflows.workflow.tasks]]
-task = "workflow.run"
-args = "AppServer"
+args = "Server"
 
 [[workflows.workflow]]
-name = "DirectAppServer"
+name = "Server"
 author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "node direct-app-server.js"
-waitForPort = 5002
-
-[[workflows.workflow]]
-name = "AppServer"
-author = "agent"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "node app-server.js"
+args = "node serve.js"
 waitForPort = 5000
 
 [deployment]

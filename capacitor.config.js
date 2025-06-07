@@ -23,12 +23,11 @@ module.exports = {
       }
     }
   },
-  server: {
-    // This tells Capacitor to use our external server for loading the app
-    // This is needed for proper functioning in iOS
-    url: 'http://localhost:5000',
-    cleartext: true
-  },
+  // Commented out for native builds - only use external server for development
+  // server: {
+  //   url: 'http://localhost:5000',
+  //   cleartext: true
+  // },
   ios: {
     contentInset: 'always',
     allowsLinkPreview: false,

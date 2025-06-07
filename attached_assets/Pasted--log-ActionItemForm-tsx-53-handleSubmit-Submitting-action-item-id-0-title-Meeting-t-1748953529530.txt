@@ -1,0 +1,13 @@
+⚡️  [log] - [ActionItemForm.tsx: 53 handleSubmit] Submitting action item: {"id":0,"title":"Meeting times","text":"Pick regular meeting times. ","notes":"","dueDate":"2025-06-04","completed":false,"type":"todo"}
+⚡️  [log] - [SponsorContactFormPage.tsx: handleAddTodo : 92] Adding todo item: {"id":0,"title":"Meeting times","text":"Pick regular meeting times. ","notes":"","dueDate":"2025-06-04","completed":false,"type":"todo"}
+⚡️  [log] - [SponsorContactFormPage.tsx: handleAddTodo : 104] New todo object: {"id":-7984,"title":"Meeting times","text":"Pick regular meeting times. ","notes":"","dueDate":"2025-06-04","completed":false,"type":"todo"}
+⚡️  [log] - [SponsorContactFormPage.tsx: 127 handleSubmit] Submitting contact with data: {"type":"phone","date":"2025-05-28","note":"Agreed to be my Sponsor"}
+⚡️  [log] - [SponsorContactFormPage.tsx: 128 handleSubmit] Submitting todos: [{"id":-7984,"title":"Meeting times","text":"Pick regular meeting times. ","notes":"","dueDate":"2025-06-04","completed":false,"type":"todo"}]
+⚡️  [log] - [SponsorSponsee.tsx] Editing contact with data: {"type":"phone","date":"2025-05-28","note":"Agreed to be my Sponsor","userId":1} actionItems: [{"id":-7984,"title":"Meeting times","text":"Pick regular meeting times. ","notes":"","dueDate":"2025-06-04","completed":false,"type":"todo"}]
+⚡️  [log] - [ sqliteLoader.js:326 ] Updating sponsor_contacts id 1 with: {"id":1,"userId":"1","sponsorId":3,"date":"2025-05-28","type":"phone","note":"Agreed to be my Sponsor","topic":null,"duration":null,"createdAt":"2025-06-02T20:30:59.899Z","updatedAt":"2025-06-03T12:25:12.491Z"}
+⚡️  [log] - [ sqliteLoader.js:355 ] Update SQL: UPDATE sponsor_contacts SET id = 1, userId = '1', sponsorId = 3, date = '2025-05-28', type = 'phone', note = 'Agreed to be my Sponsor', topic = NULL, duration = NULL, createdAt = '2025-06-02T20:30:59.899Z', updatedAt = '2025-06-03T12:25:12.492Z' WHERE id = ?
+⚡️  To Native ->  CapacitorSQLite execute 25190189
+ERROR MESSAGE:  {"errorMessage":"Execute: Must provide raw SQL statements","message":"Execute: Must provide raw SQL statements"}
+⚡️  [error] - {"errorMessage":"Execute: Must provide raw SQL statements","message":"Execute: Must provide raw SQL statements"}
+⚡️  [error] - [ sqliteLoader.js:364 ] Error updating sponsor_contacts id 1: {"errorMessage":"Execute: Must provide raw SQL statements"}
+⚡️  [error] - Error editing contact: {"errorMessage":"Execute: Must provide raw SQL statements"}

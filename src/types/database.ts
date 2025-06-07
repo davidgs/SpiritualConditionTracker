@@ -20,7 +20,7 @@ export interface BaseEntity {
 export interface SponsorData {
   name: string;
   lastName: string;
-  phone: string;
+  phoneNumber: string;
   email: string;
   sobrietyDate: string;
   notes: string;
@@ -40,7 +40,11 @@ export interface User extends BaseEntity {
   };
   preferences: {
     use24HourFormat: boolean;
+    darkMode: boolean;
+    theme: string; // For future theme customization (default, blue, green, etc.)
   };
+  isDarkMode?: number; // SQLite boolean as integer (0 or 1)
+  sponsees?: any[]; // Array of sponsee objects
   // Sponsor fields (optional)
   sponsor_name?: string;
   sponsor_lastName?: string;
@@ -76,12 +80,25 @@ export interface SponsorContactActionItem extends BaseEntity {
 
 // Activity interface
 export interface Activity extends BaseEntity {
-  userId: string;
   type: ActivityType;
   date: string;
   notes?: string;
   duration?: number; // minutes
   location?: string;
+  meetingName?: string;
+  meetingId?: number;
+  wasChair?: number;
+  wasShare?: number;
+  wasSpeaker?: number;
+  literatureTitle?: string;
+  isSponsorCall?: number;
+  isSponseeCall?: number;
+  isAAMemberCall?: number;
+  callType?: string;
+  stepNumber?: number;
+  personCalled?: string;
+  serviceType?: string;
+  completed?: number;
 }
 
 // Meeting interface
@@ -91,7 +108,23 @@ export interface Meeting extends BaseEntity {
   time: string;
   dayOfWeek: string;
   meetingType: string;
+  locationType: 'in_person' | 'online' | 'hybrid';
   notes?: string;
+}
+
+// Contact interface for sponsor/sponsee contacts
+export interface Contact extends BaseEntity {
+  name?: string;
+  lastName?: string;
+  phoneNumber?: string;
+  email?: string;
+  note?: string;
+  topic?: string;
+  type: string;
+  date: string;
+  duration?: number;
+  sponsorId?: number;
+  sponseeId?: number;
 }
 
 // Contact Details (legacy table for backward compatibility)

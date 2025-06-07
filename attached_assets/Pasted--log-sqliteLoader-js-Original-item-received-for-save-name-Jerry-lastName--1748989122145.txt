@@ -1,0 +1,41 @@
+⚡️  [log] - [ sqliteLoader.js ] Original item received for save: {
+  "name": "Jerry",
+  "lastName": "Weaver",
+  "phone": "+1 919 418 9900",
+  "email": "",
+  "sobrietyDate": "",
+  "notes": "",
+  "sponsorType": "sponsor",
+  "createdAt": "2025-06-03T22:17:31.095Z",
+  "updatedAt": "2025-06-03T22:17:31.095Z"
+}
+⚡️  [log] - [ sqliteLoader.js ] Item without ID: {
+  "name": "Jerry",
+  "lastName": "Weaver",
+  "phone": "+1 919 418 9900",
+  "email": "",
+  "sobrietyDate": "",
+  "notes": "",
+  "sponsorType": "sponsor",
+  "createdAt": "2025-06-03T22:17:31.095Z",
+  "updatedAt": "2025-06-03T22:17:31.095Z"
+}
+⚡️  [log] - [ sqliteLoader.js ] Final item for database: {
+  "name": "Jerry",
+  "lastName": "Weaver",
+  "phone": "+1 919 418 9900",
+  "email": "",
+  "sobrietyDate": "",
+  "notes": "",
+  "sponsorType": "sponsor",
+  "createdAt": "2025-06-03T22:17:31.096Z",
+  "updatedAt": "2025-06-03T22:17:31.096Z"
+}
+⚡️  [log] - [ sqliteLoader.js ] SQL keys: ["name","lastName","phone","email","sobrietyDate","notes","sponsorType","createdAt","updatedAt"]
+⚡️  To Native ->  CapacitorSQLite execute 21160040
+⚡️  [log] - [ sqliteLoader.js ] SQL values: ["Jerry","Weaver","+1 919 418 9900","","","","sponsor","2025-06-03T22:17:31.096Z","2025-06-03T22:17:31.096Z"]
+⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO sponsors (name, lastName, phone, email, sobrietyDate, notes, sponsorType, createdAt, updatedAt) VALUES ('Jerry', 'Weaver', '+1 919 418 9900', '', '', '', 'sponsor', '2025-06-03T22:17:31.096Z', '2025-06-03T22:17:31.096Z');
+ERROR MESSAGE:  {"message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: table sponsors has no column named phone","errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: table sponsors has no column named phone"}
+⚡️  [error] - {"message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: table sponsors has no column named phone","errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: table sponsors has no column named phone"}
+⚡️  [error] - [ sqliteLoader.js ] Error adding to sponsors: {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: table sponsors has no column named phone"}
+⚡️  [error] - Error saving sponsor: {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: table sponsors has no column named phone"}

@@ -10,7 +10,7 @@ import {
   CardContent 
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
-import SponseeFormDialog from './SponseeFormDialog';
+import SponseeFormPage from './SponseeFormPage';
 import { formatDateForDisplay } from '../utils/dateUtils';
 import { User } from '../types/database';
 

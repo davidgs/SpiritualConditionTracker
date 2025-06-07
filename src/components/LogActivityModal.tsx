@@ -8,7 +8,7 @@ import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import StyledDialog from './StyledDialog';
 import MuiThemeProvider from '../contexts/MuiThemeProvider';
-import MeetingForm from './MeetingForm';
+import MeetingFormDialog from './MeetingFormDialog';
 
 /**
  * Material UI Dialog component that displays the activity logging form
@@ -144,7 +144,7 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
   // Handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log('[LogActivityModal:147] Submitting activity form...')
+   // console.log('[LogActivityModal:147] Submitting activity form...')
     // Validate form
     const newErrors = {};
     if (!activityType) newErrors.activityType = 'Activity type is required';
@@ -171,16 +171,31 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
     }
     
     // Create new activity object with core fields (let SQLite auto-generate the ID)
-    const newActivity = {
+    const newActivity: any = {
       type: activityType,
       duration: parseInt(duration, 10),
       date: new Date(`${date}T12:00:00`).toISOString(), // Convert to full ISO format
       notes: (notes || '').trim(),
-      location: 'completed' // Mark all logged activities as completed so they appear in the activity list
+      location: 'completed', // Mark all logged activities as completed so they appear in the activity list
+      // Initialize all database fields with defaults
+      meetingName: '',
+      meetingId: null,
+      wasChair: 0,
+      wasShare: 0,
+      wasSpeaker: 0,
+      literatureTitle: '',
+      isSponsorCall: 0,
+      isSponseeCall: 0,
+      isAAMemberCall: 0,
+      callType: '',
+      stepNumber: null,
+      personCalled: '',
+      serviceType: '',
+      completed: 1
     };
     
-    console.log('[ LogActivityModal.tsx:179 handleSubmit ] Created activity with ISO date:', newActivity.date);
-    console.log('[ LogActivityModal.tsx:180 handleSubmit ] Original date input:', date);
+  //  console.log('[ LogActivityModal.tsx:179 handleSubmit ] Created activity with ISO date:', newActivity.date);
+  //  console.log('[ LogActivityModal.tsx:180 handleSubmit ] Original date input:', date);
     
     // Add activity-specific fields
     if (activityType === 'literature') {
@@ -189,20 +204,20 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
     
     if (activityType === 'meeting') {
       newActivity.meetingName = (meetingName || '').trim();
-      newActivity.wasChair = wasChair;
-      newActivity.wasShare = wasShare;
-      newActivity.wasSpeaker = wasSpeaker;
+      newActivity.wasChair = wasChair ? 1 : 0;
+      newActivity.wasShare = wasShare ? 1 : 0;
+      newActivity.wasSpeaker = wasSpeaker ? 1 : 0;
       
       // Include meeting ID if one was selected
       if (selectedMeetingId) {
-        newActivity.meetingId = selectedMeetingId;
+        newActivity.meetingId = parseInt(selectedMeetingId, 10);
       }
     }
     
     if (activityType === 'call') {
-      newActivity.isSponsorCall = isSponsorCall;
-      newActivity.isSponseeCall = isSponseeCall;
-      newActivity.isAAMemberCall = isAAMemberCall;
+      newActivity.isSponsorCall = isSponsorCall ? 1 : 0;
+      newActivity.isSponseeCall = isSponseeCall ? 1 : 0;
+      newActivity.isAAMemberCall = isAAMemberCall ? 1 : 0;
       
       // Determine the actual type for filtering/display purposes
       if (isSponsorCall && !isSponseeCall && !isAAMemberCall) {
@@ -240,9 +255,13 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
     setSelectedMeetingId(meetingId);
     
     if (meetingId) {
-      const meeting = meetings.find(m => m.id === meetingId);
+      // Convert to number for comparison since database IDs are integers
+      const meetingIdNum = parseInt(meetingId, 10);
+      const meeting = meetings.find(m => m.id === meetingIdNum);
+      console.log('LogActivityModal - Meeting selection:', { meetingId, meetingIdNum, meeting, availableMeetings: meetings });
       if (meeting) {
         setMeetingName(meeting.name);
+        console.log('LogActivityModal - Set meeting name to:', meeting.name);
       }
     } else {
       setMeetingName('');
@@ -339,11 +358,11 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
           
           {/* Display the meeting form inside the modal when needed */}
           {activityType === 'meeting' && showMeetingForm ? (
-            <MeetingForm
+            <MeetingFormDialog
+              open={showMeetingForm}
               onSave={handleSaveMeeting}
               onClose={() => setShowMeetingForm(false)}
-              darkMode={isDarkMode}
-              isOverlay={false}
+              isEdit={false}
             />
           ) : (
             <form onSubmit={handleSubmit}>

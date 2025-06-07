@@ -1,0 +1,90 @@
+⚡️  To Native ->  CapacitorSQLite execute 52695194
+⚡️  [log] - [ sqliteLoader.js ] Original item received for save: {
+  "name": "Arch To Freedom",
+  "days": [
+    "monday"
+  ],
+  "time": "18:00",
+  "schedule": [
+    {
+      "day": "monday",
+      "time": "18:00",
+      "format": "literature",
+      "access": "closed"
+    }
+  ],
+  "types": [],
+  "address": "100 Hughes St., Apex, NC, 27539",
+  "locationName": "Apex United Methodist Curch",
+  "streetAddress": "100 Hughes St.",
+  "city": "Apex",
+  "state": "NC",
+  "zipCode": "27539",
+  "coordinates": null,
+  "isHomeGroup": true,
+  "createdAt": "2025-05-31T12:47:52.029Z",
+  "updatedAt": "2025-05-31T12:47:52.029Z"
+}
+⚡️  [log] - [ sqliteLoader.js ] Item without ID: {
+  "name": "Arch To Freedom",
+  "days": [
+    "monday"
+  ],
+  "time": "18:00",
+  "schedule": [
+    {
+      "day": "monday",
+      "time": "18:00",
+      "format": "literature",
+      "access": "closed"
+    }
+  ],
+  "types": [],
+  "address": "100 Hughes St., Apex, NC, 27539",
+  "locationName": "Apex United Methodist Curch",
+  "streetAddress": "100 Hughes St.",
+  "city": "Apex",
+  "state": "NC",
+  "zipCode": "27539",
+  "coordinates": null,
+  "isHomeGroup": true,
+  "createdAt": "2025-05-31T12:47:52.029Z",
+  "updatedAt": "2025-05-31T12:47:52.029Z"
+}
+⚡️  [log] - [ sqliteLoader.js ] Converted days to JSON: ["monday"]
+⚡️  [log] - [ sqliteLoader.js ] Converted schedule to JSON: [{"day":"monday","time":"18:00","format":"literature","access":"closed"}]
+⚡️  [log] - [ sqliteLoader.js ] Converted types to JSON: []
+⚡️  [log] - [ sqliteLoader.js ] Final item for database: {
+  "name": "Arch To Freedom",
+  "days": "[\"monday\"]",
+  "time": "18:00",
+  "schedule": "[{\"day\":\"monday\",\"time\":\"18:00\",\"format\":\"literature\",\"access\":\"closed\"}]",
+  "types": "[]",
+  "address": "100 Hughes St., Apex, NC, 27539",
+  "locationName": "Apex United Methodist Curch",
+  "streetAddress": "100 Hughes St.",
+  "city": "Apex",
+  "state": "NC",
+  "zipCode": "27539",
+  "coordinates": null,
+  "isHomeGroup": true,
+  "createdAt": "2025-05-31T12:47:52.029Z",
+  "updatedAt": "2025-05-31T12:47:52.029Z"
+}
+⚡️  [log] - [ sqliteLoader.js ] Date field specifically: undefined
+⚡️  [log] - [ sqliteLoader.js ] Date field type: undefined
+⚡️  [log] - [ sqliteLoader.js ] SQL keys: ["name","days","time","schedule","types","address","locationName","streetAddress","city","state","zipCode","coordinates","isHomeGroup","createdAt","updatedAt"]
+⚡️  [log] - [ sqliteLoader.js ] SQL values: ["Arch To Freedom","[\"monday\"]","18:00","[{\"day\":\"monday\",\"time\":\"18:00\",\"format\":\"literature\",\"access\":\"closed\"}]","[]","100 Hughes St., Apex, NC, 27539","Apex United Methodist Curch","100 Hughes St.","Apex","NC","27539",null,true,"2025-05-31T12:47:52.029Z","2025-05-31T12:47:52.029Z"]
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  To Native ->  CapacitorSQLite query 52695195
+⚡️  [log] - [ sqliteLoader.js:453 add ] Insert completed in autocommit mode
+⚡️  TO JS {"values":[{"ios_columns":["id"]},{"id":2}]}
+⚡️  [log] - [ sqliteLoader.js ] Last insert ID result: {"values":[{"ios_columns":["id"]},{"id":2}]}
+⚡️  [log] - [ sqliteLoader.js ] Extracted ID: 2
+⚡️  [log] - [ AppDataContext ] Meeting added: 2
+⚡️  [log] - [ App ] Meeting saved successfully: 2
+⚡️  [log] - Formatting day: monday
+⚡️  [log] - Formatting time: "18:00" with 24-hour format: false
+⚡️  [log] - Converted 24-hour to 12-hour: 18:00 -> 6:00 PM
+⚡️  [log] - [ Meetings.js ] User:  {"id":1,"name":"David","lastName":"Simmons","phoneNumber":"+1 919 534 5099","email":"davidgs@me.com","sobrietyDate":"1986-05-15","homeGroups":"[\"Arch to freedom\"]","privacySettings":"{\"allowMessages\":true,\"shareLastName\":true}","preferences":"{\"use24HourFormat\":false}","sponsor_name":null,"sponsor_lastName":null,"sponsor_phone":null,"sponsor_email":null,"sponsor_sobrietyDate":null,"sponsor_notes":null,"messagingKeys":null,"profileImageUri":null,"language":null,"dateFormat":null,"timeFormat":null,"distanceUnit":null,"themePreference":null,"notificationSettings":null,"locationPermission":null,"contactPermission":null,"createdAt":null,"updatedAt":"2025-05-31T12:40:10.520Z"}
+⚡️  [log] - [ Meetings.js ] Meetings:  [{"id":1,"name":null,"days":null,"time":null,"schedule":null,"address":null,"locationName":null,"streetAddress":null,"city":null,"state":null,"zipCode":null,"country":null,"online":null,"onlineUrl":null,"phoneNumber":null,"meetingCode":null,"notes":null,"latitude":null,"longitude":null,"types":null,"format":null,"accessibility":null,"languages":null,"isHomeGroup":null,"isTemporarilyClosed":null,"contactName":null,"contactEmail":null,"contactPhone":null,"attendance":null,"lastAttended":null,"createdAt":null,"updatedAt":null,"coordinates":null},{"name":"Arch To Freedom","days":"[\"monday\"]","time":"18:00","schedule":"[{\"day\":\"monday\",\"time\":\"18:00\",\"format\":\"literature\",\"access\":\"closed\"}]","types":"[]","address":"100 Hughes St., Apex, NC, 27539","locationName":"Apex United Methodist Curch","streetAddress":"100 Hughes St.","city":"Apex","state":"NC","zipCode":"27539","coordinates":null,"isHomeGroup":true,"createdAt":"2025-05-31T12:47:52.029Z","updatedAt":"2025-05-31T12:47:52.029Z","id":2}]

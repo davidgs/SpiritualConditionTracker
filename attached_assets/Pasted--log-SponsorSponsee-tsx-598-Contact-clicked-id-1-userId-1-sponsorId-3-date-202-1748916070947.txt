@@ -1,0 +1,17 @@
+⚡️  [log] - [SponsorSponsee.tsx:598] Contact clicked: {"id":1,"userId":"1","sponsorId":3,"date":"2025-05-28","type":"phone","note":"Agreed to be my Sponsor","topic":null,"duration":null,"createdAt":"2025-06-02T20:30:59.899Z","updatedAt":"2025-06-02T20:30:59.899Z"}
+⚡️  [log] - [SponsorSponsee.tsx:24] Component loaded with activities: [{"id":"sponsor-contact-1","type":"sponsor-contact","date":"2025-05-28","notes":"Agreed to be my Sponsor [Contact: phone]","location":"phone","createdAt":"2025-06-02T20:30:59.899Z","updatedAt":"2025-06-02T20:30:59.899Z","sponsorContactId":1,"sponsorContactData":{"id":1,"userId":"1","sponsorId":3,"date":"2025-05-28","type":"phone","note":"Agreed to be my Sponsor","topic":null,"duration":null,"createdAt":"2025-06-02T20:30:59.899Z","updatedAt":"2025-06-02T20:30:59.899Z"}}] type: object
+⚡️  To Native ->  ⚡️  [log] - [ sqliteLoader.js:251 ] Getting all items from sponsor_contacts
+CapacitorSQLite query 72655827
+⚡️  TO JS {"values":[{"ios_columns":["id","userId","sponsorId","date","type","note","topic","duration","createdAt","updatedAt"]},{"type":"phone","sponsorId":3,"userId":"1","date":"2025-05-28","topic":null,"duration":null,"updatedAt":"2025-06-02T20:30:59.899Z","note"
+⚡️  [error] - {}
+
+⚡️  ------ STARTUP JS ERROR ------
+
+⚡️  TypeError: null is not an object (evaluating 's.filter')
+⚡️  URL: capacitor://localhost/bundle.js
+⚡️  bundle.js:102:661982
+
+⚡️  See above for help with debugging blank-screen issues
+⚡️  [log] - [ sqliteLoader.js:265 ] Converted 1 iOS format items to standard format
+⚡️  [log] - Loaded sponsor contacts: [{"id":1,"userId":"1","sponsorId":3,"date":"2025-05-28","type":"phone","note":"Agreed to be my Sponsor","topic":null,"duration":null,"createdAt":"2025-06-02T20:30:59.899Z","updatedAt":"2025-06-02T20:30:59.899Z"}]
+⚡️  [log] - [SponsorSponsee.tsx:99] Before filter - contactsArray: [{"id":1,"userId":"1","sponsorId":3,"date":"2025-05-28","type":"phone","note":"Agreed to be my Sponsor","topic":null,"duration":null,"createdAt":"2025-06-02T20:30:59.899Z","updatedAt":"2025-06-02T20:30:59.899Z"}] sponsorId: 3
