@@ -1,0 +1,35 @@
+{
+	"appId": "com.spiritualconditiontracker.app",
+	"appName": "Spiritual Condition Tracker",
+	"webDir": "dist",
+	"bundledWebRuntime": true,
+	"plugins": {
+		"CapacitorSQLite": {
+			"iosDatabaseLocation": "Library/CapacitorDatabase",
+			"iosIsEncryption": false,
+			"iosKeychainPrefix": "spiritual-condition-tracker",
+			"iosBiometric": {
+				"biometricAuth": false,
+				"biometricTitle": "Biometric login for database"
+			},
+			"androidIsEncryption": false,
+			"androidBiometric": {
+				"biometricAuth": false,
+				"biometricTitle": "Biometric login for database",
+				"biometricSubTitle": "Log in using your biometric"
+			}
+		}
+	},
+	"ios": {
+		"contentInset": "always",
+		"allowsLinkPreview": false,
+		"scrollEnabled": true,
+		"limitsNavigationsToAppBoundDomains": true
+	},
+	"android": {
+		"useLegacyBridge": true
+	},
+	"packageClassList": [
+		"CapacitorSQLitePlugin"
+	]
+}
