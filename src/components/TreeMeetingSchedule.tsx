@@ -405,23 +405,32 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
       {Object.keys(newMeeting).length > 0 && editingMeeting === null && (
         <Box 
           key={`${newMeeting.day}-${newMeeting.time}-${newMeeting.format}-${newMeeting.locationType}-${newMeeting.access}`}
-          sx={{ 
+          sx={(theme) => ({ 
             display: 'flex', 
             alignItems: 'center', 
             gap: 1, 
             py: 1,
-            borderBottom: '1px solid #eee',
+            borderBottom: `1px solid ${theme.palette.divider}`,
             mb: 2,
-            backgroundColor: '#f5f5f5',
+            backgroundColor: theme.palette.action.hover,
             borderRadius: 1,
             px: 1
-          }}
+          })}
         >
-          <Typography variant="body2" sx={{ fontWeight: 500, minWidth: '70px', textAlign: 'left' }}>
+          <Typography variant="body2" sx={(theme) => ({ 
+            fontWeight: 500, 
+            minWidth: '70px', 
+            textAlign: 'left',
+            color: theme.palette.text.primary
+          })}>
             {newMeeting.day ? (days.find(d => d.key === newMeeting.day)?.label || newMeeting.day) : '---'}
           </Typography>
           
-          <Typography variant="body2" sx={{ minWidth: '70px', textAlign: 'left' }}>
+          <Typography variant="body2" sx={(theme) => ({ 
+            minWidth: '70px', 
+            textAlign: 'left',
+            color: theme.palette.text.primary
+          })}>
             {newMeeting.time ? (use24HourFormat ? newMeeting.time : (() => {
               const [hour, minute] = newMeeting.time.split(':');
               const hourNum = parseInt(hour);
@@ -438,7 +447,8 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
           <Chip 
             label={newMeeting.format ? newMeeting.format.charAt(0).toUpperCase() + newMeeting.format.slice(1).replace('_', ' ') : '---'}
             size="small"
-            color="primary"
+            color={newMeeting.format ? "primary" : "default"}
+            variant={newMeeting.format ? "filled" : "outlined"}
             sx={{ fontSize: '0.7rem', height: '24px' }}
           />
           
@@ -446,6 +456,7 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
             label={newMeeting.access ? newMeeting.access.charAt(0).toUpperCase() + newMeeting.access.slice(1) : '---'}
             size="small"
             color={newMeeting.access === 'open' ? 'success' : newMeeting.access === 'closed' ? 'error' : 'default'}
+            variant={newMeeting.access ? "filled" : "outlined"}
             sx={{ fontSize: '0.7rem', height: '24px' }}
           />
         </Box>
