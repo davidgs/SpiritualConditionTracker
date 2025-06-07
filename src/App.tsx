@@ -228,7 +228,7 @@ function AppContent() {
           menuOpen={false}
           setMenuOpen={() => {}}
           isMobile={true}
-          onShowTour={() => setShowWelcomeTour(true)}
+          onShowTour={() => console.log('Tour feature temporarily disabled')}
         />
         <div style={{ paddingTop: 'calc(88px + env(safe-area-inset-top, 44px))', paddingBottom: '80px' }}>
           {currentView === 'dashboard' && (
