@@ -1,13 +1,18 @@
 const path = require('path');
 
-module.exports = {
-  entry: './src/index.tsx',
-  output: {
-    path: path.resolve(__dirname, 'dist'),
-    filename: 'bundle.js',
-    publicPath: './',
-    assetModuleFilename: 'assets/[hash][ext][query]'
-  },
+module.exports = (env, argv) => {
+  const isProduction = argv.mode === 'production';
+  
+  return {
+    entry: './src/index.tsx',
+    output: {
+      path: path.resolve(__dirname, 'dist'),
+      filename: isProduction ? '[name].[contenthash].js' : 'bundle.js',
+      chunkFilename: isProduction ? '[name].[contenthash].chunk.js' : '[name].chunk.js',
+      publicPath: './',
+      assetModuleFilename: 'assets/[hash][ext][query]',
+      clean: true
+    },
   module: {
     rules: [
       {
@@ -46,25 +51,57 @@ module.exports = {
       assets: path.resolve(__dirname, 'assets/'),
     }
   },
-  devServer: {
-    static: {
-      directory: path.join(__dirname, '.'),
+  optimization: {
+      minimize: isProduction,
+      splitChunks: {
+        chunks: 'all',
+        cacheGroups: {
+          vendor: {
+            test: /[\\/]node_modules[\\/]/,
+            name: 'vendors',
+            priority: 10,
+            chunks: 'all',
+          },
+          mui: {
+            test: /[\\/]node_modules[\\/]@mui[\\/]/,
+            name: 'mui',
+            priority: 20,
+            chunks: 'all',
+          },
+          react: {
+            test: /[\\/]node_modules[\\/](react|react-dom)[\\/]/,
+            name: 'react',
+            priority: 20,
+            chunks: 'all',
+          },
+        },
+      },
+      runtimeChunk: 'single',
     },
-    compress: true,
-    port: 5000,
-    host: '0.0.0.0',
-    allowedHosts: 'all',
-    historyApiFallback: true,
-    hot: true,
-    watchFiles: {
-      paths: ['src/**/*'],
-      options: {
-        usePolling: false,
-        aggregateTimeout: 300,
-        ignored: ['**/node_modules/**', '**/dist/**']
+    performance: {
+      maxEntrypointSize: 512000,
+      maxAssetSize: 512000,
+    },
+    devServer: {
+      static: {
+        directory: path.join(__dirname, '.'),
+      },
+      compress: true,
+      port: 5000,
+      host: '0.0.0.0',
+      allowedHosts: 'all',
+      historyApiFallback: true,
+      hot: true,
+      watchFiles: {
+        paths: ['src/**/*'],
+        options: {
+          usePolling: false,
+          aggregateTimeout: 300,
+          ignored: ['**/node_modules/**', '**/dist/**']
+        }
       }
-    }
-  },
-  mode: 'development',
-  devtool: 'source-map'
+    },
+    mode: isProduction ? 'production' : 'development',
+    devtool: isProduction ? 'source-map' : 'eval-source-map'
+  };
 };

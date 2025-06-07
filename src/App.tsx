@@ -8,13 +8,15 @@ import MuiThemeProvider, { useAppTheme } from './contexts/MuiThemeProvider';
 import { useTheme } from '@mui/material/styles';
 import DatabaseService from './services/DatabaseService';
 
-// Import components for testing
-import Dashboard from './components/Dashboard';
+// Lazy load components for better performance
+const Dashboard = React.lazy(() => import('./components/Dashboard'));
+const Meetings = React.lazy(() => import('./components/Meetings'));
+const Profile = React.lazy(() => import('./components/Profile'));
+const SponsorSponsee = React.lazy(() => import('./components/SponsorSponsee'));
+
+// Keep frequently used components as regular imports
 import Header from './components/Header';
 import BottomNavBar from './components/BottomNavBar';
-import Meetings from './components/Meetings';
-import Profile from './components/Profile';
-import SponsorSponsee from './components/SponsorSponsee';
 
 function AppContent() {
   const { state, addActivity, addMeeting, updateMeeting, deleteMeeting, updateTimeframe, updateUser, resetAllData } = useAppData();
@@ -227,48 +229,62 @@ function AppContent() {
           isMobile={true}
         />
         <div style={{ paddingTop: '80px', paddingBottom: '80px' }}>
-          {currentView === 'dashboard' && (
-            <Dashboard
-              user={state.user}
-              activities={filteredActivities}
-              meetings={state.meetings}
-              currentTimeframe={state.currentTimeframe}
-              onSave={handleSaveActivity}
-              onSaveMeeting={handleSaveMeeting}
-              onTimeframeChange={handleTimeframeChange}
-              setCurrentView={handleNavigation}
-              onUpdateActionItem={handleUpdateActionItem}
-              onNavigateToSponsorContact={handleNavigateToSponsorContact}
-            />
-          )}
-          {currentView === 'meetings' && (
-            <Meetings
-              setCurrentView={handleNavigation}
-              meetings={state.meetings}
-              onSave={handleSaveMeeting}
-              onDelete={handleDeleteMeeting}
-              user={state.user}
-            />
-          )}
-          {currentView === 'profile' && (
-            <Profile
-              setCurrentView={handleNavigation}
-              user={state.user}
-              onUpdate={handleUpdateProfile}
-              meetings={state.meetings}
-              onSaveMeeting={handleSaveMeeting}
-              onResetAllData={resetAllData}
-              currentUserId={state.currentUserId}
-            />
-          )}
-          {currentView === 'sponsor' && (
-            <SponsorSponsee
-              user={state.user}
-              onUpdate={handleUpdateProfile}
-              onSaveActivity={handleSaveActivity}
-              activities={state.activities}
-            />
-          )}
+          <React.Suspense fallback={
+            <div style={{ 
+              padding: '20px', 
+              textAlign: 'center',
+              color: muiTheme.palette.text.secondary,
+              minHeight: '200px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}>
+              Loading...
+            </div>
+          }>
+            {currentView === 'dashboard' && (
+              <Dashboard
+                user={state.user}
+                activities={filteredActivities}
+                meetings={state.meetings}
+                currentTimeframe={state.currentTimeframe}
+                onSave={handleSaveActivity}
+                onSaveMeeting={handleSaveMeeting}
+                onTimeframeChange={handleTimeframeChange}
+                setCurrentView={handleNavigation}
+                onUpdateActionItem={handleUpdateActionItem}
+                onNavigateToSponsorContact={handleNavigateToSponsorContact}
+              />
+            )}
+            {currentView === 'meetings' && (
+              <Meetings
+                setCurrentView={handleNavigation}
+                meetings={state.meetings}
+                onSave={handleSaveMeeting}
+                onDelete={handleDeleteMeeting}
+                user={state.user}
+              />
+            )}
+            {currentView === 'profile' && (
+              <Profile
+                setCurrentView={handleNavigation}
+                user={state.user}
+                onUpdate={handleUpdateProfile}
+                meetings={state.meetings}
+                onSaveMeeting={handleSaveMeeting}
+                onResetAllData={resetAllData}
+                currentUserId={state.currentUserId}
+              />
+            )}
+            {currentView === 'sponsor' && (
+              <SponsorSponsee
+                user={state.user}
+                onUpdate={handleUpdateProfile}
+                onSaveActivity={handleSaveActivity}
+                activities={state.activities}
+              />
+            )}
+          </React.Suspense>
           {currentView !== 'dashboard' && currentView !== 'meetings' && currentView !== 'profile' && currentView !== 'sponsor' && (
             <div style={{ 
               padding: '20px', 
