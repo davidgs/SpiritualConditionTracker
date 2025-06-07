@@ -334,15 +334,41 @@ export default function Meetings({ setCurrentView, meetings = [], onSave, onDele
         }}
       >
         <Box>
-          <Box sx={{ mb: 2 }}>
-            <Typography variant="h6" component="h3" sx={{ fontWeight: 'bold', display: 'flex', alignItems: 'center' }}>
+          <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <Typography variant="h6" component="h3" sx={{ fontWeight: 'bold', display: 'flex', alignItems: 'center', flex: 1 }}>
               {meeting.isHomeGroup && (
                 <i className="fa-solid fa-house" title="Home Group" style={{ fontSize: '1rem', marginRight: '8px', opacity: 0.7 }}></i>
               )}
               {meeting.name}
             </Typography>
             
-
+            {/* Action buttons moved up */}
+            <Box sx={{ display: 'flex', gap: 1, ml: 2 }}>
+              <IconButton
+                onClick={() => handleShareMeeting(meeting)}
+                color="info"
+                title="Share meeting"
+                size="small"
+              >
+                <i className="fa-solid fa-share"></i>
+              </IconButton>
+              <IconButton
+                onClick={() => handleEdit(meeting)}
+                color="primary"
+                title="Edit meeting"
+                size="small"
+              >
+                <i className="fa-solid fa-pen-to-square"></i>
+              </IconButton>
+              <IconButton
+                onClick={() => handleDelete(meeting.id)}
+                color="error"
+                title="Delete meeting"
+                size="small"
+              >
+                <i className="fa-solid fa-trash-can"></i>
+              </IconButton>
+            </Box>
           </Box>
           
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5, fontSize: '0.875rem' }}>
@@ -548,35 +574,7 @@ export default function Meetings({ setCurrentView, meetings = [], onSave, onDele
               </Box>
             )}
           </Box>
-          
-          <Box sx={{ mt: 2, pt: 2, display: 'flex', justifyContent: 'flex-end', borderTop: 1, borderColor: 'divider' }}>
-            <Box sx={{ display: 'flex', gap: 1 }}>
-              <IconButton
-                onClick={() => handleShareMeeting(meeting)}
-                color="info"
-                title="Share meeting"
-                size="small"
-              >
-                <i className="fa-solid fa-share"></i>
-              </IconButton>
-              <IconButton
-                onClick={() => handleEdit(meeting)}
-                color="primary"
-                title="Edit meeting"
-                size="small"
-              >
-                <i className="fa-solid fa-pen-to-square"></i>
-              </IconButton>
-              <IconButton
-                onClick={() => handleDelete(meeting.id)}
-                color="error"
-                title="Delete meeting"
-                size="small"
-              >
-                <i className="fa-solid fa-trash-can"></i>
-              </IconButton>
-            </Box>
-          </Box>
+
         </Box>
       </Paper>
     );
