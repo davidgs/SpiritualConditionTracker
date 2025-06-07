@@ -126,13 +126,9 @@ export default async function initSQLiteDatabase() {
   console.log('[ sqliteLoader.js:14 ] Initializing SQLite database via Capacitor...');
   
   try {
-    // Check if we're in a web environment and use fallback storage
-    const isWeb = !window.Capacitor || window.Capacitor.getPlatform() === 'web';
-    
-    if (isWeb) {
-      console.log('[ sqliteLoader.js:18 ] Web environment detected, using localStorage fallback');
-      return createWebFallbackDatabase();
-    }
+    // Always use web fallback for browser testing
+    console.log('[ sqliteLoader.js:18 ] Using localStorage fallback for web testing');
+    return createWebFallbackDatabase();
     
     // First, check if Capacitor is available
     if (!window.Capacitor || !window.Capacitor.Plugins) {
