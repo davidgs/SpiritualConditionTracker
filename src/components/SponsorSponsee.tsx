@@ -269,7 +269,7 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
   };
 
   return (
-    <div style={{ padding: '20px 16px' }}>
+    <div style={{ padding: '0 16px 20px 16px' }}>
       <Typography variant="h4" sx={{ color: theme.palette.text.primary, mb: 3, fontWeight: 'bold' }}>
         Sponsors & Sponsees
       </Typography>
