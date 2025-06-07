@@ -184,8 +184,10 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
                 }
               }}
               onAccept={(value) => {
+                console.log('Time picker accepted:', value);
                 const timeString = (value && value.isValid()) ? value.format('HH:mm') : (newMeeting.time || '19:00');
-                
+                console.log('Time string:', timeString);
+                console.log('MeeitngTime: ', newMeeting.time);
                 if (editingMeeting !== null) {
                   const updatedSchedule = [...schedule];
                   updatedSchedule[editingMeeting] = {
@@ -202,13 +204,16 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
                   setCurrentStep('format');
                 }
               }}
-           //   onClose={() => {
-           //     if (editingMeeting !== null) {
-           //       setEditingMeeting(null);
-           //       setNewMeeting({});
-           //     }
-           //     setCurrentStep('day');
-            //  }}
+              onClose={() => {
+                console.log('Time picker closed');
+                const timeString = newMeeting.time || '22:00';
+                console.log('Time string:', timeString);
+                if (editingMeeting !== null) {
+                  setEditingMeeting(null);
+                  setNewMeeting({});
+                }
+                setCurrentStep('day');
+              }}
               slotProps={{
                 textField: {
                   style: { display: 'none' }
