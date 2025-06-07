@@ -246,7 +246,7 @@ class DatabaseService {
   async deleteActivity(id: string | number): Promise<boolean> {
     return this.executeOperation(async () => {
       console.log('[ DatabaseService.ts deleteActivity ] Deleting activity with ID:', id);
-      const result = await this.database.delete('activities', id);
+      const result = await this.database.remove('activities', id);
       console.log('[ DatabaseService.ts deleteActivity ] Delete result:', result);
       return !!result;
     });
