@@ -487,8 +487,17 @@ export default function ActivityList({
                         </div>
                       )}
                       
-                      {/* Delete button for all activities */}
-                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '4px', flexShrink: 0 }}>
+                      {/* Right side container with delete button and date */}
+                      <div style={{ 
+                        display: 'flex', 
+                        flexDirection: 'column', 
+                        alignItems: 'flex-end', 
+                        justifyContent: 'space-between',
+                        minHeight: '40px',
+                        gap: '2px',
+                        flexShrink: 0,
+                        marginLeft: 'auto'
+                      }}>
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
@@ -499,14 +508,22 @@ export default function ActivityList({
                             border: 'none',
                             color: theme.palette.error.main,
                             cursor: 'pointer',
-                            padding: '2px',
-                            fontSize: '0.7rem',
-                            borderRadius: '2px',
+                            padding: '4px',
+                            fontSize: '0.8rem',
+                            borderRadius: '50%',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            width: '16px',
-                            height: '16px'
+                            width: '20px',
+                            height: '20px',
+                            lineHeight: '1',
+                            transition: 'background-color 0.2s'
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.backgroundColor = theme.palette.error.light + '20';
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.backgroundColor = 'transparent';
                           }}
                           title="Delete activity"
                         >
@@ -514,7 +531,12 @@ export default function ActivityList({
                         </button>
                         
                         {showDate && (
-                          <div style={{ fontSize: '0.7rem', color: theme.palette.text.secondary }}>
+                          <div style={{ 
+                            fontSize: '0.7rem', 
+                            color: theme.palette.text.secondary,
+                            textAlign: 'right',
+                            lineHeight: '1.2'
+                          }}>
                             {formatDate(activity.date)}
                           </div>
                         )}
