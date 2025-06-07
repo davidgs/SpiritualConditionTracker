@@ -206,13 +206,23 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
               }}
               onClose={() => {
                 console.log('Time picker closed');
-                const timeString = newMeeting.time || '22:00';
+                const timeString = newMeeting.time || '19:00';
                 console.log('Time string:', timeString);
                 if (editingMeeting !== null) {
+                  const updatedSchedule = [...schedule];
+                  updatedSchedule[editingMeeting] = {
+                    ...updatedSchedule[editingMeeting],
+                    time: timeString
+                  };
+                  onChange(updatedSchedule);
+
                   setEditingMeeting(null);
                   setNewMeeting({});
+                  setCurrentStep('day');
+                } else {
+                  setNewMeeting(prev => ({ ...prev, time: timeString }));
+                  setCurrentStep('format');
                 }
-                setCurrentStep('day');
               }}
               slotProps={{
                 textField: {
