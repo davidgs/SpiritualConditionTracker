@@ -8,10 +8,10 @@ function Header({ title, menuOpen, setMenuOpen, isMobile, onShowTour }) {
   const { primaryColor, toggleTheme } = useAppTheme();
   const darkMode = muiTheme.palette.mode === 'dark';
   
-  // Use MUI theme colors for consistent styling
+  // Use MUI theme colors for consistent styling - ensure fully opaque
   const headerBackgroundColor = darkMode 
-    ? muiTheme.palette.background.paper 
-    : muiTheme.palette.grey[100];
+    ? '#121212' // Explicitly solid dark background
+    : '#f5f5f5'; // Explicitly solid light gray
   // Header text color from MUI theme
   const headerTextColor = muiTheme.palette.text.primary;
   // Add a primary color accent from the user's selected theme
