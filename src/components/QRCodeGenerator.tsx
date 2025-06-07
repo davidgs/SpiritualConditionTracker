@@ -1,6 +1,7 @@
 import React, { useRef } from 'react';
 import { QRCode } from 'react-qrcode-logo';
-import { Box, Button, Dialog, DialogTitle, DialogContent, DialogActions, Typography, useTheme } from '@mui/material';
+import { Box, Button, Dialog, DialogTitle, DialogContent, DialogActions, Typography } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
 
 interface QRCodeGeneratorProps {
   data: string;
