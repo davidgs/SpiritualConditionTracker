@@ -1,4 +1,5 @@
 const path = require('path');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 
 module.exports = (env, argv) => {
@@ -82,6 +83,23 @@ module.exports = (env, argv) => {
       runtimeChunk: 'single',
     },
     plugins: [
+      new HtmlWebpackPlugin({
+        template: './index.html',
+        filename: 'index.html',
+        inject: 'body',
+        minify: isProduction ? {
+          removeComments: true,
+          collapseWhitespace: true,
+          removeRedundantAttributes: true,
+          useShortDoctype: true,
+          removeEmptyAttributes: true,
+          removeStyleLinkTypeAttributes: true,
+          keepClosingSlash: true,
+          minifyJS: true,
+          minifyCSS: true,
+          minifyURLs: true,
+        } : false,
+      }),
       ...(shouldAnalyze ? [new BundleAnalyzerPlugin()] : []),
     ],
     performance: {
