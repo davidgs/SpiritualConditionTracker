@@ -1,7 +1,9 @@
 const path = require('path');
+const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 
 module.exports = (env, argv) => {
   const isProduction = argv.mode === 'production';
+  const shouldAnalyze = process.env.ANALYZE === 'true';
   
   return {
     entry: './src/index.tsx',
@@ -21,7 +23,8 @@ module.exports = (env, argv) => {
         use: {
           loader: 'babel-loader',
           options: {
-            presets: ['@babel/preset-env', '@babel/preset-react', '@babel/preset-typescript']
+            configFile: './babel.config.js',
+            cacheDirectory: true
           }
         }
       },
@@ -78,6 +81,9 @@ module.exports = (env, argv) => {
       },
       runtimeChunk: 'single',
     },
+    plugins: [
+      ...(shouldAnalyze ? [new BundleAnalyzerPlugin()] : []),
+    ],
     performance: {
       maxEntrypointSize: 512000,
       maxAssetSize: 512000,
