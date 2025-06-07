@@ -31,13 +31,13 @@ function Header({ title, menuOpen, setMenuOpen, isMobile }) {
           backgroundColor: headerBackgroundColor,
           borderBottom: `1px solid ${muiTheme.palette.divider}`,
           padding: '0.5rem 1rem',
-          paddingTop: 'calc(60px + env(safe-area-inset-top, 0px) + 0.5rem)',
+          paddingTop: 'calc(60px + env(safe-area-inset-top, 0px) + 2.5rem)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'flex-start',
           boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
           gap: 1,
-          height: 'calc(60px + env(safe-area-inset-top, 0px))',
+          height: 'calc(60px + env(safe-area-inset-top, 0px) + 3.0rem)',
         }}
       >
         {/* Logo and title - left aligned */}
