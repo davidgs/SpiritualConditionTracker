@@ -49,14 +49,14 @@ html.dark body {
 
 /* App content container with iOS safe area support */
 .app-content-container {
-  padding-top: calc(60px + env(safe-area-inset-top, 0px) + 20px);
+  padding-top: calc(60px + env(safe-area-inset-top, 0px) + 8px);
   padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px));
 }
 
 /* Support for older iOS browsers */
 @supports (padding-top: constant(safe-area-inset-top)) {
   .app-content-container {
-    padding-top: calc(60px + constant(safe-area-inset-top) + 20px);
+    padding-top: calc(60px + constant(safe-area-inset-top) + 8px);
     padding-bottom: calc(80px + constant(safe-area-inset-bottom));
   }
 }
