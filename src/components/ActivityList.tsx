@@ -307,41 +307,7 @@ export default function ActivityList({
                         ? 'Action Item'
                         : activity.type.charAt(0).toUpperCase() + activity.type.slice(1)}
                       
-                      {/* Add role pills for meetings */}
-                      {activity.type === 'meeting' && (
-                        <div style={{ display: 'flex', marginLeft: '6px', gap: '4px' }}>
-                          {activity.wasChair && (
-                            <span style={{
-                              fontSize: '0.6rem',
-                              padding: '1px 5px',
-                              borderRadius: '10px',
-                              backgroundColor: theme.palette.success.light,
-                              color: theme.palette.success.dark,
-                              fontWeight: 'bold'
-                            }}>Chair</span>
-                          )}
-                          {activity.wasShare && (
-                            <span style={{
-                              fontSize: '0.6rem',
-                              padding: '1px 5px',
-                              borderRadius: '10px',
-                              backgroundColor: theme.palette.info.light,
-                              color: theme.palette.info.dark,
-                              fontWeight: 'bold'
-                            }}>Share</span>
-                          )}
-                          {activity.wasSpeaker && (
-                            <span style={{
-                              fontSize: '0.6rem',
-                              padding: '1px 5px',
-                              borderRadius: '10px',
-                              backgroundColor: theme.palette.secondary.light,
-                              color: theme.palette.secondary.dark,
-                              fontWeight: 'bold'
-                            }}>Speaker</span>
-                          )}
-                        </div>
-                      )}
+
                       
                       {/* Add pills for call types */}
                       {activity.type === 'call' && (
