@@ -187,27 +187,32 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
               }}
               onAccept={(value) => {
                 // Advance to next step when OK is clicked
+                let timeString = '19:00'; // Default fallback
+                
                 if (value && value.isValid()) {
-                  const timeString = value.format('HH:mm');
-                  console.log('Time picker accepted:', timeString);
+                  timeString = value.format('HH:mm');
+                } else if (newMeeting.time) {
+                  timeString = newMeeting.time;
+                }
+                
+                console.log('Time picker accepted:', timeString);
+                
+                // If editing an existing meeting, update it immediately with the new time
+                if (editingMeeting !== null) {
+                  const updatedSchedule = [...schedule];
+                  updatedSchedule[editingMeeting] = {
+                    ...updatedSchedule[editingMeeting],
+                    time: timeString
+                  };
+                  onChange(updatedSchedule);
                   
-                  // If editing an existing meeting, update it immediately with the new time
-                  if (editingMeeting !== null) {
-                    const updatedSchedule = [...schedule];
-                    updatedSchedule[editingMeeting] = {
-                      ...updatedSchedule[editingMeeting],
-                      time: timeString
-                    };
-                    onChange(updatedSchedule);
-                    
-                    // Reset editing state
-                    setEditingMeeting(null);
-                    setNewMeeting({});
-                    setCurrentStep('day');
-                  } else {
-                    setNewMeeting(prev => ({ ...prev, time: timeString }));
-                    setCurrentStep('format');
-                  }
+                  // Reset editing state
+                  setEditingMeeting(null);
+                  setNewMeeting({});
+                  setCurrentStep('day');
+                } else {
+                  setNewMeeting(prev => ({ ...prev, time: timeString }));
+                  setCurrentStep('format');
                 }
               }}
               slotProps={{
