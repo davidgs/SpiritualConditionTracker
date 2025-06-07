@@ -249,6 +249,26 @@ export default async function initSQLiteDatabase() {
         }
       },
 
+      async delete(collection, id) {
+        try {
+          console.log(`[ sqliteLoader.js ] Deleting from ${collection} id ${id}`);
+          
+          const sql = `DELETE FROM ${collection} WHERE id = ${id}`;
+          console.log(`[ sqliteLoader.js ] Delete SQL:`, sql);
+          
+          await sqlite.execute({
+            database: DB_NAME,
+            statements: sql
+          });
+          
+          console.log(`[ sqliteLoader.js ] Delete completed for ${collection} id ${id}`);
+          return true;
+        } catch (error) {
+          console.error(`[ sqliteLoader.js ] Error deleting from ${collection}:`, error);
+          throw error;
+        }
+      },
+
       async getById(collection, id) {
         try {
           const result = await sqlite.query({
