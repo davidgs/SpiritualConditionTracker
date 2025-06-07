@@ -230,7 +230,7 @@ function AppContent() {
           isMobile={true}
           onShowTour={() => console.log('Tour feature temporarily disabled')}
         />
-        <div style={{ paddingTop: 'calc(88px + env(safe-area-inset-top, 44px))', paddingBottom: '80px' }}>
+        <div style={{ paddingTop: 'calc(44px + env(safe-area-inset-top, 44px) + 1rem + 0.5rem)', paddingBottom: '80px' }}>
           {currentView === 'dashboard' && (
             <Dashboard
               user={state.user}
