@@ -51,8 +51,8 @@ function Header({ title, menuOpen, setMenuOpen, isMobile }) {
           src="/assets/logo.jpg"
           alt="App Logo" 
           sx={{ 
-            width: '30px',
-            height: '30px',
+            width: '40px',
+            height: '40px',
             objectFit: 'cover',
             borderRadius: '3px'
           }}
@@ -63,7 +63,7 @@ function Header({ title, menuOpen, setMenuOpen, isMobile }) {
           sx={{ 
             fontWeight: 600,
             color: headerTextColor,
-            fontSize: '1rem',
+            fontSize: '1.1rem',
             lineHeight: 1.2,
             flex: 1
           }}
