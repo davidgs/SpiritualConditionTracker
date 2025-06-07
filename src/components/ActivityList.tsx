@@ -539,41 +539,6 @@ export default function ActivityList({
                           </button>
                         </div>
                       )}
-                      
-                      {/* Delete button aligned with top line */}
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleDeleteActivity(activity.id);
-                        }}
-                        style={{
-                          background: 'none',
-                          border: 'none',
-                          color: theme.palette.error.main,
-                          cursor: 'pointer',
-                          padding: '4px',
-                          fontSize: '0.8rem',
-                          borderRadius: '50%',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          width: '20px',
-                          height: '20px',
-                          lineHeight: '1',
-                          transition: 'background-color 0.2s',
-                          flexShrink: 0,
-                          alignSelf: 'flex-start'
-                        }}
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.backgroundColor = theme.palette.error.light + '20';
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.backgroundColor = 'transparent';
-                        }}
-                        title="Delete activity"
-                      >
-                        ✕
-                      </button>
                     </div>
                   </div>
                 </div>
