@@ -31,18 +31,13 @@ function Header({ title, menuOpen, setMenuOpen, isMobile }) {
           backgroundColor: headerBackgroundColor,
           borderBottom: `1px solid ${muiTheme.palette.divider}`,
           padding: '0.5rem 1rem',
-          paddingTop: 'calc(env(safe-area-inset-top, 0px) + 0.5rem)',
+          paddingTop: 'calc(60px + env(safe-area-inset-top, 0px) + 0.5rem)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'flex-start',
           boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
           gap: 1,
           height: 'calc(60px + env(safe-area-inset-top, 0px))',
-          // Support for older iOS browsers
-          '@supports (padding-top: constant(safe-area-inset-top))': {
-            paddingTop: 'calc(constant(safe-area-inset-top) + 0.5rem)',
-            height: 'calc(60px + constant(safe-area-inset-top))'
-          }
         }}
       >
         {/* Logo and title - left aligned */}
