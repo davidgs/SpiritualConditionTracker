@@ -1,6 +1,6 @@
 import React from 'react';
 import { useTheme } from '@mui/material/styles';
-import { Typography, Box, IconButton } from '@mui/material';
+import { Typography, Box } from '@mui/material';
 import { useAppTheme } from '../contexts/MuiThemeProvider';
 
 function Header({ title, menuOpen, setMenuOpen, isMobile, onShowTour }) {
@@ -12,31 +12,30 @@ function Header({ title, menuOpen, setMenuOpen, isMobile, onShowTour }) {
   const headerBackgroundColor = darkMode 
     ? muiTheme.palette.background.paper 
     : muiTheme.palette.grey[100];
-  // Header text color from MUI theme
   const headerTextColor = muiTheme.palette.text.primary;
-  // Add a primary color accent from the user's selected theme
   const accentColor = muiTheme.palette.primary.main;
   
   return (
-      <Box
-        sx={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          zIndex: 1100,
-          backgroundColor: headerBackgroundColor,
-          borderBottom: `1px solid ${muiTheme.palette.divider}`,
-          padding: '0.5rem 1rem',
-          paddingTop: '50px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'flex-start',
-          boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
-          gap: 1,
-          height: '94px',
-        }}
-      >
+    <Box
+      data-tour="header"
+      sx={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        zIndex: 1100,
+        backgroundColor: headerBackgroundColor,
+        borderBottom: `1px solid ${muiTheme.palette.divider}`,
+        padding: '0.5rem 1rem',
+        paddingTop: 'calc(env(safe-area-inset-top, 44px) + 0.5rem)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+        gap: 1,
+        minHeight: '104px',
+      }}
+    >
       {/* Logo and title - left aligned */}
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flex: 1 }}>
         <Box
@@ -64,34 +63,36 @@ function Header({ title, menuOpen, setMenuOpen, isMobile, onShowTour }) {
         </Typography>
       </Box>
 
-      {/* Theme Toggle Button */}
+      {/* Right side buttons */}
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-        <Box
-          component="button"
-          onClick={onShowTour || (() => console.log('Tour handler not provided'))}
-          sx={{
-            border: 'none',
-            backgroundColor: accentColor,
-            color: 'white',
-            cursor: 'pointer',
-            fontSize: '1rem',
-            padding: '6px',
-            borderRadius: '50%',
-            width: '32px',
-            height: '32px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            transition: 'all 0.2s ease',
-            '&:hover': {
-              transform: 'scale(1.1)',
-              opacity: 0.8
-            }
-          }}
-          aria-label="Show welcome tour"
-          title="Help - Welcome Tour"
-        >❓
-        </Box>
+        {onShowTour && (
+          <Box
+            component="button"
+            onClick={onShowTour}
+            sx={{
+              border: 'none',
+              backgroundColor: accentColor,
+              color: 'white',
+              cursor: 'pointer',
+              fontSize: '1rem',
+              padding: '6px',
+              borderRadius: '50%',
+              width: '32px',
+              height: '32px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              transition: 'all 0.2s ease',
+              '&:hover': {
+                transform: 'scale(1.1)',
+                opacity: 0.8
+              }
+            }}
+            aria-label="Show welcome tour"
+            title="Help - Welcome Tour"
+          >❓
+          </Box>
+        )}
         
         <Box
           component="button"
