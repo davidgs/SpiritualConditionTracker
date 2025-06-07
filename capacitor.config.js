@@ -4,7 +4,7 @@
 module.exports = {
   appId: 'com.spiritualconditiontracker.app',
   appName: 'Spiritual Condition Tracker',
-  webDir: '/dist',
+  webDir: './dist',
   bundledWebRuntime: true,
   plugins: {
     CapacitorSQLite: {
