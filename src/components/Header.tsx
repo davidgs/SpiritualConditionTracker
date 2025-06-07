@@ -67,35 +67,33 @@ function Header({ title, menuOpen, setMenuOpen, isMobile, onShowTour }) {
 
       {/* Theme Toggle Button */}
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-        {onShowTour && (
-          <Box
-            component="button"
-            onClick={onShowTour}
-            sx={{
-              border: 'none',
-              backgroundColor: accentColor,
-              color: 'white',
-              cursor: 'pointer',
-              fontSize: '1rem',
-              padding: '6px',
-              borderRadius: '50%',
-              width: '32px',
-              height: '32px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              transition: 'all 0.2s ease',
-              '&:hover': {
-                transform: 'scale(1.1)',
-                opacity: 0.8
-              }
-            }}
-            aria-label="Show welcome tour"
-            title="Help - Welcome Tour"
-          >
-            ❓
-          </Box>
-        )}
+        <Box
+          component="button"
+          onClick={onShowTour || (() => console.log('Tour handler not provided'))}
+          sx={{
+            border: 'none',
+            backgroundColor: accentColor,
+            color: 'white',
+            cursor: 'pointer',
+            fontSize: '1rem',
+            padding: '6px',
+            borderRadius: '50%',
+            width: '32px',
+            height: '32px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            transition: 'all 0.2s ease',
+            '&:hover': {
+              transform: 'scale(1.1)',
+              opacity: 0.8
+            }
+          }}
+          aria-label="Show welcome tour"
+          title="Help - Welcome Tour"
+        >
+          ❓
+        </Box>
         
         <Box
           component="button"
