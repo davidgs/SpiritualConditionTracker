@@ -28,6 +28,22 @@ module.exports = {
       // Accuracy settings
       enableHighAccuracy: true,
       timeout: 10000
+    },
+    SplashScreen: {
+      launchShowDuration: 2000,
+      launchAutoHide: true,
+      launchFadeOutDuration: 1000,
+      backgroundColor: "#ffffff",
+      androidSplashResourceName: "splash",
+      androidScaleType: "CENTER_CROP",
+      showSpinner: false,
+      androidSpinnerStyle: "large",
+      iosSpinnerStyle: "small",
+      spinnerColor: "#999999",
+      splashFullScreen: true,
+      splashImmersive: true,
+      layoutName: "launch_splash",
+      useDialog: true
     }
   },
   // Commented out for native builds - only use external server for development
@@ -44,7 +60,10 @@ module.exports = {
     // Location permissions for meeting locate functionality
     infoPlist: {
       NSLocationWhenInUseUsageDescription: 'This app needs location access to help you find nearby AA meetings and add location details to your meetings.',
-      NSLocationAlwaysAndWhenInUseUsageDescription: 'This app needs location access to help you find nearby AA meetings and add location details to your meetings.'
+      NSLocationAlwaysAndWhenInUseUsageDescription: 'This app needs location access to help you find nearby AA meetings and add location details to your meetings.',
+      // Launch screen configuration
+      UILaunchStoryboardName: 'LaunchScreen',
+      UILaunchImages: 'LaunchImage'
     }
   },
   android: {
