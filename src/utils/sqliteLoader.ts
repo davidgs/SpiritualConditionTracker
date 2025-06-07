@@ -86,6 +86,23 @@ export default async function initSQLiteDatabase() {
           items = result.values || [];
         }
 
+        // Parse JSON fields back to objects/arrays
+        const jsonFields = ['days', 'schedule', 'coordinates', 'types', 'homeGroups', 'privacySettings', 'preferences'];
+        items = items.map(item => {
+          const parsedItem = { ...item };
+          jsonFields.forEach(field => {
+            if (parsedItem[field] && typeof parsedItem[field] === 'string') {
+              try {
+                parsedItem[field] = JSON.parse(parsedItem[field]);
+              } catch (e) {
+                console.warn(`[ sqliteLoader.js ] Failed to parse ${field} JSON for ${collection}:`, e);
+                // Keep as string if parsing fails
+              }
+            }
+          });
+          return parsedItem;
+        });
+
         console.log(`[ sqliteLoader.js:548 ] Processed ${items.length} items from ${collection}`);
         return items;
       },
@@ -282,12 +299,30 @@ export default async function initSQLiteDatabase() {
           }
 
           // Handle different response formats
+          let item;
           if (result.values.length > 1 && result.values[0].ios_columns) {
             const items = convertIOSFormatToStandard(result.values);
-            return items[0] || null;
+            item = items[0] || null;
           } else {
-            return result.values[0] || null;
+            item = result.values[0] || null;
           }
+          
+          // Parse JSON fields back to objects/arrays
+          if (item) {
+            const jsonFields = ['days', 'schedule', 'coordinates', 'types', 'homeGroups', 'privacySettings', 'preferences'];
+            jsonFields.forEach(field => {
+              if (item[field] && typeof item[field] === 'string') {
+                try {
+                  item[field] = JSON.parse(item[field]);
+                } catch (e) {
+                  console.warn(`[ sqliteLoader.js ] Failed to parse ${field} JSON for ${collection} getById:`, e);
+                  // Keep as string if parsing fails
+                }
+              }
+            });
+          }
+          
+          return item;
         } catch (error) {
           console.error(`[ sqliteLoader.js ] Error getting ${collection} by id ${id}:`, error);
           throw error;
