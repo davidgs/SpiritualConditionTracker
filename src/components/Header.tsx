@@ -18,121 +18,104 @@ function Header({ title, menuOpen, setMenuOpen, isMobile, onShowTour }) {
   const accentColor = muiTheme.palette.primary.main;
   
   return (
-    <>
-      {/* Safe area background fill */}
-      <Box
-        sx={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          height: 'max(env(safe-area-inset-top, 0px), 44px)',
-          backgroundColor: headerBackgroundColor,
-          zIndex: 1099,
-        }}
-      />
-      
-      {/* Header content */}
-      <Box
-        data-tour="header"
-        sx={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          zIndex: 1100,
-          backgroundColor: headerBackgroundColor,
-          borderBottom: `1px solid ${muiTheme.palette.divider}`,
-          padding: '0.5rem 1rem',
-          paddingTop: 'calc(env(safe-area-inset-top, 44px) + 2.5rem)',
-          paddingLeft: 'env(safe-area-inset-left, 1rem)',
-          paddingRight: 'env(safe-area-inset-right, 1rem)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
-          gap: 1,
-          minHeight: 'calc(44px + env(safe-area-inset-top, 44px) + 1rem)',
-        }}
-      >
-        {/* Logo and title - left aligned */}
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flex: 1 }}>
-          <Box
-            component="img" 
-            src="/assets/logo.jpg"
-            alt="App Logo" 
-            sx={{ 
-              width: '40px',
-              height: '40px',
-              objectFit: 'cover',
-              borderRadius: '20px'
-            }}
-          />
-          
-          <Typography 
-            variant="h6" 
-            sx={{ 
-              fontWeight: 600,
-              color: headerTextColor,
-              fontSize: '1.1rem',
-              lineHeight: 1.2
-            }}
-          >
-            My Spiritual Condition
-          </Typography>
-        </Box>
+    <Box
+      data-tour="header"
+      sx={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        zIndex: 1100,
+        backgroundColor: headerBackgroundColor,
+        borderBottom: `1px solid ${muiTheme.palette.divider}`,
+        padding: '0.5rem 1rem',
+        paddingTop: '88px', // Fixed padding to cover status bar area
+        paddingBottom: '0.5rem',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+        gap: 1,
+        minHeight: '132px', // Fixed height that covers status bar + header content
+      }}
+    >
+      {/* Logo and title - left aligned */}
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flex: 1 }}>
+        <Box
+          component="img" 
+          src="/assets/logo.jpg"
+          alt="App Logo" 
+          sx={{ 
+            width: '40px',
+            height: '40px',
+            objectFit: 'cover',
+            borderRadius: '20px'
+          }}
+        />
+        
+        <Typography 
+          variant="h6" 
+          sx={{ 
+            fontWeight: 600,
+            color: headerTextColor,
+            fontSize: '1.1rem',
+            lineHeight: 1.2
+          }}
+        >
+          My Spiritual Condition
+        </Typography>
+      </Box>
 
-        {/* Theme Toggle Button */}
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <Box
-            component="button"
-            onClick={onShowTour || (() => console.log('Tour handler not provided'))}
-            sx={{
-              border: 'none',
-              backgroundColor: accentColor,
-              color: 'white',
-              cursor: 'pointer',
-              fontSize: '1rem',
-              padding: '6px',
-              borderRadius: '50%',
-              width: '32px',
-              height: '32px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              transition: 'all 0.2s ease',
-              '&:hover': {
-                transform: 'scale(1.1)',
-                opacity: 0.8
-              }
-            }}
-            aria-label="Show welcome tour"
-            title="Help - Welcome Tour"
-          >❓
-          </Box>
-          
-          <Box
-            component="button"
-            onClick={toggleTheme}
-            sx={{
-              border: 'none',
-              background: 'transparent',
-              cursor: 'pointer',
-              fontSize: '1.2rem',
-              padding: '4px',
-              borderRadius: '50%',
-              transition: 'all 0.2s ease',
-              '&:hover': {
-                transform: 'scale(1.1)'
-              }
-            }}
-            aria-label="Toggle theme"
-          >
-            {muiTheme.palette.mode === 'dark' ? '🌙' : '☀️'}
-          </Box>
+      {/* Theme Toggle Button */}
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+        <Box
+          component="button"
+          onClick={onShowTour || (() => console.log('Tour handler not provided'))}
+          sx={{
+            border: 'none',
+            backgroundColor: accentColor,
+            color: 'white',
+            cursor: 'pointer',
+            fontSize: '1rem',
+            padding: '6px',
+            borderRadius: '50%',
+            width: '32px',
+            height: '32px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            transition: 'all 0.2s ease',
+            '&:hover': {
+              transform: 'scale(1.1)',
+              opacity: 0.8
+            }
+          }}
+          aria-label="Show welcome tour"
+          title="Help - Welcome Tour"
+        >❓
+        </Box>
+        
+        <Box
+          component="button"
+          onClick={toggleTheme}
+          sx={{
+            border: 'none',
+            background: 'transparent',
+            cursor: 'pointer',
+            fontSize: '1.2rem',
+            padding: '4px',
+            borderRadius: '50%',
+            transition: 'all 0.2s ease',
+            '&:hover': {
+              transform: 'scale(1.1)'
+            }
+          }}
+          aria-label="Toggle theme"
+        >
+          {muiTheme.palette.mode === 'dark' ? '🌙' : '☀️'}
         </Box>
       </Box>
-    </>
+    </Box>
   );
 }
 
