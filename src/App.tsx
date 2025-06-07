@@ -27,6 +27,7 @@ function AppContent() {
   React.useEffect(() => {
     const hasSeenTour = localStorage.getItem('welcomeTourCompleted');
     if (!hasSeenTour && !state.isLoading) {
+      // Show tour automatically for first-time users
       setShowWelcomeTour(true);
     }
   }, [state.isLoading]);
@@ -260,6 +261,7 @@ function AppContent() {
           menuOpen={false}
           setMenuOpen={() => {}}
           isMobile={true}
+          onShowTour={() => setShowWelcomeTour(true)}
         />
         <div style={{ paddingTop: '80px', paddingBottom: '80px' }}>
           {currentView === 'dashboard' && (

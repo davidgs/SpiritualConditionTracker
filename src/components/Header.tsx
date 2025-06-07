@@ -66,24 +66,48 @@ function Header({ title, menuOpen, setMenuOpen, isMobile, onShowTour }) {
       </Typography>
 
       {/* Theme Toggle Button */}
-      <Box
-        component="button"
-        onClick={toggleTheme}
-        sx={{
-          border: 'none',
-          background: 'transparent',
-          cursor: 'pointer',
-          fontSize: '1.2rem',
-          padding: '4px',
-          borderRadius: '50%',
-          transition: 'all 0.2s ease',
-          '&:hover': {
-            transform: 'scale(1.1)'
-          }
-        }}
-        aria-label="Toggle theme"
-      >
-        {muiTheme.palette.mode === 'dark' ? '🌙' : '☀️'}
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+        {onShowTour && (
+          <Box
+            component="button"
+            onClick={onShowTour}
+            sx={{
+              border: 'none',
+              background: 'transparent',
+              cursor: 'pointer',
+              fontSize: '1.1rem',
+              padding: '4px',
+              borderRadius: '50%',
+              transition: 'all 0.2s ease',
+              '&:hover': {
+                transform: 'scale(1.1)'
+              }
+            }}
+            aria-label="Show welcome tour"
+          >
+            ❓
+          </Box>
+        )}
+        
+        <Box
+          component="button"
+          onClick={toggleTheme}
+          sx={{
+            border: 'none',
+            background: 'transparent',
+            cursor: 'pointer',
+            fontSize: '1.2rem',
+            padding: '4px',
+            borderRadius: '50%',
+            transition: 'all 0.2s ease',
+            '&:hover': {
+              transform: 'scale(1.1)'
+            }
+          }}
+          aria-label="Toggle theme"
+        >
+          {muiTheme.palette.mode === 'dark' ? '🌙' : '☀️'}
+        </Box>
       </Box>
       
 
