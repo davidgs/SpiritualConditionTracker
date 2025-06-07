@@ -124,19 +124,16 @@ export default function ActivityLog({ setCurrentView, onSave, onSaveMeeting, act
       return;
     }
     
-    // Create a unique ID for the activity
-    const activityId = Date.now().toString();
-    
     // Create new activity object with core fields - store the date string directly
     // Ensure we have a valid type (critical for SQLite NOT NULL constraint)
     console.log('Saving activity with type:', activityType);
     
     const newActivity = {
-      id: activityId,
       type: activityType || 'prayer', // Failsafe default if somehow null
       duration: parseInt(duration, 10),
       date: date, // Store as-is in YYYY-MM-DD format
       notes: notes.trim(),
+      location: 'completed', // Default location value
       // Initialize all expanded schema fields with defaults
       meetingName: '',
       meetingId: null,
@@ -165,7 +162,14 @@ export default function ActivityLog({ setCurrentView, onSave, onSaveMeeting, act
       newActivity.wasChair = wasChair ? 1 : 0;
       newActivity.wasShare = wasShare ? 1 : 0;
       newActivity.wasSpeaker = wasSpeaker ? 1 : 0;
-      newActivity.meetingId = selectedMeetingId || null;
+      newActivity.meetingId = selectedMeetingId ? parseInt(selectedMeetingId, 10) : null;
+      
+      console.log('ActivityLog - Meeting activity data:', {
+        meetingName: newActivity.meetingName,
+        meetingId: newActivity.meetingId,
+        selectedMeetingId,
+        meetingNameFromState: meetingName
+      });
     }
     
     if (activityType === 'call') {
