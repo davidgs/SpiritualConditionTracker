@@ -19,28 +19,43 @@ function Header({ title, menuOpen, setMenuOpen, isMobile, onShowTour }) {
   const accentColor = muiTheme.palette.primary.main;
   
   return (
-    <Box
-      data-tour="header"
-      sx={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        zIndex: 1100,
-        backgroundColor: headerBackgroundColor,
-        borderBottom: `1px solid ${muiTheme.palette.divider}`,
-        padding: '0.5rem 1rem',
-        paddingTop: 'calc(env(safe-area-inset-top, 44px) + 0.5rem)',
-        paddingLeft: 'env(safe-area-inset-left, 1rem)',
-        paddingRight: 'env(safe-area-inset-right, 1rem)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
-        gap: 1,
-        minHeight: 'calc(44px + env(safe-area-inset-top, 44px) + 1rem)',
-      }}
-    >
+    <>
+      {/* Safe area background fill */}
+      <Box
+        sx={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          height: 'env(safe-area-inset-top, 44px)',
+          backgroundColor: headerBackgroundColor,
+          zIndex: 1099,
+        }}
+      />
+      
+      {/* Header content */}
+      <Box
+        data-tour="header"
+        sx={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          zIndex: 1100,
+          backgroundColor: headerBackgroundColor,
+          borderBottom: `1px solid ${muiTheme.palette.divider}`,
+          padding: '0.5rem 1rem',
+          paddingTop: 'calc(env(safe-area-inset-top, 44px) + 0.5rem)',
+          paddingLeft: 'env(safe-area-inset-left, 1rem)',
+          paddingRight: 'env(safe-area-inset-right, 1rem)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+          gap: 1,
+          minHeight: 'calc(44px + env(safe-area-inset-top, 44px) + 1rem)',
+        }}
+      >
       {/* Logo and title - left aligned */}
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flex: 1 }}>
         <Box
@@ -117,7 +132,7 @@ function Header({ title, menuOpen, setMenuOpen, isMobile, onShowTour }) {
           {muiTheme.palette.mode === 'dark' ? '🌙' : '☀️'}
         </Box>
       </Box>
-    </Box>
+    </>
   );
 }
 
