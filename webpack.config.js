@@ -1,5 +1,6 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 
 module.exports = (env, argv) => {
@@ -99,6 +100,20 @@ module.exports = (env, argv) => {
           minifyCSS: true,
           minifyURLs: true,
         } : false,
+      }),
+      new CopyWebpackPlugin({
+        patterns: [
+          {
+            from: 'assets',
+            to: 'assets',
+            noErrorOnMissing: true,
+          },
+          {
+            from: 'styles',
+            to: 'styles',
+            noErrorOnMissing: true,
+          },
+        ],
       }),
       ...(shouldAnalyze ? [new BundleAnalyzerPlugin()] : []),
     ],
