@@ -41,6 +41,7 @@ type AppAction =
   | { type: 'SET_CURRENT_USER_ID'; payload: string | number | null }
   | { type: 'SET_ACTIVITIES'; payload: Activity[] }
   | { type: 'ADD_ACTIVITY'; payload: Activity }
+  | { type: 'DELETE_ACTIVITY'; payload: string | number }
   | { type: 'SET_MEETINGS'; payload: Meeting[] }
   | { type: 'ADD_MEETING'; payload: Meeting }
   | { type: 'UPDATE_MEETING'; payload: { id: string | number; data: Partial<Meeting> } }
@@ -85,6 +86,12 @@ function appReducer(state: AppState, action: AppAction): AppState {
     
     case 'ADD_ACTIVITY':
       return { ...state, activities: [...state.activities, action.payload] };
+    
+    case 'DELETE_ACTIVITY':
+      return { 
+        ...state, 
+        activities: state.activities.filter(activity => activity.id !== action.payload) 
+      };
     
     case 'SET_MEETINGS':
       return { ...state, meetings: action.payload };
@@ -452,6 +459,30 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  // Delete activity
+  const deleteActivity = async (activityId: string | number): Promise<boolean> => {
+    try {
+      // Delete from database
+      const success = await databaseService.deleteActivity(activityId);
+      
+      if (success) {
+        // Update local state
+        dispatch({ type: 'DELETE_ACTIVITY', payload: activityId });
+        
+        // Recalculate spiritual fitness
+        calculateSpiritualFitness();
+        
+        console.log('[ AppDataContext.tsx ] Activity deleted:', activityId);
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.error('[ AppDataContext.tsx ] Failed to delete activity:', error);
+      dispatch({ type: 'SET_ERROR', payload: 'Failed to delete activity' });
+      return false;
+    }
+  };
+
   // Meeting operations
   const loadMeetings = async () => {
     try {
@@ -608,6 +639,7 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
     loadActivities,
     getActivitiesForTimeframe,
     addActivity,
+    deleteActivity,
     loadMeetings,
     addMeeting,
     updateMeeting,
