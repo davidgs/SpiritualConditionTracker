@@ -170,34 +170,69 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
     if (currentStep === 'time') {
       return (
         <Box sx={{ mb: 2 }}>
-          <Typography variant="h6" sx={{ mb: 1 }}>Select Time</Typography>
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <MobileTimePicker
-              value={newMeeting.time ? dayjs(`2022-04-17T${newMeeting.time}`) : dayjs('2022-04-17T19:00')}
-              minutesStep={15}
-              ampm={!use24HourFormat}
-              open={true}
-              onChange={(value) => {
-                // Real-time update as user scrolls through time
-                if (value && value.isValid()) {
-                  const timeString = value.format('HH:mm');
-                  console.log('Time picker onChange:', timeString);
-                  setNewMeeting(prev => ({ ...prev, time: timeString }));
+          <Typography variant="h6" sx={{ mb: 2 }}>Select Time</Typography>
+          
+          {/* Custom time selector with hour and minute dropdowns */}
+          <Box sx={{ display: 'flex', gap: 2, mb: 3, alignItems: 'center' }}>
+            <FormControl sx={{ minWidth: 80 }}>
+              <InputLabel>Hour</InputLabel>
+              <Select
+                value={newMeeting.time ? newMeeting.time.split(':')[0] : '19'}
+                label="Hour"
+                onChange={(e) => {
+                  const hour = e.target.value;
+                  const minute = newMeeting.time ? newMeeting.time.split(':')[1] : '00';
+                  setNewMeeting(prev => ({ ...prev, time: `${hour}:${minute}` }));
+                }}
+              >
+                {hourOptions.map(hour => (
+                  <MenuItem key={hour.value} value={hour.value}>
+                    {hour.label}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            
+            <FormControl sx={{ minWidth: 80 }}>
+              <InputLabel>Minutes</InputLabel>
+              <Select
+                value={newMeeting.time ? newMeeting.time.split(':')[1] : '00'}
+                label="Minutes"
+                onChange={(e) => {
+                  const hour = newMeeting.time ? newMeeting.time.split(':')[0] : '19';
+                  const minute = e.target.value;
+                  setNewMeeting(prev => ({ ...prev, time: `${hour}:${minute}` }));
+                }}
+              >
+                {minuteOptions.map(minute => (
+                  <MenuItem key={minute.value} value={minute.value}>
+                    {minute.label}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Box>
+          
+          {/* Action buttons */}
+          <Box sx={{ display: 'flex', gap: 2 }}>
+            <Button 
+              variant="outlined" 
+              onClick={() => {
+                if (editingMeeting !== null) {
+                  setEditingMeeting(null);
+                  setNewMeeting({});
                 }
+                setCurrentStep('day');
               }}
-              onAccept={(value) => {
-                // Advance to next step when OK is clicked
-                let timeString = '19:00'; // Default fallback
+            >
+              Back
+            </Button>
+            <Button 
+              variant="contained" 
+              onClick={() => {
+                const timeString = newMeeting.time || '19:00';
+                console.log('Time confirmed:', timeString);
                 
-                if (value && value.isValid()) {
-                  timeString = value.format('HH:mm');
-                } else if (newMeeting.time) {
-                  timeString = newMeeting.time;
-                }
-                
-                console.log('Time picker accepted:', timeString);
-                
-                // If editing an existing meeting, update it immediately with the new time
                 if (editingMeeting !== null) {
                   const updatedSchedule = [...schedule];
                   updatedSchedule[editingMeeting] = {
@@ -206,7 +241,6 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
                   };
                   onChange(updatedSchedule);
                   
-                  // Reset editing state
                   setEditingMeeting(null);
                   setNewMeeting({});
                   setCurrentStep('day');
@@ -215,13 +249,10 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
                   setCurrentStep('format');
                 }
               }}
-              slotProps={{
-                textField: {
-                  style: { display: 'none' }
-                }
-              }}
-            />
-          </LocalizationProvider>
+            >
+              Continue
+            </Button>
+          </Box>
         </Box>
       );
     }
