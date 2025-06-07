@@ -19,14 +19,20 @@ export default function ActivityList({
   const getMeetingName = (activity) => {
     if (activity.type !== 'meeting') return null;
     
+    console.log('ActivityList getMeetingName - activity:', JSON.stringify(activity, null, 2));
+    console.log('ActivityList getMeetingName - available meetings:', meetings?.length || 0);
+    console.log('ActivityList getMeetingName - meetings sample:', meetings?.slice(0, 2));
+    
     // If activity has a direct meeting name, use it
     if (activity.meetingName && activity.meetingName.trim()) {
+      console.log('ActivityList getMeetingName - using meetingName:', activity.meetingName);
       return activity.meetingName.trim();
     }
     
     // If activity has a meetingId, look up the meeting name
     if (activity.meetingId && meetings && meetings.length > 0) {
       const meeting = meetings.find(m => m.id === activity.meetingId);
+      console.log('ActivityList getMeetingName - meetingId lookup:', activity.meetingId, 'found:', meeting);
       if (meeting && meeting.name && meeting.name.trim()) {
         return meeting.name.trim();
       }
@@ -34,9 +40,11 @@ export default function ActivityList({
     
     // If activity has a generic name field, use it
     if (activity.name && activity.name.trim()) {
+      console.log('ActivityList getMeetingName - using activity.name:', activity.name);
       return activity.name.trim();
     }
     
+    console.log('ActivityList getMeetingName - no name found');
     return null;
   };
   
