@@ -30,7 +30,7 @@ function Header({ title, menuOpen, setMenuOpen, isMobile, onShowTour }) {
         backgroundColor: headerBackgroundColor,
         borderBottom: `1px solid ${muiTheme.palette.divider}`,
         padding: '0.5rem 1rem',
-        paddingTop: 'env(safe-area-inset-top, 0px)',
+        paddingTop: 'calc(env(safe-area-inset-top, 44px) + 0.5rem)',
         paddingLeft: 'env(safe-area-inset-left, 1rem)',
         paddingRight: 'env(safe-area-inset-right, 1rem)',
         display: 'flex',
@@ -38,7 +38,7 @@ function Header({ title, menuOpen, setMenuOpen, isMobile, onShowTour }) {
         justifyContent: 'space-between',
         boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
         gap: 1,
-        minHeight: 'calc(44px + env(safe-area-inset-top, 44px))',
+        minHeight: 'calc(44px + env(safe-area-inset-top, 44px) + 1rem)',
       }}
     >
       {/* Logo and title - left aligned */}
