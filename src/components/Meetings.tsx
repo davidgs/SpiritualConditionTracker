@@ -5,7 +5,10 @@ import QRCodeGenerator from './QRCodeGenerator';
 import { useTheme } from '@mui/material/styles';
 import { useAppTheme } from '../contexts/MuiThemeProvider';
 import { formatDay, formatTimeByPreference } from '../utils/dateUtils';
-import { Paper, Box, Typography, IconButton, Chip } from '@mui/material';
+import { Paper, Box, Typography, IconButton, Chip, Alert } from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
+import EventIcon from '@mui/icons-material/Event';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
 
 export default function Meetings({ setCurrentView, meetings = [], onSave, onDelete, user }) {
   // Get dark mode from theme context
@@ -286,16 +289,22 @@ export default function Meetings({ setCurrentView, meetings = [], onSave, onDele
     // If we have the individual components, use them
     if (meeting.streetAddress) {
       return (
-        <>
+        <Box>
           {meeting.locationName && (
-            <div className="font-semibold mb-1">{meeting.locationName}</div>
+            <Typography variant="body2" sx={{ fontWeight: 'semibold', mb: 0.5 }}>
+              {meeting.locationName}
+            </Typography>
           )}
-          <div><i className="fa-solid fa-location-dot text-gray-500 dark:text-gray-400 mr-3 mt-1 flex-shrink-0" style={{ fontSize: '1rem' }}></i>
-          &nbsp;{meeting.streetAddress}</div>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <LocationOnIcon sx={{ fontSize: '1rem', color: 'text.secondary' }} />
+            <Typography variant="body2">{meeting.streetAddress}</Typography>
+          </Box>
           {meeting.city && meeting.state && (
-            <div>{meeting.city}, {meeting.state} {meeting.zipCode}</div>
+            <Typography variant="body2" sx={{ ml: 3 }}>
+              {meeting.city}, {meeting.state} {meeting.zipCode}
+            </Typography>
           )}
-        </>
+        </Box>
       );
     }
     
@@ -305,15 +314,15 @@ export default function Meetings({ setCurrentView, meetings = [], onSave, onDele
     if (parts.length > 2) {
       // Show first line, and then city, state, zip together
       return (
-        <>
-          <div>{parts[0]}</div>
-          <div>{parts.slice(1).join(',')}</div>
-        </>
+        <Box>
+          <Typography variant="body2">{parts[0]}</Typography>
+          <Typography variant="body2">{parts.slice(1).join(',')}</Typography>
+        </Box>
       );
     }
     
     // If simple address, just show as is
-    return meeting.address;
+    return <Typography variant="body2">{meeting.address}</Typography>;
   };
 
   // Render a single meeting item
@@ -581,30 +590,30 @@ export default function Meetings({ setCurrentView, meetings = [], onSave, onDele
   };
   
   return (
-    <div className="p-3">
-      <div className="flex flex-col items-center justify-between mb-6">
-       <span> <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100 items-center">
-          <i className="fa-solid fa-calendar text-gray-300 dark:text-gray-600 mr-3" style={{ fontSize: '2.5rem' }}></i>&nbsp;
-          Meetings&nbsp; <button
-           onClick={() => setShowForm(true)}
-           aria-label="Add new meeting"
-           title={meetings.length > 0 ? 'Add New Meeting' : 'Add Your First Meeting'}
-           className="text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300 transition-colors duration-200"
-           style={{ 
-             background: 'transparent', 
-             border: 'none', 
-             cursor: 'pointer',
-             outline: 'none',
-             boxShadow: 'none',
-             fontSize: '2rem',  
-             padding: '0.5rem'
-           }}
-         >
-           <i className="fa-solid fa-calendar-plus"></i>
-         </button>
-        </h1></span>
-       
-      </div>
+    <Box sx={{ px: 3, pb: 3, pt: 0 }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 3 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+          <EventIcon sx={{ fontSize: '2.5rem', color: 'text.secondary' }} />
+          <Typography variant="h4" component="h1" sx={{ fontWeight: 'bold' }}>
+            Meetings
+          </Typography>
+        </Box>
+        <IconButton
+          onClick={() => setShowForm(true)}
+          aria-label="Add new meeting"
+          title={meetings.length > 0 ? 'Add New Meeting' : 'Add Your First Meeting'}
+          color="primary"
+          size="large"
+          sx={{ 
+            fontSize: '2rem',
+            '&:hover': {
+              backgroundColor: 'action.hover'
+            }
+          }}
+        >
+          <AddIcon sx={{ fontSize: 'inherit' }} />
+        </IconButton>
+      </Box>
 
       {/* Meeting Form Dialog */}
       <MeetingFormDialog 
@@ -621,45 +630,44 @@ export default function Meetings({ setCurrentView, meetings = [], onSave, onDele
       
       {/* Error Message */}
       {error && (
-        <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg">
-          <p>{error}</p>
-          <button 
-            className="text-sm text-red-700 underline mt-1"
-            onClick={() => setError('')}
-          >
-            Dismiss
-          </button>
-        </div>
+        <Alert 
+          severity="error" 
+          onClose={() => setError('')}
+          sx={{ mb: 2 }}
+        >
+          {error}
+        </Alert>
       )}
       
       {/* Meetings List */}
-      <div className="mt-4">
+      <Box sx={{ mt: 2 }}>
         {meetings.length > 0 ? (
           meetings.map(meeting => renderMeetingItem(meeting))
         ) : (
-          <div className="text-center p-8 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
-            <h3 className="text-lg font-medium text-gray-700 dark:text-gray-300 mb-2">No Meetings Found</h3>
-            <p className="text-gray-600 dark:text-gray-400 mb-3">
+          <Paper 
+            elevation={1}
+            sx={{ 
+              textAlign: 'center', 
+              p: 4, 
+              backgroundColor: 'background.default',
+              border: 1,
+              borderColor: 'divider'
+            }}
+          >
+            <Typography variant="h6" sx={{ fontWeight: 'medium', mb: 2, color: 'text.primary' }}>
+              No Meetings Found
+            </Typography>
+            <Typography variant="body1" sx={{ color: 'text.secondary', mb: 2 }}>
               You haven't added any meetings to your schedule yet.
-            </p>
-            <p className="text-gray-500 dark:text-gray-500 text-sm">
-              Click the <i className="fa-solid fa-calendar-plus text-blue-500"></i> button to add your first meeting.
-            </p>
-          </div>
+            </Typography>
+            <Typography variant="body2" sx={{ color: 'text.secondary', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1 }}>
+              Click the <AddIcon sx={{ color: 'primary.main', fontSize: '1rem' }} /> button to add your first meeting.
+            </Typography>
+          </Paper>
         )}
-      </div>
+      </Box>
 
-      {/* Render the meeting form */}
-      <MeetingFormDialog
-        open={showForm}
-        meeting={currentMeeting}
-        onSave={onSave}
-        onClose={() => {
-          setShowForm(false);
-          setCurrentMeeting(null);
-        }}
-        use24HourFormat={use24HourFormat}
-      />
+
 
       {/* QR Code Generator */}
       <QRCodeGenerator
@@ -668,6 +676,6 @@ export default function Meetings({ setCurrentView, meetings = [], onSave, onDele
         title={qrCodeTitle}
         onClose={() => setQrCodeOpen(false)}
       />
-    </div>
+    </Box>
   );
 }

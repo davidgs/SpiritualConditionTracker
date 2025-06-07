@@ -30,7 +30,7 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
   
   // State for the step-by-step meeting creation
   const [currentStep, setCurrentStep] = useState<'day' | 'time' | 'format' | 'location' | 'access' | 'complete'>('day');
-  const [newMeeting, setNewMeeting] = useState<Partial<ScheduleItem>>({});
+  const [newMeeting, setNewMeeting] = useState<Partial<ScheduleItem>>({ time: '19:00' });
   const [editingMeeting, setEditingMeeting] = useState<number | null>(null);
 
   const days = [
@@ -152,7 +152,7 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
               value={newMeeting.day || ''}
               label="Day"
               onChange={(e) => {
-                setNewMeeting({ ...newMeeting, day: e.target.value });
+                setNewMeeting({ ...newMeeting, day: e.target.value, time: '19:00' });
                 setCurrentStep('time');
               }}
             >
@@ -173,41 +173,56 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
           <Typography variant="h6" sx={{ mb: 1 }}>Select Time</Typography>
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <MobileTimePicker
-              value={newMeeting.time ? dayjs(`2022-04-17T${newMeeting.time}`) : dayjs('2022-04-17T19:00')}
-              minutesStep={15}
+              value={dayjs(`2022-04-17T${newMeeting.time || ''}`)}
               ampm={!use24HourFormat}
+              minutesStep={5}
               open={true}
               onChange={(value) => {
-                // Real-time update as user scrolls through time
+                console.log('Time picker changed:', value);
                 if (value && value.isValid()) {
                   const timeString = value.format('HH:mm');
-                  console.log('Time picker onChange:', timeString);
                   setNewMeeting(prev => ({ ...prev, time: timeString }));
                 }
               }}
               onAccept={(value) => {
-                // Advance to next step when OK is clicked
-                if (value && value.isValid()) {
-                  const timeString = value.format('HH:mm');
-                  console.log('Time picker accepted:', timeString);
+                console.log('Time picker accepted:', value);
+                const timeString = (value && value.isValid()) ? value.format('HH:mm') : (newMeeting.time || '19:00');
+                console.log('Time string:', timeString);
+                console.log('MeeitngTime: ', newMeeting.time);
+                if (editingMeeting !== null) {
+                  const updatedSchedule = [...schedule];
+                  updatedSchedule[editingMeeting] = {
+                    ...updatedSchedule[editingMeeting],
+                    time: timeString
+                  };
+                  onChange(updatedSchedule);
                   
-                  // If editing an existing meeting, update it immediately with the new time
-                  if (editingMeeting !== null) {
-                    const updatedSchedule = [...schedule];
-                    updatedSchedule[editingMeeting] = {
-                      ...updatedSchedule[editingMeeting],
-                      time: timeString
-                    };
-                    onChange(updatedSchedule);
-                    
-                    // Reset editing state
-                    setEditingMeeting(null);
-                    setNewMeeting({});
-                    setCurrentStep('day');
-                  } else {
-                    setNewMeeting(prev => ({ ...prev, time: timeString }));
-                    setCurrentStep('format');
-                  }
+                  setEditingMeeting(null);
+                  setNewMeeting({});
+                  setCurrentStep('day');
+                } else {
+                  setNewMeeting(prev => ({ ...prev, time: timeString }));
+                  setCurrentStep('format');
+                }
+              }}
+              onClose={() => {
+                console.log('Time picker closed');
+                const timeString = newMeeting.time || '19:00';
+                console.log('Time string:', timeString);
+                if (editingMeeting !== null) {
+                  const updatedSchedule = [...schedule];
+                  updatedSchedule[editingMeeting] = {
+                    ...updatedSchedule[editingMeeting],
+                    time: timeString
+                  };
+                  onChange(updatedSchedule);
+
+                  setEditingMeeting(null);
+                  setNewMeeting({});
+                  setCurrentStep('day');
+                } else {
+                  setNewMeeting(prev => ({ ...prev, time: timeString }));
+                  setCurrentStep('format');
                 }
               }}
               slotProps={{

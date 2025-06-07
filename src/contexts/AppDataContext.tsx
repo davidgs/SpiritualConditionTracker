@@ -172,6 +172,8 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
 
     const initializeApp = async () => {
       console.log('[ AppDataContext.tsx:151 ] Initializing app...');
+      console.log('[ AppDataContext.tsx ] Platform:', navigator.userAgent);
+      console.log('[ AppDataContext.tsx ] Is Capacitor:', !!(window as any).Capacitor);
       
       try {
         // Subscribe to database status changes
@@ -181,15 +183,19 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
           
           // Load data when database becomes ready
           if (status === 'ready' || status === 'fallback') {
+            console.log('[ AppDataContext.tsx ] Database ready, loading initial data...');
             loadInitialData();
           }
         });
 
+        console.log('[ AppDataContext.tsx ] About to initialize database service...');
         // Initialize database
         await databaseService.initialize();
+        console.log('[ AppDataContext.tsx ] Database service initialization completed');
       } catch (error) {
         console.error('[ AppDataContext.tsx:168 ] App initialization failed:', error);
-        dispatch({ type: 'SET_ERROR', payload: 'Failed to initialize app' });
+        console.error('[ AppDataContext.tsx ] Error stack:', error instanceof Error ? error.stack : 'No stack trace');
+        dispatch({ type: 'SET_ERROR', payload: `Failed to initialize app: ${error instanceof Error ? error.message : String(error)}` });
         dispatch({ type: 'SET_LOADING', payload: false });
       }
     };

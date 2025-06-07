@@ -182,7 +182,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
   };
 
   return (
-    <Box sx={{ p: 3, maxWidth: 'md', mx: 'auto' }}>
+    <Box sx={{ px: 3, pb: 3, pt: 0, maxWidth: 'md', mx: 'auto' }}>
       {/* Sobriety Section - Full Width */}
       <Paper 
           elevation={1}

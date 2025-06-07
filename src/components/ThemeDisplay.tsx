@@ -1,5 +1,6 @@
 import React from 'react';
-import { Box, Typography, Paper, Button, Divider, useTheme } from '@mui/material';
+import { Box, Typography, Paper, Button, Divider } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
 import { useAppTheme } from '../contexts/MuiThemeProvider';
 import baseColors from '../utils/colorThemes';
 import { defaultThemeColors } from '../utils/nativeTheme';
