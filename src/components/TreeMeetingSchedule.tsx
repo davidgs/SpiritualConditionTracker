@@ -202,13 +202,13 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
                   setCurrentStep('format');
                 }
               }}
-              onClose={() => {
-                if (editingMeeting !== null) {
-                  setEditingMeeting(null);
-                  setNewMeeting({});
-                }
-                setCurrentStep('day');
-              }}
+           //   onClose={() => {
+           //     if (editingMeeting !== null) {
+           //       setEditingMeeting(null);
+           //       setNewMeeting({});
+           //     }
+           //     setCurrentStep('day');
+            //  }}
               slotProps={{
                 textField: {
                   style: { display: 'none' }
