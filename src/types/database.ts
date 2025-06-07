@@ -85,6 +85,20 @@ export interface Activity extends BaseEntity {
   notes?: string;
   duration?: number; // minutes
   location?: string;
+  meetingName?: string;
+  meetingId?: number;
+  wasChair?: number;
+  wasShare?: number;
+  wasSpeaker?: number;
+  literatureTitle?: string;
+  isSponsorCall?: number;
+  isSponseeCall?: number;
+  isAAMemberCall?: number;
+  callType?: string;
+  stepNumber?: number;
+  personCalled?: string;
+  serviceType?: string;
+  completed?: number;
 }
 
 // Meeting interface
