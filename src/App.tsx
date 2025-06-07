@@ -308,7 +308,7 @@ function AppContent() {
               currentTimeframe={state.currentTimeframe}
               onSave={handleSaveActivity}
               onSaveMeeting={handleSaveMeeting}
-              onTimeframeChange={handleTimeframeChange}
+              onTimeframeChange={(timeframe: number) => handleTimeframeChange(timeframe)}
               setCurrentView={handleNavigation}
               onUpdateActionItem={handleUpdateActionItem}
               onNavigateToSponsorContact={handleNavigateToSponsorContact}
@@ -331,7 +331,7 @@ function AppContent() {
               meetings={state.meetings}
               onSaveMeeting={handleSaveMeeting}
               onResetAllData={resetAllData}
-              currentUserId={state.currentUserId}
+              currentUserId={state.currentUserId ? Number(state.currentUserId) : 1}
             />
           )}
           {currentView === 'sponsor' && (
