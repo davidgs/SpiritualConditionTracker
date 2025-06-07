@@ -47,6 +47,13 @@ module.exports = {
       assets: path.resolve(__dirname, 'assets/'),
     }
   },
+  plugins: [
+    new HtmlWebpackPlugin({
+      template: './index.html',
+      filename: 'index.html',
+      inject: 'body'
+    })
+  ],
   devServer: {
     static: {
       directory: path.join(__dirname, '.'),
