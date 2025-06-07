@@ -91,8 +91,7 @@ function Header({ title, menuOpen, setMenuOpen, isMobile, onShowTour }) {
           }}
           aria-label="Show welcome tour"
           title="Help - Welcome Tour"
-        >
-          ❓
+        >❓
         </Box>
         
         <Box
