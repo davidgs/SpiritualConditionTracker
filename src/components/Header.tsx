@@ -30,7 +30,7 @@ function Header({ title, menuOpen, setMenuOpen, isMobile, onShowTour }) {
         backgroundColor: headerBackgroundColor,
         borderBottom: `1px solid ${muiTheme.palette.divider}`,
         padding: '0.5rem 1rem',
-        paddingTop: 'env(safe-area-inset-top, 44px)',
+        paddingTop: 'env(safe-area-inset-top, 0px)',
         paddingLeft: 'env(safe-area-inset-left, 1rem)',
         paddingRight: 'env(safe-area-inset-right, 1rem)',
         display: 'flex',
