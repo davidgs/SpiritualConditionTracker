@@ -237,11 +237,12 @@ function AppContent() {
   async function handleTourComplete() {
     try {
       // Save tour completion using the user preferences system
-      const currentPrefs = state.user?.preferences || '{}';
+      const currentPrefs = state.user?.preferences || {};
+      const prefsString = typeof currentPrefs === 'string' ? currentPrefs : '{}';
       let parsedPrefs = {};
       
       try {
-        parsedPrefs = JSON.parse(currentPrefs);
+        parsedPrefs = JSON.parse(prefsString);
       } catch (e) {
         parsedPrefs = {};
       }
@@ -250,7 +251,7 @@ function AppContent() {
         preferences: JSON.stringify({
           ...parsedPrefs,
           welcomeTourCompleted: true
-        })
+        }) as any
       });
       console.log('Tour completion saved:', updatedUser);
       setShowWelcomeTour(false);
