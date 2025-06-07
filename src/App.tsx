@@ -25,11 +25,24 @@ function AppContent() {
 
   // Check if this is the user's first visit
   React.useEffect(() => {
-    // Temporarily force tour to show for testing
-    if (!state.isLoading) {
+    if (state.isLoading || !state.user) return;
+    
+    try {
+      // Check user preferences for tour completion
+      const prefsString = typeof state.user.preferences === 'string' 
+        ? state.user.preferences 
+        : JSON.stringify(state.user.preferences || {});
+      const preferences = JSON.parse(prefsString || '{}');
+      const hasSeenTour = preferences.welcomeTourCompleted === true;
+      
+      if (!hasSeenTour) {
+        setShowWelcomeTour(true);
+      }
+    } catch (error) {
+      console.log('User preferences not available, showing tour:', error);
       setShowWelcomeTour(true);
     }
-  }, [state.isLoading]);
+  }, [state.isLoading, state.user]);
 
   // Show loading state
   if (state.isLoading) {
@@ -221,9 +234,30 @@ function AppContent() {
   }
 
   // Handle welcome tour completion
-  function handleTourComplete() {
-    localStorage.setItem('welcomeTourCompleted', 'true');
-    setShowWelcomeTour(false);
+  async function handleTourComplete() {
+    try {
+      // Save tour completion using the user preferences system
+      const currentPrefs = state.user?.preferences || '{}';
+      let parsedPrefs = {};
+      
+      try {
+        parsedPrefs = JSON.parse(currentPrefs);
+      } catch (e) {
+        parsedPrefs = {};
+      }
+      
+      const updatedUser = await updateUser({
+        preferences: JSON.stringify({
+          ...parsedPrefs,
+          welcomeTourCompleted: true
+        })
+      });
+      console.log('Tour completion saved:', updatedUser);
+      setShowWelcomeTour(false);
+    } catch (error) {
+      console.error('Error saving tour completion:', error);
+      setShowWelcomeTour(false);
+    }
   }
 
   // Handle tour step changes for navigation
