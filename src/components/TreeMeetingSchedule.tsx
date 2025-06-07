@@ -178,6 +178,7 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
               minutesStep={5}
               open={true}
               onChange={(value) => {
+                console.log('Time picker changed:', value);
                 if (value && value.isValid()) {
                   const timeString = value.format('HH:mm');
                   setNewMeeting(prev => ({ ...prev, time: timeString }));
