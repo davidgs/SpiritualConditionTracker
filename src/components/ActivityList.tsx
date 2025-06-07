@@ -286,7 +286,9 @@ export default function ActivityList({
                     alignItems: 'center',
                     justifyContent: 'center',
                     marginRight: '0.5rem',
-                    flexShrink: 0
+                    flexShrink: 0,
+                    alignSelf: 'flex-start',
+                    marginTop: '2px'
                   }}>
                     <i className={`fas ${getActivityIcon(activity.type)}`} style={{
                       fontSize: '0.8rem',
