@@ -30,7 +30,7 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
   
   // State for the step-by-step meeting creation
   const [currentStep, setCurrentStep] = useState<'day' | 'time' | 'format' | 'location' | 'access' | 'complete'>('day');
-  const [newMeeting, setNewMeeting] = useState<Partial<ScheduleItem>>({});
+  const [newMeeting, setNewMeeting] = useState<Partial<ScheduleItem>>({ time: '19:00' });
   const [editingMeeting, setEditingMeeting] = useState<number | null>(null);
 
   const days = [
@@ -152,7 +152,7 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
               value={newMeeting.day || ''}
               label="Day"
               onChange={(e) => {
-                setNewMeeting({ ...newMeeting, day: e.target.value });
+                setNewMeeting({ ...newMeeting, day: e.target.value, time: '19:00' });
                 setCurrentStep('time');
               }}
             >
