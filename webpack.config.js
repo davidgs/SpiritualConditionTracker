@@ -23,13 +23,12 @@ module.exports = (env, argv) => {
             loader: 'babel-loader',
             options: {
               presets: [
-                ['@babel/preset-env', { modules: false }],
+                '@babel/preset-env',
                 '@babel/preset-react',
                 '@babel/preset-typescript'
               ],
               plugins: [
                 '@babel/plugin-transform-runtime',
-                '@babel/plugin-transform-dynamic-import',
                 '@babel/plugin-transform-class-properties',
                 '@babel/plugin-transform-object-rest-spread',
                 '@babel/plugin-transform-optional-chaining',
