@@ -21,6 +21,13 @@ module.exports = {
         biometricTitle: 'Biometric login for database',
         biometricSubTitle: 'Log in using your biometric'
       }
+    },
+    Geolocation: {
+      // iOS specific permissions
+      requestPermissions: true,
+      // Accuracy settings
+      enableHighAccuracy: true,
+      timeout: 10000
     }
   },
   // Commented out for native builds - only use external server for development
@@ -33,7 +40,12 @@ module.exports = {
     allowsLinkPreview: false,
     // These settings help with WebView rendering on iOS
     scrollEnabled: true,
-    limitsNavigationsToAppBoundDomains: true
+    limitsNavigationsToAppBoundDomains: true,
+    // Location permissions for meeting locate functionality
+    infoPlist: {
+      NSLocationWhenInUseUsageDescription: 'This app needs location access to help you find nearby AA meetings and add location details to your meetings.',
+      NSLocationAlwaysAndWhenInUseUsageDescription: 'This app needs location access to help you find nearby AA meetings and add location details to your meetings.'
+    }
   },
   android: {
     // Common Android configuration
