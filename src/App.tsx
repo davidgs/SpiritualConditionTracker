@@ -233,7 +233,10 @@ function AppContent() {
           setMenuOpen={() => {}}
           isMobile={true}
         />
-        <div className="app-content-container">
+        <div style={{ 
+          paddingTop: 'calc(60px + env(safe-area-inset-top, 0px))',
+          paddingBottom: 'calc(80px + env(safe-area-inset-bottom, 0px))'
+        }}>
           <React.Suspense fallback={
             <div style={{ 
               padding: '20px', 
