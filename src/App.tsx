@@ -299,7 +299,7 @@ function AppContent() {
           isMobile={true}
           onShowTour={() => setShowWelcomeTour(true)}
         />
-        <div style={{ paddingTop: '120px', paddingBottom: '80px' }}>
+        <div style={{ paddingTop: 'calc(88px + env(safe-area-inset-top, 44px))', paddingBottom: '80px' }}>
           {currentView === 'dashboard' && (
             <Dashboard
               user={state.user}

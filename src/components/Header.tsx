@@ -19,7 +19,7 @@ function Header({ title, menuOpen, setMenuOpen, isMobile, onShowTour }) {
   const accentColor = muiTheme.palette.primary.main;
   
   return (
-    <SafeAreaHeader
+    <Box
       data-tour="header"
       sx={{
         position: 'fixed',
@@ -30,40 +30,43 @@ function Header({ title, menuOpen, setMenuOpen, isMobile, onShowTour }) {
         backgroundColor: headerBackgroundColor,
         borderBottom: `1px solid ${muiTheme.palette.divider}`,
         padding: '0.5rem 1rem',
-        paddingTop: '0px',
+        paddingTop: 'env(safe-area-inset-top, 44px)',
+        paddingLeft: 'env(safe-area-inset-left, 1rem)',
+        paddingRight: 'env(safe-area-inset-right, 1rem)',
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'flex-start',
+        justifyContent: 'space-between',
         boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
         gap: 1,
-        minHeight: '44px',
+        minHeight: 'calc(44px + env(safe-area-inset-top, 44px))',
       }}
     >
       {/* Logo and title - left aligned */}
-      <Box
-        component="img" 
-        src="/assets/logo.jpg"
-        alt="App Logo" 
-        sx={{ 
-          width: '20px',
-          height: '20px',
-          objectFit: 'cover',
-          borderRadius: '3px'
-        }}
-      />
-      
-      <Typography 
-        variant="h6" 
-        sx={{ 
-          fontWeight: 600,
-          color: headerTextColor,
-          fontSize: '0.95rem',
-          lineHeight: 1.2,
-          flex: 1
-        }}
-      >
-        My Spiritual Condition
-      </Typography>
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flex: 1 }}>
+        <Box
+          component="img" 
+          src="/assets/logo.jpg"
+          alt="App Logo" 
+          sx={{ 
+            width: '20px',
+            height: '20px',
+            objectFit: 'cover',
+            borderRadius: '3px'
+          }}
+        />
+        
+        <Typography 
+          variant="h6" 
+          sx={{ 
+            fontWeight: 600,
+            color: headerTextColor,
+            fontSize: '0.95rem',
+            lineHeight: 1.2
+          }}
+        >
+          My Spiritual Condition
+        </Typography>
+      </Box>
 
       {/* Theme Toggle Button */}
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -114,9 +117,7 @@ function Header({ title, menuOpen, setMenuOpen, isMobile, onShowTour }) {
           {muiTheme.palette.mode === 'dark' ? '🌙' : '☀️'}
         </Box>
       </Box>
-      
-
-    </SafeAreaHeader>
+    </Box>
   );
 }
 
