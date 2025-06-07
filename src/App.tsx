@@ -25,9 +25,8 @@ function AppContent() {
 
   // Check if this is the user's first visit
   React.useEffect(() => {
-    const hasSeenTour = localStorage.getItem('welcomeTourCompleted');
-    if (!hasSeenTour && !state.isLoading) {
-      // Show tour automatically for first-time users
+    // Temporarily force tour to show for testing
+    if (!state.isLoading) {
       setShowWelcomeTour(true);
     }
   }, [state.isLoading]);
@@ -229,20 +228,9 @@ function AppContent() {
 
   // Handle tour step changes for navigation
   function handleTourStepChange(stepId: string) {
-    // Navigate to different views based on tour step
-    switch (stepId) {
-      case 'meetings-tab':
-      case 'steps-tab':
-      case 'sponsorship-tab':
-      case 'profile-tab':
-        // Stay on dashboard for demonstration purposes
-        // Real navigation would happen when user clicks buttons
-        break;
-      default:
-        if (currentView !== 'dashboard') {
-          setCurrentView('dashboard');
-        }
-        break;
+    // Always navigate to dashboard when tour starts to show the main features
+    if (currentView !== 'dashboard') {
+      setCurrentView('dashboard');
     }
   }
 
@@ -263,7 +251,7 @@ function AppContent() {
           isMobile={true}
           onShowTour={() => setShowWelcomeTour(true)}
         />
-        <div style={{ paddingTop: '80px', paddingBottom: '80px' }}>
+        <div style={{ paddingTop: '104px', paddingBottom: '80px' }}>
           {currentView === 'dashboard' && (
             <Dashboard
               user={state.user}
