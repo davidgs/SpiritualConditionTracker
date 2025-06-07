@@ -27,13 +27,14 @@ function Header({ title, menuOpen, setMenuOpen, isMobile, onShowTour }) {
         backgroundColor: headerBackgroundColor,
         borderBottom: `1px solid ${muiTheme.palette.divider}`,
         padding: '0.5rem 1rem',
-        paddingTop: 'calc(env(safe-area-inset-top, 44px) + 0.5rem)',
+        paddingTop: 'max(env(safe-area-inset-top), 44px)',
+        paddingBottom: '0.5rem',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
         boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
         gap: 1,
-        minHeight: '104px',
+        minHeight: 'calc(max(env(safe-area-inset-top), 44px) + 60px)',
       }}
     >
       {/* Logo and title - left aligned */}
