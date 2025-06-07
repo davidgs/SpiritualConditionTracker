@@ -12,6 +12,7 @@ sed -i 's/scheme: '\''App'\''/scheme: '\''SpiritualCondition'\''/g' capacitor.co
 # Update Podfile
 echo "Updating Podfile..."
 sed -i 's/target '\''App'\''/target '\''SpiritualCondition'\''/g' ios/App/Podfile
+sed -i 's/project '\''App\.xcodeproj'\''/project '\''SpiritualCondition.xcodeproj'\''/g' ios/App/Podfile
 
 # Rename project files if they exist
 if [ -d "ios/App/App.xcodeproj" ]; then
