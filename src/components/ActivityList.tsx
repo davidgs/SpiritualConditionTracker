@@ -31,8 +31,10 @@ export default function ActivityList({
     
     // If activity has a meetingId, look up the meeting name
     if (activity.meetingId && meetings && meetings.length > 0) {
-      const meeting = meetings.find(m => m.id === activity.meetingId);
-      console.log('ActivityList getMeetingName - meetingId lookup:', activity.meetingId, 'found:', meeting);
+      // Handle both string and number meetingId values
+      const meetingIdNum = typeof activity.meetingId === 'string' ? parseInt(activity.meetingId, 10) : activity.meetingId;
+      const meeting = meetings.find(m => m.id === meetingIdNum);
+      console.log('ActivityList getMeetingName - meetingId lookup:', { activityMeetingId: activity.meetingId, meetingIdNum, found: meeting, availableMeetings: meetings.slice(0, 3) });
       if (meeting && meeting.name && meeting.name.trim()) {
         return meeting.name.trim();
       }

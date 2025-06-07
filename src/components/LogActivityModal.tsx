@@ -255,9 +255,13 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
     setSelectedMeetingId(meetingId);
     
     if (meetingId) {
-      const meeting = meetings.find(m => m.id === meetingId);
+      // Convert to number for comparison since database IDs are integers
+      const meetingIdNum = parseInt(meetingId, 10);
+      const meeting = meetings.find(m => m.id === meetingIdNum);
+      console.log('LogActivityModal - Meeting selection:', { meetingId, meetingIdNum, meeting, availableMeetings: meetings });
       if (meeting) {
         setMeetingName(meeting.name);
+        console.log('LogActivityModal - Set meeting name to:', meeting.name);
       }
     } else {
       setMeetingName('');
