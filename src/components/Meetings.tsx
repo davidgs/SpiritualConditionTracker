@@ -457,45 +457,58 @@ export default function Meetings({ setCurrentView, meetings = [], onSave, onDele
               ) : (
                 // Legacy format - if there's no schedule, show days/time if available
                 meeting.days ? (
-                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                      <i className="fa-solid fa-calendar-days" style={{ fontSize: '1rem', opacity: 0.7, marginRight: '12px' }}></i>
-                      <Typography variant="body2" color="text.secondary">
-                        {(() => {
-                          // Parse days if it's a string (from SQLite JSON storage)
-                          let daysArray = meeting.days;
-                          if (typeof meeting.days === 'string') {
-                            try {
-                              daysArray = JSON.parse(meeting.days);
-                            } catch (e) {
-                              console.error('Failed to parse days JSON:', e);
-                              return 'Meeting days not available';
-                            }
-                          }
+                  (() => {
+                    // Parse days if it's a string (from SQLite JSON storage)
+                    let daysArray = meeting.days;
+                    if (typeof meeting.days === 'string') {
+                      try {
+                        daysArray = JSON.parse(meeting.days);
+                      } catch (e) {
+                        console.error('Failed to parse days JSON:', e);
+                        daysArray = [meeting.days]; // Treat as single day if parsing fails
+                      }
+                    }
+                    
+                    // Ensure it's an array before mapping
+                    if (Array.isArray(daysArray) && daysArray.length > 0) {
+                      // Create separate entries for each day (like the schedule format)
+                      return daysArray.map((day, idx) => (
+                        <Box key={`${meeting.id}-legacy-${idx}`} sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                            <i className="fa-solid fa-calendar-days" style={{ fontSize: '1rem', opacity: 0.7, marginRight: '12px' }}></i>
+                            <Typography variant="body2" color="text.secondary">{formatDay(day)}</Typography>
+                            {meeting.time && (
+                              <>
+                                <i className="fa-regular fa-clock" style={{ fontSize: '0.85rem', opacity: 0.7, margin: '0 4px' }}></i>
+                                <Typography variant="body2" color="text.secondary">{formatTimeByPreference(meeting.time, use24HourFormat)}</Typography>
+                              </>
+                            )}
+                          </Box>
                           
-                          // Ensure it's an array before mapping
-                          if (Array.isArray(daysArray) && daysArray.length > 0) {
-                            return daysArray.map((day, idx) => (
-                              <span key={`${meeting.id}-day-${idx}`}>
-                                {idx > 0 && ', '}
-                                {formatDay(day)}
-                              </span>
-                            ));
-                          } else {
-                            return 'Days not specified';
-                          }
-                        })()}
-                      </Typography>
-                    </Box>
-                    {meeting.time && (
-                      <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                        <i className="fa-regular fa-clock" style={{ fontSize: '1rem', opacity: 0.7, marginRight: '12px' }}></i>
-                        <Typography variant="body2" color="text.secondary">
-                          {formatTimeByPreference(meeting.time, use24HourFormat)}
+                          {/* Legacy meetings get default chips */}
+                          <Box sx={{ display: 'flex', gap: 0.5, ml: 1 }}>
+                            <Chip
+                              label="In-Person"
+                              size="small"
+                              color="success"
+                              sx={{
+                                fontSize: '0.65rem',
+                                height: '20px',
+                                fontWeight: 'medium'
+                              }}
+                            />
+                          </Box>
+                        </Box>
+                      ));
+                    } else {
+                      return (
+                        <Typography variant="body2" color="text.secondary" sx={{ display: 'flex', alignItems: 'center' }}>
+                          <i className="fa-solid fa-info-circle" style={{ marginRight: '8px', opacity: 0.7 }}></i>
+                          Days not specified
                         </Typography>
-                      </Box>
-                    )}
-                  </Box>
+                      );
+                    }
+                  })()
                 ) : (
                   <Typography variant="body2" color="text.secondary" sx={{ display: 'flex', alignItems: 'center' }}>
                     <i className="fa-solid fa-info-circle" style={{ marginRight: '8px', opacity: 0.7 }}></i>

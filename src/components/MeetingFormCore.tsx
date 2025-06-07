@@ -90,16 +90,50 @@ export default function MeetingFormCore({
       setOnlineUrl(meeting.onlineUrl || '');
       
       // Handle schedule format
-      if (meeting.schedule && Array.isArray(meeting.schedule)) {
-        setMeetingSchedule(meeting.schedule);
+      if (meeting.schedule) {
+        let scheduleArray = meeting.schedule;
+        
+        // Parse schedule if it's a JSON string (from SQLite storage)
+        if (typeof meeting.schedule === 'string') {
+          try {
+            scheduleArray = JSON.parse(meeting.schedule);
+          } catch (e) {
+            console.error('Failed to parse schedule JSON during editing:', e);
+            scheduleArray = [];
+          }
+        }
+        
+        if (Array.isArray(scheduleArray) && scheduleArray.length > 0) {
+          setMeetingSchedule(scheduleArray);
+        } else {
+          // Fallback to legacy format conversion
+          setMeetingSchedule([]);
+        }
       } else if (meeting.days && meeting.time) {
         // Convert legacy format
-        const days = Array.isArray(meeting.days) ? meeting.days : [meeting.days];
-        const schedule = days.map(day => ({
+        let daysArray = meeting.days;
+        
+        // Parse days if it's a JSON string (from SQLite storage)  
+        if (typeof meeting.days === 'string') {
+          try {
+            daysArray = JSON.parse(meeting.days);
+          } catch (e) {
+            console.error('Failed to parse days JSON during editing:', e);
+            daysArray = [meeting.days]; // Treat as single day if parsing fails
+          }
+        }
+        
+        // Ensure it's an array
+        if (!Array.isArray(daysArray)) {
+          daysArray = [daysArray];
+        }
+        
+        const schedule = daysArray.map(day => ({
           day: day.toLowerCase(),
           time: meeting.time,
-          type: meeting.type || 'Open',
-          locationType: 'in_person'
+          format: meeting.format || 'discussion', // Default format
+          locationType: meeting.locationType || 'in_person',
+          access: meeting.access || 'open' // Default access
         }));
         setMeetingSchedule(schedule);
       }
