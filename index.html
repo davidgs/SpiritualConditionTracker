@@ -16,6 +16,25 @@
   <link rel="stylesheet" href="./styles/main.css">
   
   <style>
+    /* Dynamic body background for theme support */
+    body {
+      background-color: #f5f5f5; /* Light mode default */
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow-x: hidden;
+    }
+    
+    html {
+      height: 100%;
+      background-color: #f5f5f5; /* Light mode default */
+    }
+    
+    html.dark body,
+    html.dark {
+      background-color: #121212; /* Dark mode */
+    }
+    
     /* Add some critical basic styles inline to ensure basic appearance until bundle loads */
     .card, .bg-white {
       background-color: white;
@@ -114,7 +133,7 @@
   
   <!-- Capacitor will be loaded automatically on native platforms -->
 </head>
-<body class="bg-gray-50">
+<body>
   <div id="app" class="container">
     <!-- React app will be mounted here -->
     <div class="flex justify-center items-center h-screen">

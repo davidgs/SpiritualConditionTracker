@@ -220,8 +220,11 @@ function AppContent() {
     return (
       <div style={{ 
         minHeight: '100vh',
+        height: '100%',
         backgroundColor: muiTheme.palette.background.default,
-        color: muiTheme.palette.text.primary
+        color: muiTheme.palette.text.primary,
+        position: 'relative',
+        overflow: 'hidden'
       }}>
         <Header 
           title="Recovery Dashboard"
