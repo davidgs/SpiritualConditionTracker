@@ -18,25 +18,25 @@ function Header({ title, menuOpen, setMenuOpen, isMobile, onShowTour }) {
   const accentColor = muiTheme.palette.primary.main;
   
   return (
-    <Box
-      data-tour="header"
-      sx={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        zIndex: 1100,
-        backgroundColor: headerBackgroundColor,
-        borderBottom: `1px solid ${muiTheme.palette.divider}`,
-        padding: '44px 1rem 0.5rem 1rem', // Top padding for status bar
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
-        gap: 1,
-        minHeight: '88px', // Normal header height
-      }}
-    >
+      <Box
+        sx={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          zIndex: 1100,
+          backgroundColor: headerBackgroundColor,
+          borderBottom: `1px solid ${muiTheme.palette.divider}`,
+          padding: '0.5rem 1rem',
+          paddingTop: '50px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'flex-start',
+          boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+          gap: 1,
+          height: '94px',
+        }}
+      >
       {/* Logo and title - left aligned */}
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flex: 1 }}>
         <Box
