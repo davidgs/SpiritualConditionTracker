@@ -112,10 +112,9 @@ function AppContent() {
         console.log('[ App.tsx:87 handleSaveActivity ] Activity updated successfully:', updatedActivity);
         return updatedActivity;
       } else {
-        // This is a new activity
+        // This is a new activity - pass through all fields to preserve meeting data
         const newActivity = {
-          type: activityData.type,
-          date: activityData.date,
+          ...activityData, // Include all fields from the modal
           notes: activityData.notes || '',
           duration: activityData.duration || null,
           location: activityData.location || null,
