@@ -4,7 +4,7 @@ import { Typography, Box, IconButton } from '@mui/material';
 import { useAppTheme } from '../contexts/MuiThemeProvider';
 import SafeAreaHeader from './SafeAreaHeader';
 
-function Header({ title, menuOpen, setMenuOpen, isMobile }) {
+function Header({ title, menuOpen, setMenuOpen, isMobile, onShowTour }) {
   const muiTheme = useTheme();
   const { primaryColor, toggleTheme } = useAppTheme();
   const darkMode = muiTheme.palette.mode === 'dark';

@@ -15,11 +15,21 @@ import BottomNavBar from './components/BottomNavBar';
 import Meetings from './components/Meetings';
 import Profile from './components/Profile';
 import SponsorSponsee from './components/SponsorSponsee';
+import WelcomeTour from './components/WelcomeTour';
 
 function AppContent() {
   const { state, addActivity, addMeeting, updateMeeting, deleteMeeting, updateTimeframe, updateUser, resetAllData } = useAppData();
   const muiTheme = useTheme();
   const [currentView, setCurrentView] = React.useState('dashboard');
+  const [showWelcomeTour, setShowWelcomeTour] = React.useState(false);
+
+  // Check if this is the user's first visit
+  React.useEffect(() => {
+    const hasSeenTour = localStorage.getItem('welcomeTourCompleted');
+    if (!hasSeenTour && !state.isLoading) {
+      setShowWelcomeTour(true);
+    }
+  }, [state.isLoading]);
 
   // Show loading state
   if (state.isLoading) {
@@ -210,6 +220,31 @@ function AppContent() {
     setCurrentView('sponsor');
   }
 
+  // Handle welcome tour completion
+  function handleTourComplete() {
+    localStorage.setItem('welcomeTourCompleted', 'true');
+    setShowWelcomeTour(false);
+  }
+
+  // Handle tour step changes for navigation
+  function handleTourStepChange(stepId: string) {
+    // Navigate to different views based on tour step
+    switch (stepId) {
+      case 'meetings-tab':
+      case 'steps-tab':
+      case 'sponsorship-tab':
+      case 'profile-tab':
+        // Stay on dashboard for demonstration purposes
+        // Real navigation would happen when user clicks buttons
+        break;
+      default:
+        if (currentView !== 'dashboard') {
+          setCurrentView('dashboard');
+        }
+        break;
+    }
+  }
+
   const filteredActivities = filterActivitiesByTimeframe(state.activities, state.currentTimeframe);
 
   // Try to render Header + Dashboard with MuiThemeProvider context
@@ -284,6 +319,13 @@ function AppContent() {
         <BottomNavBar 
           currentView={currentView}
           onNavigate={handleNavigation}
+        />
+        
+        {/* Welcome Tour */}
+        <WelcomeTour
+          isOpen={showWelcomeTour}
+          onClose={handleTourComplete}
+          onStepChange={handleTourStepChange}
         />
       </div>
     );

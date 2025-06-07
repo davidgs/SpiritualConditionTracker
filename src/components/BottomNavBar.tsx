@@ -21,6 +21,7 @@ function BottomNavBar({ currentView, onNavigate }: BottomNavBarProps) {
 
   return (
     <Box
+      data-tour="bottom-nav"
       sx={{
         position: 'fixed',
         bottom: 0,
@@ -42,6 +43,7 @@ function BottomNavBar({ currentView, onNavigate }: BottomNavBarProps) {
         return (
           <Box
             key={item.id}
+            data-tour={`nav-${item.id === 'dashboard' ? 'home' : item.id === 'stepwork' ? 'steps' : item.id === 'sponsor' ? 'sponsorship' : item.id}`}
             component="button"
             onClick={() => onNavigate(item.id)}
             sx={{
