@@ -175,6 +175,7 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
             <MobileTimePicker
               value={dayjs(`2022-04-17T${newMeeting.time || ''}`)}
               ampm={!use24HourFormat}
+              minutesStep={15}
               open={true}
               onChange={(value) => {
                 if (value && value.isValid()) {
