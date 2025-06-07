@@ -59,7 +59,6 @@ module.exports = {
     limitsNavigationsToAppBoundDomains: true,
     // iOS project structure configuration
     scheme: 'SpiritualCondition',
-    path: 'ios/App',
     // Safe area and status bar configuration
     backgroundColor: '#1a1a1a',
     overrideUserAgent: null,
