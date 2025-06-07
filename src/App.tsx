@@ -220,10 +220,14 @@ function AppContent() {
     return (
       <div style={{ 
         minHeight: '100vh',
-        height: '100%',
+        height: '100vh',
         backgroundColor: muiTheme.palette.background.default,
         color: muiTheme.palette.text.primary,
-        position: 'relative',
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
         overflow: 'hidden'
       }}>
         <Header 
@@ -233,7 +237,7 @@ function AppContent() {
           isMobile={true}
           onShowTour={() => console.log('Tour feature temporarily disabled')}
         />
-        <div style={{ paddingTop: '132px', paddingBottom: '80px' }}>
+        <div style={{ paddingTop: '88px', paddingBottom: '80px', height: 'calc(100vh - 168px)', overflow: 'auto' }}>
           {currentView === 'dashboard' && (
             <Dashboard
               user={state.user}

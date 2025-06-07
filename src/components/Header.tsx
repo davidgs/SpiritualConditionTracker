@@ -28,15 +28,13 @@ function Header({ title, menuOpen, setMenuOpen, isMobile, onShowTour }) {
         zIndex: 1100,
         backgroundColor: headerBackgroundColor,
         borderBottom: `1px solid ${muiTheme.palette.divider}`,
-        padding: '0.5rem 1rem',
-        paddingTop: '88px', // Fixed padding to cover status bar area
-        paddingBottom: '0.5rem',
+        padding: '44px 1rem 0.5rem 1rem', // Top padding for status bar
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
         boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
         gap: 1,
-        minHeight: '132px', // Fixed height that covers status bar + header content
+        minHeight: '88px', // Normal header height
       }}
     >
       {/* Logo and title - left aligned */}
