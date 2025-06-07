@@ -298,6 +298,7 @@ export default function ActivityList({
                   <div style={{ flexGrow: 1, minWidth: 0 }}>
                     <div style={{
                       display: 'flex',
+                      justifyContent: 'space-between',
                       alignItems: 'center',
                       fontWeight: 500,
                       fontSize: '0.8rem',
@@ -310,85 +311,121 @@ export default function ActivityList({
                         ? 'line-through' 
                         : 'none'
                     }}>
-                      {/* For call types, show the appropriate label */}
-                      {activity.type === 'call' 
-                        ? 'Call'
-                        : activity.type === 'action-item'
-                        ? 'Action Item'
-                        : activity.type.charAt(0).toUpperCase() + activity.type.slice(1)}
-                      
+                      <div style={{ display: 'flex', alignItems: 'center', flexGrow: 1 }}>
+                        {/* For call types, show the appropriate label */}
+                        {activity.type === 'call' 
+                          ? 'Call'
+                          : activity.type === 'action-item'
+                          ? 'Action Item'
+                          : activity.type.charAt(0).toUpperCase() + activity.type.slice(1)}
+                        
 
-                      {/* Add role pills for meetings */}
-                      {activity.type === 'meeting' && (
-                        <div style={{ display: 'flex', marginLeft: '6px', gap: '4px' }}>
-                          {activity.wasChair && (
-                            <span style={{
-                              fontSize: '0.6rem',
-                              padding: '1px 5px',
-                              borderRadius: '10px',
-                              backgroundColor: theme.palette.success.light,
-                              color: theme.palette.success.dark,
-                              fontWeight: 'bold'
-                            }}>Chair</span>
-                          )}
-                          {activity.wasShare && (
-                            <span style={{
-                              fontSize: '0.6rem',
-                              padding: '1px 5px',
-                              borderRadius: '10px',
-                              backgroundColor: theme.palette.info.light,
-                              color: theme.palette.info.dark,
-                              fontWeight: 'bold'
-                            }}>Share</span>
-                          )}
-                          {activity.wasSpeaker && (
-                            <span style={{
-                              fontSize: '0.6rem',
-                              padding: '1px 5px',
-                              borderRadius: '10px',
-                              backgroundColor: theme.palette.secondary.light,
-                              color: theme.palette.secondary.dark,
-                              fontWeight: 'bold'
-                            }}>Speaker</span>
-                          )}
-                        </div>
-                      )}
+                        {/* Add role pills for meetings */}
+                        {activity.type === 'meeting' && (
+                          <div style={{ display: 'flex', marginLeft: '6px', gap: '4px' }}>
+                            {activity.wasChair && (
+                              <span style={{
+                                fontSize: '0.6rem',
+                                padding: '1px 5px',
+                                borderRadius: '10px',
+                                backgroundColor: theme.palette.success.light,
+                                color: theme.palette.success.dark,
+                                fontWeight: 'bold'
+                              }}>Chair</span>
+                            )}
+                            {activity.wasShare && (
+                              <span style={{
+                                fontSize: '0.6rem',
+                                padding: '1px 5px',
+                                borderRadius: '10px',
+                                backgroundColor: theme.palette.info.light,
+                                color: theme.palette.info.dark,
+                                fontWeight: 'bold'
+                              }}>Share</span>
+                            )}
+                            {activity.wasSpeaker && (
+                              <span style={{
+                                fontSize: '0.6rem',
+                                padding: '1px 5px',
+                                borderRadius: '10px',
+                                backgroundColor: theme.palette.secondary.light,
+                                color: theme.palette.secondary.dark,
+                                fontWeight: 'bold'
+                              }}>Speaker</span>
+                            )}
+                          </div>
+                        )}
+                        
+                        {/* Add pills for call types */}
+                        {activity.type === 'call' && (
+                          <div style={{ display: 'flex', marginLeft: '6px', gap: '4px' }}>
+                            {activity.isSponsorCall && (
+                              <span style={{
+                                fontSize: '0.6rem',
+                                padding: '1px 5px',
+                                borderRadius: '10px',
+                                backgroundColor: theme.palette.success.light,
+                                color: theme.palette.success.dark,
+                                fontWeight: 'bold'
+                              }}>Sponsor</span>
+                            )}
+                            {activity.isSponseeCall && (
+                              <span style={{
+                                fontSize: '0.6rem',
+                                padding: '1px 5px',
+                                borderRadius: '10px',
+                                backgroundColor: theme.palette.info.light,
+                                color: theme.palette.info.dark,
+                                fontWeight: 'bold'
+                              }}>Sponsee</span>
+                            )}
+                            {activity.isAAMemberCall && (
+                              <span style={{
+                                fontSize: '0.6rem',
+                                padding: '1px 5px',
+                                borderRadius: '10px',
+                                backgroundColor: theme.palette.secondary.light,
+                                color: theme.palette.secondary.dark,
+                                fontWeight: 'bold'
+                              }}>AA Member</span>
+                            )}
+                          </div>
+                        )}
+                      </div>
                       
-                      {/* Add pills for call types */}
-                      {activity.type === 'call' && (
-                        <div style={{ display: 'flex', marginLeft: '6px', gap: '4px' }}>
-                          {activity.isSponsorCall && (
-                            <span style={{
-                              fontSize: '0.6rem',
-                              padding: '1px 5px',
-                              borderRadius: '10px',
-                              backgroundColor: theme.palette.success.light,
-                              color: theme.palette.success.dark,
-                              fontWeight: 'bold'
-                            }}>Sponsor</span>
-                          )}
-                          {activity.isSponseeCall && (
-                            <span style={{
-                              fontSize: '0.6rem',
-                              padding: '1px 5px',
-                              borderRadius: '10px',
-                              backgroundColor: theme.palette.info.light,
-                              color: theme.palette.info.dark,
-                              fontWeight: 'bold'
-                            }}>Sponsee</span>
-                          )}
-                          {activity.isAAMemberCall && (
-                            <span style={{
-                              fontSize: '0.6rem',
-                              padding: '1px 5px',
-                              borderRadius: '10px',
-                              backgroundColor: theme.palette.secondary.light,
-                              color: theme.palette.secondary.dark,
-                              fontWeight: 'bold'
-                            }}>AA Member</span>
-                          )}
-                        </div>
-                      )}
+                      {/* Delete button aligned with top line */}
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDeleteActivity(activity.id);
+                        }}
+                        style={{
+                          background: 'none',
+                          border: 'none',
+                          color: theme.palette.error.main,
+                          cursor: 'pointer',
+                          padding: '6px',
+                          fontSize: '0.9rem',
+                          borderRadius: '50%',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          width: '24px',
+                          height: '24px',
+                          lineHeight: '1',
+                          transition: 'background-color 0.2s',
+                          flexShrink: 0
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.backgroundColor = theme.palette.error.light + '20';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.backgroundColor = 'transparent';
+                        }}
+                        title="Delete activity"
+                      >
+                        ✕
+                      </button>
                     </div>
                     <div style={{
                       display: 'flex',
