@@ -289,16 +289,22 @@ export default function Meetings({ setCurrentView, meetings = [], onSave, onDele
     // If we have the individual components, use them
     if (meeting.streetAddress) {
       return (
-        <>
+        <Box>
           {meeting.locationName && (
-            <div className="font-semibold mb-1">{meeting.locationName}</div>
+            <Typography variant="body2" sx={{ fontWeight: 'semibold', mb: 0.5 }}>
+              {meeting.locationName}
+            </Typography>
           )}
-          <div><i className="fa-solid fa-location-dot text-gray-500 dark:text-gray-400 mr-3 mt-1 flex-shrink-0" style={{ fontSize: '1rem' }}></i>
-          &nbsp;{meeting.streetAddress}</div>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <LocationOnIcon sx={{ fontSize: '1rem', color: 'text.secondary' }} />
+            <Typography variant="body2">{meeting.streetAddress}</Typography>
+          </Box>
           {meeting.city && meeting.state && (
-            <div>{meeting.city}, {meeting.state} {meeting.zipCode}</div>
+            <Typography variant="body2" sx={{ ml: 3 }}>
+              {meeting.city}, {meeting.state} {meeting.zipCode}
+            </Typography>
           )}
-        </>
+        </Box>
       );
     }
     
@@ -308,15 +314,15 @@ export default function Meetings({ setCurrentView, meetings = [], onSave, onDele
     if (parts.length > 2) {
       // Show first line, and then city, state, zip together
       return (
-        <>
-          <div>{parts[0]}</div>
-          <div>{parts.slice(1).join(',')}</div>
-        </>
+        <Box>
+          <Typography variant="body2">{parts[0]}</Typography>
+          <Typography variant="body2">{parts.slice(1).join(',')}</Typography>
+        </Box>
       );
     }
     
     // If simple address, just show as is
-    return meeting.address;
+    return <Typography variant="body2">{meeting.address}</Typography>;
   };
 
   // Render a single meeting item
