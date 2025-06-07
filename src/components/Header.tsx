@@ -20,85 +20,93 @@ function Header({ title, menuOpen, setMenuOpen, isMobile }) {
   const accentColor = muiTheme.palette.primary.main;
   
   return (
-    <SafeAreaHeader
-      sx={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        zIndex: 1100,
-        backgroundColor: headerBackgroundColor,
-        borderBottom: `1px solid ${muiTheme.palette.divider}`,
-        padding: '0.5rem 1rem',
-        paddingTop: '3rem',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'flex-start',
-        boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
-        gap: 1
-      }}
-    >
-      {/* Logo and title - left aligned */}
+    <>
       <Box
-        component="img" 
-        src="/assets/logo.jpg"
-        alt="App Logo" 
-        sx={{ 
-          width: '20px',
-          height: '20px',
-          objectFit: 'cover',
-          borderRadius: '3px'
-        }}
-      />
-      
-      <Typography 
-        variant="h6" 
-        sx={{ 
-          fontWeight: 600,
-          color: headerTextColor,
-          fontSize: '0.95rem',
-          lineHeight: 1.2,
-          flex: 1
-        }}
-      >
-        My Spiritual Condition
-      </Typography>
-
-      {/* Info Button */}
-      <IconButton
-        onClick={() => setInfoDialogOpen(true)}
         sx={{
-          padding: '4px',
-          fontSize: '1.1rem',
-          transition: 'all 0.2s ease',
-          '&:hover': {
-            transform: 'scale(1.1)'
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          zIndex: 1100,
+          backgroundColor: headerBackgroundColor,
+          borderBottom: `1px solid ${muiTheme.palette.divider}`,
+          padding: '0.5rem 1rem',
+          paddingTop: 'calc(env(safe-area-inset-top, 0px) + 0.5rem)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'flex-start',
+          boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+          gap: 1,
+          height: 'calc(60px + env(safe-area-inset-top, 0px))',
+          // Support for older iOS browsers
+          '@supports (padding-top: constant(safe-area-inset-top))': {
+            paddingTop: 'calc(constant(safe-area-inset-top) + 0.5rem)',
+            height: 'calc(60px + constant(safe-area-inset-top))'
           }
         }}
-        aria-label="App information"
       >
-        <i className="fas fa-info-circle" style={{ fontSize: '1.1rem' }}></i>
-      </IconButton>
+        {/* Logo and title - left aligned */}
+        <Box
+          component="img" 
+          src="/assets/logo.jpg"
+          alt="App Logo" 
+          sx={{ 
+            width: '20px',
+            height: '20px',
+            objectFit: 'cover',
+            borderRadius: '3px'
+          }}
+        />
+        
+        <Typography 
+          variant="h6" 
+          sx={{ 
+            fontWeight: 600,
+            color: headerTextColor,
+            fontSize: '0.95rem',
+            lineHeight: 1.2,
+            flex: 1
+          }}
+        >
+          My Spiritual Condition
+        </Typography>
 
-      {/* Theme Toggle Button */}
-      <Box
-        component="button"
-        onClick={toggleTheme}
-        sx={{
-          border: 'none',
-          background: 'transparent',
-          cursor: 'pointer',
-          fontSize: '1.2rem',
-          padding: '4px',
-          borderRadius: '50%',
-          transition: 'all 0.2s ease',
-          '&:hover': {
-            transform: 'scale(1.1)'
-          }
-        }}
-        aria-label="Toggle theme"
-      >
-        {muiTheme.palette.mode === 'dark' ? '🌙' : '☀️'}
+        {/* Info Button */}
+        <IconButton
+          onClick={() => setInfoDialogOpen(true)}
+          sx={{
+            padding: '4px',
+            fontSize: '1.1rem',
+            transition: 'all 0.2s ease',
+            '&:hover': {
+              transform: 'scale(1.1)'
+            }
+          }}
+          aria-label="App information"
+        >
+          <i className="fas fa-info-circle" style={{ fontSize: '1.1rem' }}></i>
+        </IconButton>
+
+        {/* Theme Toggle Button */}
+        <Box
+          component="button"
+          onClick={toggleTheme}
+          sx={{
+            border: 'none',
+            background: 'transparent',
+            cursor: 'pointer',
+            fontSize: '1.2rem',
+            padding: '4px',
+            borderRadius: '50%',
+            transition: 'all 0.2s ease',
+            '&:hover': {
+              transform: 'scale(1.1)'
+            }
+          }}
+          aria-label="Toggle theme"
+        >
+          {muiTheme.palette.mode === 'dark' ? '🌙' : '☀️'}
+        </Box>
       </Box>
 
       {/* Info Dialog */}
@@ -195,8 +203,7 @@ function Header({ title, menuOpen, setMenuOpen, isMobile }) {
           </Button>
         </DialogActions>
       </Dialog>
-
-    </SafeAreaHeader>
+    </>
   );
 }
 
