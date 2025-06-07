@@ -51,7 +51,7 @@ function Header({ title, menuOpen, setMenuOpen, isMobile, onShowTour }) {
             width: '40px',
             height: '40px',
             objectFit: 'cover',
-            borderRadius: '10px'
+            borderRadius: '20px'
           }}
         />
         
