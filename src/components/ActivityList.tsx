@@ -393,6 +393,7 @@ export default function ActivityList({
                     <div style={{
                       display: 'flex',
                       justifyContent: 'space-between',
+                      alignItems: 'flex-end',
                       fontSize: '0.75rem',
                       color: activity.type === 'action-item' && activity.location === 'deleted' 
                         ? theme.palette.error.main 
@@ -445,6 +446,19 @@ export default function ActivityList({
                         )}
                       </div>
                       
+                      {/* Date aligned with bottom line */}
+                      {showDate && (
+                        <div style={{ 
+                          fontSize: '0.7rem', 
+                          color: theme.palette.text.secondary,
+                          textAlign: 'right',
+                          lineHeight: '1.2',
+                          flexShrink: 0
+                        }}>
+                          {formatDate(activity.date)}
+                        </div>
+                      )}
+                      
                       {/* Action buttons for action items */}
                       {activity.type === 'action-item' && activity.location === 'pending' && (
                         <div style={{ display: 'flex', gap: '8px', flexShrink: 0 }}>
@@ -489,60 +503,40 @@ export default function ActivityList({
                         </div>
                       )}
                       
-                      {/* Right side container with delete button and date */}
-                      <div style={{ 
-                        display: 'flex', 
-                        flexDirection: 'column', 
-                        alignItems: 'flex-end', 
-                        justifyContent: 'space-between',
-                        minHeight: '40px',
-                        gap: '2px',
-                        flexShrink: 0,
-                        marginLeft: 'auto'
-                      }}>
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleDeleteActivity(activity.id);
-                          }}
-                          style={{
-                            background: 'none',
-                            border: 'none',
-                            color: theme.palette.error.main,
-                            cursor: 'pointer',
-                            padding: '4px',
-                            fontSize: '0.8rem',
-                            borderRadius: '50%',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            width: '20px',
-                            height: '20px',
-                            lineHeight: '1',
-                            transition: 'background-color 0.2s'
-                          }}
-                          onMouseEnter={(e) => {
-                            e.currentTarget.style.backgroundColor = theme.palette.error.light + '20';
-                          }}
-                          onMouseLeave={(e) => {
-                            e.currentTarget.style.backgroundColor = 'transparent';
-                          }}
-                          title="Delete activity"
-                        >
-                          ✕
-                        </button>
-                        
-                        {showDate && (
-                          <div style={{ 
-                            fontSize: '0.7rem', 
-                            color: theme.palette.text.secondary,
-                            textAlign: 'right',
-                            lineHeight: '1.2'
-                          }}>
-                            {formatDate(activity.date)}
-                          </div>
-                        )}
-                      </div>
+                      {/* Delete button aligned with top line */}
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDeleteActivity(activity.id);
+                        }}
+                        style={{
+                          background: 'none',
+                          border: 'none',
+                          color: theme.palette.error.main,
+                          cursor: 'pointer',
+                          padding: '4px',
+                          fontSize: '0.8rem',
+                          borderRadius: '50%',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          width: '20px',
+                          height: '20px',
+                          lineHeight: '1',
+                          transition: 'background-color 0.2s',
+                          flexShrink: 0,
+                          alignSelf: 'flex-start'
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.backgroundColor = theme.palette.error.light + '20';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.backgroundColor = 'transparent';
+                        }}
+                        title="Delete activity"
+                      >
+                        ✕
+                      </button>
                     </div>
                   </div>
                 </div>
