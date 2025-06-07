@@ -581,7 +581,7 @@ export default function Meetings({ setCurrentView, meetings = [], onSave, onDele
   };
   
   return (
-    <div className="p-3">
+    <div className="px-3 pb-3">
       <div className="flex flex-col items-center justify-between mb-6">
        <span> <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100 items-center">
           <i className="fa-solid fa-calendar text-gray-300 dark:text-gray-600 mr-3" style={{ fontSize: '2.5rem' }}></i>&nbsp;

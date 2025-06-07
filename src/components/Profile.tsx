@@ -365,7 +365,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
 
 
   return (
-      <Box sx={{ p: 2, maxWidth: 600, mx: 'auto' }}>
+      <Box sx={{ px: 2, pb: 2, pt: 0, maxWidth: 600, mx: 'auto' }}>
         {/* Meeting Form Dialog - Using our new MeetingFormDialog component */}
       {showMeetingForm && (
         <MeetingFormDialog
