@@ -218,18 +218,16 @@ function AppContent() {
   // Try to render Header + Dashboard with MuiThemeProvider context
   try {
     return (
-      <div style={{ 
-        minHeight: '100vh',
-        height: '100vh',
-        backgroundColor: muiTheme.palette.background.default,
-        color: muiTheme.palette.text.primary,
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        overflow: 'hidden'
-      }}>
+        <div style={{ 
+          minHeight: '100vh',
+          backgroundColor: muiTheme.palette.background.default,
+          color: muiTheme.palette.text.primary,
+          position: 'relative',
+          paddingTop: 'max(env(safe-area-inset-top), 0px)',
+          paddingBottom: 'max(env(safe-area-inset-bottom), 0px)',
+          paddingLeft: 'max(env(safe-area-inset-left), 0px)',
+          paddingRight: 'max(env(safe-area-inset-right), 0px)'
+        }}>
         <Header 
           title="Recovery Dashboard"
           menuOpen={false}
