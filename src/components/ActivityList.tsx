@@ -390,9 +390,9 @@ export default function ActivityList({
                           // Regular activity display
                           <span>
                             {activity.duration ? `${activity.duration} min` : 'Done'} 
-                            {activity.meetingName ? ` - ${activity.meetingName}` : ''}
+                            {(activity.meetingName || activity.name) ? ` - ${activity.meetingName || activity.name}` : ''}
                             {activity.literatureTitle ? ` - ${activity.literatureTitle}` : ''}
-                            {activity.notes && !activity.meetingName && !activity.literatureTitle ? ` - ${activity.notes}` : ''}
+                            {activity.notes && !activity.meetingName && !activity.name && !activity.literatureTitle ? ` - ${activity.notes}` : ''}
                           </span>
                         )}
                       </div>
