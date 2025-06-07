@@ -428,6 +428,37 @@ async function createTables(sqlite) {
   });
   console.log('[ sqliteLoader.js ] Activities table created');
 
+  // Add missing columns to existing activities table (migrations)
+  const activityMigrations = [
+    { column: 'meetingName', type: 'TEXT' },
+    { column: 'meetingId', type: 'INTEGER' },
+    { column: 'wasChair', type: 'INTEGER DEFAULT 0' },
+    { column: 'wasShare', type: 'INTEGER DEFAULT 0' },
+    { column: 'wasSpeaker', type: 'INTEGER DEFAULT 0' },
+    { column: 'literatureTitle', type: 'TEXT' },
+    { column: 'isSponsorCall', type: 'INTEGER DEFAULT 0' },
+    { column: 'isSponseeCall', type: 'INTEGER DEFAULT 0' },
+    { column: 'isAAMemberCall', type: 'INTEGER DEFAULT 0' },
+    { column: 'callType', type: 'TEXT' },
+    { column: 'stepNumber', type: 'INTEGER' },
+    { column: 'personCalled', type: 'TEXT' },
+    { column: 'serviceType', type: 'TEXT' },
+    { column: 'completed', type: 'INTEGER DEFAULT 0' }
+  ];
+
+  for (const migration of activityMigrations) {
+    try {
+      await sqlite.execute({
+        database: DB_NAME,
+        statements: `ALTER TABLE activities ADD COLUMN ${migration.column} ${migration.type}`
+      });
+      console.log(`[ sqliteLoader.js ] Added ${migration.column} column to activities table`);
+    } catch (error) {
+      // Column already exists, which is fine
+      console.log(`[ sqliteLoader.js ] ${migration.column} column already exists or failed to add:`, error.message);
+    }
+  }
+
   // Meetings table
   await sqlite.execute({
     database: DB_NAME,
