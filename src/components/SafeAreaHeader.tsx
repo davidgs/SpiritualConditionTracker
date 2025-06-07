@@ -18,7 +18,7 @@ const SafeAreaHeader = ({ children, ...props }) => {
   // Default padding values
   // For iOS, we add more top padding to account for the notch and status bar
   // For Android, we use a smaller value for the status bar
-  const defaultTopPadding = isIOS ? 75 : 24;
+  const defaultTopPadding = isIOS ? 44 : 24;
   
   useEffect(() => {
     // Check if the environment supports safe area insets
@@ -32,7 +32,7 @@ const SafeAreaHeader = ({ children, ...props }) => {
       const safeAreaLeft = parseInt(computedStyle.getPropertyValue('--safe-area-inset-left') || '0', 10);
       
       setSafeAreaInsets({
-        top: safeAreaTop || (isIOS ? defaultTopPadding : 0),
+        top: Math.max(safeAreaTop, isIOS ? defaultTopPadding : 24),
         right: safeAreaRight,
         bottom: safeAreaBottom,
         left: safeAreaLeft

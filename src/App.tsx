@@ -27,25 +27,32 @@ function AppContent() {
   React.useEffect(() => {
     if (state.isLoading) return;
     
-    // Force tour to show for testing/first-time users
-    if (!state.user) {
-      setShowWelcomeTour(true);
-      return;
+    console.log('Checking tour status - User:', state.user, 'Loading:', state.isLoading);
+    
+    // Always show tour initially for testing - will be saved to prevent future shows
+    let shouldShowTour = true;
+    
+    if (state.user) {
+      try {
+        // Check user preferences for tour completion
+        const prefsString = typeof state.user.preferences === 'string' 
+          ? state.user.preferences 
+          : JSON.stringify(state.user.preferences || {});
+        const preferences = JSON.parse(prefsString || '{}');
+        const hasSeenTour = preferences.welcomeTourCompleted === true;
+        
+        console.log('User preferences:', preferences, 'Has seen tour:', hasSeenTour);
+        
+        if (hasSeenTour) {
+          shouldShowTour = false;
+        }
+      } catch (error) {
+        console.log('Error parsing preferences, showing tour:', error);
+      }
     }
     
-    try {
-      // Check user preferences for tour completion
-      const prefsString = typeof state.user.preferences === 'string' 
-        ? state.user.preferences 
-        : JSON.stringify(state.user.preferences || {});
-      const preferences = JSON.parse(prefsString || '{}');
-      const hasSeenTour = preferences.welcomeTourCompleted === true;
-      
-      if (!hasSeenTour) {
-        setShowWelcomeTour(true);
-      }
-    } catch (error) {
-      console.log('User preferences not available, showing tour:', error);
+    if (shouldShowTour) {
+      console.log('Showing welcome tour');
       setShowWelcomeTour(true);
     }
   }, [state.isLoading, state.user]);
