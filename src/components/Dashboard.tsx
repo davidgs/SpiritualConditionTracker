@@ -185,6 +185,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
     <Box sx={{ p: 3, maxWidth: 'md', mx: 'auto' }}>
       {/* Sobriety Section - Full Width */}
       <Paper 
+          data-tour="sobriety-card"
           elevation={1}
           sx={{
             bgcolor: 'background.paper',
@@ -306,6 +307,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
           )}
       </Paper>
         <Paper 
+          data-tour="spiritual-fitness"
           elevation={1}
           sx={{
             p: 2,
@@ -428,6 +430,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
       
       {/* Recent Activities Section */}
       <Paper 
+        data-tour="activities-section"
         elevation={1}
         sx={{
           bgcolor: 'background.paper',

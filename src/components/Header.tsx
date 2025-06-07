@@ -20,6 +20,7 @@ function Header({ title, menuOpen, setMenuOpen, isMobile }) {
   
   return (
     <SafeAreaHeader
+      data-tour="header"
       sx={{
         position: 'fixed',
         top: 0,
@@ -29,12 +30,13 @@ function Header({ title, menuOpen, setMenuOpen, isMobile }) {
         backgroundColor: headerBackgroundColor,
         borderBottom: `1px solid ${muiTheme.palette.divider}`,
         padding: '0.5rem 1rem',
-        paddingTop: '3rem',
+        paddingTop: '50px',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'flex-start',
         boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
-        gap: 1
+        gap: 1,
+        height: '94px',
       }}
     >
       {/* Logo and title - left aligned */}
