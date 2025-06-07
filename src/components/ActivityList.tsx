@@ -10,9 +10,36 @@ export default function ActivityList({
   showDate = true,
   maxDaysAgo = null,
   title = null,
-  onActivityClick = null
+  onActivityClick = null,
+  meetings = []
 }) {
   const theme = useTheme();
+  
+  // Helper function to get meeting name for an activity
+  const getMeetingName = (activity) => {
+    if (activity.type !== 'meeting') return null;
+    
+    // If activity has a direct meeting name, use it
+    if (activity.meetingName && activity.meetingName.trim()) {
+      return activity.meetingName.trim();
+    }
+    
+    // If activity has a meetingId, look up the meeting name
+    if (activity.meetingId && meetings && meetings.length > 0) {
+      const meeting = meetings.find(m => m.id === activity.meetingId);
+      if (meeting && meeting.name && meeting.name.trim()) {
+        return meeting.name.trim();
+      }
+    }
+    
+    // If activity has a generic name field, use it
+    if (activity.name && activity.name.trim()) {
+      return activity.name.trim();
+    }
+    
+    return null;
+  };
+  
   // Get icon for activity type
   const getActivityIcon = (type) => {
     switch (type) {
@@ -390,9 +417,13 @@ export default function ActivityList({
                           // Regular activity display
                           <span>
                             {activity.duration ? `${activity.duration} min` : 'Done'} 
-                            {(activity.meetingName || activity.name) ? ` - ${activity.meetingName || activity.name}` : ''}
-                            {activity.literatureTitle ? ` - ${activity.literatureTitle}` : ''}
-                            {activity.notes && !activity.meetingName && !activity.name && !activity.literatureTitle ? ` - ${activity.notes}` : ''}
+                            {(() => {
+                              const meetingName = getMeetingName(activity);
+                              if (meetingName) return ` - ${meetingName}`;
+                              if (activity.literatureTitle) return ` - ${activity.literatureTitle}`;
+                              if (activity.notes && !meetingName && !activity.literatureTitle) return ` - ${activity.notes}`;
+                              return '';
+                            })()}
                           </span>
                         )}
                       </div>

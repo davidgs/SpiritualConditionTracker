@@ -542,6 +542,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
           filter={activityTypeFilter}
           showDate={true}
           onActivityClick={handleActivityClick}
+          meetings={meetings}
         />
       </Paper>
       
