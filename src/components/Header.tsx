@@ -30,13 +30,13 @@ function Header({ title, menuOpen, setMenuOpen, isMobile, onShowTour }) {
         backgroundColor: headerBackgroundColor,
         borderBottom: `1px solid ${muiTheme.palette.divider}`,
         padding: '0.5rem 1rem',
-        paddingTop: '50px',
+        paddingTop: '0px',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'flex-start',
         boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
         gap: 1,
-        height: '94px',
+        minHeight: '44px',
       }}
     >
       {/* Logo and title - left aligned */}
@@ -73,17 +73,25 @@ function Header({ title, menuOpen, setMenuOpen, isMobile, onShowTour }) {
             onClick={onShowTour}
             sx={{
               border: 'none',
-              background: 'transparent',
+              backgroundColor: accentColor,
+              color: 'white',
               cursor: 'pointer',
-              fontSize: '1.1rem',
-              padding: '4px',
+              fontSize: '1rem',
+              padding: '6px',
               borderRadius: '50%',
+              width: '32px',
+              height: '32px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
               transition: 'all 0.2s ease',
               '&:hover': {
-                transform: 'scale(1.1)'
+                transform: 'scale(1.1)',
+                opacity: 0.8
               }
             }}
             aria-label="Show welcome tour"
+            title="Help - Welcome Tour"
           >
             ❓
           </Box>

@@ -25,7 +25,13 @@ function AppContent() {
 
   // Check if this is the user's first visit
   React.useEffect(() => {
-    if (state.isLoading || !state.user) return;
+    if (state.isLoading) return;
+    
+    // Force tour to show for testing/first-time users
+    if (!state.user) {
+      setShowWelcomeTour(true);
+      return;
+    }
     
     try {
       // Check user preferences for tour completion
@@ -286,7 +292,7 @@ function AppContent() {
           isMobile={true}
           onShowTour={() => setShowWelcomeTour(true)}
         />
-        <div style={{ paddingTop: '104px', paddingBottom: '80px' }}>
+        <div style={{ paddingTop: '120px', paddingBottom: '80px' }}>
           {currentView === 'dashboard' && (
             <Dashboard
               user={state.user}
