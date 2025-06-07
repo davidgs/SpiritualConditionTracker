@@ -210,8 +210,15 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
       
       // Include meeting ID if one was selected
       if (selectedMeetingId) {
-        newActivity.meetingId = selectedMeetingId;
+        newActivity.meetingId = parseInt(selectedMeetingId, 10);
       }
+      
+      console.log('LogActivityModal - Meeting activity being saved:', {
+        meetingName: newActivity.meetingName,
+        meetingId: newActivity.meetingId,
+        selectedMeetingId,
+        fullActivity: newActivity
+      });
     }
     
     if (activityType === 'call') {
