@@ -1,5 +1,5 @@
-import React from 'react';
-import { Box, Paper, Typography, IconButton, Divider } from '@mui/material';
+import React, { useState, useMemo } from 'react';
+import { Box, Paper, Typography, IconButton, Divider, TextField, Chip, InputAdornment } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { ContactPerson } from '../../types/ContactPerson';
 import { formatDateForDisplay } from '../../utils/dateUtils';
@@ -30,6 +30,30 @@ export default function PersonPage({
   renderContactCard
 }: PersonPageProps) {
   const theme = useTheme();
+  
+  // Search and filter state
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedContactType, setSelectedContactType] = useState<string | null>(null);
+
+  // Get unique contact types for filtering
+  const contactTypes = useMemo(() => {
+    const types = new Set(contacts.map(contact => contact.type).filter(Boolean));
+    return Array.from(types);
+  }, [contacts]);
+
+  // Filter contacts based on search term and selected type
+  const filteredContacts = useMemo(() => {
+    return contacts.filter(contact => {
+      const matchesSearch = !searchTerm || 
+        (contact.note && contact.note.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        (contact.topic && contact.topic.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        (contact.type && contact.type.toLowerCase().includes(searchTerm.toLowerCase()));
+      
+      const matchesType = !selectedContactType || contact.type === selectedContactType;
+      
+      return matchesSearch && matchesType;
+    });
+  }, [contacts, searchTerm, selectedContactType]);
 
 
 
@@ -163,7 +187,7 @@ export default function PersonPage({
       >
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
           <Typography variant="h6" sx={{ color: theme.palette.text.primary, fontWeight: 'bold' }}>
-            Contact History
+            Contact History ({filteredContacts.length})
           </Typography>
           <IconButton
             color="primary"
@@ -174,15 +198,94 @@ export default function PersonPage({
           </IconButton>
         </Box>
 
+        {/* Search and Filter Controls */}
+        {contacts.length > 0 && (
+          <Box sx={{ mb: 3 }}>
+            {/* Search Field */}
+            <TextField
+              fullWidth
+              size="small"
+              placeholder="Search contacts by notes, topic, or type..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <i className="fa-solid fa-search" style={{ color: theme.palette.text.secondary, fontSize: '14px' }}></i>
+                  </InputAdornment>
+                ),
+                endAdornment: searchTerm && (
+                  <InputAdornment position="end">
+                    <IconButton
+                      size="small"
+                      onClick={() => setSearchTerm('')}
+                      sx={{ color: theme.palette.text.secondary }}
+                    >
+                      <i className="fa-solid fa-times" style={{ fontSize: '12px' }}></i>
+                    </IconButton>
+                  </InputAdornment>
+                )
+              }}
+              sx={{ mb: 2 }}
+            />
+
+            {/* Contact Type Filter Chips */}
+            {contactTypes.length > 0 && (
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+                <Chip
+                  label="All Types"
+                  size="small"
+                  variant={selectedContactType === null ? "filled" : "outlined"}
+                  onClick={() => setSelectedContactType(null)}
+                  sx={{
+                    backgroundColor: selectedContactType === null ? theme.palette.primary.main : 'transparent',
+                    color: selectedContactType === null ? theme.palette.primary.contrastText : theme.palette.text.secondary,
+                    '&:hover': {
+                      backgroundColor: selectedContactType === null ? theme.palette.primary.dark : theme.palette.action.hover
+                    }
+                  }}
+                />
+                {contactTypes.map((type) => (
+                  <Chip
+                    key={type}
+                    label={type.charAt(0).toUpperCase() + type.slice(1)}
+                    size="small"
+                    variant={selectedContactType === type ? "filled" : "outlined"}
+                    onClick={() => setSelectedContactType(selectedContactType === type ? null : type)}
+                    sx={{
+                      backgroundColor: selectedContactType === type ? theme.palette.primary.main : 'transparent',
+                      color: selectedContactType === type ? theme.palette.primary.contrastText : theme.palette.text.secondary,
+                      '&:hover': {
+                        backgroundColor: selectedContactType === type ? theme.palette.primary.dark : theme.palette.action.hover
+                      }
+                    }}
+                  />
+                ))}
+              </Box>
+            )}
+          </Box>
+        )}
+
         {contacts.length === 0 ? (
           <Box sx={{ textAlign: 'center', py: 3 }}>
             <Typography variant="body2" sx={{ color: theme.palette.text.secondary }}>
               No contact history with {person.name} yet.
             </Typography>
           </Box>
+        ) : filteredContacts.length === 0 ? (
+          <Box sx={{ textAlign: 'center', py: 3 }}>
+            <Typography variant="body2" sx={{ color: theme.palette.text.secondary }}>
+              No contacts match your search criteria.
+            </Typography>
+            {(searchTerm || selectedContactType) && (
+              <Typography variant="caption" sx={{ color: theme.palette.text.secondary, mt: 1, display: 'block' }}>
+                Try adjusting your search or filter options.
+              </Typography>
+            )}
+          </Box>
         ) : (
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-            {contacts
+            {filteredContacts
               .slice()
               .sort((a, b) => {
                 const dateA = new Date(a.date || a.createdAt || 0);
@@ -201,7 +304,7 @@ export default function PersonPage({
                     </Typography>
                   </Box>
                 )}
-                {index < contacts.length - 1 && <Divider sx={{ my: 1 }} />}
+                {index < filteredContacts.length - 1 && <Divider sx={{ my: 1 }} />}
               </Box>
             ))}
           </Box>
