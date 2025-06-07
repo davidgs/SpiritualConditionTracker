@@ -164,12 +164,7 @@ export default function ActivityLog({ setCurrentView, onSave, onSaveMeeting, act
       newActivity.wasSpeaker = wasSpeaker ? 1 : 0;
       newActivity.meetingId = selectedMeetingId ? parseInt(selectedMeetingId, 10) : null;
       
-      console.log('ActivityLog - Meeting activity data:', {
-        meetingName: newActivity.meetingName,
-        meetingId: newActivity.meetingId,
-        selectedMeetingId,
-        meetingNameFromState: meetingName
-      });
+
     }
     
     if (activityType === 'call') {

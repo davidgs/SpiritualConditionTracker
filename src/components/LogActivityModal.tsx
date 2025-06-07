@@ -197,17 +197,12 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
   //  console.log('[ LogActivityModal.tsx:179 handleSubmit ] Created activity with ISO date:', newActivity.date);
   //  console.log('[ LogActivityModal.tsx:180 handleSubmit ] Original date input:', date);
     
-    console.log('LogActivityModal - Processing activity type:', activityType);
-    console.log('LogActivityModal - Meeting state values:', { meetingName, selectedMeetingId });
-    
     // Add activity-specific fields
     if (activityType === 'literature') {
       newActivity.literatureTitle = (literatureTitle || '').trim();
-      console.log('LogActivityModal - Added literature title:', newActivity.literatureTitle);
     }
     
     if (activityType === 'meeting') {
-      console.log('LogActivityModal - Processing meeting activity');
       newActivity.meetingName = (meetingName || '').trim();
       newActivity.wasChair = wasChair ? 1 : 0;
       newActivity.wasShare = wasShare ? 1 : 0;
@@ -217,13 +212,6 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
       if (selectedMeetingId) {
         newActivity.meetingId = parseInt(selectedMeetingId, 10);
       }
-      
-      console.log('LogActivityModal - Meeting activity being saved:', {
-        meetingName: newActivity.meetingName,
-        meetingId: newActivity.meetingId,
-        selectedMeetingId,
-        fullActivity: newActivity
-      });
     }
     
     if (activityType === 'call') {
