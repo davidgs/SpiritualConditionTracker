@@ -1,6 +1,7 @@
 import React from 'react';
 import { formatDateForDisplay, compareDatesForSorting } from '../utils/dateUtils';
 import { useTheme } from '@mui/material/styles';
+import { useAppData } from '../contexts/AppDataContext';
 
 export default function ActivityList({ 
   activities, 
@@ -14,6 +15,13 @@ export default function ActivityList({
   meetings = []
 }) {
   const theme = useTheme();
+  const { deleteActivity } = useAppData();
+
+  const handleDeleteActivity = async (activityId) => {
+    if (window.confirm('Are you sure you want to delete this activity?')) {
+      await deleteActivity(activityId);
+    }
+  };
   
   // Helper function to get meeting name for an activity
   const getMeetingName = (activity) => {
@@ -478,11 +486,39 @@ export default function ActivityList({
                           </button>
                         </div>
                       )}
-                      {showDate && (
-                        <div style={{ flexShrink: 0, fontSize: '0.7rem' }}>
-                          {formatDate(activity.date)}
-                        </div>
-                      )}
+                      
+                      {/* Delete button for all activities */}
+                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '4px', flexShrink: 0 }}>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDeleteActivity(activity.id);
+                          }}
+                          style={{
+                            background: 'none',
+                            border: 'none',
+                            color: theme.palette.error.main,
+                            cursor: 'pointer',
+                            padding: '2px',
+                            fontSize: '0.7rem',
+                            borderRadius: '2px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            width: '16px',
+                            height: '16px'
+                          }}
+                          title="Delete activity"
+                        >
+                          ✕
+                        </button>
+                        
+                        {showDate && (
+                          <div style={{ fontSize: '0.7rem', color: theme.palette.text.secondary }}>
+                            {formatDate(activity.date)}
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>

@@ -144,6 +144,7 @@ interface AppDataContextType {
   loadActivities: () => Promise<void>;
   getActivitiesForTimeframe: (timeframe: number) => Promise<Activity[]>;
   addActivity: (activity: Omit<Activity, 'id' | 'createdAt' | 'updatedAt'>) => Promise<Activity | null>;
+  deleteActivity: (activityId: string | number) => Promise<boolean>;
   
   loadMeetings: () => Promise<void>;
   addMeeting: (meeting: Omit<Meeting, 'id' | 'createdAt' | 'updatedAt'>) => Promise<Meeting | null>;
