@@ -3,7 +3,7 @@
  */
 module.exports = {
   appId: 'com.spiritualconditiontracker.app',
-  appName: 'Spiritual Condition Tracker',
+  appName: 'SpiritualCondition',
   webDir: './dist',
   bundledWebRuntime: true,
   plugins: {
@@ -57,6 +57,9 @@ module.exports = {
     // These settings help with WebView rendering on iOS
     scrollEnabled: true,
     limitsNavigationsToAppBoundDomains: true,
+    // iOS project structure configuration
+    scheme: 'SpiritualCondition',
+    path: 'ios',
     // Location permissions for meeting locate functionality
     infoPlist: {
       NSLocationWhenInUseUsageDescription: 'This app needs location access to help you find nearby AA meetings and add location details to your meetings.',
