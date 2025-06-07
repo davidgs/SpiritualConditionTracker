@@ -15,47 +15,12 @@ import BottomNavBar from './components/BottomNavBar';
 import Meetings from './components/Meetings';
 import Profile from './components/Profile';
 import SponsorSponsee from './components/SponsorSponsee';
-import WelcomeTour from './components/WelcomeTour';
+
 
 function AppContent() {
   const { state, addActivity, addMeeting, updateMeeting, deleteMeeting, updateTimeframe, updateUser, resetAllData } = useAppData();
   const muiTheme = useTheme();
   const [currentView, setCurrentView] = React.useState('dashboard');
-  const [showWelcomeTour, setShowWelcomeTour] = React.useState(false);
-
-  // Check if this is the user's first visit
-  React.useEffect(() => {
-    if (state.isLoading) return;
-    
-    console.log('Checking tour status - User:', state.user, 'Loading:', state.isLoading);
-    
-    // Always show tour initially for testing - will be saved to prevent future shows
-    let shouldShowTour = true;
-    
-    if (state.user) {
-      try {
-        // Check user preferences for tour completion
-        const prefsString = typeof state.user.preferences === 'string' 
-          ? state.user.preferences 
-          : JSON.stringify(state.user.preferences || {});
-        const preferences = JSON.parse(prefsString || '{}');
-        const hasSeenTour = preferences.welcomeTourCompleted === true;
-        
-        console.log('User preferences:', preferences, 'Has seen tour:', hasSeenTour);
-        
-        if (hasSeenTour) {
-          shouldShowTour = false;
-        }
-      } catch (error) {
-        console.log('Error parsing preferences, showing tour:', error);
-      }
-    }
-    
-    if (shouldShowTour) {
-      console.log('Showing welcome tour');
-      setShowWelcomeTour(true);
-    }
-  }, [state.isLoading, state.user]);
 
   // Show loading state
   if (state.isLoading) {
@@ -246,41 +211,7 @@ function AppContent() {
     setCurrentView('sponsor');
   }
 
-  // Handle welcome tour completion
-  async function handleTourComplete() {
-    try {
-      // Save tour completion using the user preferences system
-      const currentPrefs = state.user?.preferences || {};
-      const prefsString = typeof currentPrefs === 'string' ? currentPrefs : '{}';
-      let parsedPrefs = {};
-      
-      try {
-        parsedPrefs = JSON.parse(prefsString);
-      } catch (e) {
-        parsedPrefs = {};
-      }
-      
-      const updatedUser = await updateUser({
-        preferences: JSON.stringify({
-          ...parsedPrefs,
-          welcomeTourCompleted: true
-        }) as any
-      });
-      console.log('Tour completion saved:', updatedUser);
-      setShowWelcomeTour(false);
-    } catch (error) {
-      console.error('Error saving tour completion:', error);
-      setShowWelcomeTour(false);
-    }
-  }
 
-  // Handle tour step changes for navigation
-  function handleTourStepChange(stepId: string) {
-    // Always navigate to dashboard when tour starts to show the main features
-    if (currentView !== 'dashboard') {
-      setCurrentView('dashboard');
-    }
-  }
 
   const filteredActivities = filterActivitiesByTimeframe(state.activities, state.currentTimeframe);
 
@@ -359,12 +290,7 @@ function AppContent() {
           onNavigate={handleNavigation}
         />
         
-        {/* Welcome Tour */}
-        <WelcomeTour
-          isOpen={showWelcomeTour}
-          onClose={handleTourComplete}
-          onStepChange={handleTourStepChange}
-        />
+
       </div>
     );
   } catch (error) {
