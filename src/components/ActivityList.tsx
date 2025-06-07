@@ -417,16 +417,60 @@ export default function ActivityList({
                           </span>
                         ) : (
                           // Regular activity display
-                          <span>
-                            {activity.duration ? `${activity.duration} min` : 'Done'} 
-                            {(() => {
-                              const meetingName = getMeetingName(activity);
-                              if (meetingName) return ` - ${meetingName}`;
-                              if (activity.literatureTitle) return ` - ${activity.literatureTitle}`;
-                              if (activity.notes && !meetingName && !activity.literatureTitle) return ` - ${activity.notes}`;
-                              return '';
-                            })()}
-                          </span>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                            <span>
+                              {activity.duration ? `${activity.duration} min` : 'Done'} 
+                              {(() => {
+                                const meetingName = getMeetingName(activity);
+                                if (meetingName) return ` - ${meetingName}`;
+                                if (activity.literatureTitle) return ` - ${activity.literatureTitle}`;
+                                if (activity.notes && !meetingName && !activity.literatureTitle) return ` - ${activity.notes}`;
+                                return '';
+                              })()}
+                            </span>
+                            
+                            {/* Meeting participation chips */}
+                            {activity.type === 'meeting' && (
+                              <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
+                                {activity.wasChair === 1 && (
+                                  <span style={{
+                                    backgroundColor: theme.palette.primary.main,
+                                    color: theme.palette.primary.contrastText,
+                                    padding: '2px 6px',
+                                    borderRadius: '12px',
+                                    fontSize: '0.7rem',
+                                    fontWeight: '500'
+                                  }}>
+                                    Chair
+                                  </span>
+                                )}
+                                {activity.wasShare === 1 && (
+                                  <span style={{
+                                    backgroundColor: theme.palette.secondary.main,
+                                    color: theme.palette.secondary.contrastText,
+                                    padding: '2px 6px',
+                                    borderRadius: '12px',
+                                    fontSize: '0.7rem',
+                                    fontWeight: '500'
+                                  }}>
+                                    Shared
+                                  </span>
+                                )}
+                                {activity.wasSpeaker === 1 && (
+                                  <span style={{
+                                    backgroundColor: theme.palette.success.main,
+                                    color: theme.palette.success.contrastText,
+                                    padding: '2px 6px',
+                                    borderRadius: '12px',
+                                    fontSize: '0.7rem',
+                                    fontWeight: '500'
+                                  }}>
+                                    Speaker
+                                  </span>
+                                )}
+                              </div>
+                            )}
+                          </div>
                         )}
                       </div>
                       
