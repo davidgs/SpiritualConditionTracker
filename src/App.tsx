@@ -220,7 +220,12 @@ function AppContent() {
       <div style={{ 
         minHeight: '100vh',
         backgroundColor: muiTheme.palette.background.default,
-        color: muiTheme.palette.text.primary
+        color: muiTheme.palette.text.primary,
+        position: 'relative',
+        paddingTop: 'max(env(safe-area-inset-top), 0px)',
+        paddingBottom: 'max(env(safe-area-inset-bottom), 0px)',
+        paddingLeft: 'max(env(safe-area-inset-left), 0px)',
+        paddingRight: 'max(env(safe-area-inset-right), 0px)'
       }}>
         <Header 
           title="Recovery Dashboard"

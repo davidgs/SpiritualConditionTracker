@@ -52,7 +52,7 @@ module.exports = {
   //   cleartext: true
   // },
   ios: {
-    contentInset: 'always',
+    contentInset: 'never',
     allowsLinkPreview: false,
     // These settings help with WebView rendering on iOS
     scrollEnabled: true,
@@ -60,13 +60,20 @@ module.exports = {
     // iOS project structure configuration
     scheme: 'SpiritualCondition',
     path: 'ios',
+    // Safe area and status bar configuration
+    backgroundColor: '#1a1a1a',
+    overrideUserAgent: null,
+    appendUserAgent: null,
     // Location permissions for meeting locate functionality
     infoPlist: {
       NSLocationWhenInUseUsageDescription: 'This app needs location access to help you find nearby AA meetings and add location details to your meetings.',
       NSLocationAlwaysAndWhenInUseUsageDescription: 'This app needs location access to help you find nearby AA meetings and add location details to your meetings.',
       // Launch screen configuration
       UILaunchStoryboardName: 'LaunchScreen',
-      UILaunchImages: 'LaunchImage'
+      UILaunchImages: 'LaunchImage',
+      // Status bar configuration
+      UIStatusBarStyle: 'UIStatusBarStyleLightContent',
+      UIViewControllerBasedStatusBarAppearance: true
     }
   },
   android: {
