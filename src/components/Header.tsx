@@ -3,6 +3,7 @@ import { useTheme } from '@mui/material/styles';
 import { Typography, Box, IconButton, Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/material';
 import { useAppTheme } from '../contexts/MuiThemeProvider';
 import SafeAreaHeader from './SafeAreaHeader';
+import GuidedTour from './GuidedTour';
 
 
 function Header({ title, menuOpen, setMenuOpen, isMobile }) {
@@ -10,6 +11,7 @@ function Header({ title, menuOpen, setMenuOpen, isMobile }) {
   const { primaryColor, toggleTheme } = useAppTheme();
   const darkMode = muiTheme.palette.mode === 'dark';
   const [infoDialogOpen, setInfoDialogOpen] = useState(false);
+  const [tourOpen, setTourOpen] = useState(false);
 
   
   // Use MUI theme colors for consistent styling
@@ -69,6 +71,22 @@ function Header({ title, menuOpen, setMenuOpen, isMobile }) {
         </Typography>
 
 
+
+        {/* Help/Tour Button */}
+        <IconButton
+          onClick={() => setTourOpen(true)}
+          sx={{
+            padding: '4px',
+            fontSize: '1.1rem',
+            transition: 'all 0.2s ease',
+            '&:hover': {
+              transform: 'scale(1.1)'
+            }
+          }}
+          aria-label="Start guided tour"
+        >
+          <i className="fas fa-question-circle" style={{ fontSize: '1.1rem' }}></i>
+        </IconButton>
 
         {/* Info Button */}
         <IconButton
@@ -203,7 +221,11 @@ function Header({ title, menuOpen, setMenuOpen, isMobile }) {
         </DialogActions>
       </Dialog>
 
-
+      {/* Guided Tour */}
+      <GuidedTour 
+        isOpen={tourOpen} 
+        onClose={() => setTourOpen(false)} 
+      />
     </>
   );
 }
