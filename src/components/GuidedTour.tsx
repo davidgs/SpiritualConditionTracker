@@ -13,27 +13,19 @@ interface CustomTourNavigateEvent extends CustomEvent {
 }
 
 function TourContent({ isOpen, onClose, onNavigate }: GuidedTourProps): null {
-  const { setIsOpen, setCurrentStep, isOpen: tourIsOpen }: { 
+  const { setIsOpen, setCurrentStep }: { 
     setIsOpen: (isOpen: boolean) => void; 
     setCurrentStep: (step: number) => void;
-    isOpen: boolean;
   } = useTour();
 
   React.useEffect(() => {
-    if (isOpen && !tourIsOpen) {
+    if (isOpen) {
       setCurrentStep(0);
       setIsOpen(true);
-    } else if (!isOpen && tourIsOpen) {
+    } else {
       setIsOpen(false);
     }
-  }, [isOpen, tourIsOpen, setIsOpen, setCurrentStep]);
-
-  // Handle tour closing internally
-  React.useEffect(() => {
-    if (!tourIsOpen && isOpen) {
-      onClose();
-    }
-  }, [tourIsOpen, isOpen, onClose]);
+  }, [isOpen, setIsOpen, setCurrentStep]);
 
   React.useEffect(() => {
     const handleNavigate = (event: CustomTourNavigateEvent): void => {
@@ -143,10 +135,6 @@ export default function GuidedTour({ isOpen, onClose, onNavigate }: GuidedTourPr
     })
   };
 
-  const handleTourClose = (): void => {
-    onClose();
-  };
-
   return (
     <TourProvider
       steps={tourSteps}
@@ -156,6 +144,7 @@ export default function GuidedTour({ isOpen, onClose, onNavigate }: GuidedTourPr
       showBadge
       showCloseButton
       showNavigation
+      onRequestClose={onClose}
     >
       <TourContent isOpen={isOpen} onClose={onClose} onNavigate={onNavigate} />
     </TourProvider>
