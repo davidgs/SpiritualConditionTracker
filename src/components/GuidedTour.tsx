@@ -39,12 +39,13 @@ export default function GuidedTour({ isOpen, onClose, onNavigate }: GuidedTourPr
 
   const tourSteps = [
     {
-      selector: '[data-tour="spiritual-fitness-score"]',
-      content: 'This shows your overall spiritual health based on your daily activities like prayer, meditation, and service work.'
+      selector: '[data-tour="sobriety-days"]',
+      content: 'Track your continuous sobriety time. This updates automatically based on your sobriety date in your profile.',
+      position: 'bottom'
     },
     {
-      selector: '[data-tour="sobriety-days"]',
-      content: 'Track your continuous sobriety time. This updates automatically based on your sobriety date in your profile.'
+      selector: '[data-tour="spiritual-fitness-score"]',
+      content: 'This shows your overall spiritual health based on your daily activities like prayer, meditation, and service work.'
     },
     {
       selector: '[data-tour="log-activity-btn"]',
