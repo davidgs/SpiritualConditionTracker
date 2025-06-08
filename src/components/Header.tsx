@@ -125,7 +125,6 @@ function Header({ title, menuOpen, setMenuOpen, isMobile, onNavigate, autoStartT
         <Box
           component="button"
           onClick={toggleTheme}
-          data-tour="theme-toggle"
           sx={{
             border: 'none',
             background: 'transparent',
@@ -138,6 +137,7 @@ function Header({ title, menuOpen, setMenuOpen, isMobile, onNavigate, autoStartT
               transform: 'scale(1.1)'
             }
           }}
+              data-tour="theme-toggle"
           aria-label="Toggle theme"
         >
           {muiTheme.palette.mode === 'dark' ? '🌙' : '☀️'}

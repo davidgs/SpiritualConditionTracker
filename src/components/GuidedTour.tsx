@@ -89,6 +89,7 @@ export default function GuidedTour({ isOpen, onClose, onNavigate }: GuidedTourPr
       selector: '[data-tour="add-meeting-btn"]',
       content:
         "Keep track of the meetings you like to attend. You can save favorites and log attendance. Click to add your first meeting!",
+      position: "bottom",
       action: (): void => {
         const event: CustomTourNavigateEvent = new CustomEvent(
           "tour-navigate",
