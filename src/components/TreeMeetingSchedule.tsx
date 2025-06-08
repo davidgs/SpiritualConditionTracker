@@ -212,24 +212,31 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
     if (currentStep === 'format') {
       return (
         <Box sx={{ mb: 2 }}>
-          <Typography variant="h6" sx={{ mb: 1 }}>Select Meeting Format</Typography>
-          <FormControl fullWidth>
-            <InputLabel>Format</InputLabel>
-            <Select
-              value={newMeeting.format || ''}
-              label="Format"
-              onChange={(e) => {
-                setNewMeeting({ ...newMeeting, format: e.target.value });
-                setCurrentStep('location');
-              }}
-            >
-              {meetingFormats.map(format => (
-                <MenuItem key={format.value} value={format.value}>
-                  {format.label}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+          <CustomNestedMenu 
+            items={[
+              {
+                id: 'select-format',
+                label: '+ Select Meeting Format',
+                color: 'primary.main',
+                fontWeight: 500,
+                indentLevel: 0,
+                children: meetingFormats.map(format => ({
+                  id: `format-${format.value}`,
+                  label: format.label,
+                  color: 'text.primary',
+                  fontWeight: 500,
+                  indentLevel: 1,
+                  onClick: () => {
+                    setNewMeeting({ ...newMeeting, format: format.value });
+                    setCurrentStep('location');
+                  },
+                  isExpandable: false
+                })),
+                isExpandable: true
+              }
+            ]}
+            onActionComplete={() => {}}
+          />
         </Box>
       );
     }
@@ -237,24 +244,31 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
     if (currentStep === 'location') {
       return (
         <Box sx={{ mb: 2 }}>
-          <Typography variant="h6" sx={{ mb: 1 }}>Select Location Type</Typography>
-          <FormControl fullWidth>
-            <InputLabel>Location</InputLabel>
-            <Select
-              value={newMeeting.locationType || ''}
-              label="Location"
-              onChange={(e) => {
-                setNewMeeting({ ...newMeeting, locationType: e.target.value });
-                setCurrentStep('access');
-              }}
-            >
-              {meetingLocationTypes.map(location => (
-                <MenuItem key={location.value} value={location.value}>
-                  {location.icon} {location.label}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+          <CustomNestedMenu 
+            items={[
+              {
+                id: 'select-location',
+                label: '+ Select Location Type',
+                color: 'primary.main',
+                fontWeight: 500,
+                indentLevel: 0,
+                children: meetingLocationTypes.map(location => ({
+                  id: `location-${location.value}`,
+                  label: `${location.icon} ${location.label}`,
+                  color: 'text.primary',
+                  fontWeight: 500,
+                  indentLevel: 1,
+                  onClick: () => {
+                    setNewMeeting({ ...newMeeting, locationType: location.value });
+                    setCurrentStep('access');
+                  },
+                  isExpandable: false
+                })),
+                isExpandable: true
+              }
+            ]}
+            onActionComplete={() => {}}
+          />
         </Box>
       );
     }
@@ -262,46 +276,53 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
     if (currentStep === 'access') {
       return (
         <Box sx={{ mb: 2 }}>
-          <Typography variant="h6" sx={{ mb: 1 }}>Select Access Type</Typography>
-          <FormControl fullWidth>
-            <InputLabel>Access</InputLabel>
-            <Select
-              value={newMeeting.access || ''}
-              label="Access"
-              onChange={(e) => {
-                const updatedMeeting = { ...newMeeting, access: e.target.value };
-                setNewMeeting(updatedMeeting);
-                
-                // Complete the meeting immediately after access is selected
-                if (editingMeeting !== null) {
-                  updateExistingMeeting();
-                } else {
-                  // Need to call completeNewMeeting with the updated meeting data
-                  if (updatedMeeting.day && updatedMeeting.time && updatedMeeting.format && updatedMeeting.locationType && updatedMeeting.access) {
-                    const completeMeeting: ScheduleItem = {
-                      day: updatedMeeting.day,
-                      time: updatedMeeting.time,
-                      format: updatedMeeting.format,
-                      locationType: updatedMeeting.locationType,
-                      access: updatedMeeting.access
-                    };
-                    const newSchedule = [...schedule, completeMeeting];
-                    onChange(newSchedule);
+          <CustomNestedMenu 
+            items={[
+              {
+                id: 'select-access',
+                label: '+ Select Access Type',
+                color: 'primary.main',
+                fontWeight: 500,
+                indentLevel: 0,
+                children: meetingAccess.map(access => ({
+                  id: `access-${access.value}`,
+                  label: access.label,
+                  color: 'text.primary',
+                  fontWeight: 500,
+                  indentLevel: 1,
+                  onClick: () => {
+                    const updatedMeeting = { ...newMeeting, access: access.value };
+                    setNewMeeting(updatedMeeting);
                     
-                    // Reset for next meeting - go back to day selection
-                    setNewMeeting({});
-                    setCurrentStep('day');
-                  }
-                }
-              }}
-            >
-              {meetingAccess.map(access => (
-                <MenuItem key={access.value} value={access.value}>
-                  {access.label}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+                    // Complete the meeting immediately after access is selected
+                    if (editingMeeting !== null) {
+                      updateExistingMeeting();
+                    } else {
+                      // Need to call completeNewMeeting with the updated meeting data
+                      if (updatedMeeting.day && updatedMeeting.time && updatedMeeting.format && updatedMeeting.locationType && updatedMeeting.access) {
+                        const completeMeeting: ScheduleItem = {
+                          day: updatedMeeting.day,
+                          time: updatedMeeting.time,
+                          format: updatedMeeting.format,
+                          locationType: updatedMeeting.locationType,
+                          access: updatedMeeting.access
+                        };
+                        const newSchedule = [...schedule, completeMeeting];
+                        onChange(newSchedule);
+                        
+                        // Reset for next meeting - go back to day selection
+                        setNewMeeting({});
+                        setCurrentStep('day');
+                      }
+                    }
+                  },
+                  isExpandable: false
+                })),
+                isExpandable: true
+              }
+            ]}
+            onActionComplete={() => {}}
+          />
         </Box>
       );
     }
