@@ -20,10 +20,13 @@ function TourContent({ isOpen, onClose, onNavigate }: GuidedTourProps): null {
 
   React.useEffect(() => {
     if (isOpen) {
+      // Reset to first step and open tour
       setCurrentStep(0);
       setIsOpen(true);
     } else {
+      // Ensure tour is closed and reset
       setIsOpen(false);
+      setCurrentStep(0);
     }
   }, [isOpen, setIsOpen, setCurrentStep]);
 
@@ -43,6 +46,14 @@ function TourContent({ isOpen, onClose, onNavigate }: GuidedTourProps): null {
 
 export default function GuidedTour({ isOpen, onClose, onNavigate }: GuidedTourProps): React.ReactElement {
   const theme: Theme = useTheme();
+  const [tourKey, setTourKey] = React.useState<number>(0);
+
+  // Reset tour key when opening to force new instance
+  React.useEffect(() => {
+    if (isOpen) {
+      setTourKey(prev => prev + 1);
+    }
+  }, [isOpen]);
 
   const tourSteps: StepType[] = [
     {
@@ -135,8 +146,13 @@ export default function GuidedTour({ isOpen, onClose, onNavigate }: GuidedTourPr
     })
   };
 
+  const handleTourClose = (): void => {
+    onClose();
+  };
+
   return (
     <TourProvider
+      key={tourKey}
       steps={tourSteps}
       styles={tourStyles}
       padding={10}
@@ -145,7 +161,7 @@ export default function GuidedTour({ isOpen, onClose, onNavigate }: GuidedTourPr
       showCloseButton
       showNavigation
     >
-      <TourContent isOpen={isOpen} onClose={onClose} onNavigate={onNavigate} />
+      <TourContent isOpen={isOpen} onClose={handleTourClose} onNavigate={onNavigate} />
     </TourProvider>
   );
 }
