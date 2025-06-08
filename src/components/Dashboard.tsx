@@ -186,7 +186,6 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
       {/* Sobriety Section - Full Width */}
       <Paper 
           elevation={1}
-          data-tour="sobriety-counter-box"
           sx={{
             bgcolor: 'background.paper',
             borderRadius: 2,
@@ -388,7 +387,9 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
             boxShadow: (theme) => theme.palette.mode === 'dark' 
               ? 'inset 0 1px 2px rgba(0,0,0,0.2)' 
               : 'inset 0 1px 2px rgba(0,0,0,0.1)'
-          }}>
+          }}
+            data-tour="spiritual-fitness-display"
+>
             <Box sx={{
               borderRadius: '0 8px 8px 0',
               bgcolor: (theme) => theme.palette.mode === 'dark' ? '#374151' : '#F3F4F6',
@@ -420,6 +421,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
                 justifyContent: 'center'
               }}
               title="Change timeframe"
+              data-tour="spiritual-fitness-time"
             >
               <i className="fa-solid fa-shuffle"></i>
             </IconButton>

@@ -63,6 +63,16 @@ export default function GuidedTour({ isOpen, onClose, onNavigate }: GuidedTourPr
       position: 'bottom'
     },
     {
+      selector: '[data-tour="spiritual-fitness-display"]',
+      content: 'Get a color-coded quick look at how you are doing. Keep your indicator in the green!',
+      position: 'bottom'
+    },
+    {
+      selector: '[data-tour="spiritual-fitness-time"]',
+      content: 'See how you are doing over the last 7, 30, 60, 90, 180 or even a full year. Justs click the button to change the time.',
+      position: 'bottom'
+    },
+    {
       selector: '[data-tour="log-activity-btn"]',
       content: 'Tap here to record spiritual activities like prayer, meditation, step work, or service. Each activity improves your spiritual fitness.',
       position: 'top'
