@@ -1,6 +1,6 @@
 import React from 'react';
 import { TourProvider, useTour } from '@reactour/tour';
-import { useTheme } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
 
 interface TourStep {
   selector: string;
