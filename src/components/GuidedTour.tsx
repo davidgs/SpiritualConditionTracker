@@ -69,18 +69,16 @@ export default function GuidedTour({ isOpen, onClose, onNavigate }: GuidedTourPr
       }
     },
     {
-      selector: '[data-tour="nav-steps"]',
+      selector: '[data-tour="nav-stepwork"]',
       content: 'Track your progress through the 12 steps with guided exercises and reflection prompts.',
-      position: 'center',
       action: (): void => {
-        const event: CustomTourNavigateEvent = new CustomEvent('tour-navigate', { detail: 'steps' }) as CustomTourNavigateEvent;
+        const event: CustomTourNavigateEvent = new CustomEvent('tour-navigate', { detail: 'stepwork' }) as CustomTourNavigateEvent;
         window.dispatchEvent(event);
       }
     },
     {
-      selector: '[data-tour="nav-sponsorship"]',
+      selector: '[data-tour="nav-sponsor"]',
       content: 'Manage your sponsor and sponsee relationships. Connect with others in recovery.',
-      position: 'bottom',
       action: (): void => {
         const event: CustomTourNavigateEvent = new CustomEvent('tour-navigate', { detail: 'sponsor' }) as CustomTourNavigateEvent;
         window.dispatchEvent(event);
