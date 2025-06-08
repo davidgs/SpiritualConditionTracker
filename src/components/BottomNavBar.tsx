@@ -20,24 +20,40 @@ function BottomNavBar({ currentView, onNavigate }: BottomNavBarProps) {
   ];
 
   return (
-    <Box
-      data-tour="bottom-nav"
-      sx={{
-        position: 'fixed',
-        bottom: 0,
-        left: 0,
-        right: 0,
-        backgroundColor: isDark ? muiTheme.palette.background.paper : muiTheme.palette.background.default,
-        borderTop: `1px solid ${muiTheme.palette.divider}`,
-        display: 'flex',
-        justifyContent: 'space-around',
-        alignItems: 'center',
-        padding: '8px 0 16px 0',
-        zIndex: 1000,
-        boxShadow: '0 -2px 8px rgba(0,0,0,0.1)'
-      }}
-    >
-      {navItems.map((item) => {
+    <>
+      {/* Safe area extension */}
+      <Box
+        sx={{
+          position: 'fixed',
+          bottom: 0,
+          left: 0,
+          right: 0,
+          height: '34px',
+          backgroundColor: isDark ? muiTheme.palette.background.paper : muiTheme.palette.background.default,
+          zIndex: 998,
+          transform: 'translateY(100%)',
+        }}
+      />
+      
+      {/* Navigation bar */}
+      <Box
+        data-tour="bottom-nav"
+        sx={{
+          position: 'fixed',
+          bottom: 0,
+          left: 0,
+          right: 0,
+          backgroundColor: isDark ? muiTheme.palette.background.paper : muiTheme.palette.background.default,
+          borderTop: `1px solid ${muiTheme.palette.divider}`,
+          display: 'flex',
+          justifyContent: 'space-around',
+          alignItems: 'center',
+          padding: '8px 0 16px 0',
+          zIndex: 1000,
+          boxShadow: '0 -2px 8px rgba(0,0,0,0.1)'
+        }}
+      >
+        {navItems.map((item) => {
         const isActive = currentView === item.id;
         return (
           <Box
@@ -93,7 +109,8 @@ function BottomNavBar({ currentView, onNavigate }: BottomNavBarProps) {
           </Box>
         );
       })}
-    </Box>
+      </Box>
+    </>
   );
 }
 
