@@ -107,7 +107,13 @@ export default function GuidedTour({ isOpen, onClose, onNavigate }: GuidedTourPr
     },
     {
       selector: '[data-tour="add-sponsor-btn"]',
-      content: 'Click to add your Sponsor and begin keeping track of your work with your sponsor.',
+      content: 'Add your sponsor\'s contact information here. Your sponsor is your guide through the 12 steps.',
+      position: 'bottom'
+    },
+    {
+      selector: '[data-tour="add-sponsee-btn"]',
+      content: 'Add sponsees - people you are helping through their recovery journey. Track their progress and maintain contact.',
+      position: 'bottom'
     },
     {
       selector: '[data-tour="nav-profile"]',
