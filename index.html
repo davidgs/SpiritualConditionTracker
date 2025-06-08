@@ -148,9 +148,22 @@
       --safe-area-inset-bottom: env(safe-area-inset-bottom, 0px);
     }
     
-    /* Ensure body extends to fill safe areas */
+    /* Force viewport to extend into safe areas */
     body {
-      padding-bottom: var(--safe-area-inset-bottom);
+      padding-bottom: 0;
+      background: #f5f5f5; /* Match light mode */
+      min-height: 100vh;
+      min-height: -webkit-fill-available;
+    }
+    
+    html.dark body {
+      background: #121212; /* Match dark mode */
+    }
+    
+    /* Force full viewport coverage */
+    #app {
+      min-height: 100vh;
+      min-height: -webkit-fill-available;
     }
   </style>
   

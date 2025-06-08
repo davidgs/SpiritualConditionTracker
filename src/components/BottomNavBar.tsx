@@ -24,27 +24,19 @@ function BottomNavBar({ currentView, onNavigate }: BottomNavBarProps) {
       data-tour="bottom-nav"
       sx={{
         position: 'fixed',
-        bottom: 0,
+        bottom: '-34px', // Push down by safe area amount
         left: 0,
         right: 0,
+        width: '100%',
+        height: '98px', // 64px content + 34px safe area
         backgroundColor: isDark ? muiTheme.palette.background.paper : muiTheme.palette.background.default,
         borderTop: `1px solid ${muiTheme.palette.divider}`,
         display: 'flex',
         justifyContent: 'space-around',
-        alignItems: 'center',
-        padding: '8px 0 50px 0', // Extra bottom padding for safe area
+        alignItems: 'flex-start',
+        paddingTop: '8px',
         zIndex: 1000,
-        boxShadow: '0 -2px 8px rgba(0,0,0,0.1)',
-        // Extend background into safe area
-        '&::after': {
-          content: '""',
-          position: 'absolute',
-          bottom: '-34px',
-          left: 0,
-          right: 0,
-          height: '34px',
-          backgroundColor: 'inherit',
-        }
+        boxShadow: '0 -2px 8px rgba(0,0,0,0.1)'
       }}
     >
       {navItems.map((item) => {
