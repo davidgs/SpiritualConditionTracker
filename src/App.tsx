@@ -17,7 +17,6 @@ const SponsorSponsee = React.lazy(() => import('./components/SponsorSponsee'));
 // Keep frequently used components as regular imports
 import Header from './components/Header';
 import BottomNavBar from './components/BottomNavBar';
-import FloatingTourButton from './components/FloatingTourButton';
 
 function AppContent() {
   const { state, addActivity, addMeeting, updateMeeting, deleteMeeting, updateTimeframe, updateUser, resetAllData } = useAppData();
@@ -310,8 +309,6 @@ function AppContent() {
           currentView={currentView}
           onNavigate={handleNavigation}
         />
-        
-        <FloatingTourButton />
       </div>
     );
   } catch (error) {
