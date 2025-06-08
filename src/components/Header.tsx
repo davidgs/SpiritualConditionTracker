@@ -3,12 +3,14 @@ import { useTheme } from '@mui/material/styles';
 import { Typography, Box, IconButton, Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/material';
 import { useAppTheme } from '../contexts/MuiThemeProvider';
 import SafeAreaHeader from './SafeAreaHeader';
+import GuidedTour from './GuidedTour';
 
 function Header({ title, menuOpen, setMenuOpen, isMobile }) {
   const muiTheme = useTheme();
   const { primaryColor, toggleTheme } = useAppTheme();
   const darkMode = muiTheme.palette.mode === 'dark';
   const [infoDialogOpen, setInfoDialogOpen] = useState(false);
+  const [tourActive, setTourActive] = useState(false);
   
   // Use MUI theme colors for consistent styling
   const headerBackgroundColor = darkMode 
@@ -65,6 +67,22 @@ function Header({ title, menuOpen, setMenuOpen, isMobile }) {
         >
           My Spiritual Condition
         </Typography>
+
+        {/* Help/Tour Button */}
+        <IconButton
+          onClick={() => setTourActive(true)}
+          sx={{
+            padding: '4px',
+            fontSize: '1.1rem',
+            transition: 'all 0.2s ease',
+            '&:hover': {
+              transform: 'scale(1.1)'
+            }
+          }}
+          aria-label="Start guided tour"
+        >
+          ❓
+        </IconButton>
 
         {/* Info Button */}
         <IconButton
@@ -198,6 +216,12 @@ function Header({ title, menuOpen, setMenuOpen, isMobile }) {
           </Button>
         </DialogActions>
       </Dialog>
+
+      {/* Guided Tour */}
+      <GuidedTour 
+        isActive={tourActive} 
+        onClose={() => setTourActive(false)} 
+      />
     </>
   );
 }
