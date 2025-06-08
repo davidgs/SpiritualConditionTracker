@@ -93,7 +93,27 @@ function GuidedTour({ isOpen, onClose, onNavigate }: GuidedTourProps) {
     if (!isOpen) return;
 
     const findAndHighlightElement = () => {
-      const targetElement = document.querySelector(`[data-tour="${currentTourStep.target}"]`);
+      let targetElement = document.querySelector(`[data-tour="${currentTourStep.target}"]`);
+      
+      // Fallback selectors for specific elements that might not be found
+      if (!targetElement) {
+        switch (currentTourStep.target) {
+          case 'log-activity-btn':
+            targetElement = document.querySelector('button[aria-label="Log new activity"]') ||
+                          document.querySelector('button[title="Log new activity"]') ||
+                          document.querySelector('.fa-scroll')?.closest('button');
+            break;
+          case 'add-meeting-btn':
+            targetElement = document.querySelector('button[aria-label="Add new meeting"]') ||
+                          document.querySelector('button[title*="Add"]');
+            break;
+          case 'edit-profile-btn':
+            targetElement = document.querySelector('button[aria-label*="Edit"]') ||
+                          document.querySelector('.fa-edit')?.closest('button');
+            break;
+        }
+      }
+      
       if (targetElement) {
         setHighlightedElement(targetElement);
         
@@ -161,8 +181,20 @@ function GuidedTour({ isOpen, onClose, onNavigate }: GuidedTourProps) {
       }
     };
 
-    // Wait a bit for DOM to update if navigation occurred
-    const timeout = setTimeout(findAndHighlightElement, 100);
+    // Wait longer for DOM to update if navigation occurred, and retry if element not found
+    const attemptHighlight = (attempts = 0) => {
+      const maxAttempts = 10;
+      const targetElement = document.querySelector(`[data-tour="${currentTourStep.target}"]`);
+      
+      if (targetElement || attempts >= maxAttempts) {
+        findAndHighlightElement();
+      } else {
+        // Element not found, retry after a short delay
+        setTimeout(() => attemptHighlight(attempts + 1), 100);
+      }
+    };
+    
+    const timeout = setTimeout(() => attemptHighlight(), 200);
     return () => clearTimeout(timeout);
   }, [currentStep, isOpen, currentTourStep]);
 
@@ -197,7 +229,7 @@ function GuidedTour({ isOpen, onClose, onNavigate }: GuidedTourProps) {
 
   return (
     <Portal>
-      {/* Overlay */}
+      {/* Lighter overlay */}
       <Box
         sx={{
           position: 'fixed',
@@ -205,7 +237,7 @@ function GuidedTour({ isOpen, onClose, onNavigate }: GuidedTourProps) {
           left: 0,
           right: 0,
           bottom: 0,
-          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          backgroundColor: 'rgba(0, 0, 0, 0.3)',
           zIndex: 9998,
           pointerEvents: 'none'
         }}
@@ -223,7 +255,7 @@ function GuidedTour({ isOpen, onClose, onNavigate }: GuidedTourProps) {
             backgroundColor: 'transparent',
             border: `3px solid ${theme.palette.primary.main}`,
             borderRadius: '8px',
-            boxShadow: `0 0 0 9999px rgba(0, 0, 0, 0.5)`,
+            boxShadow: `0 0 0 9999px rgba(0, 0, 0, 0.3)`,
             zIndex: 9999,
             pointerEvents: 'none',
             animation: 'pulse 2s infinite'
@@ -381,9 +413,9 @@ function GuidedTour({ isOpen, onClose, onNavigate }: GuidedTourProps) {
       <style>
         {`
           @keyframes pulse {
-            0% { box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.5), 0 0 0 0 ${theme.palette.primary.main}40; }
-            70% { box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.5), 0 0 0 10px ${theme.palette.primary.main}00; }
-            100% { box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.5), 0 0 0 0 ${theme.palette.primary.main}00; }
+            0% { box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.3), 0 0 0 0 ${theme.palette.primary.main}40; }
+            70% { box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.3), 0 0 0 10px ${theme.palette.primary.main}00; }
+            100% { box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.3), 0 0 0 0 ${theme.palette.primary.main}00; }
           }
         `}
       </style>
