@@ -24,11 +24,11 @@ function BottomNavBar({ currentView, onNavigate }: BottomNavBarProps) {
       data-tour="bottom-nav"
       sx={{
         position: 'fixed',
-        bottom: '-34px', // Push down by safe area amount
+        bottom: '-64px', // Push down by safe area amount
         left: 0,
         right: 0,
         width: '100%',
-        height: '98px', // 64px content + 34px safe area
+        height: '108px', // 64px content + 34px safe area
         backgroundColor: isDark ? muiTheme.palette.background.paper : muiTheme.palette.background.default,
         borderTop: `1px solid ${muiTheme.palette.divider}`,
         display: 'flex',
