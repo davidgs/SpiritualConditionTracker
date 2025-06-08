@@ -142,6 +142,16 @@
     html.dark .text-gray-500 {
       color: #9ca3af;
     }
+    
+    /* Safe area variables for fallback support */
+    :root {
+      --safe-area-inset-bottom: env(safe-area-inset-bottom, 0px);
+    }
+    
+    /* Ensure body extends to fill safe areas */
+    body {
+      padding-bottom: var(--safe-area-inset-bottom);
+    }
   </style>
   
   <!-- Capacitor will be loaded automatically on native platforms -->

@@ -20,39 +20,36 @@ function BottomNavBar({ currentView, onNavigate }: BottomNavBarProps) {
   ];
 
   return (
-    <>
-      {/* Safe area background fill */}
-      <Box
-        sx={{
-          position: 'fixed',
-          bottom: 0,
+    <Box
+      data-tour="bottom-nav"
+      sx={{
+        position: 'fixed',
+        bottom: 0,
+        left: 0,
+        right: 0,
+        backgroundColor: isDark ? muiTheme.palette.background.paper : muiTheme.palette.background.default,
+        borderTop: `1px solid ${muiTheme.palette.divider}`,
+        display: 'flex',
+        justifyContent: 'space-around',
+        alignItems: 'center',
+        padding: '8px 0',
+        paddingBottom: 'max(16px, env(safe-area-inset-bottom))', // iOS safe area
+        zIndex: 1000,
+        boxShadow: '0 -2px 8px rgba(0,0,0,0.1)',
+        // Extend background to cover safe area
+        minHeight: 'calc(64px + env(safe-area-inset-bottom, 0px))',
+        '&::before': {
+          content: '""',
+          position: 'absolute',
+          top: 0,
           left: 0,
           right: 0,
-          height: 'env(safe-area-inset-bottom, 0px)',
-          backgroundColor: isDark ? muiTheme.palette.background.paper : muiTheme.palette.background.default,
-          zIndex: 999,
-        }}
-      />
-      
-      {/* Bottom navigation content */}
-      <Box
-        data-tour="bottom-nav"
-        sx={{
-          position: 'fixed',
-          bottom: 0,
-          left: 0,
-          right: 0,
-          backgroundColor: isDark ? muiTheme.palette.background.paper : muiTheme.palette.background.default,
-          borderTop: `1px solid ${muiTheme.palette.divider}`,
-          display: 'flex',
-          justifyContent: 'space-around',
-          alignItems: 'center',
-          padding: '8px 0',
-          paddingBottom: 'max(16px, env(safe-area-inset-bottom))', // iOS safe area
-          zIndex: 1000,
-          boxShadow: '0 -2px 8px rgba(0,0,0,0.1)'
-        }}
-      >
+          bottom: 'calc(-1 * env(safe-area-inset-bottom, 0px))',
+          backgroundColor: 'inherit',
+          zIndex: -1,
+        }
+      }}
+    >
         {navItems.map((item) => {
           const isActive = currentView === item.id;
           return (
@@ -109,8 +106,7 @@ function BottomNavBar({ currentView, onNavigate }: BottomNavBarProps) {
             </Box>
           );
         })}
-      </Box>
-    </>
+    </Box>
   );
 }
 
