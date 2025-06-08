@@ -416,6 +416,36 @@ class DatabaseService {
     });
   }
 
+  // Check if database is empty (for new user detection)
+  async isDatabaseEmpty(): Promise<boolean> {
+    return this.executeOperation(async () => {
+      console.log('[ DatabaseService ] Checking if database is empty for new user detection...');
+      
+      // Check main data tables for any records
+      const [users, activities, meetings, sponsorContacts, actionItems] = await Promise.all([
+        this.database.getAll('users') || [],
+        this.database.getAll('activities') || [],
+        this.database.getAll('meetings') || [],
+        this.database.getAll('sponsor_contacts') || [],
+        this.database.getAll('action_items') || []
+      ]);
+      
+      const totalRecords = users.length + activities.length + meetings.length + 
+                          sponsorContacts.length + actionItems.length;
+      
+      console.log('[ DatabaseService ] Record counts:', {
+        users: users.length,
+        activities: activities.length,
+        meetings: meetings.length,
+        sponsorContacts: sponsorContacts.length,
+        actionItems: actionItems.length,
+        total: totalRecords
+      });
+      
+      return totalRecords === 0;
+    });
+  }
+
   // Database reset method
   async resetAllData(): Promise<void> {
     return this.executeOperation(async () => {

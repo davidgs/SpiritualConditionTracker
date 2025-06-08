@@ -22,6 +22,33 @@ function AppContent() {
   const { state, addActivity, addMeeting, updateMeeting, deleteMeeting, updateTimeframe, updateUser, resetAllData } = useAppData();
   const muiTheme = useTheme();
   const [currentView, setCurrentView] = React.useState('dashboard');
+  const [tourStarted, setTourStarted] = React.useState(false);
+  const [isNewUser, setIsNewUser] = React.useState(false);
+
+  // Check for new user after database is ready
+  React.useEffect(() => {
+    async function checkNewUser() {
+      if (state.databaseStatus === 'ready' && !tourStarted) {
+        try {
+          const databaseService = DatabaseService.getInstance();
+          const isEmpty = await databaseService.isDatabaseEmpty();
+          console.log('[ App ] Database empty check result:', isEmpty);
+          
+          if (isEmpty) {
+            setIsNewUser(true);
+            // Add a small delay to ensure Dashboard is fully rendered
+            setTimeout(() => {
+              setTourStarted(true);
+            }, 1000);
+          }
+        } catch (error) {
+          console.error('[ App ] Error checking if database is empty:', error);
+        }
+      }
+    }
+
+    checkNewUser();
+  }, [state.databaseStatus, tourStarted]);
 
   // Show loading state
   if (state.isLoading) {
@@ -233,6 +260,8 @@ function AppContent() {
           setMenuOpen={() => {}}
           isMobile={true}
           onNavigate={handleNavigation}
+          autoStartTour={tourStarted}
+          onTourClose={() => setTourStarted(false)}
         />
         <div style={{ 
           paddingTop: '104px',

@@ -5,13 +5,29 @@ import { useAppTheme } from '../contexts/MuiThemeProvider';
 import SafeAreaHeader from './SafeAreaHeader';
 import GuidedTour from './GuidedTour';
 
+interface HeaderProps {
+  title: string;
+  menuOpen: boolean;
+  setMenuOpen: (open: boolean) => void;
+  isMobile: boolean;
+  onNavigate: (view: string) => void;
+  autoStartTour?: boolean;
+  onTourClose?: () => void;
+}
 
-function Header({ title, menuOpen, setMenuOpen, isMobile, onNavigate }) {
+function Header({ title, menuOpen, setMenuOpen, isMobile, onNavigate, autoStartTour, onTourClose }: HeaderProps) {
   const muiTheme = useTheme();
   const { primaryColor, toggleTheme } = useAppTheme();
   const darkMode = muiTheme.palette.mode === 'dark';
   const [infoDialogOpen, setInfoDialogOpen] = useState(false);
   const [tourOpen, setTourOpen] = useState(false);
+
+  // Auto-start tour for new users
+  React.useEffect(() => {
+    if (autoStartTour) {
+      setTourOpen(true);
+    }
+  }, [autoStartTour]);
 
   
   // Use MUI theme colors for consistent styling
@@ -225,7 +241,12 @@ function Header({ title, menuOpen, setMenuOpen, isMobile, onNavigate }) {
       {/* Guided Tour */}
       <GuidedTour 
         isOpen={tourOpen} 
-        onClose={() => setTourOpen(false)}
+        onClose={() => {
+          setTourOpen(false);
+          if (onTourClose) {
+            onTourClose();
+          }
+        }}
         onNavigate={onNavigate}
       />
     </>
