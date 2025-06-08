@@ -69,7 +69,7 @@ function Header({ title, menuOpen, setMenuOpen, isMobile, onNavigate, autoStartT
             width: '40px',
             height: '40px',
             objectFit: 'cover',
-            borderRadius: '3px'
+            borderRadius: '20px'
           }}
         />
         
