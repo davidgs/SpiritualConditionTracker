@@ -40,7 +40,8 @@ export default function GuidedTour({ isOpen, onClose, onNavigate }: GuidedTourPr
   const tourSteps = [
     {
       selector: '[data-tour="sobriety-days"]',
-      content: 'Track your continuous sobriety time. This updates automatically based on your sobriety date in your profile.'
+      content: 'Track your continuous sobriety time. This updates automatically based on your sobriety date in your profile.',
+      placement: 'bottom'
     },
     {
       selector: '[data-tour="spiritual-fitness-score"]',
@@ -53,6 +54,7 @@ export default function GuidedTour({ isOpen, onClose, onNavigate }: GuidedTourPr
     {
       selector: '[data-tour="nav-meetings"]',
       content: 'Find and track AA meetings in your area. You can save favorites and log attendance.',
+      placement: 'bottom',
       action: () => {
         const event = new CustomEvent('tour-navigate', { detail: 'meetings' });
         window.dispatchEvent(event);
