@@ -430,19 +430,44 @@ class DatabaseService {
         this.database.getAll('action_items') || []
       ]);
       
-      const totalRecords = users.length + activities.length + meetings.length + 
-                          sponsorContacts.length + actionItems.length;
+      // Check if user data is meaningful (not just default values)
+      let hasUserData = false;
+      if (users.length > 0) {
+        const user = users[0]; // Check the first user
+        // Consider user data meaningful if any of these key fields are filled
+        hasUserData = !!(
+          user.name || 
+          user.lastName || 
+          user.sobrietyDate || 
+          user.phoneNumber || 
+          user.email ||
+          user.homeGroups
+        );
+        console.log('[ DatabaseService ] User data check:', {
+          name: user.name,
+          lastName: user.lastName,
+          sobrietyDate: user.sobrietyDate,
+          phoneNumber: user.phoneNumber,
+          email: user.email,
+          homeGroups: user.homeGroups,
+          hasUserData
+        });
+      }
+      
+      const totalDataRecords = (hasUserData ? 1 : 0) + activities.length + meetings.length + 
+                              sponsorContacts.length + actionItems.length;
       
       console.log('[ DatabaseService ] Record counts:', {
         users: users.length,
+        hasUserData,
         activities: activities.length,
         meetings: meetings.length,
         sponsorContacts: sponsorContacts.length,
         actionItems: actionItems.length,
-        total: totalRecords
+        totalDataRecords
       });
       
-      return totalRecords === 0;
+      return totalDataRecords === 0;
     });
   }
 
