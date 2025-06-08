@@ -186,6 +186,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
       {/* Sobriety Section - Full Width */}
       <Paper 
           elevation={1}
+          data-tour="sobriety-counter-box"
           sx={{
             bgcolor: 'background.paper',
             borderRadius: 2,
@@ -199,7 +200,6 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
           }}>
           <Typography
             variant="h6"
-            data-tour="sobriety-days"
             sx={{
               fontSize: '1.1rem',
               fontWeight: 600,
@@ -269,6 +269,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
             <Box sx={{ textAlign: 'center' }}>
               <Box sx={{ display: 'flex', alignItems: 'baseline', mb: 0.5, justifyContent: 'center' }}>
                 <Typography 
+                  data-tour="sobriety-days"
                   variant="h4"
                   sx={{ 
                     fontSize: '1.6rem', 

@@ -49,7 +49,7 @@ export default function GuidedTour({ isOpen, onClose, onNavigate }: GuidedTourPr
 
   const tourSteps: StepType[] = [
     {
-      selector: '[data-tour="sobriety-days"]',
+      selector: '[data-tour="sobriety-counter-box"]',
       content: 'Track your continuous sobriety time. This updates automatically based on your sobriety date in your profile.',
       position: 'bottom',
       action: (): void => {
