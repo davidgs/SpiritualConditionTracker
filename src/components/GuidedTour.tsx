@@ -79,15 +79,19 @@ export default function GuidedTour({ isOpen, onClose, onNavigate }: GuidedTourPr
     },
     {
       selector: '[data-tour="nav-meetings"]',
-      content: 'Find and track AA meetings in your area. You can save favorites and log attendance.',
+      content: 'Keep track of the meetings you like to attend. You can save favorites and log attendance.',
       action: (): void => {
         const event: CustomTourNavigateEvent = new CustomEvent('tour-navigate', { detail: 'meetings' }) as CustomTourNavigateEvent;
         window.dispatchEvent(event);
       }
     },
     {
+      selector: '[data-tour="add-meeting-btn"]',
+      content: 'Click to add your first meeting!',
+    },
+    {
       selector: '[data-tour="nav-stepwork"]',
-      content: 'Track your progress through the 12 steps with guided exercises and reflection prompts.',
+      content: 'This feature is under development. You will be able to track your progress through the 12 steps with guided exercises and reflection prompts.',
       action: (): void => {
         const event: CustomTourNavigateEvent = new CustomEvent('tour-navigate', { detail: 'stepwork' }) as CustomTourNavigateEvent;
         window.dispatchEvent(event);
@@ -100,6 +104,10 @@ export default function GuidedTour({ isOpen, onClose, onNavigate }: GuidedTourPr
         const event: CustomTourNavigateEvent = new CustomEvent('tour-navigate', { detail: 'sponsor' }) as CustomTourNavigateEvent;
         window.dispatchEvent(event);
       }
+    },
+    {
+      selector: '[data-tour="add-sponsor-btn"]',
+      content: 'Click to add your Sponsor and begin keeping track of your work with your sponsor.',
     },
     {
       selector: '[data-tour="nav-profile"]',

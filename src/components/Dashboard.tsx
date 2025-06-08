@@ -196,7 +196,9 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
             borderLeft: 4,
             borderLeftColor: 'success.main',
             mb: 1.5,
-          }}>
+          }}
+          data-tour="sobriety-counter-box"
+        >
           <Typography
             variant="h6"
             sx={{
