@@ -13,22 +13,27 @@ interface CustomTourNavigateEvent extends CustomEvent {
 }
 
 function TourContent({ isOpen, onClose, onNavigate }: GuidedTourProps): null {
-  const { setIsOpen, setCurrentStep }: { 
+  const { setIsOpen, setCurrentStep, isOpen: tourIsOpen }: { 
     setIsOpen: (isOpen: boolean) => void; 
-    setCurrentStep: (step: number) => void; 
+    setCurrentStep: (step: number) => void;
+    isOpen: boolean;
   } = useTour();
 
   React.useEffect(() => {
-    if (isOpen) {
-      // Reset to first step and open tour
+    if (isOpen && !tourIsOpen) {
       setCurrentStep(0);
       setIsOpen(true);
-    } else {
-      // Ensure tour is closed and reset
+    } else if (!isOpen && tourIsOpen) {
       setIsOpen(false);
-      setCurrentStep(0);
     }
-  }, [isOpen, setIsOpen, setCurrentStep]);
+  }, [isOpen, tourIsOpen, setIsOpen, setCurrentStep]);
+
+  // Handle tour closing internally
+  React.useEffect(() => {
+    if (!tourIsOpen && isOpen) {
+      onClose();
+    }
+  }, [tourIsOpen, isOpen, onClose]);
 
   React.useEffect(() => {
     const handleNavigate = (event: CustomTourNavigateEvent): void => {
@@ -46,14 +51,6 @@ function TourContent({ isOpen, onClose, onNavigate }: GuidedTourProps): null {
 
 export default function GuidedTour({ isOpen, onClose, onNavigate }: GuidedTourProps): React.ReactElement {
   const theme: Theme = useTheme();
-  const [tourKey, setTourKey] = React.useState<number>(0);
-
-  // Reset tour key when opening to force new instance
-  React.useEffect(() => {
-    if (isOpen) {
-      setTourKey(prev => prev + 1);
-    }
-  }, [isOpen]);
 
   const tourSteps: StepType[] = [
     {
@@ -152,7 +149,6 @@ export default function GuidedTour({ isOpen, onClose, onNavigate }: GuidedTourPr
 
   return (
     <TourProvider
-      key={tourKey}
       steps={tourSteps}
       styles={tourStyles}
       padding={10}
@@ -161,7 +157,7 @@ export default function GuidedTour({ isOpen, onClose, onNavigate }: GuidedTourPr
       showCloseButton
       showNavigation
     >
-      <TourContent isOpen={isOpen} onClose={handleTourClose} onNavigate={onNavigate} />
+      <TourContent isOpen={isOpen} onClose={onClose} onNavigate={onNavigate} />
     </TourProvider>
   );
 }
