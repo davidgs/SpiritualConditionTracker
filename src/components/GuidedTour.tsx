@@ -84,7 +84,7 @@ function GuidedTour({ isOpen, onClose, onNavigate }: GuidedTourProps) {
   const theme = useTheme();
   const [currentStep, setCurrentStep] = useState(0);
   const [highlightedElement, setHighlightedElement] = useState<Element | null>(null);
-  const [tooltipPosition, setTooltipPosition] = useState({ top: 0, left: 0 });
+  const [tooltipPosition, setTooltipPosition] = useState<{ top: number; left: number; placement: string }>({ top: 0, left: 0, placement: 'bottom' });
 
   const currentTourStep = tourSteps[currentStep];
 
@@ -97,42 +97,67 @@ function GuidedTour({ isOpen, onClose, onNavigate }: GuidedTourProps) {
       if (targetElement) {
         setHighlightedElement(targetElement);
         
-        // Calculate tooltip position
+        // Calculate tooltip position with better viewport awareness
         const rect = targetElement.getBoundingClientRect();
-        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-        const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+        const tooltipWidth = 280;
+        const tooltipHeight = 150; // Approximate height
+        const arrowSize = 8;
+        const padding = 12;
         
-        let top = rect.top + scrollTop;
-        let left = rect.left + scrollLeft;
+        let top = 0;
+        let left = 0;
+        let actualPlacement = currentTourStep.placement || 'bottom';
         
-        // Adjust position based on placement
-        switch (currentTourStep.placement) {
-          case 'bottom':
-            top = rect.bottom + scrollTop + 10;
-            left = rect.left + scrollLeft + (rect.width / 2) - 150;
-            break;
-          case 'top':
-            top = rect.top + scrollTop - 10;
-            left = rect.left + scrollLeft + (rect.width / 2) - 150;
-            break;
-          case 'right':
-            top = rect.top + scrollTop + (rect.height / 2) - 75;
-            left = rect.right + scrollLeft + 10;
-            break;
-          case 'left':
-            top = rect.top + scrollTop + (rect.height / 2) - 75;
-            left = rect.left + scrollLeft - 310;
-            break;
-          default:
-            top = rect.bottom + scrollTop + 10;
-            left = rect.left + scrollLeft + (rect.width / 2) - 150;
+        // Smart placement based on available space
+        const spaceAbove = rect.top;
+        const spaceBelow = window.innerHeight - rect.bottom;
+        const spaceLeft = rect.left;
+        const spaceRight = window.innerWidth - rect.right;
+        
+        // Auto-adjust placement if there's not enough space
+        if (actualPlacement === 'bottom' && spaceBelow < tooltipHeight + padding) {
+          if (spaceAbove > tooltipHeight + padding) {
+            actualPlacement = 'top';
+          } else if (spaceRight > tooltipWidth + padding) {
+            actualPlacement = 'right';
+          } else if (spaceLeft > tooltipWidth + padding) {
+            actualPlacement = 'left';
+          }
+        } else if (actualPlacement === 'top' && spaceAbove < tooltipHeight + padding) {
+          if (spaceBelow > tooltipHeight + padding) {
+            actualPlacement = 'bottom';
+          } else if (spaceRight > tooltipWidth + padding) {
+            actualPlacement = 'right';
+          } else if (spaceLeft > tooltipWidth + padding) {
+            actualPlacement = 'left';
+          }
         }
         
-        // Keep tooltip within viewport
-        left = Math.max(10, Math.min(left, window.innerWidth - 320));
-        top = Math.max(10, top);
+        // Position tooltip based on final placement
+        switch (actualPlacement) {
+          case 'bottom':
+            top = rect.bottom + arrowSize + padding;
+            left = rect.left + (rect.width / 2) - (tooltipWidth / 2);
+            break;
+          case 'top':
+            top = rect.top - tooltipHeight - arrowSize - padding;
+            left = rect.left + (rect.width / 2) - (tooltipWidth / 2);
+            break;
+          case 'right':
+            top = rect.top + (rect.height / 2) - (tooltipHeight / 2);
+            left = rect.right + arrowSize + padding;
+            break;
+          case 'left':
+            top = rect.top + (rect.height / 2) - (tooltipHeight / 2);
+            left = rect.left - tooltipWidth - arrowSize - padding;
+            break;
+        }
         
-        setTooltipPosition({ top, left });
+        // Ensure tooltip stays within viewport
+        left = Math.max(padding, Math.min(left, window.innerWidth - tooltipWidth - padding));
+        top = Math.max(padding, Math.min(top, window.innerHeight - tooltipHeight - padding));
+        
+        setTooltipPosition({ top, left, placement: actualPlacement });
       }
     };
 
@@ -206,18 +231,89 @@ function GuidedTour({ isOpen, onClose, onNavigate }: GuidedTourProps) {
         />
       )}
 
-      {/* Tooltip */}
+      {/* Tooltip with arrow */}
       <Box
         sx={{
           position: 'fixed',
           top: `${tooltipPosition.top}px`,
           left: `${tooltipPosition.left}px`,
-          width: '300px',
+          width: '280px',
           backgroundColor: theme.palette.background.paper,
           borderRadius: 2,
           boxShadow: theme.shadows[8],
           zIndex: 10000,
-          p: 3
+          p: 2.5,
+          border: `1px solid ${theme.palette.divider}`,
+          '&::before': {
+            content: '""',
+            position: 'absolute',
+            width: 0,
+            height: 0,
+            borderStyle: 'solid',
+            ...(tooltipPosition.placement === 'bottom' && {
+              top: '-8px',
+              left: '50%',
+              transform: 'translateX(-50%)',
+              borderWidth: '0 8px 8px 8px',
+              borderColor: `transparent transparent ${theme.palette.background.paper} transparent`
+            }),
+            ...(tooltipPosition.placement === 'top' && {
+              bottom: '-8px',
+              left: '50%',
+              transform: 'translateX(-50%)',
+              borderWidth: '8px 8px 0 8px',
+              borderColor: `${theme.palette.background.paper} transparent transparent transparent`
+            }),
+            ...(tooltipPosition.placement === 'right' && {
+              left: '-8px',
+              top: '50%',
+              transform: 'translateY(-50%)',
+              borderWidth: '8px 8px 8px 0',
+              borderColor: `transparent ${theme.palette.background.paper} transparent transparent`
+            }),
+            ...(tooltipPosition.placement === 'left' && {
+              right: '-8px',
+              top: '50%',
+              transform: 'translateY(-50%)',
+              borderWidth: '8px 0 8px 8px',
+              borderColor: `transparent transparent transparent ${theme.palette.background.paper}`
+            })
+          },
+          '&::after': {
+            content: '""',
+            position: 'absolute',
+            width: 0,
+            height: 0,
+            borderStyle: 'solid',
+            ...(tooltipPosition.placement === 'bottom' && {
+              top: '-9px',
+              left: '50%',
+              transform: 'translateX(-50%)',
+              borderWidth: '0 9px 9px 9px',
+              borderColor: `transparent transparent ${theme.palette.divider} transparent`
+            }),
+            ...(tooltipPosition.placement === 'top' && {
+              bottom: '-9px',
+              left: '50%',
+              transform: 'translateX(-50%)',
+              borderWidth: '9px 9px 0 9px',
+              borderColor: `${theme.palette.divider} transparent transparent transparent`
+            }),
+            ...(tooltipPosition.placement === 'right' && {
+              left: '-9px',
+              top: '50%',
+              transform: 'translateY(-50%)',
+              borderWidth: '9px 9px 9px 0',
+              borderColor: `transparent ${theme.palette.divider} transparent transparent`
+            }),
+            ...(tooltipPosition.placement === 'left' && {
+              right: '-9px',
+              top: '50%',
+              transform: 'translateY(-50%)',
+              borderWidth: '9px 0 9px 9px',
+              borderColor: `transparent transparent transparent ${theme.palette.divider}`
+            })
+          }
         }}
       >
         <Typography variant="h6" sx={{ mb: 2, fontWeight: 'bold' }}>
