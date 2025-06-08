@@ -51,7 +51,11 @@ export default function GuidedTour({ isOpen, onClose, onNavigate }: GuidedTourPr
     {
       selector: '[data-tour="sobriety-days"]',
       content: 'Track your continuous sobriety time. This updates automatically based on your sobriety date in your profile.',
-      position: 'bottom'
+      position: 'bottom',
+      action: (): void => {
+        const event: CustomTourNavigateEvent = new CustomEvent('tour-navigate', { detail: 'dashboard' }) as CustomTourNavigateEvent;
+        window.dispatchEvent(event);
+      }
     },
     {
       selector: '[data-tour="spiritual-fitness-score"]',
