@@ -24,7 +24,7 @@ function BottomNavBar({ currentView, onNavigate }: BottomNavBarProps) {
       data-tour="bottom-nav"
       sx={{
         position: 'fixed',
-        bottom: 0,
+        bottom: 'calc(-1 * env(safe-area-inset-bottom, 0px))', // Move down into safe area
         left: 0,
         right: 0,
         backgroundColor: isDark ? muiTheme.palette.background.paper : muiTheme.palette.background.default,
@@ -33,21 +33,9 @@ function BottomNavBar({ currentView, onNavigate }: BottomNavBarProps) {
         justifyContent: 'space-around',
         alignItems: 'center',
         padding: '8px 0',
-        paddingBottom: 'max(16px, env(safe-area-inset-bottom))', // iOS safe area
+        paddingBottom: 'calc(16px + env(safe-area-inset-bottom, 0px))', // Add safe area to padding
         zIndex: 1000,
-        boxShadow: '0 -2px 8px rgba(0,0,0,0.1)',
-        // Extend background to cover safe area
-        minHeight: 'calc(64px + env(safe-area-inset-bottom, 0px))',
-        '&::before': {
-          content: '""',
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 'calc(-1 * env(safe-area-inset-bottom, 0px))',
-          backgroundColor: 'inherit',
-          zIndex: -1,
-        }
+        boxShadow: '0 -2px 8px rgba(0,0,0,0.1)'
       }}
     >
         {navItems.map((item) => {
