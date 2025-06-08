@@ -165,6 +165,23 @@
       min-height: 100vh;
       min-height: -webkit-fill-available;
     }
+    
+    /* Safe area bottom fix for iOS */
+    body::after {
+      content: '';
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: env(safe-area-inset-bottom, 34px);
+      background: #1e293b; /* Dark navigation color */
+      z-index: 999;
+      pointer-events: none;
+    }
+    
+    html.dark body::after {
+      background: #1f2937; /* Dark mode navigation color */
+    }
   </style>
   
   <!-- Capacitor will be loaded automatically on native platforms -->
