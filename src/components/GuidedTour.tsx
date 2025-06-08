@@ -47,15 +47,18 @@ export default function GuidedTour({ isOpen, onClose, onNavigate }: GuidedTourPr
   const tourSteps: StepType[] = [
     {
       selector: '[data-tour="sobriety-days"]',
-      content: 'Track your continuous sobriety time. This updates automatically based on your sobriety date in your profile.'
+      content: 'Track your continuous sobriety time. This updates automatically based on your sobriety date in your profile.',
+      position: 'bottom'
     },
     {
       selector: '[data-tour="spiritual-fitness-score"]',
-      content: 'This shows your overall spiritual health based on your daily activities like prayer, meditation, and service work.'
+      content: 'This shows your overall spiritual health based on your daily activities like prayer, meditation, and service work.',
+      position: 'bottom'
     },
     {
       selector: '[data-tour="log-activity-btn"]',
-      content: 'Tap here to record spiritual activities like prayer, meditation, step work, or service. Each activity improves your spiritual fitness.'
+      content: 'Tap here to record spiritual activities like prayer, meditation, step work, or service. Each activity improves your spiritual fitness.',
+      position: 'top'
     },
     {
       selector: '[data-tour="nav-meetings"]',
@@ -68,6 +71,7 @@ export default function GuidedTour({ isOpen, onClose, onNavigate }: GuidedTourPr
     {
       selector: '[data-tour="nav-steps"]',
       content: 'Track your progress through the 12 steps with guided exercises and reflection prompts.',
+      position: 'top',
       action: (): void => {
         const event: CustomTourNavigateEvent = new CustomEvent('tour-navigate', { detail: 'steps' }) as CustomTourNavigateEvent;
         window.dispatchEvent(event);
@@ -76,6 +80,7 @@ export default function GuidedTour({ isOpen, onClose, onNavigate }: GuidedTourPr
     {
       selector: '[data-tour="nav-sponsorship"]',
       content: 'Manage your sponsor and sponsee relationships. Connect with others in recovery.',
+      position: 'bottom',
       action: (): void => {
         const event: CustomTourNavigateEvent = new CustomEvent('tour-navigate', { detail: 'sponsor' }) as CustomTourNavigateEvent;
         window.dispatchEvent(event);
