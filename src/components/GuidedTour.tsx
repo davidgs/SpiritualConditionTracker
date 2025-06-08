@@ -12,7 +12,10 @@ interface CustomTourNavigateEvent extends CustomEvent {
   detail: string;
 }
 
-function TourContent({ onNavigate }: { onNavigate?: (path: string) => void }): null {
+function TourContent({ onNavigate, onClose }: { onNavigate?: (path: string) => void; onClose: () => void }): null {
+  const { isOpen } = useTour();
+  const prevIsOpenRef = React.useRef<boolean>(true);
+
   React.useEffect(() => {
     const handleNavigate = (event: CustomTourNavigateEvent): void => {
       if (onNavigate) {
@@ -23,6 +26,13 @@ function TourContent({ onNavigate }: { onNavigate?: (path: string) => void }): n
     window.addEventListener('tour-navigate', handleNavigate as EventListener);
     return (): void => window.removeEventListener('tour-navigate', handleNavigate as EventListener);
   }, [onNavigate]);
+
+  React.useEffect(() => {
+    if (prevIsOpenRef.current && !isOpen) {
+      onClose();
+    }
+    prevIsOpenRef.current = isOpen;
+  }, [isOpen, onClose]);
 
   return null;
 }
@@ -99,7 +109,9 @@ export default function GuidedTour({ isOpen, onClose, onNavigate }: GuidedTourPr
       boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
       maxWidth: '280px',
       fontSize: '14px',
-      padding: '16px'
+      padding: '16px',
+      backgroundColor: '#ffffff',
+      color: '#333333'
     }),
     maskArea: (base: { [key: string]: any }) => ({
       ...base,
@@ -112,19 +124,27 @@ export default function GuidedTour({ isOpen, onClose, onNavigate }: GuidedTourPr
     badge: (base: { [key: string]: any }) => ({
       ...base,
       left: 'auto',
-      right: '-0.8125em'
+      right: '-0.8125em',
+      backgroundColor: theme.palette.primary.main,
+      color: '#ffffff'
     }),
     controls: (base: { [key: string]: any }) => ({
       ...base,
       marginTop: '16px',
       display: 'flex',
       gap: '8px',
-      justifyContent: 'space-between'
+      justifyContent: 'space-between',
+      '& button': {
+        color: '#333333',
+        backgroundColor: 'transparent',
+        border: '1px solid #333333'
+      }
     }),
     close: (base: { [key: string]: any }) => ({
       ...base,
       right: '8px',
-      top: '8px'
+      top: '8px',
+      color: '#333333'
     })
   };
 
@@ -145,9 +165,8 @@ export default function GuidedTour({ isOpen, onClose, onNavigate }: GuidedTourPr
       showCloseButton
       showNavigation
       defaultOpen={true}
-      afterClose={handleTourFinish}
     >
-      <TourContent onNavigate={onNavigate} />
+      <TourContent onNavigate={onNavigate} onClose={handleTourFinish} />
     </TourProvider>
   );
 }
