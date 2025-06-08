@@ -24,7 +24,7 @@ function BottomNavBar({ currentView, onNavigate }: BottomNavBarProps) {
       data-tour="bottom-nav"
       sx={{
         position: 'fixed',
-        bottom: '-44px', // Push down by safe area amount
+        bottom: '-34px', // Push down by safe area amount
         left: 0,
         right: 0,
         width: '100%',

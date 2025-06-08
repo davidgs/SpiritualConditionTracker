@@ -219,7 +219,7 @@ function AppContent() {
   try {
     return (
         <div style={{ 
-          minHeight: '100vh',
+          height: '100vh',
           backgroundColor: muiTheme.palette.background.default,
           color: muiTheme.palette.text.primary,
           position: 'relative',
