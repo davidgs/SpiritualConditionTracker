@@ -21,6 +21,7 @@ function BottomNavBar({ currentView, onNavigate }: BottomNavBarProps) {
 
   return (
     <Box
+      data-tour="bottom-nav"
       sx={{
         position: 'fixed',
         bottom: 0,

@@ -6,7 +6,7 @@ import SafeAreaHeader from './SafeAreaHeader';
 import GuidedTour from './GuidedTour';
 
 
-function Header({ title, menuOpen, setMenuOpen, isMobile }) {
+function Header({ title, menuOpen, setMenuOpen, isMobile, onNavigate }) {
   const muiTheme = useTheme();
   const { primaryColor, toggleTheme } = useAppTheme();
   const darkMode = muiTheme.palette.mode === 'dark';
@@ -224,7 +224,8 @@ function Header({ title, menuOpen, setMenuOpen, isMobile }) {
       {/* Guided Tour */}
       <GuidedTour 
         isOpen={tourOpen} 
-        onClose={() => setTourOpen(false)} 
+        onClose={() => setTourOpen(false)}
+        onNavigate={onNavigate}
       />
     </>
   );

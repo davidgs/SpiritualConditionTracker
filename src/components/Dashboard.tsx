@@ -353,6 +353,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
           {/* Score display with dynamic color */}
           <Typography
             variant="h4"
+            data-tour="spiritual-fitness-score"
             sx={{ 
               fontSize: '1.6rem', 
               fontWeight: 'bold',
@@ -515,6 +516,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
             {/* Button to open activity modal */}
             <IconButton
               onClick={() => setShowActivityModal(true)}
+              data-tour="log-activity-btn"
               title="Log new activity"
               aria-label="Log new activity"
               size="medium"

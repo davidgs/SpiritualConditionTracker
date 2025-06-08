@@ -232,6 +232,7 @@ function AppContent() {
           menuOpen={false}
           setMenuOpen={() => {}}
           isMobile={true}
+          onNavigate={handleNavigation}
         />
         <div style={{ 
           paddingTop: '104px',
