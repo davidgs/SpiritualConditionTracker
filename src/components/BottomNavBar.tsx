@@ -20,47 +20,35 @@ function BottomNavBar({ currentView, onNavigate }: BottomNavBarProps) {
   ];
 
   return (
-    <>
-      {/* Safe area extension */}
-      <Box
-        sx={{
-          position: 'fixed',
-          bottom: 0,
-          left: 0,
-          right: 0,
-          height: '34px',
-          backgroundColor: isDark ? muiTheme.palette.background.paper : muiTheme.palette.background.default,
-          zIndex: 998,
-          transform: 'translateY(100%)',
-        }}
-      />
-      
-      {/* Navigation bar */}
-      <Box
-        data-tour="bottom-nav"
-        sx={{
-          position: 'fixed',
-          bottom: 0,
-          left: 0,
-          right: 0,
-          backgroundColor: isDark ? muiTheme.palette.background.paper : muiTheme.palette.background.default,
-          borderTop: `1px solid ${muiTheme.palette.divider}`,
-          display: 'flex',
-          justifyContent: 'space-around',
-          alignItems: 'center',
-          padding: '8px 0 16px 0',
-          zIndex: 1000,
-          boxShadow: '0 -2px 8px rgba(0,0,0,0.1)'
-        }}
-      >
-        {navItems.map((item) => {
+    <Box
+      data-tour="bottom-nav"
+      sx={{
+        position: 'fixed',
+        bottom: 0,
+        left: 0,
+        right: 0,
+        backgroundColor: isDark ? muiTheme.palette.background.paper : muiTheme.palette.background.default,
+        borderTop: `1px solid ${muiTheme.palette.divider}`,
+        display: 'flex',
+        justifyContent: 'space-around',
+        alignItems: 'center',
+        padding: '8px 0 16px 0',
+        zIndex: 1000,
+        boxShadow: '0 -2px 8px rgba(0,0,0,0.1)',
+        paddingBottom: 'max(16px, calc(16px + env(safe-area-inset-bottom)))',
+      }}
+    >
+      {navItems.map((item) => {
         const isActive = currentView === item.id;
         return (
           <Box
             key={item.id}
             data-tour={`nav-${item.id === 'dashboard' ? 'home' : item.id === 'stepwork' ? 'steps' : item.id === 'sponsor' ? 'sponsorship' : item.id}`}
             component="button"
-            onClick={() => onNavigate(item.id)}
+            onClick={() => {
+              console.log('Navigation clicked:', item.id);
+              onNavigate(item.id);
+            }}
             sx={{
               display: 'flex',
               flexDirection: 'column',
@@ -109,8 +97,7 @@ function BottomNavBar({ currentView, onNavigate }: BottomNavBarProps) {
           </Box>
         );
       })}
-      </Box>
-    </>
+    </Box>
   );
 }
 
