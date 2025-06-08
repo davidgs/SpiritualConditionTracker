@@ -199,6 +199,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
           }}>
           <Typography
             variant="h6"
+            data-tour="sobriety-days"
             sx={{
               fontSize: '1.1rem',
               fontWeight: 600,
@@ -214,7 +215,6 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
           {user?.sobrietyDate && (
             <Typography
               variant="body2" 
-              data-tour="sobriety-days"
               sx={{ 
                 fontSize: '0.85rem', 
                 color: 'text.secondary',
