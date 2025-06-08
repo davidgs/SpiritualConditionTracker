@@ -22,7 +22,7 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "node serve.js"
+args = "npx serve dist -l 5000 -s"
 waitForPort = 5000
 
 [deployment]
