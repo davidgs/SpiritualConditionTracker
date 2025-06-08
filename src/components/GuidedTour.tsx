@@ -64,15 +64,15 @@ export default function GuidedTour({ isOpen, onClose, onNavigate }: GuidedTourPr
     {
       selector: '[data-tour="spiritual-fitness-score"]',
       content:
-        "This shows your overall spiritual health based on your daily activities like prayer, meditation, and service work.",
+        "This shows your overall spiritual health based on your daily activities like prayer, meditation, and service work. You also get a color-coded quick look at how you are doing. Keep your indicator in the green!",
       position: "bottom",
     },
-    {
-      selector: '[data-tour="spiritual-fitness-display"]',
-      content:
-        "Get a color-coded quick look at how you are doing. Keep your indicator in the green!",
-      position: "bottom",
-    },
+   // {
+   //   selector: '[data-tour="spiritual-fitness-display"]',
+   //   content:
+   //     "",
+    //  position: "bottom",
+   // },
     {
       selector: '[data-tour="spiritual-fitness-time"]',
       content:
@@ -86,9 +86,9 @@ export default function GuidedTour({ isOpen, onClose, onNavigate }: GuidedTourPr
       position: "top",
     },
     {
-      selector: '[data-tour="nav-meetings"]',
+      selector: '[data-tour="add-meeting-btn"]',
       content:
-        "Keep track of the meetings you like to attend. You can save favorites and log attendance.",
+        "Keep track of the meetings you like to attend. You can save favorites and log attendance. Click to add your first meeting!",
       action: (): void => {
         const event: CustomTourNavigateEvent = new CustomEvent(
           "tour-navigate",
@@ -97,10 +97,10 @@ export default function GuidedTour({ isOpen, onClose, onNavigate }: GuidedTourPr
         window.dispatchEvent(event);
       },
     },
-    {
-      selector: '[data-tour="add-meeting-btn"]',
-      content: "Click to add your first meeting!",
-    },
+   // {
+    //  selector: '[data-tour="add-meeting-btn"]',
+    //  content: "Click to add your first meeting!",
+   // },
     {
       selector: '[data-tour="nav-stepwork"]',
       content:

@@ -320,7 +320,9 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
             borderLeft: 4,
             borderLeftColor: 'primary.main',
             mb: 1.5,
-          }}>
+          }}
+          data-tour="spiritual-fitness-score"
+        >
           <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 1 }}>
             <Typography
               variant="h6"
@@ -356,7 +358,6 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
           {/* Score display with dynamic color */}
           <Typography
             variant="h4"
-            data-tour="spiritual-fitness-score"
             sx={{ 
               fontSize: '1.6rem', 
               fontWeight: 'bold',
