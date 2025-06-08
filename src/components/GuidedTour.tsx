@@ -1,6 +1,6 @@
 import React from 'react';
-import { TourProvider, useTour } from '@reactour/tour';
-import { useTheme } from '@mui/material/styles';
+import { TourProvider, useTour, StepType } from '@reactour/tour';
+import { useTheme, Theme } from '@mui/material/styles';
 
 interface GuidedTourProps {
   isOpen: boolean;
@@ -8,8 +8,15 @@ interface GuidedTourProps {
   onNavigate?: (path: string) => void;
 }
 
-function TourContent({ isOpen, onClose, onNavigate }: GuidedTourProps) {
-  const { setIsOpen, setCurrentStep } = useTour();
+interface CustomTourNavigateEvent extends CustomEvent {
+  detail: string;
+}
+
+function TourContent({ isOpen, onClose, onNavigate }: GuidedTourProps): null {
+  const { setIsOpen, setCurrentStep }: { 
+    setIsOpen: (isOpen: boolean) => void; 
+    setCurrentStep: (step: number) => void; 
+  } = useTour();
 
   React.useEffect(() => {
     if (isOpen) {
@@ -21,27 +28,26 @@ function TourContent({ isOpen, onClose, onNavigate }: GuidedTourProps) {
   }, [isOpen, setIsOpen, setCurrentStep]);
 
   React.useEffect(() => {
-    const handleNavigate = (event: CustomEvent) => {
+    const handleNavigate = (event: CustomTourNavigateEvent): void => {
       if (onNavigate) {
         onNavigate(event.detail);
       }
     };
 
     window.addEventListener('tour-navigate', handleNavigate as EventListener);
-    return () => window.removeEventListener('tour-navigate', handleNavigate as EventListener);
+    return (): void => window.removeEventListener('tour-navigate', handleNavigate as EventListener);
   }, [onNavigate]);
 
   return null;
 }
 
-export default function GuidedTour({ isOpen, onClose, onNavigate }: GuidedTourProps) {
-  const theme = useTheme();
+export default function GuidedTour({ isOpen, onClose, onNavigate }: GuidedTourProps): React.ReactElement {
+  const theme: Theme = useTheme();
 
-  const tourSteps = [
+  const tourSteps: StepType[] = [
     {
       selector: '[data-tour="sobriety-days"]',
-      content: 'Track your continuous sobriety time. This updates automatically based on your sobriety date in your profile.',
-      placement: 'bottom'
+      content: 'Track your continuous sobriety time. This updates automatically based on your sobriety date in your profile.'
     },
     {
       selector: '[data-tour="spiritual-fitness-score"]',
@@ -54,33 +60,32 @@ export default function GuidedTour({ isOpen, onClose, onNavigate }: GuidedTourPr
     {
       selector: '[data-tour="nav-meetings"]',
       content: 'Find and track AA meetings in your area. You can save favorites and log attendance.',
-      placement: 'bottom',
-      action: () => {
-        const event = new CustomEvent('tour-navigate', { detail: 'meetings' });
+      action: (): void => {
+        const event: CustomTourNavigateEvent = new CustomEvent('tour-navigate', { detail: 'meetings' }) as CustomTourNavigateEvent;
         window.dispatchEvent(event);
       }
     },
     {
       selector: '[data-tour="nav-steps"]',
       content: 'Track your progress through the 12 steps with guided exercises and reflection prompts.',
-      action: () => {
-        const event = new CustomEvent('tour-navigate', { detail: 'steps' });
+      action: (): void => {
+        const event: CustomTourNavigateEvent = new CustomEvent('tour-navigate', { detail: 'steps' }) as CustomTourNavigateEvent;
         window.dispatchEvent(event);
       }
     },
     {
       selector: '[data-tour="nav-sponsorship"]',
       content: 'Manage your sponsor and sponsee relationships. Connect with others in recovery.',
-      action: () => {
-        const event = new CustomEvent('tour-navigate', { detail: 'sponsor' });
+      action: (): void => {
+        const event: CustomTourNavigateEvent = new CustomEvent('tour-navigate', { detail: 'sponsor' }) as CustomTourNavigateEvent;
         window.dispatchEvent(event);
       }
     },
     {
       selector: '[data-tour="nav-profile"]',
       content: 'Update your personal information, sobriety date, and app preferences.',
-      action: () => {
-        const event = new CustomEvent('tour-navigate', { detail: 'profile' });
+      action: (): void => {
+        const event: CustomTourNavigateEvent = new CustomEvent('tour-navigate', { detail: 'profile' }) as CustomTourNavigateEvent;
         window.dispatchEvent(event);
       }
     },
@@ -90,51 +95,52 @@ export default function GuidedTour({ isOpen, onClose, onNavigate }: GuidedTourPr
     }
   ];
 
+  const tourStyles = {
+    popover: (base: { [key: string]: any }) => ({
+      ...base,
+      '--reactour-accent': theme.palette.primary.main,
+      borderRadius: '12px',
+      boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
+      maxWidth: '280px',
+      fontSize: '14px',
+      padding: '16px'
+    }),
+    maskArea: (base: { [key: string]: any }) => ({
+      ...base,
+      rx: 8
+    }),
+    maskWrapper: (base: { [key: string]: any }) => ({
+      ...base,
+      color: 'rgba(0, 0, 0, 0.3)'
+    }),
+    badge: (base: { [key: string]: any }) => ({
+      ...base,
+      left: 'auto',
+      right: '-0.8125em'
+    }),
+    controls: (base: { [key: string]: any }) => ({
+      ...base,
+      marginTop: '16px',
+      display: 'flex',
+      gap: '8px',
+      justifyContent: 'space-between'
+    }),
+    close: (base: { [key: string]: any }) => ({
+      ...base,
+      right: '8px',
+      top: '8px'
+    })
+  };
+
   return (
     <TourProvider
       steps={tourSteps}
-      styles={{
-        popover: (base) => ({
-          ...base,
-          '--reactour-accent': theme.palette.primary.main,
-          borderRadius: '12px',
-          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
-          maxWidth: '280px',
-          fontSize: '14px',
-          padding: '16px'
-        }),
-        maskArea: (base) => ({
-          ...base,
-          rx: 8
-        }),
-        maskWrapper: (base) => ({
-          ...base,
-          color: 'rgba(0, 0, 0, 0.3)'
-        }),
-        badge: (base) => ({
-          ...base,
-          left: 'auto',
-          right: '-0.8125em'
-        }),
-        controls: (base) => ({
-          ...base,
-          marginTop: '16px',
-          display: 'flex',
-          gap: '8px',
-          justifyContent: 'space-between'
-        }),
-        close: (base) => ({
-          ...base,
-          right: '8px',
-          top: '8px'
-        })
-      }}
+      styles={tourStyles}
       padding={10}
       scrollSmooth
       showBadge
       showCloseButton
       showNavigation
-      onRequestClose={onClose}
     >
       <TourContent isOpen={isOpen} onClose={onClose} onNavigate={onNavigate} />
     </TourProvider>
