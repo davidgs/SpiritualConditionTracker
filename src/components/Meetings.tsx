@@ -600,7 +600,6 @@ export default function Meetings({ setCurrentView, meetings = [], onSave, onDele
         </Box>
         <IconButton
           onClick={() => setShowForm(true)}
-          data-tour="add-meeting-btn"
           aria-label="Add new meeting"
           title={meetings.length > 0 ? 'Add New Meeting' : 'Add Your First Meeting'}
           color="primary"
@@ -612,7 +611,9 @@ export default function Meetings({ setCurrentView, meetings = [], onSave, onDele
             }
           }}
         >
-          <AddIcon sx={{ fontSize: 'inherit' }} />
+          <AddIcon sx={{ fontSize: 'inherit' }}
+            data-tour="add-meeting-btn"
+          />
         </IconButton>
       </Box>
 
