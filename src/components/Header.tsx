@@ -125,6 +125,7 @@ function Header({ title, menuOpen, setMenuOpen, isMobile, onNavigate, autoStartT
         <Box
           component="button"
           onClick={toggleTheme}
+          data-tour="theme-toggle"
           sx={{
             border: 'none',
             background: 'transparent',

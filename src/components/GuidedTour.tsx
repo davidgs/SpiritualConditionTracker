@@ -100,6 +100,11 @@ export default function GuidedTour({ isOpen, onClose, onNavigate }: GuidedTourPr
       }
     },
     {
+      selector: '[data-tour="theme-toggle"]',
+      content: 'Switch between light and dark mode to customize your app appearance. Try tapping it now!',
+      position: 'bottom'
+    },
+    {
       selector: '[data-tour="edit-profile-btn"]',
       content: 'Update your sobriety date, contact information, and connect with sponsors here.'
     }
