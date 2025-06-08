@@ -752,6 +752,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
               </IconButton>
               <IconButton 
                 onClick={() => setEditingPersonalInfo(!editingPersonalInfo)}
+                data-tour="edit-profile-btn"
                 size="small"
                 aria-label={editingPersonalInfo ? "Cancel editing" : "Edit personal information"}
                 sx={{ 

@@ -44,6 +44,7 @@ function BottomNavBar({ currentView, onNavigate }: BottomNavBarProps) {
           <Box
             key={item.id}
             component="button"
+            data-tour={`nav-${item.id}`}
             onClick={() => onNavigate(item.id)}
             sx={{
               display: 'flex',

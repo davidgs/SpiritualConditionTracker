@@ -59,6 +59,7 @@ function Header({ title, menuOpen, setMenuOpen, isMobile, onNavigate }) {
         
         <Typography 
           variant="h6" 
+          data-tour="tour-welcome"
           sx={{ 
             fontWeight: 600,
             color: headerTextColor,
