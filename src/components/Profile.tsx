@@ -14,13 +14,13 @@ import { formatPhoneNumber, formatPhoneNumberForInput } from '../utils/phoneUtil
 import { MuiTelInput } from 'mui-tel-input';
 
 import Button from '@mui/material/Button';
-import { 
-  Switch, 
-  FormControlLabel, 
-  TextField, 
-  Paper, 
-  Typography, 
-  Box, 
+import {
+  Switch,
+  FormControlLabel,
+  TextField,
+  Paper,
+  Typography,
+  Box,
   Divider,
   IconButton,
   MenuItem,
@@ -47,24 +47,24 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
     if (!window.confirm('Are you sure you want to reset ALL data? This action CANNOT be undone.')) {
       return;
     }
-    
+
     // Second confirmation dialog
     if (!window.confirm('Please confirm again: This will delete ALL your recovery data including sobriety date, meetings, and activities. Are you absolutely sure?')) {
       return;
     }
-    
+
     console.log('Starting data reset process');
-    
+
     try {
       // Call the parent component's reset function to clear all React state and data
       if (onResetAllData) {
         await onResetAllData();
       }
       console.log('Data reset complete - navigating to dashboard');
-      
+
       // Show success message
       alert('All data has been reset successfully.');
-      
+
       // Navigate to dashboard instead of reloading the page
       setCurrentView('dashboard');
     } catch (error) {
@@ -75,7 +75,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
   // Access MUI theme for consistent styling
   const muiTheme = useTheme();
   const darkMode = muiTheme.palette.mode === 'dark';
-  
+
   const [name, setName] = useState('');
   const [lastName, setLastName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -133,7 +133,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
         homeGroupsData = [user.homeGroup];
       }
       setHomeGroups(homeGroupsData);
-      
+
       // Load privacy settings and preferences
       setAllowMessages(user.privacySettings?.allowMessages !== false);
       setShareLastName(user.privacySettings?.shareLastName !== false);
@@ -145,13 +145,13 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
   const [allowMessages, setAllowMessages] = useState(user?.privacySettings?.allowMessages !== false);
   const [shareLastName, setShareLastName] = useState(user?.privacySettings?.shareLastName !== false);
   const [use24HourFormat, setUse24HourFormat] = useState(user?.preferences?.use24HourFormat || false);
-  
+
   // Handle phone number input
   const handlePhoneChange = (e) => {
     const formattedNumber = formatPhoneNumberForInput(e.target.value);
     setPhoneNumber(formattedNumber);
   };
-  
+
   // Handle meeting selection change
   const handleHomeGroupChange = (e) => {
     const value = e.target.value;
@@ -161,7 +161,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
       setHomeGroups(value);
     }
   };
-  
+
   // Handle adding a new meeting from meeting form
   const handleAddMeeting = async (meeting: any) => {
     setShowMeetingForm(false);
@@ -184,31 +184,31 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
       }
     }
   };
-  
+
   // Handle form submission
   const handleSubmit = (e) => {
     if (e && e.preventDefault) {
       e.preventDefault();
     }
-    
+
     // Validate form
     const newErrors = {};
     if (!sobrietyDate) newErrors.sobrietyDate = 'Sobriety date is required';
-    
+
     // If there are errors, show them and don't submit
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       return;
     }
-    
+
     // Create updates object with privacy settings
     // Fix for timezone issue - store the date in a timezone-neutral format (YYYY-MM-DD)
     // This prevents the date from shifting when displayed
-    
+
     // Parse existing settings safely
     let existingPrivacySettings = {};
     let existingPreferences = {};
-    
+
     try {
       if (user?.privacySettings) {
         if (typeof user.privacySettings === 'string') {
@@ -221,7 +221,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
       console.warn('Failed to parse existing privacy settings:', error);
       existingPrivacySettings = {};
     }
-    
+
     try {
       if (user?.preferences) {
         if (typeof user.preferences === 'string') {
@@ -234,7 +234,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
       console.warn('Failed to parse existing preferences:', error);
       existingPreferences = {};
     }
-    
+
     const updates = {
       name,
       lastName,
@@ -253,7 +253,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
         use24HourFormat
       }
     };
-    
+
     // Update the profile and stay on the Profile page
     onUpdate(updates, { redirectToDashboard: false });
   };
@@ -262,47 +262,47 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
   // Fixed to handle timezone issues properly
   const sobrietyDays = useMemo(() => {
     if (!user?.sobrietyDate) return 0;
-    
+
     // Get the date string in YYYY-MM-DD format
     const dateStr = user.sobrietyDate.includes('T') ? user.sobrietyDate.split('T')[0] : user.sobrietyDate;
-    
+
     // Parse date components to avoid timezone issues
     const [year, month, day] = dateStr.split('-').map(Number);
     const sobrietyDate = new Date(year, month - 1, day); // month is 0-indexed
-    
+
     const today = new Date();
     const todayDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-    
+
     const diffTime = todayDate.getTime() - sobrietyDate.getTime();
     return Math.floor(diffTime / (1000 * 60 * 60 * 24));
   }, [user?.sobrietyDate]);
-  
+
   const sobrietyYears = useMemo(() => {
     if (!user?.sobrietyDate) return 0;
-    
+
     // Get the date string in YYYY-MM-DD format
     const dateStr = user.sobrietyDate.includes('T') ? user.sobrietyDate.split('T')[0] : user.sobrietyDate;
-    
+
     // Parse date components to avoid timezone issues
     const [year, month, day] = dateStr.split('-').map(Number);
     const sobrietyDate = new Date(year, month - 1, day); // month is 0-indexed
-    
+
     const today = new Date();
     const todayDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-    
+
     const diffTime = todayDate.getTime() - sobrietyDate.getTime();
     const years = diffTime / (1000 * 60 * 60 * 24 * 365.25);
     return Math.round(years * 100) / 100; // Round to 2 decimal places
   }, [user?.sobrietyDate]);
-    
+
   // Removed automatic date updating that was interfering with manual saves
-    
+
   // State for editing sobriety date
   const [editingSobriety, setEditingSobriety] = useState(false);
-  
+
   // Determine whether to display years or days prominently
   const showYearsProminent = sobrietyYears >= 1;
-  
+
   // Format number with commas
   const formatNumber = (num) => {
     return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -311,16 +311,16 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
   // Generate vCard data for QR code sharing
   const generateVCardData = () => {
     const privacySettings = user?.privacySettings || {};
-    
+
     // Respect privacy settings
     const displayName = name || '';
     const displayLastName = privacySettings.shareLastName ? (lastName || '') : '';
     const displayPhone = phoneNumber || '';
     const displayEmail = email || '';
-    
+
     // Build full name
     const fullName = `${displayName} ${displayLastName}`.trim();
-    
+
     // Create vCard format
     const vCardLines = [
       'BEGIN:VCARD',
@@ -328,21 +328,21 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
       `FN:${fullName}`,
       `N:${displayLastName};${displayName};;;`,
     ];
-    
+
     if (displayPhone) {
       vCardLines.push(`TEL:${displayPhone}`);
     }
-    
+
     if (displayEmail) {
       vCardLines.push(`EMAIL:${displayEmail}`);
     }
-    
+
     // Add organization/note for AA context
     vCardLines.push('ORG:AA Recovery Community');
     vCardLines.push('NOTE:Shared from AA Recovery Tracker');
-    
+
     vCardLines.push('END:VCARD');
-    
+
     return vCardLines.join('\n');
   };
 
@@ -352,16 +352,16 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
       alert('Please add your name before sharing contact information.');
       return;
     }
-    
+
     const vCardData = generateVCardData();
     const privacySettings = user?.privacySettings || {};
     const displayName = privacySettings.shareLastName ? `${name} ${lastName}`.trim() : name;
-    
+
     setQrCodeData(vCardData);
     setQrCodeTitle(`Contact: ${displayName}`);
     setQrCodeOpen(true);
   };
-  
+
 
 
   return (
@@ -383,8 +383,8 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
           Your personal profile
         </Typography>
       </Box>
-      
-      <Paper sx={{ 
+
+      <Paper sx={{
           p: 3,
           mb: 3,
           borderRadius: 2,
@@ -394,21 +394,21 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
             <Typography variant="h6" sx={{ color: 'text.primary', mb: 1 }}>
               Sobriety Milestone
             </Typography>
-            
+
             {sobrietyDate && !editingSobriety && (
               <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <Typography variant="subtitle1" sx={{ 
+                <Typography variant="subtitle1" sx={{
                   color: 'text.secondary',
                   fontWeight: 500
                 }}>
                   Sober since {formatDateForDisplay(sobrietyDate)}
                 </Typography>
-                <IconButton 
+                <IconButton
                   onClick={() => setEditingSobriety(!editingSobriety)}
                   size="small"
                   aria-label="Edit sobriety date"
                   color="inherit"
-                  sx={{ 
+                  sx={{
                     ml: 1,
                     p: 0.5,
                     '&:hover': {
@@ -421,18 +421,19 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
                 </IconButton>
               </Box>
             )}
-            
+
             {!sobrietyDate && !editingSobriety && (
               <Box sx={{ display: 'flex', alignItems: 'center' }}>
                 <Typography sx={{ color: 'text.secondary' }}>
                   No sobriety date set
                 </Typography>
-                <IconButton 
+                <IconButton
                   onClick={() => setEditingSobriety(true)}
                   size="small"
                   aria-label="Add sobriety date"
-                  color="inherit"
-                  sx={{ 
+                color="inherit"
+                data-tour="add-sobriety-btn"
+                  sx={{
                     ml: 1,
                     p: 0.5,
                     '&:hover': {
@@ -446,7 +447,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
               </Box>
             )}
           </Box>
-          
+
           {editingSobriety ? (
             <Box sx={{ mb: 2 }}>
               <Box sx={{ mb: 2 }}>
@@ -470,8 +471,8 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
                   InputLabelProps={{
                     shrink: true
                   }}
-                  sx={{ 
-                    '& .MuiOutlinedInput-root': { 
+                  sx={{
+                    '& .MuiOutlinedInput-root': {
                       height: 56,
                       borderRadius: 2
                     },
@@ -486,11 +487,11 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
                     }
                   }}
                 />
-                <Typography 
-                  variant="caption" 
-                  sx={{ 
-                    display: 'block', 
-                    mt: 0.5, 
+                <Typography
+                  variant="caption"
+                  sx={{
+                    display: 'block',
+                    mt: 0.5,
                     color: 'text.secondary',
                     fontStyle: 'italic'
                   }}
@@ -499,7 +500,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
                 </Typography>
               </Box>
               <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1 }}>
-                <Button 
+                <Button
                   size="small"
                   onClick={() => setEditingSobriety(false)}
                   variant="contained"
@@ -507,7 +508,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
                 >
                   Cancel
                 </Button>
-                <Button 
+                <Button
                   size="small"
                   variant="contained"
                   color="success"
@@ -539,8 +540,8 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
                     {showYearsProminent ? (
                       <>
                         <Box sx={{ display: 'flex', alignItems: 'baseline', mb: 1 }}>
-                          <Typography variant="h3" sx={{ 
-                            fontWeight: 'bold', 
+                          <Typography variant="h3" sx={{
+                            fontWeight: 'bold',
                             color: 'primary.main',
                             mr: 1
                           }}>
@@ -550,8 +551,8 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
                             years
                           </Typography>
                         </Box>
-                        <Typography sx={{ 
-                          fontSize: '1.25rem', 
+                        <Typography sx={{
+                          fontSize: '1.25rem',
                           color: 'primary.main'
                         }}>
                           {formatNumber(sobrietyDays)} days
@@ -560,8 +561,8 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
                     ) : (
                       <>
                         <Box sx={{ display: 'flex', alignItems: 'baseline', mb: 1 }}>
-                          <Typography variant="h3" sx={{ 
-                            fontWeight: 'bold', 
+                          <Typography variant="h3" sx={{
+                            fontWeight: 'bold',
                             color: 'primary.main',
                             mr: 1
                           }}>
@@ -571,8 +572,8 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
                             days
                           </Typography>
                         </Box>
-                        <Typography sx={{ 
-                          fontSize: '1.25rem', 
+                        <Typography sx={{
+                          fontSize: '1.25rem',
                           color: (theme) => theme.palette.primary.main
                         }}>
                           {sobrietyYears.toFixed(2)} years
@@ -586,9 +587,9 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
           )}
         </Paper>
       {/* App Settings */}
-      <Paper sx={{ 
-        p: 3, 
-        mb: 3, 
+      <Paper sx={{
+        p: 3,
+        mb: 3,
         borderRadius: 2,
         bgcolor: 'background.paper',
         paddingTop: '4px'
@@ -596,25 +597,25 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
         <Typography variant="h6" sx={{ mb: 2, color: 'text.primary' }}>
           App Settings
         </Typography>
-        
+
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
 
-          
+
           {/* Advanced theme customization temporarily disabled */}
           {/*
           <Box sx={{ mb: 2 }}>
             <PopoverColorPicker />
           </Box>
-          
+
           <Box sx={{ mb: 2 }}>
             <PopoverThemeDisplay />
           </Box>
           */}
-          
+
           {/* Message Privacy Option */}
           {/* <FormControlLabel
             control={
-              <Switch 
+              <Switch
                 id="allowMessages"
                 name="allowMessages"
                 checked={allowMessages}
@@ -625,14 +626,14 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
             }
             label={
               <Box>
-                <Typography sx={{ 
+                <Typography sx={{
                   fontSize: '0.875rem',
                   color: 'text.primary'
                 }}>
                   Allow Messaging
                 </Typography>
-                <Typography variant="caption" sx={{ 
-                  display: 'block', 
+                <Typography variant="caption" sx={{
+                  display: 'block',
                   color: 'text.secondary'
                 }}>
                   When enabled, connections can send you secure messages
@@ -641,11 +642,11 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
             }
             sx={{ alignItems: 'flex-start', ml: 0, mt: 1 }}
           /> */}
-          
+
           {/* Share Last Name Option */}
           <FormControlLabel
             control={
-              <Switch 
+              <Switch
                 id="shareLastName"
                 name="shareLastName"
                 checked={shareLastName}
@@ -656,14 +657,14 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
             }
             label={
               <Box>
-                <Typography sx={{ 
+                <Typography sx={{
                   fontSize: '0.875rem',
                   color: 'text.primary'
                 }}>
                   Share Last Name
                 </Typography>
-                <Typography variant="caption" sx={{ 
-                  display: 'block', 
+                <Typography variant="caption" sx={{
+                  display: 'block',
                   color: 'text.secondary'
                 }}>
                   Show your last name to other members in recovery
@@ -672,18 +673,18 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
             }
             sx={{ alignItems: 'flex-start', ml: 0, mt: 1 }}
           />
-          
+
           {/* 24-Hour Time Format Option */}
           <FormControlLabel
             control={
-              <Switch 
+              <Switch
                 id="use24HourFormat"
                 name="use24HourFormat"
                 checked={use24HourFormat}
                 onChange={(e) => {
                   const newValue = e.target.checked;
                   setUse24HourFormat(newValue);
-                  
+
                   // Save the preference change immediately without redirecting
                   const updates = {
                     preferences: {
@@ -700,14 +701,14 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
             }
             label={
               <Box>
-                <Typography sx={{ 
+                <Typography sx={{
                   fontSize: '0.875rem',
                   color: 'text.primary'
                 }}>
                   Use 24-Hour Time Format
                 </Typography>
-                <Typography variant="caption" sx={{ 
-                  display: 'block', 
+                <Typography variant="caption" sx={{
+                  display: 'block',
                   color: 'text.secondary'
                 }}>
                   Display times in 24-hour format (e.g., 18:00 instead of 6:00 PM)
@@ -718,11 +719,11 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
           />
         </Box>
       </Paper>
-      
-      <Paper elevation={0} 
-        component="form" 
-        onSubmit={handleSubmit} 
-        sx={(theme) => ({ 
+
+      <Paper elevation={0}
+        component="form"
+        onSubmit={handleSubmit}
+        sx={(theme) => ({
           p: 3,
           bgcolor: theme.palette.background.paper,
           borderRadius: 2,
@@ -736,11 +737,12 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
               Personal Information
             </Typography>
             <Box sx={{ display: 'flex', gap: 1 }}>
-              <IconButton 
+              <IconButton
                 onClick={handleShareContact}
+                data-tour="share-contact-btn"
                 size="small"
                 aria-label="Share contact information"
-                sx={{ 
+                sx={{
                   color: 'text.secondary',
                   '&:hover': {
                     color: 'primary.main',
@@ -750,12 +752,12 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
               >
                 <i className="fas fa-share" style={{ fontSize: '0.85rem' }}></i>
               </IconButton>
-              <IconButton 
+              <IconButton
                 onClick={() => setEditingPersonalInfo(!editingPersonalInfo)}
                 data-tour="edit-profile-btn"
                 size="small"
                 aria-label={editingPersonalInfo ? "Cancel editing" : "Edit personal information"}
-                sx={{ 
+                sx={{
                   color: 'text.secondary',
                   '&:hover': {
                     color: 'primary.main',
@@ -768,7 +770,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
             </Box>
           </Box>
         </Box>
-        
+
         {editingPersonalInfo ? (
           <>
             <Box sx={{ display: 'flex', flexDirection: 'column', mb: 3 }}>
@@ -784,9 +786,9 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
                 variant="outlined"
                 size="medium"
                 margin="none"
-                sx={{ 
+                sx={{
                   mb: 2,
-                  '& .MuiOutlinedInput-root': { 
+                  '& .MuiOutlinedInput-root': {
                     height: 56,
                     borderRadius: 2
                   },
@@ -796,7 +798,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
                   }
                 }}
               />
-              
+
               <TextField
                 fullWidth
                 value={lastName != "Not set" ? lastName : ""}
@@ -805,9 +807,9 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
                 variant="outlined"
                 size="medium"
                 margin="none"
-                sx={{ 
+                sx={{
                   mb: 2,
-                  '& .MuiOutlinedInput-root': { 
+                  '& .MuiOutlinedInput-root': {
                     height: 56,
                     borderRadius: 2
                   },
@@ -817,7 +819,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
                   }
                 }}
               />
-              
+
               <MuiTelInput
                 label="Phone Number"
                 value={phoneNumber != "Not set" ? phoneNumber : ""}
@@ -826,15 +828,15 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
                 forceCallingCode
                 continents={['EU', 'OC', 'NA']}
                 fullWidth
-                sx={{ 
+                sx={{
                   mb: 2,
-                  '& .MuiInputBase-root': { 
-                    height: '56px', 
+                  '& .MuiInputBase-root': {
+                    height: '56px',
                     borderRadius: '8px',
                   }
                 }}
               />
-              
+
               <TextField
                 fullWidth
                 value={email != "Not set" ? email : ""}
@@ -844,9 +846,9 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
                 type="email"
                 size="medium"
                 margin="none"
-                sx={{ 
+                sx={{
                   mb: 2,
-                  '& .MuiOutlinedInput-root': { 
+                  '& .MuiOutlinedInput-root': {
                     height: 56,
                     borderRadius: 2
                   },
@@ -856,7 +858,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
                   }
                 }}
               />
-              
+
               <Box sx={{ color: muiTheme.palette.text.secondary, fontSize: '14px', mb: '4px' }}>
                 Home Group(s)
               </Box>
@@ -868,9 +870,9 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
                 variant="outlined"
                 size="medium"
                 margin="none"
-                sx={{ 
+                sx={{
                   mb: 2,
-                  '& .MuiOutlinedInput-root': { 
+                  '& .MuiOutlinedInput-root': {
                     borderRadius: 2
                   },
                   '& .MuiSelect-select': {
@@ -901,7 +903,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
                   <em>None</em>
                 </MenuItem>
                 {/* Generate menu items from meetings prop (no database queries) */}
-                {meetings && meetings.length > 0 
+                {meetings && meetings.length > 0
                   ? meetings.map((meeting: any) => (
                       <MenuItem key={meeting.id} value={meeting.name}>{meeting.name}</MenuItem>
                     ))
@@ -913,9 +915,9 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
                 </MenuItem>
               </TextField>
             </Box>
-            
+
             <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
-              <Button 
+              <Button
                 variant="contained"
                 size="small"
                 onClick={() => setEditingPersonalInfo(false)}
@@ -923,7 +925,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
               >
                 Cancel
               </Button>
-              <Button 
+              <Button
                 variant="contained"
                 size="small"
                 color="success"
@@ -948,7 +950,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
                   {name || "Not set"}
                 </Typography>
               </Box>
-              
+
               {/* Last Name display */}
               <Box>
                 <Typography variant="caption" sx={{ color: 'text.secondary' }}>
@@ -958,7 +960,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
                   {lastName || "Not set"}
                 </Typography>
               </Box>
-              
+
               {/* Phone Number display */}
               <Box>
                 <Typography variant="caption" sx={{ color: 'text.secondary' }}>
@@ -968,7 +970,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
                   {phoneNumber || "Not set"}
                 </Typography>
               </Box>
-              
+
               {/* Email display */}
               <Box>
                 <Typography variant="caption" sx={{ color: 'text.secondary' }}>
@@ -978,14 +980,14 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
                   {email || "Not set"}
                 </Typography>
               </Box>
-              
+
               {/* Home Groups display */}
               <Box>
                 <Typography variant="caption" sx={{ color: 'text.secondary' }}>
                   Home Groups
                 </Typography>
                 <Typography sx={{ color: 'text.primary', fontWeight: 500 }}>
-                  {homeGroups && homeGroups.length > 0 
+                  {homeGroups && homeGroups.length > 0
                     ? homeGroups.join(', ')
                     : "Not set"}
                 </Typography>
@@ -996,7 +998,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
       </Paper>
 
       {/* Reset All Data Section */}
-      <Paper elevation={0} sx={{ 
+      <Paper elevation={0} sx={{
         p: 3,
         mb: 3,
         bgcolor: 'background.paper',
@@ -1005,8 +1007,8 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
         borderColor: 'divider',
         paddingTop: '4px',
       }}>
-        <Typography variant="h6" sx={{ 
-          color: 'text.primary', 
+        <Typography variant="h6" sx={{
+          color: 'text.primary',
           mb: 2,
           display: 'flex',
           alignItems: 'center',
@@ -1015,11 +1017,11 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
           <i className="fas fa-exclamation-triangle" style={{ color: muiTheme.palette.error.main }}></i>
           Danger Zone
         </Typography>
-        
+
         <Typography variant="body2" sx={{ mb: 2, color: 'text.secondary' }}>
           Resetting all data will permanently delete your profile information, meetings, activities, and all other app data. This action cannot be undone.
         </Typography>
-        
+
         <Box sx={{ display: 'flex', justifyContent: 'center' }}>
           <Button
             variant="outlined"

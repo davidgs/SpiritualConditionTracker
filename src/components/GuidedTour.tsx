@@ -50,88 +50,126 @@ export default function GuidedTour({ isOpen, onClose, onNavigate }: GuidedTourPr
   const tourSteps: StepType[] = [
     {
       selector: '[data-tour="sobriety-counter-box"]',
-      content: 'Track your continuous sobriety time. This updates automatically based on your sobriety date in your profile.',
-      position: 'bottom',
+      content:
+        "Track your continuous sobriety time. This updates automatically based on your sobriety date in your profile.",
+      position: "bottom",
       action: (): void => {
-        const event: CustomTourNavigateEvent = new CustomEvent('tour-navigate', { detail: 'dashboard' }) as CustomTourNavigateEvent;
+        const event: CustomTourNavigateEvent = new CustomEvent(
+          "tour-navigate",
+          { detail: "dashboard" }
+        ) as CustomTourNavigateEvent;
         window.dispatchEvent(event);
-      }
+      },
     },
     {
       selector: '[data-tour="spiritual-fitness-score"]',
-      content: 'This shows your overall spiritual health based on your daily activities like prayer, meditation, and service work.',
-      position: 'bottom'
+      content:
+        "This shows your overall spiritual health based on your daily activities like prayer, meditation, and service work.",
+      position: "bottom",
     },
     {
       selector: '[data-tour="spiritual-fitness-display"]',
-      content: 'Get a color-coded quick look at how you are doing. Keep your indicator in the green!',
-      position: 'bottom'
+      content:
+        "Get a color-coded quick look at how you are doing. Keep your indicator in the green!",
+      position: "bottom",
     },
     {
       selector: '[data-tour="spiritual-fitness-time"]',
-      content: 'See how you are doing over the last 7, 30, 60, 90, 180 or even a full year. Justs click the button to change the time.',
-      position: 'bottom'
+      content:
+        "See how you are doing over the last 7, 30, 60, 90, 180 or even a full year. Justs click the button to change the time.",
+      position: "bottom",
     },
     {
       selector: '[data-tour="log-activity-btn"]',
-      content: 'Tap here to record spiritual activities like prayer, meditation, step work, or service. Each activity improves your spiritual fitness.',
-      position: 'top'
+      content:
+        "Tap here to record spiritual activities like prayer, meditation, step work, or service. Each activity improves your spiritual fitness.",
+      position: "top",
     },
     {
       selector: '[data-tour="nav-meetings"]',
-      content: 'Keep track of the meetings you like to attend. You can save favorites and log attendance.',
+      content:
+        "Keep track of the meetings you like to attend. You can save favorites and log attendance.",
       action: (): void => {
-        const event: CustomTourNavigateEvent = new CustomEvent('tour-navigate', { detail: 'meetings' }) as CustomTourNavigateEvent;
+        const event: CustomTourNavigateEvent = new CustomEvent(
+          "tour-navigate",
+          { detail: "meetings" }
+        ) as CustomTourNavigateEvent;
         window.dispatchEvent(event);
-      }
+      },
     },
     {
       selector: '[data-tour="add-meeting-btn"]',
-      content: 'Click to add your first meeting!',
+      content: "Click to add your first meeting!",
     },
     {
       selector: '[data-tour="nav-stepwork"]',
-      content: 'This feature is under development. You will be able to track your progress through the 12 steps with guided exercises and reflection prompts.',
+      content:
+        "This feature is under development. You will be able to track your progress through the 12 steps with guided exercises and reflection prompts.",
       action: (): void => {
-        const event: CustomTourNavigateEvent = new CustomEvent('tour-navigate', { detail: 'stepwork' }) as CustomTourNavigateEvent;
+        const event: CustomTourNavigateEvent = new CustomEvent(
+          "tour-navigate",
+          { detail: "stepwork" }
+        ) as CustomTourNavigateEvent;
         window.dispatchEvent(event);
-      }
+      },
     },
     {
       selector: '[data-tour="nav-sponsor"]',
-      content: 'Manage your sponsor and sponsee relationships. Connect with others in recovery.',
+      content:
+        "Manage your sponsor and sponsee relationships. Keep track of the work you do with your sponsor and your sponsees.",
       action: (): void => {
-        const event: CustomTourNavigateEvent = new CustomEvent('tour-navigate', { detail: 'sponsor' }) as CustomTourNavigateEvent;
+        const event: CustomTourNavigateEvent = new CustomEvent(
+          "tour-navigate",
+          { detail: "sponsor" }
+        ) as CustomTourNavigateEvent;
         window.dispatchEvent(event);
-      }
+      },
     },
-    {
-      selector: '[data-tour="add-sponsor-btn"]',
-      content: 'Add your sponsor\'s contact information here. Your sponsor is your guide through the 12 steps.',
-      position: 'bottom'
-    },
-    {
-      selector: '[data-tour="add-sponsee-btn"]',
-      content: 'Add sponsees - people you are helping through their recovery journey. Track their progress and maintain contact.',
-      position: 'bottom'
-    },
+    // {
+    //   selector: '[data-tour="add-sponsor-btn"]',
+    //   content: 'Add your sponsor\'s contact information here. Your sponsor is your guide through the 12 steps.',
+    //   position: 'bottom'
+    // },
+    // {
+    //   selector: '[data-tour="add-sponsee-btn"]',
+    //   content: 'Add sponsees - people you are helping through their recovery journey. Track their progress and maintain contact.',
+    //   position: 'bottom'
+    // },
     {
       selector: '[data-tour="nav-profile"]',
-      content: 'Update your personal information, sobriety date, and app preferences.',
+      content:
+        "Update your personal information, sobriety date, and app preferences.",
       action: (): void => {
-        const event: CustomTourNavigateEvent = new CustomEvent('tour-navigate', { detail: 'profile' }) as CustomTourNavigateEvent;
+        const event: CustomTourNavigateEvent = new CustomEvent(
+          "tour-navigate",
+          { detail: "profile" }
+        ) as CustomTourNavigateEvent;
         window.dispatchEvent(event);
-      }
+      },
+    },
+    {
+      selector: '[data-tour="add-sobriety-btn"]',
+      content:
+        "Set your sobriety date here. This is the foundation for your sobriety counter and spiritual fitness score.",
+    },
+
+    {
+      selector: '[data-tour="edit-profile-btn"]',
+      content:
+        "Update your contact information, so you can share it with others.",
+    },
+    {
+      selector: '[data-tour="share-contact-btn"]',
+      content:
+        "Clicking here will allow you to share your contact information with others in recovery. This is important for building your support network. Anywhere you you see this button you can click to share that information.",
+      position: "bottom",
     },
     {
       selector: '[data-tour="theme-toggle"]',
-      content: 'Switch between light and dark mode to customize your app appearance. Try tapping it now!',
-      position: 'bottom'
+      content:
+        "Switch between light and dark mode to customize your app appearance. Try tapping it now!",
+      position: "bottom",
     },
-    {
-      selector: '[data-tour="edit-profile-btn"]',
-      content: 'Update your sobriety date, contact information, and connect with sponsors here.'
-    }
   ];
 
   const tourStyles = {
