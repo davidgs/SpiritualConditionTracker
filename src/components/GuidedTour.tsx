@@ -71,7 +71,7 @@ export default function GuidedTour({ isOpen, onClose, onNavigate }: GuidedTourPr
     {
       selector: '[data-tour="nav-steps"]',
       content: 'Track your progress through the 12 steps with guided exercises and reflection prompts.',
-      position: 'top',
+      position: 'center',
       action: (): void => {
         const event: CustomTourNavigateEvent = new CustomEvent('tour-navigate', { detail: 'steps' }) as CustomTourNavigateEvent;
         window.dispatchEvent(event);
