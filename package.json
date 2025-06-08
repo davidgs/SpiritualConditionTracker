@@ -28,6 +28,7 @@
     "@mui/styled-engine": "^7.1.0",
     "@mui/x-date-pickers": "^8.5.0",
     "@mui/x-tree-view": "^8.5.0",
+    "@reactour/tour": "^3.8.0",
     "@types/node": "^22.15.21",
     "@types/react": "^19.1.5",
     "@types/react-dom": "^19.1.5",

@@ -1,426 +1,176 @@
-import React, { useState, useEffect } from 'react';
-import { Box, Button, Typography, Portal } from '@mui/material';
-import { useTheme } from '@mui/material/styles';
+import React from 'react';
+import { TourProvider, useTour } from '@reactour/tour';
+import { useTheme } from '@mui/material';
 
 interface TourStep {
-  title: string;
+  selector: string;
   content: string;
-  target: string;
-  placement?: 'top' | 'bottom' | 'left' | 'right';
-  action?: 'navigate' | 'highlight' | 'click';
-  targetView?: string;
+  action?: (elem: Element | null) => void;
+  actionAfter?: (elem: Element | null) => void;
 }
 
 interface GuidedTourProps {
   isOpen: boolean;
   onClose: () => void;
-  onNavigate?: (view: string) => void;
+  onNavigate?: (path: string) => void;
 }
 
 const tourSteps: TourStep[] = [
   {
-    title: "Welcome to My Spiritual Condition",
-    content: "This app helps you track your spiritual fitness and maintain your sobriety journey. Let's take a quick tour of the key features.",
-    target: "tour-welcome",
-    placement: "bottom"
+    selector: '[data-tour="spiritual-fitness-score"]',
+    content: 'This shows your overall spiritual health based on your daily activities like prayer, meditation, and service work.'
   },
   {
-    title: "Your Spiritual Fitness Score",
-    content: "This number represents your spiritual condition based on recent activities. Higher scores indicate better spiritual health.",
-    target: "spiritual-fitness-score",
-    placement: "bottom"
+    selector: '[data-tour="sobriety-days"]',
+    content: 'Track your continuous sobriety time. This updates automatically based on your sobriety date in your profile.'
   },
   {
-    title: "Log Activity Button",
-    content: "Tap here to record spiritual activities like prayer, meditation, step work, or service. Each activity improves your spiritual fitness.",
-    target: "log-activity-btn",
-    placement: "top"
+    selector: '[data-tour="log-activity-btn"]',
+    content: 'Tap here to record spiritual activities like prayer, meditation, step work, or service. Each activity improves your spiritual fitness.'
   },
   {
-    title: "Bottom Navigation",
-    content: "Use these tabs to navigate between different sections of the app.",
-    target: "bottom-nav",
-    placement: "top"
+    selector: '[data-tour="nav-meetings"]',
+    content: 'Find and track AA meetings in your area. You can save favorites and log attendance.',
+    actionAfter: () => {
+      const event = new CustomEvent('tour-navigate', { detail: '/meetings' });
+      window.dispatchEvent(event);
+    }
   },
   {
-    title: "Meetings Section",
-    content: "Let's check out the meetings section where you can track AA meetings.",
-    target: "nav-meetings",
-    placement: "top",
-    action: "navigate",
-    targetView: "meetings"
+    selector: '[data-tour="nav-steps"]',
+    content: 'Track your progress through the 12 steps with guided exercises and reflection prompts.',
+    actionAfter: () => {
+      const event = new CustomEvent('tour-navigate', { detail: '/steps' });
+      window.dispatchEvent(event);
+    }
   },
   {
-    title: "Add Meeting",
-    content: "Tap the plus button to add new meetings to your schedule.",
-    target: "add-meeting-btn",
-    placement: "bottom"
+    selector: '[data-tour="nav-sponsorship"]',
+    content: 'Manage your sponsor and sponsee relationships. Connect with others in recovery.',
+    actionAfter: () => {
+      const event = new CustomEvent('tour-navigate', { detail: '/sponsorship' });
+      window.dispatchEvent(event);
+    }
   },
   {
-    title: "Profile Section",
-    content: "Now let's visit your profile to manage personal information and connections.",
-    target: "nav-profile",
-    placement: "top",
-    action: "navigate",
-    targetView: "profile"
+    selector: '[data-tour="nav-profile"]',
+    content: 'Update your personal information, sobriety date, and app preferences.',
+    actionAfter: () => {
+      const event = new CustomEvent('tour-navigate', { detail: '/profile' });
+      window.dispatchEvent(event);
+    }
   },
   {
-    title: "Edit Profile",
-    content: "Update your sobriety date, contact information, and connect with sponsors here.",
-    target: "edit-profile-btn",
-    placement: "bottom"
-  },
-  {
-    title: "Tour Complete",
-    content: "You're all set! Start by logging your first activity or adding a meeting. Your spiritual fitness will improve as you stay consistent.",
-    target: "nav-dashboard",
-    placement: "top",
-    action: "navigate",
-    targetView: "dashboard"
+    selector: '[data-tour="edit-profile-btn"]',
+    content: 'Update your sobriety date, contact information, and connect with sponsors here.'
   }
 ];
 
-function GuidedTour({ isOpen, onClose, onNavigate }: GuidedTourProps) {
-  const theme = useTheme();
-  const [currentStep, setCurrentStep] = useState(0);
-  const [highlightedElement, setHighlightedElement] = useState<Element | null>(null);
-  const [tooltipPosition, setTooltipPosition] = useState<{ top: number; left: number; placement: string }>({ top: 0, left: 0, placement: 'bottom' });
+function TourContent({ isOpen, onClose, onNavigate }: GuidedTourProps) {
+  const { setIsOpen, setCurrentStep } = useTour();
 
-  const currentTourStep = tourSteps[currentStep];
-
-  // Find and highlight target element
-  useEffect(() => {
-    if (!isOpen) return;
-
-    const findAndHighlightElement = () => {
-      let targetElement = document.querySelector(`[data-tour="${currentTourStep.target}"]`);
-      
-      // Fallback selectors for specific elements that might not be found
-      if (!targetElement) {
-        switch (currentTourStep.target) {
-          case 'log-activity-btn':
-            targetElement = document.querySelector('button[aria-label="Log new activity"]') ||
-                          document.querySelector('button[title="Log new activity"]') ||
-                          document.querySelector('.fa-scroll')?.closest('button');
-            break;
-          case 'add-meeting-btn':
-            targetElement = document.querySelector('button[aria-label="Add new meeting"]') ||
-                          document.querySelector('button[title*="Add"]');
-            break;
-          case 'edit-profile-btn':
-            targetElement = document.querySelector('button[aria-label*="Edit"]') ||
-                          document.querySelector('.fa-edit')?.closest('button');
-            break;
-        }
-      }
-      
-      if (targetElement) {
-        setHighlightedElement(targetElement);
-        
-        // Calculate tooltip position with better viewport awareness
-        const rect = targetElement.getBoundingClientRect();
-        const tooltipWidth = 280;
-        const tooltipHeight = 150; // Approximate height
-        const arrowSize = 8;
-        const padding = 12;
-        
-        let top = 0;
-        let left = 0;
-        let actualPlacement = currentTourStep.placement || 'bottom';
-        
-        // Smart placement based on available space
-        const spaceAbove = rect.top;
-        const spaceBelow = window.innerHeight - rect.bottom;
-        const spaceLeft = rect.left;
-        const spaceRight = window.innerWidth - rect.right;
-        
-        // Auto-adjust placement if there's not enough space
-        if (actualPlacement === 'bottom' && spaceBelow < tooltipHeight + padding) {
-          if (spaceAbove > tooltipHeight + padding) {
-            actualPlacement = 'top';
-          } else if (spaceRight > tooltipWidth + padding) {
-            actualPlacement = 'right';
-          } else if (spaceLeft > tooltipWidth + padding) {
-            actualPlacement = 'left';
-          }
-        } else if (actualPlacement === 'top' && spaceAbove < tooltipHeight + padding) {
-          if (spaceBelow > tooltipHeight + padding) {
-            actualPlacement = 'bottom';
-          } else if (spaceRight > tooltipWidth + padding) {
-            actualPlacement = 'right';
-          } else if (spaceLeft > tooltipWidth + padding) {
-            actualPlacement = 'left';
-          }
-        }
-        
-        // Position tooltip based on final placement
-        switch (actualPlacement) {
-          case 'bottom':
-            top = rect.bottom + arrowSize + padding;
-            left = rect.left + (rect.width / 2) - (tooltipWidth / 2);
-            break;
-          case 'top':
-            top = rect.top - tooltipHeight - arrowSize - padding;
-            left = rect.left + (rect.width / 2) - (tooltipWidth / 2);
-            break;
-          case 'right':
-            top = rect.top + (rect.height / 2) - (tooltipHeight / 2);
-            left = rect.right + arrowSize + padding;
-            break;
-          case 'left':
-            top = rect.top + (rect.height / 2) - (tooltipHeight / 2);
-            left = rect.left - tooltipWidth - arrowSize - padding;
-            break;
-        }
-        
-        // Ensure tooltip stays within viewport
-        left = Math.max(padding, Math.min(left, window.innerWidth - tooltipWidth - padding));
-        top = Math.max(padding, Math.min(top, window.innerHeight - tooltipHeight - padding));
-        
-        setTooltipPosition({ top, left, placement: actualPlacement });
-      }
-    };
-
-    // Wait longer for DOM to update if navigation occurred, and retry if element not found
-    const attemptHighlight = (attempts = 0) => {
-      const maxAttempts = 10;
-      const targetElement = document.querySelector(`[data-tour="${currentTourStep.target}"]`);
-      
-      if (targetElement || attempts >= maxAttempts) {
-        findAndHighlightElement();
-      } else {
-        // Element not found, retry after a short delay
-        setTimeout(() => attemptHighlight(attempts + 1), 100);
-      }
-    };
-    
-    const timeout = setTimeout(() => attemptHighlight(), 200);
-    return () => clearTimeout(timeout);
-  }, [currentStep, isOpen, currentTourStep]);
-
-  const handleNext = () => {
-    const step = tourSteps[currentStep];
-    
-    // Handle navigation if specified
-    if (step.action === 'navigate' && step.targetView && onNavigate) {
-      onNavigate(step.targetView);
-    }
-    
-    if (currentStep < tourSteps.length - 1) {
-      setCurrentStep(currentStep + 1);
+  React.useEffect(() => {
+    if (isOpen) {
+      setCurrentStep(0);
+      setIsOpen(true);
     } else {
-      handleClose();
+      setIsOpen(false);
     }
-  };
+  }, [isOpen, setIsOpen, setCurrentStep]);
 
-  const handlePrevious = () => {
-    if (currentStep > 0) {
-      setCurrentStep(currentStep - 1);
-    }
-  };
+  React.useEffect(() => {
+    const handleNavigate = (event: CustomEvent) => {
+      if (onNavigate) {
+        onNavigate(event.detail);
+      }
+    };
 
-  const handleClose = () => {
-    setCurrentStep(0);
-    setHighlightedElement(null);
-    onClose();
-  };
+    window.addEventListener('tour-navigate', handleNavigate as EventListener);
+    return () => window.removeEventListener('tour-navigate', handleNavigate as EventListener);
+  }, [onNavigate]);
 
-  if (!isOpen) return null;
-
-  return (
-    <Portal>
-      {/* Lighter overlay */}
-      <Box
-        sx={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundColor: 'rgba(0, 0, 0, 0.3)',
-          zIndex: 9998,
-          pointerEvents: 'none'
-        }}
-      />
-      
-      {/* Highlight cutout for target element */}
-      {highlightedElement && (
-        <Box
-          sx={{
-            position: 'fixed',
-            top: `${highlightedElement.getBoundingClientRect().top - 5}px`,
-            left: `${highlightedElement.getBoundingClientRect().left - 5}px`,
-            width: `${highlightedElement.getBoundingClientRect().width + 10}px`,
-            height: `${highlightedElement.getBoundingClientRect().height + 10}px`,
-            backgroundColor: 'transparent',
-            border: `3px solid ${theme.palette.primary.main}`,
-            borderRadius: '8px',
-            boxShadow: `0 0 0 9999px rgba(0, 0, 0, 0.3)`,
-            zIndex: 9999,
-            pointerEvents: 'none',
-            animation: 'pulse 2s infinite'
-          }}
-        />
-      )}
-
-      {/* Tooltip with arrow */}
-      <Box
-        sx={{
-          position: 'fixed',
-          top: `${tooltipPosition.top}px`,
-          left: `${tooltipPosition.left}px`,
-          width: '280px',
-          backgroundColor: theme.palette.background.paper,
-          borderRadius: 2,
-          boxShadow: theme.shadows[8],
-          zIndex: 10000,
-          p: 2.5,
-          border: `1px solid ${theme.palette.divider}`,
-          '&::before': {
-            content: '""',
-            position: 'absolute',
-            width: 0,
-            height: 0,
-            borderStyle: 'solid',
-            ...(tooltipPosition.placement === 'bottom' && {
-              top: '-8px',
-              left: '50%',
-              transform: 'translateX(-50%)',
-              borderWidth: '0 8px 8px 8px',
-              borderColor: `transparent transparent ${theme.palette.background.paper} transparent`
-            }),
-            ...(tooltipPosition.placement === 'top' && {
-              bottom: '-8px',
-              left: '50%',
-              transform: 'translateX(-50%)',
-              borderWidth: '8px 8px 0 8px',
-              borderColor: `${theme.palette.background.paper} transparent transparent transparent`
-            }),
-            ...(tooltipPosition.placement === 'right' && {
-              left: '-8px',
-              top: '50%',
-              transform: 'translateY(-50%)',
-              borderWidth: '8px 8px 8px 0',
-              borderColor: `transparent ${theme.palette.background.paper} transparent transparent`
-            }),
-            ...(tooltipPosition.placement === 'left' && {
-              right: '-8px',
-              top: '50%',
-              transform: 'translateY(-50%)',
-              borderWidth: '8px 0 8px 8px',
-              borderColor: `transparent transparent transparent ${theme.palette.background.paper}`
-            })
-          },
-          '&::after': {
-            content: '""',
-            position: 'absolute',
-            width: 0,
-            height: 0,
-            borderStyle: 'solid',
-            ...(tooltipPosition.placement === 'bottom' && {
-              top: '-9px',
-              left: '50%',
-              transform: 'translateX(-50%)',
-              borderWidth: '0 9px 9px 9px',
-              borderColor: `transparent transparent ${theme.palette.divider} transparent`
-            }),
-            ...(tooltipPosition.placement === 'top' && {
-              bottom: '-9px',
-              left: '50%',
-              transform: 'translateX(-50%)',
-              borderWidth: '9px 9px 0 9px',
-              borderColor: `${theme.palette.divider} transparent transparent transparent`
-            }),
-            ...(tooltipPosition.placement === 'right' && {
-              left: '-9px',
-              top: '50%',
-              transform: 'translateY(-50%)',
-              borderWidth: '9px 9px 9px 0',
-              borderColor: `transparent ${theme.palette.divider} transparent transparent`
-            }),
-            ...(tooltipPosition.placement === 'left' && {
-              right: '-9px',
-              top: '50%',
-              transform: 'translateY(-50%)',
-              borderWidth: '9px 0 9px 9px',
-              borderColor: `transparent transparent transparent ${theme.palette.divider}`
-            })
-          }
-        }}
-      >
-        <Typography variant="h6" sx={{ mb: 2, fontWeight: 'bold' }}>
-          {currentTourStep.title}
-        </Typography>
-        
-        <Typography variant="body2" sx={{ mb: 3, lineHeight: 1.5 }}>
-          {currentTourStep.content}
-        </Typography>
-
-        {/* Progress indicator */}
-        <Box sx={{ display: 'flex', justifyContent: 'center', mb: 2 }}>
-          {tourSteps.map((_, index) => (
-            <Box
-              key={index}
-              sx={{
-                width: 6,
-                height: 6,
-                borderRadius: '50%',
-                backgroundColor: index === currentStep 
-                  ? theme.palette.primary.main 
-                  : theme.palette.grey[300],
-                mx: 0.3
-              }}
-            />
-          ))}
-        </Box>
-
-        <Typography variant="caption" sx={{ 
-          display: 'block', 
-          textAlign: 'center', 
-          color: theme.palette.text.secondary,
-          mb: 2 
-        }}>
-          Step {currentStep + 1} of {tourSteps.length}
-        </Typography>
-
-        {/* Actions */}
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <Button onClick={handleClose} size="small" color="inherit">
-            Skip
-          </Button>
-          
-          <Box sx={{ display: 'flex', gap: 1 }}>
-            <Button 
-              onClick={handlePrevious} 
-              disabled={currentStep === 0}
-              variant="outlined"
-              size="small"
-            >
-              Back
-            </Button>
-            <Button 
-              onClick={handleNext} 
-              variant="contained"
-              size="small"
-            >
-              {currentStep === tourSteps.length - 1 ? 'Done' : 'Next'}
-            </Button>
-          </Box>
-        </Box>
-      </Box>
-
-      {/* CSS for pulse animation */}
-      <style>
-        {`
-          @keyframes pulse {
-            0% { box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.3), 0 0 0 0 ${theme.palette.primary.main}40; }
-            70% { box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.3), 0 0 0 10px ${theme.palette.primary.main}00; }
-            100% { box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.3), 0 0 0 0 ${theme.palette.primary.main}00; }
-          }
-        `}
-      </style>
-    </Portal>
-  );
+  return null;
 }
 
-export default GuidedTour;
+export default function GuidedTour({ isOpen, onClose, onNavigate }: GuidedTourProps) {
+  const theme = useTheme();
+
+  return (
+    <TourProvider
+      steps={tourSteps}
+      isOpen={isOpen}
+      onRequestClose={onClose}
+      styles={{
+        popover: (base) => ({
+          ...base,
+          '--reactour-accent': theme.palette.primary.main,
+          borderRadius: '12px',
+          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
+          maxWidth: '280px',
+          fontSize: '14px'
+        }),
+        maskArea: (base) => ({
+          ...base,
+          rx: 8
+        }),
+        maskWrapper: (base) => ({
+          ...base,
+          color: 'rgba(0, 0, 0, 0.3)'
+        }),
+        badge: (base) => ({
+          ...base,
+          left: 'auto',
+          right: '-0.8125em'
+        }),
+        controls: (base) => ({
+          ...base,
+          marginTop: '16px'
+        }),
+        close: (base) => ({
+          ...base,
+          right: '8px',
+          top: '8px'
+        })
+      }}
+      padding={{ mask: 5, popover: [10, 10] }}
+      scrollSmooth
+      showBadge
+      showCloseButton
+      showNavigation
+      showPrevNextButtons
+      prevButton={{
+        children: 'Back',
+        style: {
+          backgroundColor: 'transparent',
+          border: `1px solid ${theme.palette.primary.main}`,
+          color: theme.palette.primary.main,
+          borderRadius: '6px',
+          padding: '8px 16px',
+          fontSize: '14px'
+        }
+      }}
+      nextButton={{
+        children: 'Next',
+        style: {
+          backgroundColor: theme.palette.primary.main,
+          border: 'none',
+          color: 'white',
+          borderRadius: '6px',
+          padding: '8px 16px',
+          fontSize: '14px'
+        }
+      }}
+      skipButton={{
+        children: 'Skip',
+        style: {
+          backgroundColor: 'transparent',
+          border: 'none',
+          color: theme.palette.text.secondary,
+          fontSize: '14px'
+        }
+      }}
+    >
+      <TourContent isOpen={isOpen} onClose={onClose} onNavigate={onNavigate} />
+    </TourProvider>
+  );
+}
