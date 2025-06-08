@@ -43,33 +43,6 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
     { key: 'saturday', label: 'Saturday' }
   ];
 
-  const hourOptions = [
-    { value: '06', label: use24HourFormat ? '06:xx' : '6:xx AM' },
-    { value: '07', label: use24HourFormat ? '07:xx' : '7:xx AM' },
-    { value: '08', label: use24HourFormat ? '08:xx' : '8:xx AM' },
-    { value: '09', label: use24HourFormat ? '09:xx' : '9:xx AM' },
-    { value: '10', label: use24HourFormat ? '10:xx' : '10:xx AM' },
-    { value: '11', label: use24HourFormat ? '11:xx' : '11:xx AM' },
-    { value: '12', label: use24HourFormat ? '12:xx' : '12:xx PM' },
-    { value: '13', label: use24HourFormat ? '13:xx' : '1:xx PM' },
-    { value: '14', label: use24HourFormat ? '14:xx' : '2:xx PM' },
-    { value: '15', label: use24HourFormat ? '15:xx' : '3:xx PM' },
-    { value: '16', label: use24HourFormat ? '16:xx' : '4:xx PM' },
-    { value: '17', label: use24HourFormat ? '17:xx' : '5:xx PM' },
-    { value: '18', label: use24HourFormat ? '18:xx' : '6:xx PM' },
-    { value: '19', label: use24HourFormat ? '19:xx' : '7:xx PM' },
-    { value: '20', label: use24HourFormat ? '20:xx' : '8:xx PM' },
-    { value: '21', label: use24HourFormat ? '21:xx' : '9:xx PM' },
-    { value: '22', label: use24HourFormat ? '22:xx' : '10:xx PM' }
-  ];
-
-  const minuteOptions = [
-    { value: '00', label: ':00' },
-    { value: '15', label: ':15' },
-    { value: '30', label: ':30' },
-    { value: '45', label: ':45' }
-  ];
-
   const meetingFormats = [
     { value: 'discussion', label: 'Discussion' },
     { value: 'speaker', label: 'Speaker' },
