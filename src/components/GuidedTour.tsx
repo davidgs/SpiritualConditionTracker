@@ -40,8 +40,7 @@ export default function GuidedTour({ isOpen, onClose, onNavigate }: GuidedTourPr
   const tourSteps = [
     {
       selector: '[data-tour="sobriety-days"]',
-      content: 'Track your continuous sobriety time. This updates automatically based on your sobriety date in your profile.',
-      position: 'bottom'
+      content: 'Track your continuous sobriety time. This updates automatically based on your sobriety date in your profile.'
     },
     {
       selector: '[data-tour="spiritual-fitness-score"]',
@@ -54,7 +53,7 @@ export default function GuidedTour({ isOpen, onClose, onNavigate }: GuidedTourPr
     {
       selector: '[data-tour="nav-meetings"]',
       content: 'Find and track AA meetings in your area. You can save favorites and log attendance.',
-      actionAfter: () => {
+      action: () => {
         const event = new CustomEvent('tour-navigate', { detail: 'meetings' });
         window.dispatchEvent(event);
       }
@@ -62,7 +61,7 @@ export default function GuidedTour({ isOpen, onClose, onNavigate }: GuidedTourPr
     {
       selector: '[data-tour="nav-steps"]',
       content: 'Track your progress through the 12 steps with guided exercises and reflection prompts.',
-      actionAfter: () => {
+      action: () => {
         const event = new CustomEvent('tour-navigate', { detail: 'steps' });
         window.dispatchEvent(event);
       }
@@ -70,7 +69,7 @@ export default function GuidedTour({ isOpen, onClose, onNavigate }: GuidedTourPr
     {
       selector: '[data-tour="nav-sponsorship"]',
       content: 'Manage your sponsor and sponsee relationships. Connect with others in recovery.',
-      actionAfter: () => {
+      action: () => {
         const event = new CustomEvent('tour-navigate', { detail: 'sponsor' });
         window.dispatchEvent(event);
       }
@@ -78,7 +77,7 @@ export default function GuidedTour({ isOpen, onClose, onNavigate }: GuidedTourPr
     {
       selector: '[data-tour="nav-profile"]',
       content: 'Update your personal information, sobriety date, and app preferences.',
-      actionAfter: () => {
+      action: () => {
         const event = new CustomEvent('tour-navigate', { detail: 'profile' });
         window.dispatchEvent(event);
       }
