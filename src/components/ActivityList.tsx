@@ -356,22 +356,21 @@ export default function ActivityList({
                     }
                   }}
                 >
-                  <div style={{
-                    width: '1.75rem',
-                    height: '1.75rem',
-                    borderRadius: '50%',
-                    backgroundColor: (() => {
-                      const colors = getActivityColor(activity.type);
-                      return darkMode ? colors.backgroundDark : colors.background;
-                    })(),
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    marginRight: '0.5rem',
-                    flexShrink: 0,
-                    alignSelf: 'flex-start',
-                    marginTop: '2px'
-                  }}>
+                  <div 
+                    className={`activity-icon-${activity.type}`}
+                    style={{
+                      width: '1.75rem',
+                      height: '1.75rem',
+                      borderRadius: '50%',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      marginRight: '0.5rem',
+                      flexShrink: 0,
+                      alignSelf: 'flex-start',
+                      marginTop: '2px'
+                    }}
+                  >
                     <i className={`fas ${getActivityIcon(activity.type)}`} style={{
                       fontSize: '0.8rem',
                       color: (() => {
