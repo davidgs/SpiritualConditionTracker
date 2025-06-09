@@ -71,6 +71,7 @@ export default function ActivityList({
 
   // Get color scheme for activity type
   const getActivityColor = (type) => {
+    console.log('ActivityList: Getting color for type:', type);
     switch (type) {
       case 'prayer': 
         return {
@@ -360,9 +361,10 @@ export default function ActivityList({
                     width: '1.75rem',
                     height: '1.75rem',
                     borderRadius: '50%',
-                    backgroundColor: theme.palette.mode === 'dark' 
-                      ? getActivityColor(activity.type).backgroundDark 
-                      : getActivityColor(activity.type).background,
+                    backgroundColor: (() => {
+                      const colors = getActivityColor(activity.type);
+                      return darkMode ? colors.backgroundDark : colors.background;
+                    })(),
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -373,7 +375,7 @@ export default function ActivityList({
                   }}>
                     <i className={`fas ${getActivityIcon(activity.type)}`} style={{
                       fontSize: '0.8rem',
-                      color: theme.palette.mode === 'dark' 
+                      color: darkMode 
                         ? getActivityColor(activity.type).iconDark 
                         : getActivityColor(activity.type).icon
                     }}></i>
