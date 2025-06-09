@@ -32,19 +32,33 @@ const MuiThemeProvider = ({ children }) => {
   // Use system preference as fallback if no user preference is set
   const systemPrefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
   const [primaryColor, setPrimaryColor] = useState('blue');
-  const [localDarkMode, setLocalDarkMode] = useState(() => {
-    // First check localStorage for immediate theme loading
-    try {
-      const savedTheme = localStorage.getItem('darkMode');
-      if (savedTheme !== null) {
-        return savedTheme === 'true';
+  const [localDarkMode, setLocalDarkMode] = useState(false); // Always start with light mode
+  const [isThemeInitialized, setIsThemeInitialized] = useState(false);
+
+  // Initialize theme after component mounts to ensure proper timing on iOS
+  useEffect(() => {
+    const initializeTheme = async () => {
+      // Add a small delay to ensure localStorage is ready on iOS
+      await new Promise(resolve => setTimeout(resolve, 100));
+      
+      try {
+        const savedTheme = localStorage.getItem('darkMode');
+        if (savedTheme !== null) {
+          setLocalDarkMode(savedTheme === 'true');
+        } else {
+          // Default to light mode, not system preference
+          setLocalDarkMode(false);
+        }
+      } catch (error) {
+        console.log('localStorage not available, defaulting to light mode');
+        setLocalDarkMode(false);
       }
-    } catch (error) {
-      console.log('localStorage not available, using system preference');
-    }
-    // Fallback to system preference, but default to light mode
-    return systemPrefersDark || false;
-  });
+      
+      setIsThemeInitialized(true);
+    };
+
+    initializeTheme();
+  }, []);
   
   // Available color options for the theme picker
   const availableColors = Object.keys(defaultThemeColors);
@@ -55,7 +69,7 @@ const MuiThemeProvider = ({ children }) => {
 
   // Sync localStorage state with database when user data becomes available
   useEffect(() => {
-    if (themePreferences.darkMode !== undefined && themePreferences.darkMode !== localDarkMode) {
+    if (isThemeInitialized && themePreferences.darkMode !== undefined && themePreferences.darkMode !== localDarkMode) {
       setLocalDarkMode(themePreferences.darkMode);
       try {
         localStorage.setItem('darkMode', themePreferences.darkMode.toString());
@@ -63,7 +77,7 @@ const MuiThemeProvider = ({ children }) => {
         console.log('localStorage not available');
       }
     }
-  }, [themePreferences.darkMode, localDarkMode]);
+  }, [themePreferences.darkMode, localDarkMode, isThemeInitialized]);
   
   // Get actual color value from the color name
   const primaryColorValue = defaultThemeColors[primaryColor] || defaultThemeColors.blue;
@@ -126,20 +140,21 @@ const MuiThemeProvider = ({ children }) => {
   
   // Toggle between light and dark mode - now persists to database and localStorage
   const toggleTheme = () => {
+    const newValue = !darkMode;
+    
+    // Always update local state immediately for responsive UI
+    setLocalDarkMode(newValue);
+    
+    // Save to localStorage immediately
+    try {
+      localStorage.setItem('darkMode', newValue.toString());
+    } catch (error) {
+      console.log('localStorage not available');
+    }
+    
+    // Also save to database if available
     if (themePreferences.darkMode !== undefined) {
-      // User data is loaded, use database toggle
       toggleDarkMode();
-    } else {
-      // User data not loaded yet, update local state and localStorage
-      setLocalDarkMode(prev => {
-        const newValue = !prev;
-        try {
-          localStorage.setItem('darkMode', newValue.toString());
-        } catch (error) {
-          console.log('localStorage not available');
-        }
-        return newValue;
-      });
     }
   };
   
