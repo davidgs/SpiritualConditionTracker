@@ -3,7 +3,7 @@
  */
 module.exports = {
   appId: 'com.spiritualconditiontracker.app',
-  appName: 'SpiritualCondition',
+  appName: 'My Spiritual Condition',
   webDir: './dist',
   bundledWebRuntime: true,
   plugins: {
@@ -58,7 +58,7 @@ module.exports = {
     scrollEnabled: true,
     limitsNavigationsToAppBoundDomains: true,
     // iOS project structure configuration
-    scheme: 'App',
+    scheme: 'My Spiritual Condition',
     // Safe area and status bar configuration
     backgroundColor: '#1a1a1a',
     overrideUserAgent: null,
