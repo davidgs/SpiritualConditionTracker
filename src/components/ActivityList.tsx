@@ -71,6 +71,7 @@ export default function ActivityList({
 
   // Get color scheme for activity type
   const getActivityColor = (type) => {
+    console.log('[ ActivityList.js: 112 ] Getting color for activity type:', type);
     switch (type) {
       case 'prayer': 
         return {
