@@ -357,11 +357,14 @@ export default function ActivityList({
                   }}
                 >
                   <div 
-                    className={`activity-icon-${activity.type}`}
                     style={{
                       width: '1.75rem',
                       height: '1.75rem',
                       borderRadius: '50%',
+                      backgroundColor: (() => {
+                        const colors = getActivityColor(activity.type);
+                        return darkMode ? colors.backgroundDark : colors.background;
+                      })(),
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
