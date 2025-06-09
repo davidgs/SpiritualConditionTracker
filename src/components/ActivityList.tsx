@@ -14,6 +14,9 @@ export default function ActivityList({
   onActivityClick = null,
   meetings = []
 }) {
+  console.log('🔥🔥🔥 ActivityList.tsx COMPONENT IS BEING RENDERED 🔥🔥🔥');
+  console.log('🔥🔥🔥 Activities received:', activities?.length, '🔥🔥🔥');
+  console.log('🔥🔥🔥 First activity type:', activities?.[0]?.type, '🔥🔥🔥');
   const theme = useTheme();
   const { deleteActivity } = useAppData();
 
@@ -71,7 +74,7 @@ export default function ActivityList({
 
   // Get color scheme for activity type
   const getActivityColor = (type) => {
-    console.log('[ ActivityList.js: 112 ] Getting color for activity type:', type);
+    console.log('🚨 ACTIVITY COLOR FUNCTION CALLED FOR TYPE:', type);
     switch (type) {
       case 'prayer': 
         return {
@@ -363,7 +366,9 @@ export default function ActivityList({
                       height: '1.75rem',
                       borderRadius: '50%',
                       backgroundColor: (() => {
+                        console.log('🎯 ABOUT TO CALL getActivityColor for:', activity.type);
                         const colors = getActivityColor(activity.type);
+                        console.log('🎯 GOT COLORS:', colors);
                         return darkMode ? colors.backgroundDark : colors.background;
                       })(),
                       display: 'flex',
