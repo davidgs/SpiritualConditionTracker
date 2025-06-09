@@ -71,7 +71,6 @@ export default function ActivityList({
 
   // Get color scheme for activity type
   const getActivityColor = (type) => {
-    console.log('ActivityList: Getting color for type:', type);
     switch (type) {
       case 'prayer': 
         return {
@@ -375,9 +374,10 @@ export default function ActivityList({
                   }}>
                     <i className={`fas ${getActivityIcon(activity.type)}`} style={{
                       fontSize: '0.8rem',
-                      color: darkMode 
-                        ? getActivityColor(activity.type).iconDark 
-                        : getActivityColor(activity.type).icon
+                      color: (() => {
+                        const colors = getActivityColor(activity.type);
+                        return darkMode ? colors.iconDark : colors.icon;
+                      })()
                     }}></i>
                   </div>
                   <div style={{ flexGrow: 1, minWidth: 0 }}>
