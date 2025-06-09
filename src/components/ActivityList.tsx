@@ -68,6 +68,85 @@ export default function ActivityList({
       default: return 'fa-check-circle';
     }
   };
+
+  // Get color scheme for activity type
+  const getActivityColor = (type) => {
+    switch (type) {
+      case 'prayer': 
+        return {
+          background: '#e8f5e8', // Light green
+          icon: '#2e7d32',       // Dark green
+          backgroundDark: '#1b5e20',
+          iconDark: '#4caf50'
+        };
+      case 'meditation': 
+        return {
+          background: '#f3e5f5', // Light purple
+          icon: '#7b1fa2',       // Dark purple
+          backgroundDark: '#4a148c',
+          iconDark: '#ba68c8'
+        };
+      case 'literature': 
+        return {
+          background: '#fff3e0', // Light orange
+          icon: '#ef6c00',       // Dark orange
+          backgroundDark: '#e65100',
+          iconDark: '#ff9800'
+        };
+      case 'service': 
+        return {
+          background: '#e1f5fe', // Light cyan
+          icon: '#0277bd',       // Dark cyan
+          backgroundDark: '#01579b',
+          iconDark: '#29b6f6'
+        };
+      case 'sponsor':
+      case 'sponsor-contact': 
+        return {
+          background: '#f1f8e9', // Light light-green
+          icon: '#558b2f',       // Dark light-green
+          backgroundDark: '#33691e',
+          iconDark: '#8bc34a'
+        };
+      case 'sponsee': 
+        return {
+          background: '#e8eaf6', // Light indigo
+          icon: '#3f51b5',       // Dark indigo
+          backgroundDark: '#283593',
+          iconDark: '#7986cb'
+        };
+      case 'aa_call':
+      case 'call':
+      case 'multiple': 
+        return {
+          background: '#fce4ec', // Light pink
+          icon: '#c2185b',       // Dark pink
+          backgroundDark: '#880e4f',
+          iconDark: '#f06292'
+        };
+      case 'meeting': 
+        return {
+          background: '#e3f2fd', // Light blue
+          icon: '#1976d2',       // Dark blue
+          backgroundDark: '#0d47a1',
+          iconDark: '#42a5f5'
+        };
+      case 'action-item': 
+        return {
+          background: '#fff8e1', // Light amber
+          icon: '#f57c00',       // Dark amber
+          backgroundDark: '#ff6f00',
+          iconDark: '#ffb300'
+        };
+      default: 
+        return {
+          background: '#f5f5f5', // Light grey
+          icon: '#616161',       // Dark grey
+          backgroundDark: '#424242',
+          iconDark: '#bdbdbd'
+        };
+    }
+  };
   
   // Use the shared date formatting function from utils
   const formatDate = formatDateForDisplay;
@@ -281,7 +360,9 @@ export default function ActivityList({
                     width: '1.75rem',
                     height: '1.75rem',
                     borderRadius: '50%',
-                    backgroundColor: theme.palette.primary.light,
+                    backgroundColor: theme.palette.mode === 'dark' 
+                      ? getActivityColor(activity.type).backgroundDark 
+                      : getActivityColor(activity.type).background,
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -292,7 +373,9 @@ export default function ActivityList({
                   }}>
                     <i className={`fas ${getActivityIcon(activity.type)}`} style={{
                       fontSize: '0.8rem',
-                      color: theme.palette.primary.main
+                      color: theme.palette.mode === 'dark' 
+                        ? getActivityColor(activity.type).iconDark 
+                        : getActivityColor(activity.type).icon
                     }}></i>
                   </div>
                   <div style={{ flexGrow: 1, minWidth: 0 }}>
