@@ -217,7 +217,8 @@ export default function ActivityList({
         .slice(0, limit || activities.length)
     : [];
     
- // console.log('[ ActivityList.js: 98 ] Final filtered activities count:', filteredActivities.length);
+  console.log('🔍 Final filtered activities count:', filteredActivities.length);
+  console.log('🔍 Sample filtered activity:', filteredActivities[0]);
     
   if (filteredActivities.length === 0) {
     return (
@@ -327,7 +328,9 @@ export default function ActivityList({
             
             {/* Activities for this date */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-              {groups[dateKey].map((activity, index) => (
+              {groups[dateKey].map((activity, index) => {
+                console.log('🗓️ RENDERING ACTIVITY:', activity.type, 'for date:', dateKey);
+                return (
                 <div 
                   key={activity.id || `${activity.date}-${activity.type}-${index}`} 
                   style={{
@@ -635,7 +638,8 @@ export default function ActivityList({
                     </div>
                   </div>
                 </div>
-              ))}
+                )
+              })}
             </div>
           </div>
         ))}
