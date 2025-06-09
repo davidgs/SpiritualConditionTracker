@@ -32,13 +32,38 @@ const MuiThemeProvider = ({ children }) => {
   // Use system preference as fallback if no user preference is set
   const systemPrefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
   const [primaryColor, setPrimaryColor] = useState('blue');
+  const [localDarkMode, setLocalDarkMode] = useState(() => {
+    // First check localStorage for immediate theme loading
+    try {
+      const savedTheme = localStorage.getItem('darkMode');
+      if (savedTheme !== null) {
+        return savedTheme === 'true';
+      }
+    } catch (error) {
+      console.log('localStorage not available, using system preference');
+    }
+    // Fallback to system preference, but default to light mode
+    return systemPrefersDark || false;
+  });
   
   // Available color options for the theme picker
   const availableColors = Object.keys(defaultThemeColors);
   
-  // Use user preference for dark mode, fallback to system preference
-  const darkMode = themePreferences.darkMode || systemPrefersDark;
+  // Use database preference if available, otherwise use local state
+  const darkMode = themePreferences.darkMode !== undefined ? themePreferences.darkMode : localDarkMode;
   const theme = darkMode ? 'dark' : 'light';
+
+  // Sync localStorage state with database when user data becomes available
+  useEffect(() => {
+    if (themePreferences.darkMode !== undefined && themePreferences.darkMode !== localDarkMode) {
+      setLocalDarkMode(themePreferences.darkMode);
+      try {
+        localStorage.setItem('darkMode', themePreferences.darkMode.toString());
+      } catch (error) {
+        console.log('localStorage not available');
+      }
+    }
+  }, [themePreferences.darkMode, localDarkMode]);
   
   // Get actual color value from the color name
   const primaryColorValue = defaultThemeColors[primaryColor] || defaultThemeColors.blue;
@@ -81,6 +106,14 @@ const MuiThemeProvider = ({ children }) => {
         ? `linear-gradient(145deg, #1f2937 0%, #1f2937 85%, ${colorValue}40 100%)`
         : `linear-gradient(145deg, #ffffff 0%, #ffffff 85%, ${colorValue}30 100%)`);
       
+      // Save theme to localStorage for immediate persistence
+      try {
+        localStorage.setItem('darkMode', darkMode.toString());
+        localStorage.setItem('primaryColor', primaryColor);
+      } catch (error) {
+        console.log('localStorage not available');
+      }
+      
       // Save theme choices to SQLite database
       if (window.db && window.dbInitialized && window.db.setPreference) {
         window.db.setPreference('theme', theme);
@@ -91,9 +124,23 @@ const MuiThemeProvider = ({ children }) => {
     }
   }, [theme, darkMode, primaryColor, primaryColorValue]);
   
-  // Toggle between light and dark mode - now persists to database
+  // Toggle between light and dark mode - now persists to database and localStorage
   const toggleTheme = () => {
-    toggleDarkMode();
+    if (themePreferences.darkMode !== undefined) {
+      // User data is loaded, use database toggle
+      toggleDarkMode();
+    } else {
+      // User data not loaded yet, update local state and localStorage
+      setLocalDarkMode(prev => {
+        const newValue = !prev;
+        try {
+          localStorage.setItem('darkMode', newValue.toString());
+        } catch (error) {
+          console.log('localStorage not available');
+        }
+        return newValue;
+      });
+    }
   };
   
   // Create a theme based on our app's dark/light mode and custom primary color
