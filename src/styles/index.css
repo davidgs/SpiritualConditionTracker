@@ -80,33 +80,50 @@ code {
 }
 
 .meeting-icon {
-  background-color: #dbeafe;
-  color: #3b82f6;
+  background-color: #e3f2fd !important;
+  color: #1976d2 !important;
 }
 
 .meditation-icon {
-  background-color: #dcfce7;
-  color: #22c55e;
+  background-color: #f3e5f5 !important;
+  color: #7b1fa2 !important;
 }
 
-.reading-icon {
-  background-color: #f3e8ff;
-  color: #a855f7;
+.reading-icon,
+.literature-icon {
+  background-color: #fff3e0 !important;
+  color: #ef6c00 !important;
 }
 
 .prayer-icon {
-  background-color: #e0e7ff;
-  color: #6366f1;
+  background-color: #e8f5e8 !important;
+  color: #2e7d32 !important;
 }
 
 .sponsor-icon {
-  background-color: #fef9c3;
-  color: #eab308;
+  background-color: #f1f8e9 !important;
+  color: #558b2f !important;
 }
 
 .service-icon {
-  background-color: #fee2e2;
-  color: #ef4444;
+  background-color: #e1f5fe !important;
+  color: #0277bd !important;
+}
+
+.sponsee-icon {
+  background-color: #e8eaf6 !important;
+  color: #3f51b5 !important;
+}
+
+.call-icon,
+.aa_call-icon {
+  background-color: #fce4ec !important;
+  color: #c2185b !important;
+}
+
+.action-item-icon {
+  background-color: #fff8e1 !important;
+  color: #f57c00 !important;
 }
 
 .progress-bar {
