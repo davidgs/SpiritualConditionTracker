@@ -16,6 +16,14 @@ author = "agent"
 task = "workflow.run"
 args = "Server"
 
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "DevServer"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "WebServer"
+
 [[workflows.workflow]]
 name = "Server"
 author = "agent"
@@ -23,6 +31,24 @@ author = "agent"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "npm run dev"
+waitForPort = 5000
+
+[[workflows.workflow]]
+name = "DevServer"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npx webpack serve --mode development --host 0.0.0.0 --port 5000"
+waitForPort = 5000
+
+[[workflows.workflow]]
+name = "WebServer"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd dist && python3 -m http.server 5000"
 waitForPort = 5000
 
 [deployment]

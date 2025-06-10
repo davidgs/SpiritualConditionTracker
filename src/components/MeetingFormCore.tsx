@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import TreeMeetingSchedule from './TreeMeetingSchedule';
+import InteractiveMeetingSchedule from './InteractiveMeetingSchedule';
 import { useTheme } from '@mui/material/styles';
 import { 
   TextField, 
@@ -307,10 +307,27 @@ export default function MeetingFormCore({
           <Box sx={{ color: muiTheme.palette.text.secondary, fontSize: '14px', mb: '4px' }}>
             Meeting Schedule
           </Box>
-          <TreeMeetingSchedule 
+          <InteractiveMeetingSchedule 
             schedule={meetingSchedule} 
             onChange={setMeetingSchedule}
             use24HourFormat={use24HourFormat}
+            showStepper={true}
+            allowMultipleMeetings={true}
+            defaultTime="19:00"
+            minuteStep={15}
+            compactMode={false}
+            addButtonText="+ Add Meeting Time"
+            elevation={1}
+            borderRadius={2}
+            onMeetingAdded={(meeting) => {
+              console.log('[MeetingFormCore] Meeting added:', meeting);
+            }}
+            onMeetingRemoved={(meeting, index) => {
+              console.log('[MeetingFormCore] Meeting removed:', meeting, 'at index:', index);
+            }}
+            onMeetingUpdated={(meeting, index) => {
+              console.log('[MeetingFormCore] Meeting updated:', meeting, 'at index:', index);
+            }}
           />
         </Box>
         

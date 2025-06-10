@@ -146,7 +146,7 @@ const InteractiveMeetingSchedule: React.FC<InteractiveMeetingScheduleProps> = ({
     }
   };
 
-  const handleSectionClick = (field: keyof ScheduleItem, meetingIndex?: number) => {
+  const handleSectionClick = useCallback((field: keyof ScheduleItem, meetingIndex?: number) => {
     if (meetingIndex !== undefined) {
       // Editing existing meeting
       setEditingMeeting(meetingIndex);
@@ -172,7 +172,7 @@ const InteractiveMeetingSchedule: React.FC<InteractiveMeetingScheduleProps> = ({
         setActiveSpeedDial(field);
       }
     }
-  };
+  }, [schedule]);
 
   const completeStep = useCallback((field: keyof ScheduleItem, value: string) => {
     const updatedMeeting = { ...newMeeting, [field]: value };
