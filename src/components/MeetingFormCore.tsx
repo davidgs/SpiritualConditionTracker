@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import InteractiveMeetingSchedule from './InteractiveMeetingSchedule';
+import TreeMeetingSchedule from './TreeMeetingSchedule';
 import { useTheme } from '@mui/material/styles';
 import { 
   TextField, 
