@@ -426,34 +426,25 @@
                 px: 1
               })}
             >
-              {!newMeeting.day ? (
-                <Typography variant="body2" sx={(theme) => ({ 
-                  fontWeight: 500, 
-                  minWidth: '70px', 
-                  textAlign: 'left',
-                  color: theme.palette.text.primary
-                })}>
-                  ---
-                </Typography>
-              ) : (
-                <FormControl fullWidth>
-                  <InputLabel>Day</InputLabel>
-                  <Select
-                    value={newMeeting.day || ''}
-                    label="Day"
-                    onChange={(e) => {
-                      setNewMeeting({ ...newMeeting, day: e.target.value, time: '19:00' });
-                      setCurrentStep('time');
-                    }}
-                  >
-                    {days.map(day => (
-                      <MenuItem key={day.key} value={day.key}>
-                        {day.label}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              )}
+              <FormControl fullWidth>
+                <InputLabel>Day</InputLabel>
+                <Select
+                  value={newMeeting.day || ''}
+                  label="Day"
+                  displayEmpty
+                  onChange={(e) => {
+                    setNewMeeting({ ...newMeeting, day: e.target.value, time: '19:00' });
+                    setCurrentStep('time');
+                  }}
+                >
+                  <MenuItem value="">---</MenuItem>
+                  {days.map(day => (
+                    <MenuItem key={day.key} value={day.key}>
+                      {day.label}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
 
               <Typography variant="body2" sx={(theme) => ({ 
                 minWidth: '70px', 
