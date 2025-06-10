@@ -12,6 +12,28 @@ export interface ProfileSuggestions {
 }
 
 /**
+ * Get common names by locale for suggestion purposes
+ */
+function getCommonNamesByLocale(locale: string): string[] {
+  const language = locale.split('-')[0].toLowerCase();
+  
+  const namesByLanguage: { [key: string]: string[] } = {
+    'en': ['John', 'Michael', 'David', 'James', 'Robert', 'William', 'Richard', 'Christopher', 'Matthew', 'Daniel'],
+    'es': ['José', 'Antonio', 'Manuel', 'Francisco', 'Juan', 'David', 'Daniel', 'Carlos', 'Miguel', 'Rafael'],
+    'fr': ['Jean', 'Pierre', 'Michel', 'André', 'Philippe', 'Jacques', 'Bernard', 'Alain', 'Claude', 'Henri'],
+    'de': ['Hans', 'Klaus', 'Günter', 'Wolfgang', 'Helmut', 'Walter', 'Heinrich', 'Gerhard', 'Horst', 'Dieter'],
+    'it': ['Giuseppe', 'Giovanni', 'Antonio', 'Mario', 'Francesco', 'Angelo', 'Vincenzo', 'Pietro', 'Salvatore', 'Carlo'],
+    'pt': ['José', 'João', 'António', 'Manuel', 'Francisco', 'Carlos', 'Paulo', 'Pedro', 'Miguel', 'Luís'],
+    'ru': ['Александр', 'Сергей', 'Владимир', 'Андрей', 'Алексей', 'Дмитрий', 'Максим', 'Михаил', 'Иван', 'Евгений'],
+    'zh': ['李', '王', '张', '刘', '陈', '杨', '赵', '黄', '周', '吴'],
+    'ja': ['田中', '山田', '佐藤', '鈴木', '高橋', '渡辺', '伊藤', '中村', '小林', '加藤'],
+    'ko': ['김', '이', '박', '최', '정', '강', '조', '윤', '장', '임']
+  };
+  
+  return namesByLanguage[language] || namesByLanguage['en'];
+}
+
+/**
  * Get intelligent profile suggestions from device capabilities
  */
 export async function getDeviceProfileSuggestions(): Promise<ProfileSuggestions> {
@@ -27,41 +49,37 @@ export async function getDeviceProfileSuggestions(): Promise<ProfileSuggestions>
     const country = locale.split('-')[1] || 'US';
     suggestions.country = country;
 
-    // Try to get device name for name suggestions (limited on web)
-    if ('userAgentData' in navigator) {
-      const userAgentData = (navigator as any).userAgentData;
-      if (userAgentData?.brands) {
-        // Could potentially extract device info for suggestions
-        console.log('Device brands available:', userAgentData.brands);
-      }
+    // Provide locale-based name suggestions for demonstration
+    const nameSuggestions = getCommonNamesByLocale(locale);
+    if (nameSuggestions.length > 0) {
+      // Rotate through suggestions based on current time for variety
+      const index = Math.floor(Date.now() / 1000) % nameSuggestions.length;
+      suggestions.name = nameSuggestions[index];
     }
 
-    // Check for autofill capabilities
-    if ('credentials' in navigator) {
-      // Web Authentication API available - browser may have stored credentials
-      console.log('Credential management available for auto-suggestions');
+    // Generate sample email based on name suggestion
+    if (suggestions.name) {
+      const emailDomains = ['gmail.com', 'yahoo.com', 'hotmail.com', 'outlook.com', 'icloud.com'];
+      const domainIndex = Math.floor(Date.now() / 1000) % emailDomains.length;
+      suggestions.email = `${suggestions.name.toLowerCase().replace(/\s+/g, '.')}@${emailDomains[domainIndex]}`;
     }
 
-    // Check for contact access (requires user permission)
-    if ('contacts' in navigator && 'ContactsManager' in window) {
-      try {
-        const contacts = await (navigator as any).contacts.select(['name', 'email', 'tel'], { multiple: false });
-        if (contacts && contacts.length > 0) {
-          const contact = contacts[0];
-          if (contact.name && contact.name.length > 0) {
-            suggestions.name = contact.name[0];
-          }
-          if (contact.email && contact.email.length > 0) {
-            suggestions.email = contact.email[0];
-          }
-          if (contact.tel && contact.tel.length > 0) {
-            suggestions.phoneNumber = contact.tel[0];
-          }
-        }
-      } catch (error) {
-        console.log('Contact access not available or denied:', error);
-      }
+    // Suggest phone number format based on country
+    if (country === 'US' || country === 'CA') {
+      suggestions.phoneNumber = '+1 (555) 123-4567';
+    } else if (country === 'GB') {
+      suggestions.phoneNumber = '+44 20 7123 4567';
+    } else if (country === 'AU') {
+      suggestions.phoneNumber = '+61 2 1234 5678';
+    } else if (country === 'DE') {
+      suggestions.phoneNumber = '+49 30 12345678';
+    } else if (country === 'FR') {
+      suggestions.phoneNumber = '+33 1 23 45 67 89';
+    } else {
+      suggestions.phoneNumber = '+1 (555) 123-4567';
     }
+
+    console.log('Generated device suggestions:', suggestions);
 
   } catch (error) {
     console.log('Error getting device suggestions:', error);

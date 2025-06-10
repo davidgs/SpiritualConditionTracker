@@ -903,7 +903,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
                 label="Phone Number"
                 value={phoneNumber != "Not set" ? phoneNumber : ""}
                 onChange={(value) => setPhoneNumber(value)}
-                defaultCountry={defaultCountry}
+                defaultCountry={defaultCountry as any}
                 forceCallingCode
                 continents={['EU', 'OC', 'NA']}
                 fullWidth
@@ -916,10 +916,6 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
                   '& input': {
                     autoComplete: 'tel',
                   }
-                }}
-                inputProps={{
-                  autoComplete: 'tel',
-                  'data-lpignore': 'false'
                 }}
               />
 
