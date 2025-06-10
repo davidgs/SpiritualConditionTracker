@@ -481,16 +481,15 @@
 
               <Typography 
                 onClick={(e) => setLocationMenuAnchor(e.currentTarget)}
-                  sx={(theme) => ({ 
-                    textAlign: 'left',
-                    color: theme.palette.primary.main,
-                    cursor: 'pointer',
-                    '&:hover': {
-                      textDecoration: 'underline',
-                    },
+                sx={{ 
+                  fontSize: '1.2rem',
+                  cursor: 'pointer',
+                  '&:hover': {
+                    textDecoration: 'underline',
+                  },
                 }}
               >
-                {newMeeting.locationType ? (meetingLocationTypes.find(l => l.value === newMeeting.locationType)?.icon || '🏢') : 'Type'}
+                {newMeeting.locationType ? (meetingLocationTypes.find(l => l.value === newMeeting.locationType)?.icon || '🏢') : '---'}
               </Typography>
               <Menu
                 anchorEl={locationMenuAnchor}
