@@ -33,6 +33,7 @@
       const [newMeeting, setNewMeeting] = useState<Partial<ScheduleItem>>({ time: '19:00' });
       const [editingMeeting, setEditingMeeting] = useState<number | null>(null);
       const [dayMenuAnchor, setDayMenuAnchor] = useState<null | HTMLElement>(null);
+      const [locationMenuAnchor, setLocationMenuAnchor] = useState<null | HTMLElement>(null);
 
       const days = [
         { key: 'sunday', label: 'Sunday' },
@@ -477,9 +478,33 @@
                 })()) : '---'}
               </Typography>
 
-              <Typography sx={{ fontSize: '1.2rem' }}>
+              <Typography 
+                onClick={(e) => setLocationMenuAnchor(e.currentTarget)}
+                sx={{ 
+                  fontSize: '1.2rem',
+                  cursor: 'pointer',
+                  '&:hover': {
+                    textDecoration: 'underline',
+                  },
+                }}
+              >
                 {newMeeting.locationType ? (meetingLocationTypes.find(l => l.value === newMeeting.locationType)?.icon || '🏢') : '---'}
               </Typography>
+              <Menu
+                anchorEl={locationMenuAnchor}
+                open={Boolean(locationMenuAnchor)}
+                onClose={() => setLocationMenuAnchor(null)}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+              >
+                {meetingLocationTypes.map((location) => (
+                  <MenuItem key={location.value} onClick={() => {
+                    setNewMeeting({ ...newMeeting, locationType: location.value });
+                    setLocationMenuAnchor(null);
+                  }}>
+                    {location.icon} {location.label}
+                  </MenuItem>
+                ))}
+              </Menu>
 
               <Chip 
                 label={newMeeting.format ? newMeeting.format.charAt(0).toUpperCase() + newMeeting.format.slice(1).replace('_', ' ') : '---'}
