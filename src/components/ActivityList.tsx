@@ -14,10 +14,7 @@ export default function ActivityList({
   onActivityClick = null,
   meetings = []
 }) {
-  console.log('ACTIVITYLIST: Component rendered with', activities?.length, 'activities');
-  if (activities && activities.length > 0) {
-    console.log('ACTIVITYLIST: First 3 activities:', activities.slice(0, 3).map(a => ({ id: a.id, type: a.type, date: a.date })));
-  }
+
   const theme = useTheme();
   const { deleteActivity } = useAppData();
 
@@ -218,14 +215,7 @@ export default function ActivityList({
         .slice(0, limit || activities.length)
     : [];
     
-  console.log('ACTIVITYLIST: After filtering -', filteredActivities.length, 'activities remain');
-  if (filteredActivities.length > 0) {
-    console.log('ACTIVITYLIST: First filtered activity:', { 
-      type: filteredActivities[0].type, 
-      date: filteredActivities[0].date,
-      id: filteredActivities[0].id 
-    });
-  }
+
     
   if (filteredActivities.length === 0) {
     return (
@@ -297,13 +287,7 @@ export default function ActivityList({
   const { groups, sortedDateKeys } = groupByDate(filteredActivities);
   
   return (
-    <div className="activity-list-container" style={{ 
-      height: 'auto', 
-      minHeight: '100px',
-      border: '5px solid red',
-      backgroundColor: 'yellow',
-      padding: '10px'
-    }}>
+    <div className="activity-list-container" style={{ height: 'auto', minHeight: '100px' }}>
       {title && (
         <div style={{
           display: 'flex',
@@ -341,9 +325,7 @@ export default function ActivityList({
             
             {/* Activities for this date */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-              {groups[dateKey].map((activity, index) => {
-                console.log('ACTIVITYLIST: About to render activity type:', activity.type);
-                return (
+              {groups[dateKey].map((activity, index) => (
                 <div 
                   key={activity.id || `${activity.date}-${activity.type}-${index}`} 
                   style={{
@@ -646,8 +628,7 @@ export default function ActivityList({
                     </div>
                   </div>
                 </div>
-                )
-              })}
+              )}
             </div>
           </div>
         ))}
