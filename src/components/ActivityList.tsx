@@ -50,167 +50,159 @@ export default function ActivityList({
     
     return null;
   };
-  
-  // Get icon for activity type
+
+  // Helper function to get activity icon
   const getActivityIcon = (type) => {
-    switch (type) {
-      case 'prayer': return 'fa-pray';
-      case 'meditation': return 'fa-om';
-      case 'literature': return 'fa-book-open';
-      case 'service': return 'fa-hands-helping';
-      case 'sponsor': return 'fa-phone';
-      case 'sponsor-contact': return 'fa-user-tie';
-      case 'sponsee': return 'fa-user-friends';
-      case 'aa_call': return 'fa-phone-alt';
-      case 'call': return 'fa-phone';
-      case 'meeting': return 'fa-users';
-      case 'multiple': return 'fa-phone';
-      case 'action-item': return 'fa-tasks';
-      default: return 'fa-check-circle';
+    const iconMap = {
+      'prayer': 'fa-praying-hands',
+      'meditation': 'fa-om',
+      'literature': 'fa-book-open',
+      'meeting': 'fa-users',
+      'service': 'fa-hands-helping',
+      'call': 'fa-phone',
+      'sponsor-contact': 'fa-user-tie',
+      'sponsee-contact': 'fa-user-friends',
+      'action-item': 'fa-tasks',
+      'todo': 'fa-check-square'
+    };
+    return iconMap[type] || 'fa-circle';
+  };
+
+  // Helper function to get activity colors
+  const getActivityColor = (type) => {
+    const colorMap = {
+      'prayer': { bg: '#e8f5e8', icon: '#2e7d2e', iconDark: '#4caf50' },
+      'meditation': { bg: '#f3e5f5', icon: '#6a1b9a', iconDark: '#9c27b0' },
+      'literature': { bg: '#fff3e0', icon: '#e65100', iconDark: '#ff9800' },
+      'meeting': { bg: '#e3f2fd', icon: '#1565c0', iconDark: '#2196f3' },
+      'service': { bg: '#e0f2f1', icon: '#00695c', iconDark: '#009688' },
+      'call': { bg: '#fce4ec', icon: '#ad1457', iconDark: '#e91e63' },
+      'sponsor-contact': { bg: '#f1f8e9', icon: '#33691e', iconDark: '#8bc34a' },
+      'sponsee-contact': { bg: '#e8eaf6', icon: '#283593', iconDark: '#3f51b5' },
+      'action-item': { bg: '#fff8e1', icon: '#ff8f00', iconDark: '#ffc107' },
+      'todo': { bg: '#e0f7fa', icon: '#00838f', iconDark: '#00bcd4' }
+    };
+    return colorMap[type] || { bg: '#f5f5f5', icon: '#757575', iconDark: '#9e9e9e' };
+  };
+
+  // Helper function to format activity text
+  const formatActivityText = (activity) => {
+    if (activity.type === 'meeting') {
+      const meetingName = getMeetingName(activity);
+      if (meetingName) {
+        return meetingName;
+      }
+      return 'Meeting';
+    }
+    
+    if (activity.type === 'sponsor-contact') {
+      const contactName = activity.sponsorName || activity.name || 'Sponsor';
+      return `Contact with ${contactName}`;
+    }
+    
+    if (activity.type === 'sponsee-contact') {
+      const contactName = activity.sponseeName || activity.name || 'Sponsee';
+      return `Contact with ${contactName}`;
+    }
+    
+    if (activity.type === 'action-item') {
+      return activity.title || activity.text || 'Action Item';
+    }
+    
+    if (activity.type === 'todo') {
+      return activity.title || activity.text || 'Todo Item';
+    }
+    
+    // For other activity types, use duration if available
+    if (activity.duration && activity.duration > 0) {
+      const hours = Math.floor(activity.duration / 60);
+      const minutes = activity.duration % 60;
+      const durationText = hours > 0 ? `${hours}h ${minutes}m` : `${minutes} min`;
+      return durationText;
+    }
+    
+    // Fallback to activity type name
+    return activity.type.charAt(0).toUpperCase() + activity.type.slice(1);
+  };
+
+  // Helper function to format activity subtitle
+  const formatActivitySubtitle = (activity) => {
+    if (activity.notes && activity.notes.trim()) {
+      return activity.notes.trim();
+    }
+    
+    if (activity.type === 'meeting') {
+      const meetingName = getMeetingName(activity);
+      if (meetingName && (activity.duration && activity.duration > 0)) {
+        const hours = Math.floor(activity.duration / 60);
+        const minutes = activity.duration % 60;
+        const durationText = hours > 0 ? `${hours}h ${minutes}m` : `${minutes} min`;
+        return durationText;
+      }
+    }
+    
+    return null;
+  };
+
+  // Helper function to format date for display
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const today = new Date();
+    const yesterday = new Date();
+    yesterday.setDate(today.getDate() - 1);
+    
+    if (date.toDateString() === today.toDateString()) {
+      return 'Today';
+    } else if (date.toDateString() === yesterday.toDateString()) {
+      return 'Yesterday';
+    } else {
+      return formatDateForDisplay(dateString);
     }
   };
 
-  // Get color scheme for activity type
-  const getActivityColor = (type) => {
-    console.log('🚨 ACTIVITY COLOR FUNCTION CALLED FOR TYPE:', type);
-    switch (type) {
-      case 'prayer': 
-        return {
-          background: '#e8f5e8', // Light green
-          icon: '#2e7d32',       // Dark green
-          backgroundDark: '#1b5e20',
-          iconDark: '#4caf50'
-        };
-      case 'meditation': 
-        return {
-          background: '#f3e5f5', // Light purple
-          icon: '#7b1fa2',       // Dark purple
-          backgroundDark: '#4a148c',
-          iconDark: '#ba68c8'
-        };
-      case 'literature': 
-        return {
-          background: '#fff3e0', // Light orange
-          icon: '#ef6c00',       // Dark orange
-          backgroundDark: '#e65100',
-          iconDark: '#ff9800'
-        };
-      case 'service': 
-        return {
-          background: '#e1f5fe', // Light cyan
-          icon: '#0277bd',       // Dark cyan
-          backgroundDark: '#01579b',
-          iconDark: '#29b6f6'
-        };
-      case 'sponsor':
-      case 'sponsor-contact': 
-        return {
-          background: '#f1f8e9', // Light light-green
-          icon: '#558b2f',       // Dark light-green
-          backgroundDark: '#33691e',
-          iconDark: '#8bc34a'
-        };
-      case 'sponsee': 
-        return {
-          background: '#e8eaf6', // Light indigo
-          icon: '#3f51b5',       // Dark indigo
-          backgroundDark: '#283593',
-          iconDark: '#7986cb'
-        };
-      case 'aa_call':
-      case 'call':
-      case 'multiple': 
-        return {
-          background: '#fce4ec', // Light pink
-          icon: '#c2185b',       // Dark pink
-          backgroundDark: '#880e4f',
-          iconDark: '#f06292'
-        };
-      case 'meeting': 
-        return {
-          background: '#e3f2fd', // Light blue
-          icon: '#1976d2',       // Dark blue
-          backgroundDark: '#0d47a1',
-          iconDark: '#42a5f5'
-        };
-      case 'action-item': 
-        return {
-          background: '#fff8e1', // Light amber
-          icon: '#f57c00',       // Dark amber
-          backgroundDark: '#ff6f00',
-          iconDark: '#ffb300'
-        };
-      default: 
-        return {
-          background: '#f5f5f5', // Light grey
-          icon: '#616161',       // Dark grey
-          backgroundDark: '#424242',
-          iconDark: '#bdbdbd'
-        };
-    }
+  // Helper function to group activities by date
+  const groupByDate = (activities) => {
+    const groups = {};
+    
+    activities.forEach(activity => {
+      const dateKey = activity.date;
+      if (!groups[dateKey]) {
+        groups[dateKey] = [];
+      }
+      groups[dateKey].push(activity);
+    });
+    
+    // Sort dates in descending order (most recent first)
+    const sortedDateKeys = Object.keys(groups).sort((a, b) => {
+      return compareDatesForSorting(b, a); // Reverse for descending order
+    });
+    
+    return { groups, sortedDateKeys };
   };
-  
-  // Use the shared date formatting function from utils
-  const formatDate = formatDateForDisplay;
-  
-  // Filter activities
-  const today = new Date();
-  
-  console.log('[ ActivityList.js: 39 ] Total activities received:', activities?.length || 0);
- // console.log('[ ActivityList.js: 40 ] Filter params - limit:', limit, 'filter:', filter, 'maxDaysAgo:', maxDaysAgo);
-  
-  // Create a new copy of the activities array to avoid mutation issues
-  const filteredActivities = activities
-    ? [...activities]
-        // Filter to make sure we don't have duplicate IDs
-        .filter((activity, index, self) => {
-          const isDuplicate = index !== self.findIndex(a => (a.id === activity.id));
-          if (isDuplicate) {
-           // console.log('[ ActivityList.js: 49 ] Removing duplicate activity with ID:', activity.id);
-          }
-          return !isDuplicate;
-        })
-        // Filter by activity type if a filter is specified
+
+  // Filter activities based on the provided filter and date range
+  const filteredActivities = Array.isArray(activities) 
+    ? activities
         .filter(activity => {
-          const typeMatch = filter === 'all' || activity.type === filter;
-          if (!typeMatch) {
-          //  console.log('[ ActivityList.js: 57 ] Filtering out activity type:', activity.type, 'filter:', filter);
-          }
-          return typeMatch;
-        })
-        // Filter out only uncompleted action items (regular activities should always show)
-        .filter(activity => {
-          // Only filter action items that aren't completed
-          if (activity.type === 'action-item' && activity.location !== 'completed') {
-           // console.log('[ ActivityList.js: 65 ] Filtering out uncompleted action item:', activity.id);
+          // Filter by type
+          if (filter !== 'all' && activity.type !== filter) {
             return false;
           }
-          // All other activities (prayer, meetings, etc.) should always be shown
-          return true;
-        })
-        // Filter by maximum days ago if specified
-        .filter(activity => {
-          if (!maxDaysAgo) return true;
           
-          const activityDate = new Date(activity.date);
-          const diffTime = Math.abs(today.getTime() - activityDate.getTime());
-          const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-          const withinTimeframe = diffDays <= maxDaysAgo;
-          
-          if (!withinTimeframe) {
-           // console.log('[ ActivityList.js: 81 ] Filtering out activity outside timeframe - days ago:', diffDays, 'max:', maxDaysAgo);
+          // Filter by date range if maxDaysAgo is specified
+          if (maxDaysAgo !== null) {
+            const activityDate = new Date(activity.date);
+            const cutoffDate = new Date();
+            cutoffDate.setDate(cutoffDate.getDate() - maxDaysAgo);
+            if (activityDate < cutoffDate) {
+              return false;
+            }
           }
           
-          return withinTimeframe;
+          return true;
         })
-        // Sort by date (newest first)
-        .sort((a, b) => {
-          // Explicit conversion to ensure we're comparing dates correctly
-          const dateA = new Date(a.date);
-          const dateB = new Date(b.date);
-          // Sort in descending order (newest first)
-          return dateB.getTime() - dateA.getTime();
-        })
+        // Sort by date (most recent first)
+        .sort((a, b) => compareDatesForSorting(b.date, a.date))
         // Limit the number of activities if specified
         .slice(0, limit || activities.length)
     : [];
@@ -220,68 +212,15 @@ export default function ActivityList({
   if (filteredActivities.length === 0) {
     return (
       <div style={{ 
-        color: theme.palette.text.secondary, 
-        textAlign: 'center',
-        padding: '1rem',
-        fontStyle: 'italic',
-        fontSize: '0.875rem'
+        textAlign: 'center', 
+        padding: '2rem', 
+        color: theme.palette.text.secondary,
+        fontStyle: 'italic'
       }}>
-        No activities to display.
+        No activities found
       </div>
     );
   }
-  
-  // Group activities by date
-  const groupByDate = (activities) => {
-    const groups = {};
-    
-    activities.forEach(activity => {
-      // Debug log to see what dates we're working with
-    //  console.log('[ ActivityList.js: 120 ] Grouping activity with date:', activity.date, 'Type:', typeof activity.date);
-      
-      let dateKey;
-      
-      // First check if the date is already in YYYY-MM-DD format
-      if (activity.date && activity.date.length === 10 && activity.date.includes('-')) {
-        // Already in YYYY-MM-DD format, use it directly
-        dateKey = activity.date;
-      //  console.log('[ ActivityList.js: 128 ] Using direct YYYY-MM-DD dateKey:', dateKey);
-      } else {
-        // Handle ISO format or any other format
-        // Get the date portion only in YYYY-MM-DD format
-        const dateObj = new Date(activity.date);
-      //  console.log('[ ActivityList.js: 133 ] Date object created:', dateObj);
-        
-        if (isNaN(dateObj.getTime())) {
-         // console.error('[ ActivityList.js: 136 ] Invalid date object for:', activity.date);
-          // Skip this activity if date is invalid
-          return;
-        }
-        
-        // Extract only the date part (YYYY-MM-DD) in browser's local timezone
-        // This ensures the date shown matches the user's calendar day
-        const year = dateObj.getFullYear();
-        const month = String(dateObj.getMonth() + 1).padStart(2, '0');
-        const day = String(dateObj.getDate()).padStart(2, '0');
-        dateKey = `${year}-${month}-${day}`;
-      //  console.log('[ ActivityList.js: 147 ] Generated dateKey from object:', dateKey);
-      }
-      
-      if (!groups[dateKey]) {
-        groups[dateKey] = [];
-      }
-      
-      groups[dateKey].push(activity);
-    });
-    
-    // Sort the dates (newest first)
-    const sortedDateKeys = Object.keys(groups).sort((a, b) => {
-      return new Date(b).getTime() - new Date(a).getTime();
-    });
-    
-    // Return the grouped result with dates in order
-    return { groups, sortedDateKeys };
-  };
   
   // Get grouped activities
   const { groups, sortedDateKeys } = groupByDate(filteredActivities);
@@ -293,30 +232,23 @@ export default function ActivityList({
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          marginBottom: '0.5rem'
+          marginBottom: '1rem',
+          paddingBottom: '0.5rem',
+          borderBottom: `1px solid ${theme.palette.divider}`
         }}>
-          <h2 style={{
-            fontSize: '1.1rem',
-            fontWeight: 600,
-            color: theme.palette.text.primary
-          }}>{title}</h2>
+          <h3 style={{ margin: 0, color: theme.palette.text.primary }}>{title}</h3>
         </div>
       )}
       
-      <div style={{ 
-        display: 'flex', 
-        flexDirection: 'column', 
-        gap: '1rem',
-        height: 'auto'
-      }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
         {sortedDateKeys.map(dateKey => (
-          <div key={dateKey}>
+          <div key={dateKey} style={{ display: 'flex', flexDirection: 'column' }}>
             {/* Date header */}
             <div style={{
-              fontSize: '0.9rem',
-              fontWeight: 500,
               color: theme.palette.text.secondary,
-              marginBottom: '0.5rem',
+              fontSize: '0.875rem',
+              fontWeight: 600,
+              marginBottom: '0.25rem',
               paddingBottom: '0.25rem',
               borderBottom: `1px solid ${theme.palette.divider}`
             }}>
@@ -381,254 +313,118 @@ export default function ActivityList({
                       })()
                     }}></i>
                   </div>
-                  <div style={{ flexGrow: 1, minWidth: 0 }}>
+                  
+                  <div style={{ 
+                    flex: 1,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    minWidth: 0
+                  }}>
                     <div style={{
                       display: 'flex',
                       justifyContent: 'space-between',
-                      alignItems: 'center',
-                      fontWeight: 500,
-                      fontSize: '0.8rem',
-                      color: activity.type === 'action-item' && activity.location === 'deleted' 
-                        ? theme.palette.error.main 
-                        : theme.palette.text.primary,
-                      lineHeight: '1.2',
-                      marginBottom: '0.1rem',
-                      textDecoration: activity.type === 'action-item' && activity.location === 'deleted' 
-                        ? 'line-through' 
-                        : 'none'
-                    }}>
-                      <div style={{ display: 'flex', alignItems: 'center', flexGrow: 1 }}>
-                        {/* For call types, show the appropriate label */}
-                        {activity.type === 'call' 
-                          ? 'Call'
-                          : activity.type === 'action-item'
-                          ? 'Action Item'
-                          : activity.type.charAt(0).toUpperCase() + activity.type.slice(1)}
-                        
-
-                        {/* Add role pills for meetings */}
-                        {activity.type === 'meeting' && (
-                          <div style={{ display: 'flex', marginLeft: '6px', gap: '4px' }}>
-                            {activity.wasChair && (
-                              <span style={{
-                                fontSize: '0.6rem',
-                                padding: '1px 5px',
-                                borderRadius: '10px',
-                                backgroundColor: theme.palette.success.light,
-                                color: theme.palette.success.dark,
-                                fontWeight: 'bold'
-                              }}>Chair</span>
-                            )}
-                            {activity.wasShare && (
-                              <span style={{
-                                fontSize: '0.6rem',
-                                padding: '1px 5px',
-                                borderRadius: '10px',
-                                backgroundColor: theme.palette.info.light,
-                                color: theme.palette.info.dark,
-                                fontWeight: 'bold'
-                              }}>Share</span>
-                            )}
-                            {activity.wasSpeaker && (
-                              <span style={{
-                                fontSize: '0.6rem',
-                                padding: '1px 5px',
-                                borderRadius: '10px',
-                                backgroundColor: theme.palette.secondary.light,
-                                color: theme.palette.secondary.dark,
-                                fontWeight: 'bold'
-                              }}>Speaker</span>
-                            )}
-                          </div>
-                        )}
-                        
-                        {/* Add pills for call types */}
-                        {activity.type === 'call' && (
-                          <div style={{ display: 'flex', marginLeft: '6px', gap: '4px' }}>
-                            {activity.isSponsorCall && (
-                              <span style={{
-                                fontSize: '0.6rem',
-                                padding: '1px 5px',
-                                borderRadius: '10px',
-                                backgroundColor: theme.palette.success.light,
-                                color: theme.palette.success.dark,
-                                fontWeight: 'bold'
-                              }}>Sponsor</span>
-                            )}
-                            {activity.isSponseeCall && (
-                              <span style={{
-                                fontSize: '0.6rem',
-                                padding: '1px 5px',
-                                borderRadius: '10px',
-                                backgroundColor: theme.palette.info.light,
-                                color: theme.palette.info.dark,
-                                fontWeight: 'bold'
-                              }}>Sponsee</span>
-                            )}
-                            {activity.isAAMemberCall && (
-                              <span style={{
-                                fontSize: '0.6rem',
-                                padding: '1px 5px',
-                                borderRadius: '10px',
-                                backgroundColor: theme.palette.secondary.light,
-                                color: theme.palette.secondary.dark,
-                                fontWeight: 'bold'
-                              }}>AA Member</span>
-                            )}
-                          </div>
-                        )}
-                      </div>
-                      
-                      {/* Delete button aligned with top line */}
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleDeleteActivity(activity.id);
-                        }}
-                        style={{
-                          background: 'none',
-                          border: 'none',
-                          color: theme.palette.error.main,
-                          cursor: 'pointer',
-                          padding: '6px',
-                          fontSize: '0.9rem',
-                          borderRadius: '50%',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          width: '24px',
-                          height: '24px',
-                          lineHeight: '1',
-                          transition: 'background-color 0.2s',
-                          flexShrink: 0
-                        }}
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.backgroundColor = theme.palette.error.light + '20';
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.backgroundColor = 'transparent';
-                        }}
-                        title="Delete activity"
-                      >
-                        ✕
-                      </button>
-                    </div>
-                    <div style={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'flex-end',
-                      fontSize: '0.75rem',
-                      color: activity.type === 'action-item' && activity.location === 'deleted' 
-                        ? theme.palette.error.main 
-                        : theme.palette.text.secondary,
-                      lineHeight: '1.2',
-                      textDecoration: activity.type === 'action-item' && activity.location === 'deleted' 
-                        ? 'line-through' 
-                        : 'none'
+                      alignItems: 'flex-start',
+                      marginBottom: '0.125rem'
                     }}>
                       <div style={{
-                        whiteSpace: 'nowrap',
+                        fontWeight: 500,
+                        color: theme.palette.text.primary,
+                        fontSize: '0.875rem',
+                        lineHeight: '1.2',
+                        flex: 1,
+                        minWidth: 0,
+                        wordWrap: 'break-word',
                         overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                        marginRight: '0.5rem',
-                        flexGrow: 1
+                        textOverflow: 'ellipsis'
                       }}>
-                        {activity.type === 'action-item' ? (
-                          // Show action item text/title
-                          <span>
-                            {activity.text || activity.title || 'Action Item'}
-                            {activity.location === 'completed' && (
-                              <span style={{ color: theme.palette.success.main, marginLeft: '8px' }}>
-                                <i className="fas fa-check-circle" style={{ marginRight: '4px' }}></i>
-                                Completed
-                              </span>
-                            )}
-                            {activity.location === 'deleted' && (
-                              <span style={{ color: theme.palette.error.main, marginLeft: '8px' }}>
-                                <i className="fas fa-trash" style={{ marginRight: '4px' }}></i>
-                                Deleted
-                              </span>
-                            )}
-                          </span>
-                        ) : (
-                          // Regular activity display
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-                            <span>
-                              {activity.duration ? `${activity.duration} min` : 'Done'} 
-                              {(() => {
-                                const meetingName = getMeetingName(activity);
-                                if (meetingName) return ` - ${meetingName}`;
-                                if (activity.literatureTitle) return ` - ${activity.literatureTitle}`;
-                                if (activity.notes && !meetingName && !activity.literatureTitle) return ` - ${activity.notes}`;
-                                return '';
-                              })()}
-                            </span>
-                            
-
-                          </div>
-                        )}
+                        {formatActivityText(activity)}
                       </div>
                       
-                      {/* Date aligned with bottom line */}
                       {showDate && (
-                        <div style={{ 
-                          fontSize: '0.7rem', 
+                        <div style={{
                           color: theme.palette.text.secondary,
-                          textAlign: 'right',
-                          lineHeight: '1.2',
-                          flexShrink: 0
+                          fontSize: '0.75rem',
+                          flexShrink: 0,
+                          marginLeft: '0.5rem',
+                          lineHeight: '1.2'
                         }}>
-                          {formatDate(activity.date)}
-                        </div>
-                      )}
-                      
-                      {/* Action buttons for action items */}
-                      {activity.type === 'action-item' && activity.location === 'pending' && (
-                        <div style={{ display: 'flex', gap: '8px', flexShrink: 0 }}>
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              if (onActivityClick) {
-                                onActivityClick(activity, 'complete');
-                              }
-                            }}
-                            style={{
-                              background: 'none',
-                              border: 'none',
-                              color: theme.palette.success.main,
-                              cursor: 'pointer',
-                              padding: '2px',
-                              fontSize: '0.8rem'
-                            }}
-                            title="Mark as completed"
-                          >
-                            <i className="fas fa-check"></i>
-                          </button>
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              if (onActivityClick) {
-                                onActivityClick(activity, 'delete');
-                              }
-                            }}
-                            style={{
-                              background: 'none',
-                              border: 'none',
-                              color: theme.palette.error.main,
-                              cursor: 'pointer',
-                              padding: '2px',
-                              fontSize: '0.8rem'
-                            }}
-                            title="Delete action item"
-                          >
-                            <i className="fas fa-trash"></i>
-                          </button>
+                          {formatDateForDisplay(activity.date)}
                         </div>
                       )}
                     </div>
+                    
+                    {formatActivitySubtitle(activity) && (
+                      <div style={{
+                        color: theme.palette.text.secondary,
+                        fontSize: '0.75rem',
+                        lineHeight: '1.3',
+                        marginTop: '0.125rem',
+                        wordWrap: 'break-word',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis'
+                      }}>
+                        {formatActivitySubtitle(activity)}
+                      </div>
+                    )}
+                    
+                    {activity.type === 'action-item' && activity.completed && (
+                      <div style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.25rem',
+                        marginTop: '0.25rem'
+                      }}>
+                        <i className="fas fa-check-circle" style={{
+                          color: theme.palette.success.main,
+                          fontSize: '0.75rem'
+                        }}></i>
+                        <span style={{
+                          color: theme.palette.success.main,
+                          fontSize: '0.75rem',
+                          fontWeight: 500
+                        }}>
+                          Completed
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                  
+                  <div style={{ 
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'flex-end',
+                    gap: '0.25rem',
+                    marginLeft: '0.5rem'
+                  }}>
+                    {/* Delete button for action items */}
+                    {activity.type === 'action-item' && (
+                      <div style={{ display: 'flex', gap: '0.25rem' }}>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDeleteActivity(activity.id);
+                          }}
+                          style={{
+                            background: 'none',
+                            border: 'none',
+                            cursor: 'pointer',
+                            color: theme.palette.error.main,
+                            padding: '0.25rem',
+                            borderRadius: '4px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            fontSize: '0.8rem'
+                          }}
+                          title="Delete action item"
+                        >
+                          <i className="fas fa-trash"></i>
+                        </button>
+                      </div>
+                    )}
                   </div>
                 </div>
-              )}
+              ))}
             </div>
           </div>
         ))}
