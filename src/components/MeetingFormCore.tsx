@@ -303,16 +303,19 @@ export default function MeetingFormCore({
           />
         </Box>
         
-        <Box>
-          <Box sx={{ color: muiTheme.palette.text.secondary, fontSize: '14px', mb: '4px' }}>
-            Meeting Schedule
+        {meetingName.trim() && (
+          <Box>
+            <Box sx={{ color: muiTheme.palette.text.secondary, fontSize: '14px', mb: '4px' }}>
+              Meeting Schedule
+            </Box>
+            <TreeMeetingSchedule 
+              schedule={meetingSchedule} 
+              onChange={setMeetingSchedule}
+              use24HourFormat={use24HourFormat}
+              meetingName={meetingName}
+            />
           </Box>
-          <TreeMeetingSchedule 
-            schedule={meetingSchedule} 
-            onChange={setMeetingSchedule}
-            use24HourFormat={use24HourFormat}
-          />
-        </Box>
+        )}
         
         {/* Show address fields for in-person and hybrid meetings */}
         {meetingSchedule.some(item => item.locationType === 'in_person' || item.locationType === 'hybrid') && (

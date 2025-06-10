@@ -19,12 +19,14 @@
       schedule: ScheduleItem[];
       onChange: (schedule: ScheduleItem[]) => void;
       use24HourFormat?: boolean;
+      meetingName?: string;
     }
 
     const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({ 
       schedule, 
       onChange, 
-      use24HourFormat = false 
+      use24HourFormat = false,
+      meetingName = ''
     }) => {
       const muiTheme = useTheme();
 
