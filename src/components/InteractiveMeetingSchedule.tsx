@@ -341,19 +341,175 @@ const InteractiveMeetingSchedule: React.FC<InteractiveMeetingScheduleProps> = ({
           </Box>
         ))}
 
-        {/* New meeting in progress */}
-        {Object.keys(newMeeting).length > 0 && (
+        {/* Always show meeting preview during creation or if no meetings exist */}
+        {(Object.keys(newMeeting).length > 0 || (schedule.length === 0 && editingMeeting === null)) && (
           <Box>
-            <Typography variant="subtitle2" sx={{ mb: 1, color: muiTheme.palette.primary.main }}>
-              Creating Meeting:
-            </Typography>
-            {renderMeetingPreview(newMeeting, false)}
+            {/* Meeting preview with clickable sections */}
+            <Paper 
+              elevation={1} 
+              sx={{ 
+                p: 2, 
+                mb: 2, 
+                borderRadius: 2,
+                backgroundColor: muiTheme.palette.grey[50],
+                border: `1px solid ${muiTheme.palette.divider}`
+              }}
+            >
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 1 }}>
+                {/* Day Section */}
+                <Box 
+                  onClick={() => {
+                    setScheduleStep('day');
+                    setActiveSpeedDial('day');
+                  }}
+                  sx={{ 
+                    cursor: 'pointer', 
+                    padding: '8px 12px', 
+                    borderRadius: 1,
+                    backgroundColor: newMeeting.day ? muiTheme.palette.primary.main : 'transparent',
+                    color: newMeeting.day ? 'white' : muiTheme.palette.text.primary,
+                    border: `1px solid ${muiTheme.palette.divider}`,
+                    minWidth: '60px',
+                    textAlign: 'center',
+                    fontSize: '14px',
+                    fontWeight: 500,
+                    '&:hover': {
+                      backgroundColor: newMeeting.day ? muiTheme.palette.primary.dark : muiTheme.palette.action.hover
+                    }
+                  }}
+                >
+                  {getDisplayValue('day', newMeeting.day || '')}
+                </Box>
+                
+                {/* Time Section */}
+                <Box 
+                  onClick={() => {
+                    setScheduleStep('time');
+                    setShowTimePicker(true);
+                  }}
+                  sx={{ 
+                    cursor: 'pointer', 
+                    padding: '8px 12px', 
+                    borderRadius: 1,
+                    backgroundColor: newMeeting.time ? muiTheme.palette.primary.main : 'transparent',
+                    color: newMeeting.time ? 'white' : muiTheme.palette.text.primary,
+                    border: `1px solid ${muiTheme.palette.divider}`,
+                    minWidth: '80px',
+                    textAlign: 'center',
+                    fontSize: '14px',
+                    fontWeight: 500,
+                    '&:hover': {
+                      backgroundColor: newMeeting.time ? muiTheme.palette.primary.dark : muiTheme.palette.action.hover
+                    }
+                  }}
+                >
+                  {getDisplayValue('time', newMeeting.time || '')}
+                </Box>
+                
+                {/* Format Section */}
+                <Box 
+                  onClick={() => {
+                    setScheduleStep('format');
+                    setActiveSpeedDial('format');
+                  }}
+                  sx={{ 
+                    cursor: 'pointer', 
+                    padding: '8px 12px', 
+                    borderRadius: 1,
+                    backgroundColor: newMeeting.format ? muiTheme.palette.primary.main : 'transparent',
+                    color: newMeeting.format ? 'white' : muiTheme.palette.text.primary,
+                    border: `1px solid ${muiTheme.palette.divider}`,
+                    minWidth: '60px',
+                    textAlign: 'center',
+                    fontSize: '14px',
+                    fontWeight: 500,
+                    '&:hover': {
+                      backgroundColor: newMeeting.format ? muiTheme.palette.primary.dark : muiTheme.palette.action.hover
+                    }
+                  }}
+                >
+                  {getDisplayValue('format', newMeeting.format || '')}
+                </Box>
+                
+                {/* Location Type Section */}
+                <Box 
+                  onClick={() => {
+                    setScheduleStep('location');
+                    setActiveSpeedDial('locationType');
+                  }}
+                  sx={{ 
+                    cursor: 'pointer', 
+                    padding: '8px 12px', 
+                    borderRadius: 1,
+                    backgroundColor: newMeeting.locationType ? muiTheme.palette.primary.main : 'transparent',
+                    color: newMeeting.locationType ? 'white' : muiTheme.palette.text.primary,
+                    border: `1px solid ${muiTheme.palette.divider}`,
+                    minWidth: '60px',
+                    textAlign: 'center',
+                    fontSize: '14px',
+                    fontWeight: 500,
+                    '&:hover': {
+                      backgroundColor: newMeeting.locationType ? muiTheme.palette.primary.dark : muiTheme.palette.action.hover
+                    }
+                  }}
+                >
+                  {getDisplayValue('locationType', newMeeting.locationType || '')}
+                </Box>
+                
+                {/* Access Section */}
+                <Box 
+                  onClick={() => {
+                    setScheduleStep('access');
+                    setActiveSpeedDial('access');
+                  }}
+                  sx={{ 
+                    cursor: 'pointer', 
+                    padding: '8px 12px', 
+                    borderRadius: 1,
+                    backgroundColor: newMeeting.access ? muiTheme.palette.primary.main : 'transparent',
+                    color: newMeeting.access ? 'white' : muiTheme.palette.text.primary,
+                    border: `1px solid ${muiTheme.palette.divider}`,
+                    minWidth: '60px',
+                    textAlign: 'center',
+                    fontSize: '14px',
+                    fontWeight: 500,
+                    '&:hover': {
+                      backgroundColor: newMeeting.access ? muiTheme.palette.primary.dark : muiTheme.palette.action.hover
+                    }
+                  }}
+                >
+                  {getDisplayValue('access', newMeeting.access || '')}
+                </Box>
+              </Box>
+            </Paper>
+
+            {/* Select Day button when no day is selected */}
+            {!newMeeting.day && (
+              <Button
+                variant="text"
+                onClick={() => {
+                  setScheduleStep('day');
+                  setActiveSpeedDial('day');
+                }}
+                startIcon={<Typography sx={{ fontSize: '16px' }}>›</Typography>}
+                sx={{ 
+                  color: muiTheme.palette.primary.main,
+                  textTransform: 'none',
+                  fontSize: '16px',
+                  fontWeight: 400,
+                  justifyContent: 'flex-start',
+                  pl: 0
+                }}
+              >
+                + Select Day
+              </Button>
+            )}
           </Box>
         )}
 
-        {/* Add new meeting button */}
-        {Object.keys(newMeeting).length === 0 && editingMeeting === null && 
-         (allowMultipleMeetings || schedule.length === 0) && (
+        {/* Add another meeting button */}
+        {schedule.length > 0 && Object.keys(newMeeting).length === 0 && editingMeeting === null && 
+         allowMultipleMeetings && (
           <Button
             variant="outlined"
             onClick={() => setScheduleStep('day')}
