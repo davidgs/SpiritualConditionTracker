@@ -35,6 +35,7 @@
       const [dayMenuAnchor, setDayMenuAnchor] = useState<null | HTMLElement>(null);
       const [locationMenuAnchor, setLocationMenuAnchor] = useState<null | HTMLElement>(null);
       const [formatMenuAnchor, setFormatMenuAnchor] = useState<null | HTMLElement>(null);
+      const [accessMenuAnchor, setAccessMenuAnchor] = useState<null | HTMLElement>(null);
 
       const days = [
         { key: 'sunday', label: 'Sunday' },
@@ -508,7 +509,7 @@
               </Menu>
 
               <Chip 
-                label={newMeeting.format ? newMeeting.format.charAt(0).toUpperCase() + newMeeting.format.slice(1).replace('_', ' ') : '---'}
+                label={newMeeting.format ? newMeeting.format.charAt(0).toUpperCase() + newMeeting.format.slice(1).replace('_', ' ') : 'format'}
                 size="small"
                 color={newMeeting.format ? "primary" : "default"}
                 variant={newMeeting.format ? "filled" : "outlined"}
@@ -543,8 +544,31 @@
                 size="small"
                 color={newMeeting.access === 'open' ? 'success' : newMeeting.access === 'closed' ? 'error' : 'default'}
                 variant={newMeeting.access ? "filled" : "outlined"}
-                sx={{ fontSize: '0.7rem', height: '24px' }}
+                onClick={(e) => setAccessMenuAnchor(e.currentTarget)}
+                sx={{ 
+                  fontSize: '0.7rem', 
+                  height: '24px',
+                  cursor: 'pointer',
+                  '&:hover': {
+                    opacity: 0.8,
+                  },
+                }}
               />
+              <Menu
+                anchorEl={accessMenuAnchor}
+                open={Boolean(accessMenuAnchor)}
+                onClose={() => setAccessMenuAnchor(null)}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+              >
+                {meetingAccess.map((access) => (
+                  <MenuItem key={access.value} onClick={() => {
+                    setNewMeeting({ ...newMeeting, access: access.value });
+                    setAccessMenuAnchor(null);
+                  }}>
+                    {access.label}
+                  </MenuItem>
+                ))}
+              </Menu>
             </Box>
           )}
 
