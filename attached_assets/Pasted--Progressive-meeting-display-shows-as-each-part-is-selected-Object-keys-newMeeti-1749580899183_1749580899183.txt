@@ -1,0 +1,116 @@
+{/* Progressive meeting display - shows as each part is selected */}
+          {Object.keys(newMeeting).length > 0 && editingMeeting === null && (
+            <Box
+              key={`${newMeeting.day}-${newMeeting.time}-${newMeeting.format}-${newMeeting.locationType}-${newMeeting.access}`}
+              sx={(theme) => ({
+                display: 'flex',
+                alignItems: 'center',
+                gap: 1,
+                py: 1,
+                borderBottom: `1px solid ${theme.palette.divider}`,
+                mb: 2,
+                backgroundColor: theme.palette.action.hover,
+                borderRadius: 1,
+                px: 1
+              })}
+            >
+              <Typography variant="body2" sx={(theme) => ({
+                fontWeight: 500,
+                minWidth: '70px',
+                textAlign: 'left',
+                color: theme.palette.text.primary
+              })}>
+                {newMeeting.day ? (days.find(d => d.key === newMeeting.day)?.label || newMeeting.day) : '---'}
+              </Typography>
+
+              <Typography variant="body2" sx={(theme) => ({
+                minWidth: '70px',
+                textAlign: 'left',
+                color: theme.palette.text.primary
+              })}>
+                {newMeeting.time ? (use24HourFormat ? newMeeting.time : (() => {
+                  const [hour, minute] = newMeeting.time.split(':');
+                  const hourNum = parseInt(hour);
+                  const period = hourNum >= 12 ? 'PM' : 'AM';
+                  const displayHour = hourNum === 0 ? 12 : hourNum > 12 ? hourNum - 12 : hourNum;
+                  return `${displayHour}:${minute} ${period}`;
+                })()) : '---'}
+              </Typography>
+
+              <Typography sx={{ fontSize: '1.2rem' }}>
+                {newMeeting.locationType ? (meetingLocationTypes.find(l => l.value === newMeeting.locationType)?.icon || '🏢') : '---'}
+              </Typography>
+
+              <Chip
+                label={newMeeting.format ? newMeeting.format.charAt(0).toUpperCase() + newMeeting.format.slice(1).replace('_', ' ') : '---'}
+                size="small"
+                color={newMeeting.format ? "primary" : "default"}
+                variant={newMeeting.format ? "filled" : "outlined"}
+                sx={{ fontSize: '0.7rem', height: '24px' }}
+              />
+
+              <Chip
+                label={newMeeting.access ? newMeeting.access.charAt(0).toUpperCase() + newMeeting.access.slice(1) : '---'}
+                size="small"
+                color={newMeeting.access === 'open' ? 'success' : newMeeting.access === 'closed' ? 'error' : 'default'}
+                variant={newMeeting.access ? "filled" : "outlined"}
+                sx={{ fontSize: '0.7rem', height: '24px' }}
+              />
+            </Box>
+          )}
+
+          {/* Tree structure for day selection, then step-by-step flow */}
+          {currentStep === 'day' && editingMeeting === null && (
+            <CustomNestedMenu
+              items={[
+                {
+                  id: 'select-day',
+                  label: '+ Select Day',
+                  color: 'primary.main',
+                  fontWeight: 500,
+                  indentLevel: 0,
+                  children: days.map(day => ({
+                    id: `day-${day.key}`,
+                    label: day.label,
+                    color: 'text.primary',
+                    fontWeight: 500,
+                    indentLevel: 1,
+                    onClick: () => {
+                      setNewMeeting({ ...newMeeting, day: day.key });
+                      setCurrentStep('time');
+                    },
+                    isExpandable: false
+                  })),
+                  isExpandable: true
+                }
+              ]}
+              onActionComplete={() => {}}
+            />
+          )}
+
+          {/* Step-by-step selectors after day is chosen */}
+          {currentStep !== 'day' && editingMeeting === null && (
+            <Box sx={{ mt: 2 }}>
+              {renderStepSelector()}
+            </Box>
+          )}
+
+          {/* Editing existing meeting */}
+          {editingMeeting !== null && (
+            <Box sx={{ mt: 2, p: 2, border: '1px solid #orange', borderRadius: 1 }}>
+              <Typography variant="h6" sx={{ mb: 2 }}>Edit Meeting</Typography>
+              {renderStepSelector()}
+              <Button
+                variant="outlined"
+                onClick={() => {
+                  setEditingMeeting(null);
+                  setNewMeeting({});
+                  setCurrentStep('day');
+                }}
+                sx={{ mt: 1 }}
+              >
+                Cancel
+              </Button>
+            </Box>
+          )}
+        </Box>
