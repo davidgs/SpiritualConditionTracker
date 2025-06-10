@@ -14,8 +14,7 @@ import {
   FormControlLabel,
   Stepper,
   Step,
-  StepLabel,
-  StepContent
+  StepLabel
 } from '@mui/material';
 
 // Common TextField style to ensure consistent iOS-native styling
@@ -86,7 +85,7 @@ export default function MeetingFormCore({
   // Define steps for the stepper
   const steps = [
     {
-      label: 'Meeting Name',
+      label: 'Name',
       description: 'Enter the name of your meeting',
       required: true
     },
@@ -101,7 +100,7 @@ export default function MeetingFormCore({
       required: true
     },
     {
-      label: 'Additional Details',
+      label: 'Details',
       description: 'Home group and online options',
       required: false
     }
@@ -263,219 +262,201 @@ export default function MeetingFormCore({
         </Alert>
       )}
       
+      {/* Compact horizontal stepper at the top */}
+      <Box sx={{ mb: 3 }}>
+        <Stepper activeStep={activeStep} alternativeLabel sx={{ mb: 2 }}>
+          {steps.map((step, index) => (
+            <Step key={step.label} completed={isStepComplete(index)}>
+              <StepLabel 
+                error={step.required && activeStep > index && !isStepComplete(index)}
+                sx={{
+                  '& .MuiStepLabel-label': {
+                    fontSize: '0.75rem',
+                    fontWeight: activeStep === index ? 600 : 400
+                  }
+                }}
+              >
+                {step.label}
+              </StepLabel>
+            </Step>
+          ))}
+        </Stepper>
+      </Box>
+
       <Box component="form" onSubmit={handleSubmit} noValidate sx={{ 
         display: 'flex', 
-        flexDirection: 'row',
-        gap: 3,
+        flexDirection: 'column', 
+        gap: 2, 
         mt: 1,
         width: '100%', 
         maxWidth: '100%',
         boxSizing: 'border-box',
         overflow: 'hidden'
       }}>
-        {/* Vertical Stepper on the left */}
-        <Box sx={{ 
-          minWidth: '240px',
-          flexShrink: 0
-        }}>
-          <Stepper activeStep={activeStep} orientation="vertical">
-            {steps.map((step, index) => (
-              <Step key={step.label} completed={isStepComplete(index)}>
-                <StepLabel 
-                  optional={
-                    !step.required ? (
-                      <Typography variant="caption">Optional</Typography>
-                    ) : null
-                  }
-                  error={step.required && activeStep > index && !isStepComplete(index)}
-                >
-                  <Typography variant="body2" fontWeight={activeStep === index ? 600 : 400}>
-                    {step.label}
-                  </Typography>
-                </StepLabel>
-                <StepContent>
-                  <Typography variant="caption" color="text.secondary">
-                    {step.description}
-                  </Typography>
-                </StepContent>
-              </Step>
-            ))}
-          </Stepper>
+        <Box>
+          <Box sx={{ color: muiTheme.palette.primary.main, fontSize: '14px', mb: '4px' }}>
+            Meeting Name*
+          </Box>
+          <TextField
+            value={meetingName}
+            onChange={(e) => setMeetingName(e.target.value)}
+            placeholder="Enter meeting name"
+            size="medium"
+            margin="none"
+            sx={(theme) => getTextFieldStyle(theme)}
+          />
         </Box>
-
-        {/* Form content on the right */}
-        <Box sx={{ 
-          flex: 1,
-          display: 'flex', 
-          flexDirection: 'column', 
-          gap: 2,
-          minWidth: 0
-        }}>
+        
+        <Box>
+          <Box sx={{ color: muiTheme.palette.text.secondary, fontSize: '14px', mb: '4px' }}>
+            Meeting Schedule
+          </Box>
+          <TreeMeetingSchedule 
+            schedule={meetingSchedule} 
+            onChange={setMeetingSchedule}
+            use24HourFormat={use24HourFormat}
+          />
+        </Box>
+        
+        {/* Show address fields for in-person and hybrid meetings */}
+        {meetingSchedule.some(item => item.locationType === 'in_person' || item.locationType === 'hybrid') && (
           <Box>
-            <Box sx={{ color: muiTheme.palette.primary.main, fontSize: '14px', mb: '4px' }}>
-              Meeting Name*
+            <Box sx={{ color: muiTheme.palette.text.secondary, fontSize: '14px', mb: '4px' }}>
+              Location
             </Box>
+            
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+              <TextField
+                fullWidth
+                value={locationName}
+                onChange={(e) => setLocationName(e.target.value)}
+                placeholder="Location name (e.g. Apex United Methodist Church)"
+                size="medium"
+                margin="none"
+                sx={(theme) => ({
+                  ...getTextFieldStyle(theme)
+                })}
+              />
+            
             <TextField
-              value={meetingName}
-              onChange={(e) => setMeetingName(e.target.value)}
-              placeholder="Enter meeting name"
+              fullWidth
+              value={streetAddress}
+              onChange={(e) => setStreetAddress(e.target.value)}
+              placeholder="Street address"
               size="medium"
               margin="none"
               sx={(theme) => getTextFieldStyle(theme)}
             />
-          </Box>
-          
-          <Box>
-            <Box sx={{ color: muiTheme.palette.text.secondary, fontSize: '14px', mb: '4px' }}>
-              Meeting Schedule
-            </Box>
-            <TreeMeetingSchedule 
-              schedule={meetingSchedule} 
-              onChange={setMeetingSchedule}
-              use24HourFormat={use24HourFormat}
-            />
-          </Box>
-          
-          {/* Show address fields for in-person and hybrid meetings */}
-          {meetingSchedule.some(item => item.locationType === 'in_person' || item.locationType === 'hybrid') && (
-            <Box>
-              <Box sx={{ color: muiTheme.palette.text.secondary, fontSize: '14px', mb: '4px' }}>
-                Location
-              </Box>
-              
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                <TextField
-                  fullWidth
-                  value={locationName}
-                  onChange={(e) => setLocationName(e.target.value)}
-                  placeholder="Location name (e.g. Apex United Methodist Church)"
-                  size="medium"
-                  margin="none"
-                  sx={(theme) => ({
-                    ...getTextFieldStyle(theme)
-                  })}
-                />
-              
+            
+            <Box sx={{ display: 'flex', gap: 1 }}>
               <TextField
-                fullWidth
-                value={streetAddress}
-                onChange={(e) => setStreetAddress(e.target.value)}
-                placeholder="Street address"
+                value={city}
+                onChange={(e) => setCity(e.target.value)}
+                placeholder="City"
                 size="medium"
                 margin="none"
-                sx={(theme) => getTextFieldStyle(theme)}
+                sx={(theme) => ({
+                  ...getTextFieldStyle(theme),
+                  flex: '2'
+                })}
               />
               
-              <Box sx={{ display: 'flex', gap: 1 }}>
-                <TextField
-                  value={city}
-                  onChange={(e) => setCity(e.target.value)}
-                  placeholder="City"
-                  size="medium"
-                  margin="none"
-                  sx={(theme) => ({
-                    ...getTextFieldStyle(theme),
-                    flex: '2'
-                  })}
-                />
-                
-                <TextField
-                  value={state}
-                  onChange={(e) => setState(e.target.value)}
-                  placeholder="State"
-                  size="medium"
-                  margin="none"
-                  sx={(theme) => ({
-                    ...getTextFieldStyle(theme),
-                    flex: '1'
-                  })}
-                />
-                
-                <TextField
-                  value={zipCode}
-                  onChange={(e) => setZipCode(e.target.value)}
-                  placeholder="ZIP"
-                  size="medium"
-                  margin="none"
-                  sx={(theme) => ({
-                    ...getTextFieldStyle(theme),
-                    flex: '1'
-                  })}
-                />
-              </Box>
+              <TextField
+                value={state}
+                onChange={(e) => setState(e.target.value)}
+                placeholder="State"
+                size="medium"
+                margin="none"
+                sx={(theme) => ({
+                  ...getTextFieldStyle(theme),
+                  flex: '1'
+                })}
+              />
+              
+              <TextField
+                value={zipCode}
+                onChange={(e) => setZipCode(e.target.value)}
+                placeholder="ZIP"
+                size="medium"
+                margin="none"
+                sx={(theme) => ({
+                  ...getTextFieldStyle(theme),
+                  flex: '1'
+                })}
+              />
             </Box>
           </Box>
-          )}
+        </Box>
+        )}
 
-          {/* Online URL Field - Show when any schedule item has online or hybrid location */}
-          {meetingSchedule.some(item => item.locationType === 'online' || item.locationType === 'hybrid') && (
-            <Box>
-              <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 'bold' }}>
-                Online Meeting URL
-              </Typography>
-              <TextField
-                fullWidth
-                value={onlineUrl}
-                onChange={(e) => setOnlineUrl(e.target.value)}
-                placeholder="https://zoom.us/j/123456789 or meeting platform URL"
-                size="medium"
-                sx={(theme) => getTextFieldStyle(theme)}
-              />
-              <Typography variant="body2" sx={{ mt: 0.5 }} color="text.secondary">
-                Enter the URL participants will use to join the online meeting.
-              </Typography>
-            </Box>
-          )}
-          
-          {/* Home Group Checkbox */}
+        {/* Online URL Field - Show when any schedule item has online or hybrid location */}
+        {meetingSchedule.some(item => item.locationType === 'online' || item.locationType === 'hybrid') && (
           <Box>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={isHomeGroup}
-                  onChange={(e) => setIsHomeGroup(e.target.checked)}
-                  color="primary"
-                />
-              }
-              label={
-                <Typography component="span" sx={(theme) => ({ color: theme.palette.text.primary })}>
-                  This is my Home Group
-                </Typography>
-              }
+            <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 'bold' }}>
+              Online Meeting URL
+            </Typography>
+            <TextField
+              fullWidth
+              value={onlineUrl}
+              onChange={(e) => setOnlineUrl(e.target.value)}
+              placeholder="https://zoom.us/j/123456789 or meeting platform URL"
+              size="medium"
+              sx={(theme) => getTextFieldStyle(theme)}
             />
-            <Typography variant="body2" sx={{ mt: 0.5, ml: 4 }} color="text.secondary">
-              Your Home Group is your primary AA group where you regularly attend and participate.
+            <Typography variant="body2" sx={{ mt: 0.5 }} color="text.secondary">
+              Enter the URL participants will use to join the online meeting.
             </Typography>
           </Box>
+        )}
+        
+        {/* Home Group Checkbox */}
+        <Box>
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={isHomeGroup}
+                onChange={(e) => setIsHomeGroup(e.target.checked)}
+                color="primary"
+              />
+            }
+            label={
+              <Typography component="span" sx={(theme) => ({ color: theme.palette.text.primary })}>
+                This is my Home Group
+              </Typography>
+            }
+          />
+          <Typography variant="body2" sx={{ mt: 0.5, ml: 4 }} color="text.secondary">
+            Your Home Group is your primary AA group where you regularly attend and participate.
+          </Typography>
+        </Box>
 
-          {/* Action buttons */}
-          {showButtons && (
-            <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-end', mt: 2 }}>
-              {onCancel && (
-                <Button
-                  variant="contained"
-                  onClick={onCancel}
-                  color="error"
-                >
-                  Cancel
-                </Button>
-              )}
-              
+        {/* Action buttons */}
+        {showButtons && (
+          <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-end', mt: 2 }}>
+            {onCancel && (
               <Button
                 variant="contained"
-                type="submit"
-                color="success"
-                disabled={!isFormValid()}
-                sx={{
-                  opacity: !isFormValid() ? 0.6 : 1,
-                  cursor: !isFormValid() ? 'not-allowed' : 'pointer'
-                }}
+                onClick={onCancel}
+                color="error"
               >
-                Save
+                Cancel
               </Button>
-            </Box>
-          )}
-        </Box>
+            )}
+            
+            <Button
+              variant="contained"
+              type="submit"
+              color="success"
+              disabled={!isFormValid()}
+              sx={{
+                opacity: !isFormValid() ? 0.6 : 1,
+                cursor: !isFormValid() ? 'not-allowed' : 'pointer'
+              }}
+            >
+              Save
+            </Button>
+          </Box>
+        )}
       </Box>
     </Box>
   );
