@@ -429,17 +429,15 @@
             >
               <Typography
                 onClick={(e) => setDayMenuAnchor(e.currentTarget)}
-                sx={{
+                sx={(theme) => ({
                   cursor: 'pointer',
                   display: 'inline',
                   fontWeight: 500,
                   minWidth: '70px',
                   textAlign: 'left',
-                  color: 'text.primary',
-                  '&:hover': {
-                    textDecoration: 'underline',
-                  },
-                }}
+                  color: `${theme.palette.text.primary}`,
+                  textDecoration: 'underline',
+                })}
               >
                 {newMeeting.day ? (days.find(d => d.key === newMeeting.day)?.label || newMeeting.day) : '---'}
               </Typography>
