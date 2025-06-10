@@ -254,10 +254,7 @@ export default function MeetingFormCore({
       </Typography>
       
       {error && (
-        <Alert 
-          severity="error" 
-          sx={{ mb: 2 }}
-        >
+        <Alert severity="error" sx={{ mb: 2 }}>
           {error}
         </Alert>
       )}
@@ -302,7 +299,6 @@ export default function MeetingFormCore({
             onChange={(e) => setMeetingName(e.target.value)}
             placeholder="Enter meeting name"
             size="medium"
-            margin="none"
             sx={(theme) => getTextFieldStyle(theme)}
           />
         </Box>
@@ -332,7 +328,6 @@ export default function MeetingFormCore({
                 onChange={(e) => setLocationName(e.target.value)}
                 placeholder="Location name (e.g. Apex United Methodist Church)"
                 size="medium"
-                margin="none"
                 sx={(theme) => ({
                   ...getTextFieldStyle(theme)
                 })}
@@ -344,7 +339,6 @@ export default function MeetingFormCore({
               onChange={(e) => setStreetAddress(e.target.value)}
               placeholder="Street address"
               size="medium"
-              margin="none"
               sx={(theme) => getTextFieldStyle(theme)}
             />
             
@@ -354,7 +348,6 @@ export default function MeetingFormCore({
                 onChange={(e) => setCity(e.target.value)}
                 placeholder="City"
                 size="medium"
-                margin="none"
                 sx={(theme) => ({
                   ...getTextFieldStyle(theme),
                   flex: '2'
@@ -366,7 +359,6 @@ export default function MeetingFormCore({
                 onChange={(e) => setState(e.target.value)}
                 placeholder="State"
                 size="medium"
-                margin="none"
                 sx={(theme) => ({
                   ...getTextFieldStyle(theme),
                   flex: '1'
@@ -378,7 +370,6 @@ export default function MeetingFormCore({
                 onChange={(e) => setZipCode(e.target.value)}
                 placeholder="ZIP"
                 size="medium"
-                margin="none"
                 sx={(theme) => ({
                   ...getTextFieldStyle(theme),
                   flex: '1'
