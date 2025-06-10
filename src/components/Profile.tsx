@@ -92,6 +92,20 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
   const [suggestionsLoading, setSuggestionsLoading] = useState(false);
   const [defaultCountry, setDefaultCountry] = useState('US');
 
+  // Initialize device-based suggestions on component mount
+  useEffect(() => {
+    const initializeDeviceSuggestions = async () => {
+      try {
+        const country = getLocationBasedPhoneFormat();
+        setDefaultCountry(country);
+      } catch (error) {
+        console.log('Error initializing device suggestions:', error);
+      }
+    };
+    
+    initializeDeviceSuggestions();
+  }, []);
+
   // Load user data ONLY when user ID changes (not on every user object change)
   useEffect(() => {
     if (user) {
@@ -148,6 +162,34 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
   const [allowMessages, setAllowMessages] = useState(user?.privacySettings?.allowMessages !== false);
   const [shareLastName, setShareLastName] = useState(user?.privacySettings?.shareLastName !== false);
   const [use24HourFormat, setUse24HourFormat] = useState(user?.preferences?.use24HourFormat || false);
+
+  // Smart auto-fill function using device suggestions
+  const handleSmartAutoFill = async () => {
+    setSuggestionsLoading(true);
+    try {
+      const suggestions = await getDeviceProfileSuggestions();
+      
+      // Only fill empty fields to avoid overwriting existing data
+      if (suggestions.name && (!name || name === '')) {
+        setName(suggestions.name);
+      }
+      if (suggestions.email && (!email || email === '' || email === 'Not set')) {
+        setEmail(suggestions.email);
+      }
+      if (suggestions.phoneNumber && (!phoneNumber || phoneNumber === '' || phoneNumber === 'Not set')) {
+        setPhoneNumber(suggestions.phoneNumber);
+      }
+      if (suggestions.country) {
+        setDefaultCountry(suggestions.country);
+      }
+      
+      console.log('Applied device suggestions:', suggestions);
+    } catch (error) {
+      console.log('Error applying device suggestions:', error);
+    } finally {
+      setSuggestionsLoading(false);
+    }
+  };
 
   // Handle phone number input
   const handlePhoneChange = (e) => {
@@ -777,6 +819,30 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
         {editingPersonalInfo ? (
           <>
             <Box sx={{ display: 'flex', flexDirection: 'column', mb: 3 }}>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                <Typography variant="h6" sx={{ color: 'text.primary', fontWeight: 600 }}>
+                  Personal Information
+                </Typography>
+                <Button
+                  variant="outlined"
+                  size="small"
+                  onClick={handleSmartAutoFill}
+                  disabled={suggestionsLoading}
+                  startIcon={suggestionsLoading ? 
+                    <i className="fas fa-spinner fa-spin" /> : 
+                    <i className="fas fa-magic" />
+                  }
+                  sx={{
+                    fontSize: '0.75rem',
+                    py: 0.5,
+                    px: 1.5,
+                    borderRadius: 2,
+                    textTransform: 'none'
+                  }}
+                >
+                  {suggestionsLoading ? 'Filling...' : 'Auto-fill'}
+                </Button>
+              </Box>
               <Box sx={{ color: muiTheme.palette.primary.main, fontSize: '14px', mb: '4px' }}>
                 First Name*
               </Box>
@@ -837,7 +903,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
                 label="Phone Number"
                 value={phoneNumber != "Not set" ? phoneNumber : ""}
                 onChange={(value) => setPhoneNumber(value)}
-                defaultCountry="US"
+                defaultCountry={defaultCountry}
                 forceCallingCode
                 continents={['EU', 'OC', 'NA']}
                 fullWidth
@@ -851,13 +917,9 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
                     autoComplete: 'tel',
                   }
                 }}
-                slotProps={{
-                  textField: {
-                    inputProps: {
-                      autoComplete: 'tel',
-                      'data-lpignore': 'false'
-                    }
-                  }
+                inputProps={{
+                  autoComplete: 'tel',
+                  'data-lpignore': 'false'
                 }}
               />
 
