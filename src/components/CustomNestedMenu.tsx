@@ -1,9 +1,9 @@
 import React, { useState, useCallback, useMemo } from 'react';
 import { Box, Typography, Collapse, IconButton } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
-// Temporary fix for icon imports - using text placeholders
-const ExpandMoreIcon = () => <span>▼</span>;
-const ChevronRightIcon = () => <span>▶</span>;
+// Simple icon components
+const ExpandMoreIcon = ({ sx }: any) => <span style={{ fontSize: '16px' }}>▼</span>;
+const ChevronRightIcon = ({ sx }: any) => <span style={{ fontSize: '16px' }}>▶</span>;
 
 interface NestedMenuItem {
   id: string;

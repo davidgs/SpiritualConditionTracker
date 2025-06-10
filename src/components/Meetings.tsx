@@ -6,10 +6,10 @@ import { useTheme } from '@mui/material/styles';
 import { useAppTheme } from '../contexts/MuiThemeProvider';
 import { formatDay, formatTimeByPreference } from '../utils/dateUtils';
 import { Paper, Box, Typography, IconButton, Chip, Alert } from '@mui/material';
-// Temporary fix for icon imports
-const AddIcon = () => <span>+</span>;
-const EventIcon = () => <span>📅</span>;
-const LocationOnIcon = () => <span>📍</span>;
+// Simple icon components
+const AddIcon = ({ sx }: any) => <span style={{ fontSize: '18px' }}>+</span>;
+const EventIcon = ({ sx }: any) => <span style={{ fontSize: '16px' }}>📅</span>;
+const LocationOnIcon = ({ sx }: any) => <span style={{ fontSize: '16px' }}>📍</span>;
 
 export default function Meetings({ setCurrentView, meetings = [], onSave, onDelete, user }) {
   // Get dark mode from theme context
