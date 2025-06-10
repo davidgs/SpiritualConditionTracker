@@ -34,6 +34,7 @@
       const [editingMeeting, setEditingMeeting] = useState<number | null>(null);
       const [dayMenuAnchor, setDayMenuAnchor] = useState<null | HTMLElement>(null);
       const [locationMenuAnchor, setLocationMenuAnchor] = useState<null | HTMLElement>(null);
+      const [formatMenuAnchor, setFormatMenuAnchor] = useState<null | HTMLElement>(null);
 
       const days = [
         { key: 'sunday', label: 'Sunday' },
@@ -480,15 +481,16 @@
 
               <Typography 
                 onClick={(e) => setLocationMenuAnchor(e.currentTarget)}
-                sx={{ 
-                  fontSize: '1.2rem',
-                  cursor: 'pointer',
-                  '&:hover': {
-                    textDecoration: 'underline',
-                  },
+                  sx={(theme) => ({ 
+                    textAlign: 'left',
+                    color: theme.palette.primary.main,
+                    cursor: 'pointer',
+                    '&:hover': {
+                      textDecoration: 'underline',
+                    },
                 }}
               >
-                {newMeeting.locationType ? (meetingLocationTypes.find(l => l.value === newMeeting.locationType)?.icon || '🏢') : '---'}
+                {newMeeting.locationType ? (meetingLocationTypes.find(l => l.value === newMeeting.locationType)?.icon || '🏢') : 'Type'}
               </Typography>
               <Menu
                 anchorEl={locationMenuAnchor}
@@ -511,8 +513,31 @@
                 size="small"
                 color={newMeeting.format ? "primary" : "default"}
                 variant={newMeeting.format ? "filled" : "outlined"}
-                sx={{ fontSize: '0.7rem', height: '24px' }}
+                onClick={(e) => setFormatMenuAnchor(e.currentTarget)}
+                sx={{ 
+                  fontSize: '0.7rem', 
+                  height: '24px',
+                  cursor: 'pointer',
+                  '&:hover': {
+                    opacity: 0.8,
+                  },
+                }}
               />
+              <Menu
+                anchorEl={formatMenuAnchor}
+                open={Boolean(formatMenuAnchor)}
+                onClose={() => setFormatMenuAnchor(null)}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+              >
+                {meetingFormats.map((format) => (
+                  <MenuItem key={format.value} onClick={() => {
+                    setNewMeeting({ ...newMeeting, format: format.value });
+                    setFormatMenuAnchor(null);
+                  }}>
+                    {format.label}
+                  </MenuItem>
+                ))}
+              </Menu>
 
               <Chip 
                 label={newMeeting.access ? newMeeting.access.charAt(0).toUpperCase() + newMeeting.access.slice(1) : '---'}
