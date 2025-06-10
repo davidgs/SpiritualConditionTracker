@@ -1,23 +1,17 @@
 import React, { useState } from 'react';
-import {
-  Box,
-  Button,
-  Chip,
+import { 
+  Box, 
+  Typography, 
+  Button, 
+  Chip, 
   Paper,
-  SpeedDial,
-  SpeedDialAction,
-  SpeedDialIcon,
-  Typography
+  Popover,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemText
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
-import {
-  Today as TodayIcon,
-  Schedule as ScheduleIcon,
-  Place as PlaceIcon,
-  Group as GroupIcon,
-  Lock as LockIcon,
-  LockOpen as LockOpenIcon
-} from '@mui/icons-material';
 
 interface ScheduleItem {
   day: string;
@@ -33,22 +27,22 @@ interface TreeMeetingScheduleProps {
   use24HourFormat?: boolean;
 }
 
-export default function TreeMeetingSchedule({ 
+const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({ 
   schedule, 
   onChange, 
   use24HourFormat = false 
-}: TreeMeetingScheduleProps) {
+}) => {
   const muiTheme = useTheme();
   
-  // State for new meeting creation
+  // State for the step-by-step meeting creation
+  const [currentStep, setCurrentStep] = useState<'day' | 'time' | 'format' | 'location' | 'access' | 'complete'>('day');
   const [newMeeting, setNewMeeting] = useState<Partial<ScheduleItem>>({ time: '19:00' });
-  
-  // SpeedDial state
-  const [activeSpeedDial, setActiveSpeedDial] = useState<{
-    type: string;
-    index?: number;
-    anchorEl?: HTMLElement;
-  } | null>(null);
+  const [editingMeeting, setEditingMeeting] = useState<number | null>(null);
+
+  // Popover state for anchored options
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+  const [popoverType, setPopoverType] = useState<string>('');
+  const [editingIndex, setEditingIndex] = useState<number | undefined>();
 
   const days = [
     { key: 'sunday', label: 'Sunday' },
@@ -80,33 +74,39 @@ export default function TreeMeetingSchedule({
     { value: 'closed', label: 'Closed' }
   ];
 
-  // Handle clicking on elements to show SpeedDial
-  const handleElementClick = (type: string, event: React.MouseEvent, index?: number) => {
-    event.preventDefault();
-    setActiveSpeedDial({
-      type,
-      index,
-      anchorEl: event.currentTarget as HTMLElement
-    });
+  const timeOptions = [
+    '06:00', '06:30', '07:00', '07:30', '08:00', '08:30', '09:00', '09:30',
+    '10:00', '10:30', '11:00', '11:30', '12:00', '12:30', '13:00', '13:30',
+    '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:30',
+    '18:00', '18:30', '19:00', '19:30', '20:00', '20:30', '21:00', '21:30', '22:00'
+  ];
+
+  // Handle clicking on elements to show popover
+  const handleElementClick = (event: React.MouseEvent<HTMLElement>, type: string, index?: number) => {
+    setAnchorEl(event.currentTarget);
+    setPopoverType(type);
+    setEditingIndex(index);
   };
 
-  // Handle SpeedDial action selection
-  const handleSpeedDialSelect = (value: string) => {
-    if (!activeSpeedDial) return;
-    
-    const { type, index } = activeSpeedDial;
-    
-    if (index !== undefined) {
+  const handlePopoverClose = () => {
+    setAnchorEl(null);
+    setPopoverType('');
+    setEditingIndex(undefined);
+  };
+
+  // Handle selection from popover
+  const handleSelection = (value: string) => {
+    if (editingIndex !== undefined) {
       // Editing existing schedule item
       const updatedSchedule = [...schedule];
-      updatedSchedule[index] = {
-        ...updatedSchedule[index],
-        [type]: value
+      updatedSchedule[editingIndex] = {
+        ...updatedSchedule[editingIndex],
+        [popoverType]: value
       };
       onChange(updatedSchedule);
     } else {
       // Creating new meeting
-      const updatedMeeting = { ...newMeeting, [type]: value };
+      const updatedMeeting = { ...newMeeting, [popoverType]: value };
       setNewMeeting(updatedMeeting);
       
       // Auto-complete if all fields are filled
@@ -114,50 +114,17 @@ export default function TreeMeetingSchedule({
           updatedMeeting.locationType && updatedMeeting.access) {
         onChange([...schedule, updatedMeeting as ScheduleItem]);
         setNewMeeting({ time: '19:00' });
+        setCurrentStep('day');
       }
     }
     
-    setActiveSpeedDial(null);
+    handlePopoverClose();
   };
 
   // Remove schedule item
   const removeScheduleItem = (day: string, time: string) => {
     const updatedSchedule = schedule.filter(item => !(item.day === day && item.time === time));
     onChange(updatedSchedule);
-  };
-
-  // Get SpeedDial actions based on type
-  const getSpeedDialActions = () => {
-    if (!activeSpeedDial) return [];
-    
-    switch (activeSpeedDial.type) {
-      case 'day':
-        return days.map(day => ({
-          icon: <TodayIcon />,
-          name: day.label,
-          onClick: () => handleSpeedDialSelect(day.key)
-        }));
-      case 'format':
-        return meetingFormats.map(format => ({
-          icon: <GroupIcon />,
-          name: format.label,
-          onClick: () => handleSpeedDialSelect(format.value)
-        }));
-      case 'locationType':
-        return meetingLocationTypes.map(location => ({
-          icon: <PlaceIcon />,
-          name: location.label,
-          onClick: () => handleSpeedDialSelect(location.value)
-        }));
-      case 'access':
-        return accessTypes.map(access => ({
-          icon: access.value === 'open' ? <LockOpenIcon /> : <LockIcon />,
-          name: access.label,
-          onClick: () => handleSpeedDialSelect(access.value)
-        }));
-      default:
-        return [];
-    }
   };
 
   const formatTime = (time: string) => {
@@ -169,8 +136,29 @@ export default function TreeMeetingSchedule({
     return `${displayHour}:${minute} ${period}`;
   };
 
+  // Get options for current popover
+  const getPopoverOptions = () => {
+    switch (popoverType) {
+      case 'day':
+        return days.map(day => ({ value: day.key, label: day.label }));
+      case 'time':
+        return timeOptions.map(time => ({ value: time, label: formatTime(time) }));
+      case 'format':
+        return meetingFormats;
+      case 'locationType':
+        return meetingLocationTypes.map(location => ({ 
+          value: location.value, 
+          label: `${location.icon} ${location.label}` 
+        }));
+      case 'access':
+        return accessTypes;
+      default:
+        return [];
+    }
+  };
+
   return (
-    <Box sx={{ mb: 2, position: 'relative' }}>
+    <Box sx={{ mb: 2 }}>
       {/* Display existing meetings */}
       {schedule.map((item, index) => (
         <Box
@@ -186,7 +174,7 @@ export default function TreeMeetingSchedule({
         >
           <Button
             variant="text"
-            onClick={(e) => handleElementClick('day', e, index)}
+            onClick={(e) => handleElementClick(e, 'day', index)}
             sx={{ fontWeight: 500, minWidth: '60px', textAlign: 'left', fontSize: '0.85rem', px: 0.5 }}
           >
             {days.find(d => d.key === item.day)?.label || item.day}
@@ -194,7 +182,7 @@ export default function TreeMeetingSchedule({
           
           <Button
             variant="text"
-            onClick={(e) => handleElementClick('time', e, index)}
+            onClick={(e) => handleElementClick(e, 'time', index)}
             sx={{ minWidth: '60px', textAlign: 'left', fontSize: '0.85rem', px: 0.5 }}
           >
             {formatTime(item.time)}
@@ -202,7 +190,7 @@ export default function TreeMeetingSchedule({
           
           <Button
             variant="text"
-            onClick={(e) => handleElementClick('locationType', e, index)}
+            onClick={(e) => handleElementClick(e, 'locationType', index)}
             sx={{ fontSize: '1rem', minWidth: 'auto', px: 0.5 }}
           >
             {meetingLocationTypes.find(l => l.value === item.locationType)?.icon || '🏢'}
@@ -212,7 +200,7 @@ export default function TreeMeetingSchedule({
             label={item.format ? item.format.charAt(0).toUpperCase() + item.format.slice(1).replace('_', ' ') : 'Unknown'}
             size="small"
             color="primary"
-            onClick={(e) => handleElementClick('format', e, index)}
+            onClick={(e) => handleElementClick(e, 'format', index)}
             sx={{ fontSize: '0.65rem', height: '20px', cursor: 'pointer', mx: 0.25 }}
           />
           
@@ -220,7 +208,7 @@ export default function TreeMeetingSchedule({
             label={item.access ? item.access.charAt(0).toUpperCase() + item.access.slice(1) : 'Unknown'}
             size="small"
             color={item.access === 'open' ? 'success' : 'error'}
-            onClick={(e) => handleElementClick('access', e, index)}
+            onClick={(e) => handleElementClick(e, 'access', index)}
             sx={{ fontSize: '0.65rem', height: '20px', cursor: 'pointer', mx: 0.25 }}
           />
           
@@ -243,55 +231,51 @@ export default function TreeMeetingSchedule({
         </Box>
       ))}
 
-      {/* Meeting preview for new meeting creation */}
-      {(Object.keys(newMeeting).length > 0 || schedule.length === 0) && (
+      {/* Meeting preview with clickable sections for new meeting creation */}
+      {(Object.keys(newMeeting).length > 0 || (schedule.length === 0 && editingMeeting === null)) && (
         <Paper 
           elevation={1} 
           sx={{ 
-            p: 2, 
+            p: 1.5, 
             mb: 2, 
             borderRadius: 2,
             backgroundColor: muiTheme.palette.grey[50],
             border: `1px solid ${muiTheme.palette.divider}`
           }}
         >
-          <Typography variant="h6" sx={{ mb: 2, fontSize: '1rem', fontWeight: 500 }}>
+          <Typography variant="h6" sx={{ mb: 1, fontSize: '0.9rem', fontWeight: 500 }}>
             Meeting Schedule
           </Typography>
           
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 1 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, flexWrap: 'wrap' }}>
             {/* Day Section */}
             <Button
               variant="outlined"
-              onClick={(e) => handleElementClick('day', e)}
+              onClick={(e) => handleElementClick(e, 'day')}
               sx={{
-                minWidth: '60px',
-                height: '32px',
-                fontSize: '0.75rem',
+                minWidth: '45px',
+                height: '28px',
+                fontSize: '0.7rem',
                 borderColor: muiTheme.palette.divider,
                 color: newMeeting.day ? muiTheme.palette.text.primary : muiTheme.palette.text.secondary,
                 backgroundColor: newMeeting.day ? muiTheme.palette.primary.light : 'transparent',
-                '&:hover': {
-                  backgroundColor: muiTheme.palette.action.hover
-                }
+                px: 1
               }}
             >
-              {newMeeting.day ? days.find(d => d.key === newMeeting.day)?.label : '---'}
+              {newMeeting.day ? days.find(d => d.key === newMeeting.day)?.label?.slice(0, 3) : '---'}
             </Button>
 
             {/* Time Section */}
             <Button
               variant="outlined"
-              onClick={(e) => handleElementClick('time', e)}
+              onClick={(e) => handleElementClick(e, 'time')}
               sx={{
                 minWidth: '60px',
-                height: '32px',
-                fontSize: '0.75rem',
+                height: '28px',
+                fontSize: '0.7rem',
                 borderColor: muiTheme.palette.divider,
                 color: muiTheme.palette.text.primary,
-                '&:hover': {
-                  backgroundColor: muiTheme.palette.action.hover
-                }
+                px: 1
               }}
             >
               {formatTime(newMeeting.time || '19:00')}
@@ -300,16 +284,14 @@ export default function TreeMeetingSchedule({
             {/* Location Type Section */}
             <Button
               variant="outlined"
-              onClick={(e) => handleElementClick('locationType', e)}
+              onClick={(e) => handleElementClick(e, 'locationType')}
               sx={{
-                minWidth: '40px',
-                height: '32px',
-                fontSize: '1rem',
+                minWidth: '32px',
+                height: '28px',
+                fontSize: '0.9rem',
                 borderColor: muiTheme.palette.divider,
                 backgroundColor: newMeeting.locationType ? muiTheme.palette.primary.light : 'transparent',
-                '&:hover': {
-                  backgroundColor: muiTheme.palette.action.hover
-                }
+                px: 0.5
               }}
             >
               {newMeeting.locationType ? 
@@ -326,10 +308,10 @@ export default function TreeMeetingSchedule({
               }
               size="small"
               color="primary"
-              onClick={(e) => handleElementClick('format', e)}
+              onClick={(e) => handleElementClick(e, 'format')}
               sx={{ 
                 fontSize: '0.65rem', 
-                height: '32px', 
+                height: '28px', 
                 cursor: 'pointer',
                 backgroundColor: newMeeting.format ? muiTheme.palette.primary.main : muiTheme.palette.grey[300]
               }}
@@ -343,10 +325,10 @@ export default function TreeMeetingSchedule({
               }
               size="small"
               color={newMeeting.access === 'closed' ? 'error' : 'success'}
-              onClick={(e) => handleElementClick('access', e)}
+              onClick={(e) => handleElementClick(e, 'access')}
               sx={{ 
                 fontSize: '0.65rem', 
-                height: '32px', 
+                height: '28px', 
                 cursor: 'pointer',
                 backgroundColor: newMeeting.access === 'closed' ? 
                   muiTheme.palette.error.main : 
@@ -359,31 +341,43 @@ export default function TreeMeetingSchedule({
         </Paper>
       )}
 
-      {/* SpeedDial for options */}
-      {activeSpeedDial && (
-        <SpeedDial
-          ariaLabel="Meeting options"
-          sx={{
-            position: 'fixed',
-            bottom: 16,
-            right: 16,
-            zIndex: 1300
-          }}
-          icon={<SpeedDialIcon />}
-          open={true}
-          onClose={() => setActiveSpeedDial(null)}
-          direction="up"
-        >
-          {getSpeedDialActions().map((action) => (
-            <SpeedDialAction
-              key={action.name}
-              icon={action.icon}
-              tooltipTitle={action.name}
-              onClick={action.onClick}
-            />
+      {/* Anchored Popover for options */}
+      <Popover
+        open={Boolean(anchorEl)}
+        anchorEl={anchorEl}
+        onClose={handlePopoverClose}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'center',
+        }}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'center',
+        }}
+        PaperProps={{
+          sx: {
+            maxHeight: 300,
+            minWidth: 150
+          }
+        }}
+      >
+        <List dense>
+          {getPopoverOptions().map((option) => (
+            <ListItem key={option.value} disablePadding>
+              <ListItemButton onClick={() => handleSelection(option.value)}>
+                <ListItemText 
+                  primary={option.label}
+                  primaryTypographyProps={{
+                    fontSize: '0.875rem'
+                  }}
+                />
+              </ListItemButton>
+            </ListItem>
           ))}
-        </SpeedDial>
-      )}
+        </List>
+      </Popover>
     </Box>
   );
-}
+};
+
+export default TreeMeetingSchedule;
