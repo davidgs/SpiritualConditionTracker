@@ -617,21 +617,35 @@
           )}
 
           {/* Time Picker Modal */}
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <MobileTimePicker
-              open={isTimePickerOpen}
-              onClose={() => setIsTimePickerOpen(false)}
-              value={newMeeting.time ? dayjs(`2000-01-01T${newMeeting.time}`) : dayjs(`2000-01-01T19:00`)}
-              onChange={(newTime) => {
-                if (newTime) {
-                  const timeString = newTime.format('HH:mm');
-                  setNewMeeting({ ...newMeeting, time: timeString });
-                }
-                setIsTimePickerOpen(false);
-              }}
-              ampm={!use24HourFormat}
-            />
-          </LocalizationProvider>
+          {isTimePickerOpen && (
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <MobileTimePicker
+                value={dayjs(`2022-04-17T${newMeeting.time || '19:00'}`)}
+                ampm={!use24HourFormat}
+                minutesStep={5}
+                open={true}
+                onChange={(value) => {
+                  if (value && value.isValid()) {
+                    const timeString = value.format('HH:mm');
+                    setNewMeeting(prev => ({ ...prev, time: timeString }));
+                  }
+                }}
+                onAccept={(value) => {
+                  const timeString = (value && value.isValid()) ? value.format('HH:mm') : (newMeeting.time || '19:00');
+                  setNewMeeting(prev => ({ ...prev, time: timeString }));
+                  setIsTimePickerOpen(false);
+                }}
+                onClose={() => {
+                  setIsTimePickerOpen(false);
+                }}
+                slotProps={{
+                  textField: {
+                    style: { display: 'none' }
+                  }
+                }}
+              />
+            </LocalizationProvider>
+          )}
         </Box>
       );
     };
