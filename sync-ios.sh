@@ -3,6 +3,9 @@
 # Build and sync script for iOS with dual target support
 # This handles syncing assets to both the default Capacitor location and your renamed iOS target
 
+echo "Updating from git ..."
+git pull
+
 echo "Building project..."
 npm run build
 
