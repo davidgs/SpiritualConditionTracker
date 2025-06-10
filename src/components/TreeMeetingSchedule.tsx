@@ -438,7 +438,7 @@
                   color: `${theme.palette.primary.main}`,
                 })}
               >
-                {newMeeting.day ? (days.find(d => d.key === newMeeting.day)?.label || newMeeting.day) : '---'}
+                {newMeeting.day ? (days.find(d => d.key === newMeeting.day)?.label || newMeeting.day) : 'Day'}
               </Typography>
               <Menu
                 anchorEl={dayMenuAnchor}
@@ -449,7 +449,6 @@
                 {days.map((day) => (
                   <MenuItem key={day.key} onClick={() => {
                     setNewMeeting({ ...newMeeting, day: day.key, time: '19:00' });
-                    setCurrentStep('time');
                     setDayMenuAnchor(null);
                   }}>
                     {day.label}
@@ -457,11 +456,18 @@
                 ))}
               </Menu>
 
-              <Typography variant="body2" sx={(theme) => ({ 
-                minWidth: '70px', 
-                textAlign: 'left',
-                color: theme.palette.text.primary
-              })}>
+              <Typography 
+                variant="body2" 
+                onClick={() => setCurrentStep('time')}
+                sx={(theme) => ({ 
+                  minWidth: '70px', 
+                  textAlign: 'left',
+                  color: theme.palette.primary.main,
+                  cursor: 'pointer',
+                  '&:hover': {
+                    textDecoration: 'underline',
+                  },
+                })}>
                 {newMeeting.time ? (use24HourFormat ? newMeeting.time : (() => {
                   const [hour, minute] = newMeeting.time.split(':');
                   const hourNum = parseInt(hour);
