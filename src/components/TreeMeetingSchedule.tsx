@@ -38,6 +38,7 @@
       const [locationMenuAnchor, setLocationMenuAnchor] = useState<null | HTMLElement>(null);
       const [formatMenuAnchor, setFormatMenuAnchor] = useState<null | HTMLElement>(null);
       const [accessMenuAnchor, setAccessMenuAnchor] = useState<null | HTMLElement>(null);
+      const [isTimePickerOpen, setIsTimePickerOpen] = useState(false);
 
       const days = [
         { key: 'sunday', label: 'Sunday' },
@@ -463,7 +464,7 @@
 
               <Typography 
                 variant="body2" 
-                onClick={() => setCurrentStep('time')}
+                onClick={() => setIsTimePickerOpen(true)}
                 sx={(theme) => ({ 
                   minWidth: '70px', 
                   textAlign: 'left',
@@ -614,6 +615,23 @@
               </Button>
             </Box>
           )}
+
+          {/* Time Picker Modal */}
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <MobileTimePicker
+              open={isTimePickerOpen}
+              onClose={() => setIsTimePickerOpen(false)}
+              value={newMeeting.time ? dayjs(`2000-01-01T${newMeeting.time}`) : dayjs(`2000-01-01T19:00`)}
+              onChange={(newTime) => {
+                if (newTime) {
+                  const timeString = newTime.format('HH:mm');
+                  setNewMeeting({ ...newMeeting, time: timeString });
+                }
+                setIsTimePickerOpen(false);
+              }}
+              ampm={!use24HourFormat}
+            />
+          </LocalizationProvider>
         </Box>
       );
     };
