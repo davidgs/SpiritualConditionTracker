@@ -512,8 +512,26 @@
               >
                 {days.map((day) => (
                   <MenuItem key={day.key} onClick={() => {
-                    setNewMeeting({ ...newMeeting, day: day.key, time: '19:00' });
+                    const updatedMeeting = { ...newMeeting, day: day.key, time: newMeeting.time || '19:00' };
+                    setNewMeeting(updatedMeeting);
                     setDayMenuAnchor(null);
+                    
+                    // Auto-complete meeting if all fields are filled
+                    if (updatedMeeting.day && updatedMeeting.time && updatedMeeting.format && updatedMeeting.locationType && updatedMeeting.access) {
+                      const completeMeeting: ScheduleItem = {
+                        day: updatedMeeting.day,
+                        time: updatedMeeting.time,
+                        format: updatedMeeting.format,
+                        locationType: updatedMeeting.locationType,
+                        access: updatedMeeting.access
+                      };
+                      const newSchedule = [...schedule, completeMeeting];
+                      onChange(newSchedule);
+                      
+                      // Reset for next meeting
+                      setNewMeeting({});
+                      setCurrentStep('day');
+                    }
                   }}>
                     {day.label}
                   </MenuItem>
@@ -561,8 +579,26 @@
               >
                 {meetingLocationTypes.map((location) => (
                   <MenuItem key={location.value} onClick={() => {
-                    setNewMeeting({ ...newMeeting, locationType: location.value });
+                    const updatedMeeting = { ...newMeeting, locationType: location.value };
+                    setNewMeeting(updatedMeeting);
                     setLocationMenuAnchor(null);
+                    
+                    // Auto-complete meeting if all fields are filled
+                    if (updatedMeeting.day && updatedMeeting.time && updatedMeeting.format && updatedMeeting.locationType && updatedMeeting.access) {
+                      const completeMeeting: ScheduleItem = {
+                        day: updatedMeeting.day,
+                        time: updatedMeeting.time,
+                        format: updatedMeeting.format,
+                        locationType: updatedMeeting.locationType,
+                        access: updatedMeeting.access
+                      };
+                      const newSchedule = [...schedule, completeMeeting];
+                      onChange(newSchedule);
+                      
+                      // Reset for next meeting
+                      setNewMeeting({});
+                      setCurrentStep('day');
+                    }
                   }}>
                     {location.icon} {location.label}
                   </MenuItem>
@@ -592,8 +628,26 @@
               >
                 {meetingFormats.map((format) => (
                   <MenuItem key={format.value} onClick={() => {
-                    setNewMeeting({ ...newMeeting, format: format.value });
+                    const updatedMeeting = { ...newMeeting, format: format.value };
+                    setNewMeeting(updatedMeeting);
                     setFormatMenuAnchor(null);
+                    
+                    // Auto-complete meeting if all fields are filled
+                    if (updatedMeeting.day && updatedMeeting.time && updatedMeeting.format && updatedMeeting.locationType && updatedMeeting.access) {
+                      const completeMeeting: ScheduleItem = {
+                        day: updatedMeeting.day,
+                        time: updatedMeeting.time,
+                        format: updatedMeeting.format,
+                        locationType: updatedMeeting.locationType,
+                        access: updatedMeeting.access
+                      };
+                      const newSchedule = [...schedule, completeMeeting];
+                      onChange(newSchedule);
+                      
+                      // Reset for next meeting
+                      setNewMeeting({});
+                      setCurrentStep('day');
+                    }
                   }}>
                     {format.label}
                   </MenuItem>
@@ -690,8 +744,26 @@
                 }}
                 onAccept={(value) => {
                   const timeString = (value && value.isValid()) ? value.format('HH:mm') : (newMeeting.time || '19:00');
-                  setNewMeeting(prev => ({ ...prev, time: timeString }));
+                  const updatedMeeting = { ...newMeeting, time: timeString };
+                  setNewMeeting(updatedMeeting);
                   setIsTimePickerOpen(false);
+                  
+                  // Auto-complete meeting if all fields are filled
+                  if (updatedMeeting.day && updatedMeeting.time && updatedMeeting.format && updatedMeeting.locationType && updatedMeeting.access) {
+                    const completeMeeting: ScheduleItem = {
+                      day: updatedMeeting.day,
+                      time: updatedMeeting.time,
+                      format: updatedMeeting.format,
+                      locationType: updatedMeeting.locationType,
+                      access: updatedMeeting.access
+                    };
+                    const newSchedule = [...schedule, completeMeeting];
+                    onChange(newSchedule);
+                    
+                    // Reset for next meeting
+                    setNewMeeting({});
+                    setCurrentStep('day');
+                  }
                 }}
                 onClose={() => {
                   setIsTimePickerOpen(false);
