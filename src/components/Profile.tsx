@@ -12,6 +12,7 @@ import { formatDateForDisplay } from '../utils/dateUtils';
 import { Capacitor } from '@capacitor/core';
 import { formatPhoneNumber, formatPhoneNumberForInput } from '../utils/phoneUtils';
 import { MuiTelInput } from 'mui-tel-input';
+import { getDeviceProfileSuggestions, getLocationBasedPhoneFormat, ProfileSuggestions } from '../utils/deviceSuggestions';
 
 import Button from '@mui/material/Button';
 import {
@@ -88,6 +89,8 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
   const [qrCodeOpen, setQrCodeOpen] = useState(false);
   const [qrCodeData, setQrCodeData] = useState('');
   const [qrCodeTitle, setQrCodeTitle] = useState('');
+  const [suggestionsLoading, setSuggestionsLoading] = useState(false);
+  const [defaultCountry, setDefaultCountry] = useState('US');
 
   // Load user data ONLY when user ID changes (not on every user object change)
   useEffect(() => {
@@ -786,6 +789,11 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
                 variant="outlined"
                 size="medium"
                 margin="none"
+                autoComplete="given-name"
+                inputProps={{
+                  autoComplete: "given-name",
+                  'data-lpignore': 'false'
+                }}
                 sx={{
                   mb: 2,
                   '& .MuiOutlinedInput-root': {
@@ -807,6 +815,11 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
                 variant="outlined"
                 size="medium"
                 margin="none"
+                autoComplete="family-name"
+                inputProps={{
+                  autoComplete: "family-name",
+                  'data-lpignore': 'false'
+                }}
                 sx={{
                   mb: 2,
                   '& .MuiOutlinedInput-root': {
@@ -833,6 +846,17 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
                   '& .MuiInputBase-root': {
                     height: '56px',
                     borderRadius: '8px',
+                  },
+                  '& input': {
+                    autoComplete: 'tel',
+                  }
+                }}
+                slotProps={{
+                  textField: {
+                    inputProps: {
+                      autoComplete: 'tel',
+                      'data-lpignore': 'false'
+                    }
                   }
                 }}
               />
@@ -846,6 +870,11 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
                 type="email"
                 size="medium"
                 margin="none"
+                autoComplete="email"
+                inputProps={{
+                  autoComplete: "email",
+                  'data-lpignore': 'false'
+                }}
                 sx={{
                   mb: 2,
                   '& .MuiOutlinedInput-root': {
