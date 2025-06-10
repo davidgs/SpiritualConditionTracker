@@ -572,34 +572,7 @@
             </Box>
           )}
 
-          {/* Tree structure for day selection, then step-by-step flow */}
-          {currentStep === 'day' && editingMeeting === null && (
-            <CustomNestedMenu 
-              items={[
-                {
-                  id: 'select-day',
-                  label: '+ Select Day',
-                  color: 'primary.main',
-                  fontWeight: 500,
-                  indentLevel: 0,
-                  children: days.map(day => ({
-                    id: `day-${day.key}`,
-                    label: day.label,
-                    color: 'text.primary',
-                    fontWeight: 500,
-                    indentLevel: 1,
-                    onClick: () => {
-                      setNewMeeting({ ...newMeeting, day: day.key });
-                      setCurrentStep('time');
-                    },
-                    isExpandable: false
-                  })),
-                  isExpandable: true
-                }
-              ]}
-              onActionComplete={() => {}}
-            />
-          )}
+
 
           {/* Step-by-step selectors after day is chosen */}
           {currentStep !== 'day' && editingMeeting === null && (
