@@ -435,8 +435,7 @@
                   fontWeight: 500,
                   minWidth: '70px',
                   textAlign: 'left',
-                  color: `${theme.palette.text.primary}`,
-                  textDecoration: 'underline',
+                  color: `${theme.palette.primary.main}`,
                 })}
               >
                 {newMeeting.day ? (days.find(d => d.key === newMeeting.day)?.label || newMeeting.day) : '---'}
