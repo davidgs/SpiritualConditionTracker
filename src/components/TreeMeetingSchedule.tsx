@@ -40,6 +40,7 @@
       const [accessMenuAnchor, setAccessMenuAnchor] = useState<null | HTMLElement>(null);
       const [isTimePickerOpen, setIsTimePickerOpen] = useState(false);
 
+
       const days = [
         { key: 'sunday', label: 'Sunday' },
         { key: 'monday', label: 'Monday' },
@@ -339,32 +340,58 @@
 
       return (
         <Box sx={{ mb: 2 }}>
-          {/* Display existing meetings */}
+          {/* Display existing meetings using progressive display */}
           {schedule.map((item, index) => (
             <Box
               key={index}
-              sx={{ 
+              sx={(theme) => ({ 
                 display: 'flex', 
                 alignItems: 'center', 
-                gap: 0.5, 
-                py: 0.5,
-                borderBottom: '1px solid #eee',
-                mb: 1
-              }}
+                gap: 1, 
+                py: 1,
+                borderBottom: `1px solid ${theme.palette.divider}`,
+                mb: 2,
+                backgroundColor: theme.palette.action.hover,
+                borderRadius: 1,
+                px: 1
+              })}
             >
-              <Button
-                variant="text"
-                onClick={() => startEditingMeeting(index, 'day')}
-                sx={{ fontWeight: 500, minWidth: '60px', textAlign: 'left', fontSize: '0.85rem', px: 0.5 }}
+              <Typography
+                onClick={() => {
+                  // Load existing meeting into newMeeting for editing
+                  setNewMeeting(item);
+                  // Remove from schedule so it appears in progressive display
+                  const updatedSchedule = schedule.filter((_, i) => i !== index);
+                  onChange(updatedSchedule);
+                }}
+                sx={(theme) => ({
+                  cursor: 'pointer',
+                  display: 'inline',
+                  fontWeight: 500,
+                  minWidth: '70px',
+                  textAlign: 'left',
+                  color: `${theme.palette.primary.main}`,
+                })}
               >
                 {days.find(d => d.key === item.day)?.label || item.day}
-              </Button>
+              </Typography>
 
-              <Button
-                variant="text"
-                onClick={() => startEditingMeeting(index, 'time')}
-                sx={{ minWidth: '60px', textAlign: 'left', fontSize: '0.85rem', px: 0.5 }}
-              >
+              <Typography 
+                variant="body2" 
+                onClick={() => {
+                  setNewMeeting(item);
+                  const updatedSchedule = schedule.filter((_, i) => i !== index);
+                  onChange(updatedSchedule);
+                }}
+                sx={(theme) => ({ 
+                  minWidth: '70px', 
+                  textAlign: 'left',
+                  color: theme.palette.primary.main,
+                  cursor: 'pointer',
+                  '&:hover': {
+                    textDecoration: 'underline',
+                  },
+                })}>
                 {use24HourFormat ? item.time : (() => {
                   const [hour, minute] = item.time.split(':');
                   const hourNum = parseInt(hour);
@@ -372,30 +399,61 @@
                   const displayHour = hourNum === 0 ? 12 : hourNum > 12 ? hourNum - 12 : hourNum;
                   return `${displayHour}:${minute} ${period}`;
                 })()}
-              </Button>
+              </Typography>
 
-              <Button
-                variant="text"
-                onClick={() => startEditingMeeting(index, 'locationType')}
-                sx={{ fontSize: '1rem', minWidth: 'auto', px: 0.5 }}
+              <Typography 
+                onClick={() => {
+                  setNewMeeting(item);
+                  const updatedSchedule = schedule.filter((_, i) => i !== index);
+                  onChange(updatedSchedule);
+                }}
+                sx={{ 
+                  fontSize: '1.2rem',
+                  cursor: 'pointer',
+                  '&:hover': {
+                    textDecoration: 'underline',
+                  },
+                }}
               >
                 {meetingLocationTypes.find(l => l.value === item.locationType)?.icon || '🏢'}
-              </Button>
+              </Typography>
 
               <Chip 
-                label={item.format ? item.format.charAt(0).toUpperCase() + item.format.slice(1).replace('_', ' ') : 'Unknown'}
+                label={meetingFormats.find(f => f.value === item.format)?.label || item.format}
                 size="small"
                 color="primary"
-                onClick={() => startEditingMeeting(index, 'format')}
-                sx={{ fontSize: '0.65rem', height: '20px', cursor: 'pointer', mx: 0.25 }}
+                onClick={() => {
+                  setNewMeeting(item);
+                  const updatedSchedule = schedule.filter((_, i) => i !== index);
+                  onChange(updatedSchedule);
+                }}
+                sx={{ 
+                  fontSize: '0.7rem', 
+                  height: '24px',
+                  cursor: 'pointer',
+                  '&:hover': {
+                    opacity: 0.8,
+                  },
+                }}
               />
 
               <Chip 
-                label={item.access ? item.access.charAt(0).toUpperCase() + item.access.slice(1) : 'Unknown'}
+                label={meetingAccess.find(a => a.value === item.access)?.label || item.access}
                 size="small"
                 color={item.access === 'open' ? 'success' : 'error'}
-                onClick={() => startEditingMeeting(index, 'access')}
-                sx={{ fontSize: '0.65rem', height: '20px', cursor: 'pointer', mx: 0.25 }}
+                onClick={() => {
+                  setNewMeeting(item);
+                  const updatedSchedule = schedule.filter((_, i) => i !== index);
+                  onChange(updatedSchedule);
+                }}
+                sx={{ 
+                  fontSize: '0.7rem', 
+                  height: '24px',
+                  cursor: 'pointer',
+                  '&:hover': {
+                    opacity: 0.8,
+                  },
+                }}
               />
 
               <Button
@@ -646,6 +704,8 @@
               />
             </LocalizationProvider>
           )}
+
+
         </Box>
       );
     };
