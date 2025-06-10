@@ -55,7 +55,9 @@ module.exports = (env, argv) => {
       contexts: path.resolve(__dirname, 'src/contexts/'),
       styles: path.resolve(__dirname, 'styles/'),
       assets: path.resolve(__dirname, 'assets/'),
-    }
+    },
+    modules: ['node_modules'],
+    symlinks: false
   },
   optimization: {
       minimize: isProduction,
@@ -82,7 +84,7 @@ module.exports = (env, argv) => {
           },
         },
       },
-      runtimeChunk: 'single',
+      runtimeChunk: false,
     },
     plugins: [
       new HtmlWebpackPlugin({
