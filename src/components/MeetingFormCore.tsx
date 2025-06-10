@@ -84,6 +84,7 @@ export default function MeetingFormCore({
 
   // Helper function to check if meeting schedule is complete
   const isScheduleComplete = () => {
+    // Check if there's at least one complete meeting in the schedule
     return meetingSchedule.length > 0 && meetingSchedule.every(item => 
       item.day && item.time && item.format && item.locationType && item.access
     );

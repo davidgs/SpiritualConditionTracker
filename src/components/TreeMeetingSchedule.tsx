@@ -564,8 +564,26 @@
               >
                 {meetingAccess.map((access) => (
                   <MenuItem key={access.value} onClick={() => {
-                    setNewMeeting({ ...newMeeting, access: access.value });
+                    const updatedMeeting = { ...newMeeting, access: access.value };
+                    setNewMeeting(updatedMeeting);
                     setAccessMenuAnchor(null);
+                    
+                    // Auto-complete meeting if all fields are filled
+                    if (updatedMeeting.day && updatedMeeting.time && updatedMeeting.format && updatedMeeting.locationType && updatedMeeting.access) {
+                      const completeMeeting: ScheduleItem = {
+                        day: updatedMeeting.day,
+                        time: updatedMeeting.time,
+                        format: updatedMeeting.format,
+                        locationType: updatedMeeting.locationType,
+                        access: updatedMeeting.access
+                      };
+                      const newSchedule = [...schedule, completeMeeting];
+                      onChange(newSchedule);
+                      
+                      // Reset for next meeting
+                      setNewMeeting({});
+                      setCurrentStep('day');
+                    }
                   }}>
                     {access.label}
                   </MenuItem>
@@ -576,12 +594,7 @@
 
 
 
-          {/* Step-by-step selectors after day is chosen */}
-          {currentStep !== 'day' && editingMeeting === null && (
-            <Box sx={{ mt: 2 }}>
-              {renderStepSelector()}
-            </Box>
-          )}
+
 
           {/* Editing existing meeting */}
           {editingMeeting !== null && (
