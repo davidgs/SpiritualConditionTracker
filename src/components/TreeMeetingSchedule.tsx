@@ -426,15 +426,23 @@
                 px: 1
               })}
             >
-              <FormControl fullWidth>
-                <InputLabel>Day</InputLabel>
+              <FormControl sx={{ minWidth: '120px' }}>
                 <Select
                   value={newMeeting.day || ''}
-                  label="Day"
                   displayEmpty
+                  size="small"
+                  variant="standard"
                   onChange={(e) => {
                     setNewMeeting({ ...newMeeting, day: e.target.value, time: '19:00' });
                     setCurrentStep('time');
+                  }}
+                  sx={{
+                    fontSize: '0.875rem',
+                    fontWeight: 500,
+                    '& .MuiSelect-select': {
+                      py: 0.5,
+                      color: 'text.primary'
+                    }
                   }}
                 >
                   <MenuItem value="">---</MenuItem>
