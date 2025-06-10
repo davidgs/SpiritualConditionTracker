@@ -1,5 +1,5 @@
     import React, { useState } from 'react';
-    import { Box, Typography, Button, Chip, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
+    import { Box, Typography, Button, Chip, Select, MenuItem, FormControl, InputLabel, Menu } from '@mui/material';
     import { useTheme } from '@mui/material/styles';
     import { MobileTimePicker } from '@mui/x-date-pickers/MobileTimePicker';
     import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -32,6 +32,7 @@
       const [currentStep, setCurrentStep] = useState<'day' | 'time' | 'format' | 'location' | 'access' | 'complete'>('day');
       const [newMeeting, setNewMeeting] = useState<Partial<ScheduleItem>>({ time: '19:00' });
       const [editingMeeting, setEditingMeeting] = useState<number | null>(null);
+      const [dayMenuAnchor, setDayMenuAnchor] = useState<null | HTMLElement>(null);
 
       const days = [
         { key: 'sunday', label: 'Sunday' },
@@ -426,33 +427,38 @@
                 px: 1
               })}
             >
-              <FormControl sx={{ minWidth: '120px' }}>
-                <Select
-                  value={newMeeting.day || ''}
-                  displayEmpty
-                  size="small"
-                  variant="standard"
-                  onChange={(e) => {
-                    setNewMeeting({ ...newMeeting, day: e.target.value, time: '19:00' });
+              <Typography
+                onClick={(e) => setDayMenuAnchor(e.currentTarget)}
+                sx={{
+                  cursor: 'pointer',
+                  display: 'inline',
+                  fontWeight: 500,
+                  minWidth: '70px',
+                  textAlign: 'left',
+                  color: 'text.primary',
+                  '&:hover': {
+                    textDecoration: 'underline',
+                  },
+                }}
+              >
+                {newMeeting.day ? (days.find(d => d.key === newMeeting.day)?.label || newMeeting.day) : '---'}
+              </Typography>
+              <Menu
+                anchorEl={dayMenuAnchor}
+                open={Boolean(dayMenuAnchor)}
+                onClose={() => setDayMenuAnchor(null)}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+              >
+                {days.map((day) => (
+                  <MenuItem key={day.key} onClick={() => {
+                    setNewMeeting({ ...newMeeting, day: day.key, time: '19:00' });
                     setCurrentStep('time');
-                  }}
-                  sx={{
-                    fontSize: '0.875rem',
-                    fontWeight: 500,
-                    '& .MuiSelect-select': {
-                      py: 0.5,
-                      color: 'text.primary'
-                    }
-                  }}
-                >
-                  <MenuItem value="">---</MenuItem>
-                  {days.map(day => (
-                    <MenuItem key={day.key} value={day.key}>
-                      {day.label}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
+                    setDayMenuAnchor(null);
+                  }}>
+                    {day.label}
+                  </MenuItem>
+                ))}
+              </Menu>
 
               <Typography variant="body2" sx={(theme) => ({ 
                 minWidth: '70px', 
