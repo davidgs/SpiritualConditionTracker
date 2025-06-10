@@ -82,6 +82,13 @@ export default function MeetingFormCore({
   // Stepper state
   const [activeStep, setActiveStep] = useState(0);
 
+  // Helper function to check if meeting schedule is complete
+  const isScheduleComplete = () => {
+    return meetingSchedule.length > 0 && meetingSchedule.every(item => 
+      item.day && item.time && item.format && item.locationType && item.access
+    );
+  };
+
   // Define steps for the stepper
   const steps = [
     {
@@ -318,7 +325,7 @@ export default function MeetingFormCore({
         )}
         
         {/* Show address fields for in-person and hybrid meetings */}
-        {meetingSchedule.some(item => item.locationType === 'in_person' || item.locationType === 'hybrid') && (
+        {isScheduleComplete() && meetingSchedule.some(item => item.locationType === 'in_person' || item.locationType === 'hybrid') && (
           <Box>
             <Box sx={{ color: muiTheme.palette.text.secondary, fontSize: '14px', mb: '4px' }}>
               Location
@@ -384,7 +391,7 @@ export default function MeetingFormCore({
         )}
 
         {/* Online URL Field - Show when any schedule item has online or hybrid location */}
-        {meetingSchedule.some(item => item.locationType === 'online' || item.locationType === 'hybrid') && (
+        {isScheduleComplete() && meetingSchedule.some(item => item.locationType === 'online' || item.locationType === 'hybrid') && (
           <Box>
             <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 'bold' }}>
               Online Meeting URL
@@ -403,8 +410,9 @@ export default function MeetingFormCore({
           </Box>
         )}
         
-        {/* Home Group Checkbox */}
-        <Box>
+        {/* Home Group Checkbox - Only show when schedule is complete */}
+        {isScheduleComplete() && (
+          <Box>
           <FormControlLabel
             control={
               <Checkbox
@@ -422,7 +430,8 @@ export default function MeetingFormCore({
           <Typography variant="body2" sx={{ mt: 0.5, ml: 4 }} color="text.secondary">
             Your Home Group is your primary AA group where you regularly attend and participate.
           </Typography>
-        </Box>
+          </Box>
+        )}
 
         {/* Action buttons */}
         {showButtons && (
