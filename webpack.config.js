@@ -8,7 +8,6 @@ module.exports = (env, argv) => {
   const shouldAnalyze = process.env.ANALYZE === 'true';
   
   return {
-    cache: false,
     entry: './src/index.tsx',
     output: {
       path: path.resolve(__dirname, 'dist'),
@@ -27,7 +26,7 @@ module.exports = (env, argv) => {
           loader: 'babel-loader',
           options: {
             configFile: './babel.config.js',
-            cacheDirectory: false
+            cacheDirectory: true
           }
         }
       },
@@ -84,7 +83,7 @@ module.exports = (env, argv) => {
           },
         },
       },
-      runtimeChunk: false,
+      runtimeChunk: 'single',
     },
     plugins: [
       new HtmlWebpackPlugin({
