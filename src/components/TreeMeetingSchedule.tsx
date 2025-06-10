@@ -1,11 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Box, Typography, Button, Chip, SpeedDial, SpeedDialAction, SpeedDialIcon, Paper } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { MobileTimePicker } from '@mui/x-date-pickers/MobileTimePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs from 'dayjs';
-import EventIcon from '@mui/icons-material/Event';
 
 interface ScheduleItem {
   day: string;
@@ -33,9 +32,10 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
   const [newMeeting, setNewMeeting] = useState<Partial<ScheduleItem>>({ time: '19:00' });
   const [editingMeeting, setEditingMeeting] = useState<number | null>(null);
   
-  // SpeedDial state
-  const [activeSpeedDial, setActiveSpeedDial] = useState<string | null>(null);
+  // SpeedDial state - track which schedule item has active SpeedDial
+  const [activeSpeedDial, setActiveSpeedDial] = useState<{type: string, scheduleIndex?: number} | null>(null);
   const [showTimePicker, setShowTimePicker] = useState(false);
+  const scheduleRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   const days = [
     { key: 'sunday', label: 'Sunday' },
@@ -118,35 +118,37 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
     }
   };
 
-  const handleSpeedDialSelect = (field: string, value: string) => {
-    const updatedMeeting = { ...newMeeting, [field]: value };
-    setNewMeeting(updatedMeeting);
-    setActiveSpeedDial(null);
+  const handleScheduleItemClick = (field: string, scheduleIndex?: number) => {
+    setActiveSpeedDial({ type: field, scheduleIndex });
+  };
+
+  const handleSpeedDialSelect = (value: string) => {
+    if (!activeSpeedDial) return;
     
-    // Move to next step or complete
-    const stepOrder = ['day', 'time', 'format', 'location', 'access'];
-    const currentIndex = stepOrder.indexOf(currentStep);
+    const { type, scheduleIndex } = activeSpeedDial;
     
-    if (editingMeeting !== null) {
-      // Update existing meeting
+    if (scheduleIndex !== undefined) {
+      // Editing existing schedule item
       const updatedSchedule = [...schedule];
-      updatedSchedule[editingMeeting] = updatedMeeting as ScheduleItem;
+      updatedSchedule[scheduleIndex] = {
+        ...updatedSchedule[scheduleIndex],
+        [type]: value
+      };
       onChange(updatedSchedule);
-      setEditingMeeting(null);
-      setNewMeeting({});
-      setCurrentStep('day');
-    } else if (currentIndex < stepOrder.length - 1) {
-      setCurrentStep(stepOrder[currentIndex + 1] as typeof currentStep);
     } else {
-      // Complete the meeting
+      // Creating new meeting
+      const updatedMeeting = { ...newMeeting, [type]: value };
+      setNewMeeting(updatedMeeting);
+      
+      // Auto-complete if all fields are filled
       if (updatedMeeting.day && updatedMeeting.time && updatedMeeting.format && 
           updatedMeeting.locationType && updatedMeeting.access) {
-        const completeMeeting: ScheduleItem = updatedMeeting as ScheduleItem;
-        onChange([...schedule, completeMeeting]);
-        setNewMeeting({});
-        setCurrentStep('day');
+        onChange([...schedule, updatedMeeting as ScheduleItem]);
+        setNewMeeting({ time: '19:00' });
       }
     }
+    
+    setActiveSpeedDial(null);
   };
 
   const renderMeetingPreview = () => {
