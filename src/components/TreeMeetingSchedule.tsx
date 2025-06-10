@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { Box, Typography, Button, Chip, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
+import { Box, Typography, Button, Chip, SpeedDial, SpeedDialAction, SpeedDialIcon, Paper } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { MobileTimePicker } from '@mui/x-date-pickers/MobileTimePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs from 'dayjs';
-import CustomNestedMenu from './CustomNestedMenu';
+import EventIcon from '@mui/icons-material/Event';
 
 interface ScheduleItem {
   day: string;
@@ -32,6 +32,10 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
   const [currentStep, setCurrentStep] = useState<'day' | 'time' | 'format' | 'location' | 'access' | 'complete'>('day');
   const [newMeeting, setNewMeeting] = useState<Partial<ScheduleItem>>({ time: '19:00' });
   const [editingMeeting, setEditingMeeting] = useState<number | null>(null);
+  
+  // SpeedDial state
+  const [activeSpeedDial, setActiveSpeedDial] = useState<string | null>(null);
+  const [showTimePicker, setShowTimePicker] = useState(false);
 
   const days = [
     { key: 'sunday', label: 'Sunday' },
@@ -114,219 +118,186 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
     }
   };
 
-  const renderStepSelector = () => {
-    if (currentStep === 'day') {
+  const handleSpeedDialSelect = (field: string, value: string) => {
+    const updatedMeeting = { ...newMeeting, [field]: value };
+    setNewMeeting(updatedMeeting);
+    setActiveSpeedDial(null);
+    
+    // Move to next step or complete
+    const stepOrder = ['day', 'time', 'format', 'location', 'access'];
+    const currentIndex = stepOrder.indexOf(currentStep);
+    
+    if (editingMeeting !== null) {
+      // Update existing meeting
+      const updatedSchedule = [...schedule];
+      updatedSchedule[editingMeeting] = updatedMeeting as ScheduleItem;
+      onChange(updatedSchedule);
+      setEditingMeeting(null);
+      setNewMeeting({});
+      setCurrentStep('day');
+    } else if (currentIndex < stepOrder.length - 1) {
+      setCurrentStep(stepOrder[currentIndex + 1] as typeof currentStep);
+    } else {
+      // Complete the meeting
+      if (updatedMeeting.day && updatedMeeting.time && updatedMeeting.format && 
+          updatedMeeting.locationType && updatedMeeting.access) {
+        const completeMeeting: ScheduleItem = updatedMeeting as ScheduleItem;
+        onChange([...schedule, completeMeeting]);
+        setNewMeeting({});
+        setCurrentStep('day');
+      }
+    }
+  };
+
+  const renderMeetingPreview = () => {
+    // Show preview when creating new meeting or if no meetings exist
+    if (Object.keys(newMeeting).length > 0 || (schedule.length === 0 && editingMeeting === null)) {
       return (
-        <Box sx={{ mb: 2 }}>
-          <Typography variant="h6" sx={{ mb: 1 }}>Select Day</Typography>
-          <FormControl fullWidth>
-            <InputLabel>Day</InputLabel>
-            <Select
-              value={newMeeting.day || ''}
-              label="Day"
-              onChange={(e) => {
-                setNewMeeting({ ...newMeeting, day: e.target.value, time: '19:00' });
-                setCurrentStep('time');
+        <Paper 
+          elevation={1} 
+          sx={{ 
+            p: 2, 
+            mb: 2, 
+            borderRadius: 2,
+            backgroundColor: muiTheme.palette.grey[50],
+            border: `1px solid ${muiTheme.palette.divider}`
+          }}
+        >
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 1 }}>
+            {/* Day Section */}
+            <Box 
+              onClick={() => {
+                setCurrentStep('day');
+                setActiveSpeedDial('day');
+              }}
+              sx={{ 
+                cursor: 'pointer', 
+                padding: '8px 12px', 
+                borderRadius: 1,
+                backgroundColor: newMeeting.day ? muiTheme.palette.primary.main : 'transparent',
+                color: newMeeting.day ? 'white' : muiTheme.palette.text.primary,
+                border: `1px solid ${muiTheme.palette.divider}`,
+                minWidth: '60px',
+                textAlign: 'center',
+                fontSize: '14px',
+                fontWeight: 500,
+                '&:hover': {
+                  backgroundColor: newMeeting.day ? muiTheme.palette.primary.dark : muiTheme.palette.action.hover
+                }
               }}
             >
-              {days.map(day => (
-                <MenuItem key={day.key} value={day.key}>
-                  {day.label}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        </Box>
-      );
-    }
-
-    if (currentStep === 'time') {
-      return (
-        <Box sx={{ mb: 2 }}>
-          <Typography variant="h6" sx={{ mb: 1 }}>Select Time</Typography>
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <MobileTimePicker
-              value={dayjs(`2022-04-17T${newMeeting.time || ''}`)}
-              ampm={!use24HourFormat}
-              minutesStep={5}
-              open={true}
-              onChange={(value) => {
-                console.log('Time picker changed:', value);
-                if (value && value.isValid()) {
-                  const timeString = value.format('HH:mm');
-                  setNewMeeting(prev => ({ ...prev, time: timeString }));
-                }
+              {newMeeting.day ? days.find(d => d.key === newMeeting.day)?.label : '---'}
+            </Box>
+            
+            {/* Time Section */}
+            <Box 
+              onClick={() => {
+                setCurrentStep('time');
+                setShowTimePicker(true);
               }}
-              onAccept={(value) => {
-                console.log('Time picker accepted:', value);
-                const timeString = (value && value.isValid()) ? value.format('HH:mm') : (newMeeting.time || '19:00');
-                console.log('Time string:', timeString);
-                console.log('MeeitngTime: ', newMeeting.time);
-                if (editingMeeting !== null) {
-                  const updatedSchedule = [...schedule];
-                  updatedSchedule[editingMeeting] = {
-                    ...updatedSchedule[editingMeeting],
-                    time: timeString
-                  };
-                  onChange(updatedSchedule);
-                  
-                  setEditingMeeting(null);
-                  setNewMeeting({});
-                  setCurrentStep('day');
-                } else {
-                  setNewMeeting(prev => ({ ...prev, time: timeString }));
-                  setCurrentStep('format');
-                }
-              }}
-              onClose={() => {
-                console.log('Time picker closed');
-                const timeString = newMeeting.time || '19:00';
-                console.log('Time string:', timeString);
-                if (editingMeeting !== null) {
-                  const updatedSchedule = [...schedule];
-                  updatedSchedule[editingMeeting] = {
-                    ...updatedSchedule[editingMeeting],
-                    time: timeString
-                  };
-                  onChange(updatedSchedule);
-
-                  setEditingMeeting(null);
-                  setNewMeeting({});
-                  setCurrentStep('day');
-                } else {
-                  setNewMeeting(prev => ({ ...prev, time: timeString }));
-                  setCurrentStep('format');
-                }
-              }}
-              slotProps={{
-                textField: {
-                  style: { display: 'none' }
-                }
-              }}
-            />
-          </LocalizationProvider>
-        </Box>
-      );
-    }
-
-    if (currentStep === 'format') {
-      return (
-        <Box sx={{ mb: 2 }}>
-          <CustomNestedMenu 
-            items={[
-              {
-                id: 'select-format',
-                label: '+ Select Meeting Format',
-                color: 'primary.main',
+              sx={{ 
+                cursor: 'pointer', 
+                padding: '8px 12px', 
+                borderRadius: 1,
+                backgroundColor: newMeeting.time ? muiTheme.palette.primary.main : 'transparent',
+                color: newMeeting.time ? 'white' : muiTheme.palette.text.primary,
+                border: `1px solid ${muiTheme.palette.divider}`,
+                minWidth: '80px',
+                textAlign: 'center',
+                fontSize: '14px',
                 fontWeight: 500,
-                indentLevel: 0,
-                children: meetingFormats.map(format => ({
-                  id: `format-${format.value}`,
-                  label: format.label,
-                  color: 'text.primary',
-                  fontWeight: 500,
-                  indentLevel: 1,
-                  onClick: () => {
-                    setNewMeeting({ ...newMeeting, format: format.value });
-                    setCurrentStep('location');
-                  },
-                  isExpandable: false
-                })),
-                isExpandable: true
-              }
-            ]}
-            onActionComplete={() => {}}
-          />
-        </Box>
-      );
-    }
-
-    if (currentStep === 'location') {
-      return (
-        <Box sx={{ mb: 2 }}>
-          <CustomNestedMenu 
-            items={[
-              {
-                id: 'select-location',
-                label: '+ Select Location Type',
-                color: 'primary.main',
+                '&:hover': {
+                  backgroundColor: newMeeting.time ? muiTheme.palette.primary.dark : muiTheme.palette.action.hover
+                }
+              }}
+            >
+              {newMeeting.time ? (use24HourFormat ? newMeeting.time : (() => {
+                const [hour, minute] = newMeeting.time.split(':');
+                const hourNum = parseInt(hour);
+                const period = hourNum >= 12 ? 'PM' : 'AM';
+                const displayHour = hourNum === 0 ? 12 : hourNum > 12 ? hourNum - 12 : hourNum;
+                return `${displayHour}:${minute} ${period}`;
+              })()) : '7:00 PM'}
+            </Box>
+            
+            {/* Format Section */}
+            <Box 
+              onClick={() => {
+                setCurrentStep('format');
+                setActiveSpeedDial('format');
+              }}
+              sx={{ 
+                cursor: 'pointer', 
+                padding: '8px 12px', 
+                borderRadius: 1,
+                backgroundColor: newMeeting.format ? muiTheme.palette.primary.main : 'transparent',
+                color: newMeeting.format ? 'white' : muiTheme.palette.text.primary,
+                border: `1px solid ${muiTheme.palette.divider}`,
+                minWidth: '60px',
+                textAlign: 'center',
+                fontSize: '14px',
                 fontWeight: 500,
-                indentLevel: 0,
-                children: meetingLocationTypes.map(location => ({
-                  id: `location-${location.value}`,
-                  label: `${location.icon} ${location.label}`,
-                  color: 'text.primary',
-                  fontWeight: 500,
-                  indentLevel: 1,
-                  onClick: () => {
-                    setNewMeeting({ ...newMeeting, locationType: location.value });
-                    setCurrentStep('access');
-                  },
-                  isExpandable: false
-                })),
-                isExpandable: true
-              }
-            ]}
-            onActionComplete={() => {}}
-          />
-        </Box>
-      );
-    }
-
-    if (currentStep === 'access') {
-      return (
-        <Box sx={{ mb: 2 }}>
-          <CustomNestedMenu 
-            items={[
-              {
-                id: 'select-access',
-                label: '+ Select Access Type',
-                color: 'primary.main',
+                '&:hover': {
+                  backgroundColor: newMeeting.format ? muiTheme.palette.primary.dark : muiTheme.palette.action.hover
+                }
+              }}
+            >
+              {newMeeting.format ? meetingFormats.find(f => f.value === newMeeting.format)?.label : '---'}
+            </Box>
+            
+            {/* Location Type Section */}
+            <Box 
+              onClick={() => {
+                setCurrentStep('location');
+                setActiveSpeedDial('locationType');
+              }}
+              sx={{ 
+                cursor: 'pointer', 
+                padding: '8px 12px', 
+                borderRadius: 1,
+                backgroundColor: newMeeting.locationType ? muiTheme.palette.primary.main : 'transparent',
+                color: newMeeting.locationType ? 'white' : muiTheme.palette.text.primary,
+                border: `1px solid ${muiTheme.palette.divider}`,
+                minWidth: '60px',
+                textAlign: 'center',
+                fontSize: '14px',
                 fontWeight: 500,
-                indentLevel: 0,
-                children: meetingAccess.map(access => ({
-                  id: `access-${access.value}`,
-                  label: access.label,
-                  color: 'text.primary',
-                  fontWeight: 500,
-                  indentLevel: 1,
-                  onClick: () => {
-                    const updatedMeeting = { ...newMeeting, access: access.value };
-                    setNewMeeting(updatedMeeting);
-                    
-                    // Complete the meeting immediately after access is selected
-                    if (editingMeeting !== null) {
-                      updateExistingMeeting();
-                    } else {
-                      // Need to call completeNewMeeting with the updated meeting data
-                      if (updatedMeeting.day && updatedMeeting.time && updatedMeeting.format && updatedMeeting.locationType && updatedMeeting.access) {
-                        const completeMeeting: ScheduleItem = {
-                          day: updatedMeeting.day,
-                          time: updatedMeeting.time,
-                          format: updatedMeeting.format,
-                          locationType: updatedMeeting.locationType,
-                          access: updatedMeeting.access
-                        };
-                        const newSchedule = [...schedule, completeMeeting];
-                        onChange(newSchedule);
-                        
-                        // Reset for next meeting - go back to day selection
-                        setNewMeeting({});
-                        setCurrentStep('day');
-                      }
-                    }
-                  },
-                  isExpandable: false
-                })),
-                isExpandable: true
-              }
-            ]}
-            onActionComplete={() => {}}
-          />
-        </Box>
+                '&:hover': {
+                  backgroundColor: newMeeting.locationType ? muiTheme.palette.primary.dark : muiTheme.palette.action.hover
+                }
+              }}
+            >
+              {newMeeting.locationType ? meetingLocationTypes.find(l => l.value === newMeeting.locationType)?.label : '---'}
+            </Box>
+            
+            {/* Access Section */}
+            <Box 
+              onClick={() => {
+                setCurrentStep('access');
+                setActiveSpeedDial('access');
+              }}
+              sx={{ 
+                cursor: 'pointer', 
+                padding: '8px 12px', 
+                borderRadius: 1,
+                backgroundColor: newMeeting.access ? muiTheme.palette.primary.main : 'transparent',
+                color: newMeeting.access ? 'white' : muiTheme.palette.text.primary,
+                border: `1px solid ${muiTheme.palette.divider}`,
+                minWidth: '60px',
+                textAlign: 'center',
+                fontSize: '14px',
+                fontWeight: 500,
+                '&:hover': {
+                  backgroundColor: newMeeting.access ? muiTheme.palette.primary.dark : muiTheme.palette.action.hover
+                }
+              }}
+            >
+              {newMeeting.access ? meetingAccess.find(a => a.value === newMeeting.access)?.label : '---'}
+            </Box>
+          </Box>
+        </Paper>
       );
     }
-
     return null;
   };
 
@@ -410,120 +381,293 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
         </Box>
       ))}
 
-      {/* Progressive meeting display - shows as each part is selected */}
-      {Object.keys(newMeeting).length > 0 && editingMeeting === null && (
-        <Box 
-          key={`${newMeeting.day}-${newMeeting.time}-${newMeeting.format}-${newMeeting.locationType}-${newMeeting.access}`}
-          sx={(theme) => ({ 
-            display: 'flex', 
-            alignItems: 'center', 
-            gap: 1, 
-            py: 1,
-            borderBottom: `1px solid ${theme.palette.divider}`,
-            mb: 2,
-            backgroundColor: theme.palette.action.hover,
-            borderRadius: 1,
-            px: 1
-          })}
+      {/* Meeting preview with clickable sections */}
+      {(Object.keys(newMeeting).length > 0 || (schedule.length === 0 && editingMeeting === null)) && (
+        <Paper 
+          elevation={1} 
+          sx={{ 
+            p: 2, 
+            mb: 2, 
+            borderRadius: 2,
+            backgroundColor: muiTheme.palette.grey[50],
+            border: `1px solid ${muiTheme.palette.divider}`
+          }}
         >
-          <Typography variant="body2" sx={(theme) => ({ 
-            fontWeight: 500, 
-            minWidth: '70px', 
-            textAlign: 'left',
-            color: theme.palette.text.primary
-          })}>
-            {newMeeting.day ? (days.find(d => d.key === newMeeting.day)?.label || newMeeting.day) : '---'}
-          </Typography>
-          
-          <Typography variant="body2" sx={(theme) => ({ 
-            minWidth: '70px', 
-            textAlign: 'left',
-            color: theme.palette.text.primary
-          })}>
-            {newMeeting.time ? (use24HourFormat ? newMeeting.time : (() => {
-              const [hour, minute] = newMeeting.time.split(':');
-              const hourNum = parseInt(hour);
-              const period = hourNum >= 12 ? 'PM' : 'AM';
-              const displayHour = hourNum === 0 ? 12 : hourNum > 12 ? hourNum - 12 : hourNum;
-              return `${displayHour}:${minute} ${period}`;
-            })()) : '---'}
-          </Typography>
-          
-          <Typography sx={{ fontSize: '1.2rem' }}>
-            {newMeeting.locationType ? (meetingLocationTypes.find(l => l.value === newMeeting.locationType)?.icon || '🏢') : '---'}
-          </Typography>
-          
-          <Chip 
-            label={newMeeting.format ? newMeeting.format.charAt(0).toUpperCase() + newMeeting.format.slice(1).replace('_', ' ') : '---'}
-            size="small"
-            color={newMeeting.format ? "primary" : "default"}
-            variant={newMeeting.format ? "filled" : "outlined"}
-            sx={{ fontSize: '0.7rem', height: '24px' }}
-          />
-          
-          <Chip 
-            label={newMeeting.access ? newMeeting.access.charAt(0).toUpperCase() + newMeeting.access.slice(1) : '---'}
-            size="small"
-            color={newMeeting.access === 'open' ? 'success' : newMeeting.access === 'closed' ? 'error' : 'default'}
-            variant={newMeeting.access ? "filled" : "outlined"}
-            sx={{ fontSize: '0.7rem', height: '24px' }}
-          />
-        </Box>
-      )}
-
-      {/* Tree structure for day selection, then step-by-step flow */}
-      {currentStep === 'day' && editingMeeting === null && (
-        <CustomNestedMenu 
-          items={[
-            {
-              id: 'select-day',
-              label: '+ Select Day',
-              color: 'primary.main',
-              fontWeight: 500,
-              indentLevel: 0,
-              children: days.map(day => ({
-                id: `day-${day.key}`,
-                label: day.label,
-                color: 'text.primary',
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 1 }}>
+            {/* Day Section */}
+            <Box 
+              onClick={() => {
+                if (Object.keys(newMeeting).length === 0) {
+                  setNewMeeting({ time: '19:00' });
+                }
+                setCurrentStep('day');
+                setActiveSpeedDial('day');
+              }}
+              sx={{ 
+                cursor: 'pointer', 
+                padding: '8px 12px', 
+                borderRadius: 1,
+                backgroundColor: newMeeting.day ? muiTheme.palette.primary.main : 'transparent',
+                color: newMeeting.day ? 'white' : muiTheme.palette.text.primary,
+                border: `1px solid ${muiTheme.palette.divider}`,
+                minWidth: '60px',
+                textAlign: 'center',
+                fontSize: '14px',
                 fontWeight: 500,
-                indentLevel: 1,
-                onClick: () => {
-                  setNewMeeting({ ...newMeeting, day: day.key });
-                  setCurrentStep('time');
-                },
-                isExpandable: false
-              })),
-              isExpandable: true
+                '&:hover': {
+                  backgroundColor: newMeeting.day ? muiTheme.palette.primary.dark : muiTheme.palette.action.hover
+                }
+              }}
+            >
+              {newMeeting.day ? days.find(d => d.key === newMeeting.day)?.label : '---'}
+            </Box>
+            
+            {/* Time Section */}
+            <Box 
+              onClick={() => {
+                setCurrentStep('time');
+                setShowTimePicker(true);
+              }}
+              sx={{ 
+                cursor: 'pointer', 
+                padding: '8px 12px', 
+                borderRadius: 1,
+                backgroundColor: newMeeting.time ? muiTheme.palette.primary.main : 'transparent',
+                color: newMeeting.time ? 'white' : muiTheme.palette.text.primary,
+                border: `1px solid ${muiTheme.palette.divider}`,
+                minWidth: '80px',
+                textAlign: 'center',
+                fontSize: '14px',
+                fontWeight: 500,
+                '&:hover': {
+                  backgroundColor: newMeeting.time ? muiTheme.palette.primary.dark : muiTheme.palette.action.hover
+                }
+              }}
+            >
+              {newMeeting.time ? (use24HourFormat ? newMeeting.time : (() => {
+                const [hour, minute] = newMeeting.time.split(':');
+                const hourNum = parseInt(hour);
+                const period = hourNum >= 12 ? 'PM' : 'AM';
+                const displayHour = hourNum === 0 ? 12 : hourNum > 12 ? hourNum - 12 : hourNum;
+                return `${displayHour}:${minute} ${period}`;
+              })()) : '7:00 PM'}
+            </Box>
+            
+            {/* Format Section */}
+            <Box 
+              onClick={() => {
+                setCurrentStep('format');
+                setActiveSpeedDial('format');
+              }}
+              sx={{ 
+                cursor: 'pointer', 
+                padding: '8px 12px', 
+                borderRadius: 1,
+                backgroundColor: newMeeting.format ? muiTheme.palette.primary.main : 'transparent',
+                color: newMeeting.format ? 'white' : muiTheme.palette.text.primary,
+                border: `1px solid ${muiTheme.palette.divider}`,
+                minWidth: '60px',
+                textAlign: 'center',
+                fontSize: '14px',
+                fontWeight: 500,
+                '&:hover': {
+                  backgroundColor: newMeeting.format ? muiTheme.palette.primary.dark : muiTheme.palette.action.hover
+                }
+              }}
+            >
+              {newMeeting.format ? meetingFormats.find(f => f.value === newMeeting.format)?.label : '---'}
+            </Box>
+            
+            {/* Location Type Section */}
+            <Box 
+              onClick={() => {
+                setCurrentStep('location');
+                setActiveSpeedDial('locationType');
+              }}
+              sx={{ 
+                cursor: 'pointer', 
+                padding: '8px 12px', 
+                borderRadius: 1,
+                backgroundColor: newMeeting.locationType ? muiTheme.palette.primary.main : 'transparent',
+                color: newMeeting.locationType ? 'white' : muiTheme.palette.text.primary,
+                border: `1px solid ${muiTheme.palette.divider}`,
+                minWidth: '60px',
+                textAlign: 'center',
+                fontSize: '14px',
+                fontWeight: 500,
+                '&:hover': {
+                  backgroundColor: newMeeting.locationType ? muiTheme.palette.primary.dark : muiTheme.palette.action.hover
+                }
+              }}
+            >
+              {newMeeting.locationType ? meetingLocationTypes.find(l => l.value === newMeeting.locationType)?.label : '---'}
+            </Box>
+            
+            {/* Access Section */}
+            <Box 
+              onClick={() => {
+                setCurrentStep('access');
+                setActiveSpeedDial('access');
+              }}
+              sx={{ 
+                cursor: 'pointer', 
+                padding: '8px 12px', 
+                borderRadius: 1,
+                backgroundColor: newMeeting.access ? muiTheme.palette.primary.main : 'transparent',
+                color: newMeeting.access ? 'white' : muiTheme.palette.text.primary,
+                border: `1px solid ${muiTheme.palette.divider}`,
+                minWidth: '60px',
+                textAlign: 'center',
+                fontSize: '14px',
+                fontWeight: 500,
+                '&:hover': {
+                  backgroundColor: newMeeting.access ? muiTheme.palette.primary.dark : muiTheme.palette.action.hover
+                }
+              }}
+            >
+              {newMeeting.access ? meetingAccess.find(a => a.value === newMeeting.access)?.label : '---'}
+            </Box>
+          </Box>
+        </Paper>
+      )}
+
+      {/* Select Day button when no day is selected and preview is shown */}
+      {(Object.keys(newMeeting).length === 0 || !newMeeting.day) && 
+       (schedule.length === 0 || Object.keys(newMeeting).length > 0) && (
+        <Button
+          variant="text"
+          onClick={() => {
+            if (Object.keys(newMeeting).length === 0) {
+              setNewMeeting({ time: '19:00' });
             }
-          ]}
-          onActionComplete={() => {}}
-        />
+            setCurrentStep('day');
+            setActiveSpeedDial('day');
+          }}
+          startIcon={<Typography sx={{ fontSize: '16px' }}>›</Typography>}
+          sx={{ 
+            color: muiTheme.palette.primary.main,
+            textTransform: 'none',
+            fontSize: '16px',
+            fontWeight: 400,
+            justifyContent: 'flex-start',
+            pl: 0
+          }}
+        >
+          + Select Day
+        </Button>
       )}
 
-      {/* Step-by-step selectors after day is chosen */}
-      {currentStep !== 'day' && editingMeeting === null && (
-        <Box sx={{ mt: 2 }}>
-          {renderStepSelector()}
-        </Box>
+      {/* SpeedDial for Day selection */}
+      {activeSpeedDial === 'day' && (
+        <SpeedDial
+          ariaLabel="Select Day"
+          sx={{ position: 'fixed', bottom: 16, right: 16, zIndex: 1000 }}
+          icon={<SpeedDialIcon />}
+          open={true}
+          onClose={() => setActiveSpeedDial(null)}
+        >
+          {days.map((day) => (
+            <SpeedDialAction
+              key={day.key}
+              icon={<Typography variant="caption">{day.label.slice(0, 3)}</Typography>}
+              tooltipTitle={day.label}
+              onClick={() => handleSpeedDialSelect('day', day.key)}
+            />
+          ))}
+        </SpeedDial>
       )}
 
-      {/* Editing existing meeting */}
-      {editingMeeting !== null && (
-        <Box sx={{ mt: 2, p: 2, border: '1px solid #orange', borderRadius: 1 }}>
-          <Typography variant="h6" sx={{ mb: 2 }}>Edit Meeting</Typography>
-          {renderStepSelector()}
-          <Button 
-            variant="outlined" 
-            onClick={() => {
-              setEditingMeeting(null);
-              setNewMeeting({});
-              setCurrentStep('day');
+      {/* SpeedDial for Format selection */}
+      {activeSpeedDial === 'format' && (
+        <SpeedDial
+          ariaLabel="Select Format"
+          sx={{ position: 'fixed', bottom: 16, right: 16, zIndex: 1000 }}
+          icon={<SpeedDialIcon />}
+          open={true}
+          onClose={() => setActiveSpeedDial(null)}
+        >
+          {meetingFormats.map((format) => (
+            <SpeedDialAction
+              key={format.value}
+              icon={<Typography>{format.icon}</Typography>}
+              tooltipTitle={format.label}
+              onClick={() => handleSpeedDialSelect('format', format.value)}
+            />
+          ))}
+        </SpeedDial>
+      )}
+
+      {/* SpeedDial for Location Type selection */}
+      {activeSpeedDial === 'locationType' && (
+        <SpeedDial
+          ariaLabel="Select Location Type"
+          sx={{ position: 'fixed', bottom: 16, right: 16, zIndex: 1000 }}
+          icon={<SpeedDialIcon />}
+          open={true}
+          onClose={() => setActiveSpeedDial(null)}
+        >
+          {meetingLocationTypes.map((location) => (
+            <SpeedDialAction
+              key={location.value}
+              icon={<Typography>{location.icon}</Typography>}
+              tooltipTitle={location.label}
+              onClick={() => handleSpeedDialSelect('locationType', location.value)}
+            />
+          ))}
+        </SpeedDial>
+      )}
+
+      {/* SpeedDial for Access selection */}
+      {activeSpeedDial === 'access' && (
+        <SpeedDial
+          ariaLabel="Select Access Type"
+          sx={{ position: 'fixed', bottom: 16, right: 16, zIndex: 1000 }}
+          icon={<SpeedDialIcon />}
+          open={true}
+          onClose={() => setActiveSpeedDial(null)}
+        >
+          {meetingAccess.map((access) => (
+            <SpeedDialAction
+              key={access.value}
+              icon={<Typography>{access.icon}</Typography>}
+              tooltipTitle={access.label}
+              onClick={() => handleSpeedDialSelect('access', access.value)}
+            />
+          ))}
+        </SpeedDial>
+      )}
+
+      {/* Time Picker */}
+      {showTimePicker && (
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <MobileTimePicker
+            value={dayjs(`2022-04-17T${newMeeting.time || '19:00'}`)}
+            ampm={!use24HourFormat}
+            minutesStep={15}
+            open={true}
+            onChange={(value) => {
+              if (value && value.isValid()) {
+                const timeString = value.format('HH:mm');
+                setNewMeeting(prev => ({ ...prev, time: timeString }));
+              }
             }}
-            sx={{ mt: 1 }}
-          >
-            Cancel
-          </Button>
-        </Box>
+            onAccept={(value) => {
+              const timeString = (value && value.isValid()) ? value.format('HH:mm') : (newMeeting.time || '19:00');
+              handleSpeedDialSelect('time', timeString);
+              setShowTimePicker(false);
+            }}
+            onClose={() => {
+              const timeString = newMeeting.time || '19:00';
+              handleSpeedDialSelect('time', timeString);
+              setShowTimePicker(false);
+            }}
+            slotProps={{
+              textField: {
+                style: { display: 'none' }
+              }
+            }}
+          />
+        </LocalizationProvider>
       )}
     </Box>
   );
