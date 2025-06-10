@@ -511,7 +511,7 @@
               <Chip 
                 label={newMeeting.format ? newMeeting.format.charAt(0).toUpperCase() + newMeeting.format.slice(1).replace('_', ' ') : 'format'}
                 size="small"
-                color={newMeeting.format ? "primary" : "default"}
+                color={newMeeting.format ? "primary" : "primary"}
                 variant={newMeeting.format ? "filled" : "outlined"}
                 onClick={(e) => setFormatMenuAnchor(e.currentTarget)}
                 sx={{ 
@@ -540,9 +540,9 @@
               </Menu>
 
               <Chip 
-                label={newMeeting.access ? newMeeting.access.charAt(0).toUpperCase() + newMeeting.access.slice(1) : '---'}
+                label={newMeeting.access ? newMeeting.access.charAt(0).toUpperCase() + newMeeting.access.slice(1) : 'access'}
                 size="small"
-                color={newMeeting.access === 'open' ? 'success' : newMeeting.access === 'closed' ? 'error' : 'default'}
+                color={newMeeting.access === 'open' ? 'success' : newMeeting.access === 'closed' ? 'error' : 'primary'}
                 variant={newMeeting.access ? "filled" : "outlined"}
                 onClick={(e) => setAccessMenuAnchor(e.currentTarget)}
                 sx={{ 
