@@ -48,15 +48,15 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
   ];
 
   const meetingFormats = [
-    { value: 'discussion', label: 'Discussion' },
-    { value: 'speaker', label: 'Speaker' },
-    { value: 'mens', label: 'Men\'s' },
-    { value: 'womens', label: 'Women\'s' },
-    { value: 'young_people', label: 'Young People\'s' },
-    { value: 'beginners', label: 'Beginners' },
-    { value: 'big_book', label: 'Big Book' },
-    { value: 'step_study', label: 'Step Study' },
-    { value: 'literature', label: 'Literature' }
+    { value: 'discussion', label: 'Discussion', icon: '💬' },
+    { value: 'speaker', label: 'Speaker', icon: '🎤' },
+    { value: 'mens', label: 'Men\'s', icon: '👨' },
+    { value: 'womens', label: 'Women\'s', icon: '👩' },
+    { value: 'young_people', label: 'Young People\'s', icon: '🧑' },
+    { value: 'beginners', label: 'Beginners', icon: '🌱' },
+    { value: 'big_book', label: 'Big Book', icon: '📖' },
+    { value: 'step_study', label: 'Step Study', icon: '📝' },
+    { value: 'literature', label: 'Literature', icon: '📚' }
   ];
 
   const meetingLocationTypes = [
@@ -66,8 +66,8 @@ const TreeMeetingSchedule: React.FC<TreeMeetingScheduleProps> = ({
   ];
 
   const meetingAccess = [
-    { value: 'open', label: 'Open' },
-    { value: 'closed', label: 'Closed' }
+    { value: 'open', label: 'Open', icon: '🔓' },
+    { value: 'closed', label: 'Closed', icon: '🔒' }
   ];
 
   const completeNewMeeting = () => {
