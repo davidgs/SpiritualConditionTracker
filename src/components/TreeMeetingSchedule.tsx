@@ -646,7 +646,12 @@
 
               <Typography 
                 variant="body2" 
-                onClick={() => setIsTimePickerOpen(true)}
+                onClick={() => {
+                  // Initialize time picker with current time or default
+                  const currentTime = newMeeting.time || '19:00';
+                  setTimePickerValue(dayjs(`2022-04-17T${currentTime}`));
+                  setIsTimePickerOpen(true);
+                }}
                 sx={(theme) => ({ 
                   minWidth: '70px', 
                   textAlign: 'left',
@@ -866,7 +871,7 @@
           {isTimePickerOpen && (
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <MobileTimePicker
-                value={timePickerValue || dayjs(`2022-04-17T${newMeeting.time || '19:00'}`)}
+                value={timePickerValue}
                 ampm={!use24HourFormat}
                 minutesStep={5}
                 open={true}
