@@ -81,7 +81,7 @@ function BottomNavBar({ currentView, onNavigate }: BottomNavBarProps) {
             </Box>
             <Box
               sx={{
-                fontSize: '10px',
+                fontSize: '12px',
                 fontWeight: isActive ? 600 : 400,
                 color: isActive 
                   ? muiTheme.palette.primary.main 

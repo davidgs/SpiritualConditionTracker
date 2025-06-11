@@ -34,6 +34,11 @@
       const [currentStep, setCurrentStep] = useState<'day' | 'time' | 'format' | 'location' | 'access' | 'complete'>('day');
       const [newMeeting, setNewMeeting] = useState<Partial<ScheduleItem>>({ time: '19:00' });
       const [editingMeeting, setEditingMeeting] = useState<number | null>(null);
+      const [editDayMenuAnchor, setEditDayMenuAnchor] = useState<null | HTMLElement>(null);
+      const [editLocationMenuAnchor, setEditLocationMenuAnchor] = useState<null | HTMLElement>(null);
+      const [editFormatMenuAnchor, setEditFormatMenuAnchor] = useState<null | HTMLElement>(null);
+      const [editAccessMenuAnchor, setEditAccessMenuAnchor] = useState<null | HTMLElement>(null);
+      const [isEditTimePickerOpen, setIsEditTimePickerOpen] = useState(false);
       const [dayMenuAnchor, setDayMenuAnchor] = useState<null | HTMLElement>(null);
       const [locationMenuAnchor, setLocationMenuAnchor] = useState<null | HTMLElement>(null);
       const [formatMenuAnchor, setFormatMenuAnchor] = useState<null | HTMLElement>(null);
@@ -340,7 +345,7 @@
 
       return (
         <Box sx={{ mb: 2 }}>
-          {/* Display existing meetings using progressive display */}
+          {/* Display existing meetings with inline editing */}
           {schedule.map((item, index) => (
             <Box
               key={index}
@@ -357,12 +362,9 @@
               })}
             >
               <Typography
-                onClick={() => {
-                  // Load existing meeting into newMeeting for editing
-                  setNewMeeting(item);
-                  // Remove from schedule so it appears in progressive display
-                  const updatedSchedule = schedule.filter((_, i) => i !== index);
-                  onChange(updatedSchedule);
+                onClick={(e) => {
+                  setEditingMeeting(index);
+                  setEditDayMenuAnchor(e.currentTarget);
                 }}
                 sx={(theme) => ({
                   cursor: 'pointer',
@@ -375,13 +377,33 @@
               >
                 {days.find(d => d.key === item.day)?.label || item.day}
               </Typography>
+              <Menu
+                anchorEl={editDayMenuAnchor}
+                open={Boolean(editDayMenuAnchor && editingMeeting === index)}
+                onClose={() => {
+                  setEditDayMenuAnchor(null);
+                  setEditingMeeting(null);
+                }}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+              >
+                {days.map((day) => (
+                  <MenuItem key={day.key} onClick={() => {
+                    const updatedSchedule = [...schedule];
+                    updatedSchedule[index] = { ...updatedSchedule[index], day: day.key };
+                    onChange(updatedSchedule);
+                    setEditDayMenuAnchor(null);
+                    setEditingMeeting(null);
+                  }}>
+                    {day.label}
+                  </MenuItem>
+                ))}
+              </Menu>
 
               <Typography 
                 variant="body2" 
                 onClick={() => {
-                  setNewMeeting(item);
-                  const updatedSchedule = schedule.filter((_, i) => i !== index);
-                  onChange(updatedSchedule);
+                  setEditingMeeting(index);
+                  setIsEditTimePickerOpen(true);
                 }}
                 sx={(theme) => ({ 
                   minWidth: '70px', 
@@ -402,10 +424,9 @@
               </Typography>
 
               <Typography 
-                onClick={() => {
-                  setNewMeeting(item);
-                  const updatedSchedule = schedule.filter((_, i) => i !== index);
-                  onChange(updatedSchedule);
+                onClick={(e) => {
+                  setEditingMeeting(index);
+                  setEditLocationMenuAnchor(e.currentTarget);
                 }}
                 sx={{ 
                   fontSize: '1.2rem',
@@ -417,15 +438,35 @@
               >
                 {meetingLocationTypes.find(l => l.value === item.locationType)?.icon || '🏢'}
               </Typography>
+              <Menu
+                anchorEl={editLocationMenuAnchor}
+                open={Boolean(editLocationMenuAnchor && editingMeeting === index)}
+                onClose={() => {
+                  setEditLocationMenuAnchor(null);
+                  setEditingMeeting(null);
+                }}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+              >
+                {meetingLocationTypes.map((locationType) => (
+                  <MenuItem key={locationType.value} onClick={() => {
+                    const updatedSchedule = [...schedule];
+                    updatedSchedule[index] = { ...updatedSchedule[index], locationType: locationType.value };
+                    onChange(updatedSchedule);
+                    setEditLocationMenuAnchor(null);
+                    setEditingMeeting(null);
+                  }}>
+                    {locationType.icon} {locationType.label}
+                  </MenuItem>
+                ))}
+              </Menu>
 
               <Chip 
                 label={meetingFormats.find(f => f.value === item.format)?.label || item.format}
                 size="small"
                 color="primary"
-                onClick={() => {
-                  setNewMeeting(item);
-                  const updatedSchedule = schedule.filter((_, i) => i !== index);
-                  onChange(updatedSchedule);
+                onClick={(e) => {
+                  setEditingMeeting(index);
+                  setEditFormatMenuAnchor(e.currentTarget);
                 }}
                 sx={{ 
                   fontSize: '0.7rem', 
@@ -436,15 +477,35 @@
                   },
                 }}
               />
+              <Menu
+                anchorEl={editFormatMenuAnchor}
+                open={Boolean(editFormatMenuAnchor && editingMeeting === index)}
+                onClose={() => {
+                  setEditFormatMenuAnchor(null);
+                  setEditingMeeting(null);
+                }}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+              >
+                {meetingFormats.map((format) => (
+                  <MenuItem key={format.value} onClick={() => {
+                    const updatedSchedule = [...schedule];
+                    updatedSchedule[index] = { ...updatedSchedule[index], format: format.value };
+                    onChange(updatedSchedule);
+                    setEditFormatMenuAnchor(null);
+                    setEditingMeeting(null);
+                  }}>
+                    {format.label}
+                  </MenuItem>
+                ))}
+              </Menu>
 
               <Chip 
                 label={meetingAccess.find(a => a.value === item.access)?.label || item.access}
                 size="small"
                 color={item.access === 'open' ? 'success' : 'error'}
-                onClick={() => {
-                  setNewMeeting(item);
-                  const updatedSchedule = schedule.filter((_, i) => i !== index);
-                  onChange(updatedSchedule);
+                onClick={(e) => {
+                  setEditingMeeting(index);
+                  setEditAccessMenuAnchor(e.currentTarget);
                 }}
                 sx={{ 
                   fontSize: '0.7rem', 
@@ -455,6 +516,27 @@
                   },
                 }}
               />
+              <Menu
+                anchorEl={editAccessMenuAnchor}
+                open={Boolean(editAccessMenuAnchor && editingMeeting === index)}
+                onClose={() => {
+                  setEditAccessMenuAnchor(null);
+                  setEditingMeeting(null);
+                }}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+              >
+                {meetingAccess.map((access) => (
+                  <MenuItem key={access.value} onClick={() => {
+                    const updatedSchedule = [...schedule];
+                    updatedSchedule[index] = { ...updatedSchedule[index], access: access.value };
+                    onChange(updatedSchedule);
+                    setEditAccessMenuAnchor(null);
+                    setEditingMeeting(null);
+                  }}>
+                    {access.label}
+                  </MenuItem>
+                ))}
+              </Menu>
 
               <Button
                 size="small"
@@ -709,23 +791,45 @@
 
 
 
-          {/* Editing existing meeting */}
-          {editingMeeting !== null && (
-            <Box sx={{ mt: 2, p: 2, border: '1px solid #orange', borderRadius: 1 }}>
-              <Typography variant="h6" sx={{ mb: 2 }}>Edit Meeting</Typography>
-              {renderStepSelector()}
-              <Button 
-                variant="outlined" 
-                onClick={() => {
-                  setEditingMeeting(null);
-                  setNewMeeting({});
-                  setCurrentStep('day');
+          {/* Edit Time Picker Modal */}
+          {isEditTimePickerOpen && editingMeeting !== null && (
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <MobileTimePicker
+                label="Meeting Time"
+                value={dayjs(`2023-01-01T${schedule[editingMeeting].time}:00`)}
+                onChange={(value) => {
+                  if (value && value.isValid()) {
+                    const timeString = value.format('HH:mm');
+                    const updatedSchedule = [...schedule];
+                    updatedSchedule[editingMeeting] = { ...updatedSchedule[editingMeeting], time: timeString };
+                    onChange(updatedSchedule);
+                  }
                 }}
-                sx={{ mt: 1 }}
-              >
-                Cancel
-              </Button>
-            </Box>
+                onAccept={(value) => {
+                  if (value && value.isValid()) {
+                    const timeString = value.format('HH:mm');
+                    const updatedSchedule = [...schedule];
+                    updatedSchedule[editingMeeting] = { ...updatedSchedule[editingMeeting], time: timeString };
+                    onChange(updatedSchedule);
+                  }
+                  setIsEditTimePickerOpen(false);
+                  setEditingMeeting(null);
+                }}
+                onClose={() => {
+                  setIsEditTimePickerOpen(false);
+                  setEditingMeeting(null);
+                }}
+                slotProps={{
+                  textField: {
+                    fullWidth: true,
+                    variant: 'outlined',
+                  },
+                  actionBar: {
+                    actions: ['accept', 'cancel'],
+                  },
+                }}
+              />
+            </LocalizationProvider>
           )}
 
           {/* Time Picker Modal */}
