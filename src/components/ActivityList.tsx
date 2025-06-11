@@ -174,7 +174,10 @@ export default function ActivityList({
     
     // Sort dates in descending order (most recent first)
     const sortedDateKeys = Object.keys(groups).sort((a, b) => {
-      return compareDatesForSorting({date: b}, {date: a}); // Reverse for descending order
+      // Convert date strings to Date objects for proper comparison
+      const dateA = new Date(a);
+      const dateB = new Date(b);
+      return dateB.getTime() - dateA.getTime(); // Most recent first
     });
     
     return { groups, sortedDateKeys };
@@ -257,7 +260,18 @@ export default function ActivityList({
             
             {/* Activities for this date */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-              {groups[dateKey].map((activity, index) => (
+              {groups[dateKey]
+                .sort((a, b) => {
+                  // Sort by createdAt timestamp if available, otherwise by ID (newest first)
+                  if (a.createdAt && b.createdAt) {
+                    return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+                  }
+                  if (a.id && b.id) {
+                    return b.id - a.id; // Higher ID = more recent
+                  }
+                  return 0;
+                })
+                .map((activity, index) => (
                 <div 
                   key={activity.id || `${activity.date}-${activity.type}-${index}`} 
                   style={{
