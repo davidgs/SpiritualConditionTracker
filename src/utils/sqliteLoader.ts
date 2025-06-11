@@ -12,13 +12,120 @@ const DB_NAME = 'spiritual_condition_tracker.db';
  * Initialize SQLite database
  * @returns {Promise<object>} Database connection object
  */
+/**
+ * Create a web storage interface that mimics SQLite for browser testing
+ * @returns Database interface using localStorage
+ */
+function createWebStorageInterface() {
+  console.log('[ sqliteLoader.js:web ] Initializing web storage interface');
+  
+  // Initialize storage with collections if they don't exist
+  const collections = ['users', 'activities', 'meetings', 'sponsor_contacts', 'sponsee_contacts', 'action_items', 'todos'];
+  collections.forEach(collection => {
+    if (!localStorage.getItem(collection)) {
+      localStorage.setItem(collection, JSON.stringify([]));
+    }
+  });
+
+  return {
+    async getAll(collection) {
+      try {
+        const data = localStorage.getItem(collection);
+        return data ? JSON.parse(data) : [];
+      } catch (error) {
+        console.error(`[ sqliteLoader.js:web ] Error getting ${collection}:`, error);
+        return [];
+      }
+    },
+
+    async add(collection, item) {
+      try {
+        const data = await this.getAll(collection);
+        const newId = Math.max(0, ...data.map(i => i.id || 0)) + 1;
+        const newItem = {
+          ...item,
+          id: newId,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        };
+        data.push(newItem);
+        localStorage.setItem(collection, JSON.stringify(data));
+        return newItem;
+      } catch (error) {
+        console.error(`[ sqliteLoader.js:web ] Error adding to ${collection}:`, error);
+        throw error;
+      }
+    },
+
+    async update(collection, id, updates) {
+      try {
+        const data = await this.getAll(collection);
+        const index = data.findIndex(item => item.id === id);
+        if (index === -1) {
+          throw new Error(`Item with id ${id} not found in ${collection}`);
+        }
+        data[index] = {
+          ...data[index],
+          ...updates,
+          id,
+          updatedAt: new Date().toISOString()
+        };
+        localStorage.setItem(collection, JSON.stringify(data));
+        return data[index];
+      } catch (error) {
+        console.error(`[ sqliteLoader.js:web ] Error updating ${collection}:`, error);
+        throw error;
+      }
+    },
+
+    async delete(collection, id) {
+      try {
+        const data = await this.getAll(collection);
+        const filteredData = data.filter(item => item.id !== id);
+        localStorage.setItem(collection, JSON.stringify(filteredData));
+        return true;
+      } catch (error) {
+        console.error(`[ sqliteLoader.js:web ] Error deleting from ${collection}:`, error);
+        throw error;
+      }
+    },
+
+    async getById(collection, id) {
+      try {
+        const data = await this.getAll(collection);
+        return data.find(item => item.id === id) || null;
+      } catch (error) {
+        console.error(`[ sqliteLoader.js:web ] Error getting ${collection} by id:`, error);
+        return null;
+      }
+    },
+
+    async remove(collection, id) {
+      return this.delete(collection, id);
+    },
+
+    async resetDatabase() {
+      try {
+        collections.forEach(collection => {
+          localStorage.removeItem(collection);
+        });
+        return true;
+      } catch (error) {
+        console.error('[ sqliteLoader.js:web ] Error resetting database:', error);
+        throw error;
+      }
+    }
+  };
+}
+
 export default async function initSQLiteDatabase() {
   console.log('[ sqliteLoader.js:14 ] Initializing SQLite database via Capacitor...');
   
   try {
     // First, check if Capacitor is available
     if (!window.Capacitor || !window.Capacitor.Plugins) {
-      throw new Error('Capacitor not found - this app requires a native environment');
+      console.log('[ sqliteLoader.js:16 ] Capacitor not found - falling back to web storage');
+      return createWebStorageInterface();
     }
     
     // Detect platform information for specialized handling
@@ -30,7 +137,8 @@ export default async function initSQLiteDatabase() {
     const sqlite = window.Capacitor.Plugins.CapacitorSQLite;
     
     if (!sqlite) {
-      throw new Error('CapacitorSQLite plugin not found');
+      console.log('[ sqliteLoader.js:25 ] CapacitorSQLite plugin not found - falling back to web storage');
+      return createWebStorageInterface();
     }
     
     console.log('[ sqliteLoader.js:39 ]  Found CapacitorSQLite plugin:', !!sqlite);

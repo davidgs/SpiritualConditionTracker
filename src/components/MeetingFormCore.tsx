@@ -11,7 +11,10 @@ import {
   Alert,
   Typography,
   Checkbox,
-  FormControlLabel
+  FormControlLabel,
+  Stepper,
+  Step,
+  StepLabel
 } from '@mui/material';
 
 // Common TextField style to ensure consistent iOS-native styling
@@ -76,6 +79,75 @@ export default function MeetingFormCore({
   const [isHomeGroup, setIsHomeGroup] = useState(false);
   const [onlineUrl, setOnlineUrl] = useState('');
 
+  // Stepper state
+  const [activeStep, setActiveStep] = useState(0);
+
+  // Helper function to check if meeting schedule is complete
+  const isScheduleComplete = () => {
+    // Check if there's at least one complete meeting in the schedule
+    return meetingSchedule.length > 0 && meetingSchedule.every(item => 
+      item.day && item.time && item.format && item.locationType && item.access
+    );
+  };
+
+  // Define steps for the stepper
+  const steps = [
+    {
+      label: 'Name',
+      description: 'Enter the name of your meeting',
+      required: true
+    },
+    {
+      label: 'Schedule',
+      description: 'Set meeting days and times',
+      required: true
+    },
+    {
+      label: 'Location',
+      description: 'Add meeting location details',
+      required: true
+    },
+    {
+      label: 'Details',
+      description: 'Home group and online options',
+      required: false
+    }
+  ];
+
+  // Validation functions for each step
+  const isStepComplete = (stepIndex) => {
+    switch (stepIndex) {
+      case 0: // Meeting Name
+        return meetingName.trim().length > 0;
+      case 1: // Schedule
+        return meetingSchedule.length > 0;
+      case 2: // Location
+        return streetAddress.trim().length > 0 && city.trim().length > 0;
+      case 3: // Additional Details
+        return true; // This step is optional
+      default:
+        return false;
+    }
+  };
+
+  // Check if all required steps are complete
+  const isFormValid = () => {
+    return steps.filter(step => step.required).every((step, index) => isStepComplete(index));
+  };
+
+  // Update active step based on form completion
+  useEffect(() => {
+    let nextActiveStep = 0;
+    for (let i = 0; i < steps.length; i++) {
+      if (isStepComplete(i)) {
+        nextActiveStep = Math.min(i + 1, steps.length - 1);
+      } else {
+        break;
+      }
+    }
+    setActiveStep(nextActiveStep);
+  }, [meetingName, meetingSchedule, streetAddress, city]);
+
   // Initialize form with meeting data if provided
   useEffect(() => {
     if (meeting) {
@@ -98,103 +170,32 @@ export default function MeetingFormCore({
           try {
             scheduleArray = JSON.parse(meeting.schedule);
           } catch (e) {
-            console.error('Failed to parse schedule JSON during editing:', e);
+            console.warn('[MeetingFormCore] Failed to parse meeting schedule:', e);
             scheduleArray = [];
           }
         }
         
-        if (Array.isArray(scheduleArray) && scheduleArray.length > 0) {
+        // Ensure it's an array
+        if (Array.isArray(scheduleArray)) {
           setMeetingSchedule(scheduleArray);
         } else {
-          // Fallback to legacy format conversion
-          setMeetingSchedule([]);
+          console.warn('[MeetingFormCore] Meeting schedule is not an array:', scheduleArray);
         }
-      } else if (meeting.days && meeting.time) {
-        // Convert legacy format
-        let daysArray = meeting.days;
-        
-        // Parse days if it's a JSON string (from SQLite storage)  
-        if (typeof meeting.days === 'string') {
-          try {
-            daysArray = JSON.parse(meeting.days);
-          } catch (e) {
-            console.error('Failed to parse days JSON during editing:', e);
-            daysArray = [meeting.days]; // Treat as single day if parsing fails
-          }
-        }
-        
-        // Ensure it's an array
-        if (!Array.isArray(daysArray)) {
-          daysArray = [daysArray];
-        }
-        
-        const schedule = daysArray.map(day => ({
-          day: day.toLowerCase(),
-          time: meeting.time,
-          format: meeting.format || 'discussion', // Default format
-          locationType: meeting.locationType || 'in_person',
-          access: meeting.access || 'open' // Default access
-        }));
-        setMeetingSchedule(schedule);
       }
     }
   }, [meeting]);
 
-  // Get current location
-  const detectLocation = () => {
-    setSearchingLocation(true);
-    setError('');
-    
-    if (!navigator.geolocation) {
-      setError('Geolocation is not supported by this browser.');
-      setSearchingLocation(false);
-      return;
-    }
-    
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const coords = {
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude
-        };
-        setLocation(coords);
-        setSearchingLocation(false);
-      },
-      (error) => {
-        console.error('Error getting location:', error);
-        setError('Unable to retrieve your location. Please enter address manually.');
-        setSearchingLocation(false);
-      }
-    );
-  };
-
   // Handle form submission
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    console.log('[MeetingFormCore] Form submitted');
+  const handleSubmit = async (event) => {
+    event.preventDefault();
     setError('');
     
-    if (!meetingName.trim()) {
-      console.log('[MeetingFormCore] Validation failed: Missing meeting name');
-      setError('Meeting name is required');
+    if (!isFormValid()) {
+      setError('Please complete all required fields before saving.');
       return;
     }
     
-    if (meetingSchedule.length === 0) {
-      console.log('[MeetingFormCore] Validation failed: No schedule');
-      setError('Please add at least one meeting day and time');
-      return;
-    }
-
-    // Only validate online URL if explicitly marked as online/hybrid meeting
-    const hasOnlineMeeting = meetingSchedule.some(item => item.locationType === 'online' || item.locationType === 'hybrid');
-    
-    if (hasOnlineMeeting && !onlineUrl.trim()) {
-      setError('Meeting URL is required for online and hybrid meetings');
-      return;
-    }
-    
-    // Combine address fields for display and backwards compatibility
+    // Construct address
     const formattedAddress = [
       streetAddress.trim(),
       city.trim(),
@@ -257,18 +258,36 @@ export default function MeetingFormCore({
         mb: 2,
         color: theme.palette.text.secondary
       })}>
-        Add details for your regular AA meeting. Most meetings occur in the evenings, typically between 6-9 PM.
+        Add details for your regular AA Group and meetings. Most meetings occur in the evenings, typically between 6-9 PM.
       </Typography>
       
       {error && (
-        <Alert 
-          severity="error" 
-          sx={{ mb: 2 }}
-        >
+        <Alert severity="error" sx={{ mb: 2 }}>
           {error}
         </Alert>
       )}
       
+      {/* Compact horizontal stepper at the top */}
+      <Box sx={{ mb: 3 }}>
+        <Stepper activeStep={activeStep} alternativeLabel sx={{ mb: 2 }}>
+          {steps.map((step, index) => (
+            <Step key={step.label} completed={isStepComplete(index)}>
+              <StepLabel 
+                error={step.required && activeStep > index && !isStepComplete(index)}
+                sx={{
+                  '& .MuiStepLabel-label': {
+                    fontSize: '0.75rem',
+                    fontWeight: activeStep === index ? 600 : 400
+                  }
+                }}
+              >
+                {step.label}
+              </StepLabel>
+            </Step>
+          ))}
+        </Stepper>
+      </Box>
+
       <Box component="form" onSubmit={handleSubmit} noValidate sx={{ 
         display: 'flex', 
         flexDirection: 'column', 
@@ -281,31 +300,33 @@ export default function MeetingFormCore({
       }}>
         <Box>
           <Box sx={{ color: muiTheme.palette.primary.main, fontSize: '14px', mb: '4px' }}>
-            Meeting Name*
+            Group Name*
           </Box>
           <TextField
             value={meetingName}
             onChange={(e) => setMeetingName(e.target.value)}
             placeholder="Enter meeting name"
             size="medium"
-            margin="none"
             sx={(theme) => getTextFieldStyle(theme)}
           />
         </Box>
         
-        <Box>
-          <Box sx={{ color: muiTheme.palette.text.secondary, fontSize: '14px', mb: '4px' }}>
-            Meeting Schedule
+        {meetingName.trim() && (
+          <Box>
+            <Box sx={{ color: muiTheme.palette.text.secondary, fontSize: '14px', mb: '4px' }}>
+              Meeting Schedule
+            </Box>
+            <TreeMeetingSchedule 
+              schedule={meetingSchedule} 
+              onChange={setMeetingSchedule}
+              use24HourFormat={use24HourFormat}
+              meetingName={meetingName}
+            />
           </Box>
-          <TreeMeetingSchedule 
-            schedule={meetingSchedule} 
-            onChange={setMeetingSchedule}
-            use24HourFormat={use24HourFormat}
-          />
-        </Box>
+        )}
         
         {/* Show address fields for in-person and hybrid meetings */}
-        {meetingSchedule.some(item => item.locationType === 'in_person' || item.locationType === 'hybrid') && (
+        {isScheduleComplete() && meetingSchedule.some(item => item.locationType === 'in_person' || item.locationType === 'hybrid') && (
           <Box>
             <Box sx={{ color: muiTheme.palette.text.secondary, fontSize: '14px', mb: '4px' }}>
               Location
@@ -318,7 +339,6 @@ export default function MeetingFormCore({
                 onChange={(e) => setLocationName(e.target.value)}
                 placeholder="Location name (e.g. Apex United Methodist Church)"
                 size="medium"
-                margin="none"
                 sx={(theme) => ({
                   ...getTextFieldStyle(theme)
                 })}
@@ -330,135 +350,118 @@ export default function MeetingFormCore({
               onChange={(e) => setStreetAddress(e.target.value)}
               placeholder="Street address"
               size="medium"
-              margin="none"
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton 
-                      onClick={detectLocation}
-                      disabled={searchingLocation}
-                      size="small"
-                      sx={(theme) => ({ color: theme.palette.text.secondary })}
-                    >
-                      {searchingLocation ? (
-                        <CircularProgress size={16} color="inherit" />
-                      ) : (
-                        <i className="fas fa-location-arrow" />
-                      )}
-                    </IconButton>
-                  </InputAdornment>
-                )
-              }}
-              sx={(theme) => ({
-                ...getTextFieldStyle(theme)
-              })}
+              sx={(theme) => getTextFieldStyle(theme)}
             />
             
-            <TextField
-              fullWidth
-              value={city}
-              onChange={(e) => setCity(e.target.value)}
-              placeholder="City"
-              size="medium"
-              margin="none"
-              sx={(theme) => ({
-                ...getTextFieldStyle(theme)
-              })}
-            />
-            
-            <Box sx={{ display: 'flex', gap: 2 }}>
+            <Box sx={{ display: 'flex', gap: 1 }}>
+              <TextField
+                value={city}
+                onChange={(e) => setCity(e.target.value)}
+                placeholder="City"
+                size="medium"
+                sx={(theme) => ({
+                  ...getTextFieldStyle(theme),
+                  flex: '2'
+                })}
+              />
+              
               <TextField
                 value={state}
                 onChange={(e) => setState(e.target.value)}
                 placeholder="State"
                 size="medium"
-                margin="none"
                 sx={(theme) => ({
-                  width: '50%',
-                  ...getTextFieldStyle(theme)
+                  ...getTextFieldStyle(theme),
+                  flex: '1'
                 })}
               />
               
               <TextField
                 value={zipCode}
                 onChange={(e) => setZipCode(e.target.value)}
-                placeholder="Zip code"
+                placeholder="ZIP"
                 size="medium"
-                margin="none"
                 sx={(theme) => ({
-                  width: '50%',
-                  ...getTextFieldStyle(theme)
+                  ...getTextFieldStyle(theme),
+                  flex: '1'
                 })}
               />
             </Box>
           </Box>
         </Box>
-          )}
+        )}
 
-      {/* Online URL Field - Show when any schedule item has online or hybrid location */}
-      {meetingSchedule.some(item => item.locationType === 'online' || item.locationType === 'hybrid') && (
-        <Box>
-          <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 'bold' }}>
-            Online Meeting URL
-          </Typography>
-          <TextField
-            fullWidth
-            value={onlineUrl}
-            onChange={(e) => setOnlineUrl(e.target.value)}
-            placeholder="https://zoom.us/j/123456789 or meeting platform URL"
-            size="medium"
-            sx={(theme) => getTextFieldStyle(theme)}
-          />
-          <Typography variant="body2" sx={{ mt: 0.5 }} color="text.secondary">
-            Enter the URL participants will use to join the online meeting.
-          </Typography>
-        </Box>
-      )}
-      
-      {/* Home Group Checkbox */}
-      <Box>
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={isHomeGroup}
-              onChange={(e) => setIsHomeGroup(e.target.checked)}
-              color="primary"
-            />
-          }
-          label={
-            <Typography component="span" sx={(theme) => ({ color: theme.palette.text.primary })}>
-              This is my Home Group
+        {/* Online URL Field - Show when any schedule item has online or hybrid location */}
+        {isScheduleComplete() && meetingSchedule.some(item => item.locationType === 'online' || item.locationType === 'hybrid') && (
+          <Box>
+            <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 'bold' }}>
+              Online Meeting URL
             </Typography>
-          }
-        />
-        <Typography variant="body2" sx={{ mt: 0.5, ml: 4 }} color="text.secondary">
-          Your Home Group is your primary AA group where you regularly attend and participate.
-        </Typography>
-      </Box>
+            <TextField
+              fullWidth
+              value={onlineUrl}
+              onChange={(e) => setOnlineUrl(e.target.value)}
+              placeholder="https://zoom.us/j/123456789 or meeting platform URL"
+              size="medium"
+              sx={(theme) => getTextFieldStyle(theme)}
+            />
+            <Typography variant="body2" sx={{ mt: 0.5 }} color="text.secondary">
+              Enter the URL participants will use to join the online meeting.
+            </Typography>
+          </Box>
+        )}
+        
+        {/* Home Group Checkbox - Only show when schedule is complete */}
+        {isScheduleComplete() && (
+          <Box>
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={isHomeGroup}
+                onChange={(e) => setIsHomeGroup(e.target.checked)}
+                color="primary"
+              />
+            }
+            label={
+              <Typography component="span" sx={(theme) => ({ color: theme.palette.text.primary })}>
+                This is my Home Group
+              </Typography>
+            }
+          />
+          <Typography variant="body2" sx={{ mt: 0.5, ml: 4 }} color="text.secondary">
+            Your Home Group is your primary AA group where you regularly attend and participate.
+          </Typography>
+          </Box>
+        )}
 
-      {/* Action buttons */}
-      {showButtons && (
-        <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-end', mt: 2 }}>
-          {onCancel && (
+        {/* Action buttons */}
+        {showButtons && (
+          <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-end', mt: 2 }}>
+            {onCancel && (
+              <Button
+                variant="contained"
+                onClick={onCancel}
+                color="error"
+              >
+                Cancel
+              </Button>
+            )}
+            
             <Button
               variant="contained"
-              onClick={onCancel}
-              color="error"
+              type="submit"
+              color="success"
+              disabled={!isFormValid()}
+              sx={{
+                opacity: !isFormValid() ? 0.6 : 1,
+                cursor: !isFormValid() ? 'not-allowed' : 'pointer'
+              }}
             >
-              Cancel
+              Save
             </Button>
-          )}
-          
-          <Button
-            variant="contained"
-            type="submit"
-            color="success"
-          >
-            Save
-          </Button>
-        </Box>
-      )}
-    </Box>
+          </Box>
+        )}
+      </Box>
     </Box>
   );
 }
