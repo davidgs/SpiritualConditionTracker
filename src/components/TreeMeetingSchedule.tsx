@@ -647,9 +647,11 @@
               <Typography 
                 variant="body2" 
                 onClick={() => {
-                  // Initialize time picker with current time or default
+                  // Initialize time picker with a fresh dayjs instance
                   const currentTime = newMeeting.time || '19:00';
-                  setTimePickerValue(dayjs(`2022-04-17T${currentTime}`));
+                  const [hours, minutes] = currentTime.split(':');
+                  const freshTime = dayjs().hour(parseInt(hours)).minute(parseInt(minutes)).second(0).millisecond(0);
+                  setTimePickerValue(freshTime);
                   setIsTimePickerOpen(true);
                 }}
                 sx={(theme) => ({ 
@@ -877,13 +879,14 @@
                 open={true}
                 onChange={(value) => {
                   if (value && value.isValid()) {
+                    // Update the state immediately to prevent reversion
                     setTimePickerValue(value);
                     console.log('Time picker onChange:', value.format('HH:mm'));
                   }
                 }}
                 onAccept={(value) => {
-                  const finalValue = timePickerValue || value;
-                  const timeString = (finalValue && finalValue.isValid()) ? finalValue.format('HH:mm') : (newMeeting.time || '19:00');
+                  // Use the final accepted value directly
+                  const timeString = (value && value.isValid()) ? value.format('HH:mm') : (newMeeting.time || '19:00');
                   const updatedMeeting = { ...newMeeting, time: timeString };
                   setNewMeeting(updatedMeeting);
                   setIsTimePickerOpen(false);
