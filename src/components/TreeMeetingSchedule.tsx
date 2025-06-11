@@ -44,6 +44,7 @@
       const [formatMenuAnchor, setFormatMenuAnchor] = useState<null | HTMLElement>(null);
       const [accessMenuAnchor, setAccessMenuAnchor] = useState<null | HTMLElement>(null);
       const [isTimePickerOpen, setIsTimePickerOpen] = useState(false);
+      const [timePickerValue, setTimePickerValue] = useState<dayjs.Dayjs | null>(null);
 
 
       const days = [
@@ -865,19 +866,23 @@
           {isTimePickerOpen && (
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <MobileTimePicker
-                value={dayjs(`2022-04-17T${newMeeting.time || '19:00'}`)}
+                value={timePickerValue || dayjs(`2022-04-17T${newMeeting.time || '19:00'}`)}
                 ampm={!use24HourFormat}
                 minutesStep={5}
                 open={true}
                 onChange={(value) => {
-                  // Don't update state during intermediate changes to prevent minute reset
-                  console.log('Time picker onChange:', value?.format('HH:mm'));
+                  if (value && value.isValid()) {
+                    setTimePickerValue(value);
+                    console.log('Time picker onChange:', value.format('HH:mm'));
+                  }
                 }}
                 onAccept={(value) => {
-                  const timeString = (value && value.isValid()) ? value.format('HH:mm') : (newMeeting.time || '19:00');
+                  const finalValue = timePickerValue || value;
+                  const timeString = (finalValue && finalValue.isValid()) ? finalValue.format('HH:mm') : (newMeeting.time || '19:00');
                   const updatedMeeting = { ...newMeeting, time: timeString };
                   setNewMeeting(updatedMeeting);
                   setIsTimePickerOpen(false);
+                  setTimePickerValue(null);
                   
                   // Auto-complete meeting if all fields are filled
                   if (updatedMeeting.day && updatedMeeting.time && updatedMeeting.format && updatedMeeting.locationType && updatedMeeting.access) {
@@ -898,6 +903,7 @@
                 }}
                 onClose={() => {
                   setIsTimePickerOpen(false);
+                  setTimePickerValue(null);
                 }}
                 slotProps={{
                   textField: {
