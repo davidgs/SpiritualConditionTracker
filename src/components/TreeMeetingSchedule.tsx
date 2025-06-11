@@ -651,6 +651,7 @@
                   const currentTime = newMeeting.time || '19:00';
                   const [hours, minutes] = currentTime.split(':');
                   const freshTime = dayjs().hour(parseInt(hours)).minute(parseInt(minutes)).second(0).millisecond(0);
+                  console.log('Initializing time picker:', currentTime, 'parsed:', freshTime.format('HH:mm'));
                   setTimePickerValue(freshTime);
                   setIsTimePickerOpen(true);
                 }}
@@ -875,7 +876,6 @@
               <MobileTimePicker
                 value={timePickerValue}
                 ampm={!use24HourFormat}
-                minutesStep={5}
                 open={true}
                 onChange={(value) => {
                   if (value && value.isValid()) {
