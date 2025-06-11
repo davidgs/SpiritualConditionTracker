@@ -808,7 +808,9 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
                 autoComplete="given-name"
                 inputProps={{
                   autoComplete: "given-name",
-                  'data-lpignore': 'false'
+                  'data-lpignore': 'false',
+                  'data-form-type': 'name',
+                  name: 'firstName'
                 }}
                 sx={{
                   mb: 2,
@@ -834,7 +836,9 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
                 autoComplete="family-name"
                 inputProps={{
                   autoComplete: "family-name",
-                  'data-lpignore': 'false'
+                  'data-lpignore': 'false',
+                  'data-form-type': 'name',
+                  name: 'lastName'
                 }}
                 sx={{
                   mb: 2,
@@ -881,7 +885,9 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
                 autoComplete="email"
                 inputProps={{
                   autoComplete: "email",
-                  'data-lpignore': 'false'
+                  'data-lpignore': 'false',
+                  'data-form-type': 'email',
+                  name: 'email'
                 }}
                 sx={{
                   mb: 2,
