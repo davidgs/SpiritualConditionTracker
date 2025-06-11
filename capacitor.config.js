@@ -3,7 +3,7 @@
  */
 module.exports = {
   appId: 'com.spiritualconditiontracker.app',
-  appName: 'SpiritualCondition',
+  appName: 'My Spiritual Condition',
   webDir: './dist',
   bundledWebRuntime: true,
   plugins: {

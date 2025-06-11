@@ -84,6 +84,7 @@ export default function TabComponent({
             label={addTabLabel} 
             id={`tab-add`}
             aria-controls={`tabpanel-add`}
+            data-tour={addTabLabel === "+ Add Sponsor" ? "add-sponsor-btn" : addTabLabel === "+ Add Sponsee" ? "add-sponsee-btn" : undefined}
           />
         )}
       </Tabs>

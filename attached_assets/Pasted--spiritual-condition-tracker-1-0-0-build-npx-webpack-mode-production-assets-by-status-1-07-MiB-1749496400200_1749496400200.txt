@@ -1,0 +1,41 @@
+> spiritual-condition-tracker@1.0.0 build
+> npx webpack --mode production
+
+assets by status 1.07 MiB [cached] 8 assets
+assets by status 4.92 MiB [compared for emit]
+  assets by path assets/ 4.9 MiB
+    assets by status 4.85 MiB [big] 4 assets
+    asset assets/icon.png 44.5 KiB [compared for emit] [from: assets/icon.png] [copied]
+    asset assets/favicon.png 3.18 KiB [compared for emit] [from: assets/favicon.png] [copied]
+  assets by path styles/*.css 15.2 KiB
+    asset styles/main.css 10.5 KiB [compared for emit] [from: styles/main.css] [copied]
+    asset styles/tailwind.css 2.73 KiB [compared for emit] [from: styles/tailwind.css] [copied]
+    asset styles/index.css 2.01 KiB [compared for emit] [from: styles/index.css] [copied]
+  asset index.html 2.52 KiB [emitted] [compared for emit]
+assets by path *.js 38.4 KiB
+  asset 961.95c56c1461a1f21b2318.chunk.js 35 KiB [emitted] [immutable] [minimized] 1 related asset
+  asset runtime.35e7c283b2956e1d3f03.js 3.41 KiB [emitted] [immutable] [minimized] (name: runtime) 1 related asset
+Entrypoint main [big] 1010 KiB (4.12 MiB) = runtime.35e7c283b2956e1d3f03.js 3.41 KiB mui.2ef4cf5784b4eca257c8.js 430 KiB react.99b297ffd2bb586a088f.js 175 KiB vendors.9bbb7958a1b7de92e2ab.js 303 KiB main.43e52fe863a0b6879d58.js 103 KiB 5 auxiliary assets
+orphan modules 1.27 MiB [orphan] 612 modules
+runtime modules 8.55 KiB 14 modules
+cacheable modules 2.99 MiB 255 modules
+
+WARNING in asset size limit: The following asset(s) exceed the recommended size limit (500 KiB).
+This can impact web performance.
+Assets:
+  assets/adaptive-icon.png (925 KiB)
+  assets/logo.jpg (555 KiB)
+  assets/qr-logo.png (880 KiB)
+  assets/splash.png (2.55 MiB)
+
+WARNING in entrypoint size limit: The following entrypoint(s) combined asset size exceeds the recommended limit (500 KiB). This can impact web performance.
+Entrypoints:
+  main (1010 KiB)
+      runtime.35e7c283b2956e1d3f03.js
+      mui.2ef4cf5784b4eca257c8.js
+      react.99b297ffd2bb586a088f.js
+      vendors.9bbb7958a1b7de92e2ab.js
+      main.43e52fe863a0b6879d58.js
+
+
+webpack 5.99.8 compiled with 2 warnings in 6370 ms

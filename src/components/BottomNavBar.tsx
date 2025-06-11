@@ -21,6 +21,7 @@ function BottomNavBar({ currentView, onNavigate }: BottomNavBarProps) {
 
   return (
     <Box
+      data-tour="bottom-nav"
       sx={{
         position: 'fixed',
         bottom: 0,
@@ -43,6 +44,7 @@ function BottomNavBar({ currentView, onNavigate }: BottomNavBarProps) {
           <Box
             key={item.id}
             component="button"
+            data-tour={`nav-${item.id}`}
             onClick={() => onNavigate(item.id)}
             sx={{
               display: 'flex',
@@ -79,7 +81,7 @@ function BottomNavBar({ currentView, onNavigate }: BottomNavBarProps) {
             </Box>
             <Box
               sx={{
-                fontSize: '10px',
+                fontSize: '12px',
                 fontWeight: isActive ? 600 : 400,
                 color: isActive 
                   ? muiTheme.palette.primary.main 

@@ -1,0 +1,78 @@
+davidgs@DavidsNewAir SpiritualConditionTracker % git pull && npm run build && npx cap sync
+remote: Enumerating objects: 26, done.
+remote: Counting objects: 100% (26/26), done.
+remote: Compressing objects: 100% (3/3), done.
+remote: Total 19 (delta 16), reused 19 (delta 16), pack-reused 0 (from 0)
+Unpacking objects: 100% (19/19), 258.26 KiB | 18.00 KiB/s, done.
+From https://github.com/davidgs/SpiritualConditionTracker
+   c0f04869..2d165a93  on-boarding -> origin/on-boarding
+Updating c0f04869..2d165a93
+Fast-forward
+ attached_assets/image_1749417412618.png | Bin 0 -> 164982 bytes
+ attached_assets/image_1749495515152.png | Bin 0 -> 131465 bytes
+ src/components/ActivityList.tsx         |  87 +++++++++++++++++++++++++++++++++++++++++++++++++++++++--
+ src/contexts/MuiThemeProvider.tsx       |  70 +++++++++++++++++++++++++++++++++++++++++++---
+ 4 files changed, 151 insertions(+), 6 deletions(-)
+ create mode 100644 attached_assets/image_1749417412618.png
+ create mode 100644 attached_assets/image_1749495515152.png
+
+> spiritual-condition-tracker@1.0.0 build
+> npx webpack --mode production
+
+assets by status 993 KiB [cached] 7 assets
+assets by status 4.92 MiB [compared for emit]
+  assets by path assets/ 4.9 MiB
+    assets by status 4.85 MiB [big] 4 assets
+    asset assets/icon.png 44.5 KiB [compared for emit] [from: assets/icon.png] [copied]
+    asset assets/favicon.png 3.18 KiB [compared for emit] [from: assets/favicon.png] [copied]
+  assets by path styles/*.css 15.2 KiB
+    asset styles/main.css 10.5 KiB [compared for emit] [from: styles/main.css] [copied]
+    asset styles/tailwind.css 2.73 KiB [compared for emit] [from: styles/tailwind.css] [copied]
+    asset styles/index.css 2.01 KiB [compared for emit] [from: styles/index.css] [copied]
+  asset index.html 2.52 KiB [emitted] [compared for emit]
+assets by path *.js 142 KiB
+  asset main.43e52fe863a0b6879d58.js 103 KiB [emitted] [immutable] [minimized] (name: main) 1 related asset
+  asset 961.26c1e71f5960ddeed856.chunk.js 35 KiB [emitted] [immutable] [minimized] 1 related asset
+  asset runtime.c2c883aeaa29833e4556.js 3.41 KiB [emitted] [immutable] [minimized] (name: runtime) 1 related asset
+Entrypoint main [big] 1010 KiB (4.12 MiB) = runtime.c2c883aeaa29833e4556.js 3.41 KiB mui.2ef4cf5784b4eca257c8.js 430 KiB react.99b297ffd2bb586a088f.js 175 KiB vendors.9bbb7958a1b7de92e2ab.js 303 KiB main.43e52fe863a0b6879d58.js 103 KiB 5 auxiliary assets
+orphan modules 1.27 MiB [orphan] 612 modules
+runtime modules 8.55 KiB 14 modules
+cacheable modules 2.99 MiB 255 modules
+
+WARNING in asset size limit: The following asset(s) exceed the recommended size limit (500 KiB).
+This can impact web performance.
+Assets:
+  assets/adaptive-icon.png (925 KiB)
+  assets/logo.jpg (555 KiB)
+  assets/qr-logo.png (880 KiB)
+  assets/splash.png (2.55 MiB)
+
+WARNING in entrypoint size limit: The following entrypoint(s) combined asset size exceeds the recommended limit (500 KiB). This can impact web performance.
+Entrypoints:
+  main (1010 KiB)
+      runtime.c2c883aeaa29833e4556.js
+      mui.2ef4cf5784b4eca257c8.js
+      react.99b297ffd2bb586a088f.js
+      vendors.9bbb7958a1b7de92e2ab.js
+      main.43e52fe863a0b6879d58.js
+
+
+webpack 5.99.8 compiled with 2 warnings in 6251 ms
+✔ Copying web assets from dist to android/app/src/main/assets/public in 16.89ms
+✔ Creating capacitor.config.json in android/app/src/main/assets in 629.92μs
+✔ copy android in 34.20ms
+✔ Updating Android plugins in 8.08ms
+[info] Found 1 Capacitor plugin for android:
+       @capacitor-community/sqlite@7.0.0
+✔ update android in 63.52ms
+✔ Copying web assets from dist to ios/App/App/public in 19.39ms
+✔ Creating capacitor.config.json in ios/App/App in 657.37μs
+✔ copy ios in 55.17ms
+✔ Updating iOS plugins in 4.61ms
+✔ Updating iOS native dependencies with pod install in 2.98s
+[info] Found 1 Capacitor plugin for ios:
+       @capacitor-community/sqlite@7.0.0
+✔ update ios in 3.03s
+✔ copy web in 6.50ms
+✔ update web in 6.89ms
+[info] Sync finished in 3.467s

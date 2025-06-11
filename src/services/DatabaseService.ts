@@ -416,6 +416,61 @@ class DatabaseService {
     });
   }
 
+  // Check if database is empty (for new user detection)
+  async isDatabaseEmpty(): Promise<boolean> {
+    return this.executeOperation(async () => {
+      console.log('[ DatabaseService ] Checking if database is empty for new user detection...');
+      
+      // Check main data tables for any records
+      const [users, activities, meetings, sponsorContacts, actionItems] = await Promise.all([
+        this.database.getAll('users') || [],
+        this.database.getAll('activities') || [],
+        this.database.getAll('meetings') || [],
+        this.database.getAll('sponsor_contacts') || [],
+        this.database.getAll('action_items') || []
+      ]);
+      
+      // Check if user data is meaningful (not just default values)
+      let hasUserData = false;
+      if (users.length > 0) {
+        const user = users[0]; // Check the first user
+        // Consider user data meaningful if any of these key fields are filled
+        hasUserData = !!(
+          user.name || 
+          user.lastName || 
+          user.sobrietyDate || 
+          user.phoneNumber || 
+          user.email ||
+          user.homeGroups
+        );
+        console.log('[ DatabaseService ] User data check:', {
+          name: user.name,
+          lastName: user.lastName,
+          sobrietyDate: user.sobrietyDate,
+          phoneNumber: user.phoneNumber,
+          email: user.email,
+          homeGroups: user.homeGroups,
+          hasUserData
+        });
+      }
+      
+      const totalDataRecords = (hasUserData ? 1 : 0) + activities.length + meetings.length + 
+                              sponsorContacts.length + actionItems.length;
+      
+      console.log('[ DatabaseService ] Record counts:', {
+        users: users.length,
+        hasUserData,
+        activities: activities.length,
+        meetings: meetings.length,
+        sponsorContacts: sponsorContacts.length,
+        actionItems: actionItems.length,
+        totalDataRecords
+      });
+      
+      return totalDataRecords === 0;
+    });
+  }
+
   // Database reset method
   async resetAllData(): Promise<void> {
     return this.executeOperation(async () => {

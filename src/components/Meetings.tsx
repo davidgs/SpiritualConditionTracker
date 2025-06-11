@@ -611,7 +611,9 @@ export default function Meetings({ setCurrentView, meetings = [], onSave, onDele
             }
           }}
         >
-          <AddIcon sx={{ fontSize: 'inherit' }} />
+          <AddIcon sx={{ fontSize: 'inherit' }}
+            data-tour="add-meeting-btn"
+          />
         </IconButton>
       </Box>
 

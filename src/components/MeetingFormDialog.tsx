@@ -38,7 +38,7 @@ export default function MeetingFormDialog({
         gap: 1
       })}>
         <i className="fa-regular fa-calendar-plus mr-2 text-gray-400 dark:text-gray-500"></i>
-        {isEdit ? 'Edit Meeting' : 'Add New Meeting'}
+        {isEdit ? 'Edit Group/Meeting' : 'Add New Group/Meeting'}
       </DialogTitle>
       
       <DialogContent sx={(theme) => ({
