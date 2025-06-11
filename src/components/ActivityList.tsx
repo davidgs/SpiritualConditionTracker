@@ -174,7 +174,7 @@ export default function ActivityList({
     
     // Sort dates in descending order (most recent first)
     const sortedDateKeys = Object.keys(groups).sort((a, b) => {
-      return compareDatesForSorting(b, a); // Reverse for descending order
+      return compareDatesForSorting({date: b}, {date: a}); // Reverse for descending order
     });
     
     return { groups, sortedDateKeys };
@@ -202,7 +202,7 @@ export default function ActivityList({
           return true;
         })
         // Sort by date (most recent first)
-        .sort((a, b) => compareDatesForSorting(b.date, a.date))
+        .sort((a, b) => compareDatesForSorting(b, a))
         // Limit the number of activities if specified
         .slice(0, limit || activities.length)
     : [];

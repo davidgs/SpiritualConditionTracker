@@ -557,6 +557,29 @@
             </Box>
           ))}
 
+          {/* Add Another Meeting Button - show when meetings exist and no meeting is in progress */}
+          {schedule.length > 0 && Object.keys(newMeeting).length === 0 && editingMeeting === null && (
+            <Box sx={{ mb: 2 }}>
+              <Button
+                variant="outlined"
+                color="primary"
+                onClick={() => {
+                  setNewMeeting({ time: '19:00' });
+                  setCurrentStep('day');
+                }}
+                sx={{
+                  textTransform: 'none',
+                  fontWeight: 500,
+                  borderRadius: 1,
+                  px: 2,
+                  py: 1
+                }}
+              >
+                + Add Another Meeting Time
+              </Button>
+            </Box>
+          )}
+
           {/* Progressive meeting display - shows as each part is selected */}
           {Object.keys(newMeeting).length > 0 && editingMeeting === null && (
             <Box 
