@@ -847,6 +847,12 @@
                     fullWidth: true,
                     variant: 'outlined',
                   },
+                  mobilePaper: {
+                    sx: {
+                      top: '20%',
+                      transform: 'translateY(-20%)'
+                    }
+                  },
                   actionBar: {
                     actions: ['accept', 'cancel'],
                   },
@@ -864,10 +870,8 @@
                 minutesStep={5}
                 open={true}
                 onChange={(value) => {
-                  if (value && value.isValid()) {
-                    const timeString = value.format('HH:mm');
-                    setNewMeeting(prev => ({ ...prev, time: timeString }));
-                  }
+                  // Don't update state during intermediate changes to prevent minute reset
+                  console.log('Time picker onChange:', value?.format('HH:mm'));
                 }}
                 onAccept={(value) => {
                   const timeString = (value && value.isValid()) ? value.format('HH:mm') : (newMeeting.time || '19:00');
@@ -898,7 +902,16 @@
                 slotProps={{
                   textField: {
                     style: { display: 'none' }
-                  }
+                  },
+                  mobilePaper: {
+                    sx: {
+                      top: '20%',
+                      transform: 'translateY(-20%)'
+                    }
+                  },
+                  actionBar: {
+                    actions: ['accept', 'cancel'],
+                  },
                 }}
               />
             </LocalizationProvider>

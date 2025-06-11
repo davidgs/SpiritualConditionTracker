@@ -28,6 +28,14 @@ export default function MeetingFormDialog({
       onClose={onClose}
       fullWidth
       maxWidth="sm"
+      sx={{
+        '& .MuiDialog-paper': {
+          height: '90vh',
+          maxHeight: '90vh',
+          display: 'flex',
+          flexDirection: 'column'
+        }
+      }}
     >
       <DialogTitle sx={(theme) => ({ 
         color: theme.palette.text.primary,
@@ -44,7 +52,9 @@ export default function MeetingFormDialog({
       <DialogContent sx={(theme) => ({
         py: 2,
         overflowX: 'hidden',
+        overflowY: 'auto',
         maxWidth: '100%',
+        flex: 1,
         backgroundColor: theme.palette.background.paper,
         color: theme.palette.text.primary,
         '& .MuiFormControl-root': {
