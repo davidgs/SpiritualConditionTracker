@@ -680,7 +680,20 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
                 id="shareLastName"
                 name="shareLastName"
                 checked={shareLastName}
-                onChange={(e) => setShareLastName(e.target.checked)}
+                onChange={(e) => {
+                  const newValue = e.target.checked;
+                  setShareLastName(newValue);
+
+                  // Save the privacy setting change immediately without redirecting
+                  const updates = {
+                    privacySettings: {
+                      ...(user?.privacySettings || {}),
+                      shareLastName: newValue
+                    }
+                  };
+                  // Update the privacy setting without reloading the page
+                  onUpdate(updates, { redirectToDashboard: false });
+                }}
                 color="primary"
                 size="small"
               />
