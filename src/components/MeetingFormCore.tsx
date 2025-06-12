@@ -81,12 +81,63 @@ export default function MeetingFormCore({
 
   // Stepper state
   const [activeStep, setActiveStep] = useState(0);
+  const [isLocating, setIsLocating] = useState(false);
 
   // Helper function to check if meeting schedule is complete
   const isScheduleComplete = () => {
     // Check if there's at least one complete meeting in the schedule
     return meetingSchedule.length > 0 && meetingSchedule.every(item => 
       item.day && item.time && item.format && item.locationType && item.access
+    );
+  };
+
+  // Handle geolocation for current position
+  const handleLocateMe = () => {
+    if (!navigator.geolocation) {
+      setError('Geolocation is not supported by this browser');
+      return;
+    }
+
+    setIsLocating(true);
+    setError('');
+
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        try {
+          const { latitude, longitude } = position.coords;
+          setLocation({ latitude, longitude });
+          
+          // Reverse geocode to get address
+          const response = await fetch(
+            `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=en`
+          );
+          
+          if (response.ok) {
+            const data = await response.json();
+            
+            // Fill in the address fields
+            if (data.locality) setCity(data.locality);
+            if (data.principalSubdivision) setState(data.principalSubdivision);
+            if (data.postcode) setZipCode(data.postcode);
+            if (data.street) setStreetAddress(data.street);
+          }
+        } catch (error) {
+          console.error('Error getting location details:', error);
+          setError('Could not get location details');
+        } finally {
+          setIsLocating(false);
+        }
+      },
+      (error) => {
+        console.error('Geolocation error:', error);
+        setError('Could not get your location. Please check your location permissions.');
+        setIsLocating(false);
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 300000
+      }
     );
   };
 
@@ -344,14 +395,40 @@ export default function MeetingFormCore({
                 })}
               />
             
-            <TextField
-              fullWidth
-              value={streetAddress}
-              onChange={(e) => setStreetAddress(e.target.value)}
-              placeholder="Street address"
-              size="medium"
-              sx={(theme) => getTextFieldStyle(theme)}
-            />
+            <Box sx={{ display: 'flex', gap: 1, alignItems: 'flex-start' }}>
+              <TextField
+                fullWidth
+                value={streetAddress}
+                onChange={(e) => setStreetAddress(e.target.value)}
+                placeholder="Street address"
+                size="medium"
+                sx={(theme) => getTextFieldStyle(theme)}
+              />
+              <Button
+                variant="outlined"
+                size="medium"
+                onClick={handleLocateMe}
+                disabled={isLocating}
+                sx={{
+                  minWidth: 'auto',
+                  px: 1.5,
+                  py: 1,
+                  height: '40px',
+                  borderColor: 'primary.main',
+                  color: 'primary.main',
+                  '&:hover': {
+                    borderColor: 'primary.dark',
+                    backgroundColor: 'primary.light'
+                  }
+                }}
+              >
+                {isLocating ? (
+                  <i className="fa-solid fa-spinner fa-spin" />
+                ) : (
+                  <i className="fa-solid fa-location-dot" />
+                )}
+              </Button>
+            </Box>
             
             <Box sx={{ display: 'flex', gap: 1 }}>
               <TextField
