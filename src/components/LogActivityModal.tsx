@@ -812,7 +812,7 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
                   onChange={(e) => setNotes(e.target.value)}
                   placeholder="Enter any notes about this activity..."
                   multiline
-                  rows={3}
+                  rows={4}
                   variant="outlined"
                   sx={{
                     mb: 2,
