@@ -406,11 +406,18 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
               <Box sx={{ marginBottom: '1rem', maxWidth: '100%' }}>
                 <TextField
                   select
+                  fullWidth
                   label="Activity Type"
                   value={activityType}
                   onChange={(e) => setActivityType(e.target.value)}
                   error={!!errors.activityType}
                   helperText={errors.activityType}
+                  variant="outlined"
+                  InputProps={{
+                    sx: {
+                      height: '56px'
+                    }
+                  }}
                   sx={(theme) => getTextFieldStyle(theme)}
                 >
                   <MenuItem value="prayer">Prayer</MenuItem>
@@ -426,11 +433,18 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
               <Box sx={{ marginBottom: '1rem', maxWidth: '100%' }}>
                 <TextField
                   select
+                  fullWidth
                   label="Duration"
                   value={duration}
                   onChange={(e) => setDuration(e.target.value)}
                   error={!!errors.duration}
                   helperText={errors.duration}
+                  variant="outlined"
+                  InputProps={{
+                    sx: {
+                      height: '56px'
+                    }
+                  }}
                   sx={(theme) => getTextFieldStyle(theme)}
                 >
                   {getDurationOptions().map((option) => (
@@ -444,16 +458,23 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
               {/* Date picker */}
               <Box sx={{ marginBottom: '1rem', maxWidth: '100%' }}>
                 <TextField
+                  fullWidth
                   type="date"
                   label="Date"
                   value={date}
                   onChange={(e) => setDate(e.target.value)}
                   error={!!errors.date}
                   helperText={errors.date}
-                  sx={(theme) => getTextFieldStyle(theme)}
+                  variant="outlined"
+                  InputProps={{
+                    sx: {
+                      height: '56px'
+                    }
+                  }}
                   InputLabelProps={{
                     shrink: true,
                   }}
+                  sx={(theme) => getTextFieldStyle(theme)}
                 />
               </Box>
               
@@ -461,12 +482,19 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
               {activityType === 'literature' && (
                 <Box sx={{ marginBottom: '1rem', maxWidth: '100%' }}>
                   <TextField
+                    fullWidth
                     label="Literature Title"
                     value={literatureTitle}
                     onChange={(e) => setLiteratureTitle(e.target.value)}
                     placeholder="e.g., Big Book, 12x12, Daily Reflections"
                     error={!!errors.literatureTitle}
                     helperText={errors.literatureTitle}
+                    variant="outlined"
+                    InputProps={{
+                      sx: {
+                        height: '56px'
+                      }
+                    }}
                     sx={(theme) => getTextFieldStyle(theme)}
                   />
                 </Box>
@@ -527,6 +555,7 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
                   {!selectedMeetingId && (
                     <Box sx={{ marginBottom: '1rem', maxWidth: '100%' }}>
                       <TextField
+                        fullWidth
                         label="Meeting Name"
                         value={meetingName || ''}
                         onChange={(e) => {
@@ -547,6 +576,12 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
                         placeholder="Enter meeting name"
                         error={!!errors.meetingName}
                         helperText={errors.meetingName}
+                        variant="outlined"
+                        InputProps={{
+                          sx: {
+                            height: '56px'
+                          }
+                        }}
                         sx={(theme) => getTextFieldStyle(theme)}
                       />
                     </Box>
