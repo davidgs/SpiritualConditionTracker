@@ -2,6 +2,7 @@
     import { Box, Typography, Button, Chip, Select, MenuItem, FormControl, InputLabel, Menu } from '@mui/material';
     import { useTheme } from '@mui/material/styles';
     import { MobileTimePicker } from '@mui/x-date-pickers/MobileTimePicker';
+    import { TimePicker } from '@mui/x-date-pickers/TimePicker';
     import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
     import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
     import dayjs from 'dayjs';
@@ -870,62 +871,83 @@
             </LocalizationProvider>
           )}
 
-          {/* Time Picker Modal */}
+          {/* Simple Time Picker */}
           {isTimePickerOpen && (
             <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <MobileTimePicker
+              <TimePicker
                 value={timePickerValue}
                 ampm={!use24HourFormat}
-                open={true}
                 onChange={(value) => {
                   if (value && value.isValid()) {
-                    // Update the state immediately to prevent reversion
                     setTimePickerValue(value);
                     console.log('Time picker onChange:', value.format('HH:mm'));
                   }
                 }}
-                onAccept={(value) => {
-                  // Use the final accepted value directly
-                  const timeString = (value && value.isValid()) ? value.format('HH:mm') : (newMeeting.time || '19:00');
-                  const updatedMeeting = { ...newMeeting, time: timeString };
-                  setNewMeeting(updatedMeeting);
-                  setIsTimePickerOpen(false);
-                  setTimePickerValue(null);
-                  
-                  // Auto-complete meeting if all fields are filled
-                  if (updatedMeeting.day && updatedMeeting.time && updatedMeeting.format && updatedMeeting.locationType && updatedMeeting.access) {
-                    const completeMeeting: ScheduleItem = {
-                      day: updatedMeeting.day,
-                      time: updatedMeeting.time,
-                      format: updatedMeeting.format,
-                      locationType: updatedMeeting.locationType,
-                      access: updatedMeeting.access
-                    };
-                    const newSchedule = [...schedule, completeMeeting];
-                    onChange(newSchedule);
-                    
-                    // Reset for next meeting
-                    setNewMeeting({});
-                    setCurrentStep('day');
-                  }
-                }}
-                onClose={() => {
-                  setIsTimePickerOpen(false);
-                  setTimePickerValue(null);
-                }}
                 slotProps={{
                   textField: {
-                    style: { display: 'none' }
-                  },
-                  mobilePaper: {
+                    fullWidth: true,
+                    variant: 'outlined',
                     sx: {
+                      position: 'fixed',
                       top: '20%',
-                      transform: 'translateY(-20%)'
+                      left: '50%',
+                      transform: 'translateX(-50%)',
+                      zIndex: 1300,
+                      backgroundColor: 'white',
+                      borderRadius: 2,
+                      boxShadow: 3,
+                      p: 2,
+                      minWidth: 200,
+                    },
+                    onKeyDown: (e) => {
+                      if (e.key === 'Enter') {
+                        const timeString = timePickerValue ? timePickerValue.format('HH:mm') : (newMeeting.time || '19:00');
+                        const updatedMeeting = { ...newMeeting, time: timeString };
+                        setNewMeeting(updatedMeeting);
+                        setIsTimePickerOpen(false);
+                        setTimePickerValue(null);
+                        
+                        if (updatedMeeting.day && updatedMeeting.time && updatedMeeting.format && updatedMeeting.locationType && updatedMeeting.access) {
+                          const completeMeeting: ScheduleItem = {
+                            day: updatedMeeting.day,
+                            time: updatedMeeting.time,
+                            format: updatedMeeting.format,
+                            locationType: updatedMeeting.locationType,
+                            access: updatedMeeting.access
+                          };
+                          const newSchedule = [...schedule, completeMeeting];
+                          onChange(newSchedule);
+                          setNewMeeting({});
+                          setCurrentStep('day');
+                        }
+                      } else if (e.key === 'Escape') {
+                        setIsTimePickerOpen(false);
+                        setTimePickerValue(null);
+                      }
                     }
                   },
-                  actionBar: {
-                    actions: ['accept', 'cancel'],
-                  },
+                  popper: {
+                    placement: 'bottom',
+                    sx: {
+                      zIndex: 1400,
+                    }
+                  }
+                }}
+              />
+              {/* Backdrop */}
+              <Box
+                onClick={() => {
+                  setIsTimePickerOpen(false);
+                  setTimePickerValue(null);
+                }}
+                sx={{
+                  position: 'fixed',
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                  zIndex: 1200,
                 }}
               />
             </LocalizationProvider>
