@@ -521,23 +521,24 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
             
             {/* Log new activity button */}
             {/* Button to open activity modal */}
-            <IconButton
+            <Button
               onClick={() => setShowActivityModal(true)}
               data-tour="log-activity-btn"
-              title="Log new activity"
-              aria-label="Log new activity"
-              size="medium"
-              sx={{ 
-                fontSize: '1.5rem', 
-                p: 0.5,
-                color: 'primary.main',
-                '&:hover': {
-                  color: 'primary.dark'
-                }
+              variant="contained"
+              color="primary"
+              startIcon={<i className="fa-solid fa-plus" />}
+              size="small"
+              sx={{
+                fontSize: '0.75rem',
+                textTransform: 'none',
+                borderRadius: '20px',
+                px: 1.5,
+                py: 0.5,
+                minWidth: 'auto'
               }}
             >
-              <i className="fa-solid fa-scroll"></i>
-            </IconButton>
+              Log
+            </Button>
             
           </Box>
         </Box>
