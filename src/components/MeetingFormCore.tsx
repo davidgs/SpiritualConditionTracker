@@ -443,40 +443,41 @@ export default function MeetingFormCore({
                 })}
               />
             
-            <Box sx={{ display: 'flex', gap: 1, alignItems: 'flex-start' }}>
-              <TextField
-                fullWidth
-                value={streetAddress}
-                onChange={(e) => setStreetAddress(e.target.value)}
-                placeholder="Street address"
-                size="medium"
-                sx={(theme) => getTextFieldStyle(theme)}
-              />
-              <Button
-                variant="outlined"
-                size="medium"
-                onClick={handleLocateMe}
-                disabled={isLocating}
-                sx={{
-                  minWidth: 'auto',
-                  px: 1.5,
-                  py: 1,
-                  height: '40px',
-                  borderColor: 'primary.main',
-                  color: 'primary.main',
-                  '&:hover': {
-                    borderColor: 'primary.dark',
-                    backgroundColor: 'primary.light'
-                  }
-                }}
-              >
-                {isLocating ? (
-                  <i className="fa-solid fa-spinner fa-spin" />
-                ) : (
-                  <i className="fa-solid fa-location-dot" />
-                )}
-              </Button>
-            </Box>
+            <TextField
+              fullWidth
+              value={streetAddress}
+              onChange={(e) => setStreetAddress(e.target.value)}
+              placeholder="Street address"
+              size="medium"
+              sx={(theme) => getTextFieldStyle(theme)}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      onClick={handleLocateMe}
+                      disabled={isLocating}
+                      edge="end"
+                      sx={{
+                        color: 'primary.main',
+                        '&:hover': {
+                          color: 'primary.dark',
+                          backgroundColor: 'transparent'
+                        },
+                        '&:disabled': {
+                          color: 'action.disabled'
+                        }
+                      }}
+                    >
+                      {isLocating ? (
+                        <i className="fa-solid fa-spinner fa-spin" />
+                      ) : (
+                        <i className="fa-solid fa-location-dot" />
+                      )}
+                    </IconButton>
+                  </InputAdornment>
+                )
+              }}
+            />
             
             <Box sx={{ display: 'flex', gap: 1 }}>
               <TextField
