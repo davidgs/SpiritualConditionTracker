@@ -705,6 +705,10 @@
                       slotProps={{
                         textField: {
                           variant: 'standard',
+                          color: 'primary',
+                          InputProps: {
+                            disableUnderline: true,
+                          },
                           size: 'small',
                           sx: {
                             width: '70px',
