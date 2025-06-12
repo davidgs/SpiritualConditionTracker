@@ -945,13 +945,39 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
                           size="small"
                           onDelete={(event) => {
                             event.stopPropagation();
+                            event.preventDefault();
                             const newHomeGroups = homeGroups.filter(group => group !== value);
                             setHomeGroups(newHomeGroups);
                           }}
-                          deleteIcon={<i className="fas fa-times" style={{ fontSize: '0.7rem' }} />}
+                          deleteIcon={
+                            <Box
+                              component="span"
+                              sx={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                width: '16px',
+                                height: '16px',
+                                borderRadius: '50%',
+                                backgroundColor: 'error.main',
+                                color: 'error.contrastText',
+                                fontSize: '10px',
+                                fontWeight: 'bold',
+                                cursor: 'pointer',
+                                '&:hover': {
+                                  backgroundColor: 'error.dark'
+                                }
+                              }}
+                            >
+                              ×
+                            </Box>
+                          }
                           sx={{
                             '& .MuiChip-deleteIcon': {
-                              fontSize: '0.7rem'
+                              margin: '0 2px 0 -4px',
+                              '&:hover': {
+                                backgroundColor: 'transparent'
+                              }
                             }
                           }}
                         />
