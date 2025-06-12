@@ -27,7 +27,10 @@ import {
   MenuItem,
   Dialog,
   DialogTitle,
-  DialogContent
+  DialogContent,
+  Chip,
+  Checkbox,
+  ListItemText
 } from '@mui/material';
 
 
@@ -879,12 +882,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
                     autoComplete: 'tel',
                   }
                 }}
-                inputProps={{
-                  autoComplete: 'tel',
-                  'data-lpignore': 'false',
-                  'data-form-type': 'tel',
-                  name: 'phone'
-                }}
+
               />
 
               <TextField
@@ -938,12 +936,28 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
                 }}
                 SelectProps={{
                   multiple: true,
-                  renderValue: (selected) => {
-                    if (Array.isArray(selected)) {
-                      return selected.join(', ');
-                    }
-                    return selected || '';
-                  },
+                  renderValue: (selected) => (
+                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                      {Array.isArray(selected) && selected.map((value) => (
+                        <Chip
+                          key={value}
+                          label={value}
+                          size="small"
+                          onDelete={(event) => {
+                            event.stopPropagation();
+                            const newHomeGroups = homeGroups.filter(group => group !== value);
+                            setHomeGroups(newHomeGroups);
+                          }}
+                          deleteIcon={<i className="fas fa-times" style={{ fontSize: '0.7rem' }} />}
+                          sx={{
+                            '& .MuiChip-deleteIcon': {
+                              fontSize: '0.7rem'
+                            }
+                          }}
+                        />
+                      ))}
+                    </Box>
+                  ),
                   MenuProps: {
                     PaperProps: {
                       sx: {
@@ -962,7 +976,13 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
                 {/* Generate menu items from meetings prop (no database queries) */}
                 {meetings && meetings.length > 0
                   ? meetings.map((meeting: any) => (
-                      <MenuItem key={meeting.id} value={meeting.name}>{meeting.name}</MenuItem>
+                      <MenuItem key={meeting.id} value={meeting.name}>
+                        <Checkbox 
+                          checked={Array.isArray(homeGroups) && homeGroups.includes(meeting.name)}
+                          size="small"
+                        />
+                        <ListItemText primary={meeting.name} />
+                      </MenuItem>
                     ))
                   : <MenuItem value="none" disabled>No saved meetings</MenuItem>
                 }
