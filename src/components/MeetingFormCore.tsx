@@ -91,53 +91,101 @@ export default function MeetingFormCore({
     );
   };
 
-  // Handle geolocation for current position
+  // Handle geolocation for current position - iOS compatible
   const handleLocateMe = () => {
+    // Check if geolocation is available
     if (!navigator.geolocation) {
-      setError('Geolocation is not supported by this browser');
+      setError('Location services are not available on this device');
       return;
     }
 
     setIsLocating(true);
     setError('');
 
+    // iOS Safari requires user interaction and specific permissions
+    const options = {
+      enableHighAccuracy: true,
+      timeout: 15000, // Longer timeout for iOS
+      maximumAge: 600000 // 10 minutes cache
+    };
+
     navigator.geolocation.getCurrentPosition(
       async (position) => {
         try {
           const { latitude, longitude } = position.coords;
+          console.log('[MeetingForm] Got location:', latitude, longitude);
           setLocation({ latitude, longitude });
           
-          // Reverse geocode to get address
-          const response = await fetch(
-            `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=en`
-          );
-          
-          if (response.ok) {
-            const data = await response.json();
+          // Use a more reliable geocoding service
+          try {
+            const response = await fetch(
+              `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=18&addressdetails=1`,
+              {
+                headers: {
+                  'User-Agent': 'AA-Recovery-App/1.0'
+                }
+              }
+            );
             
-            // Fill in the address fields
-            if (data.locality) setCity(data.locality);
-            if (data.principalSubdivision) setState(data.principalSubdivision);
-            if (data.postcode) setZipCode(data.postcode);
-            if (data.street) setStreetAddress(data.street);
+            if (response.ok) {
+              const data = await response.json();
+              console.log('[MeetingForm] Geocoding result:', data);
+              
+              // Extract address components from OpenStreetMap response
+              const address = data.address || {};
+              
+              if (data.display_name) {
+                // Try to parse the address components
+                if (address.house_number && address.road) {
+                  setStreetAddress(`${address.house_number} ${address.road}`);
+                } else if (address.road) {
+                  setStreetAddress(address.road);
+                }
+                
+                if (address.city || address.town || address.municipality) {
+                  setCity(address.city || address.town || address.municipality);
+                }
+                
+                if (address.state) {
+                  setState(address.state);
+                }
+                
+                if (address.postcode) {
+                  setZipCode(address.postcode);
+                }
+              }
+            }
+          } catch (geocodeError) {
+            console.warn('[MeetingForm] Geocoding failed, location set but address not filled:', geocodeError);
+            // Still have coordinates, just no address details
           }
         } catch (error) {
-          console.error('Error getting location details:', error);
-          setError('Could not get location details');
+          console.error('[MeetingForm] Error processing location:', error);
+          setError('Got your location but could not get address details');
         } finally {
           setIsLocating(false);
         }
       },
       (error) => {
-        console.error('Geolocation error:', error);
-        setError('Could not get your location. Please check your location permissions.');
+        console.error('[MeetingForm] Geolocation error:', error);
         setIsLocating(false);
+        
+        switch (error.code) {
+          case error.PERMISSION_DENIED:
+            setError('Location access denied. Please enable location permissions in your browser settings.');
+            break;
+          case error.POSITION_UNAVAILABLE:
+            setError('Location information is unavailable. Please try again.');
+            break;
+          case error.TIMEOUT:
+            setError('Location request timed out. Please try again.');
+            break;
+          default:
+            setError('An unknown error occurred while getting your location.');
+            break;
+        }
       },
-      {
-        enableHighAccuracy: true,
-        timeout: 10000,
-        maximumAge: 300000
-      }
+      options
     );
   };
 
