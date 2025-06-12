@@ -707,9 +707,9 @@
                           variant: 'standard',
                           size: 'small',
                           sx: {
-                            width: '80px',
-                            minWidth: '80px',
-                            maxWidth: '80px',
+                            width: '70px',
+                            minWidth: '70px',
+                            maxWidth: '70px',
                             '& .MuiInputBase-root': {
                               border: 'none',
                               background: 'none',
