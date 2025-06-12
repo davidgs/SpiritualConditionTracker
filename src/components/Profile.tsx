@@ -174,7 +174,15 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
   // Handle meeting selection change
   const handleHomeGroupChange = (e) => {
     const value = e.target.value;
-    if (value === 'add_new') {
+    
+    // Check if "add_new" was selected
+    if (Array.isArray(value) && value.includes('add_new')) {
+      // Remove "add_new" from the selection and open the meeting form
+      const filteredValue = value.filter(v => v !== 'add_new');
+      setHomeGroups(filteredValue);
+      setShowMeetingForm(true);
+    } else if (value === 'add_new') {
+      // Single selection case
       setShowMeetingForm(true);
     } else {
       setHomeGroups(value);
@@ -870,6 +878,12 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
                   '& input': {
                     autoComplete: 'tel',
                   }
+                }}
+                inputProps={{
+                  autoComplete: 'tel',
+                  'data-lpignore': 'false',
+                  'data-form-type': 'tel',
+                  name: 'phone'
                 }}
               />
 
