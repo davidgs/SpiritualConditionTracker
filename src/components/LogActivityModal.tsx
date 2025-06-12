@@ -27,30 +27,25 @@ import MeetingFormDialog from './MeetingFormDialog';
  * @param {Array} props.meetings - List of meetings for selection in the form
  * @returns {React.ReactElement} The dialog component
  */
-// Common TextField style to ensure consistent MUI styling
+// Profile form TextField style
 const getTextFieldStyle = (theme) => ({
-  width: '100%',
-  maxWidth: '100%',
-  mb: 2,
-  '& .MuiOutlinedInput-root': { 
-    height: 56,
-    borderRadius: 2,
-    width: '100%',
-    maxWidth: '100%',
-    bgcolor: theme.palette.mode === 'dark' ? theme.palette.background.default : theme.palette.grey[50],
+  '& .MuiOutlinedInput-root': {
+    borderRadius: theme.spacing(1),
+    backgroundColor: theme.palette.background.default,
     '& fieldset': {
-      borderColor: theme.palette.divider,
+      borderColor: theme.palette.divider
     },
     '&:hover fieldset': {
-      borderColor: theme.palette.action.hover,
+      borderColor: theme.palette.primary.main
     },
     '&.Mui-focused fieldset': {
-      borderColor: theme.palette.primary.main,
+      borderColor: theme.palette.primary.main
     }
   },
-  '& .MuiOutlinedInput-input': {
-    fontSize: 16,
-    padding: '15px 14px',
+  '& .MuiInputLabel-root': {
+    color: theme.palette.text.secondary
+  },
+  '& .MuiInputBase-input': {
     color: theme.palette.text.primary
   }
 });
