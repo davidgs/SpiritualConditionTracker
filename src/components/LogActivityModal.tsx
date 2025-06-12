@@ -27,26 +27,16 @@ import MeetingFormDialog from './MeetingFormDialog';
  * @param {Array} props.meetings - List of meetings for selection in the form
  * @returns {React.ReactElement} The dialog component
  */
-// Profile form TextField style
-const getTextFieldStyle = (theme) => ({
+// Profile form TextField style - matches exactly
+const getTextFieldStyle = () => ({
+  mb: 2,
   '& .MuiOutlinedInput-root': {
-    borderRadius: theme.spacing(1),
-    backgroundColor: theme.palette.background.default,
-    '& fieldset': {
-      borderColor: theme.palette.divider
-    },
-    '&:hover fieldset': {
-      borderColor: theme.palette.primary.main
-    },
-    '&.Mui-focused fieldset': {
-      borderColor: theme.palette.primary.main
-    }
+    height: 56,
+    borderRadius: 2
   },
-  '& .MuiInputLabel-root': {
-    color: theme.palette.text.secondary
-  },
-  '& .MuiInputBase-input': {
-    color: theme.palette.text.primary
+  '& .MuiOutlinedInput-input': {
+    fontSize: 16,
+    padding: '15px 14px'
   }
 });
 
@@ -418,7 +408,7 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
                       height: '56px'
                     }
                   }}
-                  sx={(theme) => getTextFieldStyle(theme)}
+                  sx={getTextFieldStyle()}
                 >
                   <MenuItem value="prayer">Prayer</MenuItem>
                   <MenuItem value="meditation">Meditation</MenuItem>
@@ -445,7 +435,7 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
                       height: '56px'
                     }
                   }}
-                  sx={(theme) => getTextFieldStyle(theme)}
+                  sx={getTextFieldStyle()}
                 >
                   {getDurationOptions().map((option) => (
                     <MenuItem key={option.value} value={option.value}>
@@ -474,7 +464,7 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
                   InputLabelProps={{
                     shrink: true,
                   }}
-                  sx={(theme) => getTextFieldStyle(theme)}
+                  sx={getTextFieldStyle()}
                 />
               </Box>
               
@@ -495,7 +485,7 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
                         height: '56px'
                       }
                     }}
-                    sx={(theme) => getTextFieldStyle(theme)}
+                    sx={getTextFieldStyle()}
                   />
                 </Box>
               )}
@@ -520,7 +510,7 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
                       component="select"
                       value={selectedMeetingId}
                       onChange={handleMeetingSelect}
-                      sx={(theme) => getTextFieldStyle(theme)}
+                      sx={getTextFieldStyle()}
                     >
                       <option value="">-- Select a saved meeting --</option>
                       {meetings.map(meeting => (
@@ -582,7 +572,7 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
                             height: '56px'
                           }
                         }}
-                        sx={(theme) => getTextFieldStyle(theme)}
+                        sx={getTextFieldStyle()}
                       />
                     </Box>
                   )}
@@ -773,7 +763,7 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
                   placeholder="Enter any notes about this activity..."
                   multiline
                   rows={3}
-                  sx={(theme) => getTextFieldStyle(theme)}
+                  sx={getTextFieldStyle()}
                 />
               </Box>
               
