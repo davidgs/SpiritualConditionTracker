@@ -806,21 +806,22 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
               {/* Notes field */}
               <Box sx={{ marginBottom: '1rem', maxWidth: '100%' }}>
                 <TextField
+                  fullWidth
                   label="Notes (optional)"
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
                   placeholder="Enter any notes about this activity..."
                   multiline
                   rows={3}
+                  variant="outlined"
                   sx={{
                     mb: 2,
-                    "sx={getTextFieldStyle()} .MuiOutlinedInput-root": {
-                      height: 56,
+                    '& .MuiOutlinedInput-root': {
                       borderRadius: 2
                     },
-                    "sx={getTextFieldStyle()} .MuiOutlinedInput-input": {
+                    '& .MuiOutlinedInput-input': {
                       fontSize: 16,
-                      padding: "15px 14px"
+                      padding: '15px 14px'
                     }
                   }}
                 />
