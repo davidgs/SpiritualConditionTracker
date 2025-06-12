@@ -27,18 +27,7 @@ import MeetingFormDialog from './MeetingFormDialog';
  * @param {Array} props.meetings - List of meetings for selection in the form
  * @returns {React.ReactElement} The dialog component
  */
-// Profile form TextField style - matches exactly
-const getTextFieldStyle = () => ({
-  mb: 2,
-  '& .MuiOutlinedInput-root': {
-    height: 56,
-    borderRadius: 2
-  },
-  '& .MuiOutlinedInput-input': {
-    fontSize: 16,
-    padding: '15px 14px'
-  }
-});
+
 
 const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] }) => {
   // Get theme context
@@ -408,7 +397,17 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
                       height: '56px'
                     }
                   }}
-                  sx={getTextFieldStyle()}
+                  sx={{
+                    mb: 2,
+                    "sx={getTextFieldStyle()} .MuiOutlinedInput-root": {
+                      height: 56,
+                      borderRadius: 2
+                    },
+                    "sx={getTextFieldStyle()} .MuiOutlinedInput-input": {
+                      fontSize: 16,
+                      padding: "15px 14px"
+                    }
+                  }}
                 >
                   <MenuItem value="prayer">Prayer</MenuItem>
                   <MenuItem value="meditation">Meditation</MenuItem>
@@ -435,7 +434,17 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
                       height: '56px'
                     }
                   }}
-                  sx={getTextFieldStyle()}
+                  sx={{
+                    mb: 2,
+                    "sx={getTextFieldStyle()} .MuiOutlinedInput-root": {
+                      height: 56,
+                      borderRadius: 2
+                    },
+                    "sx={getTextFieldStyle()} .MuiOutlinedInput-input": {
+                      fontSize: 16,
+                      padding: "15px 14px"
+                    }
+                  }}
                 >
                   {getDurationOptions().map((option) => (
                     <MenuItem key={option.value} value={option.value}>
@@ -464,7 +473,17 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
                   InputLabelProps={{
                     shrink: true,
                   }}
-                  sx={getTextFieldStyle()}
+                  sx={{
+                    mb: 2,
+                    "sx={getTextFieldStyle()} .MuiOutlinedInput-root": {
+                      height: 56,
+                      borderRadius: 2
+                    },
+                    "sx={getTextFieldStyle()} .MuiOutlinedInput-input": {
+                      fontSize: 16,
+                      padding: "15px 14px"
+                    }
+                  }}
                 />
               </Box>
               
@@ -485,7 +504,17 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
                         height: '56px'
                       }
                     }}
-                    sx={getTextFieldStyle()}
+                    sx={{
+                    mb: 2,
+                    "sx={getTextFieldStyle()} .MuiOutlinedInput-root": {
+                      height: 56,
+                      borderRadius: 2
+                    },
+                    "sx={getTextFieldStyle()} .MuiOutlinedInput-input": {
+                      fontSize: 16,
+                      padding: "15px 14px"
+                    }
+                  }}
                   />
                 </Box>
               )}
@@ -510,7 +539,17 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
                       component="select"
                       value={selectedMeetingId}
                       onChange={handleMeetingSelect}
-                      sx={getTextFieldStyle()}
+                      sx={{
+                    mb: 2,
+                    "sx={getTextFieldStyle()} .MuiOutlinedInput-root": {
+                      height: 56,
+                      borderRadius: 2
+                    },
+                    "sx={getTextFieldStyle()} .MuiOutlinedInput-input": {
+                      fontSize: 16,
+                      padding: "15px 14px"
+                    }
+                  }}
                     >
                       <option value="">-- Select a saved meeting --</option>
                       {meetings.map(meeting => (
@@ -572,7 +611,17 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
                             height: '56px'
                           }
                         }}
-                        sx={getTextFieldStyle()}
+                        sx={{
+                    mb: 2,
+                    "sx={getTextFieldStyle()} .MuiOutlinedInput-root": {
+                      height: 56,
+                      borderRadius: 2
+                    },
+                    "sx={getTextFieldStyle()} .MuiOutlinedInput-input": {
+                      fontSize: 16,
+                      padding: "15px 14px"
+                    }
+                  }}
                       />
                     </Box>
                   )}
@@ -763,7 +812,17 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
                   placeholder="Enter any notes about this activity..."
                   multiline
                   rows={3}
-                  sx={getTextFieldStyle()}
+                  sx={{
+                    mb: 2,
+                    "sx={getTextFieldStyle()} .MuiOutlinedInput-root": {
+                      height: 56,
+                      borderRadius: 2
+                    },
+                    "sx={getTextFieldStyle()} .MuiOutlinedInput-input": {
+                      fontSize: 16,
+                      padding: "15px 14px"
+                    }
+                  }}
                 />
               </Box>
               
