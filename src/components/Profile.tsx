@@ -867,30 +867,32 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
               <Box sx={{ color: muiTheme.palette.primary.main, fontSize: '14px', mb: '4px' }}>
                 Phone Number
               </Box>
-              <MuiTelInput
-                value={phoneNumber != "Not set" ? phoneNumber : ""}
-                onChange={(value) => setPhoneNumber(value)}
-                defaultCountry={defaultCountry as any}
-                forceCallingCode
-                continents={['EU', 'OC', 'NA']}
+              <TextField
                 fullWidth
-                TextFieldProps={{
-                  inputProps: {
-                    autoComplete: 'tel',
-                    'data-lpignore': 'false',
-                    'data-form-type': 'tel',
-                    name: 'phone',
-                    'data-1p-ignore': 'false'
-                  }
+                value={phoneNumber != "Not set" ? phoneNumber : ""}
+                onChange={(e) => setPhoneNumber(e.target.value)}
+                placeholder="Enter your phone number"
+                variant="outlined"
+                type="tel"
+                size="medium"
+                margin="none"
+                autoComplete="tel"
+                inputProps={{
+                  autoComplete: "tel",
+                  'data-lpignore': 'false',
+                  'data-form-type': 'tel',
+                  name: 'phone',
+                  'data-1p-ignore': 'false'
                 }}
                 sx={{
                   mb: 2,
-                  '& .MuiInputBase-root': {
-                    height: '56px',
-                    borderRadius: '8px',
+                  '& .MuiOutlinedInput-root': {
+                    height: 56,
+                    borderRadius: 2
                   },
-                  '& input': {
-                    autoComplete: 'tel !important',
+                  '& .MuiOutlinedInput-input': {
+                    fontSize: 16,
+                    padding: '15px 14px'
                   }
                 }}
               />
