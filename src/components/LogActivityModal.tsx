@@ -6,6 +6,12 @@ import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
+import TextField from '@mui/material/TextField';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import InputLabel from '@mui/material/InputLabel';
+import Select from '@mui/material/Select';
+import { useTheme } from '@mui/material/styles';
 import StyledDialog from './StyledDialog';
 import MuiThemeProvider from '../contexts/MuiThemeProvider';
 import MeetingFormDialog from './MeetingFormDialog';
@@ -21,7 +27,38 @@ import MeetingFormDialog from './MeetingFormDialog';
  * @param {Array} props.meetings - List of meetings for selection in the form
  * @returns {React.ReactElement} The dialog component
  */
+// Common TextField style to ensure consistent MUI styling
+const getTextFieldStyle = (theme) => ({
+  width: '100%',
+  maxWidth: '100%',
+  mb: 2,
+  '& .MuiOutlinedInput-root': { 
+    height: 56,
+    borderRadius: 2,
+    width: '100%',
+    maxWidth: '100%',
+    bgcolor: theme.palette.mode === 'dark' ? theme.palette.background.default : theme.palette.grey[50],
+    '& fieldset': {
+      borderColor: theme.palette.divider,
+    },
+    '&:hover fieldset': {
+      borderColor: theme.palette.action.hover,
+    },
+    '&.Mui-focused fieldset': {
+      borderColor: theme.palette.primary.main,
+    }
+  },
+  '& .MuiOutlinedInput-input': {
+    fontSize: 16,
+    padding: '15px 14px',
+    color: theme.palette.text.primary
+  }
+});
+
 const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] }) => {
+  // Get theme context
+  const muiTheme = useTheme();
+  
   // Dark mode detection
   const darkMode = document.documentElement.classList.contains('dark');
   const [isDarkMode, setIsDarkMode] = useState(darkMode);
@@ -105,7 +142,10 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
     let maxMinutes = 60; // Default max is 1 hour
     let increment = 15; // Default increment is 15 minutes
     
-    if (activityType === 'meeting') {
+    if (activityType === 'prayer' || activityType === 'meditation') {
+      maxMinutes = 60; // 1 hour
+      increment = 5; // 5 minute increments for prayer/meditation
+    } else if (activityType === 'meeting') {
       maxMinutes = 150; // 2.5 hours
       increment = 30; // 30 minute increments
     } else if (activityType === 'sponsee' || activityType === 'service') {
@@ -113,9 +153,10 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
     }
     
     for (let i = increment; i <= maxMinutes; i += increment) {
-      options.push(
-        <option key={i} value={i.toString()}>{i} minutes</option>
-      );
+      options.push({
+        value: i.toString(),
+        label: `${i} minutes`
+      });
     }
     
     return options;
@@ -368,79 +409,41 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
             <form onSubmit={handleSubmit}>
               {/* Activity Type */}
               <Box sx={{ marginBottom: '1rem', maxWidth: '100%' }}>
-                <Box 
-                  component="label"
-                  sx={(theme) => ({
-                    display: 'block',
-                    fontSize: '0.875rem',
-                    fontWeight: '500',
-                    marginBottom: '0.25rem',
-                    color: theme.palette.text.secondary
-                  })}
-                >
-                  Activity Type
-                </Box>
-                <Box 
-                  component="select"
+                <TextField
+                  select
+                  label="Activity Type"
                   value={activityType}
                   onChange={(e) => setActivityType(e.target.value)}
+                  error={!!errors.activityType}
+                  helperText={errors.activityType}
                   sx={(theme) => getTextFieldStyle(theme)}
                 >
-                  <option value="prayer">Prayer</option>
-                  <option value="meditation">Meditation</option>
-                  <option value="literature">Reading Literature</option>
-                  <option value="service">Service Work</option>
-                  <option value="call">Call</option>
-                  <option value="meeting">AA Meeting</option>
-                </Box>
-                {errors.activityType && (
-                  <Box 
-                    component="p" 
-                    sx={(theme) => ({
-                      color: theme.palette.error.main,
-                      fontSize: '0.75rem',
-                      marginTop: '0.25rem'
-                    })}
-                  >
-                    {errors.activityType}
-                  </Box>
-                )}
+                  <MenuItem value="prayer">Prayer</MenuItem>
+                  <MenuItem value="meditation">Meditation</MenuItem>
+                  <MenuItem value="literature">Reading Literature</MenuItem>
+                  <MenuItem value="service">Service Work</MenuItem>
+                  <MenuItem value="call">Call</MenuItem>
+                  <MenuItem value="meeting">AA Meeting</MenuItem>
+                </TextField>
               </Box>
               
               {/* Duration dropdown */}
               <Box sx={{ marginBottom: '1rem', maxWidth: '100%' }}>
-                <Box 
-                  component="label"
-                  sx={(theme) => ({
-                    display: 'block',
-                    fontSize: '0.875rem',
-                    fontWeight: '500',
-                    marginBottom: '0.25rem',
-                    color: theme.palette.text.secondary
-                  })}
-                >
-                  Duration
-                </Box>
-                <Box 
-                  component="select"
+                <TextField
+                  select
+                  label="Duration"
                   value={duration}
                   onChange={(e) => setDuration(e.target.value)}
+                  error={!!errors.duration}
+                  helperText={errors.duration}
                   sx={(theme) => getTextFieldStyle(theme)}
                 >
-                  {getDurationOptions()}
-                </Box>
-                {errors.duration && (
-                  <Box 
-                    component="p" 
-                    sx={(theme) => ({
-                      color: theme.palette.error.main,
-                      fontSize: '0.75rem',
-                      marginTop: '0.25rem'
-                    })}
-                  >
-                    {errors.duration}
-                  </Box>
-                )}
+                  {getDurationOptions().map((option) => (
+                    <MenuItem key={option.value} value={option.value}>
+                      {option.label}
+                    </MenuItem>
+                  ))}
+                </TextField>
               </Box>
               
               {/* Date picker */}
