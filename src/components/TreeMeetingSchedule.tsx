@@ -871,86 +871,71 @@
             </LocalizationProvider>
           )}
 
-          {/* Simple Time Picker */}
+          {/* Inline Time Picker */}
           {isTimePickerOpen && (
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <TimePicker
-                value={timePickerValue}
-                ampm={!use24HourFormat}
-                onChange={(value) => {
-                  if (value && value.isValid()) {
-                    setTimePickerValue(value);
-                    console.log('Time picker onChange:', value.format('HH:mm'));
-                  }
-                }}
-                slotProps={{
-                  textField: {
-                    fullWidth: true,
-                    variant: 'outlined',
-                    sx: {
-                      position: 'fixed',
-                      top: '20%',
-                      left: '50%',
-                      transform: 'translateX(-50%)',
-                      zIndex: 1300,
-                      backgroundColor: 'white',
-                      borderRadius: 2,
-                      boxShadow: 3,
-                      p: 2,
-                      minWidth: 200,
-                    },
-                    onKeyDown: (e) => {
-                      if (e.key === 'Enter') {
-                        const timeString = timePickerValue ? timePickerValue.format('HH:mm') : (newMeeting.time || '19:00');
-                        const updatedMeeting = { ...newMeeting, time: timeString };
-                        setNewMeeting(updatedMeeting);
-                        setIsTimePickerOpen(false);
-                        setTimePickerValue(null);
-                        
-                        if (updatedMeeting.day && updatedMeeting.time && updatedMeeting.format && updatedMeeting.locationType && updatedMeeting.access) {
-                          const completeMeeting: ScheduleItem = {
-                            day: updatedMeeting.day,
-                            time: updatedMeeting.time,
-                            format: updatedMeeting.format,
-                            locationType: updatedMeeting.locationType,
-                            access: updatedMeeting.access
-                          };
-                          const newSchedule = [...schedule, completeMeeting];
-                          onChange(newSchedule);
-                          setNewMeeting({});
-                          setCurrentStep('day');
-                        }
-                      } else if (e.key === 'Escape') {
-                        setIsTimePickerOpen(false);
-                        setTimePickerValue(null);
+            <Box
+              sx={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                zIndex: 10,
+              }}
+            >
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <TimePicker
+                  value={timePickerValue}
+                  ampm={!use24HourFormat}
+                  onChange={(value) => {
+                    if (value && value.isValid()) {
+                      setTimePickerValue(value);
+                      const timeString = value.format('HH:mm');
+                      const updatedMeeting = { ...newMeeting, time: timeString };
+                      setNewMeeting(updatedMeeting);
+                      setIsTimePickerOpen(false);
+                      setTimePickerValue(null);
+                      
+                      if (updatedMeeting.day && updatedMeeting.time && updatedMeeting.format && updatedMeeting.locationType && updatedMeeting.access) {
+                        const completeMeeting: ScheduleItem = {
+                          day: updatedMeeting.day,
+                          time: updatedMeeting.time,
+                          format: updatedMeeting.format,
+                          locationType: updatedMeeting.locationType,
+                          access: updatedMeeting.access
+                        };
+                        const newSchedule = [...schedule, completeMeeting];
+                        onChange(newSchedule);
+                        setNewMeeting({});
+                        setCurrentStep('day');
                       }
                     }
-                  },
-                  popper: {
-                    placement: 'bottom',
-                    sx: {
-                      zIndex: 1400,
+                  }}
+                  slotProps={{
+                    textField: {
+                      variant: 'standard',
+                      sx: {
+                        '& .MuiInputBase-root': {
+                          border: 'none',
+                          '&:before': { display: 'none' },
+                          '&:after': { display: 'none' },
+                          '&:hover:not(.Mui-disabled):before': { display: 'none' },
+                        },
+                        '& .MuiInputBase-input': {
+                          padding: 0,
+                          fontSize: 'inherit',
+                          fontWeight: 'inherit',
+                          color: 'inherit',
+                          textAlign: 'left',
+                        },
+                        '& .MuiInputAdornment-root': {
+                          display: 'none',
+                        },
+                      }
                     }
-                  }
-                }}
-              />
-              {/* Backdrop */}
-              <Box
-                onClick={() => {
-                  setIsTimePickerOpen(false);
-                  setTimePickerValue(null);
-                }}
-                sx={{
-                  position: 'fixed',
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
-                  backgroundColor: 'rgba(0, 0, 0, 0.5)',
-                  zIndex: 1200,
-                }}
-              />
-            </LocalizationProvider>
+                  }}
+                />
+              </LocalizationProvider>
+            </Box>
           )}
 
 
