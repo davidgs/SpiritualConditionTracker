@@ -927,6 +927,55 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
               <Box sx={{ color: muiTheme.palette.text.secondary, fontSize: '14px', mb: '4px' }}>
                 Home Group(s)
               </Box>
+              
+              {/* Display selected groups as chips above the dropdown */}
+              {Array.isArray(homeGroups) && homeGroups.length > 0 && (
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, mb: 1 }}>
+                  {homeGroups.map((group) => (
+                    <Chip
+                      key={group}
+                      label={group}
+                      size="small"
+                      onDelete={() => {
+                        const newHomeGroups = homeGroups.filter(g => g !== group);
+                        setHomeGroups(newHomeGroups);
+                      }}
+                      deleteIcon={
+                        <Box
+                          component="span"
+                          sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            width: '16px',
+                            height: '16px',
+                            borderRadius: '50%',
+                            backgroundColor: 'error.main',
+                            color: 'error.contrastText',
+                            fontSize: '10px',
+                            fontWeight: 'bold',
+                            cursor: 'pointer',
+                            '&:hover': {
+                              backgroundColor: 'error.dark'
+                            }
+                          }}
+                        >
+                          ×
+                        </Box>
+                      }
+                      sx={{
+                        '& .MuiChip-deleteIcon': {
+                          margin: '0 2px 0 -4px',
+                          '&:hover': {
+                            backgroundColor: 'transparent'
+                          }
+                        }
+                      }}
+                    />
+                  ))}
+                </Box>
+              )}
+
               <TextField
                 select
                 fullWidth
@@ -935,6 +984,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
                 variant="outlined"
                 size="medium"
                 margin="none"
+                placeholder="Select home groups..."
                 sx={{
                   mb: 2,
                   '& .MuiOutlinedInput-root': {
@@ -946,54 +996,13 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
                 }}
                 SelectProps={{
                   multiple: true,
-                  renderValue: (selected) => (
-                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                      {Array.isArray(selected) && selected.map((value) => (
-                        <Chip
-                          key={value}
-                          label={value}
-                          size="small"
-                          onDelete={(event) => {
-                            event.stopPropagation();
-                            event.preventDefault();
-                            const newHomeGroups = homeGroups.filter(group => group !== value);
-                            setHomeGroups(newHomeGroups);
-                          }}
-                          deleteIcon={
-                            <Box
-                              component="span"
-                              sx={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                width: '16px',
-                                height: '16px',
-                                borderRadius: '50%',
-                                backgroundColor: 'error.main',
-                                color: 'error.contrastText',
-                                fontSize: '10px',
-                                fontWeight: 'bold',
-                                cursor: 'pointer',
-                                '&:hover': {
-                                  backgroundColor: 'error.dark'
-                                }
-                              }}
-                            >
-                              ×
-                            </Box>
-                          }
-                          sx={{
-                            '& .MuiChip-deleteIcon': {
-                              margin: '0 2px 0 -4px',
-                              '&:hover': {
-                                backgroundColor: 'transparent'
-                              }
-                            }
-                          }}
-                        />
-                      ))}
-                    </Box>
-                  ),
+                  displayEmpty: true,
+                  renderValue: (selected) => {
+                    if (!Array.isArray(selected) || selected.length === 0) {
+                      return <em style={{ color: 'gray' }}>Select home groups...</em>;
+                    }
+                    return `${selected.length} group${selected.length > 1 ? 's' : ''} selected`;
+                  },
                   MenuProps: {
                     PaperProps: {
                       sx: {
