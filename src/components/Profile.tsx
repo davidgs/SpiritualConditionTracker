@@ -948,44 +948,44 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            width: '14px',
-                            height: '14px',
+                            width: '20px',
+                            height: '20px',
                             borderRadius: '50%',
-                            backgroundColor: 'text.secondary',
-                            color: 'background.paper',
-                            fontSize: '9px',
+                            backgroundColor: 'error.main',
+                            color: 'error.contrastText',
+                            fontSize: '12px',
                             fontWeight: 'bold',
                             cursor: 'pointer',
                             transition: 'all 0.2s ease',
                             '&:hover': {
-                              backgroundColor: 'error.main',
-                              transform: 'scale(1.1)'
+                              backgroundColor: 'error.dark',
+                              transform: 'scale(1.15)'
                             }
                           }}
                         >
-                          ×
+                          ✕
                         </Box>
                       }
                       sx={{
-                        backgroundColor: 'action.hover',
-                        borderColor: 'divider',
-                        color: 'text.primary',
-                        fontSize: '0.75rem',
-                        height: '28px',
+                        backgroundColor: 'primary.main',
+                        color: 'primary.contrastText',
+                        fontSize: '0.8rem',
+                        height: '32px',
+                        borderRadius: '16px',
                         '& .MuiChip-label': {
-                          paddingLeft: '8px',
-                          paddingRight: '4px',
-                          fontSize: '0.75rem'
+                          paddingLeft: '12px',
+                          paddingRight: '6px',
+                          fontSize: '0.8rem',
+                          fontWeight: '500'
                         },
                         '& .MuiChip-deleteIcon': {
-                          margin: '0 4px 0 -2px',
+                          margin: '0 6px 0 -2px',
                           '&:hover': {
                             backgroundColor: 'transparent'
                           }
                         },
                         '&:hover': {
-                          backgroundColor: 'action.selected',
-                          borderColor: 'primary.main'
+                          backgroundColor: 'primary.dark'
                         }
                       }}
                     />
