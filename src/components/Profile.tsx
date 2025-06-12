@@ -930,12 +930,13 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
               
               {/* Display selected groups as chips above the dropdown */}
               {Array.isArray(homeGroups) && homeGroups.length > 0 && (
-                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, mb: 1 }}>
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.75, mb: 1.5 }}>
                   {homeGroups.map((group) => (
                     <Chip
                       key={group}
                       label={group}
                       size="small"
+                      variant="outlined"
                       onDelete={() => {
                         const newHomeGroups = homeGroups.filter(g => g !== group);
                         setHomeGroups(newHomeGroups);
@@ -947,16 +948,18 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            width: '16px',
-                            height: '16px',
+                            width: '14px',
+                            height: '14px',
                             borderRadius: '50%',
-                            backgroundColor: 'error.main',
-                            color: 'error.contrastText',
-                            fontSize: '10px',
+                            backgroundColor: 'text.secondary',
+                            color: 'background.paper',
+                            fontSize: '9px',
                             fontWeight: 'bold',
                             cursor: 'pointer',
+                            transition: 'all 0.2s ease',
                             '&:hover': {
-                              backgroundColor: 'error.dark'
+                              backgroundColor: 'error.main',
+                              transform: 'scale(1.1)'
                             }
                           }}
                         >
@@ -964,11 +967,25 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
                         </Box>
                       }
                       sx={{
+                        backgroundColor: 'action.hover',
+                        borderColor: 'divider',
+                        color: 'text.primary',
+                        fontSize: '0.75rem',
+                        height: '28px',
+                        '& .MuiChip-label': {
+                          paddingLeft: '8px',
+                          paddingRight: '4px',
+                          fontSize: '0.75rem'
+                        },
                         '& .MuiChip-deleteIcon': {
-                          margin: '0 2px 0 -4px',
+                          margin: '0 4px 0 -2px',
                           '&:hover': {
                             backgroundColor: 'transparent'
                           }
+                        },
+                        '&:hover': {
+                          backgroundColor: 'action.selected',
+                          borderColor: 'primary.main'
                         }
                       }}
                     />
