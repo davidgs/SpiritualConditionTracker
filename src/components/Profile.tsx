@@ -864,14 +864,25 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
                 }}
               />
 
+              <Box sx={{ color: muiTheme.palette.primary.main, fontSize: '14px', mb: '4px' }}>
+                Phone Number
+              </Box>
               <MuiTelInput
-                label="Phone Number"
                 value={phoneNumber != "Not set" ? phoneNumber : ""}
                 onChange={(value) => setPhoneNumber(value)}
                 defaultCountry={defaultCountry as any}
                 forceCallingCode
                 continents={['EU', 'OC', 'NA']}
                 fullWidth
+                TextFieldProps={{
+                  inputProps: {
+                    autoComplete: 'tel',
+                    'data-lpignore': 'false',
+                    'data-form-type': 'tel',
+                    name: 'phone',
+                    'data-1p-ignore': 'false'
+                  }
+                }}
                 sx={{
                   mb: 2,
                   '& .MuiInputBase-root': {
@@ -879,10 +890,9 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
                     borderRadius: '8px',
                   },
                   '& input': {
-                    autoComplete: 'tel',
+                    autoComplete: 'tel !important',
                   }
                 }}
-
               />
 
               <TextField
