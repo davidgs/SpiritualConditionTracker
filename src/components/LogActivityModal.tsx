@@ -448,74 +448,32 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
               
               {/* Date picker */}
               <Box sx={{ marginBottom: '1rem', maxWidth: '100%' }}>
-                <Box 
-                  component="label"
-                  sx={(theme) => ({
-                    display: 'block',
-                    fontSize: '0.875rem',
-                    fontWeight: '500',
-                    marginBottom: '0.25rem',
-                    color: theme.palette.text.secondary
-                  })}
-                >
-                  Date
-                </Box>
-                <Box 
-                  component="input"
+                <TextField
                   type="date"
+                  label="Date"
                   value={date}
                   onChange={(e) => setDate(e.target.value)}
+                  error={!!errors.date}
+                  helperText={errors.date}
                   sx={(theme) => getTextFieldStyle(theme)}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
                 />
-                {errors.date && (
-                  <Box 
-                    component="p" 
-                    sx={(theme) => ({
-                      color: theme.palette.error.main,
-                      fontSize: '0.75rem',
-                      marginTop: '0.25rem'
-                    })}
-                  >
-                    {errors.date}
-                  </Box>
-                )}
               </Box>
               
               {/* Literature-specific fields */}
               {activityType === 'literature' && (
                 <Box sx={{ marginBottom: '1rem', maxWidth: '100%' }}>
-                  <Box 
-                    component="label"
-                    sx={(theme) => ({
-                      display: 'block',
-                      fontSize: '0.875rem',
-                      fontWeight: '500',
-                      marginBottom: '0.25rem',
-                      color: theme.palette.text.secondary
-                    })}
-                  >
-                    Literature Title
-                  </Box>
-                  <Box 
-                    component="input"
-                    type="text"
+                  <TextField
+                    label="Literature Title"
                     value={literatureTitle}
                     onChange={(e) => setLiteratureTitle(e.target.value)}
                     placeholder="e.g., Big Book, 12x12, Daily Reflections"
+                    error={!!errors.literatureTitle}
+                    helperText={errors.literatureTitle}
                     sx={(theme) => getTextFieldStyle(theme)}
                   />
-                  {errors.literatureTitle && (
-                    <Box 
-                      component="p" 
-                      sx={(theme) => ({
-                        color: theme.palette.error.main,
-                        fontSize: '0.75rem',
-                        marginTop: '0.25rem'
-                      })}
-                    >
-                      {errors.literatureTitle}
-                    </Box>
-                  )}
                 </Box>
               )}
               
@@ -573,21 +531,8 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
                   {/* Meeting Name field - only show if no meeting selected from dropdown */}
                   {!selectedMeetingId && (
                     <Box sx={{ marginBottom: '1rem', maxWidth: '100%' }}>
-                      <Box 
-                        component="label"
-                        sx={(theme) => ({
-                          display: 'block',
-                          fontSize: '0.875rem',
-                          fontWeight: '500',
-                          marginBottom: '0.25rem',
-                          color: theme.palette.text.secondary
-                        })}
-                      >
-                        Meeting Name
-                      </Box>
-                      <Box 
-                        component="input"
-                        type="text"
+                      <TextField
+                        label="Meeting Name"
                         value={meetingName || ''}
                         onChange={(e) => {
                           const inputValue = e.target.value;
@@ -605,20 +550,10 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
                           }
                         }}
                         placeholder="Enter meeting name"
+                        error={!!errors.meetingName}
+                        helperText={errors.meetingName}
                         sx={(theme) => getTextFieldStyle(theme)}
                       />
-                      {errors.meetingName && (
-                        <Box 
-                          component="p" 
-                          sx={(theme) => ({
-                            color: theme.palette.error.main,
-                            fontSize: '0.75rem',
-                            marginTop: '0.25rem'
-                          })}
-                        >
-                          {errors.meetingName}
-                        </Box>
-                      )}
                     </Box>
                   )}
                   
@@ -801,36 +736,14 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
               
               {/* Notes field */}
               <Box sx={{ marginBottom: '1rem', maxWidth: '100%' }}>
-                <Box 
-                  component="label"
-                  sx={(theme) => ({
-                    display: 'block',
-                    fontSize: '0.875rem',
-                    fontWeight: '500',
-                    marginBottom: '0.25rem',
-                    color: theme.palette.text.secondary
-                  })}
-                >
-                  Notes (optional)
-                </Box>
-                <Box 
-                  component="textarea"
+                <TextField
+                  label="Notes (optional)"
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
                   placeholder="Enter any notes about this activity..."
+                  multiline
                   rows={3}
-                  sx={(theme) => ({
-                    width: '98%', // Slightly smaller to prevent focus border from causing overflow
-                    padding: '0.75rem',
-                    borderRadius: '0.375rem',
-                    backgroundColor: theme.palette.background.paper,
-                    color: theme.palette.text.primary,
-                    border: `1px solid ${theme.palette.mode === 'dark' ? theme.palette.grey[700] : theme.palette.grey[300]}`,
-                    fontSize: '0.875rem',
-                    resize: 'vertical',
-                    minHeight: '5rem',
-                    boxSizing: 'border-box'
-                  })}
+                  sx={(theme) => getTextFieldStyle(theme)}
                 />
               </Box>
               
