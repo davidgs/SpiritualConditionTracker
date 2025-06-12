@@ -705,23 +705,40 @@
                       slotProps={{
                         textField: {
                           variant: 'standard',
+                          size: 'small',
                           sx: {
+                            width: '80px',
+                            minWidth: '80px',
+                            maxWidth: '80px',
                             '& .MuiInputBase-root': {
                               border: 'none',
+                              background: 'none',
                               '&:before': { display: 'none' },
                               '&:after': { display: 'none' },
                               '&:hover:not(.Mui-disabled):before': { display: 'none' },
-                            },
-                            '& .MuiInputBase-input': {
-                              padding: 0,
-                              fontSize: 'inherit',
-                              fontWeight: 'inherit',
-                              color: 'primary.main',
-                              textAlign: 'left',
+                              '& .MuiInputBase-input': {
+                                padding: '0 !important',
+                                margin: '0 !important',
+                                fontSize: '14px',
+                                fontWeight: 'inherit',
+                                color: 'primary.main',
+                                textAlign: 'left',
+                                border: 'none',
+                                outline: 'none',
+                                background: 'none',
+                              },
                             },
                             '& .MuiInputAdornment-root': {
                               display: 'none',
                             },
+                            '& fieldset': {
+                              display: 'none',
+                            },
+                          }
+                        },
+                        popper: {
+                          sx: {
+                            zIndex: 1500,
                           }
                         }
                       }}
