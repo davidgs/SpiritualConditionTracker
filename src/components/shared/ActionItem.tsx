@@ -49,8 +49,8 @@ export default function ActionItem({
     }
   };
 
-  const isDeleted = actionItem.deleted || (actionItem.actionItemData && actionItem.actionItemData.deleted);
-  const isCompleted = actionItem.completed || (actionItem.actionItemData && actionItem.actionItemData.completed);
+  const isDeleted = Boolean(actionItem.deleted || (actionItem.actionItemData && actionItem.actionItemData.deleted));
+  const isCompleted = Boolean(actionItem.completed || (actionItem.actionItemData && actionItem.actionItemData.completed));
 
   const displayDate = actionItem.date || actionItem.dueDate || actionItem.createdAt;
 
