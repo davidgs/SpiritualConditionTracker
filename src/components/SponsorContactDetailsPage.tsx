@@ -185,11 +185,6 @@ export default function SponsorContactDetailsPage({
       if (updatedItem) {
         // Trigger global refresh to sync both Sponsor page and Activity list
         await loadActivities();
-        
-        // Update local state
-        const databaseServiceInstance = DatabaseService.getInstance();
-        const allActionItems = await databaseServiceInstance.getAllActionItems();
-        setActionItems(allActionItems || []);
       }
     } catch (error) {
       console.error('[SponsorContactDetailsPage] Error toggling completion:', error);
@@ -220,11 +215,6 @@ export default function SponsorContactDetailsPage({
       if (updatedItem) {
         // Trigger global refresh to sync both Sponsor page and Activity list
         await loadActivities();
-        
-        // Update local state
-        const databaseServiceInstance = DatabaseService.getInstance();
-        const allActionItems = await databaseServiceInstance.getAllActionItems();
-        setActionItems(allActionItems || []);
       }
     } catch (error) {
       console.error('[SponsorContactDetailsPage] Error soft deleting action item:', error);
