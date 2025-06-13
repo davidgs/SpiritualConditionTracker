@@ -13,5 +13,5 @@ echo "Running Capacitor sync..."
 npx cap sync ios || echo "Capacitor sync completed with pod install warning (expected in CI)"
 
 echo "✅ Sync complete!"
-echo "🔨 Ready to build 'MySpiritualCondition' target in Xcode"
-echo "Note: Run 'pod install' manually in ios/App when building locally"
+echo "Ready to build 'MySpiritualCondition' target in Xcode"
+echo "Note: Run 'pod install' manually in ios/App directory when building locally"
