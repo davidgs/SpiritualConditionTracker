@@ -331,7 +331,7 @@ export default function ContactFormDialog({
           <Box sx={{ 
             display: 'flex', 
             flexDirection: 'column', 
-            gap: theme.spacing(3),
+            gap: theme.spacing(2),
             mt: theme.spacing(1)
           }}>
             
