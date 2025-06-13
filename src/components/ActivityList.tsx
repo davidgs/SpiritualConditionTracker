@@ -31,7 +31,7 @@ export default function ActivityList({
       const activity = activities.find(a => a.actionItemId === actionItemId);
       if (activity && activity.actionItemData) {
         const isCompleted = activity.actionItemData.completed;
-        await updateActionItem(actionItemId, { completed: !isCompleted });
+        await updateActionItem(actionItemId, { completed: isCompleted ? 0 : 1 });
       }
     } catch (error) {
       console.error('Failed to toggle action item completion:', error);

@@ -5,7 +5,7 @@
 
 import React, { createContext, useContext, useReducer, useEffect, useState, ReactNode } from 'react';
 import DatabaseService, { DatabaseStatus } from '../services/DatabaseService';
-import type { User, Activity, Meeting } from '../types/database';
+import type { User, Activity, Meeting, ActionItem } from '../types/database';
 import { fixCorruptedPreferences } from '../utils/fixDatabasePreferences';
 
 // State interface
