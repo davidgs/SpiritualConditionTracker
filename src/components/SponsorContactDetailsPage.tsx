@@ -182,10 +182,7 @@ export default function SponsorContactDetailsPage({
       
       console.log('[SponsorContactDetailsPage] Updated item via AppDataContext:', updatedItem);
       
-      if (updatedItem) {
-        // Trigger global refresh to sync both Sponsor page and Activity list
-        await loadActivities();
-      }
+      // No need for manual refresh - AppDataContext UPDATE_ACTIVITY handles this automatically
     } catch (error) {
       console.error('[SponsorContactDetailsPage] Error toggling completion:', error);
     }
@@ -212,10 +209,7 @@ export default function SponsorContactDetailsPage({
       
       console.log('[SponsorContactDetailsPage] Soft deleted item via AppDataContext:', updatedItem);
       
-      if (updatedItem) {
-        // Trigger global refresh to sync both Sponsor page and Activity list
-        await loadActivities();
-      }
+      // No need for manual refresh - AppDataContext UPDATE_ACTIVITY handles this automatically
     } catch (error) {
       console.error('[SponsorContactDetailsPage] Error soft deleting action item:', error);
     }

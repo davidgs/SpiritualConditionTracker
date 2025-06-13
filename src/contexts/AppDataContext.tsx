@@ -661,10 +661,21 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
     try {
       const updatedActionItem = await databaseService.updateActionItem(itemId, updates);
       if (updatedActionItem) {
-        // Force immediate state update for all views
-        dispatch({ type: 'SET_LOADING', payload: true });
-        await loadActivities();
-        dispatch({ type: 'SET_LOADING', payload: false });
+        // Find and update the specific activity without full reload
+        const updatedActivities = state.activities.map(activity => {
+          if (activity.type === 'action-item' && 
+              (activity.actionItemId === itemId || activity.id === `action-item-${itemId}`)) {
+            return {
+              ...activity,
+              location: updatedActionItem.deleted ? 'deleted' : (updatedActionItem.completed ? 'completed' : 'pending'),
+              updatedAt: updatedActionItem.updatedAt || new Date().toISOString(),
+              actionItemData: updatedActionItem
+            };
+          }
+          return activity;
+        });
+        
+        dispatch({ type: 'SET_ACTIVITIES', payload: updatedActivities });
       }
       return updatedActionItem;
     } catch (error) {
