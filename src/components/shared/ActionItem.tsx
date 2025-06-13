@@ -147,7 +147,7 @@ export default function ActionItem({
             {actionItem.notes && ` [${actionItem.notes}]`}
           </div>
           
-          {actionItem.completed && (
+          {isCompleted && (
             <div style={{
               display: 'flex',
               alignItems: 'center',
