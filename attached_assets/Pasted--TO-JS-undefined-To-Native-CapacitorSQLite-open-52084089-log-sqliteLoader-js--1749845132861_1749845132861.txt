@@ -1,0 +1,224 @@
+⚡️  TO JS undefined
+⚡️  To Native ->  CapacitorSQLite open 52084089
+⚡️  [log] - [ sqliteLoader.js:50 ]  Database connection created
+⚡️  TO JS undefined
+⚡️  [log] - [ sqliteLoader.js:56 ]  Database opened successfully
+⚡️  [log] - [ sqliteLoader.js ] Creating database tables...
+⚡️  To Native ->  CapacitorSQLite execute 52084090
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 52084091
+⚡️  [log] - [ sqliteLoader.js ] Users table created
+ERROR MESSAGE:  {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: isDarkMode","message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: isDarkMode"}
+⚡️  [error] - {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: isDarkMode","message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: isDarkMode"}
+⚡️  To Native ->  CapacitorSQLite execute 52084092
+ERROR MESSAGE:  {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: sponsees","message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: sponsees"}
+⚡️  To Native ->  ⚡️  [error] - {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: sponsees","message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: sponsees"}
+CapacitorSQLite execute 52084093
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 52084094
+⚡️  [log] - [ sqliteLoader.js ] Activities table created
+ERROR MESSAGE:  {"message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: meetingName","errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: meetingName"}
+⚡️  [error] - {"message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: meetingName","errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: meetingName"}
+⚡️  [error] - [ sqliteLoader.js ] meetingName column already exists or failed to add: Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: meetingName
+⚡️  To Native ->  CapacitorSQLite execute 52084095
+ERROR MESSAGE:  {"message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: meetingId","errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: meetingId"}
+⚡️  [error] - {"message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: meetingId","errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: meetingId"}
+⚡️  To Native ->  ⚡️  [error] - [ sqliteLoader.js ] meetingId column already exists or failed to add: Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: meetingId
+CapacitorSQLite execute 52084096
+ERROR MESSAGE:  {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: wasChair","message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: wasChair"}
+⚡️  [error] - {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: wasChair","message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: wasChair"}
+⚡️  To Native ->  CapacitorSQLite execute 52084097
+⚡️  [error] - [ sqliteLoader.js ] wasChair column already exists or failed to add: Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: wasChair
+ERROR MESSAGE:  {"message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: wasShare","errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: wasShare"}
+⚡️  [error] - {"message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: wasShare","errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: wasShare"}
+⚡️  [error] - [ sqliteLoader.js ] wasShare column already exists or failed to add: Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: wasShare
+⚡️  To Native ->  CapacitorSQLite execute 52084098
+ERROR MESSAGE:  {"message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: wasSpeaker","errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: wasSpeaker"}
+⚡️  [error] - {"message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: wasSpeaker","errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: wasSpeaker"}
+⚡️  To Native ->  CapacitorSQLite execute 52084099
+⚡️  [error] - [ sqliteLoader.js ] wasSpeaker column already exists or failed to add: Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: wasSpeaker
+ERROR MESSAGE:  {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: literatureTitle","message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: literatureTitle"}
+⚡️  To Native ->  ⚡️  [error] - {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: literatureTitle","message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: literatureTitle"}
+CapacitorSQLite execute 52084100
+⚡️  [error] - [ sqliteLoader.js ] literatureTitle column already exists or failed to add: Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: literatureTitle
+ERROR MESSAGE:  {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: isSponsorCall","message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: isSponsorCall"}
+⚡️  [error] - {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: isSponsorCall","message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: isSponsorCall"}
+⚡️  To Native ->  CapacitorSQLite execute 52084101
+⚡️  [error] - [ sqliteLoader.js ] isSponsorCall column already exists or failed to add: Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: isSponsorCall
+ERROR MESSAGE:  {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: isSponseeCall","message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: isSponseeCall"}
+⚡️  To Native ->  CapacitorSQLite execute 52084102
+⚡️  [error] - {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: isSponseeCall","message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: isSponseeCall"}
+⚡️  [error] - [ sqliteLoader.js ] isSponseeCall column already exists or failed to add: Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: isSponseeCall
+ERROR MESSAGE:  {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: isAAMemberCall","message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: isAAMemberCall"}
+⚡️  To Native ->  CapacitorSQLite execute 52084103
+⚡️  [error] - {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: isAAMemberCall","message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: isAAMemberCall"}
+⚡️  [error] - [ sqliteLoader.js ] isAAMemberCall column already exists or failed to add: Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: isAAMemberCall
+ERROR MESSAGE:  {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: callType","message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: callType"}
+⚡️  [error] - {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: callType","message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: callType"}
+⚡️  To Native ->  CapacitorSQLite execute 52084104
+⚡️  [error] - [ sqliteLoader.js ] callType column already exists or failed to add: Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: callType
+ERROR MESSAGE:  {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: stepNumber","message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: stepNumber"}
+⚡️  [error] - {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: stepNumber","message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: stepNumber"}
+⚡️  To Native ->  CapacitorSQLite execute 52084105
+⚡️  [error] - [ sqliteLoader.js ] stepNumber column already exists or failed to add: Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: stepNumber
+ERROR MESSAGE:  {"message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: personCalled","errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: personCalled"}
+⚡️  [error] - {"message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: personCalled","errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: personCalled"}
+⚡️  To Native ->  CapacitorSQLite execute 52084106
+⚡️  [error] - [ sqliteLoader.js ] personCalled column already exists or failed to add: Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: personCalled
+ERROR MESSAGE:  {"message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: serviceType","errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: serviceType"}
+⚡️  [error] - {"message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: serviceType","errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: serviceType"}
+⚡️  [error] - [ sqliteLoader.js ] serviceType column already exists or failed to add: Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: serviceType
+⚡️  To Native ->  CapacitorSQLite execute 52084107
+ERROR MESSAGE:  {"message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: completed","errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: completed"}
+⚡️  To Native ->  CapacitorSQLite execute 52084108
+⚡️  [error] - {"message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: completed","errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: completed"}
+⚡️  [error] - [ sqliteLoader.js ] completed column already exists or failed to add: Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: completed
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 52084109
+⚡️  [log] - [ sqliteLoader.js ] Meetings table created
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 52084110
+⚡️  [log] - [ sqliteLoader.js ] Sponsors table created
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 52084111
+⚡️  [log] - [ sqliteLoader.js ] Sponsor contacts table created
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 52084112
+⚡️  [log] - [ sqliteLoader.js ] Action items table created
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 52084113
+⚡️  [log] - [ sqliteLoader.js ] Sponsees table created
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  [log] - [ sqliteLoader.js ] Sponsee contacts table created
+⚡️  [log] - [ sqliteLoader.js ] All tables created successfully
+⚡️  [log] - [ sqliteLoader.js:59 ]  Database initialization complete
+⚡️  [log] - [ DatabaseService: 55 ] SQLite database initialized successfully
+⚡️  [log] - [ DatabaseService: 63 ] Database ready
+⚡️  [log] - [ AppDataContext.tsx:156 ] Database status changed: ready
+⚡️  [log] - [ AppDataContext.tsx ] Database ready, loading initial data...
+⚡️  [log] - [ AppDataContext.tsx:187 ] Loading initial data...
+⚡️  To Native ->  CapacitorSQLite query 52084114
+⚡️  To Native ->  CapacitorSQLite query 52084115
+⚡️  To Native ->  CapacitorSQLite query 52084116
+⚡️  To Native ->  CapacitorSQLite query 52084117
+⚡️  To Native ->  CapacitorSQLite query 52084118
+⚡️  To Native ->  CapacitorSQLite query 52084119
+⚡️  TO JS {"values":[{"ios_columns":["id","name","lastName","sobrietyDate","homeGroups","phoneNumber","email","privacySettings","preferences","isDarkMode","sponsees","createdAt","updatedAt"]},{"preferences":"{\"0\":\"{\",\"1\":\"\\\"\",\"2\":\"u\",\"3\":\"s\",\"4\":
+⚡️  [log] - [ DatabaseService: 70 ] Database initialization complete
+⚡️  [log] - [ DatabaseService: 205 ] Processing 0 queued operations
+⚡️  [log] - [ AppDataContext.tsx ] Database service initialization completed
+⚡️  [log] - [ DatabaseService ] Checking if database is empty for new user detection...
+⚡️  TO JS {"values":[{"ios_columns":["id","name","lastName","sobrietyDate","homeGroups","phoneNumber","email","privacySettings","preferences","isDarkMode","sponsees","createdAt","updatedAt"]},{"email":"davidgs@me.com","phoneNumber":"+1 919 534 5099","preferences":"{
+⚡️  TO JS {"values":[{"ios_columns":["id","type","date","notes","location","duration","meetingName","meetingId","wasChair","wasShare","wasSpeaker","literatureTitle","isSponsorCall","isSponseeCall","isAAMemberCall","callType","stepNumber","personCalled","serviceType"
+⚡️  TO JS {"values":[{"ios_columns":["id","name","days","time","schedule","address","locationName","streetAddress","city","state","zipCode","coordinates","phoneNumber","onlineUrl","isHomeGroup","types","createdAt","updatedAt"]},{"createdAt":"2025-06-11T14:55:43.836Z
+⚡️  To Native ->  CapacitorSQLite query 52084120
+⚡️  TO JS {"values":[{"ios_columns":["id","userId","sponsorId","date","type","note","topic","duration","createdAt","updatedAt"]},{"updatedAt":"2025-06-13T00:17:52.681Z","sponsorId":1,"note":"I’m sad","topic":"Sadness Shit","userId":"1","date":"2025-06-13T00:17:30.77
+⚡️  TO JS {"values":[{"ios_columns":["id","contactId","title","text","notes","dueDate","completed","type","createdAt","updatedAt"]},{"updatedAt":"2025-06-13T15:59:45.037Z","id":3,"contactId":4,"type":"todo","text":"Call back","dueDate":"2025-06-13T12:35:15.234Z","cr
+⚡️  [log] - [ sqliteLoader.js:548 ] Processed 2 items from users
+⚡️  [log] - Found users to fix: 2
+⚡️  [log] - Preferences fix complete
+⚡️  [log] - [ AppDataContext.tsx ] Database preferences validated/fixed
+⚡️  TO JS {"values":[{"ios_columns":["id","name","lastName","sobrietyDate","homeGroups","phoneNumber","email","privacySettings","preferences","isDarkMode","sponsees","createdAt","updatedAt"]},{"homeGroups":"[\"Arch to Freedom\"]","sobrietyDate":"1986-05-15","prefere
+⚡️  [log] - [ sqliteLoader.js:548 ] Processed 2 items from users
+⚡️  [log] - [ sqliteLoader.js:548 ] Processed 6 items from activities
+⚡️  [log] - [ sqliteLoader.js:548 ] Processed 2 items from meetings
+⚡️  [log] - [ sqliteLoader.js:548 ] Processed 6 items from sponsor_contacts
+⚡️  [log] - [ sqliteLoader.js:548 ] Processed 3 items from action_items
+⚡️  [log] - [ DatabaseService ] User data check: {"name":"David","lastName":"Simmons","sobrietyDate":"1986-05-15","phoneNumber":"+1 919 534 5099","email":"davidgs@me.com","homeGroups":["Arch to Freedom"],"hasUserData":true}
+⚡️  [log] - [ DatabaseService ] Record counts: {"users":2,"hasUserData":true,"activities":6,"meetings":2,"sponsorContacts":6,"actionItems":3,"totalDataRecords":18}
+⚡️  [log] - [ App ] Database empty check result: false
+⚡️  [log] - [ sqliteLoader.js:548 ] Processed 2 items from users
+⚡️  [log] - [ AppDataContext.tsx:206 ] Loaded users: 2
+⚡️  [log] - [ AppDataContext.tsx:225 ] User data loaded: 1
+⚡️  To Native ->  CapacitorSQLite query 52084121
+⚡️  TO JS {"values":[{"ios_columns":["id","type","date","notes","location","duration","meetingName","meetingId","wasChair","wasShare","wasSpeaker","literatureTitle","isSponsorCall","isSponseeCall","isAAMemberCall","callType","stepNumber","personCalled","serviceType"
+⚡️  [log] - [ sqliteLoader.js:548 ] Processed 6 items from activities
+⚡️  To Native ->  CapacitorSQLite query 52084122
+⚡️  TO JS {"values":[{"ios_columns":["id","contactId","title","text","notes","dueDate","completed","type","createdAt","updatedAt"]},{"notes":"","dueDate":"2025-06-13T12:35:15.234Z","text":"Call back","id":3,"type":"todo","completed":1,"contactId":4,"title":"Call bac
+⚡️  [log] - Applying native theme: blue (#3b82f6) in dark mode
+⚡️  [log] - [ sqliteLoader.js:548 ] Processed 3 items from action_items
+⚡️  [log] - [ AppDataContext.tsx ] Fetched action items: 3
+⚡️  To Native ->  CapacitorSQLite query 52084123
+⚡️  [log] - [ AppDataContext.tsx ] Converted action items to activities: 3
+⚡️  TO JS {"values":[{"ios_columns":["id","userId","sponsorId","date","type","note","topic","duration","createdAt","updatedAt"]},{"id":1,"duration":20,"date":"2025-06-13T00:17:30.771Z","userId":"1","note":"I’m sad","sponsorId":1,"topic":"Sadness Shit","updatedAt":"2
+⚡️  [log] - [ sqliteLoader.js:548 ] Processed 6 items from sponsor_contacts
+⚡️  [log] - [ AppDataContext.tsx ] Fetched sponsor contacts: 6
+⚡️  [log] - [ AppDataContext.tsx ] Converted sponsor contacts to activities: 6
+⚡️  [log] - [ AppDataContext.tsx:288 ] Activities cached (180 days): 15 (including action items)
+⚡️  To Native ->  CapacitorSQLite query 52084124
+⚡️  [log] - [ AppDataContext.tsx:315 ] Using cached activities for 30 days: 0
+⚡️  [log] - [ AppDataContext.tsx:454 ] Calculating spiritual fitness with 0 activities for 30 days
+⚡️  TO JS {"values":[{"ios_columns":["id","name","days","time","schedule","address","locationName","streetAddress","city","state","zipCode","coordinates","phoneNumber","onlineUrl","isHomeGroup","types","createdAt","updatedAt"]},{"coordinates":null,"streetAddress":"1
+⚡️  [log] - [ sqliteLoader.js:548 ] Processed 2 items from meetings
+⚡️  [log] - [ AppDataContext.tsx:326 ] Meetings loaded: 2
+⚡️  [log] - [ AppDataContext.tsx:194 ] Initial data load complete
+⚡️  [log] - Applying native theme: blue (#3b82f6) in light mode
+⚡️  [log] - Applying native theme: blue (#3b82f6) in light mode
+⚡️  [log] - Applying native theme: blue (#3b82f6) in dark mode
+⚡️  [log] - Applying native theme: blue (#3b82f6) in dark mode
+⚡️  [log] - [ActivityList] Toggling completion for action item ID: 5
+⚡️  [log] - [ActivityList] Current completed status: 0 -> New status: 1
+⚡️  To Native ->  CapacitorSQLite execute 52084125
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  To Native ->  CapacitorSQLite query 52084126
+⚡️  TO JS {"values":[{"ios_columns":["id","type","date","notes","location","duration","meetingName","meetingId","wasChair","wasShare","wasSpeaker","literatureTitle","isSponsorCall","isSponseeCall","isAAMemberCall","callType","stepNumber","personCalled","serviceType"
+⚡️  To Native ->  CapacitorSQLite query 52084127
+⚡️  [log] - [ sqliteLoader.js:548 ] Processed 6 items from activities
+⚡️  TO JS {"values":[{"ios_columns":["id","contactId","title","text","notes","dueDate","completed","type","createdAt","updatedAt"]},{"notes":"","text":"Call back","updatedAt":"2025-06-13T15:59:45.037Z","id":3,"contactId":4,"completed":1,"createdAt":"2025-06-13T13:51
+⚡️  To Native ->  CapacitorSQLite query 52084128
+⚡️  [log] - [ sqliteLoader.js:548 ] Processed 3 items from action_items
+⚡️  [log] - [ AppDataContext.tsx ] Fetched action items: 3
+⚡️  [log] - [ AppDataContext.tsx ] Converted action items to activities: 3
+⚡️  TO JS {"values":[{"ios_columns":["id","userId","sponsorId","date","type","note","topic","duration","createdAt","updatedAt"]},{"date":"2025-06-13T00:17:30.771Z","topic":"Sadness Shit","duration":20,"updatedAt":"2025-06-13T00:17:52.681Z","createdAt":"2025-06-13T00
+⚡️  [log] - [ sqliteLoader.js:548 ] Processed 6 items from sponsor_contacts
+⚡️  [log] - [ AppDataContext.tsx ] Fetched sponsor contacts: 6
+⚡️  [log] - [ AppDataContext.tsx ] Converted sponsor contacts to activities: 6
+⚡️  [log] - [ AppDataContext.tsx:288 ] Activities cached (180 days): 15 (including action items)
+⚡️  [log] - [ AppDataContext.tsx:315 ] Using cached activities for 30 days: 15
+⚡️  [log] - [ AppDataContext.tsx:454 ] Calculating spiritual fitness with 15 activities for 30 days
+⚡️  [log] - [ActivityList] Action item updated successfully
+⚡️  [log] - Applying native theme: blue (#3b82f6) in light mode
+⚡️  [log] - Applying native theme: blue (#3b82f6) in light mode
+⚡️  [log] - Applying native theme: blue (#3b82f6) in dark mode
+⚡️  [log] - Applying native theme: blue (#3b82f6) in dark mode
+⚡️  [log] - SubTabComponent sponsor: persons: [] length: 0
+⚡️  To Native ->  CapacitorSQLite query 52084129
+⚡️  To Native ->  CapacitorSQLite query 52084130
+⚡️  To Native ->  CapacitorSQLite query 52084131
+⚡️  To Native ->  CapacitorSQLite query 52084132
+⚡️  TO JS {"values":[{"ios_columns":["id","userId","name","lastName","phoneNumber","email","sobrietyDate","notes","sponsorType","createdAt","updatedAt"]},{"name":"Jerry","email":"","phoneNumber":"+1 919 418 9900","userId":"1","createdAt":"2025-06-11T14:56:30.452Z","
+⚡️  TO JS {"values":[{"ios_columns":["id","userId","name","lastName","phoneNumber","email","sobrietyDate","notes","sponseeType","createdAt","updatedAt"]},{"lastName":"Blow","notes":"","name":"Joe","sobrietyDate":null,"id":1,"userId":"1","email":"","sponseeType":"spo
+⚡️  TO JS {"values":[{"ios_columns":["id","userId","sponsorId","date","type","note","topic","duration","createdAt","updatedAt"]},{"updatedAt":"2025-06-13T00:17:52.681Z","topic":"Sadness Shit","id":1,"sponsorId":1,"userId":"1","duration":20,"date":"2025-06-13T00:17:3
+⚡️  TO JS {"values":[]}
+⚡️  [log] - [ sqliteLoader.js:548 ] Processed 2 items from sponsors
+⚡️  [log] - [ sqliteLoader.js:548 ] Processed 1 items from sponsees
+⚡️  [log] - [ sqliteLoader.js:548 ] Processed 6 items from sponsor_contacts
+⚡️  [log] - [ sqliteLoader.js:548 ] Processed 0 items from sponsee_contacts
+⚡️  [log] - SubTabComponent sponsor: persons: [{"name":"Jerry","email":"","phoneNumber":"+1 919 418 9900","userId":"1","createdAt":"2025-06-11T14:56:30.452Z","updatedAt":"2025-06-11T14:56:30.452Z","sobrietyDate":null,"notes":"","lastName":"Weaver","id":1,"sponsorType":"sponsor"},{"lastName":"Flynn","notes":"","createdAt":"2025-06-11T22:39:43.985Z","updatedAt":"2025-06-11T22:39:43.985Z","sobrietyDate":null,"email":"","userId":"1","sponsorType":"sponsor","id":2,"phoneNumber":"","name":"Joe"}] length: 2
+⚡️  To Native ->  CapacitorSQLite query 52084133
+⚡️  To Native ->  CapacitorSQLite query 52084134
+⚡️  To Native ->  CapacitorSQLite query 52084135
+⚡️  To Native ->  CapacitorSQLite query 52084136
+⚡️  To Native ->  CapacitorSQLite query 52084137
+⚡️  To Native ->  CapacitorSQLite query 52084138
+⚡️  TO JS {"values":[{"ios_columns":["id","contactId","title","text","notes","dueDate","completed","type","createdAt","updatedAt"]},{"notes":"","id":3,"dueDate":"2025-06-13T12:35:15.234Z","contactId":4,"title":"Call back","completed":1,"updatedAt":"2025-06-13T15:59:
+⚡️  TO JS {"values":[{"ios_columns":["id","contactId","title","text","notes","dueDate","completed","type","createdAt","updatedAt"]},{"type":"todo","completed":1,"createdAt":"2025-06-13T13:51:06.463Z","notes":"","contactId":4,"id":3,"updatedAt":"2025-06-13T15:59:45.0
+⚡️  TO JS {"values":[{"ios_columns":["id","contactId","title","text","notes","dueDate","completed","type","createdAt","updatedAt"]},{"type":"todo","completed":1,"createdAt":"2025-06-13T13:51:06.463Z","notes":"","contactId":4,"id":3,"updatedAt":"2025-06-13T15:59:45.0
+⚡️  TO JS {"values":[{"ios_columns":["id","contactId","title","text","notes","dueDate","completed","type","createdAt","updatedAt"]},{"contactId":4,"type":"todo","updatedAt":"2025-06-13T15:59:45.037Z","createdAt":"2025-06-13T13:51:06.463Z","notes":"","title":"Call ba
+⚡️  TO JS {"values":[{"ios_columns":["id","contactId","title","text","notes","dueDate","completed","type","createdAt","updatedAt"]},{"notes":"","id":3,"dueDate":"2025-06-13T12:35:15.234Z","contactId":4,"title":"Call back","completed":1,"updatedAt":"2025-06-13T15:59:
+⚡️  TO JS {"values":[{"ios_columns":["id","contactId","title","text","notes","dueDate","completed","type","createdAt","updatedAt"]},{"contactId":4,"type":"todo","updatedAt":"2025-06-13T15:59:45.037Z","createdAt":"2025-06-13T13:51:06.463Z","notes":"","title":"Call ba
+⚡️  [log] - [ sqliteLoader.js:548 ] Processed 3 items from action_items
+⚡️  [log] - [ sqliteLoader.js:548 ] Processed 3 items from action_items
+⚡️  [log] - [ sqliteLoader.js:548 ] Processed 3 items from action_items
+⚡️  [log] - [ sqliteLoader.js:548 ] Processed 3 items from action_items
+⚡️  [log] - [ sqliteLoader.js:548 ] Processed 3 items from action_items
+⚡️  [log] - [ sqliteLoader.js:548 ] Processed 3 items from action_items
+⚡️  To Native ->  CapacitorSQLite query 52084139
+⚡️  TO JS {"values":[{"ios_columns":["id","contactId","title","text","notes","dueDate","completed","type","createdAt","updatedAt"]},{"createdAt":"2025-06-13T13:51:06.463Z","notes":"","dueDate":"2025-06-13T12:35:15.234Z","text":"Call back","completed":1,"id":3,"conta
+⚡️  [log] - [ sqliteLoader.js:548 ] Processed 3 items from action_items
+⚡️  To Native ->  CapacitorSQLite execute 52084140
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  [log] - Applying native theme: blue (#3b82f6) in light mode
+⚡️  [log] - Applying native theme: blue (#3b82f6) in light mode
+⚡️  [log] - Applying native theme: blue (#3b82f6) in dark mode
+⚡️  [log] - Applying native theme: blue (#3b82f6) in dark mode

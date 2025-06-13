@@ -114,21 +114,14 @@ const MuiThemeProvider = ({ children }) => {
     }
   }, [theme, darkMode, primaryColor, primaryColorValue, isThemeInitialized]);
   
-  // Toggle between light and dark mode - now persists to database and localStorage
+  // Toggle between light and dark mode - persists to database only
   const toggleTheme = () => {
     const newValue = !darkMode;
     
-    // Always update local state immediately for responsive UI
+    // Update local state immediately for responsive UI
     setLocalDarkMode(newValue);
     
-    // Save to localStorage immediately
-    try {
-      localStorage.setItem('darkMode', newValue.toString());
-    } catch (error) {
-      console.log('localStorage not available');
-    }
-    
-    // Also save to database if available
+    // Save to database if available
     if (themePreferences.darkMode !== undefined) {
       toggleDarkMode();
     }

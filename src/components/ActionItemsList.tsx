@@ -5,20 +5,8 @@ import {
   Checkbox,
   IconButton
 } from '@mui/material';
-import DatabaseService from '../services/DatabaseService';
-
-interface ActionItem {
-  id: number;
-  title: string;
-  text?: string;
-  notes?: string;
-  completed: number;
-  contactId: number;
-  dueDate?: string;
-  type: string;
-  createdAt: string;
-  updatedAt: string;
-}
+import { useAppData } from '../contexts/AppDataContext';
+import { ActionItem } from '../types/database';
 
 interface ActionItemsListProps {
   contactId: number;
@@ -31,72 +19,54 @@ export const ActionItemsList: React.FC<ActionItemsListProps> = ({
   theme,
   refreshKey
 }) => {
+  const { state, updateActionItem } = useAppData();
   const [actionItems, setActionItems] = useState<ActionItem[]>([]);
 
-  // Load action items for this contact
+  // Extract action items for this contact from shared state
   useEffect(() => {
-    const loadActionItems = async () => {
-      if (contactId) {
-        try {
-          const databaseService = DatabaseService.getInstance();
-          const allActionItems = await databaseService.getAll('action_items');
-          const actionItemsArray = Array.isArray(allActionItems) ? allActionItems : [];
-          const contactActionItems = actionItemsArray.filter(item => 
-            item && (item.contactId === contactId || item.sponsorContactId === contactId)
-          );
-          setActionItems(contactActionItems);
-        } catch (error) {
-          console.error('Error loading action items for contact:', error);
-          setActionItems([]);
-        }
-      }
-    };
-    loadActionItems();
-  }, [contactId, refreshKey]);
+    const actionItemActivities = state.activities.filter(activity => 
+      activity.type === 'action-item' && 
+      activity.actionItemData &&
+      (activity.actionItemData.contactId === contactId || activity.actionItemData.sponsorContactId === contactId)
+    );
+    
+    const contactActionItems = actionItemActivities
+      .map(activity => activity.actionItemData)
+      .filter(Boolean) as ActionItem[];
+    
+    setActionItems(contactActionItems);
+  }, [contactId, state.activities, refreshKey]);
 
-  // Toggle action item completion
+  // Toggle action item completion using shared AppDataContext
   const handleToggle = async (actionItemId: number) => {
     try {
-      const databaseService = DatabaseService.getInstance();
-      
-      const allActionItems = await databaseService.getAll('action_items');
-      const actionItem = allActionItems.find(item => item.id === actionItemId);
-      
+      const actionItem = actionItems.find(item => item.id === actionItemId);
       if (!actionItem) {
         console.error('Action item not found for ID:', actionItemId);
         return;
       }
       
-      const updatedActionItem = {
-        ...actionItem,
-        completed: actionItem.completed === 1 ? 0 : 1,
+      const updates = {
+        completed: (actionItem.completed === 1 ? 0 : 1) as 0 | 1,
         updatedAt: new Date().toISOString()
       };
       
-      await databaseService.update('action_items', actionItemId, updatedActionItem);
-      
-      // Update local state immediately for responsive UI
-      setActionItems(prev => 
-        prev.map(item => 
-          item.id === actionItemId 
-            ? { ...item, completed: updatedActionItem.completed }
-            : item
-        )
-      );
+      // Use AppDataContext update function for consistency
+      await updateActionItem(actionItemId, updates);
       
     } catch (error) {
       console.error('Error toggling action item:', error);
     }
   };
 
-  // Delete action item
+  // Delete action item using shared AppDataContext
   const handleDelete = async (actionItemId: number) => {
     try {
-      const databaseService = DatabaseService.getInstance();
-      await databaseService.remove('action_items', actionItemId);
-      
-      // Update local state immediately
-      setActionItems(prev => prev.filter(item => item.id !== actionItemId));
+      // Mark as deleted instead of removing
+      await updateActionItem(actionItemId, { 
+        deleted: 1,
+        updatedAt: new Date().toISOString()
+      });
       
     } catch (error) {
       console.error('Error deleting action item:', error);
