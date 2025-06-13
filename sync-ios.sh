@@ -1,11 +1,9 @@
 #!/bin/bash
 
-# Comprehensive iOS sync script for production builds
-# Syncs all necessary files from Capacitor's default App directory to your production target
+# Safe iOS sync script - only syncs web assets
+# Does NOT touch Xcode project files or native iOS assets
 
-set -e  # Exit on any error
-
-echo "=== iOS Production Sync Script ==="
+echo "=== Safe iOS Web Assets Sync ==="
 echo "Updating from git..."
 git pull
 
@@ -15,63 +13,38 @@ npm run build
 echo "Running Capacitor sync..."
 npx cap sync
 
-# Define source and target directories
-SOURCE_DIR="ios/App/App"
-TARGET_DIR="ios/App/My Spiritual Condition"
+# Define directories
+SOURCE_PUBLIC="ios/App/App/public"
+TARGET_PUBLIC="ios/App/My Spiritual Condition/public"
 
-echo "Syncing assets from '$SOURCE_DIR' to '$TARGET_DIR'..."
+echo "Syncing ONLY web assets (public directory)..."
 
-if [ ! -d "$TARGET_DIR" ]; then
-    echo "Error: Production target directory '$TARGET_DIR' not found!"
-    echo "Please ensure your iOS project is properly configured."
+# Check if source exists
+if [ ! -d "$SOURCE_PUBLIC" ]; then
+    echo "Error: Source web assets not found at $SOURCE_PUBLIC"
+    echo "Run 'npx cap sync' first to generate web assets."
     exit 1
 fi
 
-# Function to copy file if it exists
-copy_if_exists() {
-    local src="$1"
-    local dest="$2"
-    local desc="$3"
-    
-    if [ -e "$src" ]; then
-        echo "Copying $desc..."
-        cp -r "$src" "$dest"
-    else
-        echo "Warning: $desc not found at $src"
-    fi
-}
-
-# Remove old assets to ensure clean sync
-echo "Cleaning existing assets..."
-[ -d "$TARGET_DIR/public" ] && rm -rf "$TARGET_DIR/public"
-[ -f "$TARGET_DIR/capacitor.config.json" ] && rm -f "$TARGET_DIR/capacitor.config.json"
-[ -f "$TARGET_DIR/config.xml" ] && rm -f "$TARGET_DIR/config.xml"
-
-# Copy web assets (most important)
-copy_if_exists "$SOURCE_DIR/public" "$TARGET_DIR/public" "web assets (public directory)"
-
-# Copy Capacitor configuration files
-copy_if_exists "$SOURCE_DIR/capacitor.config.json" "$TARGET_DIR/capacitor.config.json" "Capacitor configuration"
-copy_if_exists "$SOURCE_DIR/config.xml" "$TARGET_DIR/config.xml" "Cordova configuration"
-
-# Verify critical files were copied
-if [ ! -d "$TARGET_DIR/public" ]; then
-    echo "Error: Failed to copy web assets to production target!"
+# Check if target directory exists
+if [ ! -d "ios/App/My Spiritual Condition" ]; then
+    echo "Error: Production target 'My Spiritual Condition' not found!"
     exit 1
 fi
 
-echo "✅ Production sync complete!"
-echo "📱 Your 'My Spiritual Condition' target is now up to date."
-echo "🔨 You can proceed with building in Xcode."
+# Only sync web assets - nothing else
+echo "Removing old web assets..."
+[ -d "$TARGET_PUBLIC" ] && rm -rf "$TARGET_PUBLIC"
 
-# Display sync summary
-echo ""
-echo "=== Sync Summary ==="
-echo "✓ Web assets synced to: $TARGET_DIR/public"
-if [ -f "$TARGET_DIR/capacitor.config.json" ]; then
-    echo "✓ Capacitor config synced"
+echo "Copying new web assets..."
+cp -r "$SOURCE_PUBLIC" "$TARGET_PUBLIC"
+
+# Verify sync
+if [ -d "$TARGET_PUBLIC" ]; then
+    echo "✅ Web assets synced successfully!"
+    echo "📱 'My Spiritual Condition' target updated with latest web content"
+    echo "🔨 Safe to build in Xcode"
+else
+    echo "❌ Failed to sync web assets"
+    exit 1
 fi
-if [ -f "$TARGET_DIR/config.xml" ]; then
-    echo "✓ Cordova config synced"
-fi
-echo "=== Ready for App Store build ==="
