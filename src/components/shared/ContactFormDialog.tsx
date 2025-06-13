@@ -646,7 +646,14 @@ export default function ContactFormDialog({
                         fontWeight: 600,
                         fontSize: '16px',
                         minHeight: '48px',
-                        px: theme.spacing(4)
+                        px: theme.spacing(4),
+                        borderColor: theme.palette.error.main,
+                        color: theme.palette.error.main,
+                        backgroundColor: 'transparent',
+                        '&:hover': {
+                          borderColor: theme.palette.error.main,
+                          backgroundColor: theme.palette.action.hover
+                        }
                       }}
                     >
                       Cancel
@@ -662,7 +669,18 @@ export default function ContactFormDialog({
                         fontWeight: 600,
                         fontSize: '16px',
                         minHeight: '48px',
-                        px: theme.spacing(4)
+                        px: theme.spacing(4),
+                        backgroundColor: theme.palette.success.main,
+                        color: theme.palette.success.contrastText,
+                        boxShadow: theme.shadows[2],
+                        '&:hover': {
+                          backgroundColor: theme.palette.success.dark,
+                          boxShadow: theme.shadows[4]
+                        },
+                        '&:disabled': {
+                          backgroundColor: theme.palette.action.disabledBackground,
+                          color: theme.palette.action.disabled
+                        }
                       }}
                     >
                       Add Action Item
