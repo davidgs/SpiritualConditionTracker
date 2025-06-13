@@ -7,7 +7,8 @@ interface ActionItemProps {
     id: string | number;
     title: string;
     notes?: string;
-    completed?: boolean;
+    completed?: boolean | number;
+    deleted?: boolean | number;
     createdAt?: string;
     dueDate?: string;
     date?: string;
@@ -47,6 +48,9 @@ export default function ActionItem({
       onDelete(targetId);
     }
   };
+
+  const isDeleted = actionItem.deleted || (actionItem.actionItemData && actionItem.actionItemData.deleted);
+  const isCompleted = actionItem.completed || (actionItem.actionItemData && actionItem.actionItemData.completed);
 
   const displayDate = actionItem.date || actionItem.dueDate || actionItem.createdAt;
 
@@ -124,13 +128,15 @@ export default function ActionItem({
           </div>
           
           <div style={{
-            color: theme.palette.text.secondary,
+            color: isDeleted ? theme.palette.error.main : theme.palette.text.secondary,
             fontSize: '0.75rem',
             lineHeight: '1.3',
             marginTop: '0.125rem',
             wordWrap: 'break-word',
             overflow: 'hidden',
-            textOverflow: 'ellipsis'
+            textOverflow: 'ellipsis',
+            textDecoration: isDeleted ? 'line-through' : 'none',
+            opacity: isDeleted ? 0.7 : 1
           }}>
             {actionItem.title}
             {actionItem.notes && ` [${actionItem.notes}]`}
@@ -170,11 +176,12 @@ export default function ActionItem({
             {/* Checkbox for completion */}
             <button
               onClick={handleToggleComplete}
+              disabled={isDeleted}
               style={{
                 background: 'none',
-                border: `1.5px solid ${actionItem.completed ? theme.palette.success.main : theme.palette.text.secondary}`,
-                cursor: 'pointer',
-                color: actionItem.completed ? theme.palette.success.main : theme.palette.text.secondary,
+                border: `1.5px solid ${isCompleted ? theme.palette.success.main : theme.palette.text.secondary}`,
+                cursor: isDeleted ? 'not-allowed' : 'pointer',
+                color: isCompleted ? theme.palette.success.main : theme.palette.text.secondary,
                 padding: '0.125rem',
                 borderRadius: '3px',
                 display: 'flex',
@@ -183,11 +190,12 @@ export default function ActionItem({
                 fontSize: '0.7rem',
                 width: '18px',
                 height: '18px',
-                backgroundColor: actionItem.completed ? theme.palette.success.main : 'transparent'
+                backgroundColor: isCompleted ? theme.palette.success.main : 'transparent',
+                opacity: isDeleted ? 0.5 : 1
               }}
-              title={actionItem.completed ? "Mark as incomplete" : "Mark as complete"}
+              title={isDeleted ? "Deleted item" : (isCompleted ? "Mark as incomplete" : "Mark as complete")}
             >
-              {actionItem.completed && (
+              {isCompleted && (
                 <i className="fas fa-check" style={{ color: 'white', fontSize: '0.6rem' }}></i>
               )}
             </button>
@@ -199,7 +207,7 @@ export default function ActionItem({
                 background: 'none',
                 border: 'none',
                 cursor: 'pointer',
-                color: theme.palette.error.main,
+                color: isDeleted ? theme.palette.text.secondary : theme.palette.error.main,
                 padding: '0.25rem',
                 borderRadius: '4px',
                 display: 'flex',
@@ -209,9 +217,9 @@ export default function ActionItem({
                 width: '20px',
                 height: '20px'
               }}
-              title="Delete action item"
+              title={isDeleted ? "Already deleted (-0.5 points)" : "Delete action item (-0.5 points)"}
             >
-              <i className="fas fa-times"></i>
+              <i className={isDeleted ? "fas fa-trash-slash" : "fas fa-times"}></i>
             </button>
           </div>
         </div>
@@ -234,11 +242,12 @@ export default function ActionItem({
       {/* Checkbox for completion */}
       <button
         onClick={handleToggleComplete}
+        disabled={isDeleted}
         style={{
           background: 'none',
-          border: `2px solid ${actionItem.completed ? theme.palette.success.main : theme.palette.text.secondary}`,
-          cursor: 'pointer',
-          color: actionItem.completed ? theme.palette.success.main : theme.palette.text.secondary,
+          border: `2px solid ${isCompleted ? theme.palette.success.main : theme.palette.text.secondary}`,
+          cursor: isDeleted ? 'not-allowed' : 'pointer',
+          color: isCompleted ? theme.palette.success.main : theme.palette.text.secondary,
           padding: '0.25rem',
           borderRadius: '4px',
           display: 'flex',
@@ -247,12 +256,13 @@ export default function ActionItem({
           fontSize: '0.8rem',
           width: '24px',
           height: '24px',
-          backgroundColor: actionItem.completed ? theme.palette.success.main : 'transparent',
-          flexShrink: 0
+          backgroundColor: isCompleted ? theme.palette.success.main : 'transparent',
+          flexShrink: 0,
+          opacity: isDeleted ? 0.5 : 1
         }}
-        title={actionItem.completed ? "Mark as incomplete" : "Mark as complete"}
+        title={isDeleted ? "Deleted item" : (isCompleted ? "Mark as incomplete" : "Mark as complete")}
       >
-        {actionItem.completed && (
+        {isCompleted && (
           <i className="fas fa-check" style={{ color: 'white', fontSize: '0.7rem' }}></i>
         )}
       </button>
@@ -262,9 +272,9 @@ export default function ActionItem({
         <div style={{
           fontSize: '1rem',
           fontWeight: 500,
-          color: theme.palette.text.primary,
-          textDecoration: actionItem.completed ? 'line-through' : 'none',
-          opacity: actionItem.completed ? 0.7 : 1,
+          color: isDeleted ? theme.palette.error.main : theme.palette.text.primary,
+          textDecoration: isDeleted ? 'line-through' : (isCompleted ? 'line-through' : 'none'),
+          opacity: isDeleted ? 0.7 : (isCompleted ? 0.7 : 1),
           wordWrap: 'break-word'
         }}>
           {actionItem.title}

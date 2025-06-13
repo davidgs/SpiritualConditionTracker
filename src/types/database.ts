@@ -69,6 +69,7 @@ export interface ActionItem extends BaseEntity {
   notes: string;
   dueDate: string | null;
   completed: 0 | 1; // SQLite boolean as integer
+  deleted: 0 | 1; // SQLite boolean as integer for soft deletion
   type: 'todo' | 'action' | 'reminder';
 }
 
