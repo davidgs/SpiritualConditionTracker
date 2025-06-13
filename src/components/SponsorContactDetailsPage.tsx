@@ -14,8 +14,8 @@ import {
   IconButton
 } from '@mui/material';
 import { useAppData } from '../contexts/AppDataContext';
-import { formatDateForDisplay } from '../utils/formatDate';
-import { ActionItem } from './shared/ActionItem';
+import { formatDateForDisplay } from '../utils/dateUtils';
+import ActionItem from './shared/ActionItem';
 import { ActionItemsList } from './ActionItemsList';
 
 export default function SponsorContactDetailsPage({ 
