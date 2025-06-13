@@ -121,8 +121,12 @@ export const ActionItemsList: React.FC<ActionItemsListProps> = ({
             <Typography 
               variant="body2" 
               sx={{ 
-                color: actionItem.completed === 1 ? theme.palette.success.main : theme.palette.text.primary,
-                fontWeight: actionItem.completed === 1 ? 500 : 400
+                color: actionItem.deleted === 1 ? theme.palette.error.main : 
+                       (actionItem.completed === 1 ? theme.palette.success.main : theme.palette.text.primary),
+                fontWeight: actionItem.completed === 1 ? 500 : 400,
+                textDecoration: actionItem.deleted === 1 ? 'line-through' : 
+                               (actionItem.completed === 1 ? 'line-through' : 'none'),
+                opacity: actionItem.deleted === 1 ? 0.7 : (actionItem.completed === 1 ? 0.7 : 1)
               }}
             >
               {actionItem.title}
