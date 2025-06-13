@@ -71,20 +71,14 @@ export default function SponsorContactDetailsPage({
     
     async function loadActionItems() {
       try {
-        console.log(`[SponsorContactDetailsPage] Loading action items for contact ID: ${contact.id}`);
+        console.log(`[SponsorContactDetailsPage] Loading action items using same method as Activity list`);
         
+        // Use the same method as AppDataContext to get action items
         const databaseServiceInstance = DatabaseService.getInstance();
+        const allActionItems = await databaseServiceInstance.getAllActionItems();
         
-        // First, check if we need to migrate old action items from sponsor_contact_details
-        await migrateOldActionItems(databaseServiceInstance);
-        
-        // Load action items from the main action_items table using DatabaseService
-        const allActionItems = await databaseServiceInstance.getAll('action_items');
-        
-        // Filter to show only action items related to this contact (we'll use notes or title to match)
-        // For now, load all action items since we're consolidating to one table
         const actionItemsList = allActionItems || [];
-        console.log(`[SponsorContactDetailsPage] Found ${actionItemsList.length} total action items`);
+        console.log(`[SponsorContactDetailsPage] Found ${actionItemsList.length} total action items using getAllActionItems`);
         
         setActionItems(actionItemsList);
       } catch (error) {
@@ -93,46 +87,7 @@ export default function SponsorContactDetailsPage({
       }
     }
     
-    async function migrateOldActionItems(databaseServiceInstance) {
-      try {
-        // Force migration - get old action items from sponsor_contact_details
-        console.log('[SponsorContactDetailsPage] Starting forced migration...');
-        const oldActionItems = await databaseServiceInstance.getAll('sponsor_contact_details');
-        console.log('[SponsorContactDetailsPage] Found old contact details for migration:', oldActionItems?.length || 0);
-        
-        if (oldActionItems && oldActionItems.length > 0) {
-          // Migrate each old action item to the main table
-          for (const oldItem of oldActionItems) {
-            if (oldItem.actionItem) {
-              const newActionItem = {
-                title: oldItem.actionItem,
-                text: oldItem.text || oldItem.actionItem,
-                notes: oldItem.notes || '',
-                dueDate: oldItem.dueDate || null,
-                completed: oldItem.completed || 0,
-                deleted: oldItem.deleted || 0,
-                type: 'action-item',
-                createdAt: oldItem.createdAt || new Date().toISOString(),
-                updatedAt: oldItem.updatedAt || new Date().toISOString()
-              };
-              
-              console.log('[SponsorContactDetailsPage] Migrating action item:', newActionItem.title, 'completed:', newActionItem.completed);
-              await databaseServiceInstance.add('action_items', newActionItem);
-            }
-          }
-          
-          console.log('[SponsorContactDetailsPage] Migration completed - clearing old table');
-          // Clear the old table to prevent double display
-          for (const oldItem of oldActionItems) {
-            if (oldItem.actionItem && oldItem.id) {
-              await databaseServiceInstance.remove('sponsor_contact_details', oldItem.id);
-            }
-          }
-        }
-      } catch (migrationError) {
-        console.error('[SponsorContactDetailsPage] Migration error:', migrationError);
-      }
-    }
+
     
     loadActionItems();
   }, [contact, details]);
@@ -169,8 +124,8 @@ export default function SponsorContactDetailsPage({
       const savedMainItem = await databaseServiceInstance.add('action_items', mainActionItem);
       console.log('[SponsorContactDetailsPage] Saved main item:', savedMainItem);
       
-      // Refresh the action items list to show the new item
-      const allActionItems = await databaseServiceInstance.getAll('action_items');
+      // Refresh the action items list using the same method as load
+      const allActionItems = await databaseServiceInstance.getAllActionItems();
       setActionItems(allActionItems || []);
       
       // Reset form
@@ -209,9 +164,9 @@ export default function SponsorContactDetailsPage({
       console.log('[SponsorContactDetailsPage] Updated item via AppDataContext:', updatedItem);
       
       if (updatedItem) {
-        // Refresh the action items list from the main database
+        // Refresh the action items list using the same method as load
         const databaseServiceInstance = DatabaseService.getInstance();
-        const allActionItems = await databaseServiceInstance.getAll('action_items');
+        const allActionItems = await databaseServiceInstance.getAllActionItems();
         setActionItems(allActionItems || []);
       }
     } catch (error) {
@@ -241,9 +196,9 @@ export default function SponsorContactDetailsPage({
       console.log('[SponsorContactDetailsPage] Soft deleted item via AppDataContext:', updatedItem);
       
       if (updatedItem) {
-        // Refresh the action items list from the main database
+        // Refresh the action items list using the same method as load
         const databaseServiceInstance = DatabaseService.getInstance();
-        const allActionItems = await databaseServiceInstance.getAll('action_items');
+        const allActionItems = await databaseServiceInstance.getAllActionItems();
         setActionItems(allActionItems || []);
       }
     } catch (error) {
