@@ -100,6 +100,14 @@ export interface Activity extends BaseEntity {
   personCalled?: string;
   serviceType?: string;
   completed?: number;
+  // Action item specific fields for synchronization
+  actionItemId?: number;
+  actionItemData?: ActionItem;
+  // Additional fields for compatibility
+  sponsorName?: string;
+  sponseeName?: string;
+  title?: string;
+  text?: string;
 }
 
 // Meeting interface

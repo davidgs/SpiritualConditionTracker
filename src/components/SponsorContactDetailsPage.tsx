@@ -38,7 +38,7 @@ export default function SponsorContactDetailsPage({
   onDeleteDetail
 }) {
   const theme = useTheme();
-  const { updateActionItem, addActionItem, addActivity, loadActivities } = useAppData();
+  const { updateActionItem, addActionItem, addActivity, loadActivities, state } = useAppData();
   const [contactDetails, setContactDetails] = useState(details);
   const [showAddActionForm, setShowAddActionForm] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -72,26 +72,43 @@ export default function SponsorContactDetailsPage({
     
     async function loadActionItems() {
       try {
-        console.log(`[SponsorContactDetailsPage] Loading action items using same method as Activity list`);
-        
-        // Use the same method as AppDataContext to get action items
-        const databaseServiceInstance = DatabaseService.getInstance();
-        const allActionItems = await databaseServiceInstance.getAllActionItems();
-        
-        const actionItemsList = allActionItems || [];
-        console.log(`[SponsorContactDetailsPage] Found ${actionItemsList.length} total action items using getAllActionItems`);
-        
-        setActionItems(actionItemsList);
+        // Force refresh of activities to get latest action items
+        await loadActivities();
       } catch (error) {
-        console.error('[SponsorContactDetailsPage] Error loading action items:', error);
-        setActionItems([]);
+        console.error('[SponsorContactDetailsPage] Error refreshing activities:', error);
       }
     }
     
-
-    
     loadActionItems();
-  }, [contact, details]);
+  }, [contact, details, loadActivities]);
+
+  // Separate useEffect to watch for changes in activities state
+  useEffect(() => {
+    // Extract action items from the shared AppDataContext state (same source as Activity list)
+    const actionItemActivities = state.activities.filter(activity => activity.type === 'action-item');
+    const actionItemsList = actionItemActivities.map(activity => {
+      // Use the actionItemData if available, otherwise reconstruct from activity data
+      if (activity.actionItemData) {
+        return activity.actionItemData;
+      }
+      // Fallback: reconstruct action item from activity data
+      return {
+        id: activity.actionItemId || activity.id,
+        title: activity.notes?.split(' [')[0] || 'Untitled',
+        text: activity.notes?.split(' [')[0] || 'Untitled',
+        notes: activity.notes?.includes('[') ? activity.notes.split('[')[1]?.replace(']', '') || '' : '',
+        completed: activity.location === 'completed' ? 1 : 0,
+        deleted: activity.location === 'deleted' ? 1 : 0,
+        type: 'action',
+        dueDate: activity.date,
+        createdAt: activity.createdAt,
+        updatedAt: activity.updatedAt
+      };
+    }).filter(Boolean);
+    
+    console.log(`[SponsorContactDetailsPage] Using shared state - found ${actionItemsList.length} action items from ${actionItemActivities.length} activities`);
+    setActionItems(actionItemsList);
+  }, [state.activities]);
   
   // Handle form changes for new action item
   const handleActionChange = (e) => {
