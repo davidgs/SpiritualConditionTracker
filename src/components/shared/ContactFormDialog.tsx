@@ -12,7 +12,15 @@ import {
   FormControl,
   InputLabel,
   Select,
-  MenuItem
+  MenuItem,
+  Divider,
+  List,
+  ListItem,
+  ListItemText,
+  ListItemSecondaryAction,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
@@ -20,10 +28,20 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs from 'dayjs';
 
+interface ActionItem {
+  id?: number;
+  title: string;
+  text: string;
+  notes: string;
+  dueDate: string | null;
+  completed: boolean;
+  type: 'todo' | 'action' | 'reminder';
+}
+
 interface ContactFormDialogProps {
   open: boolean;
   onClose: () => void;
-  onSave: (data: any) => void;
+  onSave: (data: any, actionItems?: ActionItem[]) => void;
   title: string;
   initialData?: any;
 }
