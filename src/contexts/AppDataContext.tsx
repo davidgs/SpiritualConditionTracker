@@ -659,14 +659,12 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
 
   const updateActionItem = async (itemId: string | number, updates: Partial<ActionItem>): Promise<ActionItem | null> => {
     try {
-      console.log('[ AppDataContext.tsx ] Updating action item:', itemId, 'with updates:', updates);
       const updatedActionItem = await databaseService.updateActionItem(itemId, updates);
       if (updatedActionItem) {
-        console.log('[ AppDataContext.tsx ] Action item updated in database:', updatedActionItem);
-        // Reload activities to reflect the updated action item
-        console.log('[ AppDataContext.tsx ] Reloading activities to sync all views...');
+        // Force immediate state update for all views
+        dispatch({ type: 'SET_LOADING', payload: true });
         await loadActivities();
-        console.log('[ AppDataContext.tsx ] Activities reloaded after action item update');
+        dispatch({ type: 'SET_LOADING', payload: false });
       }
       return updatedActionItem;
     } catch (error) {

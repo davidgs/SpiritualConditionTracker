@@ -82,7 +82,7 @@ export default function SponsorContactDetailsPage({
     loadActionItems();
   }, [contact, details, loadActivities]);
 
-  // Separate useEffect to watch for changes in activities state
+  // Watch for changes in activities state and update action items immediately
   useEffect(() => {
     // Extract action items from the shared AppDataContext state (same source as Activity list)
     const actionItemActivities = state.activities.filter(activity => activity.type === 'action-item');
@@ -106,9 +106,9 @@ export default function SponsorContactDetailsPage({
       };
     }).filter(Boolean);
     
-    console.log(`[SponsorContactDetailsPage] Using shared state - found ${actionItemsList.length} action items from ${actionItemActivities.length} activities`);
-    setActionItems(actionItemsList);
-  }, [state.activities]);
+    // Force immediate update of local state
+    setActionItems([...actionItemsList]);
+  }, [state.activities, state.isLoading]);
   
   // Handle form changes for new action item
   const handleActionChange = (e) => {

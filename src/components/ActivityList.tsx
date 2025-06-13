@@ -19,17 +19,13 @@ export default function ActivityList({
   const theme = useTheme();
   const { deleteActivity, updateActionItem, deleteActionItem } = useAppData();
   
-  // Debug logging for activities prop changes
+  // Force re-render when activities prop changes, especially for action items
+  const [renderKey, setRenderKey] = React.useState(0);
+  
   React.useEffect(() => {
     const actionItems = activities.filter(a => a.type === 'action-item');
-    console.log('[ActivityList] Received activities update - action items:', actionItems.length);
-    actionItems.forEach(item => {
-      console.log('[ActivityList] Action item:', {
-        id: item.actionItemId,
-        title: item.actionItemData?.title,
-        completed: item.actionItemData?.completed
-      });
-    });
+    // Force component re-render to ensure synchronization
+    setRenderKey(prev => prev + 1);
   }, [activities]);
 
   const handleDeleteActivity = async (activityId) => {
