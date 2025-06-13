@@ -273,16 +273,32 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
     }
   };
 
-  const handleToggleActionItem = async (actionItemId) => {
+  const handleToggleActionItem = async (actionItem) => {
     try {
-      const actionItem = activities.find(item => item.id === actionItemId);
-      if (actionItem) {
-        const updatedItem = { ...actionItem, completed: !actionItem.completed };
-        await onSaveActivity(updatedItem);
-        setRefreshKey(prev => prev + 1);
+      if (actionItem.deleted) {
+        // Handle delete operation
+        await databaseService.delete('action_items', actionItem.id);
+        console.log('Action item deleted:', actionItem.id);
+      } else {
+        // Handle toggle completion
+        const updatedItem = { 
+          ...actionItem, 
+          completed: actionItem.completed ? 0 : 1,
+          updatedAt: new Date().toISOString()
+        };
+        await databaseService.update('action_items', actionItem.id, updatedItem);
+        console.log('Action item toggled:', actionItem.id, 'completed:', updatedItem.completed);
+      }
+      setRefreshKey(prev => prev + 1);
+      // Reload activities to reflect changes
+      if (onSaveActivity) {
+        // Trigger activity reload through parent component
+        const dummyActivity = { type: 'refresh', id: Date.now() };
+        await onSaveActivity(dummyActivity);
       }
     } catch (error) {
-      console.error('Failed to toggle action item:', error);
+      console.error('Failed to update action item:', error);
+      alert('Failed to update action item');
     }
   };
 
