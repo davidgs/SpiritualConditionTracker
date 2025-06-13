@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import {
   Box,
-  Typography,
-  Checkbox,
-  IconButton
+  Typography
 } from '@mui/material';
 import { useAppData } from '../contexts/AppDataContext';
 import { ActionItem } from '../types/database';
+import ActionItemComponent from './shared/ActionItem';
 
 interface ActionItemsListProps {
   contactId: number;
@@ -84,71 +83,13 @@ export const ActionItemsList: React.FC<ActionItemsListProps> = ({
       </Typography>
       
       {actionItems.map((actionItem) => (
-        <Box 
+        <ActionItemComponent
           key={actionItem.id}
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            py: 0.5,
-            '&:hover': {
-              backgroundColor: theme.palette.action.hover,
-            }
-          }}
-        >
-          <Box sx={{ 
-            display: 'flex', 
-            alignItems: 'center', 
-            gap: 1, 
-            flex: 1 
-          }}>
-            <Checkbox
-              checked={actionItem.completed === 1}
-              onChange={(e) => {
-                e.stopPropagation();
-                handleToggle(actionItem.id);
-              }}
-              onClick={(e) => e.stopPropagation()}
-              size="small"
-              sx={{
-                color: theme.palette.text.secondary,
-                '&.Mui-checked': {
-                  color: theme.palette.success.main,
-                }
-              }}
-            />
-            
-            <Typography 
-              variant="body2" 
-              sx={{ 
-                color: actionItem.deleted === 1 ? theme.palette.error.main : 
-                       (actionItem.completed === 1 ? theme.palette.success.main : theme.palette.text.primary),
-                fontWeight: actionItem.completed === 1 ? 500 : 400,
-                textDecoration: actionItem.deleted === 1 ? 'line-through' : 
-                               (actionItem.completed === 1 ? 'line-through' : 'none'),
-                opacity: actionItem.deleted === 1 ? 0.7 : (actionItem.completed === 1 ? 0.7 : 1)
-              }}
-            >
-              {actionItem.title}
-            </Typography>
-          </Box>
-          
-          <IconButton 
-            size="small" 
-            onClick={(e) => {
-              e.stopPropagation();
-              handleDelete(actionItem.id);
-            }}
-            sx={{ 
-              color: theme.palette.error.main,
-              '&:hover': {
-                backgroundColor: theme.palette.error.light + '20',
-              }
-            }}
-          >
-            <i className="fa-solid fa-times text-xs"></i>
-          </IconButton>
-        </Box>
+          actionItem={actionItem}
+          onToggleComplete={handleToggle}
+          onDelete={handleDelete}
+          variant="compact"
+        />
       ))}
     </Box>
   );
