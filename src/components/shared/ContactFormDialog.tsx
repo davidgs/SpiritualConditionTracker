@@ -557,57 +557,53 @@ export default function ContactFormDialog({
                 </IconButton>
               </Box>
 
-              {/* Add Action Item Form - Collapsible */}
+              {/* Add Action Item Form - Compact Style */}
               {showAddActionItemForm && (
                 <Box sx={{ 
-                  p: 2, 
+                  p: 1.5, 
                   backgroundColor: theme.palette.background.default,
                   borderRadius: theme.spacing(1),
-                  mb: 2,
+                  mb: 1.5,
                   border: `1px solid ${theme.palette.divider}`
                 }}>
-                  <TextField
-                    fullWidth
-                    label="What needs to be done?"
-                    placeholder="Enter action item"
-                    value={newActionItem.title}
-                    onChange={(e) => handleActionItemChange('title', e.target.value)}
-                    variant="outlined"
-                    size="small"
-                    sx={{ mb: 2 }}
-                  />
-                  
-                  <TextField
-                    fullWidth
-                    label="Notes (optional)"
-                    placeholder="Additional details"
-                    value={newActionItem.notes}
-                    onChange={(e) => handleActionItemChange('notes', e.target.value)}
-                    variant="outlined"
-                    size="small"
-                    multiline
-                    rows={2}
-                    sx={{ mb: 2 }}
-                  />
-                  
-                  <Box sx={{ display: 'flex', gap: 1 }}>
-                    <Button
-                      variant="contained"
-                      onClick={handleAddActionItem}
-                      disabled={!newActionItem.title.trim()}
-                      size="small"
-                      sx={{ textTransform: 'none' }}
-                    >
-                      Add
-                    </Button>
-                    <Button
+                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                    <TextField
+                      fullWidth
+                      label="What needs to be done"
+                      value={newActionItem.title}
+                      onChange={(e) => handleActionItemChange('title', e.target.value)}
                       variant="outlined"
-                      onClick={() => setShowAddActionItemForm(false)}
                       size="small"
-                      sx={{ textTransform: 'none' }}
-                    >
-                      Cancel
-                    </Button>
+                    />
+                    
+                    <TextField
+                      fullWidth
+                      label="Notes (optional)"
+                      value={newActionItem.notes}
+                      onChange={(e) => handleActionItemChange('notes', e.target.value)}
+                      variant="outlined"
+                      size="small"
+                    />
+                    
+                    <Box sx={{ display: 'flex', gap: 1, mt: 0.5 }}>
+                      <Button
+                        variant="contained"
+                        onClick={handleAddActionItem}
+                        disabled={!newActionItem.title.trim()}
+                        size="small"
+                        sx={{ textTransform: 'none' }}
+                      >
+                        Add
+                      </Button>
+                      <Button
+                        variant="outlined"
+                        onClick={() => setShowAddActionItemForm(false)}
+                        size="small"
+                        sx={{ textTransform: 'none' }}
+                      >
+                        Cancel
+                      </Button>
+                    </Box>
                   </Box>
                 </Box>
               )}

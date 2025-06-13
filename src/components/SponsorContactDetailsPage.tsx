@@ -367,55 +367,52 @@ export default function SponsorContactDetailsPage({
           </Button>
         </Box>
         
-        {/* Add Action Form */}
+        {/* Add Action Form - Compact Style */}
         {showAddActionForm && (
-          <Box sx={{ mb: 3, p: 2, border: '1px solid', borderColor: 'divider', borderRadius: 1 }}>
-            <TextField
-              fullWidth
-              label="Action Item"
-              name="actionItem"
-              value={newAction.actionItem}
-              onChange={handleActionChange}
-              sx={{ mb: 2 }}
-            />
-            <TextField
-              fullWidth
-              label="Notes"
-              name="notes"
-              value={newAction.notes}
-              onChange={handleActionChange}
-              multiline
-              rows={2}
-              sx={{ mb: 2 }}
-            />
-            <TextField
-              fullWidth
-              label="Due Date"
-              name="dueDate"
-              type="date"
-              value={newAction.dueDate}
-              onChange={handleActionChange}
-              InputLabelProps={{ shrink: true }}
-              sx={{ mb: 2 }}
-            />
-            <FormControlLabel
-              control={
-                <Checkbox
-                  name="completed"
-                  checked={newAction.completed}
-                  onChange={handleActionChange}
-                />
-              }
-              label="Completed"
-              sx={{ mb: 2 }}
-            />
-            <Box sx={{ display: 'flex', gap: 1 }}>
-              <Button variant="contained" onClick={handleAddAction}>
-                Save
-              </Button>
-              <Button variant="outlined" onClick={() => setShowAddActionForm(false)}>
-                Cancel
-              </Button>
+          <Box sx={{ 
+            mb: 2, 
+            p: 1.5, 
+            border: '1px solid', 
+            borderColor: 'divider', 
+            borderRadius: 1,
+            backgroundColor: theme.palette.background.paper
+          }}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+              <TextField
+                fullWidth
+                label="What needs to be done"
+                name="actionItem"
+                value={newAction.actionItem}
+                onChange={handleActionChange}
+                size="small"
+                variant="outlined"
+              />
+              <TextField
+                fullWidth
+                label="Notes (optional)"
+                name="notes"
+                value={newAction.notes}
+                onChange={handleActionChange}
+                size="small"
+                variant="outlined"
+              />
+              <Box sx={{ display: 'flex', gap: 1, mt: 1 }}>
+                <Button 
+                  variant="contained" 
+                  onClick={handleAddAction}
+                  size="small"
+                  disabled={!newAction.actionItem.trim()}
+                >
+                  Add
+                </Button>
+                <Button 
+                  variant="outlined" 
+                  onClick={() => setShowAddActionForm(false)}
+                  size="small"
+                >
+                  Cancel
+                </Button>
+              </Box>
             </Box>
           </Box>
         )}
