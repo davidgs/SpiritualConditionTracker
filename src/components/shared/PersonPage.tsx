@@ -3,6 +3,7 @@ import { Box, Paper, Typography, IconButton, Divider, TextField, Chip, InputAdor
 import { useTheme } from '@mui/material/styles';
 import { ContactPerson } from '../../types/ContactPerson';
 import { formatDateForDisplay } from '../../utils/dateUtils';
+import ActivityList from '../ActivityList';
 
 interface PersonPageProps {
   person: ContactPerson;
@@ -360,6 +361,43 @@ export default function PersonPage({
           </Box>
         )}
       </Paper>
+
+      {/* Action Items Section - Only for sponsors */}
+      {personType === 'sponsor' && actionItems && actionItems.length > 0 && (
+        <Paper 
+          elevation={0}
+          sx={{ 
+            backgroundColor: theme.palette.background.paper,
+            boxShadow: theme.shadows[2],
+            borderRadius: 2,
+            p: 3,
+            mb: 3
+          }}
+        >
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+            <Typography variant="h6" sx={{ color: theme.palette.text.primary, fontWeight: 'bold' }}>
+              Action Items ({actionItems.filter(item => item.type === 'action-item').length})
+            </Typography>
+          </Box>
+
+          <ActivityList 
+            activities={actionItems.filter(item => item.type === 'action-item')}
+            darkMode={false}
+            limit={null}
+            filter="action-item"
+            showDate={true}
+            onActivityClick={(activity, actionType) => {
+              if (actionType === 'toggle-complete' && onToggleActionItem) {
+                onToggleActionItem(activity);
+              } else if (actionType === 'delete' && onToggleActionItem) {
+                // Handle delete by marking as deleted or calling appropriate handler
+                onToggleActionItem({ ...activity, deleted: true });
+              }
+            }}
+            meetings={[]}
+          />
+        </Paper>
+      )}
 
     </Box>
   );

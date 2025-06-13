@@ -410,13 +410,46 @@ export default function ActivityList({
                     gap: '0.25rem',
                     marginLeft: '0.5rem'
                   }}>
-                    {/* Delete button for action items */}
+                    {/* Action item controls */}
                     {activity.type === 'action-item' && (
-                      <div style={{ display: 'flex', gap: '0.25rem' }}>
+                      <div style={{ display: 'flex', gap: '0.25rem', alignItems: 'center' }}>
+                        {/* Checkbox for completion */}
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
-                            handleDeleteActivity(activity.id);
+                            if (onActivityClick) {
+                              onActivityClick(activity, 'toggle-complete');
+                            }
+                          }}
+                          style={{
+                            background: 'none',
+                            border: `2px solid ${activity.completed ? theme.palette.success.main : theme.palette.text.secondary}`,
+                            cursor: 'pointer',
+                            color: activity.completed ? theme.palette.success.main : theme.palette.text.secondary,
+                            padding: '0.25rem',
+                            borderRadius: '4px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            fontSize: '0.8rem',
+                            width: '24px',
+                            height: '24px',
+                            backgroundColor: activity.completed ? theme.palette.success.main : 'transparent'
+                          }}
+                          title={activity.completed ? "Mark as incomplete" : "Mark as complete"}
+                        >
+                          {activity.completed && (
+                            <i className="fas fa-check" style={{ color: 'white', fontSize: '0.7rem' }}></i>
+                          )}
+                        </button>
+                        
+                        {/* Delete button */}
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            if (onActivityClick) {
+                              onActivityClick(activity, 'delete');
+                            }
                           }}
                           style={{
                             background: 'none',
@@ -432,7 +465,7 @@ export default function ActivityList({
                           }}
                           title="Delete action item"
                         >
-                          <i className="fas fa-trash"></i>
+                          <i className="fas fa-times"></i>
                         </button>
                       </div>
                     )}

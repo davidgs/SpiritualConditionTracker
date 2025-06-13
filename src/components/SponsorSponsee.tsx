@@ -227,13 +227,13 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
       });
       
       // Save action items if any
-      if (actionItems && actionItems.length > 0) {
+      if (actionItems && actionItems.length > 0 && savedContact && (savedContact as any).id) {
         for (const actionItem of actionItems) {
           await databaseService.add('action_items', {
             title: actionItem.title,
             text: actionItem.text || actionItem.title,
             notes: actionItem.notes || '',
-            contactId: savedContact.id,
+            contactId: (savedContact as any).id,
             dueDate: actionItem.dueDate || contactData.date,
             completed: 0,
             type: actionItem.type || 'todo',
@@ -253,33 +253,15 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
     }
   };
 
-  const handleAddSponseeContactWithActionItem = async (contactData, actionItems = []) => {
+  const handleAddSponseeContactWithActionItem = async (contactData) => {
     try {
-      // Save the contact first
-      const savedContact = await databaseService.add('sponsee_contacts', {
+      await databaseService.add('sponsee_contacts', {
         ...contactData,
         sponseeId: selectedSponseeForContact?.id,
         userId: user?.id,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
       });
-      
-      // Save action items if any
-      if (actionItems && actionItems.length > 0) {
-        for (const actionItem of actionItems) {
-          await databaseService.add('action_items', {
-            title: actionItem.title,
-            text: actionItem.text || actionItem.title,
-            notes: actionItem.notes || '',
-            contactId: savedContact.id,
-            dueDate: actionItem.dueDate || contactData.date,
-            completed: 0,
-            type: actionItem.type || 'todo',
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString()
-          });
-        }
-      }
       
       setShowSponseeContactForm(false);
       setSelectedSponseeForContact(null);
