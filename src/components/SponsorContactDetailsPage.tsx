@@ -95,42 +95,40 @@ export default function SponsorContactDetailsPage({
     
     async function migrateOldActionItems(databaseServiceInstance) {
       try {
-        // Check if we have any action items in the main table already
-        const existingActionItems = await databaseServiceInstance.getAll('action_items');
-        if (existingActionItems && existingActionItems.length > 0) {
-          console.log('[SponsorContactDetailsPage] Migration already completed, found existing action items');
-          return;
-        }
-        
-        // Get old action items from sponsor_contact_details
+        // Force migration - get old action items from sponsor_contact_details
+        console.log('[SponsorContactDetailsPage] Starting forced migration...');
         const oldActionItems = await databaseServiceInstance.getAll('sponsor_contact_details');
         console.log('[SponsorContactDetailsPage] Found old contact details for migration:', oldActionItems?.length || 0);
         
-        if (!oldActionItems || oldActionItems.length === 0) {
-          return;
-        }
-        
-        // Migrate each old action item to the main table
-        for (const oldItem of oldActionItems) {
-          if (oldItem.actionItem) {
-            const newActionItem = {
-              title: oldItem.actionItem,
-              text: oldItem.text || oldItem.actionItem,
-              notes: oldItem.notes || '',
-              dueDate: oldItem.dueDate || null,
-              completed: oldItem.completed || 0,
-              deleted: oldItem.deleted || 0,
-              type: 'action-item',
-              createdAt: oldItem.createdAt || new Date().toISOString(),
-              updatedAt: oldItem.updatedAt || new Date().toISOString()
-            };
-            
-            console.log('[SponsorContactDetailsPage] Migrating action item:', newActionItem.title);
-            await databaseServiceInstance.add('action_items', newActionItem);
+        if (oldActionItems && oldActionItems.length > 0) {
+          // Migrate each old action item to the main table
+          for (const oldItem of oldActionItems) {
+            if (oldItem.actionItem) {
+              const newActionItem = {
+                title: oldItem.actionItem,
+                text: oldItem.text || oldItem.actionItem,
+                notes: oldItem.notes || '',
+                dueDate: oldItem.dueDate || null,
+                completed: oldItem.completed || 0,
+                deleted: oldItem.deleted || 0,
+                type: 'action-item',
+                createdAt: oldItem.createdAt || new Date().toISOString(),
+                updatedAt: oldItem.updatedAt || new Date().toISOString()
+              };
+              
+              console.log('[SponsorContactDetailsPage] Migrating action item:', newActionItem.title, 'completed:', newActionItem.completed);
+              await databaseServiceInstance.add('action_items', newActionItem);
+            }
+          }
+          
+          console.log('[SponsorContactDetailsPage] Migration completed - clearing old table');
+          // Clear the old table to prevent double display
+          for (const oldItem of oldActionItems) {
+            if (oldItem.actionItem && oldItem.id) {
+              await databaseServiceInstance.remove('sponsor_contact_details', oldItem.id);
+            }
           }
         }
-        
-        console.log('[SponsorContactDetailsPage] Migration completed');
       } catch (migrationError) {
         console.error('[SponsorContactDetailsPage] Migration error:', migrationError);
       }
