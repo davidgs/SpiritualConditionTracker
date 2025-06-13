@@ -63,6 +63,7 @@ export default function ContactFormDialog({
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(false);
+  const [showScrollIndicator, setShowScrollIndicator] = useState(true);
   
   // Action Items state
   const [actionItems, setActionItems] = useState<ActionItem[]>([]);
@@ -102,6 +103,8 @@ export default function ContactFormDialog({
       dueDate: null,
       type: 'todo'
     });
+    // Reset scroll indicator
+    setShowScrollIndicator(true);
   }, [initialData, open]);
 
   const handleChange = (field: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -293,7 +296,52 @@ export default function ContactFormDialog({
           </IconButton>
         </DialogTitle>
 
-        <DialogContent sx={{ p: theme.spacing(3) }}>
+        <DialogContent 
+          sx={{ 
+            p: theme.spacing(3),
+            maxHeight: '70vh',
+            overflowY: 'auto',
+            position: 'relative'
+          }}
+          onScroll={(e) => {
+            const target = e.target as HTMLElement;
+            const scrollPercentage = (target.scrollTop / (target.scrollHeight - target.clientHeight)) * 100;
+            // Hide indicator when user scrolls past 30%
+            if (scrollPercentage > 30) {
+              setShowScrollIndicator(false);
+            }
+          }}
+        >
+          {/* Scroll indicator */}
+          {showScrollIndicator && (
+            <Box sx={{
+              position: 'sticky',
+              top: 0,
+              right: 0,
+              display: 'flex',
+              justifyContent: 'center',
+              mb: 2,
+              zIndex: 1
+            }}>
+              <Box sx={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 1,
+                backgroundColor: theme.palette.primary.main,
+                color: 'white',
+                px: 2,
+                py: 0.5,
+                borderRadius: 2,
+                fontSize: '12px',
+                fontWeight: 500,
+                boxShadow: theme.shadows[2]
+              }}>
+                <i className="fa-solid fa-arrow-down" style={{ fontSize: '10px' }}></i>
+                Scroll down for Action Items
+              </Box>
+            </Box>
+          )}
+
           <Box sx={{ 
             display: 'flex', 
             flexDirection: 'column', 
