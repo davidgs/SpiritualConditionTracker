@@ -327,7 +327,7 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
           id: `action-item-${item.id}`, // Prefix to avoid ID conflicts
           type: 'action-item',
           date: item.dueDate || item.createdAt?.split('T')[0] || new Date().toISOString().split('T')[0],
-          notes: `Action Item: ${item.title}${item.text ? ' - ' + item.text : ''}${item.notes ? ' [Notes: ' + item.notes + ']' : ''}`,
+          notes: item.title + (item.notes ? ` [${item.notes}]` : ''),
           duration: undefined,
           location: item.completed ? 'completed' : 'pending',
           createdAt: item.createdAt || new Date().toISOString(),
