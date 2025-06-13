@@ -196,26 +196,10 @@ export default function SponsorContactDetailsPage({
       console.log('[SponsorContactDetailsPage] Soft deleted item via AppDataContext:', updatedItem);
       
       if (updatedItem) {
-        // Update local state to reflect the change immediately
-        setActionItems(prev => {
-          const prevArray = Array.isArray(prev) ? prev : [];
-          const updated = prevArray.map(item => 
-            item && item.id === actionItemId ? { ...item, deleted: newDeletedStatus } : item
-          );
-          console.log('[SponsorContactDetailsPage] Updated local action items after soft delete:', updated);
-          return updated;
-        });
-        
-        // Also update the sponsor contact detail in the local database for consistency
-        try {
-          const updatedContactDetail = {
-            ...currentItem,
-            deleted: newDeletedStatus
-          };
-          await sponsorDB.updateContactDetail(updatedContactDetail);
-        } catch (contactDetailError) {
-          console.warn('[SponsorContactDetailsPage] Failed to update contact detail, but action item was updated:', contactDetailError);
-        }
+        // Refresh the action items list from the main database
+        const databaseServiceInstance = DatabaseService.getInstance();
+        const allActionItems = await databaseServiceInstance.getAll('action_items');
+        setActionItems(allActionItems || []);
       }
     } catch (error) {
       console.error('[SponsorContactDetailsPage] Error soft deleting action item:', error);
