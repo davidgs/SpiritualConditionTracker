@@ -4,7 +4,7 @@ platform :ios, '14.0'
 use_frameworks!
 
 # Specify the Xcode project
-project 'My Spiritual Condition.xcodeproj'
+project 'App.xcodeproj'
 
 # workaround to avoid Xcode caching of Pods that requires
 # Product -> Clean Build Folder after new Cordova plugins installed

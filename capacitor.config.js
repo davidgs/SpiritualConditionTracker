@@ -58,8 +58,7 @@ module.exports = {
     scrollEnabled: true,
     limitsNavigationsToAppBoundDomains: true,
     // iOS project structure configuration
-    scheme: 'My Spiritual Condition',
-    path: 'ios/App',
+    scheme: 'App',
     // Safe area and status bar configuration
     backgroundColor: '#1a1a1a',
     overrideUserAgent: null,
