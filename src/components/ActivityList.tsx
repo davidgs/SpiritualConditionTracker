@@ -2,6 +2,7 @@ import React from 'react';
 import { formatDateForDisplay, compareDatesForSorting } from '../utils/dateUtils';
 import { useTheme } from '@mui/material/styles';
 import { useAppData } from '../contexts/AppDataContext';
+import ActionItem from './shared/ActionItem';
 
 export default function ActivityList({ 
   activities, 
@@ -16,11 +17,34 @@ export default function ActivityList({
 }) {
 
   const theme = useTheme();
-  const { deleteActivity } = useAppData();
+  const { deleteActivity, updateActionItem, deleteActionItem } = useAppData();
 
   const handleDeleteActivity = async (activityId) => {
     if (window.confirm('Are you sure you want to delete this activity?')) {
       await deleteActivity(activityId);
+    }
+  };
+
+  const handleToggleActionItemComplete = async (actionItemId) => {
+    try {
+      // Get the current action item data
+      const activity = activities.find(a => a.actionItemId === actionItemId);
+      if (activity && activity.actionItemData) {
+        const isCompleted = activity.actionItemData.completed;
+        await updateActionItem(actionItemId, { completed: !isCompleted });
+      }
+    } catch (error) {
+      console.error('Failed to toggle action item completion:', error);
+    }
+  };
+
+  const handleDeleteActionItem = async (actionItemId) => {
+    if (window.confirm('Are you sure you want to delete this action item?')) {
+      try {
+        await deleteActionItem(actionItemId);
+      } catch (error) {
+        console.error('Failed to delete action item:', error);
+      }
     }
   };
   
@@ -271,39 +295,61 @@ export default function ActivityList({
                   }
                   return 0;
                 })
-                .map((activity, index) => (
-                <div 
-                  key={activity.id || `${activity.date}-${activity.type}-${index}`} 
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    borderBottom: `1px solid ${theme.palette.divider}`,
-                    paddingBottom: '0.5rem',
-                    marginBottom: '0.25rem',
-                    cursor: (activity.type === 'sponsor-contact' || activity.type === 'action-item') ? 'pointer' : 'default',
-                    padding: '0.25rem',
-                    borderRadius: '4px',
-                    transition: 'background-color 0.2s',
-                    backgroundColor: 'transparent'
-                  }}
-                  onMouseEnter={(e) => {
-                    if (activity.type === 'sponsor-contact' || activity.type === 'action-item') {
-                      e.currentTarget.style.backgroundColor = theme.palette.action.hover;
-                    }
-                  }}
-                  onMouseLeave={(e) => {
-                    if (activity.type === 'sponsor-contact' || activity.type === 'action-item') {
-                      e.currentTarget.style.backgroundColor = 'transparent';
-                    }
-                  }}
-                  onClick={() => {
-                    if (activity.type === 'sponsor-contact' && onActivityClick) {
-                      onActivityClick(activity, 'sponsor-contact');
-                    } else if (activity.type === 'action-item' && onActivityClick) {
-                      onActivityClick(activity, 'action-item');
-                    }
-                  }}
-                >
+                .map((activity, index) => {
+                  // Handle action items with the new ActionItem component
+                  if (activity.type === 'action-item') {
+                    return (
+                      <ActionItem
+                        key={activity.id || `${activity.date}-${activity.type}-${index}`}
+                        actionItem={{
+                          id: activity.id,
+                          title: activity.actionItemData?.title || 'Action Item',
+                          notes: activity.actionItemData?.notes,
+                          completed: activity.actionItemData?.completed || false,
+                          date: activity.date,
+                          actionItemId: activity.actionItemId,
+                          actionItemData: activity.actionItemData
+                        }}
+                        variant="compact"
+                        showDate={showDate}
+                        onToggleComplete={handleToggleActionItemComplete}
+                        onDelete={handleDeleteActionItem}
+                      />
+                    );
+                  }
+
+                  // Handle other activity types with existing rendering
+                  return (
+                    <div 
+                      key={activity.id || `${activity.date}-${activity.type}-${index}`} 
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        borderBottom: `1px solid ${theme.palette.divider}`,
+                        paddingBottom: '0.5rem',
+                        marginBottom: '0.25rem',
+                        cursor: activity.type === 'sponsor-contact' ? 'pointer' : 'default',
+                        padding: '0.25rem',
+                        borderRadius: '4px',
+                        transition: 'background-color 0.2s',
+                        backgroundColor: 'transparent'
+                      }}
+                      onMouseEnter={(e) => {
+                        if (activity.type === 'sponsor-contact') {
+                          e.currentTarget.style.backgroundColor = theme.palette.action.hover;
+                        }
+                      }}
+                      onMouseLeave={(e) => {
+                        if (activity.type === 'sponsor-contact') {
+                          e.currentTarget.style.backgroundColor = 'transparent';
+                        }
+                      }}
+                      onClick={() => {
+                        if (activity.type === 'sponsor-contact' && onActivityClick) {
+                          onActivityClick(activity, 'sponsor-contact');
+                        }
+                      }}
+                    >
                   <div 
                     className={`${activity.type}-icon`}
                     style={{
@@ -380,98 +426,38 @@ export default function ActivityList({
                         {formatActivitySubtitle(activity)}
                       </div>
                     )}
-                    
-                    {activity.type === 'action-item' && activity.completed && (
-                      <div style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '0.25rem',
-                        marginTop: '0.25rem'
-                      }}>
-                        <i className="fas fa-check-circle" style={{
-                          color: theme.palette.success.main,
-                          fontSize: '0.75rem'
-                        }}></i>
-                        <span style={{
-                          color: theme.palette.success.main,
-                          fontSize: '0.75rem',
-                          fontWeight: 500
-                        }}>
-                          Completed
-                        </span>
-                      </div>
-                    )}
                   </div>
                   
                   <div style={{ 
                     display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'flex-end',
-                    gap: '0.25rem',
+                    alignItems: 'center',
                     marginLeft: '0.5rem'
                   }}>
-                    {/* Action item controls */}
-                    {activity.type === 'action-item' && (
-                      <div style={{ display: 'flex', gap: '0.25rem', alignItems: 'center' }}>
-                        {/* Checkbox for completion */}
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            if (onActivityClick) {
-                              onActivityClick(activity, 'toggle-complete');
-                            }
-                          }}
-                          style={{
-                            background: 'none',
-                            border: `1.5px solid ${activity.completed ? theme.palette.success.main : theme.palette.text.secondary}`,
-                            cursor: 'pointer',
-                            color: activity.completed ? theme.palette.success.main : theme.palette.text.secondary,
-                            padding: '0.125rem',
-                            borderRadius: '3px',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            fontSize: '0.7rem',
-                            width: '18px',
-                            height: '18px',
-                            backgroundColor: activity.completed ? theme.palette.success.main : 'transparent'
-                          }}
-                          title={activity.completed ? "Mark as incomplete" : "Mark as complete"}
-                        >
-                          {activity.completed && (
-                            <i className="fas fa-check" style={{ color: 'white', fontSize: '0.6rem' }}></i>
-                          )}
-                        </button>
-                        
-                        {/* Delete button */}
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            if (onActivityClick) {
-                              onActivityClick(activity, 'delete');
-                            }
-                          }}
-                          style={{
-                            background: 'none',
-                            border: 'none',
-                            cursor: 'pointer',
-                            color: theme.palette.error.main,
-                            padding: '0.25rem',
-                            borderRadius: '4px',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            fontSize: '0.8rem'
-                          }}
-                          title="Delete action item"
-                        >
-                          <i className="fas fa-times"></i>
-                        </button>
-                      </div>
-                    )}
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDeleteActivity(activity.id);
+                      }}
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        cursor: 'pointer',
+                        color: theme.palette.error.main,
+                        padding: '0.25rem',
+                        borderRadius: '4px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: '0.8rem'
+                      }}
+                      title="Delete activity"
+                    >
+                      <i className="fas fa-times"></i>
+                    </button>
                   </div>
                 </div>
-              ))}
+                  );
+                })}
             </div>
           </div>
         ))}

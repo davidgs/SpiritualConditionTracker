@@ -151,6 +151,10 @@ interface AppDataContextType {
   updateMeeting: (meetingId: string | number, updates: Partial<Meeting>) => Promise<Meeting | null>;
   deleteMeeting: (meetingId: string | number) => Promise<boolean>;
   
+  addActionItem: (item: Omit<ActionItem, 'id' | 'createdAt' | 'updatedAt'>) => Promise<ActionItem | null>;
+  updateActionItem: (itemId: string | number, updates: Partial<ActionItem>) => Promise<ActionItem | null>;
+  deleteActionItem: (itemId: string | number) => Promise<boolean>;
+  
   updateTimeframe: (timeframe: number) => Promise<void>;
   calculateSpiritualFitness: () => Promise<void>;
   
@@ -638,6 +642,53 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  // Action item operations
+  const addActionItem = async (itemData: Omit<ActionItem, 'id' | 'createdAt' | 'updatedAt'>): Promise<ActionItem | null> => {
+    try {
+      const newActionItem = await databaseService.addActionItem(itemData);
+      // Reload activities to include the new action item
+      await loadActivities();
+      console.log('[ AppDataContext.tsx ] Action item added:', newActionItem.id);
+      return newActionItem;
+    } catch (error) {
+      console.error('[ AppDataContext.tsx ] Failed to add action item:', error);
+      dispatch({ type: 'SET_ERROR', payload: 'Failed to save action item' });
+      return null;
+    }
+  };
+
+  const updateActionItem = async (itemId: string | number, updates: Partial<ActionItem>): Promise<ActionItem | null> => {
+    try {
+      const updatedActionItem = await databaseService.updateActionItem(itemId, updates);
+      if (updatedActionItem) {
+        // Reload activities to reflect the updated action item
+        await loadActivities();
+        console.log('[ AppDataContext.tsx ] Action item updated:', itemId);
+      }
+      return updatedActionItem;
+    } catch (error) {
+      console.error('[ AppDataContext.tsx ] Failed to update action item:', error);
+      dispatch({ type: 'SET_ERROR', payload: 'Failed to update action item' });
+      return null;
+    }
+  };
+
+  const deleteActionItem = async (itemId: string | number): Promise<boolean> => {
+    try {
+      const success = await databaseService.deleteActionItem(itemId);
+      if (success) {
+        // Reload activities to remove the deleted action item
+        await loadActivities();
+        console.log('[ AppDataContext.tsx ] Action item deleted:', itemId);
+      }
+      return success;
+    } catch (error) {
+      console.error('[ AppDataContext.tsx ] Failed to delete action item:', error);
+      dispatch({ type: 'SET_ERROR', payload: 'Failed to delete action item' });
+      return false;
+    }
+  };
+
   const contextValue: AppDataContextType = {
     state,
     dispatch,
@@ -651,6 +702,9 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
     addMeeting,
     updateMeeting,
     deleteMeeting,
+    addActionItem,
+    updateActionItem,
+    deleteActionItem,
     updateTimeframe,
     calculateSpiritualFitness,
     resetAllData,
