@@ -62,7 +62,7 @@ export function applyMuiThemeToIOS(theme) {
     // Inject the CSS
     injectStylesheet(css, 'ios-theme-styles');
     
-    console.log('Applied MUI theme to iOS components');
+    // Theme applied successfully
   } catch (error) {
     console.error('Error applying iOS theme:', error);
   }

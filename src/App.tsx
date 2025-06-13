@@ -145,7 +145,7 @@ function AppContent() {
         // Use the database service directly to update
         const databaseService = DatabaseService.getInstance();
         const updatedActivity = await databaseService.updateActivity(activityData.id, updateData);
-        console.log('[ App.tsx:87 handleSaveActivity ] Activity updated successfully:', updatedActivity);
+      //  console.log('[ App.tsx:87 handleSaveActivity ] Activity updated successfully:', updatedActivity);
         return updatedActivity;
       } else {
         // This is a new activity - pass through all fields to preserve meeting data
@@ -227,7 +227,7 @@ function AppContent() {
 
   // Simple navigation handler (does nothing for now)
   function handleNavigation(view: string) {
-    console.log('Navigation to:', view);
+  //  console.log('Navigation to:', view);
     setCurrentView(view);
   }
 
@@ -244,7 +244,7 @@ function AppContent() {
 
   // Handle navigation to sponsor contact details
   function handleNavigateToSponsorContact(contactId: string) {
-    console.log('Navigating to sponsor contact:', contactId);
+  //  console.log('Navigating to sponsor contact:', contactId);
     // Navigate to the sponsor page which shows sponsor contacts
     setCurrentView('sponsor');
   }
