@@ -277,7 +277,7 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
     try {
       if (actionItem.deleted) {
         // Handle delete operation
-        await databaseService.delete('action_items', actionItem.id);
+        await databaseService.remove('action_items', actionItem.id);
         console.log('Action item deleted:', actionItem.id);
       } else {
         // Handle toggle completion
