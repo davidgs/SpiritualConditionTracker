@@ -24,6 +24,7 @@ import { useTheme } from '@mui/material/styles';
 import { formatDateForDisplay } from '../utils/dateUtils';
 import sponsorDB from '../utils/sponsor-database';
 import ActionItem from './shared/ActionItem';
+import { useAppData } from '../contexts/AppDataContext';
 
 export default function SponsorContactDetailsPage({ 
   contact, 
@@ -35,6 +36,7 @@ export default function SponsorContactDetailsPage({
   onDeleteDetail
 }) {
   const theme = useTheme();
+  const { updateActionItem } = useAppData();
   const [contactDetails, setContactDetails] = useState(details);
   const [showAddActionForm, setShowAddActionForm] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -127,7 +129,7 @@ export default function SponsorContactDetailsPage({
     }
   };
   
-  // Toggle action item completion
+  // Toggle action item completion using shared AppDataContext method
   const handleToggleComplete = async (actionItemId) => {
     try {
       console.log('[SponsorContactDetailsPage] Toggling completion for action item ID:', actionItemId);
@@ -139,32 +141,43 @@ export default function SponsorContactDetailsPage({
         return;
       }
       
-      const updatedItem = {
-        ...currentItem,
-        completed: currentItem.completed ? 0 : 1
-      };
+      // Use the shared AppDataContext method to ensure synchronization
+      const newCompletedStatus = currentItem.completed ? 0 : 1;
+      const updatedItem = await updateActionItem(actionItemId, {
+        completed: newCompletedStatus,
+        updatedAt: new Date().toISOString()
+      });
       
-      console.log('[SponsorContactDetailsPage] Updated item data:', updatedItem);
+      console.log('[SponsorContactDetailsPage] Updated item via AppDataContext:', updatedItem);
       
-      const result = await sponsorDB.updateContactDetail(updatedItem);
-      console.log('[SponsorContactDetailsPage] Update result:', result);
-      
-      if (result) {
+      if (updatedItem) {
+        // Update local state to reflect the change immediately
         setActionItems(prev => {
           const prevArray = Array.isArray(prev) ? prev : [];
           const updated = prevArray.map(item => 
-            item && item.id === actionItemId ? updatedItem : item
+            item && item.id === actionItemId ? { ...item, completed: newCompletedStatus } : item
           );
-          console.log('[SponsorContactDetailsPage] Updated action items list:', updated);
+          console.log('[SponsorContactDetailsPage] Updated local action items list:', updated);
           return updated;
         });
+        
+        // Also update the sponsor contact detail in the local database for consistency
+        try {
+          const updatedContactDetail = {
+            ...currentItem,
+            completed: newCompletedStatus
+          };
+          await sponsorDB.updateContactDetail(updatedContactDetail);
+        } catch (contactDetailError) {
+          console.warn('[SponsorContactDetailsPage] Failed to update contact detail, but action item was updated:', contactDetailError);
+        }
       }
     } catch (error) {
       console.error('[SponsorContactDetailsPage] Error toggling completion:', error);
     }
   };
   
-  // Soft delete action item (mark as deleted with -0.5 point deduction)
+  // Soft delete action item using shared AppDataContext method
   const handleDeleteAction = async (actionItemId) => {
     try {
       console.log('[SponsorContactDetailsPage] Soft deleting action item with ID:', actionItemId);
@@ -176,25 +189,36 @@ export default function SponsorContactDetailsPage({
         return;
       }
       
-      const updatedItem = {
-        ...currentItem,
-        deleted: currentItem.deleted ? 0 : 1  // Toggle deleted state
-      };
+      // Use the shared AppDataContext method to ensure synchronization
+      const newDeletedStatus = currentItem.deleted ? 0 : 1;
+      const updatedItem = await updateActionItem(actionItemId, {
+        deleted: newDeletedStatus,
+        updatedAt: new Date().toISOString()
+      });
       
-      console.log('[SponsorContactDetailsPage] Soft delete - Updated item data:', updatedItem);
+      console.log('[SponsorContactDetailsPage] Soft deleted item via AppDataContext:', updatedItem);
       
-      const result = await sponsorDB.updateContactDetail(updatedItem);
-      console.log('[SponsorContactDetailsPage] Soft delete result:', result);
-      
-      if (result) {
+      if (updatedItem) {
+        // Update local state to reflect the change immediately
         setActionItems(prev => {
           const prevArray = Array.isArray(prev) ? prev : [];
           const updated = prevArray.map(item => 
-            item && item.id === actionItemId ? updatedItem : item
+            item && item.id === actionItemId ? { ...item, deleted: newDeletedStatus } : item
           );
-          console.log('[SponsorContactDetailsPage] Updated action items after soft delete:', updated);
+          console.log('[SponsorContactDetailsPage] Updated local action items after soft delete:', updated);
           return updated;
         });
+        
+        // Also update the sponsor contact detail in the local database for consistency
+        try {
+          const updatedContactDetail = {
+            ...currentItem,
+            deleted: newDeletedStatus
+          };
+          await sponsorDB.updateContactDetail(updatedContactDetail);
+        } catch (contactDetailError) {
+          console.warn('[SponsorContactDetailsPage] Failed to update contact detail, but action item was updated:', contactDetailError);
+        }
       }
     } catch (error) {
       console.error('[SponsorContactDetailsPage] Error soft deleting action item:', error);
