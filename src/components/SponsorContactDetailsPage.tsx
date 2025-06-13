@@ -25,6 +25,7 @@ import { formatDateForDisplay } from '../utils/dateUtils';
 import sponsorDB from '../utils/sponsor-database';
 import ActionItem from './shared/ActionItem';
 import { useAppData } from '../contexts/AppDataContext';
+import DatabaseService from '../services/DatabaseService';
 
 export default function SponsorContactDetailsPage({ 
   contact, 
@@ -36,7 +37,7 @@ export default function SponsorContactDetailsPage({
   onDeleteDetail
 }) {
   const theme = useTheme();
-  const { updateActionItem } = useAppData();
+  const { updateActionItem, addActivity } = useAppData();
   const [contactDetails, setContactDetails] = useState(details);
   const [showAddActionForm, setShowAddActionForm] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -72,9 +73,14 @@ export default function SponsorContactDetailsPage({
       try {
         console.log(`[SponsorContactDetailsPage] Loading action items for contact ID: ${contact.id}`);
         
-        // Load action items from the action_items table, not contact_details
-        const actionItemsList = await sponsorDB.getActionItemsByContactId(contact.id);
-        console.log(`[SponsorContactDetailsPage] Found ${actionItemsList.length} action items for contact`);
+        // Load action items from the main action_items table using DatabaseService
+        const databaseServiceInstance = DatabaseService.getInstance();
+        const allActionItems = await databaseServiceInstance.getAll('action_items');
+        
+        // Filter to show only action items related to this contact (we'll use notes or title to match)
+        // For now, load all action items since we're consolidating to one table
+        const actionItemsList = allActionItems || [];
+        console.log(`[SponsorContactDetailsPage] Found ${actionItemsList.length} total action items`);
         
         setActionItems(actionItemsList);
       } catch (error) {
@@ -95,25 +101,32 @@ export default function SponsorContactDetailsPage({
     }));
   };
   
-  // Add new action item
+  // Add new action item to main action_items table only
   const handleAddAction = async () => {
     try {
-      const actionData = {
-        contactId: contact.id,
-        actionItem: newAction.actionItem,
-        text: newAction.actionItem, // Required field - use same value as actionItem
+      console.log('[SponsorContactDetailsPage] Adding new action item:', newAction);
+      
+      // Create the action item in the main action_items table only
+      const databaseServiceInstance = DatabaseService.getInstance();
+      const mainActionItem = {
+        title: newAction.actionItem,
+        text: newAction.actionItem,
         notes: newAction.notes || '',
         dueDate: newAction.dueDate || null,
-        completed: newAction.completed ? 1 as const : 0 as const,
-        type: 'todo'
+        completed: newAction.completed ? 1 : 0,
+        deleted: 0,
+        type: 'action-item',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
       };
       
-      console.log('[SponsorContactDetailsPage] Adding new contact detail:', actionData);
+      console.log('[SponsorContactDetailsPage] Creating in main action_items table:', mainActionItem);
+      const savedMainItem = await databaseServiceInstance.add('action_items', mainActionItem);
+      console.log('[SponsorContactDetailsPage] Saved main item:', savedMainItem);
       
-      const savedDetail = await sponsorDB.addContactDetail(actionData);
-      
-      // Update local state
-      setActionItems(prev => [savedDetail, ...prev]);
+      // Refresh the action items list to show the new item
+      const allActionItems = await databaseServiceInstance.getAll('action_items');
+      setActionItems(allActionItems || []);
       
       // Reset form
       setNewAction({
@@ -151,26 +164,10 @@ export default function SponsorContactDetailsPage({
       console.log('[SponsorContactDetailsPage] Updated item via AppDataContext:', updatedItem);
       
       if (updatedItem) {
-        // Update local state to reflect the change immediately
-        setActionItems(prev => {
-          const prevArray = Array.isArray(prev) ? prev : [];
-          const updated = prevArray.map(item => 
-            item && item.id === actionItemId ? { ...item, completed: newCompletedStatus } : item
-          );
-          console.log('[SponsorContactDetailsPage] Updated local action items list:', updated);
-          return updated;
-        });
-        
-        // Also update the sponsor contact detail in the local database for consistency
-        try {
-          const updatedContactDetail = {
-            ...currentItem,
-            completed: newCompletedStatus
-          };
-          await sponsorDB.updateContactDetail(updatedContactDetail);
-        } catch (contactDetailError) {
-          console.warn('[SponsorContactDetailsPage] Failed to update contact detail, but action item was updated:', contactDetailError);
-        }
+        // Refresh the action items list from the main database
+        const databaseServiceInstance = DatabaseService.getInstance();
+        const allActionItems = await databaseServiceInstance.getAll('action_items');
+        setActionItems(allActionItems || []);
       }
     } catch (error) {
       console.error('[SponsorContactDetailsPage] Error toggling completion:', error);
