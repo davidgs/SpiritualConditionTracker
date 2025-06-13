@@ -215,15 +215,33 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
     }
   };
 
-  const handleAddContactWithActionItem = async (contactData) => {
+  const handleAddContactWithActionItem = async (contactData, actionItems = []) => {
     try {
-      await databaseService.add('sponsor_contacts', {
+      // Save the contact first
+      const savedContact = await databaseService.add('sponsor_contacts', {
         ...contactData,
         sponsorId: selectedSponsorForContact?.id,
         userId: user?.id,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
       });
+      
+      // Save action items if any
+      if (actionItems && actionItems.length > 0) {
+        for (const actionItem of actionItems) {
+          await databaseService.add('action_items', {
+            title: actionItem.title,
+            text: actionItem.text || actionItem.title,
+            notes: actionItem.notes || '',
+            contactId: savedContact.id,
+            dueDate: actionItem.dueDate || contactData.date,
+            completed: 0,
+            type: actionItem.type || 'todo',
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString()
+          });
+        }
+      }
       
       setShowContactForm(false);
       setSelectedSponsorForContact(null);
@@ -235,15 +253,33 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
     }
   };
 
-  const handleAddSponseeContactWithActionItem = async (contactData) => {
+  const handleAddSponseeContactWithActionItem = async (contactData, actionItems = []) => {
     try {
-      await databaseService.add('sponsee_contacts', {
+      // Save the contact first
+      const savedContact = await databaseService.add('sponsee_contacts', {
         ...contactData,
         sponseeId: selectedSponseeForContact?.id,
         userId: user?.id,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
       });
+      
+      // Save action items if any
+      if (actionItems && actionItems.length > 0) {
+        for (const actionItem of actionItems) {
+          await databaseService.add('action_items', {
+            title: actionItem.title,
+            text: actionItem.text || actionItem.title,
+            notes: actionItem.notes || '',
+            contactId: savedContact.id,
+            dueDate: actionItem.dueDate || contactData.date,
+            completed: 0,
+            type: actionItem.type || 'todo',
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString()
+          });
+        }
+      }
       
       setShowSponseeContactForm(false);
       setSelectedSponseeForContact(null);

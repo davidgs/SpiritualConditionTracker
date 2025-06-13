@@ -63,6 +63,16 @@ export default function ContactFormDialog({
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(false);
+  
+  // Action Items state
+  const [actionItems, setActionItems] = useState<ActionItem[]>([]);
+  const [newActionItem, setNewActionItem] = useState({
+    title: '',
+    text: '',
+    notes: '',
+    dueDate: null as string | null,
+    type: 'todo' as 'todo' | 'action' | 'reminder'
+  });
 
   useEffect(() => {
     if (initialData) {
@@ -83,6 +93,15 @@ export default function ContactFormDialog({
       });
     }
     setErrors({});
+    // Reset action items when dialog opens
+    setActionItems([]);
+    setNewActionItem({
+      title: '',
+      text: '',
+      notes: '',
+      dueDate: null,
+      type: 'todo'
+    });
   }, [initialData, open]);
 
   const handleChange = (field: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -133,6 +152,41 @@ export default function ContactFormDialog({
     }
   };
 
+  // Action Item handlers
+  const handleAddActionItem = () => {
+    if (!newActionItem.title.trim()) return;
+    
+    const actionItem: ActionItem = {
+      id: Date.now(), // Temporary ID
+      title: newActionItem.title,
+      text: newActionItem.text || newActionItem.title,
+      notes: newActionItem.notes,
+      dueDate: newActionItem.dueDate,
+      completed: false,
+      type: newActionItem.type
+    };
+    
+    setActionItems(prev => [...prev, actionItem]);
+    setNewActionItem({
+      title: '',
+      text: '',
+      notes: '',
+      dueDate: null,
+      type: 'todo'
+    });
+  };
+
+  const handleRemoveActionItem = (id: number) => {
+    setActionItems(prev => prev.filter(item => item.id !== id));
+  };
+
+  const handleActionItemChange = (field: string, value: any) => {
+    setNewActionItem(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
 
@@ -162,7 +216,7 @@ export default function ContactFormDialog({
         duration: formData.duration ? parseInt(formData.duration) : null
       };
       
-      await onSave(submitData);
+      await onSave(submitData, actionItems);
       onClose();
     } catch (error) {
       console.error('Error saving contact:', error);
@@ -434,6 +488,173 @@ export default function ContactFormDialog({
                 }
               }}
             />
+
+            {/* Action Items Section */}
+            <Divider sx={{ my: 3 }} />
+            
+            <Accordion 
+              defaultExpanded 
+              sx={{ 
+                boxShadow: 'none',
+                '&:before': { display: 'none' },
+                backgroundColor: 'transparent'
+              }}
+            >
+              <AccordionSummary
+                expandIcon={<i className="fa-solid fa-chevron-down"></i>}
+                sx={{
+                  backgroundColor: theme.palette.background.default,
+                  borderRadius: theme.spacing(1),
+                  minHeight: '48px',
+                  '& .MuiAccordionSummary-content': {
+                    margin: '8px 0'
+                  }
+                }}
+              >
+                <Typography variant="h6" sx={{ fontWeight: 600, color: theme.palette.text.primary }}>
+                  Action Items ({actionItems.length})
+                </Typography>
+              </AccordionSummary>
+              
+              <AccordionDetails sx={{ px: 0, pt: 2 }}>
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                  
+                  {/* Add New Action Item Form */}
+                  <Box sx={{ 
+                    p: 2, 
+                    border: 1, 
+                    borderColor: 'divider', 
+                    borderRadius: 1,
+                    backgroundColor: theme.palette.background.default
+                  }}>
+                    <Typography variant="subtitle2" sx={{ mb: 2, fontWeight: 600 }}>
+                      Add Action Item
+                    </Typography>
+                    
+                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                      <TextField
+                        fullWidth
+                        label="Action Item Title"
+                        placeholder="What needs to be done?"
+                        value={newActionItem.title}
+                        onChange={(e) => handleActionItemChange('title', e.target.value)}
+                        variant="outlined"
+                        size="small"
+                        sx={{
+                          '& .MuiOutlinedInput-root': {
+                            borderRadius: theme.spacing(0.5),
+                            backgroundColor: theme.palette.background.paper
+                          }
+                        }}
+                      />
+                      
+                      <TextField
+                        fullWidth
+                        label="Notes (optional)"
+                        placeholder="Additional details..."
+                        value={newActionItem.notes}
+                        onChange={(e) => handleActionItemChange('notes', e.target.value)}
+                        variant="outlined"
+                        size="small"
+                        multiline
+                        rows={2}
+                        sx={{
+                          '& .MuiOutlinedInput-root': {
+                            borderRadius: theme.spacing(0.5),
+                            backgroundColor: theme.palette.background.paper
+                          }
+                        }}
+                      />
+                      
+                      <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+                        <FormControl size="small" sx={{ minWidth: 120 }}>
+                          <InputLabel>Type</InputLabel>
+                          <Select
+                            value={newActionItem.type}
+                            onChange={(e) => handleActionItemChange('type', e.target.value)}
+                            label="Type"
+                          >
+                            <MenuItem value="todo">To Do</MenuItem>
+                            <MenuItem value="action">Action</MenuItem>
+                            <MenuItem value="reminder">Reminder</MenuItem>
+                          </Select>
+                        </FormControl>
+                        
+                        <Button
+                          variant="contained"
+                          onClick={handleAddActionItem}
+                          disabled={!newActionItem.title.trim()}
+                          size="small"
+                          sx={{
+                            backgroundColor: theme.palette.success.main,
+                            '&:hover': {
+                              backgroundColor: theme.palette.success.dark
+                            }
+                          }}
+                        >
+                          Add Item
+                        </Button>
+                      </Box>
+                    </Box>
+                  </Box>
+
+                  {/* Action Items List */}
+                  {actionItems.length > 0 && (
+                    <List sx={{ p: 0 }}>
+                      {actionItems.map((item) => (
+                        <ListItem
+                          key={item.id}
+                          sx={{
+                            border: 1,
+                            borderColor: 'divider',
+                            borderRadius: 1,
+                            mb: 1,
+                            backgroundColor: theme.palette.background.paper
+                          }}
+                        >
+                          <ListItemText
+                            primary={item.title}
+                            secondary={item.notes}
+                            sx={{
+                              '& .MuiListItemText-primary': {
+                                fontWeight: 500,
+                                color: theme.palette.text.primary
+                              },
+                              '& .MuiListItemText-secondary': {
+                                color: theme.palette.text.secondary
+                              }
+                            }}
+                          />
+                          <ListItemSecondaryAction>
+                            <IconButton 
+                              onClick={() => handleRemoveActionItem(item.id!)}
+                              size="small"
+                              sx={{ color: theme.palette.error.main }}
+                            >
+                              <i className="fa-solid fa-times"></i>
+                            </IconButton>
+                          </ListItemSecondaryAction>
+                        </ListItem>
+                      ))}
+                    </List>
+                  )}
+                  
+                  {actionItems.length === 0 && (
+                    <Typography 
+                      variant="body2" 
+                      sx={{ 
+                        textAlign: 'center', 
+                        color: theme.palette.text.secondary,
+                        fontStyle: 'italic',
+                        py: 2
+                      }}
+                    >
+                      No action items added yet
+                    </Typography>
+                  )}
+                </Box>
+              </AccordionDetails>
+            </Accordion>
           </Box>
         </DialogContent>
 
