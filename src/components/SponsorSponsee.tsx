@@ -247,6 +247,13 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
       setSelectedSponsorForContact(null);
       await loadSponsorContacts();
       setRefreshKey(prev => prev + 1);
+      
+      // Reload activities to show new sponsor contact and action items in dashboard
+      if (onSaveActivity) {
+        // Trigger activity reload through parent component
+        const refreshActivity = { type: 'refresh', id: Date.now() };
+        await onSaveActivity(refreshActivity);
+      }
     } catch (error) {
       console.error('Failed to add sponsor contact:', error);
       alert('Failed to add contact');
