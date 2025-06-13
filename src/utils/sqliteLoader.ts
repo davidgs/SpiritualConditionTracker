@@ -251,7 +251,9 @@ export default async function initSQLiteDatabase() {
             }
           }).join(', ');
           
-          const sql = `UPDATE ${collection} SET ${setClause} WHERE id = ${id}`;
+          // Properly escape the ID value for SQL
+          const escapedId = typeof id === 'string' ? `'${id.replace(/'/g, "''")}'` : id;
+          const sql = `UPDATE ${collection} SET ${setClause} WHERE id = ${escapedId}`;
         //  console.log(`[ sqliteLoader.js ] Update SQL:`, sql);
           
           await sqlite.execute({
@@ -272,7 +274,9 @@ export default async function initSQLiteDatabase() {
         try {
         //  console.log(`[ sqliteLoader.js ] Deleting from ${collection} id ${id}`);
           
-          const sql = `DELETE FROM ${collection} WHERE id = ${id}`;
+          // Properly escape the ID value for SQL
+          const escapedId = typeof id === 'string' ? `'${id.replace(/'/g, "''")}'` : id;
+          const sql = `DELETE FROM ${collection} WHERE id = ${escapedId}`;
         //  console.log(`[ sqliteLoader.js ] Delete SQL:`, sql);
           
           await sqlite.execute({
@@ -290,9 +294,12 @@ export default async function initSQLiteDatabase() {
 
       async getById(collection, id) {
         try {
+          // Properly escape the ID value for SQL
+          const escapedId = typeof id === 'string' ? `'${id.replace(/'/g, "''")}'` : id;
+          
           const result = await sqlite.query({
             database: DB_NAME,
-            statement: `SELECT * FROM ${collection} WHERE id = ${id}`,
+            statement: `SELECT * FROM ${collection} WHERE id = ${escapedId}`,
             values: []
           });
 
@@ -335,9 +342,12 @@ export default async function initSQLiteDatabase() {
         try {
         //  console.log(`[ sqliteLoader.js ] Removing from ${collection} id:`, id);
           
+          // Properly escape the ID value for SQL
+          const escapedId = typeof id === 'string' ? `'${id.replace(/'/g, "''")}'` : id;
+          
           const result = await sqlite.execute({
             database: DB_NAME,
-            statements: `DELETE FROM ${collection} WHERE id = ${id};`
+            statements: `DELETE FROM ${collection} WHERE id = ${escapedId};`
           });
           
         //  console.log(`[ sqliteLoader.js ] Delete result for ${collection} id ${id}:`, result);
