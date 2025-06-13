@@ -85,30 +85,31 @@ export default function SponsorContactDetailsPage({
   // Watch for changes in activities state and update action items immediately
   useEffect(() => {
     // Extract action items from the shared AppDataContext state (same source as Activity list)
-    const actionItemActivities = state.activities.filter(activity => activity.type === 'action-item');
-    const actionItemsList = actionItemActivities.map(activity => {
-      // Use the actionItemData if available, otherwise reconstruct from activity data
-      if (activity.actionItemData) {
-        return activity.actionItemData;
-      }
-      // Fallback: reconstruct action item from activity data
-      return {
-        id: activity.actionItemId || activity.id,
-        title: activity.notes?.split(' [')[0] || 'Untitled',
-        text: activity.notes?.split(' [')[0] || 'Untitled',
-        notes: activity.notes?.includes('[') ? activity.notes.split('[')[1]?.replace(']', '') || '' : '',
-        completed: activity.location === 'completed' ? 1 : 0,
-        deleted: activity.location === 'deleted' ? 1 : 0,
-        type: 'action',
-        dueDate: activity.date,
-        createdAt: activity.createdAt,
-        updatedAt: activity.updatedAt
-      };
-    }).filter(Boolean);
+    const actionItemActivities = state.activities.filter(activity => 
+      activity.type === 'action-item' && 
+      activity.actionItemData &&
+      !activity.actionItemData.deleted // Only exclude actually deleted items, not completed ones
+    );
     
-    // Force immediate update of local state
+    const actionItemsList = actionItemActivities.map(activity => ({
+      ...activity.actionItemData,
+      // Ensure we have all the necessary fields
+      id: activity.actionItemData.id,
+      title: activity.actionItemData.title || activity.actionItemData.text || 'Action Item',
+      text: activity.actionItemData.text || activity.actionItemData.title || 'Action Item',
+      notes: activity.actionItemData.notes || '',
+      completed: activity.actionItemData.completed || 0,
+      deleted: activity.actionItemData.deleted || 0,
+      type: activity.actionItemData.type || 'action',
+      dueDate: activity.actionItemData.dueDate || activity.date,
+      createdAt: activity.actionItemData.createdAt || activity.createdAt,
+      updatedAt: activity.actionItemData.updatedAt || activity.updatedAt
+    })).filter(Boolean);
+    
+    // Force immediate update of local state including completed items
     setActionItems([...actionItemsList]);
-  }, [state.activities, state.isLoading]);
+    console.log('[SponsorContactDetailsPage] Updated action items from shared state:', actionItemsList.length);
+  }, [state.activities]);
   
   // Handle form changes for new action item
   const handleActionChange = (e) => {

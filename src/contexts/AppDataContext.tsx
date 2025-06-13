@@ -670,7 +670,10 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
               ...activity,
               location: updatedActionItem.deleted ? 'deleted' : (updatedActionItem.completed ? 'completed' : 'pending'),
               updatedAt: updatedActionItem.updatedAt || new Date().toISOString(),
-              actionItemData: updatedActionItem
+              actionItemData: {
+                ...activity.actionItemData,
+                ...updatedActionItem
+              }
             };
           }
           return activity;
