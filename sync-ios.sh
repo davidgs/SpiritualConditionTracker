@@ -11,11 +11,7 @@ echo "Building project..."
 npm run build
 
 echo "Running Capacitor sync..."
-# Skip the full sync since it fails with project path issues
-# npx cap sync
-echo "Skipping full Capacitor sync due to project path configuration"
-echo "Building web assets only..."
-npm run build
+npx cap sync ios
 
 # Define directories
 SOURCE_PUBLIC="ios/App/App/public"
