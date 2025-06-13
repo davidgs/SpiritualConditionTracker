@@ -85,10 +85,11 @@ export default function SponsorContactDetailsPage({
   // Watch for changes in activities state and update action items immediately
   useEffect(() => {
     // Extract action items from the shared AppDataContext state (same source as Activity list)
+    // Include ALL action items, including deleted ones (they'll show as strikethrough/red)
     const actionItemActivities = state.activities.filter(activity => 
       activity.type === 'action-item' && 
-      activity.actionItemData &&
-      !activity.actionItemData.deleted // Only exclude actually deleted items, not completed ones
+      activity.actionItemData
+      // Don't filter out deleted items - let them display with proper styling
     );
     
     const actionItemsList = actionItemActivities.map(activity => ({
