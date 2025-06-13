@@ -557,55 +557,116 @@ export default function ContactFormDialog({
                 </IconButton>
               </Box>
 
-              {/* Add Action Item Form - Compact Style */}
+              {/* Add Action Item Form */}
               {showAddActionItemForm && (
                 <Box sx={{ 
-                  p: 1.5, 
-                  backgroundColor: theme.palette.background.default,
-                  borderRadius: theme.spacing(1),
-                  mb: 1.5,
-                  border: `1px solid ${theme.palette.divider}`
+                  display: 'flex', 
+                  flexDirection: 'column', 
+                  gap: theme.spacing(3),
+                  mb: theme.spacing(3)
                 }}>
-                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-                    <TextField
-                      fullWidth
-                      label="What needs to be done"
-                      value={newActionItem.title}
-                      onChange={(e) => handleActionItemChange('title', e.target.value)}
+                  <TextField
+                    fullWidth
+                    label="What needs to be done?"
+                    placeholder="Enter action item"
+                    value={newActionItem.title}
+                    onChange={(e) => handleActionItemChange('title', e.target.value)}
+                    variant="outlined"
+                    sx={{
+                      '& .MuiOutlinedInput-root': {
+                        borderRadius: theme.spacing(1),
+                        backgroundColor: theme.palette.background.default,
+                        minHeight: '56px',
+                        '& input': {
+                          padding: '16px 14px',
+                          fontSize: '16px',
+                          lineHeight: '1.5'
+                        },
+                        '& fieldset': {
+                          borderColor: theme.palette.divider
+                        },
+                        '&:hover fieldset': {
+                          borderColor: theme.palette.primary.main
+                        },
+                        '&.Mui-focused fieldset': {
+                          borderColor: theme.palette.primary.main
+                        }
+                      },
+                      '& .MuiInputLabel-root': {
+                        color: theme.palette.text.secondary,
+                        fontSize: '16px'
+                      },
+                      '& .MuiInputBase-input': {
+                        color: theme.palette.text.primary
+                      }
+                    }}
+                  />
+                  
+                  <TextField
+                    fullWidth
+                    label="Notes (optional)"
+                    placeholder="Additional details"
+                    value={newActionItem.notes}
+                    onChange={(e) => handleActionItemChange('notes', e.target.value)}
+                    variant="outlined"
+                    multiline
+                    rows={3}
+                    sx={{
+                      '& .MuiOutlinedInput-root': {
+                        borderRadius: theme.spacing(1),
+                        backgroundColor: theme.palette.background.default,
+                        '& fieldset': {
+                          borderColor: theme.palette.divider
+                        },
+                        '&:hover fieldset': {
+                          borderColor: theme.palette.primary.main
+                        },
+                        '&.Mui-focused fieldset': {
+                          borderColor: theme.palette.primary.main
+                        }
+                      },
+                      '& .MuiInputLabel-root': {
+                        color: theme.palette.text.secondary,
+                        fontSize: '16px'
+                      },
+                      '& .MuiInputBase-input': {
+                        color: theme.palette.text.primary
+                      }
+                    }}
+                  />
+                  
+                  <Box sx={{ display: 'flex', gap: theme.spacing(2), justifyContent: 'flex-end' }}>
+                    <Button
                       variant="outlined"
-                      size="small"
-                    />
-                    
-                    <TextField
-                      fullWidth
-                      label="Notes (optional)"
-                      value={newActionItem.notes}
-                      onChange={(e) => handleActionItemChange('notes', e.target.value)}
-                      variant="outlined"
-                      size="small"
-                      multiline
-                      rows={2}
-                    />
-                    
-                    <Box sx={{ display: 'flex', gap: 1, mt: 0.5 }}>
-                      <Button
-                        variant="contained"
-                        onClick={handleAddActionItem}
-                        disabled={!newActionItem.title.trim()}
-                        size="small"
-                        sx={{ textTransform: 'none' }}
-                      >
-                        Add
-                      </Button>
-                      <Button
-                        variant="outlined"
-                        onClick={() => setShowAddActionItemForm(false)}
-                        size="small"
-                        sx={{ textTransform: 'none' }}
-                      >
-                        Cancel
-                      </Button>
-                    </Box>
+                      onClick={() => setShowAddActionItemForm(false)}
+                      size="large"
+                      sx={{
+                        borderRadius: theme.spacing(1.5),
+                        textTransform: 'none',
+                        fontWeight: 600,
+                        fontSize: '16px',
+                        minHeight: '48px',
+                        px: theme.spacing(4)
+                      }}
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      variant="contained"
+                      onClick={handleAddActionItem}
+                      disabled={!newActionItem.title.trim()}
+                      size="large"
+                      sx={{
+                        borderRadius: theme.spacing(1.5),
+                        textTransform: 'none',
+                        fontWeight: 600,
+                        fontSize: '16px',
+                        minHeight: '48px',
+                        px: theme.spacing(4)
+                      }}
+                    >
+                      Add Action Item
+                    </Button>
                   </Box>
                 </Box>
               )}
