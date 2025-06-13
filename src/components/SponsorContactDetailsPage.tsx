@@ -120,8 +120,8 @@ export default function SponsorContactDetailsPage({
         updatedAt: new Date().toISOString()
       };
       
-      console.log('[SponsorContactDetailsPage] Creating in main action_items table:', mainActionItem);
-      const savedMainItem = await databaseServiceInstance.add('action_items', mainActionItem);
+      console.log('[SponsorContactDetailsPage] Creating action item via AppDataContext:', mainActionItem);
+      const savedMainItem = await addActionItem(mainActionItem);
       console.log('[SponsorContactDetailsPage] Saved main item:', savedMainItem);
       
       // Refresh the action items list using the same method as load
