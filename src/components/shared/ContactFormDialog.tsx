@@ -258,14 +258,16 @@ export default function ContactFormDialog({
         sx={{
           '& .MuiDialog-container': {
             alignItems: 'flex-start',
-            paddingTop: '10vh'
+            paddingTop: '5vh'
           }
         }}
         PaperProps={{
           sx: {
             backgroundColor: theme.palette.background.paper,
             borderRadius: theme.spacing(2),
-            margin: theme.spacing(2)
+            margin: theme.spacing(1),
+            maxHeight: '90vh',
+            overflow: 'auto'
           }
         }}
       >
@@ -437,8 +439,13 @@ export default function ContactFormDialog({
                 label="Duration (minutes)"
                 placeholder="How long was the contact?"
                 type="number"
-                inputProps={{ min: 1, max: 1440 }}
-                value={formData.duration}
+                inputProps={{ 
+                  min: 1, 
+                  max: 1440,
+                  pattern: '[0-9]*',
+                  inputMode: 'numeric'
+                }}
+                value={formData.duration || ''}
                 onChange={handleChange('duration')}
                 variant="outlined"
                 sx={{

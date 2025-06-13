@@ -423,23 +423,23 @@ export default function ActivityList({
                           }}
                           style={{
                             background: 'none',
-                            border: `2px solid ${activity.completed ? theme.palette.success.main : theme.palette.text.secondary}`,
+                            border: `1.5px solid ${activity.completed ? theme.palette.success.main : theme.palette.text.secondary}`,
                             cursor: 'pointer',
                             color: activity.completed ? theme.palette.success.main : theme.palette.text.secondary,
-                            padding: '0.25rem',
-                            borderRadius: '4px',
+                            padding: '0.125rem',
+                            borderRadius: '3px',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            fontSize: '0.8rem',
-                            width: '24px',
-                            height: '24px',
+                            fontSize: '0.7rem',
+                            width: '18px',
+                            height: '18px',
                             backgroundColor: activity.completed ? theme.palette.success.main : 'transparent'
                           }}
                           title={activity.completed ? "Mark as incomplete" : "Mark as complete"}
                         >
                           {activity.completed && (
-                            <i className="fas fa-check" style={{ color: 'white', fontSize: '0.7rem' }}></i>
+                            <i className="fas fa-check" style={{ color: 'white', fontSize: '0.6rem' }}></i>
                           )}
                         </button>
                         
