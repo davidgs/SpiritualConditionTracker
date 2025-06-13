@@ -661,10 +661,11 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
     try {
       const updatedActionItem = await databaseService.updateActionItem(itemId, updates);
       if (updatedActionItem) {
-        // Find and update the specific activity without full reload
+        // Update only action item activities in state without full database reload
         const updatedActivities = state.activities.map(activity => {
           if (activity.type === 'action-item' && 
-              (activity.actionItemId === itemId || activity.id === `action-item-${itemId}`)) {
+              activity.actionItemData && 
+              Number(activity.actionItemData.id) === Number(updatedActionItem.id)) {
             return {
               ...activity,
               location: updatedActionItem.deleted ? 'deleted' : (updatedActionItem.completed ? 'completed' : 'pending'),
