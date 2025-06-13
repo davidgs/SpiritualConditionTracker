@@ -530,7 +530,7 @@ export default function ContactFormDialog({
             />
 
             {/* Action Items Section - Simplified */}
-            <Box sx={{ mt: 2 }}>
+            <Box sx={{ mt: 1 }}>
               <Box sx={{ 
                 display: 'flex', 
                 alignItems: 'center', 
@@ -635,7 +635,7 @@ export default function ContactFormDialog({
                     }}
                   />
                   
-                  <Box sx={{ display: 'flex', gap: 1 }}>
+                  <Box sx={{ display: 'flex', gap: 1, justifyContent: 'flex-end' }}>
                     <Button
                       variant="outlined"
                       onClick={() => setShowAddActionItemForm(false)}
@@ -680,7 +680,7 @@ export default function ContactFormDialog({
                         }
                       }}
                     >
-                      Add
+                      Save
                     </Button>
                   </Box>
                 </Box>
