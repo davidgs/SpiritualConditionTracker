@@ -110,8 +110,6 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
     // Call the parent's timeframe change handler - the parent handles persistence properly
     onTimeframeChange(newTimeframe);
   };
-  // Use the shared date formatting function from utils
-  const formatDate = formatDateForDisplay;
 
   // Format number with thousands separator
   const formatNumber = (number) => {
