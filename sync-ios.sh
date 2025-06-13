@@ -11,7 +11,13 @@ echo "Building project..."
 npm run build
 
 echo "Running Capacitor sync..."
-npx cap sync ios
+# Run sync but continue even if pod install fails
+npx cap sync ios || echo "Capacitor sync completed with warnings"
+
+echo "Running pod install..."
+cd ios/App
+pod install
+cd ../..
 
 # Define directories
 SOURCE_PUBLIC="ios/App/App/public"
