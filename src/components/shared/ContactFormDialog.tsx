@@ -538,24 +538,23 @@ export default function ContactFormDialog({
             />
 
             {/* Action Items Section - Mobile Optimized */}
-            <Box sx={{ mt: 3 }}>
+            <Box sx={{ mt: 4 }}>
               <Typography variant="h6" sx={{ 
                 fontWeight: 600, 
                 color: theme.palette.text.primary,
-                mb: 2,
-                borderBottom: 1,
-                borderColor: 'divider',
-                pb: 1
+                mb: 3,
+                fontSize: '18px'
               }}>
                 Action Items ({actionItems.length})
               </Typography>
               
               {/* Add Action Item Form */}
               <Box sx={{ 
-                p: 2, 
+                p: 3, 
                 backgroundColor: theme.palette.background.default,
-                borderRadius: 1,
-                mb: 2
+                borderRadius: theme.spacing(1.5),
+                mb: 3,
+                border: `1px solid ${theme.palette.divider}`
               }}>
                 <Typography variant="subtitle2" sx={{ mb: 2, fontWeight: 600 }}>
                   Add Action Item
@@ -564,32 +563,109 @@ export default function ContactFormDialog({
                 <TextField
                   fullWidth
                   label="What needs to be done?"
+                  placeholder="Enter action item description"
                   value={newActionItem.title}
                   onChange={(e) => handleActionItemChange('title', e.target.value)}
                   variant="outlined"
-                  size="small"
-                  sx={{ mb: 2 }}
+                  sx={{
+                    mb: 2,
+                    '& .MuiOutlinedInput-root': {
+                      borderRadius: theme.spacing(1),
+                      backgroundColor: theme.palette.background.default,
+                      minHeight: '56px',
+                      '& input': {
+                        padding: '16px 14px',
+                        fontSize: '16px',
+                        lineHeight: '1.5'
+                      },
+                      '& fieldset': {
+                        borderColor: theme.palette.divider
+                      },
+                      '&:hover fieldset': {
+                        borderColor: theme.palette.primary.main
+                      },
+                      '&.Mui-focused fieldset': {
+                        borderColor: theme.palette.primary.main
+                      }
+                    },
+                    '& .MuiInputLabel-root': {
+                      color: theme.palette.text.secondary,
+                      fontSize: '16px'
+                    },
+                    '& .MuiInputBase-input': {
+                      color: theme.palette.text.primary
+                    }
+                  }}
                 />
                 
                 <TextField
                   fullWidth
                   label="Notes (optional)"
+                  placeholder="Additional details about this action item"
                   value={newActionItem.notes}
                   onChange={(e) => handleActionItemChange('notes', e.target.value)}
                   variant="outlined"
-                  size="small"
                   multiline
-                  rows={2}
-                  sx={{ mb: 2 }}
+                  rows={3}
+                  sx={{
+                    mb: 2,
+                    '& .MuiOutlinedInput-root': {
+                      borderRadius: theme.spacing(1),
+                      backgroundColor: theme.palette.background.default,
+                      '& fieldset': {
+                        borderColor: theme.palette.divider
+                      },
+                      '&:hover fieldset': {
+                        borderColor: theme.palette.primary.main
+                      },
+                      '&.Mui-focused fieldset': {
+                        borderColor: theme.palette.primary.main
+                      }
+                    },
+                    '& .MuiInputLabel-root': {
+                      color: theme.palette.text.secondary,
+                      fontSize: '16px'
+                    },
+                    '& .MuiInputBase-input': {
+                      color: theme.palette.text.primary
+                    }
+                  }}
                 />
                 
-                <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-                  <FormControl size="small" sx={{ minWidth: 100, flex: 1 }}>
-                    <InputLabel>Type</InputLabel>
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                  <FormControl fullWidth>
+                    <InputLabel sx={{ 
+                      color: theme.palette.text.secondary,
+                      fontSize: '16px'
+                    }}>
+                      Type
+                    </InputLabel>
                     <Select
                       value={newActionItem.type}
                       onChange={(e) => handleActionItemChange('type', e.target.value)}
                       label="Type"
+                      variant="outlined"
+                      sx={{
+                        '& .MuiOutlinedInput-root': {
+                          borderRadius: theme.spacing(1),
+                          backgroundColor: theme.palette.background.default,
+                          minHeight: '56px',
+                          '& fieldset': {
+                            borderColor: theme.palette.divider
+                          },
+                          '&:hover fieldset': {
+                            borderColor: theme.palette.primary.main
+                          },
+                          '&.Mui-focused fieldset': {
+                            borderColor: theme.palette.primary.main
+                          }
+                        },
+                        '& .MuiSelect-select': {
+                          color: theme.palette.text.primary,
+                          padding: '16px 14px',
+                          fontSize: '16px'
+                        }
+                      }}
                     >
                       <MenuItem value="todo">To Do</MenuItem>
                       <MenuItem value="action">Action</MenuItem>
@@ -601,13 +677,24 @@ export default function ContactFormDialog({
                     variant="contained"
                     onClick={handleAddActionItem}
                     disabled={!newActionItem.title.trim()}
-                    size="small"
+                    fullWidth
                     sx={{
                       backgroundColor: theme.palette.primary.main,
-                      minWidth: 80
+                      borderRadius: theme.spacing(1),
+                      minHeight: '52px',
+                      fontSize: '16px',
+                      fontWeight: 600,
+                      textTransform: 'none',
+                      '&:hover': {
+                        backgroundColor: theme.palette.primary.dark
+                      },
+                      '&:disabled': {
+                        backgroundColor: theme.palette.action.disabledBackground,
+                        color: theme.palette.action.disabled
+                      }
                     }}
                   >
-                    Add
+                    Add Action Item
                   </Button>
                 </Box>
               </Box>
