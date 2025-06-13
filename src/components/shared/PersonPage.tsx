@@ -362,7 +362,7 @@ export default function PersonPage({
         )}
       </Paper>
 
-      {/* Action Items Section - Only for sponsors */}
+      {/* Action Items Section - Only for sponsors 
       {personType === 'sponsor' && actionItems && actionItems.length > 0 && (
         <Paper 
           elevation={0}
@@ -397,7 +397,7 @@ export default function PersonPage({
             meetings={[]}
           />
         </Paper>
-      )}
+      )} */}
 
     </Box>
   );
