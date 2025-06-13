@@ -333,7 +333,7 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
           date: item.dueDate || item.createdAt?.split('T')[0] || new Date().toISOString().split('T')[0],
           notes: item.title + (item.notes ? ` [${item.notes}]` : ''),
           duration: undefined,
-          location: item.completed ? 'completed' : 'pending',
+          location: item.deleted ? 'deleted' : (item.completed ? 'completed' : 'pending'),
           createdAt: item.createdAt || new Date().toISOString(),
           updatedAt: item.updatedAt || new Date().toISOString(),
           // Keep reference to original action item

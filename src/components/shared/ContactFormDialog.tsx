@@ -107,7 +107,21 @@ export default function ContactFormDialog({
   }, [initialData, open]);
 
   const handleChange = (field: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
-    const value = event.target.value;
+    let value = event.target.value;
+    
+    // Special validation for duration field - only allow numbers
+    if (field === 'duration') {
+      // Remove any non-numeric characters
+      value = value.replace(/[^0-9]/g, '');
+      
+      // Convert to number and validate range
+      const numericValue = parseInt(value);
+      if (value !== '' && (isNaN(numericValue) || numericValue < 1 || numericValue > 1440)) {
+        // Don't update if invalid number or outside range
+        return;
+      }
+    }
+    
     setFormData(prev => ({
       ...prev,
       [field]: value
