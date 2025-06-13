@@ -3,9 +3,6 @@ require_relative '../../node_modules/@capacitor/ios/scripts/pods_helpers'
 platform :ios, '14.0'
 use_frameworks!
 
-# Specify the Xcode project
-project 'My Spiritual Condition.xcodeproj'
-
 # workaround to avoid Xcode caching of Pods that requires
 # Product -> Clean Build Folder after new Cordova plugins installed
 # Requires CocoaPods 1.6 or newer
@@ -17,7 +14,7 @@ def capacitor_pods
   pod 'CapacitorCommunitySqlite', :path => '../../node_modules/@capacitor-community/sqlite'
 end
 
-target 'My Spiritual Condition' do
+target 'App' do
   capacitor_pods
   # Add your Pods here
 end
