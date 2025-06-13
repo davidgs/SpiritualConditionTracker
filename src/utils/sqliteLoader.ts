@@ -597,6 +597,7 @@ async function createTables(sqlite) {
         notes TEXT,
         dueDate TEXT,
         completed INTEGER DEFAULT 0,
+        deleted INTEGER DEFAULT 0,
         type TEXT DEFAULT 'todo',
         createdAt TEXT,
         updatedAt TEXT
@@ -604,6 +605,18 @@ async function createTables(sqlite) {
     `
   });
   console.log('[ sqliteLoader.js ] Action items table created');
+
+  // Add deleted column to existing action_items table (migration)
+  try {
+    await sqlite.execute({
+      database: DB_NAME,
+      statements: `ALTER TABLE action_items ADD COLUMN deleted INTEGER DEFAULT 0`
+    });
+    console.log('[ sqliteLoader.js ] Added deleted column to action_items table');
+  } catch (error) {
+    // Column already exists, which is fine
+    console.log('[ sqliteLoader.js ] deleted column already exists or failed to add:', error.message);
+  }
 
   // Sponsees table
   await sqlite.execute({
