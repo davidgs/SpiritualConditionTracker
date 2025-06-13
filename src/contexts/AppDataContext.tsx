@@ -317,7 +317,7 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
       // Also fetch action items from action_items table and convert to activity format
       let actionItemActivities = [];
       try {
-        const actionItems = await window.db.getAll('action_items');
+        const actionItems = await databaseService.getAllActionItems();
         console.log('[ AppDataContext.tsx ] Fetched action items:', actionItems?.length || 0);
         
         // Convert action items to activity format for unified display

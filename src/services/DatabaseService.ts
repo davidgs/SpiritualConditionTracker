@@ -326,6 +326,45 @@ class DatabaseService {
     });
   }
 
+  // Action item operations
+  async getAllActionItems(): Promise<ActionItem[]> {
+    return this.executeOperation(async () => {
+      const items = await this.database.getAll('action_items') as ActionItem[];
+      
+      // Sort action items by created date - newest first
+      const sortedItems = (items || []).sort((a, b) => {
+        const dateA = new Date(a.createdAt || 0);
+        const dateB = new Date(b.createdAt || 0);
+        return dateB.getTime() - dateA.getTime();
+      });
+      
+      return sortedItems;
+    });
+  }
+
+  async addActionItem(item: Omit<ActionItem, 'id' | 'createdAt' | 'updatedAt'>): Promise<ActionItem> {
+    return this.executeOperation(async () => {
+      console.log('[ DatabaseService ] Adding action item:', item);
+      const result = await this.database.add('action_items', item) as ActionItem;
+      console.log('[ DatabaseService ] Action item saved:', result);
+      return result;
+    });
+  }
+
+  async updateActionItem(id: string | number, updates: Partial<ActionItem>): Promise<ActionItem | null> {
+    return this.executeOperation(async () => {
+      const result = await this.database.update('action_items', id, updates);
+      return result as ActionItem | null;
+    });
+  }
+
+  async deleteActionItem(itemId: string | number): Promise<boolean> {
+    return this.executeOperation(async () => {
+      const result = await this.database.remove('action_items', itemId);
+      return result;
+    });
+  }
+
   // Generic database operations for other entities
   async getAll<T>(collection: string): Promise<T[]> {
     return this.executeOperation(async () => {
@@ -387,34 +426,7 @@ class DatabaseService {
     });
   }
 
-  // Action items operations
-  async getAllActionItems(): Promise<ActionItem[]> {
-    return this.executeOperation(async () => {
-      const items = await window.db.getAll('action_items');
-      return items || [];
-    });
-  }
 
-  async addActionItem(item: Omit<ActionItem, 'id' | 'createdAt' | 'updatedAt'>): Promise<ActionItem> {
-    return this.executeOperation(async () => {
-      console.log('[ DatabaseService ] Adding action item:', item);
-      const result = await window.db.add('action_items', item);
-      console.log('[ DatabaseService ] Action item saved:', result);
-      return result;
-    });
-  }
-
-  async updateActionItem(id: string | number, updates: Partial<ActionItem>): Promise<ActionItem | null> {
-    return this.executeOperation(async () => {
-      return await this.database.update('action_items', id, updates);
-    });
-  }
-
-  async deleteActionItem(itemId: string | number): Promise<boolean> {
-    return this.executeOperation(async () => {
-      return await this.database.remove('action_items', itemId);
-    });
-  }
 
   // Check if database is empty (for new user detection)
   async isDatabaseEmpty(): Promise<boolean> {
