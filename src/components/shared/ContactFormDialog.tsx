@@ -635,21 +635,20 @@ export default function ContactFormDialog({
                     }}
                   />
                   
-                  <Box sx={{ display: 'flex', gap: theme.spacing(2) }}>
+                  <Box sx={{ display: 'flex', gap: 1 }}>
                     <Button
                       variant="outlined"
                       onClick={() => setShowAddActionItemForm(false)}
-                      size="large"
+                      size="small"
                       sx={{
-                        borderRadius: theme.spacing(1.5),
+                        borderRadius: theme.spacing(1),
                         textTransform: 'none',
-                        fontWeight: 600,
-                        fontSize: '16px',
-                        minHeight: '48px',
-                        px: theme.spacing(4),
+                        fontWeight: 500,
+                        fontSize: '14px',
+                        px: theme.spacing(2),
+                        py: theme.spacing(0.75),
                         borderColor: theme.palette.error.main,
                         color: theme.palette.error.main,
-                        backgroundColor: 'transparent',
                         '&:hover': {
                           borderColor: theme.palette.error.main,
                           backgroundColor: theme.palette.action.hover
@@ -662,20 +661,18 @@ export default function ContactFormDialog({
                       variant="contained"
                       onClick={handleAddActionItem}
                       disabled={!newActionItem.title.trim()}
-                      size="large"
+                      size="small"
                       sx={{
-                        borderRadius: theme.spacing(1.5),
+                        borderRadius: theme.spacing(1),
                         textTransform: 'none',
-                        fontWeight: 600,
-                        fontSize: '16px',
-                        minHeight: '48px',
-                        px: theme.spacing(4),
+                        fontWeight: 500,
+                        fontSize: '14px',
+                        px: theme.spacing(2),
+                        py: theme.spacing(0.75),
                         backgroundColor: theme.palette.success.main,
                         color: theme.palette.success.contrastText,
-                        boxShadow: theme.shadows[2],
                         '&:hover': {
-                          backgroundColor: theme.palette.success.dark,
-                          boxShadow: theme.shadows[4]
+                          backgroundColor: theme.palette.success.dark
                         },
                         '&:disabled': {
                           backgroundColor: theme.palette.action.disabledBackground,
@@ -683,7 +680,7 @@ export default function ContactFormDialog({
                         }
                       }}
                     >
-                      Add Action Item
+                      Add
                     </Button>
                   </Box>
                 </Box>
@@ -744,26 +741,24 @@ export default function ContactFormDialog({
         </DialogContent>
 
         <DialogActions sx={{ 
-          p: theme.spacing(3), 
-          pt: theme.spacing(2),
-          gap: theme.spacing(2),
+          p: theme.spacing(2), 
+          gap: 1,
           justifyContent: 'flex-end'
         }}>
           <Button
             onClick={handleCancel}
             variant="outlined"
             disabled={isLoading}
-            size="large"
+            size="small"
             sx={{
-              borderRadius: theme.spacing(1.5),
+              borderRadius: theme.spacing(1),
               textTransform: 'none',
-              fontWeight: 600,
-              fontSize: '16px',
-              minHeight: '48px',
-              px: theme.spacing(4),
+              fontWeight: 500,
+              fontSize: '14px',
+              px: theme.spacing(2),
+              py: theme.spacing(0.75),
               borderColor: theme.palette.error.main,
               color: theme.palette.error.main,
-              backgroundColor: 'transparent',
               '&:hover': {
                 borderColor: theme.palette.error.main,
                 backgroundColor: theme.palette.action.hover
@@ -777,20 +772,18 @@ export default function ContactFormDialog({
             onClick={handleSubmit}
             variant="contained"
             disabled={isLoading}
-            size="large"
+            size="small"
             sx={{
-              borderRadius: theme.spacing(1.5),
+              borderRadius: theme.spacing(1),
               textTransform: 'none',
-              fontWeight: 600,
-              fontSize: '16px',
-              minHeight: '48px',
-              px: theme.spacing(4),
+              fontWeight: 500,
+              fontSize: '14px',
+              px: theme.spacing(2),
+              py: theme.spacing(0.75),
               backgroundColor: theme.palette.success.main,
               color: theme.palette.success.contrastText,
-              boxShadow: theme.shadows[2],
               '&:hover': {
-                backgroundColor: theme.palette.success.dark,
-                boxShadow: theme.shadows[4]
+                backgroundColor: theme.palette.success.dark
               },
               '&:disabled': {
                 backgroundColor: theme.palette.action.disabledBackground,
