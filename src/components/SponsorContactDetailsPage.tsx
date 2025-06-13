@@ -26,6 +26,7 @@ import sponsorDB from '../utils/sponsor-database';
 import ActionItem from './shared/ActionItem';
 import { useAppData } from '../contexts/AppDataContext';
 import DatabaseService from '../services/DatabaseService';
+import type { ActionItem } from '../types/database';
 
 export default function SponsorContactDetailsPage({ 
   contact, 
@@ -37,7 +38,7 @@ export default function SponsorContactDetailsPage({
   onDeleteDetail
 }) {
   const theme = useTheme();
-  const { updateActionItem, addActivity } = useAppData();
+  const { updateActionItem, addActionItem, addActivity } = useAppData();
   const [contactDetails, setContactDetails] = useState(details);
   const [showAddActionForm, setShowAddActionForm] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -113,7 +114,7 @@ export default function SponsorContactDetailsPage({
         text: newAction.actionItem,
         notes: newAction.notes || '',
         dueDate: newAction.dueDate || null,
-        completed: newAction.completed ? 1 : 0,
+        completed: newAction.completed ? 1 : 0 as 0 | 1,
         deleted: 0,
         type: 'action-item',
         createdAt: new Date().toISOString(),

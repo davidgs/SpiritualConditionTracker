@@ -459,6 +459,12 @@ export default function ContactFormDialog({
                   pattern: '[0-9]*',
                   inputMode: 'numeric'
                 }}
+                onKeyPress={(e) => {
+                  // Prevent non-numeric characters from being entered
+                  if (!/[0-9]/.test(e.key) && e.key !== 'Backspace' && e.key !== 'Delete' && e.key !== 'Tab' && e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') {
+                    e.preventDefault();
+                  }
+                }}
                 value={formData.duration || ''}
                 onChange={handleChange('duration')}
                 variant="outlined"
