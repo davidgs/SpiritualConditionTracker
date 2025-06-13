@@ -166,7 +166,10 @@ export default function SponsorContactDetailsPage({
       console.log('[SponsorContactDetailsPage] Updated item via AppDataContext:', updatedItem);
       
       if (updatedItem) {
-        // Refresh the action items list using the same method as load
+        // Trigger global refresh to sync both Sponsor page and Activity list
+        await loadActivities();
+        
+        // Update local state
         const databaseServiceInstance = DatabaseService.getInstance();
         const allActionItems = await databaseServiceInstance.getAllActionItems();
         setActionItems(allActionItems || []);
@@ -198,7 +201,10 @@ export default function SponsorContactDetailsPage({
       console.log('[SponsorContactDetailsPage] Soft deleted item via AppDataContext:', updatedItem);
       
       if (updatedItem) {
-        // Refresh the action items list using the same method as load
+        // Trigger global refresh to sync both Sponsor page and Activity list
+        await loadActivities();
+        
+        // Update local state
         const databaseServiceInstance = DatabaseService.getInstance();
         const allActionItems = await databaseServiceInstance.getAllActionItems();
         setActionItems(allActionItems || []);
