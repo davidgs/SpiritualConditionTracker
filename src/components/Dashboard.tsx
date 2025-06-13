@@ -42,19 +42,19 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
   const buttonRef = useRef(null);
   
   // Log spiritualFitness prop for debugging
-  console.log('[ Dashboard.js ] Dashboard initial spiritualFitness:', spiritualFitness);
+//  console.log('[ Dashboard.js ] Dashboard initial spiritualFitness:', spiritualFitness);
   
   // Log current score state
-  console.log('[ Dashboard.js ] Dashboard currentScore state:', currentScore);
+//  console.log('[ Dashboard.js ] Dashboard currentScore state:', currentScore);
 
   // log current time frame
-  console.log('[ Dashboard.js ] Dashboard currentTimeframe:', currentTimeframe);
-  console.log('[ Dashboard.js ] Dashboard scoreTimeframe:', scoreTimeframe);
+//  console.log('[ Dashboard.js ] Dashboard currentTimeframe:', currentTimeframe);
+//  console.log('[ Dashboard.js ] Dashboard scoreTimeframe:', scoreTimeframe);
   
   // Format score to 2 decimal places for display
   const formattedScore: string = currentScore > 0 ? currentScore.toFixed(2) : '0.00';
   
-  console.log('[ Dashboard.js ] Dashboard formattedScore for display:', formattedScore);
+//  console.log('[ Dashboard.js ] Dashboard formattedScore for display:', formattedScore);
   
   // Use MUI theme for colors
   const muiTheme = useTheme();
@@ -68,15 +68,15 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
   
   // Calculate progress percentage, capped at 100%
    const progressPercent = Math.min(currentScore, 100);
-  console.log('[ Dashboard.js ] Dashboard progressPercent:', progressPercent);
+//  console.log('[ Dashboard.js ] Dashboard progressPercent:', progressPercent);
   
   // Effect to calculate spiritual fitness when activities change
   useEffect(() => {
-    console.log('[ Dashboard.js ] Dashboard useEffect [activities] triggered - calculating spiritual fitness');
+//    console.log('[ Dashboard.js ] Dashboard useEffect [activities] triggered - calculating spiritual fitness');
     const scoreBreak = getSpiritualFitnessBreakdown(activities, scoreTimeframe);
-    console.log('[ Dashboard.js ] Dashboard scoreBreak:', scoreBreak);
+//    console.log('[ Dashboard.js ] Dashboard scoreBreak:', scoreBreak);
     const newScore: number = calculateSpiritualFitnessScore(activities, scoreTimeframe);
-    console.log('[ Dashboard.js: 71 ] Dashboard newScore:', newScore);
+ //   console.log('[ Dashboard.js: 71 ] Dashboard newScore:', newScore);
     setCurrentScore(newScore);
   }, [activities, scoreTimeframe]);
   
@@ -107,12 +107,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
       default: newTimeframe = 7;
     }
     
-    // Save preference to database
-    if (window.db?.setPreference) {
-      window.db.setPreference('scoreTimeframe', newTimeframe);
-    }
-    
-    // Call the parent's timeframe change handler
+    // Call the parent's timeframe change handler - the parent handles persistence properly
     onTimeframeChange(newTimeframe);
   };
   // Use the shared date formatting function from utils
