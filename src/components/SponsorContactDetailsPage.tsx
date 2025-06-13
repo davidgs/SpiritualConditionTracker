@@ -23,10 +23,10 @@ import {
 import { useTheme } from '@mui/material/styles';
 import { formatDateForDisplay } from '../utils/dateUtils';
 import sponsorDB from '../utils/sponsor-database';
-import ActionItem from './shared/ActionItem';
+import ActionItemComponent from './shared/ActionItem';
 import { useAppData } from '../contexts/AppDataContext';
 import DatabaseService from '../services/DatabaseService';
-import type { ActionItem } from '../types/database';
+import type { ActionItem as ActionItemType } from '../types/database';
 
 export default function SponsorContactDetailsPage({ 
   contact, 
@@ -38,7 +38,7 @@ export default function SponsorContactDetailsPage({
   onDeleteDetail
 }) {
   const theme = useTheme();
-  const { updateActionItem, addActionItem, addActivity } = useAppData();
+  const { updateActionItem, addActionItem, addActivity, loadActivities } = useAppData();
   const [contactDetails, setContactDetails] = useState(details);
   const [showAddActionForm, setShowAddActionForm] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -114,18 +114,19 @@ export default function SponsorContactDetailsPage({
         text: newAction.actionItem,
         notes: newAction.notes || '',
         dueDate: newAction.dueDate || null,
-        completed: newAction.completed ? 1 : 0 as 0 | 1,
-        deleted: 0,
-        type: 'action-item',
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
+        completed: (newAction.completed ? 1 : 0) as 0 | 1,
+        deleted: 0 as 0 | 1,
+        type: 'action' as const
       };
       
       console.log('[SponsorContactDetailsPage] Creating action item via AppDataContext:', mainActionItem);
       const savedMainItem = await addActionItem(mainActionItem);
       console.log('[SponsorContactDetailsPage] Saved main item:', savedMainItem);
       
-      // Refresh the action items list using the same method as load
+      // Trigger global refresh to sync both Sponsor page and Activity list
+      await loadActivities();
+      
+      // Update local state
       const allActionItems = await databaseServiceInstance.getAllActionItems();
       setActionItems(allActionItems || []);
       
@@ -427,7 +428,7 @@ export default function SponsorContactDetailsPage({
         {actionItems.length > 0 ? (
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
             {actionItems.map((item, index) => (
-              <ActionItem
+              <ActionItemComponent
                 key={item.id || index}
                 actionItem={{
                   id: item.id,
