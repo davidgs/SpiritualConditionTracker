@@ -18,6 +18,19 @@ export default function ActivityList({
 
   const theme = useTheme();
   const { deleteActivity, updateActionItem, deleteActionItem } = useAppData();
+  
+  // Debug logging for activities prop changes
+  React.useEffect(() => {
+    const actionItems = activities.filter(a => a.type === 'action-item');
+    console.log('[ActivityList] Received activities update - action items:', actionItems.length);
+    actionItems.forEach(item => {
+      console.log('[ActivityList] Action item:', {
+        id: item.actionItemId,
+        title: item.actionItemData?.title,
+        completed: item.actionItemData?.completed
+      });
+    });
+  }, [activities]);
 
   const handleDeleteActivity = async (activityId) => {
     if (window.confirm('Are you sure you want to delete this activity?')) {
@@ -27,14 +40,27 @@ export default function ActivityList({
 
   const handleToggleActionItemComplete = async (actionItemId) => {
     try {
+      console.log('[ActivityList] Toggling completion for action item ID:', actionItemId);
+      
       // Get the current action item data
       const activity = activities.find(a => a.actionItemId === actionItemId);
       if (activity && activity.actionItemData) {
-        const isCompleted = activity.actionItemData.completed;
-        await updateActionItem(actionItemId, { completed: isCompleted ? 0 : 1 });
+        const currentCompleted = activity.actionItemData.completed;
+        const newCompleted = currentCompleted ? 0 : 1;
+        
+        console.log('[ActivityList] Current completed status:', currentCompleted, '-> New status:', newCompleted);
+        
+        await updateActionItem(actionItemId, { 
+          completed: newCompleted,
+          updatedAt: new Date().toISOString()
+        });
+        
+        console.log('[ActivityList] Action item updated successfully');
+      } else {
+        console.error('[ActivityList] Action item not found in activities:', actionItemId);
       }
     } catch (error) {
-      console.error('Failed to toggle action item completion:', error);
+      console.error('[ActivityList] Failed to toggle action item completion:', error);
     }
   };
 
