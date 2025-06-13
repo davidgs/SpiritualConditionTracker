@@ -680,7 +680,7 @@ export default function ContactFormDialog({
                         }
                       }}
                     >
-                      Save
+                      Add
                     </Button>
                   </Box>
                 </Box>
@@ -791,7 +791,7 @@ export default function ContactFormDialog({
               }
             }}
           >
-            {isLoading ? 'Saving...' : (initialData ? 'Update' : 'Add')}
+            {isLoading ? 'Saving...' : (initialData ? 'Update' : 'Save')}
           </Button>
         </DialogActions>
       </Dialog>
