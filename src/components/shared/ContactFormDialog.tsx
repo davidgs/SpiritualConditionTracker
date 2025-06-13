@@ -635,7 +635,7 @@ export default function ContactFormDialog({
                     }}
                   />
                   
-                  <Box sx={{ display: 'flex', gap: theme.spacing(2), justifyContent: 'flex-end' }}>
+                  <Box sx={{ display: 'flex', gap: theme.spacing(2) }}>
                     <Button
                       variant="outlined"
                       onClick={() => setShowAddActionItemForm(false)}
