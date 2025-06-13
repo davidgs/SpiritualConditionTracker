@@ -499,7 +499,7 @@ export default function ContactFormDialog({
               label="Notes"
               placeholder="Enter details about this contact"
               multiline
-              rows={4}
+              rows={3}
               value={formData.note}
               onChange={handleChange('note')}
               required
@@ -530,12 +530,12 @@ export default function ContactFormDialog({
             />
 
             {/* Action Items Section - Simplified */}
-            <Box sx={{ mt: 3 }}>
+            <Box sx={{ mt: 2 }}>
               <Box sx={{ 
                 display: 'flex', 
                 alignItems: 'center', 
                 justifyContent: 'space-between',
-                mb: 2
+                mb: 1
               }}>
                 <Typography variant="h6" sx={{ 
                   fontWeight: 600, 
