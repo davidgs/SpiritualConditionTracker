@@ -489,172 +489,132 @@ export default function ContactFormDialog({
               }}
             />
 
-            {/* Action Items Section */}
-            <Divider sx={{ my: 3 }} />
-            
-            <Accordion 
-              defaultExpanded 
-              sx={{ 
-                boxShadow: 'none',
-                '&:before': { display: 'none' },
-                backgroundColor: 'transparent'
-              }}
-            >
-              <AccordionSummary
-                expandIcon={<i className="fa-solid fa-chevron-down"></i>}
-                sx={{
-                  backgroundColor: theme.palette.background.default,
-                  borderRadius: theme.spacing(1),
-                  minHeight: '48px',
-                  '& .MuiAccordionSummary-content': {
-                    margin: '8px 0'
-                  }
-                }}
-              >
-                <Typography variant="h6" sx={{ fontWeight: 600, color: theme.palette.text.primary }}>
-                  Action Items ({actionItems.length})
-                </Typography>
-              </AccordionSummary>
+            {/* Action Items Section - Mobile Optimized */}
+            <Box sx={{ mt: 3 }}>
+              <Typography variant="h6" sx={{ 
+                fontWeight: 600, 
+                color: theme.palette.text.primary,
+                mb: 2,
+                borderBottom: 1,
+                borderColor: 'divider',
+                pb: 1
+              }}>
+                Action Items ({actionItems.length})
+              </Typography>
               
-              <AccordionDetails sx={{ px: 0, pt: 2 }}>
-                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+              {/* Add Action Item Form */}
+              <Box sx={{ 
+                p: 2, 
+                backgroundColor: theme.palette.background.default,
+                borderRadius: 1,
+                mb: 2
+              }}>
+                <Typography variant="subtitle2" sx={{ mb: 2, fontWeight: 600 }}>
+                  Add Action Item
+                </Typography>
+                
+                <TextField
+                  fullWidth
+                  label="What needs to be done?"
+                  value={newActionItem.title}
+                  onChange={(e) => handleActionItemChange('title', e.target.value)}
+                  variant="outlined"
+                  size="small"
+                  sx={{ mb: 2 }}
+                />
+                
+                <TextField
+                  fullWidth
+                  label="Notes (optional)"
+                  value={newActionItem.notes}
+                  onChange={(e) => handleActionItemChange('notes', e.target.value)}
+                  variant="outlined"
+                  size="small"
+                  multiline
+                  rows={2}
+                  sx={{ mb: 2 }}
+                />
+                
+                <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+                  <FormControl size="small" sx={{ minWidth: 100, flex: 1 }}>
+                    <InputLabel>Type</InputLabel>
+                    <Select
+                      value={newActionItem.type}
+                      onChange={(e) => handleActionItemChange('type', e.target.value)}
+                      label="Type"
+                    >
+                      <MenuItem value="todo">To Do</MenuItem>
+                      <MenuItem value="action">Action</MenuItem>
+                      <MenuItem value="reminder">Reminder</MenuItem>
+                    </Select>
+                  </FormControl>
                   
-                  {/* Add New Action Item Form */}
-                  <Box sx={{ 
-                    p: 2, 
-                    border: 1, 
-                    borderColor: 'divider', 
-                    borderRadius: 1,
-                    backgroundColor: theme.palette.background.default
-                  }}>
-                    <Typography variant="subtitle2" sx={{ mb: 2, fontWeight: 600 }}>
-                      Add Action Item
-                    </Typography>
-                    
-                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                      <TextField
-                        fullWidth
-                        label="Action Item Title"
-                        placeholder="What needs to be done?"
-                        value={newActionItem.title}
-                        onChange={(e) => handleActionItemChange('title', e.target.value)}
-                        variant="outlined"
-                        size="small"
-                        sx={{
-                          '& .MuiOutlinedInput-root': {
-                            borderRadius: theme.spacing(0.5),
-                            backgroundColor: theme.palette.background.paper
-                          }
-                        }}
-                      />
-                      
-                      <TextField
-                        fullWidth
-                        label="Notes (optional)"
-                        placeholder="Additional details..."
-                        value={newActionItem.notes}
-                        onChange={(e) => handleActionItemChange('notes', e.target.value)}
-                        variant="outlined"
-                        size="small"
-                        multiline
-                        rows={2}
-                        sx={{
-                          '& .MuiOutlinedInput-root': {
-                            borderRadius: theme.spacing(0.5),
-                            backgroundColor: theme.palette.background.paper
-                          }
-                        }}
-                      />
-                      
-                      <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-                        <FormControl size="small" sx={{ minWidth: 120 }}>
-                          <InputLabel>Type</InputLabel>
-                          <Select
-                            value={newActionItem.type}
-                            onChange={(e) => handleActionItemChange('type', e.target.value)}
-                            label="Type"
-                          >
-                            <MenuItem value="todo">To Do</MenuItem>
-                            <MenuItem value="action">Action</MenuItem>
-                            <MenuItem value="reminder">Reminder</MenuItem>
-                          </Select>
-                        </FormControl>
-                        
-                        <Button
-                          variant="contained"
-                          onClick={handleAddActionItem}
-                          disabled={!newActionItem.title.trim()}
-                          size="small"
-                          sx={{
-                            backgroundColor: theme.palette.success.main,
-                            '&:hover': {
-                              backgroundColor: theme.palette.success.dark
-                            }
-                          }}
-                        >
-                          Add Item
-                        </Button>
-                      </Box>
-                    </Box>
-                  </Box>
+                  <Button
+                    variant="contained"
+                    onClick={handleAddActionItem}
+                    disabled={!newActionItem.title.trim()}
+                    size="small"
+                    sx={{
+                      backgroundColor: theme.palette.primary.main,
+                      minWidth: 80
+                    }}
+                  >
+                    Add
+                  </Button>
+                </Box>
+              </Box>
 
-                  {/* Action Items List */}
-                  {actionItems.length > 0 && (
-                    <List sx={{ p: 0 }}>
-                      {actionItems.map((item) => (
-                        <ListItem
-                          key={item.id}
-                          sx={{
-                            border: 1,
-                            borderColor: 'divider',
-                            borderRadius: 1,
-                            mb: 1,
-                            backgroundColor: theme.palette.background.paper
-                          }}
-                        >
-                          <ListItemText
-                            primary={item.title}
-                            secondary={item.notes}
-                            sx={{
-                              '& .MuiListItemText-primary': {
-                                fontWeight: 500,
-                                color: theme.palette.text.primary
-                              },
-                              '& .MuiListItemText-secondary': {
-                                color: theme.palette.text.secondary
-                              }
-                            }}
-                          />
-                          <ListItemSecondaryAction>
-                            <IconButton 
-                              onClick={() => handleRemoveActionItem(item.id!)}
-                              size="small"
-                              sx={{ color: theme.palette.error.main }}
-                            >
-                              <i className="fa-solid fa-times"></i>
-                            </IconButton>
-                          </ListItemSecondaryAction>
-                        </ListItem>
-                      ))}
-                    </List>
-                  )}
-                  
-                  {actionItems.length === 0 && (
-                    <Typography 
-                      variant="body2" 
-                      sx={{ 
-                        textAlign: 'center', 
-                        color: theme.palette.text.secondary,
-                        fontStyle: 'italic',
-                        py: 2
+              {/* Action Items List */}
+              {actionItems.length > 0 ? (
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                  {actionItems.map((item) => (
+                    <Box
+                      key={item.id}
+                      sx={{
+                        p: 2,
+                        border: 1,
+                        borderColor: 'divider',
+                        borderRadius: 1,
+                        backgroundColor: theme.palette.background.paper,
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'flex-start'
                       }}
                     >
-                      No action items added yet
-                    </Typography>
-                  )}
+                      <Box sx={{ flex: 1 }}>
+                        <Typography variant="body2" sx={{ fontWeight: 500, mb: 0.5 }}>
+                          {item.title}
+                        </Typography>
+                        {item.notes && (
+                          <Typography variant="caption" sx={{ color: theme.palette.text.secondary }}>
+                            {item.notes}
+                          </Typography>
+                        )}
+                      </Box>
+                      <IconButton 
+                        onClick={() => handleRemoveActionItem(item.id!)}
+                        size="small"
+                        sx={{ color: theme.palette.error.main, ml: 1 }}
+                      >
+                        <i className="fa-solid fa-times"></i>
+                      </IconButton>
+                    </Box>
+                  ))}
                 </Box>
-              </AccordionDetails>
-            </Accordion>
+              ) : (
+                <Typography 
+                  variant="body2" 
+                  sx={{ 
+                    textAlign: 'center', 
+                    color: theme.palette.text.secondary,
+                    fontStyle: 'italic',
+                    py: 2
+                  }}
+                >
+                  No action items added yet
+                </Typography>
+              )}
+            </Box>
           </Box>
         </DialogContent>
 
