@@ -548,13 +548,9 @@ export default function ContactFormDialog({
                 <IconButton
                   onClick={() => setShowAddActionItemForm(!showAddActionItemForm)}
                   sx={{
-                    backgroundColor: theme.palette.primary.main,
-                    color: theme.palette.primary.contrastText,
+                    color: theme.palette.primary.main,
                     width: '40px',
-                    height: '40px',
-                    '&:hover': {
-                      backgroundColor: theme.palette.primary.dark
-                    }
+                    height: '40px'
                   }}
                 >
                   <i className="fa-solid fa-plus" style={{ fontSize: '16px' }}></i>
