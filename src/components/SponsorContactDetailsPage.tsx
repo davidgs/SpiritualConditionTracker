@@ -23,6 +23,7 @@ import {
 import { useTheme } from '@mui/material/styles';
 import { formatDateForDisplay } from '../utils/dateUtils';
 import sponsorDB from '../utils/sponsor-database';
+import ActionItem from './shared/ActionItem';
 
 export default function SponsorContactDetailsPage({ 
   contact, 
@@ -101,7 +102,7 @@ export default function SponsorContactDetailsPage({
         text: newAction.actionItem, // Required field - use same value as actionItem
         notes: newAction.notes || '',
         dueDate: newAction.dueDate || null,
-        completed: newAction.completed ? 1 : 0,
+        completed: newAction.completed ? 1 as const : 0 as const,
         type: 'todo'
       };
       
@@ -127,13 +128,20 @@ export default function SponsorContactDetailsPage({
   };
   
   // Toggle action item completion
-  const handleToggleComplete = async (actionItem) => {
+  const handleToggleComplete = async (actionItemId) => {
     try {
-      console.log('[SponsorContactDetailsPage] Toggling completion for action item:', actionItem);
+      console.log('[SponsorContactDetailsPage] Toggling completion for action item ID:', actionItemId);
+      
+      // Find the item in the current state
+      const currentItem = actionItems.find(item => item.id === actionItemId);
+      if (!currentItem) {
+        console.error('[SponsorContactDetailsPage] Action item not found:', actionItemId);
+        return;
+      }
       
       const updatedItem = {
-        ...actionItem,
-        completed: actionItem.completed ? 0 : 1
+        ...currentItem,
+        completed: currentItem.completed ? 0 : 1
       };
       
       console.log('[SponsorContactDetailsPage] Updated item data:', updatedItem);
@@ -145,7 +153,7 @@ export default function SponsorContactDetailsPage({
         setActionItems(prev => {
           const prevArray = Array.isArray(prev) ? prev : [];
           const updated = prevArray.map(item => 
-            item && item.id === actionItem.id ? updatedItem : item
+            item && item.id === actionItemId ? updatedItem : item
           );
           console.log('[SponsorContactDetailsPage] Updated action items list:', updated);
           return updated;
@@ -156,24 +164,40 @@ export default function SponsorContactDetailsPage({
     }
   };
   
-  // Delete action item
+  // Soft delete action item (mark as deleted with -0.5 point deduction)
   const handleDeleteAction = async (actionItemId) => {
     try {
-      console.log('[SponsorContactDetailsPage] Deleting action item with ID:', actionItemId);
+      console.log('[SponsorContactDetailsPage] Soft deleting action item with ID:', actionItemId);
       
-      const success = await sponsorDB.deleteContactDetail(actionItemId);
-      console.log('[SponsorContactDetailsPage] Delete result:', success);
+      // Find the item in the current state
+      const currentItem = actionItems.find(item => item.id === actionItemId);
+      if (!currentItem) {
+        console.error('[SponsorContactDetailsPage] Action item not found:', actionItemId);
+        return;
+      }
       
-      if (success) {
+      const updatedItem = {
+        ...currentItem,
+        deleted: currentItem.deleted ? 0 : 1  // Toggle deleted state
+      };
+      
+      console.log('[SponsorContactDetailsPage] Soft delete - Updated item data:', updatedItem);
+      
+      const result = await sponsorDB.updateContactDetail(updatedItem);
+      console.log('[SponsorContactDetailsPage] Soft delete result:', result);
+      
+      if (result) {
         setActionItems(prev => {
           const prevArray = Array.isArray(prev) ? prev : [];
-          const filtered = prevArray.filter(item => item && item.id !== actionItemId);
-          console.log('[SponsorContactDetailsPage] Updated action items after delete:', filtered);
-          return filtered;
+          const updated = prevArray.map(item => 
+            item && item.id === actionItemId ? updatedItem : item
+          );
+          console.log('[SponsorContactDetailsPage] Updated action items after soft delete:', updated);
+          return updated;
         });
       }
     } catch (error) {
-      console.error('[SponsorContactDetailsPage] Error deleting action item:', error);
+      console.error('[SponsorContactDetailsPage] Error soft deleting action item:', error);
     }
   };
   
@@ -398,64 +422,26 @@ export default function SponsorContactDetailsPage({
         
         {/* Action Items List */}
         {actionItems.length > 0 ? (
-          <List sx={{ p: 0 }}>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
             {actionItems.map((item, index) => (
-              <ListItem
+              <ActionItem
                 key={item.id || index}
-                sx={{
-                  p: 2,
-                  mb: 1,
-                  border: '1px solid',
-                  borderColor: 'divider',
-                  borderRadius: 1,
-                  bgcolor: item.completed ? 'action.hover' : 'background.paper'
+                actionItem={{
+                  id: item.id,
+                  title: item.title || item.actionItem || item.text || 'Untitled Action',
+                  notes: item.notes,
+                  completed: item.completed,
+                  deleted: item.deleted,
+                  dueDate: item.dueDate,
+                  createdAt: item.createdAt
                 }}
-              >
-                <Box sx={{ width: '100%' }}>
-                  <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
-                    <Box sx={{ flex: 1 }}>
-                      <Typography
-                        variant="body1"
-                        sx={{
-                          textDecoration: item.completed ? 'line-through' : 'none',
-                          color: item.completed ? 'text.secondary' : 'text.primary',
-                          fontWeight: item.completed ? 'normal' : 'medium'
-                        }}
-                      >
-                        {item.actionItem || item.text || 'Untitled Action'}
-                      </Typography>
-                      {item.notes && (
-                        <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-                          {item.notes}
-                        </Typography>
-                      )}
-                      {item.dueDate && (
-                        <Typography variant="caption" color="text.secondary" sx={{ mt: 0.5, display: 'block' }}>
-                          Due: {formatDateForDisplay(item.dueDate)}
-                        </Typography>
-                      )}
-                    </Box>
-                    <Box sx={{ ml: 2, display: 'flex', gap: 1 }}>
-                      <IconButton
-                        size="small"
-                        onClick={() => handleToggleComplete(item)}
-                        sx={{ color: item.completed ? 'success.main' : 'text.secondary' }}
-                      >
-                        <i className={`fa-solid ${item.completed ? 'fa-check-circle' : 'fa-circle'}`}></i>
-                      </IconButton>
-                      <IconButton
-                        size="small"
-                        onClick={() => handleDeleteAction(item.id)}
-                        sx={{ color: 'error.main' }}
-                      >
-                        <i className="fa-solid fa-trash"></i>
-                      </IconButton>
-                    </Box>
-                  </Box>
-                </Box>
-              </ListItem>
+                variant="compact"
+                showDate={false}
+                onToggleComplete={handleToggleComplete}
+                onDelete={handleDeleteAction}
+              />
             ))}
-          </List>
+          </Box>
         ) : (
           <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center', py: 3 }}>
             No action items yet. Add one to get started!
