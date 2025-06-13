@@ -71,8 +71,7 @@ export default function ContactFormDialog({
     title: '',
     text: '',
     notes: '',
-    dueDate: null as string | null,
-    type: 'todo' as 'todo' | 'action' | 'reminder'
+    dueDate: null as string | null
   });
 
   useEffect(() => {
@@ -100,9 +99,9 @@ export default function ContactFormDialog({
       title: '',
       text: '',
       notes: '',
-      dueDate: null,
-      type: 'todo'
+      dueDate: null
     });
+    setShowAddActionItemForm(false);
     // Reset scroll indicator
     setShowScrollIndicator(true);
   }, [initialData, open]);
@@ -165,8 +164,7 @@ export default function ContactFormDialog({
       text: newActionItem.text || newActionItem.title,
       notes: newActionItem.notes,
       dueDate: newActionItem.dueDate,
-      completed: false,
-      type: newActionItem.type
+      completed: false
     };
     
     setActionItems(prev => [...prev, actionItem]);
@@ -174,9 +172,9 @@ export default function ContactFormDialog({
       title: '',
       text: '',
       notes: '',
-      dueDate: null,
-      type: 'todo'
+      dueDate: null
     });
+    setShowAddActionItemForm(false);
   };
 
   const handleRemoveActionItem = (id: number) => {

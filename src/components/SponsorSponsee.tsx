@@ -236,7 +236,7 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
             contactId: (savedContact as any).id,
             dueDate: actionItem.dueDate || contactData.date,
             completed: 0,
-            type: actionItem.type || 'todo',
+            type: 'todo', // Default type since we removed categorization
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString()
           });
