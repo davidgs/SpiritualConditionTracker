@@ -63,7 +63,11 @@ export default function ActivityList({
   const handleDeleteActionItem = async (actionItemId) => {
     if (window.confirm('Are you sure you want to delete this action item?')) {
       try {
-        await deleteActionItem(actionItemId);
+        // Use soft delete (set deleted: 1) instead of hard delete
+        await updateActionItem(actionItemId, {
+          deleted: 1,
+          updatedAt: new Date().toISOString()
+        });
       } catch (error) {
         console.error('Failed to delete action item:', error);
       }
@@ -328,6 +332,7 @@ export default function ActivityList({
                           title: activity.actionItemData?.title || 'Action Item',
                           notes: activity.actionItemData?.notes,
                           completed: activity.actionItemData?.completed || false,
+                          deleted: activity.actionItemData?.deleted || false,
                           date: activity.date,
                           actionItemId: activity.actionItemId,
                           actionItemData: activity.actionItemData
