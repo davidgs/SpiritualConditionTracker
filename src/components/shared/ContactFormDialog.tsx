@@ -583,6 +583,8 @@ export default function ContactFormDialog({
                       onChange={(e) => handleActionItemChange('notes', e.target.value)}
                       variant="outlined"
                       size="small"
+                      multiline
+                      rows={2}
                     />
                     
                     <Box sx={{ display: 'flex', gap: 1, mt: 0.5 }}>
