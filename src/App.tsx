@@ -19,7 +19,7 @@ import Header from './components/Header';
 import BottomNavBar from './components/BottomNavBar';
 
 function AppContent() {
-  const { state, addActivity, addMeeting, updateMeeting, deleteMeeting, updateTimeframe, updateUser, resetAllData } = useAppData();
+  const { state, addActivity, loadActivities, addMeeting, updateMeeting, deleteMeeting, updateTimeframe, updateUser, resetAllData } = useAppData();
   const muiTheme = useTheme();
   const [currentView, setCurrentView] = React.useState('dashboard');
   const [tourStarted, setTourStarted] = React.useState(false);
@@ -122,6 +122,13 @@ function AppContent() {
       console.log('[ App.tsx:73 handleSaveActivity ] Received activity data:', JSON.stringify(activityData, null, 2));
       console.log('[ App.tsx:74 handleSaveActivity ] Current user state:', state.user);
       
+      // Handle refresh requests (from sponsor contacts and action items)
+      if (activityData.type === 'refresh') {
+        console.log('[ App.tsx ] Refreshing activities for sponsor contacts and action items');
+        await loadActivities();
+        return { success: true };
+      }
+      
       // Check if this is an update (has ID) or new activity
       if (activityData.id) {
         console.log('[ App.tsx:76 handleSaveActivity ] Updating existing activity with ID:', activityData.id);
@@ -150,6 +157,9 @@ function AppContent() {
         };
 
         const savedActivity = await addActivity(newActivity);
+        
+        // Reload activities to ensure sponsor contacts and action items appear in dashboard
+        await loadActivities();
         
         if (savedActivity) {
           return savedActivity;
