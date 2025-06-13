@@ -33,6 +33,11 @@ export default function ActionItem({
 
   const handleToggleComplete = (e: React.MouseEvent) => {
     e.stopPropagation();
+    // Don't allow completion toggle if item is deleted
+    if (isDeleted) {
+      console.log('[ActionItem] Cannot complete deleted action item');
+      return;
+    }
     if (onToggleComplete) {
       // Use actionItemId if this is from the activities list, otherwise use the direct id
       const targetId = actionItem.actionItemId || actionItem.id;
