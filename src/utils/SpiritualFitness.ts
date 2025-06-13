@@ -10,9 +10,9 @@ export function calculateSpiritualFitnessScore(
 ): number {
   // Base score - everyone starts with 5 points
   const baseScore = 5;
-  console.log('[ SpiritualFitness.js ] calculateSpiritualFitnessScore baseScore:', baseScore);
-  console.log('[ SpiritualFitness.js ] calculateSpiritualFitnessScore timeframeDays:', timeframeDays);
-  console.log('[ SpiritualFitness.js ] calculateSpiritualFitnessScore activities #:', activities.length);
+//  console.log('[ SpiritualFitness.js ] calculateSpiritualFitnessScore baseScore:', baseScore);
+//  console.log('[ SpiritualFitness.js ] calculateSpiritualFitnessScore timeframeDays:', timeframeDays);
+//  console.log('[ SpiritualFitness.js ] calculateSpiritualFitnessScore activities #:', activities.length);
   // Filter activities within the timeframe using millisecond calculation
   const now = new Date();
   const timeframeStartMs = now.getTime() - (timeframeDays * 24 * 60 * 60 * 1000);
@@ -73,7 +73,7 @@ export function calculateSpiritualFitnessScore(
     totalActivityPoints += points;
     
   });
-  console.log('[ SpiritualFitness.js ] calculateSpiritualFitnessScore totalActivityPoints:', totalActivityPoints);
+//  console.log('[ SpiritualFitness.js ] calculateSpiritualFitnessScore totalActivityPoints:', totalActivityPoints);
   
   // Scale activity points and cap at 40
   const activityPoints = Math.min(totalActivityPoints / 4, 40);
@@ -85,8 +85,8 @@ export function calculateSpiritualFitnessScore(
   // Total score (capped at 100, rounded to 2 decimal places)
   const totalScore = Math.min(100, baseScore + activityPoints + consistencyPoints);
   const preciseScore = Math.round(totalScore * 100) / 100;
-  console.log('[ SpiritualFitness.js ] calculateSpiritualFitnessScore totalScore:', totalScore);
-  console.log('[ SpiritualFitness.js ] calculateSpiritualFitnessScore preciseScore:', preciseScore);
+//  console.log('[ SpiritualFitness.js ] calculateSpiritualFitnessScore totalScore:', totalScore);
+//  console.log('[ SpiritualFitness.js ] calculateSpiritualFitnessScore preciseScore:', preciseScore);
   return preciseScore;
 }
 

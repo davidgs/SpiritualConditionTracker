@@ -216,7 +216,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
                 textAlign: 'center'
               }}
             >
-              Since {formatDate(user.sobrietyDate)}
+              Since {formatDateForDisplay(user.sobrietyDate)}
             </Typography>
           )}
           
