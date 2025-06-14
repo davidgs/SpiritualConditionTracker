@@ -44,7 +44,7 @@ function Header({ title, menuOpen, setMenuOpen, isMobile, onNavigate, autoStartT
       <Box
         sx={{
           position: 'fixed',
-          top: 0,
+          top: 1,
           left: 0,
           right: 0,
           zIndex: 1100,
@@ -56,7 +56,7 @@ function Header({ title, menuOpen, setMenuOpen, isMobile, onNavigate, autoStartT
           alignItems: 'center',
           justifyContent: 'flex-start',
           boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
-          gap: 1,
+          gap: 2,
           height: '94px',
         }}
       >
