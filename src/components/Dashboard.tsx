@@ -195,7 +195,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
           <Typography
             variant="h6"
             sx={{
-              fontSize: '1.1rem',
+              fontSize: '1.25rem',
               fontWeight: 600,
               color: 'text.primary',
               mb: 0.5,
@@ -210,7 +210,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
             <Typography
               variant="body2" 
               sx={{ 
-                fontSize: '0.85rem', 
+                fontSize: '1rem', 
                 color: 'text.secondary',
                 mb: 0.5,
                 textAlign: 'center'
@@ -226,7 +226,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
                 <Typography 
                   variant="h4"
                   sx={{ 
-                    fontSize: '1.6rem', 
+                    fontSize: '1.9rem', 
                     fontWeight: 'bold', 
                     color: 'primary.main',
                     mr: 0.5,
@@ -238,7 +238,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
                 <Typography 
                   variant="body1" 
                   sx={{ 
-                    fontSize: '1rem', 
+                    fontSize: '1.5rem', 
                     color: 'text.secondary',
                     lineHeight: 1.1
                   }}
@@ -249,7 +249,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
               <Typography 
                 variant="body1" 
                 sx={{ 
-                  fontSize: '1rem', 
+                  fontSize: '1.5rem', 
                   color: 'primary.main',
                   lineHeight: 1.1,
                   textAlign: 'center',
@@ -266,7 +266,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
                   data-tour="sobriety-days"
                   variant="h4"
                   sx={{ 
-                    fontSize: '1.6rem', 
+                    fontSize: '1.8rem', 
                     fontWeight: 'bold', 
                     color: 'primary.main',
                     mr: 0.5,
@@ -278,7 +278,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
                 <Typography 
                   variant="body1" 
                   sx={{ 
-                    fontSize: '1rem', 
+                    fontSize: '1.25rem', 
                     color: 'text.secondary',
                     lineHeight: 1.1
                   }}
@@ -289,7 +289,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
               <Typography 
                 variant="body1" 
                 sx={{ 
-                  fontSize: '1rem', 
+                  fontSize: '1.25rem', 
                   color: 'primary.main',
                   lineHeight: 1.1,
                   textAlign: 'center',
@@ -320,7 +320,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
             <Typography
               variant="h6"
               sx={{
-                fontSize: '1.1rem',
+                fontSize: '1.25rem',
                 fontWeight: 600,
                 m: 0,
                 display: 'flex',
@@ -335,7 +335,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
                   background: 'none',
                   border: 'none',
                   cursor: 'pointer',
-                  fontSize: '0.75em',
+                  fontSize: '1rem',
                   p: '0 0 0 4px',
                   position: 'relative',
                   top: '-5px',
@@ -352,7 +352,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
           <Typography
             variant="h4"
             sx={{ 
-              fontSize: '1.6rem', 
+              fontSize: '1.8rem', 
               fontWeight: 'bold',
               mb: 0.5,
               color: getScoreColor(currentScore),
@@ -402,7 +402,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
             alignItems: 'center',
             justifyContent: 'center',
             gap: 0.5,
-            fontSize: '1rem',
+            fontSize: '1.25rem',
             color: 'text.secondary'
           }}>
             <Typography variant="body2" sx={{ fontSize: 'inherit' }}>{scoreTimeframe}-day score</Typography>
@@ -450,7 +450,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
           <Typography 
             variant="h6" 
             sx={{
-              fontSize: '1.1rem',
+              fontSize: '1.25rem',
               fontWeight: 600,
               color: 'text.primary',
               paddingRight: '0.15rem'
@@ -467,7 +467,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
                 borderRadius: 0.25,
                 color: 'text.primary',
                 padding: '0.15rem 0.5rem',
-                fontSize: '0.7rem',
+                fontSize: '0.85rem',
                 cursor: 'pointer'
               }}
               defaultValue="all"
@@ -495,7 +495,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
                 borderRadius: 0.25,
                 color: 'text.primary',
                 padding: '0.15rem 0.5rem',
-                fontSize: '0.7rem',
+                fontSize: '0.85rem',
                 cursor: 'pointer'
               }}
               defaultValue="7"
@@ -522,7 +522,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
               startIcon={<i className="fa-solid fa-plus" />}
               size="small"
               sx={{
-                fontSize: '0.75rem',
+                fontSize: '1rem',
                 textTransform: 'none',
                 borderRadius: '20px',
                 px: 1.5,

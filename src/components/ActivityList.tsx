@@ -393,7 +393,7 @@ export default function ActivityList({
                     }}
                   >
                     <i className={`fas ${getActivityIcon(activity.type)}`} style={{
-                      fontSize: '0.8rem',
+                      fontSize: '0.85rem',
                       color: (() => {
                         const colors = getActivityColor(activity.type);
                         return darkMode ? colors.iconDark : colors.icon;
@@ -430,7 +430,7 @@ export default function ActivityList({
                       {showDate && (
                         <div style={{
                           color: theme.palette.text.secondary,
-                          fontSize: '0.75rem',
+                          fontSize: '0.8rem',
                           flexShrink: 0,
                           marginLeft: '0.5rem',
                           lineHeight: '1.2'
@@ -443,7 +443,7 @@ export default function ActivityList({
                     {formatActivitySubtitle(activity) && (
                       <div style={{
                         color: theme.palette.text.secondary,
-                        fontSize: '0.75rem',
+                        fontSize: '0.8rem',
                         lineHeight: '1.3',
                         marginTop: '0.125rem',
                         wordWrap: 'break-word',
@@ -475,7 +475,7 @@ export default function ActivityList({
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        fontSize: '0.8rem'
+                        fontSize: '0.85rem'
                       }}
                       title="Delete activity"
                     >
