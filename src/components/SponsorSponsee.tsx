@@ -256,7 +256,7 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
       if (actionItems && actionItems.length > 0 && savedContact && (savedContact as any).id) {
         console.log(`[handleContactWithActionItems] Saving ${actionItems.length} action items as type: ${actionItemType}`);
         for (const actionItem of actionItems) {
-          await databaseService.add('action_items', {
+          const baseActionItemData = {
             title: actionItem.title,
             text: actionItem.text || actionItem.title,
             notes: actionItem.notes || '',
@@ -266,7 +266,22 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
             type: actionItemType,
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString()
-          });
+          };
+          
+          // Add sponsor/sponsee specific association
+          const actionItemData = isSponsee ? {
+            ...baseActionItemData,
+            sponseeId: selectedPerson?.id,
+            sponseeName: selectedPerson?.name
+          } : {
+            ...baseActionItemData,
+            sponsorId: selectedPerson?.id,
+            sponsorName: selectedPerson?.name
+          };
+          
+          console.log(`[handleContactWithActionItems] Action item data for ${personType}:`, actionItemData);
+          
+          await databaseService.add('action_items', actionItemData);
         }
       }
       

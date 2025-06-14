@@ -33,6 +33,9 @@ interface ContactCardProps {
   refreshKey: number;
   onContactClick: (contact: Contact) => void;
   onEditContact?: (contact: Contact) => void;
+  sponsorId?: number;
+  sponseeId?: number;
+  personType?: 'sponsor' | 'sponsee';
 }
 
 export const ContactCard: React.FC<ContactCardProps> = ({
@@ -40,7 +43,10 @@ export const ContactCard: React.FC<ContactCardProps> = ({
   theme,
   refreshKey,
   onContactClick,
-  onEditContact
+  onEditContact,
+  sponsorId,
+  sponseeId,
+  personType
 }) => {
   const contactTypeInfo = getContactTypeInfo(contact.type);
   

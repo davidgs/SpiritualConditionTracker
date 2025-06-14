@@ -11,12 +11,18 @@ interface ActionItemsListProps {
   contactId: number;
   theme: any;
   refreshKey: number;
+  sponsorId?: number;
+  sponseeId?: number;
+  personType?: 'sponsor' | 'sponsee';
 }
 
 export const ActionItemsList: React.FC<ActionItemsListProps> = ({
   contactId,
   theme,
-  refreshKey
+  refreshKey,
+  sponsorId,
+  sponseeId,
+  personType
 }) => {
   const { state, updateActionItem } = useAppData();
   const [actionItems, setActionItems] = useState<ActionItem[]>([]);
@@ -33,6 +39,17 @@ export const ActionItemsList: React.FC<ActionItemsListProps> = ({
       const isForThisContact = hasActionItemData && 
                                (activity.actionItemData.contactId === contactId || 
                                 activity.actionItemData.sponsorContactId === contactId);
+      
+      // Additional filtering for sponsor/sponsee specific action items
+      if (personType && hasActionItemData) {
+        if (personType === 'sponsor' && sponsorId) {
+          const belongsToSponsor = (activity.actionItemData as any).sponsorId === sponsorId;
+          return isActionItemType && hasActionItemData && isForThisContact && belongsToSponsor;
+        } else if (personType === 'sponsee' && sponseeId) {
+          const belongsToSponsee = (activity.actionItemData as any).sponseeId === sponseeId;
+          return isActionItemType && hasActionItemData && isForThisContact && belongsToSponsee;
+        }
+      }
       
       return isActionItemType && hasActionItemData && isForThisContact;
     });
