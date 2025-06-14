@@ -24,6 +24,9 @@ export interface AppState {
   // Meetings
   meetings: Meeting[];
   
+  // Action Items
+  actionItems: ActionItem[];
+  
   // Spiritual fitness
   spiritualFitness: number;
   
@@ -46,6 +49,10 @@ type AppAction =
   | { type: 'ADD_MEETING'; payload: Meeting }
   | { type: 'UPDATE_MEETING'; payload: { id: string | number; data: Partial<Meeting> } }
   | { type: 'DELETE_MEETING'; payload: string | number }
+  | { type: 'SET_ACTION_ITEMS'; payload: ActionItem[] }
+  | { type: 'ADD_ACTION_ITEM'; payload: ActionItem }
+  | { type: 'UPDATE_ACTION_ITEM'; payload: { id: string | number; data: Partial<ActionItem> } }
+  | { type: 'DELETE_ACTION_ITEM'; payload: string | number }
   | { type: 'SET_SPIRITUAL_FITNESS'; payload: number }
   | { type: 'SET_TIMEFRAME'; payload: number }
   | { type: 'RESET_ALL_DATA' };
@@ -58,6 +65,7 @@ const initialState: AppState = {
   activities: [],
   currentTimeframe: 30,
   meetings: [],
+  actionItems: [],
   spiritualFitness: 5,
   isLoading: true,
   error: null,
@@ -113,6 +121,28 @@ function appReducer(state: AppState, action: AppAction): AppState {
       return { 
         ...state, 
         meetings: state.meetings.filter(meeting => meeting.id !== action.payload) 
+      };
+    
+    case 'SET_ACTION_ITEMS':
+      return { ...state, actionItems: action.payload };
+    
+    case 'ADD_ACTION_ITEM':
+      return { ...state, actionItems: [...state.actionItems, action.payload] };
+    
+    case 'UPDATE_ACTION_ITEM':
+      return {
+        ...state,
+        actionItems: state.actionItems.map(item => 
+          item.id === action.payload.id 
+            ? { ...item, ...action.payload.data, updatedAt: new Date().toISOString() }
+            : item
+        )
+      };
+    
+    case 'DELETE_ACTION_ITEM':
+      return { 
+        ...state, 
+        actionItems: state.actionItems.filter(item => item.id !== action.payload) 
       };
     
     case 'SET_SPIRITUAL_FITNESS':
@@ -230,6 +260,7 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
       await loadUserData();
       await loadActivities();
       await loadMeetings();
+      await loadActionItems();
       
       dispatch({ type: 'SET_LOADING', payload: false });
       console.log('[ AppDataContext.tsx:194 ] Initial data load complete');
@@ -499,6 +530,18 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
       console.error('[ AppDataContext.tsx:385 ] Failed to delete meeting:', error);
       dispatch({ type: 'SET_ERROR', payload: 'Failed to delete meeting' });
       return false;
+    }
+  };
+
+  // Action Items operations
+  const loadActionItems = async () => {
+    try {
+      const actionItems = await databaseService.getAllActionItems();
+      dispatch({ type: 'SET_ACTION_ITEMS', payload: actionItems || [] });
+      console.log('[ AppDataContext.tsx ] Action items loaded:', actionItems?.length || 0);
+    } catch (error) {
+      console.error('[ AppDataContext.tsx ] Failed to load action items:', error);
+      throw error;
     }
   };
 

@@ -6,8 +6,6 @@ import {
 import { useAppData } from '../contexts/AppDataContext';
 import { ActionItem } from '../types/database';
 import ActionItemComponent from './shared/ActionItem';
-import { ActionItemWithStatus } from '../utils/actionItemService';
-import DatabaseService from '../services/DatabaseService';
 
 interface ActionItemsListProps {
   contactId: number;
@@ -27,44 +25,36 @@ export const ActionItemsList: React.FC<ActionItemsListProps> = ({
   personType
 }) => {
   const { state, updateActionItem } = useAppData();
-  const [actionItems, setActionItems] = useState<ActionItemWithStatus[]>([]);
+  const [actionItems, setActionItems] = useState<ActionItem[]>([]);
 
-  // Simple query: SELECT * FROM action_items WHERE sponsorContactId = contactId (or sponseeContactId)
+  // Simple query: Get action items for this contact from global state
   useEffect(() => {
-    const loadActionItems = async () => {
-      try {
-        console.log(`[ActionItemsList] Loading action items for contact ${contactId}`);
-        
-        // Get DatabaseService singleton instance and fetch action items
-        const databaseService = DatabaseService.getInstance();
-        const allActionItems = await databaseService.getAllActionItems() || [];
-        
-        // Filter action items for this specific contact
-        const contactActionItems = allActionItems.filter(item => {
-          if (personType === 'sponsor' && item.sponsorContactId === contactId) {
-            return !item.deleted; // Exclude deleted items
-          }
-          if (personType === 'sponsee' && item.sponseeContactId === contactId) {
-            return !item.deleted; // Exclude deleted items
-          }
-          // Legacy support for old contactId field
-          if (item.contactId === contactId && !item.deleted) {
-            return true;
-          }
-          return false;
-        });
-        
-        console.log(`[ActionItemsList] Found ${contactActionItems.length} action items for contact ${contactId}`);
-        setActionItems(contactActionItems);
-        
-      } catch (error) {
-        console.error('[ActionItemsList] Error loading action items:', error);
-        setActionItems([]);
+    console.log(`[ActionItemsList] Loading action items for contact ${contactId}, type: ${personType}`);
+    
+    // Filter action items from the centralized state
+    const filteredItems = state.actionItems?.filter(item => {
+      // Exclude deleted items first
+      if (item.deleted === 1) return false;
+      
+      // Check contact association based on person type
+      if (personType === 'sponsor' && item.sponsorContactId === contactId) {
+        return true;
       }
-    };
-
-    loadActionItems();
-  }, [contactId, refreshKey, personType]);
+      if (personType === 'sponsee' && item.sponseeContactId === contactId) {
+        return true;
+      }
+      // Legacy support for old contactId field
+      if (item.contactId === contactId) {
+        return true;
+      }
+      
+      return false;
+    }) || [];
+    
+    console.log(`[ActionItemsList] Found ${filteredItems.length} action items for contact ${contactId}`);
+    setActionItems(filteredItems);
+    
+  }, [contactId, refreshKey, personType, state.actionItems]);
 
   // Toggle action item completion using shared AppDataContext
   const handleToggle = async (actionItemId: number) => {
