@@ -56,7 +56,7 @@ function Header({ title, menuOpen, setMenuOpen, isMobile, onNavigate, autoStartT
           alignItems: 'center',
           justifyContent: 'flex-start',
           boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
-          gap: 2,
+          gap: 1,
           height: '94px',
         }}
       >
