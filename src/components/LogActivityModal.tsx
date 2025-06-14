@@ -273,10 +273,10 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
       // Convert to number for comparison since database IDs are integers
       const meetingIdNum = parseInt(meetingId, 10);
       const meeting = meetings.find(m => m.id === meetingIdNum);
-      console.log('LogActivityModal - Meeting selection:', { meetingId, meetingIdNum, meeting, availableMeetings: meetings });
+      // console.log('LogActivityModal - Meeting selection:', { meetingId, meetingIdNum, meeting, availableMeetings: meetings });
       if (meeting) {
         setMeetingName(meeting.name);
-        console.log('LogActivityModal - Set meeting name to:', meeting.name);
+      //  console.log('LogActivityModal - Set meeting name to:', meeting.name);
       }
     } else {
       setMeetingName('');
@@ -527,7 +527,7 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
                       component="label"
                       sx={(theme) => ({
                         display: 'block',
-                        fontSize: '0.875rem',
+                        fontSize: '1rem',
                         fontWeight: '500',
                         marginBottom: '0.25rem',
                         color: theme.palette.text.secondary
@@ -539,6 +539,11 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
                       component="select"
                       value={selectedMeetingId}
                       onChange={handleMeetingSelect}
+                      InputProps={{
+                        sx: {
+                          height: '56px'
+                        }
+                      }}
                       sx={{
                     mb: 2,
                     "sx={getTextFieldStyle()} .MuiOutlinedInput-root": {
@@ -547,7 +552,7 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
                     },
                     "sx={getTextFieldStyle()} .MuiOutlinedInput-input": {
                       fontSize: 16,
-                      padding: "15px 14px"
+                      padding: "10px 14px"
                     }
                   }}
                     >
@@ -564,14 +569,14 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
                         display: 'flex',
                         justifyContent: 'space-between',
                         alignItems: 'center',
-                        marginTop: '0.5rem'
+                        marginTop: '0.25rem'
                       }}
                     >
                       <Button 
                         variant="text" 
                         onClick={() => setShowMeetingForm(true)}
                         sx={(theme) => ({
-                          fontSize: '0.75rem',
+                          fontSize: '1rem',
                           color: theme.palette.primary.main
                         })}
                       >
@@ -631,7 +636,7 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
                     <Box 
                       component="p"
                       sx={(theme) => ({
-                        fontSize: '0.875rem',
+                        fontSize: '1.25rem',
                         fontWeight: '500',
                         marginBottom: '0.5rem',
                         color: theme.palette.text.secondary
@@ -654,7 +659,7 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
                           htmlFor="was-chair"
                           sx={(theme) => ({
                             marginLeft: '0.5rem',
-                            fontSize: '0.875rem',
+                            fontSize: '1rem',
                             color: theme.palette.text.primary
                           })}
                         >
@@ -675,7 +680,7 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
                           htmlFor="was-share"
                           sx={(theme) => ({
                             marginLeft: '0.5rem',
-                            fontSize: '0.875rem',
+                            fontSize: '1rem',
                             color: theme.palette.text.primary
                           })}
                         >
@@ -696,7 +701,7 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
                           htmlFor="was-speaker"
                           sx={(theme) => ({
                             marginLeft: '0.5rem',
-                            fontSize: '0.875rem',
+                            fontSize: '1rem',
                             color: theme.palette.text.primary
                           })}
                         >
@@ -714,7 +719,7 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
                   <Box 
                     component="p"
                     sx={(theme) => ({
-                      fontSize: '0.875rem',
+                      fontSize: '1.25rem',
                       fontWeight: '500',
                       marginBottom: '0.5rem',
                       color: theme.palette.text.secondary
@@ -737,7 +742,7 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
                         htmlFor="sponsor-call"
                         sx={(theme) => ({
                           marginLeft: '0.5rem',
-                          fontSize: '0.875rem',
+                          fontSize: '1rem',
                           color: theme.palette.text.primary
                         })}
                       >
@@ -758,7 +763,7 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
                         htmlFor="sponsee-call"
                         sx={(theme) => ({
                           marginLeft: '0.5rem',
-                          fontSize: '0.875rem',
+                          fontSize: '1rem',
                           color: theme.palette.text.primary
                         })}
                       >
@@ -779,7 +784,7 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
                         htmlFor="aa-member-call"
                         sx={(theme) => ({
                           marginLeft: '0.5rem',
-                          fontSize: '0.875rem',
+                          fontSize: '1rem',
                           color: theme.palette.text.primary
                         })}
                       >
