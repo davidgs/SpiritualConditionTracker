@@ -42,7 +42,14 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
   const [duration, setDuration] = useState('15');
   const [date, setDate] = useState(getCurrentDateString());
   const [notes, setNotes] = useState('');
-  const [errors, setErrors] = useState({});
+  const [errors, setErrors] = useState<{
+    activityType?: string;
+    duration?: string;
+    date?: string;
+    literatureTitle?: string;
+    meetingName?: string;
+    callType?: string;
+  }>({});
   const [showSuccess, setShowSuccess] = useState(false);
   
   // Additional fields for specific activity types
@@ -419,7 +426,7 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
               </Box>
               
               {/* Duration dropdown */}
-              <Box sx={{ marginBottom: '1rem', maxWidth: '100%' }}>
+              <Box sx={{ marginBottom: '0.5rem', maxWidth: '100%' }}>
                 <TextField
                   select
                   fullWidth
@@ -435,7 +442,7 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
                     }
                   }}
                   sx={{
-                    mb: 2,
+                    mb: 1,
                     "sx={getTextFieldStyle()} .MuiOutlinedInput-root": {
                       height: 56,
                       borderRadius: 2
@@ -455,7 +462,7 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
               </Box>
               
               {/* Date picker */}
-              <Box sx={{ marginBottom: '1rem', maxWidth: '100%' }}>
+              <Box sx={{ marginBottom: '0.5rem', maxWidth: '100%' }}>
                 <TextField
                   fullWidth
                   type="date"
@@ -474,7 +481,7 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
                     shrink: true,
                   }}
                   sx={{
-                    mb: 2,
+                    mb: 1,
                     "sx={getTextFieldStyle()} .MuiOutlinedInput-root": {
                       height: 56,
                       borderRadius: 2
@@ -522,14 +529,14 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
               {/* Meeting-specific fields */}
               {activityType === 'meeting' && !showMeetingForm && (
                 <>
-                  <Box sx={{ marginBottom: '1rem', maxWidth: '100%' }}>
+                  <Box sx={{ marginBottom: '0.5rem', maxWidth: '100%' }}>
                     <Box 
                       component="label"
                       sx={(theme) => ({
                         display: 'block',
                         fontSize: '1rem',
                         fontWeight: '500',
-                        marginBottom: '0.25rem',
+                        marginBottom: '0.125rem',
                         color: theme.palette.text.secondary
                       })}
                     >
@@ -587,7 +594,7 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
                   
                   {/* Meeting Name field - only show if no meeting selected from dropdown */}
                   {!selectedMeetingId && (
-                    <Box sx={{ marginBottom: '1rem', maxWidth: '100%' }}>
+                    <Box sx={{ marginBottom: '0.5rem', maxWidth: '100%' }}>
                       <TextField
                         fullWidth
                         label="Meeting Name"
@@ -632,13 +639,13 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
                   )}
                   
                   {/* Meeting participation checkboxes */}
-                  <Box sx={{ marginBottom: '1rem' }}>
+                  <Box sx={{ marginBottom: '0.5rem' }}>
                     <Box 
                       component="p"
                       sx={(theme) => ({
                         fontSize: '1.25rem',
                         fontWeight: '500',
-                        marginBottom: '0.5rem',
+                        marginBottom: '0.25rem',
                         color: theme.palette.text.secondary
                       })}
                     >
@@ -715,13 +722,13 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
               
               {/* Call-specific fields */}
               {activityType === 'call' && (
-                <Box sx={{ marginBottom: '1rem' }}>
+                <Box sx={{ marginBottom: '0.5rem' }}>
                   <Box 
                     component="p"
                     sx={(theme) => ({
                       fontSize: '1.25rem',
                       fontWeight: '500',
-                      marginBottom: '0.5rem',
+                      marginBottom: '0.25rem',
                       color: theme.palette.text.secondary
                     })}
                   >
@@ -809,7 +816,7 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
               )}
               
               {/* Notes field */}
-              <Box sx={{ marginBottom: '1rem', maxWidth: '100%' }}>
+              <Box sx={{ marginBottom: '0.5rem', maxWidth: '100%' }}>
                 <TextField
                   fullWidth
                   label="Notes (optional)"
