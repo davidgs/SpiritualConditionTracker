@@ -168,7 +168,14 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
     e.preventDefault();
    // console.log('[LogActivityModal:147] Submitting activity form...')
     // Validate form
-    const newErrors = {};
+    const newErrors: {
+      activityType?: string;
+      duration?: string;
+      date?: string;
+      literatureTitle?: string;
+      meetingName?: string;
+      callType?: string;
+    } = {};
     if (!activityType) newErrors.activityType = 'Activity type is required';
     if (!duration) newErrors.duration = 'Duration is required';
     if (!date) newErrors.date = 'Date is required';
@@ -542,26 +549,19 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
                     >
                       Select Meeting
                     </Box>
-                    <Box 
-                      component="select"
+                    <select
                       value={selectedMeetingId}
                       onChange={handleMeetingSelect}
-                      InputProps={{
-                        sx: {
-                          height: '56px'
-                        }
+                      style={{
+                        width: '100%',
+                        height: '56px',
+                        fontSize: '16px',
+                        padding: '10px 14px',
+                        borderRadius: '8px',
+                        border: '1px solid #ccc',
+                        marginBottom: '8px',
+                        backgroundColor: 'white'
                       }}
-                      sx={{
-                    mb: 2,
-                    "sx={getTextFieldStyle()} .MuiOutlinedInput-root": {
-                      height: 56,
-                      borderRadius: 2
-                    },
-                    "sx={getTextFieldStyle()} .MuiOutlinedInput-input": {
-                      fontSize: 16,
-                      padding: "10px 14px"
-                    }
-                  }}
                     >
                       <option value="">-- Select a saved meeting --</option>
                       {meetings.map(meeting => (
@@ -569,14 +569,14 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
                           {meeting.name}
                         </option>
                       ))}
-                    </Box>
+                    </select>
                     
                     <Box 
                       sx={{
                         display: 'flex',
                         justifyContent: 'space-between',
                         alignItems: 'center',
-                        marginTop: '0.25rem'
+                        marginTop: '0.125rem'
                       }}
                     >
                       <Button 
@@ -624,7 +624,7 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
                           }
                         }}
                         sx={{
-                    mb: 2,
+                    mb: 1,
                     "sx={getTextFieldStyle()} .MuiOutlinedInput-root": {
                       height: 56,
                       borderRadius: 2
