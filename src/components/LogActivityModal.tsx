@@ -15,6 +15,7 @@ import { useTheme } from '@mui/material/styles';
 import StyledDialog from './StyledDialog';
 import MuiThemeProvider from '../contexts/MuiThemeProvider';
 import MeetingFormDialog from './MeetingFormDialog';
+import ContactFormDialog from './shared/ContactFormDialog';
 
 /**
  * Material UI Dialog component that displays the activity logging form
@@ -29,7 +30,7 @@ import MeetingFormDialog from './MeetingFormDialog';
  */
 
 
-const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] }) => {
+const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, onSaveSponsorContact, meetings = [] }) => {
   // Get theme context
   const muiTheme = useTheme();
   
@@ -67,6 +68,9 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
   // Meeting selection fields
   const [selectedMeetingId, setSelectedMeetingId] = useState('');
   const [showMeetingForm, setShowMeetingForm] = useState(false);
+  
+  // Sponsor contact dialog state
+  const [showSponsorContactForm, setShowSponsorContactForm] = useState(false);
   
   // Generate current date in YYYY-MM-DD format
   function getCurrentDateString() {
@@ -310,6 +314,20 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
     
     // Close the form
     setShowMeetingForm(false);
+  }
+
+  // Handle saving sponsor contact from the contact form
+  function handleSaveSponsorContact(contactData, actionItems) {
+    // Call the parent's onSaveSponsorContact function to persist the contact
+    if (onSaveSponsorContact) {
+      onSaveSponsorContact(contactData, actionItems);
+    }
+    
+    // Close the sponsor contact form
+    setShowSponsorContactForm(false);
+    
+    // Also close the main activity modal since the sponsor contact was logged
+    onClose();
   }
   
   // Get common text field styles for consistency
@@ -765,7 +783,13 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
                         type="checkbox"
                         id="sponsor-call"
                         checked={isSponsorCall}
-                        onChange={(e) => setIsSponsorCall(e.target.checked)}
+                        onChange={(e) => {
+                          const isChecked = e.target.checked;
+                          setIsSponsorCall(isChecked);
+                          if (isChecked) {
+                            setShowSponsorContactForm(true);
+                          }
+                        }}
                       />
                       <Box 
                         component="label"
@@ -882,6 +906,34 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
           </Button>
         </DialogActions>
       </StyledDialog>
+      
+      {/* Meeting Form Dialog */}
+      {showMeetingForm && (
+        <MeetingFormDialog
+          open={showMeetingForm}
+          onClose={() => setShowMeetingForm(false)}
+          onSave={handleSaveMeeting}
+        />
+      )}
+      
+      {/* Sponsor Contact Form Dialog */}
+      {showSponsorContactForm && (
+        <ContactFormDialog
+          open={showSponsorContactForm}
+          onClose={() => {
+            setShowSponsorContactForm(false);
+            setIsSponsorCall(false); // Uncheck the sponsor call checkbox
+          }}
+          onSave={handleSaveSponsorContact}
+          title="Log Sponsor Contact"
+          initialData={{
+            type: 'call',
+            date: date,
+            duration: duration,
+            note: ''
+          }}
+        />
+      )}
     </MuiThemeProvider>
   );
 };
