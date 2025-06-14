@@ -318,92 +318,10 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
     try {
       const activities = await databaseService.getAllActivities();
       
-      // Also fetch action items from action_items table and convert to activity format
-      let actionItemActivities = [];
-      try {
-        const actionItems = await databaseService.getAllActionItems();
-        console.log('[ AppDataContext.tsx ] Fetched action items:', actionItems?.length || 0);
-        
-        // Convert action items to activity format for unified display
-      //  console.log('[AppDataContext.tsx:299] Before map - actionItems:', actionItems);
-        const actionItemsArray = Array.isArray(actionItems) ? actionItems : [];
-        actionItemActivities = actionItemsArray.map(item => ({
-          id: `action-item-${item.id}`, // Prefix to avoid ID conflicts
-          type: item.type || 'action-item', // Preserve original type (sponsor_action_item, sponsee_action_item, etc.)
-          date: item.dueDate || item.createdAt?.split('T')[0] || new Date().toISOString().split('T')[0],
-          notes: item.title + (item.notes ? ` [${item.notes}]` : ''),
-          duration: undefined,
-          location: item.deleted ? 'deleted' : (item.completed ? 'completed' : 'pending'),
-          createdAt: item.createdAt || new Date().toISOString(),
-          updatedAt: item.updatedAt || new Date().toISOString(),
-          // Keep reference to original action item
-          actionItemId: item.id,
-          actionItemData: item
-        }));
-        
-        console.log('[ AppDataContext.tsx ] Converted action items to activities:', actionItemActivities.length);
-      } catch (actionItemError) {
-        console.warn('[ AppDataContext.tsx ] Failed to load action items:', actionItemError);
-        // Continue without action items if they fail to load
-      }
+      // Strategy 1: Action items are stored only in action_items table, referenced by activities via actionItemId
       
-      // Also fetch sponsor contacts from sponsor_contacts table and convert to activity format
-      let sponsorContactActivities = [];
-      try {
-        const sponsorContacts = await databaseService.getAllSponsorContacts();
-        console.log('[ AppDataContext.tsx ] Fetched sponsor contacts:', sponsorContacts.length);
-        
-        // Convert sponsor contacts to activity format for unified display
-        sponsorContactActivities = sponsorContacts.map(contact => ({
-          id: `sponsor-contact-${contact.id}`, // Prefix to avoid ID conflicts
-          type: 'sponsor-contact',
-          date: contact.date || contact.createdAt?.split('T')[0] || new Date().toISOString().split('T')[0],
-          notes: `${contact.note || 'Sponsor contact'} [Contact: ${contact.type}]`,
-          duration: undefined,
-          location: contact.type, // Store contact type in location field for consistency
-          createdAt: contact.createdAt || new Date().toISOString(),
-          updatedAt: contact.updatedAt || new Date().toISOString(),
-          // Keep reference to original sponsor contact
-          sponsorContactId: contact.id,
-          sponsorContactData: contact
-        }));
-        
-        console.log('[ AppDataContext.tsx ] Converted sponsor contacts to activities:', sponsorContactActivities.length);
-      } catch (sponsorContactError) {
-        console.warn('[ AppDataContext.tsx ] Failed to load sponsor contacts:', sponsorContactError);
-        // Continue without sponsor contacts if they fail to load
-      }
-      
-      // Also fetch sponsee contacts from sponsee_contacts table and convert to activity format
-      let sponseeContactActivities = [];
-      try {
-        const sponseeContacts = await databaseService.getAll('sponsee_contacts');
-        console.log('[ AppDataContext.tsx ] Fetched sponsee contacts:', sponseeContacts.length);
-        
-        // Convert sponsee contacts to activity format for unified display
-        const sponseeContactsArray = Array.isArray(sponseeContacts) ? sponseeContacts : [];
-        sponseeContactActivities = sponseeContactsArray.map((contact: any) => ({
-          id: `sponsee-contact-${contact.id}`, // Prefix to avoid ID conflicts
-          type: 'sponsee-contact',
-          date: contact.date || contact.createdAt?.split('T')[0] || new Date().toISOString().split('T')[0],
-          notes: `${contact.note || 'Sponsee contact'} [Contact: ${contact.type}]`,
-          duration: undefined,
-          location: contact.type, // Store contact type in location field for consistency
-          createdAt: contact.createdAt || new Date().toISOString(),
-          updatedAt: contact.updatedAt || new Date().toISOString(),
-          // Keep reference to original sponsee contact
-          sponseeContactId: contact.id,
-          sponseeContactData: contact
-        }));
-        
-        console.log('[ AppDataContext.tsx ] Converted sponsee contacts to activities:', sponseeContactActivities.length);
-      } catch (sponseeContactError) {
-        console.warn('[ AppDataContext.tsx ] Failed to load sponsee contacts:', sponseeContactError);
-        // Continue without sponsee contacts if they fail to load
-      }
-      
-      // Combine all activities from the 4 tables
-      const allActivities = [...activities, ...actionItemActivities, ...sponsorContactActivities, ...sponseeContactActivities];
+      // Strategy 1: Contacts are stored only in their respective tables, referenced by activities
+      const allActivities = activities;
       
       // Always load last 180 days for base cache (fixed window for memory management)
       const CACHE_DAYS = 180;

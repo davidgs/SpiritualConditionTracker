@@ -6,7 +6,8 @@ import {
 import { useAppData } from '../contexts/AppDataContext';
 import { ActionItem } from '../types/database';
 import ActionItemComponent from './shared/ActionItem';
-import { ActionItemService, ActionItemWithStatus } from '../utils/actionItemService';
+import { ActionItemWithStatus } from '../utils/actionItemService';
+import DatabaseService from '../services/DatabaseService';
 
 interface ActionItemsListProps {
   contactId: number;
@@ -28,22 +29,42 @@ export const ActionItemsList: React.FC<ActionItemsListProps> = ({
   const { state, updateActionItem } = useAppData();
   const [actionItems, setActionItems] = useState<ActionItemWithStatus[]>([]);
 
-  // Strategy 1: Use ActionItemService to get action items from activities that reference master action_items table
+  // Simple query: SELECT * FROM action_items WHERE sponsorContactId = contactId (or sponseeContactId)
   useEffect(() => {
-    console.log(`[ActionItemsList] Loading action items for contact ${contactId}, sponsor: ${sponsorId}, sponsee: ${sponseeId}`);
-    
-    // Use ActionItemService to filter and extract action items for this contact
-    const contactActionItems = ActionItemService.getActionItemsFromActivities(
-      state.activities,
-      contactId,
-      sponsorId,
-      sponseeId
-    );
-    
-    console.log(`[ActionItemsList] Found ${contactActionItems.length} action items for contact ${contactId}`);
-    setActionItems(contactActionItems);
-    
-  }, [contactId, refreshKey, sponsorId, sponseeId, personType, state.activities]);
+    const loadActionItems = async () => {
+      try {
+        console.log(`[ActionItemsList] Loading action items for contact ${contactId}`);
+        
+        // Get DatabaseService singleton instance and fetch action items
+        const databaseService = DatabaseService.getInstance();
+        const allActionItems = await databaseService.getAllActionItems() || [];
+        
+        // Filter action items for this specific contact
+        const contactActionItems = allActionItems.filter(item => {
+          if (personType === 'sponsor' && item.sponsorContactId === contactId) {
+            return !item.deleted; // Exclude deleted items
+          }
+          if (personType === 'sponsee' && item.sponseeContactId === contactId) {
+            return !item.deleted; // Exclude deleted items
+          }
+          // Legacy support for old contactId field
+          if (item.contactId === contactId && !item.deleted) {
+            return true;
+          }
+          return false;
+        });
+        
+        console.log(`[ActionItemsList] Found ${contactActionItems.length} action items for contact ${contactId}`);
+        setActionItems(contactActionItems);
+        
+      } catch (error) {
+        console.error('[ActionItemsList] Error loading action items:', error);
+        setActionItems([]);
+      }
+    };
+
+    loadActionItems();
+  }, [contactId, refreshKey, personType]);
 
   // Toggle action item completion using shared AppDataContext
   const handleToggle = async (actionItemId: number) => {

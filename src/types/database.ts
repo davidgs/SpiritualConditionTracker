@@ -71,10 +71,9 @@ export interface ActionItem extends BaseEntity {
   completed: 0 | 1; // SQLite boolean as integer
   deleted: 0 | 1; // SQLite boolean as integer for soft deletion
   type: 'todo' | 'action' | 'reminder';
-  contactId?: number; // Optional link to sponsor contact
-  sponsorContactId?: number; // Optional link to sponsor contact
-  sponsorId?: number; // Foreign key to sponsors table
-  sponseeId?: number; // Foreign key to sponsees table
+  contactId?: number; // Legacy field
+  sponsorContactId?: number; // Reference to sponsor_contacts.id
+  sponseeContactId?: number; // Reference to sponsee_contacts.id
 }
 
 // Join table for sponsor contacts and action items

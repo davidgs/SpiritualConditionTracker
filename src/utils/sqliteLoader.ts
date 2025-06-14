@@ -631,10 +631,8 @@ async function createTables(sqlite) {
   // Add missing columns to existing action_items table (migrations)
   const actionItemMigrations = [
     { column: 'deleted', type: 'INTEGER DEFAULT 0' },
-    { column: 'sponsorId', type: 'INTEGER' },
-    { column: 'sponsorName', type: 'TEXT' },
-    { column: 'sponseeId', type: 'INTEGER' },
-    { column: 'sponseeName', type: 'TEXT' }
+    { column: 'sponsorContactId', type: 'INTEGER' },
+    { column: 'sponseeContactId', type: 'INTEGER' }
   ];
 
   for (const migration of actionItemMigrations) {
