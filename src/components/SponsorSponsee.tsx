@@ -246,7 +246,7 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
             contactId: (savedContact as any).id,
             dueDate: actionItem.dueDate || contactData.date,
             completed: 0,
-            type: 'todo', // Default type since we removed categorization
+            type: 'sponsor_action_item', // Mark as sponsor action item for categorization
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString()
           });
@@ -270,9 +270,10 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
     }
   };
 
-  const handleAddSponseeContactWithActionItem = async (contactData) => {
+  const handleAddSponseeContactWithActionItem = async (contactData, actionItems = []) => {
     try {
-      await databaseService.add('sponsee_contacts', {
+      // Save the sponsee contact first
+      const savedContact = await databaseService.add('sponsee_contacts', {
         ...contactData,
         sponseeId: selectedSponseeForContact?.id,
         userId: user?.id,
@@ -280,10 +281,34 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
         updatedAt: new Date().toISOString()
       });
       
+      // Save action items if any
+      if (actionItems && actionItems.length > 0 && savedContact && (savedContact as any).id) {
+        for (const actionItem of actionItems) {
+          await databaseService.add('action_items', {
+            title: actionItem.title,
+            text: actionItem.text || actionItem.title,
+            notes: actionItem.notes || '',
+            contactId: (savedContact as any).id,
+            dueDate: actionItem.dueDate || contactData.date,
+            completed: 0,
+            type: 'sponsee_action_item', // Mark as sponsee action item for categorization
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString()
+          });
+        }
+      }
+      
       setShowSponseeContactForm(false);
       setSelectedSponseeForContact(null);
       await loadSponseeContacts();
       setRefreshKey(prev => prev + 1);
+      
+      // Reload activities to show new sponsee contact and action items in dashboard
+      if (onSaveActivity) {
+        // Trigger activity reload through parent component
+        const refreshActivity = { type: 'refresh', id: Date.now() };
+        await onSaveActivity(refreshActivity);
+      }
     } catch (error) {
       console.error('Failed to add sponsee contact:', error);
       alert('Failed to add contact');
