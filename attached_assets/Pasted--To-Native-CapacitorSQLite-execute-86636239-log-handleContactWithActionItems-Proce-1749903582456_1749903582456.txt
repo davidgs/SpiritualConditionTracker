@@ -1,0 +1,64 @@
+⚡️  To Native ->  CapacitorSQLite execute 86636239
+⚡️  [log] - [handleContactWithActionItems] Processing sponsee contact: {"type":"call","date":"2025-06-14T12:18:49.500Z","note":"Typical pigeon shit","topic":"Whining","duration":20}
+⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO sponsee_contacts (type, date, note, topic, duration, sponseeId, userId, createdAt, updatedAt) VALUES ('call', '2025-06-14T12:18:49.500Z', 'Typical pigeon shit', 'Whining', 20, 1, 1, '2025-06-14T12:19:16.718Z', '2025-06-14T12:19:16.718Z');
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  To Native ->  CapacitorSQLite query 86636240
+⚡️  TO JS {"values":[{"ios_columns":["id"]},{"id":1}]}
+⚡️  [log] - [ sqliteLoader.js ] Last insert ID result: {"values":[{"ios_columns":["id"]},{"id":1}]}
+⚡️  To Native ->  CapacitorSQLite execute 86636241
+⚡️  [log] - [handleContactWithActionItems] Saved sponsee contact to sponsee_contacts: {"type":"call","date":"2025-06-14T12:18:49.500Z","note":"Typical pigeon shit","topic":"Whining","duration":20,"sponseeId":1,"userId":1,"createdAt":"2025-06-14T12:19:16.718Z","updatedAt":"2025-06-14T12:19:16.718Z","id":1}
+⚡️  [log] - [handleContactWithActionItems] Saving 1 action items as type: sponsee_action_item
+⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO action_items (title, text, notes, contactId, dueDate, completed, type, createdAt, updatedAt) VALUES ('Go pray', 'Go pray', '', 1, '2025-06-14T12:18:49.500Z', 0, 'sponsee_action_item', '2025-06-14T12:19:16.730Z', '2025-06-14T12:19:16.730Z');
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  To Native ->  CapacitorSQLite query 86636242
+⚡️  TO JS {"values":[{"ios_columns":["id"]},{"id":2}]}
+⚡️  [log] - [ sqliteLoader.js ] Last insert ID result: {"values":[{"ios_columns":["id"]},{"id":2}]}
+⚡️  To Native ->  CapacitorSQLite query 86636243
+⚡️  TO JS {"values":[{"ios_columns":["id","userId","sponseeId","date","type","note","topic","duration","createdAt","updatedAt"]},{"note":"Typical pigeon shit","date":"2025-06-14T12:18:49.500Z","userId":"1","type":"call","id":1,"sponseeId":1,"duration":20,"createdAt"
+⚡️  [log] - SubTabComponent sponsee: persons: [{"lastName":"Furter","name":"Frank","userId":"1","id":1,"sponseeType":"sponsee","createdAt":"2025-06-14T12:18:19.744Z","updatedAt":"2025-06-14T12:18:19.744Z","phoneNumber":"+1 919 555 1212","email":"frank@furter.com","notes":"New Pigeon!","sobrietyDate":"2025-06-05T04:00:00.000Z"}] length: 1
+⚡️  [log] - [getPersonContacts] Found 0 contacts for sponsee 1
+⚡️  [log] - [ sqliteLoader.js:548 ] Processed 1 items from sponsee_contacts
+⚡️  [log] - [ App.tsx:73 handleSaveActivity ] Received activity data: {
+  "type": "refresh",
+  "id": 1749903556760
+}
+⚡️  [log] - [ App.tsx:74 handleSaveActivity ] Current user state: {"id":1,"sponsees":"[]","isDarkMode":0,"updatedAt":"2025-06-14T12:12:28.903Z","phoneNumber":"","name":"","lastName":"","preferences":{"use24HourFormat":false,"darkMode":false,"theme":"default"},"homeGroups":[],"privacySettings":{"allowMessages":true,"shareLastName":true},"sobrietyDate":"","email":"","createdAt":"2025-06-14T12:12:28.903Z"}
+⚡️  To Native ->  ⚡️  [log] - [ App.tsx ] Refreshing activities for sponsor contacts and action items
+CapacitorSQLite query 86636244
+⚡️  TO JS {"values":[]}
+⚡️  To Native ->  CapacitorSQLite query 86636245
+⚡️  [log] - [ sqliteLoader.js:548 ] Processed 0 items from activities
+⚡️  TO JS {"values":[{"ios_columns":["id","contactId","title","text","notes","dueDate","completed","deleted","type","createdAt","updatedAt"]},{"deleted":0,"text":"Write 1st step","notes":"","contactId":1,"id":1,"type":"sponsor_action_item","completed":0,"createdAt":
+⚡️  [log] - SubTabComponent sponsee: persons: [{"lastName":"Furter","name":"Frank","userId":"1","id":1,"sponseeType":"sponsee","createdAt":"2025-06-14T12:18:19.744Z","updatedAt":"2025-06-14T12:18:19.744Z","phoneNumber":"+1 919 555 1212","email":"frank@furter.com","notes":"New Pigeon!","sobrietyDate":"2025-06-05T04:00:00.000Z"}] length: 1
+⚡️  [log] - [getPersonContacts] sponsee personId: 1, contact sponseeId: 1, match: true
+⚡️  [log] - [getPersonContacts] Found 1 contacts for sponsee 1
+⚡️  [log] - [ sqliteLoader.js:548 ] Processed 2 items from action_items
+⚡️  [log] - [ AppDataContext.tsx ] Fetched action items: 2
+⚡️  To Native ->  CapacitorSQLite query 86636246
+⚡️  [log] - [ AppDataContext.tsx ] Converted action items to activities: 2
+⚡️  To Native ->  CapacitorSQLite query 86636247
+⚡️  To Native ->  CapacitorSQLite query 86636248
+⚡️  To Native ->  CapacitorSQLite query 86636249
+⚡️  TO JS {"values":[{"ios_columns":["id","userId","sponsorId","date","type","note","topic","duration","createdAt","updatedAt"]},{"note":"Get to know you","userId":"1","id":1,"sponsorId":1,"topic":"Welcome","type":"call","createdAt":"2025-06-14T12:14:51.511Z","updat
+⚡️  TO JS {"values":[{"ios_columns":["id","userId","name","lastName","phoneNumber","email","sobrietyDate","notes","sponsorType","createdAt","updatedAt"]},{"name":"Joe","userId":"1","id":1,"phoneNumber":"+1 919 534 5099","sponsorType":"sponsor","createdAt":"2025-06-1
+⚡️  TO JS {"values":[{"ios_columns":["id","userId","name","lastName","phoneNumber","email","sobrietyDate","notes","sponseeType","createdAt","updatedAt"]},{"userId":"1","updatedAt":"2025-06-14T12:18:19.744Z","lastName":"Furter","sobrietyDate":"2025-06-05T04:00:00.000
+⚡️  TO JS {"values":[{"ios_columns":["id","userId","sponsorId","date","type","note","topic","duration","createdAt","updatedAt"]},{"note":"Get to know you","topic":"Welcome","type":"call","createdAt":"2025-06-14T12:14:51.511Z","userId":"1","duration":20,"sponsorId":1
+⚡️  To Native ->  CapacitorSQLite query 86636250
+⚡️  TO JS {"values":[{"ios_columns":["id","userId","sponseeId","date","type","note","topic","duration","createdAt","updatedAt"]},{"note":"Typical pigeon shit","id":1,"sponseeId":1,"userId":"1","date":"2025-06-14T12:18:49.500Z","duration":20,"createdAt":"2025-06-14T1
+⚡️  [log] - [ sqliteLoader.js:548 ] Processed 1 items from sponsor_contacts
+⚡️  [log] - [ AppDataContext.tsx ] Fetched sponsor contacts: 1
+⚡️  [log] - [ AppDataContext.tsx ] Converted sponsor contacts to activities: 1
+⚡️  [log] - [ AppDataContext.tsx:288 ] Activities cached (180 days): 3 (including action items)
+⚡️  [log] - [ AppDataContext.tsx:315 ] Using cached activities for 30 days: 2
+⚡️  [log] - [ AppDataContext.tsx:454 ] Calculating spiritual fitness with 2 activities for 30 days
+⚡️  [log] - [handleContactWithActionItems] Successfully completed sponsee contact save
+⚡️  [log] - [ sqliteLoader.js:548 ] Processed 1 items from sponsors
+⚡️  [log] - [ sqliteLoader.js:548 ] Processed 1 items from sponsees
+⚡️  [log] - [ sqliteLoader.js:548 ] Processed 1 items from sponsor_contacts
+⚡️  [log] - [loadSponsorContacts] Raw sponsor contacts from DB: [{"note":"Get to know you","topic":"Welcome","type":"call","createdAt":"2025-06-14T12:14:51.511Z","userId":"1","duration":20,"sponsorId":1,"id":1,"date":"2025-06-14T12:14:19.498Z","updatedAt":"2025-06-14T12:14:51.511Z"}]
+⚡️  [log] - [loadSponsorContacts] Filtered sponsor contacts: [{"note":"Get to know you","topic":"Welcome","type":"call","createdAt":"2025-06-14T12:14:51.511Z","userId":"1","duration":20,"sponsorId":1,"id":1,"date":"2025-06-14T12:14:19.498Z","updatedAt":"2025-06-14T12:14:51.511Z"}]
+⚡️  [log] - [loadSponsorContacts] Current sponsors: [{"userId":"1","id":1,"lastName":"Blow","name":"Joe","createdAt":"2025-06-14T12:13:31.124Z","phoneNumber":"+1 919 534 5099","sobrietyDate":null,"email":"joe@blow.com","sponsorType":"sponsor","updatedAt":"2025-06-14T12:13:31.124Z","notes":"New Sponsor!"}]
+⚡️  [log] - [ sqliteLoader.js:548 ] Processed 1 items from sponsee_contacts
+⚡️  [log] - SubTabComponent sponsee: persons: [{"userId":"1","updatedAt":"2025-06-14T12:18:19.744Z","lastName":"Furter","sobrietyDate":"2025-06-05T04:00:00.000Z","notes":"New Pigeon!","name":"Frank","phoneNumber":"+1 919 555 1212","sponseeType":"sponsee","createdAt":"2025-06-14T12:18:19.744Z","id":1,"email":"frank@furter.com"}] length: 1
+⚡️  [log] - [getPersonContacts] sponsee personId: 1, contact sponseeId: 1, match: true
+⚡️  [log] - [getPersonContacts] Found 1 contacts for sponsee 1

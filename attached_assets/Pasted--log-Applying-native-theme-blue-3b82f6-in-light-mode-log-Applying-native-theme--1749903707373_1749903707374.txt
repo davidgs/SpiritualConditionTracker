@@ -1,0 +1,22 @@
+⚡️  [log] - Applying native theme: blue (#3b82f6) in light mode
+⚡️  [log] - Applying native theme: blue (#3b82f6) in light mode
+⚡️  [log] - SubTabComponent sponsor: persons: [] length: 0
+⚡️  To Native ->  CapacitorSQLite query 86636251
+⚡️  To Native ->  CapacitorSQLite query 86636252
+⚡️  To Native ->  CapacitorSQLite query 86636253
+⚡️  To Native ->  CapacitorSQLite query 86636254
+⚡️  TO JS {"values":[{"ios_columns":["id","userId","name","lastName","phoneNumber","email","sobrietyDate","notes","sponsorType","createdAt","updatedAt"]},{"notes":"New Sponsor!","sobrietyDate":null,"createdAt":"2025-06-14T12:13:31.124Z","sponsorType":"sponsor","phon
+⚡️  TO JS {"values":[{"ios_columns":["id","userId","name","lastName","phoneNumber","email","sobrietyDate","notes","sponseeType","createdAt","updatedAt"]},{"updatedAt":"2025-06-14T12:18:19.744Z","userId":"1","createdAt":"2025-06-14T12:18:19.744Z","email":"frank@furte
+⚡️  TO JS {"values":[{"ios_columns":["id","userId","sponsorId","date","type","note","topic","duration","createdAt","updatedAt"]},{"type":"call","sponsorId":1,"topic":"Welcome","duration":20,"createdAt":"2025-06-14T12:14:51.511Z","userId":"1","updatedAt":"2025-06-14T
+⚡️  TO JS {"values":[{"ios_columns":["id","userId","sponseeId","date","type","note","topic","duration","createdAt","updatedAt"]},{"userId":"1","note":"Typical pigeon shit","duration":20,"createdAt":"2025-06-14T12:19:16.718Z","id":1,"date":"2025-06-14T12:18:49.500Z",
+⚡️  [log] - [ sqliteLoader.js:548 ] Processed 1 items from sponsors
+⚡️  [log] - [ sqliteLoader.js:548 ] Processed 1 items from sponsees
+⚡️  [log] - [ sqliteLoader.js:548 ] Processed 1 items from sponsor_contacts
+⚡️  [log] - [loadSponsorContacts] Raw sponsor contacts from DB: [{"type":"call","sponsorId":1,"topic":"Welcome","duration":20,"createdAt":"2025-06-14T12:14:51.511Z","userId":"1","updatedAt":"2025-06-14T12:14:51.511Z","note":"Get to know you","id":1,"date":"2025-06-14T12:14:19.498Z"}]
+⚡️  [log] - [loadSponsorContacts] Filtered sponsor contacts: []
+⚡️  [log] - [loadSponsorContacts] Current sponsors: []
+⚡️  [log] - [ sqliteLoader.js:548 ] Processed 1 items from sponsee_contacts
+⚡️  [log] - SubTabComponent sponsor: persons: [{"notes":"New Sponsor!","sobrietyDate":null,"createdAt":"2025-06-14T12:13:31.124Z","sponsorType":"sponsor","phoneNumber":"+1 919 534 5099","name":"Joe","userId":"1","updatedAt":"2025-06-14T12:13:31.124Z","email":"joe@blow.com","id":1,"lastName":"Blow"}] length: 1
+⚡️  [log] - [getPersonContacts] Found 0 contacts for sponsor 1
+⚡️  [log] - SubTabComponent sponsee: persons: [{"updatedAt":"2025-06-14T12:18:19.744Z","userId":"1","createdAt":"2025-06-14T12:18:19.744Z","email":"frank@furter.com","phoneNumber":"+1 919 555 1212","name":"Frank","id":1,"sobrietyDate":"2025-06-05T04:00:00.000Z","notes":"New Pigeon!","sponseeType":"sponsee","lastName":"Furter"}] length: 1
+⚡️  [log] - [getPersonContacts] Found 0 contacts for sponsee 1

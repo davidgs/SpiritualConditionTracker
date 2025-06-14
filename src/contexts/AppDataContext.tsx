@@ -374,8 +374,36 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
         // Continue without sponsor contacts if they fail to load
       }
       
-      // Combine all activities from the 3 tables
-      const allActivities = [...activities, ...actionItemActivities, ...sponsorContactActivities];
+      // Also fetch sponsee contacts from sponsee_contacts table and convert to activity format
+      let sponseeContactActivities = [];
+      try {
+        const sponseeContacts = await databaseService.getAll('sponsee_contacts');
+        console.log('[ AppDataContext.tsx ] Fetched sponsee contacts:', sponseeContacts.length);
+        
+        // Convert sponsee contacts to activity format for unified display
+        const sponseeContactsArray = Array.isArray(sponseeContacts) ? sponseeContacts : [];
+        sponseeContactActivities = sponseeContactsArray.map((contact: any) => ({
+          id: `sponsee-contact-${contact.id}`, // Prefix to avoid ID conflicts
+          type: 'sponsee-contact',
+          date: contact.date || contact.createdAt?.split('T')[0] || new Date().toISOString().split('T')[0],
+          notes: `${contact.note || 'Sponsee contact'} [Contact: ${contact.type}]`,
+          duration: undefined,
+          location: contact.type, // Store contact type in location field for consistency
+          createdAt: contact.createdAt || new Date().toISOString(),
+          updatedAt: contact.updatedAt || new Date().toISOString(),
+          // Keep reference to original sponsee contact
+          sponseeContactId: contact.id,
+          sponseeContactData: contact
+        }));
+        
+        console.log('[ AppDataContext.tsx ] Converted sponsee contacts to activities:', sponseeContactActivities.length);
+      } catch (sponseeContactError) {
+        console.warn('[ AppDataContext.tsx ] Failed to load sponsee contacts:', sponseeContactError);
+        // Continue without sponsee contacts if they fail to load
+      }
+      
+      // Combine all activities from the 4 tables
+      const allActivities = [...activities, ...actionItemActivities, ...sponsorContactActivities, ...sponseeContactActivities];
       
       // Always load last 180 days for base cache (fixed window for memory management)
       const CACHE_DAYS = 180;

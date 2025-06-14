@@ -1,0 +1,28 @@
+⚡️  To Native ->  CapacitorSQLite execute ⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO sponsors (name, lastName, phoneNumber, email, sobrietyDate, notes, userId, updatedAt, createdAt) VALUES ('Joe', 'Blow', '+1 919 534 5099', 'joe@blow.com', NULL, 'New Sponsor!', 1, '2025-06-14T12:13:31.124Z', '2025-06-14T12:13:31.124Z');
+86636205
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  To Native ->  CapacitorSQLite query 86636206
+⚡️  TO JS {"values":[{"ios_columns":["id"]},{"id":1}]}
+⚡️  [log] - [ sqliteLoader.js ] Last insert ID result: {"values":[{"ios_columns":["id"]},{"id":1}]}
+⚡️  To Native ->  CapacitorSQLite query 86636207
+⚡️  TO JS {"values":[{"ios_columns":["id","userId","name","lastName","phoneNumber","email","sobrietyDate","notes","sponsorType","createdAt","updatedAt"]},{"email":"joe@blow.com","userId":"1","notes":"New Sponsor!","sponsorType":"sponsor","sobrietyDate":null,"updated
+⚡️  [log] - [ sqliteLoader.js:548 ] Processed 1 items from sponsors
+⚡️  [log] - SubTabComponent sponsor: persons: [{"email":"joe@blow.com","userId":"1","notes":"New Sponsor!","sponsorType":"sponsor","sobrietyDate":null,"updatedAt":"2025-06-14T12:13:31.124Z","id":1,"lastName":"Blow","phoneNumber":"+1 919 534 5099","name":"Joe","createdAt":"2025-06-14T12:13:31.124Z"}] length: 1
+⚡️  [log] - [getPersonContacts] Found 0 contacts for sponsor 1
+⚡️  To Native ->  CapacitorSQLite query 86636208
+⚡️  To Native ->  CapacitorSQLite query 86636209
+⚡️  To Native ->  CapacitorSQLite query 86636210
+⚡️  To Native ->  CapacitorSQLite query 86636211
+⚡️  TO JS {"values":[{"ios_columns":["id","userId","name","lastName","phoneNumber","email","sobrietyDate","notes","sponsorType","createdAt","updatedAt"]},{"sobrietyDate":null,"sponsorType":"sponsor","createdAt":"2025-06-14T12:13:31.124Z","userId":"1","email":"joe@bl
+⚡️  TO JS {"values":[]}
+⚡️  TO JS {"values":[]}
+⚡️  TO JS {"values":[]}
+⚡️  [log] - [ sqliteLoader.js:548 ] Processed 1 items from sponsors
+⚡️  [log] - [ sqliteLoader.js:548 ] Processed 0 items from sponsees
+⚡️  [log] - [ sqliteLoader.js:548 ] Processed 0 items from sponsor_contacts
+⚡️  [log] - [loadSponsorContacts] Raw sponsor contacts from DB: []
+⚡️  [log] - [loadSponsorContacts] Filtered sponsor contacts: []
+⚡️  [log] - [loadSponsorContacts] Current sponsors: [{"email":"joe@blow.com","userId":"1","notes":"New Sponsor!","sponsorType":"sponsor","sobrietyDate":null,"updatedAt":"2025-06-14T12:13:31.124Z","id":1,"lastName":"Blow","phoneNumber":"+1 919 534 5099","name":"Joe","createdAt":"2025-06-14T12:13:31.124Z"}]
+⚡️  [log] - [ sqliteLoader.js:548 ] Processed 0 items from sponsee_contacts
+⚡️  [log] - SubTabComponent sponsor: persons: [{"sobrietyDate":null,"sponsorType":"sponsor","createdAt":"2025-06-14T12:13:31.124Z","userId":"1","email":"joe@blow.com","updatedAt":"2025-06-14T12:13:31.124Z","phoneNumber":"+1 919 534 5099","lastName":"Blow","id":1,"name":"Joe","notes":"New Sponsor!"}] length: 1
+⚡️  [log] - [getPersonContacts] Found 0 contacts for sponsor 1

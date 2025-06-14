@@ -237,8 +237,8 @@ export default function ActivityList({
   const filteredActivities = Array.isArray(activities) 
     ? activities
         .filter(activity => {
-          // Filter out sponsor and sponsee action items from general activity log
-          if (activity.type === 'action-item' || activity.type === 'sponsor_action_item' || activity.type === 'sponsee_action_item') {
+          // Only filter out regular action items from general activity log, but keep sponsor/sponsee action items
+          if (activity.type === 'action-item') {
             return false;
           }
           
