@@ -242,6 +242,11 @@ export default function ActivityList({
             return false;
           }
           
+          // Include sponsor and sponsee action items in the activity log
+          if (activity.type === 'sponsor_action_item' || activity.type === 'sponsee_action_item') {
+            return true;
+          }
+          
           // Filter by type
           if (filter !== 'all' && activity.type !== filter) {
             return false;
@@ -327,14 +332,18 @@ export default function ActivityList({
                   return 0;
                 })
                 .map((activity, index) => {
-                  // Handle action items with the new ActionItem component
-                  if (activity.type === 'action-item') {
+                  // Handle action items (including sponsor and sponsee action items) with the new ActionItem component
+                  if (activity.type === 'action-item' || activity.type === 'sponsor_action_item' || activity.type === 'sponsee_action_item') {
+                    const actionItemTitle = activity.actionItemData?.title || activity.notes || 'Action Item';
+                    const actionItemPrefix = activity.type === 'sponsor_action_item' ? 'Sponsor Action: ' : 
+                                           activity.type === 'sponsee_action_item' ? 'Sponsee Action: ' : '';
+                    
                     return (
                       <ActionItem
                         key={activity.id || `${activity.date}-${activity.type}-${index}`}
                         actionItem={{
                           id: activity.id,
-                          title: activity.actionItemData?.title || 'Action Item',
+                          title: actionItemPrefix + actionItemTitle,
                           notes: activity.actionItemData?.notes,
                           completed: activity.actionItemData?.completed || false,
                           deleted: activity.actionItemData?.deleted || false,

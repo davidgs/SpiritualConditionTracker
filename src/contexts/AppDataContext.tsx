@@ -329,7 +329,7 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
         const actionItemsArray = Array.isArray(actionItems) ? actionItems : [];
         actionItemActivities = actionItemsArray.map(item => ({
           id: `action-item-${item.id}`, // Prefix to avoid ID conflicts
-          type: 'action-item',
+          type: item.type || 'action-item', // Preserve original type (sponsor_action_item, sponsee_action_item, etc.)
           date: item.dueDate || item.createdAt?.split('T')[0] || new Date().toISOString().split('T')[0],
           notes: item.title + (item.notes ? ` [${item.notes}]` : ''),
           duration: undefined,

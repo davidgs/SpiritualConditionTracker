@@ -82,9 +82,11 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
       const allContacts = await databaseService.getAll('sponsor_contacts');
       console.log('[loadSponsorContacts] Raw sponsor contacts from DB:', allContacts);
       // Filter to only show contacts for current user's sponsors
-      const userSponsorContacts = allContacts.filter((contact: any) => 
-        contact.userId === user?.id
-      );
+      const userSponsorContacts = allContacts.filter((contact: any) => {
+        const match = contact.userId == user?.id;
+        console.log(`[loadSponsorContacts] Filtering contact: userId=${contact.userId} (${typeof contact.userId}), user.id=${user?.id} (${typeof user?.id}), match=${match}`);
+        return match;
+      });
       console.log('[loadSponsorContacts] Filtered sponsor contacts:', userSponsorContacts);
       console.log('[loadSponsorContacts] Current sponsors:', sponsors);
       setSponsorContacts(userSponsorContacts);
@@ -98,9 +100,11 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
       const allContacts = await databaseService.getAll('sponsee_contacts');
       console.log('[loadSponseeContacts] Raw sponsee contacts from DB:', allContacts);
       // Filter to only show contacts for current user's sponsees
-      const userSponseeContacts = allContacts.filter((contact: any) => 
-        contact.userId === user?.id
-      );
+      const userSponseeContacts = allContacts.filter((contact: any) => {
+        const match = contact.userId == user?.id;
+        console.log(`[loadSponseeContacts] Filtering contact: userId=${contact.userId} (${typeof contact.userId}), user.id=${user?.id} (${typeof user?.id}), match=${match}`);
+        return match;
+      });
       console.log('[loadSponseeContacts] Filtered sponsee contacts:', userSponseeContacts);
       console.log('[loadSponseeContacts] Current sponsees:', sponsees);
       setSponseeContacts(userSponseeContacts);
