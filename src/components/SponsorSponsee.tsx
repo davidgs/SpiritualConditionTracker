@@ -377,6 +377,8 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
               contact={contact}
               theme={theme}
               refreshKey={refreshKey}
+              sponsorId={contact.sponsorId}
+              personType="sponsor"
               onContactClick={() => {}}
               onEditContact={(contact) => {
                 setEditingContact(contact);
@@ -410,6 +412,8 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
               contact={contact}
               theme={theme}
               refreshKey={refreshKey}
+              sponseeId={contact.sponseeId}
+              personType="sponsee"
               onContactClick={() => {}}
               onEditContact={(contact) => {
                 setEditingContact(contact);

@@ -160,6 +160,9 @@ export const ContactCard: React.FC<ContactCardProps> = ({
           contactId={contact.id}
           theme={theme}
           refreshKey={refreshKey}
+          sponsorId={sponsorId}
+          sponseeId={sponseeId}
+          personType={personType}
         />
       </Box>
     </ListItem>
