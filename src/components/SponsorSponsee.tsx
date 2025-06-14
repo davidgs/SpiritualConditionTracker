@@ -79,8 +79,13 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
 
   const loadSponsorContacts = async () => {
     try {
-      const contacts = await databaseService.getAll('sponsor_contacts');
-      setSponsorContacts(contacts);
+      const allContacts = await databaseService.getAll('sponsor_contacts');
+      // Filter to only show contacts for current user's sponsors
+      const userSponsorContacts = allContacts.filter(contact => 
+        contact.userId === user?.id || 
+        sponsors.some(sponsor => sponsor.id === contact.sponsorId)
+      );
+      setSponsorContacts(userSponsorContacts);
     } catch (error) {
       console.error('Failed to load sponsor contacts:', error);
     }
@@ -88,8 +93,13 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
 
   const loadSponseeContacts = async () => {
     try {
-      const contacts = await databaseService.getAll('sponsee_contacts');
-      setSponseeContacts(contacts);
+      const allContacts = await databaseService.getAll('sponsee_contacts');
+      // Filter to only show contacts for current user's sponsees
+      const userSponseeContacts = allContacts.filter(contact => 
+        contact.userId === user?.id || 
+        sponsees.some(sponsee => sponsee.id === contact.sponseeId)
+      );
+      setSponseeContacts(userSponseeContacts);
     } catch (error) {
       console.error('Failed to load sponsee contacts:', error);
     }
