@@ -271,17 +271,20 @@ export default function ContactFormDialog({
         fullWidth
         sx={{
           '& .MuiDialog-container': {
-            alignItems: 'flex-start',
-            paddingTop: '5vh'
+            alignItems: 'center',
+            justifyContent: 'center'
           }
         }}
         PaperProps={{
           sx: {
             backgroundColor: theme.palette.background.paper,
             borderRadius: theme.spacing(2),
-            margin: theme.spacing(1),
-            maxHeight: '90vh',
-            overflow: 'auto'
+            margin: theme.spacing(2),
+            maxHeight: '85vh',
+            minHeight: '400px',
+            display: 'flex',
+            flexDirection: 'column',
+            overflow: 'hidden'
           }
         }}
       >
@@ -313,9 +316,10 @@ export default function ContactFormDialog({
         <DialogContent 
           sx={{ 
             p: theme.spacing(3),
-            maxHeight: '70vh',
+            flex: 1,
             overflowY: 'auto',
-            position: 'relative'
+            position: 'relative',
+            minHeight: 0
           }}
           onScroll={(e) => {
             const target = e.target as HTMLElement;
@@ -777,7 +781,7 @@ export default function ContactFormDialog({
           <Button
             onClick={handleSubmit}
             variant="contained"
-            disabled={isLoading}
+            disabled={isLoading || showAddActionItemForm}
             size="small"
             sx={{
               borderRadius: theme.spacing(1),
