@@ -252,6 +252,29 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
       
       console.log(`[handleContactWithActionItems] Saved ${personType} contact to ${contactTable}:`, savedContact);
       
+      // Create activity record for the contact
+      const contactActivityData: any = {
+        userId: user?.id || 'default_user',
+        type: isSponsee ? 'sponsee-contact' : 'sponsor-contact',
+        date: contactData.date,
+        notes: contactData.note,
+        duration: contactData.duration,
+        personCalled: `${selectedPerson?.name} ${selectedPerson?.lastName || ''}`.trim(),
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
+      
+      if (isSponsee) {
+        contactActivityData.sponseeContactId = (savedContact as any).id;
+        contactActivityData.sponseeId = selectedPerson?.id;
+      } else {
+        contactActivityData.sponsorContactId = (savedContact as any).id;
+        contactActivityData.sponsorId = selectedPerson?.id;
+      }
+      
+      console.log(`[handleContactWithActionItems] Creating activity record for ${personType} contact:`, contactActivityData);
+      await databaseService.add('activities', contactActivityData);
+
       // Save action items if any
       if (actionItems && actionItems.length > 0 && savedContact && (savedContact as any).id) {
         console.log(`[handleContactWithActionItems] Saving ${actionItems.length} action items as type: ${actionItemType}`);
@@ -281,7 +304,26 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
           
           console.log(`[handleContactWithActionItems] Action item data for ${personType}:`, actionItemData);
           
-          await databaseService.add('action_items', actionItemData);
+          // Save action item to master table
+          const savedActionItem = await databaseService.add('action_items', actionItemData);
+          
+          // Only create activity record for sponsor action items (sponsee action items don't appear in Activity Log)
+          if (!isSponsee && savedActionItem && (savedActionItem as any).id) {
+            const actionItemActivityData = {
+              userId: user?.id || 'default_user',
+              type: 'sponsor_action_item',
+              date: actionItem.dueDate || contactData.date,
+              notes: `Action Item: ${actionItem.title}`,
+              actionItemId: (savedActionItem as any).id,
+              sponsorId: selectedPerson?.id,
+              personCalled: `${selectedPerson?.name} ${selectedPerson?.lastName || ''}`.trim(),
+              createdAt: new Date().toISOString(),
+              updatedAt: new Date().toISOString()
+            };
+            
+            console.log(`[handleContactWithActionItems] Creating activity record for sponsor action item:`, actionItemActivityData);
+            await databaseService.add('activities', actionItemActivityData);
+          }
         }
       }
       

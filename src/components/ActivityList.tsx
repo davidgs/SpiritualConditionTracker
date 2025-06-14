@@ -23,7 +23,7 @@ export default function ActivityList({
   const [renderKey, setRenderKey] = React.useState(0);
   
   React.useEffect(() => {
-    const actionItems = activities.filter(a => a.type === 'action-item');
+    const actionItems = activities.filter(a => a.type === 'sponsor_action_item' || a.type === 'action-item');
     // Force component re-render to ensure synchronization
     setRenderKey(prev => prev + 1);
   }, [activities]);

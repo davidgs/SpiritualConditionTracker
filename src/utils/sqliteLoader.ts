@@ -463,12 +463,13 @@ async function createTables(sqlite) {
   //  console.log('[ sqliteLoader.js ] sponsees column already exists or failed to add:', error.message);
   }
 
-  // Activities table
+  // Activities table - unified activity log with references
   await sqlite.execute({
     database: DB_NAME,
     statements: `
       CREATE TABLE IF NOT EXISTS activities (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
+        userId TEXT DEFAULT 'default_user',
         type TEXT NOT NULL,
         date TEXT,
         notes TEXT,
@@ -488,6 +489,11 @@ async function createTables(sqlite) {
         personCalled TEXT,
         serviceType TEXT,
         completed INTEGER DEFAULT 0,
+        actionItemId INTEGER,
+        sponsorContactId INTEGER,
+        sponseeContactId INTEGER,
+        sponsorId INTEGER,
+        sponseeId INTEGER,
         createdAt TEXT,
         updatedAt TEXT
       )
@@ -497,6 +503,7 @@ async function createTables(sqlite) {
 
   // Add missing columns to existing activities table (migrations)
   const activityMigrations = [
+    { column: 'userId', type: 'TEXT DEFAULT "default_user"' },
     { column: 'meetingName', type: 'TEXT' },
     { column: 'meetingId', type: 'INTEGER' },
     { column: 'wasChair', type: 'INTEGER DEFAULT 0' },
@@ -510,7 +517,12 @@ async function createTables(sqlite) {
     { column: 'stepNumber', type: 'INTEGER' },
     { column: 'personCalled', type: 'TEXT' },
     { column: 'serviceType', type: 'TEXT' },
-    { column: 'completed', type: 'INTEGER DEFAULT 0' }
+    { column: 'completed', type: 'INTEGER DEFAULT 0' },
+    { column: 'actionItemId', type: 'INTEGER' },
+    { column: 'sponsorContactId', type: 'INTEGER' },
+    { column: 'sponseeContactId', type: 'INTEGER' },
+    { column: 'sponsorId', type: 'INTEGER' },
+    { column: 'sponseeId', type: 'INTEGER' }
   ];
 
   for (const migration of activityMigrations) {
@@ -616,16 +628,26 @@ async function createTables(sqlite) {
   });
   console.log('[ sqliteLoader.js ] Action items table created');
 
-  // Add deleted column to existing action_items table (migration)
-  try {
-    await sqlite.execute({
-      database: DB_NAME,
-      statements: `ALTER TABLE action_items ADD COLUMN deleted INTEGER DEFAULT 0`
-    });
-    console.log('[ sqliteLoader.js ] Added deleted column to action_items table');
-  } catch (error) {
-    // Column already exists, which is fine
-    console.log('[ sqliteLoader.js ] deleted column already exists or failed to add:', error.message);
+  // Add missing columns to existing action_items table (migrations)
+  const actionItemMigrations = [
+    { column: 'deleted', type: 'INTEGER DEFAULT 0' },
+    { column: 'sponsorId', type: 'INTEGER' },
+    { column: 'sponsorName', type: 'TEXT' },
+    { column: 'sponseeId', type: 'INTEGER' },
+    { column: 'sponseeName', type: 'TEXT' }
+  ];
+
+  for (const migration of actionItemMigrations) {
+    try {
+      await sqlite.execute({
+        database: DB_NAME,
+        statements: `ALTER TABLE action_items ADD COLUMN ${migration.column} ${migration.type}`
+      });
+      console.log(`[ sqliteLoader.js ] Added ${migration.column} column to action_items table`);
+    } catch (error) {
+      // Column already exists, which is fine
+      console.log(`[ sqliteLoader.js ] ${migration.column} column already exists or failed to add:`, error.message);
+    }
   }
 
   // Sponsees table

@@ -6,6 +6,7 @@ import {
 import { useAppData } from '../contexts/AppDataContext';
 import { ActionItem } from '../types/database';
 import ActionItemComponent from './shared/ActionItem';
+import { actionItemService, ActionItemWithStatus } from '../utils/actionItemService';
 
 interface ActionItemsListProps {
   contactId: number;
