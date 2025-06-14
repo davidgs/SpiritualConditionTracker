@@ -79,7 +79,7 @@ function Header({ title, menuOpen, setMenuOpen, isMobile, onNavigate, autoStartT
           sx={{ 
             fontWeight: 600,
             color: headerTextColor,
-            fontSize: '1.1rem',
+            fontSize: '1.2rem',
             lineHeight: 1.2,
             flex: 1
           }}
