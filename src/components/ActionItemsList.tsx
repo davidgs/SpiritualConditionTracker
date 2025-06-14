@@ -6,7 +6,6 @@ import {
 import { useAppData } from '../contexts/AppDataContext';
 import { ActionItem } from '../types/database';
 import ActionItemComponent from './shared/ActionItem';
-import { actionItemService, ActionItemWithStatus } from '../utils/actionItemService';
 
 interface ActionItemsListProps {
   contactId: number;
@@ -28,44 +27,53 @@ export const ActionItemsList: React.FC<ActionItemsListProps> = ({
   const { state, updateActionItem } = useAppData();
   const [actionItems, setActionItems] = useState<ActionItem[]>([]);
 
-  // Extract action items for this contact from shared state
+  // Strategy 1: Load action items directly from activities that reference master action_items table
   useEffect(() => {
-    const actionItemActivities = state.activities.filter(activity => {
-      const activityType = activity.type as string;
-      const isActionItemType = activityType === 'action-item' || 
-                               activityType === 'sponsor_action_item' || 
-                               activityType === 'sponsee_action_item';
-      
-      const hasActionItemData = activity.actionItemData;
-      const isForThisContact = hasActionItemData && 
-                               (activity.actionItemData.contactId === contactId || 
-                                activity.actionItemData.sponsorContactId === contactId);
-      
-      // Additional filtering for sponsor/sponsee specific action items
-      if (personType && hasActionItemData) {
-        if (personType === 'sponsor' && sponsorId) {
-          const belongsToSponsor = (activity.actionItemData as any).sponsorId === sponsorId;
-          return isActionItemType && hasActionItemData && isForThisContact && belongsToSponsor;
-        } else if (personType === 'sponsee' && sponseeId) {
-          const belongsToSponsee = (activity.actionItemData as any).sponseeId === sponseeId;
-          return isActionItemType && hasActionItemData && isForThisContact && belongsToSponsee;
-        }
+    const loadActionItems = async () => {
+      try {
+        console.log(`[ActionItemsList] Loading action items for contact ${contactId}, sponsor: ${sponsorId}, sponsee: ${sponseeId}`);
+        
+        // Filter activities that reference action items for this contact
+        const actionItemActivities = state.activities.filter(activity => {
+          const activityType = activity.type as string;
+          const isActionItemType = activityType === 'action-item' || 
+                                   activityType === 'sponsor_action_item' || 
+                                   activityType === 'sponsee_action_item';
+          
+          const hasActionItemData = activity.actionItemData;
+          const isForThisContact = hasActionItemData && 
+                                   (activity.actionItemData.contactId === contactId);
+          
+          // Additional filtering for sponsor/sponsee specific action items
+          if (personType && hasActionItemData) {
+            if (personType === 'sponsor' && sponsorId) {
+              const belongsToSponsor = (activity.actionItemData as any).sponsorId === sponsorId;
+              return isActionItemType && hasActionItemData && isForThisContact && belongsToSponsor;
+            } else if (personType === 'sponsee' && sponseeId) {
+              const belongsToSponsee = (activity.actionItemData as any).sponseeId === sponseeId;
+              return isActionItemType && hasActionItemData && isForThisContact && belongsToSponsee;
+            }
+          }
+          
+          return isActionItemType && hasActionItemData && isForThisContact;
+        });
+        
+        // Extract action item data from activities
+        const contactActionItems = actionItemActivities
+          .map(activity => activity.actionItemData)
+          .filter(Boolean) as ActionItem[];
+        
+        console.log(`[ActionItemsList] Found ${contactActionItems.length} action items for contact ${contactId}`);
+        setActionItems(contactActionItems);
+        
+      } catch (error) {
+        console.error('[ActionItemsList] Error loading action items:', error);
+        setActionItems([]);
       }
-      
-      return isActionItemType && hasActionItemData && isForThisContact;
-    });
-    
-    const contactActionItems = actionItemActivities
-      .map(activity => activity.actionItemData)
-      .filter(Boolean) as ActionItem[];
-    
-    console.log(`[ActionItemsList] ContactId ${contactId}: Found ${actionItemActivities.length} activities, ${contactActionItems.length} action items`);
-    if (actionItemActivities.length > 0) {
-      console.log(`[ActionItemsList] Activities for contact ${contactId}:`, actionItemActivities);
-    }
-    
-    setActionItems(contactActionItems);
-  }, [contactId, state.activities, refreshKey]);
+    };
+
+    loadActionItems();
+  }, [contactId, refreshKey, sponsorId, sponseeId, personType, state.activities]);
 
   // Toggle action item completion using shared AppDataContext
   const handleToggle = async (actionItemId: number) => {
@@ -84,6 +92,12 @@ export const ActionItemsList: React.FC<ActionItemsListProps> = ({
       // Use AppDataContext update function for consistency
       await updateActionItem(actionItemId, updates);
       
+      // Reload action items to reflect changes
+      const updatedItems = actionItems.map(item => 
+        item.id === actionItemId ? { ...item, ...updates } : item
+      );
+      setActionItems(updatedItems);
+      
     } catch (error) {
       console.error('Error toggling action item:', error);
     }
@@ -97,6 +111,9 @@ export const ActionItemsList: React.FC<ActionItemsListProps> = ({
         deleted: 1,
         updatedAt: new Date().toISOString()
       });
+      
+      // Remove from local state
+      setActionItems(actionItems.filter(item => item.id !== actionItemId));
       
     } catch (error) {
       console.error('Error deleting action item:', error);

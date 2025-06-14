@@ -1,132 +1,100 @@
 /**
  * Action Item Service - Strategy 1 Implementation
  * Manages relationships between activities table (activity log) and action_items table (master data)
+ * 
+ * Architecture:
+ * - action_items table: Single source of truth for all action item master data
+ * - activities table: References action items via actionItemId for activity logging
+ * - Contact associations: sponsorId/sponseeId foreign keys link to specific people
  */
 
-import databaseService from '../services/DatabaseService';
+import { ActionItem, Activity } from '../types/database';
 
-export interface ActionItemWithStatus {
-  id: number;
-  title: string;
-  text: string;
-  notes: string;
-  dueDate: string;
-  completed: 0 | 1;
-  deleted: 0 | 1;
-  type: string;
-  contactId: number;
-  sponsorId?: number;
+export interface ActionItemWithStatus extends ActionItem {
   sponsorName?: string;
-  sponseeId?: number;
   sponseeName?: string;
-  createdAt: string;
-  updatedAt: string;
 }
 
 export class ActionItemService {
   /**
-   * Get action items for a specific contact with current status from master table
+   * Get all action items from activities that reference the master action_items table
    */
-  async getActionItemsForContact(contactId: number, sponsorId?: number, sponseeId?: number): Promise<ActionItemWithStatus[]> {
-    try {
-      // Query action_items table directly for master data
-      const allActionItems = await databaseService.getAll('action_items');
+  static getActionItemsFromActivities(activities: Activity[], contactId?: number, sponsorId?: number, sponseeId?: number): ActionItemWithStatus[] {
+    // Filter activities that have action item references
+    const actionItemActivities = activities.filter(activity => {
+      const activityType = activity.type as string;
+      const isActionItemType = activityType === 'action-item' || 
+                               activityType === 'sponsor_action_item' || 
+                               activityType === 'sponsee_action_item';
       
-      return allActionItems.filter(item => {
-        // Filter by contact ID
-        if (item.contactId !== contactId) return false;
-        
-        // Filter by sponsor/sponsee if specified
-        if (sponsorId && item.sponsorId !== sponsorId) return false;
-        if (sponseeId && item.sponseeId !== sponseeId) return false;
-        
-        // Exclude deleted items
-        if (item.deleted === 1) return false;
-        
-        return true;
-      });
-    } catch (error) {
-      console.error('[ActionItemService] Error getting action items for contact:', error);
-      return [];
-    }
-  }
-
-  /**
-   * Update action item status in master table
-   */
-  async updateActionItemStatus(actionItemId: number, updates: { completed?: 0 | 1; deleted?: 0 | 1 }): Promise<boolean> {
-    try {
-      await databaseService.update('action_items', actionItemId, {
-        ...updates,
-        updatedAt: new Date().toISOString()
-      });
+      const hasActionItemData = activity.actionItemData;
       
-      console.log(`[ActionItemService] Updated action item ${actionItemId} status:`, updates);
+      if (!isActionItemType || !hasActionItemData) return false;
+      
+      // Filter by contact if specified
+      if (contactId && activity.actionItemData.contactId !== contactId) return false;
+      
+      // Filter by sponsor/sponsee if specified
+      if (sponsorId && (activity.actionItemData as any).sponsorId !== sponsorId) return false;
+      if (sponseeId && (activity.actionItemData as any).sponseeId !== sponseeId) return false;
+      
+      // Exclude deleted items
+      if (activity.actionItemData.deleted === 1) return false;
+      
       return true;
-    } catch (error) {
-      console.error('[ActionItemService] Error updating action item status:', error);
-      return false;
-    }
+    });
+    
+    // Extract unique action items (activities may reference same action item multiple times)
+    const uniqueActionItems = new Map<number, ActionItemWithStatus>();
+    
+    actionItemActivities.forEach(activity => {
+      if (activity.actionItemData && !uniqueActionItems.has(activity.actionItemData.id)) {
+        uniqueActionItems.set(activity.actionItemData.id, activity.actionItemData as ActionItemWithStatus);
+      }
+    });
+    
+    return Array.from(uniqueActionItems.values()).sort((a, b) => 
+      new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime()
+    );
   }
 
   /**
-   * Get action item details by ID from master table
+   * Create activity record that references an action item from master table
    */
-  async getActionItemById(actionItemId: number): Promise<ActionItemWithStatus | null> {
-    try {
-      const actionItem = await databaseService.getById('action_items', actionItemId);
-      return actionItem as ActionItemWithStatus | null;
-    } catch (error) {
-      console.error('[ActionItemService] Error getting action item by ID:', error);
-      return null;
-    }
+  static createActionItemActivity(actionItemId: number, userId: string | number, activityType: string = 'action-item'): Omit<Activity, 'id' | 'createdAt' | 'updatedAt'> {
+    return {
+      userId: userId.toString(),
+      type: activityType,
+      date: new Date().toISOString().split('T')[0],
+      actionItemId,
+      notes: `Action item reference created`,
+      duration: 0
+    };
   }
 
   /**
-   * Get activities that reference action items (for Activity Log display)
+   * Filter action items by completion status
    */
-  async getActionItemActivities(userId: string): Promise<any[]> {
-    try {
-      const activities = await databaseService.getAll('activities');
-      
-      // Filter for action item activities for this user
-      const actionItemActivities = activities.filter(activity => 
-        activity.userId === userId && 
-        activity.actionItemId && 
-        (activity.type === 'sponsor_action_item')
-      );
-
-      // Enrich with action item data from master table
-      const enrichedActivities = await Promise.all(
-        actionItemActivities.map(async (activity) => {
-          const actionItem = await this.getActionItemById(activity.actionItemId);
-          return {
-            ...activity,
-            actionItemData: actionItem
-          };
-        })
-      );
-
-      return enrichedActivities.filter(activity => activity.actionItemData !== null);
-    } catch (error) {
-      console.error('[ActionItemService] Error getting action item activities:', error);
-      return [];
-    }
+  static filterByStatus(actionItems: ActionItemWithStatus[], completed?: boolean): ActionItemWithStatus[] {
+    if (completed === undefined) return actionItems;
+    
+    return actionItems.filter(item => 
+      completed ? item.completed === 1 : item.completed === 0
+    );
   }
 
   /**
-   * Delete action item (soft delete in master table)
+   * Get action items for spiritual fitness calculation
    */
-  async deleteActionItem(actionItemId: number): Promise<boolean> {
-    try {
-      await this.updateActionItemStatus(actionItemId, { deleted: 1 });
-      console.log(`[ActionItemService] Soft deleted action item ${actionItemId}`);
-      return true;
-    } catch (error) {
-      console.error('[ActionItemService] Error deleting action item:', error);
-      return false;
-    }
+  static getActionItemsForSpiritualFitness(activities: Activity[], timeframeDays: number): ActionItemWithStatus[] {
+    const cutoffDate = new Date();
+    cutoffDate.setDate(cutoffDate.getDate() - timeframeDays);
+    
+    return this.getActionItemsFromActivities(activities).filter(item => {
+      const itemDate = new Date(item.createdAt || 0);
+      return itemDate >= cutoffDate;
+    });
   }
 }
 
-export const actionItemService = new ActionItemService();
+export const actionItemService = ActionItemService;
