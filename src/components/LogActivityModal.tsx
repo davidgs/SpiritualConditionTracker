@@ -382,7 +382,7 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
           ) : (
             <form onSubmit={handleSubmit}>
               {/* Activity Type */}
-              <Box sx={{ marginBottom: '1rem', maxWidth: '100%' }}>
+              <Box sx={{ marginBottom: '0.5rem', maxWidth: '100%' }}>
                 <TextField
                   select
                   fullWidth
@@ -398,7 +398,7 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
                     }
                   }}
                   sx={{
-                    mb: 2,
+                    mb: 1,
                     "sx={getTextFieldStyle()} .MuiOutlinedInput-root": {
                       height: 56,
                       borderRadius: 2
