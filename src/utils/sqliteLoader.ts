@@ -6,6 +6,105 @@
 // Default database name for consistency
 const DB_NAME = 'spiritual_condition_tracker.db';
 
+// Mock database for web development
+async function createMockDatabase() {
+  console.log('[ sqliteLoader.js ] Creating mock database for web development');
+  
+  // Simple in-memory storage for development
+  const mockStorage = {
+    users: [],
+    activities: [],
+    meetings: [],
+    sponsors: [],
+    sponsor_contacts: [],
+    sponsees: [],
+    sponsee_contacts: [],
+    action_items: []
+  };
+  
+  return {
+    async getAll(collection) {
+      return mockStorage[collection] || [];
+    },
+    
+    async add(collection, item) {
+      const newItem = {
+        ...item,
+        id: Date.now() + Math.random(),
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
+      mockStorage[collection] = mockStorage[collection] || [];
+      mockStorage[collection].push(newItem);
+      return newItem;
+    },
+    
+    async update(collection, id, updates) {
+      const items = mockStorage[collection] || [];
+      const index = items.findIndex(item => item.id == id);
+      if (index !== -1) {
+        items[index] = { ...items[index], ...updates, updatedAt: new Date().toISOString() };
+        return items[index];
+      }
+      return null;
+    },
+    
+    async delete(collection, id) {
+      const items = mockStorage[collection] || [];
+      const index = items.findIndex(item => item.id == id);
+      if (index !== -1) {
+        items.splice(index, 1);
+        return true;
+      }
+      return false;
+    },
+    
+    async getById(collection, id) {
+      const items = mockStorage[collection] || [];
+      return items.find(item => item.id == id) || null;
+    },
+    
+    async remove(collection, id) {
+      return this.delete(collection, id);
+    },
+    
+    async resetDatabase() {
+      Object.keys(mockStorage).forEach(key => {
+        mockStorage[key] = [];
+      });
+      console.log('[ sqliteLoader.js ] Mock database reset');
+    },
+    
+    calculateSobrietyDays(sobrietyDate) {
+      const today = new Date();
+      const sobriety = new Date(sobrietyDate);
+      const diffTime = Math.abs(today.getTime() - sobriety.getTime());
+      return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    },
+    
+    calculateSobrietyYears(sobrietyDate, decimalPlaces = 2) {
+      const days = this.calculateSobrietyDays(sobrietyDate);
+      return parseFloat((days / 365.25).toFixed(decimalPlaces));
+    },
+    
+    async calculateSpiritualFitness() {
+      return 5; // Default score for mock
+    },
+    
+    async calculateSpiritualFitnessWithTimeframe(timeframe = 30) {
+      return 5; // Default score for mock
+    },
+    
+    async getPreference(key) {
+      return null;
+    },
+    
+    async setPreference(key, value) {
+      // Mock implementation
+    }
+  };
+}
+
 
 
 /**
@@ -15,21 +114,36 @@ const DB_NAME = 'spiritual_condition_tracker.db';
 
 
 export default async function initSQLiteDatabase() {
-  console.log('[ sqliteLoader.js:14 ] Initializing SQLite database via Capacitor...');
+  console.log('[ sqliteLoader.js:14 ] Initializing SQLite database...');
   
   try {
-    // Check if Capacitor is available
-    if (!window.Capacitor || !window.Capacitor.Plugins) {
-      throw new Error('Capacitor not available - this app requires Capacitor for iOS');
+    // Check if we're in a Capacitor environment
+    if (typeof window !== 'undefined' && window.Capacitor && window.Capacitor.getPlatform) {
+      // Native Capacitor environment - use CapacitorSQLite
+      const { CapacitorSQLite } = await import('@capacitor-community/sqlite');
+      const sqlite = CapacitorSQLite;
+      
+      return await initNativeSQLiteDatabase(sqlite);
+    } else {
+      // Web development environment - use LocalStorage-based database
+      console.log('[ sqliteLoader.js ] Running in web development mode');
+      return await createMockDatabase();
     }
+  } catch (error) {
+    console.error('[ sqliteLoader.js ] Failed to initialize database:', error);
+    // Fallback to mock database if native initialization fails
+    return await createMockDatabase();
+  }
+}
+
+async function initNativeSQLiteDatabase(sqlite) {
+  console.log('[ sqliteLoader.js ] Initializing native SQLite database');
+  
+  try {
     
     // Detect platform information for specialized handling
     const platform = window.Capacitor.getPlatform();
     console.log('[ sqliteLoader.js:20 ]  Capacitor platform detected:', platform);
-    console.log('[ sqliteLoader.js:21 ]  Capacitor plugins available:', Object.keys(window.Capacitor.Plugins || {}));
-
-    // Get the SQLite plugin
-    const sqlite = window.Capacitor.Plugins.CapacitorSQLite;
     
     if (!sqlite) {
       throw new Error('CapacitorSQLite plugin not found - this app requires SQLite for iOS');

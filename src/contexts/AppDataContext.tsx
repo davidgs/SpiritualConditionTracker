@@ -650,27 +650,11 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
     try {
       const updatedActionItem = await databaseService.updateActionItem(itemId, updates);
       if (updatedActionItem) {
-        // Update only action item activities in state without full database reload
-        const updatedActivities = state.activities.map(activity => {
-          if (activity.type === 'action-item' && 
-              activity.actionItemData && 
-              Number(activity.actionItemData.id) === Number(updatedActionItem.id)) {
-            return {
-              ...activity,
-              location: updatedActionItem.deleted ? 'deleted' : (updatedActionItem.completed ? 'completed' : 'pending'),
-              updatedAt: updatedActionItem.updatedAt || new Date().toISOString(),
-              actionItemData: {
-                ...activity.actionItemData,
-                ...updatedActionItem
-              }
-            };
-          }
-          return activity;
-        });
-        
-        dispatch({ type: 'SET_ACTIVITIES', payload: updatedActivities });
+        dispatch({ type: 'UPDATE_ACTION_ITEM', payload: { id: itemId, data: updates } });
+        console.log('[ AppDataContext.tsx ] Action item updated:', itemId);
+        return updatedActionItem;
       }
-      return updatedActionItem;
+      return null;
     } catch (error) {
       console.error('[ AppDataContext.tsx ] Failed to update action item:', error);
       dispatch({ type: 'SET_ERROR', payload: 'Failed to update action item' });
