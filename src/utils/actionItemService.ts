@@ -61,10 +61,10 @@ export class ActionItemService {
   /**
    * Create activity record that references an action item from master table
    */
-  static createActionItemActivity(actionItemId: number, userId: string | number, activityType: string = 'action-item'): Omit<Activity, 'id' | 'createdAt' | 'updatedAt'> {
+  static createActionItemActivity(actionItemId: number, userId: string | number, activityType: 'action-item' | 'sponsor_action_item' | 'sponsee_action_item' = 'action-item'): Partial<Activity> {
     return {
       userId: userId.toString(),
-      type: activityType,
+      type: activityType as any,
       date: new Date().toISOString().split('T')[0],
       actionItemId,
       notes: `Action item reference created`,

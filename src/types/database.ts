@@ -73,6 +73,8 @@ export interface ActionItem extends BaseEntity {
   type: 'todo' | 'action' | 'reminder';
   contactId?: number; // Optional link to sponsor contact
   sponsorContactId?: number; // Optional link to sponsor contact
+  sponsorId?: number; // Foreign key to sponsors table
+  sponseeId?: number; // Foreign key to sponsees table
 }
 
 // Join table for sponsor contacts and action items
@@ -83,6 +85,7 @@ export interface SponsorContactActionItem extends BaseEntity {
 
 // Activity interface
 export interface Activity extends BaseEntity {
+  userId: string;
   type: ActivityType;
   date: string;
   notes?: string;
