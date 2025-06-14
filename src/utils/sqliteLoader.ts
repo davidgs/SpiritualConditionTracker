@@ -6,25 +6,51 @@
 // Default database name for consistency
 const DB_NAME = 'spiritual_condition_tracker.db';
 
-// Mock database for web development
+// Web-compatible database for development
 async function createMockDatabase() {
-  console.log('[ sqliteLoader.js ] Creating mock database for web development');
+  console.log('[ sqliteLoader.js ] Creating web-compatible database for development');
   
-  // Simple in-memory storage for development
-  const mockStorage = {
-    users: [],
-    activities: [],
-    meetings: [],
-    sponsors: [],
-    sponsor_contacts: [],
-    sponsees: [],
-    sponsee_contacts: [],
-    action_items: []
+  // Use localStorage for persistence during development
+  const STORAGE_KEY = 'spiritual_condition_tracker_db';
+  
+  // Load existing data from localStorage
+  let storage = {};
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    storage = stored ? JSON.parse(stored) : {
+      users: [],
+      activities: [],
+      meetings: [],
+      sponsors: [],
+      sponsor_contacts: [],
+      sponsees: [],
+      sponsee_contacts: [],
+      action_items: []
+    };
+  } catch (error) {
+    storage = {
+      users: [],
+      activities: [],
+      meetings: [],
+      sponsors: [],
+      sponsor_contacts: [],
+      sponsees: [],
+      sponsee_contacts: [],
+      action_items: []
+    };
+  }
+  
+  const saveToStorage = () => {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(storage));
+    } catch (error) {
+      console.warn('Failed to save to localStorage:', error);
+    }
   };
   
   return {
     async getAll(collection) {
-      return mockStorage[collection] || [];
+      return storage[collection] || [];
     },
     
     async add(collection, item) {
@@ -34,45 +60,49 @@ async function createMockDatabase() {
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
       };
-      mockStorage[collection] = mockStorage[collection] || [];
-      mockStorage[collection].push(newItem);
+      storage[collection] = storage[collection] || [];
+      storage[collection].push(newItem);
+      saveToStorage();
       return newItem;
     },
     
     async update(collection, id, updates) {
-      const items = mockStorage[collection] || [];
+      const items = storage[collection] || [];
       const index = items.findIndex(item => item.id == id);
       if (index !== -1) {
         items[index] = { ...items[index], ...updates, updatedAt: new Date().toISOString() };
+        saveToStorage();
         return items[index];
       }
       return null;
     },
     
     async delete(collection, id) {
-      const items = mockStorage[collection] || [];
+      const items = storage[collection] || [];
       const index = items.findIndex(item => item.id == id);
       if (index !== -1) {
         items.splice(index, 1);
+        saveToStorage();
         return true;
       }
       return false;
     },
     
     async getById(collection, id) {
-      const items = mockStorage[collection] || [];
+      const items = storage[collection] || [];
       return items.find(item => item.id == id) || null;
     },
     
     async remove(collection, id) {
-      return this.delete(collection, id);
+      return await this.delete(collection, id);
     },
     
     async resetDatabase() {
-      Object.keys(mockStorage).forEach(key => {
-        mockStorage[key] = [];
+      Object.keys(storage).forEach(key => {
+        storage[key] = [];
       });
-      console.log('[ sqliteLoader.js ] Mock database reset');
+      saveToStorage();
+      console.log('[ sqliteLoader.js ] Database reset');
     },
     
     calculateSobrietyDays(sobrietyDate) {
@@ -88,11 +118,11 @@ async function createMockDatabase() {
     },
     
     async calculateSpiritualFitness() {
-      return 5; // Default score for mock
+      return 5;
     },
     
     async calculateSpiritualFitnessWithTimeframe(timeframe = 30) {
-      return 5; // Default score for mock
+      return 5;
     },
     
     async getPreference(key) {
@@ -100,7 +130,7 @@ async function createMockDatabase() {
     },
     
     async setPreference(key, value) {
-      // Mock implementation
+      // Implementation for preferences
     }
   };
 }
@@ -482,6 +512,34 @@ async function initNativeSQLiteDatabase(sqlite) {
           console.error('[ sqliteLoader.js ] Error during database reset:', error);
           throw error;
         }
+      },
+
+      calculateSobrietyDays(sobrietyDate) {
+        const today = new Date();
+        const sobriety = new Date(sobrietyDate);
+        const diffTime = Math.abs(today.getTime() - sobriety.getTime());
+        return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      },
+
+      calculateSobrietyYears(sobrietyDate, decimalPlaces = 2) {
+        const days = this.calculateSobrietyDays(sobrietyDate);
+        return parseFloat((days / 365.25).toFixed(decimalPlaces));
+      },
+
+      async calculateSpiritualFitness() {
+        return 5; // Default score
+      },
+
+      async calculateSpiritualFitnessWithTimeframe(timeframe = 30) {
+        return 5; // Default score
+      },
+
+      async getPreference(key) {
+        return null;
+      },
+
+      async setPreference(key, value) {
+        // Implementation for preferences
       }
     };
 
