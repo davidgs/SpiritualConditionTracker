@@ -225,19 +225,30 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
     }
   };
 
-  const handleAddContactWithActionItem = async (contactData, actionItems = []) => {
+  const handleContactWithActionItems = async (contactData, actionItems = [], personType: 'sponsor' | 'sponsee') => {
     try {
+      console.log(`[handleContactWithActionItems] Processing ${personType} contact:`, contactData);
+      
+      const isSponsee = personType === 'sponsee';
+      const contactTable = isSponsee ? 'sponsee_contacts' : 'sponsor_contacts';
+      const foreignKey = isSponsee ? 'sponseeId' : 'sponsorId';
+      const selectedPerson = isSponsee ? selectedSponseeForContact : selectedSponsorForContact;
+      const actionItemType = isSponsee ? 'sponsee_action_item' : 'sponsor_action_item';
+      
       // Save the contact first
-      const savedContact = await databaseService.add('sponsor_contacts', {
+      const savedContact = await databaseService.add(contactTable, {
         ...contactData,
-        sponsorId: selectedSponsorForContact?.id,
+        [foreignKey]: selectedPerson?.id,
         userId: user?.id,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
       });
       
+      console.log(`[handleContactWithActionItems] Saved ${personType} contact to ${contactTable}:`, savedContact);
+      
       // Save action items if any
       if (actionItems && actionItems.length > 0 && savedContact && (savedContact as any).id) {
+        console.log(`[handleContactWithActionItems] Saving ${actionItems.length} action items as type: ${actionItemType}`);
         for (const actionItem of actionItems) {
           await databaseService.add('action_items', {
             title: actionItem.title,
@@ -246,72 +257,36 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
             contactId: (savedContact as any).id,
             dueDate: actionItem.dueDate || contactData.date,
             completed: 0,
-            type: 'sponsor_action_item', // Mark as sponsor action item for categorization
+            type: actionItemType,
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString()
           });
         }
       }
       
-      setShowContactForm(false);
-      setSelectedSponsorForContact(null);
-      await loadSponsorContacts();
+      // Reset form state
+      if (isSponsee) {
+        setShowSponseeContactForm(false);
+        setSelectedSponseeForContact(null);
+        await loadSponseeContacts();
+      } else {
+        setShowContactForm(false);
+        setSelectedSponsorForContact(null);
+        await loadSponsorContacts();
+      }
+      
       setRefreshKey(prev => prev + 1);
       
-      // Reload activities to show new sponsor contact and action items in dashboard
+      // Reload activities to show new contact and action items in dashboard
       if (onSaveActivity) {
-        // Trigger activity reload through parent component
         const refreshActivity = { type: 'refresh', id: Date.now() };
         await onSaveActivity(refreshActivity);
       }
+      
+      console.log(`[handleContactWithActionItems] Successfully completed ${personType} contact save`);
     } catch (error) {
-      console.error('Failed to add sponsor contact:', error);
-      alert('Failed to add contact');
-    }
-  };
-
-  const handleAddSponseeContactWithActionItem = async (contactData, actionItems = []) => {
-    try {
-      // Save the sponsee contact first
-      const savedContact = await databaseService.add('sponsee_contacts', {
-        ...contactData,
-        sponseeId: selectedSponseeForContact?.id,
-        userId: user?.id,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-      });
-      
-      // Save action items if any
-      if (actionItems && actionItems.length > 0 && savedContact && (savedContact as any).id) {
-        for (const actionItem of actionItems) {
-          await databaseService.add('action_items', {
-            title: actionItem.title,
-            text: actionItem.text || actionItem.title,
-            notes: actionItem.notes || '',
-            contactId: (savedContact as any).id,
-            dueDate: actionItem.dueDate || contactData.date,
-            completed: 0,
-            type: 'sponsee_action_item', // Mark as sponsee action item for categorization
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString()
-          });
-        }
-      }
-      
-      setShowSponseeContactForm(false);
-      setSelectedSponseeForContact(null);
-      await loadSponseeContacts();
-      setRefreshKey(prev => prev + 1);
-      
-      // Reload activities to show new sponsee contact and action items in dashboard
-      if (onSaveActivity) {
-        // Trigger activity reload through parent component
-        const refreshActivity = { type: 'refresh', id: Date.now() };
-        await onSaveActivity(refreshActivity);
-      }
-    } catch (error) {
-      console.error('Failed to add sponsee contact:', error);
-      alert('Failed to add contact');
+      console.error(`Failed to add ${personType} contact:`, error);
+      alert(`Failed to add ${personType} contact`);
     }
   };
 
@@ -448,7 +423,7 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
           setEditingContact(null);
           setSelectedSponsorForContact(null);
         }}
-        onSave={handleAddContactWithActionItem}
+        onSave={(contactData, actionItems) => handleContactWithActionItems(contactData, actionItems, 'sponsor')}
         title={editingContact ? 'Edit Sponsor Contact' : 'Add Sponsor Contact'}
         initialData={editingContact}
       />
@@ -461,7 +436,7 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
           setEditingContact(null);
           setSelectedSponseeForContact(null);
         }}
-        onSave={handleAddSponseeContactWithActionItem}
+        onSave={(contactData, actionItems) => handleContactWithActionItems(contactData, actionItems, 'sponsee')}
         title={editingContact ? 'Edit Sponsee Contact' : 'Add Sponsee Contact'}
         initialData={editingContact}
       />

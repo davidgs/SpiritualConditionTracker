@@ -50,7 +50,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
             contactId: (savedContact as any).id,
             dueDate: actionItem.dueDate || contactData.date,
             completed: 0,
-            type: 'todo',
+            type: 'sponsor_action_item', // Mark as sponsor action item for categorization
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString()
           });
@@ -85,7 +85,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
             contactId: (savedContact as any).id,
             dueDate: actionItem.dueDate || contactData.date,
             completed: 0,
-            type: 'todo',
+            type: 'sponsee_action_item', // Mark as sponsee action item for categorization
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString()
           });
