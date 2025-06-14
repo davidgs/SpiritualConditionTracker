@@ -8,7 +8,8 @@ import LogActivityModal from './LogActivityModal';
 import { useAppTheme } from '../contexts/MuiThemeProvider';
 import { Paper, Box, Typography, IconButton, Button } from '@mui/material';
 import { User, Activity, Meeting } from '../types/database';
-import { calculateSpiritualFitnessScore, getSpiritualFitnessBreakdown } from '../utils/SpiritualFitness'
+import { calculateSpiritualFitnessScore, getSpiritualFitnessBreakdown } from '../utils/SpiritualFitness';
+import DatabaseService from '../services/DatabaseService';
 
 interface DashboardProps {
   setCurrentView: (view: string) => void;
@@ -24,6 +25,79 @@ interface DashboardProps {
 }
 
 export default function Dashboard({ setCurrentView, user, activities, meetings = [], onSave, onSaveMeeting, onTimeframeChange, currentTimeframe, onUpdateActionItem, onNavigateToSponsorContact }: DashboardProps) {
+  
+  // Get DatabaseService instance for contact operations
+  const databaseService = DatabaseService.getInstance();
+
+  // Handler for saving sponsor contacts from LogActivityModal
+  const handleSaveSponsorContact = async (contactData: any, actionItems: any[] = []) => {
+    try {
+      // Save the sponsor contact
+      const savedContact = await databaseService.add('sponsor_contacts', {
+        ...contactData,
+        userId: user?.id,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      });
+      
+      // Save action items if any
+      if (actionItems && actionItems.length > 0 && savedContact && (savedContact as any).id) {
+        for (const actionItem of actionItems) {
+          await databaseService.add('action_items', {
+            title: actionItem.title,
+            text: actionItem.text || actionItem.title,
+            notes: actionItem.notes || '',
+            contactId: (savedContact as any).id,
+            dueDate: actionItem.dueDate || contactData.date,
+            completed: 0,
+            type: 'todo',
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString()
+          });
+        }
+      }
+      
+      console.log('Sponsor contact saved successfully:', savedContact);
+    } catch (error) {
+      console.error('Failed to save sponsor contact:', error);
+      alert('Failed to save sponsor contact');
+    }
+  };
+
+  // Handler for saving sponsee contacts from LogActivityModal
+  const handleSaveSponseeContact = async (contactData: any, actionItems: any[] = []) => {
+    try {
+      // Save the sponsee contact to the correct table
+      const savedContact = await databaseService.add('sponsee_contacts', {
+        ...contactData,
+        userId: user?.id,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      });
+      
+      // Save action items if any
+      if (actionItems && actionItems.length > 0 && savedContact && (savedContact as any).id) {
+        for (const actionItem of actionItems) {
+          await databaseService.add('action_items', {
+            title: actionItem.title,
+            text: actionItem.text || actionItem.title,
+            notes: actionItem.notes || '',
+            contactId: (savedContact as any).id,
+            dueDate: actionItem.dueDate || contactData.date,
+            completed: 0,
+            type: 'todo',
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString()
+          });
+        }
+      }
+      
+      console.log('Sponsee contact saved successfully:', savedContact);
+    } catch (error) {
+      console.error('Failed to save sponsee contact:', error);
+      alert('Failed to save sponsee contact');
+    }
+  };
   // Get theme from MUI theme provider
   const { mode } = useAppTheme();
   const darkMode = mode === 'dark';
@@ -561,6 +635,8 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
         onClose={() => setShowActivityModal(false)}
         onSave={onSave}
         onSaveMeeting={onSaveMeeting}
+        onSaveSponsorContact={handleSaveSponsorContact}
+        onSaveSponseeContact={handleSaveSponseeContact}
         meetings={meetings}
       />
     </Box>
