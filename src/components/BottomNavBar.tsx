@@ -51,7 +51,7 @@ function BottomNavBar({ currentView, onNavigate }: BottomNavBarProps) {
               flexDirection: 'column',
               alignItems: 'center',
               justifyContent: 'center',
-              padding: '8px 12px',
+              padding: '8px 8px',
               backgroundColor: 'transparent',
               border: 'none',
               borderRadius: '12px',
@@ -81,7 +81,7 @@ function BottomNavBar({ currentView, onNavigate }: BottomNavBarProps) {
             </Box>
             <Box
               sx={{
-                fontSize: '12px',
+                fontSize: '14px',
                 fontWeight: isActive ? 600 : 400,
                 color: isActive 
                   ? muiTheme.palette.primary.main 
