@@ -80,11 +80,14 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
   const loadSponsorContacts = async () => {
     try {
       const allContacts = await databaseService.getAll('sponsor_contacts');
+      console.log('[loadSponsorContacts] Raw sponsor contacts from DB:', allContacts);
       // Filter to only show contacts for current user's sponsors
       const userSponsorContacts = allContacts.filter((contact: any) => 
         contact.userId === user?.id || 
         sponsors.some(sponsor => sponsor.id === contact.sponsorId)
       );
+      console.log('[loadSponsorContacts] Filtered sponsor contacts:', userSponsorContacts);
+      console.log('[loadSponsorContacts] Current sponsors:', sponsors);
       setSponsorContacts(userSponsorContacts);
     } catch (error) {
       console.error('Failed to load sponsor contacts:', error);
@@ -211,18 +214,16 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
   };
 
   // Contact handlers
-  const handleAddContact = (person: ContactPerson) => {
-    if (sponsors.some(s => s.id === person.id)) {
-      // This is a sponsor
-      setSelectedSponsorForContact(person);
-      setEditingContact(null);
-      setShowContactForm(true);
-    } else {
-      // This is a sponsee
-      setSelectedSponseeForContact(person);
-      setEditingContact(null);
-      setShowSponseeContactForm(true);
-    }
+  const handleAddSponsorContact = (person: ContactPerson) => {
+    setSelectedSponsorForContact(person);
+    setEditingContact(null);
+    setShowContactForm(true);
+  };
+
+  const handleAddSponseeContact = (person: ContactPerson) => {
+    setSelectedSponseeForContact(person);
+    setEditingContact(null);
+    setShowSponseeContactForm(true);
   };
 
   const handleContactWithActionItems = async (contactData, actionItems = [], personType: 'sponsor' | 'sponsee') => {
@@ -346,7 +347,7 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
           onAddPerson={() => handleEditSponsor(null)}
           onEditPerson={handleEditSponsor}
           onDeletePerson={(id) => handleDeletePerson('sponsor', id)}
-          onAddContact={handleAddContact}
+          onAddContact={handleAddSponsorContact}
           onToggleActionItem={handleToggleActionItem}
           addLabel="+ Add Sponsor"
           emptyMessage="No sponsors added yet."
@@ -379,7 +380,7 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
           onAddPerson={() => handleEditSponsee(null)}
           onEditPerson={handleEditSponsee}
           onDeletePerson={(id) => handleDeletePerson('sponsee', id)}
-          onAddContact={handleAddContact}
+          onAddContact={handleAddSponseeContact}
           onToggleActionItem={handleToggleActionItem}
           addLabel="+ Add Sponsee"
           emptyMessage="No sponsees added yet."

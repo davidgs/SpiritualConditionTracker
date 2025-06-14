@@ -81,7 +81,14 @@ export default function SubTabComponent({
   // Helper function to get contacts for a specific person
   const getPersonContacts = (personId: string | number) => {
     const foreignKey = personType === 'sponsor' ? 'sponsorId' : 'sponseeId';
-    return contacts.filter(contact => contact[foreignKey] === personId);
+    const filteredContacts = contacts.filter(contact => {
+      const contactForeignKeyValue = contact[foreignKey];
+      const match = contactForeignKeyValue == personId; // Use loose equality to handle string/number differences
+      console.log(`[getPersonContacts] ${personType} personId: ${personId}, contact ${foreignKey}: ${contactForeignKeyValue}, match: ${match}`);
+      return match;
+    });
+    console.log(`[getPersonContacts] Found ${filteredContacts.length} contacts for ${personType} ${personId}`);
+    return filteredContacts;
   };
 
   // Create tab items for the TabComponent
