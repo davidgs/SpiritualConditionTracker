@@ -335,7 +335,9 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
           style: { 
             overflowX: 'hidden',
             width: '90%',
-            maxWidth: '450px'
+            maxWidth: '450px',
+            maxHeight: '85vh',
+            height: '85vh'
           }
         }}
       >
@@ -364,7 +366,28 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
           <CloseIcon />
         </IconButton>
         
-        <DialogContent dividers>
+        <DialogContent 
+          dividers
+          sx={{
+            overflowY: 'auto',
+            maxHeight: 'calc(85vh - 120px)', // Account for header and footer
+            padding: '1rem',
+            '&::-webkit-scrollbar': {
+              width: '8px',
+            },
+            '&::-webkit-scrollbar-track': {
+              background: '#f1f1f1',
+              borderRadius: '4px',
+            },
+            '&::-webkit-scrollbar-thumb': {
+              background: '#c1c1c1',
+              borderRadius: '4px',
+            },
+            '&::-webkit-scrollbar-thumb:hover': {
+              background: '#a8a8a8',
+            },
+          }}
+        >
           {/* Success message */}
           {showSuccess && (
             <Box
@@ -839,20 +862,25 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
                 />
               </Box>
               
-              <DialogActions sx={{ justifyContent: 'flex-end', padding: '8px 0' }}>
-                <Button onClick={onClose} 
-                  size="small"
-                  variant="contained"
-                  color="error">
-                  Cancel
-                </Button>
-                <Button type="submit" variant="contained" size="small" color="success">
-                  Save
-                </Button>
-              </DialogActions>
             </form>
           )}
         </DialogContent>
+        
+        <DialogActions sx={{ justifyContent: 'flex-end', padding: '16px 24px' }}>
+          <Button onClick={onClose} 
+            size="small"
+            variant="contained"
+            color="error">
+            Cancel
+          </Button>
+          <Button 
+            onClick={handleSubmit}
+            variant="contained" 
+            size="small" 
+            color="success">
+            Save
+          </Button>
+        </DialogActions>
       </StyledDialog>
     </MuiThemeProvider>
   );
