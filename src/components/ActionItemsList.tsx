@@ -23,15 +23,28 @@ export const ActionItemsList: React.FC<ActionItemsListProps> = ({
 
   // Extract action items for this contact from shared state
   useEffect(() => {
-    const actionItemActivities = state.activities.filter(activity => 
-      activity.type === 'action-item' && 
-      activity.actionItemData &&
-      (activity.actionItemData.contactId === contactId || activity.actionItemData.sponsorContactId === contactId)
-    );
+    const actionItemActivities = state.activities.filter(activity => {
+      const activityType = activity.type as string;
+      const isActionItemType = activityType === 'action-item' || 
+                               activityType === 'sponsor_action_item' || 
+                               activityType === 'sponsee_action_item';
+      
+      const hasActionItemData = activity.actionItemData;
+      const isForThisContact = hasActionItemData && 
+                               (activity.actionItemData.contactId === contactId || 
+                                activity.actionItemData.sponsorContactId === contactId);
+      
+      return isActionItemType && hasActionItemData && isForThisContact;
+    });
     
     const contactActionItems = actionItemActivities
       .map(activity => activity.actionItemData)
       .filter(Boolean) as ActionItem[];
+    
+    console.log(`[ActionItemsList] ContactId ${contactId}: Found ${actionItemActivities.length} activities, ${contactActionItems.length} action items`);
+    if (actionItemActivities.length > 0) {
+      console.log(`[ActionItemsList] Activities for contact ${contactId}:`, actionItemActivities);
+    }
     
     setActionItems(contactActionItems);
   }, [contactId, state.activities, refreshKey]);
