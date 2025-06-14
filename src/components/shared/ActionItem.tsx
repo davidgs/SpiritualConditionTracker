@@ -108,7 +108,7 @@ export default function ActionItem({
             <div style={{
               fontWeight: 500,
               color: theme.palette.text.primary,
-              fontSize: '0.875rem',
+              fontSize: '1rem',
               lineHeight: '1.2',
               flex: 1,
               minWidth: 0,
@@ -122,7 +122,7 @@ export default function ActionItem({
             {showDate && displayDate && (
               <div style={{
                 color: theme.palette.text.secondary,
-                fontSize: '0.75rem',
+                fontSize: '0.875rem',
                 flexShrink: 0,
                 marginLeft: '0.5rem',
                 lineHeight: '1.2'
@@ -134,7 +134,7 @@ export default function ActionItem({
           
           <div style={{
             color: isDeleted ? theme.palette.error.main : theme.palette.text.secondary,
-            fontSize: '0.75rem',
+            fontSize: '0.875rem',
             lineHeight: '1.3',
             marginTop: '0.125rem',
             wordWrap: 'break-word',
@@ -160,7 +160,7 @@ export default function ActionItem({
               }}></i>
               <span style={{
                 color: theme.palette.success.main,
-                fontSize: '0.75rem',
+                fontSize: '0.875rem',
                 fontWeight: 500
               }}>
                 Completed
@@ -275,7 +275,7 @@ export default function ActionItem({
       {/* Content */}
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{
-          fontSize: '1rem',
+          fontSize: '1.125rem',
           fontWeight: 500,
           color: isDeleted ? theme.palette.error.main : theme.palette.text.primary,
           textDecoration: isDeleted ? 'line-through' : (isCompleted ? 'line-through' : 'none'),
@@ -287,7 +287,7 @@ export default function ActionItem({
         
         {actionItem.notes && (
           <div style={{
-            fontSize: '0.875rem',
+            fontSize: '1rem',
             color: theme.palette.text.secondary,
             marginTop: '0.25rem',
             wordWrap: 'break-word'
@@ -298,7 +298,7 @@ export default function ActionItem({
         
         {showDate && displayDate && (
           <div style={{
-            fontSize: '0.75rem',
+            fontSize: '0.875rem',
             color: theme.palette.text.secondary,
             marginTop: '0.25rem'
           }}>
