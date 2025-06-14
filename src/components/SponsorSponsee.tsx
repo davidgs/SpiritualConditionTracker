@@ -81,7 +81,7 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
     try {
       const allContacts = await databaseService.getAll('sponsor_contacts');
       // Filter to only show contacts for current user's sponsors
-      const userSponsorContacts = allContacts.filter(contact => 
+      const userSponsorContacts = allContacts.filter((contact: any) => 
         contact.userId === user?.id || 
         sponsors.some(sponsor => sponsor.id === contact.sponsorId)
       );
@@ -95,7 +95,7 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
     try {
       const allContacts = await databaseService.getAll('sponsee_contacts');
       // Filter to only show contacts for current user's sponsees
-      const userSponseeContacts = allContacts.filter(contact => 
+      const userSponseeContacts = allContacts.filter((contact: any) => 
         contact.userId === user?.id || 
         sponsees.some(sponsee => sponsee.id === contact.sponseeId)
       );

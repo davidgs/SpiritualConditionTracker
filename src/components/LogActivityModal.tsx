@@ -30,7 +30,7 @@ import ContactFormDialog from './shared/ContactFormDialog';
  */
 
 
-const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, onSaveSponsorContact, meetings = [] }) => {
+const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, onSaveSponsorContact, onSaveSponseeContact, meetings = [] }) => {
   // Get theme context
   const muiTheme = useTheme();
   
@@ -71,6 +71,9 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, onSaveSponsorC
   
   // Sponsor contact dialog state
   const [showSponsorContactForm, setShowSponsorContactForm] = useState(false);
+  
+  // Sponsee contact dialog state
+  const [showSponseeContactForm, setShowSponseeContactForm] = useState(false);
   
   // Generate current date in YYYY-MM-DD format
   function getCurrentDateString() {
@@ -327,6 +330,20 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, onSaveSponsorC
     setShowSponsorContactForm(false);
     
     // Also close the main activity modal since the sponsor contact was logged
+    onClose();
+  }
+  
+  // Handle saving sponsee contact from the contact form
+  function handleSaveSponseeContact(contactData, actionItems) {
+    // Call the parent's onSaveSponseeContact function to persist the contact
+    if (onSaveSponseeContact) {
+      onSaveSponseeContact(contactData, actionItems);
+    }
+    
+    // Close the sponsee contact form
+    setShowSponseeContactForm(false);
+    
+    // Also close the main activity modal since the sponsee contact was logged
     onClose();
   }
   
@@ -810,7 +827,13 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, onSaveSponsorC
                         type="checkbox"
                         id="sponsee-call"
                         checked={isSponseeCall}
-                        onChange={(e) => setIsSponseeCall(e.target.checked)}
+                        onChange={(e) => {
+                          const isChecked = e.target.checked;
+                          setIsSponseeCall(isChecked);
+                          if (isChecked) {
+                            setShowSponseeContactForm(true);
+                          }
+                        }}
                       />
                       <Box 
                         component="label"
@@ -926,6 +949,25 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, onSaveSponsorC
           }}
           onSave={handleSaveSponsorContact}
           title="Log Sponsor Contact"
+          initialData={{
+            type: 'call',
+            date: date,
+            duration: duration,
+            note: ''
+          }}
+        />
+      )}
+
+      {/* Sponsee Contact Form Dialog */}
+      {showSponseeContactForm && (
+        <ContactFormDialog
+          open={showSponseeContactForm}
+          onClose={() => {
+            setShowSponseeContactForm(false);
+            setIsSponseeCall(false); // Uncheck the sponsee call checkbox
+          }}
+          onSave={handleSaveSponseeContact}
+          title="Log Sponsee Contact"
           initialData={{
             type: 'call',
             date: date,
