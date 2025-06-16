@@ -165,7 +165,7 @@ async function createSponsorTestContacts(sponsor: any, userId: number | string, 
     
     await databaseService.add('activities', contactActivity);
     
-    // Create action item without foreign key constraint (simpler approach)
+    // Create action item linked to this specific contact
     const actionItem = {
       title: 'Practice daily meditation',
       text: 'Practice daily meditation for 10 minutes',
@@ -173,6 +173,9 @@ async function createSponsorTestContacts(sponsor: any, userId: number | string, 
       dueDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(), // 3 days from now
       completed: 0,
       type: 'sponsor_action_item',
+      sponsorContactId: contactId,
+      sponsorId: sponsor.id,
+      contactId: contactId, // Legacy support
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
     };
@@ -273,7 +276,7 @@ async function createSponseeTestContacts(sponsee: any, userId: number | string, 
     
     await databaseService.add('activities', contactActivity);
     
-    // Create action item without foreign key constraint (Note: sponsee action items do NOT appear in Activity Log)
+    // Create action item linked to this specific sponsee contact
     const actionItem = {
       title: 'Complete Step 4 inventory',
       text: 'Work on personal inventory list',
@@ -281,6 +284,9 @@ async function createSponseeTestContacts(sponsee: any, userId: number | string, 
       dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // 1 week from now
       completed: 0,
       type: 'sponsee_action_item',
+      sponseeContactId: (savedContactWithAction as any).id,
+      sponseeId: sponsee.id,
+      contactId: (savedContactWithAction as any).id, // Legacy support
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
     };
