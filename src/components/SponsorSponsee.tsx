@@ -8,6 +8,7 @@ import {
   IconButton,
   Button
 } from '@mui/material';
+import { AddIcon } from '../utils/muiOptimizations';
 import { useTheme } from '@mui/material/styles';
 import DatabaseService from '../services/DatabaseService';
 import SubTabComponent from './shared/SubTabComponent';
@@ -475,8 +476,56 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
           },
         }}
       >
-        <Tab label="Sponsors" />
-        <Tab label="Sponsees" />
+        <Tab 
+          label={
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              Sponsors
+              {sponsors.length > 0 && (
+                <IconButton
+                  size="small"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleEditSponsor(null);
+                  }}
+                  sx={{ 
+                    padding: '2px',
+                    color: 'inherit',
+                    '&:hover': {
+                      backgroundColor: 'rgba(0, 0, 0, 0.1)',
+                    }
+                  }}
+                >
+                  <AddIcon fontSize="small" />
+                </IconButton>
+              )}
+            </Box>
+          }
+        />
+        <Tab 
+          label={
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              Sponsees
+              {sponsees.length > 0 && (
+                <IconButton
+                  size="small"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleEditSponsee(null);
+                  }}
+                  sx={{ 
+                    padding: '2px',
+                    color: 'inherit',
+                    '&:hover': {
+                      backgroundColor: 'rgba(0, 0, 0, 0.1)',
+                    }
+                  }}
+                >
+                  <AddIcon fontSize="small" />
+                </IconButton>
+              )}
+            </Box>
+          }
+        />
       </Tabs>
 
       {/* Sponsor Tab */}
