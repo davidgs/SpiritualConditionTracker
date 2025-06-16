@@ -90,7 +90,7 @@ export async function createTestData(userId: number | string): Promise<TestDataR
       if (savedSponsor) {
         savedSponsors.push(savedSponsor);
         results.sponsorsCreated++;
-        console.log(`[ testDataGenerator ] Created sponsor: ${sponsor.name} ${sponsor.lastName}`);
+        console.log(`[ testDataGenerator ] Created sponsor: ${sponsor.name} ${sponsor.lastName} with ID: ${(savedSponsor as any).id}`);
       }
     }
 
@@ -101,7 +101,7 @@ export async function createTestData(userId: number | string): Promise<TestDataR
       if (savedSponsee) {
         savedSponsees.push(savedSponsee);
         results.sponseesCreated++;
-        console.log(`[ testDataGenerator ] Created sponsee: ${sponsee.name} ${sponsee.lastName}`);
+        console.log(`[ testDataGenerator ] Created sponsee: ${sponsee.name} ${sponsee.lastName} with ID: ${(savedSponsee as any).id}`);
       }
     }
 
@@ -127,10 +127,12 @@ export async function createTestData(userId: number | string): Promise<TestDataR
 async function createSponsorTestContacts(sponsor: any, userId: number | string, results: TestDataResults) {
   const databaseService = DatabaseService.getInstance();
   
+  console.log(`[ testDataGenerator ] Creating contacts for sponsor with ID: ${sponsor.id}`);
+  
   // Contact with action item
   const contactWithAction = {
     userId: userId.toString(),
-    sponsorId: sponsor.id,
+    sponsorId: sponsor.id, // Use the sponsor ID directly
     type: 'call',
     date: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000).toISOString(), // Random date within last week
     note: `Discussed my progress on Step ${Math.floor(Math.random() * 12) + 1}. Very helpful conversation about maintaining gratitude.`,
@@ -235,6 +237,8 @@ async function createSponsorTestContacts(sponsor: any, userId: number | string, 
 
 async function createSponseeTestContacts(sponsee: any, userId: number | string, results: TestDataResults) {
   const databaseService = DatabaseService.getInstance();
+  
+  console.log(`[ testDataGenerator ] Creating contacts for sponsee with ID: ${sponsee.id}`);
   
   // Contact with action item
   const contactWithAction = {
