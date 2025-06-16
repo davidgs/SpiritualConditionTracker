@@ -365,6 +365,9 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
       const activities = await databaseService.getAllActivities();
       const actionItems = await databaseService.getAllActionItems();
       
+      console.log('[ AppDataContext.tsx ] Raw activities from database:', activities.length);
+      console.log('[ AppDataContext.tsx ] Raw action items from database:', actionItems.length);
+      
       // Filter activities to only include those that should appear in Activity list:
       // 1. All regular activities (meetings, prayer, etc.)
       // 2. All sponsor contacts 
@@ -400,7 +403,8 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
       });
       
       dispatch({ type: 'SET_ACTIVITIES', payload: cachedActivities });
-      console.log(`[ AppDataContext.tsx:288 ] Activities cached (${CACHE_DAYS} days):`, cachedActivities.length, '(sponsor action items only)');
+      console.log(`[ AppDataContext.tsx:288 ] Activities cached (${CACHE_DAYS} days):`, cachedActivities.length, '(all contact activities)');
+      console.log('[ AppDataContext.tsx ] Activity types in cache:', cachedActivities.map(a => a.type));
       
       // Calculate spiritual fitness
       await calculateSpiritualFitness();
