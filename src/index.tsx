@@ -3,9 +3,27 @@ import { createRoot } from 'react-dom/client';
 import App from './App';
 import './styles/tailwind.css';
 import './styles/main.css';
+import { defineCustomElements } from '@ionic/core/loader';
+
+// Function to initialize SQLite web component
+async function initializeSQLiteWeb() {
+  // Define Ionic custom elements for web platform
+  defineCustomElements(window);
+  
+  // Add jeep-sqlite custom element for web platform
+  const jeepSqlite = document.createElement('jeep-sqlite');
+  document.body.appendChild(jeepSqlite);
+  
+  // Wait for the component to be defined
+  await customElements.whenDefined('jeep-sqlite');
+  console.log('[ index.tsx ] jeep-sqlite web component initialized');
+}
 
 // Function to initialize the app
-function initializeApp() {
+async function initializeApp() {
+  // Initialize SQLite web component first
+  await initializeSQLiteWeb();
+  
   const rootElement = document.getElementById('app');
   if (rootElement) {
     const root = createRoot(rootElement);

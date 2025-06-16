@@ -13,9 +13,6 @@ interface CustomTourNavigateEvent extends CustomEvent {
 }
 
 function TourContent({ onNavigate, onClose }: { onNavigate?: (path: string) => void; onClose: () => void }): null {
-  const { isOpen } = useTour();
-  const prevIsOpenRef = React.useRef<boolean>(true);
-
   React.useEffect(() => {
     const handleNavigate = (event: CustomTourNavigateEvent): void => {
       if (onNavigate) {
@@ -27,13 +24,6 @@ function TourContent({ onNavigate, onClose }: { onNavigate?: (path: string) => v
     return (): void => window.removeEventListener('tour-navigate', handleNavigate as EventListener);
   }, [onNavigate]);
 
-  React.useEffect(() => {
-    if (prevIsOpenRef.current && !isOpen) {
-      onClose();
-    }
-    prevIsOpenRef.current = isOpen;
-  }, [isOpen, onClose]);
-
   return null;
 }
 
@@ -41,11 +31,12 @@ export default function GuidedTour({ isOpen, onClose, onNavigate }: GuidedTourPr
   const theme: Theme = useTheme();
   const [tourKey, setTourKey] = React.useState<number>(0);
 
+  // Only increment tour key when first opening, not on every isOpen change
   React.useEffect(() => {
     if (isOpen) {
-      setTourKey(prev => prev + 1);
+      setTourKey(Date.now()); // Use timestamp to ensure uniqueness
     }
-  }, [isOpen]);
+  }, []); // Remove isOpen dependency to prevent infinite loop
 
   const tourSteps: StepType[] = [
     {
@@ -228,7 +219,6 @@ export default function GuidedTour({ isOpen, onClose, onNavigate }: GuidedTourPr
 
   return (
     <TourProvider
-      key={tourKey}
       steps={tourSteps}
       styles={tourStyles}
       padding={10}
@@ -236,7 +226,8 @@ export default function GuidedTour({ isOpen, onClose, onNavigate }: GuidedTourPr
       showBadge
       showCloseButton
       showNavigation
-      defaultOpen={true}
+      defaultOpen={isOpen}
+      onClickMask={handleTourFinish}
     >
       <TourContent onNavigate={onNavigate} onClose={handleTourFinish} />
     </TourProvider>
