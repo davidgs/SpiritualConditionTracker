@@ -16,7 +16,6 @@ export default async function initSQLiteDatabase() {
   try {
     // Import CapacitorSQLite plugin for iOS
     const { CapacitorSQLite } = await import('@capacitor-community/sqlite');
-    const { Capacitor } = await import('@capacitor/core');
     const sqlite = CapacitorSQLite;
     
     if (!sqlite) {
@@ -25,56 +24,18 @@ export default async function initSQLiteDatabase() {
     
     console.log('[ sqliteLoader.js:39 ]  Found CapacitorSQLite plugin:', !!sqlite);
     
-    const platform = Capacitor.getPlatform();
-    console.log('[ sqliteLoader.js ] Platform detected:', platform);
-    
-    // For web platform, wait for jeep-sqlite component to be ready
-    if (platform === 'web') {
-      console.log('[ sqliteLoader.js ] Waiting for jeep-sqlite web component...');
-      let attempts = 0;
-      const maxAttempts = 30; // 3 seconds max wait
-      
-      while (attempts < maxAttempts) {
-        try {
-          await sqlite.createConnection({
-            database: DB_NAME,
-            version: 1,
-            encrypted: false,
-            mode: 'no-encryption',
-            readonly: false
-          });
-          console.log('[ sqliteLoader.js:50 ]  Database connection created');
-          break;
-        } catch (connectionError) {
-          if (connectionError.message && connectionError.message.includes('jeep-sqlite element is not present')) {
-            attempts++;
-            console.log(`[ sqliteLoader.js ] Waiting for jeep-sqlite... attempt ${attempts}/${maxAttempts}`);
-            await new Promise(resolve => setTimeout(resolve, 100));
-            continue;
-          } else {
-            console.log('[ sqliteLoader.js:52 ]  Connection may already exist:', connectionError.message);
-            break;
-          }
-        }
-      }
-      
-      if (attempts >= maxAttempts) {
-        throw new Error('jeep-sqlite web component failed to initialize');
-      }
-    } else {
-      // Step 1: Create connection for native platforms
-      try {
-        await sqlite.createConnection({
-          database: DB_NAME,
-          version: 1,
-          encrypted: false,
-          mode: 'no-encryption',
-          readonly: false
-        });
-        console.log('[ sqliteLoader.js:50 ]  Database connection created');
-      } catch (connectionError) {
-        console.log('[ sqliteLoader.js:52 ]  Connection may already exist:', connectionError.message);
-      }
+    // Step 1: Create connection (check if already exists first)
+    try {
+      await sqlite.createConnection({
+        database: DB_NAME,
+        version: 1,
+        encrypted: false,
+        mode: 'no-encryption',
+        readonly: false
+      });
+      console.log('[ sqliteLoader.js:50 ]  Database connection created');
+    } catch (connectionError) {
+      console.log('[ sqliteLoader.js:52 ]  Connection may already exist:', connectionError.message);
     }
 
     // Step 2: Open the database
