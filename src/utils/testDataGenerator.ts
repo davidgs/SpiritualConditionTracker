@@ -320,7 +320,6 @@ async function createSponseeTestContacts(sponsee: any, userId: number | string, 
       notes: contactWithoutAction.note,
       personCalled: `${sponsee.name} ${sponsee.lastName}`,
       sponseeContactId: (savedContactWithoutAction as any).id,
-      sponseeId: sponsee.id,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
     };
