@@ -97,9 +97,13 @@ export default function TabComponent({
             '&.Mui-selected': {
               color: theme.palette.primary.main,
               fontWeight: 'bold',
-              backgroundColor: theme.palette.background.paper,
+              backgroundColor: theme.palette.mode === 'dark' 
+                ? 'rgba(255, 255, 255, 0.03)' 
+                : 'rgba(0, 0, 0, 0.015)',
               border: `1px solid ${theme.palette.divider}`,
-              borderBottom: `1px solid ${theme.palette.background.paper}`,
+              borderBottom: theme.palette.mode === 'dark' 
+                ? '1px solid rgba(255, 255, 255, 0.03)' 
+                : '1px solid rgba(0, 0, 0, 0.015)',
               marginBottom: '-1px',
               position: 'relative',
               zIndex: 1,
