@@ -30,6 +30,8 @@ export const ActionItemsList: React.FC<ActionItemsListProps> = ({
   // Simple query: Get action items for this contact from global state
   useEffect(() => {
     console.log(`[ActionItemsList] Loading action items for contact ${contactId}, type: ${personType}`);
+    console.log(`[ActionItemsList] Total action items in state:`, state.actionItems?.length || 0);
+    console.log(`[ActionItemsList] All action items:`, state.actionItems);
     
     // Filter action items from the centralized state
     const filteredItems = state.actionItems?.filter(item => {
@@ -38,13 +40,16 @@ export const ActionItemsList: React.FC<ActionItemsListProps> = ({
       
       // Check contact association based on person type
       if (personType === 'sponsor' && item.sponsorContactId === contactId) {
+        console.log(`[ActionItemsList] Found sponsor action item for contact ${contactId}:`, item);
         return true;
       }
       if (personType === 'sponsee' && item.sponseeContactId === contactId) {
+        console.log(`[ActionItemsList] Found sponsee action item for contact ${contactId}:`, item);
         return true;
       }
       // Legacy support for old contactId field
       if (item.contactId === contactId) {
+        console.log(`[ActionItemsList] Found legacy action item for contact ${contactId}:`, item);
         return true;
       }
       

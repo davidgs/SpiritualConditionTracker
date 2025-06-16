@@ -32,7 +32,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
   const databaseService = DatabaseService.getInstance();
   
   // Get data loading functions from context
-  const { loadActivities } = useAppData();
+  const { loadActivities, loadActionItems } = useAppData();
 
   // Handler for saving sponsor contacts from LogActivityModal
   const handleSaveSponsorContact = async (contactData: any, actionItems: any[] = []) => {
@@ -116,9 +116,10 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
       const results = await createTestData(user.id);
       console.log('[ Dashboard ] Test data creation completed:', results);
       
-      // Reload activities to show new data
-      console.log('[ Dashboard ] Reloading activities after test data creation...');
+      // Reload activities and action items to show new data
+      console.log('[ Dashboard ] Reloading activities and action items after test data creation...');
       await loadActivities();
+      await loadActionItems();
       
       // Show results to user
       alert(`Test data created successfully!\n\nSponsors: ${results.sponsorsCreated}\nSponsees: ${results.sponseesCreated}\nSponsor Contacts: ${results.sponsorContactsCreated}\nSponsee Contacts: ${results.sponseeContactsCreated}\nAction Items: ${results.actionItemsCreated}\n\nCheck the Activity Log and Sponsor/Sponsee tabs to see the new data.`);

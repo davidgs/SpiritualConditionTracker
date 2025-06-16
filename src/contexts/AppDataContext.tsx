@@ -181,6 +181,7 @@ interface AppDataContextType {
   updateMeeting: (meetingId: string | number, updates: Partial<Meeting>) => Promise<Meeting | null>;
   deleteMeeting: (meetingId: string | number) => Promise<boolean>;
   
+  loadActionItems: () => Promise<void>;
   addActionItem: (item: Omit<ActionItem, 'id' | 'createdAt' | 'updatedAt'>) => Promise<ActionItem | null>;
   updateActionItem: (itemId: string | number, updates: Partial<ActionItem>) => Promise<ActionItem | null>;
   deleteActionItem: (itemId: string | number) => Promise<boolean>;
@@ -744,6 +745,7 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
     addMeeting,
     updateMeeting,
     deleteMeeting,
+    loadActionItems,
     addActionItem,
     updateActionItem,
     deleteActionItem,
