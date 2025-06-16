@@ -186,8 +186,8 @@ export default function GuidedTour({ isOpen, onClose, onNavigate }: GuidedTourPr
     }),
     badge: (base: { [key: string]: any }) => ({
       ...base,
-      left: '8px',
-      right: '-0.8125em',
+      //left: '8px',
+      left: '-0.8125em',
       backgroundColor: theme.palette.primary.main,
       color: '#ffffff'
     }),
