@@ -213,9 +213,7 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
       const isCapacitor = !!(window as any).Capacitor;
       const isIOS = (window as any).Capacitor?.getPlatform?.() === 'ios';
       
-      // Temporarily disable platform restriction for development testing
-      // TODO: Re-enable for production deployment
-      if (false && (!isCapacitor || !isIOS)) {
+      if (!isCapacitor || !isIOS) {
         console.log('[ AppDataContext.tsx ] This app is designed for iOS only. Web platform not supported.');
         dispatch({ type: 'SET_ERROR', payload: 'This app requires iOS device with Capacitor' });
         dispatch({ type: 'SET_LOADING', payload: false });
