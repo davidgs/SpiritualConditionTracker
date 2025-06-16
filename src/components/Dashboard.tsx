@@ -10,6 +10,7 @@ import { Paper, Box, Typography, IconButton, Button } from '@mui/material';
 import { User, Activity, Meeting } from '../types/database';
 import { calculateSpiritualFitnessScore, getSpiritualFitnessBreakdown } from '../utils/SpiritualFitness';
 import DatabaseService from '../services/DatabaseService';
+import { createTestData } from '../utils/testDataGenerator';
 
 interface DashboardProps {
   setCurrentView: (view: string) => void;
@@ -98,6 +99,28 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
       alert('Failed to save sponsee contact');
     }
   };
+
+  // Test data generation handler
+  const handleCreateTestData = async () => {
+    if (!user?.id) {
+      console.error('No user ID available for test data creation');
+      return;
+    }
+
+    try {
+      console.log('[ Dashboard ] Starting test data creation...');
+      const results = await createTestData(user.id);
+      console.log('[ Dashboard ] Test data creation completed:', results);
+      
+      // Show results to user
+      alert(`Test data created successfully!\n\nSponsors: ${results.sponsorsCreated}\nSponsees: ${results.sponseesCreated}\nSponsor Contacts: ${results.sponsorContactsCreated}\nSponsee Contacts: ${results.sponseeContactsCreated}\nAction Items: ${results.actionItemsCreated}\n\nCheck the Activity Log and Sponsor/Sponsee tabs to see the new data.`);
+      
+    } catch (error) {
+      console.error('[ Dashboard ] Failed to create test data:', error);
+      alert('Failed to create test data. Check console for details.');
+    }
+  };
+
   // Get theme from MUI theme provider
   const { mode } = useAppTheme();
   const darkMode = mode === 'dark';
@@ -639,6 +662,24 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
         onSaveSponseeContact={handleSaveSponseeContact}
         meetings={meetings}
       />
+      
+      {/* Test Data Button - Development Only */}
+      <Box sx={{ mt: 3, display: 'flex', justifyContent: 'center' }}>
+        <Button
+          onClick={handleCreateTestData}
+          variant="outlined"
+          color="secondary"
+          sx={{
+            fontSize: '0.875rem',
+            textTransform: 'none',
+            borderRadius: '8px',
+            px: 2,
+            py: 1
+          }}
+        >
+          Create Test Data
+        </Button>
+      </Box>
     </Box>
   );
 }
