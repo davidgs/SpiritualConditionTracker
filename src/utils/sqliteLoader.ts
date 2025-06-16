@@ -367,9 +367,12 @@ async function createTables(sqlite) {
       CREATE TABLE IF NOT EXISTS sponsor_contacts (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         userId TEXT NOT NULL,
+        sponsorId INTEGER,
         type TEXT NOT NULL,
         date TEXT NOT NULL,
         note TEXT,
+        topic TEXT,
+        duration INTEGER,
         createdAt TEXT DEFAULT CURRENT_TIMESTAMP,
         updatedAt TEXT DEFAULT CURRENT_TIMESTAMP
       )
@@ -387,6 +390,8 @@ async function createTables(sqlite) {
         type TEXT NOT NULL,
         date TEXT NOT NULL,
         note TEXT,
+        topic TEXT,
+        duration INTEGER,
         createdAt TEXT DEFAULT CURRENT_TIMESTAMP,
         updatedAt TEXT DEFAULT CURRENT_TIMESTAMP
       )
