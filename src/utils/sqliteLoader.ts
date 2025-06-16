@@ -109,8 +109,11 @@ export default async function initSQLiteDatabase() {
         });
 
         if (result && result.changes) {
-          // Use lastId if available, otherwise generate a timestamp-based ID
-          const newId = result.changes.lastId || Date.now();
+          // Use the actual database-generated ID from lastId
+          const newId = result.changes.lastId;
+          if (!newId) {
+            throw new Error(`Database failed to generate ID for ${collection}`);
+          }
           const newItem = { 
             ...item, 
             id: newId,
