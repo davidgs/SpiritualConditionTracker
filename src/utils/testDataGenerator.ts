@@ -165,12 +165,10 @@ async function createSponsorTestContacts(sponsor: any, userId: number | string, 
       title: 'Practice daily meditation',
       text: 'Practice daily meditation for 10 minutes',
       notes: 'Focus on gratitude and serenity prayer',
-      contactId: (savedContactWithAction as any).id,
+      sponsorContactId: (savedContactWithAction as any).id,
       dueDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(), // 3 days from now
       completed: 0,
       type: 'sponsor_action_item',
-      sponsorId: sponsor.id,
-      sponsorName: sponsor.name,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
     };
@@ -272,12 +270,10 @@ async function createSponseeTestContacts(sponsee: any, userId: number | string, 
       title: 'Complete Step 4 inventory',
       text: 'Work on personal inventory list',
       notes: 'Focus on resentments and fears',
-      contactId: (savedContactWithAction as any).id,
+      sponseeContactId: (savedContactWithAction as any).id,
       dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // 1 week from now
       completed: 0,
       type: 'sponsee_action_item',
-      sponseeId: sponsee.id,
-      sponseeName: sponsee.name,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
     };
