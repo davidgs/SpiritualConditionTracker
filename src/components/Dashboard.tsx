@@ -672,8 +672,8 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
         meetings={meetings}
       />
       
-      {/* Test Data Button - Development Only */}
-      <Box sx={{ mt: 3, display: 'flex', justifyContent: 'center' }}>
+      {/* Test Data Button - Development Only - HIDDEN */}
+      {/* <Box sx={{ mt: 3, display: 'flex', justifyContent: 'center' }}>
         <Button
           onClick={handleCreateTestData}
           variant="outlined"
@@ -688,7 +688,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
         >
           Create Test Data
         </Button>
-      </Box>
+      </Box> */}
     </Box>
   );
 }
