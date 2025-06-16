@@ -33,8 +33,8 @@ function TabPanel({ children, value, index, ...other }) {
             py: 2,
             px: 2,
             backgroundColor: theme.palette.mode === 'dark' 
-              ? 'rgba(255, 255, 255, 0.05)' 
-              : 'rgba(0, 0, 0, 0.02)',
+              ? 'rgba(255, 255, 255, 0.03)' 
+              : 'rgba(0, 0, 0, 0.015)',
             border: `1px solid ${theme.palette.divider}`,
             borderTop: 'none',
             borderRadius: '0 0 8px 8px',
