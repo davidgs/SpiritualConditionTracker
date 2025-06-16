@@ -348,24 +348,44 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
   const loadActivities = async () => {
     try {
       const activities = await databaseService.getAllActivities();
+      const actionItems = await databaseService.getAllActionItems();
       
-      // Strategy 1: Action items are stored only in action_items table, referenced by activities via actionItemId
-      
-      // Strategy 1: Contacts are stored only in their respective tables, referenced by activities
-      const allActivities = activities;
+      // Filter activities to only include those that should appear in Activity list:
+      // 1. All regular activities (meetings, prayer, etc.)
+      // 2. All sponsor contacts 
+      // 3. All sponsee contacts
+      // 4. Action items from SPONSOR contacts only (user gets credit for completing these)
+      const filteredActivities = activities.filter(activity => {
+        // Include all non-action-item activities
+        if (activity.type !== 'action-item') {
+          return true;
+        }
+        
+        // For action items, only include those from sponsor contacts
+        if (activity.actionItemId) {
+          const actionItem = actionItems.find(ai => ai.id === activity.actionItemId);
+          if (actionItem) {
+            // Include if it has sponsorContactId (from sponsor)
+            // Exclude if it has sponseeContactId (from sponsee - user doesn't get credit)
+            return actionItem.sponsorContactId && !actionItem.sponseeContactId;
+          }
+        }
+        
+        return false;
+      });
       
       // Always load last 180 days for base cache (fixed window for memory management)
       const CACHE_DAYS = 180;
       const cutoffDate = new Date();
       cutoffDate.setDate(cutoffDate.getDate() - CACHE_DAYS);
       
-      const cachedActivities = allActivities.filter(activity => {
+      const cachedActivities = filteredActivities.filter(activity => {
         const activityDate = new Date(activity.date);
         return activityDate >= cutoffDate;
       });
       
       dispatch({ type: 'SET_ACTIVITIES', payload: cachedActivities });
-      console.log(`[ AppDataContext.tsx:288 ] Activities cached (${CACHE_DAYS} days):`, cachedActivities.length, '(including action items)');
+      console.log(`[ AppDataContext.tsx:288 ] Activities cached (${CACHE_DAYS} days):`, cachedActivities.length, '(sponsor action items only)');
       
       // Calculate spiritual fitness
       await calculateSpiritualFitness();
