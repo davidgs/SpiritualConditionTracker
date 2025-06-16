@@ -109,10 +109,14 @@ export default async function initSQLiteDatabase() {
         });
 
         if (result && result.changes) {
+          // Debug the result structure
+          console.log(`[ sqliteLoader.js ] Insert result for ${collection}:`, JSON.stringify(result));
+          
           // Use the actual database-generated ID from lastId
           const newId = result.changes.lastId;
           if (!newId) {
-            throw new Error(`Database failed to generate ID for ${collection}`);
+            console.log(`[ sqliteLoader.js ] No lastId found in result:`, result);
+            throw new Error(`Database failed to generate ID for ${collection}. Result: ${JSON.stringify(result)}`);
           }
           const newItem = { 
             ...item, 

@@ -1,0 +1,132 @@
+⚡️  To Native ->  CapacitorSQLite createConnection 65300762
+⚡️  [log] - Applying native theme: blue (#3b82f6) in light mode
+⚡️  [log] - [ AppDataContext.tsx:151 ] Initializing app...
+⚡️  [log] - [ AppDataContext.tsx ] Platform: Mozilla/5.0 (iPhone; CPU iPhone OS 18_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148
+⚡️  [log] - [ AppDataContext.tsx ] Is Capacitor: true
+⚡️  [log] - [ AppDataContext.tsx:156 ] Database status changed: initializing
+⚡️  [log] - [ AppDataContext.tsx ] About to initialize database service...
+⚡️  [log] - [ DatabaseService: 50 ] Starting database initialization...
+⚡️  [log] - [ AppDataContext.tsx:156 ] Database status changed: initializing
+⚡️  [log] - [ sqliteLoader.js:14 ] Initializing SQLite database via Capacitor...
+⚡️  [log] - [ sqliteLoader.js:39 ]  Found CapacitorSQLite plugin: true
+database path /Users/davidgs/Library/Developer/CoreSimulator/Devices/E7B518C7-65A2-4386-A19F-01F0D573877F/data/Containers/Data/Application/952B132F-0C25-4D8B-A825-0D2B9B022851/Library/CapacitorDatabase/spiritual_condition_trackerSQLite.db
+⚡️  TO JS undefined
+⚡️  [log] - [ sqliteLoader.js:50 ]  Database connection created
+⚡️  To Native ->  CapacitorSQLite open 65300763
+⚡️  TO JS undefined
+⚡️  [log] - [ sqliteLoader.js:56 ]  Database opened successfully
+⚡️  To Native ->  CapacitorSQLite execute 65300764
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 65300765
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 65300766
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 65300767
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 65300768
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 65300769
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 65300770
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 65300771
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 65300772
+ERROR MESSAGE:  {"message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: topic","errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: topic"}
+⚡️  [error] - {"message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: topic","errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: topic"}
+⚡️  To Native ->  CapacitorSQLite execute 65300773
+ERROR MESSAGE:  {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: duration","message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: duration"}
+⚡️  To Native ->  CapacitorSQLite execute 65300774
+⚡️  [error] - {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: duration","message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: duration"}
+ERROR MESSAGE:  {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: sponsorId","message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: sponsorId"}
+⚡️  To Native ->  CapacitorSQLite execute 65300775
+⚡️  [error] - {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: sponsorId","message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: sponsorId"}
+ERROR MESSAGE:  {"message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: topic","errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: topic"}
+⚡️  [error] - {"message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: topic","errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: topic"}
+⚡️  To Native ->  CapacitorSQLite execute 65300776
+ERROR MESSAGE:  {"message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: duration","errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: duration"}
+⚡️  To Native ->  CapacitorSQLite execute 65300777
+⚡️  [error] - {"message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: duration","errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: duration"}
+ERROR MESSAGE:  {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: contactId","message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: contactId"}
+⚡️  [error] - {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: contactId","message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: contactId"}
+⚡️  To Native ->  CapacitorSQLite execute 65300778
+ERROR MESSAGE:  {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: sponsorName","message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: sponsorName"}
+⚡️  [error] - {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: sponsorName","message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: sponsorName"}
+⚡️  To Native ->  CapacitorSQLite execute 65300779
+ERROR MESSAGE:  {"message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: sponsorId","errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: sponsorId"}
+⚡️  [error] - {"message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: sponsorId","errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: sponsorId"}
+⚡️  [log] - [ sqliteLoader.js ] All tables created with proper relationships and missing columns added
+⚡️  [log] - [ sqliteLoader.js:59 ]  Database initialization complete
+⚡️  [log] - [ DatabaseService: 55 ] SQLite database initialized successfully
+⚡️  [log] - [ DatabaseService: 63 ] Database ready
+⚡️  [log] - [ AppDataContext.tsx:156 ] Database status changed: ready
+⚡️  [log] - [ AppDataContext.tsx ] Database ready, loading initial data...
+⚡️  [log] - [ AppDataContext.tsx:187 ] Loading initial data...
+⚡️  To Native ->  CapacitorSQLite query 65300780
+⚡️  [log] - [ DatabaseService: 70 ] Database initialization complete
+⚡️  [log] - [ DatabaseService: 205 ] Processing 0 queued operations
+⚡️  To Native ->  CapacitorSQLite query 65300781
+⚡️  To Native ->  CapacitorSQLite query 65300782
+⚡️  To Native ->  CapacitorSQLite query 65300783
+⚡️  To Native ->  CapacitorSQLite query 65300784
+⚡️  To Native ->  CapacitorSQLite query 65300785
+⚡️  TO JS {"values":[{"ios_columns":["id","name","lastName","phoneNumber","email","sobrietyDate","homeGroups","privacySettings","preferences","isDarkMode","sponsor_name","sponsor_lastName","sponsor_phone","sponsor_email","sponsor_sobrietyDate","sponsor_notes","creat
+⚡️  [log] - [ AppDataContext.tsx ] Database service initialization completed
+⚡️  [log] - [ DatabaseService ] Checking if database is empty for new user detection...
+⚡️  TO JS {"values":[{"ios_columns":["id","name","lastName","phoneNumber","email","sobrietyDate","homeGroups","privacySettings","preferences","isDarkMode","sponsor_name","sponsor_lastName","sponsor_phone","sponsor_email","sponsor_sobrietyDate","sponsor_notes","creat
+⚡️  To Native ->  CapacitorSQLite query 65300786
+⚡️  TO JS {"values":[]}
+⚡️  TO JS {"values":[]}
+⚡️  TO JS {"values":[]}
+⚡️  TO JS {"values":[]}
+⚡️  [log] - Found users to fix: 2
+⚡️  [log] - Preferences fix complete
+⚡️  [log] - [ AppDataContext.tsx ] Database preferences validated/fixed
+⚡️  TO JS {"values":[{"ios_columns":["id","name","lastName","phoneNumber","email","sobrietyDate","homeGroups","privacySettings","preferences","isDarkMode","sponsor_name","sponsor_lastName","sponsor_phone","sponsor_email","sponsor_sobrietyDate","sponsor_notes","creat
+⚡️  [log] - [ DatabaseService ] User data check: {"name":"","lastName":"","sobrietyDate":"","phoneNumber":"","email":"","homeGroups":[],"hasUserData":true}
+⚡️  [log] - [ DatabaseService ] Record counts: {"users":2,"hasUserData":true,"activities":0,"meetings":0,"sponsorContacts":0,"actionItems":0,"totalDataRecords":1}
+⚡️  [log] - [ App ] Database empty check result: false
+⚡️  [log] - [ AppDataContext.tsx:206 ] Loaded users: 2
+⚡️  [log] - [ AppDataContext.tsx:225 ] User data loaded: 1
+⚡️  To Native ->  CapacitorSQLite query 65300787
+⚡️  TO JS {"values":[]}
+⚡️  To Native ->  CapacitorSQLite query 65300788
+⚡️  TO JS {"values":[]}
+⚡️  [log] - [ AppDataContext.tsx:288 ] Activities cached (180 days): 0 (sponsor action items only)
+⚡️  [log] - [ AppDataContext.tsx:315 ] Using cached activities for 30 days: 0
+⚡️  [log] - [ AppDataContext.tsx:454 ] Calculating spiritual fitness with 0 activities for 30 days
+⚡️  To Native ->  CapacitorSQLite query 65300789
+⚡️  TO JS {"values":[]}
+⚡️  [log] - [ AppDataContext.tsx:326 ] Meetings loaded: 0
+⚡️  To Native ->  CapacitorSQLite query 65300790
+⚡️  TO JS {"values":[]}
+⚡️  [log] - [ AppDataContext.tsx ] Action items loaded: 0
+⚡️  [log] - [ AppDataContext.tsx:194 ] Initial data load complete
+⚡️  WebView loaded
+⚡️  [log] - Applying native theme: blue (#3b82f6) in light mode
+⚡️  [log] - Applying native theme: blue (#3b82f6) in light mode
+⚡️  [log] - SubTabComponent sponsor: persons: [] length: 0
+⚡️  To Native ->  CapacitorSQLite query 65300791
+⚡️  To Native ->  CapacitorSQLite query 65300792
+⚡️  To Native ->  CapacitorSQLite query 65300793
+⚡️  To Native ->  CapacitorSQLite query 65300794
+⚡️  TO JS {"values":[]}
+⚡️  TO JS {"values":[]}
+⚡️  TO JS {"values":[]}
+⚡️  TO JS {"values":[]}
+⚡️  [log] - [loadSponsorContacts] Raw sponsor contacts from DB: []
+⚡️  [log] - [loadSponsorContacts] Filtered sponsor contacts: []
+⚡️  [log] - [loadSponsorContacts] Current sponsors: []
+⚡️  [log] - [loadSponseeContacts] Raw sponsee contacts from DB: []
+⚡️  [log] - [loadSponseeContacts] Filtered sponsee contacts: []
+⚡️  [log] - [loadSponseeContacts] Current sponsees: []
+⚡️  [log] - SubTabComponent sponsor: persons: [] length: 0
+⚡️  [log] - Applying native theme: blue (#3b82f6) in light mode
+⚡️  [log] - Applying native theme: blue (#3b82f6) in light mode
+⚡️  [log] - [ Dashboard ] Starting test data creation...
+⚡️  [log] - [ testDataGenerator ] Starting test data creation...
+⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO sponsors (userId, name, lastName, phoneNumber, email, sobrietyDate, notes, sponsorType, createdAt, updatedAt) VALUES ('1', 'John', 'Smith', '555-0101', 'john.smith@email.com', '2015-03-15', 'Great sponsor with 10+ years experience', 'sponsor', '2025-06-16T02:56:31.122Z', '2025-06-16T02:56:31.122Z');
+⚡️  To Native ->  CapacitorSQLite execute 65300795
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  [error] - [ testDataGenerator ] Error creating test data: {}
+⚡️  [error] - [ Dashboard ] Failed to create test data: {}
