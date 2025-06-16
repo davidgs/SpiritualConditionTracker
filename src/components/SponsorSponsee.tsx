@@ -159,6 +159,35 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
       const relatedContacts = contacts.filter((c: any) => c[foreignKey] === personId);
       
       for (const contact of relatedContacts) {
+        // Delete related action items first
+        const actionItems = await databaseService.getAll('action_items');
+        const contactActionItems = actionItems.filter((item: any) => {
+          if (personType === 'sponsor') {
+            return item.sponsorContactId === contact.id;
+          } else {
+            return item.sponseeContactId === contact.id;
+          }
+        });
+        
+        for (const actionItem of contactActionItems) {
+          await databaseService.remove('action_items', actionItem.id);
+        }
+        
+        // Delete related activities
+        const activities = await databaseService.getAll('activities');
+        const contactActivities = activities.filter((activity: any) => {
+          if (personType === 'sponsor') {
+            return activity.sponsorId === personId;
+          } else {
+            return activity.sponseeId === personId;
+          }
+        });
+        
+        for (const activity of contactActivities) {
+          await databaseService.remove('activities', activity.id);
+        }
+        
+        // Now delete the contact
         await databaseService.remove(contactTable, (contact as any).id);
       }
       
