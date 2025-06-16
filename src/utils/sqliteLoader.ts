@@ -472,6 +472,36 @@ async function createTables(sqlite) {
     // Column already exists, ignore error
   }
 
+  try {
+    await sqlite.execute({
+      database: DB_NAME,
+      statements: `ALTER TABLE action_items ADD COLUMN contactId INTEGER;`
+    });
+    console.log('[ sqliteLoader.js ] Added contactId column to action_items');
+  } catch (error) {
+    // Column already exists, ignore error
+  }
+
+  try {
+    await sqlite.execute({
+      database: DB_NAME,
+      statements: `ALTER TABLE action_items ADD COLUMN sponsorName TEXT;`
+    });
+    console.log('[ sqliteLoader.js ] Added sponsorName column to action_items');
+  } catch (error) {
+    // Column already exists, ignore error
+  }
+
+  try {
+    await sqlite.execute({
+      database: DB_NAME,
+      statements: `ALTER TABLE action_items ADD COLUMN sponsorId INTEGER;`
+    });
+    console.log('[ sqliteLoader.js ] Added sponsorId column to action_items');
+  } catch (error) {
+    // Column already exists, ignore error
+  }
+
   console.log('[ sqliteLoader.js ] All tables created with proper relationships and missing columns added');
 }
 

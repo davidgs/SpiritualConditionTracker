@@ -1,0 +1,18 @@
+⚡️  [log] - [handleContactWithActionItems] Processing sponsor contact: {"type":"call","date":"2025-06-16T02:10:05.590Z","note":"I need to do more.","topic":"Prayer","duration":12}
+⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO sponsor_contacts (type, date, note, topic, duration, sponsorId, userId, createdAt, updatedAt) VALUES ('call', '2025-06-16T02:10:05.590Z', 'I need to do more.', 'Prayer', 12, 1, 1, '2025-06-16T02:10:34.027Z', '2025-06-16T02:10:34.027Z');
+⚡️  To Native ->  CapacitorSQLite execute 50333609
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  To Native ->  CapacitorSQLite execute 50333610
+⚡️  [log] - [ sqliteLoader.js ] Created sponsor_contacts item with ID: 1750039834039
+⚡️  [log] - [handleContactWithActionItems] Saved sponsor contact to sponsor_contacts: {"type":"call","date":"2025-06-16T02:10:05.590Z","note":"I need to do more.","topic":"Prayer","duration":12,"sponsorId":1,"userId":1,"createdAt":"2025-06-16T02:10:34.039Z","updatedAt":"2025-06-16T02:10:34.039Z","id":1750039834039}
+⚡️  [log] - [handleContactWithActionItems] Creating activity record for sponsor contact: {"userId":1,"type":"sponsor-contact","date":"2025-06-16T02:10:05.590Z","notes":"I need to do more.","duration":12,"personCalled":"Joe Blow","createdAt":"2025-06-16T02:10:34.039Z","updatedAt":"2025-06-16T02:10:34.039Z","sponsorContactId":1750039834039,"sponsorId":1}
+⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO activities (userId, type, date, notes, duration, personCalled, createdAt, updatedAt, sponsorContactId, sponsorId) VALUES (1, 'sponsor-contact', '2025-06-16T02:10:05.590Z', 'I need to do more.', 12, 'Joe Blow', '2025-06-16T02:10:34.039Z', '2025-06-16T02:10:34.039Z', 1750039834039, 1);
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  [log] - [ sqliteLoader.js ] Created activities item with ID: 1750039834041
+⚡️  [log] - [handleContactWithActionItems] Saving 1 action items as type: sponsor_action_item
+⚡️  To Native ->  CapacitorSQLite execute 50333611
+⚡️  [log] - [handleContactWithActionItems] Action item data for sponsor: {"title":"Pray tonight","text":"Pray tonight","notes":"","contactId":1750039834039,"dueDate":"2025-06-16T02:10:05.590Z","completed":0,"type":"sponsor_action_item","createdAt":"2025-06-16T02:10:34.041Z","updatedAt":"2025-06-16T02:10:34.041Z","sponsorId":1,"sponsorName":"Joe"}
+⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO action_items (title, text, notes, contactId, dueDate, completed, type, createdAt, updatedAt, sponsorId, sponsorName) VALUES ('Pray tonight', 'Pray tonight', '', 1750039834039, '2025-06-16T02:10:05.590Z', 0, 'sponsor_action_item', '2025-06-16T02:10:34.041Z', '2025-06-16T02:10:34.041Z', 1, 'Joe');
+ERROR MESSAGE:  {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: table action_items has no column named contactId","message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: table action_items has no column named contactId"}
+⚡️  [error] - {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: table action_items has no column named contactId","message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: table action_items has no column named contactId"}
+⚡️  [error] - Failed to add sponsor contact: {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: table action_items has no column named contactId"}
