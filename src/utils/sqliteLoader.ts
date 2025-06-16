@@ -507,7 +507,7 @@ async function createTables(sqlite) {
 
 async function resetDatabase(sqlite) {
   try {
-    const tables = ['users', 'activities', 'meetings', 'sponsor_contacts', 'sponsee_contacts', 'action_items'];
+    const tables = ['users', 'activities', 'meetings', 'sponsor_contacts', 'sponsee_contacts', 'action_items', 'sponsors', 'sponsees'];
     
     for (const table of tables) {
       try {
