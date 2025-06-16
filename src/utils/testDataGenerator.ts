@@ -143,6 +143,9 @@ async function createSponsorTestContacts(sponsor: any, userId: number | string, 
   const savedContactWithAction = await databaseService.add('sponsor_contacts', contactWithAction);
   if (savedContactWithAction) {
     results.sponsorContactsCreated++;
+    const contactId = (savedContactWithAction as any).id;
+    
+    console.log(`[ testDataGenerator ] Created sponsor contact with ID: ${contactId}`);
     
     // Create activity record for sponsor contact
     const contactActivity = {
@@ -152,7 +155,7 @@ async function createSponsorTestContacts(sponsor: any, userId: number | string, 
       notes: contactWithAction.note,
       duration: contactWithAction.duration,
       personCalled: `${sponsor.name} ${sponsor.lastName}`,
-      sponsorContactId: (savedContactWithAction as any).id,
+      sponsorContactId: contactId,
       sponsorId: sponsor.id,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
@@ -160,18 +163,19 @@ async function createSponsorTestContacts(sponsor: any, userId: number | string, 
     
     await databaseService.add('activities', contactActivity);
     
-    // Create action item
+    // Create action item without foreign key constraint (simpler approach)
     const actionItem = {
       title: 'Practice daily meditation',
       text: 'Practice daily meditation for 10 minutes',
       notes: 'Focus on gratitude and serenity prayer',
-      sponsorContactId: (savedContactWithAction as any).id,
       dueDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(), // 3 days from now
       completed: 0,
       type: 'sponsor_action_item',
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
     };
+    
+    console.log(`[ testDataGenerator ] Creating sponsor action item: ${actionItem.title}`);
     
     const savedActionItem = await databaseService.add('action_items', actionItem);
     if (savedActionItem) {

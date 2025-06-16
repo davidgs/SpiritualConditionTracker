@@ -1,0 +1,27 @@
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  [log] - [ sqliteLoader.js ] Created sponsors item with ID: 1750040874182
+⚡️  To Native ->  CapacitorSQLite execute 132138514
+⚡️  [log] - [ testDataGenerator ] Created sponsor: Mary Johnson
+⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO sponsees (userId, name, lastName, phoneNumber, email, sobrietyDate, notes, sponseeType, createdAt, updatedAt) VALUES ('1750040818756', 'Alex', 'Wilson', '555-0201', 'alex.wilson@email.com', '2023-06-10', 'New sponsee, very motivated', 'sponsee', '2025-06-16T02:27:54.178Z', '2025-06-16T02:27:54.178Z');
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  [log] - [ sqliteLoader.js ] Created sponsees item with ID: 1750040874183
+⚡️  To Native ->  CapacitorSQLite execute 132138515
+⚡️  [log] - [ testDataGenerator ] Created sponsee: Alex Wilson
+⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO sponsees (userId, name, lastName, phoneNumber, email, sobrietyDate, notes, sponseeType, createdAt, updatedAt) VALUES ('1750040818756', 'Sarah', 'Davis', '555-0202', 'sarah.d@email.com', '2023-11-05', 'Working on Step 4', 'sponsee', '2025-06-16T02:27:54.178Z', '2025-06-16T02:27:54.178Z');
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  [log] - [ sqliteLoader.js ] Created sponsees item with ID: 1750040874185
+⚡️  [log] - [ testDataGenerator ] Created sponsee: Sarah Davis
+⚡️  To Native ->  CapacitorSQLite execute 132138516
+⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO sponsor_contacts (userId, sponsorId, type, date, note, topic, duration, createdAt, updatedAt) VALUES ('1750040818756', 1750040874181, 'call', '2025-06-13T16:07:32.925Z', 'Discussed my progress on Step 10. Very helpful conversation about maintaining gratitude.', 'Step Work & Gratitude', 35, '2025-06-16T02:27:54.185Z', '2025-06-16T02:27:54.185Z');
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  To Native ->  CapacitorSQLite execute 132138517
+⚡️  [log] - [ sqliteLoader.js ] Created sponsor_contacts item with ID: 1750040874186
+⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO activities (userId, type, date, notes, duration, personCalled, sponsorContactId, sponsorId, createdAt, updatedAt) VALUES (1750040818756, 'sponsor-contact', '2025-06-13T16:07:32.925Z', 'Discussed my progress on Step 10. Very helpful conversation about maintaining gratitude.', 35, 'John Smith', 1750040874186, 1750040874181, '2025-06-16T02:27:54.186Z', '2025-06-16T02:27:54.186Z');
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  [log] - [ sqliteLoader.js ] Created activities item with ID: 1750040874186
+⚡️  To Native ->  CapacitorSQLite execute 132138518
+⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO action_items (title, text, notes, sponsorContactId, dueDate, completed, type, createdAt, updatedAt) VALUES ('Practice daily meditation', 'Practice daily meditation for 10 minutes', 'Focus on gratitude and serenity prayer', 1750040874186, '2025-06-19T02:27:54.187Z', 0, 'sponsor_action_item', '2025-06-16T02:27:54.187Z', '2025-06-16T02:27:54.187Z');
+ERROR MESSAGE:  {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 19 message: FOREIGN KEY constraint failed","message":"Execute: Failed in executeSQL :  Error: execute failed rc: 19 message: FOREIGN KEY constraint failed"}
+⚡️  [error] - {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 19 message: FOREIGN KEY constraint failed","message":"Execute: Failed in executeSQL :  Error: execute failed rc: 19 message: FOREIGN KEY constraint failed"}
+⚡️  [error] - [ testDataGenerator ] Error creating test data: {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 19 message: FOREIGN KEY constraint failed"}
+⚡️  [error] - [ Dashboard ] Failed to create test data: {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 19 message: FOREIGN KEY constraint failed"}
