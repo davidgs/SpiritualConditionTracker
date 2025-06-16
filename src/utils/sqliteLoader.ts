@@ -421,7 +421,58 @@ async function createTables(sqlite) {
     `
   });
 
-  console.log('[ sqliteLoader.js ] All tables created with proper relationships');
+  // Add missing columns to existing tables if they don't exist
+  try {
+    await sqlite.execute({
+      database: DB_NAME,
+      statements: `ALTER TABLE sponsor_contacts ADD COLUMN topic TEXT;`
+    });
+    console.log('[ sqliteLoader.js ] Added topic column to sponsor_contacts');
+  } catch (error) {
+    // Column already exists, ignore error
+  }
+
+  try {
+    await sqlite.execute({
+      database: DB_NAME,
+      statements: `ALTER TABLE sponsor_contacts ADD COLUMN duration INTEGER;`
+    });
+    console.log('[ sqliteLoader.js ] Added duration column to sponsor_contacts');
+  } catch (error) {
+    // Column already exists, ignore error
+  }
+
+  try {
+    await sqlite.execute({
+      database: DB_NAME,
+      statements: `ALTER TABLE sponsor_contacts ADD COLUMN sponsorId INTEGER;`
+    });
+    console.log('[ sqliteLoader.js ] Added sponsorId column to sponsor_contacts');
+  } catch (error) {
+    // Column already exists, ignore error
+  }
+
+  try {
+    await sqlite.execute({
+      database: DB_NAME,
+      statements: `ALTER TABLE sponsee_contacts ADD COLUMN topic TEXT;`
+    });
+    console.log('[ sqliteLoader.js ] Added topic column to sponsee_contacts');
+  } catch (error) {
+    // Column already exists, ignore error
+  }
+
+  try {
+    await sqlite.execute({
+      database: DB_NAME,
+      statements: `ALTER TABLE sponsee_contacts ADD COLUMN duration INTEGER;`
+    });
+    console.log('[ sqliteLoader.js ] Added duration column to sponsee_contacts');
+  } catch (error) {
+    // Column already exists, ignore error
+  }
+
+  console.log('[ sqliteLoader.js ] All tables created with proper relationships and missing columns added');
 }
 
 async function resetDatabase(sqlite) {
