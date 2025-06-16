@@ -245,6 +245,7 @@ async function createSponseeTestContacts(sponsee: any, userId: number | string, 
   // Contact with action item
   const contactWithAction = {
     userId: userId.toString(),
+    sponseeId: sponsee.id,
     type: 'call',
     date: new Date(Date.now() - Math.random() * 5 * 24 * 60 * 60 * 1000).toISOString(), // Random date within last 5 days
     note: `Helped ${sponsee.name} work through Step ${Math.floor(Math.random() * 8) + 1}. Good progress being made.`,
@@ -267,6 +268,7 @@ async function createSponseeTestContacts(sponsee: any, userId: number | string, 
       duration: contactWithAction.duration,
       personCalled: `${sponsee.name} ${sponsee.lastName}`,
       sponseeContactId: (savedContactWithAction as any).id,
+      sponseeId: sponsee.id,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
     };
@@ -299,6 +301,7 @@ async function createSponseeTestContacts(sponsee: any, userId: number | string, 
   // Contact without action item
   const contactWithoutAction = {
     userId: userId.toString(),
+    sponseeId: sponsee.id,
     type: 'text',
     date: new Date(Date.now() - Math.random() * 10 * 24 * 60 * 60 * 1000).toISOString(), // Random date within last 10 days
     note: `${sponsee.name} reached out for encouragement. Provided support and reminded them of their progress.`,
@@ -320,6 +323,7 @@ async function createSponseeTestContacts(sponsee: any, userId: number | string, 
       notes: contactWithoutAction.note,
       personCalled: `${sponsee.name} ${sponsee.lastName}`,
       sponseeContactId: (savedContactWithoutAction as any).id,
+      sponseeId: sponsee.id,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
     };
