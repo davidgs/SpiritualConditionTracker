@@ -11,6 +11,7 @@ import { User, Activity, Meeting } from '../types/database';
 import { calculateSpiritualFitnessScore, getSpiritualFitnessBreakdown } from '../utils/SpiritualFitness';
 import DatabaseService from '../services/DatabaseService';
 import { createTestData } from '../utils/testDataGenerator';
+import { useAppData } from '../contexts/AppDataContext';
 
 interface DashboardProps {
   setCurrentView: (view: string) => void;
@@ -29,6 +30,9 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
   
   // Get DatabaseService instance for contact operations
   const databaseService = DatabaseService.getInstance();
+  
+  // Get data loading functions from context
+  const { loadActivities } = useAppData();
 
   // Handler for saving sponsor contacts from LogActivityModal
   const handleSaveSponsorContact = async (contactData: any, actionItems: any[] = []) => {
@@ -111,6 +115,10 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
       console.log('[ Dashboard ] Starting test data creation...');
       const results = await createTestData(user.id);
       console.log('[ Dashboard ] Test data creation completed:', results);
+      
+      // Reload activities to show new data
+      console.log('[ Dashboard ] Reloading activities after test data creation...');
+      await loadActivities();
       
       // Show results to user
       alert(`Test data created successfully!\n\nSponsors: ${results.sponsorsCreated}\nSponsees: ${results.sponseesCreated}\nSponsor Contacts: ${results.sponsorContactsCreated}\nSponsee Contacts: ${results.sponseeContactsCreated}\nAction Items: ${results.actionItemsCreated}\n\nCheck the Activity Log and Sponsor/Sponsee tabs to see the new data.`);
