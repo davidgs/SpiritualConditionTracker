@@ -18,6 +18,8 @@ import { ContactPerson } from '../types/ContactPerson';
 import { Contact } from '../types/database';
 
 function TabPanel({ children, value, index, ...other }) {
+  const theme = useTheme();
+  
   return (
     <div
       role="tabpanel"
@@ -26,7 +28,21 @@ function TabPanel({ children, value, index, ...other }) {
       aria-labelledby={`tab-${index}`}
       {...other}
     >
-      {value === index && <Box sx={{ py: 3 }}>{children}</Box>}
+      {value === index && (
+        <Box 
+          sx={{ 
+            py: 2,
+            px: 2,
+            backgroundColor: theme.palette.background.paper,
+            border: `1px solid ${theme.palette.divider}`,
+            borderTop: 'none',
+            borderRadius: '0 0 8px 8px',
+            minHeight: '200px'
+          }}
+        >
+          {children}
+        </Box>
+      )}
     </div>
   );
 }
@@ -391,7 +407,44 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
       <Tabs 
         value={currentTab} 
         onChange={(event, newValue) => setCurrentTab(newValue)}
-        sx={{ borderBottom: 1, borderColor: 'divider' }}
+        variant="scrollable"
+        scrollButtons="auto"
+        allowScrollButtonsMobile
+        sx={{ 
+          borderBottom: 1, 
+          borderColor: 'divider',
+          mb: 0,
+          '& .MuiTabs-indicator': {
+            backgroundColor: theme.palette.primary.main,
+            height: 3,
+          },
+          '& .MuiTabs-scrollButtons': {
+            color: theme.palette.primary.main,
+          },
+          '& .MuiTab-root': {
+            color: theme.palette.text.secondary,
+            fontWeight: 'normal',
+            textTransform: 'none',
+            border: `1px solid transparent`,
+            borderRadius: '8px 8px 0 0',
+            margin: '0 2px',
+            backgroundColor: 'transparent',
+            transition: 'all 0.2s ease-in-out',
+            '&.Mui-selected': {
+              color: theme.palette.primary.main,
+              fontWeight: 'bold',
+              backgroundColor: theme.palette.background.paper,
+              border: `1px solid ${theme.palette.divider}`,
+              borderBottom: `1px solid ${theme.palette.background.paper}`,
+              marginBottom: '-1px',
+              position: 'relative',
+              zIndex: 1,
+            },
+            '&:hover:not(.Mui-selected)': {
+              backgroundColor: theme.palette.action.hover,
+            },
+          },
+        }}
       >
         <Tab label="Sponsors" />
         <Tab label="Sponsees" />
