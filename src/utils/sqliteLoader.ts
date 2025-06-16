@@ -116,7 +116,8 @@ export default async function initSQLiteDatabase() {
             values: []
           });
           
-          const newId = lastIdQuery.values?.[0]?.lastId;
+          // Parse the iOS format result correctly
+          const newId = lastIdQuery.values?.[1]?.lastId;
           if (!newId) {
             throw new Error(`Database failed to generate ID for ${collection}`);
           }
