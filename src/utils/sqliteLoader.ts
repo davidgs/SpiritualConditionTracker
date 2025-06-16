@@ -84,7 +84,6 @@ export default async function initSQLiteDatabase() {
       async add(collection, item) {
         const columns = Object.keys(item);
         const values = Object.values(item);
-        const placeholders = values.map(() => '?').join(', ');
         
         const processedValues = values.map(value => {
           if (typeof value === 'object' && value !== null) {
@@ -93,10 +92,11 @@ export default async function initSQLiteDatabase() {
           return value;
         });
 
+        const valuesList = processedValues.map(v => typeof v === 'string' ? `'${v.replace(/'/g, "''")}'` : v).join(', ');
+
         const result = await sqlite.execute({
           database: DB_NAME,
-          statements: `INSERT INTO ${collection} (${columns.join(', ')}) VALUES (${placeholders})`,
-          values: processedValues
+          statements: `INSERT INTO ${collection} (${columns.join(', ')}) VALUES (${valuesList});`
         });
 
         if (result && result.changes && result.changes.lastId) {
@@ -106,18 +106,16 @@ export default async function initSQLiteDatabase() {
       },
 
       async update(collection, id, updates) {
-        const setClause = Object.keys(updates).map(key => `${key} = ?`).join(', ');
-        const values = Object.values(updates).map(value => {
-          if (typeof value === 'object' && value !== null) {
-            return JSON.stringify(value);
-          }
-          return value;
-        });
+        const setClause = Object.keys(updates).map((key, index) => {
+          const value = Object.values(updates)[index];
+          const processedValue = typeof value === 'object' && value !== null ? JSON.stringify(value) : value;
+          const escapedValue = typeof processedValue === 'string' ? `'${processedValue.replace(/'/g, "''")}'` : processedValue;
+          return `${key} = ${escapedValue}`;
+        }).join(', ');
 
         await sqlite.execute({
           database: DB_NAME,
-          statements: `UPDATE ${collection} SET ${setClause} WHERE id = ?`,
-          values: [...values, id]
+          statements: `UPDATE ${collection} SET ${setClause} WHERE id = ${id};`
         });
 
         return this.getById(collection, id);
@@ -127,8 +125,7 @@ export default async function initSQLiteDatabase() {
         try {
           await sqlite.execute({
             database: DB_NAME,
-            statements: `DELETE FROM ${collection} WHERE id = ?`,
-            values: [id]
+            statements: `DELETE FROM ${collection} WHERE id = ${id};`
           });
           return true;
         } catch (error) {
@@ -361,7 +358,24 @@ async function createTables(sqlite) {
     `
   });
 
-  // Create action_items table with foreign key to sponsor_contacts
+  // Create sponsee_contacts table
+  await sqlite.execute({
+    database: DB_NAME,
+    statements: `
+      CREATE TABLE IF NOT EXISTS sponsee_contacts (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        userId TEXT NOT NULL,
+        sponseeId INTEGER NOT NULL,
+        type TEXT NOT NULL,
+        date TEXT NOT NULL,
+        note TEXT,
+        createdAt TEXT DEFAULT CURRENT_TIMESTAMP,
+        updatedAt TEXT DEFAULT CURRENT_TIMESTAMP
+      )
+    `
+  });
+
+  // Create action_items table with foreign keys to both contact types
   await sqlite.execute({
     database: DB_NAME,
     statements: `
@@ -378,7 +392,8 @@ async function createTables(sqlite) {
         sponseeContactId INTEGER,
         createdAt TEXT DEFAULT CURRENT_TIMESTAMP,
         updatedAt TEXT DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (sponsorContactId) REFERENCES sponsor_contacts(id)
+        FOREIGN KEY (sponsorContactId) REFERENCES sponsor_contacts(id),
+        FOREIGN KEY (sponseeContactId) REFERENCES sponsee_contacts(id)
       )
     `
   });
@@ -388,7 +403,7 @@ async function createTables(sqlite) {
 
 async function resetDatabase(sqlite) {
   try {
-    const tables = ['users', 'activities', 'meetings', 'sponsor_contacts', 'action_items'];
+    const tables = ['users', 'activities', 'meetings', 'sponsor_contacts', 'sponsee_contacts', 'action_items'];
     
     for (const table of tables) {
       try {
