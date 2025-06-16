@@ -75,7 +75,7 @@ export default function TabComponent({
         sx={{ 
           borderBottom: 1, 
           borderColor: 'divider',
-          mb: 2,
+          mb: 0,
           '& .MuiTabs-indicator': {
             backgroundColor: theme.palette.primary.main,
             height: 3,
