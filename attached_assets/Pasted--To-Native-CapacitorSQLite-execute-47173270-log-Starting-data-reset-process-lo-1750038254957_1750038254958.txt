@@ -1,0 +1,102 @@
+⚡️  To Native ->  CapacitorSQLite execute 47173270
+⚡️  [log] - Starting data reset process
+⚡️  [log] - [ AppDataContext.tsx:405 ] Starting complete app reset...
+⚡️  [log] - [ AppDataContext.tsx:415 ] Calling DatabaseService.resetAllData to drop and recreate all tables...
+⚡️  [log] - [ DatabaseService ] Starting complete database reset...
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 47173271
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 47173272
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 47173273
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 47173274
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 47173275
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 47173276
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 47173277
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 47173278
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 47173279
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  [log] - [ sqliteLoader.js ] All tables created with proper relationships
+⚡️  [log] - [ sqliteLoader.js ] Database reset complete
+⚡️  [log] - [ DatabaseService ] Database reset complete - all tables dropped and recreated
+⚡️  [log] - [ AppDataContext.tsx:417 ] Database tables dropped and recreated successfully
+⚡️  [log] - [ AppDataContext.tsx:423 ] Resetting database service state...
+⚡️  [log] - [ AppDataContext.tsx:156 ] Database status changed: initializing
+⚡️  [log] - [ AppDataContext.tsx:426 ] Reinitializing database service...
+⚡️  [log] - [ DatabaseService: 50 ] Starting database initialization...
+⚡️  [log] - [ AppDataContext.tsx:156 ] Database status changed: initializing
+⚡️  [log] - [ sqliteLoader.js:14 ] Initializing SQLite database via Capacitor...
+⚡️  [log] - [ sqliteLoader.js:39 ]  Found CapacitorSQLite plugin: true
+⚡️  To Native ->  CapacitorSQLite createConnection 47173280
+ERROR MESSAGE:  {"message":"CreateConnection: Connection spiritual_condition_tracker already exists","errorMessage":"CreateConnection: Connection spiritual_condition_tracker already exists"}
+⚡️  [error] - {"message":"CreateConnection: Connection spiritual_condition_tracker already exists","errorMessage":"CreateConnection: Connection spiritual_condition_tracker already exists"}
+⚡️  To Native ->  CapacitorSQLite open 47173281
+⚡️  [log] - [ sqliteLoader.js:52 ]  Connection may already exist: CreateConnection: Connection spiritual_condition_tracker already exists
+⚡️  TO JS undefined
+⚡️  [log] - [ sqliteLoader.js:56 ]  Database opened successfully
+⚡️  To Native ->  CapacitorSQLite execute 47173282
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 47173283
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 47173284
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 47173285
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 47173286
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  [log] - [ sqliteLoader.js ] All tables created with proper relationships
+⚡️  [log] - [ sqliteLoader.js:59 ]  Database initialization complete
+⚡️  [log] - [ DatabaseService: 55 ] SQLite database initialized successfully
+⚡️  [log] - [ DatabaseService: 63 ] Database ready
+⚡️  [log] - [ AppDataContext.tsx:156 ] Database status changed: ready
+⚡️  [log] - [ AppDataContext.tsx ] Database ready, loading initial data...
+⚡️  To Native ->  CapacitorSQLite query 47173287
+⚡️  [log] - [ AppDataContext.tsx:187 ] Loading initial data...
+⚡️  [log] - [ DatabaseService: 70 ] Database initialization complete
+⚡️  [log] - [ DatabaseService: 205 ] Processing 0 queued operations
+⚡️  To Native ->  CapacitorSQLite query 47173288
+⚡️  To Native ->  CapacitorSQLite query 47173289
+⚡️  To Native ->  CapacitorSQLite query 47173290
+⚡️  TO JS {"values":[]}
+⚡️  [log] - [ AppDataContext.tsx:430 ] Reloading all data after reset...
+⚡️  To Native ->  CapacitorSQLite query 47173291
+⚡️  [log] - [ AppDataContext.tsx:187 ] Loading initial data...
+⚡️  To Native ->  CapacitorSQLite query 47173292
+⚡️  TO JS {"values":[]}
+⚡️  To Native ->  CapacitorSQLite query 47173293
+⚡️  [log] - [ DatabaseService ] Checking if database is empty for new user detection...
+⚡️  TO JS {"values":[]}
+⚡️  TO JS ⚡️  To Native ->  CapacitorSQLite query 47173294
+{"values":[]}
+⚡️  To Native ->  CapacitorSQLite query 47173295
+⚡️  TO JS {"values":[]}
+⚡️  TO JS {"values":[]}
+⚡️  TO JS {"values":[]}
+⚡️  [log] - Found users to fix: 0
+⚡️  [log] - Preferences fix complete
+⚡️  [log] - [ AppDataContext.tsx ] Database preferences validated/fixed
+⚡️  TO JS {"values":[]}
+⚡️  [log] - Found users to fix: 0
+⚡️  [log] - Preferences fix complete
+⚡️  [log] - [ AppDataContext.tsx ] Database preferences validated/fixed
+⚡️  TO JS {"values":[]}
+⚡️  [log] - [ DatabaseService ] Record counts: {"users":0,"hasUserData":false,"activities":0,"meetings":0,"sponsorContacts":0,"actionItems":0,"totalDataRecords":0}
+⚡️  [log] - [ App ] Database empty check result: true
+⚡️  [log] - [ AppDataContext.tsx:206 ] Loaded users: 0
+⚡️  To Native ->  CapacitorSQLite execute 47173296
+⚡️  To Native ->  CapacitorSQLite execute 47173297
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  [log] - [ AppDataContext.tsx:206 ] Loaded users: 0
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  [error] - [ AppDataContext.tsx:249 ] Failed to load user data: {}
+⚡️  [error] - [ AppDataContext.tsx:196 ] Failed to load initial data: {}
+⚡️  [error] - [ AppDataContext.tsx:249 ] Failed to load user data: {}
+⚡️  [error] - [ AppDataContext.tsx:196 ] Failed to load initial data: {}
+⚡️  [log] - [ AppDataContext.tsx:433 ] Complete app reset finished
+⚡️  [log] - Data reset complete - navigating to dashboard

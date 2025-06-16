@@ -99,10 +99,19 @@ export default async function initSQLiteDatabase() {
           statements: `INSERT INTO ${collection} (${columns.join(', ')}) VALUES (${valuesList});`
         });
 
-        if (result && result.changes && result.changes.lastId) {
-          return { ...item, id: result.changes.lastId };
+        if (result && result.changes) {
+          // Use lastId if available, otherwise generate a timestamp-based ID
+          const newId = result.changes.lastId || Date.now();
+          const newItem = { 
+            ...item, 
+            id: newId,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString()
+          };
+          console.log(`[ sqliteLoader.js ] Created ${collection} item with ID:`, newId);
+          return newItem;
         }
-        return null;
+        throw new Error(`Failed to insert item into ${collection}`);
       },
 
       async update(collection, id, updates) {

@@ -315,6 +315,10 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
           }
         });
         
+        if (!newUser) {
+          throw new Error('Failed to create default user - addUser returned null');
+        }
+        
         dispatch({ type: 'SET_USER', payload: newUser });
         dispatch({ type: 'SET_CURRENT_USER_ID', payload: newUser.id });
         console.log('[ AppDataContext.tsx:246 ] Created default user:', newUser.id);
