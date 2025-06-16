@@ -269,12 +269,11 @@ async function createSponseeTestContacts(sponsee: any, userId: number | string, 
     
     await databaseService.add('activities', contactActivity);
     
-    // Create action item (Note: sponsee action items do NOT appear in Activity Log)
+    // Create action item without foreign key constraint (Note: sponsee action items do NOT appear in Activity Log)
     const actionItem = {
       title: 'Complete Step 4 inventory',
       text: 'Work on personal inventory list',
       notes: 'Focus on resentments and fears',
-      sponseeContactId: (savedContactWithAction as any).id,
       dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // 1 week from now
       completed: 0,
       type: 'sponsee_action_item',
