@@ -86,17 +86,26 @@ export default async function initSQLiteDatabase() {
         const values = Object.values(item);
         
         const processedValues = values.map(value => {
+          if (value === null || value === undefined) {
+            return 'NULL';
+          }
           if (typeof value === 'object' && value !== null) {
-            return JSON.stringify(value);
+            return `'${JSON.stringify(value).replace(/'/g, "''")}'`;
+          }
+          if (typeof value === 'string') {
+            return `'${value.replace(/'/g, "''")}'`;
           }
           return value;
         });
 
-        const valuesList = processedValues.map(v => typeof v === 'string' ? `'${v.replace(/'/g, "''")}'` : v).join(', ');
+        const valuesList = processedValues.join(', ');
+        const sql = `INSERT INTO ${collection} (${columns.join(', ')}) VALUES (${valuesList});`;
+        
+        console.log(`[ sqliteLoader.js ] Executing SQL: ${sql}`);
 
         const result = await sqlite.execute({
           database: DB_NAME,
-          statements: `INSERT INTO ${collection} (${columns.join(', ')}) VALUES (${valuesList});`
+          statements: sql
         });
 
         if (result && result.changes) {

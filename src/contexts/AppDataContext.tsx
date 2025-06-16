@@ -209,6 +209,17 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
       console.log('[ AppDataContext.tsx ] Platform:', navigator.userAgent);
       console.log('[ AppDataContext.tsx ] Is Capacitor:', !!(window as any).Capacitor);
       
+      // Check if running on iOS device using Capacitor
+      const isCapacitor = !!(window as any).Capacitor;
+      const isIOS = (window as any).Capacitor?.getPlatform?.() === 'ios';
+      
+      if (!isCapacitor || !isIOS) {
+        console.log('[ AppDataContext.tsx ] This app is designed for iOS only. Web platform not supported.');
+        dispatch({ type: 'SET_ERROR', payload: 'This app requires iOS device with Capacitor' });
+        dispatch({ type: 'SET_LOADING', payload: false });
+        return;
+      }
+      
       try {
         // Subscribe to database status changes
         unsubscribeFunction = databaseService.onStatusChange((status) => {
