@@ -421,6 +421,46 @@ async function createTables(sqlite) {
     `
   });
 
+  // Create sponsors table
+  await sqlite.execute({
+    database: DB_NAME,
+    statements: `
+      CREATE TABLE IF NOT EXISTS sponsors (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        userId TEXT DEFAULT 'default_user',
+        name TEXT,
+        lastName TEXT,
+        phoneNumber TEXT,
+        email TEXT,
+        sobrietyDate TEXT,
+        notes TEXT,
+        sponsorType TEXT DEFAULT 'sponsor',
+        createdAt TEXT DEFAULT CURRENT_TIMESTAMP,
+        updatedAt TEXT DEFAULT CURRENT_TIMESTAMP
+      )
+    `
+  });
+
+  // Create sponsees table
+  await sqlite.execute({
+    database: DB_NAME,
+    statements: `
+      CREATE TABLE IF NOT EXISTS sponsees (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        userId TEXT DEFAULT 'default_user',
+        name TEXT,
+        lastName TEXT,
+        phoneNumber TEXT,
+        email TEXT,
+        sobrietyDate TEXT,
+        notes TEXT,
+        sponseeType TEXT DEFAULT 'sponsee',
+        createdAt TEXT DEFAULT CURRENT_TIMESTAMP,
+        updatedAt TEXT DEFAULT CURRENT_TIMESTAMP
+      )
+    `
+  });
+
   // Add missing columns to existing tables if they don't exist
   try {
     await sqlite.execute({
