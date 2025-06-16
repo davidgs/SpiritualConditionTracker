@@ -636,16 +636,17 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
     try {
       console.log('[ AppDataContext.tsx:405 ] Starting complete app reset...');
       
-      // Reset React state first
-      dispatch({ type: 'RESET_ALL_DATA' });
-      
       // Set loading state to show we're resetting
       dispatch({ type: 'SET_LOADING', payload: true });
+      dispatch({ type: 'SET_ERROR', payload: null });
       
       // CRITICAL: Actually reset the database by dropping and recreating tables
       console.log('[ AppDataContext.tsx:415 ] Calling DatabaseService.resetAllData to drop and recreate all tables...');
       await databaseService.resetAllData();
       console.log('[ AppDataContext.tsx:417 ] Database tables dropped and recreated successfully');
+      
+      // Reset React state after successful database reset
+      dispatch({ type: 'RESET_ALL_DATA' });
       
       // Reset and reinitialize the database service
       console.log('[ AppDataContext.tsx:423 ] Resetting database service state...');
@@ -654,6 +655,9 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
       console.log('[ AppDataContext.tsx:426 ] Reinitializing database service...');
       await databaseService.initialize();
       
+      // Wait a moment for database to be fully ready
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
       // Reload all initial data (should be empty now)
       console.log('[ AppDataContext.tsx:430 ] Reloading all data after reset...');
       await loadInitialData();
@@ -661,8 +665,18 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
       console.log('[ AppDataContext.tsx:433 ] Complete app reset finished');
     } catch (error) {
       console.error('[ AppDataContext.tsx:435 ] Failed to reset data:', error);
-      dispatch({ type: 'SET_ERROR', payload: 'Failed to reset data' });
+      console.error('[ AppDataContext.tsx ] Reset error details:', error instanceof Error ? error.stack : 'No stack trace');
+      dispatch({ type: 'SET_ERROR', payload: `Reset failed: ${error instanceof Error ? error.message : 'Unknown error'}` });
       dispatch({ type: 'SET_LOADING', payload: false });
+      
+      // Try to reinitialize the database even if reset failed
+      try {
+        console.log('[ AppDataContext.tsx ] Attempting to reinitialize database after reset failure...');
+        await databaseService.initialize();
+        await loadInitialData();
+      } catch (recoveryError) {
+        console.error('[ AppDataContext.tsx ] Recovery attempt also failed:', recoveryError);
+      }
     }
   };
 

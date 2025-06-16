@@ -556,19 +556,24 @@ async function createTables(sqlite) {
 
 async function resetDatabase(sqlite) {
   try {
+    console.log('[ sqliteLoader.js ] Starting database reset process...');
     const tables = ['users', 'activities', 'meetings', 'sponsor_contacts', 'sponsee_contacts', 'action_items', 'sponsors', 'sponsees'];
     
     for (const table of tables) {
       try {
+        console.log(`[ sqliteLoader.js ] Dropping table: ${table}`);
         await sqlite.execute({
           database: DB_NAME,
           statements: `DROP TABLE IF EXISTS ${table};`
         });
+        console.log(`[ sqliteLoader.js ] Successfully dropped table: ${table}`);
       } catch (error) {
         console.error(`[ sqliteLoader.js ] Error dropping table ${table}:`, error);
+        // Continue with other tables even if one fails
       }
     }
     
+    console.log('[ sqliteLoader.js ] Recreating tables...');
     await createTables(sqlite);
     console.log('[ sqliteLoader.js ] Database reset complete');
     
