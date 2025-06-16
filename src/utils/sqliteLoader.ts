@@ -108,16 +108,18 @@ export default async function initSQLiteDatabase() {
           statements: sql
         });
 
-        if (result && result.changes) {
-          // Debug the result structure
-          console.log(`[ sqliteLoader.js ] Insert result for ${collection}:`, JSON.stringify(result));
+        if (result && result.changes && result.changes.changes > 0) {
+          // Query the database to get the last inserted ID
+          const lastIdQuery = await sqlite.query({
+            database: DB_NAME,
+            statement: 'SELECT last_insert_rowid() as lastId'
+          });
           
-          // Use the actual database-generated ID from lastId
-          const newId = result.changes.lastId;
+          const newId = lastIdQuery.values?.[0]?.lastId;
           if (!newId) {
-            console.log(`[ sqliteLoader.js ] No lastId found in result:`, result);
-            throw new Error(`Database failed to generate ID for ${collection}. Result: ${JSON.stringify(result)}`);
+            throw new Error(`Database failed to generate ID for ${collection}`);
           }
+          
           const newItem = { 
             ...item, 
             id: newId,
