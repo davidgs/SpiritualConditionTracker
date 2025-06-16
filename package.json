@@ -38,6 +38,7 @@
     "copy-webpack-plugin": "^13.0.0",
     "dayjs": "^1.11.13",
     "express": "^5.1.0",
+    "jeep-sqlite": "^2.8.0",
     "lru-cache": "11.1.0",
     "mui-tel-input": "^9.0.1",
     "postcss-loader": "^8.1.1",

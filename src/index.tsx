@@ -3,12 +3,12 @@ import { createRoot } from 'react-dom/client';
 import App from './App';
 import './styles/tailwind.css';
 import './styles/main.css';
-import { defineCustomElements } from '@ionic/core/loader';
+import { defineCustomElements as defineJeepSqlite } from 'jeep-sqlite/loader';
 
 // Function to initialize SQLite web component
 async function initializeSQLiteWeb() {
-  // Define Ionic custom elements for web platform
-  defineCustomElements(window);
+  // Define jeep-sqlite custom elements for web platform
+  await defineJeepSqlite(window);
   
   // Add jeep-sqlite custom element for web platform
   const jeepSqlite = document.createElement('jeep-sqlite');
