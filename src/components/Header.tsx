@@ -162,7 +162,7 @@ function Header({ title, menuOpen, setMenuOpen, isMobile, onNavigate, autoStartT
           borderBottom: `1px solid ${muiTheme.palette.divider}`,
           pb: 2
         }}>
-          About My Spiritual Condition
+          About My Spiritual Condition (v1.0.6 b123)
         </DialogTitle>
         <DialogContent sx={{ pt: 3 }}>
           <Typography variant="body1" sx={{ mb: 3, lineHeight: 1.6 }}>
@@ -193,6 +193,9 @@ function Header({ title, menuOpen, setMenuOpen, isMobile, onNavigate, autoStartT
           
           <Typography variant="body2" sx={{ mb: 2, color: muiTheme.palette.text.secondary }}>
             This daily reprieve is contingent on maintaining our spiritual condition through consistent action and mindful tracking of our spiritual activities.
+          </Typography>
+          <Typography variant="body2" sx={{ mb: 2, color: muiTheme.palette.text.secondary }}>
+            I created this app in order to help me maintain consistency in working my program over time. I hope it helps you as well.
           </Typography>
           
           <Box sx={{ mt: 3, pt: 2, borderTop: `1px solid ${muiTheme.palette.divider}` }}>
