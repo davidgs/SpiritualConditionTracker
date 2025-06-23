@@ -622,19 +622,19 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
             </>
           )}
         </Paper>
+      
       {/* App Settings */}
       <Paper sx={{
-        p: 3,
-        mb: 3,
+        p: 2,
+        mb: 2,
         borderRadius: 2,
-        bgcolor: 'background.paper',
-        paddingTop: '4px'
+        bgcolor: 'background.paper'
       }}>
-        <Typography variant="h6" sx={{ mb: 2, color: 'text.primary' }}>
+        <Typography variant="h6" sx={{ mb: 1.5, color: 'text.primary' }}>
           App Settings
         </Typography>
 
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
 
 
           {/* Advanced theme customization temporarily disabled */}
@@ -780,7 +780,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
           paddingTop: '4px'
         })}
       >
-        <Box sx={{ mb: 2 }}>
+        <Box sx={{ mb: 1.5 }}>
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <Typography variant="h6" sx={{ color: 'text.primary' }}>
               Personal Information
@@ -843,7 +843,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
                   name: 'firstName'
                 }}
                 sx={{
-                  mb: 2,
+                  mb: 1.5,
                   '& .MuiOutlinedInput-root': {
                     height: 56,
                     borderRadius: 2
@@ -871,7 +871,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
                   name: 'lastName'
                 }}
                 sx={{
-                  mb: 2,
+                  mb: 1.5,
                   '& .MuiOutlinedInput-root': {
                     height: 56,
                     borderRadius: 2
@@ -901,7 +901,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
                   'data-1p-ignore': 'false'
                 }}
                 sx={{
-                  mb: 2,
+                  mb: 1.5,
                   '& .MuiInputBase-root': {
                     height: '56px',
                     borderRadius: '8px',
@@ -930,7 +930,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
                   name: 'email'
                 }}
                 sx={{
-                  mb: 2,
+                  mb: 1.5,
                   '& .MuiOutlinedInput-root': {
                     height: 56,
                     borderRadius: 2
@@ -1097,7 +1097,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
           </>
         ) : (
           <>
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
               {/* Name display */}
               <Box>
                 <Typography variant="caption" sx={{ color: 'text.secondary' }}>

@@ -23,12 +23,11 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "serve -s . -l 5000"
-waitForPort = 5000
+args = "npx webpack --mode development --watch"
 
 [[workflows.workflow]]
 name = "StaticServer"
 author = "agent"
 
 [deployment]
-run = ["sh", "-c", "serve -s . -l 5000"]
+run = ["sh", "-c", "npx webpack --mode development --watch"]
