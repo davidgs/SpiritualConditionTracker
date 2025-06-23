@@ -352,24 +352,62 @@ async function createTables(sqlite) {
     `
   });
 
-  // Create meetings table - RESTORED TO WORKING SCHEMA
+  // Create meetings table - RESTORED TO JUNE 11TH WORKING SCHEMA
   await sqlite.execute({
     database: DB_NAME,
     statements: `
       CREATE TABLE IF NOT EXISTS meetings (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT NOT NULL,
-        location TEXT NOT NULL,
-        time TEXT NOT NULL,
-        dayOfWeek TEXT NOT NULL,
-        meetingType TEXT NOT NULL,
-        locationType TEXT DEFAULT 'in_person',
-        notes TEXT,
-        createdAt TEXT DEFAULT CURRENT_TIMESTAMP,
-        updatedAt TEXT DEFAULT CURRENT_TIMESTAMP
+        name TEXT,
+        days TEXT,
+        time TEXT,
+        schedule TEXT,
+        address TEXT,
+        locationName TEXT,
+        streetAddress TEXT,
+        city TEXT,
+        state TEXT,
+        zipCode TEXT,
+        coordinates TEXT,
+        phoneNumber TEXT,
+        onlineUrl TEXT,
+        isHomeGroup INTEGER DEFAULT 0,
+        types TEXT,
+        createdAt TEXT,
+        updatedAt TEXT
       )
     `
   });
+  console.log('[ sqliteLoader.js ] Meetings table created');
+
+  // Migrate existing meetings table to include missing columns
+  const requiredColumns = [
+    'days TEXT',
+    'schedule TEXT', 
+    'address TEXT',
+    'locationName TEXT',
+    'streetAddress TEXT',
+    'city TEXT',
+    'state TEXT',
+    'zipCode TEXT',
+    'coordinates TEXT',
+    'phoneNumber TEXT',
+    'onlineUrl TEXT',
+    'isHomeGroup INTEGER DEFAULT 0',
+    'types TEXT'
+  ];
+
+  for (const column of requiredColumns) {
+    try {
+      await sqlite.execute({
+        database: DB_NAME,
+        statements: `ALTER TABLE meetings ADD COLUMN ${column}`
+      });
+      console.log('[ sqliteLoader.js ] Added column:', column);
+    } catch (error) {
+      // Column already exists or other error - continue
+    }
+  }
 
 
 

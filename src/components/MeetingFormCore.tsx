@@ -315,13 +315,25 @@ export default function MeetingFormCore({
       // For editing existing meetings, keep their ID
       ...(meeting ? { id: meeting.id } : {}),
       name: meetingName.trim(),
-      // Map to database schema fields
-      location: formattedAddress || locationName.trim(),
+      // For backward compatibility
+      days: uniqueDays,
       time: firstTime,
-      dayOfWeek: uniqueDays.length > 0 ? uniqueDays[0] : '',
-      meetingType: meetingTypes.length > 0 ? meetingTypes[0] : 'discussion',
-      locationType: meetingSchedule.length > 0 ? meetingSchedule[0].locationType || 'in_person' : 'in_person',
-      notes: onlineUrl.trim() ? `Online URL: ${onlineUrl.trim()}` : '',
+      // New format
+      schedule: meetingSchedule,
+      // Store meeting types for easy access
+      types: meetingTypes,
+      address: formattedAddress,
+      // Store the location name
+      locationName: locationName.trim(),
+      // Store individual address components for better editing
+      streetAddress: streetAddress.trim(),
+      city: city.trim(),
+      state: state.trim(),
+      zipCode: zipCode.trim(),
+      coordinates: location,
+      isHomeGroup: isHomeGroup,
+      // Store online URL for virtual meetings
+      onlineUrl: onlineUrl.trim(),
       createdAt: meeting ? meeting.createdAt : new Date().toISOString(),
       updatedAt: new Date().toISOString()
     };
