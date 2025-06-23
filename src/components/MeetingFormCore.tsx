@@ -357,7 +357,7 @@ export default function MeetingFormCore({
         mb: 2,
         color: theme.palette.text.secondary
       })}>
-        Add details for your regular AA Group and meetings. Most meetings occur in the evenings, typically between 6-9 PM.
+        Add details for your regular AA Group and meetings.
       </Typography>
       
       {error && (
