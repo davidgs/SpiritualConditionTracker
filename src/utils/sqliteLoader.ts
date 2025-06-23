@@ -352,17 +352,10 @@ async function createTables(sqlite) {
     `
   });
 
-  // Drop and recreate meetings table with June 11th working schema
-  await sqlite.execute({
-    database: DB_NAME,
-    statements: `DROP TABLE IF EXISTS meetings;`
-  });
-  console.log('[ sqliteLoader.js ] Dropped existing meetings table');
-
   await sqlite.execute({
     database: DB_NAME,
     statements: `
-      CREATE TABLE meetings (
+      CREATE TABLE IF NOT EXISTS meetings (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT,
         days TEXT,
