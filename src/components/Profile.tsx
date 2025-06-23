@@ -1158,6 +1158,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
       <Paper elevation={0} sx={{
         p: 3,
         mb: 3,
+        mt: 3,
         bgcolor: 'background.paper',
         borderRadius: 2,
         border: '1px solid',
