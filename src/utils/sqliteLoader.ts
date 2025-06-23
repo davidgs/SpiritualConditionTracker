@@ -352,7 +352,36 @@ async function createTables(sqlite) {
     `
   });
 
-  // Create meetings table
+  // Check if meetings table needs migration
+  try {
+    const tableInfo = await sqlite.execute({
+      database: DB_NAME,
+      statements: "PRAGMA table_info(meetings);"
+    });
+    
+    const columns = tableInfo.values || [];
+    const hasComplexColumns = columns.some(col => col.name === 'days' || col.name === 'schedule');
+    
+    if (!hasComplexColumns && columns.length > 0) {
+      console.log('[ sqliteLoader.js ] Migrating meetings table to support complex data...');
+      // Backup existing data
+      const existingData = await sqlite.query({
+        database: DB_NAME,
+        statement: "SELECT * FROM meetings",
+        values: []
+      });
+      
+      // Drop and recreate table
+      await sqlite.execute({
+        database: DB_NAME,
+        statements: "DROP TABLE IF EXISTS meetings;"
+      });
+    }
+  } catch (error) {
+    console.log('[ sqliteLoader.js ] Table migration check failed, will create new:', error.message);
+  }
+
+  // Create meetings table with full schema
   await sqlite.execute({
     database: DB_NAME,
     statements: `
@@ -392,6 +421,8 @@ async function createTables(sqlite) {
       )
     `
   });
+
+
 
   // Create sponsor_contacts table
   await sqlite.execute({
