@@ -352,70 +352,19 @@ async function createTables(sqlite) {
     `
   });
 
-  // Check if meetings table needs migration
-  try {
-    const tableInfo = await sqlite.execute({
-      database: DB_NAME,
-      statements: "PRAGMA table_info(meetings);"
-    });
-    
-    const columns = tableInfo.values || [];
-    const hasComplexColumns = columns.some(col => col.name === 'days' || col.name === 'schedule');
-    
-    if (!hasComplexColumns && columns.length > 0) {
-      console.log('[ sqliteLoader.js ] Migrating meetings table to support complex data...');
-      // Backup existing data
-      const existingData = await sqlite.query({
-        database: DB_NAME,
-        statement: "SELECT * FROM meetings",
-        values: []
-      });
-      
-      // Drop and recreate table
-      await sqlite.execute({
-        database: DB_NAME,
-        statements: "DROP TABLE IF EXISTS meetings;"
-      });
-    }
-  } catch (error) {
-    console.log('[ sqliteLoader.js ] Table migration check failed, will create new:', error.message);
-  }
-
-  // Create meetings table with full schema
+  // Create meetings table - RESTORED TO WORKING SCHEMA
   await sqlite.execute({
     database: DB_NAME,
     statements: `
       CREATE TABLE IF NOT EXISTS meetings (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT DEFAULT 'Unnamed Meeting',
-        days TEXT,
-        time TEXT,
-        schedule TEXT,
-        address TEXT,
-        locationName TEXT,
-        streetAddress TEXT,
-        city TEXT,
-        state TEXT,
-        zipCode TEXT,
-        country TEXT,
-        online INTEGER,
-        onlineUrl TEXT,
-        phoneNumber TEXT,
-        meetingCode TEXT,
+        name TEXT NOT NULL,
+        location TEXT NOT NULL,
+        time TEXT NOT NULL,
+        dayOfWeek TEXT NOT NULL,
+        meetingType TEXT NOT NULL,
+        locationType TEXT DEFAULT 'in_person',
         notes TEXT,
-        latitude REAL,
-        longitude REAL,
-        types TEXT,
-        format TEXT,
-        accessibility TEXT,
-        languages TEXT,
-        isHomeGroup INTEGER,
-        isTemporarilyClosed INTEGER,
-        contactName TEXT,
-        contactEmail TEXT,
-        contactPhone TEXT,
-        attendance TEXT,
-        lastAttended TEXT,
         createdAt TEXT DEFAULT CURRENT_TIMESTAMP,
         updatedAt TEXT DEFAULT CURRENT_TIMESTAMP
       )
