@@ -573,11 +573,13 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
                           <Typography variant="h3" sx={{
                             fontWeight: 'bold',
                             color: 'primary.main',
-                            mr: 1
+                            mr: 1,
+                            textAlign: 'center'
+                        
                           }}>
                             {sobrietyYears.toFixed(2)}
                           </Typography>
-                          <Typography variant="h6" sx={{ color: 'text.secondary' }}>
+                          <Typography variant="h6" sx={{ color: 'text.secondary', textAlign: 'center' }}>
                             years
                           </Typography>
                         </Box>
