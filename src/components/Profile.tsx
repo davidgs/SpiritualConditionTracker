@@ -409,7 +409,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
         <Typography variant="h4" sx={{ fontWeight: 'bold', color: 'text.primary', textAlign: 'center', }}>
           Spiritual Condition Tracker
         </Typography>
-        <Typography variant="subtitle1" sx={{ color: 'text.secondary' }}>
+        <Typography variant="subtitle1" sx={{ color: 'text.secondary', textAlign: 'center' }}>
           Your personal profile
         </Typography>
       </Box>
@@ -429,7 +429,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
               <Box sx={{ display: 'flex', alignItems: 'center' }}>
                 <Typography variant="subtitle1" sx={{
                   color: 'text.secondary',
-                  fontWeight: 500
+                  fontWeight: 500, textAlign: 'center'
                 }}>
                   Sober since {formatDateForDisplay(sobrietyDate)}
                 </Typography>
