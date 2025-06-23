@@ -823,7 +823,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
         {editingPersonalInfo ? (
           <>
             <Box sx={{ display: 'flex', flexDirection: 'column', mb: 2 }}>
-              <Box sx={{ color: muiTheme.palette.primary.main, fontSize: '14px', mb: 1.5 }}>
+              <Box sx={{ color: muiTheme.palette.primary.main, fontSize: '14px', mb: .5 }}>
                 First Name*
               </Box>
               <TextField
@@ -843,7 +843,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
                   name: 'firstName'
                 }}
                 sx={{
-                  mb: 1,
+                  mb: .5,
                   '& .MuiOutlinedInput-root': {
                     height: 56,
                     borderRadius: 2
@@ -854,7 +854,9 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
                   }
                 }}
               />
-
+              <Box sx={{ color: muiTheme.palette.primary.main, fontSize: '14px', mb: .5 }}>
+                Last Name
+              </Box>
               <TextField
                 fullWidth
                 value={lastName != "Not set" ? lastName : ""}
@@ -871,7 +873,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
                   name: 'lastName'
                 }}
                 sx={{
-                  mb: 1,
+                  mb: .5,
                   '& .MuiOutlinedInput-root': {
                     height: 56,
                     borderRadius: 2
@@ -883,7 +885,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
                 }}
               />
 
-              <Box sx={{ color: muiTheme.palette.primary.main, fontSize: '14px', mb: 1.5 }}>
+              <Box sx={{ color: muiTheme.palette.primary.main, fontSize: '14px', mb: .5 }}>
                 Phone Number
               </Box>
               <MuiTelInput
@@ -901,7 +903,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
                   'data-1p-ignore': 'false'
                 }}
                 sx={{
-                  mb: 1,
+                  mb: .5,
                   '& .MuiInputBase-root': {
                     height: '56px',
                     borderRadius: '8px',
@@ -912,7 +914,9 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
                   }
                 }}
               />
-
+              <Box sx={{ color: muiTheme.palette.primary.main, fontSize: '14px', mb: .5 }}>
+                Email Address
+              </Box>
               <TextField
                 fullWidth
                 value={email != "Not set" ? email : ""}
@@ -930,7 +934,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
                   name: 'email'
                 }}
                 sx={{
-                  mb: 1,
+                  mb: .5,
                   '& .MuiOutlinedInput-root': {
                     height: 56,
                     borderRadius: 2
@@ -942,7 +946,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
                 }}
               />
 
-              <Box sx={{ color: muiTheme.palette.text.secondary, fontSize: '14px', mb: '4px' }}>
+              <Box sx={{ color: muiTheme.palette.text.secondary, fontSize: '14px', mb: 1 }}>
                 Home Group(s)
               </Box>
               
