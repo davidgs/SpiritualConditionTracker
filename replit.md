@@ -96,7 +96,11 @@ The Spiritual Condition Tracker is a comprehensive mobile application designed f
 4. Native compilation and code signing for distribution
 
 ## Changelog
-- June 23, 2025. Initial setup
+- June 23, 2025: Fixed critical database schema mismatch causing meeting save failures
+  - Added automatic migration to upgrade meetings table from simple to complex schema
+  - Resolves "table meetings has no column named days" error
+  - Preserves existing meeting data during schema upgrade
+- June 23, 2025: Initial setup
 
 ## User Preferences
 
