@@ -8,6 +8,10 @@ import QRCodeGenerator from './QRCodeGenerator';
 import { useAppTheme } from '../contexts/MuiThemeProvider';
 import MuiThemeProvider from '../contexts/MuiThemeProvider';
 import { formatDateForDisplay } from '../utils/dateUtils';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import dayjs from 'dayjs';
 
 import { Capacitor } from '@capacitor/core';
 import { formatPhoneNumber, formatPhoneNumberForInput } from '../utils/phoneUtils';
