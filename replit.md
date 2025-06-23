@@ -96,11 +96,15 @@ The Spiritual Condition Tracker is a comprehensive mobile application designed f
 4. Native compilation and code signing for distribution
 
 ## Changelog
+- June 23, 2025: Restored phone number formatting functionality
+  - Root cause: Commit cefeb64d replaced MuiTelInput with basic TextField, losing international formatting
+  - Reverted Profile.tsx phone input to use MuiTelInput with country selection and proper formatting
+  - Phone numbers now display properly formatted instead of raw unformatted text
 - June 23, 2025: Restored meeting functionality to June 11th working state
   - Root cause: Database schema was simplified between June 11-23, breaking complex meeting functionality
   - Restored database schema to June 11th working version (commit 6e2c7333) with all complex columns
   - Restored MeetingFormCore data mapping to save complex meeting data properly
-  - Added migration logic to upgrade existing database tables with missing columns
+  - Added DROP/CREATE logic to fix existing database tables with incorrect schema
   - Complex meeting features (multiple days/times, addresses, home groups) now functional
 - June 23, 2025: Initial setup
 
