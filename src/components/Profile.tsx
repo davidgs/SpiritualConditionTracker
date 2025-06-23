@@ -406,7 +406,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
         />
       )}
       <Box sx={{ mb: 3 }}>
-        <Typography variant="h4" sx={{ fontWeight: 'bold', color: 'text.primary' }}>
+        <Typography variant="h4" sx={{ fontWeight: 'bold', color: 'text.primary', textAlign: 'center', }}>
           Spiritual Condition Tracker
         </Typography>
         <Typography variant="subtitle1" sx={{ color: 'text.secondary' }}>
@@ -421,7 +421,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
           bgcolor: 'background.paper'
         }}>
           <Box sx={{ mb: 2 }}>
-            <Typography variant="h6" sx={{ color: 'text.primary', mb: 1 }}>
+            <Typography variant="h6" sx={{ color: 'text.primary', mb: 1, textAlign: 'center' }}>
               Sobriety Milestone
             </Typography>
 
@@ -569,7 +569,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
                   <>
                     {showYearsProminent ? (
                       <>
-                        <Box sx={{ display: 'flex', alignItems: 'baseline', mb: 1 }}>
+                        <Box sx={{ display: 'flex', alignItems: 'baseline', mb: 1, textAlign: 'center' }}>
                           <Typography variant="h3" sx={{
                             fontWeight: 'bold',
                             color: 'primary.main',
@@ -590,7 +590,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
                       </>
                     ) : (
                       <>
-                        <Box sx={{ display: 'flex', alignItems: 'baseline', mb: 1 }}>
+                        <Box sx={{ display: 'flex', alignItems: 'baseline', mb: 1, textAlign: 'center' }}>
                           <Typography variant="h3" sx={{
                             fontWeight: 'bold',
                             color: 'primary.main',

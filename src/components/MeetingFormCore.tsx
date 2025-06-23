@@ -354,7 +354,7 @@ export default function MeetingFormCore({
   return (
     <Box className={className}>
       <Typography variant="body2" sx={(theme) => ({ 
-        mb: 2,
+        mb: 1.5,
         color: theme.palette.text.secondary
       })}>
         Add details for your regular AA Group and meetings. Most meetings occur in the evenings, typically between 6-9 PM.
@@ -367,8 +367,8 @@ export default function MeetingFormCore({
       )}
       
       {/* Compact horizontal stepper at the top */}
-      <Box sx={{ mb: 3 }}>
-        <Stepper activeStep={activeStep} alternativeLabel sx={{ mb: 2 }}>
+      <Box sx={{ mb: 2 }}>
+        <Stepper activeStep={activeStep} alternativeLabel sx={{ mb: 1.5 }}>
           {steps.map((step, index) => (
             <Step key={step.label} completed={isStepComplete(index)}>
               <StepLabel 
@@ -390,7 +390,7 @@ export default function MeetingFormCore({
       <Box component="form" onSubmit={handleSubmit} noValidate sx={{ 
         display: 'flex', 
         flexDirection: 'column', 
-        gap: 2, 
+        gap: 1.5, 
         mt: 1,
         width: '100%', 
         maxWidth: '100%',
@@ -431,7 +431,7 @@ export default function MeetingFormCore({
               Location
             </Box>
             
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.2 }}>
               <TextField
                 fullWidth
                 value={locationName}
