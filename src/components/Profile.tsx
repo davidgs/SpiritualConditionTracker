@@ -822,7 +822,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
 
         {editingPersonalInfo ? (
           <>
-            <Box sx={{ display: 'flex', flexDirection: 'column', mb: 3 }}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', mb: 2 }}>
               <Box sx={{ color: muiTheme.palette.primary.main, fontSize: '14px', mb: 1.5 }}>
                 First Name*
               </Box>
@@ -883,7 +883,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
                 }}
               />
 
-              <Box sx={{ color: muiTheme.palette.primary.main, fontSize: '14px', mb: '4px' }}>
+              <Box sx={{ color: muiTheme.palette.primary.main, fontSize: '14px', mb: 1.5 }}>
                 Phone Number
               </Box>
               <MuiTelInput
@@ -1097,13 +1097,13 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
           </>
         ) : (
           <>
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
               {/* Name display */}
               <Box>
                 <Typography variant="caption" sx={{ color: 'text.secondary' }}>
                   First Name
                 </Typography>
-                <Typography sx={{ color: 'text.primary', fontWeight: 500, mb: 1 }}>
+                <Typography sx={{ color: 'text.primary', fontWeight: 500, mb: .5 }}>
                   {name || "Not set"}
                 </Typography>
               </Box>
