@@ -409,7 +409,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
           isEdit={false}
         />
       )}
-      <Box sx={{ mb: 3 }}>
+      <Box sx={{ mb: 2 }}>
         <Typography variant="h4" sx={{ fontWeight: 'bold', color: 'text.primary', textAlign: 'center', }}>
           Spiritual Condition Tracker
         </Typography>
@@ -420,7 +420,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
 
       <Paper sx={{
           p: 3,
-          mb: 3,
+          mb: 2,
           borderRadius: 2,
           bgcolor: 'background.paper'
         }}>
@@ -626,11 +626,11 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
       {/* App Settings */}
       <Paper sx={{
         p: 2,
-        mb: 2,
+        mb: 1.5,
         borderRadius: 2,
         bgcolor: 'background.paper'
       }}>
-        <Typography variant="h6" sx={{ mb: 1.5, color: 'text.primary' }}>
+        <Typography variant="h6" sx={{ mb: 1, color: 'text.primary' }}>
           App Settings
         </Typography>
 
@@ -774,10 +774,10 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
         onSubmit={handleSubmit}
         sx={(theme) => ({
           p: 3,
+          mb: 1.5,
           bgcolor: theme.palette.background.paper,
           borderRadius: 2,
           border: `1px solid ${theme.palette.divider}`,
-          paddingTop: '4px'
         })}
       >
         <Box sx={{ mb: 1.5 }}>
@@ -823,7 +823,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
         {editingPersonalInfo ? (
           <>
             <Box sx={{ display: 'flex', flexDirection: 'column', mb: 3 }}>
-              <Box sx={{ color: muiTheme.palette.primary.main, fontSize: '14px', mb: '4px' }}>
+              <Box sx={{ color: muiTheme.palette.primary.main, fontSize: '14px', mb: 1.5 }}>
                 First Name*
               </Box>
               <TextField
@@ -843,7 +843,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
                   name: 'firstName'
                 }}
                 sx={{
-                  mb: 1.5,
+                  mb: 1,
                   '& .MuiOutlinedInput-root': {
                     height: 56,
                     borderRadius: 2
@@ -871,7 +871,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
                   name: 'lastName'
                 }}
                 sx={{
-                  mb: 1.5,
+                  mb: 1,
                   '& .MuiOutlinedInput-root': {
                     height: 56,
                     borderRadius: 2
@@ -901,7 +901,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
                   'data-1p-ignore': 'false'
                 }}
                 sx={{
-                  mb: 1.5,
+                  mb: 1,
                   '& .MuiInputBase-root': {
                     height: '56px',
                     borderRadius: '8px',
@@ -930,7 +930,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
                   name: 'email'
                 }}
                 sx={{
-                  mb: 1.5,
+                  mb: 1,
                   '& .MuiOutlinedInput-root': {
                     height: 56,
                     borderRadius: 2
@@ -948,7 +948,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
               
               {/* Display selected groups as chips above the dropdown */}
               {Array.isArray(homeGroups) && homeGroups.length > 0 && (
-                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.75, mb: 1.5 }}>
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.75, mb: 1 }}>
                   {homeGroups.map((group) => (
                     <Chip
                       key={group}
@@ -1021,7 +1021,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
                 margin="none"
                 placeholder="Select home groups..."
                 sx={{
-                  mb: 2,
+                  mb: 1.5,
                   '& .MuiOutlinedInput-root': {
                     borderRadius: 2
                   },
@@ -1103,7 +1103,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
                 <Typography variant="caption" sx={{ color: 'text.secondary' }}>
                   First Name
                 </Typography>
-                <Typography sx={{ color: 'text.primary', fontWeight: 500 }}>
+                <Typography sx={{ color: 'text.primary', fontWeight: 500, mb: 1 }}>
                   {name || "Not set"}
                 </Typography>
               </Box>
@@ -1113,7 +1113,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
                 <Typography variant="caption" sx={{ color: 'text.secondary' }}>
                   Last Name {shareLastName && <span style={{ fontSize: '0.7rem' }}>(Shared)</span>}
                 </Typography>
-                <Typography sx={{ color: 'text.primary', fontWeight: 500 }}>
+                <Typography sx={{ color: 'text.primary', fontWeight: 500, mb: 1 }}>
                   {lastName || "Not set"}
                 </Typography>
               </Box>
@@ -1123,7 +1123,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
                 <Typography variant="caption" sx={{ color: 'text.secondary' }}>
                   Phone Number
                 </Typography>
-                <Typography sx={{ color: 'text.primary', fontWeight: 500 }}>
+                <Typography sx={{ color: 'text.primary', fontWeight: 500, mb: 1 }}>
                   {phoneNumber || "Not set"}
                 </Typography>
               </Box>
@@ -1133,7 +1133,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
                 <Typography variant="caption" sx={{ color: 'text.secondary' }}>
                   Email Address
                 </Typography>
-                <Typography sx={{ color: 'text.primary', fontWeight: 500 }}>
+                <Typography sx={{ color: 'text.primary', fontWeight: 500, mb: 1 }}>
                   {email || "Not set"}
                 </Typography>
               </Box>
@@ -1143,7 +1143,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
                 <Typography variant="caption" sx={{ color: 'text.secondary' }}>
                   Home Groups
                 </Typography>
-                <Typography sx={{ color: 'text.primary', fontWeight: 500 }}>
+                <Typography sx={{ color: 'text.primary', fontWeight: 500, mb: 1 }}>
                   {homeGroups && homeGroups.length > 0
                     ? homeGroups.join(', ')
                     : "Not set"}
