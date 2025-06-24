@@ -372,37 +372,14 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
       console.log('[ AppDataContext.tsx ] Raw action items from database:', actionItems.length);
       console.log('[ AppDataContext.tsx ] Raw sponsor contacts from database:', sponsorContacts.length);
       
-      // Enrich activities with action item data and sponsor/sponsee names
+      // Enrich activities with action item data for proper synchronization
       const enrichedActivities = activities.map(activity => {
         if (activity.actionItemId) {
           const actionItem = actionItems.find(ai => ai.id === activity.actionItemId);
           if (actionItem) {
-            let sponsorName = '';
-            let sponseeName = '';
-            
-            // Get sponsor name if this is from a sponsor contact
-            if (actionItem.sponsorContactId) {
-              const sponsorContact = sponsorContacts.find(sc => sc.id === actionItem.sponsorContactId);
-              if (sponsorContact) {
-                sponsorName = `${sponsorContact.name || ''} ${sponsorContact.lastName || ''}`.trim() || 'Sponsor';
-              }
-            }
-            
-            // Get sponsee name if this is from a sponsee contact
-            if (actionItem.sponseeContactId) {
-              const sponseeContact = sponseeContacts.find(sc => sc.id === actionItem.sponseeContactId);
-              if (sponseeContact) {
-                sponseeName = `${sponseeContact.name || ''} ${sponseeContact.lastName || ''}`.trim() || 'Sponsee';
-              }
-            }
-            
             return {
               ...activity,
-              actionItemData: {
-                ...actionItem,
-                sponsorName,
-                sponseeName
-              },
+              actionItemData: actionItem,
               // Determine activity type based on action item context
               type: actionItem.sponsorContactId ? 'sponsor_action_item' : 
                     actionItem.sponseeContactId ? 'sponsee_action_item' : 

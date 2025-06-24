@@ -3,6 +3,7 @@ import { formatDateForDisplay, compareDatesForSorting } from '../utils/dateUtils
 import { useTheme } from '@mui/material/styles';
 import { useAppData } from '../contexts/AppDataContext';
 import ActionItem from './shared/ActionItem';
+import DatabaseService from '../services/DatabaseService';
 
 export default function ActivityList({ 
   activities, 
@@ -21,12 +22,48 @@ export default function ActivityList({
   
   // Force re-render when activities prop changes, especially for action items
   const [renderKey, setRenderKey] = React.useState(0);
+  const [sponsorContacts, setSponsorContacts] = React.useState([]);
+  const [sponseeContacts, setSponseeContacts] = React.useState([]);
+
+  // Load sponsor and sponsee contacts for name lookup
+  React.useEffect(() => {
+    const loadContacts = async () => {
+      try {
+        const databaseService = DatabaseService.getInstance();
+        const sponsors = await databaseService.getAllSponsorContacts();
+        const sponsees = await databaseService.getAllSponseeContacts();
+        setSponsorContacts(sponsors);
+        setSponseeContacts(sponsees);
+      } catch (error) {
+        console.error('Failed to load contacts for name lookup:', error);
+      }
+    };
+    loadContacts();
+  }, []);
   
   React.useEffect(() => {
     const actionItems = activities.filter(a => a.type === 'sponsor_action_item' || a.type === 'action-item');
     // Force component re-render to ensure synchronization
     setRenderKey(prev => prev + 1);
   }, [activities]);
+
+  // Helper function to get sponsor name from sponsor contact
+  const getSponsorName = (sponsorContactId) => {
+    const sponsor = sponsorContacts.find(s => s.id === sponsorContactId);
+    if (sponsor) {
+      return `${sponsor.name || ''} ${sponsor.lastName || ''}`.trim() || 'Sponsor';
+    }
+    return 'Sponsor';
+  };
+
+  // Helper function to get sponsee name from sponsee contact
+  const getSponseeeName = (sponseeContactId) => {
+    const sponsee = sponseeContacts.find(s => s.id === sponseeContactId);
+    if (sponsee) {
+      return `${sponsee.name || ''} ${sponsee.lastName || ''}`.trim() || 'Sponsee';
+    }
+    return 'Sponsee';
+  };
 
   const handleDeleteActivity = async (activityId) => {
     if (window.confirm('Are you sure you want to delete this activity?')) {
@@ -175,8 +212,24 @@ export default function ActivityList({
       return `Contact with ${contactName}`;
     }
     
-    if (activity.type === 'action-item') {
-      return activity.title || activity.text || 'Action Item';
+    if (activity.type === 'action-item' || activity.type === 'sponsor_action_item') {
+      const baseTitle = activity.title || activity.text || 'Action Item';
+      // Show sponsor name if available through actionItemData
+      if (activity.actionItemData && activity.actionItemData.sponsorContactId) {
+        const sponsorName = getSponsorName(activity.actionItemData.sponsorContactId);
+        return `${baseTitle} (from ${sponsorName})`;
+      }
+      return baseTitle;
+    }
+    
+    if (activity.type === 'sponsee_action_item') {
+      const baseTitle = activity.title || activity.text || 'Action Item';
+      // Show sponsee name if available through actionItemData
+      if (activity.actionItemData && activity.actionItemData.sponseeContactId) {
+        const sponseeName = getSponseeeName(activity.actionItemData.sponseeContactId);
+        return `${baseTitle} (for ${sponseeName})`;
+      }
+      return baseTitle;
     }
     
     if (activity.type === 'todo') {
