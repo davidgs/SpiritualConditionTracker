@@ -397,12 +397,12 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
             // Find the sponsor for this action item
             let sponsorName = '';
             if (actionItem.sponsorContactId) {
-              const sponsorContact = sponsorContacts.find(sc => sc.id == actionItem.sponsorContactId);
-              if (sponsorContact && sponsorContact.sponsorId) {
-                const sponsor = sponsors.find(s => s.id == sponsorContact.sponsorId);
-                if (sponsor) {
-                  sponsorName = `${sponsor.name || ''} ${sponsor.lastName || ''}`.trim() || 'Sponsor';
-                }
+              // Since sponsorContacts don't have proper sponsorId links,
+              // use the first sponsor from the sponsors table as fallback
+              // In a single-user app, typically there's one primary sponsor
+              if (sponsors && sponsors.length > 0) {
+                const sponsor = sponsors[0]; // Use first sponsor
+                sponsorName = `${sponsor.name || ''} ${sponsor.lastName || ''}`.trim() || 'Sponsor';
               }
             }
 

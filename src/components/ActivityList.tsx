@@ -30,7 +30,7 @@ export default function ActivityList({
     const loadContacts = async () => {
       try {
         const databaseService = DatabaseService.getInstance();
-        const sponsors = await databaseService.getAllSponsorContacts();
+        const sponsors = await databaseService.getAllSponsors(); // Get actual sponsors, not contacts
         setSponsorContacts(sponsors);
         
         // Handle sponsee contacts if method exists
@@ -58,10 +58,10 @@ export default function ActivityList({
     setRenderKey(prev => prev + 1);
   }, [activities]);
 
-  // Helper function to get sponsor name from sponsor contact
-  const getSponsorName = (sponsorContactId) => {
-    const sponsor = sponsorContacts.find(s => s.id == sponsorContactId);
-    if (sponsor) {
+  // Helper function to get sponsor name - use first sponsor since sponsorContact links are broken
+  const getSponsorName = () => {
+    if (sponsorContacts && sponsorContacts.length > 0) {
+      const sponsor = sponsorContacts[0]; // Use first sponsor from sponsors table
       return `${sponsor.name || ''} ${sponsor.lastName || ''}`.trim() || 'Sponsor';
     }
     return 'Sponsor';
@@ -226,7 +226,13 @@ export default function ActivityList({
     if (activity.type === 'action-item' || activity.type === 'sponsor_action_item') {
       const baseTitle = activity.title || activity.text || 'Action Item';
       
-      // Show sponsor name if available through actionItemData
+      // Show sponsor name if this is a sponsor action item
+      if (activity.actionItemData && activity.actionItemData.sponsorContactId) {
+        const sponsorName = getSponsorName();
+        return `${baseTitle} (from ${sponsorName})`;
+      }
+      
+      // Also check for enriched sponsor name from context
       if (activity.actionItemData && activity.actionItemData.sponsorName) {
         return `${baseTitle} (from ${activity.actionItemData.sponsorName})`;
       }
