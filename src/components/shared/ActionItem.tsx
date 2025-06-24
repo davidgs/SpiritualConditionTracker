@@ -116,7 +116,7 @@ export default function ActionItem({
               overflow: 'hidden',
               textOverflow: 'ellipsis'
             }}>
-              Action Item
+              {actionItem.title || 'Action Item'}
             </div>
             
             {showDate && displayDate && (
@@ -143,8 +143,7 @@ export default function ActionItem({
             textDecoration: isDeleted ? 'line-through' : 'none',
             opacity: isDeleted ? 0.7 : 1
           }}>
-            {actionItem.title}
-            {actionItem.notes && ` [${actionItem.notes}]`}
+            {actionItem.notes || 'No additional details'}
           </div>
           
           {isCompleted && (

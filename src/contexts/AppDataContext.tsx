@@ -420,31 +420,32 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
           }
         }
         
-        // Handle sponsor_action_item activities without actionItemId by matching to action items
-        if (activity.type === 'sponsor_action_item' && !activity.actionItemId) {
-          console.log('[ AppDataContext.tsx ] Found sponsor_action_item without actionItemId:', activity);
+        // Handle sponsor_action_item activities - enrich all with sponsor data
+        if (activity.type === 'sponsor_action_item') {
+          console.log('[ AppDataContext.tsx ] Processing sponsor_action_item:', activity);
           
-          // Try to find matching action item by sponsor contact or other criteria
-          const matchingActionItem = actionItems.find(ai => 
-            ai.sponsorContactId && ai.type === 'sponsor_action_item'
-          );
-          
-          console.log('[ AppDataContext.tsx ] Found matching action item:', matchingActionItem);
-          
-          if (matchingActionItem && sponsors && sponsors.length > 0) {
+          if (sponsors && sponsors.length > 0) {
             const sponsor = sponsors[0];
             const sponsorName = `${sponsor.name || ''} ${sponsor.lastName || ''}`.trim() || 'Sponsor';
-            console.log('[ AppDataContext.tsx ] Enriching sponsor_action_item activity with sponsor name:', sponsorName);
+            console.log('[ AppDataContext.tsx ] Adding sponsor name to activity:', sponsorName);
             
-            return {
+            // Find matching action item if available
+            const matchingActionItem = actionItems.find(ai => 
+              ai.sponsorContactId && ai.type === 'sponsor_action_item'
+            );
+            
+            const enrichedActivity = {
               ...activity,
-              actionItemData: {
+              actionItemData: matchingActionItem ? {
                 ...matchingActionItem,
                 sponsorName
-              },
-              title: matchingActionItem.title || activity.title,
-              text: matchingActionItem.text || activity.text
+              } : { sponsorName },
+              // Preserve original title but add sponsor attribution in display logic
+              sponsorName: sponsorName
             };
+            
+            console.log('[ AppDataContext.tsx ] Enriched activity:', enrichedActivity);
+            return enrichedActivity;
           }
         }
         

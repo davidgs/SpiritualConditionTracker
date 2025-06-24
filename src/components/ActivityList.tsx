@@ -236,6 +236,12 @@ export default function ActivityList({
         fullActivity: activity
       });
       
+      // Check for sponsor name from enriched data
+      if (activity.sponsorName) {
+        console.log('[ActivityList] Using enriched sponsor name:', activity.sponsorName);
+        return `${baseTitle} (from ${activity.sponsorName})`;
+      }
+      
       // Show sponsor name if this is a sponsor action item
       if (activity.actionItemData && activity.actionItemData.sponsorContactId) {
         const sponsorName = getSponsorName();
@@ -243,9 +249,9 @@ export default function ActivityList({
         return `${baseTitle} (from ${sponsorName})`;
       }
       
-      // Also check for enriched sponsor name from context
+      // Also check for enriched sponsor name from actionItemData
       if (activity.actionItemData && activity.actionItemData.sponsorName) {
-        console.log('[ActivityList] Using enriched sponsor name:', activity.actionItemData.sponsorName);
+        console.log('[ActivityList] Using actionItemData sponsor name:', activity.actionItemData.sponsorName);
         return `${baseTitle} (from ${activity.actionItemData.sponsorName})`;
       }
       
