@@ -15,11 +15,15 @@ interface ActionItemProps {
     // For activity list items that reference action items
     actionItemId?: number;
     actionItemData?: any;
+    type?: string;
+    sponsorName?: string;
+    sponseeName?: string;
   };
   showDate?: boolean;
   onToggleComplete?: (id: string | number) => void;
   onDelete?: (id: string | number) => void;
   variant?: 'compact' | 'full'; // compact for activities list, full for detail views
+  sponsorContacts?: any[];
 }
 
 export default function ActionItem({
@@ -27,7 +31,8 @@ export default function ActionItem({
   showDate = true,
   onToggleComplete,
   onDelete,
-  variant = 'full'
+  variant = 'full',
+  sponsorContacts = []
 }: ActionItemProps) {
   const theme = useTheme();
 
@@ -116,7 +121,32 @@ export default function ActionItem({
               overflow: 'hidden',
               textOverflow: 'ellipsis'
             }}>
-              {actionItem.title || 'Action Item'}
+              {(() => {
+                // Get clean title
+                let title = actionItem.title || 'Action Item';
+                
+                // Remove "Sponsor Action:" prefix if present
+                if (title.startsWith('Sponsor Action:')) {
+                  title = title.replace('Sponsor Action:', '').trim();
+                }
+                
+                // Add sponsor attribution for sponsor action items
+                if (actionItem.type === 'sponsor_action_item') {
+                  if (actionItem.sponsorName) {
+                    return `${title} (from ${actionItem.sponsorName})`;
+                  } else if (sponsorContacts.length > 0) {
+                    const sponsor = sponsorContacts[0];
+                    const sponsorName = `${sponsor.name || ''} ${sponsor.lastName || ''}`.trim() || 'Sponsor';
+                    return `${title} (from ${sponsorName})`;
+                  }
+                } else if (actionItem.type === 'sponsee_action_item') {
+                  if (actionItem.sponseeName) {
+                    return `${title} (for ${actionItem.sponseeName})`;
+                  }
+                }
+                
+                return title;
+              })()}
             </div>
             
             {showDate && displayDate && (
