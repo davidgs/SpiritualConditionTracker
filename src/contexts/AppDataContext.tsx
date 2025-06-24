@@ -384,15 +384,37 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
       console.log('[ AppDataContext.tsx ] Raw activities from database:', activities.length);
       console.log('[ AppDataContext.tsx ] Raw action items from database:', actionItems.length);
       console.log('[ AppDataContext.tsx ] Raw sponsor contacts from database:', sponsorContacts.length);
+      console.log('[ AppDataContext.tsx ] Action items detail:', actionItems.map(ai => ({ 
+        id: ai.id, 
+        title: ai.title, 
+        sponsorContactId: ai.sponsorContactId,
+        sponseeContactId: ai.sponseeContactId 
+      })));
+      console.log('[ AppDataContext.tsx ] Sponsor contacts detail:', sponsorContacts.map(sc => ({ 
+        id: sc.id, 
+        name: sc.name, 
+        lastName: sc.lastName 
+      })));
       
       // Enrich activities with action item data for proper synchronization
       const enrichedActivities = activities.map(activity => {
         if (activity.actionItemId) {
           const actionItem = actionItems.find(ai => ai.id === activity.actionItemId);
           if (actionItem) {
+            console.log('[ AppDataContext.tsx ] Enriching activity with action item:', {
+              activityId: activity.id,
+              actionItemId: actionItem.id,
+              actionItemTitle: actionItem.title,
+              sponsorContactId: actionItem.sponsorContactId,
+              sponseeContactId: actionItem.sponseeContactId
+            });
+            
             return {
               ...activity,
               actionItemData: actionItem,
+              // Use action item title and text for display
+              title: actionItem.title || activity.title,
+              text: actionItem.text || activity.text,
               // Determine activity type based on action item context
               type: actionItem.sponsorContactId ? 'sponsor_action_item' : 
                     actionItem.sponseeContactId ? 'sponsee_action_item' : 
@@ -437,6 +459,13 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
       dispatch({ type: 'SET_ACTIVITIES', payload: cachedActivities });
       console.log(`[ AppDataContext.tsx:288 ] Activities cached (${CACHE_DAYS} days):`, cachedActivities.length, '(all contact activities)');
       console.log('[ AppDataContext.tsx ] Activity types in cache:', cachedActivities.map(a => a.type));
+      console.log('[ AppDataContext.tsx ] Action item activities in cache:', cachedActivities.filter(a => a.type === 'sponsor_action_item').map(a => ({
+        id: a.id,
+        type: a.type,
+        title: a.title,
+        hasActionItemData: !!a.actionItemData,
+        sponsorContactId: a.actionItemData?.sponsorContactId
+      })));
       
       // Calculate spiritual fitness
       await calculateSpiritualFitness();

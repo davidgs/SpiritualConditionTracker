@@ -60,10 +60,16 @@ export default function ActivityList({
 
   // Helper function to get sponsor name from sponsor contact
   const getSponsorName = (sponsorContactId) => {
-    const sponsor = sponsorContacts.find(s => s.id === sponsorContactId);
+    console.log('[ActivityList] Looking up sponsor name for contactId:', sponsorContactId);
+    console.log('[ActivityList] Available sponsor contacts:', sponsorContacts);
+    
+    const sponsor = sponsorContacts.find(s => s.id == sponsorContactId); // Use == for flexible comparison
     if (sponsor) {
-      return `${sponsor.name || ''} ${sponsor.lastName || ''}`.trim() || 'Sponsor';
+      const name = `${sponsor.name || ''} ${sponsor.lastName || ''}`.trim() || 'Sponsor';
+      console.log('[ActivityList] Found sponsor:', name);
+      return name;
     }
+    console.log('[ActivityList] No sponsor found for contactId:', sponsorContactId);
     return 'Sponsor';
   };
 
@@ -225,11 +231,19 @@ export default function ActivityList({
     
     if (activity.type === 'action-item' || activity.type === 'sponsor_action_item') {
       const baseTitle = activity.title || activity.text || 'Action Item';
+      
       // Show sponsor name if available through actionItemData
       if (activity.actionItemData && activity.actionItemData.sponsorContactId) {
         const sponsorName = getSponsorName(activity.actionItemData.sponsorContactId);
         return `${baseTitle} (from ${sponsorName})`;
       }
+      
+      // Also check if sponsorContactId is directly on the activity
+      if (activity.sponsorContactId) {
+        const sponsorName = getSponsorName(activity.sponsorContactId);
+        return `${baseTitle} (from ${sponsorName})`;
+      }
+      
       return baseTitle;
     }
     
