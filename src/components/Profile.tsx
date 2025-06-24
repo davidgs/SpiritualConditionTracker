@@ -1,16 +1,11 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useTheme } from '@mui/material/styles';
-import ThemeSelector from './ThemeSelector';
 import MeetingFormDialog from './MeetingFormDialog';
-import PopoverColorPicker from './PopoverColorPicker';
-import PopoverThemeDisplay from './PopoverThemeDisplay';
 import QRCodeGenerator from './QRCodeGenerator';
 import { useAppTheme } from '../contexts/MuiThemeProvider';
-import MuiThemeProvider from '../contexts/MuiThemeProvider';
 import { formatDateForDisplay } from '../utils/dateUtils';
 
 import { Capacitor } from '@capacitor/core';
-import { formatPhoneNumber, formatPhoneNumberForInput } from '../utils/phoneUtils';
 import { MuiTelInput } from 'mui-tel-input';
 import { getLocationBasedPhoneFormat } from '../utils/deviceSuggestions';
 
@@ -22,12 +17,14 @@ import {
   Paper,
   Typography,
   Box,
-  Divider,
   IconButton,
   MenuItem,
   Dialog,
   DialogTitle,
-  DialogContent
+  DialogContent,
+  Chip,
+  Checkbox,
+  ListItemText
 } from '@mui/material';
 
 
@@ -75,7 +72,6 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
   };
   // Access MUI theme for consistent styling
   const muiTheme = useTheme();
-  const darkMode = muiTheme.palette.mode === 'dark';
 
   const [name, setName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -83,7 +79,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
   const [email, setEmail] = useState('');
   const [sobrietyDate, setSobrietyDate] = useState('');
   const [homeGroups, setHomeGroups] = useState([]);
-  const [errors, setErrors] = useState({});
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [editingPersonalInfo, setEditingPersonalInfo] = useState(false);
   const [showMeetingForm, setShowMeetingForm] = useState(false);
   const [qrCodeOpen, setQrCodeOpen] = useState(false);
@@ -102,7 +98,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
         console.log('Error initializing device suggestions:', error);
       }
     };
-    
+
     initializeDeviceSuggestions();
   }, []);
 
@@ -152,29 +148,31 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
       setHomeGroups(homeGroupsData);
 
       // Load privacy settings and preferences
-      setAllowMessages(user.privacySettings?.allowMessages !== false);
       setShareLastName(user.privacySettings?.shareLastName !== false);
       setUse24HourFormat(user.preferences?.use24HourFormat || false);
     }
   }, [user?.id]); // Only run when user ID changes, not on every user prop update
 
   // State for tracking privacy settings and preferences
-  const [allowMessages, setAllowMessages] = useState(user?.privacySettings?.allowMessages !== false);
   const [shareLastName, setShareLastName] = useState(user?.privacySettings?.shareLastName !== false);
   const [use24HourFormat, setUse24HourFormat] = useState(user?.preferences?.use24HourFormat || false);
 
 
 
-  // Handle phone number input
-  const handlePhoneChange = (e) => {
-    const formattedNumber = formatPhoneNumberForInput(e.target.value);
-    setPhoneNumber(formattedNumber);
-  };
+
 
   // Handle meeting selection change
   const handleHomeGroupChange = (e) => {
     const value = e.target.value;
-    if (value === 'add_new') {
+
+    // Check if "add_new" was selected
+    if (Array.isArray(value) && value.includes('add_new')) {
+      // Remove "add_new" from the selection and open the meeting form
+      const filteredValue = value.filter(v => v !== 'add_new');
+      setHomeGroups(filteredValue);
+      setShowMeetingForm(true);
+    } else if (value === 'add_new') {
+      // Single selection case
       setShowMeetingForm(true);
     } else {
       setHomeGroups(value);
@@ -211,7 +209,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
     }
 
     // Validate form
-    const newErrors = {};
+    const newErrors: { [key: string]: string } = {};
     if (!sobrietyDate) newErrors.sobrietyDate = 'Sobriety date is required';
 
     // If there are errors, show them and don't submit
@@ -264,7 +262,6 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
       homeGroups,
       privacySettings: {
         ...existingPrivacySettings,
-        allowMessages,
         shareLastName
       },
       preferences: {
@@ -394,23 +391,23 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
           isEdit={false}
         />
       )}
-      <Box sx={{ mb: 3 }}>
-        <Typography variant="h4" sx={{ fontWeight: 'bold', color: 'text.primary' }}>
+      <Box sx={{ mb: 2 }}>
+        <Typography variant="h4" sx={{ fontWeight: 'bold', color: 'text.primary', textAlign: 'center', }}>
           Spiritual Condition Tracker
         </Typography>
-        <Typography variant="subtitle1" sx={{ color: 'text.secondary' }}>
+        <Typography variant="subtitle1" sx={{ color: 'text.secondary', textAlign: 'center' }}>
           Your personal profile
         </Typography>
       </Box>
 
       <Paper sx={{
           p: 3,
-          mb: 3,
+          mb: 2,
           borderRadius: 2,
           bgcolor: 'background.paper'
         }}>
           <Box sx={{ mb: 2 }}>
-            <Typography variant="h6" sx={{ color: 'text.primary', mb: 1 }}>
+            <Typography variant="h6" sx={{ color: 'text.primary', mb: 1, textAlign: 'center' }}>
               Sobriety Milestone
             </Typography>
 
@@ -418,7 +415,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
               <Box sx={{ display: 'flex', alignItems: 'center' }}>
                 <Typography variant="subtitle1" sx={{
                   color: 'text.secondary',
-                  fontWeight: 500
+                  fontWeight: 500, textAlign: 'center'
                 }}>
                   Sober since {formatDateForDisplay(sobrietyDate)}
                 </Typography>
@@ -558,15 +555,17 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
                   <>
                     {showYearsProminent ? (
                       <>
-                        <Box sx={{ display: 'flex', alignItems: 'baseline', mb: 1 }}>
+                        <Box sx={{ display: 'flex', alignItems: 'baseline', mb: 1, textAlign: 'center' }}>
                           <Typography variant="h3" sx={{
                             fontWeight: 'bold',
                             color: 'primary.main',
-                            mr: 1
+                            mr: 1,
+                            textAlign: 'center'
+
                           }}>
                             {sobrietyYears.toFixed(2)}
                           </Typography>
-                          <Typography variant="h6" sx={{ color: 'text.secondary' }}>
+                          <Typography variant="h6" sx={{ color: 'text.secondary', textAlign: 'center' }}>
                             years
                           </Typography>
                         </Box>
@@ -579,7 +578,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
                       </>
                     ) : (
                       <>
-                        <Box sx={{ display: 'flex', alignItems: 'baseline', mb: 1 }}>
+                        <Box sx={{ display: 'flex', alignItems: 'baseline', mb: 1, textAlign: 'center' }}>
                           <Typography variant="h3" sx={{
                             fontWeight: 'bold',
                             color: 'primary.main',
@@ -605,19 +604,19 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
             </>
           )}
         </Paper>
+
       {/* App Settings */}
       <Paper sx={{
-        p: 3,
-        mb: 3,
+        p: 2,
+        mb: 1.5,
         borderRadius: 2,
-        bgcolor: 'background.paper',
-        paddingTop: '4px'
+        bgcolor: 'background.paper'
       }}>
-        <Typography variant="h6" sx={{ mb: 2, color: 'text.primary' }}>
+        <Typography variant="h6" sx={{ mb: 1, color: 'text.primary' }}>
           App Settings
         </Typography>
 
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
 
 
           {/* Advanced theme customization temporarily disabled */}
@@ -669,7 +668,20 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
                 id="shareLastName"
                 name="shareLastName"
                 checked={shareLastName}
-                onChange={(e) => setShareLastName(e.target.checked)}
+                onChange={(e) => {
+                  const newValue = e.target.checked;
+                  setShareLastName(newValue);
+
+                  // Save the privacy setting change immediately without redirecting
+                  const updates = {
+                    privacySettings: {
+                      ...(user?.privacySettings || {}),
+                      shareLastName: newValue
+                    }
+                  };
+                  // Update the privacy setting without reloading the page
+                  onUpdate(updates, { redirectToDashboard: false });
+                }}
                 color="primary"
                 size="small"
               />
@@ -744,13 +756,13 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
         onSubmit={handleSubmit}
         sx={(theme) => ({
           p: 3,
+          mb: 1.5,
           bgcolor: theme.palette.background.paper,
           borderRadius: 2,
           border: `1px solid ${theme.palette.divider}`,
-          paddingTop: '4px'
         })}
       >
-        <Box sx={{ mb: 2 }}>
+        <Box sx={{ mb: 1.5 }}>
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <Typography variant="h6" sx={{ color: 'text.primary' }}>
               Personal Information
@@ -792,8 +804,8 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
 
         {editingPersonalInfo ? (
           <>
-            <Box sx={{ display: 'flex', flexDirection: 'column', mb: 3 }}>
-              <Box sx={{ color: muiTheme.palette.primary.main, fontSize: '14px', mb: '4px' }}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', mb: 2 }}>
+              <Box sx={{ color: muiTheme.palette.primary.main, fontSize: '14px', mb: .5 }}>
                 First Name*
               </Box>
               <TextField
@@ -813,7 +825,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
                   name: 'firstName'
                 }}
                 sx={{
-                  mb: 2,
+                  mb: .5,
                   '& .MuiOutlinedInput-root': {
                     height: 56,
                     borderRadius: 2
@@ -824,7 +836,9 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
                   }
                 }}
               />
-
+              <Box sx={{ color: muiTheme.palette.primary.main, fontSize: '14px', mb: .5 }}>
+                Last Name
+              </Box>
               <TextField
                 fullWidth
                 value={lastName != "Not set" ? lastName : ""}
@@ -841,7 +855,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
                   name: 'lastName'
                 }}
                 sx={{
-                  mb: 2,
+                  mb: .5,
                   '& .MuiOutlinedInput-root': {
                     height: 56,
                     borderRadius: 2
@@ -853,26 +867,32 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
                 }}
               />
 
+              <Box sx={{ color: muiTheme.palette.primary.main, fontSize: '14px', mb: .5 }}>
+                Phone Number
+              </Box>
               <MuiTelInput
-                label="Phone Number"
                 value={phoneNumber != "Not set" ? phoneNumber : ""}
                 onChange={(value) => setPhoneNumber(value)}
                 defaultCountry={defaultCountry as any}
                 forceCallingCode
                 continents={['EU', 'OC', 'NA']}
                 fullWidth
+
                 sx={{
-                  mb: 2,
+                  mb: .5,
                   '& .MuiInputBase-root': {
-                    height: '56px',
+                    height: '48px',
                     borderRadius: '8px',
                   },
                   '& input': {
-                    autoComplete: 'tel',
+                    fontSize: '16px',
+                    padding: '15px 14px'
                   }
                 }}
               />
-
+              <Box sx={{ color: muiTheme.palette.primary.main, fontSize: '14px', mb: .5 }}>
+                Email Address
+              </Box>
               <TextField
                 fullWidth
                 value={email != "Not set" ? email : ""}
@@ -890,7 +910,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
                   name: 'email'
                 }}
                 sx={{
-                  mb: 2,
+                  mb: .5,
                   '& .MuiOutlinedInput-root': {
                     height: 56,
                     borderRadius: 2
@@ -902,19 +922,86 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
                 }}
               />
 
-              <Box sx={{ color: muiTheme.palette.text.secondary, fontSize: '14px', mb: '4px' }}>
+              <Box sx={{ color: muiTheme.palette.primary.main, fontSize: '14px', mb: 1 }}>
                 Home Group(s)
               </Box>
+
+              {/* Display selected groups as chips above the dropdown */}
+              {Array.isArray(homeGroups) && homeGroups.length > 0 && (
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.75, mb: 1 }}>
+                  {homeGroups.map((group) => (
+                    <Chip
+                      key={group}
+                      label={group}
+                      size="small"
+                      variant="outlined"
+                      onDelete={() => {
+                        const newHomeGroups = homeGroups.filter(g => g !== group);
+                        setHomeGroups(newHomeGroups);
+                      }}
+                      deleteIcon={
+                        <Box
+                          component="span"
+                          sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            width: '20px',
+                            height: '20px',
+                            borderRadius: '50%',
+                            backgroundColor: 'error.main',
+                            color: 'error.contrastText',
+                            fontSize: '12px',
+                            fontWeight: 'bold',
+                            cursor: 'pointer',
+                            transition: 'all 0.2s ease',
+                            '&:hover': {
+                              backgroundColor: 'error.dark',
+                              transform: 'scale(1.15)'
+                            }
+                          }}
+                        >
+                          ✕
+                        </Box>
+                      }
+                      sx={{
+                        backgroundColor: 'primary.main',
+                        color: 'primary.contrastText',
+                        fontSize: '0.8rem',
+                        height: '32px',
+                        borderRadius: '16px',
+                        '& .MuiChip-label': {
+                          paddingLeft: '12px',
+                          paddingRight: '6px',
+                          fontSize: '0.8rem',
+                          fontWeight: '500'
+                        },
+                        '& .MuiChip-deleteIcon': {
+                          margin: '0 6px 0 -2px',
+                          '&:hover': {
+                            backgroundColor: 'transparent'
+                          }
+                        },
+                        '&:hover': {
+                          backgroundColor: 'primary.dark'
+                        }
+                      }}
+                    />
+                  ))}
+                </Box>
+              )}
+
               <TextField
                 select
                 fullWidth
-                value={homeGroups != "Not set" ? homeGroups : []}
+                value={Array.isArray(homeGroups) && homeGroups.length > 0 ? homeGroups : []}
                 onChange={handleHomeGroupChange}
                 variant="outlined"
                 size="medium"
                 margin="none"
+                placeholder="Select home groups..."
                 sx={{
-                  mb: 2,
+                  mb: 1.5,
                   '& .MuiOutlinedInput-root': {
                     borderRadius: 2
                   },
@@ -924,11 +1011,12 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
                 }}
                 SelectProps={{
                   multiple: true,
+                  displayEmpty: true,
                   renderValue: (selected) => {
-                    if (Array.isArray(selected)) {
-                      return selected.join(', ');
+                    if (!Array.isArray(selected) || selected.length === 0) {
+                      return <em style={{ color: 'gray' }}>Select home groups...</em>;
                     }
-                    return selected || '';
+                    return `${selected.length} group${selected.length > 1 ? 's' : ''} selected`;
                   },
                   MenuProps: {
                     PaperProps: {
@@ -948,7 +1036,13 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
                 {/* Generate menu items from meetings prop (no database queries) */}
                 {meetings && meetings.length > 0
                   ? meetings.map((meeting: any) => (
-                      <MenuItem key={meeting.id} value={meeting.name}>{meeting.name}</MenuItem>
+                      <MenuItem key={meeting.id} value={meeting.name}>
+                        <Checkbox
+                          checked={Array.isArray(homeGroups) && homeGroups.includes(meeting.name)}
+                          size="small"
+                        />
+                        <ListItemText primary={meeting.name} />
+                      </MenuItem>
                     ))
                   : <MenuItem value="none" disabled>No saved meetings</MenuItem>
                 }
@@ -983,13 +1077,13 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
           </>
         ) : (
           <>
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
               {/* Name display */}
               <Box>
                 <Typography variant="caption" sx={{ color: 'text.secondary' }}>
                   First Name
                 </Typography>
-                <Typography sx={{ color: 'text.primary', fontWeight: 500 }}>
+                <Typography sx={{ color: 'text.primary', fontWeight: 500, mb: .5 }}>
                   {name || "Not set"}
                 </Typography>
               </Box>
@@ -999,7 +1093,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
                 <Typography variant="caption" sx={{ color: 'text.secondary' }}>
                   Last Name {shareLastName && <span style={{ fontSize: '0.7rem' }}>(Shared)</span>}
                 </Typography>
-                <Typography sx={{ color: 'text.primary', fontWeight: 500 }}>
+                <Typography sx={{ color: 'text.primary', fontWeight: 500, mb: 1 }}>
                   {lastName || "Not set"}
                 </Typography>
               </Box>
@@ -1009,7 +1103,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
                 <Typography variant="caption" sx={{ color: 'text.secondary' }}>
                   Phone Number
                 </Typography>
-                <Typography sx={{ color: 'text.primary', fontWeight: 500 }}>
+                <Typography sx={{ color: 'text.primary', fontWeight: 500, mb: 1 }}>
                   {phoneNumber || "Not set"}
                 </Typography>
               </Box>
@@ -1019,7 +1113,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
                 <Typography variant="caption" sx={{ color: 'text.secondary' }}>
                   Email Address
                 </Typography>
-                <Typography sx={{ color: 'text.primary', fontWeight: 500 }}>
+                <Typography sx={{ color: 'text.primary', fontWeight: 500, mb: 1 }}>
                   {email || "Not set"}
                 </Typography>
               </Box>
@@ -1029,7 +1123,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
                 <Typography variant="caption" sx={{ color: 'text.secondary' }}>
                   Home Groups
                 </Typography>
-                <Typography sx={{ color: 'text.primary', fontWeight: 500 }}>
+                <Typography sx={{ color: 'text.primary', fontWeight: 500, mb: 1 }}>
                   {homeGroups && homeGroups.length > 0
                     ? homeGroups.join(', ')
                     : "Not set"}
@@ -1044,6 +1138,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
       <Paper elevation={0} sx={{
         p: 3,
         mb: 3,
+        mt: 3,
         bgcolor: 'background.paper',
         borderRadius: 2,
         border: '1px solid',

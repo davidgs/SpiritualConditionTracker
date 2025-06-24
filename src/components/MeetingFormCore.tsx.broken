@@ -1,0 +1,296 @@
+import React, { useState, useEffect } from 'react';
+import { useTheme } from '@mui/material/styles';
+import {
+  Box,
+  TextField,
+  Button,
+  Typography,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  FormControlLabel,
+  RadioGroup,
+  Radio
+} from '@mui/material';
+
+// Standalone meeting form component that can be embedded anywhere
+export default function MeetingFormCore({ 
+  meeting = null,
+  onSave,
+  onCancel,
+  use24HourFormat = false,
+  showButtons = true,
+  className = ''
+}) {
+  // Get theme context
+  const muiTheme = useTheme();
+  
+  // Form state - simplified to match database schema
+  const [meetingName, setMeetingName] = useState('');
+  const [location, setLocation] = useState('');
+  const [time, setTime] = useState('');
+  const [dayOfWeek, setDayOfWeek] = useState('');
+  const [meetingType, setMeetingType] = useState('discussion');
+  const [locationType, setLocationType] = useState('in_person');
+  const [notes, setNotes] = useState('');
+  const [error, setError] = useState('');
+
+  // Initialize form with meeting data if provided
+  useEffect(() => {
+    if (meeting) {
+      setMeetingName(meeting.name || '');
+      setLocation(meeting.location || '');
+      setTime(meeting.time || '');
+      setDayOfWeek(meeting.dayOfWeek || '');
+      setMeetingType(meeting.meetingType || 'discussion');
+      setLocationType(meeting.locationType || 'in_person');
+      setNotes(meeting.notes || '');
+    }
+  }, [meeting]);
+
+  // Form validation
+  const isFormValid = () => {
+    return meetingName.trim() && location.trim() && time && dayOfWeek && meetingType;
+  };
+
+  // Handle form submission
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+
+    if (!isFormValid()) {
+      setError('Please fill in all required fields');
+      return;
+    }
+
+    const meetingData = {
+      // For editing existing meetings, keep their ID
+      ...(meeting ? { id: meeting.id } : {}),
+      name: meetingName.trim(),
+      location: location.trim(),
+      time: time,
+      dayOfWeek: dayOfWeek,
+      meetingType: meetingType,
+      locationType: locationType,
+      notes: notes.trim(),
+      createdAt: meeting ? meeting.createdAt : new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+
+    try {
+      console.log('[MeetingFormCore] Calling onSave with meeting data:', meetingData);
+      
+      if (onSave) {
+        await onSave(meetingData);
+        console.log('[MeetingFormCore] Meeting saved successfully');
+      }
+    } catch (error) {
+      console.error('[MeetingFormCore] Error saving meeting:', error);
+      setError('An error occurred while saving the meeting. Please try again.');
+    }
+  };
+
+  // Style helper for text fields
+  const getTextFieldStyle = (theme) => ({
+    '& .MuiOutlinedInput-root': {
+      backgroundColor: theme.palette.mode === 'dark' ? '#2a2a2a' : '#ffffff',
+      '& fieldset': {
+        borderColor: theme.palette.mode === 'dark' ? '#555' : '#e0e0e0',
+      },
+      '&:hover fieldset': {
+        borderColor: theme.palette.primary.main,
+      },
+      '&.Mui-focused fieldset': {
+        borderColor: theme.palette.primary.main,
+      },
+    },
+    '& .MuiInputLabel-root': {
+      color: theme.palette.text.secondary,
+      '&.Mui-focused': {
+        color: theme.palette.primary.main,
+      },
+    },
+  });
+
+  const days = [
+    { value: 'sunday', label: 'Sunday' },
+    { value: 'monday', label: 'Monday' },
+    { value: 'tuesday', label: 'Tuesday' },
+    { value: 'wednesday', label: 'Wednesday' },
+    { value: 'thursday', label: 'Thursday' },
+    { value: 'friday', label: 'Friday' },
+    { value: 'saturday', label: 'Saturday' }
+  ];
+
+  const meetingTypes = [
+    { value: 'discussion', label: 'Discussion' },
+    { value: 'speaker', label: 'Speaker' },
+    { value: 'step', label: 'Step Study' },
+    { value: 'book', label: 'Book Study' },
+    { value: 'beginners', label: 'Beginners' },
+    { value: 'open', label: 'Open' },
+    { value: 'closed', label: 'Closed' }
+  ];
+
+  const timeOptions = [
+    '06:00', '06:30', '07:00', '07:30', '08:00', '08:30', '09:00', '09:30',
+    '10:00', '10:30', '11:00', '11:30', '12:00', '12:30', '13:00', '13:30',
+    '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:30',
+    '18:00', '18:30', '19:00', '19:30', '20:00', '20:30', '21:00', '21:30', '22:00'
+  ];
+
+  return (
+    <Box className={className} sx={{ width: '100%', maxWidth: '100%' }}>
+      {error && (
+        <Box sx={{ 
+          mb: 2, 
+          p: 2, 
+          backgroundColor: 'error.light', 
+          color: 'error.contrastText', 
+          borderRadius: 1 
+        }}>
+          <Typography variant="body2">{error}</Typography>
+        </Box>
+      )}
+
+      <Box component="form" onSubmit={handleSubmit} noValidate sx={{ 
+        display: 'flex', 
+        flexDirection: 'column', 
+        gap: 2, 
+        mt: 1,
+        width: '100%', 
+        maxWidth: '100%',
+        boxSizing: 'border-box'
+      }}>
+        {/* Meeting Name */}
+        <TextField
+          fullWidth
+          label="Meeting Name *"
+          value={meetingName}
+          onChange={(e) => setMeetingName(e.target.value)}
+          placeholder="Enter meeting name"
+          variant="outlined"
+          sx={getTextFieldStyle}
+        />
+
+        {/* Day of Week */}
+        <FormControl fullWidth variant="outlined" sx={getTextFieldStyle}>
+          <InputLabel>Day of Week *</InputLabel>
+          <Select
+            value={dayOfWeek}
+            onChange={(e) => setDayOfWeek(e.target.value)}
+            label="Day of Week *"
+          >
+            {days.map((day) => (
+              <MenuItem key={day.value} value={day.value}>
+                {day.label}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+
+        {/* Time */}
+        <FormControl fullWidth variant="outlined" sx={getTextFieldStyle}>
+          <InputLabel>Time *</InputLabel>
+          <Select
+            value={time}
+            onChange={(e) => setTime(e.target.value)}
+            label="Time *"
+          >
+            {timeOptions.map((timeOption) => (
+              <MenuItem key={timeOption} value={timeOption}>
+                {use24HourFormat ? timeOption : 
+                  new Date(`2000-01-01T${timeOption}:00`).toLocaleTimeString([], { 
+                    hour: 'numeric', 
+                    minute: '2-digit' 
+                  })
+                }
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+
+        {/* Location */}
+        <TextField
+          fullWidth
+          label="Location *"
+          value={location}
+          onChange={(e) => setLocation(e.target.value)}
+          placeholder="Enter meeting location"
+          variant="outlined"
+          sx={getTextFieldStyle}
+        />
+
+        {/* Location Type */}
+        <FormControl component="fieldset">
+          <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 'bold' }}>
+            Location Type
+          </Typography>
+          <RadioGroup
+            value={locationType}
+            onChange={(e) => setLocationType(e.target.value)}
+            row
+          >
+            <FormControlLabel value="in_person" control={<Radio />} label="In Person" />
+            <FormControlLabel value="online" control={<Radio />} label="Online" />
+            <FormControlLabel value="hybrid" control={<Radio />} label="Hybrid" />
+          </RadioGroup>
+        </FormControl>
+
+        {/* Meeting Type */}
+        <FormControl fullWidth variant="outlined" sx={getTextFieldStyle}>
+          <InputLabel>Meeting Type *</InputLabel>
+          <Select
+            value={meetingType}
+            onChange={(e) => setMeetingType(e.target.value)}
+            label="Meeting Type *"
+          >
+            {meetingTypes.map((type) => (
+              <MenuItem key={type.value} value={type.value}>
+                {type.label}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+
+        {/* Notes */}
+        <TextField
+          fullWidth
+          label="Notes"
+          value={notes}
+          onChange={(e) => setNotes(e.target.value)}
+          placeholder="Additional notes (optional)"
+          variant="outlined"
+          multiline
+          rows={3}
+          sx={getTextFieldStyle}
+        />
+
+        {/* Action Buttons */}
+        {showButtons && (
+          <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-end', mt: 2 }}>
+            {onCancel && (
+              <Button 
+                variant="outlined" 
+                onClick={onCancel}
+                sx={{ minWidth: 100 }}
+              >
+                Cancel
+              </Button>
+            )}
+            <Button 
+              type="submit" 
+              variant="contained" 
+              color="primary"
+              disabled={!isFormValid()}
+              sx={{ minWidth: 100 }}
+            >
+              Save Meeting
+            </Button>
+          </Box>
+        )}
+      </Box>
+    </Box>
+  );
+}

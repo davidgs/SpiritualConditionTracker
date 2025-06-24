@@ -20,11 +20,3 @@ export interface ContactPersonFormProps {
   submitLabel?: string;
 }
 
-export interface ContactPersonTabsProps {
-  persons: ContactPerson[];
-  currentTab: number;
-  onTabChange: (event: any, newValue: number) => void;
-  addLabel: string;
-  emptyMessage: string;
-  children: React.ReactNode;
-}

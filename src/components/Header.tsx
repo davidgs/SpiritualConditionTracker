@@ -29,22 +29,22 @@ function Header({ title, menuOpen, setMenuOpen, isMobile, onNavigate, autoStartT
     }
   }, [autoStartTour]);
 
-  
+
   // Use MUI theme colors for consistent styling
-  const headerBackgroundColor = darkMode 
-    ? muiTheme.palette.background.paper 
+  const headerBackgroundColor = darkMode
+    ? muiTheme.palette.background.paper
     : muiTheme.palette.grey[100];
   // Header text color from MUI theme
   const headerTextColor = muiTheme.palette.text.primary;
   // Add a primary color accent from the user's selected theme
   const accentColor = muiTheme.palette.primary.main;
-  
+
   return (
     <>
       <Box
         sx={{
           position: 'fixed',
-          top: 0,
+          top: 1,
           left: 0,
           right: 0,
           zIndex: 1100,
@@ -62,24 +62,24 @@ function Header({ title, menuOpen, setMenuOpen, isMobile, onNavigate, autoStartT
       >
         {/* Logo and title - left aligned */}
         <Box
-          component="img" 
+          component="img"
           src="/assets/logo.jpg"
-          alt="App Logo" 
-          sx={{ 
+          alt="App Logo"
+          sx={{
             width: '40px',
             height: '40px',
             objectFit: 'cover',
             borderRadius: '20px'
           }}
         />
-        
-        <Typography 
-          variant="h6" 
+
+        <Typography
+          variant="h6"
           data-tour="tour-welcome"
-          sx={{ 
+          sx={{
             fontWeight: 600,
             color: headerTextColor,
-            fontSize: '1.1rem',
+            fontSize: '1.2rem',
             lineHeight: 1.2,
             flex: 1
           }}
@@ -129,7 +129,7 @@ function Header({ title, menuOpen, setMenuOpen, isMobile, onNavigate, autoStartT
             border: 'none',
             background: 'transparent',
             cursor: 'pointer',
-            fontSize: '1.2rem',
+            fontSize: '1.3rem',
             padding: '4px',
             borderRadius: '50%',
             transition: 'all 0.2s ease',
@@ -145,8 +145,8 @@ function Header({ title, menuOpen, setMenuOpen, isMobile, onNavigate, autoStartT
       </Box>
 
       {/* Info Dialog */}
-      <Dialog 
-        open={infoDialogOpen} 
+      <Dialog
+        open={infoDialogOpen}
         onClose={() => setInfoDialogOpen(false)}
         maxWidth="sm"
         fullWidth
@@ -157,19 +157,19 @@ function Header({ title, menuOpen, setMenuOpen, isMobile, onNavigate, autoStartT
           }
         }}
       >
-        <DialogTitle sx={{ 
+        <DialogTitle sx={{
           fontWeight: 'bold',
           borderBottom: `1px solid ${muiTheme.palette.divider}`,
           pb: 2
         }}>
-          About My Spiritual Condition
+          About My Spiritual Condition (v1.0.6 b123)
         </DialogTitle>
         <DialogContent sx={{ pt: 3 }}>
           <Typography variant="body1" sx={{ mb: 3, lineHeight: 1.6 }}>
             This app was inspired by the wisdom found on page 85 of Alcoholics Anonymous (the Big Book) and the AA Grapevine podcast, created to help maintain our spiritual condition on a daily basis.
           </Typography>
-          
-          <Box sx={{ 
+
+          <Box sx={{
             bgcolor: darkMode ? '#374151' : '#f8f9fa',
             p: 2,
             borderRadius: 1,
@@ -181,29 +181,32 @@ function Header({ title, menuOpen, setMenuOpen, isMobile, onNavigate, autoStartT
               <br /><br />
               It is easy to let up on the spiritual program of action and rest on our laurels. We are headed for trouble if we do, for alcohol is a subtle foe. We are not cured of alcoholism. What we really have is a daily reprieve contingent on the maintenance of our spiritual condition."
             </Typography>
-            <Typography variant="caption" sx={{ 
-              display: 'block', 
-              textAlign: 'right', 
+            <Typography variant="caption" sx={{
+              display: 'block',
+              textAlign: 'right',
               mt: 1,
               color: muiTheme.palette.text.secondary
             }}>
               — Alcoholics Anonymous, Page 85
             </Typography>
           </Box>
-          
+
           <Typography variant="body2" sx={{ mb: 2, color: muiTheme.palette.text.secondary }}>
             This daily reprieve is contingent on maintaining our spiritual condition through consistent action and mindful tracking of our spiritual activities.
           </Typography>
-          
+          <Typography variant="body2" sx={{ mb: 2, color: muiTheme.palette.text.secondary }}>
+            I created this app in order to help me maintain consistency in working my program over time. I hope it helps you as well.
+          </Typography>
+
           <Box sx={{ mt: 3, pt: 2, borderTop: `1px solid ${muiTheme.palette.divider}` }}>
             <Typography variant="body2" sx={{ mb: 1 }}>
               <strong>Website:</strong>{' '}
-              <Box 
-                component="a" 
-                href="https://spiritual-condition.com" 
-                target="_blank" 
+              <Box
+                component="a"
+                href="https://spiritual-condition.com"
+                target="_blank"
                 rel="noopener noreferrer"
-                sx={{ 
+                sx={{
                   color: muiTheme.palette.primary.main,
                   textDecoration: 'none',
                   '&:hover': { textDecoration: 'underline' }
@@ -214,10 +217,10 @@ function Header({ title, menuOpen, setMenuOpen, isMobile, onNavigate, autoStartT
             </Typography>
             <Typography variant="body2">
               <strong>Contact:</strong>{' '}
-              <Box 
-                component="a" 
+              <Box
+                component="a"
                 href="mailto:help@spiritual-condition.com"
-                sx={{ 
+                sx={{
                   color: muiTheme.palette.primary.main,
                   textDecoration: 'none',
                   '&:hover': { textDecoration: 'underline' }
@@ -229,8 +232,8 @@ function Header({ title, menuOpen, setMenuOpen, isMobile, onNavigate, autoStartT
           </Box>
         </DialogContent>
         <DialogActions sx={{ p: 2, borderTop: `1px solid ${muiTheme.palette.divider}` }}>
-          <Button 
-            onClick={() => setInfoDialogOpen(false)} 
+          <Button
+            onClick={() => setInfoDialogOpen(false)}
             variant="contained"
             size="small"
           >
@@ -240,8 +243,8 @@ function Header({ title, menuOpen, setMenuOpen, isMobile, onNavigate, autoStartT
       </Dialog>
 
       {/* Guided Tour */}
-      <GuidedTour 
-        isOpen={tourOpen} 
+      <GuidedTour
+        isOpen={tourOpen}
         onClose={() => {
           setTourOpen(false);
           if (onTourClose) {

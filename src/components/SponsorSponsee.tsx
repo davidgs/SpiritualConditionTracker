@@ -8,6 +8,7 @@ import {
   IconButton,
   Button
 } from '@mui/material';
+import { AddIcon } from '../utils/muiOptimizations';
 import { useTheme } from '@mui/material/styles';
 import DatabaseService from '../services/DatabaseService';
 import SubTabComponent from './shared/SubTabComponent';
@@ -18,6 +19,8 @@ import { ContactPerson } from '../types/ContactPerson';
 import { Contact } from '../types/database';
 
 function TabPanel({ children, value, index, ...other }) {
+  const theme = useTheme();
+
   return (
     <div
       role="tabpanel"
@@ -26,7 +29,21 @@ function TabPanel({ children, value, index, ...other }) {
       aria-labelledby={`tab-${index}`}
       {...other}
     >
-      {value === index && <Box sx={{ py: 3 }}>{children}</Box>}
+      {value === index && (
+        <Box
+          sx={{
+            py: 1,
+            px: .5,
+            backgroundColor: theme.palette.background.paper,
+            // border: `1px solid ${theme.palette.divider}`,
+            borderTop: 'none',
+            borderRadius: '8px 8px 8px 8px',
+            minHeight: '200px'
+          }}
+        >
+          {children}
+        </Box>
+      )}
     </div>
   );
 }
@@ -79,8 +96,17 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
 
   const loadSponsorContacts = async () => {
     try {
-      const contacts = await databaseService.getAll('sponsor_contacts');
-      setSponsorContacts(contacts);
+      const allContacts = await databaseService.getAll('sponsor_contacts');
+      // console.log('[loadSponsorContacts] Raw sponsor contacts from DB:', allContacts);
+      // Filter to only show contacts for current user's sponsors
+      const userSponsorContacts = allContacts.filter((contact: any) => {
+        const match = contact.userId == user?.id;
+        console.log(`[loadSponsorContacts] Filtering contact: userId=${contact.userId} (${typeof contact.userId}), user.id=${user?.id} (${typeof user?.id}), match=${match}`);
+        return match;
+      });
+      // console.log('[loadSponsorContacts] Filtered sponsor contacts:', userSponsorContacts);
+      console.log('[loadSponsorContacts] Current sponsors:', sponsors);
+      setSponsorContacts(userSponsorContacts);
     } catch (error) {
       console.error('Failed to load sponsor contacts:', error);
     }
@@ -88,8 +114,17 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
 
   const loadSponseeContacts = async () => {
     try {
-      const contacts = await databaseService.getAll('sponsee_contacts');
-      setSponseeContacts(contacts);
+      const allContacts = await databaseService.getAll('sponsee_contacts');
+      // console.log('[loadSponseeContacts] Raw sponsee contacts from DB:', allContacts);
+      // Filter to only show contacts for current user's sponsees
+      const userSponseeContacts = allContacts.filter((contact: any) => {
+        const match = contact.userId == user?.id;
+        // console.log(`[loadSponseeContacts] Filtering contact: userId=${contact.userId} (${typeof contact.userId}), user.id=${user?.id} (${typeof user?.id}), match=${match}`);
+        return match;
+      });
+      // console.log('[loadSponseeContacts] Filtered sponsee contacts:', userSponseeContacts);
+      // console.log('[loadSponseeContacts] Current sponsees:', sponsees);
+      setSponseeContacts(userSponseeContacts);
     } catch (error) {
       console.error('Failed to load sponsee contacts:', error);
     }
@@ -123,14 +158,43 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
       // Delete related contacts first
       const contacts = await databaseService.getAll(contactTable);
       const relatedContacts = contacts.filter((c: any) => c[foreignKey] === personId);
-      
+
       for (const contact of relatedContacts) {
+        // Delete related action items first
+        const actionItems = await databaseService.getAll('action_items');
+        const contactActionItems = actionItems.filter((item: any) => {
+          if (personType === 'sponsor') {
+            return item.sponsorContactId === contact.id;
+          } else {
+            return item.sponseeContactId === contact.id;
+          }
+        });
+
+        for (const actionItem of contactActionItems) {
+          await databaseService.remove('action_items', actionItem.id);
+        }
+
+        // Delete related activities
+        const activities = await databaseService.getAll('activities');
+        const contactActivities = activities.filter((activity: any) => {
+          if (personType === 'sponsor') {
+            return activity.sponsorId === personId;
+          } else {
+            return activity.sponseeId === personId;
+          }
+        });
+
+        for (const activity of contactActivities) {
+          await databaseService.remove('activities', activity.id);
+        }
+
+        // Now delete the contact
         await databaseService.remove(contactTable, (contact as any).id);
       }
-      
+
       // Delete the person
       await databaseService.remove(personTable, personId);
-      
+
       // Refresh data
       if (personType === 'sponsor') {
         await loadSponsors();
@@ -140,7 +204,7 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
         await loadSponseeContacts();
       }
       setRefreshKey(prev => prev + 1);
-      
+
     } catch (error) {
       console.error(`Failed to delete ${personType}:`, error);
       alert(`Failed to delete ${personType}`);
@@ -186,7 +250,7 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
 
       setShowPersonForm(false);
       setEditingPerson(null);
-      
+
       // Refresh data
       if (personFormType === 'sponsor') {
         await loadSponsors();
@@ -201,86 +265,267 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
   };
 
   // Contact handlers
-  const handleAddContact = (person: ContactPerson) => {
-    if (sponsors.some(s => s.id === person.id)) {
-      // This is a sponsor
-      setSelectedSponsorForContact(person);
-      setEditingContact(null);
-      setShowContactForm(true);
-    } else {
-      // This is a sponsee
-      setSelectedSponseeForContact(person);
-      setEditingContact(null);
-      setShowSponseeContactForm(true);
-    }
+  const handleAddSponsorContact = (person: ContactPerson) => {
+    setSelectedSponsorForContact(person);
+    setEditingContact(null);
+    setShowContactForm(true);
   };
 
-  const handleAddContactWithActionItem = async (contactData) => {
+  const handleAddSponseeContact = (person: ContactPerson) => {
+    setSelectedSponseeForContact(person);
+    setEditingContact(null);
+    setShowSponseeContactForm(true);
+  };
+
+  const handleContactWithActionItems = async (contactData, actionItems = [], personType: 'sponsor' | 'sponsee') => {
     try {
-      await databaseService.add('sponsor_contacts', {
+      console.log(`[handleContactWithActionItems] Processing ${personType} contact:`, contactData);
+
+      const isSponsee = personType === 'sponsee';
+      const contactTable = isSponsee ? 'sponsee_contacts' : 'sponsor_contacts';
+      const foreignKey = isSponsee ? 'sponseeId' : 'sponsorId';
+      const selectedPerson = isSponsee ? selectedSponseeForContact : selectedSponsorForContact;
+      const actionItemType = isSponsee ? 'sponsee_action_item' : 'sponsor_action_item';
+
+      // Save the contact first
+      const savedContact = await databaseService.add(contactTable, {
         ...contactData,
-        sponsorId: selectedSponsorForContact?.id,
+        [foreignKey]: selectedPerson?.id,
         userId: user?.id,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
       });
-      
-      setShowContactForm(false);
-      setSelectedSponsorForContact(null);
-      await loadSponsorContacts();
-      setRefreshKey(prev => prev + 1);
-    } catch (error) {
-      console.error('Failed to add sponsor contact:', error);
-      alert('Failed to add contact');
-    }
-  };
 
-  const handleAddSponseeContactWithActionItem = async (contactData) => {
-    try {
-      await databaseService.add('sponsee_contacts', {
-        ...contactData,
-        sponseeId: selectedSponseeForContact?.id,
-        userId: user?.id,
+      console.log(`[handleContactWithActionItems] Saved ${personType} contact to ${contactTable}:`, savedContact);
+
+      // Create activity record for the contact
+      const contactActivityData: any = {
+        userId: user?.id || 'default_user',
+        type: isSponsee ? 'sponsee-contact' : 'sponsor-contact',
+        date: contactData.date,
+        notes: contactData.note,
+        duration: contactData.duration,
+        personCalled: `${selectedPerson?.name} ${selectedPerson?.lastName || ''}`.trim(),
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
-      });
-      
-      setShowSponseeContactForm(false);
-      setSelectedSponseeForContact(null);
-      await loadSponseeContacts();
+      };
+
+      if (isSponsee) {
+        contactActivityData.sponseeContactId = (savedContact as any).id;
+        contactActivityData.sponseeId = selectedPerson?.id;
+      } else {
+        contactActivityData.sponsorContactId = (savedContact as any).id;
+        contactActivityData.sponsorId = selectedPerson?.id;
+      }
+
+      console.log(`[handleContactWithActionItems] Creating activity record for ${personType} contact:`, contactActivityData);
+      await databaseService.add('activities', contactActivityData);
+
+      // Save action items if any
+      if (actionItems && actionItems.length > 0 && savedContact && (savedContact as any).id) {
+        console.log(`[handleContactWithActionItems] Saving ${actionItems.length} action items as type: ${actionItemType}`);
+        for (const actionItem of actionItems) {
+          const baseActionItemData = {
+            title: actionItem.title,
+            text: actionItem.text || actionItem.title,
+            notes: actionItem.notes || '',
+            contactId: (savedContact as any).id,
+            dueDate: actionItem.dueDate || contactData.date,
+            completed: 0,
+            type: actionItemType,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString()
+          };
+
+          // Add sponsor/sponsee specific association
+          const actionItemData = isSponsee ? {
+            ...baseActionItemData,
+            sponseeId: selectedPerson?.id,
+            sponseeName: selectedPerson?.name
+          } : {
+            ...baseActionItemData,
+            sponsorId: selectedPerson?.id,
+            sponsorName: selectedPerson?.name
+          };
+
+          console.log(`[handleContactWithActionItems] Action item data for ${personType}:`, actionItemData);
+
+          // Save action item to master table
+          const savedActionItem = await databaseService.add('action_items', actionItemData);
+
+          // Only create activity record for sponsor action items (sponsee action items don't appear in Activity Log)
+          if (!isSponsee && savedActionItem && (savedActionItem as any).id) {
+            const actionItemActivityData = {
+              userId: user?.id || 'default_user',
+              type: 'sponsor_action_item',
+              date: actionItem.dueDate || contactData.date,
+              notes: `Action Item: ${actionItem.title}`,
+              actionItemId: (savedActionItem as any).id,
+              sponsorId: selectedPerson?.id,
+              personCalled: `${selectedPerson?.name} ${selectedPerson?.lastName || ''}`.trim(),
+              createdAt: new Date().toISOString(),
+              updatedAt: new Date().toISOString()
+            };
+
+            console.log(`[handleContactWithActionItems] Creating activity record for sponsor action item:`, actionItemActivityData);
+            await databaseService.add('activities', actionItemActivityData);
+          }
+        }
+      }
+
+      // Reset form state
+      if (isSponsee) {
+        setShowSponseeContactForm(false);
+        setSelectedSponseeForContact(null);
+        await loadSponseeContacts();
+      } else {
+        setShowContactForm(false);
+        setSelectedSponsorForContact(null);
+        await loadSponsorContacts();
+      }
+
       setRefreshKey(prev => prev + 1);
+
+      // Reload activities to show new contact and action items in dashboard
+      if (onSaveActivity) {
+        const refreshActivity = { type: 'refresh', id: Date.now() };
+        await onSaveActivity(refreshActivity);
+      }
+
+      console.log(`[handleContactWithActionItems] Successfully completed ${personType} contact save`);
     } catch (error) {
-      console.error('Failed to add sponsee contact:', error);
-      alert('Failed to add contact');
+      console.error(`Failed to add ${personType} contact:`, error);
+      alert(`Failed to add ${personType} contact`);
     }
   };
 
-  const handleToggleActionItem = async (actionItemId) => {
+  const handleToggleActionItem = async (actionItem) => {
     try {
-      const actionItem = activities.find(item => item.id === actionItemId);
-      if (actionItem) {
-        const updatedItem = { ...actionItem, completed: !actionItem.completed };
-        await onSaveActivity(updatedItem);
-        setRefreshKey(prev => prev + 1);
+      if (actionItem.deleted) {
+        // Handle delete operation
+        await databaseService.remove('action_items', actionItem.id);
+        console.log('Action item deleted:', actionItem.id);
+      } else {
+        // Handle toggle completion
+        const updatedItem = {
+          ...actionItem,
+          completed: actionItem.completed ? 0 : 1,
+          updatedAt: new Date().toISOString()
+        };
+        await databaseService.update('action_items', actionItem.id, updatedItem);
+        console.log('Action item toggled:', actionItem.id, 'completed:', updatedItem.completed);
+      }
+      setRefreshKey(prev => prev + 1);
+      // Reload activities to reflect changes
+      if (onSaveActivity) {
+        // Trigger activity reload through parent component
+        const dummyActivity = { type: 'refresh', id: Date.now() };
+        await onSaveActivity(dummyActivity);
       }
     } catch (error) {
-      console.error('Failed to toggle action item:', error);
+      console.error('Failed to update action item:', error);
+      alert('Failed to update action item');
     }
   };
 
   return (
     <div style={{ padding: '0 16px 20px 16px' }}>
-      <Typography variant="h4" sx={{ color: theme.palette.text.primary, mb: 3, fontWeight: 'bold' }}>
+      <Typography variant="h4" sx={{ color: theme.palette.text.primary, mb: 2, fontWeight: 'bold' }}>
         Sponsors & Sponsees
       </Typography>
 
-      <Tabs 
-        value={currentTab} 
+      <Tabs
+        value={currentTab}
         onChange={(event, newValue) => setCurrentTab(newValue)}
-        sx={{ borderBottom: 1, borderColor: 'divider' }}
+        variant="scrollable"
+        scrollButtons="auto"
+        allowScrollButtonsMobile
+        sx={{
+          borderBottom: 1,
+          borderColor: 'divider',
+          mb: 0,
+          '& .MuiTabs-indicator': {
+            backgroundColor: theme.palette.primary.main,
+            height: 3,
+          },
+          '& .MuiTabs-scrollButtons': {
+            color: theme.palette.primary.main,
+          },
+          '& .MuiTab-root': {
+            color: theme.palette.text.secondary,
+            fontWeight: 'normal',
+            textTransform: 'none',
+            border: `1px solid transparent`,
+            borderRadius: '8px 8px 8px 8px',
+            margin: '0 2px',
+            backgroundColor: 'transparent',
+            transition: 'all 0.2s ease-in-out',
+            '&.Mui-selected': {
+              color: theme.palette.primary.main,
+              fontWeight: 'bold',
+              backgroundColor: theme.palette.background.paper,
+              border: `1px solid ${theme.palette.divider}`,
+              borderBottom: `1px solid ${theme.palette.background.paper}`,
+              marginBottom: '-1px',
+              position: 'relative',
+              zIndex: 1,
+            },
+            '&:hover:not(.Mui-selected)': {
+              backgroundColor: theme.palette.action.hover,
+            },
+          },
+        }}
       >
-        <Tab label="Sponsors" />
-        <Tab label="Sponsees" />
+        <Tab
+          label={
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              Sponsors
+              {sponsors.length > 0 && (
+                <IconButton
+                  size="small"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleEditSponsor(null);
+                  }}
+                  sx={{
+                    padding: '2px',
+                    color: 'inherit',
+                    '&:hover': {
+                      backgroundColor: 'rgba(0, 0, 0, 0.1)',
+                    }
+                  }}
+                >
+                  <AddIcon fontSize="small" />
+                </IconButton>
+              )}
+            </Box>
+          }
+        />
+        <Tab
+          label={
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              Sponsees
+              {sponsees.length > 0 && (
+                <IconButton
+                  size="small"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleEditSponsee(null);
+                  }}
+                  sx={{
+                    padding: '2px',
+                    color: 'inherit',
+                    '&:hover': {
+                      backgroundColor: 'rgba(0, 0, 0, 0.1)',
+                    }
+                  }}
+                >
+                  <AddIcon fontSize="small" />
+                </IconButton>
+              )}
+            </Box>
+          }
+        />
       </Tabs>
 
       {/* Sponsor Tab */}
@@ -295,7 +540,7 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
           onAddPerson={() => handleEditSponsor(null)}
           onEditPerson={handleEditSponsor}
           onDeletePerson={(id) => handleDeletePerson('sponsor', id)}
-          onAddContact={handleAddContact}
+          onAddContact={handleAddSponsorContact}
           onToggleActionItem={handleToggleActionItem}
           addLabel="+ Add Sponsor"
           emptyMessage="No sponsors added yet."
@@ -305,6 +550,8 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
               contact={contact}
               theme={theme}
               refreshKey={refreshKey}
+              sponsorId={contact.sponsorId}
+              personType="sponsor"
               onContactClick={() => {}}
               onEditContact={(contact) => {
                 setEditingContact(contact);
@@ -328,7 +575,7 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
           onAddPerson={() => handleEditSponsee(null)}
           onEditPerson={handleEditSponsee}
           onDeletePerson={(id) => handleDeletePerson('sponsee', id)}
-          onAddContact={handleAddContact}
+          onAddContact={handleAddSponseeContact}
           onToggleActionItem={handleToggleActionItem}
           addLabel="+ Add Sponsee"
           emptyMessage="No sponsees added yet."
@@ -338,6 +585,8 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
               contact={contact}
               theme={theme}
               refreshKey={refreshKey}
+              sponseeId={contact.sponseeId}
+              personType="sponsee"
               onContactClick={() => {}}
               onEditContact={(contact) => {
                 setEditingContact(contact);
@@ -357,8 +606,8 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
           setEditingPerson(null);
         }}
         onSave={handlePersonSubmit}
-        title={editingPerson ? 
-          `Edit ${personFormType === 'sponsor' ? 'Sponsor' : 'Sponsee'}` : 
+        title={editingPerson ?
+          `Edit ${personFormType === 'sponsor' ? 'Sponsor' : 'Sponsee'}` :
           `Add ${personFormType === 'sponsor' ? 'Sponsor' : 'Sponsee'}`
         }
         initialData={editingPerson}
@@ -372,7 +621,7 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
           setEditingContact(null);
           setSelectedSponsorForContact(null);
         }}
-        onSave={handleAddContactWithActionItem}
+        onSave={(contactData, actionItems) => handleContactWithActionItems(contactData, actionItems, 'sponsor')}
         title={editingContact ? 'Edit Sponsor Contact' : 'Add Sponsor Contact'}
         initialData={editingContact}
       />
@@ -385,7 +634,7 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
           setEditingContact(null);
           setSelectedSponseeForContact(null);
         }}
-        onSave={handleAddSponseeContactWithActionItem}
+        onSave={(contactData, actionItems) => handleContactWithActionItems(contactData, actionItems, 'sponsee')}
         title={editingContact ? 'Edit Sponsee Contact' : 'Add Sponsee Contact'}
         initialData={editingContact}
       />

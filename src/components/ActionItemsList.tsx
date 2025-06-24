@@ -1,102 +1,105 @@
 import React, { useState, useEffect } from 'react';
 import {
   Box,
-  Typography,
-  Checkbox,
-  IconButton
+  Typography
 } from '@mui/material';
-import DatabaseService from '../services/DatabaseService';
-
-interface ActionItem {
-  id: number;
-  title: string;
-  text?: string;
-  notes?: string;
-  completed: number;
-  contactId: number;
-  dueDate?: string;
-  type: string;
-  createdAt: string;
-  updatedAt: string;
-}
+import { useAppData } from '../contexts/AppDataContext';
+import { ActionItem } from '../types/database';
+import ActionItemComponent from './shared/ActionItem';
 
 interface ActionItemsListProps {
   contactId: number;
   theme: any;
   refreshKey: number;
+  sponsorId?: number;
+  sponseeId?: number;
+  personType?: 'sponsor' | 'sponsee';
 }
 
 export const ActionItemsList: React.FC<ActionItemsListProps> = ({
   contactId,
   theme,
-  refreshKey
+  refreshKey,
+  sponsorId,
+  sponseeId,
+  personType
 }) => {
+  const { state, updateActionItem } = useAppData();
   const [actionItems, setActionItems] = useState<ActionItem[]>([]);
 
-  // Load action items for this contact
+  // Simple query: Get action items for this contact from global state
   useEffect(() => {
-    const loadActionItems = async () => {
-      if (contactId) {
-        try {
-          const databaseService = DatabaseService.getInstance();
-          const allActionItems = await databaseService.getAll('action_items');
-          const actionItemsArray = Array.isArray(allActionItems) ? allActionItems : [];
-          const contactActionItems = actionItemsArray.filter(item => 
-            item && (item.contactId === contactId || item.sponsorContactId === contactId)
-          );
-          setActionItems(contactActionItems);
-        } catch (error) {
-          console.error('Error loading action items for contact:', error);
-          setActionItems([]);
-        }
+    console.log(`[ActionItemsList] Loading action items for contact ${contactId}, type: ${personType}`);
+    console.log(`[ActionItemsList] Total action items in state:`, state.actionItems?.length || 0);
+    console.log(`[ActionItemsList] All action items:`, state.actionItems);
+    
+    // Filter action items from the centralized state
+    const filteredItems = state.actionItems?.filter(item => {
+      // Exclude deleted items first
+      if (item.deleted === 1) return false;
+      
+      // Check contact association based on person type
+      if (personType === 'sponsor' && item.sponsorContactId === contactId) {
+        console.log(`[ActionItemsList] Found sponsor action item for contact ${contactId}:`, item);
+        return true;
       }
-    };
-    loadActionItems();
-  }, [contactId, refreshKey]);
+      if (personType === 'sponsee' && item.sponseeContactId === contactId) {
+        console.log(`[ActionItemsList] Found sponsee action item for contact ${contactId}:`, item);
+        return true;
+      }
+      // Legacy support for old contactId field
+      if (item.contactId === contactId) {
+        console.log(`[ActionItemsList] Found legacy action item for contact ${contactId}:`, item);
+        return true;
+      }
+      
+      return false;
+    }) || [];
+    
+    console.log(`[ActionItemsList] Found ${filteredItems.length} action items for contact ${contactId}`);
+    setActionItems(filteredItems);
+    
+  }, [contactId, refreshKey, personType, state.actionItems]);
 
-  // Toggle action item completion
+  // Toggle action item completion using shared AppDataContext
   const handleToggle = async (actionItemId: number) => {
     try {
-      const databaseService = DatabaseService.getInstance();
-      
-      const allActionItems = await databaseService.getAll('action_items');
-      const actionItem = allActionItems.find(item => item.id === actionItemId);
-      
+      const actionItem = actionItems.find(item => item.id === actionItemId);
       if (!actionItem) {
         console.error('Action item not found for ID:', actionItemId);
         return;
       }
       
-      const updatedActionItem = {
-        ...actionItem,
-        completed: actionItem.completed === 1 ? 0 : 1,
+      const updates = {
+        completed: (actionItem.completed === 1 ? 0 : 1) as 0 | 1,
         updatedAt: new Date().toISOString()
       };
       
-      await databaseService.update('action_items', actionItemId, updatedActionItem);
+      // Use AppDataContext update function for consistency
+      await updateActionItem(actionItemId, updates);
       
-      // Update local state immediately for responsive UI
-      setActionItems(prev => 
-        prev.map(item => 
-          item.id === actionItemId 
-            ? { ...item, completed: updatedActionItem.completed }
-            : item
-        )
+      // Reload action items to reflect changes
+      const updatedItems = actionItems.map(item => 
+        item.id === actionItemId ? { ...item, ...updates } : item
       );
+      setActionItems(updatedItems);
       
     } catch (error) {
       console.error('Error toggling action item:', error);
     }
   };
 
-  // Delete action item
+  // Delete action item using shared AppDataContext
   const handleDelete = async (actionItemId: number) => {
     try {
-      const databaseService = DatabaseService.getInstance();
-      await databaseService.remove('action_items', actionItemId);
+      // Mark as deleted instead of removing
+      await updateActionItem(actionItemId, { 
+        deleted: 1,
+        updatedAt: new Date().toISOString()
+      });
       
-      // Update local state immediately
-      setActionItems(prev => prev.filter(item => item.id !== actionItemId));
+      // Remove from local state
+      setActionItems(actionItems.filter(item => item.id !== actionItemId));
       
     } catch (error) {
       console.error('Error deleting action item:', error);
@@ -114,67 +117,13 @@ export const ActionItemsList: React.FC<ActionItemsListProps> = ({
       </Typography>
       
       {actionItems.map((actionItem) => (
-        <Box 
+        <ActionItemComponent
           key={actionItem.id}
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            py: 0.5,
-            '&:hover': {
-              backgroundColor: theme.palette.action.hover,
-            }
-          }}
-        >
-          <Box sx={{ 
-            display: 'flex', 
-            alignItems: 'center', 
-            gap: 1, 
-            flex: 1 
-          }}>
-            <Checkbox
-              checked={actionItem.completed === 1}
-              onChange={(e) => {
-                e.stopPropagation();
-                handleToggle(actionItem.id);
-              }}
-              onClick={(e) => e.stopPropagation()}
-              size="small"
-              sx={{
-                color: theme.palette.text.secondary,
-                '&.Mui-checked': {
-                  color: theme.palette.success.main,
-                }
-              }}
-            />
-            
-            <Typography 
-              variant="body2" 
-              sx={{ 
-                color: actionItem.completed === 1 ? theme.palette.success.main : theme.palette.text.primary,
-                fontWeight: actionItem.completed === 1 ? 500 : 400
-              }}
-            >
-              {actionItem.title}
-            </Typography>
-          </Box>
-          
-          <IconButton 
-            size="small" 
-            onClick={(e) => {
-              e.stopPropagation();
-              handleDelete(actionItem.id);
-            }}
-            sx={{ 
-              color: theme.palette.error.main,
-              '&:hover': {
-                backgroundColor: theme.palette.error.light + '20',
-              }
-            }}
-          >
-            <i className="fa-solid fa-times text-xs"></i>
-          </IconButton>
-        </Box>
+          actionItem={actionItem}
+          onToggleComplete={handleToggle}
+          onDelete={handleDelete}
+          variant="compact"
+        />
       ))}
     </Box>
   );

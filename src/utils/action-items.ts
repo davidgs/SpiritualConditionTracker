@@ -110,6 +110,7 @@ export async function getActionItemsForContact(contactId) {
             notes TEXT DEFAULT '',
             dueDate TEXT DEFAULT NULL,
             completed INTEGER DEFAULT 0,
+            deleted INTEGER DEFAULT 0,
             type TEXT DEFAULT 'todo',
             createdAt TEXT,
             updatedAt TEXT,

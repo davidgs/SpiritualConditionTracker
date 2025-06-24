@@ -1,28 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  Box, 
-  Typography, 
-  Paper, 
-  IconButton, 
+import {
+  Box,
+  Typography,
   Button,
-  TextField,
-  Checkbox,
-  FormControlLabel,
-  Divider,
-  Card,
-  CardContent,
-  List,
-  ListItem,
-  Fab,
-  Alert,
+  Paper,
+  useTheme,
   Dialog,
   DialogTitle,
   DialogContent,
-  DialogActions
+  DialogActions,
+  TextField,
+  Chip,
+  IconButton
 } from '@mui/material';
-import { useTheme } from '@mui/material/styles';
+import { useAppData } from '../contexts/AppDataContext';
 import { formatDateForDisplay } from '../utils/dateUtils';
-import sponsorDB from '../utils/sponsor-database';
+import ActionItem from './shared/ActionItem';
+import { ActionItemsList } from './ActionItemsList';
 
 export default function SponsorContactDetailsPage({ 
   contact, 
@@ -34,24 +28,13 @@ export default function SponsorContactDetailsPage({
   onDeleteDetail
 }) {
   const theme = useTheme();
+  const { updateActionItem, addActionItem, addActivity, loadActivities, state } = useAppData();
   const [contactDetails, setContactDetails] = useState(details);
-  const [showAddActionForm, setShowAddActionForm] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   
   // State for edited contact
   const [editedContact, setEditedContact] = useState(contact);
   const [isEditing, setIsEditing] = useState(false);
-  
-  // Form state for new action item
-  const [newAction, setNewAction] = useState({
-    actionItem: '',
-    notes: '',
-    dueDate: '',
-    completed: false
-  });
-  
-  // State for action items
-  const [actionItems, setActionItems] = useState([]);
   
   // Update local state when the contact prop changes
   useEffect(() => {
@@ -67,113 +50,81 @@ export default function SponsorContactDetailsPage({
     
     async function loadActionItems() {
       try {
-        console.log(`[SponsorContactDetailsPage] Loading action items for contact ID: ${contact.id}`);
-        
-        // Load action items from the action_items table, not contact_details
-        const actionItemsList = await sponsorDB.getActionItemsByContactId(contact.id);
-        console.log(`[SponsorContactDetailsPage] Found ${actionItemsList.length} action items for contact`);
-        
-        setActionItems(actionItemsList);
+        // Force refresh of activities to get latest action items
+        await loadActivities();
       } catch (error) {
-        console.error('[SponsorContactDetailsPage] Error loading action items:', error);
-        setActionItems([]);
+        console.error('[SponsorContactDetailsPage] Error refreshing activities:', error);
       }
     }
     
     loadActionItems();
-  }, [contact, details]);
-  
-  // Handle form changes for new action item
-  const handleActionChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setNewAction(prev => ({
-      ...prev,
-      [name]: type === 'checkbox' ? checked : value
-    }));
-  };
-  
-  // Add new action item
-  const handleAddAction = async () => {
+  }, [contact, details, loadActivities]);
+
+  // Toggle action item completion using shared AppDataContext
+  const handleToggleComplete = async (actionItemId) => {
     try {
-      const actionData = {
-        contactId: contact.id,
-        actionItem: newAction.actionItem,
-        text: newAction.actionItem, // Required field - use same value as actionItem
-        notes: newAction.notes || '',
-        dueDate: newAction.dueDate || null,
-        completed: newAction.completed ? 1 : 0,
-        type: 'todo'
-      };
+      console.log('[SponsorContactDetailsPage] Toggling completion for action item ID:', actionItemId);
       
-      console.log('[SponsorContactDetailsPage] Adding new contact detail:', actionData);
+      // Get current action item from activities
+      const actionItemActivity = state.activities.find(activity => 
+        activity.type === 'action-item' && 
+        activity.actionItemData && 
+        Number(activity.actionItemData.id) === Number(actionItemId)
+      );
       
-      const savedDetail = await sponsorDB.addContactDetail(actionData);
-      
-      // Update local state
-      setActionItems(prev => [savedDetail, ...prev]);
-      
-      // Reset form
-      setNewAction({
-        actionItem: '',
-        notes: '',
-        dueDate: '',
-        completed: false
-      });
-      setShowAddActionForm(false);
-      
-    } catch (error) {
-      console.error('[SponsorContactDetailsPage] Error adding action item:', error);
-    }
-  };
-  
-  // Toggle action item completion
-  const handleToggleComplete = async (actionItem) => {
-    try {
-      console.log('[SponsorContactDetailsPage] Toggling completion for action item:', actionItem);
-      
-      const updatedItem = {
-        ...actionItem,
-        completed: actionItem.completed ? 0 : 1
-      };
-      
-      console.log('[SponsorContactDetailsPage] Updated item data:', updatedItem);
-      
-      const result = await sponsorDB.updateContactDetail(updatedItem);
-      console.log('[SponsorContactDetailsPage] Update result:', result);
-      
-      if (result) {
-        setActionItems(prev => {
-          const prevArray = Array.isArray(prev) ? prev : [];
-          const updated = prevArray.map(item => 
-            item && item.id === actionItem.id ? updatedItem : item
-          );
-          console.log('[SponsorContactDetailsPage] Updated action items list:', updated);
-          return updated;
-        });
+      if (!actionItemActivity?.actionItemData) {
+        console.error('[SponsorContactDetailsPage] Action item not found in activities:', actionItemId);
+        return;
       }
+      
+      const currentItem = actionItemActivity.actionItemData;
+      const newCompletedStatus = currentItem.completed === 1 ? 0 : 1;
+      
+      // Use the shared AppDataContext method to ensure synchronization
+      const updatedItem = await updateActionItem(actionItemId, {
+        completed: newCompletedStatus,
+        updatedAt: new Date().toISOString()
+      });
+      
+      console.log('[SponsorContactDetailsPage] Toggled completion via AppDataContext:', updatedItem);
+      
+      // No need for manual refresh - AppDataContext handles this automatically
     } catch (error) {
-      console.error('[SponsorContactDetailsPage] Error toggling completion:', error);
+      console.error('[SponsorContactDetailsPage] Error toggling action item:', error);
     }
   };
   
-  // Delete action item
+  // Soft delete action item using shared AppDataContext method
   const handleDeleteAction = async (actionItemId) => {
     try {
-      console.log('[SponsorContactDetailsPage] Deleting action item with ID:', actionItemId);
+      console.log('[SponsorContactDetailsPage] Soft deleting action item with ID:', actionItemId);
       
-      const success = await sponsorDB.deleteContactDetail(actionItemId);
-      console.log('[SponsorContactDetailsPage] Delete result:', success);
+      // Get current action item from activities
+      const actionItemActivity = state.activities.find(activity => 
+        activity.type === 'action-item' && 
+        activity.actionItemData && 
+        Number(activity.actionItemData.id) === Number(actionItemId)
+      );
       
-      if (success) {
-        setActionItems(prev => {
-          const prevArray = Array.isArray(prev) ? prev : [];
-          const filtered = prevArray.filter(item => item && item.id !== actionItemId);
-          console.log('[SponsorContactDetailsPage] Updated action items after delete:', filtered);
-          return filtered;
-        });
+      if (!actionItemActivity?.actionItemData) {
+        console.error('[SponsorContactDetailsPage] Action item not found in activities:', actionItemId);
+        return;
       }
+      
+      const currentItem = actionItemActivity.actionItemData;
+      const newDeletedStatus = currentItem.deleted ? 0 : 1;
+      
+      // Use the shared AppDataContext method to ensure synchronization
+      const updatedItem = await updateActionItem(actionItemId, {
+        deleted: newDeletedStatus,
+        updatedAt: new Date().toISOString()
+      });
+      
+      console.log('[SponsorContactDetailsPage] Soft deleted item via AppDataContext:', updatedItem);
+      
+      // No need for manual refresh - AppDataContext UPDATE_ACTIVITY handles this automatically
     } catch (error) {
-      console.error('[SponsorContactDetailsPage] Error deleting action item:', error);
+      console.error('[SponsorContactDetailsPage] Error soft deleting action item:', error);
     }
   };
   
@@ -193,120 +144,134 @@ export default function SponsorContactDetailsPage({
   // Get icon for contact type
   const getContactTypeIcon = (type) => {
     const typeIcons = {
-      'phone': 'fa-phone',
-      'in-person': 'fa-people-arrows',
-      'video': 'fa-video',
-      'text': 'fa-comment-sms',
-      'email': 'fa-envelope',
-      'other': 'fa-handshake'
+      'phone': 'fa-solid fa-phone',
+      'in-person': 'fa-solid fa-user-group',
+      'video': 'fa-solid fa-video',
+      'text': 'fa-solid fa-comment',
+      'email': 'fa-solid fa-envelope',
+      'other': 'fa-solid fa-comment-dots'
     };
-    return typeIcons[type] || 'fa-handshake';
+    return typeIcons[type] || 'fa-solid fa-comment-dots';
   };
-  
+
+  if (!contact) {
+    return (
+      <Box sx={{ p: 3, textAlign: 'center' }}>
+        <Typography>Contact not found</Typography>
+        <Button onClick={onBack} sx={{ mt: 2 }}>
+          Back to Contacts
+        </Button>
+      </Box>
+    );
+  }
+
   return (
-    <Box sx={{ p: { xs: 2, md: 3 } }}>
-      {/* Header with back button */}
-      <Box sx={{ 
-        display: 'flex', 
-        alignItems: 'center', 
-        mb: 3,
-        mt: -1
-      }}>
-        <IconButton 
+    <Box sx={{ p: 3, maxWidth: 600, mx: 'auto' }}>
+      {/* Header with Back Button */}
+      <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
+        <IconButton
           onClick={onBack}
-          sx={{ mr: 1, color: theme.palette.primary.main }}
+          sx={{
+            mr: 2,
+            color: theme.palette.primary.main,
+            '&:hover': {
+              backgroundColor: theme.palette.primary.main + '20',
+            }
+          }}
         >
           <i className="fa-solid fa-arrow-left"></i>
         </IconButton>
-        <Typography 
-          variant="h5" 
-          component="h1"
-          sx={{ 
-            fontWeight: 'bold',
-            color: theme.palette.text.primary
-          }}
-        >
-          Sponsor Contact Details
+        <Typography variant="h5" sx={{ fontWeight: 'bold', flex: 1 }}>
+          Contact Details
         </Typography>
       </Box>
-      
-      {/* Contact Summary Card */}
-      <Paper
-        elevation={1}
-        sx={{ 
-          p: 2.5, 
-          mb: 3, 
-          borderRadius: 2,
-          bgcolor: theme.palette.background.paper,
-          border: 1,
-          borderColor: 'divider',
-          borderLeft: 4,
-          borderLeftColor: 'primary.main'
-        }}
-      >
-        <Box sx={{ 
-          display: 'flex', 
-          flexDirection: 'row',
-          alignItems: 'flex-start',
-          gap: 2
-        }}>
-          {/* Contact Type Icon */}
-          <Box sx={{ 
-            mt: 0.5,
-            width: 50,
-            height: 50,
-            borderRadius: '50%',
-            bgcolor: theme.palette.primary.main,
-            color: theme.palette.primary.contrastText,
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            flexShrink: 0
-          }}>
-            <i className={`fa-solid ${getContactTypeIcon(contact.type)} fa-lg`}></i>
-          </Box>
+
+      {/* Contact History */}
+      {contactDetails && contactDetails.length > 0 && (
+        <Box sx={{ mb: 3 }}>
+          <Typography variant="h6" sx={{ mb: 2, fontWeight: 'bold' }}>
+            Contact History ({contactDetails.length})
+          </Typography>
           
-          {/* Contact Details */}
-          <Box sx={{ flex: 1 }}>
-            <Typography 
-              variant="h6" 
-              sx={{ 
-                fontWeight: 'bold',
-                color: theme.palette.text.primary,
-                mb: 0.5
+          {contactDetails.map((detail, index) => (
+            <Paper
+              key={detail.id || index}
+              elevation={0}
+              sx={{
+                p: 2,
+                mb: 2,
+                border: '1px solid',
+                borderColor: 'divider',
+                borderRadius: 2,
+                backgroundColor: theme.palette.background.paper
               }}
             >
-              {getContactTypeLabel(contact.type)}
-            </Typography>
-            
-            <Typography 
-              variant="body2" 
-              sx={{ 
-                color: theme.palette.text.secondary,
-                mb: 1
-              }}
-            >
-              {formatDateForDisplay(contact.date)}
-            </Typography>
-            
-            {contact.note && (
-              <Box sx={{ mt: 1.5 }}>
-                <Typography 
-                  variant="body2" 
-                  sx={{ 
-                    color: theme.palette.text.primary,
-                    whiteSpace: 'pre-wrap'
-                  }}
-                >
-                  {contact.note}
-                </Typography>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <i className={getContactTypeIcon(detail.type)} style={{ 
+                    color: theme.palette.primary.main,
+                    fontSize: '1.1rem'
+                  }}></i>
+                  <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
+                    {getContactTypeLabel(detail.type)}
+                  </Typography>
+                </Box>
+                
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <Typography variant="body2" sx={{ color: theme.palette.text.secondary }}>
+                    {formatDateForDisplay(detail.date)}
+                  </Typography>
+                  <IconButton
+                    size="small"
+                    onClick={() => onDeleteDetail(detail.id)}
+                    sx={{ 
+                      color: theme.palette.text.secondary,
+                      '&:hover': {
+                        color: theme.palette.error.main,
+                        backgroundColor: theme.palette.error.light + '20',
+                      }
+                    }}
+                  >
+                    <i className="fa-solid fa-pencil text-xs"></i>
+                  </IconButton>
+                </Box>
               </Box>
-            )}
-          </Box>
+              
+              {detail.topic && (
+                <Typography variant="body2" sx={{ mb: 1, fontWeight: 500 }}>
+                  Topic: {detail.topic}
+                </Typography>
+              )}
+              
+              {detail.duration && (
+                <Typography variant="body2" sx={{ mb: 1, color: theme.palette.text.secondary }}>
+                  Duration: {detail.duration} minutes
+                </Typography>
+              )}
+              
+              {detail.note && (
+                <Box sx={{ mt: 1 }}>
+                  <Typography variant="body2" sx={{ fontWeight: 500, mb: 0.5 }}>
+                    Notes:
+                  </Typography>
+                  <Typography variant="body2" sx={{ color: theme.palette.text.secondary }}>
+                    {detail.note}
+                  </Typography>
+                </Box>
+              )}
+
+              {/* Action Items within contact card - using ActionItemsList */}
+              <ActionItemsList 
+                contactId={detail.id} 
+                theme={theme}
+                refreshKey={state.activities.length}
+              />
+            </Paper>
+          ))}
         </Box>
-      </Paper>
-      
-      {/* Action Items Section */}
+      )}
+
+      {/* Contact Information */}
       <Paper
         elevation={0}
         sx={{
@@ -317,150 +282,67 @@ export default function SponsorContactDetailsPage({
           borderRadius: 2
         }}
       >
-        <Box sx={{ 
-          display: 'flex', 
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          mb: 1.5
-        }}>
-          <Typography 
-            variant="h6" 
-            sx={{ 
-              fontWeight: 'bold',
-              color: theme.palette.text.primary
-            }}
-          >
-            Action Items
-          </Typography>
-          <Button
-            variant="outlined"
-            startIcon={<i className="fa-solid fa-plus"></i>}
-            onClick={() => setShowAddActionForm(true)}
-            size="small"
-            sx={{ textTransform: 'none' }}
-          >
-            Add Action
-          </Button>
-        </Box>
-        
-        {/* Add Action Form */}
-        {showAddActionForm && (
-          <Box sx={{ mb: 3, p: 2, border: '1px solid', borderColor: 'divider', borderRadius: 1 }}>
-            <TextField
-              fullWidth
-              label="Action Item"
-              name="actionItem"
-              value={newAction.actionItem}
-              onChange={handleActionChange}
-              sx={{ mb: 2 }}
-            />
-            <TextField
-              fullWidth
-              label="Notes"
-              name="notes"
-              value={newAction.notes}
-              onChange={handleActionChange}
-              multiline
-              rows={2}
-              sx={{ mb: 2 }}
-            />
-            <TextField
-              fullWidth
-              label="Due Date"
-              name="dueDate"
-              type="date"
-              value={newAction.dueDate}
-              onChange={handleActionChange}
-              InputLabelProps={{ shrink: true }}
-              sx={{ mb: 2 }}
-            />
-            <FormControlLabel
-              control={
-                <Checkbox
-                  name="completed"
-                  checked={newAction.completed}
-                  onChange={handleActionChange}
-                />
-              }
-              label="Completed"
-              sx={{ mb: 2 }}
-            />
-            <Box sx={{ display: 'flex', gap: 1 }}>
-              <Button variant="contained" onClick={handleAddAction}>
-                Save
-              </Button>
-              <Button variant="outlined" onClick={() => setShowAddActionForm(false)}>
-                Cancel
-              </Button>
-            </Box>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+          <Box sx={{ flex: 1 }}>
+            <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1 }}>
+              {contact.name} {contact.lastName}
+            </Typography>
+            
+            {contact.phoneNumber && (
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+                <i className="fa-solid fa-phone" style={{ 
+                  color: theme.palette.text.secondary,
+                  fontSize: '0.9rem'
+                }}></i>
+                <Typography variant="body2" sx={{ color: theme.palette.text.secondary }}>
+                  {contact.phoneNumber}
+                </Typography>
+              </Box>
+            )}
+            
+            {contact.email && (
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+                <i className="fa-solid fa-envelope" style={{ 
+                  color: theme.palette.text.secondary,
+                  fontSize: '0.9rem'
+                }}></i>
+                <Typography variant="body2" sx={{ color: theme.palette.text.secondary }}>
+                  {contact.email}
+                </Typography>
+              </Box>
+            )}
+            
+            {contact.sobrietyDate && (
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+                <i className="fa-solid fa-calendar" style={{ 
+                  color: theme.palette.text.secondary,
+                  fontSize: '0.9rem'
+                }}></i>
+                <Typography variant="body2" sx={{ color: theme.palette.text.secondary }}>
+                  Sobriety Date: {formatDateForDisplay(contact.sobrietyDate)}
+                </Typography>
+              </Box>
+            )}
+            
+            {contact.note && (
+              <Box sx={{ mt: 2 }}>
+                <Typography variant="body2" sx={{ fontWeight: 500, mb: 0.5 }}>
+                  Notes:
+                </Typography>
+                <Typography
+                  variant="body2"
+                  sx={{
+                    color: theme.palette.text.secondary,
+                    whiteSpace: 'pre-wrap',
+                    wordBreak: 'break-word'
+                  }}
+                >
+                  {contact.note}
+                </Typography>
+              </Box>
+            )}
           </Box>
-        )}
-        
-        {/* Action Items List */}
-        {actionItems.length > 0 ? (
-          <List sx={{ p: 0 }}>
-            {actionItems.map((item, index) => (
-              <ListItem
-                key={item.id || index}
-                sx={{
-                  p: 2,
-                  mb: 1,
-                  border: '1px solid',
-                  borderColor: 'divider',
-                  borderRadius: 1,
-                  bgcolor: item.completed ? 'action.hover' : 'background.paper'
-                }}
-              >
-                <Box sx={{ width: '100%' }}>
-                  <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
-                    <Box sx={{ flex: 1 }}>
-                      <Typography
-                        variant="body1"
-                        sx={{
-                          textDecoration: item.completed ? 'line-through' : 'none',
-                          color: item.completed ? 'text.secondary' : 'text.primary',
-                          fontWeight: item.completed ? 'normal' : 'medium'
-                        }}
-                      >
-                        {item.actionItem || item.text || 'Untitled Action'}
-                      </Typography>
-                      {item.notes && (
-                        <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-                          {item.notes}
-                        </Typography>
-                      )}
-                      {item.dueDate && (
-                        <Typography variant="caption" color="text.secondary" sx={{ mt: 0.5, display: 'block' }}>
-                          Due: {formatDateForDisplay(item.dueDate)}
-                        </Typography>
-                      )}
-                    </Box>
-                    <Box sx={{ ml: 2, display: 'flex', gap: 1 }}>
-                      <IconButton
-                        size="small"
-                        onClick={() => handleToggleComplete(item)}
-                        sx={{ color: item.completed ? 'success.main' : 'text.secondary' }}
-                      >
-                        <i className={`fa-solid ${item.completed ? 'fa-check-circle' : 'fa-circle'}`}></i>
-                      </IconButton>
-                      <IconButton
-                        size="small"
-                        onClick={() => handleDeleteAction(item.id)}
-                        sx={{ color: 'error.main' }}
-                      >
-                        <i className="fa-solid fa-trash"></i>
-                      </IconButton>
-                    </Box>
-                  </Box>
-                </Box>
-              </ListItem>
-            ))}
-          </List>
-        ) : (
-          <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center', py: 3 }}>
-            No action items yet. Add one to get started!
-          </Typography>
-        )}
+        </Box>
       </Paper>
       
       {/* Delete Contact Button */}

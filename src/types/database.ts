@@ -69,7 +69,11 @@ export interface ActionItem extends BaseEntity {
   notes: string;
   dueDate: string | null;
   completed: 0 | 1; // SQLite boolean as integer
+  deleted: 0 | 1; // SQLite boolean as integer for soft deletion
   type: 'todo' | 'action' | 'reminder';
+  contactId?: number; // Legacy field
+  sponsorContactId?: number; // Reference to sponsor_contacts.id
+  sponseeContactId?: number; // Reference to sponsee_contacts.id
 }
 
 // Join table for sponsor contacts and action items
@@ -80,6 +84,7 @@ export interface SponsorContactActionItem extends BaseEntity {
 
 // Activity interface
 export interface Activity extends BaseEntity {
+  userId: string;
   type: ActivityType;
   date: string;
   notes?: string;
@@ -99,6 +104,14 @@ export interface Activity extends BaseEntity {
   personCalled?: string;
   serviceType?: string;
   completed?: number;
+  // Action item specific fields for synchronization
+  actionItemId?: number;
+  actionItemData?: ActionItem;
+  // Additional fields for compatibility
+  sponsorName?: string;
+  sponseeName?: string;
+  title?: string;
+  text?: string;
 }
 
 // Meeting interface

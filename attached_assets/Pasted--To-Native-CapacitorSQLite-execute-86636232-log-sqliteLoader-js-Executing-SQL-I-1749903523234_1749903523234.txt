@@ -1,0 +1,29 @@
+⚡️  To Native ->  CapacitorSQLite execute 86636232
+⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO sponsees (name, lastName, phoneNumber, email, sobrietyDate, notes, userId, updatedAt, createdAt) VALUES ('Frank', 'Furter', '+1 919 555 1212', 'frank@furter.com', '2025-06-05T04:00:00.000Z', 'New Pigeon!', 1, '2025-06-14T12:18:19.744Z', '2025-06-14T12:18:19.744Z');
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  To Native ->  CapacitorSQLite query 86636233
+⚡️  TO JS {"values":[{"ios_columns":["id"]},{"id":1}]}
+⚡️  To Native ->  CapacitorSQLite query 86636234
+⚡️  [log] - [ sqliteLoader.js ] Last insert ID result: {"values":[{"ios_columns":["id"]},{"id":1}]}
+⚡️  TO JS {"values":[{"ios_columns":["id","userId","name","lastName","phoneNumber","email","sobrietyDate","notes","sponseeType","createdAt","updatedAt"]},{"createdAt":"2025-06-14T12:18:19.744Z","name":"Frank","id":1,"phoneNumber":"+1 919 555 1212","lastName":"Furter
+⚡️  [log] - SubTabComponent sponsee: persons: [] length: 0
+⚡️  [log] - [ sqliteLoader.js:548 ] Processed 1 items from sponsees
+⚡️  [log] - SubTabComponent sponsee: persons: [{"createdAt":"2025-06-14T12:18:19.744Z","name":"Frank","id":1,"phoneNumber":"+1 919 555 1212","lastName":"Furter","sobrietyDate":"2025-06-05T04:00:00.000Z","userId":"1","sponseeType":"sponsee","notes":"New Pigeon!","updatedAt":"2025-06-14T12:18:19.744Z","email":"frank@furter.com"}] length: 1
+⚡️  [log] - [getPersonContacts] Found 0 contacts for sponsee 1
+⚡️  To Native ->  CapacitorSQLite query 86636235
+⚡️  To Native ->  CapacitorSQLite query 86636236
+⚡️  To Native ->  CapacitorSQLite query 86636237
+⚡️  To Native ->  CapacitorSQLite query 86636238
+⚡️  TO JS {"values":[{"ios_columns":["id","userId","name","lastName","phoneNumber","email","sobrietyDate","notes","sponsorType","createdAt","updatedAt"]},{"userId":"1","id":1,"lastName":"Blow","name":"Joe","createdAt":"2025-06-14T12:13:31.124Z","phoneNumber":"+1 919
+⚡️  TO JS {"values":[{"ios_columns":["id","userId","name","lastName","phoneNumber","email","sobrietyDate","notes","sponseeType","createdAt","updatedAt"]},{"lastName":"Furter","name":"Frank","userId":"1","id":1,"sponseeType":"sponsee","createdAt":"2025-06-14T12:18:19
+⚡️  TO JS {"values":[{"ios_columns":["id","userId","sponsorId","date","type","note","topic","duration","createdAt","updatedAt"]},{"userId":"1","date":"2025-06-14T12:14:19.498Z","id":1,"sponsorId":1,"note":"Get to know you","duration":20,"type":"call","createdAt":"20
+⚡️  TO JS {"values":[]}
+⚡️  [log] - [ sqliteLoader.js:548 ] Processed 1 items from sponsors
+⚡️  [log] - [ sqliteLoader.js:548 ] Processed 1 items from sponsees
+⚡️  [log] - [ sqliteLoader.js:548 ] Processed 1 items from sponsor_contacts
+⚡️  [log] - [loadSponsorContacts] Raw sponsor contacts from DB: [{"userId":"1","date":"2025-06-14T12:14:19.498Z","id":1,"sponsorId":1,"note":"Get to know you","duration":20,"type":"call","createdAt":"2025-06-14T12:14:51.511Z","updatedAt":"2025-06-14T12:14:51.511Z","topic":"Welcome"}]
+⚡️  [log] - [loadSponsorContacts] Filtered sponsor contacts: [{"userId":"1","date":"2025-06-14T12:14:19.498Z","id":1,"sponsorId":1,"note":"Get to know you","duration":20,"type":"call","createdAt":"2025-06-14T12:14:51.511Z","updatedAt":"2025-06-14T12:14:51.511Z","topic":"Welcome"}]
+⚡️  [log] - [loadSponsorContacts] Current sponsors: [{"createdAt":"2025-06-14T12:13:31.124Z","email":"joe@blow.com","userId":"1","phoneNumber":"+1 919 534 5099","id":1,"lastName":"Blow","name":"Joe","notes":"New Sponsor!","updatedAt":"2025-06-14T12:13:31.124Z","sobrietyDate":null,"sponsorType":"sponsor"}]
+⚡️  [log] - [ sqliteLoader.js:548 ] Processed 0 items from sponsee_contacts
+⚡️  [log] - SubTabComponent sponsee: persons: [{"lastName":"Furter","name":"Frank","userId":"1","id":1,"sponseeType":"sponsee","createdAt":"2025-06-14T12:18:19.744Z","updatedAt":"2025-06-14T12:18:19.744Z","phoneNumber":"+1 919 555 1212","email":"frank@furter.com","notes":"New Pigeon!","sobrietyDate":"2025-06-05T04:00:00.000Z"}] length: 1
+⚡️  [log] - [getPersonContacts] Found 0 contacts for sponsee 1

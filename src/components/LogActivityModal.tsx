@@ -6,13 +6,20 @@ import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
+import TextField from '@mui/material/TextField';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import InputLabel from '@mui/material/InputLabel';
+import Select from '@mui/material/Select';
+import { useTheme } from '@mui/material/styles';
 import StyledDialog from './StyledDialog';
 import MuiThemeProvider from '../contexts/MuiThemeProvider';
 import MeetingFormDialog from './MeetingFormDialog';
+import ContactFormDialog from './shared/ContactFormDialog';
 
 /**
  * Material UI Dialog component that displays the activity logging form
- * 
+ *
  * @param {Object} props - Component props
  * @param {boolean} props.open - Whether the dialog is open
  * @param {Function} props.onClose - Function to call when the dialog should close
@@ -21,41 +28,59 @@ import MeetingFormDialog from './MeetingFormDialog';
  * @param {Array} props.meetings - List of meetings for selection in the form
  * @returns {React.ReactElement} The dialog component
  */
-const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] }) => {
+
+
+const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, onSaveSponsorContact, onSaveSponseeContact, meetings = [] }) => {
+  // Get theme context
+  const muiTheme = useTheme();
+
   // Dark mode detection
   const darkMode = document.documentElement.classList.contains('dark');
   const [isDarkMode, setIsDarkMode] = useState(darkMode);
-  
+
   // Activity form states
   const [activityType, setActivityType] = useState('prayer');
   const [duration, setDuration] = useState('15');
   const [date, setDate] = useState(getCurrentDateString());
   const [notes, setNotes] = useState('');
-  const [errors, setErrors] = useState({});
+  const [errors, setErrors] = useState<{
+    activityType?: string;
+    duration?: string;
+    date?: string;
+    literatureTitle?: string;
+    meetingName?: string;
+    callType?: string;
+  }>({});
   const [showSuccess, setShowSuccess] = useState(false);
-  
+
   // Additional fields for specific activity types
   const [literatureTitle, setLiteratureTitle] = useState('');
   const [meetingName, setMeetingName] = useState('');
   const [wasChair, setWasChair] = useState(false);
   const [wasShare, setWasShare] = useState(false);
   const [wasSpeaker, setWasSpeaker] = useState(false);
-  
+
   // Call type checkboxes
   const [isSponsorCall, setIsSponsorCall] = useState(false);
   const [isSponseeCall, setIsSponseeCall] = useState(false);
   const [isAAMemberCall, setIsAAMemberCall] = useState(false);
-  
+
   // Meeting selection fields
   const [selectedMeetingId, setSelectedMeetingId] = useState('');
   const [showMeetingForm, setShowMeetingForm] = useState(false);
-  
+
+  // Sponsor contact dialog state
+  const [showSponsorContactForm, setShowSponsorContactForm] = useState(false);
+
+  // Sponsee contact dialog state
+  const [showSponseeContactForm, setShowSponseeContactForm] = useState(false);
+
   // Generate current date in YYYY-MM-DD format
   function getCurrentDateString() {
     const today = new Date();
     return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
   }
-  
+
   // Watch for dark mode changes
   useEffect(() => {
     const observer = new MutationObserver((mutations) => {
@@ -65,19 +90,19 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
         }
       });
     });
-    
+
     observer.observe(document.documentElement, { attributes: true });
-    
+
     return () => observer.disconnect();
   }, []);
-  
+
   // Reset form when dialog opens
   useEffect(() => {
     if (open) {
       resetForm();
     }
   }, [open]);
-  
+
   // Reset additional fields when activity type changes
   useEffect(() => {
     // Set default duration based on activity type
@@ -86,7 +111,7 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
     } else {
       setDuration('15'); // Default duration for other activities
     }
-    
+
     setLiteratureTitle('');
     setMeetingName('');
     setWasChair(false);
@@ -98,29 +123,33 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
     setSelectedMeetingId('');
     setShowMeetingForm(false);
   }, [activityType]);
-  
+
   // Get duration options based on activity type
   const getDurationOptions = () => {
     const options = [];
     let maxMinutes = 60; // Default max is 1 hour
     let increment = 15; // Default increment is 15 minutes
-    
-    if (activityType === 'meeting') {
+
+    if (activityType === 'prayer' || activityType === 'meditation') {
+      maxMinutes = 60; // 1 hour
+      increment = 5; // 5 minute increments for prayer/meditation
+    } else if (activityType === 'meeting') {
       maxMinutes = 150; // 2.5 hours
       increment = 30; // 30 minute increments
     } else if (activityType === 'sponsee' || activityType === 'service') {
       maxMinutes = 120; // 2 hours
     }
-    
+
     for (let i = increment; i <= maxMinutes; i += increment) {
-      options.push(
-        <option key={i} value={i.toString()}>{i} minutes</option>
-      );
+      options.push({
+        value: i.toString(),
+        label: `${i} minutes`
+      });
     }
-    
+
     return options;
   };
-  
+
   // Reset form fields
   const resetForm = () => {
     setActivityType('prayer');
@@ -140,36 +169,43 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
     setSelectedMeetingId('');
     setShowMeetingForm(false);
   };
-  
+
   // Handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
    // console.log('[LogActivityModal:147] Submitting activity form...')
     // Validate form
-    const newErrors = {};
+    const newErrors: {
+      activityType?: string;
+      duration?: string;
+      date?: string;
+      literatureTitle?: string;
+      meetingName?: string;
+      callType?: string;
+    } = {};
     if (!activityType) newErrors.activityType = 'Activity type is required';
     if (!duration) newErrors.duration = 'Duration is required';
     if (!date) newErrors.date = 'Date is required';
-    
+
     // Validate activity-specific fields
     if (activityType === 'literature' && !(literatureTitle || '').trim()) {
       newErrors.literatureTitle = 'Literature title is required';
     }
-    
+
     if (activityType === 'meeting' && !showMeetingForm && !selectedMeetingId && !(meetingName || '').trim()) {
       newErrors.meetingName = 'Meeting name is required';
     }
-    
+
     if (activityType === 'call' && !isSponsorCall && !isSponseeCall && !isAAMemberCall) {
       newErrors.callType = 'At least one call type must be selected';
     }
-    
+
     // If there are errors, show them and don't submit
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       return;
     }
-    
+
     // Create new activity object with core fields (let SQLite auto-generate the ID)
     const newActivity: any = {
       type: activityType,
@@ -193,32 +229,32 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
       serviceType: '',
       completed: 1
     };
-    
+
   //  console.log('[ LogActivityModal.tsx:179 handleSubmit ] Created activity with ISO date:', newActivity.date);
   //  console.log('[ LogActivityModal.tsx:180 handleSubmit ] Original date input:', date);
-    
+
     // Add activity-specific fields
     if (activityType === 'literature') {
       newActivity.literatureTitle = (literatureTitle || '').trim();
     }
-    
+
     if (activityType === 'meeting') {
       newActivity.meetingName = (meetingName || '').trim();
       newActivity.wasChair = wasChair ? 1 : 0;
       newActivity.wasShare = wasShare ? 1 : 0;
       newActivity.wasSpeaker = wasSpeaker ? 1 : 0;
-      
+
       // Include meeting ID if one was selected
       if (selectedMeetingId) {
         newActivity.meetingId = parseInt(selectedMeetingId, 10);
       }
     }
-    
+
     if (activityType === 'call') {
       newActivity.isSponsorCall = isSponsorCall ? 1 : 0;
       newActivity.isSponseeCall = isSponseeCall ? 1 : 0;
       newActivity.isAAMemberCall = isAAMemberCall ? 1 : 0;
-      
+
       // Determine the actual type for filtering/display purposes
       if (isSponsorCall && !isSponseeCall && !isAAMemberCall) {
         newActivity.callType = 'sponsor';
@@ -230,17 +266,17 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
         newActivity.callType = 'multiple'; // Multiple types selected
       }
     }
-    
+
     // Save the activity
     onSave(newActivity);
-    
+
     // Show success message
     setShowSuccess(true);
-    
+
     // Hide success message and close modal after 2 seconds
     setTimeout(() => {
       setShowSuccess(false);
-      
+
       // Only close the dialog on success if it's not a meeting form
       if (!showMeetingForm) {
         resetForm();
@@ -248,26 +284,26 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
       }
     }, 2000);
   };
-  
+
   // Handle meeting selection
   function handleMeetingSelect(e) {
     const meetingId = e.target.value;
     setSelectedMeetingId(meetingId);
-    
+
     if (meetingId) {
       // Convert to number for comparison since database IDs are integers
       const meetingIdNum = parseInt(meetingId, 10);
       const meeting = meetings.find(m => m.id === meetingIdNum);
-      console.log('LogActivityModal - Meeting selection:', { meetingId, meetingIdNum, meeting, availableMeetings: meetings });
+      // console.log('LogActivityModal - Meeting selection:', { meetingId, meetingIdNum, meeting, availableMeetings: meetings });
       if (meeting) {
         setMeetingName(meeting.name);
-        console.log('LogActivityModal - Set meeting name to:', meeting.name);
+      //  console.log('LogActivityModal - Set meeting name to:', meeting.name);
       }
     } else {
       setMeetingName('');
     }
   }
-  
+
   // Handle saving a meeting from the meeting form
   function handleSaveMeeting(meeting) {
     // Call the parent's onSaveMeeting function to persist the meeting
@@ -278,11 +314,39 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
         setMeetingName(savedMeeting.name);
       }
     }
-    
+
     // Close the form
     setShowMeetingForm(false);
   }
-  
+
+  // Handle saving sponsor contact from the contact form
+  function handleSaveSponsorContact(contactData, actionItems) {
+    // Call the parent's onSaveSponsorContact function to persist the contact
+    if (onSaveSponsorContact) {
+      onSaveSponsorContact(contactData, actionItems);
+    }
+
+    // Close the sponsor contact form
+    setShowSponsorContactForm(false);
+
+    // Also close the main activity modal since the sponsor contact was logged
+    onClose();
+  }
+
+  // Handle saving sponsee contact from the contact form
+  function handleSaveSponseeContact(contactData, actionItems) {
+    // Call the parent's onSaveSponseeContact function to persist the contact
+    if (onSaveSponseeContact) {
+      onSaveSponseeContact(contactData, actionItems);
+    }
+
+    // Close the sponsee contact form
+    setShowSponseeContactForm(false);
+
+    // Also close the main activity modal since the sponsee contact was logged
+    onClose();
+  }
+
   // Get common text field styles for consistency
   const getTextFieldStyle = (theme) => ({
     width: '95%', // Slightly smaller to prevent focus border overflow
@@ -294,7 +358,7 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
     fontSize: '0.875rem',
     boxSizing: 'border-box'
   });
-  
+
   return (
     <MuiThemeProvider>
       <StyledDialog
@@ -303,14 +367,16 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
         aria-labelledby="log-activity-dialog-title"
         maxWidth="sm"
         PaperProps={{
-          style: { 
+          style: {
             overflowX: 'hidden',
             width: '90%',
-            maxWidth: '450px'
+            maxWidth: '450px',
+            maxHeight: '85vh',
+            height: '85vh'
           }
         }}
       >
-        <DialogTitle 
+        <DialogTitle
           id="log-activity-dialog-title"
           sx={(theme) => ({
             backgroundColor: theme.palette.background.default,
@@ -321,7 +387,7 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
         >
           Log New Activity
         </DialogTitle>
-        
+
         <IconButton
           aria-label="close"
           onClick={onClose}
@@ -334,8 +400,29 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
         >
           <CloseIcon />
         </IconButton>
-        
-        <DialogContent dividers>
+
+        <DialogContent
+          dividers
+          sx={{
+            overflowY: 'auto',
+            maxHeight: 'calc(85vh - 120px)', // Account for header and footer
+            padding: '1rem',
+            '&::-webkit-scrollbar': {
+              width: '8px',
+            },
+            '&::-webkit-scrollbar-track': {
+              background: '#f1f1f1',
+              borderRadius: '4px',
+            },
+            '&::-webkit-scrollbar-thumb': {
+              background: '#c1c1c1',
+              borderRadius: '4px',
+            },
+            '&::-webkit-scrollbar-thumb:hover': {
+              background: '#a8a8a8',
+            },
+          }}
+        >
           {/* Success message */}
           {showSuccess && (
             <Box
@@ -355,7 +442,7 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
               Activity saved successfully!
             </Box>
           )}
-          
+
           {/* Display the meeting form inside the modal when needed */}
           {activityType === 'meeting' && showMeetingForm ? (
             <MeetingFormDialog
@@ -367,176 +454,172 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
           ) : (
             <form onSubmit={handleSubmit}>
               {/* Activity Type */}
-              <Box sx={{ marginBottom: '1rem', maxWidth: '100%' }}>
-                <Box 
-                  component="label"
-                  sx={(theme) => ({
-                    display: 'block',
-                    fontSize: '0.875rem',
-                    fontWeight: '500',
-                    marginBottom: '0.25rem',
-                    color: theme.palette.text.secondary
-                  })}
-                >
-                  Activity Type
-                </Box>
-                <Box 
-                  component="select"
+              <Box sx={{ marginBottom: '0.5rem', maxWidth: '100%' }}>
+                <TextField
+                  select
+                  fullWidth
+                  label="Activity Type"
                   value={activityType}
                   onChange={(e) => setActivityType(e.target.value)}
-                  sx={(theme) => getTextFieldStyle(theme)}
+                  error={!!errors.activityType}
+                  helperText={errors.activityType}
+                  variant="outlined"
+                  InputProps={{
+                    sx: {
+                      height: '48px'
+                    }
+                  }}
+                  sx={{
+                    mb: 1,
+                    "sx={getTextFieldStyle()} .MuiOutlinedInput-root": {
+                      height: 56,
+                      borderRadius: 2
+                    },
+                    "sx={getTextFieldStyle()} .MuiOutlinedInput-input": {
+                      fontSize: 16,
+                      padding: "15px 14px"
+                    }
+                  }}
                 >
-                  <option value="prayer">Prayer</option>
-                  <option value="meditation">Meditation</option>
-                  <option value="literature">Reading Literature</option>
-                  <option value="service">Service Work</option>
-                  <option value="call">Call</option>
-                  <option value="meeting">AA Meeting</option>
-                </Box>
-                {errors.activityType && (
-                  <Box 
-                    component="p" 
-                    sx={(theme) => ({
-                      color: theme.palette.error.main,
-                      fontSize: '0.75rem',
-                      marginTop: '0.25rem'
-                    })}
-                  >
-                    {errors.activityType}
-                  </Box>
-                )}
+                  <MenuItem value="prayer">Prayer</MenuItem>
+                  <MenuItem value="meditation">Meditation</MenuItem>
+                  <MenuItem value="literature">Reading Literature</MenuItem>
+                  <MenuItem value="service">Service Work</MenuItem>
+                  <MenuItem value="call">Call</MenuItem>
+                  <MenuItem value="meeting">AA Meeting</MenuItem>
+                </TextField>
               </Box>
-              
+
               {/* Duration dropdown */}
-              <Box sx={{ marginBottom: '1rem', maxWidth: '100%' }}>
-                <Box 
-                  component="label"
-                  sx={(theme) => ({
-                    display: 'block',
-                    fontSize: '0.875rem',
-                    fontWeight: '500',
-                    marginBottom: '0.25rem',
-                    color: theme.palette.text.secondary
-                  })}
-                >
-                  Duration
-                </Box>
-                <Box 
-                  component="select"
+              <Box sx={{ marginBottom: '0.5rem', maxWidth: '100%' }}>
+                <TextField
+                  select
+                  fullWidth
+                  label="Duration"
                   value={duration}
                   onChange={(e) => setDuration(e.target.value)}
-                  sx={(theme) => getTextFieldStyle(theme)}
+                  error={!!errors.duration}
+                  helperText={errors.duration}
+                  variant="outlined"
+                  InputProps={{
+                    sx: {
+                      height: '48px'
+                    }
+                  }}
+                  sx={{
+                    mb: 1,
+                    "sx={getTextFieldStyle()} .MuiOutlinedInput-root": {
+                      height: 56,
+                      borderRadius: 2
+                    },
+                    "sx={getTextFieldStyle()} .MuiOutlinedInput-input": {
+                      fontSize: 16,
+                      padding: "15px 14px"
+                    }
+                  }}
                 >
-                  {getDurationOptions()}
-                </Box>
-                {errors.duration && (
-                  <Box 
-                    component="p" 
-                    sx={(theme) => ({
-                      color: theme.palette.error.main,
-                      fontSize: '0.75rem',
-                      marginTop: '0.25rem'
-                    })}
-                  >
-                    {errors.duration}
-                  </Box>
-                )}
+                  {getDurationOptions().map((option) => (
+                    <MenuItem key={option.value} value={option.value}>
+                      {option.label}
+                    </MenuItem>
+                  ))}
+                </TextField>
               </Box>
-              
+
               {/* Date picker */}
-              <Box sx={{ marginBottom: '1rem', maxWidth: '100%' }}>
-                <Box 
-                  component="label"
-                  sx={(theme) => ({
-                    display: 'block',
-                    fontSize: '0.875rem',
-                    fontWeight: '500',
-                    marginBottom: '0.25rem',
-                    color: theme.palette.text.secondary
-                  })}
-                >
-                  Date
-                </Box>
-                <Box 
-                  component="input"
+              <Box sx={{ marginBottom: '0.5rem', maxWidth: '100%' }}>
+                <TextField
+                  fullWidth
                   type="date"
+                  label="Date"
                   value={date}
                   onChange={(e) => setDate(e.target.value)}
-                  sx={(theme) => getTextFieldStyle(theme)}
+                  error={!!errors.date}
+                  helperText={errors.date}
+                  variant="outlined"
+                  InputProps={{
+                    sx: {
+                      height: '48px'
+                    }
+                  }}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  sx={{
+                    mb: 1,
+                    "sx={getTextFieldStyle()} .MuiOutlinedInput-root": {
+                      height: 56,
+                      borderRadius: 2
+                    },
+                    "sx={getTextFieldStyle()} .MuiOutlinedInput-input": {
+                      fontSize: 16,
+                      padding: "15px 14px"
+                    }
+                  }}
                 />
-                {errors.date && (
-                  <Box 
-                    component="p" 
-                    sx={(theme) => ({
-                      color: theme.palette.error.main,
-                      fontSize: '0.75rem',
-                      marginTop: '0.25rem'
-                    })}
-                  >
-                    {errors.date}
-                  </Box>
-                )}
               </Box>
-              
+
               {/* Literature-specific fields */}
               {activityType === 'literature' && (
                 <Box sx={{ marginBottom: '1rem', maxWidth: '100%' }}>
-                  <Box 
-                    component="label"
-                    sx={(theme) => ({
-                      display: 'block',
-                      fontSize: '0.875rem',
-                      fontWeight: '500',
-                      marginBottom: '0.25rem',
-                      color: theme.palette.text.secondary
-                    })}
-                  >
-                    Literature Title
-                  </Box>
-                  <Box 
-                    component="input"
-                    type="text"
+                  <TextField
+                    fullWidth
+                    label="Literature Title"
                     value={literatureTitle}
                     onChange={(e) => setLiteratureTitle(e.target.value)}
                     placeholder="e.g., Big Book, 12x12, Daily Reflections"
-                    sx={(theme) => getTextFieldStyle(theme)}
+                    error={!!errors.literatureTitle}
+                    helperText={errors.literatureTitle}
+                    variant="outlined"
+                    InputProps={{
+                      sx: {
+                        height: '48px'
+                      }
+                    }}
+                    sx={{
+                    mb: 2,
+                    "sx={getTextFieldStyle()} .MuiOutlinedInput-root": {
+                      height: 56,
+                      borderRadius: 2
+                    },
+                    "sx={getTextFieldStyle()} .MuiOutlinedInput-input": {
+                      fontSize: 16,
+                      padding: "15px 14px"
+                    }
+                  }}
                   />
-                  {errors.literatureTitle && (
-                    <Box 
-                      component="p" 
-                      sx={(theme) => ({
-                        color: theme.palette.error.main,
-                        fontSize: '0.75rem',
-                        marginTop: '0.25rem'
-                      })}
-                    >
-                      {errors.literatureTitle}
-                    </Box>
-                  )}
                 </Box>
               )}
-              
+
               {/* Meeting-specific fields */}
               {activityType === 'meeting' && !showMeetingForm && (
                 <>
-                  <Box sx={{ marginBottom: '1rem', maxWidth: '100%' }}>
-                    <Box 
+                  <Box sx={{ marginBottom: '0.5rem', maxWidth: '100%' }}>
+                    <Box
                       component="label"
                       sx={(theme) => ({
                         display: 'block',
-                        fontSize: '0.875rem',
+                        fontSize: '1rem',
                         fontWeight: '500',
-                        marginBottom: '0.25rem',
+                        marginBottom: '0.125rem',
                         color: theme.palette.text.secondary
                       })}
                     >
                       Select Meeting
                     </Box>
-                    <Box 
-                      component="select"
+                    <select
                       value={selectedMeetingId}
                       onChange={handleMeetingSelect}
-                      sx={(theme) => getTextFieldStyle(theme)}
+                      style={{
+                        width: '100%',
+                        height: '48px',
+                        fontSize: '16px',
+                        padding: '10px 14px',
+                        borderRadius: '8px',
+                        border: '1px solid #ccc',
+                        marginBottom: '8px',
+                        backgroundColor: 'white'
+                      }}
                     >
                       <option value="">-- Select a saved meeting --</option>
                       {meetings.map(meeting => (
@@ -544,21 +627,21 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
                           {meeting.name}
                         </option>
                       ))}
-                    </Box>
-                    
-                    <Box 
+                    </select>
+
+                    <Box
                       sx={{
                         display: 'flex',
                         justifyContent: 'space-between',
                         alignItems: 'center',
-                        marginTop: '0.5rem'
+                        marginTop: '0.125rem'
                       }}
                     >
-                      <Button 
-                        variant="text" 
+                      <Button
+                        variant="text"
                         onClick={() => setShowMeetingForm(true)}
                         sx={(theme) => ({
-                          fontSize: '0.75rem',
+                          fontSize: '1rem',
                           color: theme.palette.primary.main
                         })}
                       >
@@ -566,33 +649,21 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
                       </Button>
                     </Box>
                   </Box>
-                  
+
                   {/* Meeting Name field - only show if no meeting selected from dropdown */}
                   {!selectedMeetingId && (
-                    <Box sx={{ marginBottom: '1rem', maxWidth: '100%' }}>
-                      <Box 
-                        component="label"
-                        sx={(theme) => ({
-                          display: 'block',
-                          fontSize: '0.875rem',
-                          fontWeight: '500',
-                          marginBottom: '0.25rem',
-                          color: theme.palette.text.secondary
-                        })}
-                      >
-                        Meeting Name
-                      </Box>
-                      <Box 
-                        component="input"
-                        type="text"
+                    <Box sx={{ marginBottom: '0.5rem', maxWidth: '100%' }}>
+                      <TextField
+                        fullWidth
+                        label="Meeting Name"
                         value={meetingName || ''}
                         onChange={(e) => {
                           const inputValue = e.target.value;
                           setMeetingName(inputValue);
-                          
+
                           // Try to match existing meeting by name
                           if (inputValue.trim()) {
-                            const matchingMeeting = meetings.find(m => 
+                            const matchingMeeting = meetings.find(m =>
                               m.name.toLowerCase() === inputValue.toLowerCase()
                             );
                             if (matchingMeeting) {
@@ -602,94 +673,100 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
                           }
                         }}
                         placeholder="Enter meeting name"
-                        sx={(theme) => getTextFieldStyle(theme)}
+                        error={!!errors.meetingName}
+                        helperText={errors.meetingName}
+                        variant="outlined"
+                        InputProps={{
+                          sx: {
+                            height: '48px'
+                          }
+                        }}
+                        sx={{
+                    mb: 1,
+                    "sx={getTextFieldStyle()} .MuiOutlinedInput-root": {
+                      height: 56,
+                      borderRadius: 2
+                    },
+                    "sx={getTextFieldStyle()} .MuiOutlinedInput-input": {
+                      fontSize: 16,
+                      padding: "15px 14px"
+                    }
+                  }}
                       />
-                      {errors.meetingName && (
-                        <Box 
-                          component="p" 
-                          sx={(theme) => ({
-                            color: theme.palette.error.main,
-                            fontSize: '0.75rem',
-                            marginTop: '0.25rem'
-                          })}
-                        >
-                          {errors.meetingName}
-                        </Box>
-                      )}
                     </Box>
                   )}
-                  
+
                   {/* Meeting participation checkboxes */}
-                  <Box sx={{ marginBottom: '1rem' }}>
-                    <Box 
+                  <Box sx={{ marginBottom: '0.5rem' }}>
+                    <Box
                       component="p"
                       sx={(theme) => ({
-                        fontSize: '0.875rem',
+                        fontSize: '1.25rem',
                         fontWeight: '500',
-                        marginBottom: '0.5rem',
+                        marginBottom: '0.25rem',
                         color: theme.palette.text.secondary
                       })}
                     >
                       Participation (optional)
                     </Box>
-                    
+
                     <Box sx={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                       <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                        <Box 
+                        <Box
                           component="input"
                           type="checkbox"
                           id="was-chair"
                           checked={wasChair}
                           onChange={(e) => setWasChair(e.target.checked)}
                         />
-                        <Box 
+                        <Box
                           component="label"
                           htmlFor="was-chair"
                           sx={(theme) => ({
                             marginLeft: '0.5rem',
-                            fontSize: '0.875rem',
+                            fontSize: '1rem',
                             color: theme.palette.text.primary
                           })}
                         >
                           I chaired the meeting
                         </Box>
                       </Box>
-                      
+
                       <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                        <Box 
+                        <Box
                           component="input"
                           type="checkbox"
                           id="was-share"
                           checked={wasShare}
                           onChange={(e) => setWasShare(e.target.checked)}
                         />
-                        <Box 
+                        <Box
                           component="label"
                           htmlFor="was-share"
                           sx={(theme) => ({
                             marginLeft: '0.5rem',
-                            fontSize: '0.875rem',
+                            fontSize: '1rem',
                             color: theme.palette.text.primary
                           })}
                         >
                           I shared during the meeting
                         </Box>
                       </Box>
-                      
+
                       <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                        <Box 
+                        <Box
                           component="input"
                           type="checkbox"
                           id="was-speaker"
                           checked={wasSpeaker}
                           onChange={(e) => setWasSpeaker(e.target.checked)}
                         />
-                        <Box 
+                        <Box
                           component="label"
                           htmlFor="was-speaker"
                           sx={(theme) => ({
                             marginLeft: '0.5rem',
-                            fontSize: '0.875rem',
+                            fontSize: '1rem',
                             color: theme.palette.text.primary
                           })}
                         >
@@ -700,79 +777,91 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
                   </Box>
                 </>
               )}
-              
+
               {/* Call-specific fields */}
               {activityType === 'call' && (
-                <Box sx={{ marginBottom: '1rem' }}>
-                  <Box 
+                <Box sx={{ marginBottom: '0.5rem' }}>
+                  <Box
                     component="p"
                     sx={(theme) => ({
-                      fontSize: '0.875rem',
+                      fontSize: '1.25rem',
                       fontWeight: '500',
-                      marginBottom: '0.5rem',
+                      marginBottom: '0.25rem',
                       color: theme.palette.text.secondary
                     })}
                   >
                     Call Type
                   </Box>
-                  
+
                   <Box sx={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                      <Box 
+                      <Box
                         component="input"
                         type="checkbox"
                         id="sponsor-call"
                         checked={isSponsorCall}
-                        onChange={(e) => setIsSponsorCall(e.target.checked)}
+                        onChange={(e) => {
+                          const isChecked = e.target.checked;
+                          setIsSponsorCall(isChecked);
+                          if (isChecked) {
+                            setShowSponsorContactForm(true);
+                          }
+                        }}
                       />
-                      <Box 
+                      <Box
                         component="label"
                         htmlFor="sponsor-call"
                         sx={(theme) => ({
                           marginLeft: '0.5rem',
-                          fontSize: '0.875rem',
+                          fontSize: '1rem',
                           color: theme.palette.text.primary
                         })}
                       >
                         Call with my sponsor
                       </Box>
                     </Box>
-                    
+
                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                      <Box 
+                      <Box
                         component="input"
                         type="checkbox"
                         id="sponsee-call"
                         checked={isSponseeCall}
-                        onChange={(e) => setIsSponseeCall(e.target.checked)}
+                        onChange={(e) => {
+                          const isChecked = e.target.checked;
+                          setIsSponseeCall(isChecked);
+                          if (isChecked) {
+                            setShowSponseeContactForm(true);
+                          }
+                        }}
                       />
-                      <Box 
+                      <Box
                         component="label"
                         htmlFor="sponsee-call"
                         sx={(theme) => ({
                           marginLeft: '0.5rem',
-                          fontSize: '0.875rem',
+                          fontSize: '1rem',
                           color: theme.palette.text.primary
                         })}
                       >
                         Call with my sponsee
                       </Box>
                     </Box>
-                    
+
                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                      <Box 
+                      <Box
                         component="input"
                         type="checkbox"
                         id="aa-member-call"
                         checked={isAAMemberCall}
                         onChange={(e) => setIsAAMemberCall(e.target.checked)}
                       />
-                      <Box 
+                      <Box
                         component="label"
                         htmlFor="aa-member-call"
                         sx={(theme) => ({
                           marginLeft: '0.5rem',
-                          fontSize: '0.875rem',
+                          fontSize: '1rem',
                           color: theme.palette.text.primary
                         })}
                       >
@@ -780,10 +869,10 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
                       </Box>
                     </Box>
                   </Box>
-                  
+
                   {errors.callType && (
-                    <Box 
-                      component="p" 
+                    <Box
+                      component="p"
                       sx={(theme) => ({
                         color: theme.palette.error.main,
                         fontSize: '0.75rem',
@@ -795,57 +884,98 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, meetings = [] 
                   )}
                 </Box>
               )}
-              
+
               {/* Notes field */}
-              <Box sx={{ marginBottom: '1rem', maxWidth: '100%' }}>
-                <Box 
-                  component="label"
-                  sx={(theme) => ({
-                    display: 'block',
-                    fontSize: '0.875rem',
-                    fontWeight: '500',
-                    marginBottom: '0.25rem',
-                    color: theme.palette.text.secondary
-                  })}
-                >
-                  Notes (optional)
-                </Box>
-                <Box 
-                  component="textarea"
+              <Box sx={{ marginBottom: '0.5rem', maxWidth: '100%' }}>
+                <TextField
+                  fullWidth
+                  label="Notes (optional)"
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
                   placeholder="Enter any notes about this activity..."
+                  multiline
                   rows={3}
-                  sx={(theme) => ({
-                    width: '98%', // Slightly smaller to prevent focus border from causing overflow
-                    padding: '0.75rem',
-                    borderRadius: '0.375rem',
-                    backgroundColor: theme.palette.background.paper,
-                    color: theme.palette.text.primary,
-                    border: `1px solid ${theme.palette.mode === 'dark' ? theme.palette.grey[700] : theme.palette.grey[300]}`,
-                    fontSize: '0.875rem',
-                    resize: 'vertical',
-                    minHeight: '5rem',
-                    boxSizing: 'border-box'
-                  })}
+                  variant="outlined"
+                  sx={{
+                    mb: 2,
+                    '& .MuiOutlinedInput-root': {
+                      borderRadius: 2
+                    },
+                    '& .MuiOutlinedInput-input': {
+                      fontSize: 16,
+                      padding: '15px 14px'
+                    }
+                  }}
                 />
               </Box>
-              
-              <DialogActions sx={{ justifyContent: 'flex-end', padding: '8px 0' }}>
-                <Button onClick={onClose} 
-                  size="small"
-                  variant="contained"
-                  color="error">
-                  Cancel
-                </Button>
-                <Button type="submit" variant="contained" size="small" color="success">
-                  Save
-                </Button>
-              </DialogActions>
+
             </form>
           )}
         </DialogContent>
+
+        <DialogActions sx={{ justifyContent: 'flex-end', padding: '16px 24px' }}>
+          <Button onClick={onClose}
+            size="small"
+            variant="contained"
+            color="error">
+            Cancel
+          </Button>
+          <Button
+            onClick={handleSubmit}
+            variant="contained"
+            size="small"
+            color="success">
+            Save
+          </Button>
+        </DialogActions>
       </StyledDialog>
+
+      {/* Meeting Form Dialog */}
+      {showMeetingForm && (
+        <MeetingFormDialog
+          open={showMeetingForm}
+          onClose={() => setShowMeetingForm(false)}
+          onSave={handleSaveMeeting}
+        />
+      )}
+
+      {/* Sponsor Contact Form Dialog */}
+      {showSponsorContactForm && (
+        <ContactFormDialog
+          open={showSponsorContactForm}
+          onClose={() => {
+            setShowSponsorContactForm(false);
+            setIsSponsorCall(false); // Uncheck the sponsor call checkbox
+          }}
+          onSave={handleSaveSponsorContact}
+          title="Log Sponsor Contact"
+          initialData={{
+            type: 'call',
+            date: date,
+            duration: duration,
+            note: ''
+          }}
+        />
+      )}
+
+      {/* Sponsee Contact Form Dialog */}
+      {showSponseeContactForm && (
+        <ContactFormDialog
+          open={showSponseeContactForm}
+          onClose={() => {
+            setShowSponseeContactForm(false);
+            setIsSponseeCall(false); // Uncheck the sponsee call checkbox
+          }}
+          onSave={handleSaveSponseeContact}
+          title="Log Sponsee Contact"
+          initialData={{
+            type: 'call',
+            date: date,
+            duration: duration,
+            note: ''
+          }}
+        />
+      )}
     </MuiThemeProvider>
   );
 };

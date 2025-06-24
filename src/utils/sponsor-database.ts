@@ -14,15 +14,15 @@ export async function getSponsorContacts(): Promise<SponsorContact[]> {
   try {
     const databaseService = DatabaseService.getInstance();
     
-    console.log('[ sponsor-database ] Querying all sponsor contacts');
+  //  console.log('[ sponsor-database ] Querying all sponsor contacts');
     
     // Use DatabaseService to get all sponsor contacts
     const allContacts = await databaseService.getAllSponsorContacts();
     
-    console.log('[ sponsor-database ] Raw database response:', allContacts);
-    console.log('[ sponsor-database ] Number of total contacts in database:', allContacts.length);
+  //  console.log('[ sponsor-database ] Raw database response:', allContacts);
+  //  console.log('[ sponsor-database ] Number of total contacts in database:', allContacts.length);
     
-    console.log(`[ sponsor-database ] Found ${allContacts.length} sponsor contacts`);
+  //  console.log(`[ sponsor-database ] Found ${allContacts.length} sponsor contacts`);
     return allContacts;
   } catch (error) {
     console.error('[ sponsor-database ] Error getting sponsor contacts:', error);
@@ -103,12 +103,12 @@ export async function getContactDetails(contactId: number): Promise<ContactDetai
   try {
     const databaseService = DatabaseService.getInstance();
     
-    console.log('[ sponsor-database ] Getting contact details for contactId:', contactId);
+  //  console.log('[ sponsor-database ] Getting contact details for contactId:', contactId);
     
     const allDetails = await databaseService.getAllContactDetails();
     const contactDetails = allDetails.filter(detail => detail.contactId === contactId);
     
-    console.log(`[ sponsor-database ] Found ${contactDetails.length} contact details`);
+  //  console.log(`[ sponsor-database ] Found ${contactDetails.length} contact details`);
     return contactDetails;
   } catch (error) {
     console.error('[ sponsor-database ] Error getting contact details:', error);
@@ -123,11 +123,11 @@ export async function addContactDetail(detailData: Omit<ContactDetail, 'id' | 'c
   try {
     const databaseService = DatabaseService.getInstance();
     
-    console.log('[ sponsor-database ] Adding contact detail:', detailData);
+  //  console.log('[ sponsor-database ] Adding contact detail:', detailData);
     
     const savedDetail = await databaseService.addContactDetail(detailData);
     
-    console.log('[ sponsor-database ] Contact detail saved with ID:', savedDetail.id);
+  //  console.log('[ sponsor-database ] Contact detail saved with ID:', savedDetail.id);
     return savedDetail;
   } catch (error) {
     console.error('[ sponsor-database ] Error adding contact detail:', error);
@@ -161,7 +161,7 @@ export async function updateContactDetail(detailData: Partial<ContactDetail> & {
   try {
     const databaseService = DatabaseService.getInstance();
     
-    console.log('[ sponsor-database ] Updating contact detail:', detailData.id);
+  //  console.log('[ sponsor-database ] Updating contact detail:', detailData.id);
     
     const { id, ...updateData } = detailData;
     const updatedDetail = await databaseService.updateContactDetail(id, updateData);
@@ -181,7 +181,7 @@ export async function deleteSponsorContact(contactId: number): Promise<boolean> 
   try {
     const databaseService = DatabaseService.getInstance();
     
-    console.log('[ sponsor-database ] Deleting sponsor contact:', contactId);
+  //  console.log('[ sponsor-database ] Deleting sponsor contact:', contactId);
     
     // First delete associated contact details
     const details = await getContactDetails(contactId);
@@ -192,7 +192,7 @@ export async function deleteSponsorContact(contactId: number): Promise<boolean> 
     // Then delete the contact itself
     const success = await databaseService.deleteSponsorContact(contactId);
     
-    console.log('[ sponsor-database ] Sponsor contact deleted:', success);
+  //  console.log('[ sponsor-database ] Sponsor contact deleted:', success);
     return success;
   } catch (error) {
     console.error('[ sponsor-database ] Error deleting sponsor contact:', error);
@@ -207,11 +207,11 @@ export async function deleteContactDetail(detailId: number): Promise<boolean> {
   try {
     const databaseService = DatabaseService.getInstance();
     
-    console.log('[ sponsor-database ] Deleting contact detail:', detailId);
+  //  console.log('[ sponsor-database ] Deleting contact detail:', detailId);
     
     const success = await databaseService.deleteContactDetail(detailId);
     
-    console.log('[ sponsor-database ] Contact detail deleted:', success);
+  //  console.log('[ sponsor-database ] Contact detail deleted:', success);
     return success;
   } catch (error) {
     console.error('[ sponsor-database ] Error deleting contact detail:', error);

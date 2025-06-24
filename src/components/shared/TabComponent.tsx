@@ -17,6 +17,8 @@ interface TabComponentProps {
 }
 
 function TabPanel({ children, value, index, ...other }) {
+  const theme = useTheme();
+
   return (
     <div
       role="tabpanel"
@@ -25,17 +27,33 @@ function TabPanel({ children, value, index, ...other }) {
       aria-labelledby={`tab-${index}`}
       {...other}
     >
-      {value === index && <Box sx={{ py: 2 }}>{children}</Box>}
+      {value === index && (
+        <Box
+          sx={{
+            py: 1,
+            px: 1,
+            backgroundColor: theme.palette.mode === 'dark'
+              ? 'rgba(255, 255, 255, 0.03)'
+              : 'rgba(0, 0, 0, 0.015)',
+            border: `1px solid ${theme.palette.divider}`,
+            borderTop: 'none',
+            borderRadius: '0 0 8px 8px',
+            minHeight: '200px'
+          }}
+        >
+          {children}
+        </Box>
+      )}
     </div>
   );
 }
 
-export default function TabComponent({ 
-  items, 
-  currentTab, 
-  onTabChange, 
+export default function TabComponent({
+  items,
+  currentTab,
+  onTabChange,
   addTabLabel,
-  onAddClick 
+  onAddClick
 }: TabComponentProps) {
   const theme = useTheme();
 
@@ -50,38 +68,63 @@ export default function TabComponent({
 
   return (
     <Box>
-      <Tabs 
-        value={currentTab} 
+      <Tabs
+        value={currentTab}
         onChange={handleTabChange}
-        sx={{ 
-          borderBottom: 1, 
+        variant="scrollable"
+        scrollButtons="auto"
+        allowScrollButtonsMobile
+        sx={{
+          borderBottom: 1,
           borderColor: 'divider',
-          mb: 2,
+          mb: 0,
           '& .MuiTabs-indicator': {
             backgroundColor: theme.palette.primary.main,
+            height: 3,
+          },
+          '& .MuiTabs-scrollButtons': {
+            color: theme.palette.primary.main,
           },
           '& .MuiTab-root': {
             color: theme.palette.text.secondary,
             fontWeight: 'normal',
             textTransform: 'none',
+            border: `1px solid transparent`,
+            borderRadius: '8px 8px 0 0',
+            margin: '0 2px',
+            backgroundColor: 'transparent',
+            transition: 'all 0.2s ease-in-out',
             '&.Mui-selected': {
               color: theme.palette.primary.main,
               fontWeight: 'bold',
+              backgroundColor: theme.palette.mode === 'dark'
+                ? 'rgba(255, 255, 255, 0.03)'
+                : 'rgba(0, 0, 0, 0.015)',
+              border: `1px solid ${theme.palette.divider}`,
+              borderBottom: theme.palette.mode === 'dark'
+                ? '1px solid rgba(255, 255, 255, 0.03)'
+                : '1px solid rgba(0, 0, 0, 0.015)',
+              marginBottom: '-1px',
+              position: 'relative',
+              zIndex: 1,
+            },
+            '&:hover:not(.Mui-selected)': {
+              backgroundColor: theme.palette.action.hover,
             },
           },
         }}
       >
         {items.map((item, index) => (
-          <Tab 
-            key={item.id} 
+          <Tab
+            key={item.id}
             label={item.label}
             id={`tab-${index}`}
             aria-controls={`tabpanel-${index}`}
           />
         ))}
         {addTabLabel && (
-          <Tab 
-            label={addTabLabel} 
+          <Tab
+            label={addTabLabel}
             id={`tab-add`}
             aria-controls={`tabpanel-add`}
             data-tour={addTabLabel === "+ Add Sponsor" ? "add-sponsor-btn" : addTabLabel === "+ Add Sponsee" ? "add-sponsee-btn" : undefined}

@@ -47,23 +47,23 @@ export default function SubTabComponent({
   // If no persons, show empty state
   if (persons.length === 0) {
     return (
-      <Box sx={{ 
-        textAlign: 'center', 
-        py: 3, 
-        px: 2,
+      <Box sx={{
+        textAlign: 'center',
+        py: 2,
+        px: 1,
         margin: '8px',
         backgroundColor: theme.palette.background.paper,
         borderRadius: '8px',
         border: `1px solid ${theme.palette.divider}`
       }}>
-        <Typography variant="body2" sx={{ color: theme.palette.text.primary, mb: 2 }}>
+        <Typography variant="body2" sx={{ color: theme.palette.text.primary, mb: 1 }}>
           {emptyMessage}
         </Typography>
-        
-        <IconButton 
+
+        <IconButton
           color="primary"
           onClick={onAddPerson}
-          sx={{ 
+          sx={{
             backgroundColor: theme.palette.primary.main,
             color: 'white',
             borderRadius: 1,
@@ -81,7 +81,14 @@ export default function SubTabComponent({
   // Helper function to get contacts for a specific person
   const getPersonContacts = (personId: string | number) => {
     const foreignKey = personType === 'sponsor' ? 'sponsorId' : 'sponseeId';
-    return contacts.filter(contact => contact[foreignKey] === personId);
+    const filteredContacts = contacts.filter(contact => {
+      const contactForeignKeyValue = contact[foreignKey];
+      const match = contactForeignKeyValue == personId; // Use loose equality to handle string/number differences
+      console.log(`[getPersonContacts] ${personType} personId: ${personId}, contact ${foreignKey}: ${contactForeignKeyValue}, match: ${match}`);
+      return match;
+    });
+    console.log(`[getPersonContacts] Found ${filteredContacts.length} contacts for ${personType} ${personId}`);
+    return filteredContacts;
   };
 
   // Create tab items for the TabComponent

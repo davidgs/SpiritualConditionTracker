@@ -1,0 +1,70 @@
+⚡️  To Native ->  CapacitorSQLite execute 86636216
+⚡️  [log] - [handleContactWithActionItems] Processing sponsor contact: {"type":"call","date":"2025-06-14T12:14:19.498Z","note":"Get to know you","topic":"Welcome","duration":20}
+⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO sponsor_contacts (type, date, note, topic, duration, sponsorId, userId, createdAt, updatedAt) VALUES ('call', '2025-06-14T12:14:19.498Z', 'Get to know you', 'Welcome', 20, 1, 1, '2025-06-14T12:14:51.511Z', '2025-06-14T12:14:51.511Z');
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  To Native ->  CapacitorSQLite query 86636217
+⚡️  TO JS {"values":[{"ios_columns":["id"]},{"id":1}]}
+⚡️  [log] - [ sqliteLoader.js ] Last insert ID result: {"values":[{"ios_columns":["id"]},{"id":1}]}
+⚡️  To Native ->  CapacitorSQLite execute 86636218
+⚡️  [log] - [handleContactWithActionItems] Saved sponsor contact to sponsor_contacts: {"type":"call","date":"2025-06-14T12:14:19.498Z","note":"Get to know you","topic":"Welcome","duration":20,"sponsorId":1,"userId":1,"createdAt":"2025-06-14T12:14:51.511Z","updatedAt":"2025-06-14T12:14:51.511Z","id":1}
+⚡️  [log] - [handleContactWithActionItems] Saving 1 action items as type: sponsor_action_item
+⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO action_items (title, text, notes, contactId, dueDate, completed, type, createdAt, updatedAt) VALUES ('Write 1st step', 'Write 1st step', '', 1, '2025-06-14T12:14:19.498Z', 0, 'sponsor_action_item', '2025-06-14T12:14:51.522Z', '2025-06-14T12:14:51.522Z');
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  To Native ->  CapacitorSQLite query 86636219
+⚡️  TO JS {"values":[{"ios_columns":["id"]},{"id":1}]}
+⚡️  [log] - [ sqliteLoader.js ] Last insert ID result: {"values":[{"ios_columns":["id"]},{"id":1}]}
+⚡️  To Native ->  CapacitorSQLite query 86636220
+⚡️  TO JS {"values":[{"ios_columns":["id","userId","sponsorId","date","type","note","topic","duration","createdAt","updatedAt"]},{"type":"call","duration":20,"updatedAt":"2025-06-14T12:14:51.511Z","topic":"Welcome","createdAt":"2025-06-14T12:14:51.511Z","note":"Get 
+⚡️  [log] - SubTabComponent sponsor: persons: [{"notes":"New Sponsor!","updatedAt":"2025-06-14T12:13:31.124Z","sponsorType":"sponsor","name":"Joe","userId":"1","sobrietyDate":null,"createdAt":"2025-06-14T12:13:31.124Z","id":1,"phoneNumber":"+1 919 534 5099","lastName":"Blow","email":"joe@blow.com"}] length: 1
+⚡️  [log] - [getPersonContacts] Found 0 contacts for sponsor 1
+⚡️  [log] - [ sqliteLoader.js:548 ] Processed 1 items from sponsor_contacts
+⚡️  [log] - [loadSponsorContacts] Raw sponsor contacts from DB: [{"type":"call","duration":20,"updatedAt":"2025-06-14T12:14:51.511Z","topic":"Welcome","createdAt":"2025-06-14T12:14:51.511Z","note":"Get to know you","id":1,"sponsorId":1,"date":"2025-06-14T12:14:19.498Z","userId":"1"}]
+⚡️  [log] - [loadSponsorContacts] Filtered sponsor contacts: [{"type":"call","duration":20,"updatedAt":"2025-06-14T12:14:51.511Z","topic":"Welcome","createdAt":"2025-06-14T12:14:51.511Z","note":"Get to know you","id":1,"sponsorId":1,"date":"2025-06-14T12:14:19.498Z","userId":"1"}]
+⚡️  [log] - [loadSponsorContacts] Current sponsors: [{"notes":"New Sponsor!","updatedAt":"2025-06-14T12:13:31.124Z","sponsorType":"sponsor","name":"Joe","userId":"1","sobrietyDate":null,"createdAt":"2025-06-14T12:13:31.124Z","id":1,"phoneNumber":"+1 919 534 5099","lastName":"Blow","email":"joe@blow.com"}]
+⚡️  [log] - [ App.tsx:73 handleSaveActivity ] Received activity data: {
+  "type": "refresh",
+  "id": 1749903291542
+}
+⚡️  [log] - [ App.tsx:74 handleSaveActivity ] Current user state: {"id":1,"sponsees":"[]","isDarkMode":0,"updatedAt":"2025-06-14T12:12:28.903Z","phoneNumber":"","name":"","lastName":"","preferences":{"use24HourFormat":false,"darkMode":false,"theme":"default"},"homeGroups":[],"privacySettings":{"allowMessages":true,"shareLastName":true},"sobrietyDate":"","email":"","createdAt":"2025-06-14T12:12:28.903Z"}
+⚡️  To Native ->  CapacitorSQLite query 86636221
+⚡️  [log] - [ App.tsx ] Refreshing activities for sponsor contacts and action items
+⚡️  TO JS {"values":[]}
+⚡️  [log] - [ sqliteLoader.js:548 ] Processed 0 items from activities
+⚡️  To Native ->  CapacitorSQLite query 86636222
+⚡️  TO JS {"values":[{"ios_columns":["id","contactId","title","text","notes","dueDate","completed","deleted","type","createdAt","updatedAt"]},{"type":"sponsor_action_item","dueDate":"2025-06-14T12:14:19.498Z","notes":"","text":"Write 1st step","contactId":1,"deleted
+⚡️  [log] - SubTabComponent sponsor: persons: [{"notes":"New Sponsor!","updatedAt":"2025-06-14T12:13:31.124Z","sponsorType":"sponsor","name":"Joe","userId":"1","sobrietyDate":null,"createdAt":"2025-06-14T12:13:31.124Z","id":1,"phoneNumber":"+1 919 534 5099","lastName":"Blow","email":"joe@blow.com"}] length: 1
+⚡️  [log] - [getPersonContacts] sponsor personId: 1, contact sponsorId: 1, match: true
+⚡️  [log] - [getPersonContacts] Found 1 contacts for sponsor 1
+⚡️  To Native ->  CapacitorSQLite query 86636223
+⚡️  [log] - [ sqliteLoader.js:548 ] Processed 1 items from action_items
+⚡️  [log] - [ AppDataContext.tsx ] Fetched action items: 1
+⚡️  [log] - [ AppDataContext.tsx ] Converted action items to activities: 1
+⚡️  To Native ->  CapacitorSQLite query 86636224
+⚡️  To Native ->  CapacitorSQLite query 86636225
+⚡️  TO JS {"values":[{"ios_columns":["id","userId","sponsorId","date","type","note","topic","duration","createdAt","updatedAt"]},{"note":"Get to know you","userId":"1","id":1,"createdAt":"2025-06-14T12:14:51.511Z","updatedAt":"2025-06-14T12:14:51.511Z","duration":20
+⚡️  To Native ->  CapacitorSQLite query 86636226
+⚡️  To Native ->  CapacitorSQLite query 86636227
+⚡️  TO JS {"values":[{"ios_columns":["id","userId","name","lastName","phoneNumber","email","sobrietyDate","notes","sponsorType","createdAt","updatedAt"]},{"lastName":"Blow","userId":"1","name":"Joe","id":1,"createdAt":"2025-06-14T12:13:31.124Z","updatedAt":"2025-06-
+⚡️  TO JS {"values":[]}
+⚡️  TO JS {"values":[{"ios_columns":["id","userId","sponsorId","date","type","note","topic","duration","createdAt","updatedAt"]},{"topic":"Welcome","duration":20,"updatedAt":"2025-06-14T12:14:51.511Z","type":"call","id":1,"userId":"1","note":"Get to know you","creat
+⚡️  TO JS {"values":[]}
+⚡️  [log] - [ sqliteLoader.js:548 ] Processed 1 items from sponsor_contacts
+⚡️  [log] - [ AppDataContext.tsx ] Fetched sponsor contacts: 1
+⚡️  [log] - [ AppDataContext.tsx ] Converted sponsor contacts to activities: 1
+⚡️  [log] - [ AppDataContext.tsx:288 ] Activities cached (180 days): 2 (including action items)
+⚡️  [log] - [ AppDataContext.tsx:315 ] Using cached activities for 30 days: 0
+⚡️  [log] - [ AppDataContext.tsx:454 ] Calculating spiritual fitness with 0 activities for 30 days
+⚡️  [log] - [handleContactWithActionItems] Successfully completed sponsor contact save
+⚡️  [log] - SubTabComponent sponsor: persons: [{"notes":"New Sponsor!","updatedAt":"2025-06-14T12:13:31.124Z","sponsorType":"sponsor","name":"Joe","userId":"1","sobrietyDate":null,"createdAt":"2025-06-14T12:13:31.124Z","id":1,"phoneNumber":"+1 919 534 5099","lastName":"Blow","email":"joe@blow.com"}] length: 1
+⚡️  [log] - [getPersonContacts] sponsor personId: 1, contact sponsorId: 1, match: true
+⚡️  [log] - [getPersonContacts] Found 1 contacts for sponsor 1
+⚡️  [log] - [ sqliteLoader.js:548 ] Processed 1 items from sponsors
+⚡️  [log] - [ sqliteLoader.js:548 ] Processed 0 items from sponsees
+⚡️  [log] - [ sqliteLoader.js:548 ] Processed 1 items from sponsor_contacts
+⚡️  [log] - [loadSponsorContacts] Raw sponsor contacts from DB: [{"topic":"Welcome","duration":20,"updatedAt":"2025-06-14T12:14:51.511Z","type":"call","id":1,"userId":"1","note":"Get to know you","createdAt":"2025-06-14T12:14:51.511Z","sponsorId":1,"date":"2025-06-14T12:14:19.498Z"}]
+⚡️  [log] - [loadSponsorContacts] Filtered sponsor contacts: [{"topic":"Welcome","duration":20,"updatedAt":"2025-06-14T12:14:51.511Z","type":"call","id":1,"userId":"1","note":"Get to know you","createdAt":"2025-06-14T12:14:51.511Z","sponsorId":1,"date":"2025-06-14T12:14:19.498Z"}]
+⚡️  [log] - [loadSponsorContacts] Current sponsors: [{"notes":"New Sponsor!","updatedAt":"2025-06-14T12:13:31.124Z","sponsorType":"sponsor","name":"Joe","userId":"1","sobrietyDate":null,"createdAt":"2025-06-14T12:13:31.124Z","id":1,"phoneNumber":"+1 919 534 5099","lastName":"Blow","email":"joe@blow.com"}]
+⚡️  [log] - [ sqliteLoader.js:548 ] Processed 0 items from sponsee_contacts
+⚡️  [log] - SubTabComponent sponsor: persons: [{"lastName":"Blow","userId":"1","name":"Joe","id":1,"createdAt":"2025-06-14T12:13:31.124Z","updatedAt":"2025-06-14T12:13:31.124Z","phoneNumber":"+1 919 534 5099","email":"joe@blow.com","notes":"New Sponsor!","sponsorType":"sponsor","sobrietyDate":null}] length: 1
+⚡️  [log] - [getPersonContacts] sponsor personId: 1, contact sponsorId: 1, match: true
+⚡️  [log] - [getPersonContacts] Found 1 contacts for sponsor 1

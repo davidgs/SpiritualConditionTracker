@@ -1,0 +1,20 @@
+⚡️  [log] - Applying native theme: blue (#3b82f6) in light mode
+⚡️  [log] - Applying native theme: blue (#3b82f6) in light mode
+⚡️  [log] - SubTabComponent sponsor: persons: [] length: 0
+⚡️  To Native ->  CapacitorSQLite query 86636228
+⚡️  To Native ->  CapacitorSQLite query 86636229
+⚡️  To Native ->  CapacitorSQLite query 86636230
+⚡️  To Native ->  CapacitorSQLite query 86636231
+⚡️  TO JS {"values":[{"ios_columns":["id","userId","name","lastName","phoneNumber","email","sobrietyDate","notes","sponsorType","createdAt","updatedAt"]},{"createdAt":"2025-06-14T12:13:31.124Z","email":"joe@blow.com","userId":"1","phoneNumber":"+1 919 534 5099","id"
+⚡️  TO JS {"values":[]}
+⚡️  TO JS {"values":[{"ios_columns":["id","userId","sponsorId","date","type","note","topic","duration","createdAt","updatedAt"]},{"updatedAt":"2025-06-14T12:14:51.511Z","type":"call","sponsorId":1,"date":"2025-06-14T12:14:19.498Z","userId":"1","topic":"Welcome","id"
+⚡️  TO JS {"values":[]}
+⚡️  [log] - [ sqliteLoader.js:548 ] Processed 1 items from sponsors
+⚡️  [log] - [ sqliteLoader.js:548 ] Processed 0 items from sponsees
+⚡️  [log] - [ sqliteLoader.js:548 ] Processed 1 items from sponsor_contacts
+⚡️  [log] - [loadSponsorContacts] Raw sponsor contacts from DB: [{"updatedAt":"2025-06-14T12:14:51.511Z","type":"call","sponsorId":1,"date":"2025-06-14T12:14:19.498Z","userId":"1","topic":"Welcome","id":1,"createdAt":"2025-06-14T12:14:51.511Z","duration":20,"note":"Get to know you"}]
+⚡️  [log] - [loadSponsorContacts] Filtered sponsor contacts: []
+⚡️  [log] - [loadSponsorContacts] Current sponsors: []
+⚡️  [log] - [ sqliteLoader.js:548 ] Processed 0 items from sponsee_contacts
+⚡️  [log] - SubTabComponent sponsor: persons: [{"createdAt":"2025-06-14T12:13:31.124Z","email":"joe@blow.com","userId":"1","phoneNumber":"+1 919 534 5099","id":1,"lastName":"Blow","name":"Joe","notes":"New Sponsor!","updatedAt":"2025-06-14T12:13:31.124Z","sobrietyDate":null,"sponsorType":"sponsor"}] length: 1
+⚡️  [log] - [getPersonContacts] Found 0 contacts for sponsor 1

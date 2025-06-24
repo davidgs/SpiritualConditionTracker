@@ -5,7 +5,7 @@
 
 import React, { createContext, useContext, useReducer, useEffect, useState, ReactNode } from 'react';
 import DatabaseService, { DatabaseStatus } from '../services/DatabaseService';
-import type { User, Activity, Meeting } from '../types/database';
+import type { User, Activity, Meeting, ActionItem } from '../types/database';
 import { fixCorruptedPreferences } from '../utils/fixDatabasePreferences';
 
 // State interface
@@ -23,6 +23,9 @@ export interface AppState {
   
   // Meetings
   meetings: Meeting[];
+  
+  // Action Items
+  actionItems: ActionItem[];
   
   // Spiritual fitness
   spiritualFitness: number;
@@ -46,6 +49,10 @@ type AppAction =
   | { type: 'ADD_MEETING'; payload: Meeting }
   | { type: 'UPDATE_MEETING'; payload: { id: string | number; data: Partial<Meeting> } }
   | { type: 'DELETE_MEETING'; payload: string | number }
+  | { type: 'SET_ACTION_ITEMS'; payload: ActionItem[] }
+  | { type: 'ADD_ACTION_ITEM'; payload: ActionItem }
+  | { type: 'UPDATE_ACTION_ITEM'; payload: { id: string | number; data: Partial<ActionItem> } }
+  | { type: 'DELETE_ACTION_ITEM'; payload: string | number }
   | { type: 'SET_SPIRITUAL_FITNESS'; payload: number }
   | { type: 'SET_TIMEFRAME'; payload: number }
   | { type: 'RESET_ALL_DATA' };
@@ -58,6 +65,7 @@ const initialState: AppState = {
   activities: [],
   currentTimeframe: 30,
   meetings: [],
+  actionItems: [],
   spiritualFitness: 5,
   isLoading: true,
   error: null,
@@ -115,6 +123,28 @@ function appReducer(state: AppState, action: AppAction): AppState {
         meetings: state.meetings.filter(meeting => meeting.id !== action.payload) 
       };
     
+    case 'SET_ACTION_ITEMS':
+      return { ...state, actionItems: action.payload };
+    
+    case 'ADD_ACTION_ITEM':
+      return { ...state, actionItems: [...state.actionItems, action.payload] };
+    
+    case 'UPDATE_ACTION_ITEM':
+      return {
+        ...state,
+        actionItems: state.actionItems.map(item => 
+          item.id === action.payload.id 
+            ? { ...item, ...action.payload.data, updatedAt: new Date().toISOString() }
+            : item
+        )
+      };
+    
+    case 'DELETE_ACTION_ITEM':
+      return { 
+        ...state, 
+        actionItems: state.actionItems.filter(item => item.id !== action.payload) 
+      };
+    
     case 'SET_SPIRITUAL_FITNESS':
       return { ...state, spiritualFitness: action.payload };
     
@@ -151,6 +181,11 @@ interface AppDataContextType {
   updateMeeting: (meetingId: string | number, updates: Partial<Meeting>) => Promise<Meeting | null>;
   deleteMeeting: (meetingId: string | number) => Promise<boolean>;
   
+  loadActionItems: () => Promise<void>;
+  addActionItem: (item: Omit<ActionItem, 'id' | 'createdAt' | 'updatedAt'>) => Promise<ActionItem | null>;
+  updateActionItem: (itemId: string | number, updates: Partial<ActionItem>) => Promise<ActionItem | null>;
+  deleteActionItem: (itemId: string | number) => Promise<boolean>;
+  
   updateTimeframe: (timeframe: number) => Promise<void>;
   calculateSpiritualFitness: () => Promise<void>;
   
@@ -174,6 +209,17 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
       console.log('[ AppDataContext.tsx:151 ] Initializing app...');
       console.log('[ AppDataContext.tsx ] Platform:', navigator.userAgent);
       console.log('[ AppDataContext.tsx ] Is Capacitor:', !!(window as any).Capacitor);
+      
+      // Check if running on iOS device using Capacitor
+      const isCapacitor = !!(window as any).Capacitor;
+      const isIOS = (window as any).Capacitor?.getPlatform?.() === 'ios';
+      
+      if (!isCapacitor || !isIOS) {
+        console.log('[ AppDataContext.tsx ] This app is designed for iOS only. Web platform not supported.');
+        dispatch({ type: 'SET_ERROR', payload: 'This app requires iOS device with Capacitor' });
+        dispatch({ type: 'SET_LOADING', payload: false });
+        return;
+      }
       
       try {
         // Subscribe to database status changes
@@ -226,6 +272,7 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
       await loadUserData();
       await loadActivities();
       await loadMeetings();
+      await loadActionItems();
       
       dispatch({ type: 'SET_LOADING', payload: false });
       console.log('[ AppDataContext.tsx:194 ] Initial data load complete');
@@ -280,6 +327,10 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
           }
         });
         
+        if (!newUser) {
+          throw new Error('Failed to create default user - addUser returned null');
+        }
+        
         dispatch({ type: 'SET_USER', payload: newUser });
         dispatch({ type: 'SET_CURRENT_USER_ID', payload: newUser.id });
         console.log('[ AppDataContext.tsx:246 ] Created default user:', newUser.id);
@@ -313,83 +364,159 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
   const loadActivities = async () => {
     try {
       const activities = await databaseService.getAllActivities();
+      const actionItems = await databaseService.getAllActionItems();
+      const sponsorContacts = await databaseService.getAllSponsorContacts();
+      const sponsors = await databaseService.getAllSponsors();
       
-      // Also fetch action items from action_items table and convert to activity format
-      let actionItemActivities = [];
+      // Handle sponsee contacts with fallback - method may not exist yet
+      let sponseeContacts = [];
       try {
-        const actionItems = await window.db.getAll('action_items');
-        console.log('[ AppDataContext.tsx ] Fetched action items:', actionItems?.length || 0);
-        
-        // Convert action items to activity format for unified display
-        console.log('[AppDataContext.tsx:299] Before map - actionItems:', actionItems);
-        const actionItemsArray = Array.isArray(actionItems) ? actionItems : [];
-        actionItemActivities = actionItemsArray.map(item => ({
-          id: `action-item-${item.id}`, // Prefix to avoid ID conflicts
-          type: 'action-item',
-          date: item.dueDate || item.createdAt?.split('T')[0] || new Date().toISOString().split('T')[0],
-          notes: `Action Item: ${item.title}${item.text ? ' - ' + item.text : ''}${item.notes ? ' [Notes: ' + item.notes + ']' : ''}`,
-          duration: undefined,
-          location: item.completed ? 'completed' : 'pending',
-          createdAt: item.createdAt || new Date().toISOString(),
-          updatedAt: item.updatedAt || new Date().toISOString(),
-          // Keep reference to original action item
-          actionItemId: item.id,
-          actionItemData: item
-        }));
-        
-        console.log('[ AppDataContext.tsx ] Converted action items to activities:', actionItemActivities.length);
-      } catch (actionItemError) {
-        console.warn('[ AppDataContext.tsx ] Failed to load action items:', actionItemError);
-        // Continue without action items if they fail to load
+        if (typeof databaseService.getAllSponseeContacts === 'function') {
+          sponseeContacts = await databaseService.getAllSponseeContacts();
+        } else {
+          console.log('[ AppDataContext.tsx ] getAllSponseeContacts method not available, using empty array');
+          sponseeContacts = [];
+        }
+      } catch (sponseeError) {
+        console.warn('[ AppDataContext.tsx ] Sponsee contacts not available, continuing with empty array:', sponseeError);
+        sponseeContacts = [];
       }
       
-      // Also fetch sponsor contacts from sponsor_contacts table and convert to activity format
-      let sponsorContactActivities = [];
-      try {
-        const sponsorContacts = await databaseService.getAllSponsorContacts();
-        console.log('[ AppDataContext.tsx ] Fetched sponsor contacts:', sponsorContacts.length);
-        
-        // Convert sponsor contacts to activity format for unified display
-        sponsorContactActivities = sponsorContacts.map(contact => ({
-          id: `sponsor-contact-${contact.id}`, // Prefix to avoid ID conflicts
-          type: 'sponsor-contact',
-          date: contact.date || contact.createdAt?.split('T')[0] || new Date().toISOString().split('T')[0],
-          notes: `${contact.note || 'Sponsor contact'} [Contact: ${contact.type}]`,
-          duration: undefined,
-          location: contact.type, // Store contact type in location field for consistency
-          createdAt: contact.createdAt || new Date().toISOString(),
-          updatedAt: contact.updatedAt || new Date().toISOString(),
-          // Keep reference to original sponsor contact
-          sponsorContactId: contact.id,
-          sponsorContactData: contact
-        }));
-        
-        console.log('[ AppDataContext.tsx ] Converted sponsor contacts to activities:', sponsorContactActivities.length);
-      } catch (sponsorContactError) {
-        console.warn('[ AppDataContext.tsx ] Failed to load sponsor contacts:', sponsorContactError);
-        // Continue without sponsor contacts if they fail to load
-      }
+      console.log('[ AppDataContext.tsx ] Raw activities from database:', activities.length);
+      console.log('[ AppDataContext.tsx ] Raw action items from database:', actionItems.length);
+      console.log('[ AppDataContext.tsx ] Raw sponsor contacts from database:', sponsorContacts.length);
+      console.log('[ AppDataContext.tsx ] Raw sponsors from database:', sponsors.length);
+      console.log('[ AppDataContext.tsx ] First sponsor:', sponsors[0]);
+      console.log('[ AppDataContext.tsx ] Activities types:', activities.map(a => `${a.id}:${a.type}`));
       
-      // Combine all activities from the 3 tables
-      const allActivities = [...activities, ...actionItemActivities, ...sponsorContactActivities];
+      // Enrich activities with action item data for proper synchronization
+      const enrichedActivities = activities.map(activity => {
+        // Handle activities with direct actionItemId reference
+        if (activity.actionItemId) {
+          const actionItem = actionItems.find(ai => ai.id === activity.actionItemId);
+          if (actionItem) {
+            // Find the sponsor for this action item
+            let sponsorName = '';
+            if (actionItem.sponsorContactId) {
+              console.log('[ AppDataContext.tsx ] Processing action item with actionItemId:', activity.actionItemId);
+              console.log('[ AppDataContext.tsx ] Available sponsors:', sponsors);
+              if (sponsors && sponsors.length > 0) {
+                const sponsor = sponsors[0]; // Use first sponsor
+                sponsorName = `${sponsor.name || ''} ${sponsor.lastName || ''}`.trim() || 'Sponsor';
+                console.log('[ AppDataContext.tsx ] Assigned sponsor name:', sponsorName);
+              }
+            }
+
+            return {
+              ...activity,
+              actionItemData: {
+                ...actionItem,
+                sponsorName
+              },
+              title: actionItem.title || activity.title,
+              text: actionItem.text || activity.text,
+              type: actionItem.sponsorContactId ? 'sponsor_action_item' : 
+                    actionItem.sponseeContactId ? 'sponsee_action_item' : 
+                    'action-item'
+            };
+          }
+        }
+        
+        // Handle sponsor_action_item activities - enrich all with sponsor data
+        if (activity.type === 'sponsor_action_item') {
+          console.log('[ AppDataContext.tsx ] Processing sponsor_action_item activity:', {
+            id: activity.id,
+            type: activity.type,
+            title: activity.title,
+            text: activity.text,
+            notes: activity.notes
+          });
+          
+          if (sponsors && sponsors.length > 0) {
+            const sponsor = sponsors[0];
+            // Format as "First Name, Last initial" for activity display
+            const firstName = sponsor.name || '';
+            const lastName = sponsor.lastName || '';
+            const sponsorName = lastName ? `${firstName} ${lastName.charAt(0)}.` : firstName || 'Sponsor';
+            console.log('[ AppDataContext.tsx ] Enriching with sponsor name:', sponsorName);
+            
+            // Find matching action item if available
+            const matchingActionItem = actionItems.find(ai => 
+              ai.sponsorContactId && ai.type === 'sponsor_action_item'
+            );
+            
+            console.log('[ AppDataContext.tsx ] Found matching action item:', matchingActionItem);
+            
+            const enrichedActivity = {
+              ...activity,
+              actionItemData: matchingActionItem ? {
+                ...matchingActionItem,
+                sponsorName
+              } : { sponsorName },
+              sponsorName: sponsorName,
+              // Clean up the title to remove "Sponsor Action:" prefix here too
+              title: activity.title && activity.title.startsWith('Sponsor Action:') 
+                ? activity.title.replace('Sponsor Action:', '').trim()
+                : activity.title
+            };
+            
+            console.log('[ AppDataContext.tsx ] Final enriched activity:', {
+              id: enrichedActivity.id,
+              type: enrichedActivity.type,
+              title: enrichedActivity.title,
+              sponsorName: enrichedActivity.sponsorName,
+              hasActionItemData: !!enrichedActivity.actionItemData
+            });
+            
+            return enrichedActivity;
+          }
+        }
+        
+        return activity;
+      });
+
+      // Filter activities to only include those that should appear in Activity list:
+      // 1. All regular activities (meetings, prayer, etc.)
+      // 2. All sponsor contacts 
+      // 3. All sponsee contacts
+      // 4. Action items from SPONSOR contacts only (user gets credit for completing these)
+      const filteredActivities = enrichedActivities.filter(activity => {
+        // Include all non-action-item activities
+        if (activity.type !== 'action-item' && activity.type !== 'sponsor_action_item' && activity.type !== 'sponsee_action_item') {
+          return true;
+        }
+        
+        // For action items, only include those from sponsor contacts
+        if (activity.actionItemId && activity.actionItemData) {
+          // Include if it has sponsorContactId (from sponsor)
+          // Exclude if it has sponseeContactId (from sponsee - user doesn't get credit)
+          return activity.actionItemData.sponsorContactId && !activity.actionItemData.sponseeContactId;
+        }
+        
+        return false;
+      });
       
       // Always load last 180 days for base cache (fixed window for memory management)
       const CACHE_DAYS = 180;
       const cutoffDate = new Date();
       cutoffDate.setDate(cutoffDate.getDate() - CACHE_DAYS);
       
-      const cachedActivities = allActivities.filter(activity => {
+      const cachedActivities = filteredActivities.filter(activity => {
         const activityDate = new Date(activity.date);
         return activityDate >= cutoffDate;
       });
       
       dispatch({ type: 'SET_ACTIVITIES', payload: cachedActivities });
-      console.log(`[ AppDataContext.tsx:288 ] Activities cached (${CACHE_DAYS} days):`, cachedActivities.length, '(including action items)');
+      console.log(`[ AppDataContext.tsx:288 ] Activities cached (${CACHE_DAYS} days):`, cachedActivities.length, '(all contact activities)');
+      console.log('[ AppDataContext.tsx ] Activity types in cache:', cachedActivities.map(a => a.type));
+
       
       // Calculate spiritual fitness
       await calculateSpiritualFitness();
     } catch (error) {
       console.error('[ AppDataContext.tsx:293 ] Failed to load activities:', error);
+      console.error('[ AppDataContext.tsx ] Error details:', JSON.stringify(error, null, 2));
+      console.error('[ AppDataContext.tsx ] Error stack:', error?.stack);
       throw error;
     }
   };
@@ -552,6 +679,18 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  // Action Items operations
+  const loadActionItems = async () => {
+    try {
+      const actionItems = await databaseService.getAllActionItems();
+      dispatch({ type: 'SET_ACTION_ITEMS', payload: actionItems || [] });
+      console.log('[ AppDataContext.tsx ] Action items loaded:', actionItems?.length || 0);
+    } catch (error) {
+      console.error('[ AppDataContext.tsx ] Failed to load action items:', error);
+      throw error;
+    }
+  };
+
   // Timeframe operations
   const updateTimeframe = async (timeframe: number) => {
     dispatch({ type: 'SET_TIMEFRAME', payload: timeframe });
@@ -608,16 +747,17 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
     try {
       console.log('[ AppDataContext.tsx:405 ] Starting complete app reset...');
       
-      // Reset React state first
-      dispatch({ type: 'RESET_ALL_DATA' });
-      
       // Set loading state to show we're resetting
       dispatch({ type: 'SET_LOADING', payload: true });
+      dispatch({ type: 'SET_ERROR', payload: null });
       
       // CRITICAL: Actually reset the database by dropping and recreating tables
       console.log('[ AppDataContext.tsx:415 ] Calling DatabaseService.resetAllData to drop and recreate all tables...');
       await databaseService.resetAllData();
       console.log('[ AppDataContext.tsx:417 ] Database tables dropped and recreated successfully');
+      
+      // Reset React state after successful database reset
+      dispatch({ type: 'RESET_ALL_DATA' });
       
       // Reset and reinitialize the database service
       console.log('[ AppDataContext.tsx:423 ] Resetting database service state...');
@@ -626,6 +766,9 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
       console.log('[ AppDataContext.tsx:426 ] Reinitializing database service...');
       await databaseService.initialize();
       
+      // Wait a moment for database to be fully ready
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
       // Reload all initial data (should be empty now)
       console.log('[ AppDataContext.tsx:430 ] Reloading all data after reset...');
       await loadInitialData();
@@ -633,8 +776,69 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
       console.log('[ AppDataContext.tsx:433 ] Complete app reset finished');
     } catch (error) {
       console.error('[ AppDataContext.tsx:435 ] Failed to reset data:', error);
-      dispatch({ type: 'SET_ERROR', payload: 'Failed to reset data' });
+      console.error('[ AppDataContext.tsx ] Reset error details:', error instanceof Error ? error.stack : 'No stack trace');
+      dispatch({ type: 'SET_ERROR', payload: `Reset failed: ${error instanceof Error ? error.message : 'Unknown error'}` });
       dispatch({ type: 'SET_LOADING', payload: false });
+      
+      // Try to reinitialize the database even if reset failed
+      try {
+        console.log('[ AppDataContext.tsx ] Attempting to reinitialize database after reset failure...');
+        await databaseService.initialize();
+        await loadInitialData();
+      } catch (recoveryError) {
+        console.error('[ AppDataContext.tsx ] Recovery attempt also failed:', recoveryError);
+      }
+    }
+  };
+
+  // Action item operations
+  const addActionItem = async (itemData: Omit<ActionItem, 'id' | 'createdAt' | 'updatedAt'>): Promise<ActionItem | null> => {
+    try {
+      const newActionItem = await databaseService.addActionItem(itemData);
+      // Reload activities to include the new action item
+      await loadActivities();
+      console.log('[ AppDataContext.tsx ] Action item added:', newActionItem.id);
+      return newActionItem;
+    } catch (error) {
+      console.error('[ AppDataContext.tsx ] Failed to add action item:', error);
+      dispatch({ type: 'SET_ERROR', payload: 'Failed to save action item' });
+      return null;
+    }
+  };
+
+  const updateActionItem = async (itemId: string | number, updates: Partial<ActionItem>): Promise<ActionItem | null> => {
+    try {
+      const updatedActionItem = await databaseService.updateActionItem(itemId, updates);
+      if (updatedActionItem) {
+        dispatch({ type: 'UPDATE_ACTION_ITEM', payload: { id: itemId, data: updates } });
+        
+        // Reload activities to ensure synchronization
+        await loadActivities();
+        
+        console.log('[ AppDataContext.tsx ] Action item updated and activities reloaded:', itemId);
+        return updatedActionItem;
+      }
+      return null;
+    } catch (error) {
+      console.error('[ AppDataContext.tsx ] Failed to update action item:', error);
+      dispatch({ type: 'SET_ERROR', payload: 'Failed to update action item' });
+      return null;
+    }
+  };
+
+  const deleteActionItem = async (itemId: string | number): Promise<boolean> => {
+    try {
+      const success = await databaseService.deleteActionItem(itemId);
+      if (success) {
+        // Reload activities to remove the deleted action item
+        await loadActivities();
+        console.log('[ AppDataContext.tsx ] Action item deleted:', itemId);
+      }
+      return success;
+    } catch (error) {
+      console.error('[ AppDataContext.tsx ] Failed to delete action item:', error);
+      dispatch({ type: 'SET_ERROR', payload: 'Failed to delete action item' });
+      return false;
     }
   };
 
@@ -651,6 +855,10 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
     addMeeting,
     updateMeeting,
     deleteMeeting,
+    loadActionItems,
+    addActionItem,
+    updateActionItem,
+    deleteActionItem,
     updateTimeframe,
     calculateSpiritualFitness,
     resetAllData,

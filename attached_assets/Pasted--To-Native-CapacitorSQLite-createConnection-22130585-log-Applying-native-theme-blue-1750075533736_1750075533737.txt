@@ -1,0 +1,248 @@
+⚡️  To Native ->  CapacitorSQLite createConnection 22130585
+⚡️  [log] - Applying native theme: blue (#3b82f6) in light mode
+⚡️  [log] - [ AppDataContext.tsx:151 ] Initializing app...
+⚡️  [log] - [ AppDataContext.tsx ] Platform: Mozilla/5.0 (iPhone; CPU iPhone OS 18_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148
+⚡️  [log] - [ AppDataContext.tsx ] Is Capacitor: true
+⚡️  [log] - [ AppDataContext.tsx:156 ] Database status changed: initializing
+⚡️  [log] - [ AppDataContext.tsx ] About to initialize database service...
+⚡️  [log] - [ DatabaseService: 50 ] Starting database initialization...
+⚡️  [log] - [ AppDataContext.tsx:156 ] Database status changed: initializing
+⚡️  [log] - [ sqliteLoader.js:14 ] Initializing SQLite database via Capacitor...
+⚡️  [log] - [ sqliteLoader.js:39 ]  Found CapacitorSQLite plugin: true
+database path /Users/davidgs/Library/Developer/CoreSimulator/Devices/E7B518C7-65A2-4386-A19F-01F0D573877F/data/Containers/Data/Application/6228202D-161A-46F5-94CC-DDEBD7F0A79E/Library/CapacitorDatabase/spiritual_condition_trackerSQLite.db
+⚡️  TO JS undefined
+⚡️  To Native ->  CapacitorSQLite ⚡️  [log] - [ sqliteLoader.js:50 ]  Database connection created
+open 22130586
+⚡️  TO JS undefined
+⚡️  To Native ->  CapacitorSQLite execute 22130587
+⚡️  [log] - [ sqliteLoader.js:56 ]  Database opened successfully
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 22130588
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  WebView loaded
+⚡️  To Native ->  CapacitorSQLite execute 22130589
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 22130590
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 22130591
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 22130592
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 22130593
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 22130594
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 22130595
+ERROR MESSAGE:  {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: topic","message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: topic"}
+⚡️  To Native ->  CapacitorSQLite execute 22130596
+⚡️  [error] - {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: topic","message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: topic"}
+ERROR MESSAGE:  {"message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: duration","errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: duration"}
+⚡️  To Native ->  CapacitorSQLite execute 22130597
+⚡️  [error] - {"message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: duration","errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: duration"}
+ERROR MESSAGE:  {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: sponsorId","message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: sponsorId"}
+⚡️  [error] - {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: sponsorId","message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: sponsorId"}
+⚡️  To Native ->  CapacitorSQLite execute 22130598
+ERROR MESSAGE:  {"message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: topic","errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: topic"}
+⚡️  To Native ->  CapacitorSQLite execute 22130599
+⚡️  [error] - {"message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: topic","errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: topic"}
+ERROR MESSAGE:  {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: duration","message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: duration"}
+⚡️  To Native ->  CapacitorSQLite execute 22130600
+⚡️  [error] - {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: duration","message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: duration"}
+ERROR MESSAGE:  {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: contactId","message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: contactId"}
+⚡️  To Native ->  CapacitorSQLite execute 22130601
+⚡️  [error] - {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: contactId","message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: contactId"}
+ERROR MESSAGE:  {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: sponsorName","message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: sponsorName"}
+⚡️  To Native ->  CapacitorSQLite execute 22130602
+⚡️  [error] - {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: sponsorName","message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: sponsorName"}
+ERROR MESSAGE:  {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: sponsorId","message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: sponsorId"}
+⚡️  [error] - {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: sponsorId","message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: sponsorId"}
+⚡️  [log] - [ sqliteLoader.js ] All tables created with proper relationships and missing columns added
+⚡️  [log] - [ sqliteLoader.js:59 ]  Database initialization complete
+⚡️  [log] - [ DatabaseService: 55 ] SQLite database initialized successfully
+⚡️  [log] - [ DatabaseService: 63 ] Database ready
+⚡️  [log] - [ AppDataContext.tsx:156 ] Database status changed: ready
+⚡️  [log] - [ AppDataContext.tsx ] Database ready, loading initial data...
+⚡️  [log] - [ AppDataContext.tsx:187 ] Loading initial data...
+⚡️  To Native ->  CapacitorSQLite query 22130603
+⚡️  [log] - [ DatabaseService: 70 ] Database initialization complete
+⚡️  [log] - [ DatabaseService: 205 ] Processing 0 queued operations
+⚡️  To Native ->  CapacitorSQLite query 22130604
+⚡️  To Native ->  CapacitorSQLite query 22130605
+⚡️  To Native ->  CapacitorSQLite query 22130606
+⚡️  To Native ->  CapacitorSQLite query 22130607
+⚡️  To Native ->  CapacitorSQLite query 22130608
+⚡️  TO JS {"values":[{"ios_columns":["id","name","lastName","phoneNumber","email","sobrietyDate","homeGroups","privacySettings","preferences","isDarkMode","sponsor_name","sponsor_lastName","sponsor_phone","sponsor_email","sponsor_sobrietyDate","sponsor_notes","creat
+⚡️  [log] - [ AppDataContext.tsx ] Database service initialization completed
+⚡️  [log] - [ DatabaseService ] Checking if database is empty for new user detection...
+⚡️  TO JS {"values":[{"ios_columns":["id","name","lastName","phoneNumber","email","sobrietyDate","homeGroups","privacySettings","preferences","isDarkMode","sponsor_name","sponsor_lastName","sponsor_phone","sponsor_email","sponsor_sobrietyDate","sponsor_notes","creat
+⚡️  TO JS {"values":[]}
+⚡️  TO JS {"values":[]}
+⚡️  TO JS {"values":[{"ios_columns":["id","userId","sponsorId","type","date","note","topic","duration","createdAt","updatedAt"]},{"type":"call","date":"2025-06-11T03:06:33.694Z","topic":"Step Work & Gratitude","note":"Discussed my progress on Step 2. Very helpful co
+⚡️  TO JS {"values":[]}
+⚡️  [log] - Found users to fix: 1
+⚡️  To Native ->  CapacitorSQLite query 22130609
+⚡️  [log] - Preferences fix complete
+⚡️  [log] - [ AppDataContext.tsx ] Database preferences validated/fixed
+⚡️  TO JS {"values":[{"ios_columns":["id","name","lastName","phoneNumber","email","sobrietyDate","homeGroups","privacySettings","preferences","isDarkMode","sponsor_name","sponsor_lastName","sponsor_phone","sponsor_email","sponsor_sobrietyDate","sponsor_notes","creat
+⚡️  [log] - [ DatabaseService ] User data check: {"name":"","lastName":"","sobrietyDate":"","phoneNumber":"","email":"","homeGroups":[],"hasUserData":true}
+⚡️  [log] - [ DatabaseService ] Record counts: {"users":1,"hasUserData":true,"activities":0,"meetings":0,"sponsorContacts":4,"actionItems":0,"totalDataRecords":5}
+⚡️  [log] - [ App ] Database empty check result: false
+⚡️  [log] - [ AppDataContext.tsx:206 ] Loaded users: 1
+⚡️  To Native ->  ⚡️  [log] - [ AppDataContext.tsx:225 ] User data loaded: 1
+CapacitorSQLite query 22130610
+⚡️  TO JS {"values":[]}
+⚡️  To Native ->  CapacitorSQLite query 22130611
+⚡️  TO JS {"values":[]}
+⚡️  [log] - [ AppDataContext.tsx ] Raw activities from database: 0
+⚡️  [log] - [ AppDataContext.tsx ] Raw action items from database: 0
+⚡️  [log] - [ AppDataContext.tsx:288 ] Activities cached (180 days): 0 (all contact activities)
+⚡️  [log] - [ AppDataContext.tsx ] Activity types in cache: []
+⚡️  [log] - [ AppDataContext.tsx:315 ] Using cached activities for 30 days: 0
+⚡️  [log] - [ AppDataContext.tsx:454 ] Calculating spiritual fitness with 0 activities for 30 days
+⚡️  To Native ->  CapacitorSQLite query 22130612
+⚡️  TO JS {"values":[]}
+⚡️  To Native ->  CapacitorSQLite query 22130613
+⚡️  [log] - [ AppDataContext.tsx:326 ] Meetings loaded: 0
+⚡️  TO JS {"values":[]}
+⚡️  [log] - [ AppDataContext.tsx ] Action items loaded: 0
+⚡️  [log] - [ AppDataContext.tsx:194 ] Initial data load complete
+⚡️  [log] - Applying native theme: blue (#3b82f6) in light mode
+⚡️  [log] - Applying native theme: blue (#3b82f6) in light mode
+⚡️  [log] - SubTabComponent sponsor: persons: [] length: 0
+⚡️  To Native ->  CapacitorSQLite query 22130614
+⚡️  To Native ->  CapacitorSQLite query 22130615
+⚡️  To Native ->  CapacitorSQLite query 22130616
+⚡️  To Native ->  CapacitorSQLite query 22130617
+⚡️  TO JS {"values":[]}
+⚡️  TO JS {"values":[]}
+⚡️  TO JS {"values":[{"ios_columns":["id","userId","sponsorId","type","date","note","topic","duration","createdAt","updatedAt"]},{"sponsorId":1,"date":"2025-06-11T03:06:33.694Z","topic":"Step Work & Gratitude","updatedAt":"2025-06-16T11:59:46.252Z","createdAt":"2025
+⚡️  TO JS {"values":[]}
+⚡️  [log] - SubTabComponent sponsor: persons: [] length: 0
+⚡️  [log] - [loadSponsorContacts] Raw sponsor contacts from DB: [{"sponsorId":1,"date":"2025-06-11T03:06:33.694Z","topic":"Step Work & Gratitude","updatedAt":"2025-06-16T11:59:46.252Z","createdAt":"2025-06-16T11:59:46.252Z","id":1,"type":"call","note":"Discussed my progress on Step 2. Very helpful conversation about maintaining gratitude.","userId":"1","duration":23},{"userId":"1","topic":"Post-Meeting Check-in","updatedAt":"2025-06-16T11:59:46.261Z","sponsorId":1,"id":2,"createdAt":"2025-06-16T11:59:46.261Z","note":"Quick check-in after the meeting. Feeling good about my recovery progress.","type":"meeting","date":"2025-06-08T04:23:07.341Z","duration":15},{"type":"call","userId":"1","updatedAt":"2025-06-16T11:59:46.264Z","sponsorId":2,"duration":33,"id":3,"date":"2025-06-15T07:51:45.874Z","topic":"Step Work & Gratitude","note":"Discussed my progress on Step 10. Very helpful conversation about maintaining gratitude.","createdAt":"2025-06-16T11:59:46.264Z"},{"date":"2025-06-10T04:52:02.289Z","topic":"Post-Meeting Check-in","userId":"1","note":"Quick check-in after the meeting. Feeling good about my recovery progress.","id":4,"type":"meeting","duration":19,"sponsorId":2,"createdAt":"2025-06-16T11:59:46.271Z","updatedAt":"2025-06-16T11:59:46.271Z"}]
+⚡️  [log] - [loadSponsorContacts] Filtering contact: userId=1 (string), user.id=1 (number), match=true
+⚡️  [log] - [loadSponsorContacts] Filtering contact: userId=1 (string), user.id=1 (number), match=true
+⚡️  [log] - [loadSponsorContacts] Filtering contact: userId=1 (string), user.id=1 (number), match=true
+⚡️  [log] - [loadSponsorContacts] Filtering contact: userId=1 (string), user.id=1 (number), match=true
+⚡️  [log] - [loadSponsorContacts] Filtered sponsor contacts: [{"sponsorId":1,"date":"2025-06-11T03:06:33.694Z","topic":"Step Work & Gratitude","updatedAt":"2025-06-16T11:59:46.252Z","createdAt":"2025-06-16T11:59:46.252Z","id":1,"type":"call","note":"Discussed my progress on Step 2. Very helpful conversation about maintaining gratitude.","userId":"1","duration":23},{"userId":"1","topic":"Post-Meeting Check-in","updatedAt":"2025-06-16T11:59:46.261Z","sponsorId":1,"id":2,"createdAt":"2025-06-16T11:59:46.261Z","note":"Quick check-in after the meeting. Feeling good about my recovery progress.","type":"meeting","date":"2025-06-08T04:23:07.341Z","duration":15},{"type":"call","userId":"1","updatedAt":"2025-06-16T11:59:46.264Z","sponsorId":2,"duration":33,"id":3,"date":"2025-06-15T07:51:45.874Z","topic":"Step Work & Gratitude","note":"Discussed my progress on Step 10. Very helpful conversation about maintaining gratitude.","createdAt":"2025-06-16T11:59:46.264Z"},{"date":"2025-06-10T04:52:02.289Z","topic":"Post-Meeting Check-in","userId":"1","note":"Quick check-in after the meeting. Feeling good about my recovery progress.","id":4,"type":"meeting","duration":19,"sponsorId":2,"createdAt":"2025-06-16T11:59:46.271Z","updatedAt":"2025-06-16T11:59:46.271Z"}]
+⚡️  [log] - [loadSponsorContacts] Current sponsors: []
+⚡️  [log] - [loadSponseeContacts] Raw sponsee contacts from DB: []
+⚡️  [log] - [loadSponseeContacts] Filtered sponsee contacts: []
+⚡️  [log] - [loadSponseeContacts] Current sponsees: []
+⚡️  [log] - SubTabComponent sponsor: persons: [] length: 0
+⚡️  [log] - Applying native theme: blue (#3b82f6) in light mode
+⚡️  [log] - Applying native theme: blue (#3b82f6) in light mode
+⚡️  [log] - [ Dashboard ] Starting test data creation...
+⚡️  [log] - [ testDataGenerator ] Starting test data creation...
+⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO sponsors (userId, name, lastName, phoneNumber, email, sobrietyDate, notes, sponsorType, createdAt, updatedAt) VALUES ('1', 'John', 'Smith', '555-0101', 'john.smith@email.com', '2015-03-15', 'Great sponsor with 10+ years experience', 'sponsor', '2025-06-16T12:04:55.984Z', '2025-06-16T12:04:55.984Z');
+⚡️  To Native ->  CapacitorSQLite execute 22130618
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  To Native ->  CapacitorSQLite query 22130619
+⚡️  TO JS {"values":[{"ios_columns":["lastId"]},{"lastId":1}]}
+⚡️  [log] - [ sqliteLoader.js ] Created sponsors item with ID: 1
+⚡️  To Native ->  CapacitorSQLite execute 22130620
+⚡️  [log] - [ testDataGenerator ] Created sponsor: John Smith with ID: 1
+⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO sponsors (userId, name, lastName, phoneNumber, email, sobrietyDate, notes, sponsorType, createdAt, updatedAt) VALUES ('1', 'Mary', 'Johnson', '555-0102', 'mary.j@email.com', '2012-08-22', 'Very supportive and knowledgeable', 'sponsor', '2025-06-16T12:04:55.984Z', '2025-06-16T12:04:55.984Z');
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  To Native ->  CapacitorSQLite query 22130621
+⚡️  TO JS {"values":[{"ios_columns":["lastId"]},{"lastId":2}]}
+⚡️  To Native ->  CapacitorSQLite execute 22130622
+⚡️  [log] - [ sqliteLoader.js ] Created sponsors item with ID: 2
+⚡️  [log] - [ testDataGenerator ] Created sponsor: Mary Johnson with ID: 2
+⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO sponsees (userId, name, lastName, phoneNumber, email, sobrietyDate, notes, sponseeType, createdAt, updatedAt) VALUES ('1', 'Alex', 'Wilson', '555-0201', 'alex.wilson@email.com', '2023-06-10', 'New sponsee, very motivated', 'sponsee', '2025-06-16T12:04:55.984Z', '2025-06-16T12:04:55.984Z');
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  To Native ->  CapacitorSQLite query 22130623
+⚡️  TO JS {"values":[{"ios_columns":["lastId"]},{"lastId":1}]}
+⚡️  To Native ->  CapacitorSQLite execute 22130624
+⚡️  [log] - [ sqliteLoader.js ] Created sponsees item with ID: 1
+⚡️  [log] - [ testDataGenerator ] Created sponsee: Alex Wilson with ID: 1
+⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO sponsees (userId, name, lastName, phoneNumber, email, sobrietyDate, notes, sponseeType, createdAt, updatedAt) VALUES ('1', 'Sarah', 'Davis', '555-0202', 'sarah.d@email.com', '2023-11-05', 'Working on Step 4', 'sponsee', '2025-06-16T12:04:55.984Z', '2025-06-16T12:04:55.984Z');
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  To Native ->  CapacitorSQLite query 22130625
+⚡️  TO JS {"values":[{"ios_columns":["lastId"]},{"lastId":2}]}
+⚡️  [log] - [ sqliteLoader.js ] Created sponsees item with ID: 2
+⚡️  [log] - [ testDataGenerator ] Created sponsee: Sarah Davis with ID: 2
+⚡️  [log] - [ testDataGenerator ] Creating contacts for sponsor with ID: 1
+⚡️  To Native ->  CapacitorSQLite execute 22130626
+⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO sponsor_contacts (userId, sponsorId, type, date, note, topic, duration, createdAt, updatedAt) VALUES ('1', 1, 'call', '2025-06-13T10:38:44.129Z', 'Discussed my progress on Step 3. Very helpful conversation about maintaining gratitude.', 'Step Work & Gratitude', 45, '2025-06-16T12:04:56.009Z', '2025-06-16T12:04:56.009Z');
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  To Native ->  CapacitorSQLite query 22130627
+⚡️  TO JS {"values":[{"ios_columns":["lastId"]},{"lastId":5}]}
+⚡️  [log] - [ sqliteLoader.js ] Created sponsor_contacts item with ID: 5
+⚡️  [log] - [ testDataGenerator ] Created sponsor contact with ID: 5
+⚡️  To Native ->  CapacitorSQLite execute 22130628
+⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO activities (userId, type, date, notes, duration, personCalled, sponsorContactId, sponsorId, createdAt, updatedAt) VALUES (1, 'sponsor-contact', '2025-06-13T10:38:44.129Z', 'Discussed my progress on Step 3. Very helpful conversation about maintaining gratitude.', 45, 'John Smith', 5, 1, '2025-06-16T12:04:56.011Z', '2025-06-16T12:04:56.011Z');
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  To Native ->  CapacitorSQLite query 22130629
+⚡️  TO JS {"values":[{"ios_columns":["lastId"]},{"lastId":1}]}
+⚡️  [log] - [ sqliteLoader.js ] Created activities item with ID: 1
+⚡️  [log] - [ testDataGenerator ] Creating sponsor action item: Practice daily meditation
+⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO action_items (title, text, notes, dueDate, completed, type, sponsorContactId, contactId, createdAt, updatedAt) VALUES ('Practice daily meditation', 'Practice daily meditation for 10 minutes', 'Focus on gratitude and serenity prayer', '2025-06-19T12:04:56.012Z', 0, 'sponsor_action_item', 5, 5, '2025-06-16T12:04:56.012Z', '2025-06-16T12:04:56.012Z');
+⚡️  To Native ->  CapacitorSQLite execute 22130630
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  To Native ->  CapacitorSQLite query 22130631
+⚡️  TO JS {"values":[{"ios_columns":["lastId"]},{"lastId":1}]}
+⚡️  [log] - [ sqliteLoader.js ] Created action_items item with ID: 1
+⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO activities (userId, type, date, notes, actionItemId, personCalled, createdAt, updatedAt) VALUES (1, 'sponsor_action_item', '2025-06-19T12:04:56.012Z', 'Action Item: Practice daily meditation', 1, 'John Smith', '2025-06-16T12:04:56.015Z', '2025-06-16T12:04:56.015Z');
+⚡️  To Native ->  CapacitorSQLite execute 22130632
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  To Native ->  CapacitorSQLite query 22130633
+⚡️  TO JS {"values":[{"ios_columns":["lastId"]},{"lastId":2}]}
+⚡️  [log] - [ sqliteLoader.js ] Created activities item with ID: 2
+⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO sponsor_contacts (userId, sponsorId, type, date, note, topic, duration, createdAt, updatedAt) VALUES ('1', 1, 'meeting', '2025-06-11T13:14:24.733Z', 'Quick check-in after the meeting. Feeling good about my recovery progress.', 'Post-Meeting Check-in', 28, '2025-06-16T12:04:56.016Z', '2025-06-16T12:04:56.016Z');
+⚡️  To Native ->  CapacitorSQLite execute 22130634
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  To Native ->  CapacitorSQLite query 22130635
+⚡️  TO JS {"values":[{"ios_columns":["lastId"]},{"lastId":6}]}
+⚡️  [log] - [ sqliteLoader.js ] Created sponsor_contacts item with ID: 6
+⚡️  To Native ->  CapacitorSQLite ⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO activities (userId, type, date, notes, duration, personCalled, sponsorContactId, sponsorId, createdAt, updatedAt) VALUES (1, 'sponsor-contact', '2025-06-11T13:14:24.733Z', 'Quick check-in after the meeting. Feeling good about my recovery progress.', 28, 'John Smith', 6, 1, '2025-06-16T12:04:56.017Z', '2025-06-16T12:04:56.017Z');
+execute 22130636
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  To Native ->  CapacitorSQLite query 22130637
+⚡️  TO JS {"values":[{"ios_columns":["lastId"]},{"lastId":3}]}
+⚡️  To Native ->  CapacitorSQLite execute 22130638
+⚡️  [log] - [ sqliteLoader.js ] Created activities item with ID: 3
+⚡️  [log] - [ testDataGenerator ] Creating contacts for sponsor with ID: 2
+⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO sponsor_contacts (userId, sponsorId, type, date, note, topic, duration, createdAt, updatedAt) VALUES ('1', 2, 'call', '2025-06-14T06:32:12.306Z', 'Discussed my progress on Step 2. Very helpful conversation about maintaining gratitude.', 'Step Work & Gratitude', 58, '2025-06-16T12:04:56.019Z', '2025-06-16T12:04:56.019Z');
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  To Native ->  CapacitorSQLite query 22130639
+⚡️  TO JS {"values":[{"ios_columns":["lastId"]},{"lastId":7}]}
+⚡️  [log] - [ sqliteLoader.js ] Created sponsor_contacts item with ID: 7
+⚡️  [log] - [ testDataGenerator ] Created sponsor contact with ID: 7
+⚡️  To Native ->  CapacitorSQLite execute 22130640
+⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO activities (userId, type, date, notes, duration, personCalled, sponsorContactId, sponsorId, createdAt, updatedAt) VALUES (1, 'sponsor-contact', '2025-06-14T06:32:12.306Z', 'Discussed my progress on Step 2. Very helpful conversation about maintaining gratitude.', 58, 'Mary Johnson', 7, 2, '2025-06-16T12:04:56.022Z', '2025-06-16T12:04:56.022Z');
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  To Native ->  CapacitorSQLite query 22130641
+⚡️  TO JS {"values":[{"ios_columns":["lastId"]},{"lastId":4}]}
+⚡️  [log] - [ sqliteLoader.js ] Created activities item with ID: 4
+⚡️  To Native ->  CapacitorSQLite execute 22130642
+⚡️  [log] - [ testDataGenerator ] Creating sponsor action item: Practice daily meditation
+⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO action_items (title, text, notes, dueDate, completed, type, sponsorContactId, contactId, createdAt, updatedAt) VALUES ('Practice daily meditation', 'Practice daily meditation for 10 minutes', 'Focus on gratitude and serenity prayer', '2025-06-19T12:04:56.026Z', 0, 'sponsor_action_item', 7, 7, '2025-06-16T12:04:56.026Z', '2025-06-16T12:04:56.026Z');
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  To Native ->  CapacitorSQLite query 22130643
+⚡️  TO JS {"values":[{"ios_columns":["lastId"]},{"lastId":2}]}
+⚡️  To Native ->  CapacitorSQLite execute 22130644
+⚡️  [log] - [ sqliteLoader.js ] Created action_items item with ID: 2
+⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO activities (userId, type, date, notes, actionItemId, personCalled, createdAt, updatedAt) VALUES (1, 'sponsor_action_item', '2025-06-19T12:04:56.026Z', 'Action Item: Practice daily meditation', 2, 'Mary Johnson', '2025-06-16T12:04:56.027Z', '2025-06-16T12:04:56.027Z');
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  To Native ->  CapacitorSQLite query 22130645
+⚡️  TO JS {"values":[{"ios_columns":["lastId"]},{"lastId":5}]}
+⚡️  [log] - [ sqliteLoader.js ] Created activities item with ID: 5
+⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO sponsor_contacts (userId, sponsorId, type, date, note, topic, duration, createdAt, updatedAt) VALUES ('1', 2, 'meeting', '2025-06-08T18:58:56.481Z', 'Quick check-in after the meeting. Feeling good about my recovery progress.', 'Post-Meeting Check-in', 22, '2025-06-16T12:04:56.028Z', '2025-06-16T12:04:56.028Z');
+⚡️  To Native ->  CapacitorSQLite execute 22130646
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  To Native ->  CapacitorSQLite query 22130647
+⚡️  TO JS {"values":[{"ios_columns":["lastId"]},{"lastId":8}]}
+⚡️  [log] - [ sqliteLoader.js ] Created sponsor_contacts item with ID: 8
+⚡️  To Native ->  CapacitorSQLite execute 22130648
+⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO activities (userId, type, date, notes, duration, personCalled, sponsorContactId, sponsorId, createdAt, updatedAt) VALUES (1, 'sponsor-contact', '2025-06-08T18:58:56.481Z', 'Quick check-in after the meeting. Feeling good about my recovery progress.', 22, 'Mary Johnson', 8, 2, '2025-06-16T12:04:56.030Z', '2025-06-16T12:04:56.030Z');
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  To Native ->  CapacitorSQLite query 22130649
+⚡️  TO JS {"values":[{"ios_columns":["lastId"]},{"lastId":6}]}
+⚡️  [log] - [ sqliteLoader.js ] Created activities item with ID: 6
+⚡️  [log] - [ testDataGenerator ] Creating contacts for sponsee with ID: 1
+⚡️  To Native ->  CapacitorSQLite execute 22130650
+⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO sponsee_contacts (userId, type, date, note, topic, duration, createdAt, updatedAt) VALUES ('1', 'call', '2025-06-15T16:44:13.445Z', 'Helped Alex work through Step 7. Good progress being made.', 'Step Work Guidance', 27, '2025-06-16T12:04:56.031Z', '2025-06-16T12:04:56.031Z');
+ERROR MESSAGE:  {"message":"Execute: Failed in executeSQL :  Error: execute failed rc: 19 message: NOT NULL constraint failed: sponsee_contacts.sponseeId","errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 19 message: NOT NULL constraint failed: sponsee_contacts.sponseeId"}
+⚡️  [error] - {"message":"Execute: Failed in executeSQL :  Error: execute failed rc: 19 message: NOT NULL constraint failed: sponsee_contacts.sponseeId","errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 19 message: NOT NULL constraint failed: sponsee_contacts.sponseeId"}
+⚡️  [error] - [ testDataGenerator ] Error creating test data: {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 19 message: NOT NULL constraint failed: sponsee_contacts.sponseeId"}
+⚡️  [error] - [ Dashboard ] Failed to create test data: {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 19 message: NOT NULL constraint failed: sponsee_contacts.sponseeId"}

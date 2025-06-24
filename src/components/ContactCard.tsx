@@ -33,6 +33,9 @@ interface ContactCardProps {
   refreshKey: number;
   onContactClick: (contact: Contact) => void;
   onEditContact?: (contact: Contact) => void;
+  sponsorId?: number;
+  sponseeId?: number;
+  personType?: 'sponsor' | 'sponsee';
 }
 
 export const ContactCard: React.FC<ContactCardProps> = ({
@@ -40,17 +43,20 @@ export const ContactCard: React.FC<ContactCardProps> = ({
   theme,
   refreshKey,
   onContactClick,
-  onEditContact
+  onEditContact,
+  sponsorId,
+  sponseeId,
+  personType
 }) => {
   const contactTypeInfo = getContactTypeInfo(contact.type);
-  
+
   return (
     <ListItem
       className="rounded-lg border border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
       sx={{
         backgroundColor: theme.palette.background.default,
-        mb: 1,
-        p: 2,
+        mb: .5,
+        p: 1,
         borderRadius: 2,
         border: `1px solid ${theme.palette.divider}`,
         '&:hover': {
@@ -64,35 +70,35 @@ export const ContactCard: React.FC<ContactCardProps> = ({
       }}
     >
       <Box sx={{ width: '100%' }}>
-        <Box sx={{ 
-          display: 'flex', 
-          justifyContent: 'space-between', 
-          alignItems: 'flex-start', 
-          mb: 2 
+        <Box sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'flex-start',
+          mb: 1
         }}>
           <Box sx={{ flex: 1 }}>
             {/* Contact Type and Date Header */}
-            <Box sx={{ 
-              display: 'flex', 
-              justifyContent: 'space-between', 
-              alignItems: 'center', 
-              mb: 1 
+            <Box sx={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              mb: .5
             }}>
-              <Box sx={{ 
-                display: 'flex', 
-                alignItems: 'center', 
-                gap: 1 
+              <Box sx={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 1
               }}>
                 <i className={contactTypeInfo.icon} style={{ color: theme.palette.text.secondary }}></i>
                 <Typography variant="body2" sx={{ color: theme.palette.text.secondary }}>
                   {contactTypeInfo.label}
                 </Typography>
               </Box>
-              
-              <Box sx={{ 
-                display: 'flex', 
-                alignItems: 'center', 
-                gap: 0.5 
+
+              <Box sx={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 0.5
               }}>
                 <i className="fa-solid fa-calendar" style={{ color: theme.palette.text.secondary, fontSize: '12px' }}></i>
                 <Typography variant="body2" sx={{ color: theme.palette.text.secondary }}>
@@ -107,7 +113,7 @@ export const ContactCard: React.FC<ContactCardProps> = ({
                 Topic: {contact.topic}
               </Typography>
             )}
-            
+
             {contact.duration && (
               <Typography variant="body2" sx={{ color: theme.palette.text.secondary, mb: 1 }}>
                 Duration: {contact.duration} minutes
@@ -123,7 +129,7 @@ export const ContactCard: React.FC<ContactCardProps> = ({
                 e.stopPropagation();
                 onEditContact(contact);
               }}
-              sx={{ 
+              sx={{
                 color: theme.palette.text.secondary,
                 ml: 1,
                 '&:hover': {
@@ -148,12 +154,15 @@ export const ContactCard: React.FC<ContactCardProps> = ({
             </Typography>
           </Box>
         )}
-        
+
         {/* Action Items for this contact */}
-        <ActionItemsList 
+        <ActionItemsList
           contactId={contact.id}
           theme={theme}
           refreshKey={refreshKey}
+          sponsorId={sponsorId}
+          sponseeId={sponseeId}
+          personType={personType}
         />
       </Box>
     </ListItem>

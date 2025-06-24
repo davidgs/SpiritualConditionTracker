@@ -81,12 +81,111 @@ export default function MeetingFormCore({
 
   // Stepper state
   const [activeStep, setActiveStep] = useState(0);
+  const [isLocating, setIsLocating] = useState(false);
 
   // Helper function to check if meeting schedule is complete
   const isScheduleComplete = () => {
     // Check if there's at least one complete meeting in the schedule
     return meetingSchedule.length > 0 && meetingSchedule.every(item => 
       item.day && item.time && item.format && item.locationType && item.access
+    );
+  };
+
+  // Handle geolocation for current position - iOS compatible
+  const handleLocateMe = () => {
+    // Check if geolocation is available
+    if (!navigator.geolocation) {
+      setError('Location services are not available on this device');
+      return;
+    }
+
+    setIsLocating(true);
+    setError('');
+
+    // iOS Safari requires user interaction and specific permissions
+    const options = {
+      enableHighAccuracy: true,
+      timeout: 15000, // Longer timeout for iOS
+      maximumAge: 600000 // 10 minutes cache
+    };
+
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        try {
+          const { latitude, longitude } = position.coords;
+          console.log('[MeetingForm] Got location:', latitude, longitude);
+          setLocation({ latitude, longitude });
+          
+          // Use a more reliable geocoding service
+          try {
+            const response = await fetch(
+              `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=18&addressdetails=1`,
+              {
+                headers: {
+                  'User-Agent': 'AA-Recovery-App/1.0'
+                }
+              }
+            );
+            
+            if (response.ok) {
+              const data = await response.json();
+              console.log('[MeetingForm] Geocoding result:', data);
+              
+              // Extract address components from OpenStreetMap response
+              const address = data.address || {};
+              
+              if (data.display_name) {
+                // Try to parse the address components
+                if (address.house_number && address.road) {
+                  setStreetAddress(`${address.house_number} ${address.road}`);
+                } else if (address.road) {
+                  setStreetAddress(address.road);
+                }
+                
+                if (address.city || address.town || address.municipality) {
+                  setCity(address.city || address.town || address.municipality);
+                }
+                
+                if (address.state) {
+                  setState(address.state);
+                }
+                
+                if (address.postcode) {
+                  setZipCode(address.postcode);
+                }
+              }
+            }
+          } catch (geocodeError) {
+            console.warn('[MeetingForm] Geocoding failed, location set but address not filled:', geocodeError);
+            // Still have coordinates, just no address details
+          }
+        } catch (error) {
+          console.error('[MeetingForm] Error processing location:', error);
+          setError('Got your location but could not get address details');
+        } finally {
+          setIsLocating(false);
+        }
+      },
+      (error) => {
+        console.error('[MeetingForm] Geolocation error:', error);
+        setIsLocating(false);
+        
+        switch (error.code) {
+          case error.PERMISSION_DENIED:
+            setError('Location access denied. Please enable location permissions in your browser settings.');
+            break;
+          case error.POSITION_UNAVAILABLE:
+            setError('Location information is unavailable. Please try again.');
+            break;
+          case error.TIMEOUT:
+            setError('Location request timed out. Please try again.');
+            break;
+          default:
+            setError('An unknown error occurred while getting your location.');
+            break;
+        }
+      },
+      options
     );
   };
 
@@ -258,7 +357,7 @@ export default function MeetingFormCore({
         mb: 2,
         color: theme.palette.text.secondary
       })}>
-        Add details for your regular AA Group and meetings. Most meetings occur in the evenings, typically between 6-9 PM.
+        Add details for your regular AA Group and meetings.
       </Typography>
       
       {error && (
@@ -351,6 +450,33 @@ export default function MeetingFormCore({
               placeholder="Street address"
               size="medium"
               sx={(theme) => getTextFieldStyle(theme)}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      onClick={handleLocateMe}
+                      disabled={isLocating}
+                      edge="end"
+                      sx={{
+                        color: 'primary.main',
+                        '&:hover': {
+                          color: 'primary.dark',
+                          backgroundColor: 'transparent'
+                        },
+                        '&:disabled': {
+                          color: 'action.disabled'
+                        }
+                      }}
+                    >
+                      {isLocating ? (
+                        <i className="fa-solid fa-spinner fa-spin" />
+                      ) : (
+                        <i className="fa-solid fa-location-dot" />
+                      )}
+                    </IconButton>
+                  </InputAdornment>
+                )
+              }}
             />
             
             <Box sx={{ display: 'flex', gap: 1 }}>

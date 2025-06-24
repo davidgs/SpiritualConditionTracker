@@ -1,0 +1,133 @@
+⚡️  To Native ->  ⚡️  [log] - [ DatabaseService ] Checking if database is empty for new user detection...
+CapacitorSQLite query 15133066
+⚡️  To Native ->  CapacitorSQLite query 15133067
+⚡️  To Native ->  CapacitorSQLite query 15133068
+⚡️  To Native ->  CapacitorSQLite query 15133069
+⚡️  To Native ->  CapacitorSQLite query 15133070
+⚡️  TO JS {"values":[{"ios_columns":["id","name","lastName","phoneNumber","email","sobrietyDate","homeGroups","privacySettings","preferences","isDarkMode","sponsor_name","sponsor_lastName","sponsor_phone","sponsor_email","sponsor_sobrietyDate","sponsor_notes","creat
+⚡️  TO JS {"values":[]}
+⚡️  TO JS {"values":[]}
+⚡️  TO JS {"values":[]}
+⚡️  TO JS {"values":[]}
+⚡️  [log] - [ DatabaseService ] User data check: {"name":null,"lastName":null,"sobrietyDate":null,"phoneNumber":null,"email":null,"homeGroups":null,"hasUserData":false}
+⚡️  [log] - [ DatabaseService ] Record counts: {"users":2,"hasUserData":false,"activities":0,"meetings":0,"sponsorContacts":0,"actionItems":0,"totalDataRecords":0}
+⚡️  [log] - [ App ] Database empty check result: true
+⚡️  To Native ->  CapacitorSQLite query 15133071
+⚡️  [log] - [ DatabaseService ] Checking if database is empty for new user detection...
+⚡️  To Native ->  CapacitorSQLite query 15133072
+⚡️  To Native ->  CapacitorSQLite query 15133073
+⚡️  To Native ->  CapacitorSQLite query 15133074
+⚡️  To Native ->  CapacitorSQLite query 15133075
+⚡️  TO JS {"values":[{"ios_columns":["id","name","lastName","phoneNumber","email","sobrietyDate","homeGroups","privacySettings","preferences","isDarkMode","sponsor_name","sponsor_lastName","sponsor_phone","sponsor_email","sponsor_sobrietyDate","sponsor_notes","creat
+⚡️  TO JS {"values":[]}
+⚡️  TO JS {"values":[]}
+⚡️  TO JS {"values":[]}
+⚡️  TO JS {"values":[]}
+⚡️  [log] - [ DatabaseService ] User data check: {"name":null,"lastName":null,"sobrietyDate":null,"phoneNumber":null,"email":null,"homeGroups":null,"hasUserData":false}
+⚡️  [log] - [ DatabaseService ] Record counts: {"users":2,"hasUserData":false,"activities":0,"meetings":0,"sponsorContacts":0,"actionItems":0,"totalDataRecords":0}
+⚡️  [log] - [ App ] Database empty check result: true
+⚡️  [log] - [ DatabaseService ] Checking if database is empty for new user detection...
+⚡️  To Native ->  CapacitorSQLite query 15133076
+⚡️  To Native ->  CapacitorSQLite query 15133077
+⚡️  To Native ->  CapacitorSQLite query 15133078
+⚡️  To Native ->  CapacitorSQLite query 15133079
+⚡️  To Native ->  CapacitorSQLite query 15133080
+⚡️  TO JS {"values":[{"ios_columns":["id","name","lastName","phoneNumber","email","sobrietyDate","homeGroups","privacySettings","preferences","isDarkMode","sponsor_name","sponsor_lastName","sponsor_phone","sponsor_email","sponsor_sobrietyDate","sponsor_notes","creat
+⚡️  TO JS {"values":[]}
+⚡️  TO JS {"values":[]}
+⚡️  TO JS {"values":[]}
+⚡️  TO JS {"values":[]}
+⚡️  [log] - [ DatabaseService ] User data check: {"name":null,"lastName":null,"sobrietyDate":null,"phoneNumber":null,"email":null,"homeGroups":null,"hasUserData":false}
+⚡️  [log] - [ DatabaseService ] Record counts: {"users":2,"hasUserData":false,"activities":0,"meetings":0,"sponsorContacts":0,"actionItems":0,"totalDataRecords":0}
+⚡️  [log] - [ App ] Database empty check result: true
+⚡️  [log] - [ DatabaseService ] Checking if database is empty for new user detection...
+⚡️  To Native ->  CapacitorSQLite query 15133081
+⚡️  To Native ->  CapacitorSQLite query 15133082
+⚡️  To Native ->  CapacitorSQLite query 15133083
+⚡️  To Native ->  CapacitorSQLite query 15133084
+⚡️  To Native ->  CapacitorSQLite query 15133085
+⚡️  TO JS {"values":[{"ios_columns":["id","name","lastName","phoneNumber","email","sobrietyDate","homeGroups","privacySettings","preferences","isDarkMode","sponsor_name","sponsor_lastName","sponsor_phone","sponsor_email","sponsor_sobrietyDate","sponsor_notes","creat
+⚡️  TO JS {"values":[]}
+⚡️  TO JS {"values":[]}
+⚡️  TO JS {"values":[]}
+⚡️  TO JS {"values":[]}
+⚡️  [log] - [ DatabaseService ] User data check: {"name":null,"lastName":null,"sobrietyDate":null,"phoneNumber":null,"email":null,"homeGroups":null,"hasUserData":false}
+⚡️  [log] - [ DatabaseService ] Record counts: {"users":2,"hasUserData":false,"activities":0,"meetings":0,"sponsorContacts":0,"actionItems":0,"totalDataRecords":0}
+⚡️  [log] - [ App ] Database empty check result: true
+⚡️  [log] - [ App.tsx:73 handleSaveActivity ] Received activity data: {
+  "type": "prayer",
+  "duration": 15,
+  "date": "2025-06-15T16:00:00.000Z",
+  "notes": "",
+  "location": "completed",
+  "meetingName": "",
+  "meetingId": null,
+  "wasChair": 0,
+  "wasShare": 0,
+  "wasSpeaker": 0,
+  "literatureTitle": "",
+  "isSponsorCall": 0,
+  "isSponseeCall": 0,
+  "isAAMemberCall": 0,
+  "callType": "",
+  "stepNumber": null,
+  "personCalled": "",
+  "serviceType": "",
+  "completed": 1
+}
+⚡️  To Native ->  CapacitorSQLite execute 15133086
+⚡️  [log] - [ App.tsx:74 handleSaveActivity ] Current user state: {"sponsor_notes":null,"createdAt":"2025-06-16 01:42:17","sponsor_email":null,"phoneNumber":null,"sobrietyDate":null,"sponsor_name":null,"isDarkMode":0,"preferences":{"use24HourFormat":false,"darkMode":false,"theme":"default"},"sponsor_phone":null,"lastName":null,"name":null,"sponsor_lastName":null,"sponsor_sobrietyDate":null,"id":1,"homeGroups":null,"privacySettings":null,"updatedAt":"2025-06-16T01:45:59.785Z","email":null}
+⚡️  [log] - [ AppDataContext.tsx:300 addActivity ] Received activity data: {
+  "type": "prayer",
+  "duration": 15,
+  "date": "2025-06-15T16:00:00.000Z",
+  "notes": "",
+  "location": "completed",
+  "meetingName": "",
+  "meetingId": null,
+  "wasChair": 0,
+  "wasShare": 0,
+  "wasSpeaker": 0,
+  "literatureTitle": "",
+  "isSponsorCall": 0,
+  "isSponseeCall": 0,
+  "isAAMemberCall": 0,
+  "callType": "",
+  "stepNumber": null,
+  "personCalled": "",
+  "serviceType": "",
+  "completed": 1
+}
+⚡️  [log] - [ AppDataContext.tsx:301 addActivity ] Calling databaseService.addActivity...
+⚡️  [log] - [ DatabaseService.ts:261 addActivity ] Received activity: {
+  "type": "prayer",
+  "duration": 15,
+  "date": "2025-06-15T16:00:00.000Z",
+  "notes": "",
+  "location": "completed",
+  "meetingName": "",
+  "meetingId": null,
+  "wasChair": 0,
+  "wasShare": 0,
+  "wasSpeaker": 0,
+  "literatureTitle": "",
+  "isSponsorCall": 0,
+  "isSponseeCall": 0,
+  "isAAMemberCall": 0,
+  "callType": "",
+  "stepNumber": null,
+  "personCalled": "",
+  "serviceType": "",
+  "completed": 1
+}
+⚡️  [log] - [ DatabaseService.ts:262 addActivity ] Calling this.database.add...
+ERROR MESSAGE:  {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: near \",\": syntax error","message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: near \",\": syntax error"}
+⚡️  [error] - {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: near \",\": syntax error","message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: near \",\": syntax error"}
+⚡️  To Native ->  CapacitorSQLite query 15133087
+⚡️  [error] - [ AppDataContext.tsx:315 addActivity ] Failed to add activity: {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: near \",\": syntax error"}
+⚡️  TO JS {"values":[]}
+⚡️  To Native ->  CapacitorSQLite query 15133088
+⚡️  TO JS {"values":[]}
+⚡️  [log] - [ AppDataContext.tsx:288 ] Activities cached (180 days): 0 (sponsor action items only)
+⚡️  [log] - [ AppDataContext.tsx:315 ] Using cached activities for 30 days: 0
+⚡️  [log] - [ AppDataContext.tsx:454 ] Calculating spiritual fitness with 0 activities for 30 days

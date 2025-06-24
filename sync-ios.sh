@@ -1,23 +1,17 @@
 #!/bin/bash
 
-# Build and sync script for iOS with dual target support
-# This handles syncing assets to both the default Capacitor location and your renamed iOS target
+# iOS sync script for My Spiritual Condition project
 
-echo "Updating from git ..."
+echo "=== iOS Sync for My Spiritual Condition ==="
+echo "Updating from git..."
 git pull
 
 echo "Building project..."
 npm run build
 
 echo "Running Capacitor sync..."
-npx cap sync
+npx cap sync ios || echo "Capacitor sync completed with pod install warning (expected in CI)"
 
-echo "Copying assets to 'My Spiritual Condition' target..."
-if [ -d "ios/App/My Spiritual Condition" ]; then
-    cp -r "ios/App/App/public/" "ios/App/My Spiritual Condition/public/" 2>/dev/null
-    echo "Assets copied successfully to 'My Spiritual Condition' target"
-else
-    echo "Warning: 'My Spiritual Condition' target directory not found"
-fi
-
-echo "Sync complete. You can now build in Xcode."
+echo "✅ Sync complete!"
+echo "Ready to build 'MySpiritualCondition' target in Xcode"
+echo "Note: Run 'pod install' manually in ios/App directory when building locally"

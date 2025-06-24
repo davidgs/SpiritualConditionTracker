@@ -2,6 +2,8 @@ import React from 'react';
 import { formatDateForDisplay, compareDatesForSorting } from '../utils/dateUtils';
 import { useTheme } from '@mui/material/styles';
 import { useAppData } from '../contexts/AppDataContext';
+import ActionItem from './shared/ActionItem';
+import DatabaseService from '../services/DatabaseService';
 
 export default function ActivityList({ 
   activities, 
@@ -16,11 +18,129 @@ export default function ActivityList({
 }) {
 
   const theme = useTheme();
-  const { deleteActivity } = useAppData();
+  const { deleteActivity, updateActionItem, deleteActionItem } = useAppData();
+  
+  // Force re-render when activities prop changes, especially for action items
+  const [renderKey, setRenderKey] = React.useState(0);
+  const [sponsorContacts, setSponsorContacts] = React.useState([]);
+  const [sponseeContacts, setSponseeContacts] = React.useState([]);
+
+  // Load sponsor and sponsee contacts for name lookup
+  React.useEffect(() => {
+    const loadContacts = async () => {
+      try {
+        const databaseService = DatabaseService.getInstance();
+        const sponsors = await databaseService.getAllSponsors(); // Get actual sponsors, not contacts
+        setSponsorContacts(sponsors);
+        
+        // Handle sponsee contacts if method exists
+        try {
+          if (typeof databaseService.getAllSponseeContacts === 'function') {
+            const sponsees = await databaseService.getAllSponseeContacts();
+            setSponseeContacts(sponsees);
+          } else {
+            setSponseeContacts([]);
+          }
+        } catch (sponseeError) {
+          console.warn('Sponsee contacts not available:', sponseeError);
+          setSponseeContacts([]);
+        }
+      } catch (error) {
+        console.error('Failed to load contacts for name lookup:', error);
+      }
+    };
+    loadContacts();
+  }, []);
+  
+  React.useEffect(() => {
+    const actionItems = activities.filter(a => a.type === 'sponsor_action_item' || a.type === 'action-item');
+    // Force component re-render to ensure synchronization
+    setRenderKey(prev => prev + 1);
+  }, [activities]);
+
+  // Helper function to get sponsor name - use first sponsor since sponsorContact links are broken
+  const getSponsorName = () => {
+    if (sponsorContacts && sponsorContacts.length > 0) {
+      const sponsor = sponsorContacts[0]; // Use first sponsor from sponsors table
+      const firstName = sponsor.name || '';
+      const lastName = sponsor.lastName || '';
+      return lastName ? `${firstName} ${lastName.charAt(0)}.` : firstName || 'Sponsor';
+    }
+    return 'Sponsor';
+  };
+
+  // Helper function to get sponsee name from sponsee contact
+  const getSponseeeName = (sponseeContactId) => {
+    const sponsee = sponseeContacts.find(s => s.id === sponseeContactId);
+    if (sponsee) {
+      return `${sponsee.name || ''} ${sponsee.lastName || ''}`.trim() || 'Sponsee';
+    }
+    return 'Sponsee';
+  };
 
   const handleDeleteActivity = async (activityId) => {
     if (window.confirm('Are you sure you want to delete this activity?')) {
       await deleteActivity(activityId);
+    }
+  };
+
+  const handleToggleActionItemComplete = async (actionItemId) => {
+    try {
+      console.log('[ActivityList] Toggling completion for action item ID:', actionItemId);
+      
+      // Find the activity that references this action item
+      const activity = activities.find(a => 
+        a.actionItemId === actionItemId || 
+        (a.type === 'sponsor_action_item' && a.actionItemId === actionItemId) ||
+        (a.type === 'sponsee_action_item' && a.actionItemId === actionItemId)
+      );
+      
+      if (activity) {
+        // Get current completion status - check multiple possible locations
+        let currentCompleted = 0;
+        if (activity.actionItemData && typeof activity.actionItemData.completed !== 'undefined') {
+          currentCompleted = activity.actionItemData.completed;
+        } else if (typeof activity.completed !== 'undefined') {
+          currentCompleted = activity.completed;
+        }
+        
+        const newCompleted = currentCompleted ? 0 : 1;
+        
+        console.log('[ActivityList] Current completed status:', currentCompleted, '-> New status:', newCompleted);
+        
+        await updateActionItem(actionItemId, { 
+          completed: newCompleted,
+          updatedAt: new Date().toISOString()
+        });
+        
+        console.log('[ActivityList] Action item updated successfully');
+        
+        // Force a re-render to reflect the changes
+        setRenderKey(prev => prev + 1);
+      } else {
+        console.error('[ActivityList] Action item not found in activities:', actionItemId);
+        console.log('[ActivityList] Available activities:', activities.map(a => ({ 
+          id: a.id, 
+          type: a.type, 
+          actionItemId: a.actionItemId 
+        })));
+      }
+    } catch (error) {
+      console.error('[ActivityList] Failed to toggle action item completion:', error);
+    }
+  };
+
+  const handleDeleteActionItem = async (actionItemId) => {
+    if (window.confirm('Are you sure you want to delete this action item?')) {
+      try {
+        // Use soft delete (set deleted: 1) instead of hard delete
+        await updateActionItem(actionItemId, {
+          deleted: 1,
+          updatedAt: new Date().toISOString()
+        });
+      } catch (error) {
+        console.error('Failed to delete action item:', error);
+      }
     }
   };
   
@@ -105,8 +225,54 @@ export default function ActivityList({
       return `Contact with ${contactName}`;
     }
     
-    if (activity.type === 'action-item') {
-      return activity.title || activity.text || 'Action Item';
+    if (activity.type === 'action-item' || activity.type === 'sponsor_action_item') {
+      // Extract clean title without "Sponsor Action:" prefix
+      let baseTitle = activity.title || activity.text || 'Action Item';
+      
+      // Remove the "Sponsor Action:" prefix that's causing formatting issues
+      if (baseTitle.startsWith('Sponsor Action:')) {
+        baseTitle = baseTitle.replace('Sponsor Action:', '').trim();
+      }
+      
+      console.log('[ActivityList] Processing action item:', {
+        originalTitle: activity.title,
+        cleanedTitle: baseTitle,
+        type: activity.type,
+        sponsorName: activity.sponsorName,
+        actionItemData: activity.actionItemData
+      });
+      
+      // Check for sponsor name from enriched data first
+      if (activity.sponsorName) {
+        console.log('[ActivityList] Found enriched sponsor name:', activity.sponsorName);
+        return `${baseTitle} (from ${activity.sponsorName})`;
+      }
+      
+      // Check actionItemData for sponsor name
+      if (activity.actionItemData && activity.actionItemData.sponsorName) {
+        console.log('[ActivityList] Found sponsor name in actionItemData:', activity.actionItemData.sponsorName);
+        return `${baseTitle} (from ${activity.actionItemData.sponsorName})`;
+      }
+      
+      // Fallback: use first available sponsor if this is a sponsor action item
+      if (activity.type === 'sponsor_action_item' && sponsorContacts.length > 0) {
+        const sponsorName = getSponsorName();
+        console.log('[ActivityList] Using fallback sponsor name:', sponsorName);
+        return `${baseTitle} (from ${sponsorName})`;
+      }
+      
+      console.log('[ActivityList] No sponsor name found, returning clean title:', baseTitle);
+      return baseTitle;
+    }
+    
+    if (activity.type === 'sponsee_action_item') {
+      const baseTitle = activity.title || activity.text || 'Action Item';
+      // Show sponsee name if available through actionItemData
+      if (activity.actionItemData && activity.actionItemData.sponseeContactId) {
+        const sponseeName = getSponseeeName(activity.actionItemData.sponseeContactId);
+        return `${baseTitle} (for ${sponseeName})`;
+      }
+      return baseTitle;
     }
     
     if (activity.type === 'todo') {
@@ -174,7 +340,10 @@ export default function ActivityList({
     
     // Sort dates in descending order (most recent first)
     const sortedDateKeys = Object.keys(groups).sort((a, b) => {
-      return compareDatesForSorting(b, a); // Reverse for descending order
+      // Convert date strings to Date objects for proper comparison
+      const dateA = new Date(a);
+      const dateB = new Date(b);
+      return dateB.getTime() - dateA.getTime(); // Most recent first
     });
     
     return { groups, sortedDateKeys };
@@ -184,6 +353,16 @@ export default function ActivityList({
   const filteredActivities = Array.isArray(activities) 
     ? activities
         .filter(activity => {
+          // Include sponsor action items in the activity log (user gets credit for completing these)
+          if (activity.type === 'sponsor_action_item') {
+            return true;
+          }
+          
+          // Filter out regular action items and sponsee action items from general activity log
+          if (activity.type === 'action-item' || activity.type === 'sponsee_action_item') {
+            return false;
+          }
+          
           // Filter by type
           if (filter !== 'all' && activity.type !== filter) {
             return false;
@@ -201,8 +380,19 @@ export default function ActivityList({
           
           return true;
         })
+        // Remove duplicates based on actionItemId for action items
+        .filter((activity, index, array) => {
+          if (activity.type === 'sponsor_action_item' && activity.actionItemId) {
+            // Keep only the first occurrence of each action item
+            return array.findIndex(a => 
+              a.type === 'sponsor_action_item' && 
+              a.actionItemId === activity.actionItemId
+            ) === index;
+          }
+          return true;
+        })
         // Sort by date (most recent first)
-        .sort((a, b) => compareDatesForSorting(b.date, a.date))
+        .sort((a, b) => compareDatesForSorting(b, a))
         // Limit the number of activities if specified
         .slice(0, limit || activities.length)
     : [];
@@ -257,39 +447,77 @@ export default function ActivityList({
             
             {/* Activities for this date */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-              {groups[dateKey].map((activity, index) => (
-                <div 
-                  key={activity.id || `${activity.date}-${activity.type}-${index}`} 
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    borderBottom: `1px solid ${theme.palette.divider}`,
-                    paddingBottom: '0.5rem',
-                    marginBottom: '0.25rem',
-                    cursor: (activity.type === 'sponsor-contact' || activity.type === 'action-item') ? 'pointer' : 'default',
-                    padding: '0.25rem',
-                    borderRadius: '4px',
-                    transition: 'background-color 0.2s',
-                    backgroundColor: 'transparent'
-                  }}
-                  onMouseEnter={(e) => {
-                    if (activity.type === 'sponsor-contact' || activity.type === 'action-item') {
-                      e.currentTarget.style.backgroundColor = theme.palette.action.hover;
-                    }
-                  }}
-                  onMouseLeave={(e) => {
-                    if (activity.type === 'sponsor-contact' || activity.type === 'action-item') {
-                      e.currentTarget.style.backgroundColor = 'transparent';
-                    }
-                  }}
-                  onClick={() => {
-                    if (activity.type === 'sponsor-contact' && onActivityClick) {
-                      onActivityClick(activity, 'sponsor-contact');
-                    } else if (activity.type === 'action-item' && onActivityClick) {
-                      onActivityClick(activity, 'action-item');
-                    }
-                  }}
-                >
+              {groups[dateKey]
+                .sort((a, b) => {
+                  // Sort by createdAt timestamp if available, otherwise by ID (newest first)
+                  if (a.createdAt && b.createdAt) {
+                    return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+                  }
+                  if (a.id && b.id) {
+                    return b.id - a.id; // Higher ID = more recent
+                  }
+                  return 0;
+                })
+                .map((activity, index) => {
+                  // Handle action items (including sponsor and sponsee action items) with the new ActionItem component
+                  if (activity.type === 'action-item' || activity.type === 'sponsor_action_item' || activity.type === 'sponsee_action_item') {
+                    return (
+                      <ActionItem
+                        key={activity.id || `${activity.date}-${activity.type}-${index}`}
+                        actionItem={{
+                          id: activity.id,
+                          title: activity.actionItemData?.title || activity.title,
+                          notes: activity.actionItemData?.notes || activity.notes,
+                          completed: activity.actionItemData?.completed || false,
+                          deleted: activity.actionItemData?.deleted || false,
+                          date: activity.date,
+                          actionItemId: activity.actionItemId,
+                          actionItemData: activity.actionItemData,
+                          type: activity.type,
+                          sponsorName: activity.sponsorName,
+                          sponseeName: activity.sponseeName
+                        }}
+                        variant="compact"
+                        showDate={showDate}
+                        onToggleComplete={handleToggleActionItemComplete}
+                        onDelete={handleDeleteActionItem}
+                        sponsorContacts={sponsorContacts}
+                      />
+                    );
+                  }
+
+                  // Handle other activity types with existing rendering
+                  return (
+                    <div 
+                      key={activity.id || `${activity.date}-${activity.type}-${index}`} 
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        borderBottom: `1px solid ${theme.palette.divider}`,
+                        paddingBottom: '0.5rem',
+                        marginBottom: '0.25rem',
+                        cursor: activity.type === 'sponsor-contact' ? 'pointer' : 'default',
+                        padding: '0.25rem',
+                        borderRadius: '4px',
+                        transition: 'background-color 0.2s',
+                        backgroundColor: 'transparent'
+                      }}
+                      onMouseEnter={(e) => {
+                        if (activity.type === 'sponsor-contact') {
+                          e.currentTarget.style.backgroundColor = theme.palette.action.hover;
+                        }
+                      }}
+                      onMouseLeave={(e) => {
+                        if (activity.type === 'sponsor-contact') {
+                          e.currentTarget.style.backgroundColor = 'transparent';
+                        }
+                      }}
+                      onClick={() => {
+                        if (activity.type === 'sponsor-contact' && onActivityClick) {
+                          onActivityClick(activity, 'sponsor-contact');
+                        }
+                      }}
+                    >
                   <div 
                     className={`${activity.type}-icon`}
                     style={{
@@ -306,7 +534,7 @@ export default function ActivityList({
                     }}
                   >
                     <i className={`fas ${getActivityIcon(activity.type)}`} style={{
-                      fontSize: '0.8rem',
+                      fontSize: '0.85rem',
                       color: (() => {
                         const colors = getActivityColor(activity.type);
                         return darkMode ? colors.iconDark : colors.icon;
@@ -343,7 +571,7 @@ export default function ActivityList({
                       {showDate && (
                         <div style={{
                           color: theme.palette.text.secondary,
-                          fontSize: '0.75rem',
+                          fontSize: '0.8rem',
                           flexShrink: 0,
                           marginLeft: '0.5rem',
                           lineHeight: '1.2'
@@ -356,7 +584,7 @@ export default function ActivityList({
                     {formatActivitySubtitle(activity) && (
                       <div style={{
                         color: theme.palette.text.secondary,
-                        fontSize: '0.75rem',
+                        fontSize: '0.8rem',
                         lineHeight: '1.3',
                         marginTop: '0.125rem',
                         wordWrap: 'break-word',
@@ -366,65 +594,38 @@ export default function ActivityList({
                         {formatActivitySubtitle(activity)}
                       </div>
                     )}
-                    
-                    {activity.type === 'action-item' && activity.completed && (
-                      <div style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '0.25rem',
-                        marginTop: '0.25rem'
-                      }}>
-                        <i className="fas fa-check-circle" style={{
-                          color: theme.palette.success.main,
-                          fontSize: '0.75rem'
-                        }}></i>
-                        <span style={{
-                          color: theme.palette.success.main,
-                          fontSize: '0.75rem',
-                          fontWeight: 500
-                        }}>
-                          Completed
-                        </span>
-                      </div>
-                    )}
                   </div>
                   
                   <div style={{ 
                     display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'flex-end',
-                    gap: '0.25rem',
+                    alignItems: 'center',
                     marginLeft: '0.5rem'
                   }}>
-                    {/* Delete button for action items */}
-                    {activity.type === 'action-item' && (
-                      <div style={{ display: 'flex', gap: '0.25rem' }}>
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleDeleteActivity(activity.id);
-                          }}
-                          style={{
-                            background: 'none',
-                            border: 'none',
-                            cursor: 'pointer',
-                            color: theme.palette.error.main,
-                            padding: '0.25rem',
-                            borderRadius: '4px',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            fontSize: '0.8rem'
-                          }}
-                          title="Delete action item"
-                        >
-                          <i className="fas fa-trash"></i>
-                        </button>
-                      </div>
-                    )}
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDeleteActivity(activity.id);
+                      }}
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        cursor: 'pointer',
+                        color: theme.palette.error.main,
+                        padding: '0.25rem',
+                        borderRadius: '4px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: '0.85rem'
+                      }}
+                      title="Delete activity"
+                    >
+                      <i className="fas fa-times"></i>
+                    </button>
                   </div>
                 </div>
-              ))}
+                  );
+                })}
             </div>
           </div>
         ))}

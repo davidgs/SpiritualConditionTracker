@@ -73,7 +73,7 @@ export default function PersonFormDialog({
       ...prev,
       [field]: value
     }));
-    
+
     // Clear error when user starts typing
     if (errors[field]) {
       setErrors(prev => {
@@ -89,7 +89,7 @@ export default function PersonFormDialog({
       ...prev,
       phoneNumber: value
     }));
-    
+
     if (errors.phoneNumber) {
       setErrors(prev => {
         const newErrors = { ...prev };
@@ -104,7 +104,7 @@ export default function PersonFormDialog({
       ...prev,
       sobrietyDate: date
     }));
-    
+
     if (errors.sobrietyDate) {
       setErrors(prev => {
         const newErrors = { ...prev };
@@ -135,13 +135,13 @@ export default function PersonFormDialog({
     }
 
     setIsLoading(true);
-    
+
     try {
       const submitData = {
         ...formData,
         sobrietyDate: formData.sobrietyDate ? formData.sobrietyDate.toISOString() : null
       };
-      
+
       await onSave(submitData);
       onClose();
     } catch (error) {
@@ -167,8 +167,8 @@ export default function PersonFormDialog({
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <Dialog 
-        open={open} 
+      <Dialog
+        open={open}
         onClose={handleCancel}
         maxWidth="sm"
         fullWidth
@@ -186,7 +186,7 @@ export default function PersonFormDialog({
           }
         }}
       >
-        <DialogTitle sx={{ 
+        <DialogTitle sx={{
           backgroundColor: theme.palette.background.default,
           color: theme.palette.text.primary,
           borderBottom: `1px solid ${theme.palette.divider}`,
@@ -200,7 +200,7 @@ export default function PersonFormDialog({
           </Typography>
           <IconButton
             onClick={handleCancel}
-            sx={{ 
+            sx={{
               color: theme.palette.text.secondary,
               '&:hover': {
                 backgroundColor: theme.palette.action.hover
@@ -212,13 +212,13 @@ export default function PersonFormDialog({
         </DialogTitle>
 
         <DialogContent sx={{ p: theme.spacing(3) }}>
-          <Box sx={{ 
-            display: 'flex', 
-            flexDirection: 'column', 
-            gap: theme.spacing(3),
-            mt: theme.spacing(1)
+          <Box sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: theme.spacing(2),
+            mt: theme.spacing(.5)
           }}>
-            
+
             {/* First Name */}
             <TextField
               fullWidth
@@ -232,12 +232,12 @@ export default function PersonFormDialog({
               variant="outlined"
               InputProps={{
                 sx: {
-                  height: '56px'
+                  height: '48px'
                 }
               }}
               sx={{
                 '& .MuiOutlinedInput-root': {
-                  borderRadius: theme.spacing(1),
+                  borderRadius: theme.spacing(.5),
                   backgroundColor: theme.palette.background.default,
                   '& fieldset': {
                     borderColor: theme.palette.divider
@@ -268,7 +268,7 @@ export default function PersonFormDialog({
               variant="outlined"
               InputProps={{
                 sx: {
-                  height: '56px'
+                  height: '48px'
                 }
               }}
               sx={{
@@ -425,10 +425,10 @@ export default function PersonFormDialog({
           </Box>
         </DialogContent>
 
-        <DialogActions sx={{ 
-          p: theme.spacing(3), 
+        <DialogActions sx={{
+          p: theme.spacing(2),
           pt: 0,
-          gap: theme.spacing(2)
+          gap: theme.spacing(1)
         }}>
           <Button
             onClick={handleCancel}
@@ -448,7 +448,7 @@ export default function PersonFormDialog({
           >
             Cancel
           </Button>
-          
+
           <Button
             onClick={handleSubmit}
             variant="contained"

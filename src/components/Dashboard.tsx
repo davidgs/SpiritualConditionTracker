@@ -8,7 +8,10 @@ import LogActivityModal from './LogActivityModal';
 import { useAppTheme } from '../contexts/MuiThemeProvider';
 import { Paper, Box, Typography, IconButton, Button } from '@mui/material';
 import { User, Activity, Meeting } from '../types/database';
-import { calculateSpiritualFitnessScore, getSpiritualFitnessBreakdown } from '../utils/SpiritualFitness'
+import { calculateSpiritualFitnessScore, getSpiritualFitnessBreakdown } from '../utils/SpiritualFitness';
+import DatabaseService from '../services/DatabaseService';
+import { createTestData } from '../utils/testDataGenerator';
+import { useAppData } from '../contexts/AppDataContext';
 
 interface DashboardProps {
   setCurrentView: (view: string) => void;
@@ -24,10 +27,113 @@ interface DashboardProps {
 }
 
 export default function Dashboard({ setCurrentView, user, activities, meetings = [], onSave, onSaveMeeting, onTimeframeChange, currentTimeframe, onUpdateActionItem, onNavigateToSponsorContact }: DashboardProps) {
+
+  // Get DatabaseService instance for contact operations
+  const databaseService = DatabaseService.getInstance();
+
+  // Get data loading functions from context
+  const { loadActivities, loadActionItems } = useAppData();
+
+  // Handler for saving sponsor contacts from LogActivityModal
+  const handleSaveSponsorContact = async (contactData: any, actionItems: any[] = []) => {
+    try {
+      // Save the sponsor contact
+      const savedContact = await databaseService.add('sponsor_contacts', {
+        ...contactData,
+        userId: user?.id,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      });
+
+      // Save action items if any
+      if (actionItems && actionItems.length > 0 && savedContact && (savedContact as any).id) {
+        for (const actionItem of actionItems) {
+          await databaseService.add('action_items', {
+            title: actionItem.title,
+            text: actionItem.text || actionItem.title,
+            notes: actionItem.notes || '',
+            contactId: (savedContact as any).id,
+            dueDate: actionItem.dueDate || contactData.date,
+            completed: 0,
+            type: 'sponsor_action_item', // Mark as sponsor action item for categorization
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString()
+          });
+        }
+      }
+
+      console.log('Sponsor contact saved successfully:', savedContact);
+    } catch (error) {
+      console.error('Failed to save sponsor contact:', error);
+      alert('Failed to save sponsor contact');
+    }
+  };
+
+  // Handler for saving sponsee contacts from LogActivityModal
+  const handleSaveSponseeContact = async (contactData: any, actionItems: any[] = []) => {
+    try {
+      // Save the sponsee contact to the correct table
+      const savedContact = await databaseService.add('sponsee_contacts', {
+        ...contactData,
+        userId: user?.id,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      });
+
+      // Save action items if any
+      if (actionItems && actionItems.length > 0 && savedContact && (savedContact as any).id) {
+        for (const actionItem of actionItems) {
+          await databaseService.add('action_items', {
+            title: actionItem.title,
+            text: actionItem.text || actionItem.title,
+            notes: actionItem.notes || '',
+            contactId: (savedContact as any).id,
+            dueDate: actionItem.dueDate || contactData.date,
+            completed: 0,
+            type: 'sponsee_action_item', // Mark as sponsee action item for categorization
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString()
+          });
+        }
+      }
+
+      console.log('Sponsee contact saved successfully:', savedContact);
+    } catch (error) {
+      console.error('Failed to save sponsee contact:', error);
+      alert('Failed to save sponsee contact');
+    }
+  };
+
+  // Test data generation handler
+  const handleCreateTestData = async () => {
+    if (!user?.id) {
+      console.error('No user ID available for test data creation');
+      return;
+    }
+
+    try {
+      console.log('[ Dashboard ] Starting test data creation...');
+      const results = await createTestData(user.id);
+      console.log('[ Dashboard ] Test data creation completed:', results);
+
+      // Reload activities and action items to show new data
+      console.log('[ Dashboard ] Reloading activities and action items after test data creation...');
+      await loadActivities();
+      await loadActionItems();
+
+      // Show results to user
+      alert(`Test data created successfully!\n\nSponsors: ${results.sponsorsCreated}\nSponsees: ${results.sponseesCreated}\nSponsor Contacts: ${results.sponsorContactsCreated}\nSponsee Contacts: ${results.sponseeContactsCreated}\nAction Items: ${results.actionItemsCreated}\n\nCheck the Activity Log and Sponsor/Sponsee tabs to see the new data.`);
+
+    } catch (error) {
+      console.error('[ Dashboard ] Failed to create test data:', error);
+      alert('Failed to create test data. Check console for details.');
+    }
+  };
+
   // Get theme from MUI theme provider
   const { mode } = useAppTheme();
   const darkMode = mode === 'dark';
-  
+
   // State for controlling modal visibility and score timeframe
   const [showScoreModal, setShowScoreModal] = useState<boolean>(false);
   const [showActivityModal, setShowActivityModal] = useState<boolean>(false);
@@ -35,66 +141,66 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
   const [activityTypeFilter, setActivityTypeFilter] = useState<string>('all');
   // Use timeframe from props instead of local state
   const scoreTimeframe = currentTimeframe;
-  const [spiritualFitness, setSpiritualFitness] = useState<number>(5);
+  // const [spiritualFitness, setSpiritualFitness] = useState<number>(5);
   const [currentScore, setCurrentScore] = useState<number>(0);
-  
+
   const modalRef = useRef(null);
   const buttonRef = useRef(null);
-  
+
   // Log spiritualFitness prop for debugging
-  console.log('[ Dashboard.js ] Dashboard initial spiritualFitness:', spiritualFitness);
-  
+//  console.log('[ Dashboard.js ] Dashboard initial spiritualFitness:', spiritualFitness);
+
   // Log current score state
-  console.log('[ Dashboard.js ] Dashboard currentScore state:', currentScore);
+//  console.log('[ Dashboard.js ] Dashboard currentScore state:', currentScore);
 
   // log current time frame
-  console.log('[ Dashboard.js ] Dashboard currentTimeframe:', currentTimeframe);
-  console.log('[ Dashboard.js ] Dashboard scoreTimeframe:', scoreTimeframe);
-  
+//  console.log('[ Dashboard.js ] Dashboard currentTimeframe:', currentTimeframe);
+//  console.log('[ Dashboard.js ] Dashboard scoreTimeframe:', scoreTimeframe);
+
   // Format score to 2 decimal places for display
   const formattedScore: string = currentScore > 0 ? currentScore.toFixed(2) : '0.00';
-  
-  console.log('[ Dashboard.js ] Dashboard formattedScore for display:', formattedScore);
-  
+
+//  console.log('[ Dashboard.js ] Dashboard formattedScore for display:', formattedScore);
+
   // Use MUI theme for colors
   const muiTheme = useTheme();
-  
+
   // Determine color based on score using theme palette
   const getScoreColor = (score: number): string => {
     if (score < 30) return muiTheme.palette.error.main; // Red
     if (score < 75) return muiTheme.palette.warning.main; // Yellow/Amber
     return muiTheme.palette.success.main; // Green
   };
-  
+
   // Calculate progress percentage, capped at 100%
    const progressPercent = Math.min(currentScore, 100);
-  console.log('[ Dashboard.js ] Dashboard progressPercent:', progressPercent);
-  
+//  console.log('[ Dashboard.js ] Dashboard progressPercent:', progressPercent);
+
   // Effect to calculate spiritual fitness when activities change
   useEffect(() => {
-    console.log('[ Dashboard.js ] Dashboard useEffect [activities] triggered - calculating spiritual fitness');
+//    console.log('[ Dashboard.js ] Dashboard useEffect [activities] triggered - calculating spiritual fitness');
     const scoreBreak = getSpiritualFitnessBreakdown(activities, scoreTimeframe);
-    console.log('[ Dashboard.js ] Dashboard scoreBreak:', scoreBreak);
+//    console.log('[ Dashboard.js ] Dashboard scoreBreak:', scoreBreak);
     const newScore: number = calculateSpiritualFitnessScore(activities, scoreTimeframe);
-    console.log('[ Dashboard.js: 71 ] Dashboard newScore:', newScore);
+ //   console.log('[ Dashboard.js: 71 ] Dashboard newScore:', newScore);
     setCurrentScore(newScore);
   }, [activities, scoreTimeframe]);
-  
+
   // Close modal when clicking outside
   useEffect(() => {
     function handleClickOutside(event) {
-      if (modalRef.current && !modalRef.current.contains(event.target) && 
+      if (modalRef.current && !modalRef.current.contains(event.target) &&
           buttonRef.current && !buttonRef.current.contains(event.target)) {
         setShowScoreModal(false);
       }
     }
-    
+
     document.addEventListener('mousedown', handleClickOutside);
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [modalRef, buttonRef]);
-  
+
   // Function to cycle through timeframe options
   const cycleTimeframe = () => {
     let newTimeframe;
@@ -106,17 +212,10 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
       case 180: newTimeframe = 365; break;
       default: newTimeframe = 7;
     }
-    
-    // Save preference to database
-    if (window.db?.setPreference) {
-      window.db.setPreference('scoreTimeframe', newTimeframe);
-    }
-    
-    // Call the parent's timeframe change handler
+
+    // Call the parent's timeframe change handler - the parent handles persistence properly
     onTimeframeChange(newTimeframe);
   };
-  // Use the shared date formatting function from utils
-  const formatDate = formatDateForDisplay;
 
   // Format number with thousands separator
   const formatNumber = (number) => {
@@ -127,34 +226,34 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
   // Fixed to handle timezone issues properly
   const sobrietyDays = useMemo(() => {
     if (!user?.sobrietyDate) return 0;
-    
+
     // Get the date string in YYYY-MM-DD format
     const dateStr = user.sobrietyDate.includes('T') ? user.sobrietyDate.split('T')[0] : user.sobrietyDate;
-    
+
     // Parse date components to avoid timezone issues
     const [year, month, day] = dateStr.split('-').map(Number);
     const sobrietyDate = new Date(year, month - 1, day); // month is 0-indexed
-    
+
     const today = new Date();
     const todayDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-    
+
     const diffTime = todayDate.getTime() - sobrietyDate.getTime();
     return Math.floor(diffTime / (1000 * 60 * 60 * 24));
   }, [user?.sobrietyDate]);
-  
+
   const sobrietyYears = useMemo(() => {
     if (!user?.sobrietyDate) return 0;
-    
+
     // Get the date string in YYYY-MM-DD format
     const dateStr = user.sobrietyDate.includes('T') ? user.sobrietyDate.split('T')[0] : user.sobrietyDate;
-    
+
     // Parse date components to avoid timezone issues
     const [year, month, day] = dateStr.split('-').map(Number);
     const sobrietyDate = new Date(year, month - 1, day); // month is 0-indexed
-    
+
     const today = new Date();
     const todayDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-    
+
     const diffTime = todayDate.getTime() - sobrietyDate.getTime();
     const years = diffTime / (1000 * 60 * 60 * 24 * 365.25);
     return Math.round(years * 100) / 100; // Round to 2 decimal places
@@ -166,7 +265,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
   // Handle activity clicks for sponsor contacts and action items
   const handleActivityClick = (activity: Activity, action: string) => {
     console.log('Activity clicked:', activity, 'Action:', action);
-    
+
     if (activity.type === 'sponsor-contact') {
       // Navigate to sponsor contact details page
       if (onNavigateToSponsorContact && (activity as any).contactId) {
@@ -182,14 +281,14 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
   };
 
   return (
-    <Box sx={{ px: 3, pb: 3, pt: 0, maxWidth: 'md', mx: 'auto' }}>
+    <Box sx={{ px: 1, pb: 3, pt: 0, maxWidth: 'md', mx: 'auto' }}>
       {/* Sobriety Section - Full Width */}
-      <Paper 
+      <Paper
           elevation={1}
           sx={{
             bgcolor: 'background.paper',
             borderRadius: 2,
-            p: 2,
+            p: 1,
             textAlign: 'center',
             border: 1,
             borderColor: 'divider',
@@ -202,7 +301,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
           <Typography
             variant="h6"
             sx={{
-              fontSize: '1.1rem',
+              fontSize: '1.25rem',
               fontWeight: 600,
               color: 'text.primary',
               mb: 0.5,
@@ -211,30 +310,30 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
           >
             Sobriety
           </Typography>
-          
+
           {/* Add sobriety date display */}
           {user?.sobrietyDate && (
             <Typography
-              variant="body2" 
-              sx={{ 
-                fontSize: '0.85rem', 
+              variant="body2"
+              sx={{
+                fontSize: '1rem',
                 color: 'text.secondary',
                 mb: 0.5,
                 textAlign: 'center'
               }}
             >
-              Since {formatDate(user.sobrietyDate)}
+              Since {formatDateForDisplay(user.sobrietyDate)}
             </Typography>
           )}
-          
+
           {showYearsProminent ? (
             <Box sx={{ textAlign: 'center' }}>
               <Box sx={{ display: 'flex', alignItems: 'baseline', mb: 0.5, justifyContent: 'center' }}>
-                <Typography 
+                <Typography
                   variant="h4"
-                  sx={{ 
-                    fontSize: '1.6rem', 
-                    fontWeight: 'bold', 
+                  sx={{
+                    fontSize: '1.9rem',
+                    fontWeight: 'bold',
                     color: 'primary.main',
                     mr: 0.5,
                     lineHeight: 1.1
@@ -242,10 +341,10 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
                 >
                   {sobrietyYears.toFixed(2)}
                 </Typography>
-                <Typography 
-                  variant="body1" 
-                  sx={{ 
-                    fontSize: '1rem', 
+                <Typography
+                  variant="body1"
+                  sx={{
+                    fontSize: '1.5rem',
                     color: 'text.secondary',
                     lineHeight: 1.1
                   }}
@@ -253,10 +352,10 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
                   years
                 </Typography>
               </Box>
-              <Typography 
-                variant="body1" 
-                sx={{ 
-                  fontSize: '1rem', 
+              <Typography
+                variant="body1"
+                sx={{
+                  fontSize: '1.5rem',
                   color: 'primary.main',
                   lineHeight: 1.1,
                   textAlign: 'center',
@@ -269,12 +368,12 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
           ) : (
             <Box sx={{ textAlign: 'center' }}>
               <Box sx={{ display: 'flex', alignItems: 'baseline', mb: 0.5, justifyContent: 'center' }}>
-                <Typography 
+                <Typography
                   data-tour="sobriety-days"
                   variant="h4"
-                  sx={{ 
-                    fontSize: '1.6rem', 
-                    fontWeight: 'bold', 
+                  sx={{
+                    fontSize: '1.8rem',
+                    fontWeight: 'bold',
                     color: 'primary.main',
                     mr: 0.5,
                     lineHeight: 1.1
@@ -282,10 +381,10 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
                 >
                   {formatNumber(sobrietyDays)}
                 </Typography>
-                <Typography 
-                  variant="body1" 
-                  sx={{ 
-                    fontSize: '1rem', 
+                <Typography
+                  variant="body1"
+                  sx={{
+                    fontSize: '1.25rem',
                     color: 'text.secondary',
                     lineHeight: 1.1
                   }}
@@ -293,10 +392,10 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
                   days
                 </Typography>
               </Box>
-              <Typography 
-                variant="body1" 
-                sx={{ 
-                  fontSize: '1rem', 
+              <Typography
+                variant="body1"
+                sx={{
+                  fontSize: '1.25rem',
                   color: 'primary.main',
                   lineHeight: 1.1,
                   textAlign: 'center',
@@ -308,10 +407,10 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
             </Box>
           )}
       </Paper>
-        <Paper 
+        <Paper
           elevation={1}
           sx={{
-            p: 2,
+            p: 1,
             textAlign: 'center',
             borderRadius: 2,
             bgcolor: 'background.paper',
@@ -327,7 +426,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
             <Typography
               variant="h6"
               sx={{
-                fontSize: '1.1rem',
+                fontSize: '1.25rem',
                 fontWeight: 600,
                 m: 0,
                 display: 'flex',
@@ -342,7 +441,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
                   background: 'none',
                   border: 'none',
                   cursor: 'pointer',
-                  fontSize: '0.75em',
+                  fontSize: '1rem',
                   p: '0 0 0 4px',
                   position: 'relative',
                   top: '-5px',
@@ -354,12 +453,12 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
               </Box>
             </Typography>
           </Box>
-          
+
           {/* Score display with dynamic color */}
           <Typography
             variant="h4"
-            sx={{ 
-              fontSize: '1.6rem', 
+            sx={{
+              fontSize: '1.8rem',
               fontWeight: 'bold',
               mb: 0.5,
               color: getScoreColor(currentScore),
@@ -368,9 +467,9 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
           >
             {formattedScore}
           </Typography>
-          
+
           {/* Gradient progress bar with mask - thicker version with no markers */}
-          <Box sx={{ 
+          <Box sx={{
             position: 'relative',
             height: '32px',
             width: '100%',
@@ -387,8 +486,8 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
             border: 1,
             borderColor: 'divider',
             overflow: 'hidden',
-            boxShadow: (theme) => theme.palette.mode === 'dark' 
-              ? 'inset 0 1px 2px rgba(0,0,0,0.2)' 
+            boxShadow: (theme) => theme.palette.mode === 'dark'
+              ? 'inset 0 1px 2px rgba(0,0,0,0.2)'
               : 'inset 0 1px 2px rgba(0,0,0,0.1)'
           }}
             data-tour="spiritual-fitness-display"
@@ -403,17 +502,17 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
               width: `${100 - progressPercent}%`
             }}></Box>
           </Box>
-          
-          <Box sx={{ 
+
+          <Box sx={{
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             gap: 0.5,
-            fontSize: '1rem',
+            fontSize: '1.25rem',
             color: 'text.secondary'
           }}>
             <Typography variant="body2" sx={{ fontSize: 'inherit' }}>{scoreTimeframe}-day score</Typography>
-            <IconButton 
+            <IconButton
               onClick={cycleTimeframe}
               size="small"
               sx={{
@@ -430,12 +529,12 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
             </IconButton>
           </Box>
           {/* "How is this calculated" button removed - now using the icon in the header */}
-          
+
           {/* Render modal at the end of the Dashboard component body to avoid positioning issues */}
         </Paper>
-      
+
       {/* Recent Activities Section */}
-      <Paper 
+      <Paper
         elevation={1}
         sx={{
           bgcolor: 'background.paper',
@@ -454,10 +553,10 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
           alignItems: 'center',
           mb: 0.5
         }}>
-          <Typography 
-            variant="h6" 
+          <Typography
+            variant="h6"
             sx={{
-              fontSize: '1.1rem',
+              fontSize: '1.25rem',
               fontWeight: 600,
               color: 'text.primary',
               paddingRight: '0.15rem'
@@ -465,35 +564,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
           >Activities</Typography>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
             {/* Activity type filter */}
-            <Box 
-              component="select" 
-              sx={{
-                bgcolor: 'transparent',
-                border: 1,
-                borderColor: 'divider',
-                borderRadius: 0.25,
-                color: 'text.primary',
-                padding: '0.15rem 0.5rem',
-                fontSize: '0.7rem',
-                cursor: 'pointer'
-              }}
-              defaultValue="all"
-              onChange={(e) => {
-                const filter = e.target.value;
-                setActivityTypeFilter(filter);
-              }}
-            >
-              <option value="all">All types</option>
-              <option value="prayer">Prayer</option>
-              <option value="meditation">Meditation</option>
-              <option value="literature">Reading</option>
-              <option value="meeting">Meetings</option>
-              <option value="call">Calls</option>
-              <option value="service">Service</option>
-            </Box>
-            
-            {/* Activity timeframe selector */}
-            <Box 
+            <Box
               component="select"
               sx={{
                 bgcolor: 'transparent',
@@ -502,7 +573,35 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
                 borderRadius: 0.25,
                 color: 'text.primary',
                 padding: '0.15rem 0.5rem',
-                fontSize: '0.7rem',
+                fontSize: '0.85rem',
+                cursor: 'pointer'
+              }}
+              defaultValue="all"
+              onChange={(e) => {
+                const filter = e.target.value;
+                setActivityTypeFilter(filter);
+              }}
+            >
+              <option value="all">All</option>
+              <option value="prayer">Prayer</option>
+              <option value="meditation">Meditation</option>
+              <option value="literature">Reading</option>
+              <option value="meeting">Meetings</option>
+              <option value="call">Calls</option>
+              <option value="service">Service</option>
+            </Box>
+
+            {/* Activity timeframe selector */}
+            <Box
+              component="select"
+              sx={{
+                bgcolor: 'transparent',
+                border: 1,
+                borderColor: 'divider',
+                borderRadius: 0.25,
+                color: 'text.primary',
+                padding: '0.15rem 0.5rem',
+                fontSize: '0.85rem',
                 cursor: 'pointer'
               }}
               defaultValue="7"
@@ -518,35 +617,36 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
               <option value="90">90 days</option>
               <option value="0">All time</option>
             </Box>
-            
+
             {/* Log new activity button */}
             {/* Button to open activity modal */}
-            <IconButton
+            <Button
               onClick={() => setShowActivityModal(true)}
               data-tour="log-activity-btn"
-              title="Log new activity"
-              aria-label="Log new activity"
-              size="medium"
-              sx={{ 
-                fontSize: '1.5rem', 
-                p: 0.5,
-                color: 'primary.main',
-                '&:hover': {
-                  color: 'primary.dark'
-                }
+              variant="contained"
+              color="primary"
+              startIcon={<i className="fa-solid fa-plus" />}
+              size="small"
+              sx={{
+                fontSize: '.9rem',
+                textTransform: 'none',
+                borderRadius: '20px',
+                px: 1,
+                py: 0.25,
+                minWidth: 'auto'
               }}
             >
-              <i className="fa-solid fa-scroll"></i>
-            </IconButton>
-            
+              Log
+            </Button>
+
           </Box>
         </Box>
-        
+
         {/* Use the reusable ActivityList component */}
-        <ActivityList 
+        <ActivityList
           activities={activities}
           darkMode={darkMode}
-          limit={15}
+          limit={30}
           maxDaysAgo={activityDaysFilter === 0 ? null : activityDaysFilter}
           filter={activityTypeFilter}
           showDate={true}
@@ -554,21 +654,41 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
           meetings={meetings}
         />
       </Paper>
-      
+
       {/* Material UI Dialog for Spiritual Fitness */}
-      <SpiritualFitnessModal 
-        open={showScoreModal} 
+      <SpiritualFitnessModal
+        open={showScoreModal}
         onClose={() => setShowScoreModal(false)}
       />
-      
+
       {/* Activity Log Modal */}
-      <LogActivityModal 
+      <LogActivityModal
         open={showActivityModal}
         onClose={() => setShowActivityModal(false)}
         onSave={onSave}
         onSaveMeeting={onSaveMeeting}
+        onSaveSponsorContact={handleSaveSponsorContact}
+        onSaveSponseeContact={handleSaveSponseeContact}
         meetings={meetings}
       />
+
+      {/* Test Data Button - Development Only - HIDDEN */}
+     <Box sx={{ mt: 3, display: 'flex', justifyContent: 'center' }}>
+        <Button
+          onClick={handleCreateTestData}
+          variant="outlined"
+          color="secondary"
+          sx={{
+            fontSize: '0.875rem',
+            textTransform: 'none',
+            borderRadius: '8px',
+            px: 2,
+            py: 1
+          }}
+        >
+          Create Test Data
+        </Button>
+      </Box>
     </Box>
   );
 }

@@ -1,0 +1,29 @@
+⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO action_items (title, text, notes, contactId, dueDate, completed, type, sponsorId, sponsorName, createdAt, updatedAt) VALUES ('Practice daily meditation', 'Practice daily meditation for 10 minutes', 'Focus on gratitude and serenity prayer', 1750040477328, '2025-06-19T02:21:17.329Z', 0, 'sponsor_action_item', 1750040477312, 'Mary', '2025-06-16T02:21:17.329Z', '2025-06-16T02:21:17.329Z');
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  To Native ->  CapacitorSQLite execute 92127716
+⚡️  [log] - [ sqliteLoader.js ] Created action_items item with ID: 1750040477330
+⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO activities (userId, type, date, notes, actionItemId, sponsorId, personCalled, createdAt, updatedAt) VALUES (1, 'sponsor_action_item', '2025-06-19T02:21:17.329Z', 'Action Item: Practice daily meditation', 1750040477330, 1750040477312, 'Mary Johnson', '2025-06-16T02:21:17.330Z', '2025-06-16T02:21:17.330Z');
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  [log] - [ sqliteLoader.js ] Created activities item with ID: 1750040477331
+⚡️  To Native ->  CapacitorSQLite execute 92127717
+⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO sponsor_contacts (userId, sponsorId, type, date, note, topic, duration, createdAt, updatedAt) VALUES ('1', 1750040477312, 'meeting', '2025-06-11T19:58:04.296Z', 'Quick check-in after the meeting. Feeling good about my recovery progress.', 'Post-Meeting Check-in', 17, '2025-06-16T02:21:17.331Z', '2025-06-16T02:21:17.331Z');
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  [log] - [ sqliteLoader.js ] Created sponsor_contacts item with ID: 1750040477332
+⚡️  To Native ->  CapacitorSQLite execute 92127718
+⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO activities (userId, type, date, notes, duration, personCalled, sponsorContactId, sponsorId, createdAt, updatedAt) VALUES (1, 'sponsor-contact', '2025-06-11T19:58:04.296Z', 'Quick check-in after the meeting. Feeling good about my recovery progress.', 17, 'Mary Johnson', 1750040477332, 1750040477312, '2025-06-16T02:21:17.332Z', '2025-06-16T02:21:17.332Z');
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  [log] - [ sqliteLoader.js ] Created activities item with ID: 1750040477333
+⚡️  To Native ->  CapacitorSQLite execute 92127719
+⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO sponsee_contacts (userId, sponseeId, type, date, note, topic, duration, createdAt, updatedAt) VALUES ('1', 1750040477314, 'call', '2025-06-12T07:02:58.650Z', 'Helped Alex work through Step 7. Good progress being made.', 'Step Work Guidance', 54, '2025-06-16T02:21:17.333Z', '2025-06-16T02:21:17.333Z');
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  [log] - [ sqliteLoader.js ] Created sponsee_contacts item with ID: 1750040477334
+⚡️  To Native ->  CapacitorSQLite execute ⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO activities (userId, type, date, notes, duration, personCalled, sponseeContactId, sponseeId, createdAt, updatedAt) VALUES (1, 'sponsee-contact', '2025-06-12T07:02:58.650Z', 'Helped Alex work through Step 7. Good progress being made.', 54, 'Alex Wilson', 1750040477334, 1750040477314, '2025-06-16T02:21:17.334Z', '2025-06-16T02:21:17.334Z');
+92127720
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  [log] - [ sqliteLoader.js ] Created activities item with ID: 1750040477335
+⚡️  To Native ->  CapacitorSQLite execute 92127721
+⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO action_items (title, text, notes, contactId, dueDate, completed, type, sponseeId, sponseeName, createdAt, updatedAt) VALUES ('Complete Step 4 inventory', 'Work on personal inventory list', 'Focus on resentments and fears', 1750040477334, '2025-06-23T02:21:17.335Z', 0, 'sponsee_action_item', 1750040477314, 'Alex', '2025-06-16T02:21:17.335Z', '2025-06-16T02:21:17.335Z');
+ERROR MESSAGE:  {"message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: table action_items has no column named sponseeId","errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: table action_items has no column named sponseeId"}
+⚡️  [error] - {"message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: table action_items has no column named sponseeId","errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: table action_items has no column named sponseeId"}
+⚡️  [error] - [ testDataGenerator ] Error creating test data: {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: table action_items has no column named sponseeId"}
+⚡️  [error] - [ Dashboard ] Failed to create test data: {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: table action_items has no column named sponseeId"}

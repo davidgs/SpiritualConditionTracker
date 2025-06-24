@@ -4,7 +4,7 @@ platform :ios, '14.0'
 use_frameworks!
 
 # Specify the Xcode project
-project 'App.xcodeproj'
+project 'MySpiritualCondition.xcodeproj'
 
 # workaround to avoid Xcode caching of Pods that requires
 # Product -> Clean Build Folder after new Cordova plugins installed
@@ -17,7 +17,7 @@ def capacitor_pods
   pod 'CapacitorCommunitySqlite', :path => '../../node_modules/@capacitor-community/sqlite'
 end
 
-target 'App' do
+target 'MySpiritualCondition' do
   capacitor_pods
   # Add your Pods here
 end

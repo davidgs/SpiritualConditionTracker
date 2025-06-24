@@ -1,6 +1,6 @@
 {
   "appId": "com.spiritualconditiontracker.app",
-  "appName": "Spiritual Condition Tracker",
+  "appName": "My Spiritual Condition",
   "webDir": "./dist",
   "bundledWebRuntime": false,
   "plugins": {

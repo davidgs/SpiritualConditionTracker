@@ -1,0 +1,420 @@
+⚡️  WebView loaded
+⚡️  To Native ->  CapacitorSQLite createConnection 80576484
+⚡️  [log] - Light mode activated
+⚡️  [log] - Applying native theme: blue (#3b82f6) in light mode
+⚡️  [log] - Applied MUI theme to iOS components
+⚡️  [log] - Applied MUI theme to iOS native components: blue
+⚡️  [log] - [ AppDataContext.tsx:151 ] Initializing app...
+⚡️  [log] - [ AppDataContext.tsx ] Platform: Mozilla/5.0 (iPhone; CPU iPhone OS 18_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148
+⚡️  [log] - [ AppDataContext.tsx ] Is Capacitor: true
+⚡️  [log] - [ AppDataContext.tsx:156 ] Database status changed: initializing
+⚡️  [log] - [ AppDataContext.tsx ] About to initialize database service...
+⚡️  [log] - [ DatabaseService: 50 ] Starting database initialization...
+⚡️  [log] - [ AppDataContext.tsx:156 ] Database status changed: initializing
+⚡️  [log] - [ sqliteLoader.js:14 ] Initializing SQLite database via Capacitor...
+⚡️  [log] - [ sqliteLoader.js:20 ]  Capacitor platform detected: ios
+⚡️  [log] - [ sqliteLoader.js:21 ]  Capacitor plugins available: ["CapacitorHttp","Console","WebView","CapacitorCookies","CapacitorSQLite"]
+⚡️  [log] - [ sqliteLoader.js:39 ]  Found CapacitorSQLite plugin: true
+database path /Users/davidgs/Library/Developer/CoreSimulator/Devices/E7B518C7-65A2-4386-A19F-01F0D573877F/data/Containers/Data/Application/22C1B042-5899-42DF-AA81-E583C78633C1/Library/CapacitorDatabase/spiritual_condition_trackerSQLite.db
+⚡️  TO JS undefined
+⚡️  To Native ->  CapacitorSQLite open 80576485
+⚡️  [log] - [ sqliteLoader.js:50 ]  Database connection created
+⚡️  TO JS undefined
+⚡️  [log] - [ sqliteLoader.js:56 ]  Database opened successfully
+⚡️  To Native ->  CapacitorSQLite execute 80576486
+⚡️  [log] - [ sqliteLoader.js ] Creating database tables...
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 80576487
+⚡️  [log] - [ sqliteLoader.js ] Users table created
+ERROR MESSAGE:  {"message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: isDarkMode","errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: isDarkMode"}
+⚡️  [error] - {"message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: isDarkMode","errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: isDarkMode"}
+⚡️  To Native ->  CapacitorSQLite execute 80576488
+⚡️  [log] - [ sqliteLoader.js ] isDarkMode column already exists or failed to add: Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: isDarkMode
+ERROR MESSAGE:  {"message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: sponsees","errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: sponsees"}
+⚡️  [error] - {"message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: sponsees","errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: sponsees"}
+⚡️  To Native ->  CapacitorSQLite execute 80576489
+⚡️  [log] - [ sqliteLoader.js ] sponsees column already exists or failed to add: Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: sponsees
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 80576490
+⚡️  [log] - [ sqliteLoader.js ] Activities table created
+ERROR MESSAGE:  {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: meetingName","message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: meetingName"}
+⚡️  [error] - {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: meetingName","message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: meetingName"}
+⚡️  [log] - [ sqliteLoader.js ] meetingName column already exists or failed to add: Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: meetingName
+⚡️  To Native ->  CapacitorSQLite execute 80576491
+ERROR MESSAGE:  {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: meetingId","message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: meetingId"}
+⚡️  [error] - {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: meetingId","message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: meetingId"}
+⚡️  To Native ->  CapacitorSQLite execute 80576492
+⚡️  [log] - [ sqliteLoader.js ] meetingId column already exists or failed to add: Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: meetingId
+ERROR MESSAGE:  {"message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: wasChair","errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: wasChair"}
+⚡️  To Native ->  CapacitorSQLite execute 80576493
+⚡️  [error] - {"message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: wasChair","errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: wasChair"}
+⚡️  [log] - [ sqliteLoader.js ] wasChair column already exists or failed to add: Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: wasChair
+ERROR MESSAGE:  {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: wasShare","message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: wasShare"}
+⚡️  To Native ->  CapacitorSQLite execute 80576494
+⚡️  [error] - {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: wasShare","message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: wasShare"}
+⚡️  [log] - [ sqliteLoader.js ] wasShare column already exists or failed to add: Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: wasShare
+ERROR MESSAGE:  {"message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: wasSpeaker","errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: wasSpeaker"}
+⚡️  [error] - {"message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: wasSpeaker","errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: wasSpeaker"}
+⚡️  To Native ->  CapacitorSQLite execute 80576495
+⚡️  [log] - [ sqliteLoader.js ] wasSpeaker column already exists or failed to add: Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: wasSpeaker
+ERROR MESSAGE:  {"message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: literatureTitle","errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: literatureTitle"}
+⚡️  [error] - {"message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: literatureTitle","errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: literatureTitle"}
+⚡️  [log] - [ sqliteLoader.js ] literatureTitle column already exists or failed to add: Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: literatureTitle
+⚡️  To Native ->  CapacitorSQLite execute 80576496
+ERROR MESSAGE:  {"message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: isSponsorCall","errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: isSponsorCall"}
+⚡️  To Native ->  CapacitorSQLite execute 80576497
+⚡️  [error] - {"message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: isSponsorCall","errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: isSponsorCall"}
+⚡️  [log] - [ sqliteLoader.js ] isSponsorCall column already exists or failed to add: Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: isSponsorCall
+ERROR MESSAGE:  {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: isSponseeCall","message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: isSponseeCall"}
+⚡️  [error] - {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: isSponseeCall","message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: isSponseeCall"}
+⚡️  [log] - [ sqliteLoader.js ] isSponseeCall column already exists or failed to add: Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: isSponseeCall
+⚡️  To Native ->  CapacitorSQLite execute 80576498
+ERROR MESSAGE:  {"message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: isAAMemberCall","errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: isAAMemberCall"}
+⚡️  [error] - {"message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: isAAMemberCall","errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: isAAMemberCall"}
+⚡️  To Native ->  CapacitorSQLite execute 80576499
+⚡️  [log] - [ sqliteLoader.js ] isAAMemberCall column already exists or failed to add: Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: isAAMemberCall
+ERROR MESSAGE:  {"message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: callType","errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: callType"}
+⚡️  [error] - {"message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: callType","errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: callType"}
+⚡️  [log] - [ sqliteLoader.js ] callType column already exists or failed to add: Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: callType
+⚡️  To Native ->  CapacitorSQLite execute 80576500
+ERROR MESSAGE:  {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: stepNumber","message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: stepNumber"}
+⚡️  [error] - {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: stepNumber","message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: stepNumber"}
+⚡️  To Native ->  CapacitorSQLite execute 80576501
+⚡️  [log] - [ sqliteLoader.js ] stepNumber column already exists or failed to add: Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: stepNumber
+ERROR MESSAGE:  {"message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: personCalled","errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: personCalled"}
+⚡️  [error] - {"message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: personCalled","errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: personCalled"}
+⚡️  [log] - [ sqliteLoader.js ] personCalled column already exists or failed to add: Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: personCalled
+⚡️  To Native ->  CapacitorSQLite execute 80576502
+ERROR MESSAGE:  {"message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: serviceType","errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: serviceType"}
+⚡️  [error] - {"message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: serviceType","errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: serviceType"}
+⚡️  To Native ->  CapacitorSQLite execute 80576503
+⚡️  [log] - [ sqliteLoader.js ] serviceType column already exists or failed to add: Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: serviceType
+ERROR MESSAGE:  {"message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: completed","errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: completed"}
+⚡️  [error] - {"message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: completed","errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: completed"}
+⚡️  [log] - [ sqliteLoader.js ] completed column already exists or failed to add: Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: completed
+⚡️  To Native ->  CapacitorSQLite execute 80576504
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 80576505
+⚡️  [log] - [ sqliteLoader.js ] Meetings table created
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  [log] - [ sqliteLoader.js ] Sponsors table created
+⚡️  To Native ->  CapacitorSQLite execute 80576506
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  [log] - [ sqliteLoader.js ] Sponsor contacts table created
+⚡️  To Native ->  CapacitorSQLite execute 80576507
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  ⚡️  [log] - [ sqliteLoader.js ] Action items table created
+CapacitorSQLite execute 80576508
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  [log] - [ sqliteLoader.js ] Sponsees table created
+⚡️  To Native ->  CapacitorSQLite execute 80576509
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  [log] - [ sqliteLoader.js ] Sponsee contacts table created
+⚡️  [log] - [ sqliteLoader.js ] All tables created successfully
+⚡️  [log] - [ sqliteLoader.js:59 ]  Database initialization complete
+⚡️  [log] - [ DatabaseService: 55 ] SQLite database initialized successfully
+⚡️  [log] - [ DatabaseService: 63 ] Database ready
+⚡️  [log] - [ AppDataContext.tsx:156 ] Database status changed: ready
+⚡️  [log] - [ AppDataContext.tsx ] Database ready, loading initial data...
+⚡️  [log] - [ AppDataContext.tsx:187 ] Loading initial data...
+⚡️  [log] - [ sqliteLoader.js:523 ] Getting all items from users
+⚡️  To Native ->  CapacitorSQLite query 80576510
+⚡️  To Native ->  CapacitorSQLite query 80576511
+⚡️  To Native ->  CapacitorSQLite query 80576512
+⚡️  To Native ->  CapacitorSQLite query 80576513
+⚡️  To Native ->  CapacitorSQLite query 80576514
+⚡️  To Native ->  CapacitorSQLite query 80576515
+⚡️  TO JS {"values":[{"ios_columns":["id","name","lastName","sobrietyDate","homeGroups","phoneNumber","email","privacySettings","preferences","isDarkMode","sponsees","createdAt","updatedAt"]},{"phoneNumber":"+1 919 534 5099","isDarkMode":1,"updatedAt":"2025-06-13T00
+⚡️  [log] - [ DatabaseService: 70 ] Database initialization complete
+⚡️  [log] - [ DatabaseService: 205 ] Processing 0 queued operations
+⚡️  [log] - [ AppDataContext.tsx ] Database service initialization completed
+⚡️  [log] - [ DatabaseService ] Checking if database is empty for new user detection...
+⚡️  [log] - [ sqliteLoader.js:523 ] Getting all items from users
+⚡️  TO JS {"values":[{"ios_columns":["id","name","lastName","sobrietyDate","homeGroups","phoneNumber","email","privacySettings","preferences","isDarkMode","sponsees","createdAt","updatedAt"]},{"id":1,"sobrietyDate":"1986-05-15","phoneNumber":"+1 919 534 5099","email
+⚡️  [log] - [ sqliteLoader.js:523 ] Getting all items from activities
+⚡️  TO JS {"values":[{"ios_columns":["id","type","date","notes","location","duration","meetingName","meetingId","wasChair","wasShare","wasSpeaker","literatureTitle","isSponsorCall","isSponseeCall","isAAMemberCall","callType","stepNumber","personCalled","serviceType"
+⚡️  [log] - [ sqliteLoader.js:523 ] Getting all items from meetings
+⚡️  TO JS {"values":[{"ios_columns":["id","name","days","time","schedule","address","locationName","streetAddress","city","state","zipCode","coordinates","phoneNumber","onlineUrl","isHomeGroup","types","createdAt","updatedAt"]},{"schedule":"[{\"day\":\"monday\",\"ti
+⚡️  [log] - [ sqliteLoader.js:523 ] Getting all items from sponsor_contacts
+⚡️  TO JS {"values":[{"ios_columns":["id","userId","sponsorId","date","type","note","topic","duration","createdAt","updatedAt"]},{"sponsorId":1,"type":"call","createdAt":"2025-06-13T00:17:52.681Z","date":"2025-06-13T00:17:30.771Z","updatedAt":"2025-06-13T00:17:52.68
+⚡️  [log] - [ sqliteLoader.js:523 ] Getting all items from action_items
+⚡️  To Native ->  CapacitorSQLite query 80576516
+⚡️  TO JS {"values":[{"ios_columns":["id","contactId","title","text","notes","dueDate","completed","type","createdAt","updatedAt"]},{"text":"Call back","title":"Call back","updatedAt":"2025-06-13T15:59:45.037Z","type":"todo","contactId":4,"createdAt":"2025-06-13T13:
+⚡️  [log] - [ sqliteLoader.js:535 ] Raw query result for users: {"values":[{"ios_columns":["id","name","lastName","sobrietyDate","homeGroups","phoneNumber","email","privacySettings","preferences","isDarkMode","sponsees","createdAt","updatedAt"]},{"phoneNumber":"+1 919 534 5099","isDarkMode":1,"updatedAt":"2025-06-13T00:14:07.700Z","homeGroups":"[\"Arch to Freedom\"]","lastName":"Simmons","sponsees":"[]","preferences":"{\"0\":\"{\",\"1\":\"\\\"\",\"2\":\"u\",\"3\":\"s\",\"4\":\"e\",\"5\":\"2\",\"6\":\"4\",\"7\":\"H\",\"8\":\"o\",\"9\":\"u\",\"10\":\"r\",\"11\":\"F\",\"12\":\"o\",\"13\":\"r\",\"14\":\"m\",\"15\":\"a\",\"16\":\"t\",\"17\":\"\\\"\",\"18\":\":\",\"19\":\"t\",\"20\":\"r\",\"21\":\"u\",\"22\":\"e\",\"23\":\",\",\"24\":\"\\\"\",\"25\":\"d\",\"26\":\"a\",\"27\":\"r\",\"28\":\"k\",\"29\":\"M\",\"30\":\"o\",\"31\":\"d\",\"32\":\"e\",\"33\":\"\\\"\",\"34\":\":\",\"35\":\"f\",\"36\":\"a\",\"37\":\"l\",\"38\":\"s\",\"39\":\"e\",\"40\":\",\",\"41\":\"\\\"\",\"42\":\"t\",\"43\":\"h\",\"44\":\"e\",\"45\":\"m\",\"46\":\"e\",\"47\":\"\\\"\",\"48\":\":\",\"49\":\"\\\"\",\"50\":\"d\",\"51\":\"e\",\"52\":\"f\",\"53\":\"a\",\"54\":\"u\",\"55\":\"l\",\"56\":\"t\",\"57\":\"\\\"\",\"58\":\"}\",\"use24HourFormat\":false}","name":"David","sobrietyDate":"1986-05-15","email":"davidgs@me.com","createdAt":"2025-06-08T19:36:15.518Z","id":1,"privacySettings":"{\"allowMessages\":true,\"shareLastName\":true}"},{"sobrietyDate":"","privacySettings":"{\"allowMessages\":true,\"shareLastName\":true}","isDarkMode":0,"createdAt":"2025-06-08T19:36:15.519Z","phoneNumber":"","lastName":"","sponsees":"[]","preferences":"{\"use24HourFormat\":false,\"darkMode\":false,\"theme\":\"default\"}","email":"","homeGroups":"[]","id":2,"name":"","updatedAt":"2025-06-08T19:36:15.519Z"}]}
+⚡️  [log] - [ sqliteLoader.js:548 ] Processed 2 items from users
+⚡️  [log] - Found users to fix: 2
+⚡️  [log] - Preferences fix complete
+⚡️  [log] - [ AppDataContext.tsx ] Database preferences validated/fixed
+⚡️  [log] - [ sqliteLoader.js:523 ] Getting all items from users
+⚡️  TO JS {"values":[{"ios_columns":["id","name","lastName","sobrietyDate","homeGroups","phoneNumber","email","privacySettings","preferences","isDarkMode","sponsees","createdAt","updatedAt"]},{"preferences":"{\"0\":\"{\",\"1\":\"\\\"\",\"2\":\"u\",\"3\":\"s\",\"4\":
+⚡️  [log] - [ sqliteLoader.js:535 ] Raw query result for users: {"values":[{"ios_columns":["id","name","lastName","sobrietyDate","homeGroups","phoneNumber","email","privacySettings","preferences","isDarkMode","sponsees","createdAt","updatedAt"]},{"id":1,"sobrietyDate":"1986-05-15","phoneNumber":"+1 919 534 5099","email":"davidgs@me.com","homeGroups":"[\"Arch to Freedom\"]","name":"David","privacySettings":"{\"allowMessages\":true,\"shareLastName\":true}","preferences":"{\"0\":\"{\",\"1\":\"\\\"\",\"2\":\"u\",\"3\":\"s\",\"4\":\"e\",\"5\":\"2\",\"6\":\"4\",\"7\":\"H\",\"8\":\"o\",\"9\":\"u\",\"10\":\"r\",\"11\":\"F\",\"12\":\"o\",\"13\":\"r\",\"14\":\"m\",\"15\":\"a\",\"16\":\"t\",\"17\":\"\\\"\",\"18\":\":\",\"19\":\"t\",\"20\":\"r\",\"21\":\"u\",\"22\":\"e\",\"23\":\",\",\"24\":\"\\\"\",\"25\":\"d\",\"26\":\"a\",\"27\":\"r\",\"28\":\"k\",\"29\":\"M\",\"30\":\"o\",\"31\":\"d\",\"32\":\"e\",\"33\":\"\\\"\",\"34\":\":\",\"35\":\"f\",\"36\":\"a\",\"37\":\"l\",\"38\":\"s\",\"39\":\"e\",\"40\":\",\",\"41\":\"\\\"\",\"42\":\"t\",\"43\":\"h\",\"44\":\"e\",\"45\":\"m\",\"46\":\"e\",\"47\":\"\\\"\",\"48\":\":\",\"49\":\"\\\"\",\"50\":\"d\",\"51\":\"e\",\"52\":\"f\",\"53\":\"a\",\"54\":\"u\",\"55\":\"l\",\"56\":\"t\",\"57\":\"\\\"\",\"58\":\"}\",\"use24HourFormat\":false}","sponsees":"[]","lastName":"Simmons","createdAt":"2025-06-08T19:36:15.518Z","isDarkMode":1,"updatedAt":"2025-06-13T00:14:07.700Z"},{"email":"","phoneNumber":"","sponsees":"[]","preferences":"{\"use24HourFormat\":false,\"darkMode\":false,\"theme\":\"default\"}","lastName":"","sobrietyDate":"","name":"","createdAt":"2025-06-08T19:36:15.519Z","id":2,"homeGroups":"[]","privacySettings":"{\"allowMessages\":true,\"shareLastName\":true}","isDarkMode":0,"updatedAt":"2025-06-08T19:36:15.519Z"}]}
+⚡️  [log] - [ sqliteLoader.js:548 ] Processed 2 items from users
+⚡️  [log] - [ sqliteLoader.js:535 ] Raw query result for activities: {"values":[{"ios_columns":["id","type","date","notes","location","duration","meetingName","meetingId","wasChair","wasShare","wasSpeaker","literatureTitle","isSponsorCall","isSponseeCall","isAAMemberCall","callType","stepNumber","personCalled","serviceType","completed","createdAt","updatedAt"]},{"meetingName":"","notes":"","isSponsorCall":0,"personCalled":"","duration":15,"literatureTitle":"","location":"completed","createdAt":"2025-06-09T18:57:08.973Z","isSponseeCall":0,"meetingId":null,"callType":"","updatedAt":"2025-06-09T18:57:08.973Z","isAAMemberCall":0,"wasSpeaker":0,"stepNumber":null,"type":"prayer","wasChair":0,"date":"2025-06-09T16:00:00.000Z","id":1,"serviceType":"","completed":1,"wasShare":0},{"createdAt":"2025-06-09T19:04:00.647Z","notes":"","wasShare":0,"meetingId":null,"type":"meditation","completed":1,"updatedAt":"2025-06-09T19:04:00.647Z","callType":"","duration":15,"wasChair":0,"isSponseeCall":0,"stepNumber":null,"wasSpeaker":0,"isAAMemberCall":0,"literatureTitle":"","date":"2025-06-09T16:00:00.000Z","meetingName":"","isSponsorCall":0,"personCalled":"","location":"completed","serviceType":"","id":2},{"createdAt":"2025-06-11T14:54:12.081Z","type":"prayer","isSponsorCall":0,"meetingId":null,"meetingName":"","callType":"","personCalled":"","completed":1,"date":"2025-06-11T16:00:00.000Z","wasShare":0,"updatedAt":"2025-06-11T14:54:12.081Z","literatureTitle":"","isAAMemberCall":0,"wasSpeaker":0,"id":3,"location":"completed","notes":"","duration":15,"wasChair":0,"serviceType":"","stepNumber":null,"isSponseeCall":0},{"wasSpeaker":0,"meetingId":3,"personCalled":"","serviceType":"","createdAt":"2025-06-11T22:52:57.860Z","updatedAt":"2025-06-11T22:52:57.860Z","date":"2025-06-11T16:00:00.000Z","stepNumber":null,"notes":"","isAAMemberCall":0,"id":4,"wasChair":0,"completed":1,"duration":60,"location":"completed","literatureTitle":"","wasShare":1,"type":"meeting","meetingName":"There is a Solution","isSponsorCall":0,"isSponseeCall":0,"callType":""},{"notes":"","type":"literature","callType":"","isSponseeCall":0,"completed":1,"updatedAt":"2025-06-13T00:14:35.281Z","date":"2025-06-12T16:00:00.000Z","wasSpeaker":0,"meetingName":"","location":"completed","literatureTitle":"Big Book","wasShare":0,"createdAt":"2025-06-13T00:14:35.281Z","meetingId":null,"wasChair":0,"isSponsorCall":0,"stepNumber":null,"personCalled":"","duration":30,"id":5,"serviceType":"","isAAMemberCall":0},{"date":"2025-06-12T16:00:00.000Z","personCalled":"","literatureTitle":"","meetingId":null,"isSponsorCall":0,"stepNumber":null,"serviceType":"","updatedAt":"2025-06-13T00:15:12.745Z","type":"prayer","wasChair":0,"meetingName":"","id":6,"createdAt":"2025-06-13T00:15:12.745Z","location":"completed","notes":"","isAAMemberCall":0,"duration":5,"wasSpeaker":0,"wasShare":0,"isSponseeCall":0,"callType":"","completed":1}]}
+⚡️  [log] - [ sqliteLoader.js:548 ] Processed 6 items from activities
+⚡️  [log] - [ sqliteLoader.js:535 ] Raw query result for meetings: {"values":[{"ios_columns":["id","name","days","time","schedule","address","locationName","streetAddress","city","state","zipCode","coordinates","phoneNumber","onlineUrl","isHomeGroup","types","createdAt","updatedAt"]},{"schedule":"[{\"day\":\"monday\",\"time\":\"18:00\",\"format\":\"literature\",\"locationType\":\"in_person\",\"access\":\"closed\"}]","address":"100 Hughes Street, Apex, NC, 27502","zipCode":"27502","createdAt":"2025-06-11T14:55:43.836Z","city":"Apex","updatedAt":"2025-06-11T14:56:05.286Z","name":"Arch to Freedom","id":2,"types":"[]","phoneNumber":null,"days":"[\"monday\"]","time":"18:00","locationName":"Apex United Methodist Church","coordinates":null,"onlineUrl":"","isHomeGroup":"true","state":"NC","streetAddress":"100 Hughes Street"},{"days":"[\"tuesday\",\"thursday\"]","types":"[]","address":"7000 Tryon Rd, Cary, NC, 27518","time":"19:00","phoneNumber":null,"onlineUrl":"","isHomeGroup":"true","createdAt":"2025-06-11T22:52:46.215Z","streetAddress":"7000 Tryon Rd","locationName":"Macedonia United Methodist Church","city":"Cary","state":"NC","zipCode":"27518","id":3,"name":"There is a Solution","coordinates":null,"schedule":"[{\"day\":\"tuesday\",\"time\":\"19:00\",\"format\":\"beginners\",\"locationType\":\"in_person\",\"access\":\"open\"},{\"day\":\"thursday\",\"time\":\"19:00\",\"format\":\"discussion\",\"locationType\":\"in_person\",\"access\":\"closed\"}]","updatedAt":"2025-06-12T23:41:05.842Z"}]}
+⚡️  [log] - [ sqliteLoader.js:548 ] Processed 2 items from meetings
+⚡️  [log] - [ sqliteLoader.js:535 ] Raw query result for sponsor_contacts: {"values":[{"ios_columns":["id","userId","sponsorId","date","type","note","topic","duration","createdAt","updatedAt"]},{"sponsorId":1,"type":"call","createdAt":"2025-06-13T00:17:52.681Z","date":"2025-06-13T00:17:30.771Z","updatedAt":"2025-06-13T00:17:52.681Z","duration":20,"id":1,"userId":"1","topic":"Sadness Shit","note":"I’m sad"},{"updatedAt":"2025-06-13T12:18:44.828Z","duration":20,"note":"We talked about getting started on step work","type":"call","id":2,"createdAt":"2025-06-13T12:18:44.828Z","userId":"1","date":"2025-06-13T12:17:46.017Z","sponsorId":1,"topic":"Step Work"},{"userId":"1","sponsorId":1,"duration":10,"createdAt":"2025-06-13T12:37:48.093Z","updatedAt":"2025-06-13T12:37:48.093Z","note":"No notes","type":"call","topic":"","id":3,"date":"2025-06-13T12:35:15.234Z"},{"type":"call","id":4,"topic":"","sponsorId":1,"date":"2025-06-13T12:35:15.234Z","duration":10,"userId":"1","createdAt":"2025-06-13T13:51:06.454Z","note":"No notes","updatedAt":"2025-06-13T13:51:06.454Z"},{"createdAt":"2025-06-13T16:00:50.362Z","userId":"1","updatedAt":"2025-06-13T16:00:50.362Z","type":"call","date":"2025-06-13T16:00:13.737Z","sponsorId":1,"id":5,"topic":"Future Calls","note":"Time field not working","duration":null}]}
+⚡️  [log] - [ sqliteLoader.js:548 ] Processed 5 items from sponsor_contacts
+⚡️  [log] - [ sqliteLoader.js:535 ] Raw query result for action_items: {"values":[{"ios_columns":["id","contactId","title","text","notes","dueDate","completed","type","createdAt","updatedAt"]},{"text":"Call back","title":"Call back","updatedAt":"2025-06-13T15:59:45.037Z","type":"todo","contactId":4,"createdAt":"2025-06-13T13:51:06.463Z","dueDate":"2025-06-13T12:35:15.234Z","completed":1,"notes":"","id":3},{"dueDate":"2025-06-13T16:00:13.737Z","title":"Fix Time Field","contactId":5,"text":"Fix Time Field","notes":"","type":"todo","completed":1,"createdAt":"2025-06-13T16:00:50.372Z","id":4,"updatedAt":"2025-06-13T16:01:04.929Z"}]}
+⚡️  [log] - [ sqliteLoader.js:548 ] Processed 2 items from action_items
+⚡️  [log] - [ DatabaseService ] User data check: {"name":"David","lastName":"Simmons","sobrietyDate":"1986-05-15","phoneNumber":"+1 919 534 5099","email":"davidgs@me.com","homeGroups":["Arch to Freedom"],"hasUserData":true}
+⚡️  [log] - [ DatabaseService ] Record counts: {"users":2,"hasUserData":true,"activities":6,"meetings":2,"sponsorContacts":5,"actionItems":2,"totalDataRecords":16}
+⚡️  [log] - [ App ] Database empty check result: false
+⚡️  [log] - [ sqliteLoader.js:535 ] Raw query result for users: {"values":[{"ios_columns":["id","name","lastName","sobrietyDate","homeGroups","phoneNumber","email","privacySettings","preferences","isDarkMode","sponsees","createdAt","updatedAt"]},{"preferences":"{\"0\":\"{\",\"1\":\"\\\"\",\"2\":\"u\",\"3\":\"s\",\"4\":\"e\",\"5\":\"2\",\"6\":\"4\",\"7\":\"H\",\"8\":\"o\",\"9\":\"u\",\"10\":\"r\",\"11\":\"F\",\"12\":\"o\",\"13\":\"r\",\"14\":\"m\",\"15\":\"a\",\"16\":\"t\",\"17\":\"\\\"\",\"18\":\":\",\"19\":\"t\",\"20\":\"r\",\"21\":\"u\",\"22\":\"e\",\"23\":\",\",\"24\":\"\\\"\",\"25\":\"d\",\"26\":\"a\",\"27\":\"r\",\"28\":\"k\",\"29\":\"M\",\"30\":\"o\",\"31\":\"d\",\"32\":\"e\",\"33\":\"\\\"\",\"34\":\":\",\"35\":\"f\",\"36\":\"a\",\"37\":\"l\",\"38\":\"s\",\"39\":\"e\",\"40\":\",\",\"41\":\"\\\"\",\"42\":\"t\",\"43\":\"h\",\"44\":\"e\",\"45\":\"m\",\"46\":\"e\",\"47\":\"\\\"\",\"48\":\":\",\"49\":\"\\\"\",\"50\":\"d\",\"51\":\"e\",\"52\":\"f\",\"53\":\"a\",\"54\":\"u\",\"55\":\"l\",\"56\":\"t\",\"57\":\"\\\"\",\"58\":\"}\",\"use24HourFormat\":false}","sponsees":"[]","phoneNumber":"+1 919 534 5099","updatedAt":"2025-06-13T00:14:07.700Z","email":"davidgs@me.com","isDarkMode":1,"lastName":"Simmons","privacySettings":"{\"allowMessages\":true,\"shareLastName\":true}","createdAt":"2025-06-08T19:36:15.518Z","sobrietyDate":"1986-05-15","homeGroups":"[\"Arch to Freedom\"]","id":1,"name":"David"},{"isDarkMode":0,"preferences":"{\"use24HourFormat\":false,\"darkMode\":false,\"theme\":\"default\"}","sobrietyDate":"","createdAt":"2025-06-08T19:36:15.519Z","name":"","id":2,"privacySettings":"{\"allowMessages\":true,\"shareLastName\":true}","lastName":"","homeGroups":"[]","updatedAt":"2025-06-08T19:36:15.519Z","sponsees":"[]","email":"","phoneNumber":""}]}
+⚡️  To Native ->  CapacitorSQLite query 80576517
+⚡️  [log] - [ sqliteLoader.js:548 ] Processed 2 items from users
+⚡️  [log] - [ AppDataContext.tsx:206 ] Loaded users: 2
+⚡️  [log] - [ AppDataContext.tsx:225 ] User data loaded: 1
+⚡️  [log] - [ sqliteLoader.js:523 ] Getting all items from activities
+⚡️  TO JS {"values":[{"ios_columns":["id","type","date","notes","location","duration","meetingName","meetingId","wasChair","wasShare","wasSpeaker","literatureTitle","isSponsorCall","isSponseeCall","isAAMemberCall","callType","stepNumber","personCalled","serviceType"
+⚡️  [log] - Dark mode activated
+⚡️  [log] - Applying native theme: blue (#3b82f6) in dark mode
+⚡️  [log] - Applied MUI theme to iOS components
+⚡️  [log] - Applied MUI theme to iOS native components: blue
+⚡️  [log] - [ sqliteLoader.js:535 ] Raw query result for activities: {"values":[{"ios_columns":["id","type","date","notes","location","duration","meetingName","meetingId","wasChair","wasShare","wasSpeaker","literatureTitle","isSponsorCall","isSponseeCall","isAAMemberCall","callType","stepNumber","personCalled","serviceType","completed","createdAt","updatedAt"]},{"isAAMemberCall":0,"duration":15,"completed":1,"updatedAt":"2025-06-09T18:57:08.973Z","literatureTitle":"","date":"2025-06-09T16:00:00.000Z","createdAt":"2025-06-09T18:57:08.973Z","notes":"","isSponsorCall":0,"serviceType":"","callType":"","stepNumber":null,"wasSpeaker":0,"id":1,"isSponseeCall":0,"personCalled":"","wasChair":0,"meetingId":null,"location":"completed","type":"prayer","meetingName":"","wasShare":0},{"callType":"","updatedAt":"2025-06-09T19:04:00.647Z","completed":1,"date":"2025-06-09T16:00:00.000Z","literatureTitle":"","serviceType":"","meetingName":"","isSponsorCall":0,"stepNumber":null,"isAAMemberCall":0,"type":"meditation","duration":15,"wasSpeaker":0,"id":2,"meetingId":null,"isSponseeCall":0,"notes":"","personCalled":"","wasShare":0,"createdAt":"2025-06-09T19:04:00.647Z","wasChair":0,"location":"completed"},{"createdAt":"2025-06-11T14:54:12.081Z","notes":"","wasShare":0,"meetingId":null,"type":"prayer","completed":1,"updatedAt":"2025-06-11T14:54:12.081Z","callType":"","duration":15,"wasChair":0,"isSponseeCall":0,"stepNumber":null,"wasSpeaker":0,"isAAMemberCall":0,"literatureTitle":"","date":"2025-06-11T16:00:00.000Z","meetingName":"","isSponsorCall":0,"personCalled":"","location":"completed","serviceType":"","id":3},{"notes":"","meetingName":"There is a Solution","isSponsorCall":0,"personCalled":"","duration":60,"literatureTitle":"","location":"completed","createdAt":"2025-06-11T22:52:57.860Z","isSponseeCall":0,"meetingId":3,"callType":"","updatedAt":"2025-06-11T22:52:57.860Z","isAAMemberCall":0,"wasSpeaker":0,"stepNumber":null,"type":"meeting","id":4,"date":"2025-06-11T16:00:00.000Z","wasChair":0,"serviceType":"","completed":1,"wasShare":1},{"updatedAt":"2025-06-13T00:14:35.281Z","literatureTitle":"Big Book","createdAt":"2025-06-13T00:14:35.281Z","meetingId":null,"wasShare":0,"stepNumber":null,"completed":1,"type":"literature","meetingName":"","callType":"","duration":30,"notes":"","serviceType":"","location":"completed","wasSpeaker":0,"id":5,"wasChair":0,"isSponsorCall":0,"isSponseeCall":0,"date":"2025-06-12T16:00:00.000Z","isAAMemberCall":0,"personCalled":""},{"location":"completed","type":"prayer","notes":"","id":6,"meetingName":"","wasShare":0,"duration":5,"wasChair":0,"literatureTitle":"","isSponsorCall":0,"serviceType":"","createdAt":"2025-06-13T00:15:12.745Z","wasSpeaker":0,"date":"2025-06-12T16:00:00.000Z","isAAMemberCall":0,"meetingId":null,"callType":"","stepNumber":null,"isSponseeCall":0,"completed":1,"personCalled":"","updatedAt":"2025-06-13T00:15:12.745Z"}]}
+⚡️  [log] - [ sqliteLoader.js:548 ] Processed 6 items from activities
+⚡️  [log] - [ sqliteLoader.js:523 ] Getting all items from action_items
+⚡️  To Native ->  CapacitorSQLite query 80576518
+⚡️  TO JS {"values":[{"ios_columns":["id","contactId","title","text","notes","dueDate","completed","type","createdAt","updatedAt"]},{"createdAt":"2025-06-13T13:51:06.463Z","notes":"","text":"Call back","title":"Call back","contactId":4,"type":"todo","dueDate":"2025-
+⚡️  [log] - [ sqliteLoader.js:535 ] Raw query result for action_items: {"values":[{"ios_columns":["id","contactId","title","text","notes","dueDate","completed","type","createdAt","updatedAt"]},{"createdAt":"2025-06-13T13:51:06.463Z","notes":"","text":"Call back","title":"Call back","contactId":4,"type":"todo","dueDate":"2025-06-13T12:35:15.234Z","completed":1,"updatedAt":"2025-06-13T15:59:45.037Z","id":3},{"updatedAt":"2025-06-13T16:01:04.929Z","contactId":5,"id":4,"createdAt":"2025-06-13T16:00:50.372Z","type":"todo","title":"Fix Time Field","text":"Fix Time Field","notes":"","dueDate":"2025-06-13T16:00:13.737Z","completed":1}]}
+⚡️  [log] - [ sqliteLoader.js:548 ] Processed 2 items from action_items
+⚡️  [log] - [ AppDataContext.tsx ] Fetched action items: 2
+⚡️  [log] - [AppDataContext.tsx:299] Before map - actionItems: [{"updatedAt":"2025-06-13T16:01:04.929Z","contactId":5,"id":4,"createdAt":"2025-06-13T16:00:50.372Z","type":"todo","title":"Fix Time Field","text":"Fix Time Field","notes":"","dueDate":"2025-06-13T16:00:13.737Z","completed":1},{"createdAt":"2025-06-13T13:51:06.463Z","notes":"","text":"Call back","title":"Call back","contactId":4,"type":"todo","dueDate":"2025-06-13T12:35:15.234Z","completed":1,"updatedAt":"2025-06-13T15:59:45.037Z","id":3}]
+⚡️  [log] - [ AppDataContext.tsx ] Converted action items to activities: 2
+⚡️  To Native ->  CapacitorSQLite query 80576519
+⚡️  [log] - [ sqliteLoader.js:523 ] Getting all items from sponsor_contacts
+⚡️  TO JS {"values":[{"ios_columns":["id","userId","sponsorId","date","type","note","topic","duration","createdAt","updatedAt"]},{"sponsorId":1,"topic":"Sadness Shit","type":"call","userId":"1","note":"I’m sad","id":1,"duration":20,"date":"2025-06-13T00:17:30.771Z",
+⚡️  [log] - [ sqliteLoader.js:535 ] Raw query result for sponsor_contacts: {"values":[{"ios_columns":["id","userId","sponsorId","date","type","note","topic","duration","createdAt","updatedAt"]},{"sponsorId":1,"topic":"Sadness Shit","type":"call","userId":"1","note":"I’m sad","id":1,"duration":20,"date":"2025-06-13T00:17:30.771Z","updatedAt":"2025-06-13T00:17:52.681Z","createdAt":"2025-06-13T00:17:52.681Z"},{"topic":"Step Work","note":"We talked about getting started on step work","id":2,"type":"call","updatedAt":"2025-06-13T12:18:44.828Z","duration":20,"sponsorId":1,"userId":"1","createdAt":"2025-06-13T12:18:44.828Z","date":"2025-06-13T12:17:46.017Z"},{"createdAt":"2025-06-13T12:37:48.093Z","note":"No notes","userId":"1","updatedAt":"2025-06-13T12:37:48.093Z","type":"call","sponsorId":1,"date":"2025-06-13T12:35:15.234Z","id":3,"topic":"","duration":10},{"type":"call","id":4,"topic":"","sponsorId":1,"date":"2025-06-13T12:35:15.234Z","duration":10,"userId":"1","createdAt":"2025-06-13T13:51:06.454Z","note":"No notes","updatedAt":"2025-06-13T13:51:06.454Z"},{"type":"call","topic":"Future Calls","date":"2025-06-13T16:00:13.737Z","userId":"1","duration":null,"createdAt":"2025-06-13T16:00:50.362Z","updatedAt":"2025-06-13T16:00:50.362Z","note":"Time field not working","sponsorId":1,"id":5}]}
+⚡️  [log] - [ sqliteLoader.js:548 ] Processed 5 items from sponsor_contacts
+⚡️  [log] - [ AppDataContext.tsx ] Fetched sponsor contacts: 5
+⚡️  [log] - [ AppDataContext.tsx ] Converted sponsor contacts to activities: 5
+⚡️  [log] - [ AppDataContext.tsx:288 ] Activities cached (180 days): 13 (including action items)
+⚡️  [log] - [ AppDataContext.tsx:315 ] Using cached activities for 30 days: 0
+⚡️  [log] - [ AppDataContext.tsx:454 ] Calculating spiritual fitness with 0 activities for 30 days
+⚡️  [log] - [ sqliteLoader.js:523 ] Getting all items from meetings
+⚡️  To Native ->  CapacitorSQLite query 80576520
+⚡️  TO JS {"values":[{"ios_columns":["id","name","days","time","schedule","address","locationName","streetAddress","city","state","zipCode","coordinates","phoneNumber","onlineUrl","isHomeGroup","types","createdAt","updatedAt"]},{"city":"Apex","schedule":"[{\"day\":\
+⚡️  [log] - [ sqliteLoader.js:535 ] Raw query result for meetings: {"values":[{"ios_columns":["id","name","days","time","schedule","address","locationName","streetAddress","city","state","zipCode","coordinates","phoneNumber","onlineUrl","isHomeGroup","types","createdAt","updatedAt"]},{"city":"Apex","schedule":"[{\"day\":\"monday\",\"time\":\"18:00\",\"format\":\"literature\",\"locationType\":\"in_person\",\"access\":\"closed\"}]","types":"[]","locationName":"Apex United Methodist Church","updatedAt":"2025-06-11T14:56:05.286Z","state":"NC","onlineUrl":"","time":"18:00","streetAddress":"100 Hughes Street","zipCode":"27502","id":2,"name":"Arch to Freedom","isHomeGroup":"true","createdAt":"2025-06-11T14:55:43.836Z","address":"100 Hughes Street, Apex, NC, 27502","days":"[\"monday\"]","coordinates":null,"phoneNumber":null},{"name":"There is a Solution","phoneNumber":null,"onlineUrl":"","isHomeGroup":"true","state":"NC","city":"Cary","schedule":"[{\"day\":\"tuesday\",\"time\":\"19:00\",\"format\":\"beginners\",\"locationType\":\"in_person\",\"access\":\"open\"},{\"day\":\"thursday\",\"time\":\"19:00\",\"format\":\"discussion\",\"locationType\":\"in_person\",\"access\":\"closed\"}]","id":3,"days":"[\"tuesday\",\"thursday\"]","zipCode":"27518","types":"[]","time":"19:00","streetAddress":"7000 Tryon Rd","updatedAt":"2025-06-12T23:41:05.842Z","address":"7000 Tryon Rd, Cary, NC, 27518","coordinates":null,"createdAt":"2025-06-11T22:52:46.215Z","locationName":"Macedonia United Methodist Church"}]}
+⚡️  [log] - [ sqliteLoader.js:548 ] Processed 2 items from meetings
+⚡️  [log] - [ AppDataContext.tsx:326 ] Meetings loaded: 2
+⚡️  [log] - [ AppDataContext.tsx:194 ] Initial data load complete
+⚡️  [log] - [ Dashboard.js ] Dashboard initial spiritualFitness: 5
+⚡️  [log] - [ Dashboard.js ] Dashboard currentScore state: 0
+⚡️  [log] - [ Dashboard.js ] Dashboard currentTimeframe: 30
+⚡️  [log] - [ Dashboard.js ] Dashboard scoreTimeframe: 30
+⚡️  [log] - [ Dashboard.js ] Dashboard formattedScore for display: 0.00
+⚡️  [log] - [ Dashboard.js ] Dashboard progressPercent: 0
+⚡️  [log] - Light mode activated
+⚡️  [log] - Applying native theme: blue (#3b82f6) in light mode
+⚡️  [log] - Applied MUI theme to iOS components
+⚡️  [log] - Applied MUI theme to iOS native components: blue
+⚡️  [log] - Light mode activated
+⚡️  [log] - Applying native theme: blue (#3b82f6) in light mode
+⚡️  [log] - Applied MUI theme to iOS components
+⚡️  [log] - Applied MUI theme to iOS native components: blue
+⚡️  [log] - [ Dashboard.js ] Dashboard useEffect [activities] triggered - calculating spiritual fitness
+⚡️  [log] - [ Dashboard.js ] Dashboard scoreBreak: {"baseScore":5,"activityPoints":14.75,"consistencyPoints":5.33,"totalScore":25.08,"recentActivities":13,"activeDays":4}
+⚡️  [log] - [ SpiritualFitness.js ] calculateSpiritualFitnessScore baseScore: 5
+⚡️  [log] - [ SpiritualFitness.js ] calculateSpiritualFitnessScore timeframeDays: 30
+⚡️  [log] - [ SpiritualFitness.js ] calculateSpiritualFitnessScore activities #: 13
+⚡️  [log] - [ SpiritualFitness.js ] calculateSpiritualFitnessScore totalActivityPoints: 59
+⚡️  [log] - [ SpiritualFitness.js ] calculateSpiritualFitnessScore totalScore: 25.083333333333332
+⚡️  [log] - [ SpiritualFitness.js ] calculateSpiritualFitnessScore preciseScore: 25.08
+⚡️  [log] - [ Dashboard.js: 71 ] Dashboard newScore: 25.08
+⚡️  [log] - [ Dashboard.js ] Dashboard initial spiritualFitness: 5
+⚡️  [log] - [ Dashboard.js ] Dashboard currentScore state: 25.08
+⚡️  [log] - [ Dashboard.js ] Dashboard currentTimeframe: 30
+⚡️  [log] - [ Dashboard.js ] Dashboard scoreTimeframe: 30
+⚡️  [log] - [ Dashboard.js ] Dashboard formattedScore for display: 25.08
+⚡️  [log] - [ Dashboard.js ] Dashboard progressPercent: 25.08
+⚡️  [log] - Dark mode activated
+⚡️  [log] - Applying native theme: blue (#3b82f6) in dark mode
+⚡️  [log] - Applied MUI theme to iOS components
+⚡️  [log] - Applied MUI theme to iOS native components: blue
+⚡️  [log] - Dark mode activated
+⚡️  [log] - Applying native theme: blue (#3b82f6) in dark mode
+⚡️  [log] - Applied MUI theme to iOS components
+⚡️  [log] - Applied MUI theme to iOS native components: blue
+⚡️  [log] - Navigation to: sponsor
+⚡️  [log] - SubTabComponent sponsor: persons: [] length: 0
+⚡️  To Native ->  CapacitorSQLite query ⚡️  [log] - [ sqliteLoader.js:523 ] Getting all items from sponsors
+80576521
+⚡️  To Native ->  CapacitorSQLite query 80576522
+⚡️  To Native ->  CapacitorSQLite query 80576523
+⚡️  To Native ->  CapacitorSQLite query 80576524
+⚡️  TO JS {"values":[{"ios_columns":["id","userId","name","lastName","phoneNumber","email","sobrietyDate","notes","sponsorType","createdAt","updatedAt"]},{"lastName":"Weaver","name":"Jerry","sobrietyDate":null,"id":1,"createdAt":"2025-06-11T14:56:30.452Z","updatedAt
+⚡️  [log] - [ sqliteLoader.js:523 ] Getting all items from sponsees
+⚡️  TO JS {"values":[{"ios_columns":["id","userId","name","lastName","phoneNumber","email","sobrietyDate","notes","sponseeType","createdAt","updatedAt"]},{"sponseeType":"sponsee","id":1,"notes":"","email":"","createdAt":"2025-06-11T22:40:05.194Z","name":"Joe","phone
+⚡️  [log] - [ sqliteLoader.js:523 ] Getting all items from sponsor_contacts
+⚡️  TO JS {"values":[{"ios_columns":["id","userId","sponsorId","date","type","note","topic","duration","createdAt","updatedAt"]},{"type":"call","id":1,"updatedAt":"2025-06-13T00:17:52.681Z","sponsorId":1,"userId":"1","date":"2025-06-13T00:17:30.771Z","duration":20,"
+⚡️  [log] - [ sqliteLoader.js:523 ] Getting all items from sponsee_contacts
+⚡️  TO JS {"values":[]}
+⚡️  [log] - [ sqliteLoader.js:535 ] Raw query result for sponsors: {"values":[{"ios_columns":["id","userId","name","lastName","phoneNumber","email","sobrietyDate","notes","sponsorType","createdAt","updatedAt"]},{"lastName":"Weaver","name":"Jerry","sobrietyDate":null,"id":1,"createdAt":"2025-06-11T14:56:30.452Z","updatedAt":"2025-06-11T14:56:30.452Z","phoneNumber":"+1 919 418 9900","email":"","sponsorType":"sponsor","userId":"1","notes":""},{"phoneNumber":"","id":2,"name":"Joe","sobrietyDate":null,"lastName":"Flynn","notes":"","userId":"1","createdAt":"2025-06-11T22:39:43.985Z","email":"","updatedAt":"2025-06-11T22:39:43.985Z","sponsorType":"sponsor"}]}
+⚡️  [log] - [ sqliteLoader.js:548 ] Processed 2 items from sponsors
+⚡️  [log] - [ sqliteLoader.js:535 ] Raw query result for sponsees: {"values":[{"ios_columns":["id","userId","name","lastName","phoneNumber","email","sobrietyDate","notes","sponseeType","createdAt","updatedAt"]},{"sponseeType":"sponsee","id":1,"notes":"","email":"","createdAt":"2025-06-11T22:40:05.194Z","name":"Joe","phoneNumber":"+1 919 555 1212","updatedAt":"2025-06-11T22:40:05.194Z","userId":"1","lastName":"Blow","sobrietyDate":null}]}
+⚡️  [log] - [ sqliteLoader.js:548 ] Processed 1 items from sponsees
+⚡️  [log] - [ sqliteLoader.js:535 ] Raw query result for sponsor_contacts: {"values":[{"ios_columns":["id","userId","sponsorId","date","type","note","topic","duration","createdAt","updatedAt"]},{"type":"call","id":1,"updatedAt":"2025-06-13T00:17:52.681Z","sponsorId":1,"userId":"1","date":"2025-06-13T00:17:30.771Z","duration":20,"createdAt":"2025-06-13T00:17:52.681Z","topic":"Sadness Shit","note":"I’m sad"},{"id":2,"createdAt":"2025-06-13T12:18:44.828Z","userId":"1","duration":20,"type":"call","topic":"Step Work","date":"2025-06-13T12:17:46.017Z","sponsorId":1,"note":"We talked about getting started on step work","updatedAt":"2025-06-13T12:18:44.828Z"},{"date":"2025-06-13T12:35:15.234Z","id":3,"userId":"1","type":"call","note":"No notes","duration":10,"createdAt":"2025-06-13T12:37:48.093Z","updatedAt":"2025-06-13T12:37:48.093Z","topic":"","sponsorId":1},{"updatedAt":"2025-06-13T13:51:06.454Z","id":4,"userId":"1","note":"No notes","duration":10,"date":"2025-06-13T12:35:15.234Z","topic":"","sponsorId":1,"type":"call","createdAt":"2025-06-13T13:51:06.454Z"},{"type":"call","userId":"1","duration":null,"createdAt":"2025-06-13T16:00:50.362Z","date":"2025-06-13T16:00:13.737Z","note":"Time field not working","topic":"Future Calls","id":5,"updatedAt":"2025-06-13T16:00:50.362Z","sponsorId":1}]}
+⚡️  [log] - [ sqliteLoader.js:548 ] Processed 5 items from sponsor_contacts
+⚡️  [log] - [ sqliteLoader.js:535 ] Raw query result for sponsee_contacts: {"values":[]}
+⚡️  [log] - [ sqliteLoader.js:548 ] Processed 0 items from sponsee_contacts
+⚡️  [log] - SubTabComponent sponsor: persons: [{"lastName":"Weaver","name":"Jerry","sobrietyDate":null,"id":1,"createdAt":"2025-06-11T14:56:30.452Z","updatedAt":"2025-06-11T14:56:30.452Z","phoneNumber":"+1 919 418 9900","email":"","sponsorType":"sponsor","userId":"1","notes":""},{"phoneNumber":"","id":2,"name":"Joe","sobrietyDate":null,"lastName":"Flynn","notes":"","userId":"1","createdAt":"2025-06-11T22:39:43.985Z","email":"","updatedAt":"2025-06-11T22:39:43.985Z","sponsorType":"sponsor"}] length: 2
+⚡️  [log] - [ sqliteLoader.js:523 ] Getting all items from action_items
+⚡️  To Native ->  CapacitorSQLite query 80576525
+⚡️  To Native ->  CapacitorSQLite query 80576526
+⚡️  To Native ->  CapacitorSQLite query 80576527
+⚡️  TO JS {"values":[{"ios_columns":["id","contactId","title","text","notes","dueDate","completed","type","createdAt","updatedAt"]},{"id":3,"notes":"","completed":1,"title":"Call back","createdAt":"2025-06-13T13:51:06.463Z","contactId":4,"type":"todo","updatedAt":"2
+⚡️  To Native ->  CapacitorSQLite query 80576528
+⚡️  [log] - [ sqliteLoader.js:523 ] Getting all items from action_items
+⚡️  TO JS ⚡️  To Native ->  CapacitorSQLite query 80576529
+{"values":[{"ios_columns":["id","contactId","title","text","notes","dueDate","completed","type","createdAt","updatedAt"]},{"id":3,"type":"todo","updatedAt":"2025-06-13T15:59:45.037Z","title":"Call back","notes":"","completed":1,"text":"Call back","createdA
+⚡️  [log] - [ sqliteLoader.js:523 ] Getting all items from action_items
+⚡️  TO JS {"values":[{"ios_columns":["id","contactId","title","text","notes","dueDate","completed","type","createdAt","updatedAt"]},{"id":3,"type":"todo","updatedAt":"2025-06-13T15:59:45.037Z","title":"Call back","notes":"","completed":1,"text":"Call back","createdA
+⚡️  [log] - [ sqliteLoader.js:523 ] Getting all items from action_items
+⚡️  TO JS {"values":[{"ios_columns":["id","contactId","title","text","notes","dueDate","completed","type","createdAt","updatedAt"]},{"id":3,"type":"todo","updatedAt":"2025-06-13T15:59:45.037Z","title":"Call back","notes":"","completed":1,"text":"Call back","createdA
+⚡️  [log] - [ sqliteLoader.js:523 ] Getting all items from action_items
+⚡️  TO JS {"values":[{"ios_columns":["id","contactId","title","text","notes","dueDate","completed","type","createdAt","updatedAt"]},{"createdAt":"2025-06-13T13:51:06.463Z","id":3,"completed":1,"updatedAt":"2025-06-13T15:59:45.037Z","type":"todo","text":"Call back","
+⚡️  [log] - [ sqliteLoader.js:535 ] Raw query result for action_items: {"values":[{"ios_columns":["id","contactId","title","text","notes","dueDate","completed","type","createdAt","updatedAt"]},{"id":3,"notes":"","completed":1,"title":"Call back","createdAt":"2025-06-13T13:51:06.463Z","contactId":4,"type":"todo","updatedAt":"2025-06-13T15:59:45.037Z","text":"Call back","dueDate":"2025-06-13T12:35:15.234Z"},{"dueDate":"2025-06-13T16:00:13.737Z","contactId":5,"text":"Fix Time Field","notes":"","type":"todo","createdAt":"2025-06-13T16:00:50.372Z","id":4,"completed":1,"title":"Fix Time Field","updatedAt":"2025-06-13T16:01:04.929Z"}]}
+⚡️  [log] - [ sqliteLoader.js:548 ] Processed 2 items from action_items
+⚡️  [log] - [ sqliteLoader.js:535 ] Raw query result for action_items: {"values":[{"ios_columns":["id","contactId","title","text","notes","dueDate","completed","type","createdAt","updatedAt"]},{"id":3,"type":"todo","updatedAt":"2025-06-13T15:59:45.037Z","title":"Call back","notes":"","completed":1,"text":"Call back","createdAt":"2025-06-13T13:51:06.463Z","dueDate":"2025-06-13T12:35:15.234Z","contactId":4},{"contactId":5,"id":4,"createdAt":"2025-06-13T16:00:50.372Z","title":"Fix Time Field","text":"Fix Time Field","completed":1,"type":"todo","notes":"","dueDate":"2025-06-13T16:00:13.737Z","updatedAt":"2025-06-13T16:01:04.929Z"}]}
+⚡️  [log] - [ sqliteLoader.js:548 ] Processed 2 items from action_items
+⚡️  [log] - [ sqliteLoader.js:535 ] Raw query result for action_items: {"values":[{"ios_columns":["id","contactId","title","text","notes","dueDate","completed","type","createdAt","updatedAt"]},{"id":3,"type":"todo","updatedAt":"2025-06-13T15:59:45.037Z","title":"Call back","notes":"","completed":1,"text":"Call back","createdAt":"2025-06-13T13:51:06.463Z","dueDate":"2025-06-13T12:35:15.234Z","contactId":4},{"contactId":5,"id":4,"createdAt":"2025-06-13T16:00:50.372Z","title":"Fix Time Field","text":"Fix Time Field","completed":1,"type":"todo","notes":"","dueDate":"2025-06-13T16:00:13.737Z","updatedAt":"2025-06-13T16:01:04.929Z"}]}
+⚡️  [log] - [ sqliteLoader.js:548 ] Processed 2 items from action_items
+⚡️  [log] - [ sqliteLoader.js:535 ] Raw query result for action_items: {"values":[{"ios_columns":["id","contactId","title","text","notes","dueDate","completed","type","createdAt","updatedAt"]},{"id":3,"type":"todo","updatedAt":"2025-06-13T15:59:45.037Z","title":"Call back","notes":"","completed":1,"text":"Call back","createdAt":"2025-06-13T13:51:06.463Z","dueDate":"2025-06-13T12:35:15.234Z","contactId":4},{"contactId":5,"id":4,"createdAt":"2025-06-13T16:00:50.372Z","title":"Fix Time Field","text":"Fix Time Field","completed":1,"type":"todo","notes":"","dueDate":"2025-06-13T16:00:13.737Z","updatedAt":"2025-06-13T16:01:04.929Z"}]}
+⚡️  [log] - [ sqliteLoader.js:548 ] Processed 2 items from action_items
+⚡️  [log] - [ sqliteLoader.js:535 ] Raw query result for action_items: {"values":[{"ios_columns":["id","contactId","title","text","notes","dueDate","completed","type","createdAt","updatedAt"]},{"createdAt":"2025-06-13T13:51:06.463Z","id":3,"completed":1,"updatedAt":"2025-06-13T15:59:45.037Z","type":"todo","text":"Call back","title":"Call back","dueDate":"2025-06-13T12:35:15.234Z","contactId":4,"notes":""},{"completed":1,"text":"Fix Time Field","type":"todo","notes":"","contactId":5,"title":"Fix Time Field","updatedAt":"2025-06-13T16:01:04.929Z","dueDate":"2025-06-13T16:00:13.737Z","id":4,"createdAt":"2025-06-13T16:00:50.372Z"}]}
+⚡️  [log] - [ sqliteLoader.js:548 ] Processed 2 items from action_items
+⚡️  To Native ->  CapacitorSQLite query 80576530
+⚡️  [log] - [ sqliteLoader.js:523 ] Getting all items from action_items
+⚡️  TO JS {"values":[{"ios_columns":["id","contactId","title","text","notes","dueDate","completed","type","createdAt","updatedAt"]},{"dueDate":"2025-06-13T12:35:15.234Z","contactId":4,"text":"Call back","notes":"","type":"todo","createdAt":"2025-06-13T13:51:06.463Z"
+⚡️  [log] - [ sqliteLoader.js:535 ] Raw query result for action_items: {"values":[{"ios_columns":["id","contactId","title","text","notes","dueDate","completed","type","createdAt","updatedAt"]},{"dueDate":"2025-06-13T12:35:15.234Z","contactId":4,"text":"Call back","notes":"","type":"todo","createdAt":"2025-06-13T13:51:06.463Z","id":3,"completed":1,"title":"Call back","updatedAt":"2025-06-13T15:59:45.037Z"},{"id":4,"notes":"","completed":1,"title":"Fix Time Field","createdAt":"2025-06-13T16:00:50.372Z","contactId":5,"type":"todo","updatedAt":"2025-06-13T16:01:04.929Z","text":"Fix Time Field","dueDate":"2025-06-13T16:00:13.737Z"}]}
+⚡️  [log] - [ sqliteLoader.js:548 ] Processed 2 items from action_items
+⚡️  [log] - [ sqliteLoader.js ] Updating action_items id 4 with: {"id":4,"notes":"","completed":0,"title":"Fix Time Field","createdAt":"2025-06-13T16:00:50.372Z","contactId":5,"type":"todo","updatedAt":"2025-06-13T16:12:23.343Z","text":"Fix Time Field","dueDate":"2025-06-13T16:00:13.737Z"}
+⚡️  [log] - [ sqliteLoader.js ] Update SQL: UPDATE action_items SET id = 4, notes = '', completed = 0, title = 'Fix Time Field', createdAt = '2025-06-13T16:00:50.372Z', contactId = 5, type = 'todo', updatedAt = '2025-06-13T16:12:23.343Z', text = 'Fix Time Field', dueDate = '2025-06-13T16:00:13.737Z' WHERE id = 4
+⚡️  To Native ->  CapacitorSQLite execute 80576531
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  [log] - [ sqliteLoader.js ] Update completed for action_items id 4
+⚡️  [log] - Navigation to: dashboard
+⚡️  [log] - [ Dashboard.js ] Dashboard initial spiritualFitness: 5
+⚡️  [log] - [ Dashboard.js ] Dashboard currentScore state: 0
+⚡️  [log] - [ Dashboard.js ] Dashboard currentTimeframe: 30
+⚡️  [log] - [ Dashboard.js ] Dashboard scoreTimeframe: 30
+⚡️  [log] - [ Dashboard.js ] Dashboard formattedScore for display: 0.00
+⚡️  [log] - [ Dashboard.js ] Dashboard progressPercent: 0
+⚡️  [log] - Light mode activated
+⚡️  [log] - Applying native theme: blue (#3b82f6) in light mode
+⚡️  [log] - Applied MUI theme to iOS components
+⚡️  [log] - Applied MUI theme to iOS native components: blue
+⚡️  [log] - Light mode activated
+⚡️  [log] - Applying native theme: blue (#3b82f6) in light mode
+⚡️  [log] - Applied MUI theme to iOS components
+⚡️  [log] - Applied MUI theme to iOS native components: blue
+⚡️  [log] - [ Dashboard.js ] Dashboard useEffect [activities] triggered - calculating spiritual fitness
+⚡️  [log] - [ Dashboard.js ] Dashboard scoreBreak: {"baseScore":5,"activityPoints":14.75,"consistencyPoints":5.33,"totalScore":25.08,"recentActivities":13,"activeDays":4}
+⚡️  [log] - [ SpiritualFitness.js ] calculateSpiritualFitnessScore baseScore: 5
+⚡️  [log] - [ SpiritualFitness.js ] calculateSpiritualFitnessScore timeframeDays: 30
+⚡️  [log] - [ SpiritualFitness.js ] calculateSpiritualFitnessScore activities #: 13
+⚡️  [log] - [ SpiritualFitness.js ] calculateSpiritualFitnessScore totalActivityPoints: 59
+⚡️  [log] - [ SpiritualFitness.js ] calculateSpiritualFitnessScore totalScore: 25.083333333333332
+⚡️  [log] - [ SpiritualFitness.js ] calculateSpiritualFitnessScore preciseScore: 25.08
+⚡️  [log] - [ Dashboard.js: 71 ] Dashboard newScore: 25.08
+⚡️  [log] - [ Dashboard.js ] Dashboard initial spiritualFitness: 5
+⚡️  [log] - [ Dashboard.js ] Dashboard currentScore state: 25.08
+⚡️  [log] - [ Dashboard.js ] Dashboard currentTimeframe: 30
+⚡️  [log] - [ Dashboard.js ] Dashboard scoreTimeframe: 30
+⚡️  [log] - [ Dashboard.js ] Dashboard formattedScore for display: 25.08
+⚡️  [log] - [ Dashboard.js ] Dashboard progressPercent: 25.08
+⚡️  [log] - Dark mode activated
+⚡️  [log] - Applying native theme: blue (#3b82f6) in dark mode
+⚡️  [log] - Applied MUI theme to iOS components
+⚡️  [log] - Applied MUI theme to iOS native components: blue
+⚡️  [log] - Dark mode activated
+⚡️  [log] - Applying native theme: blue (#3b82f6) in dark mode
+⚡️  [log] - Applied MUI theme to iOS components
+⚡️  [log] - Applied MUI theme to iOS native components: blue
+⚡️  [log] - Navigation to: sponsor
+⚡️  [log] - SubTabComponent sponsor: persons: [] length: 0
+⚡️  To Native ->  CapacitorSQLite query 80576532
+⚡️  [log] - [ sqliteLoader.js:523 ] Getting all items from sponsors
+⚡️  To Native ->  CapacitorSQLite query 80576533
+⚡️  To Native ->  CapacitorSQLite query 80576534
+⚡️  To Native ->  CapacitorSQLite query 80576535
+⚡️  TO JS {"values":[{"ios_columns":["id","userId","name","lastName","phoneNumber","email","sobrietyDate","notes","sponsorType","createdAt","updatedAt"]},{"email":"","notes":"","id":1,"sponsorType":"sponsor","name":"Jerry","updatedAt":"2025-06-11T14:56:30.452Z","pho
+⚡️  [log] - [ sqliteLoader.js:523 ] Getting all items from sponsees
+⚡️  TO JS {"values":[{"ios_columns":["id","userId","name","lastName","phoneNumber","email","sobrietyDate","notes","sponseeType","createdAt","updatedAt"]},{"sponseeType":"sponsee","email":"","notes":"","id":1,"updatedAt":"2025-06-11T22:40:05.194Z","name":"Joe","phone
+⚡️  [log] - [ sqliteLoader.js:523 ] Getting all items from sponsor_contacts
+⚡️  TO JS {"values":[{"ios_columns":["id","userId","sponsorId","date","type","note","topic","duration","createdAt","updatedAt"]},{"sponsorId":1,"duration":20,"id":1,"date":"2025-06-13T00:17:30.771Z","topic":"Sadness Shit","updatedAt":"2025-06-13T00:17:52.681Z","crea
+⚡️  [log] - [ sqliteLoader.js:523 ] Getting all items from sponsee_contacts
+⚡️  TO JS {"values":[]}
+⚡️  [log] - [ sqliteLoader.js:535 ] Raw query result for sponsors: {"values":[{"ios_columns":["id","userId","name","lastName","phoneNumber","email","sobrietyDate","notes","sponsorType","createdAt","updatedAt"]},{"email":"","notes":"","id":1,"sponsorType":"sponsor","name":"Jerry","updatedAt":"2025-06-11T14:56:30.452Z","phoneNumber":"+1 919 418 9900","createdAt":"2025-06-11T14:56:30.452Z","lastName":"Weaver","userId":"1","sobrietyDate":null},{"id":2,"updatedAt":"2025-06-11T22:39:43.985Z","userId":"1","lastName":"Flynn","email":"","notes":"","sponsorType":"sponsor","sobrietyDate":null,"createdAt":"2025-06-11T22:39:43.985Z","phoneNumber":"","name":"Joe"}]}
+⚡️  [log] - [ sqliteLoader.js:548 ] Processed 2 items from sponsors
+⚡️  [log] - [ sqliteLoader.js:535 ] Raw query result for sponsees: {"values":[{"ios_columns":["id","userId","name","lastName","phoneNumber","email","sobrietyDate","notes","sponseeType","createdAt","updatedAt"]},{"sponseeType":"sponsee","email":"","notes":"","id":1,"updatedAt":"2025-06-11T22:40:05.194Z","name":"Joe","phoneNumber":"+1 919 555 1212","createdAt":"2025-06-11T22:40:05.194Z","lastName":"Blow","userId":"1","sobrietyDate":null}]}
+⚡️  [log] - [ sqliteLoader.js:548 ] Processed 1 items from sponsees
+⚡️  [log] - [ sqliteLoader.js:535 ] Raw query result for sponsor_contacts: {"values":[{"ios_columns":["id","userId","sponsorId","date","type","note","topic","duration","createdAt","updatedAt"]},{"sponsorId":1,"duration":20,"id":1,"date":"2025-06-13T00:17:30.771Z","topic":"Sadness Shit","updatedAt":"2025-06-13T00:17:52.681Z","createdAt":"2025-06-13T00:17:52.681Z","note":"I’m sad","type":"call","userId":"1"},{"type":"call","id":2,"updatedAt":"2025-06-13T12:18:44.828Z","sponsorId":1,"userId":"1","date":"2025-06-13T12:17:46.017Z","duration":20,"createdAt":"2025-06-13T12:18:44.828Z","topic":"Step Work","note":"We talked about getting started on step work"},{"createdAt":"2025-06-13T12:37:48.093Z","userId":"1","type":"call","sponsorId":1,"note":"No notes","topic":"","duration":10,"updatedAt":"2025-06-13T12:37:48.093Z","date":"2025-06-13T12:35:15.234Z","id":3},{"topic":"","createdAt":"2025-06-13T13:51:06.454Z","duration":10,"id":4,"date":"2025-06-13T12:35:15.234Z","sponsorId":1,"updatedAt":"2025-06-13T13:51:06.454Z","userId":"1","type":"call","note":"No notes"},{"duration":null,"topic":"Future Calls","id":5,"type":"call","date":"2025-06-13T16:00:13.737Z","updatedAt":"2025-06-13T16:00:50.362Z","createdAt":"2025-06-13T16:00:50.362Z","userId":"1","sponsorId":1,"note":"Time field not working"}]}
+⚡️  [log] - [ sqliteLoader.js:548 ] Processed 5 items from sponsor_contacts
+⚡️  [log] - [ sqliteLoader.js:535 ] Raw query result for sponsee_contacts: {"values":[]}
+⚡️  [log] - [ sqliteLoader.js:548 ] Processed 0 items from sponsee_contacts
+⚡️  [log] - SubTabComponent sponsor: persons: [{"email":"","notes":"","id":1,"sponsorType":"sponsor","name":"Jerry","updatedAt":"2025-06-11T14:56:30.452Z","phoneNumber":"+1 919 418 9900","createdAt":"2025-06-11T14:56:30.452Z","lastName":"Weaver","userId":"1","sobrietyDate":null},{"id":2,"updatedAt":"2025-06-11T22:39:43.985Z","userId":"1","lastName":"Flynn","email":"","notes":"","sponsorType":"sponsor","sobrietyDate":null,"createdAt":"2025-06-11T22:39:43.985Z","phoneNumber":"","name":"Joe"}] length: 2
+⚡️  To Native ->  CapacitorSQLite query 80576536
+⚡️  [log] - [ sqliteLoader.js:523 ] Getting all items from action_items
+⚡️  To Native ->  CapacitorSQLite query 80576537
+⚡️  To Native ->  CapacitorSQLite query 80576538
+⚡️  To Native ->  CapacitorSQLite query 80576539
+⚡️  To Native ->  CapacitorSQLite query 80576540
+⚡️  TO JS {"values":[{"ios_columns":["id","contactId","title","text","notes","dueDate","completed","type","createdAt","updatedAt"]},{"dueDate":"2025-06-13T12:35:15.234Z","contactId":4,"title":"Call back","text":"Call back","notes":"","type":"todo","completed":1,"cre
+⚡️  [log] - [ sqliteLoader.js:523 ] Getting all items from action_items
+⚡️  TO JS {"values":[{"ios_columns":["id","contactId","title","text","notes","dueDate","completed","type","createdAt","updatedAt"]},{"type":"todo","title":"Call back","id":3,"createdAt":"2025-06-13T13:51:06.463Z","updatedAt":"2025-06-13T15:59:45.037Z","dueDate":"202
+⚡️  [log] - [ sqliteLoader.js:523 ] Getting all items from action_items
+⚡️  TO JS {"values":[{"ios_columns":["id","contactId","title","text","notes","dueDate","completed","type","createdAt","updatedAt"]},{"type":"todo","text":"Call back","contactId":4,"notes":"","updatedAt":"2025-06-13T15:59:45.037Z","title":"Call back","completed":1,"i
+⚡️  [log] - [ sqliteLoader.js:523 ] Getting all items from action_items
+⚡️  TO JS {"values":[{"ios_columns":["id","contactId","title","text","notes","dueDate","completed","type","createdAt","updatedAt"]},{"id":3,"completed":1,"updatedAt":"2025-06-13T15:59:45.037Z","title":"Call back","dueDate":"2025-06-13T12:35:15.234Z","type":"todo","c
+⚡️  [log] - [ sqliteLoader.js:523 ] Getting all items from action_items
+⚡️  TO JS {"values":[{"ios_columns":["id","contactId","title","text","notes","dueDate","completed","type","createdAt","updatedAt"]},{"notes":"","contactId":4,"text":"Call back","id":3,"updatedAt":"2025-06-13T15:59:45.037Z","createdAt":"2025-06-13T13:51:06.463Z","com
+⚡️  [log] - [ sqliteLoader.js:535 ] Raw query result for action_items: {"values":[{"ios_columns":["id","contactId","title","text","notes","dueDate","completed","type","createdAt","updatedAt"]},{"dueDate":"2025-06-13T12:35:15.234Z","contactId":4,"title":"Call back","text":"Call back","notes":"","type":"todo","completed":1,"createdAt":"2025-06-13T13:51:06.463Z","id":3,"updatedAt":"2025-06-13T15:59:45.037Z"},{"completed":0,"text":"Fix Time Field","type":"todo","dueDate":"2025-06-13T16:00:13.737Z","createdAt":"2025-06-13T16:00:50.372Z","id":4,"updatedAt":"2025-06-13T16:12:23.343Z","notes":"","contactId":5,"title":"Fix Time Field"}]}
+⚡️  [log] - [ sqliteLoader.js:548 ] Processed 2 items from action_items
+⚡️  [log] - [ sqliteLoader.js:535 ] Raw query result for action_items: {"values":[{"ios_columns":["id","contactId","title","text","notes","dueDate","completed","type","createdAt","updatedAt"]},{"type":"todo","title":"Call back","id":3,"createdAt":"2025-06-13T13:51:06.463Z","updatedAt":"2025-06-13T15:59:45.037Z","dueDate":"2025-06-13T12:35:15.234Z","contactId":4,"text":"Call back","completed":1,"notes":""},{"id":4,"notes":"","completed":0,"title":"Fix Time Field","createdAt":"2025-06-13T16:00:50.372Z","contactId":5,"type":"todo","updatedAt":"2025-06-13T16:12:23.343Z","text":"Fix Time Field","dueDate":"2025-06-13T16:00:13.737Z"}]}
+⚡️  [log] - [ sqliteLoader.js:548 ] Processed 2 items from action_items
+⚡️  [log] - [ sqliteLoader.js:535 ] Raw query result for action_items: {"values":[{"ios_columns":["id","contactId","title","text","notes","dueDate","completed","type","createdAt","updatedAt"]},{"type":"todo","text":"Call back","contactId":4,"notes":"","updatedAt":"2025-06-13T15:59:45.037Z","title":"Call back","completed":1,"id":3,"createdAt":"2025-06-13T13:51:06.463Z","dueDate":"2025-06-13T12:35:15.234Z"},{"type":"todo","updatedAt":"2025-06-13T16:12:23.343Z","createdAt":"2025-06-13T16:00:50.372Z","title":"Fix Time Field","text":"Fix Time Field","notes":"","dueDate":"2025-06-13T16:00:13.737Z","id":4,"contactId":5,"completed":0}]}
+⚡️  [log] - [ sqliteLoader.js:548 ] Processed 2 items from action_items
+⚡️  [log] - [ sqliteLoader.js:535 ] Raw query result for action_items: {"values":[{"ios_columns":["id","contactId","title","text","notes","dueDate","completed","type","createdAt","updatedAt"]},{"id":3,"completed":1,"updatedAt":"2025-06-13T15:59:45.037Z","title":"Call back","dueDate":"2025-06-13T12:35:15.234Z","type":"todo","createdAt":"2025-06-13T13:51:06.463Z","contactId":4,"text":"Call back","notes":""},{"notes":"","createdAt":"2025-06-13T16:00:50.372Z","id":4,"text":"Fix Time Field","contactId":5,"dueDate":"2025-06-13T16:00:13.737Z","completed":0,"type":"todo","title":"Fix Time Field","updatedAt":"2025-06-13T16:12:23.343Z"}]}
+⚡️  [log] - [ sqliteLoader.js:548 ] Processed 2 items from action_items
+⚡️  [log] - [ sqliteLoader.js:535 ] Raw query result for action_items: {"values":[{"ios_columns":["id","contactId","title","text","notes","dueDate","completed","type","createdAt","updatedAt"]},{"notes":"","contactId":4,"text":"Call back","id":3,"updatedAt":"2025-06-13T15:59:45.037Z","createdAt":"2025-06-13T13:51:06.463Z","completed":1,"title":"Call back","type":"todo","dueDate":"2025-06-13T12:35:15.234Z"},{"id":4,"type":"todo","updatedAt":"2025-06-13T16:12:23.343Z","title":"Fix Time Field","notes":"","completed":0,"text":"Fix Time Field","createdAt":"2025-06-13T16:00:50.372Z","dueDate":"2025-06-13T16:00:13.737Z","contactId":5}]}
+⚡️  [log] - [ sqliteLoader.js:548 ] Processed 2 items from action_items
+-[RTIInputSystemClient remoteTextInputSessionWithID:textSuggestionsChanged:]  Can only set suggestions for an active session. sessionID = C0DFCD9B-3AC0-4217-9E3C-9AC783671DA5
+⚡️  [log] - Navigation to: dashboard
+⚡️  [log] - [ Dashboard.js ] Dashboard initial spiritualFitness: 5
+⚡️  [log] - [ Dashboard.js ] Dashboard currentScore state: 0
+⚡️  [log] - [ Dashboard.js ] Dashboard currentTimeframe: 30
+⚡️  [log] - [ Dashboard.js ] Dashboard scoreTimeframe: 30
+⚡️  [log] - [ Dashboard.js ] Dashboard formattedScore for display: 0.00
+⚡️  [log] - [ Dashboard.js ] Dashboard progressPercent: 0
+⚡️  [log] - Light mode activated
+⚡️  [log] - Applying native theme: blue (#3b82f6) in light mode
+⚡️  [log] - Applied MUI theme to iOS components
+⚡️  [log] - Applied MUI theme to iOS native components: blue
+⚡️  [log] - Light mode activated
+⚡️  [log] - Applying native theme: blue (#3b82f6) in light mode
+⚡️  [log] - Applied MUI theme to iOS components
+⚡️  [log] - Applied MUI theme to iOS native components: blue
+⚡️  [log] - [ Dashboard.js ] Dashboard useEffect [activities] triggered - calculating spiritual fitness
+⚡️  [log] - [ Dashboard.js ] Dashboard scoreBreak: {"baseScore":5,"activityPoints":14.75,"consistencyPoints":5.33,"totalScore":25.08,"recentActivities":13,"activeDays":4}
+⚡️  [log] - [ SpiritualFitness.js ] calculateSpiritualFitnessScore baseScore: 5
+⚡️  [log] - [ SpiritualFitness.js ] calculateSpiritualFitnessScore timeframeDays: 30
+⚡️  [log] - [ SpiritualFitness.js ] calculateSpiritualFitnessScore activities #: 13
+⚡️  [log] - [ SpiritualFitness.js ] calculateSpiritualFitnessScore totalActivityPoints: 59
+⚡️  [log] - [ SpiritualFitness.js ] calculateSpiritualFitnessScore totalScore: 25.083333333333332
+⚡️  [log] - [ SpiritualFitness.js ] calculateSpiritualFitnessScore preciseScore: 25.08
+⚡️  [log] - [ Dashboard.js: 71 ] Dashboard newScore: 25.08
+⚡️  [log] - [ Dashboard.js ] Dashboard initial spiritualFitness: 5
+⚡️  [log] - [ Dashboard.js ] Dashboard currentScore state: 25.08
+⚡️  [log] - [ Dashboard.js ] Dashboard currentTimeframe: 30
+⚡️  [log] - [ Dashboard.js ] Dashboard scoreTimeframe: 30
+⚡️  [log] - [ Dashboard.js ] Dashboard formattedScore for display: 25.08
+⚡️  [log] - [ Dashboard.js ] Dashboard progressPercent: 25.08
+⚡️  [log] - Dark mode activated
+⚡️  [log] - Applying native theme: blue (#3b82f6) in dark mode
+⚡️  [log] - Applied MUI theme to iOS components
+⚡️  [log] - Applied MUI theme to iOS native components: blue
+⚡️  [log] - Dark mode activated
+⚡️  [log] - Applying native theme: blue (#3b82f6) in dark mode
+⚡️  [log] - Applied MUI theme to iOS components
+⚡️  [log] - Applied MUI theme to iOS native components: blue

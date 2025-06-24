@@ -1,0 +1,60 @@
+⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO activities (userId, type, date, notes, personCalled, sponseeContactId, sponseeId, createdAt, updatedAt) VALUES (1, 'sponsee-contact', '2025-06-21T10:00:23.316Z', 'Alex reached out for encouragement. Provided support and reminded them of their progress.', 'Alex Wilson', 14, 1, '2025-06-24T02:17:32.503Z', '2025-06-24T02:17:32.503Z');
+⚡️  To Native ->  CapacitorSQLite execute 46347335
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  To Native ->  CapacitorSQLite query 46347336
+⚡️  TO JS {"values":[{"ios_columns":["lastId"]},{"lastId":8}]}
+⚡️  [log] - [ sqliteLoader.js ] Created activities item with ID: 8
+⚡️  [log] - [ testDataGenerator ] Creating contacts for sponsee with ID: 2
+⚡️  To Native ->  ⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO sponsee_contacts (userId, sponseeId, type, date, note, topic, duration, createdAt, updatedAt) VALUES ('1', 2, 'call', '2025-06-22T01:50:00.780Z', 'Helped Sarah work through Step 7. Good progress being made.', 'Step Work Guidance', 31, '2025-06-24T02:17:32.505Z', '2025-06-24T02:17:32.505Z');
+CapacitorSQLite execute 46347337
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  To Native ->  CapacitorSQLite query 46347338
+⚡️  TO JS {"values":[{"ios_columns":["lastId"]},{"lastId":15}]}
+⚡️  [log] - [ sqliteLoader.js ] Created sponsee_contacts item with ID: 15
+⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO activities (userId, type, date, notes, duration, personCalled, sponseeContactId, sponseeId, createdAt, updatedAt) VALUES (1, 'sponsee-contact', '2025-06-22T01:50:00.780Z', 'Helped Sarah work through Step 7. Good progress being made.', 31, 'Sarah Davis', 15, 2, '2025-06-24T02:17:32.506Z', '2025-06-24T02:17:32.506Z');
+⚡️  To Native ->  CapacitorSQLite execute 46347339
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  To Native ->  CapacitorSQLite query 46347340
+⚡️  TO JS {"values":[{"ios_columns":["lastId"]},{"lastId":9}]}
+⚡️  [log] - [ sqliteLoader.js ] Created activities item with ID: 9
+⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO action_items (title, text, notes, dueDate, completed, type, sponseeContactId, contactId, createdAt, updatedAt) VALUES ('Complete Step 4 inventory', 'Work on personal inventory list', 'Focus on resentments and fears', '2025-07-01T02:17:32.507Z', 0, 'sponsee_action_item', 15, 15, '2025-06-24T02:17:32.507Z', '2025-06-24T02:17:32.507Z');
+⚡️  To Native ->  CapacitorSQLite execute 46347341
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  To Native ->  CapacitorSQLite query 46347342
+⚡️  TO JS {"values":[{"ios_columns":["lastId"]},{"lastId":4}]}
+⚡️  [log] - [ sqliteLoader.js ] Created action_items item with ID: 4
+⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO sponsee_contacts (userId, sponseeId, type, date, note, topic, duration, createdAt, updatedAt) VALUES ('1', 2, 'text', '2025-06-15T23:13:02.258Z', 'Sarah reached out for encouragement. Provided support and reminded them of their progress.', 'Encouragement & Support', NULL, '2025-06-24T02:17:32.508Z', '2025-06-24T02:17:32.508Z');
+⚡️  To Native ->  CapacitorSQLite execute 46347343
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  To Native ->  CapacitorSQLite query 46347344
+⚡️  TO JS {"values":[{"ios_columns":["lastId"]},{"lastId":16}]}
+⚡️  [log] - [ sqliteLoader.js ] Created sponsee_contacts item with ID: 16
+⚡️  To Native ->  CapacitorSQLite ⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO activities (userId, type, date, notes, personCalled, sponseeContactId, sponseeId, createdAt, updatedAt) VALUES (1, 'sponsee-contact', '2025-06-15T23:13:02.258Z', 'Sarah reached out for encouragement. Provided support and reminded them of their progress.', 'Sarah Davis', 16, 2, '2025-06-24T02:17:32.509Z', '2025-06-24T02:17:32.509Z');
+execute 46347345
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  To Native ->  CapacitorSQLite query 46347346
+⚡️  TO JS {"values":[{"ios_columns":["lastId"]},{"lastId":10}]}
+⚡️  [log] - [ sqliteLoader.js ] Created activities item with ID: 10
+⚡️  [log] - [ testDataGenerator ] Test data creation completed: {"sponsorsCreated":2,"sponseesCreated":2,"sponsorContactsCreated":4,"sponseeContactsCreated":4,"actionItemsCreated":4}
+⚡️  [log] - [ Dashboard ] Test data creation completed: {"sponsorsCreated":2,"sponseesCreated":2,"sponsorContactsCreated":4,"sponseeContactsCreated":4,"actionItemsCreated":4}
+⚡️  [log] - [ Dashboard ] Reloading activities and action items after test data creation...
+⚡️  To Native ->  CapacitorSQLite query 46347347
+⚡️  TO JS {"values":[{"ios_columns":["id","userId","type","date","notes","duration","location","meetingName","meetingId","wasChair","wasShare","wasSpeaker","literatureTitle","isSponsorCall","isSponseeCall","isAAMemberCall","callType","stepNumber","personCalled","ser
+⚡️  To Native ->  CapacitorSQLite query 46347348
+⚡️  TO JS {"values":[{"ios_columns":["id","title","text","notes","dueDate","completed","deleted","type","sponsorContactId","sponseeContactId","createdAt","updatedAt","contactId","sponsorName","sponsorId"]},{"sponsorId":null,"title":"Practice daily meditation","text"
+⚡️  To Native ->  CapacitorSQLite query 46347349
+⚡️  TO JS {"values":[{"ios_columns":["id","userId","sponsorId","type","date","note","topic","duration","createdAt","updatedAt"]},{"updatedAt":"2025-06-24T01:47:15.084Z","duration":30,"sponsorId":1,"type":"call","userId":"1","topic":"Step Work & Gratitude","note":"Di
+⚡️  To Native ->  CapacitorSQLite query 46347350
+⚡️  TO JS {"values":[{"ios_columns":["id","userId","name","lastName","phoneNumber","email","sobrietyDate","notes","sponsorType","createdAt","updatedAt"]},{"sobrietyDate":"2015-03-15","lastName":"Smith","updatedAt":"2025-06-24T02:17:32.465Z","email":"john.smith@email
+⚡️  [log] - [ AppDataContext.tsx ] getAllSponseeContacts method not available, using empty array
+⚡️  [log] - [ AppDataContext.tsx ] Raw activities from database: 10
+⚡️  [log] - [ AppDataContext.tsx ] Raw action items from database: 4
+⚡️  [log] - [ AppDataContext.tsx ] Raw sponsor contacts from database: 16
+⚡️  [log] - [ AppDataContext.tsx ] Raw sponsors from database: 2
+⚡️  [log] - [ AppDataContext.tsx:288 ] Activities cached (180 days): 10 (all contact activities)
+⚡️  [log] - [ AppDataContext.tsx ] Activity types in cache: ["sponsor-contact","sponsor_action_item","sponsor-contact","sponsor-contact","sponsor_action_item","sponsor-contact","sponsee-contact","sponsee-contact","sponsee-contact","sponsee-contact"]
+⚡️  [log] - [ AppDataContext.tsx:315 ] Using cached activities for 30 days: 0
+⚡️  To Native ->  ⚡️  [log] - [ AppDataContext.tsx:454 ] Calculating spiritual fitness with 0 activities for 30 days
+CapacitorSQLite query 46347351
+⚡️  TO JS {"values":[{"ios_columns":["id","title","text","notes","dueDate","completed","deleted","type","sponsorContactId","sponseeContactId","createdAt","updatedAt","contactId","sponsorName","sponsorId"]},{"deleted":0,"createdAt":"2025-06-24T02:17:32.479Z","complet
+⚡️  [log] - [ AppDataContext.tsx ] Action items loaded: 4

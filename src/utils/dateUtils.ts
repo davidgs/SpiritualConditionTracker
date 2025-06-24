@@ -59,7 +59,7 @@ export function formatDateForDisplay(dateString: string): string {
 }
 
 export function formatDay(day) {
-  console.log("Formatting day:", day);
+ // console.log("Formatting day:", day);
     return day.charAt(0).toUpperCase() + day.slice(1);
   }
 
@@ -71,7 +71,7 @@ export function formatDay(day) {
  * @returns {string} Formatted time string
  */
 export function formatTimeByPreference(time, use24HourFormat = false) {
-  console.log(`Formatting time: "${time}" with 24-hour format: ${use24HourFormat}`);
+//  console.log(`Formatting time: "${time}" with 24-hour format: ${use24HourFormat}`);
   
   // Handle string input in format "HH:MM" or "H:MM AM/PM"
   if (typeof time === 'string') {
@@ -86,10 +86,10 @@ export function formatTimeByPreference(time, use24HourFormat = false) {
         if (period === 'AM' && hours === 12) hours = 0;
         
         const result = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
-        console.log(`Converted 12-hour to 24-hour: ${time} -> ${result}`);
+    //    console.log(`Converted 12-hour to 24-hour: ${time} -> ${result}`);
         return result;
       }
-      console.log(`Keeping 12-hour format: ${time}`);
+    //  console.log(`Keeping 12-hour format: ${time}`);
       return time; // Already in 12-hour format
     }
     
@@ -102,10 +102,10 @@ export function formatTimeByPreference(time, use24HourFormat = false) {
         const period = hours >= 12 ? 'PM' : 'AM';
         const hours12 = hours % 12 || 12;
         const result = `${hours12}:${minutes.toString().padStart(2, '0')} ${period}`;
-        console.log(`Converted 24-hour to 12-hour: ${time} -> ${result}`);
+    //    console.log(`Converted 24-hour to 12-hour: ${time} -> ${result}`);
         return result;
       }
-      console.log(`Keeping 24-hour format: ${time}`);
+    //  console.log(`Keeping 24-hour format: ${time}`);
       return time; // Already in 24-hour format
     }
   }
@@ -114,11 +114,11 @@ export function formatTimeByPreference(time, use24HourFormat = false) {
   if (time instanceof Date) {
     if (use24HourFormat) {
       const result = time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
-      console.log(`Formatted Date to 24-hour: ${time} -> ${result}`);
+    //  console.log(`Formatted Date to 24-hour: ${time} -> ${result}`);
       return result;
     } else {
       const result = time.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', hour12: true });
-      console.log(`Formatted Date to 12-hour: ${time} -> ${result}`);
+    //  console.log(`Formatted Date to 12-hour: ${time} -> ${result}`);
       return result;
     }
   }
