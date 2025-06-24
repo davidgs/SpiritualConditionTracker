@@ -98,7 +98,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
         console.log('Error initializing device suggestions:', error);
       }
     };
-    
+
     initializeDeviceSuggestions();
   }, []);
 
@@ -164,7 +164,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
   // Handle meeting selection change
   const handleHomeGroupChange = (e) => {
     const value = e.target.value;
-    
+
     // Check if "add_new" was selected
     if (Array.isArray(value) && value.includes('add_new')) {
       // Remove "add_new" from the selection and open the meeting form
@@ -561,7 +561,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
                             color: 'primary.main',
                             mr: 1,
                             textAlign: 'center'
-                        
+
                           }}>
                             {sobrietyYears.toFixed(2)}
                           </Typography>
@@ -604,7 +604,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
             </>
           )}
         </Paper>
-      
+
       {/* App Settings */}
       <Paper sx={{
         p: 2,
@@ -881,7 +881,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
                 sx={{
                   mb: .5,
                   '& .MuiInputBase-root': {
-                    height: '56px',
+                    height: '48px',
                     borderRadius: '8px',
                   },
                   '& input': {
@@ -922,10 +922,10 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
                 }}
               />
 
-              <Box sx={{ color: muiTheme.palette.text.secondary, fontSize: '14px', mb: 1 }}>
+              <Box sx={{ color: muiTheme.palette.primary.main, fontSize: '14px', mb: 1 }}>
                 Home Group(s)
               </Box>
-              
+
               {/* Display selected groups as chips above the dropdown */}
               {Array.isArray(homeGroups) && homeGroups.length > 0 && (
                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.75, mb: 1 }}>
@@ -1037,7 +1037,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
                 {meetings && meetings.length > 0
                   ? meetings.map((meeting: any) => (
                       <MenuItem key={meeting.id} value={meeting.name}>
-                        <Checkbox 
+                        <Checkbox
                           checked={Array.isArray(homeGroups) && homeGroups.includes(meeting.name)}
                           size="small"
                         />

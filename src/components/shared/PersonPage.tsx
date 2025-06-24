@@ -31,7 +31,7 @@ export default function PersonPage({
   renderContactCard
 }: PersonPageProps) {
   const theme = useTheme();
-  
+
   // Search and filter state
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedContactType, setSelectedContactType] = useState<string | null>(null);
@@ -45,13 +45,13 @@ export default function PersonPage({
   // Filter contacts based on search term and selected type
   const filteredContacts = useMemo(() => {
     return contacts.filter(contact => {
-      const matchesSearch = !searchTerm || 
+      const matchesSearch = !searchTerm ||
         (contact.note && contact.note.toLowerCase().includes(searchTerm.toLowerCase())) ||
         (contact.topic && contact.topic.toLowerCase().includes(searchTerm.toLowerCase())) ||
         (contact.type && contact.type.toLowerCase().includes(searchTerm.toLowerCase()));
-      
+
       const matchesType = !selectedContactType || contact.type === selectedContactType;
-      
+
       return matchesSearch && matchesType;
     });
   }, [contacts, searchTerm, selectedContactType]);
@@ -61,11 +61,11 @@ export default function PersonPage({
   return (
     <Box>
       {/* Header with Edit and Delete buttons */}
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
         <Typography variant="h4" sx={{ color: theme.palette.text.primary, fontWeight: 'bold' }}>
           {person.name} {person.lastName || ''}
         </Typography>
-        
+
         <Box sx={{ display: 'flex', gap: 1 }}>
           <IconButton
             color="primary"
@@ -75,7 +75,7 @@ export default function PersonPage({
           >
             <i className="fa-solid fa-pen-to-square"></i>
           </IconButton>
-          
+
           <IconButton
             color="error"
             size="small"
@@ -88,35 +88,35 @@ export default function PersonPage({
       </Box>
 
       {/* Person Information Card */}
-      <Paper 
+      <Paper
         elevation={0}
-        sx={{ 
+        sx={{
           backgroundColor: theme.palette.background.paper,
           boxShadow: theme.shadows[2],
           borderRadius: 2,
-          p: 3,
-          mb: 3
+          p: 1,
+          mb: 1
         }}
       >
-        <Typography variant="h6" sx={{ color: theme.palette.text.primary, mb: 2, fontWeight: 'bold' }}>
+        <Typography variant="h6" sx={{ color: theme.palette.text.primary, mb: 1, fontWeight: 'bold' }}>
           Contact Information
         </Typography>
 
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
           {person.phoneNumber && (
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-              <Box sx={{ display: 'flex', gap: 1 }}>
-                <IconButton 
-                  size="small" 
-                  component="a" 
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+              <Box sx={{ display: 'flex', gap: .5 }}>
+                <IconButton
+                  size="small"
+                  component="a"
                   href={`tel:${person.phoneNumber}`}
                   sx={{ color: theme.palette.primary.main }}
                 >
                   <i className="fa-solid fa-phone"></i>
                 </IconButton>
-                <IconButton 
-                  size="small" 
-                  component="a" 
+                <IconButton
+                  size="small"
+                  component="a"
                   href={`sms:${person.phoneNumber}`}
                   sx={{ color: theme.palette.secondary.main }}
                 >
@@ -128,12 +128,12 @@ export default function PersonPage({
               </Typography>
             </Box>
           )}
-          
+
           {person.email && (
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-              <IconButton 
-                size="small" 
-                component="a" 
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+              <IconButton
+                size="small"
+                component="a"
                 href={`mailto:${person.email}`}
                 sx={{ color: theme.palette.primary.main }}
               >
@@ -146,9 +146,9 @@ export default function PersonPage({
           )}
 
           {person.sobrietyDate && (
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-              <IconButton 
-                size="small" 
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+              <IconButton
+                size="small"
                 sx={{ color: theme.palette.primary.main }}
               >
                 <i className="fa-solid fa-calendar"></i>
@@ -160,9 +160,9 @@ export default function PersonPage({
           )}
 
           {person.notes && (
-            <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2 }}>
-              <IconButton 
-                size="small" 
+            <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5 }}>
+              <IconButton
+                size="small"
                 sx={{ color: theme.palette.primary.main }}
               >
                 <i className="fa-solid fa-sticky-note"></i>
@@ -176,17 +176,17 @@ export default function PersonPage({
       </Paper>
 
       {/* Contact History Section */}
-      <Paper 
+      <Paper
         elevation={0}
-        sx={{ 
+        sx={{
           backgroundColor: theme.palette.background.paper,
           boxShadow: theme.shadows[2],
           borderRadius: 2,
-          p: 3,
-          mb: 3
+          p: 2,
+          mb: 1.5
         }}
       >
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
           <Typography variant="h6" sx={{ color: theme.palette.text.primary, fontWeight: 'bold' }}>
             Contact History ({filteredContacts.length})
           </Typography>
@@ -201,9 +201,9 @@ export default function PersonPage({
 
         {/* Search and Filter Controls in Accordion */}
         {contacts.length > 0 && (
-          <Accordion 
-            sx={{ 
-              mb: 2,
+          <Accordion
+            sx={{
+              mb: 1,
               '&:before': { display: 'none' },
               boxShadow: 'none',
               border: `1px solid ${theme.palette.divider}`,
@@ -228,7 +228,7 @@ export default function PersonPage({
                 }
               }}
             >
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: .5 }}>
                 <i className="fa-solid fa-filter" style={{ color: theme.palette.text.secondary, fontSize: '14px' }}></i>
                 <Typography variant="body2" sx={{ color: theme.palette.text.secondary }}>
                   Search & Filter Contacts
@@ -266,8 +266,8 @@ export default function PersonPage({
                     </InputAdornment>
                   )
                 }}
-                sx={{ 
-                  mb: 2,
+                sx={{
+                  mb: 1,
                   '& .MuiOutlinedInput-root': {
                     fontSize: '16px'
                   }
@@ -277,7 +277,7 @@ export default function PersonPage({
               {/* Contact Type Filter Chips */}
               {contactTypes.length > 0 && (
                 <Box>
-                  <Typography variant="body2" sx={{ color: theme.palette.text.secondary, mb: 1 }}>
+                  <Typography variant="body2" sx={{ color: theme.palette.text.secondary, mb: .5 }}>
                     Filter by contact type:
                   </Typography>
                   <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
@@ -335,7 +335,7 @@ export default function PersonPage({
             )}
           </Box>
         ) : (
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: .5 }}>
             {filteredContacts
               .slice()
               .sort((a, b) => {
@@ -346,7 +346,7 @@ export default function PersonPage({
               .map((contact, index) => (
               <Box key={contact.id || index}>
                 {renderContactCard ? renderContactCard(contact, index) : (
-                  <Box sx={{ p: 2, bgcolor: theme.palette.background.default, borderRadius: 1 }}>
+                  <Box sx={{ p: .5, bgcolor: theme.palette.background.default, borderRadius: 1 }}>
                     <Typography variant="body2" sx={{ color: theme.palette.text.primary }}>
                       {contact.note || contact.notes}
                     </Typography>
@@ -362,11 +362,11 @@ export default function PersonPage({
         )}
       </Paper>
 
-      {/* Action Items Section - Only for sponsors 
+      {/* Action Items Section - Only for sponsors
       {personType === 'sponsor' && actionItems && actionItems.length > 0 && (
-        <Paper 
+        <Paper
           elevation={0}
-          sx={{ 
+          sx={{
             backgroundColor: theme.palette.background.paper,
             boxShadow: theme.shadows[2],
             borderRadius: 2,
@@ -380,7 +380,7 @@ export default function PersonPage({
             </Typography>
           </Box>
 
-          <ActivityList 
+          <ActivityList
             activities={actionItems.filter(item => item.type === 'action-item')}
             darkMode={false}
             limit={null}

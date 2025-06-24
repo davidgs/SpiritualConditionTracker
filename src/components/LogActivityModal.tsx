@@ -19,7 +19,7 @@ import ContactFormDialog from './shared/ContactFormDialog';
 
 /**
  * Material UI Dialog component that displays the activity logging form
- * 
+ *
  * @param {Object} props - Component props
  * @param {boolean} props.open - Whether the dialog is open
  * @param {Function} props.onClose - Function to call when the dialog should close
@@ -33,11 +33,11 @@ import ContactFormDialog from './shared/ContactFormDialog';
 const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, onSaveSponsorContact, onSaveSponseeContact, meetings = [] }) => {
   // Get theme context
   const muiTheme = useTheme();
-  
+
   // Dark mode detection
   const darkMode = document.documentElement.classList.contains('dark');
   const [isDarkMode, setIsDarkMode] = useState(darkMode);
-  
+
   // Activity form states
   const [activityType, setActivityType] = useState('prayer');
   const [duration, setDuration] = useState('15');
@@ -52,35 +52,35 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, onSaveSponsorC
     callType?: string;
   }>({});
   const [showSuccess, setShowSuccess] = useState(false);
-  
+
   // Additional fields for specific activity types
   const [literatureTitle, setLiteratureTitle] = useState('');
   const [meetingName, setMeetingName] = useState('');
   const [wasChair, setWasChair] = useState(false);
   const [wasShare, setWasShare] = useState(false);
   const [wasSpeaker, setWasSpeaker] = useState(false);
-  
+
   // Call type checkboxes
   const [isSponsorCall, setIsSponsorCall] = useState(false);
   const [isSponseeCall, setIsSponseeCall] = useState(false);
   const [isAAMemberCall, setIsAAMemberCall] = useState(false);
-  
+
   // Meeting selection fields
   const [selectedMeetingId, setSelectedMeetingId] = useState('');
   const [showMeetingForm, setShowMeetingForm] = useState(false);
-  
+
   // Sponsor contact dialog state
   const [showSponsorContactForm, setShowSponsorContactForm] = useState(false);
-  
+
   // Sponsee contact dialog state
   const [showSponseeContactForm, setShowSponseeContactForm] = useState(false);
-  
+
   // Generate current date in YYYY-MM-DD format
   function getCurrentDateString() {
     const today = new Date();
     return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
   }
-  
+
   // Watch for dark mode changes
   useEffect(() => {
     const observer = new MutationObserver((mutations) => {
@@ -90,19 +90,19 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, onSaveSponsorC
         }
       });
     });
-    
+
     observer.observe(document.documentElement, { attributes: true });
-    
+
     return () => observer.disconnect();
   }, []);
-  
+
   // Reset form when dialog opens
   useEffect(() => {
     if (open) {
       resetForm();
     }
   }, [open]);
-  
+
   // Reset additional fields when activity type changes
   useEffect(() => {
     // Set default duration based on activity type
@@ -111,7 +111,7 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, onSaveSponsorC
     } else {
       setDuration('15'); // Default duration for other activities
     }
-    
+
     setLiteratureTitle('');
     setMeetingName('');
     setWasChair(false);
@@ -123,13 +123,13 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, onSaveSponsorC
     setSelectedMeetingId('');
     setShowMeetingForm(false);
   }, [activityType]);
-  
+
   // Get duration options based on activity type
   const getDurationOptions = () => {
     const options = [];
     let maxMinutes = 60; // Default max is 1 hour
     let increment = 15; // Default increment is 15 minutes
-    
+
     if (activityType === 'prayer' || activityType === 'meditation') {
       maxMinutes = 60; // 1 hour
       increment = 5; // 5 minute increments for prayer/meditation
@@ -139,17 +139,17 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, onSaveSponsorC
     } else if (activityType === 'sponsee' || activityType === 'service') {
       maxMinutes = 120; // 2 hours
     }
-    
+
     for (let i = increment; i <= maxMinutes; i += increment) {
       options.push({
         value: i.toString(),
         label: `${i} minutes`
       });
     }
-    
+
     return options;
   };
-  
+
   // Reset form fields
   const resetForm = () => {
     setActivityType('prayer');
@@ -169,7 +169,7 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, onSaveSponsorC
     setSelectedMeetingId('');
     setShowMeetingForm(false);
   };
-  
+
   // Handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -186,26 +186,26 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, onSaveSponsorC
     if (!activityType) newErrors.activityType = 'Activity type is required';
     if (!duration) newErrors.duration = 'Duration is required';
     if (!date) newErrors.date = 'Date is required';
-    
+
     // Validate activity-specific fields
     if (activityType === 'literature' && !(literatureTitle || '').trim()) {
       newErrors.literatureTitle = 'Literature title is required';
     }
-    
+
     if (activityType === 'meeting' && !showMeetingForm && !selectedMeetingId && !(meetingName || '').trim()) {
       newErrors.meetingName = 'Meeting name is required';
     }
-    
+
     if (activityType === 'call' && !isSponsorCall && !isSponseeCall && !isAAMemberCall) {
       newErrors.callType = 'At least one call type must be selected';
     }
-    
+
     // If there are errors, show them and don't submit
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       return;
     }
-    
+
     // Create new activity object with core fields (let SQLite auto-generate the ID)
     const newActivity: any = {
       type: activityType,
@@ -229,32 +229,32 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, onSaveSponsorC
       serviceType: '',
       completed: 1
     };
-    
+
   //  console.log('[ LogActivityModal.tsx:179 handleSubmit ] Created activity with ISO date:', newActivity.date);
   //  console.log('[ LogActivityModal.tsx:180 handleSubmit ] Original date input:', date);
-    
+
     // Add activity-specific fields
     if (activityType === 'literature') {
       newActivity.literatureTitle = (literatureTitle || '').trim();
     }
-    
+
     if (activityType === 'meeting') {
       newActivity.meetingName = (meetingName || '').trim();
       newActivity.wasChair = wasChair ? 1 : 0;
       newActivity.wasShare = wasShare ? 1 : 0;
       newActivity.wasSpeaker = wasSpeaker ? 1 : 0;
-      
+
       // Include meeting ID if one was selected
       if (selectedMeetingId) {
         newActivity.meetingId = parseInt(selectedMeetingId, 10);
       }
     }
-    
+
     if (activityType === 'call') {
       newActivity.isSponsorCall = isSponsorCall ? 1 : 0;
       newActivity.isSponseeCall = isSponseeCall ? 1 : 0;
       newActivity.isAAMemberCall = isAAMemberCall ? 1 : 0;
-      
+
       // Determine the actual type for filtering/display purposes
       if (isSponsorCall && !isSponseeCall && !isAAMemberCall) {
         newActivity.callType = 'sponsor';
@@ -266,17 +266,17 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, onSaveSponsorC
         newActivity.callType = 'multiple'; // Multiple types selected
       }
     }
-    
+
     // Save the activity
     onSave(newActivity);
-    
+
     // Show success message
     setShowSuccess(true);
-    
+
     // Hide success message and close modal after 2 seconds
     setTimeout(() => {
       setShowSuccess(false);
-      
+
       // Only close the dialog on success if it's not a meeting form
       if (!showMeetingForm) {
         resetForm();
@@ -284,12 +284,12 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, onSaveSponsorC
       }
     }, 2000);
   };
-  
+
   // Handle meeting selection
   function handleMeetingSelect(e) {
     const meetingId = e.target.value;
     setSelectedMeetingId(meetingId);
-    
+
     if (meetingId) {
       // Convert to number for comparison since database IDs are integers
       const meetingIdNum = parseInt(meetingId, 10);
@@ -303,7 +303,7 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, onSaveSponsorC
       setMeetingName('');
     }
   }
-  
+
   // Handle saving a meeting from the meeting form
   function handleSaveMeeting(meeting) {
     // Call the parent's onSaveMeeting function to persist the meeting
@@ -314,7 +314,7 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, onSaveSponsorC
         setMeetingName(savedMeeting.name);
       }
     }
-    
+
     // Close the form
     setShowMeetingForm(false);
   }
@@ -325,28 +325,28 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, onSaveSponsorC
     if (onSaveSponsorContact) {
       onSaveSponsorContact(contactData, actionItems);
     }
-    
+
     // Close the sponsor contact form
     setShowSponsorContactForm(false);
-    
+
     // Also close the main activity modal since the sponsor contact was logged
     onClose();
   }
-  
+
   // Handle saving sponsee contact from the contact form
   function handleSaveSponseeContact(contactData, actionItems) {
     // Call the parent's onSaveSponseeContact function to persist the contact
     if (onSaveSponseeContact) {
       onSaveSponseeContact(contactData, actionItems);
     }
-    
+
     // Close the sponsee contact form
     setShowSponseeContactForm(false);
-    
+
     // Also close the main activity modal since the sponsee contact was logged
     onClose();
   }
-  
+
   // Get common text field styles for consistency
   const getTextFieldStyle = (theme) => ({
     width: '95%', // Slightly smaller to prevent focus border overflow
@@ -358,7 +358,7 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, onSaveSponsorC
     fontSize: '0.875rem',
     boxSizing: 'border-box'
   });
-  
+
   return (
     <MuiThemeProvider>
       <StyledDialog
@@ -367,7 +367,7 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, onSaveSponsorC
         aria-labelledby="log-activity-dialog-title"
         maxWidth="sm"
         PaperProps={{
-          style: { 
+          style: {
             overflowX: 'hidden',
             width: '90%',
             maxWidth: '450px',
@@ -376,7 +376,7 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, onSaveSponsorC
           }
         }}
       >
-        <DialogTitle 
+        <DialogTitle
           id="log-activity-dialog-title"
           sx={(theme) => ({
             backgroundColor: theme.palette.background.default,
@@ -387,7 +387,7 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, onSaveSponsorC
         >
           Log New Activity
         </DialogTitle>
-        
+
         <IconButton
           aria-label="close"
           onClick={onClose}
@@ -400,8 +400,8 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, onSaveSponsorC
         >
           <CloseIcon />
         </IconButton>
-        
-        <DialogContent 
+
+        <DialogContent
           dividers
           sx={{
             overflowY: 'auto',
@@ -442,7 +442,7 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, onSaveSponsorC
               Activity saved successfully!
             </Box>
           )}
-          
+
           {/* Display the meeting form inside the modal when needed */}
           {activityType === 'meeting' && showMeetingForm ? (
             <MeetingFormDialog
@@ -466,7 +466,7 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, onSaveSponsorC
                   variant="outlined"
                   InputProps={{
                     sx: {
-                      height: '56px'
+                      height: '48px'
                     }
                   }}
                   sx={{
@@ -489,7 +489,7 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, onSaveSponsorC
                   <MenuItem value="meeting">AA Meeting</MenuItem>
                 </TextField>
               </Box>
-              
+
               {/* Duration dropdown */}
               <Box sx={{ marginBottom: '0.5rem', maxWidth: '100%' }}>
                 <TextField
@@ -503,7 +503,7 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, onSaveSponsorC
                   variant="outlined"
                   InputProps={{
                     sx: {
-                      height: '56px'
+                      height: '48px'
                     }
                   }}
                   sx={{
@@ -525,7 +525,7 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, onSaveSponsorC
                   ))}
                 </TextField>
               </Box>
-              
+
               {/* Date picker */}
               <Box sx={{ marginBottom: '0.5rem', maxWidth: '100%' }}>
                 <TextField
@@ -539,7 +539,7 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, onSaveSponsorC
                   variant="outlined"
                   InputProps={{
                     sx: {
-                      height: '56px'
+                      height: '48px'
                     }
                   }}
                   InputLabelProps={{
@@ -558,7 +558,7 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, onSaveSponsorC
                   }}
                 />
               </Box>
-              
+
               {/* Literature-specific fields */}
               {activityType === 'literature' && (
                 <Box sx={{ marginBottom: '1rem', maxWidth: '100%' }}>
@@ -573,7 +573,7 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, onSaveSponsorC
                     variant="outlined"
                     InputProps={{
                       sx: {
-                        height: '56px'
+                        height: '48px'
                       }
                     }}
                     sx={{
@@ -590,12 +590,12 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, onSaveSponsorC
                   />
                 </Box>
               )}
-              
+
               {/* Meeting-specific fields */}
               {activityType === 'meeting' && !showMeetingForm && (
                 <>
                   <Box sx={{ marginBottom: '0.5rem', maxWidth: '100%' }}>
-                    <Box 
+                    <Box
                       component="label"
                       sx={(theme) => ({
                         display: 'block',
@@ -612,7 +612,7 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, onSaveSponsorC
                       onChange={handleMeetingSelect}
                       style={{
                         width: '100%',
-                        height: '56px',
+                        height: '48px',
                         fontSize: '16px',
                         padding: '10px 14px',
                         borderRadius: '8px',
@@ -628,8 +628,8 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, onSaveSponsorC
                         </option>
                       ))}
                     </select>
-                    
-                    <Box 
+
+                    <Box
                       sx={{
                         display: 'flex',
                         justifyContent: 'space-between',
@@ -637,8 +637,8 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, onSaveSponsorC
                         marginTop: '0.125rem'
                       }}
                     >
-                      <Button 
-                        variant="text" 
+                      <Button
+                        variant="text"
                         onClick={() => setShowMeetingForm(true)}
                         sx={(theme) => ({
                           fontSize: '1rem',
@@ -649,7 +649,7 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, onSaveSponsorC
                       </Button>
                     </Box>
                   </Box>
-                  
+
                   {/* Meeting Name field - only show if no meeting selected from dropdown */}
                   {!selectedMeetingId && (
                     <Box sx={{ marginBottom: '0.5rem', maxWidth: '100%' }}>
@@ -660,10 +660,10 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, onSaveSponsorC
                         onChange={(e) => {
                           const inputValue = e.target.value;
                           setMeetingName(inputValue);
-                          
+
                           // Try to match existing meeting by name
                           if (inputValue.trim()) {
-                            const matchingMeeting = meetings.find(m => 
+                            const matchingMeeting = meetings.find(m =>
                               m.name.toLowerCase() === inputValue.toLowerCase()
                             );
                             if (matchingMeeting) {
@@ -678,7 +678,7 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, onSaveSponsorC
                         variant="outlined"
                         InputProps={{
                           sx: {
-                            height: '56px'
+                            height: '48px'
                           }
                         }}
                         sx={{
@@ -695,10 +695,10 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, onSaveSponsorC
                       />
                     </Box>
                   )}
-                  
+
                   {/* Meeting participation checkboxes */}
                   <Box sx={{ marginBottom: '0.5rem' }}>
-                    <Box 
+                    <Box
                       component="p"
                       sx={(theme) => ({
                         fontSize: '1.25rem',
@@ -709,17 +709,17 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, onSaveSponsorC
                     >
                       Participation (optional)
                     </Box>
-                    
+
                     <Box sx={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                       <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                        <Box 
+                        <Box
                           component="input"
                           type="checkbox"
                           id="was-chair"
                           checked={wasChair}
                           onChange={(e) => setWasChair(e.target.checked)}
                         />
-                        <Box 
+                        <Box
                           component="label"
                           htmlFor="was-chair"
                           sx={(theme) => ({
@@ -731,16 +731,16 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, onSaveSponsorC
                           I chaired the meeting
                         </Box>
                       </Box>
-                      
+
                       <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                        <Box 
+                        <Box
                           component="input"
                           type="checkbox"
                           id="was-share"
                           checked={wasShare}
                           onChange={(e) => setWasShare(e.target.checked)}
                         />
-                        <Box 
+                        <Box
                           component="label"
                           htmlFor="was-share"
                           sx={(theme) => ({
@@ -752,16 +752,16 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, onSaveSponsorC
                           I shared during the meeting
                         </Box>
                       </Box>
-                      
+
                       <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                        <Box 
+                        <Box
                           component="input"
                           type="checkbox"
                           id="was-speaker"
                           checked={wasSpeaker}
                           onChange={(e) => setWasSpeaker(e.target.checked)}
                         />
-                        <Box 
+                        <Box
                           component="label"
                           htmlFor="was-speaker"
                           sx={(theme) => ({
@@ -777,11 +777,11 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, onSaveSponsorC
                   </Box>
                 </>
               )}
-              
+
               {/* Call-specific fields */}
               {activityType === 'call' && (
                 <Box sx={{ marginBottom: '0.5rem' }}>
-                  <Box 
+                  <Box
                     component="p"
                     sx={(theme) => ({
                       fontSize: '1.25rem',
@@ -792,10 +792,10 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, onSaveSponsorC
                   >
                     Call Type
                   </Box>
-                  
+
                   <Box sx={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                      <Box 
+                      <Box
                         component="input"
                         type="checkbox"
                         id="sponsor-call"
@@ -808,7 +808,7 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, onSaveSponsorC
                           }
                         }}
                       />
-                      <Box 
+                      <Box
                         component="label"
                         htmlFor="sponsor-call"
                         sx={(theme) => ({
@@ -820,9 +820,9 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, onSaveSponsorC
                         Call with my sponsor
                       </Box>
                     </Box>
-                    
+
                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                      <Box 
+                      <Box
                         component="input"
                         type="checkbox"
                         id="sponsee-call"
@@ -835,7 +835,7 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, onSaveSponsorC
                           }
                         }}
                       />
-                      <Box 
+                      <Box
                         component="label"
                         htmlFor="sponsee-call"
                         sx={(theme) => ({
@@ -847,16 +847,16 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, onSaveSponsorC
                         Call with my sponsee
                       </Box>
                     </Box>
-                    
+
                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                      <Box 
+                      <Box
                         component="input"
                         type="checkbox"
                         id="aa-member-call"
                         checked={isAAMemberCall}
                         onChange={(e) => setIsAAMemberCall(e.target.checked)}
                       />
-                      <Box 
+                      <Box
                         component="label"
                         htmlFor="aa-member-call"
                         sx={(theme) => ({
@@ -869,10 +869,10 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, onSaveSponsorC
                       </Box>
                     </Box>
                   </Box>
-                  
+
                   {errors.callType && (
-                    <Box 
-                      component="p" 
+                    <Box
+                      component="p"
                       sx={(theme) => ({
                         color: theme.palette.error.main,
                         fontSize: '0.75rem',
@@ -884,7 +884,7 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, onSaveSponsorC
                   )}
                 </Box>
               )}
-              
+
               {/* Notes field */}
               <Box sx={{ marginBottom: '0.5rem', maxWidth: '100%' }}>
                 <TextField
@@ -908,28 +908,28 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, onSaveSponsorC
                   }}
                 />
               </Box>
-              
+
             </form>
           )}
         </DialogContent>
-        
+
         <DialogActions sx={{ justifyContent: 'flex-end', padding: '16px 24px' }}>
-          <Button onClick={onClose} 
+          <Button onClick={onClose}
             size="small"
             variant="contained"
             color="error">
             Cancel
           </Button>
-          <Button 
+          <Button
             onClick={handleSubmit}
-            variant="contained" 
-            size="small" 
+            variant="contained"
+            size="small"
             color="success">
             Save
           </Button>
         </DialogActions>
       </StyledDialog>
-      
+
       {/* Meeting Form Dialog */}
       {showMeetingForm && (
         <MeetingFormDialog
@@ -938,7 +938,7 @@ const LogActivityModal = ({ open, onClose, onSave, onSaveMeeting, onSaveSponsorC
           onSave={handleSaveMeeting}
         />
       )}
-      
+
       {/* Sponsor Contact Form Dialog */}
       {showSponsorContactForm && (
         <ContactFormDialog

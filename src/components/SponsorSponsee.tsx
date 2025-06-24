@@ -20,7 +20,7 @@ import { Contact } from '../types/database';
 
 function TabPanel({ children, value, index, ...other }) {
   const theme = useTheme();
-  
+
   return (
     <div
       role="tabpanel"
@@ -30,14 +30,14 @@ function TabPanel({ children, value, index, ...other }) {
       {...other}
     >
       {value === index && (
-        <Box 
-          sx={{ 
-            py: 2,
-            px: 2,
+        <Box
+          sx={{
+            py: 1,
+            px: .5,
             backgroundColor: theme.palette.background.paper,
-            border: `1px solid ${theme.palette.divider}`,
+            // border: `1px solid ${theme.palette.divider}`,
             borderTop: 'none',
-            borderRadius: '0 0 8px 8px',
+            borderRadius: '8px 8px 8px 8px',
             minHeight: '200px'
           }}
         >
@@ -97,14 +97,14 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
   const loadSponsorContacts = async () => {
     try {
       const allContacts = await databaseService.getAll('sponsor_contacts');
-      console.log('[loadSponsorContacts] Raw sponsor contacts from DB:', allContacts);
+      // console.log('[loadSponsorContacts] Raw sponsor contacts from DB:', allContacts);
       // Filter to only show contacts for current user's sponsors
       const userSponsorContacts = allContacts.filter((contact: any) => {
         const match = contact.userId == user?.id;
         console.log(`[loadSponsorContacts] Filtering contact: userId=${contact.userId} (${typeof contact.userId}), user.id=${user?.id} (${typeof user?.id}), match=${match}`);
         return match;
       });
-      console.log('[loadSponsorContacts] Filtered sponsor contacts:', userSponsorContacts);
+      // console.log('[loadSponsorContacts] Filtered sponsor contacts:', userSponsorContacts);
       console.log('[loadSponsorContacts] Current sponsors:', sponsors);
       setSponsorContacts(userSponsorContacts);
     } catch (error) {
@@ -115,15 +115,15 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
   const loadSponseeContacts = async () => {
     try {
       const allContacts = await databaseService.getAll('sponsee_contacts');
-      console.log('[loadSponseeContacts] Raw sponsee contacts from DB:', allContacts);
+      // console.log('[loadSponseeContacts] Raw sponsee contacts from DB:', allContacts);
       // Filter to only show contacts for current user's sponsees
       const userSponseeContacts = allContacts.filter((contact: any) => {
         const match = contact.userId == user?.id;
-        console.log(`[loadSponseeContacts] Filtering contact: userId=${contact.userId} (${typeof contact.userId}), user.id=${user?.id} (${typeof user?.id}), match=${match}`);
+        // console.log(`[loadSponseeContacts] Filtering contact: userId=${contact.userId} (${typeof contact.userId}), user.id=${user?.id} (${typeof user?.id}), match=${match}`);
         return match;
       });
-      console.log('[loadSponseeContacts] Filtered sponsee contacts:', userSponseeContacts);
-      console.log('[loadSponseeContacts] Current sponsees:', sponsees);
+      // console.log('[loadSponseeContacts] Filtered sponsee contacts:', userSponseeContacts);
+      // console.log('[loadSponseeContacts] Current sponsees:', sponsees);
       setSponseeContacts(userSponseeContacts);
     } catch (error) {
       console.error('Failed to load sponsee contacts:', error);
@@ -158,7 +158,7 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
       // Delete related contacts first
       const contacts = await databaseService.getAll(contactTable);
       const relatedContacts = contacts.filter((c: any) => c[foreignKey] === personId);
-      
+
       for (const contact of relatedContacts) {
         // Delete related action items first
         const actionItems = await databaseService.getAll('action_items');
@@ -169,11 +169,11 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
             return item.sponseeContactId === contact.id;
           }
         });
-        
+
         for (const actionItem of contactActionItems) {
           await databaseService.remove('action_items', actionItem.id);
         }
-        
+
         // Delete related activities
         const activities = await databaseService.getAll('activities');
         const contactActivities = activities.filter((activity: any) => {
@@ -183,18 +183,18 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
             return activity.sponseeId === personId;
           }
         });
-        
+
         for (const activity of contactActivities) {
           await databaseService.remove('activities', activity.id);
         }
-        
+
         // Now delete the contact
         await databaseService.remove(contactTable, (contact as any).id);
       }
-      
+
       // Delete the person
       await databaseService.remove(personTable, personId);
-      
+
       // Refresh data
       if (personType === 'sponsor') {
         await loadSponsors();
@@ -204,7 +204,7 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
         await loadSponseeContacts();
       }
       setRefreshKey(prev => prev + 1);
-      
+
     } catch (error) {
       console.error(`Failed to delete ${personType}:`, error);
       alert(`Failed to delete ${personType}`);
@@ -250,7 +250,7 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
 
       setShowPersonForm(false);
       setEditingPerson(null);
-      
+
       // Refresh data
       if (personFormType === 'sponsor') {
         await loadSponsors();
@@ -280,13 +280,13 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
   const handleContactWithActionItems = async (contactData, actionItems = [], personType: 'sponsor' | 'sponsee') => {
     try {
       console.log(`[handleContactWithActionItems] Processing ${personType} contact:`, contactData);
-      
+
       const isSponsee = personType === 'sponsee';
       const contactTable = isSponsee ? 'sponsee_contacts' : 'sponsor_contacts';
       const foreignKey = isSponsee ? 'sponseeId' : 'sponsorId';
       const selectedPerson = isSponsee ? selectedSponseeForContact : selectedSponsorForContact;
       const actionItemType = isSponsee ? 'sponsee_action_item' : 'sponsor_action_item';
-      
+
       // Save the contact first
       const savedContact = await databaseService.add(contactTable, {
         ...contactData,
@@ -295,9 +295,9 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
       });
-      
+
       console.log(`[handleContactWithActionItems] Saved ${personType} contact to ${contactTable}:`, savedContact);
-      
+
       // Create activity record for the contact
       const contactActivityData: any = {
         userId: user?.id || 'default_user',
@@ -309,7 +309,7 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
       };
-      
+
       if (isSponsee) {
         contactActivityData.sponseeContactId = (savedContact as any).id;
         contactActivityData.sponseeId = selectedPerson?.id;
@@ -317,7 +317,7 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
         contactActivityData.sponsorContactId = (savedContact as any).id;
         contactActivityData.sponsorId = selectedPerson?.id;
       }
-      
+
       console.log(`[handleContactWithActionItems] Creating activity record for ${personType} contact:`, contactActivityData);
       await databaseService.add('activities', contactActivityData);
 
@@ -336,7 +336,7 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString()
           };
-          
+
           // Add sponsor/sponsee specific association
           const actionItemData = isSponsee ? {
             ...baseActionItemData,
@@ -347,12 +347,12 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
             sponsorId: selectedPerson?.id,
             sponsorName: selectedPerson?.name
           };
-          
+
           console.log(`[handleContactWithActionItems] Action item data for ${personType}:`, actionItemData);
-          
+
           // Save action item to master table
           const savedActionItem = await databaseService.add('action_items', actionItemData);
-          
+
           // Only create activity record for sponsor action items (sponsee action items don't appear in Activity Log)
           if (!isSponsee && savedActionItem && (savedActionItem as any).id) {
             const actionItemActivityData = {
@@ -366,13 +366,13 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
               createdAt: new Date().toISOString(),
               updatedAt: new Date().toISOString()
             };
-            
+
             console.log(`[handleContactWithActionItems] Creating activity record for sponsor action item:`, actionItemActivityData);
             await databaseService.add('activities', actionItemActivityData);
           }
         }
       }
-      
+
       // Reset form state
       if (isSponsee) {
         setShowSponseeContactForm(false);
@@ -383,15 +383,15 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
         setSelectedSponsorForContact(null);
         await loadSponsorContacts();
       }
-      
+
       setRefreshKey(prev => prev + 1);
-      
+
       // Reload activities to show new contact and action items in dashboard
       if (onSaveActivity) {
         const refreshActivity = { type: 'refresh', id: Date.now() };
         await onSaveActivity(refreshActivity);
       }
-      
+
       console.log(`[handleContactWithActionItems] Successfully completed ${personType} contact save`);
     } catch (error) {
       console.error(`Failed to add ${personType} contact:`, error);
@@ -407,8 +407,8 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
         console.log('Action item deleted:', actionItem.id);
       } else {
         // Handle toggle completion
-        const updatedItem = { 
-          ...actionItem, 
+        const updatedItem = {
+          ...actionItem,
           completed: actionItem.completed ? 0 : 1,
           updatedAt: new Date().toISOString()
         };
@@ -430,18 +430,18 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
 
   return (
     <div style={{ padding: '0 16px 20px 16px' }}>
-      <Typography variant="h4" sx={{ color: theme.palette.text.primary, mb: 3, fontWeight: 'bold' }}>
+      <Typography variant="h4" sx={{ color: theme.palette.text.primary, mb: 2, fontWeight: 'bold' }}>
         Sponsors & Sponsees
       </Typography>
 
-      <Tabs 
-        value={currentTab} 
+      <Tabs
+        value={currentTab}
         onChange={(event, newValue) => setCurrentTab(newValue)}
         variant="scrollable"
         scrollButtons="auto"
         allowScrollButtonsMobile
-        sx={{ 
-          borderBottom: 1, 
+        sx={{
+          borderBottom: 1,
           borderColor: 'divider',
           mb: 0,
           '& .MuiTabs-indicator': {
@@ -456,7 +456,7 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
             fontWeight: 'normal',
             textTransform: 'none',
             border: `1px solid transparent`,
-            borderRadius: '8px 8px 0 0',
+            borderRadius: '8px 8px 8px 8px',
             margin: '0 2px',
             backgroundColor: 'transparent',
             transition: 'all 0.2s ease-in-out',
@@ -476,7 +476,7 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
           },
         }}
       >
-        <Tab 
+        <Tab
           label={
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               Sponsors
@@ -487,7 +487,7 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
                     e.stopPropagation();
                     handleEditSponsor(null);
                   }}
-                  sx={{ 
+                  sx={{
                     padding: '2px',
                     color: 'inherit',
                     '&:hover': {
@@ -501,7 +501,7 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
             </Box>
           }
         />
-        <Tab 
+        <Tab
           label={
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               Sponsees
@@ -512,7 +512,7 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
                     e.stopPropagation();
                     handleEditSponsee(null);
                   }}
-                  sx={{ 
+                  sx={{
                     padding: '2px',
                     color: 'inherit',
                     '&:hover': {
@@ -606,8 +606,8 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
           setEditingPerson(null);
         }}
         onSave={handlePersonSubmit}
-        title={editingPerson ? 
-          `Edit ${personFormType === 'sponsor' ? 'Sponsor' : 'Sponsee'}` : 
+        title={editingPerson ?
+          `Edit ${personFormType === 'sponsor' ? 'Sponsor' : 'Sponsee'}` :
           `Add ${personFormType === 'sponsor' ? 'Sponsor' : 'Sponsee'}`
         }
         initialData={editingPerson}

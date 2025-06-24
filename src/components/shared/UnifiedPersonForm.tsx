@@ -16,10 +16,10 @@ interface UnifiedPersonFormProps {
   title: string;
 }
 
-export default function UnifiedPersonForm({ 
-  initialData, 
-  onSave, 
-  onCancel, 
+export default function UnifiedPersonForm({
+  initialData,
+  onSave,
+  onCancel,
   title
 }: UnifiedPersonFormProps) {
   const theme = useTheme();
@@ -61,7 +61,7 @@ export default function UnifiedPersonForm({
 
   const handleSubmit = () => {
     let dataToSave = { ...formData };
-    
+
     try {
       if (dataToSave.sobrietyDate && dataToSave.sobrietyDate.trim()) {
         const date = new Date(dataToSave.sobrietyDate);
@@ -76,40 +76,40 @@ export default function UnifiedPersonForm({
     } catch (error) {
       dataToSave.sobrietyDate = null;
     }
-    
+
     onSave(dataToSave);
   };
 
   console.log('UnifiedPersonForm is rendering with title:', title);
-  
+
   return (
-    <Box sx={{ 
+    <Box sx={{
       minHeight: '100vh',
       bgcolor: theme.palette.background.default,
       display: 'flex',
       flexDirection: 'column'
     }}>
       {/* Header */}
-      <Box sx={{ 
-        display: 'flex', 
-        alignItems: 'center', 
-        p: theme.spacing(2),
+      <Box sx={{
+        display: 'flex',
+        alignItems: 'center',
+        p: theme.spacing(1),
         bgcolor: theme.palette.primary.main,
         color: theme.palette.primary.contrastText
       }}>
-        <IconButton 
+        <IconButton
           onClick={onCancel}
-          sx={{ 
-            mr: theme.spacing(2), 
+          sx={{
+            mr: theme.spacing(1),
             color: theme.palette.primary.contrastText
           }}
         >
           <i className="fa-solid fa-times"></i>
         </IconButton>
-        <Typography 
-          variant="h6" 
+        <Typography
+          variant="h6"
           component="h1"
-          sx={{ 
+          sx={{
             fontWeight: 600,
             fontSize: '18px'
           }}
@@ -119,16 +119,16 @@ export default function UnifiedPersonForm({
       </Box>
 
       {/* Form Content */}
-      <Box sx={{ 
+      <Box sx={{
         flex: 1,
-        p: theme.spacing(3),
+        p: theme.spacing(2),
         bgcolor: theme.palette.background.default
       }}>
-        <Box sx={{ 
+        <Box sx={{
           p: 0,
           display: 'flex',
           flexDirection: 'column',
-          gap: theme.spacing(2)
+          gap: theme.spacing(1)
         }}>
           {/* First Name */}
           <TextField
@@ -163,7 +163,7 @@ export default function UnifiedPersonForm({
               }
             }}
           />
-          
+
           {/* Last Name */}
           <TextField
             fullWidth
@@ -196,7 +196,7 @@ export default function UnifiedPersonForm({
               }
             }}
           />
-          
+
           {/* Phone Number */}
           <MuiTelInput
             value={formData.phoneNumber}
@@ -226,7 +226,7 @@ export default function UnifiedPersonForm({
               }
             }}
           />
-          
+
           {/* Email */}
           <TextField
             fullWidth
@@ -260,14 +260,14 @@ export default function UnifiedPersonForm({
               }
             }}
           />
-          
+
           {/* Sobriety Date */}
           <Box sx={{ position: 'relative' }}>
-            <Typography sx={{ 
+            <Typography sx={{
               color: theme.palette.text.secondary,
               fontSize: '14px',
-              mb: theme.spacing(1),
-              ml: theme.spacing(1)
+              mb: theme.spacing(.5),
+              ml: theme.spacing(.5)
             }}>
               Sobriety Date
             </Typography>
@@ -297,7 +297,7 @@ export default function UnifiedPersonForm({
               }}
             />
           </Box>
-          
+
           {/* Notes */}
           <TextField
             fullWidth
@@ -333,19 +333,19 @@ export default function UnifiedPersonForm({
           />
         </Box>
       </Box>
-      
+
       {/* Bottom Actions */}
-      <Box sx={{ 
-        p: theme.spacing(3),
+      <Box sx={{
+        p: theme.spacing(2),
         bgcolor: theme.palette.background.default,
         display: 'flex',
-        gap: theme.spacing(2),
+        gap: theme.spacing(1),
         justifyContent: 'center'
       }}>
         <Button
           variant="outlined"
           onClick={onCancel}
-          sx={{ 
+          sx={{
             flex: 1,
             maxWidth: '140px',
             borderRadius: theme.spacing(1),
@@ -361,11 +361,11 @@ export default function UnifiedPersonForm({
         >
           Cancel
         </Button>
-        
+
         <Button
           variant="contained"
           onClick={handleSubmit}
-          sx={{ 
+          sx={{
             flex: 1,
             maxWidth: '140px',
             borderRadius: theme.spacing(1),

@@ -18,7 +18,7 @@ interface TabComponentProps {
 
 function TabPanel({ children, value, index, ...other }) {
   const theme = useTheme();
-  
+
   return (
     <div
       role="tabpanel"
@@ -28,12 +28,12 @@ function TabPanel({ children, value, index, ...other }) {
       {...other}
     >
       {value === index && (
-        <Box 
-          sx={{ 
-            py: 2,
-            px: 2,
-            backgroundColor: theme.palette.mode === 'dark' 
-              ? 'rgba(255, 255, 255, 0.03)' 
+        <Box
+          sx={{
+            py: 1,
+            px: 1,
+            backgroundColor: theme.palette.mode === 'dark'
+              ? 'rgba(255, 255, 255, 0.03)'
               : 'rgba(0, 0, 0, 0.015)',
             border: `1px solid ${theme.palette.divider}`,
             borderTop: 'none',
@@ -48,12 +48,12 @@ function TabPanel({ children, value, index, ...other }) {
   );
 }
 
-export default function TabComponent({ 
-  items, 
-  currentTab, 
-  onTabChange, 
+export default function TabComponent({
+  items,
+  currentTab,
+  onTabChange,
   addTabLabel,
-  onAddClick 
+  onAddClick
 }: TabComponentProps) {
   const theme = useTheme();
 
@@ -68,14 +68,14 @@ export default function TabComponent({
 
   return (
     <Box>
-      <Tabs 
-        value={currentTab} 
+      <Tabs
+        value={currentTab}
         onChange={handleTabChange}
         variant="scrollable"
         scrollButtons="auto"
         allowScrollButtonsMobile
-        sx={{ 
-          borderBottom: 1, 
+        sx={{
+          borderBottom: 1,
           borderColor: 'divider',
           mb: 0,
           '& .MuiTabs-indicator': {
@@ -97,12 +97,12 @@ export default function TabComponent({
             '&.Mui-selected': {
               color: theme.palette.primary.main,
               fontWeight: 'bold',
-              backgroundColor: theme.palette.mode === 'dark' 
-                ? 'rgba(255, 255, 255, 0.03)' 
+              backgroundColor: theme.palette.mode === 'dark'
+                ? 'rgba(255, 255, 255, 0.03)'
                 : 'rgba(0, 0, 0, 0.015)',
               border: `1px solid ${theme.palette.divider}`,
-              borderBottom: theme.palette.mode === 'dark' 
-                ? '1px solid rgba(255, 255, 255, 0.03)' 
+              borderBottom: theme.palette.mode === 'dark'
+                ? '1px solid rgba(255, 255, 255, 0.03)'
                 : '1px solid rgba(0, 0, 0, 0.015)',
               marginBottom: '-1px',
               position: 'relative',
@@ -115,16 +115,16 @@ export default function TabComponent({
         }}
       >
         {items.map((item, index) => (
-          <Tab 
-            key={item.id} 
+          <Tab
+            key={item.id}
             label={item.label}
             id={`tab-${index}`}
             aria-controls={`tabpanel-${index}`}
           />
         ))}
         {addTabLabel && (
-          <Tab 
-            label={addTabLabel} 
+          <Tab
+            label={addTabLabel}
             id={`tab-add`}
             aria-controls={`tabpanel-add`}
             data-tour={addTabLabel === "+ Add Sponsor" ? "add-sponsor-btn" : addTabLabel === "+ Add Sponsee" ? "add-sponsee-btn" : undefined}

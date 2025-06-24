@@ -10,7 +10,7 @@ interface BottomNavBarProps {
 function BottomNavBar({ currentView, onNavigate }: BottomNavBarProps) {
   const muiTheme = useTheme();
   const isDark = muiTheme.palette.mode === 'dark';
-  
+
   const navItems = [
     { id: 'dashboard', name: 'Home', icon: '🏠' },
     { id: 'meetings', name: 'Meetings', icon: '📍' },
@@ -51,16 +51,16 @@ function BottomNavBar({ currentView, onNavigate }: BottomNavBarProps) {
               flexDirection: 'column',
               alignItems: 'center',
               justifyContent: 'center',
-              padding: '8px 8px',
+              padding: '6px 6px',
               backgroundColor: 'transparent',
               border: 'none',
               borderRadius: '12px',
               cursor: 'pointer',
               transition: 'all 0.2s ease',
-              minWidth: '60px',
+              minWidth: '40px',
               '&:hover': {
-                backgroundColor: isDark 
-                  ? muiTheme.palette.action.hover 
+                backgroundColor: isDark
+                  ? muiTheme.palette.action.hover
                   : muiTheme.palette.action.hover,
               },
               '&:active': {
@@ -83,8 +83,8 @@ function BottomNavBar({ currentView, onNavigate }: BottomNavBarProps) {
               sx={{
                 fontSize: '14px',
                 fontWeight: isActive ? 600 : 400,
-                color: isActive 
-                  ? muiTheme.palette.primary.main 
+                color: isActive
+                  ? muiTheme.palette.primary.main
                   : muiTheme.palette.text.secondary,
                 transition: 'all 0.2s ease'
               }}
