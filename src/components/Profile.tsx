@@ -1,20 +1,11 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useTheme } from '@mui/material/styles';
-import ThemeSelector from './ThemeSelector';
 import MeetingFormDialog from './MeetingFormDialog';
-import PopoverColorPicker from './PopoverColorPicker';
-import PopoverThemeDisplay from './PopoverThemeDisplay';
 import QRCodeGenerator from './QRCodeGenerator';
 import { useAppTheme } from '../contexts/MuiThemeProvider';
-import MuiThemeProvider from '../contexts/MuiThemeProvider';
 import { formatDateForDisplay } from '../utils/dateUtils';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import dayjs from 'dayjs';
 
 import { Capacitor } from '@capacitor/core';
-import { formatPhoneNumber, formatPhoneNumberForInput } from '../utils/phoneUtils';
 import { MuiTelInput } from 'mui-tel-input';
 import { getLocationBasedPhoneFormat } from '../utils/deviceSuggestions';
 
@@ -26,7 +17,6 @@ import {
   Paper,
   Typography,
   Box,
-  Divider,
   IconButton,
   MenuItem,
   Dialog,
@@ -90,7 +80,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
   const [email, setEmail] = useState('');
   const [sobrietyDate, setSobrietyDate] = useState('');
   const [homeGroups, setHomeGroups] = useState([]);
-  const [errors, setErrors] = useState({});
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [editingPersonalInfo, setEditingPersonalInfo] = useState(false);
   const [showMeetingForm, setShowMeetingForm] = useState(false);
   const [qrCodeOpen, setQrCodeOpen] = useState(false);
@@ -172,11 +162,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
 
 
 
-  // Handle phone number input
-  const handlePhoneChange = (e) => {
-    const formattedNumber = formatPhoneNumberForInput(e.target.value);
-    setPhoneNumber(formattedNumber);
-  };
+
 
   // Handle meeting selection change
   const handleHomeGroupChange = (e) => {
@@ -226,7 +212,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
     }
 
     // Validate form
-    const newErrors = {};
+    const newErrors: { [key: string]: string } = {};
     if (!sobrietyDate) newErrors.sobrietyDate = 'Sobriety date is required';
 
     // If there are errors, show them and don't submit
@@ -895,13 +881,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
                 forceCallingCode
                 continents={['EU', 'OC', 'NA']}
                 fullWidth
-                inputProps={{
-                  autoComplete: 'tel',
-                  'data-lpignore': 'false',
-                  'data-form-type': 'tel',
-                  name: 'phone',
-                  'data-1p-ignore': 'false'
-                }}
+
                 sx={{
                   mb: .5,
                   '& .MuiInputBase-root': {
@@ -1018,7 +998,7 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
               <TextField
                 select
                 fullWidth
-                value={homeGroups != "Not set" ? homeGroups : []}
+                value={Array.isArray(homeGroups) && homeGroups.length > 0 ? homeGroups : []}
                 onChange={handleHomeGroupChange}
                 variant="outlined"
                 size="medium"
