@@ -103,8 +103,10 @@ The Spiritual Condition Tracker is a comprehensive mobile application designed f
   - Added duplicate filtering based on actionItemId to prevent duplicate action items
   - Added automatic activity reload after action item updates for proper synchronization
   - Fixed Action Item component displaying hardcoded "Action Item" instead of actual titles
-  - Enhanced sponsor name enrichment for all sponsor_action_item activities
-  - Added direct sponsor name attribution to activities for proper display
+  - Fixed formatting issue: removed "Sponsor Action:" prefix causing unwanted line breaks
+  - Enhanced sponsor name enrichment logic with comprehensive fallback checking
+  - Added title cleanup in both context enrichment and display logic
+  - Action items should now display as "Practice daily meditation (from John Smith)"
   - Action items complete properly from Activity List and sync with Sponsorship page
 - June 23, 2025: Cleaned up unused imports and variables in Profile.tsx
   - Removed unused imports: ThemeSelector, PopoverColorPicker, DatePicker components

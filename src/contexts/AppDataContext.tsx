@@ -386,6 +386,8 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
       console.log('[ AppDataContext.tsx ] Raw action items from database:', actionItems.length);
       console.log('[ AppDataContext.tsx ] Raw sponsor contacts from database:', sponsorContacts.length);
       console.log('[ AppDataContext.tsx ] Raw sponsors from database:', sponsors.length);
+      console.log('[ AppDataContext.tsx ] First sponsor:', sponsors[0]);
+      console.log('[ AppDataContext.tsx ] Activities types:', activities.map(a => `${a.id}:${a.type}`));
       
       // Enrich activities with action item data for proper synchronization
       const enrichedActivities = activities.map(activity => {
@@ -422,17 +424,25 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
         
         // Handle sponsor_action_item activities - enrich all with sponsor data
         if (activity.type === 'sponsor_action_item') {
-          console.log('[ AppDataContext.tsx ] Processing sponsor_action_item:', activity);
+          console.log('[ AppDataContext.tsx ] Processing sponsor_action_item activity:', {
+            id: activity.id,
+            type: activity.type,
+            title: activity.title,
+            text: activity.text,
+            notes: activity.notes
+          });
           
           if (sponsors && sponsors.length > 0) {
             const sponsor = sponsors[0];
             const sponsorName = `${sponsor.name || ''} ${sponsor.lastName || ''}`.trim() || 'Sponsor';
-            console.log('[ AppDataContext.tsx ] Adding sponsor name to activity:', sponsorName);
+            console.log('[ AppDataContext.tsx ] Enriching with sponsor name:', sponsorName);
             
             // Find matching action item if available
             const matchingActionItem = actionItems.find(ai => 
               ai.sponsorContactId && ai.type === 'sponsor_action_item'
             );
+            
+            console.log('[ AppDataContext.tsx ] Found matching action item:', matchingActionItem);
             
             const enrichedActivity = {
               ...activity,
@@ -440,11 +450,21 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
                 ...matchingActionItem,
                 sponsorName
               } : { sponsorName },
-              // Preserve original title but add sponsor attribution in display logic
-              sponsorName: sponsorName
+              sponsorName: sponsorName,
+              // Clean up the title to remove "Sponsor Action:" prefix here too
+              title: activity.title && activity.title.startsWith('Sponsor Action:') 
+                ? activity.title.replace('Sponsor Action:', '').trim()
+                : activity.title
             };
             
-            console.log('[ AppDataContext.tsx ] Enriched activity:', enrichedActivity);
+            console.log('[ AppDataContext.tsx ] Final enriched activity:', {
+              id: enrichedActivity.id,
+              type: enrichedActivity.type,
+              title: enrichedActivity.title,
+              sponsorName: enrichedActivity.sponsorName,
+              hasActionItemData: !!enrichedActivity.actionItemData
+            });
+            
             return enrichedActivity;
           }
         }

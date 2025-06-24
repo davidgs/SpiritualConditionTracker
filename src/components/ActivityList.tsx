@@ -224,38 +224,42 @@ export default function ActivityList({
     }
     
     if (activity.type === 'action-item' || activity.type === 'sponsor_action_item') {
-      const baseTitle = activity.title || activity.text || 'Action Item';
+      // Extract clean title without "Sponsor Action:" prefix
+      let baseTitle = activity.title || activity.text || 'Action Item';
       
-      console.log('[ActivityList] Processing action item with data:', {
-        baseTitle,
+      // Remove the "Sponsor Action:" prefix that's causing formatting issues
+      if (baseTitle.startsWith('Sponsor Action:')) {
+        baseTitle = baseTitle.replace('Sponsor Action:', '').trim();
+      }
+      
+      console.log('[ActivityList] Processing action item:', {
+        originalTitle: activity.title,
+        cleanedTitle: baseTitle,
         type: activity.type,
-        hasActionItemData: !!activity.actionItemData,
-        sponsorContactId: activity.actionItemData?.sponsorContactId,
-        enrichedSponsorName: activity.actionItemData?.sponsorName,
-        availableSponsors: sponsorContacts.length,
-        fullActivity: activity
+        sponsorName: activity.sponsorName,
+        actionItemData: activity.actionItemData
       });
       
-      // Check for sponsor name from enriched data
+      // Check for sponsor name from enriched data first
       if (activity.sponsorName) {
-        console.log('[ActivityList] Using enriched sponsor name:', activity.sponsorName);
+        console.log('[ActivityList] Found enriched sponsor name:', activity.sponsorName);
         return `${baseTitle} (from ${activity.sponsorName})`;
       }
       
-      // Show sponsor name if this is a sponsor action item
-      if (activity.actionItemData && activity.actionItemData.sponsorContactId) {
-        const sponsorName = getSponsorName();
-        console.log('[ActivityList] Adding sponsor name to title:', sponsorName);
-        return `${baseTitle} (from ${sponsorName})`;
-      }
-      
-      // Also check for enriched sponsor name from actionItemData
+      // Check actionItemData for sponsor name
       if (activity.actionItemData && activity.actionItemData.sponsorName) {
-        console.log('[ActivityList] Using actionItemData sponsor name:', activity.actionItemData.sponsorName);
+        console.log('[ActivityList] Found sponsor name in actionItemData:', activity.actionItemData.sponsorName);
         return `${baseTitle} (from ${activity.actionItemData.sponsorName})`;
       }
       
-      console.log('[ActivityList] No sponsor name found, returning base title');
+      // Fallback: use first available sponsor if this is a sponsor action item
+      if (activity.type === 'sponsor_action_item' && sponsorContacts.length > 0) {
+        const sponsorName = getSponsorName();
+        console.log('[ActivityList] Using fallback sponsor name:', sponsorName);
+        return `${baseTitle} (from ${sponsorName})`;
+      }
+      
+      console.log('[ActivityList] No sponsor name found, returning clean title:', baseTitle);
       return baseTitle;
     }
     
