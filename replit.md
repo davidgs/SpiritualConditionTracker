@@ -110,7 +110,7 @@ The Spiritual Condition Tracker is a comprehensive mobile application designed f
   - ActivityList now passes clean data (type, sponsorName, sponsorContacts) to ActionItem
   - ActionItem component handles title cleanup and sponsor attribution internally
   - Proper separation of concerns: ActivityList manages data, ActionItem manages display
-  - Action items now display as "Practice daily meditation (from John Smith)" 
+  - Action items now display as "Practice daily meditation (from John S.)" using First Name, Last initial format
   - Fixed checkbox and delete button vertical alignment - positioned at top of action item content
   - Action items complete properly from Activity List and sync with Sponsorship page
 - June 23, 2025: Cleaned up unused imports and variables in Profile.tsx

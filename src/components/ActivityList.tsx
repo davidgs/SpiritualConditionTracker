@@ -62,7 +62,9 @@ export default function ActivityList({
   const getSponsorName = () => {
     if (sponsorContacts && sponsorContacts.length > 0) {
       const sponsor = sponsorContacts[0]; // Use first sponsor from sponsors table
-      return `${sponsor.name || ''} ${sponsor.lastName || ''}`.trim() || 'Sponsor';
+      const firstName = sponsor.name || '';
+      const lastName = sponsor.lastName || '';
+      return lastName ? `${firstName} ${lastName.charAt(0)}.` : firstName || 'Sponsor';
     }
     return 'Sponsor';
   };

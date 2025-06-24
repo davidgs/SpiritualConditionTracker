@@ -434,7 +434,10 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
           
           if (sponsors && sponsors.length > 0) {
             const sponsor = sponsors[0];
-            const sponsorName = `${sponsor.name || ''} ${sponsor.lastName || ''}`.trim() || 'Sponsor';
+            // Format as "First Name, Last initial" for activity display
+            const firstName = sponsor.name || '';
+            const lastName = sponsor.lastName || '';
+            const sponsorName = lastName ? `${firstName} ${lastName.charAt(0)}.` : firstName || 'Sponsor';
             console.log('[ AppDataContext.tsx ] Enriching with sponsor name:', sponsorName);
             
             // Find matching action item if available

@@ -133,11 +133,18 @@ export default function ActionItem({
                 // Add sponsor attribution for sponsor action items
                 if (actionItem.type === 'sponsor_action_item') {
                   if (actionItem.sponsorName) {
-                    return `${title} (from ${actionItem.sponsorName})`;
+                    // Format as "First Name, Last initial"
+                    const nameParts = actionItem.sponsorName.trim().split(' ');
+                    const firstName = nameParts[0] || '';
+                    const lastName = nameParts[nameParts.length - 1] || '';
+                    const formattedName = lastName ? `${firstName} ${lastName.charAt(0)}.` : firstName;
+                    return `${title} (from ${formattedName})`;
                   } else if (sponsorContacts.length > 0) {
                     const sponsor = sponsorContacts[0];
-                    const sponsorName = `${sponsor.name || ''} ${sponsor.lastName || ''}`.trim() || 'Sponsor';
-                    return `${title} (from ${sponsorName})`;
+                    const firstName = sponsor.name || '';
+                    const lastName = sponsor.lastName || '';
+                    const formattedName = lastName ? `${firstName} ${lastName.charAt(0)}.` : firstName || 'Sponsor';
+                    return `${title} (from ${formattedName})`;
                   }
                 } else if (actionItem.type === 'sponsee_action_item') {
                   if (actionItem.sponseeName) {
