@@ -459,16 +459,36 @@ export default function ActivityList({
                 .map((activity, index) => {
                   // Handle action items (including sponsor and sponsee action items) with the new ActionItem component
                   if (activity.type === 'action-item' || activity.type === 'sponsor_action_item' || activity.type === 'sponsee_action_item') {
-                    const actionItemTitle = activity.actionItemData?.title || activity.notes || 'Action Item';
-                    const actionItemPrefix = activity.type === 'sponsor_action_item' ? 'Sponsor Action: ' : 
-                                           activity.type === 'sponsee_action_item' ? 'Sponsee Action: ' : '';
+                    // Get clean action item title
+                    let actionItemTitle = activity.actionItemData?.title || activity.title || activity.notes || 'Action Item';
+                    
+                    // Remove "Sponsor Action:" prefix if present in the title
+                    if (actionItemTitle.startsWith('Sponsor Action:')) {
+                      actionItemTitle = actionItemTitle.replace('Sponsor Action:', '').trim();
+                    }
+                    
+                    // Add sponsor attribution for sponsor action items
+                    let finalTitle = actionItemTitle;
+                    if (activity.type === 'sponsor_action_item') {
+                      if (activity.sponsorName) {
+                        finalTitle = `${actionItemTitle} (from ${activity.sponsorName})`;
+                      } else if (sponsorContacts.length > 0) {
+                        const sponsorName = getSponsorName();
+                        finalTitle = `${actionItemTitle} (from ${sponsorName})`;
+                      }
+                    } else if (activity.type === 'sponsee_action_item') {
+                      // Add sponsee attribution if available
+                      if (activity.sponseeName) {
+                        finalTitle = `${actionItemTitle} (for ${activity.sponseeName})`;
+                      }
+                    }
                     
                     return (
                       <ActionItem
                         key={activity.id || `${activity.date}-${activity.type}-${index}`}
                         actionItem={{
                           id: activity.id,
-                          title: actionItemPrefix + actionItemTitle,
+                          title: finalTitle,
                           notes: activity.actionItemData?.notes,
                           completed: activity.actionItemData?.completed || false,
                           deleted: activity.actionItemData?.deleted || false,
