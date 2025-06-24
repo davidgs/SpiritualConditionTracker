@@ -104,7 +104,7 @@ export default function ActionItemForm({ onSubmit, onCancel, initialData }: Acti
         sx={{ mb: 2 }}
       />
 
-      <TextField
+      {/* <TextField
         fullWidth
         margin="normal"
         name="notes"
@@ -116,7 +116,7 @@ export default function ActionItemForm({ onSubmit, onCancel, initialData }: Acti
         placeholder="Any additional notes"
         sx={{ mb: 2 }}
       />
-
+*/}
       <TextField
         fullWidth
         margin="normal"
@@ -162,7 +162,7 @@ export default function ActionItemForm({ onSubmit, onCancel, initialData }: Acti
           variant="contained"
           color="success"
         >
-          {initialData ? 'Update' : 'Save'} Action Item
+          {initialData ? 'Update' : 'Save'} 
         </Button>
       </Box>
     </Box>
