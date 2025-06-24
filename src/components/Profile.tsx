@@ -72,7 +72,6 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
   };
   // Access MUI theme for consistent styling
   const muiTheme = useTheme();
-  const darkMode = muiTheme.palette.mode === 'dark';
 
   const [name, setName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -149,14 +148,12 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
       setHomeGroups(homeGroupsData);
 
       // Load privacy settings and preferences
-      setAllowMessages(user.privacySettings?.allowMessages !== false);
       setShareLastName(user.privacySettings?.shareLastName !== false);
       setUse24HourFormat(user.preferences?.use24HourFormat || false);
     }
   }, [user?.id]); // Only run when user ID changes, not on every user prop update
 
   // State for tracking privacy settings and preferences
-  const [allowMessages, setAllowMessages] = useState(user?.privacySettings?.allowMessages !== false);
   const [shareLastName, setShareLastName] = useState(user?.privacySettings?.shareLastName !== false);
   const [use24HourFormat, setUse24HourFormat] = useState(user?.preferences?.use24HourFormat || false);
 
@@ -265,7 +262,6 @@ export default function Profile({ setCurrentView, user, onUpdate, meetings, onSa
       homeGroups,
       privacySettings: {
         ...existingPrivacySettings,
-        allowMessages,
         shareLastName
       },
       preferences: {
