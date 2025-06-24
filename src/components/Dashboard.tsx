@@ -196,7 +196,9 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
             borderLeft: 4,
             borderLeftColor: 'success.main',
             mb: 1.5,
-          }}>
+          }}
+          data-tour="sobriety-counter-box"
+        >
           <Typography
             variant="h6"
             sx={{
@@ -268,6 +270,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
             <Box sx={{ textAlign: 'center' }}>
               <Box sx={{ display: 'flex', alignItems: 'baseline', mb: 0.5, justifyContent: 'center' }}>
                 <Typography 
+                  data-tour="sobriety-days"
                   variant="h4"
                   sx={{ 
                     fontSize: '1.6rem', 
@@ -317,7 +320,9 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
             borderLeft: 4,
             borderLeftColor: 'primary.main',
             mb: 1.5,
-          }}>
+          }}
+          data-tour="spiritual-fitness-score"
+        >
           <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 1 }}>
             <Typography
               variant="h6"
@@ -385,7 +390,9 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
             boxShadow: (theme) => theme.palette.mode === 'dark' 
               ? 'inset 0 1px 2px rgba(0,0,0,0.2)' 
               : 'inset 0 1px 2px rgba(0,0,0,0.1)'
-          }}>
+          }}
+            data-tour="spiritual-fitness-display"
+>
             <Box sx={{
               borderRadius: '0 8px 8px 0',
               bgcolor: (theme) => theme.palette.mode === 'dark' ? '#374151' : '#F3F4F6',
@@ -417,6 +424,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
                 justifyContent: 'center'
               }}
               title="Change timeframe"
+              data-tour="spiritual-fitness-time"
             >
               <i className="fa-solid fa-shuffle"></i>
             </IconButton>
@@ -515,6 +523,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
             {/* Button to open activity modal */}
             <IconButton
               onClick={() => setShowActivityModal(true)}
+              data-tour="log-activity-btn"
               title="Log new activity"
               aria-label="Log new activity"
               size="medium"

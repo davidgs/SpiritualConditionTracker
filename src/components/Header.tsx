@@ -3,12 +3,32 @@ import { useTheme } from '@mui/material/styles';
 import { Typography, Box, IconButton, Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/material';
 import { useAppTheme } from '../contexts/MuiThemeProvider';
 import SafeAreaHeader from './SafeAreaHeader';
+import GuidedTour from './GuidedTour';
 
-function Header({ title, menuOpen, setMenuOpen, isMobile }) {
+interface HeaderProps {
+  title: string;
+  menuOpen: boolean;
+  setMenuOpen: (open: boolean) => void;
+  isMobile: boolean;
+  onNavigate: (view: string) => void;
+  autoStartTour?: boolean;
+  onTourClose?: () => void;
+}
+
+function Header({ title, menuOpen, setMenuOpen, isMobile, onNavigate, autoStartTour, onTourClose }: HeaderProps) {
   const muiTheme = useTheme();
   const { primaryColor, toggleTheme } = useAppTheme();
   const darkMode = muiTheme.palette.mode === 'dark';
   const [infoDialogOpen, setInfoDialogOpen] = useState(false);
+  const [tourOpen, setTourOpen] = useState(false);
+
+  // Auto-start tour for new users
+  React.useEffect(() => {
+    if (autoStartTour) {
+      setTourOpen(true);
+    }
+  }, [autoStartTour]);
+
   
   // Use MUI theme colors for consistent styling
   const headerBackgroundColor = darkMode 
@@ -49,12 +69,13 @@ function Header({ title, menuOpen, setMenuOpen, isMobile }) {
             width: '40px',
             height: '40px',
             objectFit: 'cover',
-            borderRadius: '3px'
+            borderRadius: '20px'
           }}
         />
         
         <Typography 
           variant="h6" 
+          data-tour="tour-welcome"
           sx={{ 
             fontWeight: 600,
             color: headerTextColor,
@@ -65,6 +86,24 @@ function Header({ title, menuOpen, setMenuOpen, isMobile }) {
         >
           My Spiritual Condition
         </Typography>
+
+
+
+        {/* Help/Tour Button */}
+        <IconButton
+          onClick={() => setTourOpen(true)}
+          sx={{
+            padding: '4px',
+            fontSize: '1.1rem',
+            transition: 'all 0.2s ease',
+            '&:hover': {
+              transform: 'scale(1.1)'
+            }
+          }}
+          aria-label="Start guided tour"
+        >
+          <i className="fas fa-question-circle" style={{ fontSize: '1.1rem' }}></i>
+        </IconButton>
 
         {/* Info Button */}
         <IconButton
@@ -98,6 +137,7 @@ function Header({ title, menuOpen, setMenuOpen, isMobile }) {
               transform: 'scale(1.1)'
             }
           }}
+              data-tour="theme-toggle"
           aria-label="Toggle theme"
         >
           {muiTheme.palette.mode === 'dark' ? '🌙' : '☀️'}
@@ -198,6 +238,18 @@ function Header({ title, menuOpen, setMenuOpen, isMobile }) {
           </Button>
         </DialogActions>
       </Dialog>
+
+      {/* Guided Tour */}
+      <GuidedTour 
+        isOpen={tourOpen} 
+        onClose={() => {
+          setTourOpen(false);
+          if (onTourClose) {
+            onTourClose();
+          }
+        }}
+        onNavigate={onNavigate}
+      />
     </>
   );
 }
