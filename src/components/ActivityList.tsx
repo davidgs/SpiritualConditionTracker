@@ -31,9 +31,20 @@ export default function ActivityList({
       try {
         const databaseService = DatabaseService.getInstance();
         const sponsors = await databaseService.getAllSponsorContacts();
-        const sponsees = await databaseService.getAllSponseeContacts();
         setSponsorContacts(sponsors);
-        setSponseeContacts(sponsees);
+        
+        // Handle sponsee contacts if method exists
+        try {
+          if (typeof databaseService.getAllSponseeContacts === 'function') {
+            const sponsees = await databaseService.getAllSponseeContacts();
+            setSponseeContacts(sponsees);
+          } else {
+            setSponseeContacts([]);
+          }
+        } catch (sponseeError) {
+          console.warn('Sponsee contacts not available:', sponseeError);
+          setSponseeContacts([]);
+        }
       } catch (error) {
         console.error('Failed to load contacts for name lookup:', error);
       }

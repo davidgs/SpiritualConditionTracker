@@ -366,7 +366,20 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
       const activities = await databaseService.getAllActivities();
       const actionItems = await databaseService.getAllActionItems();
       const sponsorContacts = await databaseService.getAllSponsorContacts();
-      const sponseeContacts = await databaseService.getAllSponseeContacts();
+      
+      // Handle sponsee contacts with fallback - method may not exist yet
+      let sponseeContacts = [];
+      try {
+        if (typeof databaseService.getAllSponseeContacts === 'function') {
+          sponseeContacts = await databaseService.getAllSponseeContacts();
+        } else {
+          console.log('[ AppDataContext.tsx ] getAllSponseeContacts method not available, using empty array');
+          sponseeContacts = [];
+        }
+      } catch (sponseeError) {
+        console.warn('[ AppDataContext.tsx ] Sponsee contacts not available, continuing with empty array:', sponseeError);
+        sponseeContacts = [];
+      }
       
       console.log('[ AppDataContext.tsx ] Raw activities from database:', activities.length);
       console.log('[ AppDataContext.tsx ] Raw action items from database:', actionItems.length);
@@ -429,6 +442,8 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
       await calculateSpiritualFitness();
     } catch (error) {
       console.error('[ AppDataContext.tsx:293 ] Failed to load activities:', error);
+      console.error('[ AppDataContext.tsx ] Error details:', JSON.stringify(error, null, 2));
+      console.error('[ AppDataContext.tsx ] Error stack:', error?.stack);
       throw error;
     }
   };
