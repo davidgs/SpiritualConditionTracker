@@ -226,17 +226,30 @@ export default function ActivityList({
     if (activity.type === 'action-item' || activity.type === 'sponsor_action_item') {
       const baseTitle = activity.title || activity.text || 'Action Item';
       
+      console.log('[ActivityList] Processing action item with data:', {
+        baseTitle,
+        type: activity.type,
+        hasActionItemData: !!activity.actionItemData,
+        sponsorContactId: activity.actionItemData?.sponsorContactId,
+        enrichedSponsorName: activity.actionItemData?.sponsorName,
+        availableSponsors: sponsorContacts.length,
+        fullActivity: activity
+      });
+      
       // Show sponsor name if this is a sponsor action item
       if (activity.actionItemData && activity.actionItemData.sponsorContactId) {
         const sponsorName = getSponsorName();
+        console.log('[ActivityList] Adding sponsor name to title:', sponsorName);
         return `${baseTitle} (from ${sponsorName})`;
       }
       
       // Also check for enriched sponsor name from context
       if (activity.actionItemData && activity.actionItemData.sponsorName) {
+        console.log('[ActivityList] Using enriched sponsor name:', activity.actionItemData.sponsorName);
         return `${baseTitle} (from ${activity.actionItemData.sponsorName})`;
       }
       
+      console.log('[ActivityList] No sponsor name found, returning base title');
       return baseTitle;
     }
     

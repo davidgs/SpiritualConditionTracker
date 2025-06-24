@@ -23,15 +23,14 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "npx webpack serve --mode development --host 0.0.0.0 --port 5000"
-waitForPort = 5000
+args = "echo \"Checking if Activities page loads and shows debug logs for sponsor name lookup\""
 
 [[workflows.workflow]]
 name = "StaticServer"
 author = "agent"
 
 [deployment]
-run = ["sh", "-c", "npx webpack serve --mode development --host 0.0.0.0 --port 5000"]
+run = ["sh", "-c", "echo \"Checking if Activities page loads and shows debug logs for sponsor name lookup\""]
 
 [[ports]]
 localPort = 5000

@@ -389,20 +389,19 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
       
       // Enrich activities with action item data for proper synchronization
       const enrichedActivities = activities.map(activity => {
+        // Handle activities with direct actionItemId reference
         if (activity.actionItemId) {
           const actionItem = actionItems.find(ai => ai.id === activity.actionItemId);
           if (actionItem) {
-
-            
             // Find the sponsor for this action item
             let sponsorName = '';
             if (actionItem.sponsorContactId) {
-              // Since sponsorContacts don't have proper sponsorId links,
-              // use the first sponsor from the sponsors table as fallback
-              // In a single-user app, typically there's one primary sponsor
+              console.log('[ AppDataContext.tsx ] Processing action item with actionItemId:', activity.actionItemId);
+              console.log('[ AppDataContext.tsx ] Available sponsors:', sponsors);
               if (sponsors && sponsors.length > 0) {
                 const sponsor = sponsors[0]; // Use first sponsor
                 sponsorName = `${sponsor.name || ''} ${sponsor.lastName || ''}`.trim() || 'Sponsor';
+                console.log('[ AppDataContext.tsx ] Assigned sponsor name:', sponsorName);
               }
             }
 
@@ -412,16 +411,43 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
                 ...actionItem,
                 sponsorName
               },
-              // Use action item title and text for display
               title: actionItem.title || activity.title,
               text: actionItem.text || activity.text,
-              // Determine activity type based on action item context
               type: actionItem.sponsorContactId ? 'sponsor_action_item' : 
                     actionItem.sponseeContactId ? 'sponsee_action_item' : 
                     'action-item'
             };
           }
         }
+        
+        // Handle sponsor_action_item activities without actionItemId by matching to action items
+        if (activity.type === 'sponsor_action_item' && !activity.actionItemId) {
+          console.log('[ AppDataContext.tsx ] Found sponsor_action_item without actionItemId:', activity);
+          
+          // Try to find matching action item by sponsor contact or other criteria
+          const matchingActionItem = actionItems.find(ai => 
+            ai.sponsorContactId && ai.type === 'sponsor_action_item'
+          );
+          
+          console.log('[ AppDataContext.tsx ] Found matching action item:', matchingActionItem);
+          
+          if (matchingActionItem && sponsors && sponsors.length > 0) {
+            const sponsor = sponsors[0];
+            const sponsorName = `${sponsor.name || ''} ${sponsor.lastName || ''}`.trim() || 'Sponsor';
+            console.log('[ AppDataContext.tsx ] Enriching sponsor_action_item activity with sponsor name:', sponsorName);
+            
+            return {
+              ...activity,
+              actionItemData: {
+                ...matchingActionItem,
+                sponsorName
+              },
+              title: matchingActionItem.title || activity.title,
+              text: matchingActionItem.text || activity.text
+            };
+          }
+        }
+        
         return activity;
       });
 

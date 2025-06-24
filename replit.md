@@ -96,15 +96,15 @@ The Spiritual Condition Tracker is a comprehensive mobile application designed f
 4. Native compilation and code signing for distribution
 
 ## Changelog
-- June 24, 2025: Fixed action item synchronization and added sponsor name display
+- June 24, 2025: Working on action item synchronization and sponsor name display
   - Root cause: Action items appearing twice in Activity List and not completing properly
   - Enhanced AppDataContext loadActivities() to properly enrich activities with actionItemData
   - Fixed ActivityList handleToggleActionItemComplete() to handle multiple data locations
   - Added duplicate filtering based on actionItemId to prevent duplicate action items
   - Added automatic activity reload after action item updates for proper synchronization
-  - Fixed sponsor name lookup by using sponsors table directly (sponsor_contacts had null sponsorId values)
-  - Added getAllSponsors() method to DatabaseService for proper sponsor data retrieval
-  - Action items now display as "Task Title (from Sponsor Name)" using first sponsor for single-user app context
+  - Enhanced data enrichment logic to handle sponsor_action_item activities without actionItemId
+  - Added fallback matching to connect sponsor action items with sponsor names
+  - Working to resolve sponsor name display issue by improving activity/action item relationships
   - Action items complete properly from Activity List and sync with Sponsorship page
 - June 23, 2025: Cleaned up unused imports and variables in Profile.tsx
   - Removed unused imports: ThemeSelector, PopoverColorPicker, DatePicker components
