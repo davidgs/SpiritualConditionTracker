@@ -227,15 +227,8 @@ export default function ActivityList({
       const baseTitle = activity.title || activity.text || 'Action Item';
       
       // Show sponsor name if available through actionItemData
-      if (activity.actionItemData && activity.actionItemData.sponsorContactId) {
-        const sponsorName = getSponsorName(activity.actionItemData.sponsorContactId);
-        return `${baseTitle} (from ${sponsorName})`;
-      }
-      
-      // Also check if sponsorContactId is directly on the activity
-      if (activity.sponsorContactId) {
-        const sponsorName = getSponsorName(activity.sponsorContactId);
-        return `${baseTitle} (from ${sponsorName})`;
+      if (activity.actionItemData && activity.actionItemData.sponsorName) {
+        return `${baseTitle} (from ${activity.actionItemData.sponsorName})`;
       }
       
       return baseTitle;
