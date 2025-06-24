@@ -38,10 +38,22 @@ export default function ActivityList({
     try {
       console.log('[ActivityList] Toggling completion for action item ID:', actionItemId);
       
-      // Get the current action item data
-      const activity = activities.find(a => a.actionItemId === actionItemId);
-      if (activity && activity.actionItemData) {
-        const currentCompleted = activity.actionItemData.completed;
+      // Find the activity that references this action item
+      const activity = activities.find(a => 
+        a.actionItemId === actionItemId || 
+        (a.type === 'sponsor_action_item' && a.actionItemId === actionItemId) ||
+        (a.type === 'sponsee_action_item' && a.actionItemId === actionItemId)
+      );
+      
+      if (activity) {
+        // Get current completion status - check multiple possible locations
+        let currentCompleted = 0;
+        if (activity.actionItemData && typeof activity.actionItemData.completed !== 'undefined') {
+          currentCompleted = activity.actionItemData.completed;
+        } else if (typeof activity.completed !== 'undefined') {
+          currentCompleted = activity.completed;
+        }
+        
         const newCompleted = currentCompleted ? 0 : 1;
         
         console.log('[ActivityList] Current completed status:', currentCompleted, '-> New status:', newCompleted);
@@ -52,8 +64,16 @@ export default function ActivityList({
         });
         
         console.log('[ActivityList] Action item updated successfully');
+        
+        // Force a re-render to reflect the changes
+        setRenderKey(prev => prev + 1);
       } else {
         console.error('[ActivityList] Action item not found in activities:', actionItemId);
+        console.log('[ActivityList] Available activities:', activities.map(a => ({ 
+          id: a.id, 
+          type: a.type, 
+          actionItemId: a.actionItemId 
+        })));
       }
     } catch (error) {
       console.error('[ActivityList] Failed to toggle action item completion:', error);
@@ -237,14 +257,14 @@ export default function ActivityList({
   const filteredActivities = Array.isArray(activities) 
     ? activities
         .filter(activity => {
-          // Only filter out regular action items from general activity log, but keep sponsor/sponsee action items
-          if (activity.type === 'action-item') {
-            return false;
+          // Include sponsor action items in the activity log (user gets credit for completing these)
+          if (activity.type === 'sponsor_action_item') {
+            return true;
           }
           
-          // Include sponsor and sponsee action items in the activity log
-          if (activity.type === 'sponsor_action_item' || activity.type === 'sponsee_action_item') {
-            return true;
+          // Filter out regular action items and sponsee action items from general activity log
+          if (activity.type === 'action-item' || activity.type === 'sponsee_action_item') {
+            return false;
           }
           
           // Filter by type
@@ -262,6 +282,17 @@ export default function ActivityList({
             }
           }
           
+          return true;
+        })
+        // Remove duplicates based on actionItemId for action items
+        .filter((activity, index, array) => {
+          if (activity.type === 'sponsor_action_item' && activity.actionItemId) {
+            // Keep only the first occurrence of each action item
+            return array.findIndex(a => 
+              a.type === 'sponsor_action_item' && 
+              a.actionItemId === activity.actionItemId
+            ) === index;
+          }
           return true;
         })
         // Sort by date (most recent first)

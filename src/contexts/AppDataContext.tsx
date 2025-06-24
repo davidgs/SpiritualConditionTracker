@@ -365,29 +365,70 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
     try {
       const activities = await databaseService.getAllActivities();
       const actionItems = await databaseService.getAllActionItems();
+      const sponsorContacts = await databaseService.getAllSponsorContacts();
+      const sponseeContacts = await databaseService.getAllSponseeContacts();
       
       console.log('[ AppDataContext.tsx ] Raw activities from database:', activities.length);
       console.log('[ AppDataContext.tsx ] Raw action items from database:', actionItems.length);
+      console.log('[ AppDataContext.tsx ] Raw sponsor contacts from database:', sponsorContacts.length);
       
+      // Enrich activities with action item data and sponsor/sponsee names
+      const enrichedActivities = activities.map(activity => {
+        if (activity.actionItemId) {
+          const actionItem = actionItems.find(ai => ai.id === activity.actionItemId);
+          if (actionItem) {
+            let sponsorName = '';
+            let sponseeName = '';
+            
+            // Get sponsor name if this is from a sponsor contact
+            if (actionItem.sponsorContactId) {
+              const sponsorContact = sponsorContacts.find(sc => sc.id === actionItem.sponsorContactId);
+              if (sponsorContact) {
+                sponsorName = `${sponsorContact.name || ''} ${sponsorContact.lastName || ''}`.trim() || 'Sponsor';
+              }
+            }
+            
+            // Get sponsee name if this is from a sponsee contact
+            if (actionItem.sponseeContactId) {
+              const sponseeContact = sponseeContacts.find(sc => sc.id === actionItem.sponseeContactId);
+              if (sponseeContact) {
+                sponseeName = `${sponseeContact.name || ''} ${sponseeContact.lastName || ''}`.trim() || 'Sponsee';
+              }
+            }
+            
+            return {
+              ...activity,
+              actionItemData: {
+                ...actionItem,
+                sponsorName,
+                sponseeName
+              },
+              // Determine activity type based on action item context
+              type: actionItem.sponsorContactId ? 'sponsor_action_item' : 
+                    actionItem.sponseeContactId ? 'sponsee_action_item' : 
+                    'action-item'
+            };
+          }
+        }
+        return activity;
+      });
+
       // Filter activities to only include those that should appear in Activity list:
       // 1. All regular activities (meetings, prayer, etc.)
       // 2. All sponsor contacts 
       // 3. All sponsee contacts
       // 4. Action items from SPONSOR contacts only (user gets credit for completing these)
-      const filteredActivities = activities.filter(activity => {
+      const filteredActivities = enrichedActivities.filter(activity => {
         // Include all non-action-item activities
-        if (activity.type !== 'action-item') {
+        if (activity.type !== 'action-item' && activity.type !== 'sponsor_action_item' && activity.type !== 'sponsee_action_item') {
           return true;
         }
         
         // For action items, only include those from sponsor contacts
-        if (activity.actionItemId) {
-          const actionItem = actionItems.find(ai => ai.id === activity.actionItemId);
-          if (actionItem) {
-            // Include if it has sponsorContactId (from sponsor)
-            // Exclude if it has sponseeContactId (from sponsee - user doesn't get credit)
-            return actionItem.sponsorContactId && !actionItem.sponseeContactId;
-          }
+        if (activity.actionItemId && activity.actionItemData) {
+          // Include if it has sponsorContactId (from sponsor)
+          // Exclude if it has sponseeContactId (from sponsee - user doesn't get credit)
+          return activity.actionItemData.sponsorContactId && !activity.actionItemData.sponseeContactId;
         }
         
         return false;
@@ -705,7 +746,11 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
       const updatedActionItem = await databaseService.updateActionItem(itemId, updates);
       if (updatedActionItem) {
         dispatch({ type: 'UPDATE_ACTION_ITEM', payload: { id: itemId, data: updates } });
-        console.log('[ AppDataContext.tsx ] Action item updated:', itemId);
+        
+        // Reload activities to ensure synchronization
+        await loadActivities();
+        
+        console.log('[ AppDataContext.tsx ] Action item updated and activities reloaded:', itemId);
         return updatedActionItem;
       }
       return null;
