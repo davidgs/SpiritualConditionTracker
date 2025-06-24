@@ -401,13 +401,15 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
         if (activity.actionItemId) {
           const actionItem = actionItems.find(ai => ai.id === activity.actionItemId);
           if (actionItem) {
-            console.log('[ AppDataContext.tsx ] Enriching activity with action item:', {
-              activityId: activity.id,
-              actionItemId: actionItem.id,
-              actionItemTitle: actionItem.title,
-              sponsorContactId: actionItem.sponsorContactId,
-              sponseeContactId: actionItem.sponseeContactId
-            });
+            // Debug log for sponsor contact lookup
+            if (actionItem.sponsorContactId) {
+              const sponsorContact = sponsorContacts.find(sc => sc.id == actionItem.sponsorContactId);
+              console.log('[ AppDataContext.tsx ] Action item sponsor lookup:', {
+                actionItemId: actionItem.id,
+                sponsorContactId: actionItem.sponsorContactId,
+                foundSponsor: sponsorContact ? `${sponsorContact.name} ${sponsorContact.lastName}` : 'NOT FOUND'
+              });
+            }
             
             return {
               ...activity,

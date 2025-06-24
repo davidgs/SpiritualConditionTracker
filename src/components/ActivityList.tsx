@@ -60,16 +60,10 @@ export default function ActivityList({
 
   // Helper function to get sponsor name from sponsor contact
   const getSponsorName = (sponsorContactId) => {
-    console.log('[ActivityList] Looking up sponsor name for contactId:', sponsorContactId);
-    console.log('[ActivityList] Available sponsor contacts:', sponsorContacts);
-    
-    const sponsor = sponsorContacts.find(s => s.id == sponsorContactId); // Use == for flexible comparison
+    const sponsor = sponsorContacts.find(s => s.id == sponsorContactId);
     if (sponsor) {
-      const name = `${sponsor.name || ''} ${sponsor.lastName || ''}`.trim() || 'Sponsor';
-      console.log('[ActivityList] Found sponsor:', name);
-      return name;
+      return `${sponsor.name || ''} ${sponsor.lastName || ''}`.trim() || 'Sponsor';
     }
-    console.log('[ActivityList] No sponsor found for contactId:', sponsorContactId);
     return 'Sponsor';
   };
 
