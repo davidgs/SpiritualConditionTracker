@@ -96,7 +96,7 @@ The Spiritual Condition Tracker is a comprehensive mobile application designed f
 4. Native compilation and code signing for distribution
 
 ## Changelog
-- June 24, 2025: Working on action item synchronization and sponsor name display
+- June 24, 2025: Fixed action item display and data deletion issues
   - Root cause: Action items appearing twice in Activity List and not completing properly
   - Enhanced AppDataContext loadActivities() to properly enrich activities with actionItemData
   - Fixed ActivityList handleToggleActionItemComplete() to handle multiple data locations
@@ -113,6 +113,9 @@ The Spiritual Condition Tracker is a comprehensive mobile application designed f
   - Action items now display as "Practice daily meditation (from John S.)" using First Name, Last initial format
   - Fixed checkbox and delete button vertical alignment - positioned at top of action item content
   - Action items complete properly from Activity List and sync with Sponsorship page
+  - Enhanced data deletion to use DROP/CREATE approach for complete data cleanup
+  - Added comprehensive table discovery to ensure all tables are dropped during reset
+  - Fixed sponsor contact and action item data not being deleted during "Reset All Data"
 - June 23, 2025: Cleaned up unused imports and variables in Profile.tsx
   - Removed unused imports: ThemeSelector, PopoverColorPicker, DatePicker components
   - Removed unused variables: darkMode, allowMessages, formatPhoneNumberForInput

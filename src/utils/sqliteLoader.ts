@@ -569,8 +569,47 @@ async function createTables(sqlite) {
 async function resetDatabase(sqlite) {
   try {
     console.log('[ sqliteLoader.js ] Starting database reset process...');
-    const tables = ['users', 'activities', 'meetings', 'sponsor_contacts', 'sponsee_contacts', 'action_items', 'sponsors', 'sponsees'];
+    // Comprehensive list of ALL tables that might exist - including any possible variations
+    const tables = [
+      'users', 
+      'activities', 
+      'meetings', 
+      'sponsor_contacts', 
+      'sponsee_contacts', 
+      'action_items', 
+      'sponsors', 
+      'sponsees',
+      'sponsor_contact_details', // Additional table that might exist
+      'contact_details',         // Alternative name
+      'todos',                   // In case todo items exist separately
+      'preferences'              // User preferences table
+    ];
     
+    // First, get actual table names from database to ensure we drop everything
+    try {
+      const tableQuery = await sqlite.query({
+        database: DB_NAME,
+        statement: "SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'",
+        values: []
+      });
+      
+      if (tableQuery.values && tableQuery.values.length > 0) {
+        console.log('[ sqliteLoader.js ] Found existing tables:', tableQuery.values);
+        // Add any discovered tables to our drop list
+        const discoveredTables = tableQuery.values.map(row => 
+          row.name || (Array.isArray(row) ? row[0] : row)
+        ).filter(name => name && !tables.includes(name));
+        
+        if (discoveredTables.length > 0) {
+          console.log('[ sqliteLoader.js ] Adding discovered tables to drop list:', discoveredTables);
+          tables.push(...discoveredTables);
+        }
+      }
+    } catch (queryError) {
+      console.log('[ sqliteLoader.js ] Could not query existing tables, proceeding with default list:', queryError.message);
+    }
+    
+    // Drop all tables
     for (const table of tables) {
       try {
         console.log(`[ sqliteLoader.js ] Dropping table: ${table}`);
@@ -587,7 +626,7 @@ async function resetDatabase(sqlite) {
     
     console.log('[ sqliteLoader.js ] Recreating tables...');
     await createTables(sqlite);
-    console.log('[ sqliteLoader.js ] Database reset complete');
+    console.log('[ sqliteLoader.js ] Database reset complete - all data permanently deleted');
     
   } catch (error) {
     console.error('[ sqliteLoader.js ] Error during database reset:', error);
