@@ -22,7 +22,7 @@ The Spiritual Condition Tracker is a comprehensive mobile application designed f
 ### Mobile Platform Support
 - **iOS**: Full Capacitor integration with Xcode project configuration
 - **Android**: Capacitor support with Android-specific configurations
-- **Web**: Fallback support for development and testing
+- **Development**: Webpack build only - no web deployment (iOS-only app)
 
 ## Key Components
 
@@ -80,9 +80,9 @@ The Spiritual Condition Tracker is a comprehensive mobile application designed f
 ## Deployment Strategy
 
 ### Development Environment
-- **Local Development**: Webpack dev server with hot reload
-- **Database**: SQLite with in-memory fallback for web development
-- **Testing**: Component-based testing with React Testing Library
+- **Local Development**: Webpack build process for iOS deployment
+- **Database**: SQLite via CapacitorSQLite plugin (iOS-only)
+- **Testing**: iOS device/simulator testing only
 
 ### Mobile Deployment
 - **iOS Build**: Capacitor sync → Xcode → App Store or TestFlight
@@ -94,6 +94,7 @@ The Spiritual Condition Tracker is a comprehensive mobile application designed f
 2. `npx cap sync ios` - Sync web assets to iOS project
 3. `npx cap open ios` - Open in Xcode for native build
 4. Native compilation and code signing for distribution
+5. TestFlight deployment for user testing
 
 ## Changelog
 - June 24, 2025: Fixed action item display and data deletion issues
