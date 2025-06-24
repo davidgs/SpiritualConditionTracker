@@ -201,61 +201,63 @@ export default function ActionItem({
         {/* Controls */}
         <div style={{ 
           display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'flex-end',
+          flexDirection: 'row',
+          alignItems: 'flex-start',
           gap: '0.25rem',
-          marginLeft: '0.5rem'
+          marginLeft: '0.5rem',
+          alignSelf: 'flex-start',
+          marginTop: '0.125rem'
         }}>
-          <div style={{ display: 'flex', gap: '0.25rem', alignItems: 'center' }}>
-            {/* Checkbox for completion */}
-            <button
-              onClick={handleToggleComplete}
-              disabled={isDeleted}
-              style={{
-                background: 'none',
-                border: `1.5px solid ${isCompleted ? theme.palette.success.main : theme.palette.text.secondary}`,
-                cursor: isDeleted ? 'not-allowed' : 'pointer',
-                color: isCompleted ? theme.palette.success.main : theme.palette.text.secondary,
-                padding: '0.125rem',
-                borderRadius: '3px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: '0.7rem',
-                width: '18px',
-                height: '18px',
-                backgroundColor: isCompleted ? theme.palette.success.main : 'transparent',
-                opacity: isDeleted ? 0.5 : 1
-              }}
-              title={isDeleted ? "Deleted item" : (isCompleted ? "Mark as incomplete" : "Mark as complete")}
-            >
-              {isCompleted && (
-                <i className="fas fa-check" style={{ color: 'white', fontSize: '0.6rem' }}></i>
-              )}
-            </button>
-            
-            {/* Delete button */}
-            <button
-              onClick={handleDelete}
-              style={{
-                background: 'none',
-                border: 'none',
-                cursor: 'pointer',
-                color: isDeleted ? theme.palette.text.secondary : theme.palette.error.main,
-                padding: '0.25rem',
-                borderRadius: '4px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: '0.8rem',
-                width: '20px',
-                height: '20px'
-              }}
-              title={isDeleted ? "Already deleted (-0.5 points)" : "Delete action item (-0.5 points)"}
-            >
-              <i className={isDeleted ? "fas fa-trash-slash" : "fas fa-times"}></i>
-            </button>
-          </div>
+          {/* Checkbox for completion */}
+          <button
+            onClick={handleToggleComplete}
+            disabled={isDeleted}
+            style={{
+              background: 'none',
+              border: `1.5px solid ${isCompleted ? theme.palette.success.main : theme.palette.text.secondary}`,
+              cursor: isDeleted ? 'not-allowed' : 'pointer',
+              color: isCompleted ? theme.palette.success.main : theme.palette.text.secondary,
+              padding: '0.125rem',
+              borderRadius: '3px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '0.7rem',
+              width: '18px',
+              height: '18px',
+              backgroundColor: isCompleted ? theme.palette.success.main : 'transparent',
+              opacity: isDeleted ? 0.5 : 1,
+              flexShrink: 0
+            }}
+            title={isDeleted ? "Deleted item" : (isCompleted ? "Mark as incomplete" : "Mark as complete")}
+          >
+            {isCompleted && (
+              <i className="fas fa-check" style={{ color: 'white', fontSize: '0.6rem' }}></i>
+            )}
+          </button>
+          
+          {/* Delete button */}
+          <button
+            onClick={handleDelete}
+            style={{
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              color: isDeleted ? theme.palette.text.secondary : theme.palette.error.main,
+              padding: '0.25rem',
+              borderRadius: '4px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '0.8rem',
+              width: '20px',
+              height: '20px',
+              flexShrink: 0
+            }}
+            title={isDeleted ? "Already deleted (-0.5 points)" : "Delete action item (-0.5 points)"}
+          >
+            <i className={isDeleted ? "fas fa-trash-slash" : "fas fa-times"}></i>
+          </button>
         </div>
       </div>
     );
