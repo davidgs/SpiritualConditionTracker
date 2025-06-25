@@ -1,0 +1,45 @@
+⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO meetings (name, days, time, schedule, types, address, city, state, zipCode, locationName, notes, createdAt, updatedAt) VALUES ('Gratitude & Meditation', 'Friday', '18:30', 'weekly', 'Meditation', '789 Mindful Way, Zen Village, ZV 11223', 'Zen Village', 'ZV', '11223', 'Peaceful Path Center', 'Combines AA principles with guided meditation practice. Quiet environment, cushions provided.', '2025-06-25T19:55:27.268Z', '2025-06-25T19:55:27.268Z');
+⚡️  To Native ->  CapacitorSQLite execute 6306547
+ERROR MESSAGE:  {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: table meetings has no column named notes","message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: table meetings has no column named notes"}
+⚡️  [error] - {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: table meetings has no column named notes","message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: table meetings has no column named notes"}
+⚡️  To Native ->  CapacitorSQLite execute 6306548
+⚡️  [error] - [ testDataGenerator ] Error creating meeting Gratitude & Meditation: {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: table meetings has no column named notes"}
+⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO meetings (name, days, time, schedule, types, address, city, state, zipCode, locationName, notes, createdAt, updatedAt) VALUES ('Young People in Recovery', 'Sunday', '16:00', 'weekly', 'Young People', '321 Youth Center Dr, New Hope, NH 44556', 'New Hope', 'NH', '44556', 'Youth Activity Center', 'For people under 35, very welcoming and energetic group. Youth-friendly space, snacks provided.', '2025-06-25T19:55:27.268Z', '2025-06-25T19:55:27.268Z');
+ERROR MESSAGE:  {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: table meetings has no column named notes","message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: table meetings has no column named notes"}
+⚡️  [error] - {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: table meetings has no column named notes","message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: table meetings has no column named notes"}
+⚡️  [error] - [ testDataGenerator ] Error creating meeting Young People in Recovery: {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: table meetings has no column named notes"}
+⚡️  [log] - [ testDataGenerator ] Creating test activities...
+⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO activities (userId, type, date, notes, duration, createdAt, updatedAt) VALUES ('1', 'prayer', '2025-06-25', 'Morning meditation and serenity prayer', 15, '2025-06-25T19:55:27.273Z', '2025-06-25T19:55:27.273Z');
+⚡️  To Native ->  CapacitorSQLite execute 6306549
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  To Native ->  CapacitorSQLite query 6306550
+⚡️  TO JS {"values":[{"ios_columns":["lastId"]},{"lastId":1}]}
+⚡️  [log] - [ sqliteLoader.js ] Created activities item with ID: 1
+⚡️  [log] - [ testDataGenerator ] Created prayer activity: Morning meditation and serenit...
+⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO activities (userId, type, date, notes, duration, createdAt, updatedAt) VALUES ('1', 'prayer', '2025-06-24', 'Evening gratitude prayer', 10, '2025-06-25T19:55:27.276Z', '2025-06-25T19:55:27.276Z');
+⚡️  To Native ->  CapacitorSQLite execute 6306551
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  To Native ->  CapacitorSQLite query 6306552
+⚡️  TO JS {"values":[{"ios_columns":["lastId"]},{"lastId":2}]}
+⚡️  [log] - [ sqliteLoader.js ] Created activities item with ID: 2
+⚡️  [log] - [ testDataGenerator ] Created prayer activity: Evening gratitude prayer...
+⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO activities (userId, type, date, notes, duration, createdAt, updatedAt) VALUES ('1', 'prayer', '2025-06-23', 'Step 11 prayer and meditation', 20, '2025-06-25T19:55:27.280Z', '2025-06-25T19:55:27.280Z');
+⚡️  To Native ->  CapacitorSQLite execute 6306553
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  To Native ->  CapacitorSQLite query 6306554
+⚡️  TO JS {"values":[{"ios_columns":["lastId"]},{"lastId":3}]}
+⚡️  [log] - [ sqliteLoader.js ] Created activities item with ID: 3
+⚡️  [log] - [ testDataGenerator ] Created prayer activity: Step 11 prayer and meditation...
+⚡️  To Native ->  CapacitorSQLite execute 6306555
+⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO activities (userId, type, date, notes, duration, createdAt, updatedAt, meetingName) VALUES ('1', 'meeting', '2025-06-24', 'Big Book Study - Chapter 4: We Agnostics', 90, '2025-06-25T19:55:27.282Z', '2025-06-25T19:55:27.282Z', 'Big Book Study');
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  To Native ->  CapacitorSQLite query 6306556
+⚡️  TO JS {"values":[{"ios_columns":["lastId"]},{"lastId":4}]}
+⚡️  [log] - [ sqliteLoader.js ] Created activities item with ID: 4
+⚡️  To Native ->  CapacitorSQLite execute 6306557
+⚡️  [log] - [ testDataGenerator ] Created meeting activity: Big Book Study - Chapter 4: We...
+⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO activities (userId, type, date, notes, duration, createdAt, updatedAt, meetingName) VALUES ('1', 'meeting', '2025-06-23', 'Saturday Morning Serenity - Shared about gratitude', 60, '2025-06-25T19:55:27.284Z', '2025-06-25T19:55:27.284Z', 'Saturday Morning Serenity');
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  To Native ->  CapacitorSQLite query 6306558
+⚡️  TO JS {"values":[{"ios_columns":["lastId"]},{"lastId":5}]}
+⚡️  [log] - [ sqliteLoader.js ] Created activities item with ID: 5
