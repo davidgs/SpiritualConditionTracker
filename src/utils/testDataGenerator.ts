@@ -356,7 +356,6 @@ async function createTestMeetings(userId: number | string, results: TestDataResu
       state: 'HC',
       zipCode: '12345',
       locationName: 'St. Mary\'s Church',
-      notes: 'Focuses on reading and discussing the Big Book chapter by chapter. Wheelchair accessible.',
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
     },
@@ -371,7 +370,6 @@ async function createTestMeetings(userId: number | string, results: TestDataResu
       state: 'PT',
       zipCode: '67890',
       locationName: 'Community Center',
-      notes: 'Great way to start the weekend with fellowship and sharing. Wheelchair accessible, Parking available.',
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
     },
@@ -382,7 +380,6 @@ async function createTestMeetings(userId: number | string, results: TestDataResu
       schedule: 'weekly',
       types: 'Online Meeting',
       onlineUrl: 'https://zoom.us/j/1234567890',
-      notes: 'Perfect for busy schedules or when traveling. Meeting ID: 123 456 7890, Password: unity2024',
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
     },
@@ -397,7 +394,6 @@ async function createTestMeetings(userId: number | string, results: TestDataResu
       state: 'ZV',
       zipCode: '11223',
       locationName: 'Peaceful Path Center',
-      notes: 'Combines AA principles with guided meditation practice. Quiet environment, cushions provided.',
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
     },
@@ -412,7 +408,6 @@ async function createTestMeetings(userId: number | string, results: TestDataResu
       state: 'NH', 
       zipCode: '44556',
       locationName: 'Youth Activity Center',
-      notes: 'For people under 35, very welcoming and energetic group. Youth-friendly space, snacks provided.',
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
     }
@@ -488,7 +483,7 @@ async function createTestActivities(userId: number | string, results: TestDataRe
       ]
     },
     {
-      type: 'reading',
+      type: 'literature',
       activities: [
         {
           notes: 'Daily Reflections - June 25th reading',
@@ -524,46 +519,6 @@ async function createTestActivities(userId: number | string, results: TestDataRe
           notes: 'Made coffee for Sunday meeting',
           duration: 20,
           daysAgo: 4
-        }
-      ]
-    },
-    {
-      type: 'exercise',
-      activities: [
-        {
-          notes: 'Morning jog - cleared my head and felt grateful',
-          duration: 30,
-          daysAgo: 0
-        },
-        {
-          notes: 'Gym workout - used exercise to manage stress',
-          duration: 60,
-          daysAgo: 1
-        },
-        {
-          notes: 'Walk in nature - practiced mindfulness',
-          duration: 45,
-          daysAgo: 3
-        }
-      ]
-    },
-    {
-      type: 'journaling',
-      activities: [
-        {
-          notes: 'Gratitude list - wrote 10 things I\'m grateful for',
-          duration: 20,
-          daysAgo: 0
-        },
-        {
-          notes: 'Step 4 inventory work - continued resentment list',
-          duration: 60,
-          daysAgo: 2
-        },
-        {
-          notes: 'Daily inventory - reviewed day and made amends plan',
-          duration: 15,
-          daysAgo: 1
         }
       ]
     }

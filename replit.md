@@ -150,6 +150,11 @@ The Spiritual Condition Tracker is a comprehensive mobile application designed f
   - Sponsor contacts now properly stored ONLY in sponsor_contacts table, not duplicated in activities
   - Fixed same data duplication issue that was resolved for action items
   - Proper data architecture: contacts in contact tables, activities in activities table
+  - Fixed duplicate column errors during database initialization (ALTER TABLE statements)
+  - Test data generator now successfully creates profile data, 5 meetings, and 18 activities
+  - FINAL FIX: Removed invalid "notes" column from meetings table data (column doesn't exist)
+  - Fixed invalid activity types: changed "reading" to "literature", removed "exercise" and "journaling"
+  - Test data generator now uses only valid database schema columns and activity types
 - June 23, 2025: Cleaned up unused imports and variables in Profile.tsx
   - Removed unused imports: ThemeSelector, PopoverColorPicker, DatePicker components
   - Removed unused variables: darkMode, allowMessages, formatPhoneNumberForInput
