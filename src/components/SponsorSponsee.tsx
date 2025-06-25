@@ -59,9 +59,9 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
   const [currentSponsorTab, setCurrentSponsorTab] = useState(0);
   const [currentSponseeTab, setCurrentSponseeTab] = useState(0);
 
-  // Data state - now from AppDataContext
-  const sponsors = state.sponsors;
-  const sponsees = state.sponsees;
+  // Data state - local state management
+  const [sponsors, setSponsors] = useState([]);
+  const [sponsees, setSponsees] = useState([]);
   const [sponsorContacts, setSponsorContacts] = useState([]);
   const [sponseeContacts, setSponseeContacts] = useState([]);
   const [refreshKey, setRefreshKey] = useState(0);
@@ -77,7 +77,23 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
   const [selectedSponseeForContact, setSelectedSponseeForContact] = useState(null);
   const [selectedSponsorForContact, setSelectedSponsorForContact] = useState(null);
 
-  // Sponsors and sponsees are now loaded automatically by AppDataContext
+  const loadSponsors = async () => {
+    try {
+      const allSponsors = await databaseService.getAll('sponsors');
+      setSponsors(allSponsors);
+    } catch (error) {
+      console.error('Failed to load sponsors:', error);
+    }
+  };
+
+  const loadSponsees = async () => {
+    try {
+      const allSponsees = await databaseService.getAll('sponsees');
+      setSponsees(allSponsees);
+    } catch (error) {
+      console.error('Failed to load sponsees:', error);
+    }
+  };
 
   const loadSponsorContacts = async () => {
     try {
@@ -117,6 +133,8 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
 
   useEffect(() => {
     if (user?.id) {
+      loadSponsors();
+      loadSponsees();
       loadSponsorContacts();
       loadSponseeContacts();
     }
@@ -210,24 +228,36 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
   // Form submission handlers
   const handlePersonSubmit = async (personData: ContactPerson) => {
     try {
+      const tableMap = {
+        sponsor: 'sponsors',
+        sponsee: 'sponsees'
+      };
+
+      const table = tableMap[personFormType];
+      const dataToSave = {
+        ...personData,
+        userId: user?.id,
+        updatedAt: new Date().toISOString()
+      };
+
       if (editingPerson?.id) {
-        // Update existing person
-        if (personFormType === 'sponsor') {
-          await updateSponsor(editingPerson.id, personData);
-        } else {
-          await updateSponsee(editingPerson.id, personData);
-        }
+        await databaseService.update(table, editingPerson.id, dataToSave);
       } else {
-        // Add new person
-        if (personFormType === 'sponsor') {
-          await addSponsor(personData);
-        } else {
-          await addSponsee(personData);
-        }
+        await databaseService.add(table, {
+          ...dataToSave,
+          createdAt: new Date().toISOString()
+        });
       }
 
       setShowPersonForm(false);
       setEditingPerson(null);
+
+      // Refresh data
+      if (personFormType === 'sponsor') {
+        await loadSponsors();
+      } else {
+        await loadSponsees();
+      }
       setRefreshKey(prev => prev + 1);
     } catch (error) {
       console.error('Failed to save person:', error);

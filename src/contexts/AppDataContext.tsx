@@ -439,19 +439,8 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
       const sponsorContacts = await databaseService.getAllSponsorContacts();
       const sponsors = await databaseService.getAllSponsors();
       
-      // Handle sponsee contacts with fallback - method may not exist yet
-      let sponseeContacts = [];
-      try {
-        if (typeof databaseService.getAllSponseeContacts === 'function') {
-          sponseeContacts = await databaseService.getAllSponseeContacts();
-        } else {
-          console.log('[ AppDataContext.tsx ] getAllSponseeContacts method not available, using empty array');
-          sponseeContacts = [];
-        }
-      } catch (sponseeError) {
-        console.warn('[ AppDataContext.tsx ] Sponsee contacts not available, continuing with empty array:', sponseeError);
-        sponseeContacts = [];
-      }
+      // Get sponsee contacts using the table directly
+      const sponseeContacts = await databaseService.getAll('sponsee_contacts');
       
       console.log('[ AppDataContext.tsx ] Raw activities from database:', activities.length);
       console.log('[ AppDataContext.tsx ] Raw action items from database:', actionItems.length);

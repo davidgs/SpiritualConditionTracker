@@ -1,0 +1,415 @@
+⚡️  To Native ->  CapacitorSQLite query 94818675
+⚡️  [log] - Starting data reset process
+⚡️  [log] - [ AppDataContext.tsx:405 ] Starting complete app reset...
+⚡️  [log] - [ AppDataContext.tsx:415 ] Calling DatabaseService.resetAllData to drop and recreate all tables...
+⚡️  [log] - [ DatabaseService ] Starting complete database reset...
+⚡️  [log] - [ sqliteLoader.js ] Starting database reset process...
+⚡️  TO JS {"values":[{"ios_columns":["name"]},{"name":"activities"},{"name":"meetings"},{"name":"sponsor_contacts"},{"name":"sponsee_contacts"},{"name":"action_items"},{"name":"sponsors"},{"name":"sponsees"},{"name":"users"}]}
+⚡️  [log] - [ sqliteLoader.js ] Found existing tables: [{"ios_columns":["name"]},{"name":"activities"},{"name":"meetings"},{"name":"sponsor_contacts"},{"name":"sponsee_contacts"},{"name":"action_items"},{"name":"sponsors"},{"name":"sponsees"},{"name":"users"}]
+⚡️  [log] - [ sqliteLoader.js ] Adding discovered tables to drop list: [{"ios_columns":["name"]}]
+⚡️  To Native ->  CapacitorSQLite execute 94818676
+⚡️  [log] - [ sqliteLoader.js ] Dropping table: users
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 94818677
+⚡️  [log] - [ sqliteLoader.js ] Successfully dropped table: users
+⚡️  [log] - [ sqliteLoader.js ] Dropping table: activities
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 94818678
+⚡️  [log] - [ sqliteLoader.js ] Successfully dropped table: activities
+⚡️  [log] - [ sqliteLoader.js ] Dropping table: meetings
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  [log] - [ sqliteLoader.js ] Successfully dropped table: meetings
+⚡️  To Native ->  CapacitorSQLite ⚡️  [log] - [ sqliteLoader.js ] Dropping table: sponsor_contacts
+execute 94818679
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  [log] - [ sqliteLoader.js ] Successfully dropped table: sponsor_contacts
+⚡️  To Native ->  CapacitorSQLite execute 94818680
+⚡️  [log] - [ sqliteLoader.js ] Dropping table: sponsee_contacts
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  [log] - [ sqliteLoader.js ] Successfully dropped table: sponsee_contacts
+⚡️  [log] - [ sqliteLoader.js ] Dropping table: action_items
+⚡️  To Native ->  CapacitorSQLite execute 94818681
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  [log] - [ sqliteLoader.js ] Successfully dropped table: action_items
+⚡️  [log] - [ sqliteLoader.js ] Dropping table: sponsors
+⚡️  To Native ->  CapacitorSQLite execute 94818682
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  [log] - [ sqliteLoader.js ] Successfully dropped table: sponsors
+⚡️  To Native ->  CapacitorSQLite execute 94818683
+⚡️  [log] - [ sqliteLoader.js ] Dropping table: sponsees
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  [log] - [ sqliteLoader.js ] Successfully dropped table: sponsees
+⚡️  [log] - [ sqliteLoader.js ] Dropping table: sponsor_contact_details
+⚡️  To Native ->  CapacitorSQLite execute 94818684
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 94818685
+⚡️  [log] - [ sqliteLoader.js ] Successfully dropped table: sponsor_contact_details
+⚡️  [log] - [ sqliteLoader.js ] Dropping table: contact_details
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  [log] - [ sqliteLoader.js ] Successfully dropped table: contact_details
+⚡️  To Native ->  ⚡️  [log] - [ sqliteLoader.js ] Dropping table: todos
+CapacitorSQLite execute 94818686
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  [log] - [ sqliteLoader.js ] Successfully dropped table: todos
+⚡️  To Native ->  CapacitorSQLite execute 94818687
+⚡️  [log] - [ sqliteLoader.js ] Dropping table: preferences
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  [log] - [ sqliteLoader.js ] Successfully dropped table: preferences
+⚡️  [log] - [ sqliteLoader.js ] Dropping table: [object Object]
+⚡️  To Native ->  CapacitorSQLite execute 94818688
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  [log] - [ sqliteLoader.js ] Successfully dropped table: [object Object]
+⚡️  [log] - [ sqliteLoader.js ] Recreating tables...
+⚡️  To Native ->  CapacitorSQLite execute 94818689
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  ⚡️  [log] - [ sqliteLoader.js ] Dropped existing users table for clean schema
+CapacitorSQLite execute 94818690
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  [log] - [ sqliteLoader.js ] Created users table with clean schema (no sponsor columns)
+⚡️  To Native ->  CapacitorSQLite execute 94818691
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 94818692
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  [log] - [ sqliteLoader.js ] Meetings table created with working schema
+⚡️  To Native ->  CapacitorSQLite execute 94818693
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 94818694
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 94818695
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 94818696
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 94818697
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  [log] - [ sqliteLoader.js ] All tables created with proper relationships and missing columns added
+⚡️  [log] - [ sqliteLoader.js ] Database reset complete - all data permanently deleted
+⚡️  [log] - [ DatabaseService ] Database reset complete - all tables dropped and recreated
+⚡️  [log] - [ AppDataContext.tsx:417 ] Database tables dropped and recreated successfully
+⚡️  [log] - [ AppDataContext.tsx:423 ] Resetting database service state...
+⚡️  [log] - [ AppDataContext.tsx:156 ] Database status changed: initializing
+⚡️  [log] - [ AppDataContext.tsx:426 ] Reinitializing database service...
+⚡️  [log] - [ DatabaseService: 50 ] Starting database initialization...
+⚡️  [log] - [ AppDataContext.tsx:156 ] Database status changed: initializing
+⚡️  [log] - [ sqliteLoader.js:14 ] Initializing SQLite database via Capacitor...
+⚡️  [log] - [ sqliteLoader.js:39 ]  Found CapacitorSQLite plugin: true
+⚡️  To Native ->  CapacitorSQLite createConnection 94818698
+ERROR MESSAGE:  {"errorMessage":"CreateConnection: Connection spiritual_condition_tracker already exists","message":"CreateConnection: Connection spiritual_condition_tracker already exists"}
+⚡️  [error] - {"errorMessage":"CreateConnection: Connection spiritual_condition_tracker already exists","message":"CreateConnection: Connection spiritual_condition_tracker already exists"}
+⚡️  To Native ->  CapacitorSQLite open 94818699
+⚡️  [log] - [ sqliteLoader.js:52 ]  Connection may already exist: CreateConnection: Connection spiritual_condition_tracker already exists
+⚡️  TO JS undefined
+⚡️  To Native ->  CapacitorSQLite execute 94818700
+⚡️  [log] - [ sqliteLoader.js:56 ]  Database opened successfully
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 94818701
+⚡️  [log] - [ sqliteLoader.js ] Dropped existing users table for clean schema
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  [log] - [ sqliteLoader.js ] Created users table with clean schema (no sponsor columns)
+⚡️  To Native ->  CapacitorSQLite execute 94818702
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 94818703
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 94818704
+⚡️  [log] - [ sqliteLoader.js ] Meetings table created with working schema
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 94818705
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 94818706
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 94818707
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 94818708
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  [log] - [ sqliteLoader.js ] All tables created with proper relationships and missing columns added
+⚡️  [log] - [ sqliteLoader.js:59 ]  Database initialization complete
+⚡️  [log] - [ DatabaseService: 55 ] SQLite database initialized successfully
+⚡️  [log] - [ DatabaseService: 63 ] Database ready
+⚡️  [log] - [ AppDataContext.tsx:156 ] Database status changed: ready
+⚡️  [log] - [ AppDataContext.tsx ] Database ready, loading initial data...
+⚡️  [log] - [ AppDataContext.tsx:187 ] Loading initial data...
+⚡️  [log] - [ DatabaseService: 70 ] Database initialization complete
+⚡️  To Native ->  CapacitorSQLite query 94818709
+⚡️  [log] - [ DatabaseService: 205 ] Processing 0 queued operations
+⚡️  TO JS {"values":[]}
+⚡️  [log] - Found users to fix: 0
+⚡️  [log] - Preferences fix complete
+⚡️  [log] - [ AppDataContext.tsx ] Database preferences validated/fixed
+⚡️  To Native ->  CapacitorSQLite query 94818710
+⚡️  TO JS {"values":[]}
+⚡️  To Native ->  CapacitorSQLite query ⚡️  [log] - [ DatabaseService ] Checking if database is empty for new user detection...
+94818711
+⚡️  To Native ->  CapacitorSQLite query 94818712
+⚡️  TO JS {"values":[]}
+⚡️  To Native ->  CapacitorSQLite query 94818713
+⚡️  To Native ->  CapacitorSQLite query 94818714
+⚡️  TO JS {"values":[]}
+⚡️  To Native ->  CapacitorSQLite query 94818715
+⚡️  TO JS {"values":[]}
+⚡️  To Native ->  CapacitorSQLite execute ⚡️  TO JS {"values":[]}
+94818716
+⚡️  TO JS {"values":[]}
+⚡️  [log] - [ AppDataContext.tsx:206 ] Loaded users: 0
+⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO users (name, lastName, sobrietyDate, homeGroups, phoneNumber, email, privacySettings, preferences) VALUES ('', '', '', '[]', '', '', '{"allowMessages":true,"shareLastName":true}', '{"use24HourFormat":false,"darkMode":false,"theme":"default"}');
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  [log] - [ DatabaseService ] Record counts: {"users":0,"hasUserData":false,"activities":0,"meetings":0,"sponsorContacts":0,"actionItems":0,"totalDataRecords":0}
+⚡️  [log] - [ App ] Database empty check result: true
+⚡️  To Native ->  CapacitorSQLite query 94818717
+⚡️  TO JS {"values":[{"ios_columns":["lastId"]},{"lastId":1}]}
+⚡️  [log] - [ sqliteLoader.js ] Created users item with ID: 1
+⚡️  [log] - [ AppDataContext.tsx:246 ] Created default user: 1
+⚡️  To Native ->  CapacitorSQLite query 94818718
+⚡️  TO JS {"values":[]}
+⚡️  To Native ->  CapacitorSQLite query 94818719
+⚡️  TO JS {"values":[]}
+⚡️  To Native ->  CapacitorSQLite query 94818720
+⚡️  TO JS {"values":[]}
+⚡️  To Native ->  CapacitorSQLite query 94818721
+⚡️  TO JS {"values":[]}
+⚡️  [log] - [ AppDataContext.tsx ] getAllSponseeContacts method not available, using empty array
+⚡️  [log] - [ AppDataContext.tsx ] Raw activities from database: 0
+⚡️  [log] - [ AppDataContext.tsx ] Raw action items from database: 0
+⚡️  [log] - [ AppDataContext.tsx ] Raw sponsor contacts from database: 0
+⚡️  [log] - [ AppDataContext.tsx ] Raw sponsors from database: 0
+⚡️  [log] - [ AppDataContext.tsx ] First sponsor: undefined
+⚡️  [log] - [ AppDataContext.tsx ] Activities types: []
+⚡️  [log] - [ AppDataContext.tsx:288 ] Activities cached (180 days): 0 (all contact activities)
+⚡️  [log] - [ AppDataContext.tsx ] Activity types in cache: []
+⚡️  [log] - [ AppDataContext.tsx:315 ] Using cached activities for 30 days: 0
+⚡️  [log] - [ AppDataContext.tsx:454 ] Calculating spiritual fitness with 0 activities for 30 days
+⚡️  To Native ->  CapacitorSQLite query 94818722
+⚡️  TO JS {"values":[]}
+⚡️  To Native ->  CapacitorSQLite query 94818723
+⚡️  [log] - [ AppDataContext.tsx:326 ] Meetings loaded: 0
+⚡️  TO JS {"values":[]}
+⚡️  [log] - [ AppDataContext.tsx ] Action items loaded: 0
+⚡️  [log] - [ AppDataContext.tsx:194 ] Initial data load complete
+⚡️  [log] - [ AppDataContext.tsx:430 ] Reloading all data after reset...
+⚡️  To Native ->  CapacitorSQLite query 94818724
+⚡️  [log] - [ AppDataContext.tsx:187 ] Loading initial data...
+⚡️  TO JS {"values":[{"ios_columns":["id","name","lastName","phoneNumber","email","sobrietyDate","homeGroups","privacySettings","preferences","isDarkMode","createdAt","updatedAt"]},{"phoneNumber":"","lastName":"","createdAt":"2025-06-25 23:07:32","id":1,"email":"","
+⚡️  [log] - Found users to fix: 1
+⚡️  [log] - Preferences fix complete
+⚡️  To Native ->  ⚡️  [log] - [ AppDataContext.tsx ] Database preferences validated/fixed
+CapacitorSQLite query 94818725
+⚡️  TO JS {"values":[{"ios_columns":["id","name","lastName","phoneNumber","email","sobrietyDate","homeGroups","privacySettings","preferences","isDarkMode","createdAt","updatedAt"]},{"email":"","privacySettings":"{\"allowMessages\":true,\"shareLastName\":true}","crea
+⚡️  [log] - [ AppDataContext.tsx:206 ] Loaded users: 1
+⚡️  [log] - [ AppDataContext.tsx:225 ] User data loaded: 1
+⚡️  To Native ->  CapacitorSQLite query 94818726
+⚡️  TO JS {"values":[]}
+⚡️  To Native ->  CapacitorSQLite query 94818727
+⚡️  TO JS {"values":[]}
+⚡️  To Native ->  CapacitorSQLite query 94818728
+⚡️  TO JS {"values":[]}
+⚡️  To Native ->  CapacitorSQLite query 94818729
+⚡️  TO JS {"values":[]}
+⚡️  [log] - [ AppDataContext.tsx ] getAllSponseeContacts method not available, using empty array
+⚡️  [log] - [ AppDataContext.tsx ] Raw activities from database: 0
+⚡️  [log] - [ AppDataContext.tsx ] Raw action items from database: 0
+⚡️  [log] - [ AppDataContext.tsx ] Raw sponsor contacts from database: 0
+⚡️  [log] - [ AppDataContext.tsx ] Raw sponsors from database: 0
+⚡️  [log] - [ AppDataContext.tsx ] First sponsor: undefined
+⚡️  [log] - [ AppDataContext.tsx ] Activities types: []
+⚡️  [log] - [ AppDataContext.tsx:288 ] Activities cached (180 days): 0 (all contact activities)
+⚡️  [log] - [ AppDataContext.tsx ] Activity types in cache: []
+⚡️  [log] - [ AppDataContext.tsx:315 ] Using cached activities for 30 days: 0
+⚡️  To Native ->  CapacitorSQLite query 94818730
+⚡️  [log] - [ AppDataContext.tsx:454 ] Calculating spiritual fitness with 0 activities for 30 days
+⚡️  TO JS {"values":[]}
+⚡️  [log] - [ AppDataContext.tsx:326 ] Meetings loaded: 0
+⚡️  To Native ->  CapacitorSQLite query 94818731
+⚡️  TO JS {"values":[]}
+⚡️  [log] - [ AppDataContext.tsx ] Action items loaded: 0
+⚡️  [log] - [ AppDataContext.tsx:194 ] Initial data load complete
+⚡️  [log] - [ AppDataContext.tsx:433 ] Complete app reset finished
+⚡️  [log] - Data reset complete - navigating to dashboard
+-[RTIInputSystemClient remoteTextInputSessionWithID:performInputOperation:]  perform input operation requires a valid sessionID. inputModality = Keyboard, inputOperation = <null selector>, customInfoType = UIEmojiSearchOperations
+-[RTIInputSystemClient remoteTextInputSessionWithID:performInputOperation:]  perform input operation requires a valid sessionID. inputModality = Keyboard, inputOperation = <null selector>, customInfoType = UIEmojiSearchOperations
+-[RTIInputSystemClient remoteTextInputSessionWithID:performInputOperation:]  perform input operation requires a valid sessionID. inputModality = Keyboard, inputOperation = <null selector>, customInfoType = UIEmojiSearchOperations
+-[RTIInputSystemClient remoteTextInputSessionWithID:performInputOperation:]  Can only perform input operation for an active session. sessionID = A084D8DB-397D-4D94-A128-76BA064AD4FD
+-[RTIInputSystemClient remoteTextInputSessionWithID:textSuggestionsChanged:]  Can only set suggestions for an active session. sessionID = A084D8DB-397D-4D94-A128-76BA064AD4FD
+-[RTIInputSystemClient remoteTextInputSessionWithID:textSuggestionsChanged:]  Can only set suggestions for an active session. sessionID = A084D8DB-397D-4D94-A128-76BA064AD4FD
+⚡️  [log] - Applying native theme: blue (#3b82f6) in light mode
+⚡️  [log] - Applying native theme: blue (#3b82f6) in light mode
+⚡️  To Native ->  CapacitorSQLite query 94818732
+⚡️  TO JS {"values":[]}
+⚡️  [log] - [ Dashboard ] Starting test data creation...
+⚡️  [log] - [ testDataGenerator ] Starting comprehensive test data creation...
+⚡️  [log] - [ testDataGenerator ] Creating user profile data...
+⚡️  To Native ->  CapacitorSQLite query 94818733
+⚡️  TO JS {"values":[{"ios_columns":["id","name","lastName","phoneNumber","email","sobrietyDate","homeGroups","privacySettings","preferences","isDarkMode","createdAt","updatedAt"]},{"privacySettings":"{\"allowMessages\":true,\"shareLastName\":true}","id":1,"phoneNum
+⚡️  To Native ->  CapacitorSQLite execute 94818734
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  To Native ->  CapacitorSQLite query 94818735
+⚡️  TO JS {"values":[{"ios_columns":["id","name","lastName","phoneNumber","email","sobrietyDate","homeGroups","privacySettings","preferences","isDarkMode","createdAt","updatedAt"]},{"createdAt":"2025-06-25 23:07:32","preferences":"{\"emergencyContactName\":\"Sarah T
+⚡️  [log] - [ testDataGenerator ] Updated existing user profile: {"createdAt":"2025-06-25 23:07:32","preferences":{"emergencyContactName":"Sarah Thompson","emergencyContactPhone":"+1 (555) 987-6543","allowMessages":true,"use24HourFormat":false,"darkMode":false,"theme":"default"},"sobrietyDate":"2020-06-15","isDarkMode":0,"lastName":"Thompson","privacySettings":{"allowMessages":true,"shareLastName":true},"updatedAt":"2025-06-25T23:10:52.361Z","name":"David","homeGroups":["Serenity Circle AA"],"phoneNumber":"+1 (555) 123-4567","id":1,"email":"david.thompson@email.com"}
+⚡️  [log] - [ testDataGenerator ] Creating test meetings...
+⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO meetings (name, days, time, schedule, types, address, city, state, zipCode, locationName, createdAt, updatedAt) VALUES ('Big Book Study', 'Monday,Wednesday', '19:00', 'weekly', 'Big Book Study', '123 Recovery St, Hope City, HC 12345', 'Hope City', 'HC', '12345', 'St. Mary''s Church', '2025-06-25T23:10:52.366Z', '2025-06-25T23:10:52.366Z');
+⚡️  To Native ->  CapacitorSQLite execute 94818736
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  To Native ->  CapacitorSQLite query 94818737
+⚡️  TO JS {"values":[{"ios_columns":["lastId"]},{"lastId":1}]}
+⚡️  [log] - [ sqliteLoader.js ] Created meetings item with ID: 1
+⚡️  [log] - [ testDataGenerator ] Created meeting: Big Book Study
+⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO meetings (name, days, time, schedule, types, address, city, state, zipCode, locationName, createdAt, updatedAt) VALUES ('Saturday Morning Serenity', 'Saturday', '09:00', 'weekly', 'Open Discussion', '456 Serenity Ave, Peace Town, PT 67890', 'Peace Town', 'PT', '67890', 'Community Center', '2025-06-25T23:10:52.366Z', '2025-06-25T23:10:52.366Z');
+⚡️  To Native ->  CapacitorSQLite execute 94818738
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  To Native ->  CapacitorSQLite query 94818739
+⚡️  TO JS {"values":[{"ios_columns":["lastId"]},{"lastId":2}]}
+⚡️  [log] - [ sqliteLoader.js ] Created meetings item with ID: 2
+⚡️  [log] - [ testDataGenerator ] Created meeting: Saturday Morning Serenity
+⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO meetings (name, days, time, schedule, types, onlineUrl, createdAt, updatedAt) VALUES ('Online Unity Group', 'Tuesday,Thursday,Sunday', '20:00', 'weekly', 'Online Meeting', 'https://zoom.us/j/1234567890', '2025-06-25T23:10:52.366Z', '2025-06-25T23:10:52.366Z');
+⚡️  To Native ->  CapacitorSQLite execute 94818740
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  To Native ->  CapacitorSQLite query 94818741
+⚡️  TO JS {"values":[{"ios_columns":["lastId"]},{"lastId":3}]}
+⚡️  [log] - [ sqliteLoader.js ] Created meetings item with ID: 3
+⚡️  [log] - [ testDataGenerator ] Created meeting: Online Unity Group
+⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO meetings (name, days, time, schedule, types, address, city, state, zipCode, locationName, createdAt, updatedAt) VALUES ('Gratitude & Meditation', 'Friday', '18:30', 'weekly', 'Meditation', '789 Mindful Way, Zen Village, ZV 11223', 'Zen Village', 'ZV', '11223', 'Peaceful Path Center', '2025-06-25T23:10:52.366Z', '2025-06-25T23:10:52.366Z');
+⚡️  To Native ->  CapacitorSQLite execute 94818742
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  To Native ->  CapacitorSQLite query 94818743
+⚡️  TO JS {"values":[{"ios_columns":["lastId"]},{"lastId":4}]}
+⚡️  [log] - [ sqliteLoader.js ] Created meetings item with ID: 4
+⚡️  [log] - [ testDataGenerator ] Created meeting: Gratitude & Meditation
+⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO meetings (name, days, time, schedule, types, address, city, state, zipCode, locationName, createdAt, updatedAt) VALUES ('Young People in Recovery', 'Sunday', '16:00', 'weekly', 'Young People', '321 Youth Center Dr, New Hope, NH 44556', 'New Hope', 'NH', '44556', 'Youth Activity Center', '2025-06-25T23:10:52.366Z', '2025-06-25T23:10:52.366Z');
+⚡️  To Native ->  CapacitorSQLite execute 94818744
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  To Native ->  CapacitorSQLite query 94818745
+⚡️  TO JS {"values":[{"ios_columns":["lastId"]},{"lastId":5}]}
+⚡️  [log] - [ sqliteLoader.js ] Created meetings item with ID: 5
+⚡️  [log] - [ testDataGenerator ] Created meeting: Young People in Recovery
+⚡️  [log] - [ testDataGenerator ] Creating test activities...
+⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO activities (userId, type, date, notes, duration, createdAt, updatedAt) VALUES ('1', 'prayer', '2025-06-25', 'Morning meditation and serenity prayer', 15, '2025-06-25T23:10:52.374Z', '2025-06-25T23:10:52.374Z');
+⚡️  To Native ->  CapacitorSQLite execute 94818746
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  To Native ->  CapacitorSQLite query 94818747
+⚡️  TO JS {"values":[{"ios_columns":["lastId"]},{"lastId":1}]}
+⚡️  [log] - [ sqliteLoader.js ] Created activities item with ID: 1
+⚡️  [log] - [ testDataGenerator ] Created prayer activity: Morning meditation and serenit...
+⚡️  To Native ->  CapacitorSQLite execute 94818748
+⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO activities (userId, type, date, notes, duration, createdAt, updatedAt) VALUES ('1', 'prayer', '2025-06-24', 'Evening gratitude prayer', 10, '2025-06-25T23:10:52.375Z', '2025-06-25T23:10:52.375Z');
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  To Native ->  CapacitorSQLite query 94818749
+⚡️  TO JS {"values":[{"ios_columns":["lastId"]},{"lastId":2}]}
+⚡️  [log] - [ sqliteLoader.js ] Created activities item with ID: 2
+⚡️  [log] - [ testDataGenerator ] Created prayer activity: Evening gratitude prayer...
+⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO activities (userId, type, date, notes, duration, createdAt, updatedAt) VALUES ('1', 'prayer', '2025-06-23', 'Step 11 prayer and meditation', 20, '2025-06-25T23:10:52.376Z', '2025-06-25T23:10:52.376Z');
+⚡️  To Native ->  CapacitorSQLite execute 94818750
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  To Native ->  CapacitorSQLite query 94818751
+⚡️  TO JS {"values":[{"ios_columns":["lastId"]},{"lastId":3}]}
+⚡️  [log] - [ sqliteLoader.js ] Created activities item with ID: 3
+⚡️  [log] - [ testDataGenerator ] Created prayer activity: Step 11 prayer and meditation...
+⚡️  To Native ->  CapacitorSQLite execute 94818752
+⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO activities (userId, type, date, notes, duration, createdAt, updatedAt, meetingName) VALUES ('1', 'meeting', '2025-06-24', 'Big Book Study - Chapter 4: We Agnostics', 90, '2025-06-25T23:10:52.378Z', '2025-06-25T23:10:52.378Z', 'Big Book Study');
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  To Native ->  CapacitorSQLite query 94818753
+⚡️  TO JS {"values":[{"ios_columns":["lastId"]},{"lastId":4}]}
+⚡️  To Native ->  CapacitorSQLite execute 94818754
+⚡️  [log] - [ sqliteLoader.js ] Created activities item with ID: 4
+⚡️  [log] - [ testDataGenerator ] Created meeting activity: Big Book Study - Chapter 4: We...
+⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO activities (userId, type, date, notes, duration, createdAt, updatedAt, meetingName) VALUES ('1', 'meeting', '2025-06-23', 'Saturday Morning Serenity - Shared about gratitude', 60, '2025-06-25T23:10:52.380Z', '2025-06-25T23:10:52.380Z', 'Saturday Morning Serenity');
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  To Native ->  CapacitorSQLite query 94818755
+⚡️  TO JS {"values":[{"ios_columns":["lastId"]},{"lastId":5}]}
+⚡️  [log] - [ sqliteLoader.js ] Created activities item with ID: 5
+⚡️  [log] - [ testDataGenerator ] Created meeting activity: Saturday Morning Serenity - Sh...
+⚡️  To Native ->  CapacitorSQLite execute 94818756
+⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO activities (userId, type, date, notes, duration, createdAt, updatedAt, meetingName) VALUES ('1', 'meeting', '2025-06-22', 'Online Unity Group - Step work discussion', 75, '2025-06-25T23:10:52.381Z', '2025-06-25T23:10:52.381Z', 'Online Unity Group');
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  To Native ->  CapacitorSQLite query 94818757
+⚡️  TO JS {"values":[{"ios_columns":["lastId"]},{"lastId":6}]}
+⚡️  [log] - [ sqliteLoader.js ] Created activities item with ID: 6
+⚡️  To Native ->  CapacitorSQLite execute 94818758
+⚡️  [log] - [ testDataGenerator ] Created meeting activity: Online Unity Group - Step work...
+⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO activities (userId, type, date, notes, duration, createdAt, updatedAt, meetingName) VALUES ('1', 'meeting', '2025-06-21', 'Young People meeting - Topic: Dealing with stress', 60, '2025-06-25T23:10:52.382Z', '2025-06-25T23:10:52.382Z', 'Young People in Recovery');
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  To Native ->  CapacitorSQLite query 94818759
+⚡️  TO JS {"values":[{"ios_columns":["lastId"]},{"lastId":7}]}
+⚡️  [log] - [ sqliteLoader.js ] Created activities item with ID: 7
+⚡️  To Native ->  CapacitorSQLite execute ⚡️  [log] - [ testDataGenerator ] Created meeting activity: Young People meeting - Topic: ...
+94818760
+⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO activities (userId, type, date, notes, duration, createdAt, updatedAt) VALUES ('1', 'literature', '2025-06-25', 'Daily Reflections - June 25th reading', 10, '2025-06-25T23:10:52.383Z', '2025-06-25T23:10:52.383Z');
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  To Native ->  CapacitorSQLite query 94818761
+⚡️  TO JS {"values":[{"ios_columns":["lastId"]},{"lastId":8}]}
+⚡️  [log] - [ sqliteLoader.js ] Created activities item with ID: 8
+⚡️  [log] - [ testDataGenerator ] Created literature activity: Daily Reflections - June 25th ...
+⚡️  To Native ->  CapacitorSQLite execute 94818762
+⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO activities (userId, type, date, notes, duration, createdAt, updatedAt) VALUES ('1', 'literature', '2025-06-24', 'Big Book - Pages 83-88, Step 4 inventory work', 45, '2025-06-25T23:10:52.384Z', '2025-06-25T23:10:52.384Z');
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  To Native ->  CapacitorSQLite query 94818763
+⚡️  TO JS {"values":[{"ios_columns":["lastId"]},{"lastId":9}]}
+⚡️  [log] - [ sqliteLoader.js ] Created activities item with ID: 9
+⚡️  [log] - [ testDataGenerator ] Created literature activity: Big Book - Pages 83-88, Step 4...
+⚡️  To Native ->  CapacitorSQLite execute 94818764
+⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO activities (userId, type, date, notes, duration, createdAt, updatedAt) VALUES ('1', 'literature', '2025-06-22', 'As Bill Sees It - Random page reading', 15, '2025-06-25T23:10:52.385Z', '2025-06-25T23:10:52.385Z');
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  To Native ->  CapacitorSQLite query 94818765
+⚡️  TO JS {"values":[{"ios_columns":["lastId"]},{"lastId":10}]}
+⚡️  [log] - [ sqliteLoader.js ] Created activities item with ID: 10
+⚡️  [log] - [ testDataGenerator ] Created literature activity: As Bill Sees It - Random page ...
+⚡️  To Native ->  ⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO activities (userId, type, date, notes, duration, createdAt, updatedAt) VALUES ('1', 'service', '2025-06-23', 'Set up chairs for Saturday meeting', 30, '2025-06-25T23:10:52.386Z', '2025-06-25T23:10:52.386Z');
+CapacitorSQLite execute 94818766
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  To Native ->  CapacitorSQLite query 94818767
+⚡️  TO JS {"values":[{"ios_columns":["lastId"]},{"lastId":11}]}
+⚡️  [log] - [ sqliteLoader.js ] Created activities item with ID: 11
+⚡️  [log] - [ testDataGenerator ] Created service activity: Set up chairs for Saturday mee...
+⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO activities (userId, type, date, notes, duration, createdAt, updatedAt) VALUES ('1', 'service', '2025-06-24', 'Greeted newcomers at Big Book Study', 15, '2025-06-25T23:10:52.386Z', '2025-06-25T23:10:52.386Z');
+⚡️  To Native ->  CapacitorSQLite execute 94818768
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  To Native ->  CapacitorSQLite query 94818769
+⚡️  TO JS {"values":[{"ios_columns":["lastId"]},{"lastId":12}]}
+⚡️  [log] - [ sqliteLoader.js ] Created activities item with ID: 12
+⚡️  [log] - [ testDataGenerator ] Created service activity: Greeted newcomers at Big Book ...
+⚡️  To Native ->  ⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO activities (userId, type, date, notes, duration, createdAt, updatedAt) VALUES ('1', 'service', '2025-06-21', 'Made coffee for Sunday meeting', 20, '2025-06-25T23:10:52.387Z', '2025-06-25T23:10:52.387Z');
+CapacitorSQLite execute 94818770
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  To Native ->  CapacitorSQLite query 94818771
+⚡️  TO JS {"values":[{"ios_columns":["lastId"]},{"lastId":13}]}
+⚡️  [log] - [ sqliteLoader.js ] Created activities item with ID: 13
+⚡️  [log] - [ testDataGenerator ] Created service activity: Made coffee for Sunday meeting...
+⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO sponsors (userId, name, lastName, phoneNumber, email, sobrietyDate, notes, sponsorType, createdAt, updatedAt) VALUES ('1', 'John', 'Smith', '555-0101', 'john.smith@email.com', '2015-03-15', 'Great sponsor with 10+ years experience', 'sponsor', '2025-06-25T23:10:52.388Z', '2025-06-25T23:10:52.388Z');
+⚡️  To Native ->  CapacitorSQLite execute 94818772
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  To Native ->  CapacitorSQLite query 94818773
+⚡️  TO JS {"values":[{"ios_columns":["lastId"]},{"lastId":1}]}
+⚡️  To Native ->  CapacitorSQLite execute 94818774
+⚡️  [log] - [ sqliteLoader.js ] Created sponsors item with ID: 1
+⚡️  [log] - [ testDataGenerator ] Created sponsor: John Smith with ID: 1
+⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO sponsors (userId, name, lastName, phoneNumber, email, sobrietyDate, notes, sponsorType, createdAt, updatedAt) VALUES ('1', 'Mary', 'Johnson', '555-0102', 'mary.j@email.com', '2012-08-22', 'Very supportive and knowledgeable', 'sponsor', '2025-06-25T23:10:52.388Z', '2025-06-25T23:10:52.388Z');
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  To Native ->  CapacitorSQLite query 94818775
+⚡️  TO JS {"values":[{"ios_columns":["lastId"]},{"lastId":2}]}
+⚡️  [log] - [ sqliteLoader.js ] Created sponsors item with ID: 2
+⚡️  [log] - [ testDataGenerator ] Created sponsor: Mary Johnson with ID: 2
+⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO sponsees (userId, name, lastName, phoneNumber, email, sobrietyDate, notes, sponseeType, createdAt, updatedAt) VALUES ('1', 'Alex', 'Wilson', '555-0201', 'alex.wilson@email.com', '2023-06-10', 'New sponsee, very motivated', 'sponsee', '2025-06-25T23:10:52.388Z', '2025-06-25T23:10:52.388Z');
+⚡️  To Native ->  CapacitorSQLite execute 94818776
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  To Native ->  CapacitorSQLite query 94818777
+⚡️  TO JS {"values":[{"ios_columns":["lastId"]},{"lastId":1}]}
+⚡️  [log] - [ sqliteLoader.js ] Created sponsees item with ID: 1
+⚡️  [log] - [ testDataGenerator ] Created sponsee: Alex Wilson with ID: 1
+⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO sponsees (userId, name, lastName, phoneNumber, email, sobrietyDate, notes, sponseeType, createdAt, updatedAt) VALUES ('1', 'Sarah', 'Davis', '555-0202', 'sarah.d@email.com', '2023-11-05', 'Working on Step 4', 'sponsee', '2025-06-25T23:10:52.388Z', '2025-06-25T23:10:52.388Z');
+⚡️  To Native ->  CapacitorSQLite execute 94818778
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  To Native ->  CapacitorSQLite query 94818779
+⚡️  TO JS {"values":[{"ios_columns":["lastId"]},{"lastId":2}]}
+⚡️  [log] - [ sqliteLoader.js ] Created sponsees item with ID: 2
+⚡️  [log] - [ testDataGenerator ] Created sponsee: Sarah Davis with ID: 2
+⚡️  [log] - [ testDataGenerator ] Creating contacts for sponsor with ID: 1
+⚡️  To Native ->  CapacitorSQLite execute 94818780
+⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO sponsor_contacts (userId, sponsorId, type, date, note, topic, duration, createdAt, updatedAt) VALUES ('1', 1, 'call', '2025-06-21T02:23:44.597Z', 'Discussed my progress on Step 11. Very helpful conversation about maintaining gratitude.', 'Step Work & Gratitude', 58, '2025-06-25T23:10:52.394Z', '2025-06-25T23:10:52.394Z');
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  To Native ->  CapacitorSQLite query 94818781
+⚡️  TO JS {"values":[{"ios_columns":["lastId"]},{"lastId":1}]}
+⚡️  To Native ->  CapacitorSQLite execute 94818782
+⚡️  [log] - [ sqliteLoader.js ] Created sponsor_contacts item with ID: 1
+⚡️  [log] - [ testDataGenerator ] Created sponsor contact with ID: 1
+⚡️  [log] - [ testDataGenerator ] Creating sponsor action item: Practice daily meditation
+⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO action_items (title, text, notes, dueDate, completed, type, sponsorContactId, contactId, createdAt, updatedAt) VALUES ('Practice daily meditation', 'Practice daily meditation for 10 minutes', 'Focus on gratitude and serenity prayer', '2025-06-28T23:10:52.395Z', 0, 'sponsor_action_item', 1, 1, '2025-06-25T23:10:52.395Z', '2025-06-25T23:10:52.395Z');
+ERROR MESSAGE:  {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: table action_items has no column named contactId","message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: table action_items has no column named contactId"}
+⚡️  [error] - {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: table action_items has no column named contactId","message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: table action_items has no column named contactId"}
+⚡️  [error] - [ testDataGenerator ] Error creating test data: {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: table action_items has no column named contactId"}
+⚡️  [error] - [ Dashboard ] Failed to create test data: {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: table action_items has no column named contactId"}
