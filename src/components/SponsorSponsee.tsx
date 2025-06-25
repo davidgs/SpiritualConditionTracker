@@ -117,8 +117,6 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
 
   useEffect(() => {
     if (user?.id) {
-      loadSponsors();
-      loadSponsees();
       loadSponsorContacts();
       loadSponseeContacts();
     }

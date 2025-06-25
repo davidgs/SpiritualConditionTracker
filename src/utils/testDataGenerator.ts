@@ -44,8 +44,8 @@ export async function createTestData(appDataContext: any): Promise<TestDataResul
     // Step 3: Create various activity types using actual addActivity function
     await createTestActivities(addActivity, userId, results);
 
-    // Step 4: Create sponsors and sponsees using DatabaseService (like the real app does)
-    await createTestSponsorsAndSponsees(databaseService, userId, results);
+    // Step 4: Create sponsors and sponsees using AppDataContext (now centralized)
+    await createTestSponsorsAndSponsees(appDataContext, userId, results);
 
     console.log('[ testDataGenerator ] Test data creation completed:', results);
     return results;
@@ -211,59 +211,62 @@ async function createTestActivities(addActivity: any, userId: any, results: Test
   }
 }
 
-// Create sponsors and sponsees using DatabaseService (like the real app)
-async function createTestSponsorsAndSponsees(databaseService: any, userId: any, results: TestDataResults) {
+// Create sponsors and sponsees using AppDataContext (centralized approach)
+async function createTestSponsorsAndSponsees(appDataContext: any, userId: any, results: TestDataResults) {
   try {
-    console.log('[ testDataGenerator ] Creating sponsors and sponsees using DatabaseService...');
+    console.log('[ testDataGenerator ] Creating sponsors and sponsees using AppDataContext...');
     
-    // Create test sponsors using same pattern as real app
+    const { addSponsor, addSponsee } = appDataContext;
+    const databaseService = DatabaseService.getInstance();
+    
+    // Create test sponsors using addSponsor function
     const testSponsors = [
       {
-        userId: userId.toString(),
         name: 'John',
         lastName: 'Smith',
         phoneNumber: '555-0101',
         email: 'john.smith@email.com',
         sobrietyDate: '2015-03-15',
-        notes: 'Great sponsor with 10+ years experience'
+        notes: 'Great sponsor with 10+ years experience',
+        userId: userId.toString()
       },
       {
-        userId: userId.toString(),
         name: 'Mary',
         lastName: 'Johnson',
         phoneNumber: '555-0102',
         email: 'mary.j@email.com',
         sobrietyDate: '2012-08-22',
-        notes: 'Very supportive and knowledgeable'
+        notes: 'Very supportive and knowledgeable',
+        userId: userId.toString()
       }
     ];
 
-    // Create test sponsees
+    // Create test sponsees using addSponsee function
     const testSponsees = [
       {
-        userId: userId.toString(),
         name: 'Alex',
         lastName: 'Wilson',
         phoneNumber: '555-0201',
         email: 'alex.wilson@email.com',
         sobrietyDate: '2023-06-10',
-        notes: 'New sponsee, very motivated'
+        notes: 'New sponsee, very motivated',
+        userId: userId.toString()
       },
       {
-        userId: userId.toString(),
         name: 'Sarah',
         lastName: 'Davis',
         phoneNumber: '555-0202',
         email: 'sarah.d@email.com',
         sobrietyDate: '2023-11-05',
-        notes: 'Working on Step 4'
+        notes: 'Working on Step 4',
+        userId: userId.toString()
       }
     ];
 
-    // Create sponsors
+    // Create sponsors using AppDataContext
     const savedSponsors = [];
     for (const sponsor of testSponsors) {
-      const savedSponsor = await databaseService.add('sponsors', sponsor);
+      const savedSponsor = await addSponsor(sponsor);
       if (savedSponsor) {
         savedSponsors.push(savedSponsor);
         results.sponsorsCreated++;
@@ -271,10 +274,10 @@ async function createTestSponsorsAndSponsees(databaseService: any, userId: any, 
       }
     }
 
-    // Create sponsees
+    // Create sponsees using AppDataContext
     const savedSponsees = [];
     for (const sponsee of testSponsees) {
-      const savedSponsee = await databaseService.add('sponsees', sponsee);
+      const savedSponsee = await addSponsee(sponsee);
       if (savedSponsee) {
         savedSponsees.push(savedSponsee);
         results.sponseesCreated++;
@@ -282,12 +285,12 @@ async function createTestSponsorsAndSponsees(databaseService: any, userId: any, 
       }
     }
 
-    // Create sponsor contacts and action items
+    // Create sponsor contacts and action items using DatabaseService for contacts
     for (const sponsor of savedSponsors) {
       await createSponsorTestContacts(databaseService, sponsor, userId, results);
     }
 
-    // Create sponsee contacts and action items
+    // Create sponsee contacts and action items using DatabaseService for contacts
     for (const sponsee of savedSponsees) {
       await createSponseeTestContacts(databaseService, sponsee, userId, results);
     }

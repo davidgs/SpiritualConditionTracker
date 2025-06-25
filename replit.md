@@ -97,6 +97,19 @@ The Spiritual Condition Tracker is a comprehensive mobile application designed f
 5. TestFlight deployment for user testing
 
 ## Changelog
+- June 25, 2025: Architectural refactoring - Centralized sponsor/sponsee management
+  - CRITICAL ARCHITECTURE FIX: Removed architectural inconsistency where SponsorSponsee was only component bypassing centralized state management
+  - Added sponsor/sponsee management to AppDataContext with full CRUD operations (addSponsor, updateSponsor, deleteSponsor, addSponsee, updateSponsee, deleteSponsee)
+  - Refactored SponsorSponsee component to use centralized AppDataContext instead of direct databaseService calls
+  - Updated test data generator to use new centralized sponsor/sponsee functions instead of direct database access
+  - Enhanced AppDataContext state interface to include sponsors and sponsees arrays
+  - Added sponsor/sponsee loading to initial data load process for consistent state management
+  - Fixed architectural inconsistency: all components now follow same data management pattern through AppDataContext
+  - Improved data synchronization: sponsor/sponsee changes now trigger app-wide state updates automatically
+  - Eliminated manual refresh requirements: removed setRefreshKey() dependency in favor of automatic state synchronization
+  - Made sponsor/sponsee data accessible to other components through shared context state
+  - Architecture now consistent: Profile uses updateUser(), Activities use addActivity(), Meetings use addMeeting(), Sponsors/Sponsees use addSponsor()/addSponsee()
+  - Test data generator follows proper data flow architecture for all data types
 - June 24, 2025: Fixed action item display and data deletion issues
   - Root cause: Action items appearing twice in Activity List and not completing properly
   - Enhanced AppDataContext loadActivities() to properly enrich activities with actionItemData
