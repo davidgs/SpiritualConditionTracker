@@ -140,6 +140,10 @@ The Spiritual Condition Tracker is a comprehensive mobile application designed f
   - Added various activity types: prayer, meetings, reading, service, exercise, journaling
   - Enhanced TestDataResults interface to track all data creation categories
   - Test data now populates all areas of the app for thorough testing
+  - CRITICAL FIX: Fixed database schema mismatches in test data generator
+  - Updated user profile data to use correct column names (homeGroups, preferences, privacySettings)
+  - Fixed meetings table to use actual schema (no userId column, types instead of type/format)
+  - Corrected JSON field formatting for proper database storage
 - June 23, 2025: Cleaned up unused imports and variables in Profile.tsx
   - Removed unused imports: ThemeSelector, PopoverColorPicker, DatePicker components
   - Removed unused variables: darkMode, allowMessages, formatPhoneNumberForInput
