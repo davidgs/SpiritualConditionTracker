@@ -117,6 +117,9 @@ The Spiritual Condition Tracker is a comprehensive mobile application designed f
   - Enhanced data deletion to use DROP/CREATE approach for complete data cleanup
   - Added comprehensive table discovery to ensure all tables are dropped during reset
   - Fixed sponsor contact and action item data not being deleted during "Reset All Data"
+  - CRITICAL FIX: Stopped action items from being incorrectly saved to activities table
+  - Action items now properly stored ONLY in action_items table, not duplicated in activities
+  - Removed erroneous activity record creation for action items (proper data architecture)
 - June 23, 2025: Cleaned up unused imports and variables in Profile.tsx
   - Removed unused imports: ThemeSelector, PopoverColorPicker, DatePicker components
   - Removed unused variables: darkMode, allowMessages, formatPhoneNumberForInput

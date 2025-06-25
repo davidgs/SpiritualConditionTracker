@@ -350,26 +350,12 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
 
           console.log(`[handleContactWithActionItems] Action item data for ${personType}:`, actionItemData);
 
-          // Save action item to master table
+          // Save action item to master table ONLY
           const savedActionItem = await databaseService.add('action_items', actionItemData);
+          console.log(`[handleContactWithActionItems] Saved action item to action_items table:`, savedActionItem);
 
-          // Only create activity record for sponsor action items (sponsee action items don't appear in Activity Log)
-          if (!isSponsee && savedActionItem && (savedActionItem as any).id) {
-            const actionItemActivityData = {
-              userId: user?.id || 'default_user',
-              type: 'sponsor_action_item',
-              date: actionItem.dueDate || contactData.date,
-              notes: `Action Item: ${actionItem.title}`,
-              actionItemId: (savedActionItem as any).id,
-              sponsorId: selectedPerson?.id,
-              personCalled: `${selectedPerson?.name} ${selectedPerson?.lastName || ''}`.trim(),
-              createdAt: new Date().toISOString(),
-              updatedAt: new Date().toISOString()
-            };
-
-            console.log(`[handleContactWithActionItems] Creating activity record for sponsor action item:`, actionItemActivityData);
-            await databaseService.add('activities', actionItemActivityData);
-          }
+          // DO NOT create activities table records for action items
+          // Action items are standalone and referenced by activities via actionItemId when needed
         }
       }
 

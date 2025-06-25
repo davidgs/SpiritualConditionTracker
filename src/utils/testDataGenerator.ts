@@ -185,13 +185,8 @@ async function createSponsorTestContacts(sponsor: any, userId: number | string, 
     if (savedActionItem) {
       results.actionItemsCreated++;
       
-      // Create activity record for sponsor action item (shows in Activity Log)
-      const actionItemActivity = {
-        userId: userId,
-        type: 'sponsor_action_item',
-        date: actionItem.dueDate,
-        notes: `Action Item: ${actionItem.title}`,
-        actionItemId: (savedActionItem as any).id,
+      // DO NOT create activity records for action items
+      // Action items exist independently in action_items table
 
         personCalled: `${sponsor.name} ${sponsor.lastName}`,
         createdAt: new Date().toISOString(),

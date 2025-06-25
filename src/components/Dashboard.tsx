@@ -45,7 +45,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
         updatedAt: new Date().toISOString()
       });
 
-      // Save action items if any
+      // Save action items if any - to action_items table ONLY
       if (actionItems && actionItems.length > 0 && savedContact && (savedContact as any).id) {
         for (const actionItem of actionItems) {
           await databaseService.add('action_items', {
@@ -53,9 +53,11 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
             text: actionItem.text || actionItem.title,
             notes: actionItem.notes || '',
             contactId: (savedContact as any).id,
+            sponsorId: selectedSponsorForContact?.id,
+            sponsorName: selectedSponsorForContact?.name,
             dueDate: actionItem.dueDate || contactData.date,
             completed: 0,
-            type: 'sponsor_action_item', // Mark as sponsor action item for categorization
+            type: 'sponsor_action_item',
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString()
           });
