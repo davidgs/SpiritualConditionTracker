@@ -342,6 +342,8 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
       await loadActivities();
       await loadMeetings();
       await loadActionItems();
+      await loadSponsors();
+      await loadSponsees();
       
       dispatch({ type: 'SET_LOADING', payload: false });
       console.log('[ AppDataContext.tsx:194 ] Initial data load complete');

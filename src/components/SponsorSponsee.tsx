@@ -10,6 +10,7 @@ import {
 } from '@mui/material';
 import { AddIcon } from '../utils/muiOptimizations';
 import { useTheme } from '@mui/material/styles';
+import { useAppData } from '../contexts/AppDataContext';
 import DatabaseService from '../services/DatabaseService';
 import SubTabComponent from './shared/SubTabComponent';
 import PersonFormDialog from './shared/PersonFormDialog';
@@ -50,6 +51,7 @@ function TabPanel({ children, value, index, ...other }) {
 
 export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activities = [] }) {
   const theme = useTheme();
+  const { state, addSponsor, updateSponsor, deleteSponsor, addSponsee, updateSponsee, deleteSponsee } = useAppData();
   const databaseService = DatabaseService.getInstance();
 
   // Tab state
@@ -57,9 +59,9 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
   const [currentSponsorTab, setCurrentSponsorTab] = useState(0);
   const [currentSponseeTab, setCurrentSponseeTab] = useState(0);
 
-  // Data state
-  const [sponsors, setSponsors] = useState<ContactPerson[]>([]);
-  const [sponsees, setSponsees] = useState<ContactPerson[]>([]);
+  // Data state - now from AppDataContext
+  const sponsors = state.sponsors;
+  const sponsees = state.sponsees;
   const [sponsorContacts, setSponsorContacts] = useState([]);
   const [sponseeContacts, setSponseeContacts] = useState([]);
   const [refreshKey, setRefreshKey] = useState(0);
@@ -75,24 +77,7 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
   const [selectedSponseeForContact, setSelectedSponseeForContact] = useState(null);
   const [selectedSponsorForContact, setSelectedSponsorForContact] = useState(null);
 
-  // Load data - FIXED: Show all sponsors/sponsees since there's only one user
-  const loadSponsors = async () => {
-    try {
-      const sponsorData = await databaseService.getAll('sponsors');
-      setSponsors(sponsorData as ContactPerson[]);
-    } catch (error) {
-      console.error('Failed to load sponsors:', error);
-    }
-  };
-
-  const loadSponsees = async () => {
-    try {
-      const sponseeData = await databaseService.getAll('sponsees');
-      setSponsees(sponseeData as ContactPerson[]);
-    } catch (error) {
-      console.error('Failed to load sponsees:', error);
-    }
-  };
+  // Sponsors and sponsees are now loaded automatically by AppDataContext
 
   const loadSponsorContacts = async () => {
     try {
@@ -227,36 +212,24 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
   // Form submission handlers
   const handlePersonSubmit = async (personData: ContactPerson) => {
     try {
-      const tableMap = {
-        sponsor: 'sponsors',
-        sponsee: 'sponsees'
-      };
-
-      const table = tableMap[personFormType];
-      const dataToSave = {
-        ...personData,
-        userId: user?.id,
-        updatedAt: new Date().toISOString()
-      };
-
       if (editingPerson?.id) {
-        await databaseService.update(table, editingPerson.id, dataToSave);
+        // Update existing person
+        if (personFormType === 'sponsor') {
+          await updateSponsor(editingPerson.id, personData);
+        } else {
+          await updateSponsee(editingPerson.id, personData);
+        }
       } else {
-        await databaseService.add(table, {
-          ...dataToSave,
-          createdAt: new Date().toISOString()
-        });
+        // Add new person
+        if (personFormType === 'sponsor') {
+          await addSponsor(personData);
+        } else {
+          await addSponsee(personData);
+        }
       }
 
       setShowPersonForm(false);
       setEditingPerson(null);
-
-      // Refresh data
-      if (personFormType === 'sponsor') {
-        await loadSponsors();
-      } else {
-        await loadSponsees();
-      }
       setRefreshKey(prev => prev + 1);
     } catch (error) {
       console.error('Failed to save person:', error);
