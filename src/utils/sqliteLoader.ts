@@ -288,11 +288,22 @@ function convertIOSFormatToStandard(iosResult) {
 }
 
 async function createTables(sqlite) {
-  // Create users table
+  // Drop and recreate users table to ensure clean schema without sponsor columns
+  try {
+    await sqlite.execute({
+      database: DB_NAME,
+      statements: `DROP TABLE IF EXISTS users;`
+    });
+    console.log('[ sqliteLoader.js ] Dropped existing users table for clean schema');
+  } catch (error) {
+    console.log('[ sqliteLoader.js ] No existing users table to drop');
+  }
+
+  // Create users table with clean schema (no sponsor columns)
   await sqlite.execute({
     database: DB_NAME,
     statements: `
-      CREATE TABLE IF NOT EXISTS users (
+      CREATE TABLE users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT DEFAULT '',
         lastName TEXT DEFAULT '',
@@ -308,6 +319,7 @@ async function createTables(sqlite) {
       )
     `
   });
+  console.log('[ sqliteLoader.js ] Created users table with clean schema (no sponsor columns)');
 
   // Create activities table
   await sqlite.execute({

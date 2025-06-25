@@ -323,8 +323,8 @@ async function createUserProfileData(userId: number | string, results: TestDataR
     
     if (user) {
       // Update existing user
-      await databaseService.update('users', parseInt(userId.toString()), profileData);
-      console.log('[ testDataGenerator ] Updated existing user profile');
+      const result = await databaseService.update('users', parseInt(userId.toString()), profileData);
+      console.log('[ testDataGenerator ] Updated existing user profile:', result);
     } else {
       // Create new user
       const newUser = {
@@ -332,13 +332,14 @@ async function createUserProfileData(userId: number | string, results: TestDataR
         ...profileData,
         createdAt: new Date().toISOString()
       };
-      await databaseService.add('users', newUser);
-      console.log('[ testDataGenerator ] Created new user profile');
+      const result = await databaseService.add('users', newUser);
+      console.log('[ testDataGenerator ] Created new user profile:', result);
     }
     
     results.userProfileUpdated = true;
   } catch (error) {
     console.error('[ testDataGenerator ] Error creating user profile:', error);
+    console.error('[ testDataGenerator ] Full error details:', error.message);
   }
 }
 
