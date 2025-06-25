@@ -1,6 +1,6 @@
 /**
  * Test Data Generator for Sponsor/Sponsee System
- * Creates comprehensive test data for contacts and action items
+ * Creates comprehensive test data using actual app data paths
  */
 
 import DatabaseService from '../services/DatabaseService';
@@ -16,7 +16,9 @@ export interface TestDataResults {
   actionItemsCreated: number;
 }
 
-export async function createTestData(userId: number | string): Promise<TestDataResults> {
+export async function createTestData(appDataContext: any): Promise<TestDataResults> {
+  const { updateUser, addActivity, addMeeting, addActionItem, state } = appDataContext;
+  const userId = state.currentUserId;
   const databaseService = DatabaseService.getInstance();
   
   const results: TestDataResults = {
@@ -31,18 +33,190 @@ export async function createTestData(userId: number | string): Promise<TestDataR
   };
 
   try {
-    console.log('[ testDataGenerator ] Starting comprehensive test data creation...');
+    console.log('[ testDataGenerator ] Starting comprehensive test data creation using real app data paths...');
     
-    // Step 1: Update user profile with comprehensive data
-    await createUserProfileData(userId, results);
+    // Step 1: Update user profile using actual updateUser function (same as Profile.tsx)
+    await createUserProfileData(updateUser, results);
     
-    // Step 2: Create diverse meetings
-    await createTestMeetings(userId, results);
+    // Step 2: Create diverse meetings using actual addMeeting function
+    await createTestMeetings(addMeeting, results);
     
-    // Step 3: Create various activity types
-    await createTestActivities(userId, results);
+    // Step 3: Create various activity types using actual addActivity function
+    await createTestActivities(addActivity, userId, results);
 
-    // Create test sponsors
+    // Step 4: Create sponsors and sponsees using DatabaseService (like the real app does)
+    await createTestSponsorsAndSponsees(databaseService, userId, results);
+
+    console.log('[ testDataGenerator ] Test data creation completed:', results);
+    return results;
+
+  } catch (error) {
+    console.error('[ testDataGenerator ] Error creating test data:', error);
+    throw error;
+  }
+}
+
+// Create user profile data using the same pattern as Profile.tsx
+async function createUserProfileData(updateUser: any, results: TestDataResults) {
+  try {
+    console.log('[ testDataGenerator ] Creating user profile data using actual updateUser function...');
+    
+    // Use the exact same structure as Profile.tsx
+    const updates = {
+      name: "David",
+      lastName: "Simmons", 
+      phoneNumber: "+1-919-555-0123",
+      email: "david.simmons@email.com",
+      sobrietyDate: "2022-01-15", // Store as string, not Date object
+      homeGroups: ["Triangle Group", "Sunrise Meeting"],
+      privacySettings: {
+        shareLastName: true
+      },
+      preferences: {
+        use24HourFormat: false
+      }
+    };
+    
+    const updatedUser = await updateUser(updates);
+    if (updatedUser) {
+      results.userProfileUpdated = true;
+      console.log('[ testDataGenerator ] User profile updated successfully');
+    }
+  } catch (error) {
+    console.error('[ testDataGenerator ] Error creating user profile:', error);
+  }
+}
+
+// Create test meetings using actual addMeeting function
+async function createTestMeetings(addMeeting: any, results: TestDataResults) {
+  try {
+    console.log('[ testDataGenerator ] Creating test meetings using actual addMeeting function...');
+    
+    const testMeetings = [
+      {
+        name: "Big Book Study",
+        time: "18:00",
+        types: ["Big Book", "Closed"],
+        days: ["Monday", "Wednesday", "Friday"],
+        address: "123 Recovery St, Raleigh, NC 27601",
+        city: "Raleigh",
+        state: "NC",
+        zipCode: "27601",
+        locationName: "First Presbyterian Church",
+        onlineUrl: "",
+        schedule: "Weekly",
+        homeGroup: true
+      },
+      {
+        name: "Online Unity Meeting",
+        time: "19:30",
+        types: ["Discussion", "Online"],
+        days: ["Tuesday", "Thursday"],
+        address: "",
+        city: "",
+        state: "",
+        zipCode: "",
+        locationName: "Zoom Meeting",
+        onlineUrl: "https://zoom.us/j/123456789",
+        schedule: "Weekly",
+        homeGroup: false
+      },
+      {
+        name: "Morning Meditation",
+        time: "07:00",
+        types: ["Meditation", "Open"],
+        days: ["Saturday"],
+        address: "456 Serenity Ave, Durham, NC 27707",
+        city: "Durham",
+        state: "NC",
+        zipCode: "27707",
+        locationName: "Unity Center",
+        onlineUrl: "",
+        schedule: "Weekly",
+        homeGroup: false
+      }
+    ];
+    
+    for (const meeting of testMeetings) {
+      const savedMeeting = await addMeeting(meeting);
+      if (savedMeeting) {
+        results.meetingsCreated++;
+        console.log(`[ testDataGenerator ] Created meeting: ${meeting.name}`);
+      }
+    }
+  } catch (error) {
+    console.error('[ testDataGenerator ] Error creating meetings:', error);
+  }
+}
+
+// Create test activities using actual addActivity function
+async function createTestActivities(addActivity: any, userId: any, results: TestDataResults) {
+  try {
+    console.log('[ testDataGenerator ] Creating test activities using actual addActivity function...');
+    
+    const testActivities = [
+      {
+        userId: userId.toString(),
+        type: "prayer",
+        duration: 10,
+        date: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(), // 1 day ago
+        notes: "Morning prayers and gratitude"
+      },
+      {
+        userId: userId.toString(),
+        type: "meditation",
+        duration: 15,
+        date: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(), // 2 days ago
+        notes: "Quiet reflection on Step 3"
+      },
+      {
+        userId: userId.toString(),
+        type: "literature",
+        duration: 30,
+        date: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(), // 3 days ago
+        notes: "Big Book Chapter 5 - How It Works"
+      },
+      {
+        userId: userId.toString(),
+        type: "meeting",
+        duration: 60,
+        date: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(), // 1 day ago
+        notes: "Big Book Study - great discussion on resentments"
+      },
+      {
+        userId: userId.toString(),
+        type: "service",
+        duration: 45,
+        date: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000).toISOString(), // 4 days ago
+        notes: "Setup chairs for meeting"
+      },
+      {
+        userId: userId.toString(),
+        type: "call",
+        duration: 20,
+        date: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(), // 2 days ago
+        notes: "Called sponsee Alex - discussed Step 4 work"
+      }
+    ];
+    
+    for (const activity of testActivities) {
+      const savedActivity = await addActivity(activity);
+      if (savedActivity) {
+        results.activitiesCreated++;
+        console.log(`[ testDataGenerator ] Created activity: ${activity.type} - ${activity.notes}`);
+      }
+    }
+  } catch (error) {
+    console.error('[ testDataGenerator ] Error creating activities:', error);
+  }
+}
+
+// Create sponsors and sponsees using DatabaseService (like the real app)
+async function createTestSponsorsAndSponsees(databaseService: any, userId: any, results: TestDataResults) {
+  try {
+    console.log('[ testDataGenerator ] Creating sponsors and sponsees using DatabaseService...');
+    
+    // Create test sponsors using same pattern as real app
     const testSponsors = [
       {
         userId: userId.toString(),
@@ -51,10 +225,7 @@ export async function createTestData(userId: number | string): Promise<TestDataR
         phoneNumber: '555-0101',
         email: 'john.smith@email.com',
         sobrietyDate: '2015-03-15',
-        notes: 'Great sponsor with 10+ years experience',
-        sponsorType: 'sponsor',
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
+        notes: 'Great sponsor with 10+ years experience'
       },
       {
         userId: userId.toString(),
@@ -63,10 +234,7 @@ export async function createTestData(userId: number | string): Promise<TestDataR
         phoneNumber: '555-0102',
         email: 'mary.j@email.com',
         sobrietyDate: '2012-08-22',
-        notes: 'Very supportive and knowledgeable',
-        sponsorType: 'sponsor',
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
+        notes: 'Very supportive and knowledgeable'
       }
     ];
 
@@ -79,10 +247,7 @@ export async function createTestData(userId: number | string): Promise<TestDataR
         phoneNumber: '555-0201',
         email: 'alex.wilson@email.com',
         sobrietyDate: '2023-06-10',
-        notes: 'New sponsee, very motivated',
-        sponseeType: 'sponsee',
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
+        notes: 'New sponsee, very motivated'
       },
       {
         userId: userId.toString(),
@@ -91,10 +256,7 @@ export async function createTestData(userId: number | string): Promise<TestDataR
         phoneNumber: '555-0202',
         email: 'sarah.d@email.com',
         sobrietyDate: '2023-11-05',
-        notes: 'Working on Step 4',
-        sponseeType: 'sponsee',
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
+        notes: 'Working on Step 4'
       }
     ];
 
@@ -105,7 +267,7 @@ export async function createTestData(userId: number | string): Promise<TestDataR
       if (savedSponsor) {
         savedSponsors.push(savedSponsor);
         results.sponsorsCreated++;
-        console.log(`[ testDataGenerator ] Created sponsor: ${sponsor.name} ${sponsor.lastName} with ID: ${(savedSponsor as any).id}`);
+        console.log(`[ testDataGenerator ] Created sponsor: ${sponsor.name} ${sponsor.lastName}`);
       }
     }
 
@@ -116,31 +278,26 @@ export async function createTestData(userId: number | string): Promise<TestDataR
       if (savedSponsee) {
         savedSponsees.push(savedSponsee);
         results.sponseesCreated++;
-        console.log(`[ testDataGenerator ] Created sponsee: ${sponsee.name} ${sponsee.lastName} with ID: ${(savedSponsee as any).id}`);
+        console.log(`[ testDataGenerator ] Created sponsee: ${sponsee.name} ${sponsee.lastName}`);
       }
     }
 
     // Create sponsor contacts and action items
     for (const sponsor of savedSponsors) {
-      await createSponsorTestContacts(sponsor, userId, results);
+      await createSponsorTestContacts(databaseService, sponsor, userId, results);
     }
 
     // Create sponsee contacts and action items
     for (const sponsee of savedSponsees) {
-      await createSponseeTestContacts(sponsee, userId, results);
+      await createSponseeTestContacts(databaseService, sponsee, userId, results);
     }
-
-    console.log('[ testDataGenerator ] Test data creation completed:', results);
-    return results;
-
+    
   } catch (error) {
-    console.error('[ testDataGenerator ] Error creating test data:', error);
-    throw error;
+    console.error('[ testDataGenerator ] Error creating sponsors/sponsees:', error);
   }
 }
 
-async function createSponsorTestContacts(sponsor: any, userId: number | string, results: TestDataResults) {
-  const databaseService = DatabaseService.getInstance();
+async function createSponsorTestContacts(databaseService: any, sponsor: any, userId: number | string, results: TestDataResults) {
   
   console.log(`[ testDataGenerator ] Creating contacts for sponsor with ID: ${sponsor.id}`);
   
@@ -215,8 +372,7 @@ async function createSponsorTestContacts(sponsor: any, userId: number | string, 
   }
 }
 
-async function createSponseeTestContacts(sponsee: any, userId: number | string, results: TestDataResults) {
-  const databaseService = DatabaseService.getInstance();
+async function createSponseeTestContacts(databaseService: any, sponsee: any, userId: number | string, results: TestDataResults) {
   
   console.log(`[ testDataGenerator ] Creating contacts for sponsee with ID: ${sponsee.id}`);
   
@@ -283,280 +439,6 @@ async function createSponseeTestContacts(sponsee: any, userId: number | string, 
     // Do NOT create activity record for sponsee contact
     // Sponsee contacts should be stored ONLY in sponsee_contacts table
     // They should NOT appear in the Activity List per requirements
-  }
-}
-
-// Create comprehensive user profile data
-async function createUserProfileData(userId: number | string, results: TestDataResults) {
-  const databaseService = DatabaseService.getInstance();
-  
-  console.log('[ testDataGenerator ] Creating user profile data...');
-  
-  try {
-    // Get existing user or create one
-    let user = await databaseService.getById('users', parseInt(userId.toString()));
-    
-    const profileData = {
-      name: 'David',
-      lastName: 'Thompson',
-      phoneNumber: '+1 (555) 123-4567',
-      email: 'david.thompson@email.com',
-      sobrietyDate: '2020-06-15',
-      homeGroups: JSON.stringify(['Serenity Circle AA']),
-      preferences: JSON.stringify({
-        emergencyContactName: 'Sarah Thompson',
-        emergencyContactPhone: '+1 (555) 987-6543',
-        allowMessages: true,
-        use24HourFormat: false,
-        darkMode: false,
-        theme: 'default'
-      }),
-      privacySettings: JSON.stringify({
-        allowMessages: true,
-        shareLastName: true
-      }),
-      isDarkMode: 0,
-      updatedAt: new Date().toISOString()
-    };
-    
-    if (user) {
-      // Update existing user
-      const result = await databaseService.update('users', parseInt(userId.toString()), profileData);
-      console.log('[ testDataGenerator ] Updated existing user profile:', result);
-    } else {
-      // Create new user
-      const newUser = {
-        id: parseInt(userId.toString()),
-        ...profileData,
-        createdAt: new Date().toISOString()
-      };
-      const result = await databaseService.add('users', newUser);
-      console.log('[ testDataGenerator ] Created new user profile:', result);
-    }
-    
-    results.userProfileUpdated = true;
-  } catch (error) {
-    console.error('[ testDataGenerator ] Error creating user profile:', error);
-    console.error('[ testDataGenerator ] Full error details:', error.message);
-  }
-}
-
-// Create diverse test meetings
-async function createTestMeetings(userId: number | string, results: TestDataResults) {
-  const databaseService = DatabaseService.getInstance();
-  
-  console.log('[ testDataGenerator ] Creating test meetings...');
-  
-  const testMeetings = [
-    {
-      name: 'Big Book Study',
-      days: 'Monday,Wednesday',
-      time: '19:00',
-      schedule: 'weekly',
-      types: 'Big Book Study',
-      address: '123 Recovery St, Hope City, HC 12345',
-      city: 'Hope City',
-      state: 'HC',
-      zipCode: '12345',
-      locationName: 'St. Mary\'s Church',
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    },
-    {
-      name: 'Saturday Morning Serenity',
-      days: 'Saturday',
-      time: '09:00',
-      schedule: 'weekly',
-      types: 'Open Discussion',
-      address: '456 Serenity Ave, Peace Town, PT 67890',
-      city: 'Peace Town',
-      state: 'PT',
-      zipCode: '67890',
-      locationName: 'Community Center',
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    },
-    {
-      name: 'Online Unity Group',
-      days: 'Tuesday,Thursday,Sunday',
-      time: '20:00',
-      schedule: 'weekly',
-      types: 'Online Meeting',
-      onlineUrl: 'https://zoom.us/j/1234567890',
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    },
-    {
-      name: 'Gratitude & Meditation',
-      days: 'Friday',
-      time: '18:30',
-      schedule: 'weekly',
-      types: 'Meditation',
-      address: '789 Mindful Way, Zen Village, ZV 11223',
-      city: 'Zen Village', 
-      state: 'ZV',
-      zipCode: '11223',
-      locationName: 'Peaceful Path Center',
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    },
-    {
-      name: 'Young People in Recovery',
-      days: 'Sunday',
-      time: '16:00',
-      schedule: 'weekly',
-      types: 'Young People',
-      address: '321 Youth Center Dr, New Hope, NH 44556',
-      city: 'New Hope',
-      state: 'NH', 
-      zipCode: '44556',
-      locationName: 'Youth Activity Center',
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    }
-  ];
-  
-  for (const meeting of testMeetings) {
-    try {
-      const savedMeeting = await databaseService.add('meetings', meeting);
-      if (savedMeeting) {
-        results.meetingsCreated++;
-        console.log(`[ testDataGenerator ] Created meeting: ${meeting.name}`);
-      }
-    } catch (error) {
-      console.error(`[ testDataGenerator ] Error creating meeting ${meeting.name}:`, error);
-    }
-  }
-}
-
-// Create diverse test activities
-async function createTestActivities(userId: number | string, results: TestDataResults) {
-  const databaseService = DatabaseService.getInstance();
-  
-  console.log('[ testDataGenerator ] Creating test activities...');
-  
-  const activityTypes = [
-    {
-      type: 'prayer',
-      activities: [
-        {
-          notes: 'Morning meditation and serenity prayer',
-          duration: 15,
-          daysAgo: 0
-        },
-        {
-          notes: 'Evening gratitude prayer',
-          duration: 10,
-          daysAgo: 1
-        },
-        {
-          notes: 'Step 11 prayer and meditation',
-          duration: 20,
-          daysAgo: 2
-        }
-      ]
-    },
-    {
-      type: 'meeting',
-      activities: [
-        {
-          notes: 'Big Book Study - Chapter 4: We Agnostics',
-          duration: 90,
-          daysAgo: 1,
-          meetingName: 'Big Book Study'
-        },
-        {
-          notes: 'Saturday Morning Serenity - Shared about gratitude',
-          duration: 60,
-          daysAgo: 2,
-          meetingName: 'Saturday Morning Serenity'
-        },
-        {
-          notes: 'Online Unity Group - Step work discussion',
-          duration: 75,
-          daysAgo: 3,
-          meetingName: 'Online Unity Group'
-        },
-        {
-          notes: 'Young People meeting - Topic: Dealing with stress',
-          duration: 60,
-          daysAgo: 4,
-          meetingName: 'Young People in Recovery'
-        }
-      ]
-    },
-    {
-      type: 'literature',
-      activities: [
-        {
-          notes: 'Daily Reflections - June 25th reading',
-          duration: 10,
-          daysAgo: 0
-        },
-        {
-          notes: 'Big Book - Pages 83-88, Step 4 inventory work',
-          duration: 45,
-          daysAgo: 1
-        },
-        {
-          notes: 'As Bill Sees It - Random page reading',
-          duration: 15,
-          daysAgo: 3
-        }
-      ]
-    },
-    {
-      type: 'service',
-      activities: [
-        {
-          notes: 'Set up chairs for Saturday meeting',
-          duration: 30,
-          daysAgo: 2
-        },
-        {
-          notes: 'Greeted newcomers at Big Book Study',
-          duration: 15,
-          daysAgo: 1
-        },
-        {
-          notes: 'Made coffee for Sunday meeting',
-          duration: 20,
-          daysAgo: 4
-        }
-      ]
-    }
-  ];
-  
-  for (const activityGroup of activityTypes) {
-    for (const activity of activityGroup.activities) {
-      try {
-        const activityDate = new Date();
-        activityDate.setDate(activityDate.getDate() - activity.daysAgo);
-        
-        const activityData: any = {
-          userId: userId.toString(),
-          type: activityGroup.type,
-          date: activityDate.toISOString().split('T')[0],
-          notes: activity.notes,
-          duration: activity.duration,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString()
-        };
-        
-        // Add meetingName only if it exists in the activity
-        if ('meetingName' in activity && activity.meetingName) {
-          activityData.meetingName = activity.meetingName;
-        }
-        
-        const savedActivity = await databaseService.add('activities', activityData);
-        if (savedActivity) {
-          results.activitiesCreated++;
-          console.log(`[ testDataGenerator ] Created ${activityGroup.type} activity: ${activity.notes.substring(0, 30)}...`);
-        }
-      } catch (error) {
-        console.error(`[ testDataGenerator ] Error creating activity:`, error);
-      }
-    }
   }
 }
 
