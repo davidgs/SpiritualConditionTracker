@@ -250,7 +250,6 @@ async function createSponseeTestContacts(sponsee: any, userId: number | string, 
       completed: 0,
       type: 'sponsee_action_item',
       sponseeContactId: (savedContactWithAction as any).id,
-      contactId: (savedContactWithAction as any).id,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
     };
