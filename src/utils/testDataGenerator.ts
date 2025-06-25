@@ -164,21 +164,9 @@ async function createSponsorTestContacts(sponsor: any, userId: number | string, 
     
     console.log(`[ testDataGenerator ] Created sponsor contact with ID: ${contactId}`);
     
-    // Create activity record for sponsor contact
-    const contactActivity = {
-      userId: userId,
-      type: 'sponsor-contact',
-      date: contactWithAction.date,
-      notes: contactWithAction.note,
-      duration: contactWithAction.duration,
-      personCalled: `${sponsor.name} ${sponsor.lastName}`,
-      sponsorContactId: contactId,
-      sponsorId: sponsor.id,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    };
-    
-    await databaseService.add('activities', contactActivity);
+    // Do NOT create activity record for sponsor contact
+    // Sponsor contacts should be stored ONLY in sponsor_contacts table
+    // The AppDataContext will handle displaying them in the Activity List
     
     // Create action item linked to this specific contact
     const actionItem = {
@@ -222,21 +210,9 @@ async function createSponsorTestContacts(sponsor: any, userId: number | string, 
   if (savedContactWithoutAction) {
     results.sponsorContactsCreated++;
     
-    // Create activity record for sponsor contact
-    const contactActivity = {
-      userId: userId,
-      type: 'sponsor-contact',
-      date: contactWithoutAction.date,
-      notes: contactWithoutAction.note,
-      duration: contactWithoutAction.duration,
-      personCalled: `${sponsor.name} ${sponsor.lastName}`,
-      sponsorContactId: (savedContactWithoutAction as any).id,
-      sponsorId: sponsor.id,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    };
-    
-    await databaseService.add('activities', contactActivity);
+    // Do NOT create activity record for sponsor contact
+    // Sponsor contacts should be stored ONLY in sponsor_contacts table
+    // The AppDataContext will handle displaying them in the Activity List
   }
 }
 
@@ -262,21 +238,9 @@ async function createSponseeTestContacts(sponsee: any, userId: number | string, 
   if (savedContactWithAction) {
     results.sponseeContactsCreated++;
     
-    // Create activity record for sponsee contact
-    const contactActivity = {
-      userId: userId,
-      type: 'sponsee-contact',
-      date: contactWithAction.date,
-      notes: contactWithAction.note,
-      duration: contactWithAction.duration,
-      personCalled: `${sponsee.name} ${sponsee.lastName}`,
-      sponseeContactId: (savedContactWithAction as any).id,
-      sponseeId: sponsee.id,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    };
-    
-    await databaseService.add('activities', contactActivity);
+    // Do NOT create activity record for sponsee contact
+    // Sponsee contacts should be stored ONLY in sponsee_contacts table
+    // They should NOT appear in the Activity List per requirements
     
     // Create action item linked to this specific sponsee contact
     const actionItem = {
@@ -318,20 +282,9 @@ async function createSponseeTestContacts(sponsee: any, userId: number | string, 
   if (savedContactWithoutAction) {
     results.sponseeContactsCreated++;
     
-    // Create activity record for sponsee contact
-    const contactActivity = {
-      userId: userId,
-      type: 'sponsee-contact',
-      date: contactWithoutAction.date,
-      notes: contactWithoutAction.note,
-      personCalled: `${sponsee.name} ${sponsee.lastName}`,
-      sponseeContactId: (savedContactWithoutAction as any).id,
-      sponseeId: sponsee.id,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    };
-    
-    await databaseService.add('activities', contactActivity);
+    // Do NOT create activity record for sponsee contact
+    // Sponsee contacts should be stored ONLY in sponsee_contacts table
+    // They should NOT appear in the Activity List per requirements
   }
 }
 
@@ -622,16 +575,20 @@ async function createTestActivities(userId: number | string, results: TestDataRe
         const activityDate = new Date();
         activityDate.setDate(activityDate.getDate() - activity.daysAgo);
         
-        const activityData = {
+        const activityData: any = {
           userId: userId.toString(),
           type: activityGroup.type,
           date: activityDate.toISOString().split('T')[0],
           notes: activity.notes,
           duration: activity.duration,
-          meetingName: activity.meetingName || undefined,
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString()
         };
+        
+        // Add meetingName only if it exists in the activity
+        if ('meetingName' in activity && activity.meetingName) {
+          activityData.meetingName = activity.meetingName;
+        }
         
         const savedActivity = await databaseService.add('activities', activityData);
         if (savedActivity) {
