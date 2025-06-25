@@ -371,76 +371,70 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
       const sponsorContacts = await databaseService.getAllSponsorContacts();
       console.log('[ AppDataContext.tsx ] Loaded sponsor contacts:', sponsorContacts.length);
       
-      // 3. For each sponsor contact, load associated action items
-      const allActionItems = [];
+      // 3. Load action items only once and transform them
       const sponsors = await databaseService.getAllSponsors();
-      
-      // Load all action items once
       const allDbActionItems = await databaseService.getAllActionItems();
       console.log('[ AppDataContext.tsx ] Loaded all action items from database:', allDbActionItems.length);
 
-      for (const contact of sponsorContacts) {
-        try {
-          // Filter action items for this specific contact
-          const contactActionItems = allDbActionItems.filter(ai => ai.contactId === contact.id);
-          console.log(`[ AppDataContext.tsx ] Found ${contactActionItems.length} action items for sponsor contact ${contact.id}`);
-          
-          // Transform each action item into an activity-like object for the Activity List
-          for (const actionItem of contactActionItems) {
-            // Find sponsor name for display
-            let sponsorName = 'Sponsor';
-            if (sponsors && sponsors.length > 0) {
-              const sponsor = sponsors[0]; // Use first sponsor
-              const firstName = sponsor.name || '';
-              const lastName = sponsor.lastName || '';
-              sponsorName = lastName ? `${firstName} ${lastName.charAt(0)}.` : firstName || 'Sponsor';
-            }
-            
-            const activityLikeActionItem = {
-              id: `action_item_${actionItem.id}`, // Unique ID for activity list
-              userId: state.currentUserId,
-              type: 'sponsor_action_item',
-              title: actionItem.title,
-              text: actionItem.text || actionItem.title,
-              notes: actionItem.notes || '',
-              date: contact.date, // Use contact date as activity date
-              duration: 0,
-              completed: actionItem.completed,
-              createdAt: actionItem.createdAt || new Date().toISOString(),
-              updatedAt: actionItem.updatedAt || new Date().toISOString(),
-              // Additional data for action item handling
-              actionItemId: actionItem.id,
-              actionItemData: {
-                ...actionItem,
-                sponsorName,
-                sponsorContactId: contact.id
-              },
-              sponsorName,
-              sponsorContactId: contact.id
-            };
-            
-            allActionItems.push(activityLikeActionItem);
-          }
-        } catch (actionItemError) {
-          console.warn(`[ AppDataContext.tsx ] Failed to load action items for sponsor contact ${contact.id}:`, actionItemError);
-        }
+      // Get sponsor name for display
+      let sponsorName = 'Sponsor';
+      if (sponsors && sponsors.length > 0) {
+        const sponsor = sponsors[0];
+        const firstName = sponsor.name || '';
+        const lastName = sponsor.lastName || '';
+        sponsorName = lastName ? `${firstName} ${lastName.charAt(0)}.` : firstName || 'Sponsor';
       }
+
+      // Transform action items to activity-like objects, ensuring uniqueness
+      const actionItemActivities = allDbActionItems
+        .filter(actionItem => {
+          // Only include action items linked to sponsor contacts
+          return sponsorContacts.some(contact => contact.id === actionItem.contactId);
+        })
+        .map(actionItem => {
+          const relatedContact = sponsorContacts.find(contact => contact.id === actionItem.contactId);
+          return {
+            id: `action_item_${actionItem.id}`,
+            userId: String(state.currentUserId || 'default_user'),
+            type: 'sponsor_action_item',
+            title: actionItem.title,
+            text: actionItem.text || actionItem.title,
+            notes: actionItem.notes || '',
+            date: relatedContact?.date || new Date().toISOString(),
+            duration: 0,
+            completed: actionItem.completed,
+            createdAt: actionItem.createdAt || new Date().toISOString(),
+            updatedAt: actionItem.updatedAt || new Date().toISOString(),
+            actionItemId: actionItem.id,
+            actionItemData: actionItem,
+            sponsorName,
+            sponsorContactId: actionItem.contactId
+          };
+        });
       
-      console.log('[ AppDataContext.tsx ] Total action items transformed to activities:', allActionItems.length);
+      console.log('[ AppDataContext.tsx ] Transformed action items to activities:', actionItemActivities.length);
       
-      // 4. Load sponsee contacts (future implementation)
-      // Note: Sponsee contacts functionality will be implemented later
-      const sponseeContacts = [];
-      console.log('[ AppDataContext.tsx ] Sponsee contacts not yet implemented, using empty array');
+      // 4. Filter out any existing activities that already reference these action items to avoid duplicates
+      const filteredActivities = activities.filter(activity => {
+        if (activity.actionItemId) {
+          // Remove activities that reference action items we're about to add separately
+          const hasMatchingActionItem = actionItemActivities.some(ai => ai.actionItemId === activity.actionItemId);
+          if (hasMatchingActionItem) {
+            console.log('[ AppDataContext.tsx ] Removing duplicate activity that references action item:', activity.title);
+            return false;
+          }
+        }
+        return true;
+      });
       
-      // 5. Merge all data: activities + action items (+ future sponsee contacts)
+      // 5. Merge filtered activities with action item activities
       const allActivitiesData = [
-        ...activities, // Real activities from activities table
-        ...allActionItems // Action items transformed to activity-like objects
-      ];
+        ...filteredActivities, // Real activities (minus duplicates)
+        ...actionItemActivities // Action items as activities
+      ] as Activity[];
       
-      console.log('[ AppDataContext.tsx ] Total merged activities (activities + action items):', allActivitiesData.length);
-      console.log('[ AppDataContext.tsx ] Activity types in merged data:', allActivitiesData.map(a => `${a.id}:${a.type}`));
+      console.log('[ AppDataContext.tsx ] Total merged activities (deduplicated):', allActivitiesData.length);
+      console.log('[ AppDataContext.tsx ] Activity types:', allActivitiesData.map(a => `${a.type}`));
       
       // Always load last 180 days for base cache (fixed window for memory management)
       const CACHE_DAYS = 180;
