@@ -673,7 +673,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
       />
 
       {/* Test Data Button - Development Only - HIDDEN */}
-     <Box sx={{ mt: 3, display: 'flex', justifyContent: 'center' }}>
+      <Box sx={{ mt: 3, display: 'flex', justifyContent: 'center' }}>
         <Button
           onClick={handleCreateTestData}
           variant="outlined"
