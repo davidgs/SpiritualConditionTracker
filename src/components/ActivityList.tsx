@@ -4,6 +4,19 @@ import { useTheme } from '@mui/material/styles';
 import { useAppData } from '../contexts/AppDataContext';
 import ActionItem from './shared/ActionItem';
 import DatabaseService from '../services/DatabaseService';
+import { Activity, Meeting, ActionItem as ActionItemType, SponsorData } from '../types/database';
+
+interface ActivityListProps {
+  activities: Activity[];
+  darkMode?: boolean;
+  limit?: number | null;
+  filter?: 'all' | 'completed' | 'pending' | string;
+  showDate?: boolean;
+  maxDaysAgo?: number | null;
+  title?: string | null;
+  onActivityClick?: ((activity: Activity) => void) | null;
+  meetings?: Meeting[];
+}
 
 export default function ActivityList({ 
   activities, 
@@ -15,15 +28,15 @@ export default function ActivityList({
   title = null,
   onActivityClick = null,
   meetings = []
-}) {
+}: ActivityListProps) {
 
   const theme = useTheme();
   const { deleteActivity, updateActionItem, deleteActionItem } = useAppData();
   
   // Force re-render when activities prop changes, especially for action items
-  const [renderKey, setRenderKey] = React.useState(0);
-  const [sponsorContacts, setSponsorContacts] = React.useState([]);
-  const [sponseeContacts, setSponseeContacts] = React.useState([]);
+  const [renderKey, setRenderKey] = React.useState<number>(0);
+  const [sponsorContacts, setSponsorContacts] = React.useState<SponsorData[]>([]);
+  const [sponseeContacts, setSponseeContacts] = React.useState<any[]>([]);
 
   // Load sponsor and sponsee contacts for name lookup
   React.useEffect(() => {
@@ -70,7 +83,7 @@ export default function ActivityList({
   };
 
   // Helper function to get sponsee name from sponsee contact
-  const getSponseeeName = (sponseeContactId) => {
+  const getSponseeeName = (sponseeContactId: number): string => {
     const sponsee = sponseeContacts.find(s => s.id === sponseeContactId);
     if (sponsee) {
       return `${sponsee.name || ''} ${sponsee.lastName || ''}`.trim() || 'Sponsee';
@@ -78,13 +91,13 @@ export default function ActivityList({
     return 'Sponsee';
   };
 
-  const handleDeleteActivity = async (activityId) => {
+  const handleDeleteActivity = async (activityId: string | number): Promise<void> => {
     if (window.confirm('Are you sure you want to delete this activity?')) {
       await deleteActivity(activityId);
     }
   };
 
-  const handleToggleActionItemComplete = async (actionItemId) => {
+  const handleToggleActionItemComplete = async (actionItemId: string | number): Promise<void> => {
     try {
       console.log('[ActivityList] Toggling completion for action item ID:', actionItemId);
       
@@ -130,7 +143,7 @@ export default function ActivityList({
     }
   };
 
-  const handleDeleteActionItem = async (actionItemId) => {
+  const handleDeleteActionItem = async (actionItemId: string | number): Promise<void> => {
     if (window.confirm('Are you sure you want to delete this action item?')) {
       try {
         // Use soft delete (set deleted: 1) instead of hard delete
@@ -145,7 +158,7 @@ export default function ActivityList({
   };
   
   // Helper function to get meeting name for an activity
-  const getMeetingName = (activity) => {
+  const getMeetingName = (activity: Activity): string | null => {
     if (activity.type !== 'meeting') return null;
     
     // If activity has a direct meeting name, use it
@@ -172,8 +185,8 @@ export default function ActivityList({
   };
 
   // Helper function to get activity icon
-  const getActivityIcon = (type) => {
-    const iconMap = {
+  const getActivityIcon = (type: string): string => {
+    const iconMap: Record<string, string> = {
       'prayer': 'fa-praying-hands',
       'meditation': 'fa-om',
       'literature': 'fa-book-open',
@@ -189,8 +202,8 @@ export default function ActivityList({
   };
 
   // Helper function to get activity colors
-  const getActivityColor = (type) => {
-    const colorMap = {
+  const getActivityColor = (type: string): { bg: string; icon: string; iconDark: string } => {
+    const colorMap: Record<string, { bg: string; icon: string; iconDark: string }> = {
       'prayer': { bg: '#e8f5e8', icon: '#2e7d2e', iconDark: '#4caf50' },
       'meditation': { bg: '#f3e5f5', icon: '#6a1b9a', iconDark: '#9c27b0' },
       'literature': { bg: '#fff3e0', icon: '#e65100', iconDark: '#ff9800' },
@@ -206,7 +219,7 @@ export default function ActivityList({
   };
 
   // Helper function to format activity text
-  const formatActivityText = (activity) => {
+  const formatActivityText = (activity: Activity): string => {
     if (activity.type === 'meeting') {
       const meetingName = getMeetingName(activity);
       if (meetingName) {
@@ -292,7 +305,7 @@ export default function ActivityList({
   };
 
   // Helper function to format activity subtitle
-  const formatActivitySubtitle = (activity) => {
+  const formatActivitySubtitle = (activity: Activity): string | null => {
     if (activity.notes && activity.notes.trim()) {
       return activity.notes.trim();
     }
@@ -311,7 +324,7 @@ export default function ActivityList({
   };
 
   // Helper function to format date for display
-  const formatDate = (dateString) => {
+  const formatDate = (dateString: string): string => {
     const date = new Date(dateString);
     const today = new Date();
     const yesterday = new Date();
@@ -327,8 +340,8 @@ export default function ActivityList({
   };
 
   // Helper function to group activities by date
-  const groupByDate = (activities) => {
-    const groups = {};
+  const groupByDate = (activities: Activity[]): { groups: Record<string, Activity[]>; sortedDateKeys: string[] } => {
+    const groups: Record<string, Activity[]> = {};
     
     activities.forEach(activity => {
       const dateKey = activity.date;
@@ -514,7 +527,7 @@ export default function ActivityList({
                       }}
                       onClick={() => {
                         if (activity.type === 'sponsor-contact' && onActivityClick) {
-                          onActivityClick(activity, 'sponsor-contact');
+                          onActivityClick(activity);
                         }
                       }}
                     >

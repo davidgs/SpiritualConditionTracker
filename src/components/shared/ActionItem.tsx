@@ -1,29 +1,32 @@
 import React from 'react';
 import { useTheme } from '@mui/material/styles';
 import { formatDateForDisplay } from '../../utils/dateUtils';
+import { ActionItem as ActionItemType, SponsorData } from '../../types/database';
+
+interface ActionItemData {
+  id: string | number;
+  title: string;
+  notes?: string;
+  completed?: boolean | number;
+  deleted?: boolean | number;
+  createdAt?: string;
+  dueDate?: string;
+  date?: string;
+  // For activity list items that reference action items
+  actionItemId?: number;
+  actionItemData?: ActionItemType;
+  type?: string;
+  sponsorName?: string;
+  sponseeName?: string;
+}
 
 interface ActionItemProps {
-  actionItem: {
-    id: string | number;
-    title: string;
-    notes?: string;
-    completed?: boolean | number;
-    deleted?: boolean | number;
-    createdAt?: string;
-    dueDate?: string;
-    date?: string;
-    // For activity list items that reference action items
-    actionItemId?: number;
-    actionItemData?: any;
-    type?: string;
-    sponsorName?: string;
-    sponseeName?: string;
-  };
+  actionItem: ActionItemData;
   showDate?: boolean;
   onToggleComplete?: (id: string | number) => void;
   onDelete?: (id: string | number) => void;
   variant?: 'compact' | 'full'; // compact for activities list, full for detail views
-  sponsorContacts?: any[];
+  sponsorContacts?: SponsorData[];
 }
 
 export default function ActionItem({
@@ -36,7 +39,7 @@ export default function ActionItem({
 }: ActionItemProps) {
   const theme = useTheme();
 
-  const handleToggleComplete = (e: React.MouseEvent) => {
+  const handleToggleComplete = (e: React.MouseEvent<HTMLElement>): void => {
     e.stopPropagation();
     // Don't allow completion toggle if item is deleted
     if (isDeleted) {
@@ -50,7 +53,7 @@ export default function ActionItem({
     }
   };
 
-  const handleDelete = (e: React.MouseEvent) => {
+  const handleDelete = (e: React.MouseEvent<HTMLElement>): void => {
     e.stopPropagation();
     if (onDelete) {
       // Use actionItemId if this is from the activities list, otherwise use the direct id
@@ -59,10 +62,10 @@ export default function ActionItem({
     }
   };
 
-  const isDeleted = Boolean(actionItem.deleted || (actionItem.actionItemData && actionItem.actionItemData.deleted));
-  const isCompleted = Boolean(actionItem.completed || (actionItem.actionItemData && actionItem.actionItemData.completed));
+  const isDeleted: boolean = Boolean(actionItem.deleted || (actionItem.actionItemData && actionItem.actionItemData.deleted));
+  const isCompleted: boolean = Boolean(actionItem.completed || (actionItem.actionItemData && actionItem.actionItemData.completed));
 
-  const displayDate = actionItem.date || actionItem.dueDate || actionItem.createdAt;
+  const displayDate: string | undefined = actionItem.date || actionItem.dueDate || actionItem.createdAt;
 
   if (variant === 'compact') {
     // Compact version for activities list

@@ -7,7 +7,7 @@
 export type ContactType = 'phone' | 'in-person' | 'video' | 'text' | 'email' | 'other';
 
 // Activity types enum
-export type ActivityType = 'prayer' | 'meditation' | 'reading' | 'meeting' | 'service' | 'inventory' | 'amends' | 'sponsor-contact' | 'action-item' | 'other';
+export type ActivityType = 'prayer' | 'meditation' | 'reading' | 'literature' | 'meeting' | 'service' | 'inventory' | 'amends' | 'sponsor-contact' | 'sponsee-contact' | 'action-item' | 'sponsor_action_item' | 'sponsee_action_item' | 'call' | 'todo' | 'other';
 
 // Base interface for database entities
 export interface BaseEntity {
@@ -65,15 +65,19 @@ export interface SponsorContact extends BaseEntity {
 // Action Item interface
 export interface ActionItem extends BaseEntity {
   title: string;
-  text: string;
-  notes: string;
-  dueDate: string | null;
+  text?: string;
+  notes?: string;
+  dueDate?: string | null;
   completed: 0 | 1; // SQLite boolean as integer
   deleted: 0 | 1; // SQLite boolean as integer for soft deletion
-  type: 'todo' | 'action' | 'reminder';
+  type: 'todo' | 'action' | 'reminder' | 'sponsor_action_item' | 'sponsee_action_item';
   contactId?: number; // Legacy field
   sponsorContactId?: number; // Reference to sponsor_contacts.id
   sponseeContactId?: number; // Reference to sponsee_contacts.id
+  sponsorId?: number; // Reference to sponsors.id
+  sponsorName?: string; // Sponsor name for display
+  sponseeId?: number; // Reference to sponsees.id
+  sponseeName?: string; // Sponsee name for display
 }
 
 // Join table for sponsor contacts and action items
@@ -107,11 +111,17 @@ export interface Activity extends BaseEntity {
   // Action item specific fields for synchronization
   actionItemId?: number;
   actionItemData?: ActionItem;
-  // Additional fields for compatibility
+  // Additional fields for compatibility and enrichment
   sponsorName?: string;
   sponseeName?: string;
   title?: string;
   text?: string;
+  name?: string; // Generic name field for activities
+  // Contact association fields
+  sponsorContactId?: number;
+  sponseeContactId?: number;
+  sponsorId?: number;
+  sponseeId?: number;
 }
 
 // Meeting interface

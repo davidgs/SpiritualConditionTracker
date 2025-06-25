@@ -352,6 +352,7 @@ async function createTables(sqlite) {
     `
   });
 
+  // Create meetings table
   await sqlite.execute({
     database: DB_NAME,
     statements: `
