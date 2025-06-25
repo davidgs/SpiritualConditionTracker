@@ -124,6 +124,10 @@ The Spiritual Condition Tracker is a comprehensive mobile application designed f
   - Properly typed all function parameters, return types, and interface definitions
   - Enhanced type safety with strict typing for Activity, ActionItem, and SponsorData interfaces
   - Fixed onClick handler typing and improved component prop validation
+  - CRITICAL BUG FIX: Fixed sponsor name formatting showing "Joe J." instead of "Joe B."
+  - Root cause: Double-formatting of sponsor names (formatted once upstream, then again in component)
+  - Added check to prevent re-formatting already formatted names (containing periods)
+  - Sponsor names now correctly display as "First Name, Last initial" format
 - June 23, 2025: Cleaned up unused imports and variables in Profile.tsx
   - Removed unused imports: ThemeSelector, PopoverColorPicker, DatePicker components
   - Removed unused variables: darkMode, allowMessages, formatPhoneNumberForInput

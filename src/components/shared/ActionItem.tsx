@@ -136,12 +136,18 @@ export default function ActionItem({
                 // Add sponsor attribution for sponsor action items
                 if (actionItem.type === 'sponsor_action_item') {
                   if (actionItem.sponsorName) {
-                    // Format as "First Name, Last initial"
-                    const nameParts = actionItem.sponsorName.trim().split(' ');
-                    const firstName = nameParts[0] || '';
-                    const lastName = nameParts[nameParts.length - 1] || '';
-                    const formattedName = lastName ? `${firstName} ${lastName.charAt(0)}.` : firstName;
-                    return `${title} (from ${formattedName})`;
+                    // Check if already formatted (contains a period indicating "First L.")
+                    if (actionItem.sponsorName.includes('.')) {
+                      // Already formatted, use as-is
+                      return `${title} (from ${actionItem.sponsorName})`;
+                    } else {
+                      // Format as "First Name, Last initial"
+                      const nameParts = actionItem.sponsorName.trim().split(' ');
+                      const firstName = nameParts[0] || '';
+                      const lastName = nameParts[nameParts.length - 1] || '';
+                      const formattedName = lastName ? `${firstName} ${lastName.charAt(0)}.` : firstName;
+                      return `${title} (from ${formattedName})`;
+                    }
                   } else if (sponsorContacts.length > 0) {
                     const sponsor = sponsorContacts[0];
                     const firstName = sponsor.name || '';
