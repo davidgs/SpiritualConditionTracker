@@ -187,13 +187,6 @@ async function createSponsorTestContacts(sponsor: any, userId: number | string, 
       
       // DO NOT create activity records for action items
       // Action items exist independently in action_items table
-
-        personCalled: `${sponsor.name} ${sponsor.lastName}`,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-      };
-      
-      await databaseService.add('activities', actionItemActivity);
     }
   }
 
