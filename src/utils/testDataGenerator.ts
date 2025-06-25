@@ -6,6 +6,9 @@
 import DatabaseService from '../services/DatabaseService';
 
 export interface TestDataResults {
+  userProfileUpdated: boolean;
+  meetingsCreated: number;
+  activitiesCreated: number;
   sponsorsCreated: number;
   sponseesCreated: number;
   sponsorContactsCreated: number;
@@ -17,6 +20,9 @@ export async function createTestData(userId: number | string): Promise<TestDataR
   const databaseService = DatabaseService.getInstance();
   
   const results: TestDataResults = {
+    userProfileUpdated: false,
+    meetingsCreated: 0,
+    activitiesCreated: 0,
     sponsorsCreated: 0,
     sponseesCreated: 0,
     sponsorContactsCreated: 0,
@@ -25,7 +31,16 @@ export async function createTestData(userId: number | string): Promise<TestDataR
   };
 
   try {
-    console.log('[ testDataGenerator ] Starting test data creation...');
+    console.log('[ testDataGenerator ] Starting comprehensive test data creation...');
+    
+    // Step 1: Update user profile with comprehensive data
+    await createUserProfileData(userId, results);
+    
+    // Step 2: Create diverse meetings
+    await createTestMeetings(userId, results);
+    
+    // Step 3: Create various activity types
+    await createTestActivities(userId, results);
 
     // Create test sponsors
     const testSponsors = [
@@ -317,6 +332,328 @@ async function createSponseeTestContacts(sponsee: any, userId: number | string, 
     };
     
     await databaseService.add('activities', contactActivity);
+  }
+}
+
+// Create comprehensive user profile data
+async function createUserProfileData(userId: number | string, results: TestDataResults) {
+  const databaseService = DatabaseService.getInstance();
+  
+  console.log('[ testDataGenerator ] Creating user profile data...');
+  
+  try {
+    // Get existing user or create one
+    let user = await databaseService.getById('users', parseInt(userId.toString()));
+    
+    const profileData = {
+      name: 'David',
+      lastName: 'Thompson',
+      phoneNumber: '+1 (555) 123-4567',
+      email: 'david.thompson@email.com',
+      sobrietyDate: '2020-06-15', // About 5 years sober
+      homeGroup: 'Serenity Circle AA',
+      emergencyContactName: 'Sarah Thompson',
+      emergencyContactPhone: '+1 (555) 987-6543',
+      allowMessages: true,
+      shareLastName: true,
+      updatedAt: new Date().toISOString()
+    };
+    
+    if (user) {
+      // Update existing user
+      await databaseService.update('users', parseInt(userId.toString()), profileData);
+      console.log('[ testDataGenerator ] Updated existing user profile');
+    } else {
+      // Create new user
+      const newUser = {
+        id: parseInt(userId.toString()),
+        userId: userId.toString(),
+        ...profileData,
+        createdAt: new Date().toISOString()
+      };
+      await databaseService.add('users', newUser);
+      console.log('[ testDataGenerator ] Created new user profile');
+    }
+    
+    results.userProfileUpdated = true;
+  } catch (error) {
+    console.error('[ testDataGenerator ] Error creating user profile:', error);
+  }
+}
+
+// Create diverse test meetings
+async function createTestMeetings(userId: number | string, results: TestDataResults) {
+  const databaseService = DatabaseService.getInstance();
+  
+  console.log('[ testDataGenerator ] Creating test meetings...');
+  
+  const testMeetings = [
+    {
+      userId: userId.toString(),
+      name: 'Big Book Study',
+      days: 'Monday,Wednesday',
+      time: '19:00',
+      schedule: 'weekly',
+      type: 'Big Book Study',
+      format: 'Closed Discussion',
+      address: '123 Recovery St, Hope City, HC 12345',
+      city: 'Hope City',
+      state: 'HC',
+      zipCode: '12345',
+      locationName: 'St. Mary\'s Church',
+      accessibility: 'Wheelchair accessible',
+      notes: 'Focuses on reading and discussing the Big Book chapter by chapter',
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    },
+    {
+      userId: userId.toString(),
+      name: 'Saturday Morning Serenity',
+      days: 'Saturday',
+      time: '09:00',
+      schedule: 'weekly',
+      type: 'Open Discussion',
+      format: 'Open Discussion',
+      address: '456 Serenity Ave, Peace Town, PT 67890',
+      city: 'Peace Town',
+      state: 'PT',
+      zipCode: '67890',
+      locationName: 'Community Center',
+      accessibility: 'Wheelchair accessible, Parking available',
+      notes: 'Great way to start the weekend with fellowship and sharing',
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    },
+    {
+      userId: userId.toString(),
+      name: 'Online Unity Group',
+      days: 'Tuesday,Thursday,Sunday',
+      time: '20:00',
+      schedule: 'weekly',
+      type: 'Online Meeting',
+      format: 'Closed Discussion',
+      onlineUrl: 'https://zoom.us/j/1234567890',
+      onlineMeetingId: '123 456 7890',
+      onlinePassword: 'unity2024',
+      notes: 'Perfect for busy schedules or when traveling',
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    },
+    {
+      userId: userId.toString(),
+      name: 'Gratitude & Meditation',
+      days: 'Friday',
+      time: '18:30',
+      schedule: 'weekly',
+      type: 'Meditation',
+      format: 'Meditation/Spiritual',
+      address: '789 Mindful Way, Zen Village, ZV 11223',
+      city: 'Zen Village', 
+      state: 'ZV',
+      zipCode: '11223',
+      locationName: 'Peaceful Path Center',
+      accessibility: 'Quiet environment, cushions provided',
+      notes: 'Combines AA principles with guided meditation practice',
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    },
+    {
+      userId: userId.toString(),
+      name: 'Young People in Recovery',
+      days: 'Sunday',
+      time: '16:00',
+      schedule: 'weekly',
+      type: 'Young People',
+      format: 'Closed Discussion',
+      address: '321 Youth Center Dr, New Hope, NH 44556',
+      city: 'New Hope',
+      state: 'NH', 
+      zipCode: '44556',
+      locationName: 'Youth Activity Center',
+      accessibility: 'Youth-friendly space, snacks provided',
+      notes: 'For people under 35, very welcoming and energetic group',
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    }
+  ];
+  
+  for (const meeting of testMeetings) {
+    try {
+      const savedMeeting = await databaseService.add('meetings', meeting);
+      if (savedMeeting) {
+        results.meetingsCreated++;
+        console.log(`[ testDataGenerator ] Created meeting: ${meeting.name}`);
+      }
+    } catch (error) {
+      console.error(`[ testDataGenerator ] Error creating meeting ${meeting.name}:`, error);
+    }
+  }
+}
+
+// Create diverse test activities
+async function createTestActivities(userId: number | string, results: TestDataResults) {
+  const databaseService = DatabaseService.getInstance();
+  
+  console.log('[ testDataGenerator ] Creating test activities...');
+  
+  const activityTypes = [
+    {
+      type: 'prayer',
+      activities: [
+        {
+          notes: 'Morning meditation and serenity prayer',
+          duration: 15,
+          daysAgo: 0
+        },
+        {
+          notes: 'Evening gratitude prayer',
+          duration: 10,
+          daysAgo: 1
+        },
+        {
+          notes: 'Step 11 prayer and meditation',
+          duration: 20,
+          daysAgo: 2
+        }
+      ]
+    },
+    {
+      type: 'meeting',
+      activities: [
+        {
+          notes: 'Big Book Study - Chapter 4: We Agnostics',
+          duration: 90,
+          daysAgo: 1,
+          meetingName: 'Big Book Study'
+        },
+        {
+          notes: 'Saturday Morning Serenity - Shared about gratitude',
+          duration: 60,
+          daysAgo: 2,
+          meetingName: 'Saturday Morning Serenity'
+        },
+        {
+          notes: 'Online Unity Group - Step work discussion',
+          duration: 75,
+          daysAgo: 3,
+          meetingName: 'Online Unity Group'
+        },
+        {
+          notes: 'Young People meeting - Topic: Dealing with stress',
+          duration: 60,
+          daysAgo: 4,
+          meetingName: 'Young People in Recovery'
+        }
+      ]
+    },
+    {
+      type: 'reading',
+      activities: [
+        {
+          notes: 'Daily Reflections - June 25th reading',
+          duration: 10,
+          daysAgo: 0
+        },
+        {
+          notes: 'Big Book - Pages 83-88, Step 4 inventory work',
+          duration: 45,
+          daysAgo: 1
+        },
+        {
+          notes: 'As Bill Sees It - Random page reading',
+          duration: 15,
+          daysAgo: 3
+        }
+      ]
+    },
+    {
+      type: 'service',
+      activities: [
+        {
+          notes: 'Set up chairs for Saturday meeting',
+          duration: 30,
+          daysAgo: 2
+        },
+        {
+          notes: 'Greeted newcomers at Big Book Study',
+          duration: 15,
+          daysAgo: 1
+        },
+        {
+          notes: 'Made coffee for Sunday meeting',
+          duration: 20,
+          daysAgo: 4
+        }
+      ]
+    },
+    {
+      type: 'exercise',
+      activities: [
+        {
+          notes: 'Morning jog - cleared my head and felt grateful',
+          duration: 30,
+          daysAgo: 0
+        },
+        {
+          notes: 'Gym workout - used exercise to manage stress',
+          duration: 60,
+          daysAgo: 1
+        },
+        {
+          notes: 'Walk in nature - practiced mindfulness',
+          duration: 45,
+          daysAgo: 3
+        }
+      ]
+    },
+    {
+      type: 'journaling',
+      activities: [
+        {
+          notes: 'Gratitude list - wrote 10 things I\'m grateful for',
+          duration: 20,
+          daysAgo: 0
+        },
+        {
+          notes: 'Step 4 inventory work - continued resentment list',
+          duration: 60,
+          daysAgo: 2
+        },
+        {
+          notes: 'Daily inventory - reviewed day and made amends plan',
+          duration: 15,
+          daysAgo: 1
+        }
+      ]
+    }
+  ];
+  
+  for (const activityGroup of activityTypes) {
+    for (const activity of activityGroup.activities) {
+      try {
+        const activityDate = new Date();
+        activityDate.setDate(activityDate.getDate() - activity.daysAgo);
+        
+        const activityData = {
+          userId: userId.toString(),
+          type: activityGroup.type,
+          date: activityDate.toISOString().split('T')[0],
+          notes: activity.notes,
+          duration: activity.duration,
+          meetingName: activity.meetingName || undefined,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        };
+        
+        const savedActivity = await databaseService.add('activities', activityData);
+        if (savedActivity) {
+          results.activitiesCreated++;
+          console.log(`[ testDataGenerator ] Created ${activityGroup.type} activity: ${activity.notes.substring(0, 30)}...`);
+        }
+      } catch (error) {
+        console.error(`[ testDataGenerator ] Error creating activity:`, error);
+      }
+    }
   }
 }
 

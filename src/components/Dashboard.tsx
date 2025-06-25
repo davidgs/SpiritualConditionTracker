@@ -124,7 +124,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
       await loadActionItems();
 
       // Show results to user
-      alert(`Test data created successfully!\n\nSponsors: ${results.sponsorsCreated}\nSponsees: ${results.sponseesCreated}\nSponsor Contacts: ${results.sponsorContactsCreated}\nSponsee Contacts: ${results.sponseeContactsCreated}\nAction Items: ${results.actionItemsCreated}\n\nCheck the Activity Log and Sponsor/Sponsee tabs to see the new data.`);
+      alert(`Comprehensive test data created successfully!\n\nUser Profile: ${results.userProfileUpdated ? 'Updated' : 'Not updated'}\nMeetings: ${results.meetingsCreated}\nActivities: ${results.activitiesCreated}\nSponsors: ${results.sponsorsCreated}\nSponsees: ${results.sponseesCreated}\nSponsor Contacts: ${results.sponsorContactsCreated}\nSponsee Contacts: ${results.sponseeContactsCreated}\nAction Items: ${results.actionItemsCreated}\n\nCheck all tabs to see the comprehensive test data including profile, meetings, activities, and sponsor/sponsee relationships.`);
 
     } catch (error) {
       console.error('[ Dashboard ] Failed to create test data:', error);
