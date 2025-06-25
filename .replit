@@ -14,23 +14,24 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "Server"
+args = "Dev Server"
 
 
 [[workflows.workflow]]
-name = "Server"
+name = "Dev Server"
 author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "echo \"Checking if Activities page loads and shows debug logs for sponsor name lookup\""
+args = "npm run dev"
+waitForPort = 5000
 
 [[workflows.workflow]]
 name = "StaticServer"
 author = "agent"
 
 [deployment]
-run = ["sh", "-c", "echo \"Checking if Activities page loads and shows debug logs for sponsor name lookup\""]
+run = ["sh", "-c", "npm run dev"]
 
 [[ports]]
 localPort = 5000

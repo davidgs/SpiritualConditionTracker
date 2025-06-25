@@ -303,12 +303,6 @@ async function createTables(sqlite) {
         privacySettings TEXT DEFAULT '{"allowMessages": true, "shareLastName": false}',
         preferences TEXT DEFAULT '{"use24HourFormat": false, "darkMode": false, "theme": "default"}',
         isDarkMode INTEGER DEFAULT 0,
-        sponsor_name TEXT,
-        sponsor_lastName TEXT,
-        sponsor_phone TEXT,
-        sponsor_email TEXT,
-        sponsor_sobrietyDate TEXT,
-        sponsor_notes TEXT,
         createdAt TEXT DEFAULT CURRENT_TIMESTAMP,
         updatedAt TEXT DEFAULT CURRENT_TIMESTAMP
       )

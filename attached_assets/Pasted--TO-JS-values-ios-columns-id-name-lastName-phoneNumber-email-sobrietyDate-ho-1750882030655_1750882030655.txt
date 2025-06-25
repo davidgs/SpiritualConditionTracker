@@ -1,0 +1,24 @@
+⚡️  TO JS {"values":[{"ios_columns":["id","name","lastName","phoneNumber","email","sobrietyDate","homeGroups","privacySettings","preferences","isDarkMode","sponsor_name","sponsor_lastName","sponsor_phone","sponsor_email","sponsor_sobrietyDate","sponsor_notes","creat
+⚡️  [log] - [ AppDataContext.tsx ] Database service initialization completed
+⚡️  [log] - [ DatabaseService ] Checking if database is empty for new user detection...
+⚡️  TO JS {"values":[{"ios_columns":["id","name","lastName","phoneNumber","email","sobrietyDate","homeGroups","privacySettings","preferences","isDarkMode","sponsor_name","sponsor_lastName","sponsor_phone","sponsor_email","sponsor_sobrietyDate","sponsor_notes","creat
+⚡️  To Native ->  CapacitorSQLite query 84852858
+⚡️  TO JS {"values":[]}
+⚡️  TO JS {"values":[]}
+⚡️  TO JS {"values":[{"ios_columns":["id","userId","sponsorId","type","date","note","topic","duration","createdAt","updatedAt"]},{"type":"call","updatedAt":"2025-06-25T18:21:01.140Z","sponsorId":1,"date":"2025-06-20T10:59:38.871Z","topic":"Step Work & Gratitude","cr
+⚡️  TO JS {"values":[]}
+⚡️  [log] - Found users to fix: 1
+⚡️  [log] - Preferences fix complete
+⚡️  [log] - [ AppDataContext.tsx ] Database preferences validated/fixed
+⚡️  TO JS {"values":[{"ios_columns":["id","name","lastName","phoneNumber","email","sobrietyDate","homeGroups","privacySettings","preferences","isDarkMode","sponsor_name","sponsor_lastName","sponsor_phone","sponsor_email","sponsor_sobrietyDate","sponsor_notes","creat
+⚡️  [log] - [ DatabaseService ] User data check: {"name":"","lastName":"","sobrietyDate":"","phoneNumber":"","email":"","homeGroups":[],"hasUserData":true}
+⚡️  [log] - [ DatabaseService ] Record counts: {"users":1,"hasUserData":true,"activities":0,"meetings":0,"sponsorContacts":8,"actionItems":0,"totalDataRecords":9}
+⚡️  [log] - [ App ] Database empty check result: false
+⚡️  [log] - [ AppDataContext.tsx:206 ] Loaded users: 1
+⚡️  [log] - [ AppDataContext.tsx:225 ] User data loaded: 1
+⚡️  To Native ->  CapacitorSQLite query 84852859
+⚡️  TO JS {"values":[]}
+⚡️  To Native ->  CapacitorSQLite query 84852860
+⚡️  TO JS {"values":[]}
+⚡️  To Native ->  CapacitorSQLite query 84852861
+⚡️  TO JS

@@ -303,16 +303,21 @@ async function createUserProfileData(userId: number | string, results: TestDataR
       lastName: 'Thompson',
       phoneNumber: '+1 (555) 123-4567',
       email: 'david.thompson@email.com',
-      sobrietyDate: '2020-06-15', // About 5 years sober
+      sobrietyDate: '2020-06-15',
       homeGroups: JSON.stringify(['Serenity Circle AA']),
       preferences: JSON.stringify({
         emergencyContactName: 'Sarah Thompson',
         emergencyContactPhone: '+1 (555) 987-6543',
-        allowMessages: true
+        allowMessages: true,
+        use24HourFormat: false,
+        darkMode: false,
+        theme: 'default'
       }),
       privacySettings: JSON.stringify({
+        allowMessages: true,
         shareLastName: true
       }),
+      isDarkMode: 0,
       updatedAt: new Date().toISOString()
     };
     
@@ -324,7 +329,6 @@ async function createUserProfileData(userId: number | string, results: TestDataR
       // Create new user
       const newUser = {
         id: parseInt(userId.toString()),
-        userId: userId.toString(),
         ...profileData,
         createdAt: new Date().toISOString()
       };
