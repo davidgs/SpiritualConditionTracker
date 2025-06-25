@@ -159,42 +159,42 @@ async function createTestActivities(addActivity: any, userId: any, results: Test
         userId: userId.toString(),
         type: "prayer",
         duration: 10,
-        date: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(), // 1 day ago
+        date: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
         notes: "Morning prayers and gratitude"
       },
       {
         userId: userId.toString(),
         type: "meditation",
         duration: 15,
-        date: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(), // 2 days ago
+        date: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
         notes: "Quiet reflection on Step 3"
       },
       {
         userId: userId.toString(),
         type: "literature",
         duration: 30,
-        date: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(), // 3 days ago
+        date: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
         notes: "Big Book Chapter 5 - How It Works"
       },
       {
         userId: userId.toString(),
         type: "meeting",
         duration: 60,
-        date: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(), // 1 day ago
+        date: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
         notes: "Big Book Study - great discussion on resentments"
       },
       {
         userId: userId.toString(),
         type: "service",
         duration: 45,
-        date: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000).toISOString(), // 4 days ago
+        date: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000).toISOString(),
         notes: "Setup chairs for meeting"
       },
       {
         userId: userId.toString(),
         type: "call",
         duration: 20,
-        date: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(), // 2 days ago
+        date: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
         notes: "Called sponsee Alex - discussed Step 4 work"
       }
     ];
@@ -298,20 +298,17 @@ async function createTestSponsorsAndSponsees(databaseService: any, userId: any, 
 }
 
 async function createSponsorTestContacts(databaseService: any, sponsor: any, userId: number | string, results: TestDataResults) {
-  
   console.log(`[ testDataGenerator ] Creating contacts for sponsor with ID: ${sponsor.id}`);
   
   // Contact with action item
   const contactWithAction = {
     userId: userId.toString(),
-    sponsorId: sponsor.id, // Use the sponsor ID directly
+    sponsorId: sponsor.id,
     type: 'call',
-    date: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000).toISOString(), // Random date within last week
+    date: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000).toISOString(),
     note: `Discussed my progress on Step ${Math.floor(Math.random() * 12) + 1}. Very helpful conversation about maintaining gratitude.`,
     topic: 'Step Work & Gratitude',
-    duration: Math.floor(Math.random() * 45) + 15, // 15-60 minutes
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
+    duration: Math.floor(Math.random() * 45) + 15
   };
 
   const savedContactWithAction = await databaseService.add('sponsor_contacts', contactWithAction);
@@ -321,21 +318,15 @@ async function createSponsorTestContacts(databaseService: any, sponsor: any, use
     
     console.log(`[ testDataGenerator ] Created sponsor contact with ID: ${contactId}`);
     
-    // Do NOT create activity record for sponsor contact
-    // Sponsor contacts should be stored ONLY in sponsor_contacts table
-    // The AppDataContext will handle displaying them in the Activity List
-    
     // Create action item linked to this specific contact
     const actionItem = {
       title: 'Practice daily meditation',
       text: 'Practice daily meditation for 10 minutes',
       notes: 'Focus on gratitude and serenity prayer',
-      dueDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(), // 3 days from now
+      dueDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(),
       completed: 0,
       type: 'sponsor_action_item',
-      sponsorContactId: contactId,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
+      sponsorContactId: contactId
     };
     
     console.log(`[ testDataGenerator ] Creating sponsor action item: ${actionItem.title}`);
@@ -343,9 +334,6 @@ async function createSponsorTestContacts(databaseService: any, sponsor: any, use
     const savedActionItem = await databaseService.add('action_items', actionItem);
     if (savedActionItem) {
       results.actionItemsCreated++;
-      
-      // DO NOT create activity records for action items
-      // Action items exist independently in action_items table
     }
   }
 
@@ -354,26 +342,19 @@ async function createSponsorTestContacts(databaseService: any, sponsor: any, use
     userId: userId.toString(),
     sponsorId: sponsor.id,
     type: 'meeting',
-    date: new Date(Date.now() - Math.random() * 14 * 24 * 60 * 60 * 1000).toISOString(), // Random date within last 2 weeks
+    date: new Date(Date.now() - Math.random() * 14 * 24 * 60 * 60 * 1000).toISOString(),
     note: 'Quick check-in after the meeting. Feeling good about my recovery progress.',
     topic: 'Post-Meeting Check-in',
-    duration: Math.floor(Math.random() * 20) + 10, // 10-30 minutes
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
+    duration: Math.floor(Math.random() * 20) + 10
   };
 
   const savedContactWithoutAction = await databaseService.add('sponsor_contacts', contactWithoutAction);
   if (savedContactWithoutAction) {
     results.sponsorContactsCreated++;
-    
-    // Do NOT create activity record for sponsor contact
-    // Sponsor contacts should be stored ONLY in sponsor_contacts table
-    // The AppDataContext will handle displaying them in the Activity List
   }
 }
 
 async function createSponseeTestContacts(databaseService: any, sponsee: any, userId: number | string, results: TestDataResults) {
-  
   console.log(`[ testDataGenerator ] Creating contacts for sponsee with ID: ${sponsee.id}`);
   
   // Contact with action item
@@ -381,41 +362,30 @@ async function createSponseeTestContacts(databaseService: any, sponsee: any, use
     userId: userId.toString(),
     sponseeId: sponsee.id,
     type: 'call',
-    date: new Date(Date.now() - Math.random() * 5 * 24 * 60 * 60 * 1000).toISOString(), // Random date within last 5 days
+    date: new Date(Date.now() - Math.random() * 5 * 24 * 60 * 60 * 1000).toISOString(),
     note: `Helped ${sponsee.name} work through Step ${Math.floor(Math.random() * 8) + 1}. Good progress being made.`,
     topic: 'Step Work Guidance',
-    duration: Math.floor(Math.random() * 40) + 20, // 20-60 minutes
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
+    duration: Math.floor(Math.random() * 40) + 20
   };
 
   const savedContactWithAction = await databaseService.add('sponsee_contacts', contactWithAction);
   if (savedContactWithAction) {
     results.sponseeContactsCreated++;
     
-    // Do NOT create activity record for sponsee contact
-    // Sponsee contacts should be stored ONLY in sponsee_contacts table
-    // They should NOT appear in the Activity List per requirements
-    
     // Create action item linked to this specific sponsee contact
     const actionItem = {
       title: 'Complete Step 4 inventory',
       text: 'Work on personal inventory list',
       notes: 'Focus on resentments and fears',
-      dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // 1 week from now
+      dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
       completed: 0,
       type: 'sponsee_action_item',
-      sponseeContactId: (savedContactWithAction as any).id,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
+      sponseeContactId: (savedContactWithAction as any).id
     };
     
     const savedActionItem = await databaseService.add('action_items', actionItem);
     if (savedActionItem) {
       results.actionItemsCreated++;
-      
-      // Note: Do NOT create activity record for sponsee action items
-      // They should not appear in the Activity Log per requirements
     }
   }
 
@@ -424,21 +394,15 @@ async function createSponseeTestContacts(databaseService: any, sponsee: any, use
     userId: userId.toString(),
     sponseeId: sponsee.id,
     type: 'text',
-    date: new Date(Date.now() - Math.random() * 10 * 24 * 60 * 60 * 1000).toISOString(), // Random date within last 10 days
+    date: new Date(Date.now() - Math.random() * 10 * 24 * 60 * 60 * 1000).toISOString(),
     note: `${sponsee.name} reached out for encouragement. Provided support and reminded them of their progress.`,
     topic: 'Encouragement & Support',
-    duration: null, // Text messages don't have duration
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
+    duration: null
   };
 
   const savedContactWithoutAction = await databaseService.add('sponsee_contacts', contactWithoutAction);
   if (savedContactWithoutAction) {
     results.sponseeContactsCreated++;
-    
-    // Do NOT create activity record for sponsee contact
-    // Sponsee contacts should be stored ONLY in sponsee_contacts table
-    // They should NOT appear in the Activity List per requirements
   }
 }
 

@@ -31,8 +31,9 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
   // Get DatabaseService instance for contact operations
   const databaseService = DatabaseService.getInstance();
 
-  // Get data loading functions from context
-  const { loadActivities, loadActionItems } = useAppData();
+  // Get the complete AppDataContext for test data generation
+  const appDataContext = useAppData();
+  const { loadActivities, loadActionItems, loadUserData, loadMeetings } = appDataContext;
 
   // Handler for saving sponsor contacts from LogActivityModal
   const handleSaveSponsorContact = async (contactData: any, actionItems: any[] = []) => {
@@ -52,9 +53,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
             title: actionItem.title,
             text: actionItem.text || actionItem.title,
             notes: actionItem.notes || '',
-            contactId: (savedContact as any).id,
-            sponsorId: selectedSponsorForContact?.id,
-            sponsorName: selectedSponsorForContact?.name,
+            sponsorContactId: (savedContact as any).id,
             dueDate: actionItem.dueDate || contactData.date,
             completed: 0,
             type: 'sponsor_action_item',
@@ -89,7 +88,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
             title: actionItem.title,
             text: actionItem.text || actionItem.title,
             notes: actionItem.notes || '',
-            contactId: (savedContact as any).id,
+            sponseeContactId: (savedContact as any).id,
             dueDate: actionItem.dueDate || contactData.date,
             completed: 0,
             type: 'sponsee_action_item', // Mark as sponsee action item for categorization
@@ -108,18 +107,20 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
 
   // Test data generation handler
   const handleCreateTestData = async () => {
-    if (!user?.id) {
+    if (!appDataContext.state.currentUserId) {
       console.error('No user ID available for test data creation');
       return;
     }
 
     try {
       console.log('[ Dashboard ] Starting test data creation...');
-      const results = await createTestData(user.id);
+      const results = await createTestData(appDataContext);
       console.log('[ Dashboard ] Test data creation completed:', results);
 
-      // Reload activities and action items to show new data
-      console.log('[ Dashboard ] Reloading activities and action items after test data creation...');
+      // Reload all data types to show new data
+      console.log('[ Dashboard ] Reloading all data after test data creation...');
+      await loadUserData();
+      await loadMeetings();
       await loadActivities();
       await loadActionItems();
 
