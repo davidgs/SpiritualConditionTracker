@@ -483,49 +483,25 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
       // 3. All sponsee contacts
       // 4. Action items from SPONSOR contacts only (user gets credit for completing these)
       const filteredActivities = enrichedActivities.filter(activity => {
-        console.log('[ AppDataContext.tsx ] Filtering activity:', {
-          id: activity.id,
-          type: activity.type,
-          title: activity.title,
-          hasActionItemData: !!activity.actionItemData
-        });
-        
-        // Include all regular activities (meetings, prayer, etc.)
-        if (!activity.type.includes('action_item') && !activity.type.includes('action-item')) {
-          console.log('[ AppDataContext.tsx ] Including regular activity:', activity.type);
+        // Include all non-action-item activities
+        if (activity.type !== 'action-item' && activity.type !== 'sponsor_action_item' && activity.type !== 'sponsee_action_item') {
           return true;
         }
         
-        // Always include sponsor action items (user gets credit for completing these)
+        // For sponsor action items, always include them (user gets credit for completing these)
         if (activity.type === 'sponsor_action_item') {
-          console.log('[ AppDataContext.tsx ] Including sponsor action item:', activity.title);
           return true;
         }
         
-        // Include action-item type activities that are from sponsor contacts
-        if (activity.type === 'action-item' && activity.actionItemData) {
-          const actionItemData = activity.actionItemData as any;
-          const hasSponsorContactId = actionItemData.sponsorContactId;
-          const hasSponseeContactId = actionItemData.sponseeContactId;
-          const includeItem = hasSponsorContactId && !hasSponseeContactId;
-          console.log('[ AppDataContext.tsx ] Action item filter decision:', {
-            title: activity.title,
-            sponsorContactId: hasSponsorContactId,
-            sponseeContactId: hasSponseeContactId,
-            include: includeItem
-          });
-          return includeItem;
+        // For other action items, only include those from sponsor contacts
+        if (activity.actionItemId && activity.actionItemData) {
+          // Include if it has sponsorContactId (from sponsor)
+          // Exclude if it has sponseeContactId (from sponsee - user doesn't get credit)
+          return activity.actionItemData.sponsorContactId && !activity.actionItemData.sponseeContactId;
         }
         
-        // Exclude sponsee action items (user doesn't get credit for giving action items to sponsees)
-        if (activity.type === 'sponsee_action_item') {
-          console.log('[ AppDataContext.tsx ] Excluding sponsee action item:', activity.title);
-          return false;
-        }
-        
-        console.log('[ AppDataContext.tsx ] Excluding unmatched activity:', activity.type);
         return false;
-      }) as Activity[];
+      });
       
       // Always load last 180 days for base cache (fixed window for memory management)
       const CACHE_DAYS = 180;
