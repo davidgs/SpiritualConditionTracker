@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { meetingOperations } from '../utils/database';
 import MeetingFormDialog from './MeetingFormDialog';
 import QRCodeGenerator from './QRCodeGenerator';
 import { useTheme } from '@mui/material/styles';

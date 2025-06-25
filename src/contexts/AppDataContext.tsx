@@ -6,6 +6,7 @@
 import React, { createContext, useContext, useReducer, useEffect, useState, ReactNode } from 'react';
 import DatabaseService, { DatabaseStatus } from '../services/DatabaseService';
 import type { User, Activity, Meeting, ActionItem } from '../types/database';
+import type { ContactPerson } from '../types/ContactPerson';
 import { fixCorruptedPreferences } from '../utils/fixDatabasePreferences';
 
 // State interface
@@ -26,6 +27,10 @@ export interface AppState {
   
   // Action Items
   actionItems: ActionItem[];
+  
+  // Sponsors and Sponsees
+  sponsors: ContactPerson[];
+  sponsees: ContactPerson[];
   
   // Spiritual fitness
   spiritualFitness: number;
@@ -53,6 +58,14 @@ type AppAction =
   | { type: 'ADD_ACTION_ITEM'; payload: ActionItem }
   | { type: 'UPDATE_ACTION_ITEM'; payload: { id: string | number; data: Partial<ActionItem> } }
   | { type: 'DELETE_ACTION_ITEM'; payload: string | number }
+  | { type: 'SET_SPONSORS'; payload: ContactPerson[] }
+  | { type: 'ADD_SPONSOR'; payload: ContactPerson }
+  | { type: 'UPDATE_SPONSOR'; payload: { id: string | number; data: Partial<ContactPerson> } }
+  | { type: 'DELETE_SPONSOR'; payload: string | number }
+  | { type: 'SET_SPONSEES'; payload: ContactPerson[] }
+  | { type: 'ADD_SPONSEE'; payload: ContactPerson }
+  | { type: 'UPDATE_SPONSEE'; payload: { id: string | number; data: Partial<ContactPerson> } }
+  | { type: 'DELETE_SPONSEE'; payload: string | number }
   | { type: 'SET_SPIRITUAL_FITNESS'; payload: number }
   | { type: 'SET_TIMEFRAME'; payload: number }
   | { type: 'RESET_ALL_DATA' };
@@ -66,6 +79,8 @@ const initialState: AppState = {
   currentTimeframe: 30,
   meetings: [],
   actionItems: [],
+  sponsors: [],
+  sponsees: [],
   spiritualFitness: 5,
   isLoading: true,
   error: null,
@@ -145,6 +160,50 @@ function appReducer(state: AppState, action: AppAction): AppState {
         actionItems: state.actionItems.filter(item => item.id !== action.payload) 
       };
     
+    case 'SET_SPONSORS':
+      return { ...state, sponsors: action.payload };
+    
+    case 'ADD_SPONSOR':
+      return { ...state, sponsors: [...state.sponsors, action.payload] };
+    
+    case 'UPDATE_SPONSOR':
+      return {
+        ...state,
+        sponsors: state.sponsors.map(sponsor => 
+          sponsor.id === action.payload.id 
+            ? { ...sponsor, ...action.payload.data, updatedAt: new Date().toISOString() }
+            : sponsor
+        )
+      };
+    
+    case 'DELETE_SPONSOR':
+      return { 
+        ...state, 
+        sponsors: state.sponsors.filter(sponsor => sponsor.id !== action.payload) 
+      };
+    
+    case 'SET_SPONSEES':
+      return { ...state, sponsees: action.payload };
+    
+    case 'ADD_SPONSEE':
+      return { ...state, sponsees: [...state.sponsees, action.payload] };
+    
+    case 'UPDATE_SPONSEE':
+      return {
+        ...state,
+        sponsees: state.sponsees.map(sponsee => 
+          sponsee.id === action.payload.id 
+            ? { ...sponsee, ...action.payload.data, updatedAt: new Date().toISOString() }
+            : sponsee
+        )
+      };
+    
+    case 'DELETE_SPONSEE':
+      return { 
+        ...state, 
+        sponsees: state.sponsees.filter(sponsee => sponsee.id !== action.payload) 
+      };
+    
     case 'SET_SPIRITUAL_FITNESS':
       return { ...state, spiritualFitness: action.payload };
     
@@ -185,6 +244,16 @@ interface AppDataContextType {
   addActionItem: (item: Omit<ActionItem, 'id' | 'createdAt' | 'updatedAt'>) => Promise<ActionItem | null>;
   updateActionItem: (itemId: string | number, updates: Partial<ActionItem>) => Promise<ActionItem | null>;
   deleteActionItem: (itemId: string | number) => Promise<boolean>;
+  
+  loadSponsors: () => Promise<void>;
+  addSponsor: (sponsor: Omit<ContactPerson, 'id' | 'createdAt' | 'updatedAt'>) => Promise<ContactPerson | null>;
+  updateSponsor: (sponsorId: string | number, updates: Partial<ContactPerson>) => Promise<ContactPerson | null>;
+  deleteSponsor: (sponsorId: string | number) => Promise<boolean>;
+  
+  loadSponsees: () => Promise<void>;
+  addSponsee: (sponsee: Omit<ContactPerson, 'id' | 'createdAt' | 'updatedAt'>) => Promise<ContactPerson | null>;
+  updateSponsee: (sponseeId: string | number, updates: Partial<ContactPerson>) => Promise<ContactPerson | null>;
+  deleteSponsee: (sponseeId: string | number) => Promise<boolean>;
   
   updateTimeframe: (timeframe: number) => Promise<void>;
   calculateSpiritualFitness: () => Promise<void>;
@@ -849,6 +918,140 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  // Sponsor operations
+  const loadSponsors = async () => {
+    try {
+      const sponsors = await databaseService.getAll('sponsors');
+      dispatch({ type: 'SET_SPONSORS', payload: sponsors as ContactPerson[] || [] });
+      console.log('[ AppDataContext.tsx ] Sponsors loaded:', sponsors?.length || 0);
+    } catch (error) {
+      console.error('[ AppDataContext.tsx ] Failed to load sponsors:', error);
+      throw error;
+    }
+  };
+
+  const addSponsor = async (sponsorData: Omit<ContactPerson, 'id' | 'createdAt' | 'updatedAt'>): Promise<ContactPerson | null> => {
+    try {
+      const newSponsor = await databaseService.add('sponsors', {
+        ...sponsorData,
+        userId: state.currentUserId,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      });
+      
+      if (newSponsor) {
+        dispatch({ type: 'ADD_SPONSOR', payload: newSponsor as ContactPerson });
+        console.log('[ AppDataContext.tsx ] Sponsor added:', newSponsor.id);
+      }
+      return newSponsor as ContactPerson;
+    } catch (error) {
+      console.error('[ AppDataContext.tsx ] Failed to add sponsor:', error);
+      dispatch({ type: 'SET_ERROR', payload: 'Failed to save sponsor' });
+      return null;
+    }
+  };
+
+  const updateSponsor = async (sponsorId: string | number, updates: Partial<ContactPerson>): Promise<ContactPerson | null> => {
+    try {
+      const updatedSponsor = await databaseService.update('sponsors', sponsorId, {
+        ...updates,
+        updatedAt: new Date().toISOString()
+      });
+      
+      if (updatedSponsor) {
+        dispatch({ type: 'UPDATE_SPONSOR', payload: { id: sponsorId, data: updates } });
+        console.log('[ AppDataContext.tsx ] Sponsor updated:', sponsorId);
+      }
+      return updatedSponsor as ContactPerson;
+    } catch (error) {
+      console.error('[ AppDataContext.tsx ] Failed to update sponsor:', error);
+      dispatch({ type: 'SET_ERROR', payload: 'Failed to update sponsor' });
+      return null;
+    }
+  };
+
+  const deleteSponsor = async (sponsorId: string | number): Promise<boolean> => {
+    try {
+      const success = await databaseService.remove('sponsors', sponsorId);
+      if (success) {
+        dispatch({ type: 'DELETE_SPONSOR', payload: sponsorId });
+        console.log('[ AppDataContext.tsx ] Sponsor deleted:', sponsorId);
+      }
+      return success;
+    } catch (error) {
+      console.error('[ AppDataContext.tsx ] Failed to delete sponsor:', error);
+      dispatch({ type: 'SET_ERROR', payload: 'Failed to delete sponsor' });
+      return false;
+    }
+  };
+
+  // Sponsee operations
+  const loadSponsees = async () => {
+    try {
+      const sponsees = await databaseService.getAll('sponsees');
+      dispatch({ type: 'SET_SPONSEES', payload: sponsees as ContactPerson[] || [] });
+      console.log('[ AppDataContext.tsx ] Sponsees loaded:', sponsees?.length || 0);
+    } catch (error) {
+      console.error('[ AppDataContext.tsx ] Failed to load sponsees:', error);
+      throw error;
+    }
+  };
+
+  const addSponsee = async (sponseeData: Omit<ContactPerson, 'id' | 'createdAt' | 'updatedAt'>): Promise<ContactPerson | null> => {
+    try {
+      const newSponsee = await databaseService.add('sponsees', {
+        ...sponseeData,
+        userId: state.currentUserId,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      });
+      
+      if (newSponsee) {
+        dispatch({ type: 'ADD_SPONSEE', payload: newSponsee as ContactPerson });
+        console.log('[ AppDataContext.tsx ] Sponsee added:', newSponsee.id);
+      }
+      return newSponsee as ContactPerson;
+    } catch (error) {
+      console.error('[ AppDataContext.tsx ] Failed to add sponsee:', error);
+      dispatch({ type: 'SET_ERROR', payload: 'Failed to save sponsee' });
+      return null;
+    }
+  };
+
+  const updateSponsee = async (sponseeId: string | number, updates: Partial<ContactPerson>): Promise<ContactPerson | null> => {
+    try {
+      const updatedSponsee = await databaseService.update('sponsees', sponseeId, {
+        ...updates,
+        updatedAt: new Date().toISOString()
+      });
+      
+      if (updatedSponsee) {
+        dispatch({ type: 'UPDATE_SPONSEE', payload: { id: sponseeId, data: updates } });
+        console.log('[ AppDataContext.tsx ] Sponsee updated:', sponseeId);
+      }
+      return updatedSponsee as ContactPerson;
+    } catch (error) {
+      console.error('[ AppDataContext.tsx ] Failed to update sponsee:', error);
+      dispatch({ type: 'SET_ERROR', payload: 'Failed to update sponsee' });
+      return null;
+    }
+  };
+
+  const deleteSponsee = async (sponseeId: string | number): Promise<boolean> => {
+    try {
+      const success = await databaseService.remove('sponsees', sponseeId);
+      if (success) {
+        dispatch({ type: 'DELETE_SPONSEE', payload: sponseeId });
+        console.log('[ AppDataContext.tsx ] Sponsee deleted:', sponseeId);
+      }
+      return success;
+    } catch (error) {
+      console.error('[ AppDataContext.tsx ] Failed to delete sponsee:', error);
+      dispatch({ type: 'SET_ERROR', payload: 'Failed to delete sponsee' });
+      return false;
+    }
+  };
+
   const contextValue: AppDataContextType = {
     state,
     dispatch,
@@ -866,6 +1069,14 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
     addActionItem,
     updateActionItem,
     deleteActionItem,
+    loadSponsors,
+    addSponsor,
+    updateSponsor,
+    deleteSponsor,
+    loadSponsees,
+    addSponsee,
+    updateSponsee,
+    deleteSponsee,
     updateTimeframe,
     calculateSpiritualFitness,
     resetAllData,
