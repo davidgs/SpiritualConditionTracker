@@ -411,7 +411,9 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
               ...activity,
               actionItemData: {
                 ...actionItem,
-                sponsorName
+                sponsorName: sponsorName, // Keep the concatenated name for backwards compatibility
+                sponsorFirstName: sponsors[0]?.name || '',
+                sponsorLastName: sponsors[0]?.lastName || ''
               },
               title: actionItem.title || activity.title,
               text: actionItem.text || activity.text,
@@ -486,7 +488,12 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
           return true;
         }
         
-        // For action items, only include those from sponsor contacts
+        // For sponsor action items, always include them (user gets credit for completing these)
+        if (activity.type === 'sponsor_action_item') {
+          return true;
+        }
+        
+        // For other action items, only include those from sponsor contacts
         if (activity.actionItemId && activity.actionItemData) {
           // Include if it has sponsorContactId (from sponsor)
           // Exclude if it has sponseeContactId (from sponsee - user doesn't get credit)

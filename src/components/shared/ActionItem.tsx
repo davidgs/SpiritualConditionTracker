@@ -135,9 +135,19 @@ export default function ActionItem({
                 
                 // Add sponsor attribution for sponsor action items
                 if (actionItem.type === 'sponsor_action_item') {
-                  if (actionItem.sponsorName) {
-                    // Check if already formatted (contains a period indicating "First L.")
-                    if (actionItem.sponsorName.includes('.')) {
+                  // Check if we have separate first/last name fields first (preferred)
+                  if ((actionItem as any).sponsorFirstName && (actionItem as any).sponsorLastName) {
+                    const firstName = (actionItem as any).sponsorFirstName;
+                    const lastName = (actionItem as any).sponsorLastName;
+                    const formattedName = `${firstName} ${lastName.charAt(0)}.`;
+                    return `${title} (from ${formattedName})`;
+                  } 
+                  // Fallback to concatenated sponsorName if available
+                  else if (actionItem.sponsorName) {
+                    // Check if already formatted (ends with single letter followed by period, like "John S.")
+                    const isAlreadyFormatted = /\s[A-Z]\.$/.test(actionItem.sponsorName.trim());
+                    
+                    if (isAlreadyFormatted) {
                       // Already formatted, use as-is
                       return `${title} (from ${actionItem.sponsorName})`;
                     } else {
@@ -148,7 +158,9 @@ export default function ActionItem({
                       const formattedName = lastName ? `${firstName} ${lastName.charAt(0)}.` : firstName;
                       return `${title} (from ${formattedName})`;
                     }
-                  } else if (sponsorContacts.length > 0) {
+                  } 
+                  // Final fallback to sponsor contacts
+                  else if (sponsorContacts.length > 0) {
                     const sponsor = sponsorContacts[0];
                     const firstName = sponsor.name || '';
                     const lastName = sponsor.lastName || '';
