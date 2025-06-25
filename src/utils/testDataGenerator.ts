@@ -177,7 +177,6 @@ async function createSponsorTestContacts(sponsor: any, userId: number | string, 
       completed: 0,
       type: 'sponsor_action_item',
       sponsorContactId: contactId,
-      contactId: contactId,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
     };
