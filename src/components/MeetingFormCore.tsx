@@ -7,7 +7,6 @@ import {
   IconButton, 
   Button,
   Box,
-  CircularProgress,
   Alert,
   Typography,
   Checkbox,
@@ -23,7 +22,7 @@ const getTextFieldStyle = (theme) => ({
   maxWidth: '100%',
   mb: 2,
   '& .MuiOutlinedInput-root': { 
-    height: 56,
+    height: 48,
     borderRadius: 2,
     width: '100%',
     maxWidth: '100%',
@@ -56,7 +55,6 @@ export default function MeetingFormCore({
 }) {
   // Get theme context
   const muiTheme = useTheme();
-  const darkMode = muiTheme.palette.mode === 'dark';
   
   // Form state
   const [meetingName, setMeetingName] = useState('');

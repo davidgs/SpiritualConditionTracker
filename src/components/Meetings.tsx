@@ -14,7 +14,6 @@ export default function Meetings({ setCurrentView, meetings = [], onSave, onDele
   // Get dark mode from theme context
   const muiTheme = useTheme();
   const { theme } = useAppTheme();
-  const darkMode = muiTheme.palette.mode === 'dark';
   
   // Get user preferences
   const [use24HourFormat, setUse24HourFormat] = useState(false);

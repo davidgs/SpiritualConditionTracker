@@ -4,6 +4,7 @@
  */
 
 import DatabaseService from '../services/DatabaseService';
+import { useAppData } from '../contexts/AppDataContext';
 
 export interface TestDataResults {
   sponsorsCreated: number;
@@ -13,9 +14,10 @@ export interface TestDataResults {
   actionItemsCreated: number;
 }
 
-export async function createTestData(userId: number | string): Promise<TestDataResults> {
+export async function createTestData(userId: number | string): 
+  Promise<TestDataResults> {
   const databaseService = DatabaseService.getInstance();
-  
+  const { state, addActivity, addMeeting } = useAppData();
   const results: TestDataResults = {
     sponsorsCreated: 0,
     sponseesCreated: 0,
@@ -24,16 +26,73 @@ export async function createTestData(userId: number | string): Promise<TestDataR
     actionItemsCreated: 0
   };
 
+  const aToFMeeting = {
+    name:"Arch to Freedom",
+    days:["monday"],
+    time:"18:00",
+    schedule: [{
+      day:"monday",
+      time:"18:00",
+      format:"literature",
+      locationType:"in_person",
+      access:"open"
+    }],
+    types:[],
+    address:"100 Hughes St, Apex, NC, 27502",
+    locationName:"Apex United Methodist Church",
+    streetAddress:"100 Hughes St",
+    city:"Apex",
+    state:"NC",
+    zipCode:"27502",
+    coordinates:null,
+    isHomeGroup:true,
+    onlineUrl:"",
+    createdAt:new Date().toISOString(),
+    updatedAt:new Date().toISOString()
+  };
+
+  const tia = {
+    name:"There Is A Solution",
+    days:["tuesday","thursday"],
+    time:"19:00",
+    schedule:[
+      {
+        day:"tuesday",
+        time:"19:00",
+        format:"beginners",
+        locationType:"in_person",
+        access:"open"
+      },{
+        day:"thursday",
+        time:"19:00",
+        format:"discussion",
+        locationType:"in_person",
+        access:"closed"
+      }
+    ],
+    types:[],
+    address:"7000 Tryon Rd., Cary, NC, 27518",
+    locationName:"Macedonia United Methodist Church",
+    streetAddress:"7000 Tryon Rd.",
+    city:"Cary",
+    state:"NC",
+    zipCode:"27518",
+    coordinates:null,
+    isHomeGroup:true,
+    onlineUrl:"",
+    createdAt:new Date().toISOString(),
+    updatedAt:new Date().toISOString()
+  };
   try {
     console.log('[ testDataGenerator ] Starting test data creation...');
 
-    // Create test sponsors
+    // Create 2 test sponsors
     const testSponsors = [
       {
         userId: userId.toString(),
         name: 'John',
         lastName: 'Smith',
-        phoneNumber: '555-0101',
+        phoneNumber: '919-555-0101',
         email: 'john.smith@email.com',
         sobrietyDate: '2015-03-15',
         notes: 'Great sponsor with 10+ years experience',
@@ -45,7 +104,7 @@ export async function createTestData(userId: number | string): Promise<TestDataR
         userId: userId.toString(),
         name: 'Mary',
         lastName: 'Johnson',
-        phoneNumber: '555-0102',
+        phoneNumber: '919-555-0102',
         email: 'mary.j@email.com',
         sobrietyDate: '2012-08-22',
         notes: 'Very supportive and knowledgeable',
@@ -55,13 +114,13 @@ export async function createTestData(userId: number | string): Promise<TestDataR
       }
     ];
 
-    // Create test sponsees
+    // Create 2 test sponsees
     const testSponsees = [
       {
         userId: userId.toString(),
         name: 'Alex',
         lastName: 'Wilson',
-        phoneNumber: '555-0201',
+        phoneNumber: '919-555-0201',
         email: 'alex.wilson@email.com',
         sobrietyDate: '2023-06-10',
         notes: 'New sponsee, very motivated',
@@ -73,7 +132,7 @@ export async function createTestData(userId: number | string): Promise<TestDataR
         userId: userId.toString(),
         name: 'Sarah',
         lastName: 'Davis',
-        phoneNumber: '555-0202',
+        phoneNumber: '919-555-0202',
         email: 'sarah.d@email.com',
         sobrietyDate: '2023-11-05',
         notes: 'Working on Step 4',
@@ -110,6 +169,8 @@ export async function createTestData(userId: number | string): Promise<TestDataR
       await createSponsorTestContacts(sponsor, userId, results);
     }
 
+    const savedMeeting = await addMeeting(tia as any);
+    const savedMeeting2 = await addMeeting(aToFMeeting as any);
     // Do NOT create sponsee contacts for now - they should not appear in Activity List
     // TODO: Implement sponsee contact functionality when requirements are clarified
     console.log('[ testDataGenerator ] Skipping sponsee contact creation - not shown in Activity List per requirements');
@@ -156,7 +217,6 @@ async function createSponsorTestContacts(sponsor: any, userId: number | string, 
     const actionItem = {
       title: 'Practice daily meditation',
       text: 'Practice daily meditation for 10 minutes',
-      notes: 'Focus on gratitude and serenity prayer',
       dueDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(), // 3 days from now
       completed: 0,
       type: 'sponsor_action_item',
@@ -228,7 +288,6 @@ async function createSponseeTestContacts(sponsee: any, userId: number | string, 
     const actionItem = {
       title: 'Complete Step 4 inventory',
       text: 'Work on personal inventory list',
-      notes: 'Focus on resentments and fears',
       dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // 1 week from now
       completed: 0,
       type: 'sponsee_action_item',
