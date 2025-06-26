@@ -367,23 +367,41 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
       const activities = await databaseService.getAllActivities();
       console.log('[ AppDataContext.tsx ] Loaded activities from activities table:', activities.length);
       
-      // 2. Load sponsor contacts
+      // 2. Load sponsor contacts and transform them to activities
       const sponsorContacts = await databaseService.getAllSponsorContacts();
       console.log('[ AppDataContext.tsx ] Loaded sponsor contacts:', sponsorContacts.length);
-      
-      // 3. Load action items only once and transform them
-      const sponsors = await databaseService.getAllSponsors();
-      const allDbActionItems = await databaseService.getAllActionItems();
-      console.log('[ AppDataContext.tsx ] Loaded all action items from database:', allDbActionItems.length);
 
       // Get sponsor name for display
-      let sponsorName = 'Sponsor';
-      if (sponsors && sponsors.length > 0) {
-        const sponsor = sponsors[0];
+      const allSponsors = await databaseService.getAllSponsors();
+      let mainSponsorName = 'Sponsor';
+      if (allSponsors && allSponsors.length > 0) {
+        const sponsor = allSponsors[0];
         const firstName = sponsor.name || '';
         const lastName = sponsor.lastName || '';
-        sponsorName = lastName ? `${firstName} ${lastName.charAt(0)}.` : firstName || 'Sponsor';
+        mainSponsorName = lastName ? `${firstName} ${lastName.charAt(0)}.` : firstName || 'Sponsor';
       }
+
+      // Transform sponsor contacts to activity-like objects
+      const sponsorContactActivities = sponsorContacts.map(contact => ({
+        id: `sponsor_contact_${contact.id}`,
+        userId: String(state.currentUserId || 'default_user'),
+        type: 'sponsor-contact',
+        title: 'Contact with Sponsor',
+        text: contact.note || 'Contact with Sponsor',
+        notes: contact.note || '',
+        date: contact.date,
+        duration: 0, // Duration may not be tracked for all contact types
+        completed: 0,
+        createdAt: contact.createdAt || new Date().toISOString(),
+        updatedAt: contact.updatedAt || new Date().toISOString(),
+        sponsorContactId: contact.id,
+        sponsorName: mainSponsorName,
+        personCalled: mainSponsorName
+      }));
+      
+      // 3. Load action items only once and transform them
+      const allDbActionItems = await databaseService.getAllActionItems();
+      console.log('[ AppDataContext.tsx ] Loaded all action items from database:', allDbActionItems.length);
 
       // Transform action items to activity-like objects, ensuring uniqueness
       const actionItemActivities = allDbActionItems
@@ -407,29 +425,40 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
             updatedAt: actionItem.updatedAt || new Date().toISOString(),
             actionItemId: actionItem.id,
             actionItemData: actionItem,
-            sponsorName,
+            sponsorName: mainSponsorName,
             sponsorContactId: actionItem.contactId
           };
         });
       
       console.log('[ AppDataContext.tsx ] Transformed action items to activities:', actionItemActivities.length);
       
-      // 4. Filter out any existing activities that already reference these action items to avoid duplicates
+      // 4. Filter out any existing activities that already reference sponsor contacts or action items
       const filteredActivities = activities.filter(activity => {
+        // Remove activities that reference action items we're adding separately
         if (activity.actionItemId) {
-          // Remove activities that reference action items we're about to add separately
           const hasMatchingActionItem = actionItemActivities.some(ai => ai.actionItemId === activity.actionItemId);
           if (hasMatchingActionItem) {
             console.log('[ AppDataContext.tsx ] Removing duplicate activity that references action item:', activity.title);
             return false;
           }
         }
+        
+        // Remove activities that reference sponsor contacts we're adding separately
+        if ((activity as any).sponsorContactId) {
+          const hasMatchingSponsorContact = sponsorContactActivities.some(sc => sc.sponsorContactId === (activity as any).sponsorContactId);
+          if (hasMatchingSponsorContact) {
+            console.log('[ AppDataContext.tsx ] Removing duplicate activity that references sponsor contact:', activity.title);
+            return false;
+          }
+        }
+        
         return true;
       });
       
-      // 5. Merge filtered activities with action item activities
+      // 5. Merge all data: activities + sponsor contacts + action items
       const allActivitiesData = [
         ...filteredActivities, // Real activities (minus duplicates)
+        ...sponsorContactActivities, // Sponsor contacts as activities
         ...actionItemActivities // Action items as activities
       ] as Activity[];
       

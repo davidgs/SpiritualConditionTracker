@@ -149,21 +149,9 @@ async function createSponsorTestContacts(sponsor: any, userId: number | string, 
     
     console.log(`[ testDataGenerator ] Created sponsor contact with ID: ${contactId}`);
     
-    // Create activity record for sponsor contact
-    const contactActivity = {
-      userId: userId,
-      type: 'sponsor-contact',
-      date: contactWithAction.date,
-      notes: contactWithAction.note,
-      duration: contactWithAction.duration,
-      personCalled: `${sponsor.name} ${sponsor.lastName}`,
-      sponsorContactId: contactId,
-      sponsorId: sponsor.id,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    };
-    
-    await databaseService.add('activities', contactActivity);
+    // Do NOT create activity records for sponsor contacts
+    // Sponsor contacts appear in Activity List through the AppDataContext transformation
+    // Creating activities here causes duplicates
     
     // Create action item linked to this specific contact
     const actionItem = {
@@ -207,21 +195,8 @@ async function createSponsorTestContacts(sponsor: any, userId: number | string, 
   if (savedContactWithoutAction) {
     results.sponsorContactsCreated++;
     
-    // Create activity record for sponsor contact
-    const contactActivity = {
-      userId: userId,
-      type: 'sponsor-contact',
-      date: contactWithoutAction.date,
-      notes: contactWithoutAction.note,
-      duration: contactWithoutAction.duration,
-      personCalled: `${sponsor.name} ${sponsor.lastName}`,
-      sponsorContactId: (savedContactWithoutAction as any).id,
-      sponsorId: sponsor.id,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    };
-    
-    await databaseService.add('activities', contactActivity);
+    // Do NOT create activity records for sponsor contacts
+    // Sponsor contacts appear in Activity List through the AppDataContext transformation
   }
 }
 
@@ -247,21 +222,8 @@ async function createSponseeTestContacts(sponsee: any, userId: number | string, 
   if (savedContactWithAction) {
     results.sponseeContactsCreated++;
     
-    // Create activity record for sponsee contact
-    const contactActivity = {
-      userId: userId,
-      type: 'sponsee-contact',
-      date: contactWithAction.date,
-      notes: contactWithAction.note,
-      duration: contactWithAction.duration,
-      personCalled: `${sponsee.name} ${sponsee.lastName}`,
-      sponseeContactId: (savedContactWithAction as any).id,
-      sponseeId: sponsee.id,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    };
-    
-    await databaseService.add('activities', contactActivity);
+    // Do NOT create activity records for sponsee contacts
+    // Sponsee contacts should not appear in Activity List per requirements
     
     // Create action item linked to this specific sponsee contact
     const actionItem = {
@@ -303,20 +265,8 @@ async function createSponseeTestContacts(sponsee: any, userId: number | string, 
   if (savedContactWithoutAction) {
     results.sponseeContactsCreated++;
     
-    // Create activity record for sponsee contact
-    const contactActivity = {
-      userId: userId,
-      type: 'sponsee-contact',
-      date: contactWithoutAction.date,
-      notes: contactWithoutAction.note,
-      personCalled: `${sponsee.name} ${sponsee.lastName}`,
-      sponseeContactId: (savedContactWithoutAction as any).id,
-      sponseeId: sponsee.id,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    };
-    
-    await databaseService.add('activities', contactActivity);
+    // Do NOT create activity records for sponsee contacts
+    // Sponsee contacts should not appear in Activity List per requirements
   }
 }
 
