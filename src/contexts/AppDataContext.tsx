@@ -406,8 +406,12 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
       // Transform action items to activity-like objects, ensuring uniqueness
       const actionItemActivities = allDbActionItems
         .filter(actionItem => {
-          // Only include action items linked to sponsor contacts
-          return sponsorContacts.some(contact => contact.id === actionItem.contactId);
+          // Only include sponsor action items (NOT sponsee action items)
+          // Check both the type field and the contactId linkage to sponsor contacts
+          const isLinkedToSponsorContact = sponsorContacts.some(contact => contact.id === actionItem.contactId);
+          const isSponsorActionItemType = actionItem.type === 'sponsor_action_item';
+          
+          return isLinkedToSponsorContact && isSponsorActionItemType;
         })
         .map(actionItem => {
           const relatedContact = sponsorContacts.find(contact => contact.id === actionItem.contactId);
@@ -464,6 +468,16 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
       
       console.log('[ AppDataContext.tsx ] Total merged activities (deduplicated):', allActivitiesData.length);
       console.log('[ AppDataContext.tsx ] Activity types:', allActivitiesData.map(a => `${a.type}`));
+      
+      // Debug: Log activities by date to check for duplicates
+      const dateGroups = allActivitiesData.reduce((groups, activity) => {
+        const dateKey = new Date(activity.date).toDateString();
+        if (!groups[dateKey]) groups[dateKey] = [];
+        groups[dateKey].push(`${activity.type}: ${activity.title || activity.text || 'No title'}`);
+        return groups;
+      }, {} as Record<string, string[]>);
+      
+      console.log('[ AppDataContext.tsx ] Activities grouped by date:', dateGroups);
       
       // Always load last 180 days for base cache (fixed window for memory management)
       const CACHE_DAYS = 180;
