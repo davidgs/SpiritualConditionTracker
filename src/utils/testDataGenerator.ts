@@ -110,10 +110,9 @@ export async function createTestData(userId: number | string): Promise<TestDataR
       await createSponsorTestContacts(sponsor, userId, results);
     }
 
-    // Create sponsee contacts and action items
-    for (const sponsee of savedSponsees) {
-      await createSponseeTestContacts(sponsee, userId, results);
-    }
+    // Do NOT create sponsee contacts for now - they should not appear in Activity List
+    // TODO: Implement sponsee contact functionality when requirements are clarified
+    console.log('[ testDataGenerator ] Skipping sponsee contact creation - not shown in Activity List per requirements');
 
     console.log('[ testDataGenerator ] Test data creation completed:', results);
     return results;
@@ -129,15 +128,15 @@ async function createSponsorTestContacts(sponsor: any, userId: number | string, 
   
   console.log(`[ testDataGenerator ] Creating contacts for sponsor with ID: ${sponsor.id}`);
   
-  // Contact with action item
+  // Contact with action item - use fixed recent dates to avoid duplicates
   const contactWithAction = {
     userId: userId.toString(),
-    sponsorId: sponsor.id, // Use the sponsor ID directly
+    sponsorId: sponsor.id,
     type: 'call',
-    date: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000).toISOString(), // Random date within last week
-    note: `Discussed my progress on Step ${Math.floor(Math.random() * 12) + 1}. Very helpful conversation about maintaining gratitude.`,
+    date: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(), // Yesterday
+    note: `Discussed my progress on Step 7. Very helpful conversation about maintaining gratitude.`,
     topic: 'Step Work & Gratitude',
-    duration: Math.floor(Math.random() * 45) + 15, // 15-60 minutes
+    duration: 30,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   };
@@ -178,15 +177,15 @@ async function createSponsorTestContacts(sponsor: any, userId: number | string, 
     }
   }
 
-  // Contact without action item
+  // Contact without action item - use fixed date to avoid duplicates
   const contactWithoutAction = {
     userId: userId.toString(),
     sponsorId: sponsor.id,
     type: 'meeting',
-    date: new Date(Date.now() - Math.random() * 14 * 24 * 60 * 60 * 1000).toISOString(), // Random date within last 2 weeks
+    date: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(), // 3 days ago
     note: 'Quick check-in after the meeting. Feeling good about my recovery progress.',
     topic: 'Post-Meeting Check-in',
-    duration: Math.floor(Math.random() * 20) + 10, // 10-30 minutes
+    duration: 15,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   };

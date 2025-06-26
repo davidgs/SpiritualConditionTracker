@@ -367,7 +367,7 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
       const activities = await databaseService.getAllActivities();
       console.log('[ AppDataContext.tsx ] Loaded activities from activities table:', activities.length);
       
-      // 2. Load sponsor contacts and transform them to activities
+      // 2. Load sponsor contacts and transform them to activities (NOT sponsee contacts)
       const sponsorContacts = await databaseService.getAllSponsorContacts();
       console.log('[ AppDataContext.tsx ] Loaded sponsor contacts:', sponsorContacts.length);
 
@@ -381,7 +381,7 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
         mainSponsorName = lastName ? `${firstName} ${lastName.charAt(0)}.` : firstName || 'Sponsor';
       }
 
-      // Transform sponsor contacts to activity-like objects
+      // Transform ONLY sponsor contacts to activity-like objects
       const sponsorContactActivities = sponsorContacts.map(contact => ({
         id: `sponsor_contact_${contact.id}`,
         userId: String(state.currentUserId || 'default_user'),
@@ -390,7 +390,7 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
         text: contact.note || 'Contact with Sponsor',
         notes: contact.note || '',
         date: contact.date,
-        duration: 0, // Duration may not be tracked for all contact types
+        duration: 0,
         completed: 0,
         createdAt: contact.createdAt || new Date().toISOString(),
         updatedAt: contact.updatedAt || new Date().toISOString(),
@@ -398,6 +398,8 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
         sponsorName: mainSponsorName,
         personCalled: mainSponsorName
       }));
+      
+      console.log('[ AppDataContext.tsx ] Transformed sponsor contacts to activities:', sponsorContactActivities.length);
       
       // 3. Load action items only once and transform them
       const allDbActionItems = await databaseService.getAllActionItems();
@@ -436,7 +438,7 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
       
       console.log('[ AppDataContext.tsx ] Transformed action items to activities:', actionItemActivities.length);
       
-      // 4. Filter out any existing activities that already reference sponsor contacts or action items
+      // 4. Filter out any existing activities that already reference sponsor/sponsee contacts or action items
       const filteredActivities = activities.filter(activity => {
         // Remove activities that reference action items we're adding separately
         if (activity.actionItemId) {
@@ -454,6 +456,18 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
             console.log('[ AppDataContext.tsx ] Removing duplicate activity that references sponsor contact:', activity.title);
             return false;
           }
+        }
+        
+        // Remove sponsee contact activities (they should NOT appear in Activity List)
+        if ((activity as any).sponseeContactId || activity.type === 'sponsee-contact') {
+          console.log('[ AppDataContext.tsx ] Removing sponsee contact activity (should not appear in Activity List):', activity.title);
+          return false;
+        }
+        
+        // Remove sponsee action items (they should NOT appear in Activity List)
+        if (activity.type === 'sponsee_action_item') {
+          console.log('[ AppDataContext.tsx ] Removing sponsee action item (should not appear in Activity List):', activity.title);
+          return false;
         }
         
         return true;
@@ -478,6 +492,18 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
       }, {} as Record<string, string[]>);
       
       console.log('[ AppDataContext.tsx ] Activities grouped by date:', dateGroups);
+      
+      // Debug: Check for potential duplicates
+      const titleCounts = allActivitiesData.reduce((counts, activity) => {
+        const title = activity.title || activity.text || 'No title';
+        counts[title] = (counts[title] || 0) + 1;
+        return counts;
+      }, {} as Record<string, number>);
+      
+      const duplicateTitles = Object.entries(titleCounts).filter(([title, count]) => count > 1);
+      if (duplicateTitles.length > 0) {
+        console.warn('[ AppDataContext.tsx ] Found duplicate activity titles:', duplicateTitles);
+      }
       
       // Always load last 180 days for base cache (fixed window for memory management)
       const CACHE_DAYS = 180;
