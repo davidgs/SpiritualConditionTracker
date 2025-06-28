@@ -14,11 +14,13 @@ export interface TestDataResults {
   meetingsCreated: number;
 }
 
-export async function createTestData(userId: number | string): Promise<TestDataResults> {
+export async function createTestData(userId: number | string, databaseService?: DatabaseService): Promise<TestDataResults> {
   try {
     console.log('[ testDataGenerator ] Starting test data creation for user:', userId);
     
-    const databaseService = DatabaseService.getInstance();
+    // Use provided database service or get instance (prefer provided to ensure same connection)
+    const dbService = databaseService || DatabaseService.getInstance();
+    console.log('[ testDataGenerator ] Using database service:', dbService ? 'provided' : 'getInstance');
     
     const results: TestDataResults = {
       sponsorsCreated: 0,
@@ -90,8 +92,8 @@ export async function createTestData(userId: number | string): Promise<TestDataR
     };
 
     // Create meetings
-    const savedMeeting1 = await databaseService.add('meetings', aToFMeeting);
-    const savedMeeting2 = await databaseService.add('meetings', tia);
+    const savedMeeting1 = await dbService.add('meetings', aToFMeeting);
+    const savedMeeting2 = await dbService.add('meetings', tia);
     
     if (savedMeeting1) results.meetingsCreated++;
     if (savedMeeting2) results.meetingsCreated++;
@@ -129,7 +131,7 @@ export async function createTestData(userId: number | string): Promise<TestDataR
     // Create sponsors
     const savedSponsors = [];
     for (const sponsor of testSponsors) {
-      const savedSponsor = await databaseService.add('sponsors', sponsor);
+      const savedSponsor = await dbService.add('sponsors', sponsor);
       if (savedSponsor) {
         savedSponsors.push(savedSponsor);
         results.sponsorsCreated++;
@@ -156,7 +158,7 @@ export async function createTestData(userId: number | string): Promise<TestDataR
     // Create sponsees
     const savedSponsees = [];
     for (const sponsee of testSponsees) {
-      const savedSponsee = await databaseService.add('sponsees', sponsee);
+      const savedSponsee = await dbService.add('sponsees', sponsee);
       if (savedSponsee) {
         savedSponsees.push(savedSponsee);
         results.sponseesCreated++;
@@ -166,7 +168,7 @@ export async function createTestData(userId: number | string): Promise<TestDataR
 
     // Create sponsor contacts (only these will appear in Activity List)
     for (const sponsor of savedSponsors) {
-      await createSponsorTestContacts(sponsor, userId, results);
+      await createSponsorTestContacts(sponsor, userId, results, dbService);
     }
 
     // Skip sponsee contacts per requirements (they should not appear in Activity List)
@@ -183,9 +185,8 @@ export async function createTestData(userId: number | string): Promise<TestDataR
   }
 }
 
-async function createSponsorTestContacts(sponsor: any, userId: number | string, results: TestDataResults) {
+async function createSponsorTestContacts(sponsor: any, userId: number | string, results: TestDataResults, databaseService: DatabaseService) {
   try {
-    const databaseService = DatabaseService.getInstance();
     console.log('[ testDataGenerator ] Creating contacts for sponsor:', sponsor.name);
 
     // Contact with action item - fixed date to avoid duplicates

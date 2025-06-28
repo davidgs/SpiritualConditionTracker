@@ -32,7 +32,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
   const databaseService = DatabaseService.getInstance();
 
   // Get data loading functions from context
-  const { loadActivities, loadActionItems } = useAppData();
+  const { loadActivities, loadActionItems, loadMeetings } = useAppData();
 
   // Handler for saving sponsor contacts from LogActivityModal
   const handleSaveSponsorContact = async (contactData: any, actionItems: any[] = []) => {
