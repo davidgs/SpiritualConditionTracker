@@ -26,6 +26,16 @@ export interface SponsorData {
   notes: string;
 }
 
+// Sponsee interface for the sponsee entity
+export interface SponseeData {
+  name: string;
+  lastName: string;
+  phoneNumber: string;
+  email: string;
+  sobrietyDate: string;
+  notes: string;
+}
+
 // User interface
 export interface User extends BaseEntity {
   name: string;
@@ -123,17 +133,35 @@ export interface Activity extends BaseEntity {
   sponsorId?: number;
   sponseeId?: number;
 }
-
-// Meeting interface
 export interface Meeting extends BaseEntity {
   name: string;
-  location: string;
+  days: [string];
   time: string;
-  dayOfWeek: string;
-  meetingType: string;
-  locationType: 'in_person' | 'online' | 'hybrid';
-  notes?: string;
-}
+  schedule: [
+    {
+      day: string;
+      time: string;
+      format: 'discussion' | 'speaker' | 'mens' | 'womens' | 'young_people' | 'beginners' | 'big_book' | 'step_study' | 'literature';
+      locationType: "in_person" | "online" | "hybrid";
+      access: "open" | "closed";
+    }
+  ];
+  types?: [];
+  address?: string;
+  locationName?: string;
+  streetAddress?: string;
+  city?: string;
+  state?: string;
+  zipCode?: string;
+  coordinates?: string | null;
+  isHomeGroup: 0 | 1;
+  onlineUrl?: string | null;
+  onlineMeetingId?: string | null;
+  onlinePasscode?: string | null;
+  createdAt: string;
+  updatedAt: string;
+};
+
 
 // Contact interface for sponsor/sponsee contacts
 export interface Contact extends BaseEntity {
@@ -164,7 +192,7 @@ export interface ContactDetail extends BaseEntity {
 // Database interface for window.db
 export interface DatabaseInterface {
   schemaVersion: string;
-  
+
   // CRUD operations
   getAll<T>(collection: string): Promise<T[]>;
   getById<T>(collection: string, id: number): Promise<T | null>;
@@ -172,13 +200,13 @@ export interface DatabaseInterface {
   update<T>(collection: string, id: number, updates: Partial<T>): Promise<T | null>;
   remove(collection: string, id: number): Promise<boolean>;
   query<T>(collection: string, predicate: (item: T) => boolean): Promise<T[]>;
-  
+
   // Calculation functions
   calculateSobrietyDays(sobrietyDate: string): number;
   calculateSobrietyYears(sobrietyDate: string, decimalPlaces?: number): number;
   calculateSpiritualFitness(): Promise<number>;
   calculateSpiritualFitnessWithTimeframe(timeframe?: number): Promise<number>;
-  
+
   // Preferences
   getPreference<T>(key: string): Promise<T | null>;
   setPreference<T>(key: string, value: T): Promise<void>;
