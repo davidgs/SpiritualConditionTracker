@@ -205,15 +205,18 @@ async function createSponsorTestContacts(sponsor: any, userId: number | string, 
     if (savedContactWithAction) {
       results.sponsorContactsCreated++;
       
-      // Create associated action item
+      // Create associated action item (matching actual database schema with ALTER TABLE additions)
       const actionItem = {
-        userId: userId.toString(),
-        sponsorId: sponsor.id,
         title: 'Practice daily meditation',
-        description: 'Start each day with 10 minutes of quiet meditation to center myself',
-        isCompleted: false,
+        text: 'Practice daily meditation',
+        notes: 'Start each day with 10 minutes of quiet meditation to center myself',
+        completed: 0,
         dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // Due in 1 week
-        priority: 'medium',
+        type: 'action',
+        sponsorContactId: (savedContactWithAction as any).id, // Link to the sponsor contact
+        sponsorId: sponsor.id, // Added via ALTER TABLE
+        sponsorName: `${sponsor.name} ${sponsor.lastName.charAt(0)}.`, // Added via ALTER TABLE
+        contactId: (savedContactWithAction as any).id, // Added via ALTER TABLE
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
       };

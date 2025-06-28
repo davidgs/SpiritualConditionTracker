@@ -1,0 +1,87 @@
+⚡️  To Native ->  ⚡️  [log] - [ Dashboard ] Starting test data creation...
+CapacitorSQLite execute 22203048
+⚡️  [log] - [ testDataGenerator ] Starting test data creation for user: 1
+⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO meetings (name, days, time, schedule, types, address, locationName, streetAddress, city, state, zipCode, coordinates, isHomeGroup, onlineUrl, createdAt, updatedAt) VALUES ('Arch to Freedom', '["monday"]', '18:00', '[{"day":"monday","time":"18:00","format":"literature","locationType":"in_person","access":"open"}]', '[]', '100 Hughes St, Apex, NC, 27502', 'Apex United Methodist Church', '100 Hughes St', 'Apex', 'NC', '27502', NULL, true, '', '2025-06-28T23:41:59.495Z', '2025-06-28T23:41:59.495Z');
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  To Native ->  CapacitorSQLite query 22203049
+⚡️  TO JS {"values":[{"ios_columns":["lastId"]},{"lastId":1}]}
+⚡️  To Native ->  CapacitorSQLite execute 22203050
+⚡️  [log] - [ sqliteLoader.js ] Created meetings item with ID: 1
+⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO meetings (name, days, time, schedule, types, address, locationName, streetAddress, city, state, zipCode, coordinates, isHomeGroup, onlineUrl, createdAt, updatedAt) VALUES ('There Is A Solution', '["tuesday","thursday"]', '19:00', '[{"day":"tuesday","time":"19:00","format":"beginners","locationType":"in_person","access":"open"},{"day":"thursday","time":"19:00","format":"discussion","locationType":"in_person","access":"closed"}]', '[]', '7000 Tryon Rd., Cary, NC, 27518', 'Macedonia United Methodist Church', '7000 Tryon Rd.', 'Cary', 'NC', '27518', NULL, true, '', '2025-06-28T23:41:59.495Z', '2025-06-28T23:41:59.495Z');
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  To Native ->  CapacitorSQLite query 22203051
+⚡️  TO JS {"values":[{"ios_columns":["lastId"]},{"lastId":2}]}
+⚡️  [log] - [ sqliteLoader.js ] Created meetings item with ID: 2
+⚡️  [log] - [ testDataGenerator ] Created meetings: 2
+⚡️  To Native ->  CapacitorSQLite execute 22203052
+⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO sponsors (userId, name, lastName, phoneNumber, email, sobrietyDate, notes, sponsorType, createdAt, updatedAt) VALUES ('1', 'John', 'Smith', '919-555-0101', 'john.smith@email.com', '2015-03-15', 'Great sponsor with 10+ years experience', 'sponsor', '2025-06-28T23:41:59.510Z', '2025-06-28T23:41:59.510Z');
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  To Native ->  CapacitorSQLite query 22203053
+⚡️  TO JS {"values":[{"ios_columns":["lastId"]},{"lastId":1}]}
+⚡️  [log] - [ sqliteLoader.js ] Created sponsors item with ID: 1
+⚡️  [log] - [ testDataGenerator ] Created sponsor: John Smith
+⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO sponsors (userId, name, lastName, phoneNumber, email, sobrietyDate, notes, sponsorType, createdAt, updatedAt) VALUES ('1', 'Mary', 'Johnson', '919-555-0102', 'mary.j@email.com', '2012-08-22', 'Very supportive and knowledgeable', 'sponsor', '2025-06-28T23:41:59.510Z', '2025-06-28T23:41:59.510Z');
+⚡️  To Native ->  CapacitorSQLite execute 22203054
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  To Native ->  CapacitorSQLite query 22203055
+⚡️  TO JS {"values":[{"ios_columns":["lastId"]},{"lastId":2}]}
+⚡️  To Native ->  CapacitorSQLite execute 22203056
+⚡️  [log] - [ sqliteLoader.js ] Created sponsors item with ID: 2
+⚡️  [log] - [ testDataGenerator ] Created sponsor: Mary Johnson
+⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO sponsees (userId, name, lastName, phoneNumber, email, sobrietyDate, notes, sponseeType, createdAt, updatedAt) VALUES ('1', 'Alex', 'Wilson', '919-555-0201', 'alex.wilson@email.com', '2023-06-10', 'New sponsee, very motivated', 'sponsee', '2025-06-28T23:41:59.517Z', '2025-06-28T23:41:59.517Z');
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  To Native ->  CapacitorSQLite query 22203057
+⚡️  TO JS {"values":[{"ios_columns":["lastId"]},{"lastId":1}]}
+⚡️  [log] - [ sqliteLoader.js ] Created sponsees item with ID: 1
+⚡️  [log] - [ testDataGenerator ] Created sponsee: Alex Wilson
+⚡️  To Native ->  CapacitorSQLite execute 22203058
+⚡️  [log] - [ testDataGenerator ] Creating contacts for sponsor: John
+⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO sponsor_contacts (userId, sponsorId, type, date, note, topic, duration, createdAt, updatedAt) VALUES ('1', 1, 'call', '2025-06-27T23:41:59.519Z', 'Discussed my progress on Step 7. Very helpful conversation about maintaining gratitude.', 'Step Work & Gratitude', 30, '2025-06-28T23:41:59.519Z', '2025-06-28T23:41:59.519Z');
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  To Native ->  CapacitorSQLite query 22203059
+⚡️  TO JS {"values":[{"ios_columns":["lastId"]},{"lastId":1}]}
+⚡️  [log] - [ sqliteLoader.js ] Created sponsor_contacts item with ID: 1
+⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO action_items (userId, sponsorId, title, description, isCompleted, dueDate, priority, createdAt, updatedAt) VALUES ('1', 1, 'Practice daily meditation', 'Start each day with 10 minutes of quiet meditation to center myself', false, '2025-07-05T23:41:59.520Z', 'medium', '2025-06-28T23:41:59.520Z', '2025-06-28T23:41:59.520Z');
+⚡️  To Native ->  CapacitorSQLite execute 22203060
+ERROR MESSAGE:  {"message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: table action_items has no column named userId","errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: table action_items has no column named userId"}
+⚡️  [error] - {"message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: table action_items has no column named userId","errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: table action_items has no column named userId"}
+⚡️  [error] - [ testDataGenerator ] Error creating sponsor contacts: {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: table action_items has no column named userId"}
+⚡️  [error] - [ testDataGenerator ] Error creating test data: {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: table action_items has no column named userId"}
+⚡️  [error] - [ testDataGenerator ] Error stack: i@capacitor://localhost/vendors.d84566fec2eddf431f1e.js:2:115197
+returnResult@user-script:2:943:49
+@user-script:2:925:29
+⚡️  [error] - [ testDataGenerator ] Error message: Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: table action_items has no column named userId
+⚡️  [error] - [ Dashboard ] Failed to create test data: {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: table action_items has no column named userId"}
+-[RTIInputSystemClient remoteTextInputSessionWithID:performInputOperation:]  perform input operation requires a valid sessionID. inputModality = Keyboard, inputOperation = <null selector>, customInfoType = UIEmojiSearchOperations
+-[RTIInputSystemClient remoteTextInputSessionWithID:performInputOperation:]  perform input operation requires a valid sessionID. inputModality = Keyboard, inputOperation = <null selector>, customInfoType = UIEmojiSearchOperations
+-[RTIInputSystemClient remoteTextInputSessionWithID:performInputOperation:]  perform input operation requires a valid sessionID. inputModality = Keyboard, inputOperation = <null selector>, customInfoType = UIEmojiSearchOperations
+-[RTIInputSystemClient remoteTextInputSessionWithID:performInputOperation:]  Can only perform input operation for an active session. sessionID = 2EC64821-AA2B-4B60-8C86-3244A7CC03E4
+-[RTIInputSystemClient remoteTextInputSessionWithID:textSuggestionsChanged:]  Can only set suggestions for an active session. sessionID = 2EC64821-AA2B-4B60-8C86-3244A7CC03E4
+-[RTIInputSystemClient remoteTextInputSessionWithID:textSuggestionsChanged:]  Can only set suggestions for an active session. sessionID = 2EC64821-AA2B-4B60-8C86-3244A7CC03E4
+⚡️  [log] - [ Meetings.js ] User:  {"sponsor_lastName":null,"preferences":{"use24HourFormat":false,"darkMode":false,"theme":"default"},"sponsor_name":null,"phoneNumber":"","homeGroups":[],"name":"","sponsor_sobrietyDate":null,"id":1,"isDarkMode":0,"sponsor_email":null,"updatedAt":"2025-06-26 18:03:30","createdAt":"2025-06-26 18:03:30","sponsor_phone":null,"sponsor_notes":null,"sobrietyDate":"","lastName":"","email":"","privacySettings":{"allowMessages":true,"shareLastName":true}}
+⚡️  [log] - [ Meetings.js ] Meetings:  []
+⚡️  [log] - SubTabComponent sponsor: persons: [] length: 0
+⚡️  To Native ->  CapacitorSQLite query 22203061
+⚡️  To Native ->  CapacitorSQLite query 22203062
+⚡️  To Native ->  CapacitorSQLite query 22203063
+⚡️  To Native ->  CapacitorSQLite query 22203064
+⚡️  TO JS {"values":[{"ios_columns":["id","userId","name","lastName","phoneNumber","email","sobrietyDate","notes","sponsorType","createdAt","updatedAt"]},{"notes":"Great sponsor with 10+ years experience","createdAt":"2025-06-28T23:41:59.510Z","lastName":"Smith","na
+⚡️  TO JS {"values":[{"ios_columns":["id","userId","name","lastName","phoneNumber","email","sobrietyDate","notes","sponseeType","createdAt","updatedAt"]},{"notes":"New sponsee, very motivated","updatedAt":"2025-06-28T23:41:59.517Z","sobrietyDate":"2023-06-10","userI
+⚡️  TO JS {"values":[{"ios_columns":["id","userId","sponsorId","type","date","note","topic","duration","createdAt","updatedAt"]},{"note":"Discussed my progress on Step 7. Very helpful conversation about maintaining gratitude.","updatedAt":"2025-06-28T23:41:59.519Z",
+⚡️  TO JS {"values":[]}
+⚡️  [log] - [loadSponsorContacts] Filtering contact: userId=1 (string), user.id=1 (number), match=true
+⚡️  [log] - [loadSponsorContacts] Current sponsors: []
+⚡️  [log] - SubTabComponent sponsor: persons: [{"notes":"Great sponsor with 10+ years experience","createdAt":"2025-06-28T23:41:59.510Z","lastName":"Smith","name":"John","userId":"1","email":"john.smith@email.com","id":1,"sobrietyDate":"2015-03-15","updatedAt":"2025-06-28T23:41:59.510Z","phoneNumber":"919-555-0101","sponsorType":"sponsor"},{"sobrietyDate":"2012-08-22","notes":"Very supportive and knowledgeable","updatedAt":"2025-06-28T23:41:59.510Z","lastName":"Johnson","email":"mary.j@email.com","id":2,"createdAt":"2025-06-28T23:41:59.510Z","name":"Mary","userId":"1","sponsorType":"sponsor","phoneNumber":"919-555-0102"}] length: 2
+⚡️  [log] - [getPersonContacts] sponsor personId: 1, contact sponsorId: 1, match: true
+⚡️  [log] - [getPersonContacts] Found 1 contacts for sponsor 1
+⚡️  [log] - [getPersonContacts] sponsor personId: 2, contact sponsorId: 1, match: false
+⚡️  [log] - [getPersonContacts] Found 0 contacts for sponsor 2
+⚡️  [log] - [ActionItemsList] Loading action items for contact 1, type: sponsor
+⚡️  [log] - [ActionItemsList] Total action items in state: 0
+⚡️  [log] - [ActionItemsList] All action items: []
+⚡️  [log] - [ActionItemsList] Found 0 action items for contact 1
+⚡️  [log] - SubTabComponent sponsor: persons: [{"notes":"Great sponsor with 10+ years experience","createdAt":"2025-06-28T23:41:59.510Z","lastName":"Smith","name":"John","userId":"1","email":"john.smith@email.com","id":1,"sobrietyDate":"2015-03-15","updatedAt":"2025-06-28T23:41:59.510Z","phoneNumber":"919-555-0101","sponsorType":"sponsor"},{"sobrietyDate":"2012-08-22","notes":"Very supportive and knowledgeable","updatedAt":"2025-06-28T23:41:59.510Z","lastName":"Johnson","email":"mary.j@email.com","id":2,"createdAt":"2025-06-28T23:41:59.510Z","name":"Mary","userId":"1","sponsorType":"sponsor","phoneNumber":"919-555-0102"}] length: 2
+⚡️  [log] - [getPersonContacts] sponsor personId: 1, contact sponsorId: 1, match: true
+⚡️  [log] - [getPersonContacts] Found 1 contacts for sponsor 1
+⚡️  [log] - [getPersonContacts] sponsor personId: 2, contact sponsorId: 1, match: false
+⚡️  [log] - [getPersonContacts] Found 0 contacts for sponsor 2
