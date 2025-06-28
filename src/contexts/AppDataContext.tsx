@@ -768,6 +768,10 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
       // Reset React state after successful database reset
       dispatch({ type: 'RESET_ALL_DATA' });
       
+      // Clear the extended cache that persists old activity data
+      console.log('[ AppDataContext.tsx:419 ] Clearing extended activity cache...');
+      setExtendedCache(new Map());
+      
       // Reset and reinitialize the database service
       console.log('[ AppDataContext.tsx:423 ] Resetting database service state...');
       databaseService.resetInitialization();
