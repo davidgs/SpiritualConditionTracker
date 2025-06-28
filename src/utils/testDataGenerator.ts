@@ -1,9 +1,7 @@
 /**
  * Test Data Generator for Sponsor/Sponsee System
- * Creates comprehensive test data for contacts and action items
+ * Creates comprehensive test data using proper app data pathways
  */
-
-import DatabaseService from '../services/DatabaseService';
 
 export interface TestDataResults {
   sponsorsCreated: number;
@@ -14,13 +12,15 @@ export interface TestDataResults {
   meetingsCreated: number;
 }
 
-export async function createTestData(userId: number | string, databaseService?: DatabaseService): Promise<TestDataResults> {
+interface AppDataFunctions {
+  addMeeting: (meeting: any) => Promise<any>;
+  addActivity: (activity: any) => Promise<any>;
+}
+
+export async function createTestData(userId: number | string, appDataFunctions: AppDataFunctions): Promise<TestDataResults> {
   try {
     console.log('[ testDataGenerator ] Starting test data creation for user:', userId);
-    
-    // Use provided database service or get instance (prefer provided to ensure same connection)
-    const dbService = databaseService || DatabaseService.getInstance();
-    console.log('[ testDataGenerator ] Using database service:', dbService ? 'provided' : 'getInstance');
+    console.log('[ testDataGenerator ] Using proper app data pathways');
     
     const results: TestDataResults = {
       sponsorsCreated: 0,
@@ -31,7 +31,7 @@ export async function createTestData(userId: number | string, databaseService?: 
       meetingsCreated: 0
     };
 
-    // Create test meetings first
+    // Create test meetings using app data pathways
     const aToFMeeting = {
       name: "Arch to Freedom",
       days: ["monday"],
@@ -52,9 +52,7 @@ export async function createTestData(userId: number | string, databaseService?: 
       zipCode: "27502",
       coordinates: null,
       isHomeGroup: true,
-      onlineUrl: "", 
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
+      onlineUrl: ""
     };
 
     const tia = {
@@ -86,170 +84,82 @@ export async function createTestData(userId: number | string, databaseService?: 
       zipCode: "27518",
       coordinates: null,
       isHomeGroup: true,
-      onlineUrl: "",
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
+      onlineUrl: ""
     };
 
-    // Create meetings
-    const savedMeeting1 = await dbService.add('meetings', aToFMeeting);
-    const savedMeeting2 = await dbService.add('meetings', tia);
+    // Create meetings using proper app data pathway
+    console.log('[ testDataGenerator ] Creating meetings through app data functions...');
+    const savedMeeting1 = await appDataFunctions.addMeeting(aToFMeeting);
+    const savedMeeting2 = await appDataFunctions.addMeeting(tia);
     
-    if (savedMeeting1) results.meetingsCreated++;
-    if (savedMeeting2) results.meetingsCreated++;
+    if (savedMeeting1) {
+      results.meetingsCreated++;
+      console.log('[ testDataGenerator ] Created meeting:', aToFMeeting.name);
+    }
+    if (savedMeeting2) {
+      results.meetingsCreated++;
+      console.log('[ testDataGenerator ] Created meeting:', tia.name);
+    }
     
-    console.log('[ testDataGenerator ] Created meetings:', results.meetingsCreated);
+    console.log('[ testDataGenerator ] Total meetings created:', results.meetingsCreated);
 
-    // Create test sponsors
-    const testSponsors = [
+    // Create some test activities using app data pathway
+    const testActivities = [
       {
         userId: userId.toString(),
-        name: 'John',
-        lastName: 'Smith',
-        phoneNumber: '919-555-0101',
-        email: 'john.smith@email.com',
-        sobrietyDate: '2015-03-15',
-        notes: 'Great sponsor with 10+ years experience',
-        sponsorType: 'sponsor',
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
+        type: 'prayer',
+        title: 'Morning Prayer',
+        text: 'Morning Prayer',
+        notes: 'Started the day with gratitude and reflection',
+        date: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(), // Yesterday
+        duration: 10,
+        completed: 1
       },
       {
         userId: userId.toString(),
-        name: 'Mary',
-        lastName: 'Johnson',
-        phoneNumber: '919-555-0102',
-        email: 'mary.j@email.com',
-        sobrietyDate: '2012-08-22',
-        notes: 'Very supportive and knowledgeable',
-        sponsorType: 'sponsor',
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-      }
-    ];
-
-    // Create sponsors
-    const savedSponsors = [];
-    for (const sponsor of testSponsors) {
-      const savedSponsor = await dbService.add('sponsors', sponsor);
-      if (savedSponsor) {
-        savedSponsors.push(savedSponsor);
-        results.sponsorsCreated++;
-        console.log('[ testDataGenerator ] Created sponsor:', sponsor.name, sponsor.lastName);
-      }
-    }
-
-    // Create test sponsees 
-    const testSponsees = [
+        type: 'meditation',
+        title: 'Evening Meditation',
+        text: 'Evening Meditation',
+        notes: '15 minutes of quiet reflection before bed',
+        date: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(), // Yesterday
+        duration: 15,
+        completed: 1
+      },
       {
         userId: userId.toString(),
-        name: 'Alex',
-        lastName: 'Wilson',
-        phoneNumber: '919-555-0201',
-        email: 'alex.wilson@email.com',
-        sobrietyDate: '2023-06-10',
-        notes: 'New sponsee, very motivated',
-        sponseeType: 'sponsee',
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
+        type: 'literature',
+        title: 'Big Book Reading',
+        text: 'Big Book Reading',
+        notes: 'Read pages 85-88 about making amends',
+        date: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(), // 2 days ago
+        duration: 20,
+        completed: 1
       }
     ];
 
-    // Create sponsees
-    const savedSponsees = [];
-    for (const sponsee of testSponsees) {
-      const savedSponsee = await dbService.add('sponsees', sponsee);
-      if (savedSponsee) {
-        savedSponsees.push(savedSponsee);
-        results.sponseesCreated++;
-        console.log('[ testDataGenerator ] Created sponsee:', sponsee.name, sponsee.lastName);
+    // Create activities using app data pathway
+    console.log('[ testDataGenerator ] Creating activities through app data functions...');
+    let activitiesCreated = 0;
+    for (const activity of testActivities) {
+      const savedActivity = await appDataFunctions.addActivity(activity);
+      if (savedActivity) {
+        activitiesCreated++;
+        console.log('[ testDataGenerator ] Created activity:', activity.title);
       }
     }
 
-    // Create sponsor contacts (only these will appear in Activity List)
-    for (const sponsor of savedSponsors) {
-      await createSponsorTestContacts(sponsor, userId, results, dbService);
-    }
+    console.log('[ testDataGenerator ] Test data creation completed successfully!');
+    console.log('[ testDataGenerator ] Results:', {
+      meetingsCreated: results.meetingsCreated,
+      activitiesCreated: activitiesCreated
+    });
 
-    // Skip sponsee contacts per requirements (they should not appear in Activity List)
-    console.log('[ testDataGenerator ] Skipping sponsee contact creation - not shown in Activity List per requirements');
-
-    console.log('[ testDataGenerator ] Test data creation completed:', results);
     return results;
 
   } catch (error) {
     console.error('[ testDataGenerator ] Error creating test data:', error);
     console.error('[ testDataGenerator ] Error stack:', error instanceof Error ? error.stack : 'No stack available');
     console.error('[ testDataGenerator ] Error message:', error instanceof Error ? error.message : JSON.stringify(error));
-    throw error;
-  }
-}
-
-async function createSponsorTestContacts(sponsor: any, userId: number | string, results: TestDataResults, databaseService: DatabaseService) {
-  try {
-    console.log('[ testDataGenerator ] Creating contacts for sponsor:', sponsor.name);
-
-    // Contact with action item - fixed date to avoid duplicates
-    const contactWithAction = {
-      userId: userId.toString(),
-      sponsorId: sponsor.id,
-      type: 'call',
-      date: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(), // Yesterday
-      note: 'Discussed my progress on Step 7. Very helpful conversation about maintaining gratitude.',
-      topic: 'Step Work & Gratitude', 
-      duration: 30,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    };
-
-    const savedContactWithAction = await databaseService.add('sponsor_contacts', contactWithAction);
-    if (savedContactWithAction) {
-      results.sponsorContactsCreated++;
-      
-      // Create associated action item (matching actual database schema with ALTER TABLE additions)
-      const actionItem = {
-        title: 'Practice daily meditation',
-        text: 'Practice daily meditation',
-        notes: 'Start each day with 10 minutes of quiet meditation to center myself',
-        completed: 0,
-        dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // Due in 1 week
-        type: 'action',
-        sponsorContactId: (savedContactWithAction as any).id, // Link to the sponsor contact
-        sponsorId: sponsor.id, // Added via ALTER TABLE
-        sponsorName: `${sponsor.name} ${sponsor.lastName.charAt(0)}.`, // Added via ALTER TABLE
-        contactId: (savedContactWithAction as any).id, // Added via ALTER TABLE
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-      };
-
-      const savedActionItem = await databaseService.add('action_items', actionItem);
-      if (savedActionItem) {
-        results.actionItemsCreated++;
-        console.log('[ testDataGenerator ] Created action item for sponsor contact');
-      }
-    }
-
-    // Contact without action item - fixed date to avoid duplicates
-    const contactWithoutAction = {
-      userId: userId.toString(),
-      sponsorId: sponsor.id,
-      type: 'meeting',
-      date: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(), // 3 days ago
-      note: 'Quick check-in after the meeting. Feeling good about my recovery progress.',
-      topic: 'Post-Meeting Check-in',
-      duration: 15,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    };
-
-    const savedContactWithoutAction = await databaseService.add('sponsor_contacts', contactWithoutAction);
-    if (savedContactWithoutAction) {
-      results.sponsorContactsCreated++;
-      console.log('[ testDataGenerator ] Created sponsor contact without action item');
-    }
-
-  } catch (error) {
-    console.error('[ testDataGenerator ] Error creating sponsor contacts:', error);
     throw error;
   }
 }
