@@ -4,7 +4,6 @@
  */
 
 import DatabaseService from '../services/DatabaseService';
-import { useAppData } from '../contexts/AppDataContext';
 
 export interface TestDataResults {
   sponsorsCreated: number;
@@ -17,7 +16,10 @@ export interface TestDataResults {
 export async function createTestData(userId: number | string): 
   Promise<TestDataResults> {
   const databaseService = DatabaseService.getInstance();
-  const { state, addActivity, addMeeting } = useAppData();
+  
+  // Ensure database is ready
+  console.log('[ testDataGenerator ] Using database service:', typeof databaseService);
+  
   const results: TestDataResults = {
     sponsorsCreated: 0,
     sponseesCreated: 0,
@@ -169,8 +171,12 @@ export async function createTestData(userId: number | string):
       await createSponsorTestContacts(sponsor, userId, results);
     }
 
-    const savedMeeting = await addMeeting(tia as any);
-    const savedMeeting2 = await addMeeting(aToFMeeting as any);
+    // Create test meetings directly using database service
+    const savedMeeting = await databaseService.add('meetings', tia);
+    const savedMeeting2 = await databaseService.add('meetings', aToFMeeting);
+    console.log('[ testDataGenerator ] Created test meetings:', 
+      savedMeeting ? (savedMeeting as any).id : 'failed',
+      savedMeeting2 ? (savedMeeting2 as any).id : 'failed');
     // Do NOT create sponsee contacts for now - they should not appear in Activity List
     // TODO: Implement sponsee contact functionality when requirements are clarified
     console.log('[ testDataGenerator ] Skipping sponsee contact creation - not shown in Activity List per requirements');
@@ -180,6 +186,8 @@ export async function createTestData(userId: number | string):
 
   } catch (error) {
     console.error('[ testDataGenerator ] Error creating test data:', error);
+    console.error('[ testDataGenerator ] Error stack:', error instanceof Error ? error.stack : 'No stack available');
+    console.error('[ testDataGenerator ] Error message:', error instanceof Error ? error.message : JSON.stringify(error));
     throw error;
   }
 }
@@ -188,6 +196,8 @@ async function createSponsorTestContacts(sponsor: any, userId: number | string, 
   const databaseService = DatabaseService.getInstance();
   
   console.log(`[ testDataGenerator ] Creating contacts for sponsor with ID: ${sponsor.id}`);
+  
+  try {
   
   // Contact with action item - use fixed recent dates to avoid duplicates
   const contactWithAction = {
