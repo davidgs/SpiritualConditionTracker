@@ -88,7 +88,7 @@ export interface LegacySponsorContact extends BaseEntity {
   note: string;
 }
 
-// Action Item interface - matches action_items table schema exactly from tables.ts
+// Action Item interface - simplified for unified contact architecture
 export interface ActionItem extends BaseEntity {
   title: string;
   text?: string;
@@ -97,55 +97,69 @@ export interface ActionItem extends BaseEntity {
   completed: number; // Default 0, SQLite boolean as integer
   deleted: number; // Default 0, SQLite boolean as integer for soft deletion
   type: ActionItemType; // Default 'action'
-  sponsorContactId?: number; // Foreign key to sponsor_contacts.id
-  sponseeContactId?: number; // Foreign key to sponsee_contacts.id
-  contactId?: number; // Foreign key to contact (general)
-  sponsorId?: number;
-  sponsorName?: string;
-  sponseeId?: number;
-  sponseeName?: string;
-  // NOTE: No userId field - action items are linked via contacts, not directly to users
+  contactId?: number; // Foreign key to contacts.id
+  personId?: number; // Foreign key to people.id (for direct person association)
+  // NOTE: No userId field - action items are linked via contacts/people, not directly to users
 }
 
-// Sponsors table interface - matches sponsors table schema exactly  
+// People table interface - unified address book for all contacts
+export interface Person extends BaseEntity {
+  userId: string;
+  firstName: string;
+  lastName?: string;
+  phoneNumber?: string;
+  email?: string;
+  sobrietyDate?: string;
+  homeGroup?: string;
+  notes?: string;
+  relationship?: string; // 'sponsor', 'sponsee', 'member', 'friend', 'family', 'professional'
+  isActive: number; // Default 1, SQLite boolean as integer
+}
+
+// Contacts table interface - unified interaction records
+export interface Contact extends BaseEntity {
+  userId: string;
+  personId: number; // Foreign key to people.id
+  contactType: string; // 'call', 'meeting', 'coffee', 'text', 'service'
+  date: string;
+  note?: string;
+  topic?: string;
+  duration: number; // Default 0
+  location?: string;
+}
+
+// Sponsors table interface - simplified to reference people
 export interface Sponsor extends BaseEntity {
-  userId: string; // References current user, defaults to 'default_user'
-  name?: string;
-  lastName?: string;
-  phoneNumber?: string;
-  email?: string;
-  sobrietyDate?: string;
+  userId: string;
+  personId: number; // Foreign key to people.id
+  startDate?: string;
+  status: string; // Default 'active', values: 'active', 'former'
   notes?: string;
-  sponsorType: string; // Default 'sponsor'
 }
 
-// Sponsees table interface - matches sponsees table schema exactly
+// Sponsees table interface - simplified to reference people
 export interface Sponsee extends BaseEntity {
-  userId: string; // References current user, defaults to 'default_user'
-  name?: string;
-  lastName?: string;
-  phoneNumber?: string;
-  email?: string;
-  sobrietyDate?: string;
+  userId: string;
+  personId: number; // Foreign key to people.id
+  startDate?: string;
+  status: string; // Default 'active'
   notes?: string;
-  sponseeType: string; // Default 'sponsee'
 }
 
-// Sponsor Contacts table interface - matches sponsor_contacts table schema exactly
+// Legacy interfaces for backward compatibility (to be removed after migration)
 export interface SponsorContact extends BaseEntity {
   userId: string;
-  sponsorId?: number; // Foreign key to sponsors.id
-  type: string; // Contact type as string in database
+  sponsorId?: number;
+  type: string;
   date: string;
   note?: string;
   topic?: string;
   duration?: number;
 }
 
-// Sponsee Contacts table interface - matches sponsee_contacts table schema exactly
 export interface SponseeContact extends BaseEntity {
   userId: string;
-  sponseeId: number; // Foreign key to sponsees.id - required
+  sponseeId: number;
   type: string;
   date: string;
   note?: string;

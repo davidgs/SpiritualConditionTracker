@@ -76,19 +76,52 @@ export const TABLE_DEFINITIONS = {
     )
   `,
 
-  sponsors: `
-    CREATE TABLE IF NOT EXISTS sponsors (
+  people: `
+    CREATE TABLE IF NOT EXISTS people (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       userId TEXT DEFAULT 'default_user',
-      name TEXT,
+      firstName TEXT NOT NULL,
       lastName TEXT,
       phoneNumber TEXT,
       email TEXT,
       sobrietyDate TEXT,
+      homeGroup TEXT,
       notes TEXT,
-      sponsorType TEXT DEFAULT 'sponsor',
+      relationship TEXT, -- 'sponsor', 'sponsee', 'member', 'friend', 'family', 'professional'
+      isActive INTEGER DEFAULT 1,
       createdAt TEXT DEFAULT CURRENT_TIMESTAMP,
       updatedAt TEXT DEFAULT CURRENT_TIMESTAMP
+    )
+  `,
+
+  contacts: `
+    CREATE TABLE IF NOT EXISTS contacts (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      userId TEXT DEFAULT 'default_user',
+      personId INTEGER NOT NULL,
+      contactType TEXT NOT NULL, -- 'call', 'meeting', 'coffee', 'text', 'service'
+      date TEXT NOT NULL,
+      note TEXT,
+      topic TEXT,
+      duration INTEGER DEFAULT 0,
+      location TEXT,
+      createdAt TEXT DEFAULT CURRENT_TIMESTAMP,
+      updatedAt TEXT DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (personId) REFERENCES people(id)
+    )
+  `,
+
+  sponsors: `
+    CREATE TABLE IF NOT EXISTS sponsors (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      userId TEXT DEFAULT 'default_user',
+      personId INTEGER NOT NULL,
+      startDate TEXT,
+      status TEXT DEFAULT 'active', -- 'active', 'former'
+      notes TEXT,
+      createdAt TEXT DEFAULT CURRENT_TIMESTAMP,
+      updatedAt TEXT DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (personId) REFERENCES people(id)
     )
   `,
 
@@ -96,45 +129,13 @@ export const TABLE_DEFINITIONS = {
     CREATE TABLE IF NOT EXISTS sponsees (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       userId TEXT DEFAULT 'default_user',
-      name TEXT,
-      lastName TEXT,
-      phoneNumber TEXT,
-      email TEXT,
-      sobrietyDate TEXT,
+      personId INTEGER NOT NULL,
+      startDate TEXT,
+      status TEXT DEFAULT 'active',
       notes TEXT,
-      sponseeType TEXT DEFAULT 'sponsee',
       createdAt TEXT DEFAULT CURRENT_TIMESTAMP,
-      updatedAt TEXT DEFAULT CURRENT_TIMESTAMP
-    )
-  `,
-
-  sponsor_contacts: `
-    CREATE TABLE IF NOT EXISTS sponsor_contacts (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      userId TEXT NOT NULL,
-      sponsorId INTEGER NOT NULL,
-      type TEXT NOT NULL,
-      date TEXT NOT NULL,
-      note TEXT,
-      topic TEXT,
-      duration INTEGER,
-      createdAt TEXT DEFAULT CURRENT_TIMESTAMP,
-      updatedAt TEXT DEFAULT CURRENT_TIMESTAMP
-    )
-  `,
-
-  sponsee_contacts: `
-    CREATE TABLE IF NOT EXISTS sponsee_contacts (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      userId TEXT NOT NULL,
-      sponseeId INTEGER NOT NULL,
-      type TEXT NOT NULL,
-      date TEXT NOT NULL,
-      note TEXT,
-      topic TEXT,
-      duration INTEGER,
-      createdAt TEXT DEFAULT CURRENT_TIMESTAMP,
-      updatedAt TEXT DEFAULT CURRENT_TIMESTAMP
+      updatedAt TEXT DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (personId) REFERENCES people(id)
     )
   `,
 
@@ -148,17 +149,12 @@ export const TABLE_DEFINITIONS = {
       completed INTEGER DEFAULT 0,
       deleted INTEGER DEFAULT 0,
       type TEXT DEFAULT 'action',
-      sponsorContactId INTEGER,
-      sponseeContactId INTEGER,
-      contactId INTEGER,
-      sponsorId INTEGER,
-      sponsorName TEXT,
-      sponseeId INTEGER,
-      sponseeName TEXT,
+      contactId INTEGER, -- References contacts.id (simplified)
+      personId INTEGER, -- References people.id (for direct person association)
       createdAt TEXT DEFAULT CURRENT_TIMESTAMP,
       updatedAt TEXT DEFAULT CURRENT_TIMESTAMP,
-      FOREIGN KEY (sponsorContactId) REFERENCES sponsor_contacts(id),
-      FOREIGN KEY (sponseeContactId) REFERENCES sponsee_contacts(id)
+      FOREIGN KEY (contactId) REFERENCES contacts(id),
+      FOREIGN KEY (personId) REFERENCES people(id)
     )
   `
 } as const;

@@ -310,6 +310,49 @@ async function createTables(sqlite) {
     `
   });
 
+  // Create people table - unified address book
+  await sqlite.execute({
+    database: DB_NAME,
+    statements: `
+      CREATE TABLE IF NOT EXISTS people (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        userId TEXT DEFAULT 'default_user',
+        firstName TEXT NOT NULL,
+        lastName TEXT,
+        phoneNumber TEXT,
+        email TEXT,
+        sobrietyDate TEXT,
+        homeGroup TEXT,
+        notes TEXT,
+        relationship TEXT, -- 'sponsor', 'sponsee', 'member', 'friend', 'family', 'professional'
+        isActive INTEGER DEFAULT 1,
+        createdAt TEXT DEFAULT CURRENT_TIMESTAMP,
+        updatedAt TEXT DEFAULT CURRENT_TIMESTAMP
+      )
+    `
+  });
+
+  // Create unified contacts table
+  await sqlite.execute({
+    database: DB_NAME,
+    statements: `
+      CREATE TABLE IF NOT EXISTS contacts (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        userId TEXT DEFAULT 'default_user',
+        personId INTEGER NOT NULL,
+        contactType TEXT NOT NULL, -- 'call', 'meeting', 'coffee', 'text', 'service'
+        date TEXT NOT NULL,
+        note TEXT,
+        topic TEXT,
+        duration INTEGER DEFAULT 0,
+        location TEXT,
+        createdAt TEXT DEFAULT CURRENT_TIMESTAMP,
+        updatedAt TEXT DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (personId) REFERENCES people(id)
+      )
+    `
+  });
+
   // Create activities table - cleaned up without data duplication
   await sqlite.execute({
     database: DB_NAME,
@@ -371,45 +414,9 @@ async function createTables(sqlite) {
 
 
 
-  // Create sponsor_contacts table
-  await sqlite.execute({
-    database: DB_NAME,
-    statements: `
-      CREATE TABLE IF NOT EXISTS sponsor_contacts (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        userId TEXT NOT NULL,
-        sponsorId INTEGER,
-        type TEXT NOT NULL,
-        date TEXT NOT NULL,
-        note TEXT,
-        topic TEXT,
-        duration INTEGER,
-        createdAt TEXT DEFAULT CURRENT_TIMESTAMP,
-        updatedAt TEXT DEFAULT CURRENT_TIMESTAMP
-      )
-    `
-  });
 
-  // Create sponsee_contacts table
-  await sqlite.execute({
-    database: DB_NAME,
-    statements: `
-      CREATE TABLE IF NOT EXISTS sponsee_contacts (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        userId TEXT NOT NULL,
-        sponseeId INTEGER NOT NULL,
-        type TEXT NOT NULL,
-        date TEXT NOT NULL,
-        note TEXT,
-        topic TEXT,
-        duration INTEGER,
-        createdAt TEXT DEFAULT CURRENT_TIMESTAMP,
-        updatedAt TEXT DEFAULT CURRENT_TIMESTAMP
-      )
-    `
-  });
 
-  // Create action_items table - matches types/database.ts ActionItem interface exactly
+  // Create simplified action_items table
   await sqlite.execute({
     database: DB_NAME,
     statements: `
@@ -422,57 +429,48 @@ async function createTables(sqlite) {
         completed INTEGER DEFAULT 0,
         deleted INTEGER DEFAULT 0,
         type TEXT DEFAULT 'action',
-        sponsorContactId INTEGER,
-        sponseeContactId INTEGER,
-        contactId INTEGER,
-        sponsorId INTEGER,
-        sponsorName TEXT,
-        sponseeId INTEGER,
-        sponseeName TEXT,
+        contactId INTEGER, -- References contacts.id
+        personId INTEGER, -- References people.id (for direct person association)
         createdAt TEXT DEFAULT CURRENT_TIMESTAMP,
         updatedAt TEXT DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (sponsorContactId) REFERENCES sponsor_contacts(id),
-        FOREIGN KEY (sponseeContactId) REFERENCES sponsee_contacts(id)
+        FOREIGN KEY (contactId) REFERENCES contacts(id),
+        FOREIGN KEY (personId) REFERENCES people(id)
       )
     `
   });
 
-  // Create sponsors table
+  // Create simplified sponsors table (references people)
   await sqlite.execute({
     database: DB_NAME,
     statements: `
       CREATE TABLE IF NOT EXISTS sponsors (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         userId TEXT DEFAULT 'default_user',
-        name TEXT,
-        lastName TEXT,
-        phoneNumber TEXT,
-        email TEXT,
-        sobrietyDate TEXT,
+        personId INTEGER NOT NULL,
+        startDate TEXT,
+        status TEXT DEFAULT 'active', -- 'active', 'former'
         notes TEXT,
-        sponsorType TEXT DEFAULT 'sponsor',
         createdAt TEXT DEFAULT CURRENT_TIMESTAMP,
-        updatedAt TEXT DEFAULT CURRENT_TIMESTAMP
+        updatedAt TEXT DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (personId) REFERENCES people(id)
       )
     `
   });
 
-  // Create sponsees table
+  // Create simplified sponsees table (references people)
   await sqlite.execute({
     database: DB_NAME,
     statements: `
       CREATE TABLE IF NOT EXISTS sponsees (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         userId TEXT DEFAULT 'default_user',
-        name TEXT,
-        lastName TEXT,
-        phoneNumber TEXT,
-        email TEXT,
-        sobrietyDate TEXT,
+        personId INTEGER NOT NULL,
+        startDate TEXT,
+        status TEXT DEFAULT 'active',
         notes TEXT,
-        sponseeType TEXT DEFAULT 'sponsee',
         createdAt TEXT DEFAULT CURRENT_TIMESTAMP,
-        updatedAt TEXT DEFAULT CURRENT_TIMESTAMP
+        updatedAt TEXT DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (personId) REFERENCES people(id)
       )
     `
   });
@@ -488,47 +486,7 @@ async function createTables(sqlite) {
     // Column already exists, ignore error
   }
 
-  try {
-    await sqlite.execute({
-      database: DB_NAME,
-      statements: `ALTER TABLE action_items ADD COLUMN sponsorName TEXT;`
-    });
-    console.log('[ sqliteLoader.js ] Added sponsorName column to action_items');
-  } catch (error) {
-    // Column already exists, ignore error
-  }
-
-  try {
-    await sqlite.execute({
-      database: DB_NAME,
-      statements: `ALTER TABLE action_items ADD COLUMN contactId INTEGER;`
-    });
-    console.log('[ sqliteLoader.js ] Added contactId column to action_items');
-  } catch (error) {
-    // Column already exists, ignore error
-  }
-
-  try {
-    await sqlite.execute({
-      database: DB_NAME,
-      statements: `ALTER TABLE action_items ADD COLUMN sponseeId INTEGER;`
-    });
-    console.log('[ sqliteLoader.js ] Added sponseeId column to action_items');
-  } catch (error) {
-    // Column already exists, ignore error
-  }
-
-  try {
-    await sqlite.execute({
-      database: DB_NAME,
-      statements: `ALTER TABLE action_items ADD COLUMN sponseeName TEXT;`
-    });
-    console.log('[ sqliteLoader.js ] Added sponseeName column to action_items');
-  } catch (error) {
-    // Column already exists, ignore error
-  }
-
-  console.log('[ sqliteLoader.js ] All tables created with proper relationships and missing columns added');
+  console.log('[ sqliteLoader.js ] All tables created with unified people + contacts architecture');
 }
 
 async function resetDatabase(sqlite) {
@@ -539,15 +497,18 @@ async function resetDatabase(sqlite) {
       'users', 
       'activities', 
       'meetings', 
+      'people',         // New unified address book
+      'contacts',       // New unified contact records
+      'action_items', 
+      'sponsors',       // Simplified sponsors table
+      'sponsees',       // Simplified sponsees table
+      // Legacy tables to remove
       'sponsor_contacts', 
       'sponsee_contacts', 
-      'action_items', 
-      'sponsors', 
-      'sponsees',
-      'sponsor_contact_details', // Additional table that might exist
-      'contact_details',         // Alternative name
-      'todos',                   // In case todo items exist separately
-      'preferences'              // User preferences table
+      'sponsor_contact_details',
+      'contact_details',
+      'todos',
+      'preferences'
     ];
     
     // First, get actual table names from database to ensure we drop everything
