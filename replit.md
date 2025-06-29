@@ -97,6 +97,15 @@ The Spiritual Condition Tracker is a comprehensive mobile application designed f
 5. TestFlight deployment for user testing
 
 ## Changelog
+- June 29, 2025: **NEW FEATURE** - Added comprehensive Contacts component for full address book functionality
+  - **NEW: Contacts navigation tab** - Added between Meetings and Sponsorship tabs in bottom navigation
+  - **NEW: Full address book interface** - Manage all contacts beyond just sponsors/sponsees (friends, family, AA members, professionals)
+  - **NEW: Relationship categorization** - Filter contacts by relationship type with dedicated tabs
+  - **NEW: Contact recording system** - Log interactions with any contact (calls, meetings, coffee, service work)
+  - **NEW: Unified database integration** - Uses same people + contacts tables as sponsor/sponsee system
+  - **ENHANCED: Navigation structure** - Updated BottomNavBar with Contacts icon and routing
+  - Contact management supports: add/edit/delete contacts, track contact history, relationship-based filtering
+  - Integrates seamlessly with existing unified people + contacts database architecture
 - June 29, 2025: **CRITICAL FIX** - Fixed database table errors in unified architecture
   - **FIXED: "no such table: sponsee_contacts" errors** - Updated DatabaseService to use unified contacts table
   - **FIXED: getAllSponseeContacts method** - Now queries unified people + contacts tables instead of old sponsee_contacts

@@ -23,8 +23,9 @@ The Spiritual Condition Tracker is a comprehensive mobile application designed s
 - **Spiritual Fitness Scoring**: Algorithmic calculation of spiritual wellness based on recovery activities
 - **Comprehensive Activity Tracking**: Prayer, meditation, literature study, meetings, and sponsor contacts
 - **Meeting Management**: Schedule tracking with QR code sharing capabilities
-- **Sponsor Network**: Bidirectional sponsor/sponsee relationship management
-- **Action Item Tracking**: Goal setting and progress monitoring
+- **Unified Contact System**: Complete address book for sponsors, sponsees, friends, family, and professionals
+- **Sponsor Network**: Bidirectional sponsor/sponsee relationship management with contact tracking
+- **Action Item Tracking**: Goal setting and progress monitoring with sponsor assignments
 - **Privacy-First Design**: Local data storage with optional sharing features
 
 ---
@@ -158,27 +159,43 @@ Total Score = Base Score + Activity Points + Consistency Points
 - **Privacy Controls**: Select which information to include in shared codes
 - **Batch Generation**: Create multiple QR codes for different purposes
 
-### 4. Sponsor/Sponsee Network
+### 4. Unified Contact Management System
 
-#### Relationship Management
-- **Bidirectional Contacts**: Manage both sponsor and sponsee relationships
-- **Contact Profiles**: Detailed information including recovery milestones
-- **Communication History**: Track all interactions and conversations
-- **Shared Activities**: View joint activities and progress
+#### Complete Address Book
+- **Relationship Categories**: Sponsors, sponsees, AA members, friends, family, professionals
+- **Contact Profiles**: Comprehensive contact information with recovery milestones
+- **Interaction Tracking**: Log phone calls, meetings, texts, coffee meetings, service work
+- **Relationship Filtering**: Tabbed interface to filter contacts by relationship type
+- **Contact History**: Complete timeline of all interactions with each contact
+
+#### Contact Features
+- **Add/Edit Contacts**: Full contact management with relationship categorization
+- **Contact Records**: Track duration, type, and notes for each interaction
+- **Quick Actions**: Fast access to add contact records, edit details, or delete contacts
+- **Integration**: Seamlessly works with unified people + contacts database architecture
+- **Privacy Controls**: Manage visibility and sharing of contact information
+
+### 5. Sponsor/Sponsee Network
+
+#### Advanced Relationship Management
+- **Bidirectional Contacts**: Manage both sponsor and sponsee relationships within unified contact system
+- **Specialized Workflows**: Enhanced sponsor/sponsee specific features beyond general contacts
+- **Communication History**: Track all sponsor-specific interactions and conversations
+- **Shared Activities**: View joint activities and progress with sponsors/sponsees
 
 #### Sponsor Dashboard
-- **Sponsee Overview**: Quick view of all sponsees' progress
-- **Activity Monitoring**: Track sponsee spiritual fitness scores
-- **Action Item Management**: Create and assign tasks to sponsees
-- **Communication Tools**: Built-in messaging and calling features
+- **Sponsee Overview**: Quick view of all sponsees' progress and activities
+- **Activity Monitoring**: Track sponsee spiritual fitness scores and trends
+- **Action Item Management**: Create and assign tasks to sponsees with due dates
+- **Contact Integration**: Access full contact history and interaction records
 
 #### Sponsee Features
-- **Sponsor Check-ins**: Regular progress reporting
+- **Sponsor Check-ins**: Regular progress reporting with detailed activity logs
 - **Assigned Tasks**: View and complete sponsor-assigned action items
-- **Progress Sharing**: Optional sharing of spiritual fitness data
-- **Accountability Tools**: Reminders and milestone tracking
+- **Progress Sharing**: Optional sharing of spiritual fitness data and activity logs
+- **Accountability Tools**: Reminders and milestone tracking with sponsor visibility
 
-### 5. Action Item System
+### 6. Action Item System
 
 #### Task Management
 - **Goal Setting**: Create specific, measurable action items
@@ -192,7 +209,7 @@ Total Score = Base Score + Activity Points + Consistency Points
 - **Service Commitments**: AA service work and responsibilities
 - **Literature Work**: Step work and reading assignments
 
-### 6. Profile Management
+### 7. Profile Management
 
 #### Personal Information
 - **Basic Details**: Name, contact information, sobriety date
