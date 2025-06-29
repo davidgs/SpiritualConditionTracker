@@ -1,0 +1,81 @@
+⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO sponsors (userId, name, lastName, phoneNumber, email, sobrietyDate, notes, sponsorType) VALUES ('1', 'John', 'Smith', '+1 (919) 555-0123', 'john.smith@email.com', '2018-03-15', 'My primary sponsor, very helpful with step work', 'sponsor');
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  To Native ->  CapacitorSQLite query 124901419
+⚡️  TO JS {"values":[{"ios_columns":["lastId"]},{"lastId":1}]}
+⚡️  [log] - [ sqliteLoader.js ] Created sponsors item with ID: 1
+⚡️  To Native ->  CapacitorSQLite execute 124901420
+⚡️  [log] - [ testDataGenerator ] Created sponsor: John Smith
+⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO sponsors (userId, name, lastName, phoneNumber, email, sobrietyDate, notes, sponsorType) VALUES ('1', 'Sarah', 'Johnson', '+1 (919) 555-0456', 'sarah.j@email.com', '2015-07-22', 'Great listener, helps with literature study', 'sponsor');
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  To Native ->  CapacitorSQLite query 124901421
+⚡️  TO JS {"values":[{"ios_columns":["lastId"]},{"lastId":2}]}
+⚡️  To Native ->  CapacitorSQLite execute 124901422
+⚡️  [log] - [ sqliteLoader.js ] Created sponsors item with ID: 2
+⚡️  [log] - [ testDataGenerator ] Created sponsor: Sarah Johnson
+⚡️  [log] - [ testDataGenerator ] Creating sponsees through app data functions...
+⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO sponsees (userId, name, lastName, phoneNumber, email, sobrietyDate, notes, sponseeType) VALUES ('1', 'Mike', 'Wilson', '+1 (919) 555-0789', 'mike.w@email.com', '2023-01-10', 'Working on step 4, making good progress', 'sponsee');
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  To Native ->  CapacitorSQLite query 124901423
+⚡️  TO JS {"values":[{"ios_columns":["lastId"]},{"lastId":1}]}
+⚡️  [log] - [ sqliteLoader.js ] Created sponsees item with ID: 1
+⚡️  [log] - [ testDataGenerator ] Created sponsee: Mike Wilson
+⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO sponsees (userId, name, lastName, phoneNumber, email, sobrietyDate, notes, sponseeType) VALUES ('1', 'Jennifer', 'Davis', '+1 (919) 555-0321', 'jen.davis@email.com', '2023-09-05', 'New to the program, eager to learn', 'sponsee');
+⚡️  To Native ->  CapacitorSQLite execute 124901424
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  To Native ->  CapacitorSQLite query 124901425
+⚡️  TO JS {"values":[{"ios_columns":["lastId"]},{"lastId":2}]}
+⚡️  [log] - [ sqliteLoader.js ] Created sponsees item with ID: 2
+⚡️  [log] - [ testDataGenerator ] Created sponsee: Jennifer Davis
+⚡️  [log] - [ testDataGenerator ] Creating sponsee contacts...
+⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO sponsee_contacts (userId, sponseeId, type, date, note, topic, duration) VALUES ('1', 1, 'call', '2025-06-28T15:02:50.438Z', 'Checked in on daily routine and step 3 work', 'Daily Check-in', 20);
+⚡️  To Native ->  CapacitorSQLite execute 124901426
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  To Native ->  CapacitorSQLite query 124901427
+⚡️  TO JS {"values":[{"ios_columns":["lastId"]},{"lastId":1}]}
+⚡️  [log] - [ sqliteLoader.js ] Created sponsee_contacts item with ID: 1
+⚡️  [log] - [ testDataGenerator ] Created sponsee contact with topic: Daily Check-in
+⚡️  To Native ->  CapacitorSQLite execute 124901428
+⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO sponsee_contacts (userId, sponseeId, type, date, note, topic, duration) VALUES ('1', 2, 'text', '2025-06-26T15:02:50.438Z', 'Sent encouragement and meeting suggestions', 'Support', 5);
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  To Native ->  CapacitorSQLite query 124901429
+⚡️  TO JS {"values":[{"ios_columns":["lastId"]},{"lastId":2}]}
+⚡️  [log] - [ sqliteLoader.js ] Created sponsee_contacts item with ID: 2
+⚡️  [log] - [ testDataGenerator ] Created sponsee contact with topic: Support
+⚡️  [log] - [ testDataGenerator ] Creating sponsor contacts with action items...
+⚡️  [log] - [ sponsor-database ] Adding sponsor contact: {"userId":"1","sponsorId":1,"type":"call","date":"2025-06-27T15:02:50.442Z","note":"Discussed step 5 work and amends list","topic":"Step Work","duration":30}
+⚡️  [log] - [ sponsor-database ] With action items: []
+⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO sponsor_contacts (userId, sponsorId, type, date, note, topic, duration) VALUES ('1', 1, 'call', '2025-06-27T15:02:50.442Z', 'Discussed step 5 work and amends list', 'Step Work', 30);
+⚡️  To Native ->  CapacitorSQLite execute 124901430
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  To Native ->  CapacitorSQLite query 124901431
+⚡️  TO JS {"values":[{"ios_columns":["lastId"]},{"lastId":1}]}
+⚡️  [log] - [ sqliteLoader.js ] Created sponsor_contacts item with ID: 1
+⚡️  [log] - [ sponsor-database ] Sponsor contact saved with ID: 1
+⚡️  [log] - [ testDataGenerator ] Created sponsor contact with topic: Step Work
+⚡️  [log] - [ sponsor-database ] Adding sponsor contact: {"userId":"1","sponsorId":1,"type":"meeting","date":"2025-06-24T15:02:50.442Z","note":"Met at coffee shop to review progress","topic":"Progress Review","duration":60}
+⚡️  [log] - [ sponsor-database ] With action items: []
+⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO sponsor_contacts (userId, sponsorId, type, date, note, topic, duration) VALUES ('1', 1, 'meeting', '2025-06-24T15:02:50.442Z', 'Met at coffee shop to review progress', 'Progress Review', 60);
+⚡️  To Native ->  CapacitorSQLite execute 124901432
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  To Native ->  CapacitorSQLite query 124901433
+⚡️  TO JS {"values":[{"ios_columns":["lastId"]},{"lastId":2}]}
+⚡️  [log] - [ sqliteLoader.js ] Created sponsor_contacts item with ID: 2
+⚡️  [log] - [ sponsor-database ] Sponsor contact saved with ID: 2
+⚡️  [log] - [ testDataGenerator ] Created sponsor contact with topic: Progress Review
+⚡️  [log] - [ sponsor-database ] Adding sponsor contact: {"userId":"1","sponsorId":1,"type":"call","date":"2025-06-26T15:02:50.442Z","note":"Discussed step work and assigned tasks","topic":"Step Work Assignment","duration":45}
+⚡️  To Native ->  CapacitorSQLite execute 124901434
+⚡️  [log] - [ sponsor-database ] With action items: [{"title":"Complete step 4 inventory","text":"Finish writing moral inventory as discussed","notes":"Focus on resentments and fears section","dueDate":"2025-07-06T15:02:50.442Z","completed":false,"type":"todo"},{"title":"Read pages 85-88 in Big Book","text":"Study the amends section thoroughly","notes":"Take notes on what resonates","dueDate":"2025-07-02T15:02:50.442Z","completed":false,"type":"todo"}]
+⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO sponsor_contacts (userId, sponsorId, type, date, note, topic, duration) VALUES ('1', 1, 'call', '2025-06-26T15:02:50.442Z', 'Discussed step work and assigned tasks', 'Step Work Assignment', 45);
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  To Native ->  CapacitorSQLite query 124901435
+⚡️  TO JS {"values":[{"ios_columns":["lastId"]},{"lastId":3}]}
+⚡️  [log] - [ sqliteLoader.js ] Created sponsor_contacts item with ID: 3
+⚡️  [log] - [ sponsor-database ] Sponsor contact saved with ID: 3
+⚡️  [log] - [ sponsor-database ] Saving action item with sponsorContactId: {"userId":"1","title":"Complete step 4 inventory","text":"Finish writing moral inventory as discussed","notes":"Focus on resentments and fears section","dueDate":"2025-07-06T15:02:50.442Z","completed":0,"deleted":0,"type":"sponsor_action_item","sponsorContactId":3,"contactId":3}
+⚡️  [log] - [ DatabaseService ] Adding action item: {"userId":"1","title":"Complete step 4 inventory","text":"Finish writing moral inventory as discussed","notes":"Focus on resentments and fears section","dueDate":"2025-07-06T15:02:50.442Z","completed":0,"deleted":0,"type":"sponsor_action_item","sponsorContactId":3,"contactId":3}
+⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO action_items (userId, title, text, notes, dueDate, completed, deleted, type, sponsorContactId, contactId) VALUES ('1', 'Complete step 4 inventory', 'Finish writing moral inventory as discussed', 'Focus on resentments and fears section', '2025-07-06T15:02:50.442Z', 0, 0, 'sponsor_action_item', 3, 3);
+⚡️  To Native ->  CapacitorSQLite execute 124901436
+ERROR MESSAGE:  {"message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: table action_items has no column named userId","errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: table action_items has no column named userId"}
+⚡️  [error] - {"message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: table action_items has no column named userId","errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: table action_items has no column named userId"}
+⚡️  [error] - [ sponsor-database ] Error saving action items: {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: table action_items has no column named userId"}
+⚡️  [log] - [ testDataGenerator ] Created sponsor contact with topic: Step Work Assignment

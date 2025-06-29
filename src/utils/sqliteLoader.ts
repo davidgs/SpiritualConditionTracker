@@ -3,6 +3,8 @@
  * iOS-only implementation using CapacitorSQLite
  */
 
+import { TABLE_DEFINITIONS } from './tables';
+
 // Default database name for consistency
 const DB_NAME = 'spiritual_condition_tracker.db';
 
@@ -422,7 +424,7 @@ async function createTables(sqlite) {
     `
   });
 
-  // Create action_items table with foreign keys to both contact types
+  // Create action_items table - matches types/database.ts ActionItem interface exactly
   await sqlite.execute({
     database: DB_NAME,
     statements: `

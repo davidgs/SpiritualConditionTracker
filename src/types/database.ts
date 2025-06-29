@@ -84,7 +84,7 @@ export interface LegacySponsorContact extends BaseEntity {
   note: string;
 }
 
-// Action Item interface - matches action_items table schema exactly
+// Action Item interface - matches action_items table schema exactly from tables.ts
 export interface ActionItem extends BaseEntity {
   title: string;
   text?: string;
@@ -95,12 +95,12 @@ export interface ActionItem extends BaseEntity {
   type: ActionItemType; // Default 'action'
   sponsorContactId?: number; // Foreign key to sponsor_contacts.id
   sponseeContactId?: number; // Foreign key to sponsee_contacts.id
-  // Legacy fields for backward compatibility
-  contactId?: number;
+  contactId?: number; // Foreign key to contact (general)
   sponsorId?: number;
   sponsorName?: string;
   sponseeId?: number;
   sponseeName?: string;
+  // NOTE: No userId field - action items are linked via contacts, not directly to users
 }
 
 // Sponsors table interface - matches sponsors table schema exactly  

@@ -53,7 +53,6 @@ export async function addSponsorContact(contactData: Omit<SponsorContact, 'id' |
         for (const actionItem of actionItems) {
           // Save the action item with direct relationship to contact
           const actionItemData = {
-            userId: String(contactData.userId), // Required field
             title: actionItem.title,
             text: actionItem.text || actionItem.title,
             notes: actionItem.notes || '',
