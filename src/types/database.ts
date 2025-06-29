@@ -229,8 +229,8 @@ export interface Meeting extends BaseEntity {
 }
 
 
-// Contact interface for sponsor/sponsee contacts
-export interface Contact extends BaseEntity {
+// Legacy Contact interface (to be removed after migration)
+export interface LegacyContact extends BaseEntity {
   name?: string;
   lastName?: string;
   phoneNumber?: string;

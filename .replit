@@ -14,16 +14,16 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "Server"
+args = "WebpackDev"
 
 
 [[workflows.workflow]]
-name = "Server"
+name = "WebpackDev"
 author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "npm run build && npm run serve"
+args = "npm run dev"
 waitForPort = 5000
 
 [[workflows.workflow]]
@@ -31,7 +31,7 @@ name = "StaticServer"
 author = "agent"
 
 [deployment]
-run = ["sh", "-c", "npm run build && npm run serve"]
+run = ["sh", "-c", "npm run dev"]
 
 [[ports]]
 localPort = 5000
