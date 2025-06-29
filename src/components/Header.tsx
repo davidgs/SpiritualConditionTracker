@@ -102,7 +102,7 @@ function Header({ title, menuOpen, setMenuOpen, isMobile, onNavigate, autoStartT
           }}
           aria-label="Start guided tour"
         >
-          <i className="fas fa-question-circle" style={{ fontSize: '1.1rem' }}></i>
+          ❓
         </IconButton>
 
         {/* Info Button */}
@@ -118,7 +118,7 @@ function Header({ title, menuOpen, setMenuOpen, isMobile, onNavigate, autoStartT
           }}
           aria-label="App information"
         >
-          <i className="fas fa-info-circle" style={{ fontSize: '1.1rem' }}></i>
+          ℹ️
         </IconButton>
 
         {/* Theme Toggle Button */}
