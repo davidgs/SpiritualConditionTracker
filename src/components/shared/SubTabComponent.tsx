@@ -94,7 +94,7 @@ export default function SubTabComponent({
   // Create tab items for the TabComponent
   const tabItems = persons.map((person, index) => ({
     id: person.id || index,
-    label: `${person.name} ${person.lastName || ''}`.trim(),
+    label: `${person.name || 'Unknown'} ${person.lastName || ''}`.trim(),
     content: (
       <PersonPage
         person={person}

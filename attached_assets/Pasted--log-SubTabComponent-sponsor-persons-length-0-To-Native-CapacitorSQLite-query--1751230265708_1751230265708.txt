@@ -1,0 +1,57 @@
+⚡️  [log] - SubTabComponent sponsor: persons: [] length: 0
+⚡️  To Native ->  CapacitorSQLite query 16092538
+⚡️  To Native ->  CapacitorSQLite query 16092539
+⚡️  To Native ->  CapacitorSQLite query 16092540
+⚡️  To Native ->  CapacitorSQLite query 16092541
+⚡️  TO JS {"values":[{"ios_columns":["id","userId","personId","startDate","status","notes","createdAt","updatedAt"]},{"userId":"default_user","updatedAt":"2025-06-29 20:47:34","notes":"Current sponsor, meeting weekly","personId":1,"id":1,"startDate":"2024-01-15","st
+⚡️  TO JS {"values":[{"ios_columns":["id","userId","personId","startDate","status","notes","createdAt","updatedAt"]},{"userId":"default_user","updatedAt":"2025-06-29 20:47:34","notes":"Working through Step 3","personId":3,"id":1,"startDate":"2024-02-01","status":"ac
+⚡️  TO JS {"values":[{"ios_columns":["id","userId","personId","contactType","date","note","topic","duration","location","createdAt","updatedAt"]},{"userId":"default_user","contactType":"call","topic":"Step Work","updatedAt":"2025-06-29 20:47:34","duration":30,"perso
+⚡️  TO JS {"values":[{"ios_columns":["id","userId","personId","contactType","date","note","topic","duration","location","createdAt","updatedAt"]},{"contactType":"call","note":"Weekly check-in call, discussed Step 4 progress","duration":30,"userId":"default_user","up
+⚡️  To Native ->  CapacitorSQLite query 16092542
+⚡️  To Native ->  CapacitorSQLite query 16092543
+⚡️  TO JS {"values":[{"ios_columns":["id","userId","firstName","lastName","phoneNumber","email","sobrietyDate","homeGroup","notes","relationship","isActive","createdAt","updatedAt"]},{"updatedAt":"2025-06-29 20:47:34","notes":"Great sponsor, very supportive","firstN
+⚡️  TO JS {"values":[{"ios_columns":["id","userId","firstName","lastName","phoneNumber","email","sobrietyDate","homeGroup","notes","relationship","isActive","createdAt","updatedAt"]},{"updatedAt":"2025-06-29 20:47:34","createdAt":"2025-06-29 20:47:34","notes":"Great
+⚡️  [log] - SubTabComponent sponsor: persons: [{"userId":"default_user","updatedAt":"2025-06-29 20:47:34","notes":"Current sponsor, meeting weekly","personId":1,"id":1,"startDate":"2024-01-15","status":"active","createdAt":"2025-06-29 20:47:34"},{"updatedAt":"2025-06-29 20:47:34","userId":"default_user","personId":2,"status":"former","startDate":"2023-06-01","createdAt":"2025-06-29 20:47:34","id":2,"notes":"Former sponsor, moved to different city"}] length: 2
+⚡️  [log] - [getPersonContacts] Found 0 contacts for sponsor 1
+⚡️  [log] - [getPersonContacts] Found 0 contacts for sponsor 2
+⚡️  [log] - [ DatabaseService ] Converted unified contacts to legacy sponsor contacts: 2
+⚡️  [log] - [loadSponsorContacts] Loaded sponsor contacts using unified architecture: 2
+⚡️  [log] - [ DatabaseService ] Converted unified contacts to legacy sponsee contacts: 2
+⚡️  [log] - [loadSponseeContacts] Loaded sponsee contacts using unified architecture: 2
+⚡️  [log] - SubTabComponent sponsor: persons: [{"userId":"default_user","updatedAt":"2025-06-29 20:47:34","notes":"Current sponsor, meeting weekly","personId":1,"id":1,"startDate":"2024-01-15","status":"active","createdAt":"2025-06-29 20:47:34"},{"updatedAt":"2025-06-29 20:47:34","userId":"default_user","personId":2,"status":"former","startDate":"2023-06-01","createdAt":"2025-06-29 20:47:34","id":2,"notes":"Former sponsor, moved to different city"}] length: 2
+⚡️  [log] - [getPersonContacts] sponsor personId: 1, contact sponsorId: 1, match: true
+⚡️  [log] - [getPersonContacts] sponsor personId: 1, contact sponsorId: 1, match: true
+⚡️  [log] - [getPersonContacts] Found 2 contacts for sponsor 1
+⚡️  [log] - [getPersonContacts] sponsor personId: 2, contact sponsorId: 1, match: false
+⚡️  [log] - [getPersonContacts] sponsor personId: 2, contact sponsorId: 1, match: false
+⚡️  [log] - [getPersonContacts] Found 0 contacts for sponsor 2
+⚡️  [log] - [ActionItemsList] Loading action items for contact 1, type: sponsor
+⚡️  [log] - [ActionItemsList] Total action items in state: 4
+⚡️  [log] - [ActionItemsList] All action items: [{"title":"Complete Step 4 inventory by next week","text":"Work on Step 4 fearless moral inventory","type":"action","id":1,"updatedAt":"2025-06-29 20:47:34","personId":3,"deleted":0,"notes":"Focus on resentments first, then fears","completed":0,"dueDate":null,"createdAt":"2025-06-29 20:47:34","contactId":3},{"notes":"Prepare for inventory discussion","deleted":0,"title":"Read pages 86-88 in Big Book","type":"action","contactId":4,"completed":0,"personId":4,"text":"Study Step 4 instructions","createdAt":"2025-06-29 20:47:34","updatedAt":"2025-06-29 20:47:34","id":2,"dueDate":null},{"dueDate":"2025-01-05","deleted":0,"text":"Weekly sponsor check-in","type":"action","createdAt":"2025-06-29 20:47:34","updatedAt":"2025-06-29 20:47:34","contactId":null,"title":"Call sponsor this week","personId":1,"id":3,"notes":"Discuss Step 5 preparation","completed":0},{"updatedAt":"2025-06-29 20:47:34","text":"Regular home group attendance","dueDate":null,"title":"Attend home group meeting","personId":5,"completed":1,"id":4,"notes":"Thursday 7pm meeting","deleted":0,"createdAt":"2025-06-29 20:47:34","type":"action","contactId":null}]
+⚡️  [log] - [ActionItemsList] Found 0 action items for contact 1
+⚡️  [log] - [ActionItemsList] Loading action items for contact 2, type: sponsor
+⚡️  [log] - [ActionItemsList] Total action items in state: 4
+⚡️  [log] - [ActionItemsList] All action items: [{"title":"Complete Step 4 inventory by next week","text":"Work on Step 4 fearless moral inventory","type":"action","id":1,"updatedAt":"2025-06-29 20:47:34","personId":3,"deleted":0,"notes":"Focus on resentments first, then fears","completed":0,"dueDate":null,"createdAt":"2025-06-29 20:47:34","contactId":3},{"notes":"Prepare for inventory discussion","deleted":0,"title":"Read pages 86-88 in Big Book","type":"action","contactId":4,"completed":0,"personId":4,"text":"Study Step 4 instructions","createdAt":"2025-06-29 20:47:34","updatedAt":"2025-06-29 20:47:34","id":2,"dueDate":null},{"dueDate":"2025-01-05","deleted":0,"text":"Weekly sponsor check-in","type":"action","createdAt":"2025-06-29 20:47:34","updatedAt":"2025-06-29 20:47:34","contactId":null,"title":"Call sponsor this week","personId":1,"id":3,"notes":"Discuss Step 5 preparation","completed":0},{"updatedAt":"2025-06-29 20:47:34","text":"Regular home group attendance","dueDate":null,"title":"Attend home group meeting","personId":5,"completed":1,"id":4,"notes":"Thursday 7pm meeting","deleted":0,"createdAt":"2025-06-29 20:47:34","type":"action","contactId":null}]
+⚡️  [log] - [ActionItemsList] Found 0 action items for contact 2
+⚡️  [log] - SubTabComponent sponsor: persons: [{"userId":"default_user","updatedAt":"2025-06-29 20:47:34","notes":"Current sponsor, meeting weekly","personId":1,"id":1,"startDate":"2024-01-15","status":"active","createdAt":"2025-06-29 20:47:34"},{"updatedAt":"2025-06-29 20:47:34","userId":"default_user","personId":2,"status":"former","startDate":"2023-06-01","createdAt":"2025-06-29 20:47:34","id":2,"notes":"Former sponsor, moved to different city"}] length: 2
+⚡️  [log] - [getPersonContacts] sponsor personId: 1, contact sponsorId: 1, match: true
+⚡️  [log] - [getPersonContacts] sponsor personId: 1, contact sponsorId: 1, match: true
+⚡️  [log] - [getPersonContacts] Found 2 contacts for sponsor 1
+⚡️  [log] - [getPersonContacts] sponsor personId: 2, contact sponsorId: 1, match: false
+⚡️  [log] - [getPersonContacts] sponsor personId: 2, contact sponsorId: 1, match: false
+⚡️  [log] - [getPersonContacts] Found 0 contacts for sponsor 2
+⚡️  [log] - SubTabComponent sponsor: persons: [{"userId":"default_user","updatedAt":"2025-06-29 20:47:34","notes":"Current sponsor, meeting weekly","personId":1,"id":1,"startDate":"2024-01-15","status":"active","createdAt":"2025-06-29 20:47:34"},{"updatedAt":"2025-06-29 20:47:34","userId":"default_user","personId":2,"status":"former","startDate":"2023-06-01","createdAt":"2025-06-29 20:47:34","id":2,"notes":"Former sponsor, moved to different city"}] length: 2
+⚡️  [log] - [getPersonContacts] sponsor personId: 1, contact sponsorId: 1, match: true
+⚡️  [log] - [getPersonContacts] sponsor personId: 1, contact sponsorId: 1, match: true
+⚡️  [log] - [getPersonContacts] Found 2 contacts for sponsor 1
+⚡️  [log] - [getPersonContacts] sponsor personId: 2, contact sponsorId: 1, match: false
+⚡️  [log] - [getPersonContacts] sponsor personId: 2, contact sponsorId: 1, match: false
+⚡️  [log] - [getPersonContacts] Found 0 contacts for sponsor 2
+⚡️  [log] - [ActionItemsList] Loading action items for contact 1, type: sponsor
+⚡️  [log] - [ActionItemsList] Total action items in state: 4
+⚡️  [log] - [ActionItemsList] All action items: [{"title":"Complete Step 4 inventory by next week","text":"Work on Step 4 fearless moral inventory","type":"action","id":1,"updatedAt":"2025-06-29 20:47:34","personId":3,"deleted":0,"notes":"Focus on resentments first, then fears","completed":0,"dueDate":null,"createdAt":"2025-06-29 20:47:34","contactId":3},{"notes":"Prepare for inventory discussion","deleted":0,"title":"Read pages 86-88 in Big Book","type":"action","contactId":4,"completed":0,"personId":4,"text":"Study Step 4 instructions","createdAt":"2025-06-29 20:47:34","updatedAt":"2025-06-29 20:47:34","id":2,"dueDate":null},{"dueDate":"2025-01-05","deleted":0,"text":"Weekly sponsor check-in","type":"action","createdAt":"2025-06-29 20:47:34","updatedAt":"2025-06-29 20:47:34","contactId":null,"title":"Call sponsor this week","personId":1,"id":3,"notes":"Discuss Step 5 preparation","completed":0},{"updatedAt":"2025-06-29 20:47:34","text":"Regular home group attendance","dueDate":null,"title":"Attend home group meeting","personId":5,"completed":1,"id":4,"notes":"Thursday 7pm meeting","deleted":0,"createdAt":"2025-06-29 20:47:34","type":"action","contactId":null}]
+⚡️  [log] - [ActionItemsList] Found 0 action items for contact 1
+⚡️  [log] - [ActionItemsList] Loading action items for contact 2, type: sponsor
+⚡️  [log] - [ActionItemsList] Total action items in state: 4
+⚡️  [log] - [ActionItemsList] All action items: [{"title":"Complete Step 4 inventory by next week","text":"Work on Step 4 fearless moral inventory","type":"action","id":1,"updatedAt":"2025-06-29 20:47:34","personId":3,"deleted":0,"notes":"Focus on resentments first, then fears","completed":0,"dueDate":null,"createdAt":"2025-06-29 20:47:34","contactId":3},{"notes":"Prepare for inventory discussion","deleted":0,"title":"Read pages 86-88 in Big Book","type":"action","contactId":4,"completed":0,"personId":4,"text":"Study Step 4 instructions","createdAt":"2025-06-29 20:47:34","updatedAt":"2025-06-29 20:47:34","id":2,"dueDate":null},{"dueDate":"2025-01-05","deleted":0,"text":"Weekly sponsor check-in","type":"action","createdAt":"2025-06-29 20:47:34","updatedAt":"2025-06-29 20:47:34","contactId":null,"title":"Call sponsor this week","personId":1,"id":3,"notes":"Discuss Step 5 preparation","completed":0},{"updatedAt":"2025-06-29 20:47:34","text":"Regular home group attendance","dueDate":null,"title":"Attend home group meeting","personId":5,"completed":1,"id":4,"notes":"Thursday 7pm meeting","deleted":0,"createdAt":"2025-06-29 20:47:34","type":"action","contactId":null}]
+⚡️  [log] - [ActionItemsList] Found 0 action items for contact 2

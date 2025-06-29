@@ -44,7 +44,29 @@ export default function ActivityList({
       try {
         const databaseService = DatabaseService.getInstance();
         const sponsors = await databaseService.getAllSponsors(); // Get actual sponsors, not contacts
-        setSponsorContacts(sponsors);
+        
+        // Transform sponsors to SponsorData format by joining with people data
+        const allPeople = await databaseService.getAll('people');
+        const sponsorData: SponsorData[] = [];
+        for (const sponsor of sponsors) {
+          const person = allPeople.find((p: any) => p.id === sponsor.personId) as any;
+          if (person) {
+            sponsorData.push({
+              userId: sponsor.userId,
+              name: person.firstName || '',
+              lastName: person.lastName || '',
+              phoneNumber: person.phoneNumber || '',
+              email: person.email || '',
+              sobrietyDate: person.sobrietyDate || '',
+              homeGroup: person.homeGroup || '',
+              notes: sponsor.notes || '',
+              isActive: sponsor.status === 'active',
+              createdAt: sponsor.createdAt,
+              updatedAt: sponsor.updatedAt
+            });
+          }
+        }
+        setSponsorContacts(sponsorData);
         
         // Handle sponsee contacts if method exists
         try {
@@ -473,7 +495,7 @@ export default function ActivityList({
                 })
                 .map((activity, index) => {
                   // Handle action items (including sponsor and sponsee action items) with the new ActionItem component
-                  if (activity.type === 'action-item' || activity.type === 'sponsor_action_item' || activity.type === 'sponsee_action_item') {
+                  if (activity.type === 'action-item' || activity.type === 'Action_item' || activity.type === 'sponsor_action_item' || activity.type === 'sponsee_action_item') {
                     return (
                       <ActionItem
                         key={activity.id || `${activity.date}-${activity.type}-${index}`}
