@@ -10,7 +10,7 @@ import { Paper, Box, Typography, IconButton, Button } from '@mui/material';
 import { User, Activity, Meeting } from '../types/database';
 import { calculateSpiritualFitnessScore, getSpiritualFitnessBreakdown } from '../utils/SpiritualFitness';
 import DatabaseService from '../services/DatabaseService';
-import { createTestData } from '../utils/testDataGenerator';
+import { createUnifiedTestData } from '../utils/unifiedTestDataGenerator';
 import { useAppData } from '../contexts/AppDataContext';
 
 interface DashboardProps {
@@ -117,8 +117,8 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
 
     try {
       console.log('[ Dashboard ] Starting test data creation...');
-      const results = await createTestData(user.id, { addMeeting, addActivity });
-      console.log('[ Dashboard ] Test data creation completed:', results);
+      await createUnifiedTestData();
+      console.log('[ Dashboard ] Test data creation completed');
 
       // Reload all data to show new test data
       console.log('[ Dashboard ] Reloading all data after test data creation...');
@@ -127,7 +127,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
       await loadMeetings();
 
       // Show results to user
-      alert(`Test data created successfully!\n\nSponsors: ${results.sponsorsCreated}\nSponsees: ${results.sponseesCreated}\nSponsor Contacts: ${results.sponsorContactsCreated}\nSponsee Contacts: ${results.sponseeContactsCreated}\nAction Items: ${results.actionItemsCreated}\n\nCheck the Activity Log and Sponsor/Sponsee tabs to see the new data.`);
+      alert('Test data created successfully!\n\nCreated sponsors, sponsees, contacts, action items, and activities using the unified architecture.\n\nCheck the Activity Log and Sponsor/Sponsee tabs to see the new data.');
 
     } catch (error) {
       console.error('[ Dashboard ] Failed to create test data:', error);
