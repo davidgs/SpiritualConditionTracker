@@ -15,6 +15,11 @@ export interface TestDataResults {
 interface AppDataFunctions {
   addMeeting: (meeting: any) => Promise<any>;
   addActivity: (activity: any) => Promise<any>;
+  addSponsor: (sponsor: any) => Promise<any>;
+  addSponsee: (sponsee: any) => Promise<any>;
+  addSponsorContact: (contact: any) => Promise<any>;
+  addSponseeContact: (contact: any) => Promise<any>;
+  addActionItem: (actionItem: any) => Promise<any>;
 }
 
 export async function createTestData(userId: number | string, appDataFunctions: AppDataFunctions): Promise<TestDataResults> {
@@ -102,6 +107,186 @@ export async function createTestData(userId: number | string, appDataFunctions: 
     }
     
     console.log('[ testDataGenerator ] Total meetings created:', results.meetingsCreated);
+
+    // Create test sponsors
+    console.log('[ testDataGenerator ] Creating sponsors through app data functions...');
+    const sponsors = [
+      {
+        userId: userId.toString(),
+        name: 'John',
+        lastName: 'Smith',
+        phoneNumber: '+1 (919) 555-0123',
+        email: 'john.smith@email.com',
+        sobrietyDate: '2018-03-15',
+        notes: 'My primary sponsor, very helpful with step work',
+        sponsorType: 'sponsor'
+      },
+      {
+        userId: userId.toString(),
+        name: 'Sarah',
+        lastName: 'Johnson',
+        phoneNumber: '+1 (919) 555-0456',
+        email: 'sarah.j@email.com',
+        sobrietyDate: '2015-07-22',
+        notes: 'Great listener, helps with literature study',
+        sponsorType: 'sponsor'
+      }
+    ];
+
+    let createdSponsors = [];
+    for (const sponsor of sponsors) {
+      const savedSponsor = await appDataFunctions.addSponsor(sponsor);
+      if (savedSponsor) {
+        results.sponsorsCreated++;
+        createdSponsors.push(savedSponsor);
+        console.log('[ testDataGenerator ] Created sponsor:', sponsor.name, sponsor.lastName);
+      }
+    }
+
+    // Create test sponsees
+    console.log('[ testDataGenerator ] Creating sponsees through app data functions...');
+    const sponsees = [
+      {
+        userId: userId.toString(),
+        name: 'Mike',
+        lastName: 'Wilson',
+        phoneNumber: '+1 (919) 555-0789',
+        email: 'mike.w@email.com',
+        sobrietyDate: '2023-01-10',
+        notes: 'Working on step 4, making good progress',
+        sponseeType: 'sponsee'
+      },
+      {
+        userId: userId.toString(),
+        name: 'Jennifer',
+        lastName: 'Davis',
+        phoneNumber: '+1 (919) 555-0321',
+        email: 'jen.davis@email.com',
+        sobrietyDate: '2023-09-05',
+        notes: 'New to the program, eager to learn',
+        sponseeType: 'sponsee'
+      }
+    ];
+
+    let createdSponsees = [];
+    for (const sponsee of sponsees) {
+      const savedSponsee = await appDataFunctions.addSponsee(sponsee);
+      if (savedSponsee) {
+        results.sponseesCreated++;
+        createdSponsees.push(savedSponsee);
+        console.log('[ testDataGenerator ] Created sponsee:', sponsee.name, sponsee.lastName);
+      }
+    }
+
+    // Create sponsor contacts
+    if (createdSponsors.length > 0) {
+      console.log('[ testDataGenerator ] Creating sponsor contacts...');
+      const sponsorContacts = [
+        {
+          userId: userId.toString(),
+          sponsorId: createdSponsors[0].id,
+          type: 'call',
+          date: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+          note: 'Discussed step 5 work and amends list',
+          topic: 'Step Work',
+          duration: 30
+        },
+        {
+          userId: userId.toString(),
+          sponsorId: createdSponsors[0].id,
+          type: 'meeting',
+          date: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
+          note: 'Met at coffee shop to review progress',
+          topic: 'Progress Review',
+          duration: 60
+        }
+      ];
+
+      for (const contact of sponsorContacts) {
+        const savedContact = await appDataFunctions.addSponsorContact(contact);
+        if (savedContact) {
+          results.sponsorContactsCreated++;
+          console.log('[ testDataGenerator ] Created sponsor contact with topic:', contact.topic);
+        }
+      }
+    }
+
+    // Create sponsee contacts
+    if (createdSponsees.length > 0) {
+      console.log('[ testDataGenerator ] Creating sponsee contacts...');
+      const sponseeContacts = [
+        {
+          userId: userId.toString(),
+          sponseeId: createdSponsees[0].id,
+          type: 'call',
+          date: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
+          note: 'Checked in on daily routine and step 3 work',
+          topic: 'Daily Check-in',
+          duration: 20
+        },
+        {
+          userId: userId.toString(),
+          sponseeId: createdSponsees[1].id,
+          type: 'text',
+          date: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
+          note: 'Sent encouragement and meeting suggestions',
+          topic: 'Support',
+          duration: 5
+        }
+      ];
+
+      for (const contact of sponseeContacts) {
+        const savedContact = await appDataFunctions.addSponseeContact(contact);
+        if (savedContact) {
+          results.sponseeContactsCreated++;
+          console.log('[ testDataGenerator ] Created sponsee contact with topic:', contact.topic);
+        }
+      }
+    }
+
+    // Create action items
+    console.log('[ testDataGenerator ] Creating action items...');
+    const actionItems = [
+      {
+        title: 'Complete step 4 inventory',
+        text: 'Finish writing moral inventory as discussed',
+        notes: 'Focus on resentments and fears section',
+        dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+        completed: 0,
+        deleted: 0,
+        type: 'sponsor_action_item',
+        sponsorId: createdSponsors.length > 0 ? createdSponsors[0].id : null,
+        sponsorName: createdSponsors.length > 0 ? `${createdSponsors[0].name} ${createdSponsors[0].lastName}` : null
+      },
+      {
+        title: 'Read pages 85-88 in Big Book',
+        text: 'Study the amends section thoroughly',
+        notes: 'Take notes on what resonates',
+        dueDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(),
+        completed: 0,
+        deleted: 0,
+        type: 'sponsor_action_item',
+        sponsorId: createdSponsors.length > 0 ? createdSponsors[0].id : null,
+        sponsorName: createdSponsors.length > 0 ? `${createdSponsors[0].name} ${createdSponsors[0].lastName}` : null
+      },
+      {
+        title: 'Practice daily meditation',
+        text: 'Start with 10 minutes each morning',
+        notes: 'Use guided meditation app if helpful',
+        dueDate: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000).toISOString(),
+        completed: 0,
+        deleted: 0,
+        type: 'action_item'
+      }
+    ];
+
+    for (const actionItem of actionItems) {
+      const savedActionItem = await appDataFunctions.addActionItem(actionItem);
+      if (savedActionItem) {
+        results.actionItemsCreated++;
+        console.log('[ testDataGenerator ] Created action item:', actionItem.title);
+      }
+    }
 
     // Create some test activities using app data pathway
     const testActivities = [

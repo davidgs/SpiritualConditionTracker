@@ -6,9 +6,10 @@
 import React, { createContext, useContext, useReducer, useEffect, useState, ReactNode } from 'react';
 import DatabaseService, { DatabaseStatus } from '../services/DatabaseService';
 import type { 
-  User, Activity, Meeting, ActionItem, 
+  User, Activity, Meeting, ActionItem, Sponsor, Sponsee, SponsorContact, SponseeContact,
   InsertUser, UpdateUser, InsertActivity, UpdateActivity, 
-  InsertMeeting, UpdateMeeting, InsertActionItem, UpdateActionItem 
+  InsertMeeting, UpdateMeeting, InsertActionItem, UpdateActionItem,
+  InsertSponsor, InsertSponsee, InsertSponsorContact, InsertSponseeContact
 } from '../types/database';
 import { fixCorruptedPreferences } from '../utils/fixDatabasePreferences';
 
@@ -189,6 +190,12 @@ interface AppDataContextType {
   addActionItem: (item: InsertActionItem) => Promise<ActionItem | null>;
   updateActionItem: (itemId: string | number, updates: UpdateActionItem) => Promise<ActionItem | null>;
   deleteActionItem: (itemId: string | number) => Promise<boolean>;
+  
+  // Sponsor/Sponsee operations
+  addSponsor: (sponsor: InsertSponsor) => Promise<Sponsor | null>;
+  addSponsee: (sponsee: InsertSponsee) => Promise<Sponsee | null>;
+  addSponsorContact: (contact: InsertSponsorContact) => Promise<SponsorContact | null>;
+  addSponseeContact: (contact: InsertSponseeContact) => Promise<SponseeContact | null>;
   
   updateTimeframe: (timeframe: number) => Promise<void>;
   calculateSpiritualFitness: () => Promise<void>;
@@ -870,6 +877,62 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  // Sponsor operations
+  const addSponsor = async (sponsorData: InsertSponsor): Promise<Sponsor | null> => {
+    try {
+      const newSponsor = await databaseService.addSponsor(sponsorData);
+      console.log('[ AppDataContext.tsx ] Sponsor added:', newSponsor.id);
+      return newSponsor;
+    } catch (error) {
+      console.error('[ AppDataContext.tsx ] Failed to add sponsor:', error);
+      dispatch({ type: 'SET_ERROR', payload: 'Failed to add sponsor' });
+      return null;
+    }
+  };
+
+  // Sponsee operations
+  const addSponsee = async (sponseeData: InsertSponsee): Promise<Sponsee | null> => {
+    try {
+      const newSponsee = await databaseService.addSponsee(sponseeData);
+      console.log('[ AppDataContext.tsx ] Sponsee added:', newSponsee.id);
+      return newSponsee;
+    } catch (error) {
+      console.error('[ AppDataContext.tsx ] Failed to add sponsee:', error);
+      dispatch({ type: 'SET_ERROR', payload: 'Failed to add sponsee' });
+      return null;
+    }
+  };
+
+  // Sponsor contact operations
+  const addSponsorContact = async (contactData: InsertSponsorContact): Promise<SponsorContact | null> => {
+    try {
+      const newContact = await databaseService.addSponsorContact(contactData);
+      // Reload activities to include the new sponsor contact
+      await loadActivities();
+      console.log('[ AppDataContext.tsx ] Sponsor contact added:', newContact.id);
+      return newContact;
+    } catch (error) {
+      console.error('[ AppDataContext.tsx ] Failed to add sponsor contact:', error);
+      dispatch({ type: 'SET_ERROR', payload: 'Failed to add sponsor contact' });
+      return null;
+    }
+  };
+
+  // Sponsee contact operations
+  const addSponseeContact = async (contactData: InsertSponseeContact): Promise<SponseeContact | null> => {
+    try {
+      const newContact = await databaseService.addSponseeContact(contactData);
+      // Reload activities to include the new sponsee contact
+      await loadActivities();
+      console.log('[ AppDataContext.tsx ] Sponsee contact added:', newContact.id);
+      return newContact;
+    } catch (error) {
+      console.error('[ AppDataContext.tsx ] Failed to add sponsee contact:', error);
+      dispatch({ type: 'SET_ERROR', payload: 'Failed to add sponsee contact' });
+      return null;
+    }
+  };
+
   const contextValue: AppDataContextType = {
     state,
     dispatch,
@@ -887,6 +950,10 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
     addActionItem,
     updateActionItem,
     deleteActionItem,
+    addSponsor,
+    addSponsee,
+    addSponsorContact,
+    addSponseeContact,
     updateTimeframe,
     calculateSpiritualFitness,
     resetAllData,
