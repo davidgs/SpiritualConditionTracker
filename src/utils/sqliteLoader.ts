@@ -307,31 +307,6 @@ async function createTables(sqlite) {
   }
   
   console.log('[ sqliteLoader.js ] All tables created using centralized definitions from tables.ts');
-
-  // Add missing columns to action_items table for backward compatibility
-  try {
-    await sqlite.execute({
-      database: DB_NAME,
-      statements: `ALTER TABLE action_items ADD COLUMN sponsorId INTEGER;`
-    });
-    console.log('[ sqliteLoader.js ] Added sponsorId column to action_items');
-  } catch (error) {
-    // Column already exists, ignore error
-  }
-
-  // Add missing completed column to activities table for backward compatibility
-  try {
-    await sqlite.execute({
-      database: DB_NAME,
-      statements: `ALTER TABLE activities ADD COLUMN completed INTEGER DEFAULT 0;`
-    });
-    console.log('[ sqliteLoader.js ] Added completed column to activities');
-  } catch (error) {
-    // Column already exists, ignore error
-    console.log('[ sqliteLoader.js ] Completed column already exists in activities table');
-  }
-
-  console.log('[ sqliteLoader.js ] All tables created with unified people + contacts architecture');
 }
 
 async function resetDatabase(sqlite) {
