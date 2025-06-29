@@ -268,21 +268,16 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
   const showYearsProminent = sobrietyYears >= 1;
 
   // Handle activity clicks for sponsor contacts and action items
-  const handleActivityClick = (activity: Activity, action: string) => {
-    console.log('Activity clicked:', activity, 'Action:', action);
+  const handleActivityClick = (activity: Activity) => {
+    console.log('Activity clicked:', activity);
 
     if (activity.type === 'sponsor-contact') {
       // Navigate to sponsor contact details page
       if (onNavigateToSponsorContact && (activity as any).contactId) {
         onNavigateToSponsorContact((activity as any).contactId);
       }
-    } else if (activity.type === 'action-item') {
-      if (action === 'complete' && onUpdateActionItem) {
-        onUpdateActionItem(String(activity.id), 'completed');
-      } else if (action === 'delete' && onUpdateActionItem) {
-        onUpdateActionItem(String(activity.id), 'deleted');
-      }
     }
+    // Note: Action items (complete/delete) are handled internally within ActivityList component
   };
 
   return (

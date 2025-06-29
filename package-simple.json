@@ -1,0 +1,6 @@
+{
+  "name": "spiritual-condition-tracker-simple",
+  "scripts": {
+    "serve": "node -e \"const http = require('http'); const fs = require('fs'); const path = require('path'); const server = http.createServer((req, res) => { let filePath = req.url === '/' ? '/index.html' : req.url; const fullPath = path.join(__dirname, 'dist', filePath); const ext = path.extname(fullPath); const contentTypes = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css' }; const contentType = contentTypes[ext] || 'text/plain'; fs.readFile(fullPath, (err, data) => { if (err) { res.writeHead(404); res.end('Not found'); } else { res.writeHead(200, { 'Content-Type': contentType }); res.end(data); } }); }); server.listen(5000, '0.0.0.0', () => console.log('Server running on port 5000'));\""
+  }
+}

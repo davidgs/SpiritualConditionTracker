@@ -131,15 +131,17 @@ export async function createTestData(userId: number | string, appDataFunctions: 
       }
     ];
 
+    // DEPRECATED: Sponsor creation disabled - use unifiedTestDataGenerator instead
     let createdSponsors = [];
-    for (const sponsor of sponsors) {
-      const savedSponsor = await databaseService.addSponsor(sponsor);
-      if (savedSponsor) {
-        results.sponsorsCreated++;
-        createdSponsors.push(savedSponsor);
-        console.log('[ testDataGenerator ] Created sponsor:', sponsor.name, sponsor.lastName);
-      }
-    }
+    console.warn('[ testDataGenerator ] Sponsor creation disabled - old schema incompatible');
+    // for (const sponsor of sponsors) {
+    //   const savedSponsor = await databaseService.addSponsor(sponsor);
+    //   if (savedSponsor) {
+    //     results.sponsorsCreated++;
+    //     createdSponsors.push(savedSponsor);
+    //     console.log('[ testDataGenerator ] Created sponsor:', sponsor.name, sponsor.lastName);
+    //   }
+    // }
 
     // Create test sponsees
     console.log('[ testDataGenerator ] Creating sponsees through app data functions...');
@@ -166,15 +168,17 @@ export async function createTestData(userId: number | string, appDataFunctions: 
       }
     ];
 
+    // DEPRECATED: Sponsee creation disabled - use unifiedTestDataGenerator instead
     let createdSponsees = [];
-    for (const sponsee of sponsees) {
-      const savedSponsee = await databaseService.addSponsee(sponsee);
-      if (savedSponsee) {
-        results.sponseesCreated++;
-        createdSponsees.push(savedSponsee);
-        console.log('[ testDataGenerator ] Created sponsee:', sponsee.name, sponsee.lastName);
-      }
-    }
+    console.warn('[ testDataGenerator ] Sponsee creation disabled - old schema incompatible');
+    // for (const sponsee of sponsees) {
+    //   const savedSponsee = await databaseService.addSponsee(sponsee);
+    //   if (savedSponsee) {
+    //     results.sponseesCreated++;
+    //     createdSponsees.push(savedSponsee);
+    //     console.log('[ testDataGenerator ] Created sponsee:', sponsee.name, sponsee.lastName);
+    //   }
+    // }
 
     // Sponsor contacts will be created through proper app workflow below (with action items)
 
