@@ -378,120 +378,125 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
       const activities = await databaseService.getAllActivities();
       console.log('[ AppDataContext.tsx ] Loaded activities from activities table:', activities.length);
       
-      // 2. Load sponsor contacts and transform them to activities
-      const sponsorContacts = await databaseService.getAllSponsorContacts();
-      console.log('[ AppDataContext.tsx ] Loaded sponsor contacts:', sponsorContacts.length);
+      // 2. Load all contacts from unified contacts table
+      const allContacts = await databaseService.getAllContacts();
+      console.log('[ AppDataContext.tsx ] Loaded contacts from unified contacts table:', allContacts.length);
 
-      // 3. Load sponsee contacts and transform them to activities  
-      const sponseeContacts = await databaseService.getAllSponseeContacts();
-      console.log('[ AppDataContext.tsx ] Loaded sponsee contacts:', sponseeContacts.length);
+      // 3. Load all people for name enrichment
+      const allPeople = await databaseService.getAllPeople();
+      console.log('[ AppDataContext.tsx ] Loaded people from people table:', allPeople.length);
 
-      // Get sponsor and sponsee names for display
+      // 4. Load sponsors and sponsees for relationship context
       const allSponsors = await databaseService.getAllSponsors();
       const allSponsees = await databaseService.getAllSponsees();
-      
-      let mainSponsorName = 'Sponsor';
-      if (allSponsors && allSponsors.length > 0) {
-        const sponsor = allSponsors[0];
-        const firstName = sponsor.name || '';
-        const lastName = sponsor.lastName || '';
-        mainSponsorName = lastName ? `${firstName} ${lastName.charAt(0)}.` : firstName || 'Sponsor';
-      }
-
-      // Transform sponsor contacts to activity-like objects
-      const sponsorContactActivities = sponsorContacts.map(contact => ({
-        id: `sponsor_contact_${contact.id}`,
-        userId: String(state.currentUserId || 'default_user'),
-        type: 'sponsor-contact',
-        title: 'Contact with Sponsor',
-        text: contact.note || 'Contact with Sponsor',
-        notes: contact.note || '',
-        date: contact.date,
-        duration: 0,
-        completed: 0,
-        createdAt: contact.createdAt || new Date().toISOString(),
-        updatedAt: contact.updatedAt || new Date().toISOString(),
-        sponsorContactId: contact.id,
-        sponsorName: mainSponsorName,
-        personCalled: mainSponsorName
-      }));
-      
-      // Transform sponsee contacts to activity-like objects
-      const sponseeContactActivities = sponseeContacts.map(contact => {
-        // Find the sponsee for this contact
-        const relatedSponsee = allSponsees.find(s => s.id === contact.sponseeId);
-        const sponseeName = relatedSponsee 
-          ? `${relatedSponsee.name || ''} ${(relatedSponsee.lastName || '').charAt(0)}.`.trim()
-          : 'Sponsee';
+      // 5. Create enriched contact activities from unified contacts table
+      const contactActivities = allContacts.map(contact => {
+        // Find the person for this contact
+        const person = allPeople.find(p => p.id === contact.personId);
+        const personName = person 
+          ? `${person.firstName} ${person.lastName ? person.lastName.charAt(0) + '.' : ''}`.trim()
+          : 'Unknown Contact';
+        
+        // Determine contact type for display
+        let contactTypeDisplay = 'Contact';
+        let activityType = 'contact';
+        
+        if (person?.relationship === 'sponsor') {
+          contactTypeDisplay = 'Contact with Sponsor';
+          activityType = 'sponsor-contact';
+        } else if (person?.relationship === 'sponsee') {
+          contactTypeDisplay = 'Contact with Sponsee';
+          activityType = 'sponsee-contact';
+        } else if (person?.relationship === 'member') {
+          contactTypeDisplay = 'Contact with AA Member';
+          activityType = 'member-contact';
+        } else if (person?.relationship === 'friend') {
+          contactTypeDisplay = 'Contact with Friend';
+          activityType = 'friend-contact';
+        }
         
         return {
-          id: `sponsee_contact_${contact.id}`,
+          id: `contact_${contact.id}`,
           userId: String(state.currentUserId || 'default_user'),
-          type: 'sponsee-contact',
-          title: 'Contact with Sponsee',
-          text: contact.note || 'Contact with Sponsee',
+          type: activityType,
+          title: contactTypeDisplay,
+          text: contact.note || contactTypeDisplay,
           notes: contact.note || '',
           date: contact.date,
-          duration: 0,
+          duration: contact.duration || 0,
           completed: 0,
           createdAt: contact.createdAt || new Date().toISOString(),
           updatedAt: contact.updatedAt || new Date().toISOString(),
-          sponseeContactId: contact.id,
-          sponseeName: sponseeName,
-          personCalled: sponseeName
+          // Enrichment fields for backward compatibility
+          personCalled: personName,
+          sponsorName: person?.relationship === 'sponsor' ? personName : undefined,
+          sponseeName: person?.relationship === 'sponsee' ? personName : undefined,
         };
       });
       
-      console.log('[ AppDataContext.tsx ] Transformed sponsor contacts to activities:', sponsorContactActivities.length);
-      console.log('[ AppDataContext.tsx ] Transformed sponsee contacts to activities:', sponseeContactActivities.length);
+      console.log('[ AppDataContext.tsx ] Transformed unified contacts to activities:', contactActivities.length);
       
-      // 4. Load action items and filter for sponsor action items only
+      // 6. Load action items and transform to activities
       const allDbActionItems = await databaseService.getAllActionItems();
       console.log('[ AppDataContext.tsx ] Loaded all action items from database:', allDbActionItems.length);
 
-      // Transform ONLY sponsor action items to activity-like objects (exclude sponsee action items)
+      // Transform action items to activity-like objects with person context
       const actionItemActivities = allDbActionItems
         .filter(actionItem => {
-          // Include action items that are linked to sponsor contacts
-          const isLinkedToSponsorContact = sponsorContacts.some(contact => contact.id === actionItem.contactId);
-          const isSponsorActionItemType = actionItem.type === 'sponsor_action_item';
-          
-          console.log(`[ AppDataContext.tsx ] Filtering action item "${actionItem.title}":`, {
-            actionItemId: actionItem.id,
-            type: actionItem.type,
-            contactId: actionItem.contactId,
-            sponsorContactId: actionItem.sponsorContactId,
-            isLinkedToSponsorContact,
-            isSponsorActionItemType,
-            willInclude: isLinkedToSponsorContact && isSponsorActionItemType
-          });
-          
-          return isLinkedToSponsorContact && isSponsorActionItemType;
+          // Only include non-deleted action items
+          return !actionItem.deleted;
         })
         .map(actionItem => {
-          const relatedContact = sponsorContacts.find(contact => contact.id === actionItem.contactId);
+          // Find related contact or person for context
+          let relatedContact = null;
+          let relatedPerson = null;
+          let activityDate = new Date().toISOString();
+          
+          if (actionItem.contactId) {
+            relatedContact = allContacts.find(c => c.id === actionItem.contactId);
+            if (relatedContact) {
+              relatedPerson = allPeople.find(p => p.id === relatedContact.personId);
+              activityDate = relatedContact.date;
+            }
+          } else if (actionItem.personId) {
+            relatedPerson = allPeople.find(p => p.id === actionItem.personId);
+          }
+          
+          const personName = relatedPerson 
+            ? `${relatedPerson.firstName} ${relatedPerson.lastName ? relatedPerson.lastName.charAt(0) + '.' : ''}`.trim()
+            : 'Unknown Person';
+          
+          // Determine activity type based on person relationship
+          let activityType = 'action_item';
+          if (relatedPerson?.relationship === 'sponsor') {
+            activityType = 'sponsor_action_item';
+          } else if (relatedPerson?.relationship === 'sponsee') {
+            activityType = 'sponsee_action_item';
+          }
+          
           return {
             id: `action_item_${actionItem.id}`,
             userId: String(state.currentUserId || 'default_user'),
-            type: 'sponsor_action_item',
+            type: activityType,
             title: actionItem.title,
             text: actionItem.text || actionItem.title,
             notes: actionItem.notes || '',
-            date: relatedContact?.date || new Date().toISOString(),
+            date: activityDate,
             duration: 0,
             completed: actionItem.completed,
             createdAt: actionItem.createdAt || new Date().toISOString(),
             updatedAt: actionItem.updatedAt || new Date().toISOString(),
             actionItemId: actionItem.id,
             actionItemData: actionItem,
-            sponsorName: mainSponsorName,
-            sponsorContactId: actionItem.contactId
+            personCalled: personName,
+            sponsorName: relatedPerson?.relationship === 'sponsor' ? personName : undefined,
+            sponseeName: relatedPerson?.relationship === 'sponsee' ? personName : undefined,
           };
         });
       
       console.log('[ AppDataContext.tsx ] Transformed action items to activities:', actionItemActivities.length);
       
-      // 4. Filter out any existing activities that already reference sponsor/sponsee contacts or action items
+      // 7. Filter activities to avoid duplication
       const filteredActivities = activities.filter(activity => {
         // Remove activities that reference action items we're adding separately
         if (activity.actionItemId) {
@@ -502,19 +507,7 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
           }
         }
         
-        // Remove activities that reference sponsor contacts we're adding separately
-        if ((activity as any).sponsorContactId) {
-          const hasMatchingSponsorContact = sponsorContactActivities.some(sc => sc.sponsorContactId === (activity as any).sponsorContactId);
-          if (hasMatchingSponsorContact) {
-            console.log('[ AppDataContext.tsx ] Removing duplicate activity that references sponsor contact:', activity.title);
-            return false;
-          }
-        }
-        
-        // Keep sponsee contact activities (they SHOULD appear in Activity List)
-        // Only remove sponsee action items, not sponsee contacts
-        
-        // Remove sponsee action items (they should NOT appear in Activity List)
+        // Remove sponsee action items from main activity list (they should NOT appear)
         if (activity.type === 'sponsee_action_item') {
           console.log('[ AppDataContext.tsx ] Removing sponsee action item (should not appear in Activity List):', activity.title);
           return false;
@@ -523,12 +516,22 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
         return true;
       });
       
-      // 5. Merge all data: activities + sponsor contacts + sponsee contacts + sponsor action items
+      // 8. Filter action items to only show sponsor action items in Activity List
+      const filteredActionItemActivities = actionItemActivities.filter(activity => {
+        // Only include sponsor action items and general action items in Activity List
+        // Exclude sponsee action items
+        if (activity.type === 'sponsee_action_item') {
+          console.log('[ AppDataContext.tsx ] Excluding sponsee action item from Activity List:', activity.title);
+          return false;
+        }
+        return true;
+      });
+      
+      // 9. Merge all data: activities + contacts + filtered action items
       const allActivitiesData = [
-        ...filteredActivities, // Real activities (minus duplicates)
-        ...sponsorContactActivities, // Sponsor contacts as activities
-        ...sponseeContactActivities, // Sponsee contacts as activities  
-        ...actionItemActivities // Sponsor action items as activities (sponsee action items excluded)
+        ...filteredActivities, // Core spiritual activities (prayer, meditation, etc.)
+        ...contactActivities, // All contact records (sponsor, sponsee, member, friend)  
+        ...filteredActionItemActivities // Action items (excluding sponsee action items)
       ] as Activity[];
       
       console.log('[ AppDataContext.tsx ] Total merged activities (deduplicated):', allActivitiesData.length);

@@ -1,0 +1,90 @@
+⚡️  WebView loaded
+⚡️  To Native ->  CapacitorSQLite createConnection 21200526
+⚡️  [log] - Applying native theme: blue (#3b82f6) in light mode
+⚡️  [log] - [ AppDataContext.tsx:151 ] Initializing app...
+⚡️  [log] - [ AppDataContext.tsx ] Platform: Mozilla/5.0 (iPhone; CPU iPhone OS 18_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148
+⚡️  [log] - [ AppDataContext.tsx ] Is Capacitor: true
+⚡️  [log] - [ AppDataContext.tsx:156 ] Database status changed: initializing
+⚡️  [log] - [ AppDataContext.tsx ] About to initialize database service...
+⚡️  [log] - [ DatabaseService: 50 ] Starting database initialization...
+⚡️  [log] - [ AppDataContext.tsx:156 ] Database status changed: initializing
+⚡️  [log] - [ sqliteLoader.js:14 ] Initializing SQLite database via Capacitor...
+⚡️  [log] - [ sqliteLoader.js:39 ]  Found CapacitorSQLite plugin: true
+database path /Users/davidgs/Library/Developer/CoreSimulator/Devices/E7B518C7-65A2-4386-A19F-01F0D573877F/data/Containers/Data/Application/EC1D7F32-2F79-40F1-B06F-3C2FDDA1BD31/Library/CapacitorDatabase/spiritual_condition_trackerSQLite.db
+⚡️  TO JS undefined
+⚡️  To Native ->  CapacitorSQLite open 21200527
+⚡️  [log] - [ sqliteLoader.js:50 ]  Database connection created
+⚡️  TO JS undefined
+⚡️  [log] - [ sqliteLoader.js:56 ]  Database opened successfully
+⚡️  To Native ->  CapacitorSQLite execute 21200528
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 21200529
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 21200530
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 21200531
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 21200532
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite ⚡️  [log] - [ sqliteLoader.js ] Meetings table created with working schema
+execute 21200533
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 21200534
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 21200535
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 21200536
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  [log] - [ sqliteLoader.js ] Added sponsorId column to action_items
+⚡️  [log] - [ sqliteLoader.js ] All tables created with unified people + contacts architecture
+⚡️  [log] - [ sqliteLoader.js:59 ]  Database initialization complete
+⚡️  [log] - [ DatabaseService: 55 ] SQLite database initialized successfully
+⚡️  [log] - [ DatabaseService: 63 ] Database ready
+⚡️  [log] - [ AppDataContext.tsx:156 ] Database status changed: ready
+⚡️  [log] - [ AppDataContext.tsx ] Database ready, loading initial data...
+⚡️  [log] - [ AppDataContext.tsx:187 ] Loading initial data...
+⚡️  [log] - [ DatabaseService: 70 ] Database initialization complete
+⚡️  [log] - [ DatabaseService: 205 ] Processing 0 queued operations
+⚡️  To Native ->  CapacitorSQLite query 21200537
+⚡️  To Native ->  CapacitorSQLite query 21200538
+⚡️  To Native ->  CapacitorSQLite query 21200539
+⚡️  To Native ->  CapacitorSQLite query 21200540
+⚡️  To Native ->  CapacitorSQLite query 21200541
+⚡️  To Native ->  CapacitorSQLite query 21200542
+⚡️  TO JS {"values":[]}
+⚡️  [log] - [ AppDataContext.tsx ] Database service initialization completed
+⚡️  [log] - [ DatabaseService ] Checking if database is empty for new user detection...
+⚡️  TO JS {"values":[]}
+⚡️  To Native ->  CapacitorSQLite query 21200543
+⚡️  TO JS {"values":[]}
+⚡️  TO JS {"values":[]}
+⚡️  TO JS {"values":[]}
+⚡️  [log] - Found users to fix: 0
+⚡️  [log] - Preferences fix complete
+⚡️  [log] - [ AppDataContext.tsx ] Database preferences validated/fixed
+⚡️  TO JS {"values":[]}
+ERROR MESSAGE:  {"message":"Query: Failed in selectSQL : Error: querySQL prepare failed rc: 1 message: no such table: sponsor_contacts","errorMessage":"Query: Failed in selectSQL : Error: querySQL prepare failed rc: 1 message: no such table: sponsor_contacts"}
+⚡️  [error] - {"message":"Query: Failed in selectSQL : Error: querySQL prepare failed rc: 1 message: no such table: sponsor_contacts","errorMessage":"Query: Failed in selectSQL : Error: querySQL prepare failed rc: 1 message: no such table: sponsor_contacts"}
+⚡️  [error] - [ App ] Error checking if database is empty: {"errorMessage":"Query: Failed in selectSQL : Error: querySQL prepare failed rc: 1 message: no such table: sponsor_contacts"}
+⚡️  [log] - [ AppDataContext.tsx:206 ] Loaded users: 0
+⚡️  To Native ->  CapacitorSQLite execute 21200544
+⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO users (name, lastName, sobrietyDate, homeGroups, phoneNumber, email, privacySettings, preferences) VALUES ('', '', '', '[]', '', '', '{"allowMessages":true,"shareLastName":true}', '{"use24HourFormat":false,"darkMode":false,"theme":"default"}');
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  To Native ->  CapacitorSQLite query 21200545
+⚡️  TO JS {"values":[{"ios_columns":["lastId"]},{"lastId":1}]}
+⚡️  [log] - [ sqliteLoader.js ] Created users item with ID: 1
+⚡️  [log] - [ AppDataContext.tsx:246 ] Created default user: 1
+⚡️  To Native ->  CapacitorSQLite query 21200546
+⚡️  TO JS {"values":[]}
+⚡️  To Native ->  CapacitorSQLite query 21200547
+⚡️  [log] - [ AppDataContext.tsx ] Loaded activities from activities table: 0
+ERROR MESSAGE:  {"message":"Query: Failed in selectSQL : Error: querySQL prepare failed rc: 1 message: no such table: sponsor_contacts","errorMessage":"Query: Failed in selectSQL : Error: querySQL prepare failed rc: 1 message: no such table: sponsor_contacts"}
+⚡️  [error] - {"message":"Query: Failed in selectSQL : Error: querySQL prepare failed rc: 1 message: no such table: sponsor_contacts","errorMessage":"Query: Failed in selectSQL : Error: querySQL prepare failed rc: 1 message: no such table: sponsor_contacts"}
+⚡️  [error] - [ AppDataContext.tsx:293 ] Failed to load activities: {"errorMessage":"Query: Failed in selectSQL : Error: querySQL prepare failed rc: 1 message: no such table: sponsor_contacts"}
+⚡️  [error] - [ AppDataContext.tsx ] Error details: {
+  "errorMessage": "Query: Failed in selectSQL : Error: querySQL prepare failed rc: 1 message: no such table: sponsor_contacts"
+}
+⚡️  [error] - [ AppDataContext.tsx ] Error stack: i@capacitor://localhost/vendors.d84566fec2eddf431f1e.js:2:115197
+returnResult@user-script:2:943:49
+@user-script:2:925:29
+⚡️  [error] - [ AppDataContext.tsx:196 ] Failed to load initial data: {"errorMessage":"Query: Failed in selectSQL : Error: querySQL prepare failed rc: 1 message: no such table: sponsor_contacts"}

@@ -6,9 +6,11 @@
 import initSQLiteDatabase from '../utils/sqliteLoader';
 import type { 
   User, Activity, Meeting, SponsorContact, ContactDetail, ActionItem, Sponsor, Sponsee, SponseeContact,
+  Person, Contact,
   InsertUser, UpdateUser, InsertActivity, UpdateActivity, InsertMeeting, UpdateMeeting,
   InsertActionItem, UpdateActionItem, InsertSponsor, UpdateSponsor, InsertSponsee, UpdateSponsee,
-  InsertSponsorContact, UpdateSponsorContact, InsertSponseeContact, UpdateSponseeContact
+  InsertSponsorContact, UpdateSponsorContact, InsertSponseeContact, UpdateSponseeContact,
+  InsertPerson, UpdatePerson, InsertContact, UpdateContact
 } from '../types/database';
 
 export type DatabaseStatus = 'initializing' | 'ready' | 'error' | 'fallback';
@@ -567,6 +569,58 @@ class DatabaseService {
       });
       
       return totalDataRecords === 0;
+    });
+  }
+
+  // People operations (unified address book)
+  async getAllPeople(): Promise<Person[]> {
+    return this.executeOperation(async () => {
+      const people = await this.database.getAll('people');
+      return people || [];
+    });
+  }
+
+  async addPerson(person: InsertPerson): Promise<Person> {
+    return this.executeOperation(async () => {
+      return await this.database.add('people', person);
+    });
+  }
+
+  async updatePerson(id: string | number, updates: UpdatePerson): Promise<Person | null> {
+    return this.executeOperation(async () => {
+      return await this.database.update('people', id, updates);
+    });
+  }
+
+  async deletePerson(personId: string | number): Promise<boolean> {
+    return this.executeOperation(async () => {
+      return await this.database.remove('people', personId);
+    });
+  }
+
+  // Contacts operations (unified contact records)
+  async getAllContacts(): Promise<Contact[]> {
+    return this.executeOperation(async () => {
+      const contacts = await this.database.getAll('contacts');
+      return contacts || [];
+    });
+  }
+
+  async addContact(contact: InsertContact): Promise<Contact> {
+    return this.executeOperation(async () => {
+      return await this.database.add('contacts', contact);
+    });
+  }
+
+  async updateContact(id: string | number, updates: UpdateContact): Promise<Contact | null> {
+    return this.executeOperation(async () => {
+      return await this.database.update('contacts', id, updates);
+    });
+  }
+
+  async deleteContact(contactId: string | number): Promise<boolean> {
+    return this.executeOperation(async () => {
+      return await this.database.remove('contacts', contactId);
     });
   }
 

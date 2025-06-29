@@ -35,9 +35,13 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
   const { loadActivities, loadActionItems, loadMeetings, addMeeting, addActivity } = useAppData();
 
   // Handler for saving sponsor contacts from LogActivityModal
+  // NOTE: This function needs updating for the new unified architecture
   const handleSaveSponsorContact = async (contactData: any, actionItems: any[] = []) => {
     try {
-      // Save the sponsor contact
+      // TODO: Update to use unified people + contacts architecture
+      console.warn('handleSaveSponsorContact needs updating for unified architecture');
+      
+      // Save the sponsor contact (temporary - needs unified architecture update)
       const savedContact = await databaseService.add('sponsor_contacts', {
         ...contactData,
         userId: user?.id,
@@ -53,8 +57,6 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
             text: actionItem.text || actionItem.title,
             notes: actionItem.notes || '',
             contactId: (savedContact as any).id,
-            sponsorId: selectedSponsorForContact?.id,
-            sponsorName: selectedSponsorForContact?.name,
             dueDate: actionItem.dueDate || contactData.date,
             completed: 0,
             type: 'sponsor_action_item',
