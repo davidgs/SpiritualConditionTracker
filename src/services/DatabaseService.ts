@@ -293,8 +293,8 @@ class DatabaseService {
     });
   }
 
-  // Sponsor contact operations
-  async getAllSponsorContacts(): Promise<SponsorContact[]> {
+  // Legacy sponsor contact operations (updated to use proper types)
+  async getLegacySponsorContacts(): Promise<SponsorContact[]> {
     return this.executeOperation(async () => {
       const contacts = await this.database.getAll('sponsor_contacts');
       
@@ -306,36 +306,6 @@ class DatabaseService {
       });
       
       return sortedContacts;
-    });
-  }
-
-  // Sponsor operations (actual sponsor data with names)
-  async getAllSponsors(): Promise<any[]> {
-    return this.executeOperation(async () => {
-      const sponsors = await this.database.getAll('sponsors');
-      return sponsors || [];
-    });
-  }
-
-  async addSponsorContact(contact: Omit<SponsorContact, 'id' | 'createdAt' | 'updatedAt'>): Promise<SponsorContact> {
-    return this.executeOperation(async () => {
-      console.log('[ DatabaseService ] Adding sponsor contact:', contact);
-      const result = await this.database.add('sponsor_contacts', contact);
-      console.log('[ DatabaseService ] Sponsor contact saved:', result);
-      return result;
-    });
-  }
-
-  async updateSponsorContact(id: string | number, updates: Partial<SponsorContact>): Promise<SponsorContact | null> {
-    return this.executeOperation(async () => {
-      return await this.database.update('sponsor_contacts', id, updates);
-    });
-  }
-
-  async deleteSponsorContact(contactId: string | number): Promise<boolean> {
-    return this.executeOperation(async () => {
-      const result = await this.database.remove('sponsor_contacts', contactId);
-      return result;
     });
   }
 

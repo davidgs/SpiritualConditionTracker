@@ -171,23 +171,23 @@ interface AppDataContextType {
   state: AppState;
   dispatch: React.Dispatch<AppAction>;
   
-  // Data operations
+  // Data operations with proper typing
   loadUserData: () => Promise<void>;
-  updateUser: (updates: Partial<User>) => Promise<User | null>;
+  updateUser: (updates: UpdateUser) => Promise<User | null>;
   
   loadActivities: () => Promise<void>;
   getActivitiesForTimeframe: (timeframe: number) => Promise<Activity[]>;
-  addActivity: (activity: Omit<Activity, 'id' | 'createdAt' | 'updatedAt'>) => Promise<Activity | null>;
+  addActivity: (activity: InsertActivity) => Promise<Activity | null>;
   deleteActivity: (activityId: string | number) => Promise<boolean>;
   
   loadMeetings: () => Promise<void>;
-  addMeeting: (meeting: Omit<Meeting, 'id' | 'createdAt' | 'updatedAt'>) => Promise<Meeting | null>;
-  updateMeeting: (meetingId: string | number, updates: Partial<Meeting>) => Promise<Meeting | null>;
+  addMeeting: (meeting: InsertMeeting) => Promise<Meeting | null>;
+  updateMeeting: (meetingId: string | number, updates: UpdateMeeting) => Promise<Meeting | null>;
   deleteMeeting: (meetingId: string | number) => Promise<boolean>;
   
   loadActionItems: () => Promise<void>;
-  addActionItem: (item: Omit<ActionItem, 'id' | 'createdAt' | 'updatedAt'>) => Promise<ActionItem | null>;
-  updateActionItem: (itemId: string | number, updates: Partial<ActionItem>) => Promise<ActionItem | null>;
+  addActionItem: (item: InsertActionItem) => Promise<ActionItem | null>;
+  updateActionItem: (itemId: string | number, updates: UpdateActionItem) => Promise<ActionItem | null>;
   deleteActionItem: (itemId: string | number) => Promise<boolean>;
   
   updateTimeframe: (timeframe: number) => Promise<void>;
@@ -345,7 +345,7 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const updateUser = async (updates: Partial<User>): Promise<User | null> => {
+  const updateUser = async (updates: UpdateUser): Promise<User | null> => {
     try {
       if (!state.currentUserId) {
         throw new Error('[AppDataContext: 257] No current user ID');
@@ -583,7 +583,7 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const addActivity = async (activityData: Omit<Activity, 'id' | 'createdAt' | 'updatedAt'>): Promise<Activity | null> => {
+  const addActivity = async (activityData: InsertActivity): Promise<Activity | null> => {
     try {
       console.log('[ AppDataContext.tsx:300 addActivity ] Received activity data:', JSON.stringify(activityData, null, 2));
       console.log('[ AppDataContext.tsx:301 addActivity ] Calling databaseService.addActivity...');
@@ -642,7 +642,7 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const addMeeting = async (meetingData: Omit<Meeting, 'id' | 'createdAt' | 'updatedAt'>): Promise<Meeting | null> => {
+  const addMeeting = async (meetingData: InsertMeeting): Promise<Meeting | null> => {
     try {
       const newMeeting = await databaseService.addMeeting(meetingData);
       dispatch({ type: 'ADD_MEETING', payload: newMeeting });
@@ -655,7 +655,7 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const updateMeeting = async (meetingId: string | number, updates: Partial<Meeting>): Promise<Meeting | null> => {
+  const updateMeeting = async (meetingId: string | number, updates: UpdateMeeting): Promise<Meeting | null> => {
     try {
       const updatedMeeting = await databaseService.updateMeeting(meetingId, updates);
       if (updatedMeeting) {
@@ -820,7 +820,7 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
   };
 
   // Action item operations
-  const addActionItem = async (itemData: Omit<ActionItem, 'id' | 'createdAt' | 'updatedAt'>): Promise<ActionItem | null> => {
+  const addActionItem = async (itemData: InsertActionItem): Promise<ActionItem | null> => {
     try {
       const newActionItem = await databaseService.addActionItem(itemData);
       // Reload activities to include the new action item
@@ -834,7 +834,7 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const updateActionItem = async (itemId: string | number, updates: Partial<ActionItem>): Promise<ActionItem | null> => {
+  const updateActionItem = async (itemId: string | number, updates: UpdateActionItem): Promise<ActionItem | null> => {
     try {
       const updatedActionItem = await databaseService.updateActionItem(itemId, updates);
       if (updatedActionItem) {
