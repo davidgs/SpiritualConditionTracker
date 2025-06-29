@@ -1,0 +1,374 @@
+⚡️  WebView loaded
+⚡️  To Native ->  CapacitorSQLite createConnection 122439675
+⚡️  [log] - Applying native theme: blue (#3b82f6) in light mode
+⚡️  [log] - [ AppDataContext.tsx:151 ] Initializing app...
+⚡️  [log] - [ AppDataContext.tsx ] Platform: Mozilla/5.0 (iPhone; CPU iPhone OS 18_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148
+⚡️  [log] - [ AppDataContext.tsx ] Is Capacitor: true
+⚡️  [log] - [ AppDataContext.tsx:156 ] Database status changed: initializing
+⚡️  [log] - [ AppDataContext.tsx ] About to initialize database service...
+⚡️  [log] - [ DatabaseService: 50 ] Starting database initialization...
+⚡️  [log] - [ AppDataContext.tsx:156 ] Database status changed: initializing
+⚡️  [log] - [ sqliteLoader.js:14 ] Initializing SQLite database via Capacitor...
+⚡️  [log] - [ sqliteLoader.js:39 ]  Found CapacitorSQLite plugin: true
+database path /Users/davidgs/Library/Developer/CoreSimulator/Devices/E7B518C7-65A2-4386-A19F-01F0D573877F/data/Containers/Data/Application/D4E18A53-67FB-4255-8F84-59A60F89B308/Library/CapacitorDatabase/spiritual_condition_trackerSQLite.db
+⚡️  TO JS undefined
+⚡️  To Native ->  CapacitorSQLite open 122439676
+⚡️  [log] - [ sqliteLoader.js:50 ]  Database connection created
+⚡️  TO JS undefined
+⚡️  [log] - [ sqliteLoader.js:56 ]  Database opened successfully
+⚡️  To Native ->  CapacitorSQLite execute 122439677
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 122439678
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 122439679
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute ⚡️  [log] - [ sqliteLoader.js ] Meetings table created with working schema
+122439680
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 122439681
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 122439682
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 122439683
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 122439684
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 122439685
+ERROR MESSAGE:  {"message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: topic","errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: topic"}
+⚡️  [error] - {"message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: topic","errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: topic"}
+⚡️  To Native ->  CapacitorSQLite execute 122439686
+ERROR MESSAGE:  {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: duration","message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: duration"}
+⚡️  [error] - {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: duration","message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: duration"}
+⚡️  To Native ->  CapacitorSQLite execute 122439687
+ERROR MESSAGE:  {"message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: sponsorId","errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: sponsorId"}
+⚡️  [error] - {"message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: sponsorId","errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: sponsorId"}
+⚡️  To Native ->  CapacitorSQLite execute 122439688
+ERROR MESSAGE:  {"message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: topic","errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: topic"}
+⚡️  [error] - {"message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: topic","errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: topic"}
+⚡️  To Native ->  CapacitorSQLite execute 122439689
+ERROR MESSAGE:  {"message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: duration","errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: duration"}
+⚡️  To Native ->  CapacitorSQLite execute 122439690
+⚡️  [error] - {"message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: duration","errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: duration"}
+ERROR MESSAGE:  {"message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: contactId","errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: contactId"}
+⚡️  [error] - {"message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: contactId","errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: contactId"}
+⚡️  To Native ->  CapacitorSQLite execute 122439691
+ERROR MESSAGE:  {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: sponsorName","message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: sponsorName"}
+⚡️  [error] - {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: sponsorName","message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: sponsorName"}
+⚡️  To Native ->  CapacitorSQLite execute 122439692
+ERROR MESSAGE:  {"message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: sponsorId","errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: sponsorId"}
+⚡️  [error] - {"message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: sponsorId","errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: duplicate column name: sponsorId"}
+⚡️  To Native ->  CapacitorSQLite execute 122439693
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  To Native ->  CapacitorSQLite execute 122439694
+⚡️  [log] - [ sqliteLoader.js ] Added title column to activities
+⚡️  TO JS {"changes":{"changes":0}}
+⚡️  [log] - [ sqliteLoader.js ] Added text column to activities
+⚡️  [log] - [ sqliteLoader.js ] All tables created with proper relationships and missing columns added
+⚡️  [log] - [ sqliteLoader.js:59 ]  Database initialization complete
+⚡️  [log] - [ DatabaseService: 55 ] SQLite database initialized successfully
+⚡️  [log] - [ DatabaseService: 63 ] Database ready
+⚡️  [log] - [ AppDataContext.tsx:156 ] Database status changed: ready
+⚡️  To Native ->  CapacitorSQLite query 122439695
+⚡️  [log] - [ AppDataContext.tsx ] Database ready, loading initial data...
+⚡️  [log] - [ AppDataContext.tsx:187 ] Loading initial data...
+⚡️  [log] - [ DatabaseService: 70 ] Database initialization complete
+⚡️  [log] - [ DatabaseService: 205 ] Processing 0 queued operations
+⚡️  To Native ->  CapacitorSQLite query 122439696
+⚡️  TO JS {"values":[{"ios_columns":["id","name","lastName","phoneNumber","email","sobrietyDate","homeGroups","privacySettings","preferences","isDarkMode","sponsor_name","sponsor_lastName","sponsor_phone","sponsor_email","sponsor_sobrietyDate","sponsor_notes","creat
+⚡️  [log] - [ AppDataContext.tsx ] Database service initialization completed
+⚡️  [log] - [ DatabaseService ] Checking if database is empty for new user detection...
+⚡️  TO JS {"values":[{"ios_columns":["id","name","lastName","phoneNumber","email","sobrietyDate","homeGroups","privacySettings","preferences","isDarkMode","sponsor_name","sponsor_lastName","sponsor_phone","sponsor_email","sponsor_sobrietyDate","sponsor_notes","creat
+⚡️  To Native ->  CapacitorSQLite query 122439697
+⚡️  To Native ->  CapacitorSQLite query 122439698
+⚡️  To Native ->  CapacitorSQLite query 122439699
+⚡️  To Native ->  CapacitorSQLite query 122439700
+⚡️  TO JS {"values":[]}
+⚡️  TO JS {"values":[{"ios_columns":["id","name","days","time","schedule","address","locationName","streetAddress","city","state","zipCode","coordinates","phoneNumber","onlineUrl","isHomeGroup","types","createdAt","updatedAt"]},{"time":"18:00","streetAddress":"100 H
+⚡️  TO JS {"values":[]}
+⚡️  TO JS {"values":[]}
+⚡️  [log] - Found users to fix: 1
+⚡️  [log] - Preferences fix complete
+⚡️  [log] - [ AppDataContext.tsx ] Database preferences validated/fixed
+⚡️  To Native ->  CapacitorSQLite query 122439701
+⚡️  TO JS {"values":[{"ios_columns":["id","name","lastName","phoneNumber","email","sobrietyDate","homeGroups","privacySettings","preferences","isDarkMode","sponsor_name","sponsor_lastName","sponsor_phone","sponsor_email","sponsor_sobrietyDate","sponsor_notes","creat
+⚡️  [log] - [ DatabaseService ] User data check: {"name":"","lastName":"","sobrietyDate":"","phoneNumber":"","email":"","homeGroups":[],"hasUserData":true}
+⚡️  [log] - [ DatabaseService ] Record counts: {"users":1,"hasUserData":true,"activities":0,"meetings":2,"sponsorContacts":0,"actionItems":0,"totalDataRecords":3}
+⚡️  [log] - [ App ] Database empty check result: false
+⚡️  [log] - [ AppDataContext.tsx:206 ] Loaded users: 1
+⚡️  [log] - [ AppDataContext.tsx:225 ] User data loaded: 1
+⚡️  To Native ->  CapacitorSQLite query 122439702
+⚡️  TO JS {"values":[]}
+⚡️  [log] - [ AppDataContext.tsx ] Loaded activities from activities table: 0
+⚡️  To Native ->  CapacitorSQLite query 122439703
+⚡️  TO JS {"values":[]}
+⚡️  [log] - [ AppDataContext.tsx ] Loaded sponsor contacts: 0
+⚡️  To Native ->  CapacitorSQLite query 122439704
+⚡️  TO JS {"values":[]}
+⚡️  To Native ->  CapacitorSQLite query 122439705
+⚡️  [log] - [ AppDataContext.tsx ] Transformed sponsor contacts to activities: 0
+⚡️  TO JS {"values":[]}
+⚡️  [log] - [ AppDataContext.tsx ] Loaded all action items from database: 0
+⚡️  [log] - [ AppDataContext.tsx ] Transformed action items to activities: 0
+⚡️  [log] - [ AppDataContext.tsx ] Total merged activities (deduplicated): 0
+⚡️  [log] - [ AppDataContext.tsx ] Activity types: []
+⚡️  [log] - [ AppDataContext.tsx ] Activities grouped by date: {}
+⚡️  [log] - [ AppDataContext.tsx ] Activities cached (180 days): 0 (activities + action items)
+⚡️  [log] - [ AppDataContext.tsx ] Activity types in cache: []
+⚡️  [log] - [ AppDataContext.tsx:315 ] Using cached activities for 30 days: 0
+⚡️  To Native ->  CapacitorSQLite ⚡️  [log] - [ AppDataContext.tsx:454 ] Calculating spiritual fitness with 0 activities for 30 days
+query 122439706
+⚡️  TO JS {"values":[{"ios_columns":["id","name","days","time","schedule","address","locationName","streetAddress","city","state","zipCode","coordinates","phoneNumber","onlineUrl","isHomeGroup","types","createdAt","updatedAt"]},{"coordinates":null,"streetAddress":"1
+⚡️  [log] - [ AppDataContext.tsx:326 ] Meetings loaded: 2
+⚡️  To Native ->  CapacitorSQLite query 122439707
+⚡️  TO JS {"values":[]}
+⚡️  [log] - [ AppDataContext.tsx ] Action items loaded: 0
+⚡️  [log] - [ AppDataContext.tsx:194 ] Initial data load complete
+⚡️  [log] - Applying native theme: blue (#3b82f6) in light mode
+⚡️  [log] - Applying native theme: blue (#3b82f6) in light mode
+⚡️  To Native ->  CapacitorSQLite query 122439708
+⚡️  TO JS {"values":[]}
+⚡️  To Native ->  CapacitorSQLite query 122439709
+⚡️  TO JS {"values":[]}
+⚡️  [log] - SubTabComponent sponsor: persons: [] length: 0
+⚡️  To Native ->  CapacitorSQLite query 122439710
+⚡️  To Native ->  CapacitorSQLite query 122439711
+⚡️  To Native ->  CapacitorSQLite query 122439712
+⚡️  To Native ->  CapacitorSQLite query 122439713
+⚡️  TO JS {"values":[]}
+⚡️  TO JS {"values":[]}
+⚡️  TO JS {"values":[]}
+⚡️  TO JS {"values":[]}
+⚡️  [log] - [loadSponsorContacts] Current sponsors: []
+⚡️  [log] - SubTabComponent sponsor: persons: [] length: 0
+⚡️  [log] - Applying native theme: blue (#3b82f6) in light mode
+⚡️  To Native ->  CapacitorSQLite query 122439714
+⚡️  [log] - Applying native theme: blue (#3b82f6) in light mode
+⚡️  TO JS {"values":[]}
+⚡️  To Native ->  CapacitorSQLite query 122439715
+⚡️  TO JS {"values":[]}
+⚡️  [log] - [ Dashboard ] Starting test data creation...
+⚡️  [log] - [ testDataGenerator ] Starting test data creation for user: 1
+⚡️  [log] - [ testDataGenerator ] Using proper app data pathways
+⚡️  [log] - [ testDataGenerator ] Creating meetings through app data functions...
+⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO meetings (name, days, time, schedule, types, address, locationName, streetAddress, city, state, zipCode, coordinates, isHomeGroup, onlineUrl) VALUES ('Arch to Freedom', '["monday"]', '18:00', '[{"day":"monday","time":"18:00","format":"literature","locationType":"in_person","access":"open"}]', '[]', '100 Hughes St, Apex, NC, 27502', 'Apex United Methodist Church', '100 Hughes St', 'Apex', 'NC', '27502', NULL, true, '');
+⚡️  To Native ->  CapacitorSQLite execute 122439716
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  To Native ->  CapacitorSQLite query 122439717
+⚡️  TO JS {"values":[{"ios_columns":["lastId"]},{"lastId":3}]}
+⚡️  [log] - [ sqliteLoader.js ] Created meetings item with ID: 3
+⚡️  [log] - [ AppDataContext.tsx:337 ] Meeting added: 3
+⚡️  To Native ->  CapacitorSQLite execute 122439718
+⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO meetings (name, days, time, schedule, types, address, locationName, streetAddress, city, state, zipCode, coordinates, isHomeGroup, onlineUrl) VALUES ('There Is A Solution', '["tuesday","thursday"]', '19:00', '[{"day":"tuesday","time":"19:00","format":"beginners","locationType":"in_person","access":"open"},{"day":"thursday","time":"19:00","format":"discussion","locationType":"in_person","access":"closed"}]', '[]', '7000 Tryon Rd., Cary, NC, 27518', 'Macedonia United Methodist Church', '7000 Tryon Rd.', 'Cary', 'NC', '27518', NULL, true, '');
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  To Native ->  CapacitorSQLite query 122439719
+⚡️  TO JS {"values":[{"ios_columns":["lastId"]},{"lastId":4}]}
+⚡️  [log] - [ sqliteLoader.js ] Created meetings item with ID: 4
+⚡️  [log] - [ AppDataContext.tsx:337 ] Meeting added: 4
+⚡️  [log] - [ testDataGenerator ] Created meeting: Arch to Freedom
+⚡️  [log] - [ testDataGenerator ] Created meeting: There Is A Solution
+⚡️  [log] - [ testDataGenerator ] Total meetings created: 2
+⚡️  [log] - [ testDataGenerator ] Creating activities through app data functions...
+⚡️  [log] - [ AppDataContext.tsx:300 addActivity ] Received activity data: {
+  "userId": "1",
+  "type": "prayer",
+  "title": "Morning Prayer",
+  "text": "Morning Prayer",
+  "notes": "Started the day with gratitude and reflection",
+  "date": "2025-06-28T00:25:58.077Z",
+  "duration": 10,
+  "completed": 1
+}
+⚡️  [log] - [ AppDataContext.tsx:301 addActivity ] Calling databaseService.addActivity...
+⚡️  [log] - [ DatabaseService.ts:261 addActivity ] Received activity: {
+  "userId": "1",
+  "type": "prayer",
+  "title": "Morning Prayer",
+  "text": "Morning Prayer",
+  "notes": "Started the day with gratitude and reflection",
+  "date": "2025-06-28T00:25:58.077Z",
+  "duration": 10,
+  "completed": 1
+}
+⚡️  [log] - [ DatabaseService.ts:262 addActivity ] Calling this.database.add...
+⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO activities (userId, type, title, text, notes, date, duration, completed) VALUES ('1', 'prayer', 'Morning Prayer', 'Morning Prayer', 'Started the day with gratitude and reflection', '2025-06-28T00:25:58.077Z', 10, 1);
+⚡️  To Native ->  CapacitorSQLite execute 122439720
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  To Native ->  CapacitorSQLite query 122439721
+⚡️  TO JS {"values":[{"ios_columns":["lastId"]},{"lastId":1}]}
+⚡️  [log] - [ sqliteLoader.js ] Created activities item with ID: 1
+⚡️  [log] - [ DatabaseService.ts:266 addActivity ] this.database.add returned: {
+  "userId": "1",
+  "type": "prayer",
+  "title": "Morning Prayer",
+  "text": "Morning Prayer",
+  "notes": "Started the day with gratitude and reflection",
+  "date": "2025-06-28T00:25:58.077Z",
+  "duration": 10,
+  "completed": 1,
+  "id": 1,
+  "createdAt": "2025-06-29T00:25:58.085Z",
+  "updatedAt": "2025-06-29T00:25:58.085Z"
+}
+⚡️  [log] - [ AppDataContext.tsx:305 addActivity ] DatabaseService returned: {
+  "userId": "1",
+  "type": "prayer",
+  "title": "Morning Prayer",
+  "text": "Morning Prayer",
+  "notes": "Started the day with gratitude and reflection",
+  "date": "2025-06-28T00:25:58.077Z",
+  "duration": 10,
+  "completed": 1,
+  "id": 1,
+  "createdAt": "2025-06-29T00:25:58.085Z",
+  "updatedAt": "2025-06-29T00:25:58.085Z"
+}
+⚡️  [log] - [ AppDataContext.tsx:315 ] Using cached activities for 30 days: 0
+⚡️  [log] - [ AppDataContext.tsx:312 addActivity ] Activity added successfully with ID: 1
+⚡️  To Native ->  CapacitorSQLite execute 122439722
+⚡️  [log] - [ AppDataContext.tsx:454 ] Calculating spiritual fitness with 0 activities for 30 days
+⚡️  [log] - [ testDataGenerator ] Created activity: Morning Prayer
+⚡️  [log] - [ AppDataContext.tsx:300 addActivity ] Received activity data: {
+  "userId": "1",
+  "type": "meditation",
+  "title": "Evening Meditation",
+  "text": "Evening Meditation",
+  "notes": "15 minutes of quiet reflection before bed",
+  "date": "2025-06-28T00:25:58.077Z",
+  "duration": 15,
+  "completed": 1
+}
+⚡️  [log] - [ AppDataContext.tsx:301 addActivity ] Calling databaseService.addActivity...
+⚡️  [log] - [ DatabaseService.ts:261 addActivity ] Received activity: {
+  "userId": "1",
+  "type": "meditation",
+  "title": "Evening Meditation",
+  "text": "Evening Meditation",
+  "notes": "15 minutes of quiet reflection before bed",
+  "date": "2025-06-28T00:25:58.077Z",
+  "duration": 15,
+  "completed": 1
+}
+⚡️  [log] - [ DatabaseService.ts:262 addActivity ] Calling this.database.add...
+⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO activities (userId, type, title, text, notes, date, duration, completed) VALUES ('1', 'meditation', 'Evening Meditation', 'Evening Meditation', '15 minutes of quiet reflection before bed', '2025-06-28T00:25:58.077Z', 15, 1);
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  To Native ->  CapacitorSQLite query 122439723
+⚡️  TO JS {"values":[{"ios_columns":["lastId"]},{"lastId":2}]}
+⚡️  [log] - [ sqliteLoader.js ] Created activities item with ID: 2
+⚡️  [log] - [ DatabaseService.ts:266 addActivity ] this.database.add returned: {
+  "userId": "1",
+  "type": "meditation",
+  "title": "Evening Meditation",
+  "text": "Evening Meditation",
+  "notes": "15 minutes of quiet reflection before bed",
+  "date": "2025-06-28T00:25:58.077Z",
+  "duration": 15,
+  "completed": 1,
+  "id": 2,
+  "createdAt": "2025-06-29T00:25:58.092Z",
+  "updatedAt": "2025-06-29T00:25:58.092Z"
+}
+⚡️  [log] - [ AppDataContext.tsx:305 addActivity ] DatabaseService returned: {
+  "userId": "1",
+  "type": "meditation",
+  "title": "Evening Meditation",
+  "text": "Evening Meditation",
+  "notes": "15 minutes of quiet reflection before bed",
+  "date": "2025-06-28T00:25:58.077Z",
+  "duration": 15,
+  "completed": 1,
+  "id": 2,
+  "createdAt": "2025-06-29T00:25:58.092Z",
+  "updatedAt": "2025-06-29T00:25:58.092Z"
+}
+⚡️  To Native ->  CapacitorSQLite execute 122439724
+⚡️  [log] - [ AppDataContext.tsx:315 ] Using cached activities for 30 days: 0
+⚡️  [log] - [ AppDataContext.tsx:312 addActivity ] Activity added successfully with ID: 2
+⚡️  [log] - [ AppDataContext.tsx:454 ] Calculating spiritual fitness with 0 activities for 30 days
+⚡️  [log] - [ testDataGenerator ] Created activity: Evening Meditation
+⚡️  [log] - [ AppDataContext.tsx:300 addActivity ] Received activity data: {
+  "userId": "1",
+  "type": "literature",
+  "title": "Big Book Reading",
+  "text": "Big Book Reading",
+  "notes": "Read pages 85-88 about making amends",
+  "date": "2025-06-27T00:25:58.077Z",
+  "duration": 20,
+  "completed": 1
+}
+⚡️  [log] - [ AppDataContext.tsx:301 addActivity ] Calling databaseService.addActivity...
+⚡️  [log] - [ DatabaseService.ts:261 addActivity ] Received activity: {
+  "userId": "1",
+  "type": "literature",
+  "title": "Big Book Reading",
+  "text": "Big Book Reading",
+  "notes": "Read pages 85-88 about making amends",
+  "date": "2025-06-27T00:25:58.077Z",
+  "duration": 20,
+  "completed": 1
+}
+⚡️  [log] - [ DatabaseService.ts:262 addActivity ] Calling this.database.add...
+⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO activities (userId, type, title, text, notes, date, duration, completed) VALUES ('1', 'literature', 'Big Book Reading', 'Big Book Reading', 'Read pages 85-88 about making amends', '2025-06-27T00:25:58.077Z', 20, 1);
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  To Native ->  CapacitorSQLite query 122439725
+⚡️  TO JS {"values":[{"ios_columns":["lastId"]},{"lastId":3}]}
+⚡️  [log] - [ sqliteLoader.js ] Created activities item with ID: 3
+⚡️  [log] - [ DatabaseService.ts:266 addActivity ] this.database.add returned: {
+  "userId": "1",
+  "type": "literature",
+  "title": "Big Book Reading",
+  "text": "Big Book Reading",
+  "notes": "Read pages 85-88 about making amends",
+  "date": "2025-06-27T00:25:58.077Z",
+  "duration": 20,
+  "completed": 1,
+  "id": 3,
+  "createdAt": "2025-06-29T00:25:58.105Z",
+  "updatedAt": "2025-06-29T00:25:58.105Z"
+}
+⚡️  [log] - [ AppDataContext.tsx:305 addActivity ] DatabaseService returned: {
+  "userId": "1",
+  "type": "literature",
+  "title": "Big Book Reading",
+  "text": "Big Book Reading",
+  "notes": "Read pages 85-88 about making amends",
+  "date": "2025-06-27T00:25:58.077Z",
+  "duration": 20,
+  "completed": 1,
+  "id": 3,
+  "createdAt": "2025-06-29T00:25:58.105Z",
+  "updatedAt": "2025-06-29T00:25:58.105Z"
+}
+⚡️  To Native ->  CapacitorSQLite query 122439726
+⚡️  [log] - [ AppDataContext.tsx:315 ] Using cached activities for 30 days: 0
+⚡️  [log] - [ AppDataContext.tsx:312 addActivity ] Activity added successfully with ID: 3
+⚡️  [log] - [ AppDataContext.tsx:454 ] Calculating spiritual fitness with 0 activities for 30 days
+⚡️  [log] - [ testDataGenerator ] Created activity: Big Book Reading
+⚡️  [log] - [ testDataGenerator ] Test data creation completed successfully!
+⚡️  [log] - [ testDataGenerator ] Results: {"meetingsCreated":2,"activitiesCreated":3}
+⚡️  [log] - [ Dashboard ] Test data creation completed: {"sponsorsCreated":0,"sponseesCreated":0,"sponsorContactsCreated":0,"sponseeContactsCreated":0,"actionItemsCreated":0,"meetingsCreated":2}
+⚡️  [log] - [ Dashboard ] Reloading all data after test data creation...
+⚡️  TO JS {"values":[{"ios_columns":["id","userId","type","date","notes","duration","location","meetingName","meetingId","wasChair","wasShare","wasSpeaker","literatureTitle","isSponsorCall","isSponseeCall","isAAMemberCall","callType","stepNumber","personCalled","ser
+⚡️  To Native ->  CapacitorSQLite query 122439727
+⚡️  [log] - [ AppDataContext.tsx ] Loaded activities from activities table: 3
+⚡️  TO JS {"values":[]}
+⚡️  [log] - [ AppDataContext.tsx ] Loaded sponsor contacts: 0
+⚡️  To Native ->  CapacitorSQLite query 122439728
+⚡️  TO JS {"values":[]}
+⚡️  To Native ->  ⚡️  [log] - [ AppDataContext.tsx ] Transformed sponsor contacts to activities: 0
+CapacitorSQLite query 122439729
+⚡️  TO JS {"values":[]}
+⚡️  [log] - [ AppDataContext.tsx ] Loaded all action items from database: 0
+⚡️  [log] - [ AppDataContext.tsx ] Transformed action items to activities: 0
+⚡️  [log] - [ AppDataContext.tsx ] Total merged activities (deduplicated): 3
+⚡️  [log] - [ AppDataContext.tsx ] Activity types: ["prayer","meditation","literature"]
+⚡️  [log] - [ AppDataContext.tsx ] Activities grouped by date: {"Fri Jun 27 2025":["prayer: Morning Prayer","meditation: Evening Meditation"],"Thu Jun 26 2025":["literature: Big Book Reading"]}
+⚡️  [log] - [ AppDataContext.tsx ] Activities cached (180 days): 3 (activities + action items)
+⚡️  [log] - [ AppDataContext.tsx ] Activity types in cache: ["prayer","meditation","literature"]
+⚡️  [log] - [ AppDataContext.tsx:315 ] Using cached activities for 30 days: 0
+⚡️  To Native ->  CapacitorSQLite query 122439730
+⚡️  [log] - [ AppDataContext.tsx:454 ] Calculating spiritual fitness with 0 activities for 30 days
+⚡️  TO JS {"values":[]}
+⚡️  To Native ->  CapacitorSQLite query 122439731
+⚡️  [log] - [ AppDataContext.tsx ] Action items loaded: 0
+⚡️  TO JS {"values":[{"ios_columns":["id","name","days","time","schedule","address","locationName","streetAddress","city","state","zipCode","coordinates","phoneNumber","onlineUrl","isHomeGroup","types","createdAt","updatedAt"]},{"address":"100 Hughes St, Apex, NC, 2
+⚡️  [log] - [ AppDataContext.tsx:326 ] Meetings loaded: 4

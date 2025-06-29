@@ -97,14 +97,17 @@ The Spiritual Condition Tracker is a comprehensive mobile application designed f
 5. TestFlight deployment for user testing
 
 ## Changelog
-- June 29, 2025: Comprehensive database schema type definitions created
+- June 29, 2025: Comprehensive database schema type definitions and initialization fixes
+  - **FIXED: Database schema initialization errors** - Removed redundant ALTER TABLE statements causing "duplicate column name" errors
+  - **FIXED: Test data creation** - Database now initializes properly and test data generation works successfully
   - Created complete TypeScript interfaces matching all SQLite tables exactly
   - Added types for: User, Activity, Meeting, ActionItem, Sponsor, Sponsee, SponsorContact, SponseeContact
-  - Fixed database schema issues - added missing title and text columns to activities table
+  - Updated all database functions (DatabaseService, AppDataContext) to use proper Insert/Update types
   - Created comprehensive Insert/Update utility types for all database operations  
   - Added proper foreign key relationship typing and backward compatibility fields
   - Enhanced type safety with strict enum definitions for ActivityType, ContactType, etc.
   - All database operations now have proper TypeScript typing to prevent schema mismatches
+  - Database initialization now completes without errors, test data creation functional
 - June 24, 2025: Fixed action item display and data deletion issues
   - Root cause: Action items appearing twice in Activity List and not completing properly
   - Enhanced AppDataContext loadActivities() to properly enrich activities with actionItemData
