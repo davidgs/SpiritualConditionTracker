@@ -381,6 +381,11 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
       // 2. Load sponsor contacts and transform them to activities (NOT sponsee contacts)
       const sponsorContacts = await databaseService.getAllSponsorContacts();
       console.log('[ AppDataContext.tsx ] Loaded sponsor contacts:', sponsorContacts.length);
+      console.log('[ AppDataContext.tsx ] Sponsor contact IDs:', sponsorContacts.map(contact => ({
+        id: contact.id,
+        topic: contact.topic,
+        date: contact.date
+      })));
 
       // Get sponsor name for display
       const allSponsors = await databaseService.getAllSponsors();
@@ -415,6 +420,13 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
       // 3. Load action items only once and transform them
       const allDbActionItems = await databaseService.getAllActionItems();
       console.log('[ AppDataContext.tsx ] Loaded all action items from database:', allDbActionItems.length);
+      console.log('[ AppDataContext.tsx ] Action items details:', allDbActionItems.map(item => ({
+        id: item.id,
+        title: item.title,
+        type: item.type,
+        contactId: item.contactId,
+        sponsorContactId: item.sponsorContactId
+      })));
 
       // Transform action items to activity-like objects, ensuring uniqueness
       const actionItemActivities = allDbActionItems
