@@ -1,13 +1,26 @@
 /**
  * TypeScript interfaces for database entities
- * Strict typing to prevent data structure issues
+ * Comprehensive type definitions matching SQLite schema
+ * Last Updated: June 29, 2025
  */
 
 // Contact types enum for strict validation
 export type ContactType = 'phone' | 'in-person' | 'video' | 'text' | 'email' | 'other';
 
-// Activity types enum
-export type ActivityType = 'prayer' | 'meditation' | 'reading' | 'literature' | 'meeting' | 'service' | 'inventory' | 'amends' | 'sponsor-contact' | 'sponsee-contact' | 'action-item' | 'sponsor_action_item' | 'sponsee_action_item' | 'call' | 'todo' | 'other';
+// Activity types - matches activities table type column constraints
+export type ActivityType = 'prayer' | 'meditation' | 'literature' | 'meeting' | 'service' | 'call' | 'journaling' | 'sponsor-contact' | 'sponsee-contact' | 'action-item' | 'sponsor_action_item' | 'sponsee_action_item' | 'todo' | 'other';
+
+// Action item types
+export type ActionItemType = 'todo' | 'action' | 'reminder' | 'sponsor_action_item' | 'sponsee_action_item';
+
+// Meeting format types
+export type MeetingFormat = 'discussion' | 'speaker' | 'mens' | 'womens' | 'young_people' | 'beginners' | 'big_book' | 'step_study' | 'literature';
+
+// Meeting location types
+export type LocationType = 'in_person' | 'online' | 'hybrid';
+
+// Meeting access types
+export type AccessType = 'open' | 'closed';
 
 // Base interface for database entities
 export interface BaseEntity {
@@ -36,26 +49,25 @@ export interface SponseeData {
   notes: string;
 }
 
-// User interface
+// User interface - matches users table schema exactly
 export interface User extends BaseEntity {
   name: string;
   lastName: string;
   phoneNumber: string;
   email: string;
   sobrietyDate: string;
-  homeGroups: string[];
+  homeGroups: string[]; // JSON parsed from TEXT column
   privacySettings: {
     allowMessages: boolean;
     shareLastName: boolean;
-  };
+  }; // JSON parsed from TEXT column
   preferences: {
     use24HourFormat: boolean;
     darkMode: boolean;
-    theme: string; // For future theme customization (default, blue, green, etc.)
-  };
-  isDarkMode?: number; // SQLite boolean as integer (0 or 1)
-  sponsees?: any[]; // Array of sponsee objects
-  // Sponsor fields (optional)
+    theme: string;
+  }; // JSON parsed from TEXT column
+  isDarkMode?: number; // SQLite boolean as integer (0 or 1), optional for compatibility
+  // Sponsor fields from users table
   sponsor_name?: string;
   sponsor_lastName?: string;
   sponsor_phone?: string;
@@ -64,103 +76,141 @@ export interface User extends BaseEntity {
   sponsor_notes?: string;
 }
 
-// Sponsor Contact interface
-export interface SponsorContact extends BaseEntity {
+// Legacy SponsorContact interface (keeping for backward compatibility)
+export interface LegacySponsorContact extends BaseEntity {
   userId: string;
   type: ContactType;
   date: string;
   note: string;
 }
 
-// Action Item interface
+// Action Item interface - matches action_items table schema exactly
 export interface ActionItem extends BaseEntity {
   title: string;
   text?: string;
   notes?: string;
-  dueDate?: string | null;
-  completed: 0 | 1; // SQLite boolean as integer
-  deleted: 0 | 1; // SQLite boolean as integer for soft deletion
-  type: 'todo' | 'action' | 'reminder' | 'sponsor_action_item' | 'sponsee_action_item';
-  contactId?: number; // Legacy field
-  sponsorContactId?: number; // Reference to sponsor_contacts.id
-  sponseeContactId?: number; // Reference to sponsee_contacts.id
-  sponsorId?: number; // Reference to sponsors.id
-  sponsorName?: string; // Sponsor name for display
-  sponseeId?: number; // Reference to sponsees.id
-  sponseeName?: string; // Sponsee name for display
+  dueDate?: string;
+  completed: number; // Default 0, SQLite boolean as integer
+  deleted: number; // Default 0, SQLite boolean as integer for soft deletion
+  type: ActionItemType; // Default 'action'
+  sponsorContactId?: number; // Foreign key to sponsor_contacts.id
+  sponseeContactId?: number; // Foreign key to sponsee_contacts.id
+  // Legacy fields for backward compatibility
+  contactId?: number;
+  sponsorId?: number;
+  sponsorName?: string;
+  sponseeId?: number;
+  sponseeName?: string;
 }
 
-// Join table for sponsor contacts and action items
-export interface SponsorContactActionItem extends BaseEntity {
-  contactId: number;
-  actionItemId: number;
+// Sponsors table interface - matches sponsors table schema exactly  
+export interface Sponsor extends BaseEntity {
+  userId: string; // References current user, defaults to 'default_user'
+  name?: string;
+  lastName?: string;
+  phoneNumber?: string;
+  email?: string;
+  sobrietyDate?: string;
+  notes?: string;
+  sponsorType: string; // Default 'sponsor'
 }
 
-// Activity interface
+// Sponsees table interface - matches sponsees table schema exactly
+export interface Sponsee extends BaseEntity {
+  userId: string; // References current user, defaults to 'default_user'
+  name?: string;
+  lastName?: string;
+  phoneNumber?: string;
+  email?: string;
+  sobrietyDate?: string;
+  notes?: string;
+  sponseeType: string; // Default 'sponsee'
+}
+
+// Sponsor Contacts table interface - matches sponsor_contacts table schema exactly
+export interface SponsorContact extends BaseEntity {
+  userId: string;
+  sponsorId?: number; // Foreign key to sponsors.id
+  type: string; // Contact type as string in database
+  date: string;
+  note?: string;
+  topic?: string;
+  duration?: number;
+}
+
+// Sponsee Contacts table interface - matches sponsee_contacts table schema exactly
+export interface SponseeContact extends BaseEntity {
+  userId: string;
+  sponseeId: number; // Foreign key to sponsees.id - required
+  type: string;
+  date: string;
+  note?: string;
+  topic?: string;
+  duration?: number;
+}
+
+// Activity interface - matches activities table schema exactly
 export interface Activity extends BaseEntity {
   userId: string;
   type: ActivityType;
+  title?: string; // Added to match schema
+  text?: string; // Added to match schema
   date: string;
   notes?: string;
-  duration?: number; // minutes
+  duration: number; // Default 0 in schema, so not optional
   location?: string;
   meetingName?: string;
   meetingId?: number;
-  wasChair?: number;
-  wasShare?: number;
-  wasSpeaker?: number;
+  wasChair: number; // Default 0, SQLite boolean as integer
+  wasShare: number; // Default 0, SQLite boolean as integer
+  wasSpeaker: number; // Default 0, SQLite boolean as integer
   literatureTitle?: string;
-  isSponsorCall?: number;
-  isSponseeCall?: number;
-  isAAMemberCall?: number;
+  isSponsorCall: number; // Default 0, SQLite boolean as integer
+  isSponseeCall: number; // Default 0, SQLite boolean as integer
+  isAAMemberCall: number; // Default 0, SQLite boolean as integer
   callType?: string;
   stepNumber?: number;
   personCalled?: string;
   serviceType?: string;
-  completed?: number;
-  // Action item specific fields for synchronization
+  completed: number; // Default 0, SQLite boolean as integer
   actionItemId?: number;
-  actionItemData?: ActionItem;
-  // Additional fields for compatibility and enrichment
-  sponsorName?: string;
-  sponseeName?: string;
-  title?: string;
-  text?: string;
-  name?: string; // Generic name field for activities
-  // Contact association fields
   sponsorContactId?: number;
   sponseeContactId?: number;
   sponsorId?: number;
   sponseeId?: number;
+  // Runtime enrichment fields (not in database schema)
+  actionItemData?: ActionItem;
+  sponsorName?: string;
+  sponseeName?: string;
+  name?: string; // Generic name field for activities
 }
-export interface Meeting extends BaseEntity {
-  name: string;
-  days: [string];
+// Meeting schedule item interface
+export interface MeetingScheduleItem {
+  day: string;
   time: string;
-  schedule: [
-    {
-      day: string;
-      time: string;
-      format: 'discussion' | 'speaker' | 'mens' | 'womens' | 'young_people' | 'beginners' | 'big_book' | 'step_study' | 'literature';
-      locationType: "in_person" | "online" | "hybrid";
-      access: "open" | "closed";
-    }
-  ];
-  types?: [];
+  format: MeetingFormat;
+  locationType: LocationType;
+  access: AccessType;
+}
+
+// Meeting interface - matches meetings table schema exactly
+export interface Meeting extends BaseEntity {
+  name?: string;
+  days?: string; // JSON string, parsed to string[]
+  time?: string;
+  schedule?: string; // JSON string, parsed to MeetingScheduleItem[]
   address?: string;
   locationName?: string;
   streetAddress?: string;
   city?: string;
   state?: string;
   zipCode?: string;
-  coordinates?: string | null;
-  isHomeGroup: 0 | 1;
-  onlineUrl?: string | null;
-  onlineMeetingId?: string | null;
-  onlinePasscode?: string | null;
-  createdAt: string;
-  updatedAt: string;
-};
+  coordinates?: string;
+  phoneNumber?: string;
+  onlineUrl?: string;
+  isHomeGroup: number; // Default 0, SQLite boolean as integer
+  types?: string; // JSON string, parsed to string[]
+}
 
 
 // Contact interface for sponsor/sponsee contacts
@@ -222,6 +272,31 @@ declare global {
   }
 }
 
+// Database operation utility types
+export type InsertUser = Omit<User, 'id' | 'createdAt' | 'updatedAt'>;
+export type UpdateUser = Partial<InsertUser>;
+
+export type InsertActivity = Omit<Activity, 'id' | 'createdAt' | 'updatedAt'>;
+export type UpdateActivity = Partial<InsertActivity>;
+
+export type InsertMeeting = Omit<Meeting, 'id' | 'createdAt' | 'updatedAt'>;
+export type UpdateMeeting = Partial<InsertMeeting>;
+
+export type InsertActionItem = Omit<ActionItem, 'id' | 'createdAt' | 'updatedAt'>;
+export type UpdateActionItem = Partial<InsertActionItem>;
+
+export type InsertSponsor = Omit<Sponsor, 'id' | 'createdAt' | 'updatedAt'>;
+export type UpdateSponsor = Partial<InsertSponsor>;
+
+export type InsertSponsee = Omit<Sponsee, 'id' | 'createdAt' | 'updatedAt'>;
+export type UpdateSponsee = Partial<InsertSponsee>;
+
+export type InsertSponsorContact = Omit<SponsorContact, 'id' | 'createdAt' | 'updatedAt'>;
+export type UpdateSponsorContact = Partial<InsertSponsorContact>;
+
+export type InsertSponseeContact = Omit<SponseeContact, 'id' | 'createdAt' | 'updatedAt'>;
+export type UpdateSponseeContact = Partial<InsertSponseeContact>;
+
 // Form data interfaces
 export interface ContactFormData {
   type: ContactType;
@@ -237,7 +312,7 @@ export interface ActionItemFormData {
   dueDate: string | null;
   completed: boolean;
   deleted?: boolean;
-  type: 'todo' | 'action' | 'reminder';
+  type: ActionItemType;
 }
 
 // Component prop interfaces
