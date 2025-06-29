@@ -52,17 +52,12 @@ export default function ActivityList({
           const person = allPeople.find((p: any) => p.id === sponsor.personId) as any;
           if (person) {
             sponsorData.push({
-              userId: sponsor.userId,
               name: person.firstName || '',
               lastName: person.lastName || '',
               phoneNumber: person.phoneNumber || '',
               email: person.email || '',
               sobrietyDate: person.sobrietyDate || '',
-              homeGroup: person.homeGroup || '',
-              notes: sponsor.notes || '',
-              isActive: sponsor.status === 'active',
-              createdAt: sponsor.createdAt,
-              updatedAt: sponsor.updatedAt
+              notes: sponsor.notes || ''
             });
           }
         }
@@ -144,8 +139,7 @@ export default function ActivityList({
         console.log('[ActivityList] Current completed status:', currentCompleted, '-> New status:', newCompleted);
         
         await updateActionItem(actionItemId, { 
-          completed: newCompleted,
-          updatedAt: new Date().toISOString()
+          completed: newCompleted
         });
         
         console.log('[ActivityList] Action item updated successfully');
@@ -170,8 +164,7 @@ export default function ActivityList({
       try {
         // Use soft delete (set deleted: 1) instead of hard delete
         await updateActionItem(actionItemId, {
-          deleted: 1,
-          updatedAt: new Date().toISOString()
+          deleted: 1
         });
       } catch (error) {
         console.error('Failed to delete action item:', error);

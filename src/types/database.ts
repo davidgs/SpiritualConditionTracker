@@ -8,7 +8,7 @@
 export type ContactType = 'phone' | 'in-person' | 'video' | 'text' | 'email' | 'other';
 
 // Activity types - matches activities table type column constraints
-export type ActivityType = 'prayer' | 'meditation' | 'literature' | 'meeting' | 'service' | 'call' | 'journaling' | 'sponsor-contact' | 'sponsee-contact' | 'action-item' | 'sponsor_action_item' | 'sponsee_action_item' | 'todo' | 'other';
+export type ActivityType = 'prayer' | 'meditation' | 'literature' | 'meeting' | 'service' | 'call' | 'journaling' | 'sponsor-contact' | 'sponsee-contact' | 'action-item' | 'Action_item' | 'sponsor_action_item' | 'sponsee_action_item' | 'todo' | 'other';
 
 // Action item types
 export type ActionItemType = 'todo' | 'action' | 'reminder' | 'sponsor_action_item' | 'sponsee_action_item';
