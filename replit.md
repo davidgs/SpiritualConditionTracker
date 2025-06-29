@@ -100,6 +100,7 @@ The Spiritual Condition Tracker is a comprehensive mobile application designed f
 - June 29, 2025: Database schema alignment and architecture improvements
   - **FIXED: Critical database schema alignment** - Resolved mismatch between User interface and users table schema
   - **ARCHITECTURE IMPROVEMENT: Proper relational design** - Removed sponsor fields from users table, use sponsors table relationships instead
+  - **MAJOR CLEANUP: Activities table data duplication** - Removed redundant sponsor/contact/action item fields from activities table
   - **FIXED: "userId" column error in action_items** - Removed non-existent userId field from action item creation
   - **FIXED: Database schema initialization errors** - Removed redundant ALTER TABLE statements causing "duplicate column name" errors
   - **FIXED: Test data creation for sponsors/sponsees** - Restored comprehensive test data generator to create sponsors, sponsees, contacts, and action items

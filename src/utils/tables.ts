@@ -38,25 +38,17 @@ export const TABLE_DEFINITIONS = {
       notes TEXT,
       duration INTEGER DEFAULT 0,
       location TEXT,
+      -- Meeting-specific fields (when type='meeting')
       meetingName TEXT,
       meetingId INTEGER,
       wasChair INTEGER DEFAULT 0,
       wasShare INTEGER DEFAULT 0,
       wasSpeaker INTEGER DEFAULT 0,
+      -- Literature-specific fields (when type='literature')
       literatureTitle TEXT,
-      isSponsorCall INTEGER DEFAULT 0,
-      isSponseeCall INTEGER DEFAULT 0,
-      isAAMemberCall INTEGER DEFAULT 0,
-      callType TEXT,
       stepNumber INTEGER,
-      personCalled TEXT,
+      -- Service-specific fields (when type='service')
       serviceType TEXT,
-      completed INTEGER DEFAULT 0,
-      actionItemId INTEGER,
-      sponsorContactId INTEGER,
-      sponseeContactId INTEGER,
-      sponsorId INTEGER,
-      sponseeId INTEGER,
       createdAt TEXT DEFAULT CURRENT_TIMESTAMP,
       updatedAt TEXT DEFAULT CURRENT_TIMESTAMP
     )

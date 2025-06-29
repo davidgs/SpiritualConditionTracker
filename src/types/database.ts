@@ -153,40 +153,38 @@ export interface SponseeContact extends BaseEntity {
   duration?: number;
 }
 
-// Activity interface - matches activities table schema exactly
+// Activity interface - cleaned up to match proper table structure
 export interface Activity extends BaseEntity {
   userId: string;
   type: ActivityType;
-  title?: string; // Added to match schema
-  text?: string; // Added to match schema
+  title?: string;
+  text?: string;
   date: string;
   notes?: string;
   duration: number; // Default 0 in schema, so not optional
   location?: string;
+  // Meeting-specific fields (when type='meeting')
   meetingName?: string;
   meetingId?: number;
   wasChair: number; // Default 0, SQLite boolean as integer
   wasShare: number; // Default 0, SQLite boolean as integer
   wasSpeaker: number; // Default 0, SQLite boolean as integer
+  // Literature-specific fields (when type='literature')
   literatureTitle?: string;
-  isSponsorCall: number; // Default 0, SQLite boolean as integer
-  isSponseeCall: number; // Default 0, SQLite boolean as integer
-  isAAMemberCall: number; // Default 0, SQLite boolean as integer
-  callType?: string;
   stepNumber?: number;
-  personCalled?: string;
+  // Service-specific fields (when type='service')
   serviceType?: string;
-  completed: number; // Default 0, SQLite boolean as integer
-  actionItemId?: number;
-  sponsorContactId?: number;
-  sponseeContactId?: number;
-  sponsorId?: number;
-  sponseeId?: number;
-  // Runtime enrichment fields (not in database schema)
+  
+  // Runtime enrichment fields (added by AppDataContext, not in database schema)
+  // These are used when activities represent contacts or action items
   actionItemData?: ActionItem;
   sponsorName?: string;
   sponseeName?: string;
-  name?: string; // Generic name field for activities
+  sponsorContactId?: number;
+  sponseeContactId?: number;
+  actionItemId?: number;
+  completed?: number; // For action items
+  personCalled?: string; // For contact activities
 }
 // Meeting schedule item interface
 export interface MeetingScheduleItem {
