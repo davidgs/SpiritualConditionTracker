@@ -32,18 +32,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
   const databaseService = DatabaseService.getInstance();
 
   // Get data and function from context
-  const { 
-    loadActivities, 
-    loadActionItems, 
-    loadMeetings, 
-    addMeeting, 
-    addActivity, 
-    addSponsor, 
-    addSponsee, 
-    addSponsorContact, 
-    addSponseeContact, 
-    addActionItem 
-  } = useAppData();
+  const { loadActivities, loadActionItems, loadMeetings, addMeeting, addActivity } = useAppData();
 
   // Handler for saving sponsor contacts from LogActivityModal
   const handleSaveSponsorContact = async (contactData: any, actionItems: any[] = []) => {
@@ -126,15 +115,7 @@ export default function Dashboard({ setCurrentView, user, activities, meetings =
 
     try {
       console.log('[ Dashboard ] Starting test data creation...');
-      const results = await createTestData(user.id, { 
-        addMeeting, 
-        addActivity, 
-        addSponsor, 
-        addSponsee, 
-        addSponsorContact, 
-        addSponseeContact, 
-        addActionItem 
-      });
+      const results = await createTestData(user.id, { addMeeting, addActivity });
       console.log('[ Dashboard ] Test data creation completed:', results);
 
       // Reload all data to show new test data

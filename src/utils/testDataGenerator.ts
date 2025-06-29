@@ -1,7 +1,9 @@
 /**
  * Test Data Generator for Sponsor/Sponsee System
- * Creates comprehensive test data using proper app data pathways
+ * Creates comprehensive test data using DatabaseService directly
  */
+
+import DatabaseService from '../services/DatabaseService';
 
 export interface TestDataResults {
   sponsorsCreated: number;
@@ -15,18 +17,14 @@ export interface TestDataResults {
 interface AppDataFunctions {
   addMeeting: (meeting: any) => Promise<any>;
   addActivity: (activity: any) => Promise<any>;
-  addSponsor: (sponsor: any) => Promise<any>;
-  addSponsee: (sponsee: any) => Promise<any>;
-  addSponsorContact: (contact: any) => Promise<any>;
-  addSponseeContact: (contact: any) => Promise<any>;
-  addActionItem: (actionItem: any) => Promise<any>;
 }
 
 export async function createTestData(userId: number | string, appDataFunctions: AppDataFunctions): Promise<TestDataResults> {
   try {
     console.log('[ testDataGenerator ] Starting test data creation for user:', userId);
-    console.log('[ testDataGenerator ] Using proper app data pathways');
+    console.log('[ testDataGenerator ] Using DatabaseService directly for sponsors/sponsees');
     
+    const databaseService = DatabaseService.getInstance();
     const results: TestDataResults = {
       sponsorsCreated: 0,
       sponseesCreated: 0,
@@ -135,7 +133,7 @@ export async function createTestData(userId: number | string, appDataFunctions: 
 
     let createdSponsors = [];
     for (const sponsor of sponsors) {
-      const savedSponsor = await appDataFunctions.addSponsor(sponsor);
+      const savedSponsor = await databaseService.addSponsor(sponsor);
       if (savedSponsor) {
         results.sponsorsCreated++;
         createdSponsors.push(savedSponsor);
@@ -170,7 +168,7 @@ export async function createTestData(userId: number | string, appDataFunctions: 
 
     let createdSponsees = [];
     for (const sponsee of sponsees) {
-      const savedSponsee = await appDataFunctions.addSponsee(sponsee);
+      const savedSponsee = await databaseService.addSponsee(sponsee);
       if (savedSponsee) {
         results.sponseesCreated++;
         createdSponsees.push(savedSponsee);
@@ -203,7 +201,7 @@ export async function createTestData(userId: number | string, appDataFunctions: 
       ];
 
       for (const contact of sponsorContacts) {
-        const savedContact = await appDataFunctions.addSponsorContact(contact);
+        const savedContact = await databaseService.addSponsorContact(contact);
         if (savedContact) {
           results.sponsorContactsCreated++;
           console.log('[ testDataGenerator ] Created sponsor contact with topic:', contact.topic);
@@ -236,7 +234,7 @@ export async function createTestData(userId: number | string, appDataFunctions: 
       ];
 
       for (const contact of sponseeContacts) {
-        const savedContact = await appDataFunctions.addSponseeContact(contact);
+        const savedContact = await databaseService.addSponseeContact(contact);
         if (savedContact) {
           results.sponseeContactsCreated++;
           console.log('[ testDataGenerator ] Created sponsee contact with topic:', contact.topic);
@@ -281,7 +279,7 @@ export async function createTestData(userId: number | string, appDataFunctions: 
     ];
 
     for (const actionItem of actionItems) {
-      const savedActionItem = await appDataFunctions.addActionItem(actionItem);
+      const savedActionItem = await databaseService.addActionItem(actionItem);
       if (savedActionItem) {
         results.actionItemsCreated++;
         console.log('[ testDataGenerator ] Created action item:', actionItem.title);
