@@ -10,51 +10,114 @@ We have **2 separate contact tables** (`sponsor_contacts`, `sponsee_contacts`) b
 
 This creates maintenance overhead and requires complex queries across multiple tables.
 
-## Proposed Unified Contacts Table
+## Proposed Unified Architecture with Address Book
 
+### 1. People Table (Address Book)
+```sql
+CREATE TABLE IF NOT EXISTS people (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  userId TEXT DEFAULT 'default_user',
+  firstName TEXT NOT NULL,
+  lastName TEXT,
+  phoneNumber TEXT,
+  email TEXT,
+  sobrietyDate TEXT,
+  homeGroup TEXT,
+  notes TEXT,
+  relationship TEXT, -- 'sponsor', 'sponsee', 'member', 'friend', 'family'
+  isActive INTEGER DEFAULT 1,
+  createdAt TEXT DEFAULT CURRENT_TIMESTAMP,
+  updatedAt TEXT DEFAULT CURRENT_TIMESTAMP
+);
+```
+
+### 2. Contacts Table (Interaction Records)
 ```sql
 CREATE TABLE IF NOT EXISTS contacts (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   userId TEXT DEFAULT 'default_user',
-  contactType TEXT NOT NULL, -- 'sponsor', 'sponsee', 'member', 'service'
-  relatedPersonId INTEGER, -- References sponsors.id, sponsees.id, or NULL for general members
-  relatedPersonName TEXT, -- Cached name for performance
-  type TEXT NOT NULL, -- 'call', 'meeting', 'coffee', 'text', etc.
+  personId INTEGER NOT NULL, -- References people.id
+  contactType TEXT NOT NULL, -- 'call', 'meeting', 'coffee', 'text', 'service'
   date TEXT NOT NULL,
   note TEXT,
   topic TEXT,
   duration INTEGER DEFAULT 0,
   location TEXT,
   createdAt TEXT DEFAULT CURRENT_TIMESTAMP,
-  updatedAt TEXT DEFAULT CURRENT_TIMESTAMP
+  updatedAt TEXT DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (personId) REFERENCES people(id)
 );
 ```
 
-## Benefits of Unified Table
-
-### 1. **Supports All Contact Types**
-- **Sponsor contacts**: `contactType='sponsor'`, `relatedPersonId` references `sponsors.id`  
-- **Sponsee contacts**: `contactType='sponsee'`, `relatedPersonId` references `sponsees.id`
-- **AA member contacts**: `contactType='member'`, `relatedPersonId=NULL`, store name in `relatedPersonName`
-- **Service contacts**: `contactType='service'`, `relatedPersonId=NULL`
-
-### 2. **Simplified Queries**
+### 3. Simplified Sponsors/Sponsees Tables
 ```sql
--- All contacts
-SELECT * FROM contacts ORDER BY date DESC;
+-- Sponsors table now just references people
+CREATE TABLE IF NOT EXISTS sponsors (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  userId TEXT DEFAULT 'default_user',
+  personId INTEGER NOT NULL, -- References people.id
+  startDate TEXT,
+  status TEXT DEFAULT 'active', -- 'active', 'former'
+  notes TEXT,
+  createdAt TEXT DEFAULT CURRENT_TIMESTAMP,
+  updatedAt TEXT DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (personId) REFERENCES people(id)
+);
 
--- Only sponsor contacts  
-SELECT * FROM contacts WHERE contactType = 'sponsor';
-
--- Only sponsee contacts
-SELECT * FROM contacts WHERE contactType = 'sponsee';
-
--- All relationship contacts (sponsors + sponsees)
-SELECT * FROM contacts WHERE contactType IN ('sponsor', 'sponsee');
-
--- General AA member contacts
-SELECT * FROM contacts WHERE contactType = 'member';
+-- Sponsees table now just references people
+CREATE TABLE IF NOT EXISTS sponsees (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  userId TEXT DEFAULT 'default_user',
+  personId INTEGER NOT NULL, -- References people.id
+  startDate TEXT,
+  status TEXT DEFAULT 'active',
+  notes TEXT,
+  createdAt TEXT DEFAULT CURRENT_TIMESTAMP,
+  updatedAt TEXT DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (personId) REFERENCES people(id)
+);
 ```
+
+## Benefits of Unified Architecture with Address Book
+
+### 1. **Complete Contact Management**
+- **Address Book**: Store all contact info (name, phone, email, sobriety date) in `people` table
+- **Interaction History**: Track all communications in `contacts` table
+- **Relationship Tracking**: sponsors/sponsees reference people with relationship status
+- **Unified Experience**: One place to manage all recovery community contacts
+
+### 2. **Powerful Queries**
+```sql
+-- All people in address book
+SELECT * FROM people WHERE isActive = 1 ORDER BY firstName;
+
+-- All sponsors with their contact info
+SELECT p.*, s.startDate, s.status 
+FROM people p 
+JOIN sponsors s ON p.id = s.personId 
+WHERE s.status = 'active';
+
+-- Contact history with a specific person
+SELECT c.*, p.firstName, p.lastName 
+FROM contacts c 
+JOIN people p ON c.personId = p.id 
+WHERE p.id = ? 
+ORDER BY c.date DESC;
+
+-- All interactions this month
+SELECT c.*, p.firstName, p.lastName, p.relationship
+FROM contacts c 
+JOIN people p ON c.personId = p.id 
+WHERE c.date >= date('now', 'start of month');
+```
+
+### 3. **Address Book Features**
+- **Search contacts** by name, phone, email
+- **Filter by relationship** (sponsor, sponsee, member, friend)
+- **Track sobriety dates** for anniversary reminders
+- **Store home group** information
+- **Notes and relationship status**
+- **Active/inactive status** for people who've moved, etc.
 
 ### 3. **Simplified Action Items**
 ```sql
@@ -137,12 +200,50 @@ async addContact(contact: InsertContact): Promise<Contact>
 - Consistent contact display logic
 - Easier search across all contacts
 
+## UI Features Enabled
+
+### Address Book Screen
+- **Contact List**: Alphabetical list of all people with photos, names, relationships
+- **Search Bar**: Search by name, phone number, or home group
+- **Filter Tabs**: All | Sponsors | Sponsees | Members | Friends | Family
+- **Quick Actions**: Call, text, email directly from address book
+- **Add Contact**: Simple form for new people
+
+### Contact Detail Screen  
+- **Personal Info**: Name, phone, email, sobriety date, home group
+- **Relationship Status**: Current sponsor/sponsee status with dates
+- **Interaction History**: Timeline of all contacts (calls, meetings, etc.)
+- **Action Items**: Linked action items from this person
+- **Quick Contact**: One-tap call/text/email buttons
+
+### Enhanced Activity List
+- **Rich Contact Display**: "Called John S. (Sponsor)" instead of generic contact
+- **Person Photos**: Profile pictures in activity timeline
+- **Contact Context**: See relationship and last contact date
+- **Quick Follow-up**: Create action items directly from activity
+
 ## Future Extensibility
 
-With unified contacts table, easily add:
-- **Home group contacts**: `contactType='homegroup'`
-- **Treatment center contacts**: `contactType='treatment'`
-- **Therapist contacts**: `contactType='professional'`
-- **Family contacts**: `contactType='family'`
+With unified people + contacts architecture, easily add:
+- **Anniversary Reminders**: Track sobriety dates for congratulations
+- **Contact Frequency Goals**: "Call sponsor 3x per week" tracking
+- **Group Contacts**: Home group member directory
+- **Emergency Contacts**: Quick access to key people
+- **Professional Contacts**: Therapists, doctors, treatment center staff
+- **Family Contacts**: Recovery-supportive family members
 
 All without additional tables or complex schema changes.
+
+## Migration Benefits
+
+### Data Consolidation
+- **Eliminate duplicate names** across sponsor/sponsee tables
+- **Single contact info** per person (no sync issues)
+- **Relationship history** (former sponsors, moved sponsees)
+- **Complete interaction timeline** per person
+
+### Performance Improvements  
+- **Fewer JOIN operations** for contact enrichment
+- **Better indexing** on single people table
+- **Reduced data duplication** and storage needs
+- **Faster contact lookups** and searches
