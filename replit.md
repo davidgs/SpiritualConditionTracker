@@ -101,6 +101,7 @@ The Spiritual Condition Tracker is a comprehensive mobile application designed f
   - **FIXED: "no such table: sponsee_contacts" errors** - Updated DatabaseService to use unified contacts table
   - **FIXED: getAllSponseeContacts method** - Now queries unified people + contacts tables instead of old sponsee_contacts
   - **FIXED: getAllSponsorContacts method** - Converted to use unified architecture with backward compatibility
+  - **FIXED: "activities has no column named completed"** - Added missing completed column to activities table schema
   - **MAINTAINED: Legacy interface compatibility** - Existing components continue to work with unified data
   - **RESOLVED: FontAwesome icons missing** - Fixed by Xcode clean and rebuild (build cache issue)
   - App now successfully runs with unified people + contacts architecture without database errors

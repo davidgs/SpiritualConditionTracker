@@ -366,6 +366,7 @@ async function createTables(sqlite) {
         date TEXT NOT NULL,
         notes TEXT,
         duration INTEGER DEFAULT 0,
+        completed INTEGER DEFAULT 0,
         location TEXT,
         -- Meeting-specific fields (when type='meeting')
         meetingName TEXT,
@@ -484,6 +485,18 @@ async function createTables(sqlite) {
     console.log('[ sqliteLoader.js ] Added sponsorId column to action_items');
   } catch (error) {
     // Column already exists, ignore error
+  }
+
+  // Add missing completed column to activities table for backward compatibility
+  try {
+    await sqlite.execute({
+      database: DB_NAME,
+      statements: `ALTER TABLE activities ADD COLUMN completed INTEGER DEFAULT 0;`
+    });
+    console.log('[ sqliteLoader.js ] Added completed column to activities');
+  } catch (error) {
+    // Column already exists, ignore error
+    console.log('[ sqliteLoader.js ] Completed column already exists in activities table');
   }
 
   console.log('[ sqliteLoader.js ] All tables created with unified people + contacts architecture');

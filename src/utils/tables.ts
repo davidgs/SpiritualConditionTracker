@@ -37,6 +37,7 @@ export const TABLE_DEFINITIONS = {
       date TEXT NOT NULL,
       notes TEXT,
       duration INTEGER DEFAULT 0,
+      completed INTEGER DEFAULT 0,
       location TEXT,
       -- Meeting-specific fields (when type='meeting')
       meetingName TEXT,
