@@ -1,0 +1,137 @@
+⚡️  [log] - Applying native theme: blue (#3b82f6) in light mode
+⚡️  [log] - Applying native theme: blue (#3b82f6) in light mode
+⚡️  To Native ->  CapacitorSQLite query 19115499
+⚡️  TO JS {"values":[]}
+⚡️  [log] - [ Dashboard ] Starting test data creation...
+⚡️  [log] - [ testDataGenerator ] Starting test data creation for user: 1
+⚡️  [log] - [ testDataGenerator ] Using proper app data pathways
+⚡️  [log] - [ testDataGenerator ] Creating meetings through app data functions...
+⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO meetings (name, days, time, schedule, types, address, locationName, streetAddress, city, state, zipCode, coordinates, isHomeGroup, onlineUrl) VALUES ('Arch to Freedom', '["monday"]', '18:00', '[{"day":"monday","time":"18:00","format":"literature","locationType":"in_person","access":"open"}]', '[]', '100 Hughes St, Apex, NC, 27502', 'Apex United Methodist Church', '100 Hughes St', 'Apex', 'NC', '27502', NULL, true, '');
+⚡️  To Native ->  CapacitorSQLite execute 19115500
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  To Native ->  CapacitorSQLite query 19115501
+⚡️  TO JS {"values":[{"ios_columns":["lastId"]},{"lastId":1}]}
+⚡️  [log] - [ sqliteLoader.js ] Created meetings item with ID: 1
+⚡️  To Native ->  CapacitorSQLite execute 19115502
+⚡️  [log] - [ AppDataContext.tsx:337 ] Meeting added: 1
+⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO meetings (name, days, time, schedule, types, address, locationName, streetAddress, city, state, zipCode, coordinates, isHomeGroup, onlineUrl) VALUES ('There Is A Solution', '["tuesday","thursday"]', '19:00', '[{"day":"tuesday","time":"19:00","format":"beginners","locationType":"in_person","access":"open"},{"day":"thursday","time":"19:00","format":"discussion","locationType":"in_person","access":"closed"}]', '[]', '7000 Tryon Rd., Cary, NC, 27518', 'Macedonia United Methodist Church', '7000 Tryon Rd.', 'Cary', 'NC', '27518', NULL, true, '');
+⚡️  TO JS {"changes":{"changes":1}}
+⚡️  To Native ->  CapacitorSQLite query 19115503
+⚡️  TO JS {"values":[{"ios_columns":["lastId"]},{"lastId":2}]}
+⚡️  [log] - [ sqliteLoader.js ] Created meetings item with ID: 2
+⚡️  [log] - [ AppDataContext.tsx:337 ] Meeting added: 2
+⚡️  [log] - [ testDataGenerator ] Created meeting: Arch to Freedom
+⚡️  [log] - [ testDataGenerator ] Created meeting: There Is A Solution
+⚡️  [log] - [ testDataGenerator ] Total meetings created: 2
+⚡️  [log] - [ testDataGenerator ] Creating activities through app data functions...
+⚡️  [log] - [ AppDataContext.tsx:300 addActivity ] Received activity data: {
+  "userId": "1",
+  "type": "prayer",
+  "title": "Morning Prayer",
+  "text": "Morning Prayer",
+  "notes": "Started the day with gratitude and reflection",
+  "date": "2025-06-27T23:59:49.283Z",
+  "duration": 10,
+  "completed": 1
+}
+⚡️  [log] - [ AppDataContext.tsx:301 addActivity ] Calling databaseService.addActivity...
+⚡️  To Native ->  CapacitorSQLite execute 19115504
+⚡️  [log] - [ DatabaseService.ts:261 addActivity ] Received activity: {
+  "userId": "1",
+  "type": "prayer",
+  "title": "Morning Prayer",
+  "text": "Morning Prayer",
+  "notes": "Started the day with gratitude and reflection",
+  "date": "2025-06-27T23:59:49.283Z",
+  "duration": 10,
+  "completed": 1
+}
+⚡️  [log] - [ DatabaseService.ts:262 addActivity ] Calling this.database.add...
+⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO activities (userId, type, title, text, notes, date, duration, completed) VALUES ('1', 'prayer', 'Morning Prayer', 'Morning Prayer', 'Started the day with gratitude and reflection', '2025-06-27T23:59:49.283Z', 10, 1);
+ERROR MESSAGE:  {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: table activities has no column named title","message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: table activities has no column named title"}
+⚡️  [error] - {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: table activities has no column named title","message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: table activities has no column named title"}
+⚡️  [error] - [ AppDataContext.tsx:315 addActivity ] Failed to add activity: {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: table activities has no column named title"}
+⚡️  [log] - [ AppDataContext.tsx:300 addActivity ] Received activity data: {
+  "userId": "1",
+  "type": "meditation",
+  "title": "Evening Meditation",
+  "text": "Evening Meditation",
+  "notes": "15 minutes of quiet reflection before bed",
+  "date": "2025-06-27T23:59:49.283Z",
+  "duration": 15,
+  "completed": 1
+}
+⚡️  [log] - [ AppDataContext.tsx:301 addActivity ] Calling databaseService.addActivity...
+⚡️  [log] - [ DatabaseService.ts:261 addActivity ] Received activity: {
+  "userId": "1",
+  "type": "meditation",
+  "title": "Evening Meditation",
+  "text": "Evening Meditation",
+  "notes": "15 minutes of quiet reflection before bed",
+  "date": "2025-06-27T23:59:49.283Z",
+  "duration": 15,
+  "completed": 1
+}
+⚡️  [log] - [ DatabaseService.ts:262 addActivity ] Calling this.database.add...
+⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO activities (userId, type, title, text, notes, date, duration, completed) VALUES ('1', 'meditation', 'Evening Meditation', 'Evening Meditation', '15 minutes of quiet reflection before bed', '2025-06-27T23:59:49.283Z', 15, 1);
+⚡️  To Native ->  CapacitorSQLite execute 19115505
+ERROR MESSAGE:  {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: table activities has no column named title","message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: table activities has no column named title"}
+⚡️  [error] - {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: table activities has no column named title","message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: table activities has no column named title"}
+⚡️  To Native ->  CapacitorSQLite execute 19115506
+⚡️  [error] - [ AppDataContext.tsx:315 addActivity ] Failed to add activity: {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: table activities has no column named title"}
+⚡️  [log] - [ AppDataContext.tsx:300 addActivity ] Received activity data: {
+  "userId": "1",
+  "type": "literature",
+  "title": "Big Book Reading",
+  "text": "Big Book Reading",
+  "notes": "Read pages 85-88 about making amends",
+  "date": "2025-06-26T23:59:49.283Z",
+  "duration": 20,
+  "completed": 1
+}
+⚡️  [log] - [ AppDataContext.tsx:301 addActivity ] Calling databaseService.addActivity...
+⚡️  [log] - [ DatabaseService.ts:261 addActivity ] Received activity: {
+  "userId": "1",
+  "type": "literature",
+  "title": "Big Book Reading",
+  "text": "Big Book Reading",
+  "notes": "Read pages 85-88 about making amends",
+  "date": "2025-06-26T23:59:49.283Z",
+  "duration": 20,
+  "completed": 1
+}
+⚡️  [log] - [ DatabaseService.ts:262 addActivity ] Calling this.database.add...
+⚡️  [log] - [ sqliteLoader.js ] Executing SQL: INSERT INTO activities (userId, type, title, text, notes, date, duration, completed) VALUES ('1', 'literature', 'Big Book Reading', 'Big Book Reading', 'Read pages 85-88 about making amends', '2025-06-26T23:59:49.283Z', 20, 1);
+ERROR MESSAGE:  {"message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: table activities has no column named title","errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: table activities has no column named title"}
+⚡️  [error] - {"message":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: table activities has no column named title","errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: table activities has no column named title"}
+⚡️  [error] - [ AppDataContext.tsx:315 addActivity ] Failed to add activity: {"errorMessage":"Execute: Failed in executeSQL :  Error: execute failed rc: 1 message: table activities has no column named title"}
+⚡️  To Native ->  CapacitorSQLite query 19115507
+⚡️  [log] - [ testDataGenerator ] Test data creation completed successfully!
+⚡️  [log] - [ testDataGenerator ] Results: {"meetingsCreated":2,"activitiesCreated":0}
+⚡️  [log] - [ Dashboard ] Test data creation completed: {"sponsorsCreated":0,"sponseesCreated":0,"sponsorContactsCreated":0,"sponseeContactsCreated":0,"actionItemsCreated":0,"meetingsCreated":2}
+⚡️  [log] - [ Dashboard ] Reloading all data after test data creation...
+⚡️  TO JS {"values":[]}
+⚡️  [log] - [ AppDataContext.tsx ] Loaded activities from activities table: 0
+⚡️  To Native ->  CapacitorSQLite query 19115508
+⚡️  TO JS {"values":[]}
+⚡️  [log] - [ AppDataContext.tsx ] Loaded sponsor contacts: 0
+⚡️  To Native ->  CapacitorSQLite query 19115509
+⚡️  TO JS {"values":[]}
+⚡️  [log] - [ AppDataContext.tsx ] Transformed sponsor contacts to activities: 0
+⚡️  To Native ->  CapacitorSQLite query 19115510
+⚡️  TO JS {"values":[]}
+⚡️  [log] - [ AppDataContext.tsx ] Loaded all action items from database: 0
+⚡️  [log] - [ AppDataContext.tsx ] Transformed action items to activities: 0
+⚡️  To Native ->  CapacitorSQLite query 19115511
+⚡️  [log] - [ AppDataContext.tsx ] Total merged activities (deduplicated): 0
+⚡️  [log] - [ AppDataContext.tsx ] Activity types: []
+⚡️  [log] - [ AppDataContext.tsx ] Activities grouped by date: {}
+⚡️  [log] - [ AppDataContext.tsx ] Activities cached (180 days): 0 (activities + action items)
+⚡️  [log] - [ AppDataContext.tsx ] Activity types in cache: []
+⚡️  [log] - [ AppDataContext.tsx:315 ] Using cached activities for 30 days: 0
+⚡️  [log] - [ AppDataContext.tsx:454 ] Calculating spiritual fitness with 0 activities for 30 days
+⚡️  TO JS {"values":[]}
+⚡️  To Native ->  CapacitorSQLite query 19115512
+⚡️  [log] - [ AppDataContext.tsx ] Action items loaded: 0
+⚡️  TO JS {"values":[{"ios_columns":["id","name","days","time","schedule","address","locationName","streetAddress","city","state","zipCode","coordinates","phoneNumber","onlineUrl","isHomeGroup","types","createdAt","updatedAt"]},{"isHomeGroup":1,"zipCode":"27502","on
+⚡️  [log] - [ AppDataContext.tsx:326 ] Meetings loaded: 2

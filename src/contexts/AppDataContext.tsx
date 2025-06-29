@@ -779,8 +779,19 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
       console.log('[ AppDataContext.tsx:426 ] Reinitializing database service...');
       await databaseService.initialize();
       
-      // Wait a moment for database to be fully ready
-      await new Promise(resolve => setTimeout(resolve, 500));
+      // Wait longer for database to be fully ready and tables to be created
+      console.log('[ AppDataContext.tsx:428 ] Waiting for database to stabilize...');
+      await new Promise(resolve => setTimeout(resolve, 2000)); // Increased from 500ms to 2000ms
+      
+      // Verify database is ready before loading data
+      const dbStatus = databaseService.getStatus();
+      console.log('[ AppDataContext.tsx:432 ] Database status after reset:', dbStatus);
+      
+      if (dbStatus !== 'ready') {
+        console.warn('[ AppDataContext.tsx:434 ] Database not ready after reset, status:', dbStatus);
+        dispatch({ type: 'SET_ERROR', payload: 'Database not ready after reset. Please restart the app.' });
+        return;
+      }
       
       // Reload all initial data (should be empty now)
       console.log('[ AppDataContext.tsx:430 ] Reloading all data after reset...');
