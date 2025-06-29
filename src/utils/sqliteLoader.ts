@@ -315,7 +315,7 @@ async function createTables(sqlite) {
     `
   });
 
-  // Create activities table
+  // Create activities table with all required columns
   await sqlite.execute({
     database: DB_NAME,
     statements: `
@@ -323,6 +323,8 @@ async function createTables(sqlite) {
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         userId TEXT DEFAULT 'default_user',
         type TEXT NOT NULL,
+        title TEXT,
+        text TEXT,
         date TEXT NOT NULL,
         notes TEXT,
         duration INTEGER DEFAULT 0,
