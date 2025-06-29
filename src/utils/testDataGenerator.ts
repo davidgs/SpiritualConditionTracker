@@ -176,38 +176,7 @@ export async function createTestData(userId: number | string, appDataFunctions: 
       }
     }
 
-    // Create sponsor contacts
-    if (createdSponsors.length > 0) {
-      console.log('[ testDataGenerator ] Creating sponsor contacts...');
-      const sponsorContacts = [
-        {
-          userId: userId.toString(),
-          sponsorId: createdSponsors[0].id,
-          type: 'call',
-          date: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
-          note: 'Discussed step 5 work and amends list',
-          topic: 'Step Work',
-          duration: 30
-        },
-        {
-          userId: userId.toString(),
-          sponsorId: createdSponsors[0].id,
-          type: 'meeting',
-          date: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
-          note: 'Met at coffee shop to review progress',
-          topic: 'Progress Review',
-          duration: 60
-        }
-      ];
-
-      for (const contact of sponsorContacts) {
-        const savedContact = await databaseService.addSponsorContact(contact);
-        if (savedContact) {
-          results.sponsorContactsCreated++;
-          console.log('[ testDataGenerator ] Created sponsor contact with topic:', contact.topic);
-        }
-      }
-    }
+    // Sponsor contacts will be created through proper app workflow below (with action items)
 
     // Create sponsee contacts
     if (createdSponsees.length > 0) {
@@ -249,46 +218,75 @@ export async function createTestData(userId: number | string, appDataFunctions: 
       // Import the proper contact creation function that handles action items
       const { addSponsorContact } = await import('./sponsor-database');
       
-      // Create sponsor contact with action items attached (like the real app does)
-      const contactWithActionItems = {
-        userId: userId,
-        sponsorId: createdSponsors[0].id,
-        type: 'call',
-        date: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(), // 3 days ago
-        note: 'Discussed step work and assigned tasks',
-        topic: 'Step Work Assignment',
-        duration: 45
-      };
-      
-      const actionItemsForContact = [
+      // Create multiple sponsor contacts using proper app workflow
+      const sponsorContactsWithActionItems = [
         {
-          title: 'Complete step 4 inventory',
-          text: 'Finish writing moral inventory as discussed',
-          notes: 'Focus on resentments and fears section',
-          dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
-          completed: false,
-          type: 'todo'
+          contactData: {
+            userId: userId.toString(),
+            sponsorId: createdSponsors[0].id,
+            type: 'call',
+            date: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+            note: 'Discussed step 5 work and amends list',
+            topic: 'Step Work',
+            duration: 30
+          },
+          actionItems: []
         },
         {
-          title: 'Read pages 85-88 in Big Book',
-          text: 'Study the amends section thoroughly',
-          notes: 'Take notes on what resonates',
-          dueDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(),
-          completed: false,
-          type: 'todo'
+          contactData: {
+            userId: userId.toString(),
+            sponsorId: createdSponsors[0].id,
+            type: 'meeting',
+            date: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
+            note: 'Met at coffee shop to review progress',
+            topic: 'Progress Review',
+            duration: 60
+          },
+          actionItems: []
+        },
+        {
+          contactData: {
+            userId: userId.toString(),
+            sponsorId: createdSponsors[0].id,
+            type: 'call',
+            date: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
+            note: 'Discussed step work and assigned tasks',
+            topic: 'Step Work Assignment',
+            duration: 45
+          },
+          actionItems: [
+            {
+              title: 'Complete step 4 inventory',
+              text: 'Finish writing moral inventory as discussed',
+              notes: 'Focus on resentments and fears section',
+              dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+              completed: false,
+              type: 'todo'
+            },
+            {
+              title: 'Read pages 85-88 in Big Book',
+              text: 'Study the amends section thoroughly',
+              notes: 'Take notes on what resonates',
+              dueDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(),
+              completed: false,
+              type: 'todo'
+            }
+          ]
         }
       ];
       
-      try {
-        // Use the actual app's sponsor contact creation method that properly handles action items
-        const savedContactWithActions = await addSponsorContact(contactWithActionItems, actionItemsForContact);
-        if (savedContactWithActions) {
-          results.sponsorContactsCreated++;
-          results.actionItemsCreated += actionItemsForContact.length;
-          console.log('[ testDataGenerator ] Created sponsor contact with action items via proper app workflow');
+      // Create each contact using the proper app workflow
+      for (const { contactData, actionItems } of sponsorContactsWithActionItems) {
+        try {
+          const savedContact = await addSponsorContact(contactData, actionItems);
+          if (savedContact) {
+            results.sponsorContactsCreated++;
+            results.actionItemsCreated += actionItems.length;
+            console.log('[ testDataGenerator ] Created sponsor contact with topic:', contactData.topic);
+          }
+        } catch (error) {
+          console.error('[ testDataGenerator ] Error creating sponsor contact:', contactData.topic, error);
         }
-      } catch (error) {
-        console.error('[ testDataGenerator ] Error creating sponsor contact with action items:', error);
       }
     }
 
