@@ -324,18 +324,18 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
           name: '',
           lastName: '',
           sobrietyDate: '',
-          homeGroups: [],
+          homeGroups: JSON.stringify([]),
           phoneNumber: '',
           email: '',
-          privacySettings: {
+          privacySettings: JSON.stringify({
             allowMessages: true,
             shareLastName: true
-          },
-          preferences: {
+          }),
+          preferences: JSON.stringify({
             use24HourFormat: false,
             darkMode: false,
             theme: 'default'
-          }
+          })
         });
         
         if (!newUser) {

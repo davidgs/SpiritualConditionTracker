@@ -49,6 +49,18 @@ export interface SponseeData {
   notes: string;
 }
 
+// User preferences and privacy settings interfaces
+export interface UserPreferences {
+  use24HourFormat: boolean;
+  darkMode: boolean;
+  theme: string;
+}
+
+export interface PrivacySettings {
+  allowMessages: boolean;
+  shareLastName: boolean;
+}
+
 // User interface - matches users table schema exactly
 export interface User extends BaseEntity {
   name: string;
@@ -56,24 +68,16 @@ export interface User extends BaseEntity {
   phoneNumber: string;
   email: string;
   sobrietyDate: string;
-  homeGroups: string[]; // JSON parsed from TEXT column
-  privacySettings: {
-    allowMessages: boolean;
-    shareLastName: boolean;
-  }; // JSON parsed from TEXT column
-  preferences: {
-    use24HourFormat: boolean;
-    darkMode: boolean;
-    theme: string;
-  }; // JSON parsed from TEXT column
-  isDarkMode?: number; // SQLite boolean as integer (0 or 1), optional for compatibility
-  // Sponsor fields from users table
-  sponsor_name?: string;
-  sponsor_lastName?: string;
-  sponsor_phone?: string;
-  sponsor_email?: string;
-  sponsor_sobrietyDate?: string;
-  sponsor_notes?: string;
+  homeGroups: string; // JSON string stored in database, parsed to string[]
+  preferences: string; // JSON string stored in database, parsed to UserPreferences
+  privacySettings: string; // JSON string stored in database, parsed to PrivacySettings
+}
+
+// Parsed user interface for application use (with JSON fields parsed)
+export interface ParsedUser extends Omit<User, 'homeGroups' | 'preferences' | 'privacySettings'> {
+  homeGroups: string[];
+  preferences: UserPreferences;
+  privacySettings: PrivacySettings;
 }
 
 // Legacy SponsorContact interface (keeping for backward compatibility)
@@ -272,9 +276,21 @@ declare global {
   }
 }
 
-// Database operation utility types
-export type InsertUser = Omit<User, 'id' | 'createdAt' | 'updatedAt'>;
+// Database operation utility types with proper JSON handling
+export type InsertUser = Omit<User, 'id' | 'createdAt' | 'updatedAt'>; // Uses string types for JSON fields
 export type UpdateUser = Partial<InsertUser>;
+
+// Helper type for creating users with parsed types
+export type CreateUserData = {
+  name: string;
+  lastName: string;
+  phoneNumber: string;
+  email: string;
+  sobrietyDate: string;
+  homeGroups?: string[]; // Will be JSON.stringify'd
+  preferences?: UserPreferences; // Will be JSON.stringify'd
+  privacySettings?: PrivacySettings; // Will be JSON.stringify'd
+};
 
 export type InsertActivity = Omit<Activity, 'id' | 'createdAt' | 'updatedAt'>;
 export type UpdateActivity = Partial<InsertActivity>;
