@@ -150,14 +150,14 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
         const actionItems = await databaseService.getAll('action_items');
         const contactActionItems = actionItems.filter((item: any) => {
           if (personType === 'sponsor') {
-            return item.sponsorContactId === contact.id;
+            return item.sponsorContactId === (contact as any).id;
           } else {
-            return item.sponseeContactId === contact.id;
+            return item.sponseeContactId === (contact as any).id;
           }
         });
 
         for (const actionItem of contactActionItems) {
-          await databaseService.remove('action_items', actionItem.id);
+          await databaseService.remove('action_items', (actionItem as any).id);
         }
 
         // Delete related activities
@@ -171,7 +171,7 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
         });
 
         for (const activity of contactActivities) {
-          await databaseService.remove('activities', activity.id);
+          await databaseService.remove('activities', (activity as any).id);
         }
 
         // Now delete the contact
@@ -522,12 +522,12 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
               contact={contact}
               theme={theme}
               refreshKey={refreshKey}
-              sponsorId={contact.sponsorId}
+              sponsorId={(contact as any).sponsorId}
               personType="sponsor"
               onContactClick={() => {}}
               onEditContact={(contact) => {
                 setEditingContact(contact);
-                setSelectedSponsorForContact(sponsors.find(s => s.id === contact.sponsorId) || null);
+                setSelectedSponsorForContact(sponsors.find(s => s.id === (contact as any).sponsorId) || null);
                 setShowContactForm(true);
               }}
             />
@@ -557,12 +557,12 @@ export default function SponsorSponsee({ user, onUpdate, onSaveActivity, activit
               contact={contact}
               theme={theme}
               refreshKey={refreshKey}
-              sponseeId={contact.sponseeId}
+              sponseeId={(contact as any).sponseeId}
               personType="sponsee"
               onContactClick={() => {}}
               onEditContact={(contact) => {
                 setEditingContact(contact);
-                setSelectedSponseeForContact(sponsees.find(s => s.id === contact.sponseeId) || null);
+                setSelectedSponseeForContact(sponsees.find(s => s.id === (contact as any).sponseeId) || null);
                 setShowSponseeContactForm(true);
               }}
             />

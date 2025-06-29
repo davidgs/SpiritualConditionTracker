@@ -177,23 +177,23 @@ export default function ActivityList({
     if (activity.type !== 'meeting') return null;
     
     // If activity has a direct meeting name, use it
-    if (activity.meetingName && activity.meetingName.trim()) {
-      return activity.meetingName.trim();
+    if ((activity as any).meetingName && (activity as any).meetingName.trim()) {
+      return (activity as any).meetingName.trim();
     }
     
     // If activity has a meetingId, look up the meeting name
-    if (activity.meetingId && meetings && meetings.length > 0) {
+    if ((activity as any).meetingId && meetings && meetings.length > 0) {
       // Handle both string and number meetingId values
-      const meetingIdNum = typeof activity.meetingId === 'string' ? parseInt(activity.meetingId, 10) : activity.meetingId;
+      const meetingIdNum = typeof (activity as any).meetingId === 'string' ? parseInt((activity as any).meetingId, 10) : (activity as any).meetingId;
       const meeting = meetings.find(m => m.id === meetingIdNum);
-      if (meeting && meeting.name && meeting.name.trim()) {
-        return meeting.name.trim();
+      if (meeting && (meeting as any).name && (meeting as any).name.trim()) {
+        return (meeting as any).name.trim();
       }
     }
     
     // If activity has a generic name field, use it
-    if (activity.name && activity.name.trim()) {
-      return activity.name.trim();
+    if ((activity as any).name && (activity as any).name.trim()) {
+      return (activity as any).name.trim();
     }
     
     return null;
@@ -244,12 +244,12 @@ export default function ActivityList({
     }
     
     if (activity.type === 'sponsor-contact') {
-      const contactName = activity.sponsorName || activity.name || 'Sponsor';
+      const contactName = (activity as any).sponsorName || (activity as any).name || 'Sponsor';
       return `Contact with ${contactName}`;
     }
     
     if (activity.type === 'sponsee-contact') {
-      const contactName = activity.sponseeName || activity.name || 'Sponsee';
+      const contactName = (activity as any).sponseeName || (activity as any).name || 'Sponsee';
       return `Contact with ${contactName}`;
     }
     
@@ -277,9 +277,9 @@ export default function ActivityList({
       }
       
       // Check actionItemData for sponsor name
-      if (activity.actionItemData && activity.actionItemData.sponsorName) {
-        console.log('[ActivityList] Found sponsor name in actionItemData:', activity.actionItemData.sponsorName);
-        return `${baseTitle} (from ${activity.actionItemData.sponsorName})`;
+      if (activity.actionItemData && (activity.actionItemData as any).sponsorName) {
+        console.log('[ActivityList] Found sponsor name in actionItemData:', (activity.actionItemData as any).sponsorName);
+        return `${baseTitle} (from ${(activity.actionItemData as any).sponsorName})`;
       }
       
       // Fallback: use first available sponsor if this is a sponsor action item
@@ -296,8 +296,8 @@ export default function ActivityList({
     if (activity.type === 'sponsee_action_item') {
       const baseTitle = activity.title || activity.text || 'Action Item';
       // Show sponsee name if available through actionItemData
-      if (activity.actionItemData && activity.actionItemData.sponseeContactId) {
-        const sponseeName = getSponseeeName(activity.actionItemData.sponseeContactId);
+      if (activity.actionItemData && (activity.actionItemData as any).sponseeContactId) {
+        const sponseeName = getSponseeeName((activity.actionItemData as any).sponseeContactId);
         return `${baseTitle} (for ${sponseeName})`;
       }
       return baseTitle;
