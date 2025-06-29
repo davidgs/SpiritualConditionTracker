@@ -4,7 +4,12 @@
  */
 
 import initSQLiteDatabase from '../utils/sqliteLoader';
-import type { User, Activity, Meeting, SponsorContact, ContactDetail, ActionItem } from '../types/database';
+import type { 
+  User, Activity, Meeting, SponsorContact, ContactDetail, ActionItem, Sponsor, Sponsee, SponseeContact,
+  InsertUser, UpdateUser, InsertActivity, UpdateActivity, InsertMeeting, UpdateMeeting,
+  InsertActionItem, UpdateActionItem, InsertSponsor, UpdateSponsor, InsertSponsee, UpdateSponsee,
+  InsertSponsorContact, UpdateSponsorContact, InsertSponseeContact, UpdateSponseeContact
+} from '../types/database';
 
 export type DatabaseStatus = 'initializing' | 'ready' | 'error' | 'fallback';
 
@@ -181,13 +186,13 @@ class DatabaseService {
     });
   }
 
-  async addUser(user: Omit<User, 'id' | 'createdAt' | 'updatedAt'>): Promise<User> {
+  async addUser(user: InsertUser): Promise<User> {
     return this.executeOperation(async () => {
       return await this.database.add('users', user);
     });
   }
 
-  async updateUser(id: string | number, updates: Partial<User>): Promise<User | null> {
+  async updateUser(id: string | number, updates: UpdateUser): Promise<User | null> {
     return this.executeOperation(async () => {
       console.log('[ DatabaseService.ts updateUser ] Raw updates received:', JSON.stringify(updates, null, 2));
       
@@ -230,7 +235,7 @@ class DatabaseService {
     });
   }
 
-  async addActivity(activity: Omit<Activity, 'id' | 'createdAt' | 'updatedAt'>): Promise<Activity> {
+  async addActivity(activity: InsertActivity): Promise<Activity> {
     return this.executeOperation(async () => {
       console.log('[ DatabaseService.ts:261 addActivity ] Received activity:', JSON.stringify(activity, null, 2));
       console.log('[ DatabaseService.ts:262 addActivity ] Calling this.database.add...');
@@ -242,7 +247,7 @@ class DatabaseService {
     });
   }
 
-  async updateActivity(id: string | number, updates: Partial<Activity>): Promise<Activity | null> {
+  async updateActivity(id: string | number, updates: UpdateActivity): Promise<Activity | null> {
     return this.executeOperation(async () => {
       console.log('[ DatabaseService.ts updateActivity ] Updating activity with ID:', id, 'updates:', updates);
       const result = await this.database.update('activities', id, updates);
@@ -267,7 +272,7 @@ class DatabaseService {
     });
   }
 
-  async addMeeting(meeting: Omit<Meeting, 'id' | 'createdAt' | 'updatedAt'>): Promise<Meeting> {
+  async addMeeting(meeting: InsertMeeting): Promise<Meeting> {
     return this.executeOperation(async () => {
       return await this.database.add('meetings', meeting);
     });
@@ -350,7 +355,7 @@ class DatabaseService {
     });
   }
 
-  async addActionItem(item: Omit<ActionItem, 'id' | 'createdAt' | 'updatedAt'>): Promise<ActionItem> {
+  async addActionItem(item: InsertActionItem): Promise<ActionItem> {
     return this.executeOperation(async () => {
       console.log('[ DatabaseService ] Adding action item:', item);
       const result = await this.database.add('action_items', item) as ActionItem;
@@ -359,7 +364,7 @@ class DatabaseService {
     });
   }
 
-  async updateActionItem(id: string | number, updates: Partial<ActionItem>): Promise<ActionItem | null> {
+  async updateActionItem(id: string | number, updates: UpdateActionItem): Promise<ActionItem | null> {
     return this.executeOperation(async () => {
       const result = await this.database.update('action_items', id, updates);
       return result as ActionItem | null;
@@ -405,7 +410,111 @@ class DatabaseService {
     });
   }
 
-  // Contact details operations
+  // Sponsor operations
+  async getAllSponsors(): Promise<Sponsor[]> {
+    return this.executeOperation(async () => {
+      const sponsors = await this.database.getAll('sponsors');
+      return sponsors || [];
+    });
+  }
+
+  async addSponsor(sponsor: InsertSponsor): Promise<Sponsor> {
+    return this.executeOperation(async () => {
+      return await this.database.add('sponsors', sponsor);
+    });
+  }
+
+  async updateSponsor(id: string | number, updates: UpdateSponsor): Promise<Sponsor | null> {
+    return this.executeOperation(async () => {
+      return await this.database.update('sponsors', id, updates);
+    });
+  }
+
+  async deleteSponsor(sponsorId: string | number): Promise<boolean> {
+    return this.executeOperation(async () => {
+      return await this.database.remove('sponsors', sponsorId);
+    });
+  }
+
+  // Sponsee operations
+  async getAllSponsees(): Promise<Sponsee[]> {
+    return this.executeOperation(async () => {
+      const sponsees = await this.database.getAll('sponsees');
+      return sponsees || [];
+    });
+  }
+
+  async addSponsee(sponsee: InsertSponsee): Promise<Sponsee> {
+    return this.executeOperation(async () => {
+      return await this.database.add('sponsees', sponsee);
+    });
+  }
+
+  async updateSponsee(id: string | number, updates: UpdateSponsee): Promise<Sponsee | null> {
+    return this.executeOperation(async () => {
+      return await this.database.update('sponsees', id, updates);
+    });
+  }
+
+  async deleteSponsee(sponseeId: string | number): Promise<boolean> {
+    return this.executeOperation(async () => {
+      return await this.database.remove('sponsees', sponseeId);
+    });
+  }
+
+  // Sponsor Contact operations
+  async getAllSponsorContacts(): Promise<SponsorContact[]> {
+    return this.executeOperation(async () => {
+      const contacts = await this.database.getAll('sponsor_contacts');
+      return contacts || [];
+    });
+  }
+
+  async addSponsorContact(contact: InsertSponsorContact): Promise<SponsorContact> {
+    return this.executeOperation(async () => {
+      return await this.database.add('sponsor_contacts', contact);
+    });
+  }
+
+  async updateSponsorContact(id: string | number, updates: UpdateSponsorContact): Promise<SponsorContact | null> {
+    return this.executeOperation(async () => {
+      return await this.database.update('sponsor_contacts', id, updates);
+    });
+  }
+
+  async deleteSponsorContact(contactId: string | number): Promise<boolean> {
+    return this.executeOperation(async () => {
+      return await this.database.remove('sponsor_contacts', contactId);
+    });
+  }
+
+  // Sponsee Contact operations
+  async getAllSponseeContacts(): Promise<SponseeContact[]> {
+    return this.executeOperation(async () => {
+      const contacts = await this.database.getAll('sponsee_contacts');
+      return contacts || [];
+    });
+  }
+
+  async addSponseeContact(contact: InsertSponseeContact): Promise<SponseeContact> {
+    return this.executeOperation(async () => {
+      return await this.database.add('sponsee_contacts', contact);
+    });
+  }
+
+  async updateSponseeContact(id: string | number, updates: UpdateSponseeContact): Promise<SponseeContact | null> {
+    return this.executeOperation(async () => {
+      return await this.database.update('sponsee_contacts', id, updates);
+    });
+  }
+
+  async deleteSponseeContact(contactId: string | number): Promise<boolean> {
+    return this.executeOperation(async () => {
+      return await this.database.remove('sponsee_contacts', contactId);
+    });
+  }
+
+  // Legacy contact details operations (for backward compatibility)
   async getAllContactDetails(): Promise<ContactDetail[]> {
     return this.executeOperation(async () => {
       const details = await this.database.getAll('sponsor_contact_details');
