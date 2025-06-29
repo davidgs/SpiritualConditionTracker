@@ -44,22 +44,8 @@ export async function addSponsorContact(contactData: Omit<SponsorContact, 'id' |
     
     console.log('[ sponsor-database ] Sponsor contact saved with ID:', savedContact.id);
     
-    // Also create an activity entry so it appears in the Dashboard
-    try {
-      const activityData = {
-        type: 'sponsor-contact' as const,
-        date: contactData.date,
-        notes: `${contactData.note || ''} [Contact: ${contactData.type}]`,
-        location: contactData.type,
-        duration: undefined
-      };
-      
-      await databaseService.addActivity(activityData);
-      console.log('[ sponsor-database ] Activity entry created for sponsor contact');
-    } catch (activityError) {
-      console.warn('[ sponsor-database ] Failed to create activity entry:', activityError);
-      // Don't throw - the contact was still saved successfully
-    }
+    // Sponsor contacts are displayed in Activities List through AppDataContext transformation
+    // No need to create duplicate activity entries
     
     // Save action items using proper join table structure
     if (actionItems && actionItems.length > 0) {
