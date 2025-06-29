@@ -67,11 +67,13 @@ export async function addSponsorContact(contactData: Omit<SponsorContact, 'id' |
         for (const actionItem of actionItems) {
           // Save the action item with direct relationship to contact
           const actionItemData = {
+            userId: String(contactData.userId), // Required field
             title: actionItem.title,
             text: actionItem.text || actionItem.title,
             notes: actionItem.notes || '',
             dueDate: actionItem.dueDate || contactData.date,
             completed: (actionItem.completed ? 1 : 0) as 0 | 1,
+            deleted: 0 as 0 | 1, // Required field - not deleted
             type: 'sponsor_action_item' as const, // Correct type for Activities List filter
             sponsorContactId: savedContact.id, // Direct relationship
             contactId: savedContact.id // Legacy field for compatibility - this is what the filter checks

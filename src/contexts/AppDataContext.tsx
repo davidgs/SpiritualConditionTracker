@@ -424,6 +424,16 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
           const isLinkedToSponsorContact = sponsorContacts.some(contact => contact.id === actionItem.contactId);
           const isSponsorActionItemType = actionItem.type === 'sponsor_action_item';
           
+          console.log(`[ AppDataContext.tsx ] Filtering action item "${actionItem.title}":`, {
+            actionItemId: actionItem.id,
+            type: actionItem.type,
+            contactId: actionItem.contactId,
+            sponsorContactId: actionItem.sponsorContactId,
+            isLinkedToSponsorContact,
+            isSponsorActionItemType,
+            willInclude: isLinkedToSponsorContact && isSponsorActionItemType
+          });
+          
           return isLinkedToSponsorContact && isSponsorActionItemType;
         })
         .map(actionItem => {
