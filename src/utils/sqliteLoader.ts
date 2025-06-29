@@ -290,191 +290,23 @@ function convertIOSFormatToStandard(iosResult) {
 }
 
 async function createTables(sqlite) {
-  // Create users table
-  await sqlite.execute({
-    database: DB_NAME,
-    statements: `
-      CREATE TABLE IF NOT EXISTS users (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT DEFAULT '',
-        lastName TEXT DEFAULT '',
-        phoneNumber TEXT DEFAULT '',
-        email TEXT DEFAULT '',
-        sobrietyDate TEXT DEFAULT '',
-        homeGroups TEXT DEFAULT '[]',
-        privacySettings TEXT DEFAULT '{"allowMessages": true, "shareLastName": false}',
-        preferences TEXT DEFAULT '{"use24HourFormat": false, "darkMode": false, "theme": "default"}',
-        createdAt TEXT DEFAULT CURRENT_TIMESTAMP,
-        updatedAt TEXT DEFAULT CURRENT_TIMESTAMP
-      )
-    `
-  });
-
-  // Create people table - unified address book
-  await sqlite.execute({
-    database: DB_NAME,
-    statements: `
-      CREATE TABLE IF NOT EXISTS people (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        userId TEXT DEFAULT 'default_user',
-        firstName TEXT NOT NULL,
-        lastName TEXT,
-        phoneNumber TEXT,
-        email TEXT,
-        sobrietyDate TEXT,
-        homeGroup TEXT,
-        notes TEXT,
-        relationship TEXT, -- 'sponsor', 'sponsee', 'member', 'friend', 'family', 'professional'
-        isActive INTEGER DEFAULT 1,
-        createdAt TEXT DEFAULT CURRENT_TIMESTAMP,
-        updatedAt TEXT DEFAULT CURRENT_TIMESTAMP
-      )
-    `
-  });
-
-  // Create unified contacts table
-  await sqlite.execute({
-    database: DB_NAME,
-    statements: `
-      CREATE TABLE IF NOT EXISTS contacts (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        userId TEXT DEFAULT 'default_user',
-        personId INTEGER NOT NULL,
-        contactType TEXT NOT NULL, -- 'call', 'meeting', 'coffee', 'text', 'service'
-        date TEXT NOT NULL,
-        note TEXT,
-        topic TEXT,
-        duration INTEGER DEFAULT 0,
-        location TEXT,
-        createdAt TEXT DEFAULT CURRENT_TIMESTAMP,
-        updatedAt TEXT DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (personId) REFERENCES people(id)
-      )
-    `
-  });
-
-  // Create activities table - cleaned up without data duplication
-  await sqlite.execute({
-    database: DB_NAME,
-    statements: `
-      CREATE TABLE IF NOT EXISTS activities (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        userId TEXT DEFAULT 'default_user',
-        type TEXT NOT NULL,
-        title TEXT,
-        text TEXT,
-        date TEXT NOT NULL,
-        notes TEXT,
-        duration INTEGER DEFAULT 0,
-        completed INTEGER DEFAULT 0,
-        location TEXT,
-        -- Meeting-specific fields (when type='meeting')
-        meetingName TEXT,
-        meetingId INTEGER,
-        wasChair INTEGER DEFAULT 0,
-        wasShare INTEGER DEFAULT 0,
-        wasSpeaker INTEGER DEFAULT 0,
-        -- Literature-specific fields (when type='literature')
-        literatureTitle TEXT,
-        stepNumber INTEGER,
-        -- Service-specific fields (when type='service')
-        serviceType TEXT,
-        createdAt TEXT DEFAULT CURRENT_TIMESTAMP,
-        updatedAt TEXT DEFAULT CURRENT_TIMESTAMP
-      )
-    `
-  });
-
-  // Create meetings table
-  await sqlite.execute({
-    database: DB_NAME,
-    statements: `
-      CREATE TABLE IF NOT EXISTS meetings (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT,
-        days TEXT,
-        time TEXT,
-        schedule TEXT,
-        address TEXT,
-        locationName TEXT,
-        streetAddress TEXT,
-        city TEXT,
-        state TEXT,
-        zipCode TEXT,
-        coordinates TEXT,
-        phoneNumber TEXT,
-        onlineUrl TEXT,
-        isHomeGroup INTEGER DEFAULT 0,
-        types TEXT,
-        createdAt TEXT,
-        updatedAt TEXT
-      )
-    `
-  });
-  console.log('[ sqliteLoader.js ] Meetings table created with working schema');
-
-
-
-
-
-  // Create simplified action_items table
-  await sqlite.execute({
-    database: DB_NAME,
-    statements: `
-      CREATE TABLE IF NOT EXISTS action_items (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        title TEXT NOT NULL,
-        text TEXT,
-        notes TEXT,
-        dueDate TEXT,
-        completed INTEGER DEFAULT 0,
-        deleted INTEGER DEFAULT 0,
-        type TEXT DEFAULT 'action',
-        contactId INTEGER, -- References contacts.id
-        personId INTEGER, -- References people.id (for direct person association)
-        createdAt TEXT DEFAULT CURRENT_TIMESTAMP,
-        updatedAt TEXT DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (contactId) REFERENCES contacts(id),
-        FOREIGN KEY (personId) REFERENCES people(id)
-      )
-    `
-  });
-
-  // Create simplified sponsors table (references people)
-  await sqlite.execute({
-    database: DB_NAME,
-    statements: `
-      CREATE TABLE IF NOT EXISTS sponsors (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        userId TEXT DEFAULT 'default_user',
-        personId INTEGER NOT NULL,
-        startDate TEXT,
-        status TEXT DEFAULT 'active', -- 'active', 'former'
-        notes TEXT,
-        createdAt TEXT DEFAULT CURRENT_TIMESTAMP,
-        updatedAt TEXT DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (personId) REFERENCES people(id)
-      )
-    `
-  });
-
-  // Create simplified sponsees table (references people)
-  await sqlite.execute({
-    database: DB_NAME,
-    statements: `
-      CREATE TABLE IF NOT EXISTS sponsees (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        userId TEXT DEFAULT 'default_user',
-        personId INTEGER NOT NULL,
-        startDate TEXT,
-        status TEXT DEFAULT 'active',
-        notes TEXT,
-        createdAt TEXT DEFAULT CURRENT_TIMESTAMP,
-        updatedAt TEXT DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (personId) REFERENCES people(id)
-      )
-    `
-  });
+  // Use centralized table definitions from tables.ts
+  const tableNames = ['users', 'people', 'contacts', 'activities', 'meetings', 'action_items', 'sponsors', 'sponsees'];
+  
+  for (const tableName of tableNames) {
+    const tableDefinition = TABLE_DEFINITIONS[tableName];
+    if (tableDefinition) {
+      await sqlite.execute({
+        database: DB_NAME,
+        statements: tableDefinition
+      });
+      console.log(`[ sqliteLoader.js ] Created ${tableName} table from centralized definition`);
+    } else {
+      console.warn(`[ sqliteLoader.js ] No table definition found for ${tableName}`);
+    }
+  }
+  
+  console.log('[ sqliteLoader.js ] All tables created using centralized definitions from tables.ts');
 
   // Add missing columns to action_items table for backward compatibility
   try {
