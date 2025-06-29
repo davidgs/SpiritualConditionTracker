@@ -65,20 +65,22 @@ export async function addSponsorContact(contactData: Omit<SponsorContact, 'id' |
     if (actionItems && actionItems.length > 0) {
       try {
         for (const actionItem of actionItems) {
-          // First, save the action item to the action_items table
+          // Save the action item with direct relationship to contact
           const actionItemData = {
             title: actionItem.title,
             text: actionItem.text || actionItem.title,
             notes: actionItem.notes || '',
             dueDate: actionItem.dueDate || contactData.date,
             completed: (actionItem.completed ? 1 : 0) as 0 | 1,
-            type: 'todo' as const
+            type: 'todo' as const,
+            sponsorContactId: savedContact.id, // Direct relationship
+            contactId: savedContact.id // Legacy field for compatibility
           };
           
-          console.log('[ sponsor-database ] Saving action item:', actionItemData);
+          console.log('[ sponsor-database ] Saving action item with sponsorContactId:', actionItemData);
           const savedActionItem = await databaseService.addActionItem(actionItemData);
           
-          // Then, create the association in the join table
+          // Also create the association in the join table for backward compatibility
           console.log('[ sponsor-database ] Creating association between contact', savedContact.id, 'and action item', savedActionItem.id);
           await associateActionItemWithContact(savedContact.id, savedActionItem.id);
         }
