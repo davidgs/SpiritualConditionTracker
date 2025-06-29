@@ -334,7 +334,12 @@ export async function createTestData(userId: number | string, appDataFunctions: 
     }
 
     console.log('[ testDataGenerator ] Test data creation completed successfully!');
-    console.log('[ testDataGenerator ] Results:', {
+    console.log('[ testDataGenerator ] Complete Results:', {
+      sponsorsCreated: results.sponsorsCreated,
+      sponseesCreated: results.sponseesCreated,
+      sponsorContactsCreated: results.sponsorContactsCreated,
+      sponseeContactsCreated: results.sponseeContactsCreated,
+      actionItemsCreated: results.actionItemsCreated,
       meetingsCreated: results.meetingsCreated,
       activitiesCreated: activitiesCreated
     });
