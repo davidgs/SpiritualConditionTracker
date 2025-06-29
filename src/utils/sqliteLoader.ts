@@ -564,6 +564,27 @@ async function createTables(sqlite) {
     // Column already exists, ignore error
   }
 
+  // Add missing title and text columns to activities table
+  try {
+    await sqlite.execute({
+      database: DB_NAME,
+      statements: `ALTER TABLE activities ADD COLUMN title TEXT;`
+    });
+    console.log('[ sqliteLoader.js ] Added title column to activities');
+  } catch (error) {
+    // Column already exists, ignore error
+  }
+
+  try {
+    await sqlite.execute({
+      database: DB_NAME,
+      statements: `ALTER TABLE activities ADD COLUMN text TEXT;`
+    });
+    console.log('[ sqliteLoader.js ] Added text column to activities');
+  } catch (error) {
+    // Column already exists, ignore error
+  }
+
   console.log('[ sqliteLoader.js ] All tables created with proper relationships and missing columns added');
 }
 
