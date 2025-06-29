@@ -242,47 +242,53 @@ export async function createTestData(userId: number | string, appDataFunctions: 
       }
     }
 
-    // Create action items
-    console.log('[ testDataGenerator ] Creating action items...');
-    const actionItems = [
-      {
-        title: 'Complete step 4 inventory',
-        text: 'Finish writing moral inventory as discussed',
-        notes: 'Focus on resentments and fears section',
-        dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
-        completed: 0,
-        deleted: 0,
-        type: 'sponsor_action_item',
-        sponsorId: createdSponsors.length > 0 ? createdSponsors[0].id : null,
-        sponsorName: createdSponsors.length > 0 ? `${createdSponsors[0].name} ${createdSponsors[0].lastName}` : null
-      },
-      {
-        title: 'Read pages 85-88 in Big Book',
-        text: 'Study the amends section thoroughly',
-        notes: 'Take notes on what resonates',
-        dueDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(),
-        completed: 0,
-        deleted: 0,
-        type: 'sponsor_action_item',
-        sponsorId: createdSponsors.length > 0 ? createdSponsors[0].id : null,
-        sponsorName: createdSponsors.length > 0 ? `${createdSponsors[0].name} ${createdSponsors[0].lastName}` : null
-      },
-      {
-        title: 'Practice daily meditation',
-        text: 'Start with 10 minutes each morning',
-        notes: 'Use guided meditation app if helpful',
-        dueDate: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000).toISOString(),
-        completed: 0,
-        deleted: 0,
-        type: 'action_item'
-      }
-    ];
-
-    for (const actionItem of actionItems) {
-      const savedActionItem = await databaseService.addActionItem(actionItem);
-      if (savedActionItem) {
-        results.actionItemsCreated++;
-        console.log('[ testDataGenerator ] Created action item:', actionItem.title);
+    // Create sponsor contacts with action items using the proper app workflow
+    console.log('[ testDataGenerator ] Creating sponsor contacts with action items...');
+    
+    if (createdSponsors.length > 0) {
+      // Import the proper contact creation function that handles action items
+      const { addSponsorContact } = await import('./sponsor-database');
+      
+      // Create sponsor contact with action items attached (like the real app does)
+      const contactWithActionItems = {
+        userId: userId,
+        sponsorId: createdSponsors[0].id,
+        type: 'call',
+        date: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(), // 3 days ago
+        note: 'Discussed step work and assigned tasks',
+        topic: 'Step Work Assignment',
+        duration: 45
+      };
+      
+      const actionItemsForContact = [
+        {
+          title: 'Complete step 4 inventory',
+          text: 'Finish writing moral inventory as discussed',
+          notes: 'Focus on resentments and fears section',
+          dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+          completed: false,
+          type: 'todo'
+        },
+        {
+          title: 'Read pages 85-88 in Big Book',
+          text: 'Study the amends section thoroughly',
+          notes: 'Take notes on what resonates',
+          dueDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(),
+          completed: false,
+          type: 'todo'
+        }
+      ];
+      
+      try {
+        // Use the actual app's sponsor contact creation method that properly handles action items
+        const savedContactWithActions = await addSponsorContact(contactWithActionItems, actionItemsForContact);
+        if (savedContactWithActions) {
+          results.sponsorContactsCreated++;
+          results.actionItemsCreated += actionItemsForContact.length;
+          console.log('[ testDataGenerator ] Created sponsor contact with action items via proper app workflow');
+        }
+      } catch (error) {
+        console.error('[ testDataGenerator ] Error creating sponsor contact with action items:', error);
       }
     }
 
