@@ -72,9 +72,9 @@ export async function addSponsorContact(contactData: Omit<SponsorContact, 'id' |
             notes: actionItem.notes || '',
             dueDate: actionItem.dueDate || contactData.date,
             completed: (actionItem.completed ? 1 : 0) as 0 | 1,
-            type: 'todo' as const,
+            type: 'sponsor_action_item' as const, // Correct type for Activities List filter
             sponsorContactId: savedContact.id, // Direct relationship
-            contactId: savedContact.id // Legacy field for compatibility
+            contactId: savedContact.id // Legacy field for compatibility - this is what the filter checks
           };
           
           console.log('[ sponsor-database ] Saving action item with sponsorContactId:', actionItemData);
