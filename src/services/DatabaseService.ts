@@ -295,19 +295,49 @@ class DatabaseService {
     });
   }
 
-  // Legacy sponsor contact operations (updated to use proper types)
+  // Legacy sponsor contact operations (updated to use unified architecture)
   async getLegacySponsorContacts(): Promise<SponsorContact[]> {
     return this.executeOperation(async () => {
-      const contacts = await this.database.getAll('sponsor_contacts');
-      
-      // Sort contacts by date - newest first
-      const sortedContacts = (contacts || []).sort((a, b) => {
-        const dateA = new Date(a.date || a.createdAt || 0);
-        const dateB = new Date(b.date || b.createdAt || 0);
-        return dateB.getTime() - dateA.getTime();
-      });
-      
-      return sortedContacts;
+      try {
+        // Use unified contacts table instead of old sponsor_contacts
+        const allContacts = await this.database.getAll('contacts');
+        const allPeople = await this.database.getAll('people');
+        
+        // Filter contacts for sponsors and transform to legacy format
+        const sponsorContacts = allContacts
+          .filter((contact: any) => {
+            const person = allPeople.find((p: any) => p.id === contact.personId);
+            return person?.relationship === 'sponsor';
+          })
+          .map((contact: any) => {
+            const person = allPeople.find((p: any) => p.id === contact.personId);
+            return {
+              id: contact.id,
+              userId: contact.userId,
+              sponsorId: person?.id || 0,
+              type: contact.contactType,
+              date: contact.date,
+              note: contact.note,
+              topic: contact.topic,
+              duration: contact.duration,
+              createdAt: contact.createdAt,
+              updatedAt: contact.updatedAt
+            };
+          });
+        
+        // Sort contacts by date - newest first
+        const sortedContacts = sponsorContacts.sort((a, b) => {
+          const dateA = new Date(a.date || a.createdAt || 0);
+          const dateB = new Date(b.date || b.createdAt || 0);
+          return dateB.getTime() - dateA.getTime();
+        });
+        
+        console.log('[ DatabaseService ] Converted unified contacts to legacy sponsor contacts:', sortedContacts.length);
+        return sortedContacts;
+      } catch (error) {
+        console.error('[ DatabaseService ] Error getting sponsor contacts from unified tables:', error);
+        return [];
+      }
     });
   }
 
@@ -434,11 +464,42 @@ class DatabaseService {
     });
   }
 
-  // Sponsor Contact operations
+  // Sponsor Contact operations (updated to use unified architecture)
   async getAllSponsorContacts(): Promise<SponsorContact[]> {
     return this.executeOperation(async () => {
-      const contacts = await this.database.getAll('sponsor_contacts');
-      return contacts || [];
+      try {
+        // Use unified contacts table instead of old sponsor_contacts
+        const allContacts = await this.database.getAll('contacts');
+        const allPeople = await this.database.getAll('people');
+        
+        // Filter contacts for sponsors and transform to legacy format
+        const sponsorContacts = allContacts
+          .filter((contact: any) => {
+            const person = allPeople.find((p: any) => p.id === contact.personId);
+            return person?.relationship === 'sponsor';
+          })
+          .map((contact: any) => {
+            const person = allPeople.find((p: any) => p.id === contact.personId);
+            return {
+              id: contact.id,
+              userId: contact.userId,
+              sponsorId: person?.id || 0,
+              type: contact.contactType,
+              date: contact.date,
+              note: contact.note,
+              topic: contact.topic,
+              duration: contact.duration,
+              createdAt: contact.createdAt,
+              updatedAt: contact.updatedAt
+            };
+          });
+        
+        console.log('[ DatabaseService ] Converted unified contacts to legacy sponsor contacts:', sponsorContacts.length);
+        return sponsorContacts;
+      } catch (error) {
+        console.warn('[ DatabaseService ] Sponsor contacts not available:', error);
+        return [];
+      }
     });
   }
 
@@ -460,11 +521,42 @@ class DatabaseService {
     });
   }
 
-  // Sponsee Contact operations
+  // Sponsee Contact operations (updated to use unified architecture)
   async getAllSponseeContacts(): Promise<SponseeContact[]> {
     return this.executeOperation(async () => {
-      const contacts = await this.database.getAll('sponsee_contacts');
-      return contacts || [];
+      try {
+        // Use unified contacts table instead of old sponsee_contacts
+        const allContacts = await this.database.getAll('contacts');
+        const allPeople = await this.database.getAll('people');
+        
+        // Filter contacts for sponsees and transform to legacy format
+        const sponseeContacts = allContacts
+          .filter((contact: any) => {
+            const person = allPeople.find((p: any) => p.id === contact.personId);
+            return person?.relationship === 'sponsee';
+          })
+          .map((contact: any) => {
+            const person = allPeople.find((p: any) => p.id === contact.personId);
+            return {
+              id: contact.id,
+              userId: contact.userId,
+              sponseeId: person?.id || 0,
+              type: contact.contactType,
+              date: contact.date,
+              note: contact.note,
+              topic: contact.topic,
+              duration: contact.duration,
+              createdAt: contact.createdAt,
+              updatedAt: contact.updatedAt
+            };
+          });
+        
+        console.log('[ DatabaseService ] Converted unified contacts to legacy sponsee contacts:', sponseeContacts.length);
+        return sponseeContacts;
+      } catch (error) {
+        console.warn('[ DatabaseService ] Sponsee contacts not available:', error);
+        return [];
+      }
     });
   }
 
