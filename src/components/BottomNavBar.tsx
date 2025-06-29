@@ -14,7 +14,7 @@ function BottomNavBar({ currentView, onNavigate }: BottomNavBarProps) {
   const navItems = [
     { id: 'dashboard', name: 'Home', icon: '🏠' },
     { id: 'meetings', name: 'Meetings', icon: '📍' },
-    { id: 'stepwork', name: 'Steps', icon: '📖' },
+    { id: 'contacts', name: 'Contacts', icon: '📱' },
     { id: 'sponsor', name: 'Sponsorship', icon: '👥' },
     { id: 'profile', name: 'Profile', icon: '👤' }
   ];

@@ -13,6 +13,7 @@ const Dashboard = React.lazy(() => import('./components/Dashboard'));
 const Meetings = React.lazy(() => import('./components/Meetings'));
 const Profile = React.lazy(() => import('./components/Profile'));
 const SponsorSponsee = React.lazy(() => import('./components/SponsorSponsee'));
+const Contacts = React.lazy(() => import('./components/Contacts'));
 
 // Keep frequently used components as regular imports
 import Header from './components/Header';
@@ -332,8 +333,13 @@ function AppContent() {
                 activities={state.activities}
               />
             )}
+            {currentView === 'contacts' && (
+              <Contacts
+                setCurrentView={handleNavigation}
+              />
+            )}
           </React.Suspense>
-          {currentView !== 'dashboard' && currentView !== 'meetings' && currentView !== 'profile' && currentView !== 'sponsor' && (
+          {currentView !== 'dashboard' && currentView !== 'meetings' && currentView !== 'profile' && currentView !== 'sponsor' && currentView !== 'contacts' && (
             <div style={{ 
               padding: '20px', 
               textAlign: 'center',
