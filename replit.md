@@ -97,11 +97,15 @@ The Spiritual Condition Tracker is a comprehensive mobile application designed f
 5. TestFlight deployment for user testing
 
 ## Changelog
-- June 29, 2025: Database schema alignment and architecture improvements
-  - **FIXED: Critical database schema alignment** - Resolved mismatch between User interface and users table schema
-  - **ARCHITECTURE IMPROVEMENT: Proper relational design** - Removed sponsor fields from users table, use sponsors table relationships instead
+- June 29, 2025: **BREAKING CHANGE** - Unified People + Contacts Architecture
+  - **🚨 BREAKING CHANGE: Unified People + Contacts Architecture** - Complete database restructure requires app deletion/reinstall
+  - **NEW: People table** - Unified address book for all contacts (sponsors, sponsees, members, friends, family)
+  - **NEW: Contacts table** - Unified interaction records linked to people (eliminates sponsor_contacts/sponsee_contacts)
+  - **SIMPLIFIED: Sponsors/Sponsees tables** - Now reference people table instead of duplicating contact info
+  - **SIMPLIFIED: Action items table** - Single contactId/personId references instead of multiple foreign keys
+  - **ELIMINATED: All ALTER TABLE statements** - Clean schema creation without migration complexity
   - **MAJOR CLEANUP: Activities table data duplication** - Removed redundant sponsor/contact/action item fields from activities table
-  - **FIXED: "userId" column error in action_items** - Removed non-existent userId field from action item creation
+  - **FIXED: Critical database schema alignment** - Resolved mismatch between User interface and users table schema
   - **FIXED: Database schema initialization errors** - Removed redundant ALTER TABLE statements causing "duplicate column name" errors
   - **FIXED: Test data creation for sponsors/sponsees** - Restored comprehensive test data generator to create sponsors, sponsees, contacts, and action items
   - **FIXED: Test data generator** - Now uses DatabaseService directly instead of requiring non-existent AppDataContext functions

@@ -124,7 +124,7 @@ export interface Contact extends BaseEntity {
   date: string;
   note?: string;
   topic?: string;
-  duration: number; // Default 0
+  duration?: number; // Default 0
   location?: string;
 }
 
@@ -313,12 +313,20 @@ export type UpdateMeeting = Partial<InsertMeeting>;
 export type InsertActionItem = Omit<ActionItem, 'id' | 'createdAt' | 'updatedAt'>;
 export type UpdateActionItem = Partial<InsertActionItem>;
 
+// New unified types
+export type InsertPerson = Omit<Person, 'id' | 'createdAt' | 'updatedAt'>;
+export type UpdatePerson = Partial<InsertPerson>;
+
+export type InsertContact = Omit<Contact, 'id' | 'createdAt' | 'updatedAt'>;
+export type UpdateContact = Partial<InsertContact>;
+
 export type InsertSponsor = Omit<Sponsor, 'id' | 'createdAt' | 'updatedAt'>;
 export type UpdateSponsor = Partial<InsertSponsor>;
 
 export type InsertSponsee = Omit<Sponsee, 'id' | 'createdAt' | 'updatedAt'>;
 export type UpdateSponsee = Partial<InsertSponsee>;
 
+// Legacy types for backward compatibility (to be removed after migration)
 export type InsertSponsorContact = Omit<SponsorContact, 'id' | 'createdAt' | 'updatedAt'>;
 export type UpdateSponsorContact = Partial<InsertSponsorContact>;
 
